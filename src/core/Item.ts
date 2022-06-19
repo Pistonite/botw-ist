@@ -33,6 +33,23 @@ export const ItemIds = {
     [Item.SpiritOrb]: 0x02,
 
     [Item.Diamond]: 0x10,
+    [Item.Lotus]: 0x11,
+    [Item.SilentPrincess]: 0x12,
+    [Item.Honey]: 0x13,
+    [Item.Acorn]: 0x14,
+    [Item.FaroshScale]: 0x15,
+    [Item.FaroshClaw]: 0x16,
+    [Item.FaroshHorn]: 0x17,
+    [Item.HeartyBass]: 0x18,
+    [Item.Beetle]: 0x19,
+    [Item.Opal]: 0x1a,
+    [Item.Tail]: 0x1b,
+    [Item.Spring]: 0x1c,
+    [Item.Shaft]: 0x1d,
+    [Item.Core]: 0x1e,
+    [Item.Wood]: 0x1f,
+
+    [Item.SpeedFood]: 0x40,
 }
 
 export const itemToType = (item: Item): ItemType => {

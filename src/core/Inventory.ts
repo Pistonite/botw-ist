@@ -34,8 +34,8 @@ export class Inventory {
     }
 
     public init(stacks: ItemStack[]) {
-        this.savedSlots = [...stacks];
-        this.slots = [...stacks];
+        this.savedSlots = [...stacks.map((stack)=>({...stack}))];
+        this.slots = [...stacks.map((stack)=>({...stack}))];
     }
 
     public addBrokenSlots(num: number) {

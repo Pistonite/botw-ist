@@ -9,6 +9,9 @@ import { ItemStack as ISC } from './components/ItemStack';
 import { ItemStack, ItemType } from 'core/ItemStack';
 import { DisplayPane } from 'surfaces/DisplayPane';
 import { Item } from 'core/Item';
+import { deserialzeCommands, serializeCommands } from 'core/serialize';
+
+const Buffer = require("buffer/").Buffer;
 
 export const App: React.FC =  () => {
   const [commands, setCommands] = useState<Command[]>([
@@ -62,7 +65,15 @@ export const App: React.FC =  () => {
     }
   }, [commands, displayIndex]);
 
+  // useEffect(()=>{
+  //   const encoded = serializeCommands(commands);
+  //   console.log(encoded);
+  //   const deserialized = deserialzeCommands(encoded);
+  //   console.log(deserialized);
+  //   window.location.hash = "#"+encoded;
+  // }, [commands]);
 
+  
   return (
     <div className='Calamity'
     >
@@ -107,18 +118,21 @@ export const App: React.FC =  () => {
          
         </ul>
       </div>
-      
+      {displayIndex >= 0 && displayIndex < commands.length &&
       <DisplayPane 
-        displayIndex={displayIndex}
-        command={commands[displayIndex].getDisplayString()} 
-        stacks={inventories[displayIndex].getSlots()} 
-        numBroken={inventories[displayIndex].getNumBroken()} 
-        editCommand={(c)=>{
-          const arrCopy = [...commands];
-          arrCopy[displayIndex] = c;
-          setCommands(arrCopy);
-        }}/> 
+      displayIndex={displayIndex}
+      command={commands[displayIndex].getDisplayString()} 
+      stacks={inventories[displayIndex].getSlots()} 
+      numBroken={inventories[displayIndex].getNumBroken()} 
+      editCommand={(c)=>{
+        const arrCopy = [...commands];
+        arrCopy[displayIndex] = c;
+        setCommands(arrCopy);
+      }}/> 
 
+      
+      }
+      
       {
         contextMenuShowing && <div style={{
           position: "absolute",
@@ -157,6 +171,9 @@ export const App: React.FC =  () => {
             <CommandItem error onClick={()=>{
               if(confirm("Delete?")){
                 setCommands(commands.filter((_,i)=>i!==contextIndex));
+                if(displayIndex >= commands.length){
+                  setDisplayIndex(commands.length-1);
+                }
                 setContextMenuShowing(false);
                 setContextIndex(-1);
               }
