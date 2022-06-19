@@ -10,17 +10,16 @@ type CommandItemProps = PropsWithChildren<{
 }>;
 
 export const CommandItem: React.FC<CommandItemProps> = ({isSelected, isContextSelected,error, children, onClick, onContextMenu}) => {
-    return <li 
-        className={clsx("CommandItem", isSelected && "CommandItemSelected", isContextSelected&& "CommandItemContextSelected",error && "CommandItemError")}
-        onClick={onClick}
-        onContextMenu={(e)=>{
-            if(onContextMenu){
-                console.log(e);
-                onContextMenu(e.clientX,e.clientY);
-                e.preventDefault();
-            }
+	return <li 
+		className={clsx("CommandItem", isSelected && "CommandItemSelected", isContextSelected&& "CommandItemContextSelected",error && "CommandItemError")}
+		onClick={onClick}
+		onContextMenu={(e)=>{
+			if(onContextMenu){
+				onContextMenu(e.clientX,e.clientY);
+				e.preventDefault();
+			}
             
-        }}
-    >{children}&nbsp;</li>
-}
+		}}
+	>{children}&nbsp;</li>;
+};
 
