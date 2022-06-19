@@ -1,6 +1,7 @@
 {
   "name": "botw-hundo-dupl",
   "version": "0.1.0",
+  "homepage": "https://dupl.itntpiston.app/",
   "private": true,
   "dependencies": {
     "@babel/core": "^7.16.0",

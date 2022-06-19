@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.7948f1f9.css",
+    "main.js": "/static/js/main.b9496df3.js",
+    "static/js/787.ada1a5f8.chunk.js": "/static/js/787.ada1a5f8.chunk.js",
+    "static/media/Calamity-Regular.otf": "/static/media/Calamity-Regular.cbeefc650e6ac39335b6.otf",
+    "index.html": "/index.html",
+    "main.7948f1f9.css.map": "/static/css/main.7948f1f9.css.map",
+    "main.b9496df3.js.map": "/static/js/main.b9496df3.js.map",
+    "787.ada1a5f8.chunk.js.map": "/static/js/787.ada1a5f8.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7948f1f9.css",
+    "static/js/main.b9496df3.js"
+  ]
+}
