@@ -61,9 +61,9 @@ export class CommandInitialize implements Command {
         return read;
     }
     public toBuffer(): Buffer {
-        const buf: Buffer = Buffer.alloc(3*this.stacks.length+5);
+        const buf: Buffer = Buffer.alloc(3*this.stacks.length+3);
         let write = 0;
-        buf.writeUInt8(CommandInitialize.Op);
+        buf.writeInt8(CommandInitialize.Op);
         write++;
         buf.writeInt16LE(this.stacks.length, write);
         write+=2;

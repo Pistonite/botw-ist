@@ -13,8 +13,12 @@ import { deserialzeCommands, serializeCommands } from 'core/serialize';
 
 const Buffer = require("buffer/").Buffer;
 
-export const App: React.FC =  () => {
-  const [commands, setCommands] = useState<Command[]>([
+const getDefaultCommands = (): Command[]=>{
+  const encoded = localStorage.getItem("HDS.CurrentCommands");
+  if(encoded){
+    return deserialzeCommands(encoded);
+  }
+  return [
     new CommandInitialize([
       {
         item: Item.Diamond,
@@ -38,7 +42,11 @@ export const App: React.FC =  () => {
     new CommandSortKey(),
     new CommandSave(),
     new CommandReload()
-  ]);
+  ];
+}
+
+export const App: React.FC =  () => {
+  const [commands, setCommands] = useState<Command[]>(getDefaultCommands());
   const [displayIndex, setDisplayIndex] = useState<number>(0);
   const [contextMenuX, setContextMenuX] = useState<number>(0);
   const [contextMenuY, setContextMenuY] = useState<number>(0);
@@ -65,13 +73,11 @@ export const App: React.FC =  () => {
     }
   }, [commands, displayIndex]);
 
-  // useEffect(()=>{
-  //   const encoded = serializeCommands(commands);
-  //   console.log(encoded);
-  //   const deserialized = deserialzeCommands(encoded);
-  //   console.log(deserialized);
-  //   window.location.hash = "#"+encoded;
-  // }, [commands]);
+  useEffect(()=>{
+    const encoded = serializeCommands(commands);
+    localStorage.setItem("HDS.CurrentCommands", encoded);
+  }, [commands]);
+
 
   
   return (
