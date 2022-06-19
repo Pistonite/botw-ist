@@ -80,7 +80,21 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({command,editCommand,dis
             setHasError(true);
           }
         }}></input>
-        <button>Reference</button>
+        <button onClick={()=>{
+          alert(`Available Commands:
+Initialize X Item1 Y Item2 Z Item3 ...
+Break X Slots - add X broken slots
+Save
+Reload
+Sort Key/Material - sort key items or material
+Get/Add/Cook/Pickup X ITEM
+Remove/Drop/Sell X ITEM From Slot Y
+Remove/Sell/Eat MEAL From Slot X
+
+Limitations:
+When you reload without altering inventory, things become weird. It won't be handled correctly and the commands will become red
+  `);
+        }}>Reference</button>
         </div>
         
       <div style={{

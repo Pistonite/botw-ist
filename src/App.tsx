@@ -1,4 +1,4 @@
-import { Command, CommandBreakSlots, CommandInitialize, CommandNothing, CommandReload, CommandSave } from 'core/Command';
+import { Command, CommandBreakSlots, CommandInitialize, CommandNothing, CommandReload, CommandSave, CommandSortKey } from 'core/Command';
 import { Inventory } from 'core/Inventory';
 import React, { useEffect, useMemo, useState } from 'react';
 
@@ -32,6 +32,7 @@ export const App: React.FC =  () => {
     ]),
     new CommandBreakSlots(4),
     new CommandReload(),
+    new CommandSortKey(),
     new CommandSave(),
     new CommandReload()
   ]);
@@ -40,8 +41,6 @@ export const App: React.FC =  () => {
   const [contextMenuY, setContextMenuY] = useState<number>(0);
   const [contextMenuShowing, setContextMenuShowing] = useState<boolean>(false);
   const [contextIndex, setContextIndex] = useState<number>(-1);
-  console.log(Item.Diamond === "Diamond");
-  console.log(Item);
   // compute props
   const inventories = useMemo(()=>{
     const inventories: Inventory[] = [];
