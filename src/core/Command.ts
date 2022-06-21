@@ -1,28 +1,18 @@
 import { Inventory } from "./Inventory";
-import { Item, ItemIds } from "./Item";
-import { ItemStack } from "./ItemStack";
+import { idToItemData, Item, ItemStack, itemToArrowType, itemToItemData } from "./Item";
 
 const Buffer = require("buffer/").Buffer; /* eslint-disable-line  @typescript-eslint/no-var-requires*/
 
 export interface Command {
 	execute(inv: Inventory): void,
 	getDisplayString(): string,
-	fromBuffer(buf: Buffer): number,
-	toBuffer(): Buffer,
+	// fromBuffer(buf: Buffer): number,
+	// toBuffer(): Buffer,
 }
 
 export class CommandNothing implements Command {
 	static Op = 0x0;
 
-	fromBuffer(_buf: Buffer): number {
-		return 0;
-	}
-	toBuffer(): Buffer {
-		const buf: Buffer = Buffer.alloc(1);
-		buf.writeInt8(CommandNothing.Op);
-		return buf;
-	}
-	
 	execute(_inv: Inventory): void {
 		// nothing
 	}
@@ -38,40 +28,36 @@ export class CommandInitialize implements Command {
 	constructor(stacks: ItemStack[]){
 		this.stacks = stacks;
 	}
-	public fromBuffer(buf: Buffer): number {
-		let read = 0;
-		const size = buf.readUInt16LE();
-		read+=2;
-		const stacks: ItemStack[] = [];
-		for(let i=0;i<size;i++){
-			const count = buf.readInt16LE(read);
-			read+=2;
-			const id = buf.readInt8(read);
-			read++;
-			for(const item in ItemIds){
-				if(ItemIds[item as Item] === id){
-					stacks.push({item: item as Item, count});
-				}
-			}
-		}
-		this.stacks = stacks;
-		return read;
-	}
-	public toBuffer(): Buffer {
-		const buf: Buffer = Buffer.alloc(3*this.stacks.length+3);
-		let write = 0;
-		buf.writeInt8(CommandInitialize.Op);
-		write++;
-		buf.writeInt16LE(this.stacks.length, write);
-		write+=2;
-		this.stacks.forEach(({item,count})=>{
-			buf.writeInt16LE(count&0xffff, write);
-			write+=2;
-			buf.writeInt8(ItemIds[item], write);
-			write++;
-		});
-		return buf;
-	}
+	// public fromBuffer(buf: Buffer): number {
+	// 	let read = 0;
+	// 	const size = buf.readUInt16LE();
+	// 	read+=2;
+	// 	const stacks: ItemStack[] = [];
+	// 	for(let i=0;i<size;i++){
+	// 		const count = buf.readInt16LE(read);
+	// 		read+=2;
+	// 		const id = buf.readInt8(read);
+	// 		read++;
+	// 		stacks.push({item: idToItemData(id).item, count, equipped: false});
+	// 	}
+	// 	this.stacks = stacks;
+	// 	return read;
+	// }
+	// public toBuffer(): Buffer {
+	// 	const buf: Buffer = Buffer.alloc(3*this.stacks.length+3);
+	// 	let write = 0;
+	// 	buf.writeInt8(CommandInitialize.Op);
+	// 	write++;
+	// 	buf.writeInt16LE(this.stacks.length, write);
+	// 	write+=2;
+	// 	this.stacks.forEach(({item,count})=>{
+	// 		buf.writeInt16LE(count&0xffff, write);
+	// 		write+=2;
+	// 		buf.writeInt8(itemToItemData(item).id, write);
+	// 		write++;
+	// 	});
+	// 	return buf;
+	// }
 
 	public execute(inv: Inventory): void {
 		inv.init(this.stacks);
@@ -93,16 +79,16 @@ export class CommandBreakSlots implements Command {
 	constructor(numToBreak: number){
 		this.numToBreak = numToBreak;
 	}
-	public fromBuffer(buf: Buffer): number {
-		this.numToBreak = buf.readInt16LE();
-		return 2;
-	}
-	public toBuffer(): Buffer {
-		const buf: Buffer = Buffer.alloc(3);
-		buf.writeUInt8(CommandBreakSlots.Op);
-		buf.writeInt16LE(this.numToBreak, 1);
-		return buf;
-	}
+	// public fromBuffer(buf: Buffer): number {
+	// 	this.numToBreak = buf.readInt16LE();
+	// 	return 2;
+	// }
+	// public toBuffer(): Buffer {
+	// 	const buf: Buffer = Buffer.alloc(3);
+	// 	buf.writeUInt8(CommandBreakSlots.Op);
+	// 	buf.writeInt16LE(this.numToBreak, 1);
+	// 	return buf;
+	// }
 	public execute(inv: Inventory): void {
 		inv.addBrokenSlots(this.numToBreak);
 	}
@@ -113,14 +99,14 @@ export class CommandBreakSlots implements Command {
 
 export class CommandSave implements Command {
 	static Op = 0x3;
-	public fromBuffer(_buf: Buffer): number {
-		return 0;
-	}
-	public toBuffer(): Buffer {
-		const buf: Buffer = Buffer.alloc(1);
-		buf.writeInt8(CommandSave.Op);
-		return buf;
-	}
+	// public fromBuffer(_buf: Buffer): number {
+	// 	return 0;
+	// }
+	// public toBuffer(): Buffer {
+	// 	const buf: Buffer = Buffer.alloc(1);
+	// 	buf.writeInt8(CommandSave.Op);
+	// 	return buf;
+	// }
 	public execute(inv: Inventory): void {
 		inv.save();
 	}
@@ -131,14 +117,14 @@ export class CommandSave implements Command {
 
 export class CommandReload implements Command {
 	static Op = 0x4;
-	public fromBuffer(_buf: Buffer): number {
-		return 0;
-	}
-	public toBuffer(): Buffer {
-		const buf: Buffer = Buffer.alloc(1);
-		buf.writeInt8(CommandReload.Op);
-		return buf;
-	}
+	// public fromBuffer(_buf: Buffer): number {
+	// 	return 0;
+	// }
+	// public toBuffer(): Buffer {
+	// 	const buf: Buffer = Buffer.alloc(1);
+	// 	buf.writeInt8(CommandReload.Op);
+	// 	return buf;
+	// }
 	public execute(inv: Inventory): void {
 		inv.reload();
 	}
@@ -149,14 +135,14 @@ export class CommandReload implements Command {
 
 export class CommandSortKey implements Command {
 	static Op = 0x5;
-	public fromBuffer(_buf: Buffer): number {
-		return 0;
-	}
-	public toBuffer(): Buffer {
-		const buf: Buffer = Buffer.alloc(1);
-		buf.writeInt8(CommandSortKey.Op);
-		return buf;
-	}
+	// public fromBuffer(_buf: Buffer): number {
+	// 	return 0;
+	// }
+	// public toBuffer(): Buffer {
+	// 	const buf: Buffer = Buffer.alloc(1);
+	// 	buf.writeInt8(CommandSortKey.Op);
+	// 	return buf;
+	// }
 	public execute(inv: Inventory): void {
 		inv.sortKey();
 	}
@@ -167,14 +153,14 @@ export class CommandSortKey implements Command {
 
 export class CommandSortMaterial implements Command {
 	static Op = 0x6;
-	public fromBuffer(_buf: Buffer): number {
-		return 0;
-	}
-	public toBuffer(): Buffer {
-		const buf: Buffer = Buffer.alloc(1);
-		buf.writeInt8(CommandSortMaterial.Op);
-		return buf;
-	}
+	// public fromBuffer(_buf: Buffer): number {
+	// 	return 0;
+	// }
+	// public toBuffer(): Buffer {
+	// 	const buf: Buffer = Buffer.alloc(1);
+	// 	buf.writeInt8(CommandSortMaterial.Op);
+	// 	return buf;
+	// }
 	public execute(inv: Inventory): void {
 		inv.sortMaterial();
 	}
@@ -201,48 +187,20 @@ export class CommandRemoveMaterial implements Command {
 	private count: number;
 	private item: Item;
 	private slot: number;
-	constructor(verb: string, count: number, item: Item, slot: number){
+	private noSlot: boolean;
+	constructor(verb: string, count: number, item: Item, slot: number, noSlot: boolean){
 		this.verb = VerbToId[verb as keyof typeof VerbToId]  || 0;
 		this.count = count;
 		this.item = item;
 		this.slot = slot;
-	}
-	public fromBuffer(buf: Buffer): number {
-		let read = 0;
-		this.count = buf.readInt16LE(read);
-		read+=2;
-		const id = buf.readInt8(read);
-		read+=1;
-		for(const item in ItemIds){
-			if(ItemIds[item as Item] === id){
-				this.item = item as Item;
-			}
-		}
-		this.slot = buf.readInt16LE(read);
-		read+=2;
-		this.verb = buf.readInt8(read);
-		read++;
-		return read;
-	}
-	public toBuffer(): Buffer {
-		const buf: Buffer = Buffer.alloc(1+2+1+2+1);
-		let write = 0;
-		buf.writeInt8(CommandRemoveMaterial.Op);
-		write++;
-		buf.writeInt16LE(this.count, write);
-		write+=2;
-		buf.writeInt8(ItemIds[this.item], write);
-		write++;
-		buf.writeInt16LE(this.slot, write);
-		write+=2;
-		buf.writeInt8(this.verb, write);
-		return buf;
+		this.noSlot = noSlot;
 	}
 	public execute(inv: Inventory): void {
 		inv.remove(this.item, this.count, this.slot);
 	}
 	public getDisplayString(): string {
-		return `${Verbs[this.verb]} ${this.count} ${this.item} From Slot ${this.slot+1}`;
+		const slotString = this.noSlot ? "" : ` From Slot ${this.slot+1}`
+		return `${Verbs[this.verb]} ${this.count} ${this.item}${slotString}`;
 	}
 }
 
@@ -251,43 +209,19 @@ export class CommandRemoveUnstackableMaterial implements Command {
 	private verb: number;
 	private item: Item;
 	private slot: number;
-	constructor(verb: string,item: Item, slot: number){
+	private noSlot: boolean;
+	constructor(verb: string,item: Item, slot: number, noSlot: boolean){
 		this.verb = VerbToId[verb as keyof typeof VerbToId]  || 0;
 		this.item = item;
 		this.slot = slot;
-	}
-	public fromBuffer(buf: Buffer): number {
-		let read = 0;
-		const id = buf.readInt8(read);
-		read+=1;
-		for(const item in ItemIds){
-			if(ItemIds[item as Item] === id){
-				this.item = item as Item;
-			}
-		}
-		this.slot = buf.readInt16LE(read);
-		read+=2;
-		this.verb = buf.readInt8(read);
-		read++;
-		return read;
-	}
-	public toBuffer(): Buffer {
-		const buf: Buffer = Buffer.alloc(1+1+2+1);
-		let write = 0;
-		buf.writeInt8(CommandRemoveUnstackableMaterial.Op);
-		write++;
-		buf.writeInt8(ItemIds[this.item], write);
-		write++;
-		buf.writeInt16LE(this.slot, write);
-		write+=2;
-		buf.writeInt8(this.verb, write);
-		return buf;
+		this.noSlot = noSlot;
 	}
 	public execute(inv: Inventory): void {
 		inv.remove(this.item, 1, this.slot);
 	}
 	public getDisplayString(): string {
-		return `${Verbs[this.verb]} ${this.item} From Slot ${this.slot+1}`;
+		const slotString = this.noSlot ? "" : ` From Slot ${this.slot+1}`
+		return `${Verbs[this.verb]} ${this.item}${slotString}`;
 	}
 }
 
@@ -301,37 +235,91 @@ export class CommandAddMaterial implements Command {
 		this.count = count;
 		this.item = item;
 	}
-	public fromBuffer(buf: Buffer): number {
-		let read = 0;
-		const id = buf.readInt8(read);
-		read+=1;
-		for(const item in ItemIds){
-			if(ItemIds[item as Item] === id){
-				this.item = item as Item;
-			}
-		}
-		this.count = buf.readInt16LE(read);
-		read+=2;
-		this.verb = buf.readInt8(read);
-		read++;
-		return read;
-	}
-	public toBuffer(): Buffer {
-		const buf: Buffer = Buffer.alloc(1+1+2+1);
-		let write = 0;
-		buf.writeInt8(CommandAddMaterial.Op);
-		write++;
-		buf.writeInt8(ItemIds[this.item], write);
-		write++;
-		buf.writeInt16LE(this.count, write);
-		write+=2;
-		buf.writeInt8(this.verb, write);
-		return buf;
-	}
+	// public fromBuffer(buf: Buffer): number {
+	// 	let read = 0;
+	// 	const id = buf.readInt8(read);
+	// 	read+=1;
+	// 	this.item = idToItemData(id).item;
+
+	// 	this.count = buf.readInt16LE(read);
+	// 	read+=2;
+	// 	this.verb = buf.readInt8(read);
+	// 	read++;
+	// 	return read;
+	// }
+	// public toBuffer(): Buffer {
+	// 	const buf: Buffer = Buffer.alloc(1+1+2+1);
+	// 	let write = 0;
+	// 	buf.writeInt8(CommandAddMaterial.Op);
+	// 	write++;
+	// 	buf.writeInt8(itemToItemData(this.item).id, write);
+	// 	write++;
+	// 	buf.writeInt16LE(this.count, write);
+	// 	write+=2;
+	// 	buf.writeInt8(this.verb, write);
+	// 	return buf;
+	// }
 	public execute(inv: Inventory): void {
 		inv.add(this.item, this.count);
 	}
 	public getDisplayString(): string {
 		return `${Verbs[this.verb]} ${this.count} ${this.item}`;
+	}
+}
+
+export class CommandEquipArrow implements Command {
+	private item: Item;
+	private slot: number;
+	private noSlot: boolean;
+	constructor(item: Item, slot: number, noSlot: boolean){
+		this.item = item;
+		this.slot = slot;
+		this.noSlot = noSlot;
+	}
+	
+	public execute(inv: Inventory): void {
+		inv.equipEquipmentOrArrow(this.item, this.slot);
+	}
+	public getDisplayString(): string {
+		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`
+		return `Equip ${itemToArrowType(this.item)} Arrow${slotString}`;
+	}
+}
+
+export class CommandEquip implements Command {
+	private item: Item;
+	private slot: number;
+	private noSlot: boolean;
+	constructor(item: Item, slot: number, noSlot: boolean){
+		this.item = item;
+		this.slot = slot;
+		this.noSlot = noSlot;
+	}
+	
+	public execute(inv: Inventory): void {
+		inv.equipEquipmentOrArrow(this.item, this.slot);
+	}
+	public getDisplayString(): string {
+		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`
+		return `Equip ${this.item}${slotString}`;
+	}
+}
+
+export class CommandUnequip implements Command {
+	private item: Item;
+	private slot: number;
+	private noSlot: boolean;
+	constructor(item: Item, slot: number, noSlot: boolean){
+		this.item = item;
+		this.slot = slot;
+		this.noSlot = noSlot;
+	}
+	
+	public execute(inv: Inventory): void {
+		inv.unequipEquipment(this.item, this.slot);
+	}
+	public getDisplayString(): string {
+		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`
+		return `Unequip ${this.item}${slotString}`;
 	}
 }

@@ -35,3 +35,46 @@ h1 {
 .InputError {
   background-color: #eeaaaa;
 }
+
+.ItemSlot {
+  margin: 4px;
+  width: 64px;
+  height: 64px;
+  
+  background-color: #333333;
+  box-sizing: content-box;
+  display: inline-block;
+}
+
+.ItemSlotBroken {
+  background-color: #660000;
+}
+
+.ItemSlotSave {
+  background-color: #003300;
+}
+
+.ItemSlotEquipped {
+  background-color: #0088ff;
+}
+
+.ItemImage {
+  border: 1px solid #999999;
+  box-sizing: border-box;
+  margin:1px;
+  width:62px;
+  height:62px;
+  display:inline-block;
+}
+
+.ItemImageSave {
+}
+
+.ItemCount {
+  font-size: 10pt;
+  position:relative;
+  top:-22px;
+  left:8px;
+  color:#eeeeee;
+  float: left;
+}

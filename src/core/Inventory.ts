@@ -1,28 +1,32 @@
-import { itemToType, getKeyItemSortOrder, shouldIgnoreOnReload, getMaterialSortOrder, Item, isStackable } from "./Item";
-import { ItemStack, ItemType } from "./ItemStack";
+import { Item, ItemStack, itemToItemData, ItemType, ItemTypes } from "./Item";
+import { Slots } from "./Slots";
+
+
 
 export class Inventory {
-	private slots: ItemStack[] = [];
-	private savedSlots: ItemStack[] = [];
+	private slots: Slots = new Slots([]);
+	private savedSlots: Slots = new Slots([]);
 	private numBroken = 0;
 	private isInitialSort = false;
 	private isAltered = true;
-	private isSaveAltered = true;
 	private inaccurate = false;
-	public clone(): Inventory {
+	public deepClone(): Inventory {
 		const other = new Inventory();
-		other.slots = [...this.slots.map(stack=>({...stack}))];
-		other.savedSlots = [...this.savedSlots.map(stack=>({...stack}))];
+		other.slots = this.slots.deepClone();
+		other.savedSlots = this.savedSlots.deepClone();
 		other.numBroken = this.numBroken;
 		other.isInitialSort = this.isInitialSort;
 		other.isAltered = this.isAltered;
-		other.isSaveAltered = this.isSaveAltered;
 		other.inaccurate = this.inaccurate;
 		return other;
 	}
 
-	public getSlots(): ItemStack[] {
+	public getSlots(): Slots {
 		return this.slots;
+	}
+
+	public getSavedSlots(): Slots {
+		return this.savedSlots;
 	}
 
 	public getNumBroken(): number {
@@ -34,12 +38,13 @@ export class Inventory {
 	}
 
 	public init(stacks: ItemStack[]) {
-		this.savedSlots = [...stacks.map((stack)=>({...stack}))];
-		this.slots = [...stacks.map((stack)=>({...stack}))];
+		this.slots = new Slots([]);
+		stacks.forEach(s=>{
+			this.slots.add(s.item, s.count)
+		});
 		this.numBroken = 0;
 		this.isInitialSort = false;
 		this.isAltered = true;
-		this.isSaveAltered = true;
 		this.inaccurate = false;
 	}
 
@@ -48,130 +53,127 @@ export class Inventory {
 	}
 
 	public save() {
-		this.isSaveAltered = this.isAltered;
-		this.savedSlots = [...this.slots];
+		if(this.isAltered){
+			this.savedSlots = this.slots.deepClone();
+		}
+		// Inventory Corruption
+		// get durability transfer slots
+		const durabilityTransferSlots: number[] = [];
+		const equippedWeapon = this.slots.getFirstEquippedSlotIndex(ItemType.Weapon);
+		if(equippedWeapon>=0){
+			durabilityTransferSlots.push(equippedWeapon);
+		}
+		const equippedBow = this.slots.getFirstEquippedSlotIndex(ItemType.Bow);
+		if(equippedBow>=0){
+			durabilityTransferSlots.push(equippedBow);
+		}
+		const equippedShield = this.slots.getFirstEquippedSlotIndex(ItemType.Shield);
+		if(equippedShield>=0){
+			durabilityTransferSlots.push(equippedShield);
+		}
+		durabilityTransferSlots.forEach(s=>{
+			if(s<this.savedSlots.length){
+				// We ignore the case where durability transfer happens from equipment to equipment
+
+				if(itemToItemData(this.savedSlots.get(s).item).stackable){
+					this.savedSlots.get(s).count = 999;
+				}
+			}
+		})
 	}
 
 	public reload() {
-		if(!this.isSaveAltered){
-			this.inaccurate = true;
-		}
+		
 		// get things to dupe
-		const dupeMap: {[k in ItemType]: ItemStack[]} = {
-			[ItemType.Material]: [],
-			[ItemType.Meal]: [],
-			[ItemType.Key]: []
+		const dupeMap: {[k in ItemType]: Slots} = {
+			[ItemType.Weapon]: new Slots([]),
+			[ItemType.Bow]: new Slots([]),
+			[ItemType.Arrow]: new Slots([]),
+			[ItemType.Shield]: new Slots([]),
+			[ItemType.Material]: new Slots([]),
+			[ItemType.Meal]: new Slots([]),
+			[ItemType.Key]: new Slots([])
 		};
 		for(let i=Math.max(0, this.slots.length-this.numBroken);i<this.slots.length;i++){
-			const stack = this.slots[i];
-			if(!shouldIgnoreOnReload(stack.item)){
-				dupeMap[itemToType(stack.item)].push(stack);
-			}
+			const stack = this.slots.get(i);
+			const itemData = itemToItemData(stack.item);
+			dupeMap[itemData.type].addStackCopy(stack);
 		}
-		// get materials, food, and key items
-		const materials = this.savedSlots.filter(stack=>itemToType(stack.item)===ItemType.Material);
-		const meals = this.savedSlots.filter(stack=>itemToType(stack.item)===ItemType.Meal);
-		const keyItems = this.savedSlots.filter(stack=>itemToType(stack.item)===ItemType.Key);
 		// apply dupe
-		this.slots = [];
-		// duped materials go to the left
-		this.slots.push(...dupeMap[ItemType.Material].map(stack=>({...stack})));
-		this.slots.push(...materials.map(stack=>({...stack})));
-		this.slots.push(...dupeMap[ItemType.Meal].map(stack=>({...stack})));
-		this.slots.push(...meals.map(stack=>({...stack})));
-		// key items to the right
-		this.slots.push(...keyItems.map(stack=>({...stack})));
-		this.slots.push(...dupeMap[ItemType.Key].map(stack=>({...stack})));
+		//console.log(dupeMap);
+		this.slots = new Slots([]);
+		// const dupeType = (type: ItemType) => {
+			
+		// }
+		ItemTypes.forEach(type=>{
+			this.slots.addSlotsToEnd(dupeMap[type]);
+			this.slots.addSlotsToEnd(this.savedSlots.getByType(type).deepClone());
+		});
 
+		this.slots.sortArrows();
 		this.isInitialSort = true;
 		this.isAltered = false;
-		this.isSaveAltered = false;
 	}
 
 	public sortKey() {
-		const nonKeyItems = this.slots.filter(stack=>itemToType(stack.item)!==ItemType.Key);
-		const keyItems = this.slots.filter(stack=>itemToType(stack.item)===ItemType.Key);
-		keyItems.sort((a,b)=>{
-			return getKeyItemSortOrder(a.item) - getKeyItemSortOrder(b.item);
-		});
-		this.slots = [...nonKeyItems, ...keyItems];
+		const nonKeyItems = this.slots.getBeforeType(ItemType.Key);
+		const keyItems = this.slots.getByType(ItemType.Key);
+		keyItems.sort();
+		nonKeyItems.addSlotsToEnd(keyItems);
+		this.slots = nonKeyItems;
 		this.isAltered=true;
 		this.isInitialSort=false;
 	}
 
 	public sortMaterial() {
-		const nonMaterial = this.slots.filter(stack=>itemToType(stack.item)!==ItemType.Material);
-		const materials = this.slots.filter(stack=>itemToType(stack.item)===ItemType.Material);
+		const beforeMaterial = this.slots.getBeforeType(ItemType.Material);
+		const afterMaterial = this.slots.getAfterType(ItemType.Material);
+		const materials = this.slots.getByType(ItemType.Material);
 		if(this.isInitialSort){
 			// the materials in broken slots are not sorted
-			const brokenSlots = Math.max(0, this.numBroken - nonMaterial.length);
-			const sortPart = materials.splice(0, materials.length-brokenSlots);
-			sortPart.sort((a,b)=>{
-				return getMaterialSortOrder(a.item) - getMaterialSortOrder(b.item);
-			});
-			this.slots = [...sortPart, ...materials, ...nonMaterial];
-			this.isInitialSort = false;
+			const brokenSlots = Math.max(0, this.numBroken - afterMaterial.length);
+			const noSortPart = materials.removeFromEnd(brokenSlots);
+			materials.sort();
+			beforeMaterial.addSlotsToEnd(materials);
+			beforeMaterial.addSlotsToEnd(noSortPart);
+			beforeMaterial.addSlotsToEnd(afterMaterial);
 		}else{
-			materials.sort((a,b)=>{
-				return getMaterialSortOrder(a.item) - getMaterialSortOrder(b.item);
-			});
-			this.slots = [...materials, ...nonMaterial];
+			materials.sort();
+			beforeMaterial.addSlotsToEnd(materials);
+			beforeMaterial.addSlotsToEnd(afterMaterial);
 		}
+		
+		this.slots = beforeMaterial;
+		this.isInitialSort = false;
 		this.isAltered=true;
 	}
 
 	public remove(item: Item, count: number, slot: number) {
-		let s = 0;
-		for(let i = 0; i<this.slots.length;i++){
-			if(this.slots[i].item === item){
-				if(s<slot){
-					s++;
-				}else{
-					this.slots[i].count-=count;
-					break;
-				}
-			}
-		}
-		this.slots = this.slots.filter(({count})=>count>0);
+		this.slots.remove(item, count, slot);
 		this.isAltered=true;
 	}
 
 	public add(item: Item, count: number) {
-		let added = false;
-		if(isStackable(item)){
-			for(let i = 0; i<this.slots.length;i++){
-				if(this.slots[i].item === item){
-					this.slots[i].count+=count;
-					added = true;
-					break;
-				}
-			}
-		}
-		if(!added){
-			// add to the correct type
-			switch(itemToType(item)){
-				case ItemType.Material: {
-					const materials = this.slots.filter(stack=>itemToType(stack.item)===ItemType.Material);
-					this.slots.splice(materials.length, 0, {
-						item, count
-					});
-					break;
-				}
-				case ItemType.Meal: {
-					const keyItems = this.slots.filter(stack=>itemToType(stack.item)===ItemType.Key);
-					this.slots.splice(-keyItems.length, 0, {
-						item, count
-					});
-					break;
-				}
-				case ItemType.Key: {
-					this.slots.push({
-						item, count
-					});
-					break;
-				}
-			}
+		this.slots.add(item, count);
+		if(itemToItemData(item).type===ItemType.Arrow){
+			this.slots.sortArrows();
 		}
 		this.isAltered=true;
 	}
+
+	public equipEquipmentOrArrow(item: Item, slot: number) {
+		this.slots.equip(item, slot);
+		this.isAltered=true;
+	}
+
+	public unequipEquipment(item: Item, slot: number){
+		this.slots.unequip(item, slot);
+		this.isAltered=true;
+	}
+
+	public shootArrow(item: Item, count: number){
+		this.slots.shoot(item, count);
+		this.isAltered=true;
+	}
+
 }

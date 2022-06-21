@@ -1,47 +1,45 @@
 import clsx from "clsx";
-import { ItemList, ItemListProps } from "components/ItemList";
+import { ItemList, ItemListItemProps, ItemListProps } from "components/ItemList";
+import { DoubleItemSlot } from "components/ItemSlot";
 import { Command } from "core/Command";
-import { itemToType } from "core/Item";
-import { ItemStack, ItemType } from "core/ItemStack";
+import { ItemStack, itemToItemData } from "core/Item";
 import { parseCommand } from "core/Parser";
+import { Slots } from "core/Slots";
 
 import React, { useEffect, useState } from "react";
 
 type DisplayPaneProps = {
     command: string,
     displayIndex: number,
-    stacks: ItemStack[],
+    slots: Slots,
+	savedSlots: Slots,
     numBroken: number,
+	overlaySave: boolean,
     editCommand: (c: Command)=>void
 }
 
-const stacksToItemListProps = (stacks: ItemStack[], numBroken: number): [ItemListProps, ItemListProps, ItemListProps] => {
-	const materials = stacks.filter(stack=>itemToType(stack.item)==ItemType.Material);
-	const meals = stacks.filter(stack=>itemToType(stack.item)==ItemType.Meal);
-	const keyItems = stacks.filter(stack=>itemToType(stack.item)==ItemType.Key);
-	return [
-		{
-			items: stacksToNameAndCount(materials),
-			numBroken: Math.max(0, numBroken - keyItems.length - meals.length )
-		},
-		{
-			items: stacksToNameAndCount(meals),
-			numBroken: Math.max(0, numBroken - keyItems.length)
-		},{
-			items: stacksToNameAndCount(keyItems),
-			numBroken
-		},
-	];
+const stacksToItemListProps = (slots: Slots, numBroken: number, isSave: boolean): ItemListProps => {
+	return {
+		items: stacksToItemProps(slots.getSlotsRef()),
+		numBroken,
+		isSave,
+	};
 };
 
-const stacksToNameAndCount = (stacks: ItemStack[]): ItemListProps["items"] => {
-	return stacks.map(({item, count})=>({name: item, count}));
+const stacksToItemProps = (stacks: ItemStack[]): ItemListItemProps[] => {
+	return stacks.map(stackToItemProps);
 };
 
-export const DisplayPane: React.FC<DisplayPaneProps> = ({command,editCommand,displayIndex, stacks, numBroken})=>{
+const stackToItemProps = ({item, count, equipped}: ItemStack): ItemListItemProps => {
+	const data = itemToItemData(item);
+	return {image: data.image, count: data.stackable ? count : 0, isEquipped:equipped};
+}
+
+export const DisplayPane: React.FC<DisplayPaneProps> = ({command,editCommand,displayIndex, slots, savedSlots, numBroken, overlaySave})=>{
 	const [commandString, setCommandString] = useState<string>("");
 	const [hasError, setHasError] = useState<boolean>(false);
-	const [materialListProps, mealListProps, keyItemListProps] = stacksToItemListProps(stacks, numBroken);
+	const listProps = stacksToItemListProps(slots, numBroken, false);
+	const listSaveProps = stacksToItemListProps(savedSlots, 0, true);
 	useEffect(()=>{
 		if(commandString!==command){
 			setCommandString(command);
@@ -80,51 +78,70 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({command,editCommand,dis
 					setHasError(true);
 				}
 			}}></input>
-			<button onClick={()=>{
-				alert(`Available Commands:
-Initialize X Item1 Y Item2 Z Item3 ...
-Break X Slots - add X broken slots
-Save
-Reload
-Sort Key/Material - sort key items or material
-Get/Add/Cook/Pickup X ITEM
-Remove/Drop/Sell X ITEM From Slot Y
-Remove/Sell/Eat MEAL From Slot X
 
-Limitations:
-When you reload without altering inventory, things become weird. It won't be handled correctly and the commands will become red
-  `);
-			}}>Reference</button>
 		</div>
-        
-		<div style={{
+        {overlaySave ? 
+			<div style={{
+			borderTop: "1px solid black",
+			boxSizing: "content-box",
+			height: "calc( ( 99vh - 60px ))",
+			overflowY: "auto"
+		} }>
+			<div>Save / Current</div>
+			<div>
+			{
+				(()=>{
+					const doubleSlots: JSX.Element[] = [];
+					for(let i=0;i<savedSlots.length && i<slots.length;i++){
+						doubleSlots.push(<DoubleItemSlot
+							first={{...stackToItemProps(savedSlots.get(i)), isBroken:false, isSave:true}}
+							second={{...stackToItemProps(slots.get(i)), isBroken:i>=slots.length-numBroken, isSave:false}}
+						/>);
+					}
+					if(savedSlots.length>slots.length){
+						for(let i=slots.length;i<savedSlots.length;i++){
+							doubleSlots.push(<DoubleItemSlot
+								first={{...stackToItemProps(savedSlots.get(i)), isBroken:false, isSave:true}}
+							/>);
+						}
+					}else if(slots.length > savedSlots.length){
+						for(let i=savedSlots.length;i<slots.length;i++){
+							doubleSlots.push(<DoubleItemSlot
+								second={{...stackToItemProps(slots.get(i)), isBroken:i>=slots.length-numBroken, isSave:false}}
+							/>);
+						}
+					}
+					return doubleSlots;
+				})()
+			}
+			</div>
+			
+		</div>
+		
+		 :<>
+		
+			<div style={{
 			borderTop: "1px solid black",
 			borderBottom: "1px solid black",
 			marginBottom: 2,
 			boxSizing: "content-box",
-			height: "calc( ( 99vh - 60px ) / 3)",
+			height: "calc( ( 99vh - 60px ) / 2)",
 			overflowY: "auto"
 		} }>
-			<ItemList {...materialListProps}/>
+			<div>Inventory of (Hard) Save</div>
+			<ItemList {...listSaveProps}/>
 		</div>
 		<div style={{
 			borderTop: "1px solid black",
 			boxSizing: "content-box",
-			borderBottom: "1px solid black",
-			marginBottom: 2,
-			height: "calc( ( 99vh - 60px ) / 3)",
+			height: "calc( ( 99vh - 60px ) / 2)",
 			overflowY: "auto"
 		} }>
-			<ItemList {...mealListProps}/>
+			<div>Current Inventory</div>
+			<ItemList {...listProps}/>
 		</div>
-		<div style={{
-			borderTop: "1px solid black",
-			boxSizing: "content-box",
-			height: "calc( ( 99vh - 60px ) / 3)",
-			overflowY: "auto"
-		} }>
-			<ItemList {...keyItemListProps}/>
-		</div>
+		</>}
+
 
 	</div>;
 };

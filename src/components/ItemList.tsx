@@ -1,16 +1,23 @@
-import { ItemStack } from "./ItemStack";
+import { ItemSlot } from "./ItemSlot";
+
+export type ItemListItemProps = {
+	image: string, 
+	count: number, 
+	isEquipped: boolean,
+}
 
 export type ItemListProps = {
-    items: {name: string, count: number}[],
+	isSave: boolean,
+    items: ItemListItemProps[],
     numBroken: number
 }
 
-export const ItemList: React.FC<ItemListProps> = ({items, numBroken}) => {
+export const ItemList: React.FC<ItemListProps> = ({items, numBroken, isSave}) => {
 	return <>
 		{
-			items.map(({name, count}, i)=>{
+			items.map(({image, count, isEquipped}, i)=>{
 				const broken = i+numBroken >= items.length;
-				return <ItemStack key={i} name={name} count={count} isBroken={broken}/>;
+				return <ItemSlot key={i} image={image} count={count} isBroken={broken} isSave={isSave} isEquipped={isEquipped}/>;
 			})
 		}
 	</>;

@@ -7,32 +7,36 @@ import { CommandItem } from "./components/CommandItem";
 
 import { DisplayPane } from "surfaces/DisplayPane";
 import { Item } from "core/Item";
-import { deserialzeCommands, serializeCommands } from "core/serialize";
 import { saveAs } from "data/FileSaver";
 import { parseCommand } from "core/Parser";
 
 const getDefaultCommands = (): Command[]=>{
-	const encoded = localStorage.getItem("HDS.CurrentCommands");
+	const encoded = localStorage.getItem("HDS.CurrentCommandsText");
 	if(encoded){
-		return deserialzeCommands(encoded);
+		const lines = encoded.split("\n");
+		return lines.map(l=>parseCommand(l)).filter(c=>c) as Command[];
 	}
 	return [
 		new CommandInitialize([
 			{
 				item: Item.Diamond,
 				count: 5,
+				equipped:false,
 			},
 			{
 				item: Item.Slate,
 				count: 1,
+				equipped:false,
 			},
 			{
 				item: Item.Glider,
 				count: 1,
+				equipped:false,
 			},
 			{
 				item: Item.SpiritOrb,
 				count: 4,
+				equipped:false,
 			}
 		]),
 		new CommandBreakSlots(4),
@@ -44,6 +48,7 @@ const getDefaultCommands = (): Command[]=>{
 };
 
 export const App: React.FC =  () => {
+	const [overlaySave, setOverlaySave] = useState<boolean>(false);
 	const [commands, setCommands] = useState<Command[]>(getDefaultCommands());
 	const [displayIndex, setDisplayIndex] = useState<number>(0);
 	const [contextMenuX, setContextMenuX] = useState<number>(0);
@@ -56,7 +61,7 @@ export const App: React.FC =  () => {
 		const inv = new Inventory();
 		commands.forEach(c=>{
 			c.execute(inv);
-			inventories.push(inv.clone());
+			inventories.push(inv.deepClone());
 		});
 		return inventories;
 	}, [commands]);
@@ -72,8 +77,12 @@ export const App: React.FC =  () => {
 	}, [commands, displayIndex]);
 
 	useEffect(()=>{
-		const encoded = serializeCommands(commands);
-		localStorage.setItem("HDS.CurrentCommands", encoded);
+		// const encoded = serializeCommands(commands);
+		// localStorage.setItem("HDS.CurrentCommands", encoded);
+		const lines = commands.map(c=>c.getDisplayString());
+		const text = lines.join("\n");
+		localStorage.setItem("HDS.CurrentCommandsText", text);
+
 	}, [commands]);
 
 	const uploadRef = useRef<HTMLInputElement>(null);
@@ -132,23 +141,22 @@ export const App: React.FC =  () => {
 						arrCopy.push(new CommandNothing());
 						setCommands(arrCopy);
 					}}>(new)</CommandItem>
-					<CommandItem onClick={()=>{
-						if(uploadRef.current){
-							uploadRef.current.click();
-						}
-					}}>(import)</CommandItem>
-					<CommandItem onClick={()=>{
-						const lines = commands.map(c=>c.getDisplayString());
-						const text = lines.join("\n");
-						saveAs(text, "dupe.txt");
-					}}>(export)</CommandItem>
+					<CommandItem onClick={(x,y)=>{
+						setContextIndex(-1);
+						setContextMenuX(x);
+						setContextMenuY(y);
+						setContextMenuShowing(true);
+					}}>(options)</CommandItem>
+
 				</ul>
 			</div>
 			{displayIndex >= 0 && displayIndex < commands.length &&
 				<DisplayPane 
+				overlaySave={overlaySave}
 					displayIndex={displayIndex}
 					command={commands[displayIndex].getDisplayString()} 
-					stacks={inventories[displayIndex].getSlots()} 
+					slots={inventories[displayIndex].getSlots()} 
+					savedSlots={inventories[displayIndex].getSavedSlots()}
 					numBroken={inventories[displayIndex].getNumBroken()} 
 					editCommand={(c)=>{
 						const arrCopy = [...commands];
@@ -186,6 +194,7 @@ export const App: React.FC =  () => {
 							listStyleType: "none",
 							paddingInlineStart: 0
 						}}>
+							{contextIndex >= 0 ? <>
 							<CommandItem onClick={()=>{
 								const arrCopy = [...commands];
 								arrCopy.splice(contextIndex, 0, new CommandNothing());
@@ -202,7 +211,65 @@ export const App: React.FC =  () => {
 									setContextMenuShowing(false);
 									setContextIndex(-1);
 								}
-							}}>Delete</CommandItem>
+							}}>Delete</CommandItem></> :
+							<>
+							<CommandItem onClick={()=>{
+						setOverlaySave(!overlaySave);
+					}}>Toggle Save Overlay</CommandItem>
+												<CommandItem onClick={()=>{
+						if(uploadRef.current){
+							uploadRef.current.click();
+						}
+					}}>Import</CommandItem>
+					<CommandItem onClick={()=>{
+						const lines = commands.map(c=>c.getDisplayString());
+						const text = lines.join("\n");
+						saveAs(text, "dupe.txt");
+					}}>Export</CommandItem>
+					<CommandItem onClick={()=>{
+										alert(`Available Commands:
+Initialize X Item1 Y Item2 Z Item3 ...
+Break X Slots - add X broken slots
+Save
+Reload
+Sort Key/Material - sort key items or material
+Get/Add/Cook/Pickup X ITEM
+Remove/Drop/Sell X ITEM From Slot Y
+Remove/Sell/Eat MEAL From Slot X
+
+Limitations:
+Inventory corruption is not implemented yet
+
+`);
+	alert(`Available Items:
+Slate
+Glider
+SpiritOrb
+SpeedFood
+Lotus
+SilentPrincess
+Honey
+Acorn
+FaroshScale
+FaroshClaw
+FaroshHorn
+HeartyBass
+Beetle
+Opal
+Diamond
+Tail
+Spring
+Shaft
+Core
+Wood
+Weapon
+		`);
+					}}>Reference</CommandItem>
+
+							</>
+							
+							}
+							
 						</ul>
 					</div>
 				</div>

@@ -1,6 +1,5 @@
-import { Command, CommandAddMaterial, CommandBreakSlots, CommandInitialize, CommandNothing, CommandReload, CommandRemoveMaterial, CommandRemoveUnstackableMaterial, CommandSave, CommandSortKey, CommandSortMaterial } from "./Command";
-import { Item } from "./Item";
-import { ItemStack } from "./ItemStack";
+import { Command, CommandAddMaterial, CommandBreakSlots, CommandEquip, CommandEquipArrow, CommandInitialize, CommandNothing, CommandReload, CommandRemoveMaterial, CommandRemoveUnstackableMaterial, CommandSave, CommandSortKey, CommandSortMaterial, CommandUnequip } from "./Command";
+import { Item, ItemStack } from "./Item";
 
 export const parseCommand = (cmdString: string): Command | undefined => {
 	const tokens = cmdString.split(" ").filter(i=>i);
@@ -18,7 +17,7 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 			const item = tokens[i+1];
 			if (item in Item){
 				stacks.push({
-					item: Item[item as keyof typeof Item], count
+					item: Item[item as keyof typeof Item], count, equipped:false
 				});
 			}else{
 				return undefined;
@@ -54,7 +53,15 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		const item = tokens[2];
 		const slot = parseInt(tokens[5]);
 		if(Number.isInteger(count) && Number.isInteger(slot) && item in Item){
-			return new CommandRemoveMaterial(tokens[0], count, Item[item as keyof typeof Item], slot-1);
+			return new CommandRemoveMaterial(tokens[0], count, Item[item as keyof typeof Item], slot-1, false);
+		}
+		return undefined;
+	}
+	if (tokens.length === 3 && (tokens[0] === "Remove" || tokens[0] === "Sell" || tokens[0] === "Drop")){
+		const count = parseInt(tokens[1]);
+		const item = tokens[2];
+		if(Number.isInteger(count) && item in Item){
+			return new CommandRemoveMaterial(tokens[0], count, Item[item as keyof typeof Item], 0, true);
 		}
 		return undefined;
 	}
@@ -63,7 +70,14 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		const item = tokens[1];
 		const slot = parseInt(tokens[4]);
 		if(Number.isInteger(slot) && item in Item){
-			return new CommandRemoveUnstackableMaterial(tokens[0], Item[item as keyof typeof Item], slot-1);
+			return new CommandRemoveUnstackableMaterial(tokens[0], Item[item as keyof typeof Item], slot-1, false);
+		}
+		return undefined;
+	}
+	if (tokens.length === 2 && (tokens[0] === "Remove" || tokens[0] === "Sell" || tokens[0] === "Eat")){
+		const item = tokens[1];
+		if(item in Item){
+			return new CommandRemoveUnstackableMaterial(tokens[0], Item[item as keyof typeof Item], 0, true);
 		}
 		return undefined;
 	}
@@ -73,6 +87,54 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		const item = tokens[2];
 		if(Number.isInteger(count)  && item in Item){
 			return new CommandAddMaterial(tokens[0], count, Item[item as keyof typeof Item]);
+		}
+		return undefined;
+	}
+	// Equip Equipment
+	if (tokens.length === 5 && tokens[0] === "Equip" && tokens[2] === "In" && tokens[3] ==="Slot" ){
+		const item = tokens[1];
+		const slot = parseInt(tokens[4]);
+		if( Number.isInteger(slot) && item in Item){
+			return new CommandEquip(Item[item as keyof typeof Item], slot-1, false);
+		}
+		return undefined;
+	}
+	if (tokens.length === 2 && tokens[0] === "Equip"){
+		const item = tokens[1];
+		if( item in Item){
+			return new CommandEquip(Item[item as keyof typeof Item], 0, true);
+		}
+		return undefined;
+	}
+	// Unequip Equipment
+	if (tokens.length === 5 && tokens[0] === "Unequip" && tokens[2] === "In" && tokens[3] ==="Slot" ){
+		const item = tokens[1];
+		const slot = parseInt(tokens[4]);
+		if( Number.isInteger(slot) && item in Item){
+			return new CommandUnequip(Item[item as keyof typeof Item], slot-1, false);
+		}
+		return undefined;
+	}
+	if (tokens.length === 2 && tokens[0] === "Unequip"){
+		const item = tokens[1];
+		if( item in Item){
+			return new CommandUnequip(Item[item as keyof typeof Item], -1, true);
+		}
+		return undefined;
+	}
+	// Equip Arrow
+	if (tokens.length === 6 && tokens[0] === "Equip" && tokens[2] === "Arrow" && tokens[3] === "In" && tokens[4] ==="Slot" ){
+		const item = tokens[1]+"Arrow";
+		const slot = parseInt(tokens[5]);
+		if( Number.isInteger(slot) && item in Item){
+			return new CommandEquipArrow(Item[item as keyof typeof Item], slot-1, false);
+		}
+		return undefined;
+	}
+	if (tokens.length === 3 && tokens[0] === "Equip" && tokens[2] === "Arrow" ){
+		const item = tokens[1]+"Arrow";
+		if(item in Item){
+			return new CommandEquipArrow(Item[item as keyof typeof Item], 0, true);
 		}
 		return undefined;
 	}

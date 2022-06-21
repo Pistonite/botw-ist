@@ -1,4 +1,58 @@
-import { ItemType } from "./ItemStack";
+import ImageSlate from "assets/img/Slate.png";
+import ImageGlider from "assets/img/Glider.png";
+import ImageSpiritOrb from "assets/img/SpiritOrb.png";
+import ImageLotus from "assets/img/Lotus.png";
+import ImageSilentPrincess from "assets/img/SilentPrincess.png";
+import ImageHoney from "assets/img/Lotus.png";
+import ImageAcorn from "assets/img/SilentPrincess.png";
+import ImageFaroshScale from "assets/img/FaroshScale.png";
+import ImageFaroshClaw from "assets/img/FaroshClaw.png";
+import ImageFaroshHorn from "assets/img/FaroshHorn.png";
+import ImageHeartyBass from "assets/img/HeartyBass.png";
+import ImageBeetle from "assets/img/Beetle.png";
+import ImageOpal from "assets/img/Opal.png";
+import ImageDiamond from "assets/img/Diamond.png";
+import ImageTail from "assets/img/Tail.png";
+import ImageSpring from "assets/img/Spring.png";
+import ImageShaft from "assets/img/Shaft.png";
+import ImageCore from "assets/img/Core.png";
+import ImageWood from "assets/img/Wood.png";
+import ImageSpeedFood from "assets/img/SpeedFood.png";
+import ImageAxe from "assets/img/Axe.png";
+import ImageBow from "assets/img/ForestDwellerBow.png";
+import ImageArrow from "assets/img/NormalArrow.png";
+import ImageFireArrow from "assets/img/FireArrow.png";
+import ImageIceArrow from "assets/img/IceArrow.png";
+import ImageShockArrow from "assets/img/ShockArrow.png";
+import ImageBombArrow from "assets/img/BombArrow.png";
+import ImageAncientArrow from "assets/img/AncientArrow.png";
+import ImageShield from "assets/img/PotLid.png";
+
+export enum ItemType {
+    Weapon = 0,
+    Bow = 1,
+	Arrow = 2,
+    Shield = 3,
+    Material = 4,
+    Meal = 5,
+    Key = 6
+}
+
+export const ItemTypes = [
+    ItemType.Weapon,
+    ItemType.Bow,
+	ItemType.Arrow,
+    ItemType.Shield,
+    ItemType.Material,
+    ItemType.Meal,
+    ItemType.Key
+]
+
+export type ItemStack = {
+    item: Item,
+    count: number,
+    equipped: boolean
+}
 
 export enum Item {
     Slate = "Slate",
@@ -22,90 +76,110 @@ export enum Item {
     Core = "Core",
     Wood = "Wood",
 
-    SpeedFood = "SpeedFood"
+    SpeedFood = "SpeedFood",
+	Weapon = "Weapon",
+	Bow = "Bow",
+	NormalArrow = "NormalArrow",
+	FireArrow = "FireArrow",
+	IceArrow = "IceArrow",
+	ShockArrow = "ShockArrow",
+	BombArrow = "BombArrow",
+	AncientArrow = "AncientArrow",
+	Shield = "Shield"
 }
 
-export const ItemIds = {
-	/* Do not change the ID once created. Otherwise you would break existing codes */
-	[Item.Slate]: 0x00,
-	[Item.Glider]: 0x01,
-	[Item.SpiritOrb]: 0x02,
+type ItemData = {
+	item: Item,
+	image: string,
+	id: number,
+	type: ItemType,
+	repeatable: boolean,
+	stackable: boolean,
+	sortOrder: number,
+}
 
-	[Item.Diamond]: 0x10,
-	[Item.Lotus]: 0x11,
-	[Item.SilentPrincess]: 0x12,
-	[Item.Honey]: 0x13,
-	[Item.Acorn]: 0x14,
-	[Item.FaroshScale]: 0x15,
-	[Item.FaroshClaw]: 0x16,
-	[Item.FaroshHorn]: 0x17,
-	[Item.HeartyBass]: 0x18,
-	[Item.Beetle]: 0x19,
-	[Item.Opal]: 0x1a,
-	[Item.Tail]: 0x1b,
-	[Item.Spring]: 0x1c,
-	[Item.Shaft]: 0x1d,
-	[Item.Core]: 0x1e,
-	[Item.Wood]: 0x1f,
-
-	[Item.SpeedFood]: 0x40,
+const IdToData: {[id: number]: ItemData} = {};
+const ItemToData: {[k in Item]?: ItemData} = {};
+const TypeToCount = {
+	[ItemType.Weapon]: 0,
+	[ItemType.Bow]: 0,
+	[ItemType.Arrow]: 0,
+	[ItemType.Shield]: 0,
+	[ItemType.Material]: 0,
+	[ItemType.Key]: 0,
+	[ItemType.Meal]: 0,
 };
+const register = (id: number, item: Item, type: ItemType, image: string, options?: Partial<ItemData>) => {
+	const sortOrder = TypeToCount[type];
+	TypeToCount[type]++;
+	const data: ItemData = {
+		item,
+		image,
+		id,
+		type,
+		repeatable: true,
+		stackable: true,
+		sortOrder,
+		...(options||{})
+	};
+	IdToData[id] = data;
+	ItemToData[item] = data;
+}
+/* Do not change the ID once created. Otherwise you would break existing codes */
+register(0x00, Item.Slate, ItemType.Key, ImageSlate, {
+	repeatable: false,
+	stackable: false
+});
+register(0x01, Item.Glider, ItemType.Key, ImageGlider, {
+	repeatable: false,
+	stackable: false
+});
+register(0x02, Item.SpiritOrb, ItemType.Key, ImageSpiritOrb);
 
-export const itemToType = (item: Item): ItemType => {
-	if (item === Item.Slate || item === Item.Glider || item === Item.SpiritOrb){
-		return ItemType.Key;
+register(0x11, Item.Lotus, ItemType.Material, ImageLotus);
+register(0x12, Item.SilentPrincess, ItemType.Material, ImageSilentPrincess);
+register(0x13, Item.Honey, ItemType.Material, ImageHoney);
+register(0x14, Item.Acorn, ItemType.Material, ImageAcorn);
+register(0x15, Item.FaroshScale, ItemType.Material, ImageFaroshScale);
+register(0x16, Item.FaroshClaw, ItemType.Material, ImageFaroshClaw);
+register(0x17, Item.FaroshHorn, ItemType.Material, ImageFaroshHorn);
+register(0x18, Item.HeartyBass, ItemType.Material, ImageHeartyBass);
+register(0x19, Item.Beetle, ItemType.Material, ImageBeetle);
+register(0x1a, Item.Opal, ItemType.Material, ImageOpal);
+register(0x10, Item.Diamond, ItemType.Material, ImageDiamond);
+register(0x1b, Item.Tail, ItemType.Material, ImageTail);
+register(0x1c, Item.Spring, ItemType.Material, ImageSpring);
+register(0x1d, Item.Shaft, ItemType.Material, ImageShaft);
+register(0x1e, Item.Core, ItemType.Material, ImageCore);
+register(0x1f, Item.Wood, ItemType.Material, ImageWood);
+
+register(0x40, Item.SpeedFood, ItemType.Meal, ImageSpeedFood, {
+	stackable: false
+});
+
+register(0x50, Item.Weapon, ItemType.Weapon, ImageAxe, {
+	stackable: false
+});
+
+register(0x60, Item.Bow, ItemType.Bow, ImageBow, {
+	stackable: false
+});
+register(0x70, Item.NormalArrow, ItemType.Arrow, ImageArrow);
+register(0x71, Item.FireArrow, ItemType.Arrow, ImageFireArrow);
+register(0x72, Item.IceArrow, ItemType.Arrow, ImageIceArrow);
+register(0x73, Item.ShockArrow, ItemType.Arrow, ImageShockArrow);
+register(0x74, Item.BombArrow, ItemType.Arrow, ImageBombArrow);
+register(0x75, Item.AncientArrow, ItemType.Arrow, ImageAncientArrow);
+register(0x60, Item.Shield, ItemType.Shield, ImageShield, {
+	stackable: false
+});
+
+export const idToItemData = (id: number): ItemData => IdToData[id];
+export const itemToItemData = (item: Item): ItemData => ItemToData[item] as ItemData;
+export const itemToArrowType = (item: Item): string => {
+	if(itemToItemData(item).type === ItemType.Arrow){
+		const str = `${item}`;
+		return str.substring(0,str.length-5);
 	}
-	if (item === Item.SpeedFood) {
-		return ItemType.Meal;
-	}
-	return ItemType.Material;
-};
-
-export const shouldIgnoreOnReload = (item: Item): boolean => {
-	return item === Item.Slate || item === Item.Glider;
-};
-
-export const isStackable = (item: Item): boolean => {
-	return item !==Item.Slate && item !== Item.Glider && item !== Item.SpeedFood;
-};
-
-const KeyItemSortOrderMap = (()=>{
-	const map: {[k in Item]?: number} = {};
-	[
-		Item.Slate,
-		Item.Glider,
-		Item.SpiritOrb
-	].forEach((item, i)=>map[item] = i);
-	return map;
-})();
-
-export const getKeyItemSortOrder = (item: Item): number => {
-	return KeyItemSortOrderMap[item] || -1;
-};
-
-const MaterialSortOrderMap = (()=>{
-	const map: {[k in Item]?: number} = {};
-	[
-		Item.Lotus,
-		Item.SilentPrincess,
-		Item.Honey,
-		Item.Acorn,
-		Item.FaroshScale,
-		Item.FaroshClaw,
-		Item.FaroshHorn,
-		Item.HeartyBass,
-		Item.Beetle,
-		Item.Opal,
-		Item.Diamond,
-		Item.Tail,
-		Item.Spring,
-		Item.Shaft,
-		Item.Core,
-		Item.Wood,
-	].forEach((item, i)=>map[item] = i);
-	return map;
-})();
-
-export const getMaterialSortOrder = (item: Item): number => {
-	return MaterialSortOrderMap[item] || -1;
-};
+	return "";
+}
