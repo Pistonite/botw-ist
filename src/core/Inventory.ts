@@ -6,10 +6,12 @@ import { Slots } from "./Slots";
 export class Inventory {
 	private slots: Slots = new Slots([]);
 	private savedSlots: Slots = new Slots([]);
+	private namedSlots: {[name: string]: Slots} = {};
 	private numBroken = 0;
 	private isInitialSort = false;
 	private isAltered = true;
 	private inaccurate = false;
+	private turnedInOrbs = 0;
 	public deepClone(): Inventory {
 		const other = new Inventory();
 		other.slots = this.slots.deepClone();
@@ -18,6 +20,11 @@ export class Inventory {
 		other.isInitialSort = this.isInitialSort;
 		other.isAltered = this.isAltered;
 		other.inaccurate = this.inaccurate;
+		other.turnedInOrbs = this.turnedInOrbs;
+		other.namedSlots = {};
+		for(const name in this.namedSlots){
+			other.namedSlots[name] = this.namedSlots[name].deepClone();
+		}
 		return other;
 	}
 
@@ -37,6 +44,10 @@ export class Inventory {
 		return this.inaccurate;
 	}
 
+	public getTurnedInOrbs(): number {
+		return this.turnedInOrbs;
+	}
+
 	public init(stacks: ItemStack[]) {
 		this.slots = new Slots([]);
 		stacks.forEach(s=>{
@@ -48,8 +59,28 @@ export class Inventory {
 		this.inaccurate = false;
 	}
 
+	public closeGame() {
+		this.numBroken = 0;
+		this.isInitialSort = false;
+		this.isAltered = true;
+		this.inaccurate = false;
+		this.slots = new Slots([]);
+	}
+
 	public addBrokenSlots(num: number) {
 		this.numBroken+=num;
+	}
+
+	public setTag(name: string){
+		this.namedSlots[name] = this.savedSlots.deepClone();
+	}
+
+	public applyTag(name: string){
+		if(name in this.namedSlots){
+			this.savedSlots = this.namedSlots[name].deepClone();
+		}else{
+			this.savedSlots = new Slots([]);
+		}
 	}
 
 	public save() {
@@ -150,6 +181,9 @@ export class Inventory {
 
 	public remove(item: Item, count: number, slot: number) {
 		this.slots.remove(item, count, slot);
+		if(item===Item.SpiritOrb){
+			this.turnedInOrbs+=count;
+		}
 		this.isAltered=true;
 	}
 

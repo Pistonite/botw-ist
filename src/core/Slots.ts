@@ -55,13 +55,20 @@ export class Slots {
 	}
 	public remove(item: Item, count: number, slot: number) {
 		let s = 0;
-		for(let i = 0; i<this.internalSlots.length;i++){
+		for(let i = 0; i<this.internalSlots.length && count > 0;i++){
 			if(this.internalSlots[i].item === item){
 				if(s<slot){
 					s++;
 				}else{
-					this.internalSlots[i].count-=count;
-					break;
+					if(this.internalSlots[i].count<count){
+						count-=this.internalSlots[i].count;
+						this.internalSlots[i].count=0;
+						
+					}else{
+						this.internalSlots[i].count-=count;
+						break;
+					}
+					
 				}
 			}
 		}

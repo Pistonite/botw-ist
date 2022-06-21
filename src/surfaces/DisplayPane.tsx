@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 
 type DisplayPaneProps = {
     command: string,
+	orbs: number,
     displayIndex: number,
     slots: Slots,
 	savedSlots: Slots,
@@ -35,7 +36,7 @@ const stackToItemProps = ({item, count, equipped}: ItemStack): ItemListItemProps
 	return {image: data.image, count: data.stackable ? count : 0, isEquipped:equipped};
 }
 
-export const DisplayPane: React.FC<DisplayPaneProps> = ({command,editCommand,displayIndex, slots, savedSlots, numBroken, overlaySave})=>{
+export const DisplayPane: React.FC<DisplayPaneProps> = ({command,orbs,editCommand,displayIndex, slots, savedSlots, numBroken, overlaySave})=>{
 	const [commandString, setCommandString] = useState<string>("");
 	const [hasError, setHasError] = useState<boolean>(false);
 	const listProps = stacksToItemListProps(slots, numBroken, false);
@@ -78,7 +79,9 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({command,editCommand,dis
 					setHasError(true);
 				}
 			}}></input>
-
+				<span>
+					Orbs: {orbs}
+				</span>
 		</div>
         {overlaySave ? 
 			<div style={{
@@ -93,20 +96,20 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({command,editCommand,dis
 				(()=>{
 					const doubleSlots: JSX.Element[] = [];
 					for(let i=0;i<savedSlots.length && i<slots.length;i++){
-						doubleSlots.push(<DoubleItemSlot
+						doubleSlots.push(<DoubleItemSlot key={i}
 							first={{...stackToItemProps(savedSlots.get(i)), isBroken:false, isSave:true}}
 							second={{...stackToItemProps(slots.get(i)), isBroken:i>=slots.length-numBroken, isSave:false}}
 						/>);
 					}
 					if(savedSlots.length>slots.length){
 						for(let i=slots.length;i<savedSlots.length;i++){
-							doubleSlots.push(<DoubleItemSlot
+							doubleSlots.push(<DoubleItemSlot key={i+slots.length}
 								first={{...stackToItemProps(savedSlots.get(i)), isBroken:false, isSave:true}}
 							/>);
 						}
 					}else if(slots.length > savedSlots.length){
 						for(let i=savedSlots.length;i<slots.length;i++){
-							doubleSlots.push(<DoubleItemSlot
+							doubleSlots.push(<DoubleItemSlot key={i + savedSlots.length}
 								second={{...stackToItemProps(slots.get(i)), isBroken:i>=slots.length-numBroken, isSave:false}}
 							/>);
 						}
@@ -128,7 +131,7 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({command,editCommand,dis
 			height: "calc( ( 99vh - 60px ) / 2)",
 			overflowY: "auto"
 		} }>
-			<div>Inventory of (Hard) Save</div>
+			<div>Inventory of Save</div>
 			<ItemList {...listSaveProps}/>
 		</div>
 		<div style={{

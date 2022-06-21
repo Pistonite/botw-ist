@@ -55,6 +55,9 @@ export const App: React.FC =  () => {
 	const [contextMenuY, setContextMenuY] = useState<number>(0);
 	const [contextMenuShowing, setContextMenuShowing] = useState<boolean>(false);
 	const [contextIndex, setContextIndex] = useState<number>(-1);
+
+	const uploadRef = useRef<HTMLInputElement>(null);
+	const contextMenuRef = useRef<HTMLDivElement>(null);
 	// compute props
 	const inventories = useMemo(()=>{
 		const inventories: Inventory[] = [];
@@ -85,7 +88,16 @@ export const App: React.FC =  () => {
 
 	}, [commands]);
 
-	const uploadRef = useRef<HTMLInputElement>(null);
+	useEffect(()=>{
+		if(contextMenuRef.current && contextMenuShowing){
+			const rect = contextMenuRef.current.getBoundingClientRect();
+			if (rect.bottom > window.innerHeight){
+				setContextMenuY(contextMenuY-rect.height);
+			}
+		}
+	}, [contextMenuRef, contextMenuShowing])
+
+
   
 	return (
 		<div className='Calamity'
@@ -130,7 +142,7 @@ export const App: React.FC =  () => {
 								key={i} 
 								isSelected={displayIndex===i}
 								isContextSelected={contextIndex===i}
-								error={inventories[i].isInaccurate()}
+								comment={c.getDisplayString().startsWith("#")}
 							>
 								{c.getDisplayString()}
 							</CommandItem>
@@ -140,8 +152,17 @@ export const App: React.FC =  () => {
 						const arrCopy = [...commands];
 						arrCopy.push(new CommandNothing());
 						setCommands(arrCopy);
+					}} onContextMenu={()=>{
+						const arrCopy = [...commands];
+						arrCopy.push(new CommandNothing());
+						setCommands(arrCopy);
 					}}>(new)</CommandItem>
 					<CommandItem onClick={(x,y)=>{
+						setContextIndex(-1);
+						setContextMenuX(x);
+						setContextMenuY(y);
+						setContextMenuShowing(true);
+					}} onContextMenu={(x,y)=>{
 						setContextIndex(-1);
 						setContextMenuX(x);
 						setContextMenuY(y);
@@ -154,7 +175,8 @@ export const App: React.FC =  () => {
 				<DisplayPane 
 				overlaySave={overlaySave}
 					displayIndex={displayIndex}
-					command={commands[displayIndex].getDisplayString()} 
+					command={commands[displayIndex].getDisplayString()}
+					orbs={inventories[displayIndex].getTurnedInOrbs()}  
 					slots={inventories[displayIndex].getSlots()} 
 					savedSlots={inventories[displayIndex].getSavedSlots()}
 					numBroken={inventories[displayIndex].getNumBroken()} 
@@ -181,7 +203,7 @@ export const App: React.FC =  () => {
 					setContextIndex(-1);
 					e.preventDefault();
 				}}>
-					<div style={{
+					<div ref={contextMenuRef} style={{
 						position: "absolute",
 						top: contextMenuY,
 						left: contextMenuX,
@@ -202,7 +224,20 @@ export const App: React.FC =  () => {
 								setContextMenuShowing(false);
 								setContextIndex(-1);
 							}}>Insert Above</CommandItem>
-							<CommandItem error onClick={()=>{
+							<CommandItem onClick={()=>{
+								if(contextIndex > 0){
+									const arrCopy = [...commands];
+									const temp = arrCopy[contextIndex];
+									arrCopy[contextIndex] = arrCopy[contextIndex-1];
+									arrCopy[contextIndex-1] = temp;
+									setCommands(arrCopy);
+								setContextMenuShowing(false);
+								setContextIndex(-1);
+								}
+								
+								
+							}}>Move Up</CommandItem>
+							<CommandItem onClick={()=>{
 								if(confirm("Delete?")){
 									setCommands(commands.filter((_,i)=>i!==contextIndex));
 									if(displayIndex >= commands.length){

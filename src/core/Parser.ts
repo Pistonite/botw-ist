@@ -1,7 +1,10 @@
-import { Command, CommandAddMaterial, CommandBreakSlots, CommandEquip, CommandEquipArrow, CommandInitialize, CommandNothing, CommandReload, CommandRemoveMaterial, CommandRemoveUnstackableMaterial, CommandSave, CommandSortKey, CommandSortMaterial, CommandUnequip } from "./Command";
+import { Command, CommandAddMaterial, CommandApplyTag, CommandBreakSlots, CommandCloseGame, CommandComment, CommandEquip, CommandEquipArrow, CommandInitialize, CommandNothing, CommandReload, CommandRemoveMaterial, CommandRemoveUnstackableMaterial, CommandSave, CommandSetTag, CommandSortKey, CommandSortMaterial, CommandUnequip } from "./Command";
 import { Item, ItemStack } from "./Item";
 
 export const parseCommand = (cmdString: string): Command | undefined => {
+	if(cmdString.startsWith("# ")){
+		return new CommandComment(cmdString.substring(2));
+	}
 	const tokens = cmdString.split(" ").filter(i=>i);
 	if(tokens.length===0){
 		return new CommandNothing();
@@ -38,6 +41,9 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 	}
 	if(tokens.length===2 && tokens[0] === "Sort" && tokens[1] === "Material"){
 		return new CommandSortMaterial();
+	}
+	if(tokens.length===2 && tokens[0] === "Close" && tokens[1] === "Game"){
+		return new CommandCloseGame();
 	}
 	// break
 	if (tokens.length > 2 && tokens[0] === "Break" && tokens[2]=== "Slots" ){
@@ -138,6 +144,14 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		}
 		return undefined;
 	}
-
+	// Multi Save
+	if (tokens.length === 3 && tokens[0] === "Save" && tokens[1] === "As"){
+		const name = tokens[2];
+		return new CommandSetTag(name);
+	}
+	if (tokens.length === 2 && tokens[0] === "Use"){
+		const name = tokens[1];
+		return new CommandApplyTag(name);
+	}
 	return undefined;
 };

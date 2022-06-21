@@ -3,8 +3,8 @@ import ImageGlider from "assets/img/Glider.png";
 import ImageSpiritOrb from "assets/img/SpiritOrb.png";
 import ImageLotus from "assets/img/Lotus.png";
 import ImageSilentPrincess from "assets/img/SilentPrincess.png";
-import ImageHoney from "assets/img/Lotus.png";
-import ImageAcorn from "assets/img/SilentPrincess.png";
+import ImageHoney from "assets/img/Honey.png";
+import ImageAcorn from "assets/img/Acorn.png";
 import ImageFaroshScale from "assets/img/FaroshScale.png";
 import ImageFaroshClaw from "assets/img/FaroshClaw.png";
 import ImageFaroshHorn from "assets/img/FaroshHorn.png";
@@ -27,6 +27,11 @@ import ImageShockArrow from "assets/img/ShockArrow.png";
 import ImageBombArrow from "assets/img/BombArrow.png";
 import ImageAncientArrow from "assets/img/AncientArrow.png";
 import ImageShield from "assets/img/PotLid.png";
+import ImageRushroom from "assets/img/Rushroom.png";
+import ImageScrew from "assets/img/Screw.png";
+import ImageHyruleBass from "assets/img/HyruleBass.png";
+import ImageLizalfosHorn from "assets/img/LizalfosHorn.png";
+import ImageLizalfosTalon from "assets/img/LizalfosTalon.png";
 
 export enum ItemType {
     Weapon = 0,
@@ -76,6 +81,12 @@ export enum Item {
     Core = "Core",
     Wood = "Wood",
 
+	Rushroom = "Rushroom",
+	Screw = "Screw",
+	HyruleBass = "HyruleBass",
+	LizalfosHorn = "LizalfosHorn",
+	LizalfosTalon = "LizalfosTalon",
+
     SpeedFood = "SpeedFood",
 	Weapon = "Weapon",
 	Bow = "Bow",
@@ -122,6 +133,9 @@ const register = (id: number, item: Item, type: ItemType, image: string, options
 		sortOrder,
 		...(options||{})
 	};
+	if(id in IdToData){
+		console.error("Multiple items registered to the same id: "+id+", ("+item+")");
+	}
 	IdToData[id] = data;
 	ItemToData[item] = data;
 }
@@ -137,6 +151,7 @@ register(0x01, Item.Glider, ItemType.Key, ImageGlider, {
 register(0x02, Item.SpiritOrb, ItemType.Key, ImageSpiritOrb);
 
 register(0x11, Item.Lotus, ItemType.Material, ImageLotus);
+register(0x20, Item.Rushroom, ItemType.Material, ImageRushroom);
 register(0x12, Item.SilentPrincess, ItemType.Material, ImageSilentPrincess);
 register(0x13, Item.Honey, ItemType.Material, ImageHoney);
 register(0x14, Item.Acorn, ItemType.Material, ImageAcorn);
@@ -144,10 +159,14 @@ register(0x15, Item.FaroshScale, ItemType.Material, ImageFaroshScale);
 register(0x16, Item.FaroshClaw, ItemType.Material, ImageFaroshClaw);
 register(0x17, Item.FaroshHorn, ItemType.Material, ImageFaroshHorn);
 register(0x18, Item.HeartyBass, ItemType.Material, ImageHeartyBass);
+register(0x21, Item.HyruleBass, ItemType.Material, ImageHyruleBass);
 register(0x19, Item.Beetle, ItemType.Material, ImageBeetle);
 register(0x1a, Item.Opal, ItemType.Material, ImageOpal);
 register(0x10, Item.Diamond, ItemType.Material, ImageDiamond);
+register(0x23, Item.LizalfosHorn, ItemType.Material, ImageLizalfosHorn);
+register(0x24, Item.LizalfosTalon, ItemType.Material, ImageLizalfosTalon);
 register(0x1b, Item.Tail, ItemType.Material, ImageTail);
+register(0x22, Item.Screw, ItemType.Material, ImageScrew);
 register(0x1c, Item.Spring, ItemType.Material, ImageSpring);
 register(0x1d, Item.Shaft, ItemType.Material, ImageShaft);
 register(0x1e, Item.Core, ItemType.Material, ImageCore);
@@ -170,7 +189,7 @@ register(0x72, Item.IceArrow, ItemType.Arrow, ImageIceArrow);
 register(0x73, Item.ShockArrow, ItemType.Arrow, ImageShockArrow);
 register(0x74, Item.BombArrow, ItemType.Arrow, ImageBombArrow);
 register(0x75, Item.AncientArrow, ItemType.Arrow, ImageAncientArrow);
-register(0x60, Item.Shield, ItemType.Shield, ImageShield, {
+register(0x80, Item.Shield, ItemType.Shield, ImageShield, {
 	stackable: false
 });
 

@@ -19,8 +19,9 @@ h1 {
   background-color: #eeaaaa;
 }
 
-.CommandItemError{
-  color: red;
+.CommandItemComment{
+  color: green;
+  font-size: 10pt;
 }
 
 .CommandItem {
@@ -29,7 +30,7 @@ h1 {
 }
 
 .CommandItem:hover {
-  border: 1px solid black
+  background-color: #eeeeee;
 }
 
 .InputError {

@@ -323,3 +323,52 @@ export class CommandUnequip implements Command {
 		return `Unequip ${this.item}${slotString}`;
 	}
 }
+
+export class CommandSetTag implements Command {
+	private name: string;
+	constructor(name: string){
+		this.name = name;
+	}
+	public execute(inv: Inventory): void {
+		inv.save();
+		inv.setTag(this.name);
+	}
+	public getDisplayString(): string {
+		return `Save As ${this.name}`
+	}
+}
+
+export class CommandApplyTag implements Command {
+	private name: string;
+	constructor(name: string){
+		this.name = name;
+	}
+	public execute(inv: Inventory): void {
+		inv.applyTag(this.name);
+	}
+	public getDisplayString(): string {
+		return `Use ${this.name}`
+	}
+}
+
+export class CommandCloseGame implements Command {
+	public execute(inv: Inventory): void {
+		inv.closeGame();
+	}
+	public getDisplayString(): string {
+		return `Close Game`;
+	}
+}
+
+export class CommandComment implements Command {
+	private name: string;
+	constructor(name: string){
+		this.name = name;
+	}
+	public execute(inv: Inventory): void {
+		
+	}
+	public getDisplayString(): string {
+		return `# ${this.name}`;
+	}
+}
