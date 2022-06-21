@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.820e0273.css",
-    "main.js": "/static/js/main.96892c8b.js",
+    "main.js": "/static/js/main.4124a2d4.js",
     "static/js/787.ada1a5f8.chunk.js": "/static/js/787.ada1a5f8.chunk.js",
     "static/media/PotLid.png": "/static/media/PotLid.baf78a40199753b3af39.png",
     "static/media/Calamity-Regular.otf": "/static/media/Calamity-Regular.cbeefc650e6ac39335b6.otf",
@@ -21,21 +21,24 @@
     "static/media/NormalArrow.png": "/static/media/NormalArrow.1c54890bf60a08914a20.png",
     "static/media/BombArrow.png": "/static/media/BombArrow.6b5994846aa06c8a8e92.png",
     "static/media/Opal.png": "/static/media/Opal.2e20b71d79a80f905a80.png",
+    "static/media/BigHeartyRadish.png": "/static/media/BigHeartyRadish.f4234222deeb380ad3f2.png",
+    "static/media/HylianShroom.png": "/static/media/HylianShroom.0f05ef4a95089fb84ba0.png",
     "static/media/Spring.png": "/static/media/Spring.bb7dcfa111b7b56ab25a.png",
     "static/media/ShockArrow.png": "/static/media/ShockArrow.823f535857deb6e461ab.png",
     "static/media/Shaft.png": "/static/media/Shaft.328e8aa17c1e5f9f0058.png",
     "static/media/ForestDwellerBow.png": "/static/media/ForestDwellerBow.d2a6ab2d3f59bcc67b4b.png",
     "static/media/FaroshClaw.png": "/static/media/FaroshClaw.4da7a445c986e0279916.png",
     "static/media/HyruleBass.png": "/static/media/HyruleBass.82ea677144fd38b4665a.png",
+    "static/media/Fairy.png": "/static/media/Fairy.02985afe57816235258e.png",
     "static/media/FireArrow.png": "/static/media/FireArrow.103898dc3f492d3293bd.png",
     "static/media/Lotus.png": "/static/media/Lotus.6006e27a51c66a0b9d3b.png",
     "index.html": "/index.html",
     "main.820e0273.css.map": "/static/css/main.820e0273.css.map",
-    "main.96892c8b.js.map": "/static/js/main.96892c8b.js.map",
+    "main.4124a2d4.js.map": "/static/js/main.4124a2d4.js.map",
     "787.ada1a5f8.chunk.js.map": "/static/js/787.ada1a5f8.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.820e0273.css",
-    "static/js/main.96892c8b.js"
+    "static/js/main.4124a2d4.js"
   ]
 }
