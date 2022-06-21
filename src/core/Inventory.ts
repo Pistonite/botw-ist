@@ -1,8 +1,6 @@
 import { Item, ItemStack, itemToItemData, ItemType, ItemTypes } from "./Item";
 import { Slots } from "./Slots";
 
-
-
 export class Inventory {
 	private slots: Slots = new Slots([]);
 	private savedSlots: Slots = new Slots([]);
@@ -51,7 +49,7 @@ export class Inventory {
 	public init(stacks: ItemStack[]) {
 		this.slots = new Slots([]);
 		stacks.forEach(s=>{
-			this.slots.add(s.item, s.count)
+			this.slots.add(s.item, s.count);
 		});
 		this.numBroken = 0;
 		this.isInitialSort = false;
@@ -110,7 +108,7 @@ export class Inventory {
 					this.savedSlots.get(s).count = 999;
 				}
 			}
-		})
+		});
 	}
 
 	public reload() {

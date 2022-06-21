@@ -1,7 +1,5 @@
 import { Inventory } from "./Inventory";
-import { idToItemData, Item, ItemStack, itemToArrowType, itemToItemData } from "./Item";
-
-const Buffer = require("buffer/").Buffer; /* eslint-disable-line  @typescript-eslint/no-var-requires*/
+import { Item, ItemStack, itemToArrowType } from "./Item";
 
 export interface Command {
 	execute(inv: Inventory): void,
@@ -199,7 +197,7 @@ export class CommandRemoveMaterial implements Command {
 		inv.remove(this.item, this.count, this.slot);
 	}
 	public getDisplayString(): string {
-		const slotString = this.noSlot ? "" : ` From Slot ${this.slot+1}`
+		const slotString = this.noSlot ? "" : ` From Slot ${this.slot+1}`;
 		return `${Verbs[this.verb]} ${this.count} ${this.item}${slotString}`;
 	}
 }
@@ -220,7 +218,7 @@ export class CommandRemoveUnstackableMaterial implements Command {
 		inv.remove(this.item, 1, this.slot);
 	}
 	public getDisplayString(): string {
-		const slotString = this.noSlot ? "" : ` From Slot ${this.slot+1}`
+		const slotString = this.noSlot ? "" : ` From Slot ${this.slot+1}`;
 		return `${Verbs[this.verb]} ${this.item}${slotString}`;
 	}
 }
@@ -281,7 +279,7 @@ export class CommandEquipArrow implements Command {
 		inv.equipEquipmentOrArrow(this.item, this.slot);
 	}
 	public getDisplayString(): string {
-		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`
+		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`;
 		return `Equip ${itemToArrowType(this.item)} Arrow${slotString}`;
 	}
 }
@@ -300,7 +298,7 @@ export class CommandEquip implements Command {
 		inv.equipEquipmentOrArrow(this.item, this.slot);
 	}
 	public getDisplayString(): string {
-		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`
+		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`;
 		return `Equip ${this.item}${slotString}`;
 	}
 }
@@ -319,7 +317,7 @@ export class CommandUnequip implements Command {
 		inv.unequipEquipment(this.item, this.slot);
 	}
 	public getDisplayString(): string {
-		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`
+		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`;
 		return `Unequip ${this.item}${slotString}`;
 	}
 }
@@ -334,7 +332,7 @@ export class CommandSetTag implements Command {
 		inv.setTag(this.name);
 	}
 	public getDisplayString(): string {
-		return `Save As ${this.name}`
+		return `Save As ${this.name}`;
 	}
 }
 
@@ -347,7 +345,7 @@ export class CommandApplyTag implements Command {
 		inv.applyTag(this.name);
 	}
 	public getDisplayString(): string {
-		return `Use ${this.name}`
+		return `Use ${this.name}`;
 	}
 }
 
@@ -356,7 +354,7 @@ export class CommandCloseGame implements Command {
 		inv.closeGame();
 	}
 	public getDisplayString(): string {
-		return `Close Game`;
+		return "Close Game";
 	}
 }
 
@@ -365,8 +363,8 @@ export class CommandComment implements Command {
 	constructor(name: string){
 		this.name = name;
 	}
-	public execute(inv: Inventory): void {
-		
+	public execute(_inv: Inventory): void {
+		// nothing
 	}
 	public getDisplayString(): string {
 		return `# ${this.name}`;

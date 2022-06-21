@@ -44,14 +44,14 @@ export enum ItemType {
 }
 
 export const ItemTypes = [
-    ItemType.Weapon,
-    ItemType.Bow,
+	ItemType.Weapon,
+	ItemType.Bow,
 	ItemType.Arrow,
-    ItemType.Shield,
-    ItemType.Material,
-    ItemType.Meal,
-    ItemType.Key
-]
+	ItemType.Shield,
+	ItemType.Material,
+	ItemType.Meal,
+	ItemType.Key
+];
 
 export type ItemStack = {
     item: Item,
@@ -131,14 +131,14 @@ const register = (id: number, item: Item, type: ItemType, image: string, options
 		repeatable: true,
 		stackable: true,
 		sortOrder,
-		...(options||{})
+		...options||{}
 	};
 	if(id in IdToData){
 		console.error("Multiple items registered to the same id: "+id+", ("+item+")");
 	}
 	IdToData[id] = data;
 	ItemToData[item] = data;
-}
+};
 /* Do not change the ID once created. Otherwise you would break existing codes */
 register(0x00, Item.Slate, ItemType.Key, ImageSlate, {
 	repeatable: false,
@@ -201,4 +201,4 @@ export const itemToArrowType = (item: Item): string => {
 		return str.substring(0,str.length-5);
 	}
 	return "";
-}
+};

@@ -34,7 +34,7 @@ const stacksToItemProps = (stacks: ItemStack[]): ItemListItemProps[] => {
 const stackToItemProps = ({item, count, equipped}: ItemStack): ItemListItemProps => {
 	const data = itemToItemData(item);
 	return {image: data.image, count: data.stackable ? count : 0, isEquipped:equipped};
-}
+};
 
 export const DisplayPane: React.FC<DisplayPaneProps> = ({command,orbs,editCommand,displayIndex, slots, savedSlots, numBroken, overlaySave})=>{
 	const [commandString, setCommandString] = useState<string>("");
@@ -79,72 +79,71 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({command,orbs,editComman
 					setHasError(true);
 				}
 			}}></input>
-				<span>
+			<span>
 					Orbs: {orbs}
-				</span>
+			</span>
 		</div>
-        {overlaySave ? 
+		{overlaySave ? 
 			<div style={{
-			borderTop: "1px solid black",
-			boxSizing: "content-box",
-			height: "calc( ( 99vh - 60px ))",
-			overflowY: "auto"
-		} }>
-			<div>Save / Current</div>
-			<div>
-			{
-				(()=>{
-					const doubleSlots: JSX.Element[] = [];
-					for(let i=0;i<savedSlots.length && i<slots.length;i++){
-						doubleSlots.push(<DoubleItemSlot key={i}
-							first={{...stackToItemProps(savedSlots.get(i)), isBroken:false, isSave:true}}
-							second={{...stackToItemProps(slots.get(i)), isBroken:i>=slots.length-numBroken, isSave:false}}
-						/>);
+				borderTop: "1px solid black",
+				boxSizing: "content-box",
+				height: "calc( ( 99vh - 60px ))",
+				overflowY: "auto"
+			} }>
+				<div>Save / Current</div>
+				<div>
+					{
+						(()=>{
+							const doubleSlots: JSX.Element[] = [];
+							for(let i=0;i<savedSlots.length && i<slots.length;i++){
+								doubleSlots.push(<DoubleItemSlot key={i}
+									first={{...stackToItemProps(savedSlots.get(i)), isBroken:false, isSave:true}}
+									second={{...stackToItemProps(slots.get(i)), isBroken:i>=slots.length-numBroken, isSave:false}}
+								/>);
+							}
+							if(savedSlots.length>slots.length){
+								for(let i=slots.length;i<savedSlots.length;i++){
+									doubleSlots.push(<DoubleItemSlot key={i+slots.length}
+										first={{...stackToItemProps(savedSlots.get(i)), isBroken:false, isSave:true}}
+									/>);
+								}
+							}else if(slots.length > savedSlots.length){
+								for(let i=savedSlots.length;i<slots.length;i++){
+									doubleSlots.push(<DoubleItemSlot key={i + savedSlots.length}
+										second={{...stackToItemProps(slots.get(i)), isBroken:i>=slots.length-numBroken, isSave:false}}
+									/>);
+								}
+							}
+							return doubleSlots;
+						})()
 					}
-					if(savedSlots.length>slots.length){
-						for(let i=slots.length;i<savedSlots.length;i++){
-							doubleSlots.push(<DoubleItemSlot key={i+slots.length}
-								first={{...stackToItemProps(savedSlots.get(i)), isBroken:false, isSave:true}}
-							/>);
-						}
-					}else if(slots.length > savedSlots.length){
-						for(let i=savedSlots.length;i<slots.length;i++){
-							doubleSlots.push(<DoubleItemSlot key={i + savedSlots.length}
-								second={{...stackToItemProps(slots.get(i)), isBroken:i>=slots.length-numBroken, isSave:false}}
-							/>);
-						}
-					}
-					return doubleSlots;
-				})()
-			}
-			</div>
+				</div>
 			
-		</div>
+			</div>
 		
-		 :<>
+			:<>
 		
-			<div style={{
-			borderTop: "1px solid black",
-			borderBottom: "1px solid black",
-			marginBottom: 2,
-			boxSizing: "content-box",
-			height: "calc( ( 99vh - 60px ) / 2)",
-			overflowY: "auto"
-		} }>
-			<div>Inventory of Save</div>
-			<ItemList {...listSaveProps}/>
-		</div>
-		<div style={{
-			borderTop: "1px solid black",
-			boxSizing: "content-box",
-			height: "calc( ( 99vh - 60px ) / 2)",
-			overflowY: "auto"
-		} }>
-			<div>Current Inventory</div>
-			<ItemList {...listProps}/>
-		</div>
-		</>}
-
+				<div style={{
+					borderTop: "1px solid black",
+					borderBottom: "1px solid black",
+					marginBottom: 2,
+					boxSizing: "content-box",
+					height: "calc( ( 99vh - 60px ) / 2)",
+					overflowY: "auto"
+				} }>
+					<div>Inventory of Save</div>
+					<ItemList {...listSaveProps}/>
+				</div>
+				<div style={{
+					borderTop: "1px solid black",
+					boxSizing: "content-box",
+					height: "calc( ( 99vh - 60px ) / 2)",
+					overflowY: "auto"
+				} }>
+					<div>Current Inventory</div>
+					<ItemList {...listProps}/>
+				</div>
+			</>}
 
 	</div>;
 };

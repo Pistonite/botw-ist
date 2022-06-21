@@ -95,9 +95,7 @@ export const App: React.FC =  () => {
 				setContextMenuY(contextMenuY-rect.height);
 			}
 		}
-	}, [contextMenuRef, contextMenuShowing])
-
-
+	}, [contextMenuRef, contextMenuShowing]);
   
 	return (
 		<div className='Calamity'
@@ -173,7 +171,7 @@ export const App: React.FC =  () => {
 			</div>
 			{displayIndex >= 0 && displayIndex < commands.length &&
 				<DisplayPane 
-				overlaySave={overlaySave}
+					overlaySave={overlaySave}
 					displayIndex={displayIndex}
 					command={commands[displayIndex].getDisplayString()}
 					orbs={inventories[displayIndex].getTurnedInOrbs()}  
@@ -217,51 +215,50 @@ export const App: React.FC =  () => {
 							paddingInlineStart: 0
 						}}>
 							{contextIndex >= 0 ? <>
-							<CommandItem onClick={()=>{
-								const arrCopy = [...commands];
-								arrCopy.splice(contextIndex, 0, new CommandNothing());
-								setCommands(arrCopy);
-								setContextMenuShowing(false);
-								setContextIndex(-1);
-							}}>Insert Above</CommandItem>
-							<CommandItem onClick={()=>{
-								if(contextIndex > 0){
+								<CommandItem onClick={()=>{
 									const arrCopy = [...commands];
-									const temp = arrCopy[contextIndex];
-									arrCopy[contextIndex] = arrCopy[contextIndex-1];
-									arrCopy[contextIndex-1] = temp;
+									arrCopy.splice(contextIndex, 0, new CommandNothing());
 									setCommands(arrCopy);
-								setContextMenuShowing(false);
-								setContextIndex(-1);
-								}
-								
-								
-							}}>Move Up</CommandItem>
-							<CommandItem onClick={()=>{
-								if(confirm("Delete?")){
-									setCommands(commands.filter((_,i)=>i!==contextIndex));
-									if(displayIndex >= commands.length){
-										setDisplayIndex(commands.length-1);
-									}
 									setContextMenuShowing(false);
 									setContextIndex(-1);
-								}
-							}}>Delete</CommandItem></> :
-							<>
-							<CommandItem onClick={()=>{
-						setOverlaySave(!overlaySave);
-					}}>Toggle Save Overlay</CommandItem>
-												<CommandItem onClick={()=>{
-						if(uploadRef.current){
-							uploadRef.current.click();
-						}
-					}}>Import</CommandItem>
-					<CommandItem onClick={()=>{
-						const lines = commands.map(c=>c.getDisplayString());
-						const text = lines.join("\n");
-						saveAs(text, "dupe.txt");
-					}}>Export</CommandItem>
-					<CommandItem onClick={()=>{
+								}}>Insert Above</CommandItem>
+								<CommandItem onClick={()=>{
+									if(contextIndex > 0){
+										const arrCopy = [...commands];
+										const temp = arrCopy[contextIndex];
+										arrCopy[contextIndex] = arrCopy[contextIndex-1];
+										arrCopy[contextIndex-1] = temp;
+										setCommands(arrCopy);
+										setContextMenuShowing(false);
+										setContextIndex(-1);
+									}
+								
+								}}>Move Up</CommandItem>
+								<CommandItem onClick={()=>{
+									if(confirm("Delete?")){
+										setCommands(commands.filter((_,i)=>i!==contextIndex));
+										if(displayIndex >= commands.length){
+											setDisplayIndex(commands.length-1);
+										}
+										setContextMenuShowing(false);
+										setContextIndex(-1);
+									}
+								}}>Delete</CommandItem></> :
+								<>
+									<CommandItem onClick={()=>{
+										setOverlaySave(!overlaySave);
+									}}>Toggle Save Overlay</CommandItem>
+									<CommandItem onClick={()=>{
+										if(uploadRef.current){
+											uploadRef.current.click();
+										}
+									}}>Import</CommandItem>
+									<CommandItem onClick={()=>{
+										const lines = commands.map(c=>c.getDisplayString());
+										const text = lines.join("\n");
+										saveAs(text, "dupe.txt");
+									}}>Export</CommandItem>
+									<CommandItem onClick={()=>{
 										alert(`Available Commands:
 Initialize X Item1 Y Item2 Z Item3 ...
 Break X Slots - add X broken slots
@@ -276,7 +273,7 @@ Limitations:
 Inventory corruption is not implemented yet
 
 `);
-	alert(`Available Items:
+										alert(`Available Items:
 Slate
 Glider
 SpiritOrb
@@ -299,9 +296,9 @@ Core
 Wood
 Weapon
 		`);
-					}}>Reference</CommandItem>
+									}}>Reference</CommandItem>
 
-							</>
+								</>
 							
 							}
 							
