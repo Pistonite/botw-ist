@@ -1,12 +1,7 @@
 {
   "files": {
-<<<<<<< HEAD
     "main.css": "/static/css/main.820e0273.css",
     "main.js": "/static/js/main.96892c8b.js",
-=======
-    "main.css": "/static/css/main.bd09d334.css",
-    "main.js": "/static/js/main.21b6773b.js",
->>>>>>> 103566beb2b0cc73fb27d9c178a7eb56d80af54c
     "static/js/787.ada1a5f8.chunk.js": "/static/js/787.ada1a5f8.chunk.js",
     "static/media/PotLid.png": "/static/media/PotLid.baf78a40199753b3af39.png",
     "static/media/Calamity-Regular.otf": "/static/media/Calamity-Regular.cbeefc650e6ac39335b6.otf",
@@ -14,18 +9,12 @@
     "static/media/AncientArrow.png": "/static/media/AncientArrow.9a1a41d05b09babd770d.png",
     "static/media/IceArrow.png": "/static/media/IceArrow.c227e7fda67cfc094e27.png",
     "static/media/FaroshHorn.png": "/static/media/FaroshHorn.ea7e3cbc262af3c30e1d.png",
-<<<<<<< HEAD
     "static/media/Rushroom.png": "/static/media/Rushroom.ab3824a1f76fa5347021.png",
-=======
->>>>>>> 103566beb2b0cc73fb27d9c178a7eb56d80af54c
     "static/media/SpeedFood.png": "/static/media/SpeedFood.1bde9cae9ffc0c3906ea.png",
     "static/media/HeartyBass.png": "/static/media/HeartyBass.4e0f8e06034479e163fe.png",
     "static/media/SilentPrincess.png": "/static/media/SilentPrincess.6b9283141fbc5993b481.png",
     "static/media/FaroshScale.png": "/static/media/FaroshScale.cc674ca9ac3cb63f99a3.png",
-<<<<<<< HEAD
     "static/media/Honey.png": "/static/media/Honey.dbf6fd6eae2e33fc3d6c.png",
-=======
->>>>>>> 103566beb2b0cc73fb27d9c178a7eb56d80af54c
     "static/media/Tail.png": "/static/media/Tail.a43cfa310e2c86532247.png",
     "static/media/Wood.png": "/static/media/Wood.8105d493814e4ecd145f.png",
     "static/media/Diamond.png": "/static/media/Diamond.df6931b37a1f47165e37.png",
@@ -37,7 +26,6 @@
     "static/media/Shaft.png": "/static/media/Shaft.328e8aa17c1e5f9f0058.png",
     "static/media/ForestDwellerBow.png": "/static/media/ForestDwellerBow.d2a6ab2d3f59bcc67b4b.png",
     "static/media/FaroshClaw.png": "/static/media/FaroshClaw.4da7a445c986e0279916.png",
-<<<<<<< HEAD
     "static/media/HyruleBass.png": "/static/media/HyruleBass.82ea677144fd38b4665a.png",
     "static/media/FireArrow.png": "/static/media/FireArrow.103898dc3f492d3293bd.png",
     "static/media/Lotus.png": "/static/media/Lotus.6006e27a51c66a0b9d3b.png",
@@ -49,17 +37,5 @@
   "entrypoints": [
     "static/css/main.820e0273.css",
     "static/js/main.96892c8b.js"
-=======
-    "static/media/FireArrow.png": "/static/media/FireArrow.103898dc3f492d3293bd.png",
-    "static/media/Lotus.png": "/static/media/Lotus.6006e27a51c66a0b9d3b.png",
-    "index.html": "/index.html",
-    "main.bd09d334.css.map": "/static/css/main.bd09d334.css.map",
-    "main.21b6773b.js.map": "/static/js/main.21b6773b.js.map",
-    "787.ada1a5f8.chunk.js.map": "/static/js/787.ada1a5f8.chunk.js.map"
-  },
-  "entrypoints": [
-    "static/css/main.bd09d334.css",
-    "static/js/main.21b6773b.js"
->>>>>>> 103566beb2b0cc73fb27d9c178a7eb56d80af54c
   ]
 }
