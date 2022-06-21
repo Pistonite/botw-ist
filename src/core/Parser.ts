@@ -54,7 +54,7 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		return undefined;
 	}
 	// remove material
-	if (tokens.length === 6 && (tokens[0] === "Remove" || tokens[0] === "Sell" || tokens[0] === "Drop") && tokens[3] === "From" && tokens[4] ==="Slot" ){
+	if (tokens.length === 6 && (tokens[0] === "Remove" || tokens[0] === "Sell" || tokens[0] === "Drop"|| tokens[0] === "Eat") && tokens[3] === "From" && tokens[4] ==="Slot" ){
 		const count = parseInt(tokens[1]);
 		const item = tokens[2];
 		const slot = parseInt(tokens[5]);
@@ -63,7 +63,7 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		}
 		return undefined;
 	}
-	if (tokens.length === 3 && (tokens[0] === "Remove" || tokens[0] === "Sell" || tokens[0] === "Drop")){
+	if (tokens.length === 3 && (tokens[0] === "Remove" || tokens[0] === "Sell" || tokens[0] === "Drop"|| tokens[0] === "Eat")){
 		const count = parseInt(tokens[1]);
 		const item = tokens[2];
 		if(Number.isInteger(count) && item in Item){
