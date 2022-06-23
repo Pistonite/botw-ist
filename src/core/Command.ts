@@ -29,12 +29,7 @@ export class CommandInitialize implements Command {
 		state.initialize(this.stacks);
 	}
 	public getDisplayString(): string {
-		const parts = ["Initialize"];
-		this.stacks.forEach(({item, count})=>{
-			parts.push(""+count);
-			parts.push(item);
-		});
-		return parts.join(" ");
+		return joinItemStackString("Initialize", this.stacks);
 	}
 
 }
@@ -104,7 +99,239 @@ export class CommandBreakSlots implements Command {
 	}
 }
 
+export class CommandAdd implements Command {
+	private verb: string;
+	private count: number;
+	private item: Item;
+	constructor(verb: string, count: number, item: Item){
+		this.verb = verb;
+		this.count = count;
+		this.item = item;
+	}
 
+	public execute(state: SimulationState): void {
+		state.obtain(this.item, this.count);
+	}
+	public getDisplayString(): string {
+		return `${this.verb} ${this.count} ${this.item}`;
+	}
+}
+
+export class CommandAddWithoutCount implements Command {
+	private verb: string;
+	private item: Item;
+	constructor(verb: string, item: Item){
+		this.verb = verb;
+		this.item = item;
+	}
+
+	public execute(state: SimulationState): void {
+		state.obtain(this.item, 1);
+	}
+	public getDisplayString(): string {
+		return `${this.verb} ${this.item}`;
+	}
+}
+
+export class CommandAddMultiple implements Command {
+	private verb: string;
+	private stacks: ItemStack[];
+	constructor(verb: string, stacks: ItemStack[]){
+		this.verb = verb;
+		this.stacks = stacks;
+	}
+
+	public execute(state: SimulationState): void {
+		this.stacks.forEach(({item, count})=>state.obtain(item,count));
+	}
+	public getDisplayString(): string {
+		return joinItemStackString(this.verb, this.stacks);
+
+	}
+}
+
+export class CommandRemove implements Command {
+	private verb: string;
+	private count: number;
+	private item: Item;
+	private slot: number;
+	private noSlot: boolean;
+	constructor(verb: string, count: number, item: Item, slot: number, noSlot: boolean){
+		this.verb = verb;
+		this.count = count;
+		this.item = item;
+		this.slot = slot;
+		this.noSlot = noSlot;
+	}
+	public execute(state: SimulationState): void {
+		state.remove(this.item, this.count, this.slot);
+	}
+	public getDisplayString(): string {
+		const slotString = this.noSlot ? "" : ` From Slot ${this.slot+1}`;
+		return `${this.verb} ${this.count} ${this.item}${slotString}`;
+	}
+}
+
+export class CommandRemoveWithoutCount implements Command {
+	private verb: string;
+	private item: Item;
+	private slot: number;
+	private noSlot: boolean;
+	constructor(verb: string, item: Item, slot: number, noSlot: boolean){
+		this.verb = verb;
+		this.item = item;
+		this.slot = slot;
+		this.noSlot = noSlot;
+	}
+	public execute(state: SimulationState): void {
+		state.remove(this.item, 1, this.slot);
+	}
+	public getDisplayString(): string {
+		const slotString = this.noSlot ? "" : ` From Slot ${this.slot+1}`;
+		return `${this.verb} ${this.item}${slotString}`;
+	}
+}
+
+export class CommandRemoveMultiple implements Command {
+	private verb: string;
+	private stacks: ItemStack[];
+	constructor(verb: string, stacks: ItemStack[]){
+		this.verb = verb;
+		this.stacks = stacks;
+	}
+
+	public execute(state: SimulationState): void {
+		this.stacks.forEach(({item, count})=>state.remove(item,count,0));
+	}
+	public getDisplayString(): string {
+		return joinItemStackString(this.verb, this.stacks);
+	}
+}
+
+const joinItemStackString = (initial: string, stacks: ItemStack[]): string => {
+	const parts: string[] = [initial];
+	stacks.forEach(({item, count})=>{
+		parts.push(""+count);
+		parts.push(item);
+	});
+	return parts.join(" ");
+}
+
+export class CommandDaP implements Command {
+	private count: number;
+	private item: Item;
+
+	constructor(count: number, item: Item,){
+		this.count = count;
+		this.item = item;
+	}
+	public execute(state: SimulationState): void {
+		state.remove(this.item, this.count, 0);
+		state.obtain(this.item, this.count);
+	}
+	public getDisplayString(): string {
+		return `D&P ${this.count} ${this.item}`;
+	}
+}
+
+export class CommandEquip implements Command {
+	private item: Item;
+	private slot: number;
+	private noSlot: boolean;
+	constructor(item: Item, slot: number, noSlot: boolean){
+		this.item = item;
+		this.slot = slot;
+		this.noSlot = noSlot;
+	}
+	
+	public execute(state: SimulationState): void {
+		state.equip(this.item, this.slot);
+	}
+	public getDisplayString(): string {
+		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`;
+		return `Equip ${this.item}${slotString}`;
+	}
+}
+
+export class CommandUnequip implements Command {
+	private item: Item;
+	private slot: number;
+	private noSlot: boolean;
+	constructor(item: Item, slot: number, noSlot: boolean){
+		this.item = item;
+		this.slot = slot;
+		this.noSlot = noSlot;
+	}
+	
+	public execute(state: SimulationState): void {
+		state.unequip(this.item, this.slot);
+	}
+	public getDisplayString(): string {
+		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`;
+		return `Unequip ${this.item}${slotString}`;
+	}
+}
+
+export class CommandShootArrow implements Command {
+	private count: number
+	constructor(count: number){
+		this.count = count;
+	}
+	
+	public execute(state: SimulationState): void {
+		state.shootArrow(this.count);
+	}
+	public getDisplayString(): string {
+		return `Shoot ${this.count} Arrow`;
+	}
+}
+
+
+// export class CommandEquipArrow implements Command {
+// 	private item: Item;
+// 	private slot: number;
+// 	private noSlot: boolean;
+// 	constructor(item: Item, slot: number, noSlot: boolean){
+// 		this.item = item;
+// 		this.slot = slot;
+// 		this.noSlot = noSlot;
+// 	}
+	
+// 	public execute(inv: Inventory): void {
+// 		inv.equipEquipmentOrArrow(this.item, this.slot);
+// 	}
+// 	public getDisplayString(): string {
+// 		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`;
+// 		return `Equip ${itemToArrowType(this.item)} Arrow${slotString}`;
+// 	}
+// }
+
+
+
+
+
+
+// export class CommandCloseGame implements Command {
+// 	public execute(inv: Inventory): void {
+// 		inv.closeGame();
+// 	}
+// 	public getDisplayString(): string {
+// 		return "Close Game";
+// 	}
+// }
+
+export class CommandComment implements Command {
+	private name: string;
+	constructor(name: string){
+		this.name = name;
+	}
+	public execute(_state: SimulationState): void {
+		// nothing
+	}
+	public getDisplayString(): string {
+		return `# ${this.name}`;
+	}
+}
 
 // export class CommandSortKey implements Command {
 // 	static Op = 0x5;
@@ -141,182 +368,3 @@ export class CommandBreakSlots implements Command {
 // 		return "Sort Material";
 // 	}
 // }
-
-// const Verbs = ["?", "Remove", "Drop", "Sell", "Eat", "Cook", "Get", "Add", "Pickup"];
-// const VerbToId = {
-// 	"Remove" : 1,
-// 	"Drop": 2,
-// 	"Sell": 3,
-// 	"Eat": 4,
-// 	"Cook": 5,
-// 	"Get": 6,
-// 	"Add": 7,
-// 	"Pickup": 8
-// };
-
-// export class CommandRemoveMaterial implements Command {
-// 	static Op = 0x7;
-// 	private verb: number;
-// 	private count: number;
-// 	private item: Item;
-// 	private slot: number;
-// 	private noSlot: boolean;
-// 	constructor(verb: string, count: number, item: Item, slot: number, noSlot: boolean){
-// 		this.verb = VerbToId[verb as keyof typeof VerbToId]  || 0;
-// 		this.count = count;
-// 		this.item = item;
-// 		this.slot = slot;
-// 		this.noSlot = noSlot;
-// 	}
-// 	public execute(inv: Inventory): void {
-// 		inv.remove(this.item, this.count, this.slot);
-// 	}
-// 	public getDisplayString(): string {
-// 		const slotString = this.noSlot ? "" : ` From Slot ${this.slot+1}`;
-// 		return `${Verbs[this.verb]} ${this.count} ${this.item}${slotString}`;
-// 	}
-// }
-
-// export class CommandRemoveUnstackableMaterial implements Command {
-// 	static Op = 0x8;
-// 	private verb: number;
-// 	private item: Item;
-// 	private slot: number;
-// 	private noSlot: boolean;
-// 	constructor(verb: string,item: Item, slot: number, noSlot: boolean){
-// 		this.verb = VerbToId[verb as keyof typeof VerbToId]  || 0;
-// 		this.item = item;
-// 		this.slot = slot;
-// 		this.noSlot = noSlot;
-// 	}
-// 	public execute(inv: Inventory): void {
-// 		inv.remove(this.item, 1, this.slot);
-// 	}
-// 	public getDisplayString(): string {
-// 		const slotString = this.noSlot ? "" : ` From Slot ${this.slot+1}`;
-// 		return `${Verbs[this.verb]} ${this.item}${slotString}`;
-// 	}
-// }
-
-// export class CommandAddMaterial implements Command {
-// 	static Op = 0x9;
-// 	private verb: number;
-// 	private count: number;
-// 	private item: Item;
-// 	constructor(verb: string, count: number, item: Item){
-// 		this.verb = VerbToId[verb as keyof typeof VerbToId]  || 0;
-// 		this.count = count;
-// 		this.item = item;
-// 	}
-// 	// public fromBuffer(buf: Buffer): number {
-// 	// 	let read = 0;
-// 	// 	const id = buf.readInt8(read);
-// 	// 	read+=1;
-// 	// 	this.item = idToItemData(id).item;
-
-// 	// 	this.count = buf.readInt16LE(read);
-// 	// 	read+=2;
-// 	// 	this.verb = buf.readInt8(read);
-// 	// 	read++;
-// 	// 	return read;
-// 	// }
-// 	// public toBuffer(): Buffer {
-// 	// 	const buf: Buffer = Buffer.alloc(1+1+2+1);
-// 	// 	let write = 0;
-// 	// 	buf.writeInt8(CommandAddMaterial.Op);
-// 	// 	write++;
-// 	// 	buf.writeInt8(itemToItemData(this.item).id, write);
-// 	// 	write++;
-// 	// 	buf.writeInt16LE(this.count, write);
-// 	// 	write+=2;
-// 	// 	buf.writeInt8(this.verb, write);
-// 	// 	return buf;
-// 	// }
-// 	public execute(inv: Inventory): void {
-// 		inv.add(this.item, this.count);
-// 	}
-// 	public getDisplayString(): string {
-// 		return `${Verbs[this.verb]} ${this.count} ${this.item}`;
-// 	}
-// }
-
-// export class CommandEquipArrow implements Command {
-// 	private item: Item;
-// 	private slot: number;
-// 	private noSlot: boolean;
-// 	constructor(item: Item, slot: number, noSlot: boolean){
-// 		this.item = item;
-// 		this.slot = slot;
-// 		this.noSlot = noSlot;
-// 	}
-	
-// 	public execute(inv: Inventory): void {
-// 		inv.equipEquipmentOrArrow(this.item, this.slot);
-// 	}
-// 	public getDisplayString(): string {
-// 		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`;
-// 		return `Equip ${itemToArrowType(this.item)} Arrow${slotString}`;
-// 	}
-// }
-
-// export class CommandEquip implements Command {
-// 	private item: Item;
-// 	private slot: number;
-// 	private noSlot: boolean;
-// 	constructor(item: Item, slot: number, noSlot: boolean){
-// 		this.item = item;
-// 		this.slot = slot;
-// 		this.noSlot = noSlot;
-// 	}
-	
-// 	public execute(inv: Inventory): void {
-// 		inv.equipEquipmentOrArrow(this.item, this.slot);
-// 	}
-// 	public getDisplayString(): string {
-// 		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`;
-// 		return `Equip ${this.item}${slotString}`;
-// 	}
-// }
-
-// export class CommandUnequip implements Command {
-// 	private item: Item;
-// 	private slot: number;
-// 	private noSlot: boolean;
-// 	constructor(item: Item, slot: number, noSlot: boolean){
-// 		this.item = item;
-// 		this.slot = slot;
-// 		this.noSlot = noSlot;
-// 	}
-	
-// 	public execute(inv: Inventory): void {
-// 		inv.unequipEquipment(this.item, this.slot);
-// 	}
-// 	public getDisplayString(): string {
-// 		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`;
-// 		return `Unequip ${this.item}${slotString}`;
-// 	}
-// }
-
-
-
-// export class CommandCloseGame implements Command {
-// 	public execute(inv: Inventory): void {
-// 		inv.closeGame();
-// 	}
-// 	public getDisplayString(): string {
-// 		return "Close Game";
-// 	}
-// }
-
-export class CommandComment implements Command {
-	private name: string;
-	constructor(name: string){
-		this.name = name;
-	}
-	public execute(_state: SimulationState): void {
-		// nothing
-	}
-	public getDisplayString(): string {
-		return `# ${this.name}`;
-	}
-}

@@ -1,4 +1,5 @@
 import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "./DisplayableInventory";
+import { Item, itemToItemData } from "./Item";
 import { Slots } from "./Slots";
 import { VisibleInventory } from "./VisibleInventory";
 
@@ -18,6 +19,10 @@ export class GameData implements DisplayableInventory {
     
     public syncWith(pouch: VisibleInventory) {
         this.slots = pouch.getSlots().deepClone();
+    }
+
+    public updateDurability(durability: number, slot: number){
+        this.slots.corrupt(durability, slot);
     }
 
     public addAllToPouchOnReload(pouch: VisibleInventory) {

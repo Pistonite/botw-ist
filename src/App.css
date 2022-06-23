@@ -116,5 +116,10 @@ p.Example {
 
 h3.Reference {
   margin-top: 30px;
-  margin-bottom: 0
+  margin-bottom: 0;
+}
+
+h3.Reference2 {
+  margin-top: 0;
+  margin-bottom: 0;
 }

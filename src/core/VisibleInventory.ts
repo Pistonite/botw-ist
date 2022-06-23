@@ -1,5 +1,6 @@
 import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "./DisplayableInventory";
-import { Item, ItemStack } from "./Item";
+import { GameData } from "./GameData";
+import { Item, ItemStack, itemToItemData, ItemType } from "./Item";
 import { Slots } from "./Slots";
 
 /*
@@ -35,13 +36,61 @@ export class VisibleInventory implements DisplayableInventory{
         this.count+=slotsAdded;
     }
 
-    //public addInGame
+    public addInGame(item: Item, count: number) {
+        const slotsAdded = this.slots.add(item, count, false, false, this.count);
+        this.count+=slotsAdded;
+    }
+
+    public remove(item: Item, count: number, slot: number) {
+        const slotsRemoved = this.slots.remove(item, count, slot);
+        this.count-=slotsRemoved;
+    }
+
+    public equip(item: Item, slot: number) {
+        this.slots.equip(item, slot);
+    }
+
+    public unequip(item: Item, slot: number) {
+        this.slots.unequip(item, slot);
+    }
 
     // Only clears first this.count
     public clearForReload() {
         if(this.count > 0){
             this.slots.clearFirst(this.count);
             this.count = 0;
+        }
+    }
+
+    public updateEquipmentDurability(gameData: GameData) {
+        // find first weapon/bow/shield. this one searches entire inventory
+        let foundWeapon = false;
+        let foundBow = false;
+        let foundShield = false;
+        this.slots.getSlotsRef().forEach(({item, equipped}, i)=>{
+            if(equipped){
+                const type = itemToItemData(item).type;
+                if(type === ItemType.Weapon && !foundWeapon){
+                    gameData.updateDurability(999, i);
+                    foundWeapon = true;
+                }
+                if(type === ItemType.Bow && !foundBow){
+                    gameData.updateDurability(999, i);
+                    foundBow = true;
+                }
+                if(type === ItemType.Shield && !foundShield){
+                    gameData.updateDurability(999, i);
+                    foundShield = true;
+                }
+            }
+        })
+    }
+
+    public shootArrow(count: number, gameData: GameData) {
+        const updatedSlot = this.slots.shootArrow(count);
+        if(updatedSlot>=0){
+            const durability = this.slots.getSlotsRef()[updatedSlot].count;
+            gameData.updateDurability(durability, updatedSlot);
         }
     }
 

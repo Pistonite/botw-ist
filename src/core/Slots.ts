@@ -61,7 +61,7 @@ export class Slots {
 	public addStackDirectly(stack: ItemStack): number {
 		const data = itemToItemData(stack.item);
 		if(data.stackable){
-			this.internalSlots.push(stack);
+			this.internalSlots.push({...stack});
 			return 1;
 		}
 		for(let i=0;i<stack.count;i++){
@@ -70,7 +70,7 @@ export class Slots {
 		return stack.count;
 	}
 	public addSlot(stack: ItemStack, mCount: number | null) {
-		this.internalSlots.push(stack);
+		this.internalSlots.push({...stack});
 		this.sortItemType(mCount);
 	}
 	// public addStackCopy(stack: ItemStack) {
@@ -85,27 +85,33 @@ export class Slots {
 	// 	const end = this.internalSlots.splice(-count, count);
 	// 	return new Slots(end);
 	// }
-	// public remove(item: Item, count: number, slot: number) {
-	// 	let s = 0;
-	// 	for(let i = 0; i<this.internalSlots.length && count > 0;i++){
-	// 		if(this.internalSlots[i].item === item){
-	// 			if(s<slot){
-	// 				s++;
-	// 			}else{
-	// 				if(this.internalSlots[i].count<count){
-	// 					count-=this.internalSlots[i].count;
-	// 					this.internalSlots[i].count=0;
+
+	// remove item(s) start from slot
+	// return number of slots removed
+	public remove(item: Item, count: number, slot: number): number {
+		const oldLength = this.internalSlots.length;
+		let s = 0;
+		for(let i = 0; i<this.internalSlots.length && count > 0;i++){
+			if(this.internalSlots[i].item === item){
+				if(s<slot){
+					s++;
+				}else{
+					if(this.internalSlots[i].count<count){
+						count-=this.internalSlots[i].count;
+						this.internalSlots[i].count=0;
 						
-	// 				}else{
-	// 					this.internalSlots[i].count-=count;
-	// 					break;
-	// 				}
+					}else{
+						this.internalSlots[i].count-=count;
+						break;
+					}
 					
-	// 			}
-	// 		}
-	// 	}
-	// 	this.internalSlots = this.internalSlots.filter(({count})=>count>0);
-	// }
+				}
+			}
+		}
+		
+		this.internalSlots = this.internalSlots.filter(({count})=>count>0);
+		return oldLength-this.internalSlots.length;
+	}
 
 	// Add something to inventory in game
 	// returns number of slots added
@@ -153,140 +159,140 @@ export class Slots {
 		
 		// Checks finish, do add new slot
 		if(data.stackable){
-			if(data.type===ItemType.Arrow){
-				// if currently equipped arrow == 0. new arrows are equiped
-				// TODO: botw needs more testing on how arrows are handled in various cases
-				const shouldEquipNew = this.internalSlots.filter(s=>{
-					const sData = itemToItemData(s.item);
-					return sData.type === data.type && s.equipped && s.count > 0;
-				}).length === 0;
-				this.addSlot({item,count,equipped:shouldEquipNew}, mCount+1);
+			if(reloading){
+				this.addSlot({item,count,equipped:equippedDuringReload}, mCount+1);
 			}else{
-				this.addSlot({item,count,equipped:false}, mCount+1);
+				if(data.type===ItemType.Arrow){
+					// if currently equipped arrow == 0. new arrows are equiped
+					// TODO: botw needs more testing on how arrows are handled in various cases
+					const shouldEquipNew = this.internalSlots.filter(s=>{
+						const sData = itemToItemData(s.item);
+						return sData.type === data.type && s.equipped && s.count > 0;
+					}).length === 0;
+					this.addSlot({item,count,equipped:shouldEquipNew}, mCount+1);
+				}else{
+					this.addSlot({item,count,equipped:false}, mCount+1);
+				}
 			}
+			
 			return 1;
 		}
 
-		if(data.type===ItemType.Weapon || data.type===ItemType.Bow || data.type===ItemType.Shield){
-			//Check equip
-			const shouldEquipNew = !reloading && this.internalSlots.filter(s=>{
-				const sData = itemToItemData(s.item);
-				return sData.type === data.type && s.equipped;
-			}).length === 0;
-			this.addSlot({item,count:1,equipped: shouldEquipNew}, mCount+1);
-			for(let i=1;i<count;i++){
-				this.addSlot({item,count:1,equipped: false}, mCount+i+1);
-
+		if(reloading){
+			for(let i=0;i<count;i++){
+				this.addSlot({item,count:1,equipped: equippedDuringReload}, mCount+i+1);
 			}
 		}else{
-			for(let i=0;i<count;i++){
-				this.addSlot({item,count:1,equipped: false}, mCount+i+1);
+			if(data.type===ItemType.Weapon || data.type===ItemType.Bow || data.type===ItemType.Shield){
+				//Check equip
+				const shouldEquipNew = this.internalSlots.filter(s=>{
+					const sData = itemToItemData(s.item);
+					return sData.type === data.type && s.equipped;
+				}).length === 0;
+				this.addSlot({item,count:1,equipped: shouldEquipNew}, mCount+1);
+				for(let i=1;i<count;i++){
+					this.addSlot({item,count:1,equipped: false}, mCount+i+1);
+	
+				}
+			}else{
+				for(let i=0;i<count;i++){
+					this.addSlot({item,count:1,equipped: false}, mCount+i+1);
+				}
 			}
 		}
+		
 
 		return count;
 	}
 
-	// return how many slots are added
-	// public add(item: Item, count: number, equipped: boolean, isReloading: boolean, mCount: number): number {
-	// 	let added = false;
-	// 	const data = itemToItemData(item);
-	// 	if(data.stackable){
-	// 		for(let i = 0; i<this.internalSlots.length;i++){
-	// 			if(this.internalSlots[i].item === item){
-	// 				if(isReloading){
-	// 					if(mCount > 0 && this.internalSlots[i].count + count > 999){
-	// 						return 0; // Skip, do not add new stack at all
-	// 					}
-	// 					// Otherwise push the entire new stack
-	// 					this.internalSlots.push({item, count, equipped});
-	// 				}else{
-	// 					this.internalSlots[i].count = Math.min(999, this.internalSlots[i].count+count);
-	// 					added = true;
-	// 				}
-					
-	// 				break;
-	// 			}
-	// 		}
-	// 	}
-	// 	if(!added){
-	// 		const after = this.removeFromEnd(this.getAfterType(data.type).length);
-	// 		if(data.stackable){
-	// 			if(data.type===ItemType.Arrow){
-	// 				// if currently equipped arrow == 0. new arrows are equiped
-	// 				const shouldEquipNew = this.internalSlots.filter(s=>{
-	// 					const sData = itemToItemData(s.item);
-	// 					return sData.type === data.type && s.equipped && s.count > 0;
-	// 				}).length === 0;
-	// 				this.addStack({item,count,equipped:shouldEquipNew});
-	// 			}else{
-	// 				this.addStack({item,count,equipped:false});
-	// 			}
-                
-	// 		}else{
-	// 			if(data.type===ItemType.Weapon || data.type===ItemType.Bow || data.type===ItemType.Shield){
-	// 				//Check equip
-	// 				const shouldEquipNew = this.internalSlots.filter(s=>{
-	// 					const sData = itemToItemData(s.item);
-	// 					return sData.type === data.type && s.equipped;
-	// 				}).length === 0;
-	// 				this.addStack({item,count:1,equipped: shouldEquipNew});
-	// 				for(let i=1;i<count;i++){
-	// 					this.addStack({item,count:1,equipped: false});
+	
 
-	// 				}
-	// 			}else{
-	// 				for(let i=0;i<count;i++){
-	// 					this.addStack({item,count:1,equipped: false});
-	// 				}
-	// 			}
-                
-	// 		}
+	// this is for both equipments and arrows
+	public equip(item: Item, slot: number) {
+		let s = 0;
+		// unequip same type in first tab
+		const type = itemToItemData(item).type;
+		let i=0;
+		while(i<this.internalSlots.length && itemToItemData(this.internalSlots[i].item).type < type){
+			i++;
+		}
+		for(;i<this.internalSlots.length && itemToItemData(this.internalSlots[i].item).type === type;i++){
+			this.internalSlots[i].equipped = false;
+		}
+		// now search for the one the player selects and equip it
+		for(let i = 0; i<this.internalSlots.length;i++){
+			if(this.internalSlots[i].item === item){
+				if (s===slot){
+					this.internalSlots[i].equipped=true;
+					break;
+				}
+				s++;
+			}
+		}
+	}
+	public unequip(item:Item, slot: number) {
+		let s = 0;
+		const type = itemToItemData(item).type;
+		if (type===ItemType.Arrow){
+			return; // cannot unequip arrow
+		}
+		for(let i = 0; i<this.internalSlots.length;i++){
+			if(this.internalSlots[i].item === item){
+				if(slot < 0){
+					if(this.internalSlots[i].equipped){
+						this.internalSlots[i].equipped=false;
+						break;
+					}
+				}else{
+					if(s<slot){
+						s++;
+					}else{
+						this.internalSlots[i].equipped=false;
+						break;
+					}
+				}
+			}
+		}
+	}
 
-	// 		this.addSlotsToEnd(after);
-	// 	}	
-	// }
+	public corrupt(durability: number, slot: number) {
+		if(slot < 0 || slot >= this.internalSlots.length){
+			return;
+		}
+        const thisData = itemToItemData(this.internalSlots[slot].item);
+		if(thisData.stackable){
+			this.internalSlots[slot].count = durability;
+		}
+	}
 
-	// // this is for both equipments and arrows
-	// public equip(item: Item, slot: number) {
-	// 	let s = 0;
-	// 	const type = itemToItemData(item).type;
-	// 	const filtered = this.internalSlots.filter(s=>itemToItemData(s.item).type === type);
-	// 	for(let i = 0; i<filtered.length;i++){
-	// 		filtered[i].equipped=false;
-	// 		if(filtered[i].item === item){
-	// 			if (s===slot){
-	// 				filtered[i].equipped=true;
-	// 			}
-	// 			s++;
-	// 		}
-	// 	}
-	// }
-	// public unequip(item:Item, slot: number) {
-	// 	let s = 0;
-	// 	const type = itemToItemData(item).type;
-	// 	if (type===ItemType.Arrow){
-	// 		return; // cannot unequip arrow
-	// 	}
-	// 	for(let i = 0; i<this.internalSlots.length;i++){
-	// 		if(this.internalSlots[i].item === item){
-	// 			if(slot < 0){
-	// 				if(this.internalSlots[i].equipped){
-	// 					this.internalSlots[i].equipped=false;
-	// 					break;
-	// 				}
-	// 			}else{
-	// 				if(s<slot){
-	// 					s++;
-	// 				}else{
-	// 					this.internalSlots[i].equipped=false;
-	// 					break;
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
+	// shoot count arrows. return the slot that was updated, or -1
+	public shootArrow(count: number): number {
+		// first find equipped arrow, search entire inventory
+		let i=0;
+		for(;i<this.internalSlots.length;i++){
+			if(this.internalSlots[i].equipped){
+				const data = itemToItemData(this.internalSlots[i].item);
+				if(data.type === ItemType.Arrow){
+					break;
+				}
+			}
+		}
+		if(i>=this.internalSlots.length){
+			//can't find equipped arrow
+			return -1;
+		}
+		const equippedArrow = this.internalSlots[i].item;
+		// now find the first slot of that arrow and update
+		for(let j=0;j<this.internalSlots.length;j++){
+			if(this.internalSlots[j].item === equippedArrow){
+				this.internalSlots[j].count = Math.max(0, this.internalSlots[j].count-count);
+				return j;
+			}
+		}
+		//for some reason cannot find that arrow now?
+		return -1;
 
+	}
 	// // Difference between shoot and remove:
 	// // 1. can only be from first (leftmost) slot
 	// // 2. empty slots not removed

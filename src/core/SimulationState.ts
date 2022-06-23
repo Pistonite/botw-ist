@@ -1,6 +1,6 @@
 import { DisplayableInventory } from "./DisplayableInventory";
 import { GameData } from "./GameData";
-import { ItemStack } from "./Item";
+import { Item, ItemStack } from "./Item";
 import { Slots } from "./Slots";
 import { VisibleInventory } from "./VisibleInventory";
 
@@ -21,6 +21,7 @@ export class SimulationState {
     private namedSaves: {[name: string]: GameData} = {};
     private pouch: VisibleInventory;
     private nextReloadName?: string;
+    private isOnEventide: boolean = false;
 
     constructor(gameData: GameData, manualSave: GameData | null, namedSaves: {[name: string]: GameData}, pouch: VisibleInventory){
         this.gameData = gameData;
@@ -34,12 +35,16 @@ export class SimulationState {
         for(const name in this.namedSaves){
             copyNamedSaves[name] = this.namedSaves[name].deepClone();
         }
-        return new SimulationState(
+        const newState = new SimulationState(
             this.gameData.deepClone(),
             this.manualSave ? this.manualSave.deepClone() : null,
             copyNamedSaves,
             this.pouch.deepClone()
         );
+        newState.nextReloadName = this.nextReloadName;
+        newState.isOnEventide = this.isOnEventide;
+
+        return newState;
     }
 
     public initialize(stacks: ItemStack[]) {
@@ -79,6 +84,7 @@ export class SimulationState {
         this.gameData = data.deepClone();
         this.pouch.clearForReload();
         this.gameData.addAllToPouchOnReload(this.pouch);
+        this.pouch.updateEquipmentDurability(this.gameData);
     }
 
     public useSaveForNextReload(name: string){
@@ -87,6 +93,37 @@ export class SimulationState {
 
     public breakSlots(n: number) {
         this.pouch.modifyCount(-n);
+    }
+
+    public obtain(item: Item, count: number) {
+        this.pouch.addInGame(item, count);
+        this.syncGameDataWithPouch();
+    }
+
+    public remove(item: Item, count: number, slot: number) {
+        this.pouch.remove(item, count, slot);
+        this.syncGameDataWithPouch();
+    }
+
+    public equip(item: Item, slot: number) {
+        this.pouch.equip(item, slot);
+        this.syncGameDataWithPouch();
+    }
+
+    public unequip(item: Item, slot: number){
+        this.pouch.unequip(item, slot);
+        this.syncGameDataWithPouch();
+    }
+
+    public shootArrow(count: number){
+        this.pouch.shootArrow(count, this.gameData);
+        // does not sync
+    }
+
+    public syncGameDataWithPouch() {
+        if(!this.isOnEventide){
+            this.gameData.syncWith(this.pouch);
+        }
     }
 
     public get displayableGameData(): DisplayableInventory {
@@ -116,21 +153,13 @@ export class SimulationState {
 
 }
 
-// Save - save to hard save slot
-// Save As <name> - save to a auto save slot
-// Reload - reload hard save
-// Reload <name> - reload a named auto save
-// Use <name> - no effect, but next Reload reloads the named auto save
-// Break X Slots
-// Sort Key (In Tab X)
-// Sort Material (In Tab X)
-// Get/Add/Cook/Pickup X <item>, X can be omitted and default to 1
-// Get/Add/Cook/Pickup X <item> Y <item2> ...
-// Remove/Drop/Sell/Eat X <item> From Slot Y, X can be omitted and default to 1
-// Remove/Drop/Sell/Eat X <item1> Y <item2> ...
-// D&P X <item>, drop and pick up (to sort)
-// Equip <item> (In Slot X)
-// Unequip <item> (In Slot X), without slot, it unequipps the first equipped
+
+
+
 // Shoot X Arrow, x can be ommited and default to 1
+
 // Close Game
 // Close Inventory, same as Resync GameData
+// Enter Eventide / Leave Eventide
+// Sort Key (In Tab X) - need more research on which tab is sorted. (might not be possible to select which tab to sort)
+// Sort Material (In Tab X) - need more research on which tab is sorted

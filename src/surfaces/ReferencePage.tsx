@@ -78,7 +78,90 @@ export const ReferencePage: React.FC = React.memo(()=>{
                     </p>
                     
                     <p className="Reference Example">Example: Break 4 Slots</p>
+
+                    <h3 className="Reference">Get/Add/Cook/Pickup item</h3>
+                    <h3 className="Reference2">Get/Add/Cook/Pickup X item</h3>
+                    <h3 className="Reference2">Get/Add/Cook/Pickup X item1 Y item2 Z item3 ...</h3>
+                    <h4 className="Reference">Simulate obtaining items in game</h4>
+                    <p className="Reference">
+                        Add the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
+                    </p>
+                    <p className="Reference">
+                        Like in game, you won't be able to obtain multiple unstackable key items, or multiple master sword in this way. 
+                        If a stackable item is at 999 or more when you invoke this command, the count is set to 999 (not fully accurate since you won't be able to pick up more items in game).
+                    </p>
+                    <p className="Reference">
+                        If you specify a count for unstackable items, they are added in different slots as if you pick them up in game, one after another.
+                    </p>
+                    <p className="Reference">
+                        Note that you must not enter plural forms for the item name.
+                    </p>
+                    
+                    <p className="Reference Example">Example 1: Add Apple</p>
+                    <p className="Reference Example">Example 2: Get 10 Apple</p>
+                    <p className="Reference Example">Example 3: Pickup 10 Apple 5 Diamond 1 Slate 5 MasterSword</p>
+
+                    <h3 className="Reference">Remove/Sell/Eat/Drop item</h3>
+                    <h3 className="Reference2">Remove/Sell/Eat/Drop X item</h3>
+                    <h3 className="Reference2">Remove/Sell/Eat/Drop item From Slot Y</h3>
+                    <h3 className="Reference2">Remove/Sell/Eat/Drop X item From Slot Y</h3>
+                    <h3 className="Reference2">Remove/Sell/Eat/Drop X item1 Y item2 Z item3 ...</h3>
+                    <h4 className="Reference">Simulate removing items in game</h4>
+                    <p className="Reference">
+                        Remove the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
+                    </p>
+                    <p className="Reference">
+                        When number of item is not specified, it defaults to 1. Up to X items will be removed from inventory, even when they span multiple slots. 
+                        If X &gt; total number of items in inventory, all of them will be removed.
+                    </p>
+                    <p className="Reference">
+                        When slot is specified, it starts removing from slot X (slot 1 is the leftmost slot with that item, slot 2 is the second leftmost slot with that item).
+                    </p>
+                    <p className="Reference">
+                        Note that you must not enter plural forms for the item name.
+                    </p>
+                    
+                    <p className="Reference Example">Example 1: Remove Apple</p>
+                    <p className="Reference Example">Example 2: Drop 10 Diamond</p>
+                    <p className="Reference Example">Example 3: Sell 10 Apple 5 Diamond</p>
+                    <p className="Reference Example">Example 4: Sell 5 Apple From Slot 3</p>
+
+                    <h3 className="Reference">D&amp;P X item</h3>
+                    <h4 className="Reference">Shortcut for drop and pick up, for sorting inventory</h4>
+                    <p className="Reference">
+                        This command drops X item from the first slot, then pick them up
+                    </p>
+                    <p className="Reference Example">Example: D&amp;P 5 Diamond</p>
+
+                    <h3 className="Reference">Equip item</h3>
+                    <h3 className="Reference2">Equip item In Slot X</h3>
+                    <h4 className="Reference">Simulates equipping something</h4>
+                    <p className="Reference">
+                        When equipping an item, all other item of the same type in the first tab is unequipped, then the item selected is equipped.
+                    </p>
+                    <p className="Reference">
+                        Slot can be used if you have multiple of the same item. When slot is not specified, the leftmost item will be equipped. 
+                        Note that you can use this command to equip something that is already equipped, which is not possible in game.
+                        You can also equip unequippable items like materials, but it is not meaningful
+                    </p>
+                    <p className="Reference Example">Example 1: Equip Weapon</p>
+                    <p className="Reference Example">Example 2: Equip Weapon In Slot 3</p>
+
+                    <h3 className="Reference">Unequip item</h3>
+                    <h3 className="Reference2">Unequip item In Slot X</h3>
+                    <h4 className="Reference">Simulates unequipping something</h4>
+                    <p className="Reference">
+                        When unequipping an item, only the selected item is unequipped.
+                    </p>
+                    <p className="Reference">
+                        Slot can be used if you have multiple of the same item. When slot is not specified, the leftmost equipped item will be unequipped.
+                        Note that you can use this command to unequip something that is already unequipped, which is useless.
+                        You cannot unequip arrows.
+                    </p>
+                    <p className="Reference Example">Example 1: Unequip Shield</p>
+                    <p className="Reference Example">Example 2: Unequip Shield In Slot 5</p>
                 </div>
+                
                 
             </TitledList>
         </div>
