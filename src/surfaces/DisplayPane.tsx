@@ -19,7 +19,7 @@ type DisplayPaneProps = {
     editCommand: (c: Command)=>void
 }
 
-const stacksToItemListProps = (slots: Slots, numBroken: number, isSave: boolean): ItemListProps => {
+export const stacksToItemListProps = (slots: Slots, numBroken: number, isSave: boolean): ItemListProps => {
 	return {
 		items: stacksToItemProps(slots.getSlotsRef()),
 		numBroken,
@@ -27,11 +27,11 @@ const stacksToItemListProps = (slots: Slots, numBroken: number, isSave: boolean)
 	};
 };
 
-const stacksToItemProps = (stacks: ItemStack[]): ItemListItemProps[] => {
+export const stacksToItemProps = (stacks: ItemStack[]): ItemListItemProps[] => {
 	return stacks.map(stackToItemProps);
 };
 
-const stackToItemProps = ({item, count, equipped}: ItemStack): ItemListItemProps => {
+export const stackToItemProps = ({item, count, equipped}: ItemStack): ItemListItemProps => {
 	const data = itemToItemData(item);
 	return {image: data.image, count: data.stackable ? count : 0, isEquipped:equipped};
 };

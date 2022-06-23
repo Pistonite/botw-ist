@@ -76,3 +76,8 @@ h1 {
   color:#eeeeee;
   float: left;
 }
+
+h3.ListHeader {
+  margin: 0;
+  padding: 10px;
+}

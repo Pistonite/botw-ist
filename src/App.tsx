@@ -5,10 +5,12 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { CommandItem } from "./components/CommandItem";
 
-import { DisplayPane } from "surfaces/DisplayPane";
+import { DisplayPane, stacksToItemListProps } from "surfaces/DisplayPane";
 import { Item } from "core/Item";
 import { saveAs } from "data/FileSaver";
 import { parseCommand } from "core/Parser";
+import { ItemList } from "components/ItemList";
+import { TitledList } from "components/TitledList";
 
 const getDefaultCommands = (): Command[]=>{
 	const encoded = localStorage.getItem("HDS.CurrentCommandsText");
@@ -46,6 +48,31 @@ const getDefaultCommands = (): Command[]=>{
 		new CommandReload()
 	];
 };
+
+const tempSaveInventory = new Inventory();
+tempSaveInventory.rawInit([
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+	{item: Item.Acorn, count: 55, equipped: false},
+])
+const listProps = stacksToItemListProps(tempSaveInventory.getSlots(), 0, true);
+
 
 export const App: React.FC =  () => {
 	const [overlaySave, setOverlaySave] = useState<boolean>(false);
@@ -98,8 +125,7 @@ export const App: React.FC =  () => {
 	}, [contextMenuRef, contextMenuShowing]);
   
 	return (
-		<div className='Calamity'
-		>
+		<div className='Calamity'>
 			<input ref={uploadRef} id="Upload" type="File" hidden onChange={(e)=>{
 				const files = e.target.files;
 				if(files?.length && files[0]){
@@ -114,18 +140,77 @@ export const App: React.FC =  () => {
 					});
 				}
 			}}/>
-			<div id="CommandList" style={{
-				width: "300px",
-				height: "calc( 100vh - 5px )",
-				overflowY: "auto",
-		
-				float: "left",
-				border: "1px solid black",
-				boxSizing: "content-box"
-			} }>
-				<ul style={{
-					listStyleType: "none",
-					paddingInlineStart: 0
+			<div id="NavBar" style={{
+				height: 40
+			}}>
+				<button>Simulation</button>
+				<button>Reference</button>
+				<button>Options</button>
+			</div>
+
+			<div id="SidePane" style={{
+				width: 300,
+				float: "left"
+			}}>
+				<div style={{
+					maxHeight: 220,
+					height: "30vh",
+					border: "1px solid black",
+					boxSizing: "content-box",
+					overflowY: "hidden"
+					
+				}}>
+					<TitledList title="Saves">
+					<ol>
+						<CommandItem 
+								onClick={()=>{}}  
+								comment={false}
+							>
+								Manual Save
+							</CommandItem>
+							<CommandItem 
+								onClick={()=>{}}  
+								comment={false}
+							>
+								Auto Save 1
+							</CommandItem>
+							<CommandItem 
+								onClick={()=>{}}  
+								comment={false}
+							>
+								Auto Save 2
+							</CommandItem>
+							<CommandItem 
+								onClick={()=>{}}  
+								comment={false}
+							>
+								Auto Save 3
+							</CommandItem>
+							<CommandItem 
+								onClick={()=>{}}  
+								comment={false}
+							>
+								Auto Save 4
+							</CommandItem>
+							<CommandItem 
+								onClick={()=>{}}  
+								comment={false}
+							>
+								Auto Save 5
+							</CommandItem>
+					</ol>
+					</TitledList>
+				</div>
+				<div style={{
+					minHeight: "calc( 70vh - 45px )",
+					height: "calc( 100vh - 45px - 220px )",
+					border: "1px solid black",
+					boxSizing: "content-box",
+					overflowY: "hidden"
+					
+				}}>
+					<TitledList title="Instructions">
+					<ol style={{
 				}}>
 					{
 						commands.map((c,i)=>
@@ -167,8 +252,29 @@ export const App: React.FC =  () => {
 						setContextMenuShowing(true);
 					}}>(options)</CommandItem>
 
-				</ul>
+				</ol>
+					</TitledList>
+					
+				</div>
+				
 			</div>
+			<div id="MainPane" style={{
+				width: "calc ( 100% - 300px )"
+			}}>
+				<div style={{
+					maxHeight: 220,
+					height: "30vh",
+					border: "1px solid black",
+					boxSizing: "content-box",
+					overflowY: "hidden"
+				} }>
+					<TitledList title="Save Data">
+						<ItemList {...listProps}/>
+					</TitledList>
+					
+					
+				</div>
+				<div >
 			{displayIndex >= 0 && displayIndex < commands.length &&
 				<DisplayPane 
 					overlaySave={overlaySave}
@@ -185,6 +291,38 @@ export const App: React.FC =  () => {
 					}}
 				/> 
 			}
+			</div>
+			</div>
+
+
+
+
+			{/* <div id="SavePane" style={{
+				height: "200px"
+			}}>
+				
+				
+			</div>
+			<div id="InstructionPane" style={{
+
+			}}> */}
+			{/* <div id="CommandList" style={{
+				width: "300px",
+				height: "calc( 60vh - 5px )",
+				overflowY: "auto",
+		
+				
+				border: "1px solid black",
+				boxSizing: "content-box"
+			} }>
+				
+				
+				
+			</div> */}
+			
+			
+			{/* </div> */}
+			
 
 			{
 				contextMenuShowing && <div style={{

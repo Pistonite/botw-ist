@@ -46,6 +46,10 @@ export class Inventory {
 		return this.turnedInOrbs;
 	}
 
+	public rawInit(stacks: ItemStack[]) {
+		this.slots = new Slots(stacks);
+	}
+
 	public init(stacks: ItemStack[]) {
 		this.slots = new Slots([]);
 		stacks.forEach(s=>{
