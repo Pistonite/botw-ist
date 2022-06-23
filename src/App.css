@@ -30,11 +30,30 @@ h1 {
 }
 
 .CommandItem:hover {
-  background-color: #eeeeee;
+  border: 1px solid black;
+}
+
+.CommandInput {
+  border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 2px solid #0074d9;
+  color: #b7f1ff;
+  text-shadow: 0 0 5px #3aa0ff,0 0 5px #3aa0ff,0 0 5px #3aa0ff;
+}
+
+.CommandInput:focus-visible {
+  border-color: #b7f1ff;
 }
 
 .InputError {
-  background-color: #eeaaaa;
+  color: #ff3333;
+  text-shadow: 0 0 5px #ee7777,0 0 5px #ee7777,0 0 5px #ee7777;
+  border-bottom: 2px solid #dd0000;
+}
+
+.InputError:focus-visible {
+  border-bottom: 2px solid #ff3333;
 }
 
 .ItemSlot {
@@ -42,7 +61,7 @@ h1 {
   width: 64px;
   height: 64px;
   
-  background-color: #333333;
+  background-color: #333333bb;
   box-sizing: content-box;
   display: inline-block;
 }
@@ -51,7 +70,7 @@ h1 {
   background-color: #660000;
 }
 
-.ItemSlotSave {
+.GameDataBackground {
   background-color: #003300;
 }
 
@@ -80,4 +99,22 @@ h1 {
 h3.ListHeader {
   margin: 0;
   padding: 10px;
+}
+
+h4.Reference {
+  margin: 0;
+  color: #cccccc;
+}
+
+p.Reference {
+  padding-left: 20px;
+}
+
+p.Example {
+  color:#eeee00;
+}
+
+h3.Reference {
+  margin-top: 30px;
+  margin-bottom: 0
 }

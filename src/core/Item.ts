@@ -5,9 +5,10 @@ export enum ItemType {
     Bow = 1,
 	Arrow = 2,
     Shield = 3,
-    Material = 4,
-    Meal = 5,
-    Key = 6
+	Armor = 4,
+    Material = 5,
+    Meal = 6,
+    Key = 7
 }
 
 export const ItemTypes = [
@@ -73,6 +74,8 @@ export enum Item {
 	HeartyRadish = "HeartyRadish",
 	BigHeartyRadish = "BigHeartyRadish",
 	Fairy = "Fairy",
+
+	MasterSword = "MasterSword",
 }
 
 type ItemData = {
@@ -90,6 +93,7 @@ const TypeToCount = {
 	[ItemType.Bow]: 0,
 	[ItemType.Arrow]: 0,
 	[ItemType.Shield]: 0,
+	[ItemType.Armor]: 0,
 	[ItemType.Material]: 0,
 	[ItemType.Key]: 0,
 	[ItemType.Meal]: 0,
@@ -161,6 +165,9 @@ register(0x50, Item.Weapon, ItemType.Weapon, {
 	image: Images.Axe,
 	stackable: false
 });
+register(0, Item.MasterSword, ItemType.Weapon, {
+	stackable: false,
+})
 
 register(0x60, Item.Bow, ItemType.Bow, {
 	image: Images.ForestDwellerBow,

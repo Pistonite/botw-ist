@@ -1,23 +1,15 @@
+import { DisplayableSlot } from "core/DisplayableInventory";
 import { ItemSlot } from "./ItemSlot";
 
-export type ItemListItemProps = {
-	image: string, 
-	count: number, 
-	isEquipped: boolean,
-}
-
 export type ItemListProps = {
-	isSave: boolean,
-    items: ItemListItemProps[],
-    numBroken: number
+    slots: DisplayableSlot[]
 }
 
-export const ItemList: React.FC<ItemListProps> = ({items, numBroken, isSave}) => {
+export const ItemList: React.FC<ItemListProps> = ({slots}) => {
 	return <>
 		{
-			items.map(({image, count, isEquipped}, i)=>{
-				const broken = i+numBroken >= items.length;
-				return <ItemSlot key={i} image={image} count={count} isBroken={broken} isSave={isSave} isEquipped={isEquipped}/>;
+			slots.map((slot, i)=>{
+				return <ItemSlot key={i} slot={slot}/>;
 			})
 		}
 	</>;

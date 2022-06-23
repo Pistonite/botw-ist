@@ -1,5 +1,11 @@
+import { count } from "console";
+import { stableSort } from "data/mergeSort";
 import { Item, ItemStack, itemToItemData, ItemType } from "./Item";
 
+
+/*
+ * This is the data model common to GameData and VisibleInventory
+ */
 export class Slots {
 	private internalSlots: ItemStack[] = [];
 	constructor(slots: ItemStack[]) {
@@ -14,184 +20,301 @@ export class Slots {
 	public get length(): number {
 		return this.internalSlots.length;
 	}
-	public get(i: number): ItemStack{
-		return this.internalSlots[i];
-	}
-	public getByType(type: ItemType): Slots {
-		return new Slots(this.internalSlots.filter(s=>itemToItemData(s.item).type===type));
-	}
-	public getBeforeType(type: ItemType): Slots {
-		return new Slots(this.internalSlots.filter(s=>itemToItemData(s.item).type<type));
-	}
-	public getAfterType(type: ItemType): Slots {
-		return new Slots(this.internalSlots.filter(s=>itemToItemData(s.item).type>type));
-	}
-	public addSlotsToEnd(slots: Slots) {
-		slots.internalSlots.forEach(s=>this.addStack(s));
-	}
-	public addStack(stack: ItemStack) {
-		// Scan non-repeatables
-		const data = itemToItemData(stack.item);
-		if(!data.repeatable){
-			for(let i=0;i<this.internalSlots.length;i++){
-				if(this.internalSlots[i].item===stack.item){
-					return;
-				}
-			}
+
+	// Sort the item types as they appear in game. Arrows are also sorted amongst each other
+	// input mCount = null will skip the optimization. Otherwise if mCount <= 1, do nothing
+	public sortItemType(mCount: number | null) {
+		if(mCount === null){
+			mCount = this.internalSlots.length;
 		}
-		this.internalSlots.push(stack);
-	}
-	public addStackCopy(stack: ItemStack) {
-		this.addStack({...stack});
-	}
-	public sort() {
-		this.internalSlots.sort((a,b)=>{
-			return itemToItemData(a.item).sortOrder - itemToItemData(b.item).sortOrder;
+		if(mCount <= 1){
+			return;
+		}
+		stableSort(this.internalSlots, (a,b)=>{
+			const aData = itemToItemData(a.item);
+			const bData = itemToItemData(b.item);
+			if(aData.type === ItemType.Arrow && bData.type === ItemType.Arrow){
+				return aData.sortOrder - bData.sortOrder;
+			}
+			return aData.type - bData.type;
 		});
 	}
-	public removeFromEnd(count: number): Slots {
-		const end = this.internalSlots.splice(-count, count);
-		return new Slots(end);
-	}
-	public remove(item: Item, count: number, slot: number) {
-		let s = 0;
-		for(let i = 0; i<this.internalSlots.length && count > 0;i++){
-			if(this.internalSlots[i].item === item){
-				if(s<slot){
-					s++;
-				}else{
-					if(this.internalSlots[i].count<count){
-						count-=this.internalSlots[i].count;
-						this.internalSlots[i].count=0;
-						
-					}else{
-						this.internalSlots[i].count-=count;
-						break;
-					}
-					
-				}
-			}
-		}
-		this.internalSlots = this.internalSlots.filter(({count})=>count>0);
-	}
 
-	public add(item: Item, count: number) {
-		let added = false;
+	public clearFirst(count: number) {
+		this.internalSlots.splice(0, count);
+	}
+	// public get(i: number): ItemStack{
+	// 	return this.internalSlots[i];
+	// }
+	// public getByType(type: ItemType): Slots {
+	// 	return new Slots(this.internalSlots.filter(s=>itemToItemData(s.item).type===type));
+	// }
+	// public getBeforeType(type: ItemType): Slots {
+	// 	return new Slots(this.internalSlots.filter(s=>itemToItemData(s.item).type<type));
+	// }
+	// public getAfterType(type: ItemType): Slots {
+	// 	return new Slots(this.internalSlots.filter(s=>itemToItemData(s.item).type>type));
+	// }
+	// public addSlotsToEnd(slots: Slots) {
+	// 	slots.internalSlots.forEach(s=>this.addStack(s));
+	// }
+	public addStackDirectly(stack: ItemStack): number {
+		const data = itemToItemData(stack.item);
+		if(data.stackable){
+			this.internalSlots.push(stack);
+			return 1;
+		}
+		for(let i=0;i<stack.count;i++){
+			this.internalSlots.push({...stack, count: 1});
+		}
+		return stack.count;
+	}
+	public addSlot(stack: ItemStack, mCount: number | null) {
+		this.internalSlots.push(stack);
+		this.sortItemType(mCount);
+	}
+	// public addStackCopy(stack: ItemStack) {
+	// 	this.addStack({...stack});
+	// }
+	// public sort() {
+	// 	this.internalSlots.sort((a,b)=>{
+	// 		return itemToItemData(a.item).sortOrder - itemToItemData(b.item).sortOrder;
+	// 	});
+	// }
+	// public removeFromEnd(count: number): Slots {
+	// 	const end = this.internalSlots.splice(-count, count);
+	// 	return new Slots(end);
+	// }
+	// public remove(item: Item, count: number, slot: number) {
+	// 	let s = 0;
+	// 	for(let i = 0; i<this.internalSlots.length && count > 0;i++){
+	// 		if(this.internalSlots[i].item === item){
+	// 			if(s<slot){
+	// 				s++;
+	// 			}else{
+	// 				if(this.internalSlots[i].count<count){
+	// 					count-=this.internalSlots[i].count;
+	// 					this.internalSlots[i].count=0;
+						
+	// 				}else{
+	// 					this.internalSlots[i].count-=count;
+	// 					break;
+	// 				}
+					
+	// 			}
+	// 		}
+	// 	}
+	// 	this.internalSlots = this.internalSlots.filter(({count})=>count>0);
+	// }
+
+	// Add something to inventory in game
+	// returns number of slots added
+	public add(item: Item, count: number, equippedDuringReload: boolean, reloading: boolean, mCount: number | null): number {
+		if(mCount === null){
+			mCount = this.internalSlots.length;
+		}
+		//let added = false;
 		const data = itemToItemData(item);
+		// If item is stackable (arrow, material, spirit orbs)
+		// Check if there's already a slot, if so, add it to that and cap it at 999
 		if(data.stackable){
 			for(let i = 0; i<this.internalSlots.length;i++){
 				if(this.internalSlots[i].item === item){
-					this.internalSlots[i].count+=count;
-					added = true;
-					break;
+					if(reloading){
+						if(this.internalSlots[i].count + count > 999){
+							// do not add new stack during loading save, if it would exceed 999
+							return 0;
+						}
+						// Otherwise add the stack directly
+						this.addSlot({item, count, equipped: equippedDuringReload}, mCount+1);
+						return 1;
+					}
+					this.internalSlots[i].count = Math.min(999, this.internalSlots[i].count+count);
+					return 0;
 				}
 			}
 		}
-		if(!added){
-			const after = this.removeFromEnd(this.getAfterType(data.type).length);
-			if(data.stackable){
-				if(data.type===ItemType.Arrow){
-					// if currently equipped arrow == 0. new arrows are equiped
-					const shouldEquipNew = this.internalSlots.filter(s=>{
-						const sData = itemToItemData(s.item);
-						return sData.type === data.type && s.equipped && s.count > 0;
-					}).length === 0;
-					this.addStack({item,count,equipped:shouldEquipNew});
-				}else{
-					this.addStack({item,count,equipped:false});
+		// Need to add new slot
+		// Key item check: if the key item or master sword already exists in the first tab, do not add
+		if(mCount != 0){
+			if(data.type === ItemType.Key || item === Item.MasterSword) {
+				let i=0;
+				while(i<this.internalSlots.length && itemToItemData(this.internalSlots[i].item).type < data.type){
+					i++;
 				}
-                
+				for(;i<this.internalSlots.length && itemToItemData(this.internalSlots[i].item).type === data.type;i++){
+					if(this.internalSlots[i].item === item){
+						// Found the key item/master sword, do not add
+						return 0;
+					}
+				}
+			}
+		}
+		
+		// Checks finish, do add new slot
+		if(data.stackable){
+			if(data.type===ItemType.Arrow){
+				// if currently equipped arrow == 0. new arrows are equiped
+				// TODO: botw needs more testing on how arrows are handled in various cases
+				const shouldEquipNew = this.internalSlots.filter(s=>{
+					const sData = itemToItemData(s.item);
+					return sData.type === data.type && s.equipped && s.count > 0;
+				}).length === 0;
+				this.addSlot({item,count,equipped:shouldEquipNew}, mCount+1);
 			}else{
-				if(data.type===ItemType.Weapon || data.type===ItemType.Bow || data.type===ItemType.Shield){
-					//Check equip
-					const shouldEquipNew = this.internalSlots.filter(s=>{
-						const sData = itemToItemData(s.item);
-						return sData.type === data.type && s.equipped;
-					}).length === 0;
-					this.addStack({item,count:1,equipped: shouldEquipNew});
-					for(let i=1;i<count;i++){
-						this.addStack({item,count:1,equipped: false});
+				this.addSlot({item,count,equipped:false}, mCount+1);
+			}
+			return 1;
+		}
 
-					}
-				}else{
-					for(let i=0;i<count;i++){
-						this.addStack({item,count:1,equipped: false});
-					}
-				}
+		if(data.type===ItemType.Weapon || data.type===ItemType.Bow || data.type===ItemType.Shield){
+			//Check equip
+			const shouldEquipNew = !reloading && this.internalSlots.filter(s=>{
+				const sData = itemToItemData(s.item);
+				return sData.type === data.type && s.equipped;
+			}).length === 0;
+			this.addSlot({item,count:1,equipped: shouldEquipNew}, mCount+1);
+			for(let i=1;i<count;i++){
+				this.addSlot({item,count:1,equipped: false}, mCount+i+1);
+
+			}
+		}else{
+			for(let i=0;i<count;i++){
+				this.addSlot({item,count:1,equipped: false}, mCount+i+1);
+			}
+		}
+
+		return count;
+	}
+
+	// return how many slots are added
+	// public add(item: Item, count: number, equipped: boolean, isReloading: boolean, mCount: number): number {
+	// 	let added = false;
+	// 	const data = itemToItemData(item);
+	// 	if(data.stackable){
+	// 		for(let i = 0; i<this.internalSlots.length;i++){
+	// 			if(this.internalSlots[i].item === item){
+	// 				if(isReloading){
+	// 					if(mCount > 0 && this.internalSlots[i].count + count > 999){
+	// 						return 0; // Skip, do not add new stack at all
+	// 					}
+	// 					// Otherwise push the entire new stack
+	// 					this.internalSlots.push({item, count, equipped});
+	// 				}else{
+	// 					this.internalSlots[i].count = Math.min(999, this.internalSlots[i].count+count);
+	// 					added = true;
+	// 				}
+					
+	// 				break;
+	// 			}
+	// 		}
+	// 	}
+	// 	if(!added){
+	// 		const after = this.removeFromEnd(this.getAfterType(data.type).length);
+	// 		if(data.stackable){
+	// 			if(data.type===ItemType.Arrow){
+	// 				// if currently equipped arrow == 0. new arrows are equiped
+	// 				const shouldEquipNew = this.internalSlots.filter(s=>{
+	// 					const sData = itemToItemData(s.item);
+	// 					return sData.type === data.type && s.equipped && s.count > 0;
+	// 				}).length === 0;
+	// 				this.addStack({item,count,equipped:shouldEquipNew});
+	// 			}else{
+	// 				this.addStack({item,count,equipped:false});
+	// 			}
                 
-			}
+	// 		}else{
+	// 			if(data.type===ItemType.Weapon || data.type===ItemType.Bow || data.type===ItemType.Shield){
+	// 				//Check equip
+	// 				const shouldEquipNew = this.internalSlots.filter(s=>{
+	// 					const sData = itemToItemData(s.item);
+	// 					return sData.type === data.type && s.equipped;
+	// 				}).length === 0;
+	// 				this.addStack({item,count:1,equipped: shouldEquipNew});
+	// 				for(let i=1;i<count;i++){
+	// 					this.addStack({item,count:1,equipped: false});
 
-			this.addSlotsToEnd(after);
-		}	
-	}
-	// this is for both equipments and arrows
-	public equip(item: Item, slot: number) {
-		let s = 0;
-		const type = itemToItemData(item).type;
-		const filtered = this.internalSlots.filter(s=>itemToItemData(s.item).type === type);
-		for(let i = 0; i<filtered.length;i++){
-			filtered[i].equipped=false;
-			if(filtered[i].item === item){
-				if (s===slot){
-					filtered[i].equipped=true;
-				}
-				s++;
-			}
-		}
-	}
-	public unequip(item:Item, slot: number) {
-		let s = 0;
-		const type = itemToItemData(item).type;
-		if (type===ItemType.Arrow){
-			return; // cannot unequip arrow
-		}
-		for(let i = 0; i<this.internalSlots.length;i++){
-			if(this.internalSlots[i].item === item){
-				if(slot < 0){
-					if(this.internalSlots[i].equipped){
-						this.internalSlots[i].equipped=false;
-						break;
-					}
-				}else{
-					if(s<slot){
-						s++;
-					}else{
-						this.internalSlots[i].equipped=false;
-						break;
-					}
-				}
-			}
-		}
-	}
+	// 				}
+	// 			}else{
+	// 				for(let i=0;i<count;i++){
+	// 					this.addStack({item,count:1,equipped: false});
+	// 				}
+	// 			}
+                
+	// 		}
 
-	// Difference between shoot and remove:
-	// 1. can only be from first (leftmost) slot
-	// 2. empty slots not removed
-	public shoot(item: Item, count: number) {
-		for(let i = 0; i<this.internalSlots.length;i++){
-			if(this.internalSlots[i].item === item){
-				this.internalSlots[i].count-=count;
-			}
-		}
-	}
+	// 		this.addSlotsToEnd(after);
+	// 	}	
+	// }
 
-	public sortArrows() {
-		const after = this.removeFromEnd(this.getAfterType(ItemType.Arrow).length);
-		const arrows = this.removeFromEnd(this.getByType(ItemType.Arrow).length);
-		arrows.sort();
-		this.addSlotsToEnd(arrows);
-		this.addSlotsToEnd(after);
-	}
+	// // this is for both equipments and arrows
+	// public equip(item: Item, slot: number) {
+	// 	let s = 0;
+	// 	const type = itemToItemData(item).type;
+	// 	const filtered = this.internalSlots.filter(s=>itemToItemData(s.item).type === type);
+	// 	for(let i = 0; i<filtered.length;i++){
+	// 		filtered[i].equipped=false;
+	// 		if(filtered[i].item === item){
+	// 			if (s===slot){
+	// 				filtered[i].equipped=true;
+	// 			}
+	// 			s++;
+	// 		}
+	// 	}
+	// }
+	// public unequip(item:Item, slot: number) {
+	// 	let s = 0;
+	// 	const type = itemToItemData(item).type;
+	// 	if (type===ItemType.Arrow){
+	// 		return; // cannot unequip arrow
+	// 	}
+	// 	for(let i = 0; i<this.internalSlots.length;i++){
+	// 		if(this.internalSlots[i].item === item){
+	// 			if(slot < 0){
+	// 				if(this.internalSlots[i].equipped){
+	// 					this.internalSlots[i].equipped=false;
+	// 					break;
+	// 				}
+	// 			}else{
+	// 				if(s<slot){
+	// 					s++;
+	// 				}else{
+	// 					this.internalSlots[i].equipped=false;
+	// 					break;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 
-	public getFirstEquippedSlotIndex(type: ItemType): number {
-		for(let i = 0; i<this.internalSlots.length;i++){
-			if(this.internalSlots[i].equipped){
-				const data = itemToItemData(this.internalSlots[i].item);
-				if(data.type === type){
-					return i;
-				}
-			}
-		}
-		return -1;
-	}
+	// // Difference between shoot and remove:
+	// // 1. can only be from first (leftmost) slot
+	// // 2. empty slots not removed
+	// public shoot(item: Item, count: number) {
+	// 	for(let i = 0; i<this.internalSlots.length;i++){
+	// 		if(this.internalSlots[i].item === item){
+	// 			this.internalSlots[i].count-=count;
+	// 		}
+	// 	}
+	// }
+
+	// public sortArrows() {
+	// 	const after = this.removeFromEnd(this.getAfterType(ItemType.Arrow).length);
+	// 	const arrows = this.removeFromEnd(this.getByType(ItemType.Arrow).length);
+	// 	arrows.sort();
+	// 	this.addSlotsToEnd(arrows);
+	// 	this.addSlotsToEnd(after);
+	// }
+
+	// public getFirstEquippedSlotIndex(type: ItemType): number {
+	// 	for(let i = 0; i<this.internalSlots.length;i++){
+	// 		if(this.internalSlots[i].equipped){
+	// 			const data = itemToItemData(this.internalSlots[i].item);
+	// 			if(data.type === type){
+	// 				return i;
+	// 			}
+	// 		}
+	// 	}
+	// 	return -1;
+	// }
 }

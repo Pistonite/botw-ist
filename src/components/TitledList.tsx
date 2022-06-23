@@ -8,9 +8,9 @@ export const TitledList: React.FC<TitledListProps> = ({title, children}) => {
     return (
         <>
             <h3 className="ListHeader" style={{
-                height: 20,
-                border: "1px solid red",
-                boxSizing: "content-box"
+                height: 40,
+                borderBottom: "2px solid",
+                boxSizing: "border-box",
             }}>
                 {title}
             </h3>
