@@ -1,5 +1,5 @@
-import { Item, ItemStack, itemToItemData, ItemType, ItemTypes } from "./Item";
-import { Slots } from "./Slots";
+// import { Item, ItemStack, itemToItemData, ItemType, ItemTypes } from "./Item";
+// import { Slots } from "./Slots";
 
 export class Inventory {
 	// private slots: Slots = new Slots([]);

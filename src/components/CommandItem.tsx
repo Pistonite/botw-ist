@@ -11,7 +11,7 @@ type CommandItemProps = PropsWithChildren<{
 
 export const CommandItem: React.FC<CommandItemProps> = ({isSelected, isContextSelected, comment,children, onClick, onContextMenu}) => {
 	if(comment){
-		return <div className={clsx("CommandItem", isSelected && "CommandItemSelected", isContextSelected&& "CommandItemContextSelected",comment && "CommandItemComment")}>{children}</div>
+		return <div className={clsx("CommandItem", isSelected && "CommandItemSelected", isContextSelected&& "CommandItemContextSelected",comment && "CommandItemComment")}>{children}</div>;
 	}
 	return <li 
 		className={clsx("CommandItem", isSelected && "CommandItemSelected", isContextSelected&& "CommandItemContextSelected",comment && "CommandItemComment")}

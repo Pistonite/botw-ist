@@ -1,5 +1,5 @@
 import { Inventory } from "./Inventory";
-import { Item, ItemStack, itemToArrowType } from "./Item";
+import { Item, ItemStack } from "./Item";
 import { SimulationState } from "./SimulationState";
 
 export interface Command {
@@ -69,7 +69,6 @@ export class CommandReload implements Command {
 		return `Reload${this.name?` ${this.name}`:""}`;
 	}
 }
-
 
 export class CommandUse implements Command {
 	private name: string;
@@ -215,7 +214,7 @@ const joinItemStackString = (initial: string, stacks: ItemStack[]): string => {
 		parts.push(item);
 	});
 	return parts.join(" ");
-}
+};
 
 export class CommandDaP implements Command {
 	private count: number;
@@ -273,7 +272,7 @@ export class CommandUnequip implements Command {
 }
 
 export class CommandShootArrow implements Command {
-	private count: number
+	private count: number;
 	constructor(count: number){
 		this.count = count;
 	}
@@ -286,39 +285,28 @@ export class CommandShootArrow implements Command {
 	}
 }
 
+export class CommandCloseGame implements Command {
+	public execute(state: SimulationState): void {
+		state.closeGame();
+	}
+	public getDisplayString(): string {
+		return "Close Game";
+	}
+}
 
-// export class CommandEquipArrow implements Command {
-// 	private item: Item;
-// 	private slot: number;
-// 	private noSlot: boolean;
-// 	constructor(item: Item, slot: number, noSlot: boolean){
-// 		this.item = item;
-// 		this.slot = slot;
-// 		this.noSlot = noSlot;
-// 	}
-	
-// 	public execute(inv: Inventory): void {
-// 		inv.equipEquipmentOrArrow(this.item, this.slot);
-// 	}
-// 	public getDisplayString(): string {
-// 		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`;
-// 		return `Equip ${itemToArrowType(this.item)} Arrow${slotString}`;
-// 	}
-// }
+export class CommandSync implements Command {
+	private actionString: string;
+	constructor(actionString: string){
+		this.actionString = actionString;
+	}
 
-
-
-
-
-
-// export class CommandCloseGame implements Command {
-// 	public execute(inv: Inventory): void {
-// 		inv.closeGame();
-// 	}
-// 	public getDisplayString(): string {
-// 		return "Close Game";
-// 	}
-// }
+	public execute(state: SimulationState): void {
+		state.syncGameDataWithPouch();
+	}
+	public getDisplayString(): string {
+		return this.actionString;
+	}
+}
 
 export class CommandComment implements Command {
 	private name: string;
@@ -333,38 +321,38 @@ export class CommandComment implements Command {
 	}
 }
 
-// export class CommandSortKey implements Command {
-// 	static Op = 0x5;
-// 	// public fromBuffer(_buf: Buffer): number {
-// 	// 	return 0;
-// 	// }
-// 	// public toBuffer(): Buffer {
-// 	// 	const buf: Buffer = Buffer.alloc(1);
-// 	// 	buf.writeInt8(CommandSortKey.Op);
-// 	// 	return buf;
-// 	// }
-// 	public execute(inv: Inventory): void {
-// 		inv.sortKey();
-// 	}
-// 	public getDisplayString(): string {
-// 		return "Sort Key";
-// 	}
-// }
+export class CommandSortKey implements Command {
+	static Op = 0x5;
+	// public fromBuffer(_buf: Buffer): number {
+	// 	return 0;
+	// }
+	// public toBuffer(): Buffer {
+	// 	const buf: Buffer = Buffer.alloc(1);
+	// 	buf.writeInt8(CommandSortKey.Op);
+	// 	return buf;
+	// }
+	public execute(_state: SimulationState): void {
+		// wip
+	}
+	public getDisplayString(): string {
+		return "Sort Key";
+	}
+}
 
-// export class CommandSortMaterial implements Command {
-// 	static Op = 0x6;
-// 	// public fromBuffer(_buf: Buffer): number {
-// 	// 	return 0;
-// 	// }
-// 	// public toBuffer(): Buffer {
-// 	// 	const buf: Buffer = Buffer.alloc(1);
-// 	// 	buf.writeInt8(CommandSortMaterial.Op);
-// 	// 	return buf;
-// 	// }
-// 	public execute(inv: Inventory): void {
-// 		inv.sortMaterial();
-// 	}
-// 	public getDisplayString(): string {
-// 		return "Sort Material";
-// 	}
-// }
+export class CommandSortMaterial implements Command {
+	static Op = 0x6;
+	// public fromBuffer(_buf: Buffer): number {
+	// 	return 0;
+	// }
+	// public toBuffer(): Buffer {
+	// 	const buf: Buffer = Buffer.alloc(1);
+	// 	buf.writeInt8(CommandSortMaterial.Op);
+	// 	return buf;
+	// }
+	public execute(_state: SimulationState): void {
+		// wip
+	}
+	public getDisplayString(): string {
+		return "Sort Material";
+	}
+}

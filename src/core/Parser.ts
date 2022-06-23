@@ -4,6 +4,7 @@ import {
 	CommandAddMultiple,
 	CommandAddWithoutCount,
 	CommandBreakSlots,
+	CommandCloseGame,
 	CommandComment,
 	CommandDaP,
 	CommandEquip,
@@ -16,6 +17,9 @@ import {
 	CommandSave,
 	CommandSaveAs,
 	CommandShootArrow,
+	CommandSortKey,
+	CommandSortMaterial,
+	CommandSync,
 	CommandUnequip,
 	CommandUse
 } from "./Command";
@@ -54,7 +58,7 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 	if(tokens.length===2 && tokens[0] === "Reload"){
 		return new CommandReload(tokens[1]);
 	}
-    // break
+	// break
 	if (tokens.length > 2 && tokens[0] === "Break" && tokens[2]=== "Slots" ){
 		const slots = parseInt(tokens[1]);
 		if(Number.isInteger(slots)){
@@ -176,50 +180,29 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		return undefined;
 	}
 	
-	// if(tokens.length===2 && tokens[0] === "Sort" && tokens[1] === "Key"){
-	// 	return new CommandSortKey();
-	// }
-	// if(tokens.length===2 && tokens[0] === "Sort" && tokens[1] === "Material"){
-	// 	return new CommandSortMaterial();
-	// }
-	// if(tokens.length===2 && tokens[0] === "Close" && tokens[1] === "Game"){
-	// 	return new CommandCloseGame();
-	// }
-	
-	// 	return undefined;
-	// }
-	// // remove material
-	
-	
-	
-	
-	// // Equip Arrow
-	// if (tokens.length === 6 && tokens[0] === "Equip" && tokens[2] === "Arrow" && tokens[3] === "In" && tokens[4] ==="Slot" ){
-	// 	const item = tokens[1]+"Arrow";
-	// 	const slot = parseInt(tokens[5]);
-	// 	if( Number.isInteger(slot) && item in Item){
-	// 		return new CommandEquipArrow(Item[item as keyof typeof Item], slot-1, false);
-	// 	}
-	// 	return undefined;
-	// }
-	// if (tokens.length === 3 && tokens[0] === "Equip" && tokens[2] === "Arrow" ){
-	// 	const item = tokens[1]+"Arrow";
-	// 	if(item in Item){
-	// 		return new CommandEquipArrow(Item[item as keyof typeof Item], 0, true);
-	// 	}
-	// 	return undefined;
-	// }
+	if(tokens.length===2 && tokens[0] === "Sort" && tokens[1] === "Key"){
+		return new CommandSortKey();
+	}
+	if(tokens.length===2 && tokens[0] === "Sort" && tokens[1] === "Material"){
+		return new CommandSortMaterial();
+	}
+	if(tokens.length===2 && tokens[0] === "Close" && tokens[1] === "Game"){
+		return new CommandCloseGame();
+	}
+	if(tokens.length===2 && tokens[0] === "Sync" && tokens[1] === "GameData"){
+		return new CommandSync("Sync GameData");
+	}
 	
 	return undefined;
 };
 
 const isAddVerb = (token: string): boolean => {
-	return token === "Get" || token === "Cook" || token === "Add" || token === "Pickup"
-}
+	return token === "Get" || token === "Cook" || token === "Add" || token === "Pickup";
+};
 
 const isRemoveVerb = (token: string): boolean => {
-	return token === "Remove" || token === "Sell" || token === "Eat" || token === "Drop"
-}
+	return token === "Remove" || token === "Sell" || token === "Eat" || token === "Drop";
+};
 
 const parseItemStacks = (tokens: string[], from: number): ItemStack[] | undefined => {
 	if((tokens.length-from)%2 !== 0){
@@ -242,4 +225,4 @@ const parseItemStacks = (tokens: string[], from: number): ItemStack[] | undefine
 		}
 	}
 	return stacks;
-}
+};

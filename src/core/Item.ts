@@ -76,6 +76,7 @@ export enum Item {
 	Fairy = "Fairy",
 
 	MasterSword = "MasterSword",
+	ZoraArmor = "ZoraArmor",
 }
 
 type ItemData = {
@@ -167,7 +168,7 @@ register(0x50, Item.Weapon, ItemType.Weapon, {
 });
 register(0, Item.MasterSword, ItemType.Weapon, {
 	stackable: false,
-})
+});
 
 register(0x60, Item.Bow, ItemType.Bow, {
 	image: Images.ForestDwellerBow,
@@ -184,6 +185,10 @@ register(0x80, Item.Shield, ItemType.Shield, {
 	stackable: false
 });
 
+register(9, Item.ZoraArmor, ItemType.Armor, {
+	stackable: false
+});
+
 //export const idToItemData = (id: number): ItemData => IdToData[id];
 export const itemToItemData = (item: Item): ItemData => ItemToData[item] as ItemData;
 export const itemToArrowType = (item: Item): string => {
@@ -193,3 +198,5 @@ export const itemToArrowType = (item: Item): string => {
 	}
 	return "";
 };
+
+export const getAllItems = (): string[] => Object.keys(ItemToData);

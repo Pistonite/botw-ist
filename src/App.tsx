@@ -1,19 +1,16 @@
 import { Command, CommandNothing } from "core/Command";
-import { Inventory } from "core/Inventory";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import "./App.css";
 import { CommandItem } from "./components/CommandItem";
 
 import { DisplayPane } from "surfaces/DisplayPane";
-import { Item } from "core/Item";
 import { saveAs } from "data/FileSaver";
 import { parseCommand } from "core/Parser";
 import { ItemList } from "components/ItemList";
 import { TitledList } from "components/TitledList";
 import { createSimulationState, SimulationState } from "core/SimulationState";
 import { ReferencePage } from "surfaces/ReferencePage";
-import { GameData } from "core/GameData";
 
 const getDefaultCommands = (): Command[]=>{
 	const encoded = localStorage.getItem("HDS.CurrentCommandsText");
@@ -28,9 +25,8 @@ const getDefaultCommands = (): Command[]=>{
 		parseCommand("Reload"),
 		parseCommand("Save"),
 		parseCommand("Reload"),
-	]  as Command[];;
+	]  as Command[];
 };
-
 
 export const App: React.FC =  () => {
 	const [page, setPageInState] = useState<string>("#simulation");
@@ -120,12 +116,12 @@ export const App: React.FC =  () => {
 				height: 40
 			}}>
 				<button onClick={()=>{
-					setPage("#simulation")
+					setPage("#simulation");
 				}}>Simulation</button>
 				<button onClick={()=>{
-					setPage("#reference")
+					setPage("#reference");
 				}}>Reference</button>
-				<button>Options</button>
+				<button disabled>Options</button>
 			</div>
 
 			<div id="SidePane" style={{
@@ -147,31 +143,31 @@ export const App: React.FC =  () => {
 								{
 									!!simulationStates[displayIndex].getManualSave() &&
 									<CommandItem 
-								onClick={()=>{
-									setSelectedSaveName("");
-								}}  
-								comment={false}
-								isSelected={selectedSaveName===""}
+										onClick={()=>{
+											setSelectedSaveName("");
+										}}  
+										comment={false}
+										isSelected={selectedSaveName===""}
 
-							>
+									>
 								Manual Save
-							</CommandItem>
+									</CommandItem>
 								}
 							
-							{
-								Object.entries(simulationStates[displayIndex].getNamedSaves()).map(([name, _gamedata])=>(
-									<CommandItem 
-								onClick={()=>{
-									setSelectedSaveName(name);
-								}}  
-								comment={false}
-								isSelected={selectedSaveName===name}
-							>
-								{name}
-							</CommandItem>
-								))
-							}
-					</ol>
+								{
+									Object.entries(simulationStates[displayIndex].getNamedSaves()).map(([name, _gamedata])=>
+										<CommandItem 
+											onClick={()=>{
+												setSelectedSaveName(name);
+											}}  
+											comment={false}
+											isSelected={selectedSaveName===name}
+										>
+											{name}
+										</CommandItem>
+									)
+								}
+							</ol>
 						}
 					
 					</TitledList>
@@ -185,55 +181,55 @@ export const App: React.FC =  () => {
 					
 				}}>
 					<TitledList title="Instructions">
-					<ol style={{
-				}}>
-					{
-						commands.map((c,i)=>
-							<CommandItem 
-								onClick={()=>{
-									setDisplayIndex(i);
-									const inputField = document.getElementById("CommandInputField");
-									if(inputField){
-										inputField.focus();
-									}
-								}} 
-								onContextMenu={(x,y)=>{
-									setContextIndex(i);
-									setContextMenuX(x);
-									setContextMenuY(y);
-									setContextMenuShowing(true);
-								}}
-								key={i} 
-								isSelected={displayIndex===i}
-								isContextSelected={contextIndex===i}
-								comment={c.getDisplayString().startsWith("#")}
-							>
-								{c.getDisplayString()}
-							</CommandItem>
-						)
-					}
-					<CommandItem onClick={()=>{
-						const arrCopy = [...commands];
-						arrCopy.push(new CommandNothing());
-						setCommands(arrCopy);
-					}} onContextMenu={()=>{
-						const arrCopy = [...commands];
-						arrCopy.push(new CommandNothing());
-						setCommands(arrCopy);
-					}}>(new)</CommandItem>
-					<CommandItem onClick={(x,y)=>{
-						setContextIndex(-1);
-						setContextMenuX(x);
-						setContextMenuY(y);
-						setContextMenuShowing(true);
-					}} onContextMenu={(x,y)=>{
-						setContextIndex(-1);
-						setContextMenuX(x);
-						setContextMenuY(y);
-						setContextMenuShowing(true);
-					}}>(options)</CommandItem>
+						<ol style={{
+						}}>
+							{
+								commands.map((c,i)=>
+									<CommandItem 
+										onClick={()=>{
+											setDisplayIndex(i);
+											const inputField = document.getElementById("CommandInputField");
+											if(inputField){
+												inputField.focus();
+											}
+										}} 
+										onContextMenu={(x,y)=>{
+											setContextIndex(i);
+											setContextMenuX(x);
+											setContextMenuY(y);
+											setContextMenuShowing(true);
+										}}
+										key={i} 
+										isSelected={displayIndex===i}
+										isContextSelected={contextIndex===i}
+										comment={c.getDisplayString().startsWith("#")}
+									>
+										{c.getDisplayString()}
+									</CommandItem>
+								)
+							}
+							<CommandItem onClick={()=>{
+								const arrCopy = [...commands];
+								arrCopy.push(new CommandNothing());
+								setCommands(arrCopy);
+							}} onContextMenu={()=>{
+								const arrCopy = [...commands];
+								arrCopy.push(new CommandNothing());
+								setCommands(arrCopy);
+							}}>(new)</CommandItem>
+							<CommandItem onClick={(x,y)=>{
+								setContextIndex(-1);
+								setContextMenuX(x);
+								setContextMenuY(y);
+								setContextMenuShowing(true);
+							}} onContextMenu={(x,y)=>{
+								setContextIndex(-1);
+								setContextMenuX(x);
+								setContextMenuY(y);
+								setContextMenuShowing(true);
+							}}>(options)</CommandItem>
 
-				</ol>
+						</ol>
 					</TitledList>
 					
 				</div>
@@ -249,45 +245,51 @@ export const App: React.FC =  () => {
 			}}>
 				{
 					page === "#simulation" && <>
-					<div style={{
-						maxHeight: 220,
-						height: "30vh",
-						border: "1px solid black",
-						boxSizing: "border-box",
-						overflowY: "hidden",
-						color: "white",
-						backgroundColor: "#262626"
-					} }>
-						{
-							(displayIndex >= 0 && displayIndex < commands.length) ? 
-							<TitledList title="Save Data">
+						<div style={{
+							maxHeight: 220,
+							height: "30vh",
+							border: "1px solid black",
+							boxSizing: "border-box",
+							overflowY: "hidden",
+							color: "white",
+							backgroundColor: "#262626"
+						} }>
 							{
-								selectedSaveName === "" && !!simulationStates[displayIndex].getManualSave() &&
-								<ItemList slots={(simulationStates[displayIndex].getManualSave() as GameData).getDisplayedSlots()}/>
+								displayIndex >= 0 && displayIndex < commands.length ? 
+									<TitledList title="Save Data">
+										{
+											(()=>{
+												if (selectedSaveName === ""){
+													const manualSave = simulationStates[displayIndex].getManualSave();
+													if(manualSave){
+														return <ItemList slots={manualSave.getDisplayedSlots()}/>;
+													}
+												}else if(selectedSaveName){
+													const namedSaves = simulationStates[displayIndex].getNamedSaves();
+													if(selectedSaveName in namedSaves){
+														const save = namedSaves[selectedSaveName];
+														return <ItemList slots={save.getDisplayedSlots()}/>;
+													}
+												}
+												return null;
+											})()
+										}
+									</TitledList>
+									:
+									<TitledList title="Select an instruction on the left to view it">
+						
+									</TitledList>
 							}
-							{
-								selectedSaveName !== "" && !!simulationStates[displayIndex].getNamedSaves()[selectedSaveName] &&
-								<ItemList slots={(simulationStates[displayIndex].getNamedSaves()[selectedSaveName] as GameData).getDisplayedSlots()}/>
-							}
-						</TitledList>
-						:
-						<TitledList title="Select an instruction on the left to view it">
-							
 						
-						</TitledList>
-						}
-						
-						
-						
-					</div>
-					<div style={{
-						minHeight: "calc( 70vh - 40px )",
-						height: "calc( 100vh - 40px - 220px )",
-						border: "1px solid black",
-						boxSizing: "border-box",
-						overflowY: "hidden"
-					}}>
-				{displayIndex >= 0 && displayIndex < commands.length &&
+						</div>
+						<div style={{
+							minHeight: "calc( 70vh - 40px )",
+							height: "calc( 100vh - 40px - 220px )",
+							border: "1px solid black",
+							boxSizing: "border-box",
+							overflowY: "hidden"
+						}}>
+							{displayIndex >= 0 && displayIndex < commands.length &&
 					<DisplayPane 
 						overlaySave={overlaySave}
 						displayIndex={displayIndex}
@@ -300,44 +302,14 @@ export const App: React.FC =  () => {
 						}}
 					/> 
 					
-				}
-				</div>
-				</>
+							}
+						</div>
+					</>
 				}
 				{
 					page === "#reference" && <ReferencePage />
 				}
 			</div>
-
-
-
-
-			{/* <div id="SavePane" style={{
-				height: "200px"
-			}}>
-				
-				
-			</div>
-			<div id="InstructionPane" style={{
-
-			}}> */}
-			{/* <div id="CommandList" style={{
-				width: "300px",
-				height: "calc( 60vh - 5px )",
-				overflowY: "auto",
-		
-				
-				border: "1px solid black",
-				boxSizing: "content-box"
-			} }>
-				
-				
-				
-			</div> */}
-			
-			
-			{/* </div> */}
-			
 
 			{
 				contextMenuShowing && <div style={{
@@ -411,45 +383,6 @@ export const App: React.FC =  () => {
 										const text = lines.join("\n");
 										saveAs(text, "dupe.txt");
 									}}>Export</CommandItem>
-									<CommandItem onClick={()=>{
-										alert(`Available Commands:
-Initialize X Item1 Y Item2 Z Item3 ...
-Break X Slots - add X broken slots
-Save
-Reload
-Sort Key/Material - sort key items or material
-Get/Add/Cook/Pickup X ITEM
-Remove/Drop/Sell X ITEM From Slot Y
-Remove/Sell/Eat MEAL From Slot X
-
-Limitations:
-Inventory corruption is not implemented yet
-
-`);
-										alert(`Available Items:
-Slate
-Glider
-SpiritOrb
-SpeedFood
-Lotus
-SilentPrincess
-Honey
-Acorn
-FaroshScale
-FaroshClaw
-FaroshHorn
-HeartyBass
-Beetle
-Opal
-Diamond
-Tail
-Spring
-Shaft
-Core
-Wood
-Weapon
-		`);
-									}}>Reference</CommandItem>
 
 								</>
 							

@@ -2,7 +2,6 @@ import clsx from "clsx";
 import { DisplayableSlot } from "core/DisplayableInventory";
 import Background from "assets/Background.png";
 
-
 type ItemSlotProps = {
   slot: DisplayableSlot
 };
