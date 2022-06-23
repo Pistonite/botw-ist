@@ -1,9 +1,12 @@
 {
   "files": {
-    "main.css": "/static/css/main.820e0273.css",
-    "main.js": "/static/js/main.4124a2d4.js",
+    "main.css": "/static/css/main.3cbfcb7d.css",
+    "main.js": "/static/js/main.6e59a07a.js",
     "static/js/787.ada1a5f8.chunk.js": "/static/js/787.ada1a5f8.chunk.js",
+    "static/media/InGame.png": "/static/media/InGame.54443a18479ad462e4fe.png",
+    "static/media/ZoraArmor.png": "/static/media/ZoraArmor.c8e3613781b28c668f3c.png",
     "static/media/PotLid.png": "/static/media/PotLid.baf78a40199753b3af39.png",
+    "static/media/Background.png": "/static/media/Background.0e120fe5fc51d2dee803.png",
     "static/media/Calamity-Regular.otf": "/static/media/Calamity-Regular.cbeefc650e6ac39335b6.otf",
     "static/media/SpiritOrb.png": "/static/media/SpiritOrb.66f25f8bbb0f27f0f568.png",
     "static/media/AncientArrow.png": "/static/media/AncientArrow.9a1a41d05b09babd770d.png",
@@ -33,12 +36,12 @@
     "static/media/FireArrow.png": "/static/media/FireArrow.103898dc3f492d3293bd.png",
     "static/media/Lotus.png": "/static/media/Lotus.6006e27a51c66a0b9d3b.png",
     "index.html": "/index.html",
-    "main.820e0273.css.map": "/static/css/main.820e0273.css.map",
-    "main.4124a2d4.js.map": "/static/js/main.4124a2d4.js.map",
+    "main.3cbfcb7d.css.map": "/static/css/main.3cbfcb7d.css.map",
+    "main.6e59a07a.js.map": "/static/js/main.6e59a07a.js.map",
     "787.ada1a5f8.chunk.js.map": "/static/js/787.ada1a5f8.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.820e0273.css",
-    "static/js/main.4124a2d4.js"
+    "static/css/main.3cbfcb7d.css",
+    "static/js/main.6e59a07a.js"
   ]
 }
