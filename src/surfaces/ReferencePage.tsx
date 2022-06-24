@@ -5,12 +5,12 @@ import React from "react";
 export const ReferencePage: React.FC = React.memo(()=>{
 
 	return (
-		<div style={{height: "100%", width: "100%", color: "white"}}>
+		<div className="OtherPage">
 			<TitledList title="Reference">
-				<div style={{padding: 10}}>
+				<div className="OtherPageContent">
 					<h2>Items</h2>
 					{
-						getAllItems().map(item=><h4 className="Reference">{item}</h4>)
+						getAllItems().map((item, i)=><h4 key={i} className="Reference">{item}</h4>)
 					}
 					<h2>Commands</h2>
 					<h3 className="Reference">Initialize X item1 Y item2 Z item3 ...</h3>
@@ -81,9 +81,9 @@ export const ReferencePage: React.FC = React.memo(()=>{
                     
 					<p className="Reference Example">Example: Break 4 Slots</p>
 
-					<h3 className="Reference">Get/Add/Cook/Pickup item</h3>
-					<h3 className="Reference2">Get/Add/Cook/Pickup X item</h3>
-					<h3 className="Reference2">Get/Add/Cook/Pickup X item1 Y item2 Z item3 ...</h3>
+					<h3 className="Reference">Get/Add/Cook/Pickup/Buy item</h3>
+					<h3 className="Reference2">Get/Add/Cook/Pickup/Buy X item</h3>
+					<h3 className="Reference2">Get/Add/Cook/Pickup/Buy X item1 Y item2 Z item3 ...</h3>
 					<h4 className="Reference">Simulate obtaining items in game</h4>
 					<p className="Reference">
                         Add the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
@@ -103,11 +103,11 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<p className="Reference Example">Example 2: Get 10 Apple</p>
 					<p className="Reference Example">Example 3: Pickup 10 Apple 5 Diamond 1 Slate 5 MasterSword</p>
 
-					<h3 className="Reference">Remove/Sell/Eat/Drop item</h3>
-					<h3 className="Reference2">Remove/Sell/Eat/Drop X item</h3>
-					<h3 className="Reference2">Remove/Sell/Eat/Drop item From Slot Y</h3>
-					<h3 className="Reference2">Remove/Sell/Eat/Drop X item From Slot Y</h3>
-					<h3 className="Reference2">Remove/Sell/Eat/Drop X item1 Y item2 Z item3 ...</h3>
+					<h3 className="Reference">With/Remove/Sell/Eat/Drop item</h3>
+					<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item</h3>
+					<h3 className="Reference2">With/Remove/Sell/Eat/Drop item From Slot Y</h3>
+					<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item From Slot Y</h3>
+					<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item1 Y item2 Z item3 ...</h3>
 					<h4 className="Reference">Simulate removing items in game</h4>
 					<p className="Reference">
                         Remove the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
@@ -169,6 +169,13 @@ export const ReferencePage: React.FC = React.memo(()=>{
                         When closing the game, Visible Inventory and Game Data are erased
 					</p>
 					<p className="Reference Example">Example: Close Game</p>
+
+                    <h3 className="Reference">Sync GameData</h3>
+					<h4 className="Reference">Copy Visible Inventory to Game Data</h4>
+					<p className="Reference">
+                        Usually done in game by opening and closing inventory.
+					</p>
+					<p className="Reference Example">Example: Sync GameData</p>
 
 					<h3 className="Reference">Sort Key/Material</h3>
 					<h4 className="Reference">Simulates press Y to sort tab</h4>

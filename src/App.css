@@ -24,6 +24,10 @@ h1 {
   font-size: 10pt;
 }
 
+.CommandItemInvalid {
+  color: red;
+}
+
 .CommandItem {
   padding: 2px 2px 2px 10px;
   cursor: pointer;
@@ -110,7 +114,7 @@ p.Reference {
   padding-left: 20px;
 }
 
-p.Example {
+.Example {
   color:#eeee00;
 }
 
@@ -122,4 +126,66 @@ h3.Reference {
 h3.Reference2 {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+button.MainButton {
+  font-family: CalamitySans;
+  font-weight: bold;
+  display: inline-block;
+  padding: 5px;
+  width: 100px;
+  margin: 5px;
+  background-color: #00000099;
+  color: #ffffff;
+  border-radius: 0;
+  border: 2px solid #888888;
+}
+
+button.MainButton:hover {
+  border-color: #eeeeee;
+  box-shadow: 0 0 5px #eeeeee;
+}
+
+button.MainButton:active {
+  background-color: #888888;
+}
+
+.FullWidth {
+  width: 100% !important;
+}
+
+div.OtherPage {
+  height: 100%;
+  width: 100%;
+  color: #ffffff;
+}
+
+div.OtherPageContent{
+  padding: 10px;
+}
+
+.MainInput {
+  display: block;
+  width: 100%;
+  background-color: #00000099;
+  color: #ffffff;
+  border-radius: 0;
+  border: 2px solid #888888;
+  margin-bottom: 5px;
+}
+
+input.MainInput {
+  font-size: 14pt;
+  font-family: CalamitySans;
+}
+
+textarea {
+  resize: none;
+  height: 300px;
+}
+
+.MainInput:focus-visible {
+  outline: none;
+  border-color: #eeeeee;
+  box-shadow: 0 0 5px #eeeeee;
 }

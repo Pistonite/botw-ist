@@ -1,4 +1,4 @@
-import { Command, CommandNothing } from "core/Command";
+import { Command, CommandNop } from "core/Command";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import "./App.css";
@@ -11,16 +11,18 @@ import { ItemList } from "components/ItemList";
 import { TitledList } from "components/TitledList";
 import { createSimulationState, SimulationState } from "core/SimulationState";
 import { ReferencePage } from "surfaces/ReferencePage";
+import { OptionPage } from "surfaces/OptionPage";
 
 const getDefaultCommands = (): Command[]=>{
 	const encoded = localStorage.getItem("HDS.CurrentCommandsText");
 	if(encoded){
 		const lines = encoded.split("\n");
-		return lines.map(l=>parseCommand(l)).filter(c=>c) as Command[];
+		return lines.map(parseCommand);
 	}
 	return [
 		parseCommand("Get 5 Diamond 1 Slate 1 Glider 4 SpiritOrb"),
 		parseCommand("Save"),
+		parseCommand("# Magically break 4 slots"),
 		parseCommand("Break 4 Slots"),
 		parseCommand("Reload"),
 		parseCommand("Save"),
@@ -30,16 +32,16 @@ const getDefaultCommands = (): Command[]=>{
 
 export const App: React.FC =  () => {
 	const [page, setPageInState] = useState<string>("#simulation");
-	const [overlaySave, setOverlaySave] = useState<boolean>(false);
+	// Option States
+	const [interlaceInventory, setInterlaceInventory] = useState<boolean>(false);
+
 	const [commands, setCommands] = useState<Command[]>(getDefaultCommands());
 	const [selectedSaveName, setSelectedSaveName] = useState<string>("");
 	const [displayIndex, setDisplayIndex] = useState<number>(0);
 	const [contextMenuX, setContextMenuX] = useState<number>(0);
 	const [contextMenuY, setContextMenuY] = useState<number>(0);
-	const [contextMenuShowing, setContextMenuShowing] = useState<boolean>(false);
 	const [contextIndex, setContextIndex] = useState<number>(-1);
 
-	const uploadRef = useRef<HTMLInputElement>(null);
 	const contextMenuRef = useRef<HTMLDivElement>(null);
 	// compute props
 	const simulationStates = useMemo(()=>{
@@ -50,6 +52,9 @@ export const App: React.FC =  () => {
 			simulationStates.push(state.deepClone());
 		});
 		return simulationStates;
+	}, [commands]);
+	const commandText = useMemo(()=>{
+		return commands.map(c=>c.getDisplayString()).join("\n");
 	}, [commands]);
 
 	const setPage = useCallback((hash: string)=>{
@@ -66,7 +71,7 @@ export const App: React.FC =  () => {
 			if(e.code==="ArrowDown"){
 				if(displayIndex===commands.length-1){
 					const arrCopy = [...commands];
-					arrCopy.push(new CommandNothing());
+					arrCopy.push(new CommandNop(""));
 					setCommands(arrCopy);
 					setDisplayIndex(arrCopy.length-1);
 				}else{
@@ -88,40 +93,32 @@ export const App: React.FC =  () => {
 	}, [commands]);
 
 	useEffect(()=>{
-		if(contextMenuRef.current && contextMenuShowing){
+		if(contextIndex < 0 || contextIndex >= commands.length){
+			setContextIndex(-1);
+		}else if(contextMenuRef.current){
 			const rect = contextMenuRef.current.getBoundingClientRect();
 			if (rect.bottom > window.innerHeight){
 				setContextMenuY(contextMenuY-rect.height);
 			}
 		}
-	}, [contextMenuRef, contextMenuShowing]);
+	}, [contextMenuRef, contextIndex, commands]);
   
 	return (
 		<div className='Calamity'>
-			<input ref={uploadRef} id="Upload" type="File" hidden onChange={(e)=>{
-				const files = e.target.files;
-				if(files?.length && files[0]){
-					const file = files[0];
-					file.text().then(text=>{
-						const lines = text.split("\n");
-						const parsedCommands: Command[] = lines.map(l=>parseCommand(l)).filter(c=>c) as Command[];
-						setDisplayIndex(0);
-						setContextIndex(-1);
-						setContextMenuShowing(false);
-						setCommands(parsedCommands);
-					});
-				}
-			}}/>
+			
 			<div id="NavBar" style={{
+				backgroundColor: "#262626",
 				height: 40
 			}}>
-				<button onClick={()=>{
+				<button className="MainButton" onClick={()=>{
 					setPage("#simulation");
 				}}>Simulation</button>
-				<button onClick={()=>{
+				<button className="MainButton" onClick={()=>{
 					setPage("#reference");
 				}}>Reference</button>
-				<button disabled>Options</button>
+				<button className="MainButton" onClick={()=>{
+					setPage("#options");
+				}}>Options</button>
 			</div>
 
 			<div id="SidePane" style={{
@@ -145,8 +142,9 @@ export const App: React.FC =  () => {
 									<CommandItem 
 										onClick={()=>{
 											setSelectedSaveName("");
+											setPage("#simulation");
 										}}  
-										comment={false}
+										useListItem
 										isSelected={selectedSaveName===""}
 
 									>
@@ -159,9 +157,10 @@ export const App: React.FC =  () => {
 										<CommandItem 
 											onClick={()=>{
 												setSelectedSaveName(name);
+												setPage("#simulation");
 											}}  
-											comment={false}
 											isSelected={selectedSaveName===name}
+											useListItem
 										>
 											{name}
 										</CommandItem>
@@ -188,6 +187,7 @@ export const App: React.FC =  () => {
 									<CommandItem 
 										onClick={()=>{
 											setDisplayIndex(i);
+											setPage("#simulation");
 											const inputField = document.getElementById("CommandInputField");
 											if(inputField){
 												inputField.focus();
@@ -197,12 +197,13 @@ export const App: React.FC =  () => {
 											setContextIndex(i);
 											setContextMenuX(x);
 											setContextMenuY(y);
-											setContextMenuShowing(true);
 										}}
 										key={i} 
 										isSelected={displayIndex===i}
 										isContextSelected={contextIndex===i}
-										comment={c.getDisplayString().startsWith("#")}
+										isComment={c.getDisplayString().startsWith("#")}
+										useListItem={!c.getDisplayString().startsWith("#")}
+										isInvalid={!c.isValid()}
 									>
 										{c.getDisplayString()}
 									</CommandItem>
@@ -210,24 +211,14 @@ export const App: React.FC =  () => {
 							}
 							<CommandItem onClick={()=>{
 								const arrCopy = [...commands];
-								arrCopy.push(new CommandNothing());
+								arrCopy.push(new CommandNop(""));
 								setCommands(arrCopy);
 							}} onContextMenu={()=>{
 								const arrCopy = [...commands];
-								arrCopy.push(new CommandNothing());
+								arrCopy.push(new CommandNop(""));
 								setCommands(arrCopy);
 							}}>(new)</CommandItem>
-							<CommandItem onClick={(x,y)=>{
-								setContextIndex(-1);
-								setContextMenuX(x);
-								setContextMenuY(y);
-								setContextMenuShowing(true);
-							}} onContextMenu={(x,y)=>{
-								setContextIndex(-1);
-								setContextMenuX(x);
-								setContextMenuY(y);
-								setContextMenuShowing(true);
-							}}>(options)</CommandItem>
+
 
 						</ol>
 					</TitledList>
@@ -248,8 +239,6 @@ export const App: React.FC =  () => {
 						<div style={{
 							maxHeight: 220,
 							height: "30vh",
-							border: "1px solid black",
-							boxSizing: "border-box",
 							overflowY: "hidden",
 							color: "white",
 							backgroundColor: "#262626"
@@ -291,7 +280,7 @@ export const App: React.FC =  () => {
 						}}>
 							{displayIndex >= 0 && displayIndex < commands.length &&
 					<DisplayPane 
-						overlaySave={overlaySave}
+						overlaySave={interlaceInventory}
 						displayIndex={displayIndex}
 						command={commands[displayIndex].getDisplayString()}
 						simulationState={simulationStates[displayIndex]}
@@ -309,20 +298,32 @@ export const App: React.FC =  () => {
 				{
 					page === "#reference" && <ReferencePage />
 				}
+				{
+					page === "#options" && 
+					<OptionPage 
+						interlaceInventory={interlaceInventory}
+						setInterlaceInventory={setInterlaceInventory}
+						commandText={commandText}
+						setCommandText={(value)=>{
+							if(value !== commandText){
+								const commands = value.split("\n").map(parseCommand)
+								setCommands(commands);
+							}
+						}}
+					/>
+				}
 			</div>
 
 			{
-				contextMenuShowing && <div style={{
+				contextIndex >= 0 && contextIndex < commands.length && <div style={{
 					position: "absolute",
 					top: 0,
 					left: 0,
 					width: "100vw",
 					height: "100vh",
 				}} onClick={()=>{
-					setContextMenuShowing(false);
 					setContextIndex(-1);
 				}} onContextMenu={(e)=>{
-					setContextMenuShowing(false);
 					setContextIndex(-1);
 					e.preventDefault();
 				}}>
@@ -339,12 +340,11 @@ export const App: React.FC =  () => {
 							listStyleType: "none",
 							paddingInlineStart: 0
 						}}>
-							{contextIndex >= 0 ? <>
+						
 								<CommandItem onClick={()=>{
 									const arrCopy = [...commands];
-									arrCopy.splice(contextIndex, 0, new CommandNothing());
+									arrCopy.splice(contextIndex, 0, new CommandNop(""));
 									setCommands(arrCopy);
-									setContextMenuShowing(false);
 									setContextIndex(-1);
 								}}>Insert Above</CommandItem>
 								<CommandItem onClick={()=>{
@@ -354,7 +354,6 @@ export const App: React.FC =  () => {
 										arrCopy[contextIndex] = arrCopy[contextIndex-1];
 										arrCopy[contextIndex-1] = temp;
 										setCommands(arrCopy);
-										setContextMenuShowing(false);
 										setContextIndex(-1);
 									}
 								
@@ -365,28 +364,9 @@ export const App: React.FC =  () => {
 										if(displayIndex >= commands.length){
 											setDisplayIndex(commands.length-1);
 										}
-										setContextMenuShowing(false);
 										setContextIndex(-1);
 									}
-								}}>Delete</CommandItem></> :
-								<>
-									<CommandItem onClick={()=>{
-										setOverlaySave(!overlaySave);
-									}}>Toggle Save Overlay</CommandItem>
-									<CommandItem onClick={()=>{
-										if(uploadRef.current){
-											uploadRef.current.click();
-										}
-									}}>Import</CommandItem>
-									<CommandItem onClick={()=>{
-										const lines = commands.map(c=>c.getDisplayString());
-										const text = lines.join("\n");
-										saveAs(text, "dupe.txt");
-									}}>Export</CommandItem>
-
-								</>
-							
-							}
+								}}>Delete</CommandItem>
 							
 						</ul>
 					</div>

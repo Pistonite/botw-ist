@@ -53,6 +53,7 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({command,editCommand,dis
 				outline: "none",
 			}}value={commandString}
 			placeholder="Type command here..."
+			spellCheck={false}
 			onChange={(e)=>{
 				const cmdString = e.target.value;
 				setCommandString(cmdString);
