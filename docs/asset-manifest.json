@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.3cbfcb7d.css",
-    "main.js": "/static/js/main.6e59a07a.js",
+    "main.css": "/static/css/main.6a4997ca.css",
+    "main.js": "/static/js/main.a8565699.js",
     "static/js/787.ada1a5f8.chunk.js": "/static/js/787.ada1a5f8.chunk.js",
     "static/media/InGame.png": "/static/media/InGame.54443a18479ad462e4fe.png",
     "static/media/ZoraArmor.png": "/static/media/ZoraArmor.c8e3613781b28c668f3c.png",
@@ -36,12 +36,12 @@
     "static/media/FireArrow.png": "/static/media/FireArrow.103898dc3f492d3293bd.png",
     "static/media/Lotus.png": "/static/media/Lotus.6006e27a51c66a0b9d3b.png",
     "index.html": "/index.html",
-    "main.3cbfcb7d.css.map": "/static/css/main.3cbfcb7d.css.map",
-    "main.6e59a07a.js.map": "/static/js/main.6e59a07a.js.map",
+    "main.6a4997ca.css.map": "/static/css/main.6a4997ca.css.map",
+    "main.a8565699.js.map": "/static/js/main.a8565699.js.map",
     "787.ada1a5f8.chunk.js.map": "/static/js/787.ada1a5f8.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3cbfcb7d.css",
-    "static/js/main.6e59a07a.js"
+    "static/css/main.6a4997ca.css",
+    "static/js/main.a8565699.js"
   ]
 }
