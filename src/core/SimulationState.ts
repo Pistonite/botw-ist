@@ -85,6 +85,7 @@ export class SimulationState {
 		this.pouch.clearForReload();
 		this.gameData.addAllToPouchOnReload(this.pouch);
 		this.pouch.updateEquipmentDurability(this.gameData);
+		this.isOnEventide = false;
 	}
 
 	public useSaveForNextReload(name: string){
@@ -124,6 +125,22 @@ export class SimulationState {
 		this.pouch = new VisibleInventory(new Slots([]), 0);
 		this.gameData = new GameData(new Slots([]));
 		this.isOnEventide = false;
+	}
+
+	public setEventide(onEventide: boolean){
+		if(this.isOnEventide !== onEventide){
+			if(onEventide){
+				// clear everything except for key items
+				this.pouch.clearForEventide();
+				// game data is not updated (?)
+                
+			}else{
+				// reload pouch from gamedata as if reloading a save
+				this.reloadFrom(this.gameData);
+			}
+			this.isOnEventide = onEventide;
+		}
+        
 	}
 
 	public syncGameDataWithPouch() {

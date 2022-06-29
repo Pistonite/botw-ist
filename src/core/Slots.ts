@@ -264,4 +264,12 @@ export class Slots {
 
 	}
 
+	// return how many slots are removed
+	public clearAllButKeyItems(): number {
+		const newslots = this.internalSlots.filter(stack=>itemToItemData(stack.item).type === ItemType.Key);
+		const removedCount = this.internalSlots.length - newslots.length;
+		this.internalSlots = newslots;
+		return removedCount;
+	}
+
 }

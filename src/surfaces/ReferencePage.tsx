@@ -13,6 +13,9 @@ export const ReferencePage: React.FC = React.memo(()=>{
 						getAllItems().map((item, i)=><h4 key={i} className="Reference">{item}</h4>)
 					}
 					<h2>Commands</h2>
+					<p className="Reference">
+                        This is a list of available commands. All commands and items are case-sensitive
+					</p>
 					<h3 className="Reference">Initialize X item1 Y item2 Z item3 ...</h3>
 					<h4 className="Reference">Used for initializing inventory before simulation</h4>
 					<p className="Reference">
@@ -29,11 +32,16 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					</p>
 					<p className="Reference Example">Example: Initialize 1 Apple 2 Axe 3 Slate 4 SpiritOrb</p>
 
-					<h3 className="Reference">Save / Save As NAME</h3>
+					<h3 className="Reference">Save</h3>
+					<h3 className="Reference2">Save As NAME</h3>
+
 					<h4 className="Reference">Simulates a hard save or auto save action</h4>
 					<p className="Reference">
                         Writes Game Data to the corresponding save slot. The auto saves are specified by NAME. 
                         You can have as many auto saves as you want in the simulator.
+					</p>
+					<p className="Reference">
+                        You cannot save on Eventide/ToTS. However, the simulator does not enforce that.
 					</p>
                     
 					<p className="Reference Example">Example 1: Save</p>
@@ -128,12 +136,18 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<p className="Reference Example">Example 3: Sell 10 Apple 5 Diamond</p>
 					<p className="Reference Example">Example 4: Sell 5 Apple From Slot 3</p>
 
-					<h3 className="Reference">D&amp;P X item</h3>
+					<h3 className="Reference">D&amp;P X item1 Y item2 Z item3 ...</h3>
 					<h4 className="Reference">Shortcut for drop and pick up, for sorting inventory</h4>
 					<p className="Reference">
-                        This command drops X item from the first slot, then pick them up
+                        This command drops and pick up each item stack in the specified order.
+                        You can also repeat items if you are combining more than 2 slots.
 					</p>
-					<p className="Reference Example">Example: D&amp;P 5 Diamond</p>
+					<p className="Reference">
+                        You can only drop from slot 1 with this shortcut.
+					</p>
+					<p className="Reference Example">Example 1: D&amp;P 5 Diamond</p>
+					<p className="Reference Example">Example 2: D&amp;P 20 Shaft 5 Diamond</p>
+					<p className="Reference Example">Example 3: D&amp;P 5 Diamond 10 Diamond</p>
 
 					<h3 className="Reference">Equip item</h3>
 					<h3 className="Reference2">Equip item In Slot X</h3>
@@ -170,7 +184,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					</p>
 					<p className="Reference Example">Example: Close Game</p>
 
-                    <h3 className="Reference">Sync GameData</h3>
+					<h3 className="Reference">Sync GameData</h3>
 					<h4 className="Reference">Copy Visible Inventory to Game Data</h4>
 					<p className="Reference">
                         Usually done in game by opening and closing inventory.
@@ -182,7 +196,30 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<p className="Reference Example">
                         This command is currently broken
 					</p>
+
+					<h3 className="Reference">Shoot X Arrow</h3>
+					<h4 className="Reference">Simulates shooting arrow without opening inventory</h4>
+					<p className="Reference">
+                        When reloading a save with desynced game data, the equipped weapon/bow/shield are automatically corrupted, but not the arrows.
+                        To corrupt the equipped arrow slot, you need to shoot an arrow.
+					</p>
+					<p className="Reference">
+                        This command does not let you select which arrow to shoot. 
+                        When you reload a save, Link should have the last equipped arrow slot equipped in the overworld.
+						<span className="Example">[needs confirmation]</span>
+					</p>
+					<p className="Reference Example">Example: Shoot 1 Arrow</p>
                     
+					<h3 className="Reference">Enter/Exit Eventide</h3>
+					<h4 className="Reference">Simulates entering/exiting Eventide or Trial of the Sword</h4>
+					<p className="Reference">
+                        When entering Eventide or TotS, the entire inventory is cleared except for key items regardless of inventory count. 
+                        While the challenge is active, none of the inventory changes are synced to game data.
+					</p>
+					<p className="Reference">
+                        When exiting the challenge, the game reloads the game data as if reloading a save
+					</p>
+					<p className="Reference Example">Example: Enter Eventide</p>
 				</div>
                 
 			</TitledList>

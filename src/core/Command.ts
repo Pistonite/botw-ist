@@ -232,20 +232,21 @@ const joinItemStackString = (initial: string, stacks: ItemStack[]): string => {
 };
 
 export class CommandDaP extends CommandImpl  {
-	private count: number;
-	private item: Item;
+	private stacks: ItemStack[];
 
-	constructor(count: number, item: Item){
+	constructor(stacks: ItemStack[]){
 		super();
-		this.count = count;
-		this.item = item;
+		this.stacks = stacks;
 	}
 	public execute(state: SimulationState): void {
-		state.remove(this.item, this.count, 0);
-		state.obtain(this.item, this.count);
+		this.stacks.forEach(({item,count})=>{
+			state.remove(item, count, 0);
+			state.obtain(item, count);
+		});
+		
 	}
 	public getDisplayString(): string {
-		return `D&P ${this.count} ${this.item}`;
+		return joinItemStackString("D&P", this.stacks);
 	}
 }
 
@@ -325,6 +326,21 @@ export class CommandSync extends CommandImpl  {
 	}
 	public getDisplayString(): string {
 		return this.actionString;
+	}
+}
+
+export class CommandEventide extends CommandImpl  {
+	private enter: boolean;
+	constructor(enter: boolean){
+		super();
+		this.enter = enter;
+	}
+
+	public execute(state: SimulationState): void {
+		state.setEventide(this.enter);
+	}
+	public getDisplayString(): string {
+		return `${this.enter? "Enter":"Exit"} Eventide`;
 	}
 }
 

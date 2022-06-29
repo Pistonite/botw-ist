@@ -5,7 +5,6 @@ import "./App.css";
 import { CommandItem } from "./components/CommandItem";
 
 import { DisplayPane } from "surfaces/DisplayPane";
-import { saveAs } from "data/FileSaver";
 import { parseCommand } from "core/Parser";
 import { ItemList } from "components/ItemList";
 import { TitledList } from "components/TitledList";
@@ -69,16 +68,25 @@ export const App: React.FC =  () => {
 	useEffect(()=>{
 		window.onkeydown=(e)=>{
 			if(e.code==="ArrowDown"){
-				if(displayIndex===commands.length-1){
+				let nextCommandIndex = displayIndex+1;
+				while(nextCommandIndex<commands.length && !commands[nextCommandIndex].isValid()){
+					nextCommandIndex++;
+				}
+				if(nextCommandIndex===commands.length-1){
 					const arrCopy = [...commands];
 					arrCopy.push(new CommandNop(""));
 					setCommands(arrCopy);
 					setDisplayIndex(arrCopy.length-1);
 				}else{
-					setDisplayIndex(Math.min(commands.length-1, displayIndex+1));
+					
+					setDisplayIndex(Math.min(commands.length-1, nextCommandIndex));
 				}
 			}else if(e.code==="ArrowUp"){
-				setDisplayIndex(Math.max(0, displayIndex-1));
+				let nextCommandIndex = displayIndex-1;
+				while(nextCommandIndex>=0 && !commands[nextCommandIndex].isValid()){
+					nextCommandIndex--;
+				}
+				setDisplayIndex(Math.max(0, nextCommandIndex));
 			}
 		};
 	}, [commands, displayIndex]);
@@ -219,7 +227,6 @@ export const App: React.FC =  () => {
 								setCommands(arrCopy);
 							}}>(new)</CommandItem>
 
-
 						</ol>
 					</TitledList>
 					
@@ -306,7 +313,7 @@ export const App: React.FC =  () => {
 						commandText={commandText}
 						setCommandText={(value)=>{
 							if(value !== commandText){
-								const commands = value.split("\n").map(parseCommand)
+								const commands = value.split("\n").map(parseCommand);
 								setCommands(commands);
 							}
 						}}
@@ -341,32 +348,32 @@ export const App: React.FC =  () => {
 							paddingInlineStart: 0
 						}}>
 						
-								<CommandItem onClick={()=>{
+							<CommandItem onClick={()=>{
+								const arrCopy = [...commands];
+								arrCopy.splice(contextIndex, 0, new CommandNop(""));
+								setCommands(arrCopy);
+								setContextIndex(-1);
+							}}>Insert Above</CommandItem>
+							<CommandItem onClick={()=>{
+								if(contextIndex > 0){
 									const arrCopy = [...commands];
-									arrCopy.splice(contextIndex, 0, new CommandNop(""));
+									const temp = arrCopy[contextIndex];
+									arrCopy[contextIndex] = arrCopy[contextIndex-1];
+									arrCopy[contextIndex-1] = temp;
 									setCommands(arrCopy);
 									setContextIndex(-1);
-								}}>Insert Above</CommandItem>
-								<CommandItem onClick={()=>{
-									if(contextIndex > 0){
-										const arrCopy = [...commands];
-										const temp = arrCopy[contextIndex];
-										arrCopy[contextIndex] = arrCopy[contextIndex-1];
-										arrCopy[contextIndex-1] = temp;
-										setCommands(arrCopy);
-										setContextIndex(-1);
-									}
+								}
 								
-								}}>Move Up</CommandItem>
-								<CommandItem onClick={()=>{
-									if(confirm("Delete?")){
-										setCommands(commands.filter((_,i)=>i!==contextIndex));
-										if(displayIndex >= commands.length){
-											setDisplayIndex(commands.length-1);
-										}
-										setContextIndex(-1);
+							}}>Move Up</CommandItem>
+							<CommandItem onClick={()=>{
+								if(confirm("Delete?")){
+									setCommands(commands.filter((_,i)=>i!==contextIndex));
+									if(displayIndex >= commands.length){
+										setDisplayIndex(commands.length-1);
 									}
-								}}>Delete</CommandItem>
+									setContextIndex(-1);
+								}
+							}}>Delete</CommandItem>
 							
 						</ul>
 					</div>

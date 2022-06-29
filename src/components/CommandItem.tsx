@@ -30,7 +30,7 @@ export const CommandItem: React.FC<CommandItemProps> = ({
 	);
 
 	const clickHandler = useCallback((e: React.MouseEvent)=>{
-		onClick(e.clientX, e.clientY)
+		onClick(e.clientX, e.clientY);
 	}, [onClick]);
 	const contextMenuHandler = useCallback((e: React.MouseEvent)=>{
 		if(onContextMenu){

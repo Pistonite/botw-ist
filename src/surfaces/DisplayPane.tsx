@@ -58,12 +58,8 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({command,editCommand,dis
 				const cmdString = e.target.value;
 				setCommandString(cmdString);
 				const parsedCommand = parseCommand(cmdString);
-				if(parsedCommand){
-					editCommand(parsedCommand);
-					setHasError(false);
-				}else{
-					setHasError(true);
-				}
+				editCommand(parsedCommand);
+				setHasError(cmdString!=="" &&!cmdString.startsWith("#") && !parsedCommand.isValid());
 			}}></input>
 
 		</div>

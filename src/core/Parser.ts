@@ -7,6 +7,7 @@ import {
 	CommandCloseGame,
 	CommandDaP,
 	CommandEquip,
+	CommandEventide,
 	CommandInitialize,
 	CommandNop,
 	CommandReload,
@@ -124,11 +125,10 @@ export const parseCommand = (cmdString: string): Command => {
 		}
 	}
 	//Shortcut for drop and pick up
-	if (tokens.length === 3 && tokens[0] === "D&P" ){
-		const count = parseInt(tokens[1]);
-		const item = tokens[2];
-		if(Number.isInteger(count) && item in Item){
-			return new CommandDaP(count, Item[item as keyof typeof Item]);
+	if (tokens.length >2 && tokens[0] === "D&P" ){
+		const stacks = parseItemStacks(tokens, 1);
+		if(stacks){
+			return new CommandDaP(stacks);
 		}
 	}
 
@@ -181,6 +181,9 @@ export const parseCommand = (cmdString: string): Command => {
 	}
 	if(tokens.length===2 && tokens[0] === "Sync" && tokens[1] === "GameData"){
 		return new CommandSync("Sync GameData");
+	}
+	if(tokens.length===2 && (tokens[0] === "Enter" || tokens[0] === "Exit") && tokens[1] === "Eventide"){
+		return new CommandEventide(tokens[0] === "Enter");
 	}
 	
 	return new CommandNop(cmdString);

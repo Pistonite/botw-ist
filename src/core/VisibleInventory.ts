@@ -105,4 +105,8 @@ export class VisibleInventory implements DisplayableInventory{
 	public resetCount(): void {
 		this.count = this.slots.length;
 	}
+
+	public clearForEventide(): void {
+		this.count-=this.slots.clearAllButKeyItems();
+	}
 }
