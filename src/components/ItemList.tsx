@@ -14,4 +14,3 @@ export const ItemList: React.FC<ItemListProps> = ({slots}) => {
 		}
 	</>;
 };
-

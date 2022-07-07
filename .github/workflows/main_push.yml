@@ -1,0 +1,47 @@
+name: Push, Pull Request
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  work:
+    name: Lint, Test, Build
+    #
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup | Checkout
+      uses: actions/checkout@v2
+    - name: Setup | just
+      uses: extractions/setup-just@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Setup | Python 3.10
+      uses: actions/setup-python@v3.0.0
+      with:
+        python-version: '3.10'
+    - name: Setup | toml, pyyaml, pylint, pylint-quotes
+      uses: BSFishy/pip-action@v1
+      with:
+        packages: |
+          pylint
+          pylint-quotes
+
+    - name: Setup | Node Install
+      run: npm ci
+    - name: Lint
+      run: just lint
+    - name: Test (WIP)
+      run: echo "No tests ran"
+    - name: Build
+      run: npm run build
+
+
+  
+
+
+  
