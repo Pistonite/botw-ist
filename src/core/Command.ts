@@ -1,27 +1,29 @@
-import { Inventory } from "./Inventory";
-import { Item, ItemStack, itemToArrowType } from "./Item";
+import { Item, ItemStack } from "./Item";
 import { SimulationState } from "./SimulationState";
 
 export interface Command {
+	isValid(): boolean,
 	execute(state: SimulationState): void,
 	getDisplayString(): string,
 }
 
-export class CommandNothing implements Command {
-
-	execute(_state: Inventory): void {
+class CommandImpl implements Command{
+	isValid(): boolean {
+		return true;
+	}
+	execute(_state: SimulationState): void {
 		// nothing
 	}
 	getDisplayString(): string {
-		return "";
+		throw new Error("Method not implemented.");
 	}
-	
 }
 
-export class CommandInitialize implements Command {
+export class CommandInitialize extends CommandImpl {
 
 	private stacks: ItemStack[];
 	constructor(stacks: ItemStack[]){
+		super();
 		this.stacks = stacks;
 	}
 
@@ -34,7 +36,7 @@ export class CommandInitialize implements Command {
 
 }
 
-export class CommandSave implements Command {
+export class CommandSave extends CommandImpl {
 
 	public execute(state: SimulationState): void {
 		state.save();
@@ -44,9 +46,10 @@ export class CommandSave implements Command {
 	}
 }
 
-export class CommandSaveAs implements Command {
+export class CommandSaveAs extends CommandImpl {
 	private name: string;
 	constructor(name: string){
+		super();
 		this.name = name;
 	}
 	public execute(state: SimulationState): void {
@@ -57,9 +60,10 @@ export class CommandSaveAs implements Command {
 	}
 }
 
-export class CommandReload implements Command {
+export class CommandReload extends CommandImpl {
 	private name?: string;
 	constructor(name?: string){
+		super();
 		this.name = name;
 	}
 	public execute(state: SimulationState): void {
@@ -70,10 +74,10 @@ export class CommandReload implements Command {
 	}
 }
 
-
-export class CommandUse implements Command {
+export class CommandUse extends CommandImpl{
 	private name: string;
 	constructor(name: string){
+		super();
 		this.name = name;
 	}
 	public execute(state: SimulationState): void {
@@ -82,12 +86,16 @@ export class CommandUse implements Command {
 	public getDisplayString(): string {
 		return `Use ${this.name}`;
 	}
+	public isValid(): boolean {
+		return false; // this command is deprecated
+	}
 }
 
-export class CommandBreakSlots implements Command {
+export class CommandBreakSlots extends CommandImpl {
 
 	private numToBreak: number;
 	constructor(numToBreak: number){
+		super();
 		this.numToBreak = numToBreak;
 	}
 
@@ -99,11 +107,12 @@ export class CommandBreakSlots implements Command {
 	}
 }
 
-export class CommandAdd implements Command {
+export class CommandAdd extends CommandImpl {
 	private verb: string;
 	private count: number;
 	private item: Item;
 	constructor(verb: string, count: number, item: Item){
+		super();
 		this.verb = verb;
 		this.count = count;
 		this.item = item;
@@ -117,10 +126,11 @@ export class CommandAdd implements Command {
 	}
 }
 
-export class CommandAddWithoutCount implements Command {
+export class CommandAddWithoutCount extends CommandImpl {
 	private verb: string;
 	private item: Item;
 	constructor(verb: string, item: Item){
+		super();
 		this.verb = verb;
 		this.item = item;
 	}
@@ -133,10 +143,11 @@ export class CommandAddWithoutCount implements Command {
 	}
 }
 
-export class CommandAddMultiple implements Command {
+export class CommandAddMultiple extends CommandImpl  {
 	private verb: string;
 	private stacks: ItemStack[];
 	constructor(verb: string, stacks: ItemStack[]){
+		super();
 		this.verb = verb;
 		this.stacks = stacks;
 	}
@@ -150,13 +161,14 @@ export class CommandAddMultiple implements Command {
 	}
 }
 
-export class CommandRemove implements Command {
+export class CommandRemove extends CommandImpl  {
 	private verb: string;
 	private count: number;
 	private item: Item;
 	private slot: number;
 	private noSlot: boolean;
 	constructor(verb: string, count: number, item: Item, slot: number, noSlot: boolean){
+		super();
 		this.verb = verb;
 		this.count = count;
 		this.item = item;
@@ -172,12 +184,13 @@ export class CommandRemove implements Command {
 	}
 }
 
-export class CommandRemoveWithoutCount implements Command {
+export class CommandRemoveWithoutCount extends CommandImpl  {
 	private verb: string;
 	private item: Item;
 	private slot: number;
 	private noSlot: boolean;
 	constructor(verb: string, item: Item, slot: number, noSlot: boolean){
+		super();
 		this.verb = verb;
 		this.item = item;
 		this.slot = slot;
@@ -192,10 +205,11 @@ export class CommandRemoveWithoutCount implements Command {
 	}
 }
 
-export class CommandRemoveMultiple implements Command {
+export class CommandRemoveMultiple extends CommandImpl  {
 	private verb: string;
 	private stacks: ItemStack[];
 	constructor(verb: string, stacks: ItemStack[]){
+		super();
 		this.verb = verb;
 		this.stacks = stacks;
 	}
@@ -215,30 +229,33 @@ const joinItemStackString = (initial: string, stacks: ItemStack[]): string => {
 		parts.push(item);
 	});
 	return parts.join(" ");
-}
+};
 
-export class CommandDaP implements Command {
-	private count: number;
-	private item: Item;
+export class CommandDaP extends CommandImpl  {
+	private stacks: ItemStack[];
 
-	constructor(count: number, item: Item,){
-		this.count = count;
-		this.item = item;
+	constructor(stacks: ItemStack[]){
+		super();
+		this.stacks = stacks;
 	}
 	public execute(state: SimulationState): void {
-		state.remove(this.item, this.count, 0);
-		state.obtain(this.item, this.count);
+		this.stacks.forEach(({item,count})=>{
+			state.remove(item, count, 0);
+			state.obtain(item, count);
+		});
+		
 	}
 	public getDisplayString(): string {
-		return `D&P ${this.count} ${this.item}`;
+		return joinItemStackString("D&P", this.stacks);
 	}
 }
 
-export class CommandEquip implements Command {
+export class CommandEquip extends CommandImpl  {
 	private item: Item;
 	private slot: number;
 	private noSlot: boolean;
 	constructor(item: Item, slot: number, noSlot: boolean){
+		super();
 		this.item = item;
 		this.slot = slot;
 		this.noSlot = noSlot;
@@ -253,11 +270,12 @@ export class CommandEquip implements Command {
 	}
 }
 
-export class CommandUnequip implements Command {
+export class CommandUnequip extends CommandImpl {
 	private item: Item;
 	private slot: number;
 	private noSlot: boolean;
 	constructor(item: Item, slot: number, noSlot: boolean){
+		super();
 		this.item = item;
 		this.slot = slot;
 		this.noSlot = noSlot;
@@ -272,9 +290,10 @@ export class CommandUnequip implements Command {
 	}
 }
 
-export class CommandShootArrow implements Command {
-	private count: number
+export class CommandShootArrow extends CommandImpl  {
+	private count: number;
 	constructor(count: number){
+		super();
 		this.count = count;
 	}
 	
@@ -286,85 +305,94 @@ export class CommandShootArrow implements Command {
 	}
 }
 
+export class CommandCloseGame extends CommandImpl  {
+	public execute(state: SimulationState): void {
+		state.closeGame();
+	}
+	public getDisplayString(): string {
+		return "Close Game";
+	}
+}
 
-// export class CommandEquipArrow implements Command {
-// 	private item: Item;
-// 	private slot: number;
-// 	private noSlot: boolean;
-// 	constructor(item: Item, slot: number, noSlot: boolean){
-// 		this.item = item;
-// 		this.slot = slot;
-// 		this.noSlot = noSlot;
-// 	}
-	
-// 	public execute(inv: Inventory): void {
-// 		inv.equipEquipmentOrArrow(this.item, this.slot);
-// 	}
-// 	public getDisplayString(): string {
-// 		const slotString = this.noSlot ? "" : ` In Slot ${this.slot+1}`;
-// 		return `Equip ${itemToArrowType(this.item)} Arrow${slotString}`;
-// 	}
-// }
+export class CommandSync extends CommandImpl  {
+	private actionString: string;
+	constructor(actionString: string){
+		super();
+		this.actionString = actionString;
+	}
 
+	public execute(state: SimulationState): void {
+		state.syncGameDataWithPouch();
+	}
+	public getDisplayString(): string {
+		return this.actionString;
+	}
+}
 
+export class CommandEventide extends CommandImpl  {
+	private enter: boolean;
+	constructor(enter: boolean){
+		super();
+		this.enter = enter;
+	}
 
+	public execute(state: SimulationState): void {
+		state.setEventide(this.enter);
+	}
+	public getDisplayString(): string {
+		return `${this.enter? "Enter":"Exit"} Eventide`;
+	}
+}
 
-
-
-// export class CommandCloseGame implements Command {
-// 	public execute(inv: Inventory): void {
-// 		inv.closeGame();
-// 	}
-// 	public getDisplayString(): string {
-// 		return "Close Game";
-// 	}
-// }
-
-export class CommandComment implements Command {
-	private name: string;
-	constructor(name: string){
-		this.name = name;
+export class CommandNop extends CommandImpl  {
+	private text: string;
+	constructor(text: string){
+		super();
+		this.text = text;
+	}
+	public isValid(): boolean {
+		return false;
 	}
 	public execute(_state: SimulationState): void {
 		// nothing
 	}
 	public getDisplayString(): string {
-		return `# ${this.name}`;
+		return this.text;
 	}
 }
 
-// export class CommandSortKey implements Command {
-// 	static Op = 0x5;
-// 	// public fromBuffer(_buf: Buffer): number {
-// 	// 	return 0;
-// 	// }
-// 	// public toBuffer(): Buffer {
-// 	// 	const buf: Buffer = Buffer.alloc(1);
-// 	// 	buf.writeInt8(CommandSortKey.Op);
-// 	// 	return buf;
-// 	// }
-// 	public execute(inv: Inventory): void {
-// 		inv.sortKey();
-// 	}
-// 	public getDisplayString(): string {
-// 		return "Sort Key";
-// 	}
-// }
+export class CommandSortKey extends CommandImpl  {
+	static Op = 0x5;
+	// public fromBuffer(_buf: Buffer): number {
+	// 	return 0;
+	// }
+	// public toBuffer(): Buffer {
+	// 	const buf: Buffer = Buffer.alloc(1);
+	// 	buf.writeInt8(CommandSortKey.Op);
+	// 	return buf;
+	// }
+	public execute(_state: SimulationState): void {
+		// wip
+	}
+	public getDisplayString(): string {
+		return "Sort Key";
+	}
+}
 
-// export class CommandSortMaterial implements Command {
-// 	static Op = 0x6;
-// 	// public fromBuffer(_buf: Buffer): number {
-// 	// 	return 0;
-// 	// }
-// 	// public toBuffer(): Buffer {
-// 	// 	const buf: Buffer = Buffer.alloc(1);
-// 	// 	buf.writeInt8(CommandSortMaterial.Op);
-// 	// 	return buf;
-// 	// }
-// 	public execute(inv: Inventory): void {
-// 		inv.sortMaterial();
-// 	}
-// 	public getDisplayString(): string {
-// 		return "Sort Material";
-// 	}
-// }
+export class CommandSortMaterial extends CommandImpl  {
+	static Op = 0x6;
+	// public fromBuffer(_buf: Buffer): number {
+	// 	return 0;
+	// }
+	// public toBuffer(): Buffer {
+	// 	const buf: Buffer = Buffer.alloc(1);
+	// 	buf.writeInt8(CommandSortMaterial.Op);
+	// 	return buf;
+	// }
+	public execute(_state: SimulationState): void {
+		// wip
+	}
+	public getDisplayString(): string {
+		return "Sort Material";
+	}
+}

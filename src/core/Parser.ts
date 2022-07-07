@@ -4,11 +4,12 @@ import {
 	CommandAddMultiple,
 	CommandAddWithoutCount,
 	CommandBreakSlots,
-	CommandComment,
+	CommandCloseGame,
 	CommandDaP,
 	CommandEquip,
+	CommandEventide,
 	CommandInitialize,
-	CommandNothing,
+	CommandNop,
 	CommandReload,
 	CommandRemove,
 	CommandRemoveMultiple,
@@ -16,30 +17,32 @@ import {
 	CommandSave,
 	CommandSaveAs,
 	CommandShootArrow,
+	CommandSortKey,
+	CommandSortMaterial,
+	CommandSync,
 	CommandUnequip,
 	CommandUse
 } from "./Command";
 import { Item, ItemStack } from "./Item";
 
-export const parseCommand = (cmdString: string): Command | undefined => {
+export const parseCommand = (cmdString: string): Command => {
 
-	if(cmdString.startsWith("# ")){
-		return new CommandComment(cmdString.substring(2));
-	}
 	const tokens = cmdString.split(" ").filter(i=>i);
 	if(tokens.length===0){
-		return new CommandNothing();
+		return new CommandNop("");
 	}
 	// intialize
 	if(tokens.length>1 && tokens[0] === "Initialize"){
 		const stacks = parseItemStacks(tokens, 1);
-		return stacks ? new CommandInitialize(stacks) : undefined;
+		if(stacks){
+			return new CommandInitialize(stacks);
+		}
 	}
 	// Save/Reload
 	if(tokens.length===1 && tokens[0] === "Save"){
 		return new CommandSave();
 	}
-	// // Multi Save
+	// Multi Save
 	if (tokens.length === 3 && tokens[0] === "Save" && tokens[1] === "As"){
 		const name = tokens[2];
 		return new CommandSaveAs(name);
@@ -54,7 +57,7 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 	if(tokens.length===2 && tokens[0] === "Reload"){
 		return new CommandReload(tokens[1]);
 	}
-    // break
+	// break
 	if (tokens.length > 2 && tokens[0] === "Break" && tokens[2]=== "Slots" ){
 		const slots = parseInt(tokens[1]);
 		if(Number.isInteger(slots)){
@@ -69,18 +72,18 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		if(Number.isInteger(count)  && item in Item){
 			return new CommandAdd(tokens[0], count, Item[item as keyof typeof Item]);
 		}
-		return undefined;
 	}
 	if (tokens.length === 2 && isAddVerb(tokens[0])){
 		const item = tokens[1];
 		if(item in Item){
 			return new CommandAddWithoutCount(tokens[0], Item[item as keyof typeof Item]);
 		}
-		return undefined;
 	}
 	if(tokens.length>2 && isAddVerb(tokens[0])){
 		const stacks = parseItemStacks(tokens, 1);
-		return stacks ? new CommandAddMultiple(tokens[0], stacks) : undefined;
+		if(stacks){
+			return new CommandAddMultiple(tokens[0], stacks);
+		}
 	}
 	// remove X item From Slot Y
 	if (tokens.length === 6 && isRemoveVerb(tokens[0]) && tokens[3] === "From" && tokens[4] ==="Slot" ){
@@ -90,7 +93,6 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		if(Number.isInteger(count) && Number.isInteger(slot) && item in Item){
 			return new CommandRemove(tokens[0], count, Item[item as keyof typeof Item], slot-1, false);
 		}
-		return undefined;
 	}
 	// remove X item
 	if (tokens.length === 3 && isRemoveVerb(tokens[0]) ){
@@ -99,7 +101,6 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		if(Number.isInteger(count) && item in Item){
 			return new CommandRemove(tokens[0], count, Item[item as keyof typeof Item], 0, true);
 		}
-		return undefined;
 	}
 	// remove item From Slot Y
 	if (tokens.length === 5 && isRemoveVerb(tokens[0]) && tokens[2] === "From" && tokens[3] ==="Slot" ){
@@ -108,7 +109,6 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		if(Number.isInteger(slot) && item in Item){
 			return new CommandRemoveWithoutCount(tokens[0], Item[item as keyof typeof Item], slot-1, false);
 		}
-		return undefined;
 	}
 	// remove item
 	if (tokens.length === 2 && isRemoveVerb(tokens[0]) ){
@@ -116,21 +116,20 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		if(item in Item){
 			return new CommandRemoveWithoutCount(tokens[0], Item[item as keyof typeof Item], 0, true);
 		}
-		return undefined;
 	}
 	// remove multiple
 	if(tokens.length>2 && isRemoveVerb(tokens[0])){
 		const stacks = parseItemStacks(tokens, 1);
-		return stacks ? new CommandRemoveMultiple(tokens[0], stacks) : undefined;
+		if(stacks){
+			return new CommandRemoveMultiple(tokens[0], stacks);
+		}
 	}
 	//Shortcut for drop and pick up
-	if (tokens.length === 3 && tokens[0] === "D&P" ){
-		const count = parseInt(tokens[1]);
-		const item = tokens[2];
-		if(Number.isInteger(count) && item in Item){
-			return new CommandDaP(count, Item[item as keyof typeof Item]);
+	if (tokens.length >2 && tokens[0] === "D&P" ){
+		const stacks = parseItemStacks(tokens, 1);
+		if(stacks){
+			return new CommandDaP(stacks);
 		}
-		return undefined;
 	}
 
 	// Equip item In Slot X
@@ -140,7 +139,6 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		if( Number.isInteger(slot) && item in Item){
 			return new CommandEquip(Item[item as keyof typeof Item], slot-1, false);
 		}
-		return undefined;
 	}
 	// Equip item
 	if (tokens.length === 2 && tokens[0] === "Equip"){
@@ -148,7 +146,6 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		if( item in Item){
 			return new CommandEquip(Item[item as keyof typeof Item], 0, true);
 		}
-		return undefined;
 	}
 	// Unequip item in slot X
 	if (tokens.length === 5 && tokens[0] === "Unequip" && tokens[2] === "In" && tokens[3] ==="Slot" ){
@@ -157,7 +154,6 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		if( Number.isInteger(slot) && item in Item){
 			return new CommandUnequip(Item[item as keyof typeof Item], slot-1, false);
 		}
-		return undefined;
 	}
 	// Unequip item
 	if (tokens.length === 2 && tokens[0] === "Unequip"){
@@ -165,7 +161,6 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		if( item in Item){
 			return new CommandUnequip(Item[item as keyof typeof Item], -1, true);
 		}
-		return undefined;
 	}
 	// Shoot X Arrow
 	if (tokens.length === 3 && tokens[0] === "Shoot" && tokens[2] === "Arrow"){
@@ -173,53 +168,34 @@ export const parseCommand = (cmdString: string): Command | undefined => {
 		if( Number.isInteger(count) ){
 			return new CommandShootArrow(count);
 		}
-		return undefined;
 	}
 	
-	// if(tokens.length===2 && tokens[0] === "Sort" && tokens[1] === "Key"){
-	// 	return new CommandSortKey();
-	// }
-	// if(tokens.length===2 && tokens[0] === "Sort" && tokens[1] === "Material"){
-	// 	return new CommandSortMaterial();
-	// }
-	// if(tokens.length===2 && tokens[0] === "Close" && tokens[1] === "Game"){
-	// 	return new CommandCloseGame();
-	// }
+	if(tokens.length===2 && tokens[0] === "Sort" && tokens[1] === "Key"){
+		return new CommandSortKey();
+	}
+	if(tokens.length===2 && tokens[0] === "Sort" && tokens[1] === "Material"){
+		return new CommandSortMaterial();
+	}
+	if(tokens.length===2 && tokens[0] === "Close" && tokens[1] === "Game"){
+		return new CommandCloseGame();
+	}
+	if(tokens.length===2 && tokens[0] === "Sync" && tokens[1] === "GameData"){
+		return new CommandSync("Sync GameData");
+	}
+	if(tokens.length===2 && (tokens[0] === "Enter" || tokens[0] === "Exit") && tokens[1] === "Eventide"){
+		return new CommandEventide(tokens[0] === "Enter");
+	}
 	
-	// 	return undefined;
-	// }
-	// // remove material
-	
-	
-	
-	
-	// // Equip Arrow
-	// if (tokens.length === 6 && tokens[0] === "Equip" && tokens[2] === "Arrow" && tokens[3] === "In" && tokens[4] ==="Slot" ){
-	// 	const item = tokens[1]+"Arrow";
-	// 	const slot = parseInt(tokens[5]);
-	// 	if( Number.isInteger(slot) && item in Item){
-	// 		return new CommandEquipArrow(Item[item as keyof typeof Item], slot-1, false);
-	// 	}
-	// 	return undefined;
-	// }
-	// if (tokens.length === 3 && tokens[0] === "Equip" && tokens[2] === "Arrow" ){
-	// 	const item = tokens[1]+"Arrow";
-	// 	if(item in Item){
-	// 		return new CommandEquipArrow(Item[item as keyof typeof Item], 0, true);
-	// 	}
-	// 	return undefined;
-	// }
-	
-	return undefined;
+	return new CommandNop(cmdString);
 };
 
 const isAddVerb = (token: string): boolean => {
-	return token === "Get" || token === "Cook" || token === "Add" || token === "Pickup"
-}
+	return token === "Get" || token === "Cook" || token === "Add" || token === "Pickup" || token === "Buy";
+};
 
 const isRemoveVerb = (token: string): boolean => {
-	return token === "Remove" || token === "Sell" || token === "Eat" || token === "Drop"
-}
+	return token === "Remove" || token === "Sell" || token === "Eat" || token === "Drop" || token === "With";
+};
 
 const parseItemStacks = (tokens: string[], from: number): ItemStack[] | undefined => {
 	if((tokens.length-from)%2 !== 0){
@@ -242,4 +218,4 @@ const parseItemStacks = (tokens: string[], from: number): ItemStack[] | undefine
 		}
 	}
 	return stacks;
-}
+};
