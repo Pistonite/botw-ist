@@ -5,6 +5,8 @@ import { useRef, useState } from "react";
 type OptionPageProps = {
 	interlaceInventory: boolean,
 	setInterlaceInventory: (value: boolean)=>void,
+	isIconAnimated: boolean,
+	setIsIconAnimated: (value: boolean)=>void,
 	commandText: string,
 	setCommandText: (value: string)=>void,
 }
@@ -12,6 +14,8 @@ type OptionPageProps = {
 export const OptionPage: React.FC<OptionPageProps> = ({
 	interlaceInventory,
 	setInterlaceInventory,
+	isIconAnimated,
+	setIsIconAnimated,
 	commandText,
 	setCommandText
 }) => {
@@ -48,6 +52,18 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 					</h3>
 					<h4 className="Reference">
 						Toggle whether Visible Inventory should be displayed separetely from Game Data or interlaced.
+					</h4>
+
+					<h3 className="Reference">
+						Enable Animated Item Icons
+						<button className="MainButton" onClick={()=>{
+							setIsIconAnimated(!isIconAnimated);
+						}}>
+							{isIconAnimated ? "ON" : "OFF"}
+						</button>
+					</h3>
+					<h4 className="Reference">
+						Toggle whether items such as the champion abilities or Travel Medallion use animated or still icons.
 					</h4>
 
 					<h3 className="Reference">Import / Export</h3>

@@ -1,5 +1,5 @@
 import { stableSort } from "data/mergeSort";
-import { Item, ItemStack, itemToItemData, ItemType } from "./Item";
+import { ItemStack, itemToItemData, ItemType } from "./Item";
 
 /*
  * This is the data model common to GameData and VisibleInventory
@@ -60,7 +60,7 @@ export class Slots {
 
 	// remove item(s) start from slot
 	// return number of slots removed
-	public remove(item: Item, count: number, slot: number): number {
+	public remove(item: string, count: number, slot: number): number {
 		const oldLength = this.internalSlots.length;
 		let s = 0;
 		for(let i = 0; i<this.internalSlots.length && count > 0;i++){
@@ -87,7 +87,7 @@ export class Slots {
 
 	// Add something to inventory in game
 	// returns number of slots added
-	public add(item: Item, count: number, equippedDuringReload: boolean, reloading: boolean, mCount: number | null): number {
+	public add(item: string, count: number, equippedDuringReload: boolean, reloading: boolean, mCount: number | null): number {
 		if(mCount === null){
 			mCount = this.internalSlots.length;
 		}
@@ -115,7 +115,7 @@ export class Slots {
 		// Need to add new slot
 		// Key item check: if the key item or master sword already exists in the first tab, do not add
 		if(mCount != 0){
-			if(data.type === ItemType.Key || item === Item.MasterSword) {
+			if(data.type === ItemType.Key || item === "MasterSword") {
 				let i=0;
 				while(i<this.internalSlots.length && itemToItemData(this.internalSlots[i].item).type < data.type){
 					i++;
@@ -175,7 +175,7 @@ export class Slots {
 	}
 
 	// this is for both equipments and arrows
-	public equip(item: Item, slot: number) {
+	public equip(item: string, slot: number) {
 		let s = 0;
 		// unequip same type in first tab
 		const type = itemToItemData(item).type;
@@ -197,7 +197,7 @@ export class Slots {
 			}
 		}
 	}
-	public unequip(item:Item, slot: number) {
+	public unequip(item: string, slot: number) {
 		let s = 0;
 		const type = itemToItemData(item).type;
 		if (type===ItemType.Arrow){
@@ -227,7 +227,7 @@ export class Slots {
 			return;
 		}
 		const thisData = itemToItemData(this.internalSlots[slot].item);
-		// Currently only supports corrupting arrows, material, meal and key items as durability values are not simulated on equipments
+		// Currently only supports corrupting arrows, material, food and key items as durability values are not simulated on equipments
 		if(thisData.type >= ItemType.Material || thisData.stackable){
 			this.internalSlots[slot].count = durability;
 		}
@@ -238,7 +238,7 @@ export class Slots {
 		// first find equipped arrow, search entire inventory
 		// this is the last equipped arrow before armor
 		let i=0;
-		let equippedArrow: Item | undefined = undefined;
+		let equippedArrow: string | undefined = undefined;
 		for(;i<this.internalSlots.length;i++){
 			const data = itemToItemData(this.internalSlots[i].item);
 			if(data.type > ItemType.Shield){

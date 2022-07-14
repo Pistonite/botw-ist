@@ -23,7 +23,7 @@ import {
 	CommandUnequip,
 	CommandUse
 } from "./Command";
-import { Item, ItemStack } from "./Item";
+import { itemExists, ItemStack } from "./Item";
 
 export const parseCommand = (cmdString: string): Command => {
 
@@ -69,14 +69,14 @@ export const parseCommand = (cmdString: string): Command => {
 	if (tokens.length === 3 && isAddVerb(tokens[0])){
 		const count = parseInt(tokens[1]);
 		const item = tokens[2];
-		if(Number.isInteger(count)  && item in Item){
-			return new CommandAdd(tokens[0], count, Item[item as keyof typeof Item]);
+		if(Number.isInteger(count) && itemExists(item)){
+			return new CommandAdd(tokens[0], count, item);
 		}
 	}
 	if (tokens.length === 2 && isAddVerb(tokens[0])){
 		const item = tokens[1];
-		if(item in Item){
-			return new CommandAddWithoutCount(tokens[0], Item[item as keyof typeof Item]);
+		if (itemExists(item)){
+			return new CommandAddWithoutCount(tokens[0], item);
 		}
 	}
 	if(tokens.length>2 && isAddVerb(tokens[0])){
@@ -90,31 +90,31 @@ export const parseCommand = (cmdString: string): Command => {
 		const count = parseInt(tokens[1]);
 		const item = tokens[2];
 		const slot = parseInt(tokens[5]);
-		if(Number.isInteger(count) && Number.isInteger(slot) && item in Item){
-			return new CommandRemove(tokens[0], count, Item[item as keyof typeof Item], slot-1, false);
+		if(Number.isInteger(count) && Number.isInteger(slot) && itemExists(item)){
+			return new CommandRemove(tokens[0], count, item, slot-1, false);
 		}
 	}
 	// remove X item
 	if (tokens.length === 3 && isRemoveVerb(tokens[0]) ){
 		const count = parseInt(tokens[1]);
 		const item = tokens[2];
-		if(Number.isInteger(count) && item in Item){
-			return new CommandRemove(tokens[0], count, Item[item as keyof typeof Item], 0, true);
+		if(Number.isInteger(count) && itemExists(item)){
+			return new CommandRemove(tokens[0], count, item, 0, true);
 		}
 	}
 	// remove item From Slot Y
 	if (tokens.length === 5 && isRemoveVerb(tokens[0]) && tokens[2] === "From" && tokens[3] ==="Slot" ){
 		const item = tokens[1];
 		const slot = parseInt(tokens[4]);
-		if(Number.isInteger(slot) && item in Item){
-			return new CommandRemoveWithoutCount(tokens[0], Item[item as keyof typeof Item], slot-1, false);
+		if(Number.isInteger(slot) && itemExists(item)){
+			return new CommandRemoveWithoutCount(tokens[0], item, slot-1, false);
 		}
 	}
 	// remove item
 	if (tokens.length === 2 && isRemoveVerb(tokens[0]) ){
 		const item = tokens[1];
-		if(item in Item){
-			return new CommandRemoveWithoutCount(tokens[0], Item[item as keyof typeof Item], 0, true);
+		if (itemExists(item)){
+			return new CommandRemoveWithoutCount(tokens[0], item, 0, true);
 		}
 	}
 	// remove multiple
@@ -136,30 +136,30 @@ export const parseCommand = (cmdString: string): Command => {
 	if (tokens.length === 5 && tokens[0] === "Equip" && tokens[2] === "In" && tokens[3] ==="Slot" ){
 		const item = tokens[1];
 		const slot = parseInt(tokens[4]);
-		if( Number.isInteger(slot) && item in Item){
-			return new CommandEquip(Item[item as keyof typeof Item], slot-1, false);
+		if( Number.isInteger(slot) && itemExists(item)){
+			return new CommandEquip(item, slot-1, false);
 		}
 	}
 	// Equip item
 	if (tokens.length === 2 && tokens[0] === "Equip"){
 		const item = tokens[1];
-		if( item in Item){
-			return new CommandEquip(Item[item as keyof typeof Item], 0, true);
+		if (itemExists(item)){
+			return new CommandEquip(item, 0, true);
 		}
 	}
 	// Unequip item in slot X
 	if (tokens.length === 5 && tokens[0] === "Unequip" && tokens[2] === "In" && tokens[3] ==="Slot" ){
 		const item = tokens[1];
 		const slot = parseInt(tokens[4]);
-		if( Number.isInteger(slot) && item in Item){
-			return new CommandUnequip(Item[item as keyof typeof Item], slot-1, false);
+		if( Number.isInteger(slot) && itemExists(item)){
+			return new CommandUnequip(item, slot-1, false);
 		}
 	}
 	// Unequip item
 	if (tokens.length === 2 && tokens[0] === "Unequip"){
 		const item = tokens[1];
-		if( item in Item){
-			return new CommandUnequip(Item[item as keyof typeof Item], -1, true);
+		if (itemExists(item)){
+			return new CommandUnequip(item, -1, true);
 		}
 	}
 	// Shoot X Arrow
@@ -209,9 +209,9 @@ const parseItemStacks = (tokens: string[], from: number): ItemStack[] | undefine
 			return undefined;
 		} 
 		const item = tokens[i+1];
-		if (item in Item){
+		if (itemExists(item)){
 			stacks.push({
-				item: Item[item as keyof typeof Item], count, equipped:false
+				item: item, count, equipped:false
 			});
 		}else{
 			return undefined;

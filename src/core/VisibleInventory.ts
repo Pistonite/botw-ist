@@ -1,6 +1,6 @@
 import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "./DisplayableInventory";
 import { GameData } from "./GameData";
-import { Item, ItemStack, itemToItemData, ItemType } from "./Item";
+import { ItemStack, itemToItemData, ItemType } from "./Item";
 import { Slots } from "./Slots";
 
 /*
@@ -19,8 +19,8 @@ export class VisibleInventory implements DisplayableInventory{
 		return new VisibleInventory(this.slots.deepClone(), this.count);
 	}
 
-	public getDisplayedSlots(): DisplayableSlot[] {
-		return this.slots.getSlotsRef().map((stack, i)=>itemStackToDisplayableSlot(stack, i>=this.count));
+	public getDisplayedSlots(isIconAnimated: boolean): DisplayableSlot[] {
+		return this.slots.getSlotsRef().map((stack, i)=>itemStackToDisplayableSlot(stack, i>=this.count, isIconAnimated));
 	}
 
 	public getSlots(): Slots {
@@ -31,26 +31,26 @@ export class VisibleInventory implements DisplayableInventory{
 		this.count+=this.slots.addStackDirectly(stack);
 	}
 
-	public addWhenReload(item: Item, count: number, equippedDuringReload: boolean) {
+	public addWhenReload(item: string, count: number, equippedDuringReload: boolean) {
 		const slotsAdded = this.slots.add(item, count, equippedDuringReload, true, this.count);
 		this.count+=slotsAdded;
 	}
 
-	public addInGame(item: Item, count: number) {
+	public addInGame(item: string, count: number) {
 		const slotsAdded = this.slots.add(item, count, false, false, this.count);
 		this.count+=slotsAdded;
 	}
 
-	public remove(item: Item, count: number, slot: number) {
+	public remove(item: string, count: number, slot: number) {
 		const slotsRemoved = this.slots.remove(item, count, slot);
 		this.count-=slotsRemoved;
 	}
 
-	public equip(item: Item, slot: number) {
+	public equip(item: string, slot: number) {
 		this.slots.equip(item, slot);
 	}
 
-	public unequip(item: Item, slot: number) {
+	public unequip(item: string, slot: number) {
 		this.slots.unequip(item, slot);
 	}
 

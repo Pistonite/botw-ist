@@ -86,6 +86,7 @@ h1 {
   border: 1px solid #999999;
   box-sizing: border-box;
   margin:1px;
+  padding:1px;
   width:62px;
   height:62px;
   display:inline-block;

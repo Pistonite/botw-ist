@@ -28,7 +28,7 @@ export class GameData implements DisplayableInventory {
 		this.slots.getSlotsRef().forEach(stack=>pouch.addWhenReload(stack.item, stack.count, stack.equipped));
 	}
 
-	public getDisplayedSlots(): DisplayableSlot[] {
-		return this.slots.getSlotsRef().map(stack=>itemStackToDisplayableSlot(stack, false));
+	public getDisplayedSlots(isIconAnimated: boolean): DisplayableSlot[] {
+		return this.slots.getSlotsRef().map(stack=>itemStackToDisplayableSlot(stack, false, isIconAnimated));
 	}
 }

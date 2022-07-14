@@ -1,4 +1,4 @@
-import { Item, ItemStack } from "./Item";
+import { ItemStack } from "./Item";
 import { SimulationState } from "./SimulationState";
 
 export interface Command {
@@ -110,8 +110,8 @@ export class CommandBreakSlots extends CommandImpl {
 export class CommandAdd extends CommandImpl {
 	private verb: string;
 	private count: number;
-	private item: Item;
-	constructor(verb: string, count: number, item: Item){
+	private item: string;
+	constructor(verb: string, count: number, item: string){
 		super();
 		this.verb = verb;
 		this.count = count;
@@ -128,8 +128,8 @@ export class CommandAdd extends CommandImpl {
 
 export class CommandAddWithoutCount extends CommandImpl {
 	private verb: string;
-	private item: Item;
-	constructor(verb: string, item: Item){
+	private item: string;
+	constructor(verb: string, item: string){
 		super();
 		this.verb = verb;
 		this.item = item;
@@ -164,10 +164,10 @@ export class CommandAddMultiple extends CommandImpl  {
 export class CommandRemove extends CommandImpl  {
 	private verb: string;
 	private count: number;
-	private item: Item;
+	private item: string;
 	private slot: number;
 	private noSlot: boolean;
-	constructor(verb: string, count: number, item: Item, slot: number, noSlot: boolean){
+	constructor(verb: string, count: number, item: string, slot: number, noSlot: boolean){
 		super();
 		this.verb = verb;
 		this.count = count;
@@ -186,10 +186,10 @@ export class CommandRemove extends CommandImpl  {
 
 export class CommandRemoveWithoutCount extends CommandImpl  {
 	private verb: string;
-	private item: Item;
+	private item: string;
 	private slot: number;
 	private noSlot: boolean;
-	constructor(verb: string, item: Item, slot: number, noSlot: boolean){
+	constructor(verb: string, item: string, slot: number, noSlot: boolean){
 		super();
 		this.verb = verb;
 		this.item = item;
@@ -251,10 +251,10 @@ export class CommandDaP extends CommandImpl  {
 }
 
 export class CommandEquip extends CommandImpl  {
-	private item: Item;
+	private item: string;
 	private slot: number;
 	private noSlot: boolean;
-	constructor(item: Item, slot: number, noSlot: boolean){
+	constructor(item: string, slot: number, noSlot: boolean){
 		super();
 		this.item = item;
 		this.slot = slot;
@@ -271,10 +271,10 @@ export class CommandEquip extends CommandImpl  {
 }
 
 export class CommandUnequip extends CommandImpl {
-	private item: Item;
+	private item: string;
 	private slot: number;
 	private noSlot: boolean;
-	constructor(item: Item, slot: number, noSlot: boolean){
+	constructor(item: string, slot: number, noSlot: boolean){
 		super();
 		this.item = item;
 		this.slot = slot;

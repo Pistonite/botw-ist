@@ -1,6 +1,6 @@
 import { DisplayableInventory } from "./DisplayableInventory";
 import { GameData } from "./GameData";
-import { Item, ItemStack } from "./Item";
+import { ItemStack } from "./Item";
 import { Slots } from "./Slots";
 import { VisibleInventory } from "./VisibleInventory";
 
@@ -96,22 +96,22 @@ export class SimulationState {
 		this.pouch.modifyCount(-n);
 	}
 
-	public obtain(item: Item, count: number) {
+	public obtain(item: string, count: number) {
 		this.pouch.addInGame(item, count);
 		this.syncGameDataWithPouch();
 	}
 
-	public remove(item: Item, count: number, slot: number) {
+	public remove(item: string, count: number, slot: number) {
 		this.pouch.remove(item, count, slot);
 		this.syncGameDataWithPouch();
 	}
 
-	public equip(item: Item, slot: number) {
+	public equip(item: string, slot: number) {
 		this.pouch.equip(item, slot);
 		this.syncGameDataWithPouch();
 	}
 
-	public unequip(item: Item, slot: number){
+	public unequip(item: string, slot: number){
 		this.pouch.unequip(item, slot);
 		this.syncGameDataWithPouch();
 	}

@@ -6,10 +6,10 @@ type ItemSlotProps = {
   slot: DisplayableSlot
 };
 
-export const ItemSlot: React.FC<ItemSlotProps> = ({slot: {image, count, isBrokenSlot, isEquipped, displayCount}})=>{
+export const ItemSlot: React.FC<ItemSlotProps> = ({slot: {image, description, count, isBrokenSlot, isEquipped, displayCount}})=>{
 	return (
 		<span className={clsx("ItemSlot", isBrokenSlot && "ItemSlotBroken", isEquipped && "ItemSlotEquipped")}>
-			<img className={clsx("ItemImage")} src={image} />
+			<img className={clsx("ItemImage")} src={image} title={description}/>
 			{
 				displayCount && <span className={"ItemCount"}>
           x{count}

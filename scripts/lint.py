@@ -28,6 +28,7 @@ ignore_exts = [
     ".ico",
     ".ps1",
     ".wasm",
+    ".webp",
     ".tar.gz",
     ".otf",
     ".svg"

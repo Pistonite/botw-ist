@@ -5,11 +5,11 @@ const r = require as any; // eslint-disable-line @typescript-eslint/no-explicit-
 const images = ((requireContext)=>{
 	const imgMap: {[name: string]: string} = {};
 	requireContext.keys().forEach((k: string)=>{
-		if(k.startsWith("./") && k.endsWith(".png")){
+		if(k.startsWith("./") && (k.endsWith(".png") || k.endsWith("webp"))){
 			const module = requireContext(k);
 			// Clean image path ./name.png => name
 
-			const name = k.substring(2, k.length - 4);
+			const name = k.substring(2, k.lastIndexOf("."));
 			if(typeof module === "string"){
 				imgMap[name] = module;
 			}else if (typeof module === "object" && "default" in module){
@@ -20,6 +20,6 @@ const images = ((requireContext)=>{
 		}
 	});
 	return imgMap;
-})(r.context(".", false, /\.png$/));
+})(r.context(".", true, /\.(?:png|webp)$/));
 
 export default images as {readonly [name:string]:string};
