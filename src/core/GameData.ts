@@ -20,12 +20,12 @@ export class GameData implements DisplayableInventory {
 		this.slots = pouch.getSlots().deepClone();
 	}
 
-	public updateDurability(durability: number, slot: number){
-		this.slots.corrupt(durability, slot);
+	public updateLife(life: number, slot: number){
+		this.slots.updateLife(life, slot);
 	}
 
 	public addAllToPouchOnReload(pouch: VisibleInventory) {
-		this.slots.getSlotsRef().forEach(stack=>pouch.addWhenReload(stack.item, stack.count, stack.equipped));
+		this.slots.getSlotsRef().forEach(stack=>pouch.addWhenReload(stack));
 	}
 
 	public getDisplayedSlots(isIconAnimated: boolean): DisplayableSlot[] {

@@ -1,41 +1,74 @@
-import { Command, CommandNop } from "core/Command";
+import { parseCommand } from "core/command";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import "./App.css";
 import { CommandItem } from "./components/CommandItem";
 
 import { DisplayPane } from "surfaces/DisplayPane";
-import { parseCommand } from "core/Parser";
 import { ItemList } from "components/ItemList";
 import { TitledList } from "components/TitledList";
 import { createSimulationState, SimulationState } from "core/SimulationState";
 import { ReferencePage } from "surfaces/ReferencePage";
 import { OptionPage } from "surfaces/OptionPage";
+import { useSearchItem } from "data/item";
+import { GalleryPage } from "surfaces/GalleryPage";
 
-const getDefaultCommands = (): Command[]=>{
+const getDefaultCommandTexts = (): string[]=>{
 	const encoded = localStorage.getItem("HDS.CurrentCommandsText");
 	if(encoded){
 		const lines = encoded.split("\n");
-		return lines.map(parseCommand);
+		return lines;
 	}
 	return [
-		parseCommand("Get 5 Diamond 1 Slate 1 Glider 4 SpiritOrb"),
-		parseCommand("Save"),
-		parseCommand("# Magically break 4 slots"),
-		parseCommand("Break 4 Slots"),
-		parseCommand("Reload"),
-		parseCommand("Save"),
-		parseCommand("Reload"),
-	]  as Command[];
+		"Get 5 Diamond 1 Slate 1 Glider 4 SpiritOrb",
+		"Save",
+		"# Magically break 4 slots",
+		"Break 4 Slots",
+		"Reload",
+		"Save",
+		"Reload",
+	];
 };
 
+type Setting = {
+	interlaceInventory: boolean,
+	isIconAnimated: boolean,
+
+}
+const getSetting = (): Setting=>{
+	const settingString = localStorage.getItem("HDS.Setting");
+	const defaultSetting = {
+		interlaceInventory: false,
+		isIconAnimated: true,
+	};
+	if(settingString){
+		return {
+			...defaultSetting,
+			...JSON.parse(settingString)
+		};
+	}
+	return defaultSetting;
+};
+
+const initialSetting = getSetting();
+
 export const App: React.FC =  () => {
+	
+	const searchItem = useSearchItem();
 	const [page, setPageInState] = useState<string>("#simulation");
 	// Option States
-	const [interlaceInventory, setInterlaceInventory] = useState<boolean>(false);
-	const [isIconAnimated, setIsIconAnimated] = useState<boolean>(false);
+	const [interlaceInventory, setInterlaceInventory] = useState<boolean>(initialSetting.interlaceInventory);
+	const [isIconAnimated, setIsIconAnimated] = useState<boolean>(initialSetting.isIconAnimated);
 
-	const [commands, setCommands] = useState<Command[]>(getDefaultCommands());
+	// save settings
+	useEffect(()=>{
+		localStorage.setItem("HDS.Setting", JSON.stringify({
+			interlaceInventory,
+			isIconAnimated
+		}));
+	},[interlaceInventory, isIconAnimated]);
+	// Core Logic States
+	const [commandTexts, setCommandTexts] = useState<string[]>(getDefaultCommandTexts());
 	const [selectedSaveName, setSelectedSaveName] = useState<string>("");
 	const [displayIndex, setDisplayIndex] = useState<number>(0);
 	const [contextMenuX, setContextMenuX] = useState<number>(0);
@@ -44,17 +77,23 @@ export const App: React.FC =  () => {
 
 	const contextMenuRef = useRef<HTMLDivElement>(null);
 	// compute props
+
+	const parseCommandWithSearch = useCallback((cmd: string)=>{
+		return parseCommand(cmd, searchItem);
+	}, [searchItem]);
+
+	const commands = useMemo(()=>{
+		return commandTexts.map(c=>parseCommandWithSearch(c));
+	}, [commandTexts, parseCommandWithSearch]);
+
 	const simulationStates = useMemo(()=>{
 		const simulationStates: SimulationState[] = [];
 		const state = createSimulationState();
 		commands.forEach(c=>{
-			c.execute(state);
+			state.executeCommand(c);
 			simulationStates.push(state.deepClone());
 		});
 		return simulationStates;
-	}, [commands]);
-	const commandText = useMemo(()=>{
-		return commands.map(c=>c.getDisplayString()).join("\n");
 	}, [commands]);
 
 	const setPage = useCallback((hash: string)=>{
@@ -70,39 +109,36 @@ export const App: React.FC =  () => {
 		window.onkeydown=(e)=>{
 			if(e.code==="ArrowDown"){
 				let nextCommandIndex = displayIndex+1;
-				while(nextCommandIndex<commands.length && !commands[nextCommandIndex].isValid()){
+				while(nextCommandIndex<commandTexts.length && commands[nextCommandIndex].getError() !== undefined){
 					nextCommandIndex++;
 				}
-				if(nextCommandIndex===commands.length-1){
-					const arrCopy = [...commands];
-					arrCopy.push(new CommandNop(""));
-					setCommands(arrCopy);
+				if(nextCommandIndex===commandTexts.length-1){
+					const arrCopy = [...commandTexts];
+					arrCopy.push("");
+					setCommandTexts(arrCopy);
 					setDisplayIndex(arrCopy.length-1);
 				}else{
 					
-					setDisplayIndex(Math.min(commands.length-1, nextCommandIndex));
+					setDisplayIndex(Math.min(commandTexts.length-1, nextCommandIndex));
 				}
 			}else if(e.code==="ArrowUp"){
 				let nextCommandIndex = displayIndex-1;
-				while(nextCommandIndex>=0 && !commands[nextCommandIndex].isValid()){
+				while(nextCommandIndex>=0 && commands[nextCommandIndex].getError() !== undefined){
 					nextCommandIndex--;
 				}
 				setDisplayIndex(Math.max(0, nextCommandIndex));
 			}
 		};
-	}, [commands, displayIndex]);
+	}, [commandTexts, displayIndex, commands]);
 
 	useEffect(()=>{
-		// const encoded = serializeCommands(commands);
-		// localStorage.setItem("HDS.CurrentCommands", encoded);
-		const lines = commands.map(c=>c.getDisplayString());
-		const text = lines.join("\n");
+		const text = commandTexts.join("\n");
 		localStorage.setItem("HDS.CurrentCommandsText", text);
 
-	}, [commands]);
+	}, [commandTexts]);
 
 	useEffect(()=>{
-		if(contextIndex < 0 || contextIndex >= commands.length){
+		if(contextIndex < 0 || contextIndex >= commandTexts.length){
 			setContextIndex(-1);
 		}else if(contextMenuRef.current){
 			const rect = contextMenuRef.current.getBoundingClientRect();
@@ -110,7 +146,7 @@ export const App: React.FC =  () => {
 				setContextMenuY(contextMenuY-rect.height);
 			}
 		}
-	}, [contextMenuRef, contextIndex, commands]);
+	}, [contextMenuRef, contextIndex, commandTexts]);
   
 	return (
 		<div className='Calamity'>
@@ -124,10 +160,14 @@ export const App: React.FC =  () => {
 				}}>Simulation</button>
 				<button className="MainButton" onClick={()=>{
 					setPage("#reference");
-				}}>Reference</button>
+				}}>Commands</button>
+				<button className="MainButton" onClick={()=>{
+					setPage("#items");
+				}}>Items</button>
 				<button className="MainButton" onClick={()=>{
 					setPage("#options");
 				}}>Options</button>
+				
 			</div>
 
 			<div id="SidePane" style={{
@@ -162,8 +202,9 @@ export const App: React.FC =  () => {
 								}
 							
 								{
-									Object.entries(simulationStates[displayIndex].getNamedSaves()).map(([name, _gamedata])=>
+									Object.entries(simulationStates[displayIndex].getNamedSaves()).map(([name, _gamedata], i)=>
 										<CommandItem 
+											key={i}
 											onClick={()=>{
 												setSelectedSaveName(name);
 												setPage("#simulation");
@@ -192,7 +233,7 @@ export const App: React.FC =  () => {
 						<ol style={{
 						}}>
 							{
-								commands.map((c,i)=>
+								commandTexts.map((c,i)=>
 									<CommandItem 
 										onClick={()=>{
 											setDisplayIndex(i);
@@ -210,22 +251,22 @@ export const App: React.FC =  () => {
 										key={i} 
 										isSelected={displayIndex===i}
 										isContextSelected={contextIndex===i}
-										isComment={c.getDisplayString().startsWith("#")}
-										useListItem={!c.getDisplayString().startsWith("#")}
-										isInvalid={!c.isValid()}
+										isComment={c.startsWith("#")}
+										useListItem={!c.startsWith("#")}
+										isInvalid={commands[i].getError() !== undefined}
 									>
-										{c.getDisplayString()}
+										{c}
 									</CommandItem>
 								)
 							}
 							<CommandItem onClick={()=>{
-								const arrCopy = [...commands];
-								arrCopy.push(new CommandNop(""));
-								setCommands(arrCopy);
+								const arrCopy = [...commandTexts];
+								arrCopy.push("");
+								setCommandTexts(arrCopy);
 							}} onContextMenu={()=>{
-								const arrCopy = [...commands];
-								arrCopy.push(new CommandNop(""));
-								setCommands(arrCopy);
+								const arrCopy = [...commandTexts];
+								arrCopy.push("");
+								setCommandTexts(arrCopy);
 							}}>(new)</CommandItem>
 
 						</ol>
@@ -287,18 +328,19 @@ export const App: React.FC =  () => {
 							overflowY: "hidden"
 						}}>
 							{displayIndex >= 0 && displayIndex < commands.length &&
-					<DisplayPane 
-						overlaySave={interlaceInventory}
-						isIconAnimated={isIconAnimated}
-						displayIndex={displayIndex}
-						command={commands[displayIndex].getDisplayString()}
-						simulationState={simulationStates[displayIndex]}
-						editCommand={(c)=>{
-							const arrCopy = [...commands];
-							arrCopy[displayIndex] = c;
-							setCommands(arrCopy);
-						}}
-					/> 
+								
+								<DisplayPane 
+									overlaySave={interlaceInventory}
+									isIconAnimated={isIconAnimated}
+									command={commandTexts[displayIndex]}
+									commandError={commands[displayIndex].getError()}
+									simulationState={simulationStates[displayIndex]}
+									editCommand={(c)=>{
+										const arrCopy = [...commandTexts];
+										arrCopy[displayIndex] = c;
+										setCommandTexts(arrCopy);
+									}}
+								/> 
 					
 							}
 						</div>
@@ -308,18 +350,18 @@ export const App: React.FC =  () => {
 					page === "#reference" && <ReferencePage />
 				}
 				{
+					page === "#items" && <GalleryPage isIconAnimated={isIconAnimated}/>
+				}
+				{
 					page === "#options" && 
 					<OptionPage 
 						interlaceInventory={interlaceInventory}
 						setInterlaceInventory={setInterlaceInventory}
 						isIconAnimated={isIconAnimated}
 						setIsIconAnimated={setIsIconAnimated}
-						commandText={commandText}
+						commandText={commandTexts.join("\n")}
 						setCommandText={(value)=>{
-							if(value !== commandText){
-								const commands = value.split("\n").map(parseCommand);
-								setCommands(commands);
-							}
+							setCommandTexts(value.split("\n"));
 						}}
 					/>
 				}
@@ -353,27 +395,27 @@ export const App: React.FC =  () => {
 						}}>
 						
 							<CommandItem onClick={()=>{
-								const arrCopy = [...commands];
-								arrCopy.splice(contextIndex, 0, new CommandNop(""));
-								setCommands(arrCopy);
+								const arrCopy = [...commandTexts];
+								arrCopy.splice(contextIndex, 0, "");
+								setCommandTexts(arrCopy);
 								setContextIndex(-1);
 							}}>Insert Above</CommandItem>
 							<CommandItem onClick={()=>{
 								if(contextIndex > 0){
-									const arrCopy = [...commands];
+									const arrCopy = [...commandTexts];
 									const temp = arrCopy[contextIndex];
 									arrCopy[contextIndex] = arrCopy[contextIndex-1];
 									arrCopy[contextIndex-1] = temp;
-									setCommands(arrCopy);
+									setCommandTexts(arrCopy);
 									setContextIndex(-1);
 								}
 								
 							}}>Move Up</CommandItem>
 							<CommandItem onClick={()=>{
 								if(confirm("Delete?")){
-									setCommands(commands.filter((_,i)=>i!==contextIndex));
-									if(displayIndex >= commands.length){
-										setDisplayIndex(commands.length-1);
+									setCommandTexts(commandTexts.filter((_,i)=>i!==contextIndex));
+									if(displayIndex >= commandTexts.length){
+										setDisplayIndex(commandTexts.length-1);
 									}
 									setContextIndex(-1);
 								}

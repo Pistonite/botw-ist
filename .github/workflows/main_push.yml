@@ -35,7 +35,7 @@ jobs:
       run: npm ci
     - name: Lint
       run: just lint --verbose
-    - name: Test (WIP)
-      run: echo "No tests ran"
+    - name: Test
+      run: npm run test-all -- --watchAll=false
     - name: Build
       run: npm run build

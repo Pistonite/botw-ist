@@ -68,6 +68,7 @@ h1 {
   background-color: #333333bb;
   box-sizing: content-box;
   display: inline-block;
+  position:relative;
 }
 
 .ItemSlotBroken {
@@ -92,13 +93,37 @@ h1 {
   display:inline-block;
 }
 
+.ItemLayer {
+  width: 72px;
+  height: 72px;
+  position: absolute;
+  top: -4px;
+  left:-4px;
+}
+
 .ItemCount {
   font-size: 10pt;
-  position:relative;
-  top:-22px;
-  left:8px;
+  position:absolute;
+  left:10px;
+  top: 48px;
+  /* top:-22px;
+  left:8px; */ 
   color:#eeeeee;
-  float: left;
+}
+
+.ItemDurability {
+  display:inline-block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 10pt;
+  position:absolute;
+  left: 2px;
+  bottom: 2px;
+
+  color:#eeeeee;
+  background-color: #333333bb;
+  box-sizing: border-box;
+  border: 1px solid #999999;
+  padding: 0 1px;
 }
 
 h3.ListHeader {
@@ -189,4 +214,10 @@ textarea {
   outline: none;
   border-color: #eeeeee;
   box-shadow: 0 0 5px #eeeeee;
+}
+
+.SpecialScreen {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
 }

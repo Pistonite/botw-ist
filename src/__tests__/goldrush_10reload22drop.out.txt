@@ -1,0 +1,5 @@
+Initialize 8 weapon 1 bomb[equip] 1 a*arrow 1 shield 1 slate 1 glider 8 orb
+Save As Autosave
+Initialize 1 weapon[equip] 1 bow[equip] 1000 bomb arrow[equip] 1000 An*Arr 1 shield[equip] 3 screw 3 a*shaft 10 lizal talon 16 Honey 12 lizal horn 1 far*horn 999 Tail 999 Beetle 999 Core 999 Opal 999 Wood 2 Apple 2 s*pepper 999 rush 2 hy*shr 999 acorn 4 sil*p 6 hear 12 end 8 spring*a 16 SpeedFood 1 slate 1 glider
+Save
+Break 13 slots

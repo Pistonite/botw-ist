@@ -1,7 +1,7 @@
 import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "./DisplayableInventory";
 import { GameData } from "./GameData";
-import { ItemStack, itemToItemData, ItemType } from "./Item";
 import { Slots } from "./Slots";
+import { Item, ItemStack, ItemType, MetaOption } from "data/item";
 
 /*
  * Implementation of Visible Inventory (PauseMenuDataMgr) in botw
@@ -31,26 +31,26 @@ export class VisibleInventory implements DisplayableInventory{
 		this.count+=this.slots.addStackDirectly(stack);
 	}
 
-	public addWhenReload(item: string, count: number, equippedDuringReload: boolean) {
-		const slotsAdded = this.slots.add(item, count, equippedDuringReload, true, this.count);
+	public addWhenReload(stack: ItemStack) {
+		const slotsAdded = this.slots.add(stack, true, this.count);
 		this.count+=slotsAdded;
 	}
 
-	public addInGame(item: string, count: number) {
-		const slotsAdded = this.slots.add(item, count, false, false, this.count);
+	public addInGame(stack: ItemStack) {
+		const slotsAdded = this.slots.add(stack, false, this.count);
 		this.count+=slotsAdded;
 	}
 
-	public remove(item: string, count: number, slot: number) {
-		const slotsRemoved = this.slots.remove(item, count, slot);
+	public remove(stack: ItemStack, slot: number) {
+		const slotsRemoved = this.slots.remove(stack, slot);
 		this.count-=slotsRemoved;
 	}
 
-	public equip(item: string, slot: number) {
-		this.slots.equip(item, slot);
+	public equip(item: Item, slot: number) {
+		this.slots.equip(item, slot, this.count);
 	}
 
-	public unequip(item: string, slot: number) {
+	public unequip(item: Item, slot: number) {
 		this.slots.unequip(item, slot);
 	}
 
@@ -67,19 +67,19 @@ export class VisibleInventory implements DisplayableInventory{
 		let foundWeapon = false;
 		let foundBow = false;
 		let foundShield = false;
-		this.slots.getSlotsRef().forEach(({item, equipped}, i)=>{
+		this.slots.getSlotsRef().forEach(({item, count, equipped}, i)=>{
 			if(equipped){
-				const type = itemToItemData(item).type;
+				const type = item.type;
 				if(type === ItemType.Weapon && !foundWeapon){
-					gameData.updateDurability(999, i);
+					gameData.updateLife(count, i);
 					foundWeapon = true;
 				}
 				if(type === ItemType.Bow && !foundBow){
-					gameData.updateDurability(999, i);
+					gameData.updateLife(count, i);
 					foundBow = true;
 				}
 				if(type === ItemType.Shield && !foundShield){
-					gameData.updateDurability(999, i);
+					gameData.updateLife(count, i);
 					foundShield = true;
 				}
 			}
@@ -90,8 +90,12 @@ export class VisibleInventory implements DisplayableInventory{
 		const updatedSlot = this.slots.shootArrow(count);
 		if(updatedSlot>=0){
 			const durability = this.slots.getSlotsRef()[updatedSlot].count;
-			gameData.updateDurability(durability, updatedSlot);
+			gameData.updateLife(durability, updatedSlot);
 		}
+	}
+
+	public setMetadata(item: Item, slot: number, meta: MetaOption) {
+		this.slots.setMetadata(item, slot, meta);
 	}
 
 	public getCount(): number {

@@ -1,6 +1,7 @@
+import { Item, ItemStack, MetaOption } from "data/item";
+import { Command } from "./command";
 import { DisplayableInventory } from "./DisplayableInventory";
 import { GameData } from "./GameData";
-import { ItemStack } from "./Item";
 import { Slots } from "./Slots";
 import { VisibleInventory } from "./VisibleInventory";
 
@@ -22,6 +23,7 @@ export class SimulationState {
 	private pouch: VisibleInventory;
 	private nextReloadName?: string;
 	private isOnEventide = false;
+	private crashed = false;
 
 	constructor(gameData: GameData, manualSave: GameData | null, namedSaves: {[name: string]: GameData}, pouch: VisibleInventory){
 		this.gameData = gameData;
@@ -43,8 +45,19 @@ export class SimulationState {
 		);
 		newState.nextReloadName = this.nextReloadName;
 		newState.isOnEventide = this.isOnEventide;
+		newState.crashed = this.crashed;
 
 		return newState;
+	}
+
+	// this is a wrapper that also have pre- and post-command checks
+	public executeCommand(command: Command){
+		this.crashed = false;
+		command.execute(this);
+		if(this.shouldCrash()){
+			this.closeGame();
+			this.crashed = true;
+		}
 	}
 
 	public initialize(stacks: ItemStack[]) {
@@ -96,22 +109,22 @@ export class SimulationState {
 		this.pouch.modifyCount(-n);
 	}
 
-	public obtain(item: string, count: number) {
-		this.pouch.addInGame(item, count);
+	public obtain(stack: ItemStack) {
+		this.pouch.addInGame(stack);
 		this.syncGameDataWithPouch();
 	}
 
-	public remove(item: string, count: number, slot: number) {
-		this.pouch.remove(item, count, slot);
+	public remove(stack: ItemStack, slot: number) {
+		this.pouch.remove(stack, slot);
 		this.syncGameDataWithPouch();
 	}
 
-	public equip(item: string, slot: number) {
+	public equip(item: Item, slot: number) {
 		this.pouch.equip(item, slot);
 		this.syncGameDataWithPouch();
 	}
 
-	public unequip(item: string, slot: number){
+	public unequip(item: Item, slot: number){
 		this.pouch.unequip(item, slot);
 		this.syncGameDataWithPouch();
 	}
@@ -119,6 +132,11 @@ export class SimulationState {
 	public shootArrow(count: number){
 		this.pouch.shootArrow(count, this.gameData);
 		// does not sync
+	}
+
+	public setMetadata(item: Item, slot: number, meta: MetaOption) {
+		this.pouch.setMetadata(item, slot, meta);
+		this.syncGameDataWithPouch();
 	}
 
 	public closeGame() {
@@ -149,6 +167,10 @@ export class SimulationState {
 		}
 	}
 
+	public shouldCrash(): boolean {
+		return this.pouch.getSlots().length > 420;
+	}
+
 	public get displayableGameData(): DisplayableInventory {
 		return this.gameData;
 	}
@@ -161,6 +183,10 @@ export class SimulationState {
 		return this.pouch.getCount();
 	}
 
+	public isCrashed(): boolean{
+		return this.crashed;
+	}
+
 	public getManualSave(): GameData | null {
 		return this.manualSave;
 	}
@@ -169,15 +195,4 @@ export class SimulationState {
 		return this.namedSaves;
 	}
 
-	// public get displayableGameData(): DisplayableInventory {
-	//     return this.gameData;
-	// }
-
 }
-
-// Shoot X Arrow, x can be ommited and default to 1
-
-// Close Inventory, same as Resync GameData
-// Enter Eventide / Leave Eventide
-// Sort Key (In Tab X) - need more research on which tab is sorted. (might not be possible to select which tab to sort)
-// Sort Material (In Tab X) - need more research on which tab is sorted

@@ -33,7 +33,7 @@ jobs:
     - name: Lint
       run: just lint --verbose
     - name: Test (WIP)
-      run: echo "No tests ran"
+      run: npm run test-all -- --watchAll=false
     - name: Build
       run: npm run build
     - name: Deploy

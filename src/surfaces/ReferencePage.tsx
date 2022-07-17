@@ -1,36 +1,75 @@
+import { BodyText, Emphasized, Header, SubHeader, SubTitle } from "components/Text";
 import { TitledList } from "components/TitledList";
-import { getAllItems } from "core/Item";
 import React from "react";
 
 export const ReferencePage: React.FC = React.memo(()=>{
 
 	return (
 		<div className="OtherPage">
-			<TitledList title="Reference">
+			<TitledList title="Command Reference">
 				<div className="OtherPageContent">
-					<h2>Items</h2>
-					{
-						getAllItems().map((item, i)=><h4 key={i} className="Reference">{item}</h4>)
-					}
-					<h2>Commands</h2>
-					<p className="Reference">
-                        This is a list of available commands. All commands and items are case-sensitive
-					</p>
-					<h3 className="Reference">Initialize X item1 Y item2 Z item3 ...</h3>
-					<h4 className="Reference">Used for initializing inventory before simulation</h4>
-					<p className="Reference">
+					<Header>Item Syntax</Header>
+					<BodyText>
+						Item are specified by using <Emphasized>search keys</Emphasized> and <Emphasized>metadata</Emphasized>.
+					</BodyText>
+					<SubHeader>Search Keys</SubHeader>
+					<BodyText>
+						Search keys are used to find the item. For example, in the command <Emphasized>"Add 1 master sword"</Emphasized>,
+						<Emphasized>1</Emphasized> specifies the count, and <Emphasized>master sword</Emphasized> are 2 search keys to locate the item.
+						Search keys are designed to "just work", but they sometimes find the wrong item. In this case you can add more keys to narrow the search.
+						For example, <Emphasized>shroom</Emphasized> will match <Emphasized>Rushroom</Emphasized>, but <Emphasized>shroom hy</Emphasized> will match <Emphasized>HylianShroom</Emphasized>.
+						Another example, <Emphasized>hammer</Emphasized> will match <Emphasized>IronSledgeHammer</Emphasized>, but <Emphasized>spr ham</Emphasized> will match <Emphasized>SpringLoadedHammer</Emphasized>
+					</BodyText>
+					<BodyText>
+						In certain commands like <Emphasized>Equip</Emphasized>, you can only use 1 search key. In this case, you can use "*" to combine search keys into 1.
+						For example, <Emphasized>snow*head</Emphasized> is one search key that functions like <Emphasized>snow head</Emphasized>, which will give you the snowquill headdress
+					</BodyText>
+					<BodyText>
+						The order of the keys doesn't matter and they are case-insensitive.
+					</BodyText>
+					<SubHeader>Number of Items</SubHeader>
+					<BodyText>
+						When specifying number of items, you can use an integer or <Emphasized>all</Emphasized>, which is equivalent to 9999999 and can be used to remove all items without specifying the real count
+					</BodyText>
+					
+					<SubHeader>Metadata</SubHeader>
+					<BodyText>
+						Metadata is used to specify extra information. The syntax is <Emphasized>[key1=value1,key2=value2,...]</Emphasized>.
+						Metadata is not available in all commands. If you see <Emphasized>item[meta]</Emphasized>, then it's supported in that particular command.
+					</BodyText>
+					<BodyText>
+						Here is a list of available metadata. More will be added as they are implemented in the future
+					</BodyText>
+					<SubTitle>life (integer)</SubTitle>
+					<BodyText>Used to specify stack size or durability</BodyText>
+					<BodyText emphasized>
+						Example: hammer[life=300] makes a hammer with 3 durability
+					</BodyText>
+					<SubTitle>equip (boolean)</SubTitle>
+					<BodyText>Used to specify if a slot is equipped</BodyText>
+					<BodyText emphasized>
+						Example: hammer[equip] makes the hammer equipped. [equip] and [equip=true] are the same
+					</BodyText>
+
+					<Header>Command List</Header>
+					<BodyText>
+                        This is a list of available commands. All commands and items are case-insensitive
+					</BodyText>
+					<SubHeader>Initialize X item1[meta] Y item2[meta] Z item3[meta] ...</SubHeader>
+					<SubTitle>Used for initializing inventory before simulation</SubTitle>
+					<BodyText>
                         Fully resets the inventory by clearing all items and set Count to 0, then forcefully write the item list to inventory.
                         This would reset any broken slot you already have, and any in-game checks that happen when adding items are disabled.
                         For example, the items will appear in the order you specify, not in the in-game tab order
-					</p>
-					<p className="Reference">
+					</BodyText>
+					<BodyText>
                         If you specify count &gt; 1 for unstackable items like weapon or sheika slate, multiple of that item would be added.
                         Game Data will be synced with Visible Inventory after the reset
-					</p>
-					<p className="Reference">
+					</BodyText>
+					<BodyText>
                         Note that this will not clear saves. You can use this command to initialize multiple saves
-					</p>
-					<p className="Reference Example">Example: Initialize 1 Apple 2 Axe 3 Slate 4 SpiritOrb</p>
+					</BodyText>
+					<BodyText emphasized>Example: Initialize 1 Apple 2 Axe 3 Slate 4 SpiritOrb</BodyText>
 
 					<h3 className="Reference">Save</h3>
 					<h3 className="Reference2">Save As NAME</h3>
@@ -66,17 +105,6 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<p className="Reference Example">Example 1: Reload</p>
 					<p className="Reference Example">Example 2: Reload MySave</p>
 
-					<h3 className="Reference">Use NAME</h3>
-					<h4 className="Reference">(Deprecated) Specify which save to load on the subsequent reload</h4>
-					<p className="Reference Example">
-                        This command is only for backward compatibility. Use "Reload" instead
-					</p>
-					<p className="Reference">
-                        Specify the save named NAME to be reloaded on the next "Reload" command
-					</p>
-                    
-					<p className="Reference Example">Example: Use MySave</p>
-
 					<h3 className="Reference">Break X Slots</h3>
 					<h4 className="Reference">Simulate making X broken slots with hold smuggle glitch</h4>
 					<p className="Reference">
@@ -90,8 +118,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<p className="Reference Example">Example: Break 4 Slots</p>
 
 					<h3 className="Reference">Get/Add/Cook/Pickup/Buy item</h3>
-					<h3 className="Reference2">Get/Add/Cook/Pickup/Buy X item</h3>
-					<h3 className="Reference2">Get/Add/Cook/Pickup/Buy X item1 Y item2 Z item3 ...</h3>
+					<h3 className="Reference2">Get/Add/Cook/Pickup/Buy X item1[meta] Y item2[meta] Z item3[meta] ...</h3>
 					<h4 className="Reference">Simulate obtaining items in game</h4>
 					<p className="Reference">
                         Add the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
@@ -104,18 +131,17 @@ export const ReferencePage: React.FC = React.memo(()=>{
                         If you specify a count for unstackable items, they are added in different slots as if you pick them up in game, one after another.
 					</p>
 					<p className="Reference">
-                        Note that you must not enter plural forms for the item name.
+                        Try to avoid plural forms as they often make search fail
 					</p>
                     
 					<p className="Reference Example">Example 1: Add Apple</p>
 					<p className="Reference Example">Example 2: Get 10 Apple</p>
-					<p className="Reference Example">Example 3: Pickup 10 Apple 5 Diamond 1 Slate 5 MasterSword</p>
+					<p className="Reference Example">Example 3: Pickup 10 Apple 5 Diamond 1 Slate 5 MasterSword[life=700]</p>
 
 					<h3 className="Reference">With/Remove/Sell/Eat/Drop item</h3>
-					<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item</h3>
 					<h3 className="Reference2">With/Remove/Sell/Eat/Drop item From Slot Y</h3>
-					<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item From Slot Y</h3>
-					<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item1 Y item2 Z item3 ...</h3>
+					<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item From Slot Y</h3>				
+					<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item1[meta] Y item2[meta] Z item3[meta] ...</h3>
 					<h4 className="Reference">Simulate removing items in game</h4>
 					<p className="Reference">
                         Remove the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
@@ -127,8 +153,11 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<p className="Reference">
                         When slot is specified, it starts removing from slot X (slot 1 is the leftmost slot with that item, slot 2 is the second leftmost slot with that item).
 					</p>
+					<BodyText>
+						When removing items, the simulator will try to match the stack exactly, including metadata. If no items are found this way, the simulator will then try to match an item while ignoring the metadata
+					</BodyText>
 					<p className="Reference">
-                        Note that you must not enter plural forms for the item name.
+                        Try to avoid plural forms as they often make search fail
 					</p>
                     
 					<p className="Reference Example">Example 1: Remove Apple</p>
@@ -136,7 +165,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<p className="Reference Example">Example 3: Sell 10 Apple 5 Diamond</p>
 					<p className="Reference Example">Example 4: Sell 5 Apple From Slot 3</p>
 
-					<h3 className="Reference">D&amp;P X item1 Y item2 Z item3 ...</h3>
+					<h3 className="Reference">D&amp;P X item1[meta] Y item2[meta] Z item3[meta] ...</h3>
 					<h4 className="Reference">Shortcut for drop and pick up, for sorting inventory</h4>
 					<p className="Reference">
                         This command drops and pick up each item stack in the specified order.
@@ -160,6 +189,9 @@ export const ReferencePage: React.FC = React.memo(()=>{
                         Note that you can use this command to equip something that is already equipped, which is not possible in game.
                         You can also equip unequippable items like materials, but it is not meaningful
 					</p>
+					<BodyText emphasized>
+						Note that you cannot specify metadata. If you need to equip a specific item among others of the same type, use slot to specify which
+					</BodyText>
 					<p className="Reference Example">Example 1: Equip Weapon</p>
 					<p className="Reference Example">Example 2: Equip Weapon In Slot 3</p>
 
@@ -174,6 +206,9 @@ export const ReferencePage: React.FC = React.memo(()=>{
                         Note that you can use this command to unequip something that is already unequipped, which is useless.
                         You cannot unequip arrows.
 					</p>
+					<BodyText emphasized>
+						Note that you cannot specify metadata. If you need to equip a specific item among others of the same type, use slot to specify which
+					</BodyText>
 					<p className="Reference Example">Example 1: Unequip Shield</p>
 					<p className="Reference Example">Example 2: Unequip Shield In Slot 5</p>
 
@@ -191,12 +226,6 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					</p>
 					<p className="Reference Example">Example: Sync GameData</p>
 
-					<h3 className="Reference">Sort Key/Material</h3>
-					<h4 className="Reference">Simulates press Y to sort tab</h4>
-					<p className="Reference Example">
-                        This command is currently broken
-					</p>
-
 					<h3 className="Reference">Shoot X Arrow</h3>
 					<h4 className="Reference">Simulates shooting arrow without opening inventory</h4>
 					<p className="Reference">
@@ -211,6 +240,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<p className="Reference Example">Example: Shoot 1 Arrow</p>
                     
 					<h3 className="Reference">Enter/Exit Eventide</h3>
+					<h3 className="Reference2">Enter/Exit TOTS</h3>
 					<h4 className="Reference">Simulates entering/exiting Eventide or Trial of the Sword</h4>
 					<p className="Reference">
                         When entering Eventide or TotS, the entire inventory is cleared except for key items regardless of inventory count. 
@@ -220,6 +250,18 @@ export const ReferencePage: React.FC = React.memo(()=>{
                         When exiting the challenge, the game reloads the game data as if reloading a save
 					</p>
 					<p className="Reference Example">Example: Enter Eventide</p>
+
+					<SubHeader>Write [meta] To item</SubHeader>
+					<SubHeader connected>Write [meta] To item In Slot X</SubHeader>
+					<SubTitle>Change the metadata of item</SubTitle>
+					<BodyText>
+						This can be used to modify durability on weapon or count on items. This will sync inventory to game data.
+					</BodyText>
+					<BodyText>
+						if you write 0 to life, it will not cause the slot to be removed
+					</BodyText>
+					<BodyText emphasized>Example: Write [life=1000] To pot lid</BodyText>
+					<BodyText emphasized>Example: Write [life=1000] To pot lid In Slot 3</BodyText>
 				</div>
                 
 			</TitledList>

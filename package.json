@@ -1,6 +1,6 @@
 {
   "name": "botw-hundo-dupl",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "homepage": "https://dupl.itntpiston.app/",
   "private": true,
   "dependencies": {
@@ -63,12 +63,15 @@
     "webpack": "^5.64.4",
     "webpack-dev-server": "^4.6.0",
     "webpack-manifest-plugin": "^4.0.2",
-    "workbox-webpack-plugin": "^6.4.1"
+    "workbox-webpack-plugin": "^6.4.1",
+    "yaml": "^2.1.1",
+    "yaml-loader": "^0.8.0"
   },
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js",
+    "test-all": "node scripts/test.js",
+    "test": "node scripts/test.js test.ts",
     "lint": "eslint src --ext .ts,.tsx --max-warnings 0"
   },
   "eslintConfig": {
@@ -120,7 +123,10 @@
     "modulePaths": [],
     "moduleNameMapper": {
       "^react-native$": "react-native-web",
-      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy",
+      "^data/(.*)$": "<rootDir>/src/data/$1",
+      "^components/(.*)$": "<rootDir>/src/components/$1",
+      "^core/(.*)$": "<rootDir>/src/core/$1"
     },
     "moduleFileExtensions": [
       "web.js",
@@ -144,5 +150,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "webpack-bundle-analyzer": "^4.5.0"
   }
 }
