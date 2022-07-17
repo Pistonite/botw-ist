@@ -29,7 +29,8 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					</BodyText>
 					<SubHeader>Number of Items</SubHeader>
 					<BodyText>
-						When specifying number of items, you can use an integer or <Emphasized>all</Emphasized>, which is equivalent to 9999999 and can be used to remove all items without specifying the real count
+						When specifying number of items, you can use an integer or <Emphasized>all</Emphasized>, which is equivalent to -1.
+						When using -1 as the count in Remove commands, it will remove all items.
 					</BodyText>
 					
 					<SubHeader>Metadata</SubHeader>
@@ -55,7 +56,8 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<BodyText>
                         This is a list of available commands. All commands and items are case-insensitive
 					</BodyText>
-					<SubHeader>Initialize X item1[meta] Y item2[meta] Z item3[meta] ...</SubHeader>
+					<SubHeader>Initialize</SubHeader>
+					<SubHeader connected>Initialize X item1[meta] Y item2[meta] Z item3[meta] ...</SubHeader>
 					<SubTitle>Used for initializing inventory before simulation</SubTitle>
 					<BodyText>
                         Fully resets the inventory by clearing all items and set Count to 0, then forcefully write the item list to inventory.
@@ -65,6 +67,9 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<BodyText>
                         If you specify count &gt; 1 for unstackable items like weapon or sheika slate, multiple of that item would be added.
                         Game Data will be synced with Visible Inventory after the reset
+					</BodyText>
+					<BodyText>
+                        If you don't specify any item, it will make an empty inventory
 					</BodyText>
 					<BodyText>
                         Note that this will not clear saves. You can use this command to initialize multiple saves
@@ -219,12 +224,24 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					</p>
 					<p className="Reference Example">Example: Close Game</p>
 
-					<h3 className="Reference">Sync GameData</h3>
-					<h4 className="Reference">Copy Visible Inventory to Game Data</h4>
-					<p className="Reference">
-                        Usually done in game by opening and closing inventory.
-					</p>
-					<p className="Reference Example">Example: Sync GameData</p>
+					<SubHeader>Sync GameData</SubHeader>
+					<SubTitle>Copy Visible Inventory to Game Data</SubTitle>
+					<BodyText>
+                        Certain actions in game will cause gamedata be synced with visible inventory, including but not limited to: open and close inventory, dpad quick menu, drop items.
+					</BodyText>
+					<BodyText>
+                        Furthermore, if visible inventory has Count = 0, Game Data will be empty.
+					</BodyText>
+					<BodyText emphasized>Example: Sync GameData</BodyText>
+
+					<SubHeader>Init GameData</SubHeader>
+					<SubHeader connected>Init GameData X item1[meta] Y item2[meta] Z item3[meta] ...</SubHeader>
+					<SubTitle>Used for forcing the game data to be desynced with visible inventory in simulation</SubTitle>
+					<BodyText>
+                        Similar to <Emphasized>Initialize</Emphasized>, this command sets up game data with items in the specified order. However, this command does not change visible inventory.
+						This can be used to set up an initial state where Game Data is desynced.
+					</BodyText>
+					<BodyText emphasized>Example: Init GameData 1 Apple 2 Axe 3 Slate 4 SpiritOrb</BodyText>
 
 					<h3 className="Reference">Shoot X Arrow</h3>
 					<h4 className="Reference">Simulates shooting arrow without opening inventory</h4>

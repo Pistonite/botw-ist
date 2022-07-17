@@ -37,6 +37,8 @@ export class CommandHint extends CommandImpl {
 				return "Enter TOTS|Eventide";
 			case "sort":
 				return "Sorting is currently not supported";
+			case "init":
+				return "Init GameData X item1[meta] Y item2[meta] Z item3[meta] ...";
 		}
 		if(isAddVerb(this.keyword)){
 			return "Add item, Add X item1[meta] Y item2[meta] Z item3[meta] ...";

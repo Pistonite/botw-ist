@@ -1,6 +1,7 @@
 import { ItemStack, parseMetadata } from "data/item";
 import { tokenize } from "data/tokenize";
 import { CommandHint } from "./CommandHint";
+import { CommandInitGameData } from "./CommandInitGameData";
 import {  
 	CommandAdd, 
 	CommandBreakSlots, 
@@ -45,12 +46,20 @@ export const parseCommand = (cmdString: string, searchFunc: (word: string)=>Item
 		return result;
 	};
 	// intialize
-	if(tokens.length>1 && keywordMatch(tokens[0],"initialize")){
+	if(tokens.length>0 && keywordMatch(tokens[0],"initialize")){
 		const stacks = parseItemStacks(tokens, 1, searchFunc);
 		if(typeof stacks === "string"){
 			return new CommandNop(cmdString, stacks);
 		}
 		return new CommandInitialize(stacks);
+	}
+	// init gamedata
+	if(tokens.length>1 && keywordMatch(tokens[0],"init") && keywordMatch(tokens[1],"gamedata")){
+		const stacks = parseItemStacks(tokens, 2, searchFunc);
+		if(typeof stacks === "string"){
+			return new CommandNop(cmdString, stacks);
+		}
+		return new CommandInitGameData(stacks);
 	}
 	if(isAddVerb(tokens[0])){
 		// add item
@@ -327,7 +336,7 @@ const parseItemStacks = (tokens: string[], from: number, searchFunc: (word: stri
 
 const parseInteger = (token: string): number|undefined => {
 	if(keywordMatch(token, "all")){
-		return 9999999;
+		return -1;
 	}
 	const num = parseInt(token);
 	if(!Number.isInteger(num)){

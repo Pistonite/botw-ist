@@ -31,7 +31,8 @@ ignore_exts = [
     ".webp",
     ".tar.gz",
     ".otf",
-    ".svg"
+    ".svg",
+    ".log"
 ]
 
 ROOT = "."

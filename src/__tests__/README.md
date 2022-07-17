@@ -3,7 +3,7 @@
 1. Make up a name for the test
 2. Write the script in simulator
 3. Export the script and put it as `<name>.in.txt` in `src/__tests__`
-4. Write another script that uses `initialize`, `save`, `save as` and `break x slots` to achieve the expected result as the first script (look at one of the existing tests as an example)
+4. Write another script that uses `initialize`, `init gamedata`, `save`, `save as` and `break x slots` to achieve the expected result as the first script (look at one of the existing tests as an example)
 5. Export the new script and put it as `<name>.out.txt` in `src/__tests__`
 6. Create a new file `<name>.e2e.ts`
 7. copy paste the following and replace `<name>` with the name of your test. Replace `YOUR_NAME` with your name

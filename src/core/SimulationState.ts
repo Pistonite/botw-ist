@@ -66,6 +66,10 @@ export class SimulationState {
 		this.gameData.syncWith(this.pouch);
 	}
 
+	public setGameData(stacks: ItemStack[]) {
+		this.gameData = new GameData(new Slots([...stacks]));
+	}
+
 	public save(name?: string) {
 		if(name){
 			this.namedSaves[name] = this.gameData.deepClone();

@@ -1,0 +1,4 @@
+save
+initialize 1 apple 2 hylianshroom 3 slate
+init gamedata
+break 5 slots

@@ -1,0 +1,2 @@
+initialize 1 apple 2 hylianshroom 1 slate 1 glider
+save

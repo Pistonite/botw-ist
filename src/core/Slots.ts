@@ -65,12 +65,13 @@ export class Slots {
 	// remove item(s) start from slot
 	// return number of slots removed
 	// if item stack can't be matched exactly, will try to match without metadata
+	// pass negative as count to remove all
 	public remove(toRemove: ItemStack, slot: number): number {
 		const oldLength = this.internalSlots.length;
 		let count = toRemove.count;
 		let s = 0;
 		let found = false;
-		for(let i = 0; i<this.internalSlots.length && count > 0;i++){
+		for(let i = 0; i<this.internalSlots.length && count !== 0;i++){
 			const stack = this.internalSlots[i];
 			if(stack.canStack(toRemove)){
 				found = true;
@@ -78,7 +79,7 @@ export class Slots {
 					// find the right slot
 					s++;
 				}else{
-					if(stack.count<count){
+					if(count<0 || stack.count<count){
 						// this stack not enough to remove all
 						count-=stack.count;
 						this.internalSlots[i] = stack.modify({count:0});

@@ -1,0 +1,78 @@
+# Initialization. At Hateno
+Initialize 2 tree 1 w axe 1 boko spear 1 boko club 1 hammer 1 roy Bow[equip] 11 n*Arrow[equip] 0 AncientArrow 1 pot[equip] 2 Hylianshroom 2 s*pepper 1 amber 2 sunshroom 2 silentshroom 2 ironshroom 2 razorshroom 2 durian 2 Wood 2 rushroom 2 Spring 2 Shaft 2 Screw 1 Core 2 fairy 2 hot frog 1 Slate 8 SpiritOrb 1 Glider
+# Initialization Done
+dnp 2 sunshroom 
+with 2 hylianshroom 2 spicypepper 2 silentshroom 2 ironshroom 2 razorshroom
+Break 5 Slots
+Save
+with 2 wood 2 rushroom 2 ancient spring 2 fairy 2 durian
+Break 5 Slots
+# Regular IST Dupe
+Reload
+with 4 hot frog 1 core
+cook hasty
+Sell 16 orb
+# go to purah get sensor + sensing quest, drop the truffle + extra sun and screw
+Remove 4 screw
+Remove 4 sunshroom
+# Set order
+Drop 2 amber 4 Shaft 1 core
+pickup 2 amber 1 core
+dnp 2 fairy
+pickup 4 Shaft
+# Dump the rest
+Drop 2 durian
+Drop potlid
+# Corruption
+#wb to shop
+# drop all weapon except hammer
+drop 2 weapon 2 tree 1 boko spear 1 boko club 1 w*axe
+Equip hammer
+Save
+# pick up the weapons
+get  2 tree 1 boko spear 1 boko club 1 w*axe
+drop all wood all fairy all rush all amber all a*spring all sunshroom all core all Shaft 1 hasty
+Drop potlid
+unequip hammer
+# go to shrine for autosave
+Save As AutoSave
+drop ro*bow
+Reload
+Shoot 1 arrow
+Save
+Reload AutoSave
+# Drop all except core and shaft
+Drop all wood all fairy all rush all amber all ancient spring 1 hasty
+drop ro*bow
+equip w*axe
+Reload
+Save
+Drop 99 fairy 99 wood
+Reload
+# sell spring for money
+Sell 300 Spring
+Sell 10 amber
+Sell 4 Shaft
+#buy house
+Remove 30 Wood
+# wb to purah get stasis+, bombs+
+remove 3 core
+Remove 3 Shaft
+#Lurelin quests
+get sap
+get 1 seafood pae
+#orbs along the way
+Get 5 orb
+Remove 1 n*arrow
+Drop ro*b
+Drop pot
+Drop hammer
+Drop 5 fairy
+Enter Eventide
+Pickup ro*bow
+add 1 n*arrow
+pickup pot
+pickup 5 fairy
+pickup hammer
+Exit Eventide
+sync gamedata
