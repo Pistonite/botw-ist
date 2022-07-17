@@ -271,7 +271,7 @@ const parseSimpleCommands = (tokens: string[]): Command | undefined => {
 	if(tokens.length===2 && keywordMatchAny(tokens[0],["close", "exit"]) && keywordMatch(tokens[1],"game")){
 		return new CommandCloseGame();
 	}
-	if(tokens.length===2 && keywordMatch(tokens[0],"sync") && keywordMatch(tokens[0],"gamedata")){
+	if(tokens.length===2 && keywordMatch(tokens[0],"sync") && keywordMatch(tokens[1],"gamedata")){
 		return new CommandSync();
 	}
 	if(tokens.length===2 && (keywordMatch(tokens[0],"enter") || keywordMatch(tokens[0],"exit")) && (keywordMatch(tokens[1],"eventide") || keywordMatch(tokens[1],"tots"))){
