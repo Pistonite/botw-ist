@@ -1,0 +1,5 @@
+Initialize 1 Shield[equip] 999 Apple 1 Slate 1 Glider
+Save
+Initialize 2 Shield[equip] 999 Apple 1 Slate 1 Glider
+Break 3 Slots
+Init GameData 1 Shield[equip] 999 Apple 1 Slate 1 Glider

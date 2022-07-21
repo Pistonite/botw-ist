@@ -1,0 +1,4 @@
+Initialize 1 Shield 999 Apple 1 Slate 4 Orb 4 Orb 4 Orb 1 Glider 4 Orb 4 Orb 4 Orb 4 Orb 4 Orb 4 Orb
+Equip Shield
+Save
+Break 4 Slots

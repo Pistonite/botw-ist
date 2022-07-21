@@ -1,0 +1,7 @@
+Get 5 Diamond 1 Slate 1 Glider 4 SpiritOrb
+Save
+# Magically break 4 slots
+Break 4 Slots
+Reload
+Save
+Reload
