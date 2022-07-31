@@ -63,27 +63,38 @@ export class VisibleInventory implements DisplayableInventory{
 	}
 
 	public updateEquipmentDurability(gameData: GameData) {
+		// find last equipped weapon/bow/shield, but update the durability on first equipped slot
 		// find first weapon/bow/shield. this one searches entire inventory
-		let foundWeapon = false;
-		let foundBow = false;
-		let foundShield = false;
-		this.slots.getSlotsRef().forEach(({item, count, equipped}, i)=>{
+		let firstEquippedWeaponSlot = -1;
+		let firstEquippedBowSlot = -1;
+		let firstEquippedShieldSlot = -1;
+		this.slots.getSlotsRef().forEach(({item, equipped}, i)=>{
 			if(equipped){
 				const type = item.type;
-				if(type === ItemType.Weapon && !foundWeapon){
-					gameData.updateLife(count, i);
-					foundWeapon = true;
+				if(type === ItemType.Weapon && firstEquippedWeaponSlot === -1){
+					firstEquippedWeaponSlot = i;
 				}
-				if(type === ItemType.Bow && !foundBow){
-					gameData.updateLife(count, i);
-					foundBow = true;
+				if(type === ItemType.Bow && firstEquippedBowSlot === -1){
+					firstEquippedBowSlot = i;
 				}
-				if(type === ItemType.Shield && !foundShield){
-					gameData.updateLife(count, i);
-					foundShield = true;
+				if(type === ItemType.Shield && firstEquippedShieldSlot === -1){
+					firstEquippedShieldSlot = i;
 				}
 			}
 		});
+		// get life value from last equipped
+		const lastEquippedWeaponSlot = this.slots.findLastEquippedSlot(ItemType.Weapon);
+		if(firstEquippedWeaponSlot >=0 && lastEquippedWeaponSlot >=0){
+			gameData.updateLife(this.slots.getSlotsRef()[lastEquippedWeaponSlot].count, firstEquippedWeaponSlot);
+		}
+		const lastEquippedBowSlot = this.slots.findLastEquippedSlot(ItemType.Bow);
+		if(firstEquippedBowSlot >=0 && lastEquippedBowSlot >=0){
+			gameData.updateLife(this.slots.getSlotsRef()[lastEquippedBowSlot].count, firstEquippedBowSlot);
+		}
+		const lastEquippedShieldSlot = this.slots.findLastEquippedSlot(ItemType.Shield);
+		if(firstEquippedShieldSlot >=0 && lastEquippedShieldSlot >=0){
+			gameData.updateLife(this.slots.getSlotsRef()[lastEquippedShieldSlot].count, firstEquippedShieldSlot);
+		}
 	}
 
 	public shootArrow(count: number, gameData: GameData) {

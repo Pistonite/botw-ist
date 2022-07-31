@@ -27,6 +27,7 @@ export const createArrowMockItem = (id: string): Item => new MockItem(id, ItemTy
 export const createMaterialMockItem = (id: string): Item => new MockItem(id, ItemType.Material, true, true);
 export const createFoodMockItem = (id: string): Item => new MockItem(id, ItemType.Food, false, true);
 export const createKeyMockItem = (id: string): Item => new MockItem(id, ItemType.Key, false, false);
+export const createKeyMockItemStackable = (id: string): Item => new MockItem(id, ItemType.Key, true, true);
 export const createEquipmentMockItem = (id: string, type: ItemType): Item => new MockItem(id, type, false, true);
 
 export const equalsExceptEquip = (a: ItemStack, b: ItemStack): boolean => a.equalsExceptForEquipped(b);

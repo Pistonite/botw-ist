@@ -276,36 +276,34 @@ export class Slots {
 		if(slot < 0 || slot >= this.internalSlots.length){
 			return;
 		}
-		if(this.internalSlots[slot].item.stackable && this.internalSlots[slot].item.type !== ItemType.Arrow){
+		const type = this.internalSlots[slot].item.type;
+		const stackable = this.internalSlots[slot].item.stackable;
+		// [confirmed] material and meals are capped at 999
+		// meals: https://discord.com/channels/269611402854006785/269616041435332608/1000253331668742265
+		const isMaterialOrMeal = type === ItemType.Material || type === ItemType.Food;
+		// [confirmed] arrows are not capped at 999
+		const isArrow = type === ItemType.Arrow;
+		// [confirmed] stackble key items are capped
+		// https://discord.com/channels/269611402854006785/269616041435332608/1003165317125656586
+		const isStackableKey = type === ItemType.Key && stackable;
+
+		const shouldCapAt999 = !isArrow && (isMaterialOrMeal || isStackableKey);
+		if(shouldCapAt999){
 			life = Math.min(999, life);
 		}
-		//const thisData = itemToItemData(this.internalSlots[slot].item);
-		// Currently only supports corrupting arrows, material, food and key items as durability values are not simulated on equipments
-		//if(this.internalSlots[slot].item.type >= ItemType.Material || this.internalSlots[slot].item.stackable){
-		//const newLife = Math.min(999, life);
+		
 		this.modifySlot(slot, {count: life});
-		//}
+
 	}
 
 	// shoot count arrows. return the slot that was updated, or -1
 	public shootArrow(count: number): number {
 		// first find equipped arrow, search entire inventory
-		// this is the last equipped arrow before armor
-		let i=0;
-		let equippedArrow: Item | undefined = undefined;
-		// [needs confirm] does this check entire inventory?
-		for(;i<this.internalSlots.length;i++){
-			if(this.internalSlots[i].item.type > ItemType.Shield){
-				break;
-			}
-			if(this.internalSlots[i].equipped && this.internalSlots[i].item.type === ItemType.Arrow){
-				equippedArrow = this.internalSlots[i].item;
-			}
-		}
-		if(i>=this.internalSlots.length){
-			//can't find equipped arrow
+		const lastEquippedArrowSlot = this.findLastEquippedSlot(ItemType.Arrow);
+		if(lastEquippedArrowSlot < 0){
 			return -1;
 		}
+		const equippedArrow: Item = this.internalSlots[lastEquippedArrowSlot].item;
 		// now find the first slot of that arrow and update
 		for(let j=0;j<this.internalSlots.length;j++){
 			if(this.internalSlots[j].item === equippedArrow){
@@ -315,7 +313,26 @@ export class Slots {
 		}
 		//for some reason cannot find that arrow now?
 		return -1;
+	}
 
+	public findLastEquippedSlot(type: ItemType): number {
+		let i = 0;
+		let result = -1;
+		// [needs confirm] does this check entire inventory?
+		for(;i<this.internalSlots.length;i++){
+			// [needs confirm] does this break when == type+1?
+			// [needs confirm] does this matter when tabs are undiscovered?
+			if(this.internalSlots[i].item.type > type+1){
+				break;
+			}
+			if(this.internalSlots[i].equipped && this.internalSlots[i].item.type === type){
+				// constantly update result as long as a new slot is found
+				// In the end, this will be the last equipped slots of that type
+				result = i;
+			}
+		}
+		// will be -1 if never found
+		return result;
 	}
 
 	// set item metadata

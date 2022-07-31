@@ -23,5 +23,7 @@ export {};
 1. Open the `e2e.ts` file of the failed test
 2. replace `it` with `it.only`
 3. replace `toPassE2ESimulation()` with `toPassE2ESimulation(true)` (i.e. type `true` in the parenthese)
-4. Run the test again, you should now see `debug.expected.log` and `debug.actual.log` containing the expected and actual content of the simuation states.
+4. Run the test again, you should see 3 files in the test folder:
+    - `debug.expected.log` and `debug.actual.log` containing the expected and actual content of the simuation states.
+    - `debug.mismatch.log` containing parts of the states that are different
 5. After fixing the test, revert the changes to `e2e.ts` you made
