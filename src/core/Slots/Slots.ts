@@ -79,6 +79,12 @@ export class Slots {
 					// find the right slot
 					s++;
 				}else{
+					// fully remove weapons, bows, and shields instead of reducing their life
+					if(stack.item.type === ItemType.Weapon || stack.item.type === ItemType.Bow || stack.item.type === ItemType.Shield){
+						this.internalSlots[i] = stack.modify({count:0});
+						break;
+					}
+
 					if(count<0 || stack.count<count){
 						// this stack not enough to remove all
 						count-=stack.count;

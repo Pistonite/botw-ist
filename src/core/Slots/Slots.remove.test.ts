@@ -1,6 +1,6 @@
-import { createMaterialStack, ItemStack } from "data/item";
+import { createEquipmentStack, createMaterialStack, ItemStack, ItemType } from "data/item";
 import { Slots } from "./Slots";
-import { createMaterialMockItem } from "./SlotsTestHelpers";
+import { createEquipmentMockItem, createMaterialMockItem } from "./SlotsTestHelpers";
 
 describe("Slots.remove", ()=>{
 	it("Does nothing if item doesn't exist", ()=>{
@@ -85,6 +85,42 @@ describe("Slots.remove", ()=>{
 		const removed = slots.remove(stackToRemove, 0);
 		const expected: ItemStack[] = [];
 		expect(removed).toBe(2);
+		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+	});
+	it("Removes weapons with increased durability", ()=>{
+		const mockItem1 = createEquipmentMockItem("WeaponA", ItemType.Weapon);
+		const stackToRemove = createEquipmentStack(mockItem1, 1000, false);
+
+		const stacks: ItemStack[] = [createEquipmentStack(mockItem1, 80000, false)];
+		const slots = new Slots(stacks);
+
+		const removed = slots.remove(stackToRemove, 0);
+		const expected: ItemStack[] = [];
+		expect(removed).toBe(1);
+		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+	});
+	it("Removes bows with increased durability", ()=>{
+		const mockItem1 = createEquipmentMockItem("WeaponA", ItemType.Bow);
+		const stackToRemove = createEquipmentStack(mockItem1, 1000, false);
+
+		const stacks: ItemStack[] = [createEquipmentStack(mockItem1, 80000, false)];
+		const slots = new Slots(stacks);
+
+		const removed = slots.remove(stackToRemove, 0);
+		const expected: ItemStack[] = [];
+		expect(removed).toBe(1);
+		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+	});
+	it("Removes shields with increased durability", ()=>{
+		const mockItem1 = createEquipmentMockItem("WeaponA", ItemType.Shield);
+		const stackToRemove = createEquipmentStack(mockItem1, 1000, false);
+
+		const stacks: ItemStack[] = [createEquipmentStack(mockItem1, 80000, false)];
+		const slots = new Slots(stacks);
+
+		const removed = slots.remove(stackToRemove, 0);
+		const expected: ItemStack[] = [];
+		expect(removed).toBe(1);
 		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
 	});
 });
