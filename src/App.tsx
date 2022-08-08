@@ -153,6 +153,7 @@ export const App: React.FC =  () => {
 			
 			<div id="NavBar" style={{
 				backgroundColor: "#262626",
+				color: "#ffffff",
 				height: 40
 			}}>
 				<button className="MainButton" onClick={()=>{
@@ -167,7 +168,7 @@ export const App: React.FC =  () => {
 				<button className="MainButton" onClick={()=>{
 					setPage("#options");
 				}}>Options</button>
-				
+				Helpful reading for understanding IST: <a href="https://restite.org/reload/#">https://restite.org/reload</a> by savage13
 			</div>
 
 			<div id="SidePane" style={{
