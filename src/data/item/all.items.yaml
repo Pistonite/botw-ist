@@ -269,7 +269,8 @@ bow:
   global:
     stackable: false
   entries:
-  - BowOfLight
+  - BowOfLight:
+      durability: 100
   - WoodenBow:
       durability: 20
   - TravelersBow:
