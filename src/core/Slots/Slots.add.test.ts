@@ -2,7 +2,7 @@ import { ItemStack, ItemType, createMaterialStack, createEquipmentStack } from "
 import { Slots } from "./Slots";
 import { createArrowMockItem, createEquipmentMockItem, createFoodMockItem, createKeyMockItem, createMaterialMockItem, equalsExceptEquip } from "./SlotsTestHelpers";
 
-describe("Slots.add", ()=>{
+describe("core/Slots.add", ()=>{
 	describe("sorted", ()=>{
 		describe("reloading = true", ()=>{
 			it("should add new stack when empty", ()=>{

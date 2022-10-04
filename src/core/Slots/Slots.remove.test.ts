@@ -2,7 +2,7 @@ import { createEquipmentStack, createMaterialStack, ItemStack, ItemType } from "
 import { Slots } from "./Slots";
 import { createEquipmentMockItem, createMaterialMockItem } from "./SlotsTestHelpers";
 
-describe("Slots.remove", ()=>{
+describe("core/Slots.remove", ()=>{
 	it("Does nothing if item doesn't exist", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
 		const stackToRemove = createMaterialStack(mockItem1, 1);

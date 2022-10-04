@@ -1,6 +1,8 @@
+import { BodyText, SubHeader, SubTitle } from "components/Text";
 import { TitledList } from "components/TitledList";
 import { saveAs } from "data/FileSaver";
-import { useRef, useState } from "react";
+import { serialize } from "data/serialize";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type OptionPageProps = {
 	interlaceInventory: boolean,
@@ -21,7 +23,20 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 }) => {
 	const [currentText, setCurrentText] = useState<string>(commandText);
 	const [fileName, setFileName] = useState<string>("");
+	const [showDirectUrl, setShowDirectUrl] = useState<boolean>(false);
+	const [showCopiedMessage, setShowCopiedMessage] = useState<boolean>(false);
+	
 	const uploadRef = useRef<HTMLInputElement>(null);
+
+	const directUrl = useMemo(()=>{
+		const serializedCommands = serialize(commandText);
+		const query = new URLSearchParams(serializedCommands).toString();
+		return `${window.location.origin}/?${query}`;
+	}, [commandText]);
+
+	useEffect(()=>{
+		setShowCopiedMessage(false);
+	}, [currentText]);
 
 	return (
 		<div className="OtherPage">
@@ -41,36 +56,29 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 
 			<TitledList title="Options">
 				<div className="OtherPageContent">
- 
-					<h3 className="Reference">
+					<SubHeader>
 						Interlace Inventory with GameData 
 						<button className="MainButton" onClick={()=>{
 							setInterlaceInventory(!interlaceInventory);
 						}}>
 							{interlaceInventory ? "ON" : "OFF"}
 						</button>
-					</h3>
-					<h4 className="Reference">
-						Toggle whether Visible Inventory should be displayed separetely from Game Data or interlaced.
-					</h4>
+					</SubHeader>
+					<SubTitle>Toggle whether Visible Inventory should be displayed separetely from Game Data or interlaced.</SubTitle>
 
-					<h3 className="Reference">
+					<SubHeader>
 						Enable Animated Item Icons
 						<button className="MainButton" onClick={()=>{
 							setIsIconAnimated(!isIconAnimated);
 						}}>
 							{isIconAnimated ? "ON" : "OFF"}
 						</button>
-					</h3>
-					<h4 className="Reference">
-						Toggle whether items such as the champion abilities or Travel Medallion use animated or still icons.
-					</h4>
+					</SubHeader>
+					<SubTitle>Toggle whether items such as the champion abilities or Travel Medallion use animated or still icons.</SubTitle>
 
-					<h3 className="Reference">Import / Export</h3>
-					<h4 className="Reference">
-						You can also directly copy, paste, or edit the commands here
-					</h4>
-					<p className="Reference">
+					<SubHeader>Text Import / Export</SubHeader>
+					<SubTitle>You can also directly copy, paste, or edit the commands here</SubTitle>
+					<BodyText>
 						<button className="MainButton" onClick={()=>{
 							if(uploadRef.current){
 								uploadRef.current.click();
@@ -112,9 +120,48 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 								<span className="Example">Don't forget to save changes</span>
 							</>
 						}
-						
-					</p>
+					</BodyText>
 
+					<SubHeader>Direct URL</SubHeader>
+					<SubTitle>Use this to open the simulator with the steps automatically loaded.</SubTitle>
+					<div>
+						{
+							currentText !== commandText ?
+								<BodyText emphasized>
+									You must save the changes above to access the updated URL
+								</BodyText>
+								:
+								<>
+									<p className="Reference" style={{
+										fontSize: "10pt",
+										color: "#aaaaaa",
+									
+										...!showDirectUrl && {
+											textOverflow: "ellipsis",
+											overflowX: "hidden",
+											whiteSpace: "nowrap",
+										}
+									}}>
+										{directUrl}
+									</p>
+									<BodyText>
+										<button className="MainButton" onClick={()=>{
+											setShowDirectUrl(!showDirectUrl);
+										}}>{showDirectUrl ? "Hide" : "Expand"}</button>
+										<button className="MainButton" disabled={currentText !== commandText} onClick={()=>{
+											window.navigator.clipboard.writeText(directUrl);
+											setShowCopiedMessage(true);
+										}}>
+										Copy
+										</button>
+										{
+											showCopiedMessage && <span className="Example">Link copied!</span>
+										}
+						
+									</BodyText>
+								</>
+						}
+					</div>
 				</div>
 			</TitledList>
 		</div>

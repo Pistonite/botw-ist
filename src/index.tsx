@@ -5,6 +5,7 @@ import {App} from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { LanguageProvider } from "data/i18n";
 import { ItemProvider } from "data/item";
+import { DirectLoadPage } from "surfaces/DirectLoadPage";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -12,12 +13,12 @@ const root = ReactDOM.createRoot(
 root.render(
 	<React.StrictMode>
 		<LanguageProvider>
-			<ItemProvider>
-				<App />
-			</ItemProvider>
-			
+			<DirectLoadPage>
+				<ItemProvider>
+					<App />
+				</ItemProvider>
+			</DirectLoadPage>
 		</LanguageProvider>
-		
 	</React.StrictMode>
 );
 

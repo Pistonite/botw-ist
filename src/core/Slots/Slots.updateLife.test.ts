@@ -2,7 +2,7 @@ import { createEquipmentStack, createMaterialStack, ItemStack, ItemType } from "
 import { Slots } from "./Slots";
 import { createArrowMockItem, createEquipmentMockItem, createFoodMockItem, createKeyMockItemStackable, createMaterialMockItem } from "./SlotsTestHelpers";
 
-describe.only("Slots.updateLife", ()=>{
+describe.only("core/Slots.updateLife", ()=>{
 	it("should update life", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
 		const slot = createMaterialStack(mockItem1, 1);

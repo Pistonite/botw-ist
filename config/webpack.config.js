@@ -297,9 +297,9 @@ module.exports = function (webpackEnv) {
       ],
     },
     resolve: {
-      // fallback: {
-      //   buffer: require.resolve("buffer/")
-      // },
+      fallback: {
+        buffer: require.resolve("buffer/")
+      },
       // This allows you to set a fallback for where webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"
       // if there are any conflicts. This matches Node resolution mechanism.
@@ -579,6 +579,11 @@ module.exports = function (webpackEnv) {
       ].filter(Boolean),
     },
     plugins: [
+      // Work around for Buffer is undefined:
+      // https://github.com/webpack/changelog-v5/issues/10
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+      }),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(
         Object.assign(

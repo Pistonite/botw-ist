@@ -176,6 +176,13 @@ button.MainButton:active {
   background-color: #888888;
 }
 
+button.MainButton:disabled{
+  color: #888888;
+  background-color: #333333;
+  border-color: #888888;
+  box-shadow: none;
+}
+
 .FullWidth {
   width: 100% !important;
 }
@@ -188,6 +195,7 @@ div.OtherPage {
 
 div.OtherPageContent{
   padding: 10px;
+  overflow-wrap: break-word;
 }
 
 .MainInput {

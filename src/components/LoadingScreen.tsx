@@ -1,7 +1,11 @@
 import { PropsWithChildren } from "react";
 
+type Props = {
+	multiLine?: boolean, 
+}
+
 // an over-engineered loading screen
-export const LoadingScreen: React.FC<PropsWithChildren> = ({children})=>{
+export const LoadingScreen: React.FC<PropsWithChildren<Props>> = ({multiLine, children})=>{
 	return (
 		<div style={{
 			textAlign: "center",
@@ -15,7 +19,7 @@ export const LoadingScreen: React.FC<PropsWithChildren> = ({children})=>{
 			<span style={{
 				color: "#00ffcc",
                 
-				lineHeight: "100vh",
+				lineHeight: multiLine?"default":"100vh",
 				height: "100vh",
 			}}>
 				{children}
