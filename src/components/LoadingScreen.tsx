@@ -2,10 +2,11 @@ import { PropsWithChildren } from "react";
 
 type Props = {
 	multiLine?: boolean, 
+	hasError?: boolean,
 }
 
 // an over-engineered loading screen
-export const LoadingScreen: React.FC<PropsWithChildren<Props>> = ({multiLine, children})=>{
+export const LoadingScreen: React.FC<PropsWithChildren<Props>> = ({multiLine, hasError, children})=>{
 	return (
 		<div style={{
 			textAlign: "center",
@@ -17,7 +18,7 @@ export const LoadingScreen: React.FC<PropsWithChildren<Props>> = ({multiLine, ch
 			backgroundColor: "#262626"
 		}}>
 			<span style={{
-				color: "#00ffcc",
+				color: hasError? "#ee7777":"#00ffcc",
                 
 				lineHeight: multiLine?"default":"100vh",
 				height: "100vh",

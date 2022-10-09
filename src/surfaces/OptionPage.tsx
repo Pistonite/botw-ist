@@ -4,6 +4,8 @@ import { saveAs } from "data/FileSaver";
 import { serialize } from "data/serialize";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+const URL_MAX = 2048;
+
 type OptionPageProps = {
 	interlaceInventory: boolean,
 	setInterlaceInventory: (value: boolean)=>void,
@@ -33,6 +35,8 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 		const query = new URLSearchParams(serializedCommands).toString();
 		return `${window.location.origin}/?${query}`;
 	}, [commandText]);
+
+	const directUrlLength = directUrl.length;
 
 	useEffect(()=>{
 		setShowCopiedMessage(false);
@@ -132,6 +136,11 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 								</BodyText>
 								:
 								<>
+									{
+										directUrlLength > URL_MAX && <BodyText emphasized>
+											Warning: The URL is too long ({directUrlLength} characters) and may not work in certain browsers. Export as file instead if you encounter any problems.
+										</BodyText>
+									}
 									<p className="Reference" style={{
 										fontSize: "10pt",
 										color: "#aaaaaa",
@@ -144,6 +153,7 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 									}}>
 										{directUrl}
 									</p>
+									
 									<BodyText>
 										<button className="MainButton" onClick={()=>{
 											setShowDirectUrl(!showDirectUrl);
@@ -157,7 +167,7 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 										{
 											showCopiedMessage && <span className="Example">Link copied!</span>
 										}
-						
+										
 									</BodyText>
 								</>
 						}

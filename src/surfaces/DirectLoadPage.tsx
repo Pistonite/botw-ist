@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import { parse } from "query-string";
 import { deserialize } from "data/serialize";
 import { LoadingScreen } from "components/LoadingScreen";
@@ -10,7 +10,28 @@ const redirectToMainApp = ()=>{
 
 export const DirectLoadPage: React.FC<PropsWithChildren> = ({children}) => {
 	const query = parse(window.location.search);
-	const commandTextToLoad = deserialize(query);
+	const [commandTextToLoad, errorText] = useMemo(()=>{
+		try {
+			return [deserialize(query), false];
+		} catch (e) {
+			console.error(e);
+			return [null, "Fail to deserialize. The URL may be corrupted."];
+		}
+	}, [query]);
+
+	if(errorText){
+		return (
+			<LoadingScreen hasError multiLine>
+				<Header>Error loading direct URL</Header>
+				<SubHeader>{errorText}</SubHeader>
+				<BodyText>The browser console may have useful information for debugging</BodyText>
+				<BodyText emphasized>Press Continue to load existing data in the simulator instead</BodyText>
+				<button className="MainButton" onClick={()=>{
+					redirectToMainApp();
+				}}>Continue</button>
+			</LoadingScreen>
+		);
+	}
 
 	if (!commandTextToLoad){
 		return <>{children}</>;
