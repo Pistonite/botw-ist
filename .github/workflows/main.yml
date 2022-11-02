@@ -49,32 +49,32 @@ jobs:
 
   build:
     name: Build
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
     - name: Setup | Checkout
       uses: actions/checkout@v3
     - name: Setup | Node Install
       run: npm ci
-    - name: Build
+    - name: Build | React Build
       run: npm run build
-
-  build-deploy:
-    name: Build and Deploy
-    if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    steps:
-    - name: Setup | Checkout
-      uses: actions/checkout@v3
-    - name: Setup | Node Install
-      run: npm ci
-    - name: Build
-      run: npm run build
-    - name: Deploy | Upload Artifact
+    - name: Build | Upload Artifact
       uses: actions/upload-pages-artifact@v1.0.4
       with:
         path: build
         retention-days: 30
+
+  deploy:
+    name: Deploy
+    needs: build
+    if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
     - name: Deploy | GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v1
