@@ -107,6 +107,6 @@ export type ItemIdMap = { [id: string]: Item};
 export type MetaOption = {
     //life value, count or durability*100
     life?: number,
-    //equipped. 
+    //equipped.
     equip?: boolean,
 }

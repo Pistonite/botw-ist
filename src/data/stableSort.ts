@@ -7,7 +7,7 @@ export const stableSort = <T>(array: T[], cmp: (a:T, b:T) => number): void => {
 		return a[1] - b[1];
 	};
 	stabilizedThis.sort(stableCmp);
-    
+
 	for (let i=0; i<array.length; i++) {
 		array[i] = stabilizedThis[i][0];
 	}

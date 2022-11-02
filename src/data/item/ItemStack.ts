@@ -56,7 +56,7 @@ class ItemStackImpl implements ItemStack {
 		// TODO metadata
 		return this.item === other.item;
 	}
-    
+
 }
 
 export const createMaterialStack = (item: Item, count: number): ItemStack => {

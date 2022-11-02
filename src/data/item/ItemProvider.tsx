@@ -68,7 +68,7 @@ export const ItemProvider: React.FC<PropsWithChildren> = ({children}) => {
 				()=>({}),
 			];
 		}
-        
+
 	}, [itemIdMap, itemSearchMap]);
 
 	if(!itemIdMap || !itemSearchMap){
@@ -93,7 +93,7 @@ const loadItemDataAsync = async ():Promise<[ItemIdMap, ItemSearchMap]> => {
 	return loadItemData(itemData);
 	//const imgModule = await import("assets/img");
 	//const { getImage }= imgModule
-	
+
 };
 
 export const loadItemData = (itemData: (typeof import("*.items.yaml"))["default"]): [ItemIdMap, ItemSearchMap] => {
@@ -261,10 +261,10 @@ const searchItemInMap = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMa
 		// continue filtering
 	}
 	// after all phrases are passed and still have more than 1 result
-    
+
 	// we can either reject the search or return the first result.
 	// returning the first result here to make the search more generous
-	const resultStartCountMap: {[id: string]: number} = {}; 
+	const resultStartCountMap: {[id: string]: number} = {};
 	filteredResult.forEach((resultId)=>{
 		resultStartCountMap[resultId] = parts.filter(p=>resultId.toLowerCase().startsWith(p)).length;
 	});

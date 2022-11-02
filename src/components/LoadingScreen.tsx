@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 
 type Props = {
-	multiLine?: boolean, 
+	multiLine?: boolean,
 	hasError?: boolean,
 }
 
@@ -19,7 +19,7 @@ export const LoadingScreen: React.FC<PropsWithChildren<Props>> = ({multiLine, ha
 		}}>
 			<span style={{
 				color: hasError? "#ee7777":"#00ffcc",
-                
+
 				lineHeight: multiLine?"default":"100vh",
 				height: "100vh",
 			}}>

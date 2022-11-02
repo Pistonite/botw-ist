@@ -152,8 +152,8 @@ const runE2ETest = (name: string, debug: boolean): [string, string]=>{
 			const out: string[] = [];
 			diffObjects(expectedState, result, "", out);
 			fs.writeFileSync(
-				"src/__tests__/debug.mismatches.log", 
-				out.join("\n"), 
+				"src/__tests__/debug.mismatches.log",
+				out.join("\n"),
 				"utf-8");
 		}
 

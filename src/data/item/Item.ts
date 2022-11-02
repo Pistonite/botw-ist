@@ -29,11 +29,11 @@ export class ItemImpl implements Item {
 	configuredAnimatedImage?: string;
 	defaultStackFactory?: (item: Item)=>ItemStack;
 	constructor(
-		id: string, 
-		type: ItemType, 
-		repeatable: boolean, 
-		stackable: boolean, 
-		image: string, 
+		id: string,
+		type: ItemType,
+		repeatable: boolean,
+		stackable: boolean,
+		image: string,
 		animatedImage: string|undefined,
 		defaultStackFactory: ((item: Item)=>ItemStack)|undefined
 	){
@@ -60,5 +60,5 @@ export class ItemImpl implements Item {
 		}
 		return createMaterialStack(this, 1);
 	}
-    
+
 }

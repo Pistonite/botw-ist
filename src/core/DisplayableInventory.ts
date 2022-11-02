@@ -1,7 +1,7 @@
 import { ItemStack, ItemType } from "data/item";
 
 export type DisplayableSlot = {
-	// image to display 
+	// image to display
     image: string,
 	// localization key for description
     descKey: string,

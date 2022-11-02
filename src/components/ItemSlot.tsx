@@ -8,16 +8,16 @@ type ItemSlotProps = {
 };
 
 export const ItemSlot: React.FC<ItemSlotProps> = ({slot: {
-	image, 
-	descKey, 
-	count, 
+	image,
+	descKey,
+	count,
 	durability,
-	isBrokenSlot, 
+	isBrokenSlot,
 	isEquipped
 }})=>{
 	const t = useI18n();
 	return (
-		<span className={clsx("ItemSlot", isBrokenSlot && "ItemSlotBroken", isEquipped && "ItemSlotEquipped")} 
+		<span className={clsx("ItemSlot", isBrokenSlot && "ItemSlotBroken", isEquipped && "ItemSlotEquipped")}
 			title={t(descKey)}
 		>
 			<img className={clsx("ItemImage")} src={image} />
@@ -26,7 +26,7 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot: {
 					{
 						<span className={"ItemCount"}>
                           x{count}
-						</span> 
+						</span>
 					}
 				</div>
 			}
@@ -35,11 +35,11 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot: {
 					{
 						<span className={"ItemDurability"}>
 							{durability}
-						</span> 
+						</span>
 					}
 				</div>
 			}
-            
+
 		</span>
 	);
 };
@@ -55,4 +55,4 @@ export const DoubleItemSlot: React.FC<{first?: ItemSlotProps, second?: ItemSlotP
 			</div>
 		</span>
 	);
-}; 
+};

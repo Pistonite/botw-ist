@@ -74,7 +74,8 @@
     "build": "node scripts/build.js",
     "test-all": "node scripts/test.js",
     "test": "node scripts/test.js test.ts",
-    "lint": "eslint src --ext .ts,.tsx --max-warnings 0"
+    "lint-base": "python3 scripts/base-lint . -c -p config/base-lint.toml",
+    "lint-ts": "eslint src --ext .ts,.tsx --max-warnings 0"
   },
   "eslintConfig": {
     "extends": [

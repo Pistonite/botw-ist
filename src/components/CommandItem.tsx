@@ -13,19 +13,19 @@ type CommandItemProps = PropsWithChildren<{
 
 export const CommandItem: React.FC<CommandItemProps> = ({
 	useListItem,
-	isSelected, 
-	isContextSelected, 
-	isComment, 
+	isSelected,
+	isContextSelected,
+	isComment,
 	isInvalid,
-	onClick, 
-	onContextMenu, 
+	onClick,
+	onContextMenu,
 	children
 }) => {
 	const className = clsx(
-		"CommandItem", 
-		isSelected && "CommandItemSelected", 
+		"CommandItem",
+		isSelected && "CommandItemSelected",
 		isContextSelected && "CommandItemContextSelected",
-		isComment && "CommandItemComment", 
+		isComment && "CommandItemComment",
 		isInvalid && !isComment && "CommandItemInvalid",
 	);
 

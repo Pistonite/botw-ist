@@ -23,7 +23,7 @@ export const CrashScreen: React.FC<PropsWithChildren> = ({children})=>{
 			}}>!</div>
 			<span style={{
 				color: "#ffffff",
-                
+
 				lineHeight: "100vh",
 				height: "100vh",
 			}}>

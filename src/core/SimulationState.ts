@@ -155,14 +155,14 @@ export class SimulationState {
 				// clear everything except for key items
 				this.pouch.clearForEventide();
 				// game data is not updated (?)
-                
+
 			}else{
 				// reload pouch from gamedata as if reloading a save
 				this.reloadFrom(this.gameData);
 			}
 			this.isOnEventide = onEventide;
 		}
-        
+
 	}
 
 	public syncGameDataWithPouch() {

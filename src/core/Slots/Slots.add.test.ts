@@ -24,7 +24,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem2, 1);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, true, null);
 				const expected = [alreadyHaveStack, stackToAdd.modify({})];
 				expect(added).toBe(1);
@@ -36,7 +36,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem1, 1);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, true, null);
 				const expected = [alreadyHaveStack, stackToAdd.modify({})];
 				expect(added).toBe(1);
@@ -48,7 +48,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem1, 598);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, true, null);
 				const expected = [alreadyHaveStack, stackToAdd.modify({})];
 				expect(added).toBe(1);
@@ -60,7 +60,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem1, 599);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, true, null);
 				const expected = [alreadyHaveStack, stackToAdd.modify({})];
 				expect(added).toBe(1);
@@ -72,7 +72,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem1, 599);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				let added = slots.add(stackToAdd, true, null);
 				const expected = [alreadyHaveStack, stackToAdd];
 				expect(added).toBe(1);
@@ -88,7 +88,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem1, 600);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, true, null);
 				const expected = [alreadyHaveStack];
 				expect(added).toBe(0);
@@ -100,7 +100,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem1, 600);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, true, null);
 				const expected = [alreadyHaveStack, stackToAdd];
 				expect(added).toBe(1);
@@ -196,7 +196,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem2, 1);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, false, null);
 				const expected = [alreadyHaveStack, stackToAdd.modify({})];
 				expect(added).toBe(1);
@@ -208,7 +208,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem1, 1);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, false, null);
 				const expected = [alreadyHaveStack.modify({count: 2})];
 				expect(added).toBe(0);
@@ -220,7 +220,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem1, 598);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, false, null);
 				const expected = [alreadyHaveStack.modify({count: 998})];
 				expect(added).toBe(0);
@@ -232,7 +232,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem1, 599);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, false, null);
 				const expected = [alreadyHaveStack.modify({count: 999})];
 				expect(added).toBe(0);
@@ -244,7 +244,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem1, 600);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, false, null);
 				const expected = [alreadyHaveStack.modify({count: 999})];
 				expect(added).toBe(0);
@@ -256,7 +256,7 @@ describe("core/Slots.add", ()=>{
 				const alreadyHaveStack = createMaterialStack(mockItem1, 600);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new Slots(stacks);
-                
+
 				const added = slots.add(stackToAdd, false, null);
 				const expected = [alreadyHaveStack, stackToAdd];
 				expect(added).toBe(1);

@@ -53,20 +53,20 @@ export const DirectLoadPage: React.FC<PropsWithChildren> = ({children}) => {
 				redirectToMainApp();
 			}}>Yes</button>
 			<button className="MainButton" onClick={()=>{
-                
+
 				redirectToMainApp();
 			}}>No</button>
-            
+
 			<div style={{marginTop: "50px", marginLeft: "10%", marginRight: "10%"}}>
 				<BodyText>(Below is what the incoming data looks like)</BodyText>
-				<textarea 
+				<textarea
 					className="MainInput"
-					spellCheck={false} 
+					spellCheck={false}
 					value={commandTextToLoad}
 				/>
 			</div>
-            
+
 		</div>
-        
+
 	</LoadingScreen>;
 };

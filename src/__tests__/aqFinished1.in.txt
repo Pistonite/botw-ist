@@ -1,7 +1,7 @@
 # Initialization. At Hateno
 Initialize 2 tree 1 w axe 1 boko spear 1 boko club 1 hammer 1 roy Bow[equip] 11 n*Arrow[equip] 0 AncientArrow 1 pot[equip] 2 Hylianshroom 2 s*pepper 1 amber 2 sunshroom 2 silentshroom 2 ironshroom 2 razorshroom 2 durian 2 Wood 2 rushroom 2 Spring 2 Shaft 2 Screw 1 Core 2 fairy 2 hot frog 1 Slate 8 SpiritOrb 1 Glider
 # Initialization Done
-dnp 2 sunshroom 
+dnp 2 sunshroom
 with 2 hylianshroom 2 spicypepper 2 silentshroom 2 ironshroom 2 razorshroom
 Break 5 Slots
 Save

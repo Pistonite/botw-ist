@@ -6,7 +6,7 @@ import { VisibleInventory } from "./VisibleInventory";
  * Implementation of GameData in botw
  */
 export class GameData implements DisplayableInventory {
-    
+
 	private slots: Slots = new Slots([]);
 	constructor(slots: Slots){
 		this.slots = slots;
@@ -15,7 +15,7 @@ export class GameData implements DisplayableInventory {
 	public deepClone(): GameData {
 		return new GameData(this.slots.deepClone());
 	}
-    
+
 	public syncWith(pouch: VisibleInventory) {
 		if(pouch.getCount() <=0){
 			// inventory nuking.
