@@ -23,6 +23,11 @@ jobs:
       uses: actions/setup-python@v3.0.0
       with:
         python-version: '3.10'
+    - name: Setup | toml
+      uses: BSFishy/pip-action@v1
+      with:
+        packages: |
+          toml
     - name: Setup | Node Install
       run: npm ci
     - name: Lint
