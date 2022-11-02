@@ -1,0 +1,3 @@
+[submodule "scripts/base-lint"]
+	path = scripts/base-lint
+	url = git@github.com:iTNTPiston/base-lint

@@ -53,7 +53,7 @@ const getSetting = (): Setting=>{
 const initialSetting = getSetting();
 
 export const App: React.FC =  () => {
-	
+
 	const searchItem = useSearchItem();
 	const [page, setPageInState] = useState<string>("#simulation");
 	// Option States
@@ -100,7 +100,7 @@ export const App: React.FC =  () => {
 		window.location.hash = hash;
 		setPageInState(hash);
 	}, []);
-	
+
 	useEffect(()=>{
 		setPage(window.location.hash || "#simulation");
 	}, [window.location.hash]);
@@ -118,7 +118,7 @@ export const App: React.FC =  () => {
 					setCommandTexts(arrCopy);
 					setDisplayIndex(arrCopy.length-1);
 				}else{
-					
+
 					setDisplayIndex(Math.min(commandTexts.length-1, nextCommandIndex));
 				}
 			}else if(e.code==="ArrowUp"){
@@ -147,10 +147,10 @@ export const App: React.FC =  () => {
 			}
 		}
 	}, [contextMenuRef, contextIndex, commandTexts]);
-  
+
 	return (
 		<div className='Calamity'>
-			
+
 			<div id="NavBar" style={{
 				backgroundColor: "#262626",
 				color: "#ffffff",
@@ -181,7 +181,7 @@ export const App: React.FC =  () => {
 					border: "1px solid black",
 					boxSizing: "border-box",
 					overflowY: "hidden",
-					
+
 				}}>
 					<TitledList title="Saves">
 						{
@@ -189,11 +189,11 @@ export const App: React.FC =  () => {
 							<ol>
 								{
 									!!simulationStates[displayIndex].getManualSave() &&
-									<CommandItem 
+									<CommandItem
 										onClick={()=>{
 											setSelectedSaveName("");
 											setPage("#simulation");
-										}}  
+										}}
 										useListItem
 										isSelected={selectedSaveName===""}
 
@@ -201,15 +201,15 @@ export const App: React.FC =  () => {
 								Manual Save
 									</CommandItem>
 								}
-							
+
 								{
 									Object.entries(simulationStates[displayIndex].getNamedSaves()).map(([name, _gamedata], i)=>
-										<CommandItem 
+										<CommandItem
 											key={i}
 											onClick={()=>{
 												setSelectedSaveName(name);
 												setPage("#simulation");
-											}}  
+											}}
 											isSelected={selectedSaveName===name}
 											useListItem
 										>
@@ -219,7 +219,7 @@ export const App: React.FC =  () => {
 								}
 							</ol>
 						}
-					
+
 					</TitledList>
 				</div>
 				<div style={{
@@ -228,14 +228,14 @@ export const App: React.FC =  () => {
 					border: "1px solid black",
 					boxSizing: "border-box",
 					overflowY: "hidden"
-					
+
 				}}>
 					<TitledList title="Instructions">
 						<ol style={{
 						}}>
 							{
 								commandTexts.map((c,i)=>
-									<CommandItem 
+									<CommandItem
 										onClick={()=>{
 											setDisplayIndex(i);
 											setPage("#simulation");
@@ -243,13 +243,13 @@ export const App: React.FC =  () => {
 											if(inputField){
 												inputField.focus();
 											}
-										}} 
+										}}
 										onContextMenu={(x,y)=>{
 											setContextIndex(i);
 											setContextMenuX(x);
 											setContextMenuY(y);
 										}}
-										key={i} 
+										key={i}
 										isSelected={displayIndex===i}
 										isContextSelected={contextIndex===i}
 										isComment={c.startsWith("#")}
@@ -272,9 +272,9 @@ export const App: React.FC =  () => {
 
 						</ol>
 					</TitledList>
-					
+
 				</div>
-				
+
 			</div>
 			<div id="MainPane" style={{
 				position: "absolute",
@@ -294,7 +294,7 @@ export const App: React.FC =  () => {
 							backgroundColor: "#262626"
 						} }>
 							{
-								displayIndex >= 0 && displayIndex < commands.length ? 
+								displayIndex >= 0 && displayIndex < commands.length ?
 									<TitledList title="Save Data">
 										{
 											(()=>{
@@ -316,10 +316,10 @@ export const App: React.FC =  () => {
 									</TitledList>
 									:
 									<TitledList title="Select an instruction on the left to view it">
-						
+
 									</TitledList>
 							}
-						
+
 						</div>
 						<div style={{
 							minHeight: "calc( 70vh - 40px )",
@@ -329,8 +329,8 @@ export const App: React.FC =  () => {
 							overflowY: "hidden"
 						}}>
 							{displayIndex >= 0 && displayIndex < commands.length &&
-								
-								<DisplayPane 
+
+								<DisplayPane
 									overlaySave={interlaceInventory}
 									isIconAnimated={isIconAnimated}
 									command={commandTexts[displayIndex]}
@@ -341,8 +341,8 @@ export const App: React.FC =  () => {
 										arrCopy[displayIndex] = c;
 										setCommandTexts(arrCopy);
 									}}
-								/> 
-					
+								/>
+
 							}
 						</div>
 					</>
@@ -354,8 +354,8 @@ export const App: React.FC =  () => {
 					page === "#items" && <GalleryPage isIconAnimated={isIconAnimated}/>
 				}
 				{
-					page === "#options" && 
-					<OptionPage 
+					page === "#options" &&
+					<OptionPage
 						interlaceInventory={interlaceInventory}
 						setInterlaceInventory={setInterlaceInventory}
 						isIconAnimated={isIconAnimated}
@@ -394,7 +394,7 @@ export const App: React.FC =  () => {
 							listStyleType: "none",
 							paddingInlineStart: 0
 						}}>
-						
+
 							<CommandItem onClick={()=>{
 								const arrCopy = [...commandTexts];
 								arrCopy.splice(contextIndex, 0, "");
@@ -410,7 +410,7 @@ export const App: React.FC =  () => {
 									setCommandTexts(arrCopy);
 									setContextIndex(-1);
 								}
-								
+
 							}}>Move Up</CommandItem>
 							<CommandItem onClick={()=>{
 								if(confirm("Delete?")){
@@ -421,7 +421,7 @@ export const App: React.FC =  () => {
 									setContextIndex(-1);
 								}
 							}}>Delete</CommandItem>
-							
+
 						</ul>
 					</div>
 				</div>

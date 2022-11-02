@@ -1124,15 +1124,15 @@ key:
       animated: false # not supported yet
   - Paraglider:
       repeatable: false
-  - RutasEmblem: 
+  - RutasEmblem:
       animated: false # not supported yet
-  - MedohsEmblem: 
+  - MedohsEmblem:
       animated: false # not supported yet
-  - RudaniasEmblem: 
+  - RudaniasEmblem:
       animated: false # not supported yet
-  - NaborissEmblem: 
+  - NaborissEmblem:
       animated: false # not supported yet
-  - SpiritOrb: 
+  - SpiritOrb:
       animated: true
   - KorokSeed
   - HestusMaracas:

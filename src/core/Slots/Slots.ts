@@ -89,7 +89,7 @@ export class Slots {
 						// this stack not enough to remove all
 						count-=stack.count;
 						this.internalSlots[i] = stack.modify({count:0});
-                        
+
 					}else{
 						this.internalSlots[i] = stack.modify({count:stack.count-count});
 						break;
@@ -110,7 +110,7 @@ export class Slots {
 							// this stack not enough to remove all
 							count-=stack.count;
 							this.internalSlots[i] = stack.modify({count:0});
-                            
+
 						}else{
 							this.internalSlots[i] = stack.modify({count:stack.count-count});
 							break;
@@ -168,13 +168,13 @@ export class Slots {
 						if(newCount != this.internalSlots[i].count){
 							this.internalSlots[i] = this.internalSlots[i].modify({count: newCount});
 						}
-                        
+
 						return 0;
 					}
-                    
+
 				}
 			}
-            
+
 		}
 
 		// [confirmed] this check does not happen if mCount = 0 (which is covered by i!==-1 line below)
@@ -223,7 +223,7 @@ export class Slots {
 				}
 			}
 		}
-        
+
 		this.addSlot(stack, mCount+1);
 		return 1;
 	}
@@ -240,7 +240,7 @@ export class Slots {
 				}
 			}
 		}
-        
+
 		// now search for the one the player selects and equip it
 		for(let i = 0; i<this.internalSlots.length;i++){
 			if(this.internalSlots[i].item === item){
@@ -297,7 +297,7 @@ export class Slots {
 		if(shouldCapAt999){
 			life = Math.min(999, life);
 		}
-		
+
 		this.modifySlot(slot, {count: life});
 
 	}
@@ -397,7 +397,7 @@ export class Slots {
 				}
 			});
 		}
-        
+
 		// first first tab of that type
 		// if type is arrow, find the first arrow in that tab
 		const tabToFind = getTabFromType(type);

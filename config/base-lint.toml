@@ -1,0 +1,7 @@
+ignore = [
+    "CNAME",
+    "scripts/base-lint/"
+]
+
+windows = []
+add = []

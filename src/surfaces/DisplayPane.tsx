@@ -24,12 +24,12 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 	command,
 	commandError,
 	editCommand,
-	simulationState,  
-	overlaySave, 
+	simulationState,
+	overlaySave,
 	isIconAnimated
 })=>{
 	//const searchItem = useSearchItem();
-	// const 
+	// const
 	const error = useMemo(()=>{
 		if(command === ""){
 			return "";
@@ -41,19 +41,19 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 
 	let content: JSX.Element;
 	if(simulationState.isCrashed()){
-		content = 
+		content =
 			<div style={{
 				position: "relative",
 				height: "100%"
 			}}>
 				<CrashScreen>
 					The game has crashed (This is <Emphasized>not</Emphasized> a simulator bug)
-					
+
 				</CrashScreen>
 			</div>;
-		
+
 	}else if(overlaySave){
-		content = 
+		content =
 			<div style={{
 				borderTop: "1px solid black",
 				boxSizing: "border-box",
@@ -61,10 +61,10 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 				overflowY: "auto",
 				background: `url(${InGameBackground})`,
 				backgroundPosition: "center",
-				backgroundSize: "auto 100%", 
+				backgroundSize: "auto 100%",
 				color: "white",
 			} }>
-			
+
 				<TitledList title={`Game Data / Visible Inventory (Count=${simulationState.inventoryMCount})`}>
 					{
 						(()=>{
@@ -94,13 +94,13 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 						})()
 					}
 				</TitledList>
-		
+
 			</div>
 		;
 	}else{
-		content = 
+		content =
 			<>
-		
+
 				<div style={{
 					borderTop: "1px solid black",
 					background: `url(${Background})`,
@@ -113,13 +113,13 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 					<TitledList title="Game Data">
 						<ItemList slots={simulationState.displayableGameData.getDisplayedSlots(isIconAnimated)}/>
 					</TitledList>
-					
+
 				</div>
 				<div style={{
 					borderTop: "1px solid black",
 					background: `url(${InGameBackground})`,
 					backgroundPosition: "center",
-					backgroundSize: "100%", 
+					backgroundSize: "100%",
 					boxSizing: "border-box",
 					height: "50%",
 					overflowY: "auto",
@@ -128,10 +128,10 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 					<TitledList title={`Visible Inventory (Count=${simulationState.inventoryMCount})`}>
 						<ItemList slots={simulationState.displayablePouch.getDisplayedSlots(isIconAnimated)}/>
 					</TitledList>
-					
+
 				</div>
 			</>;
-		
+
 	}
 
 	return <div id="DisplayPane" style={{
@@ -168,7 +168,7 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 					color: "#eeeeee",
 				}}>{error}</div>
 			}
-			
+
 		</div>
 		<div style={{
 			height: "calc( 100% - 40px )"

@@ -1,0 +1,74 @@
+name: IST Simulator - CI
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup | Checkout
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Setup | Python 3.10
+      uses: actions/setup-python@v3.0.0
+      with:
+        python-version: '3.10'
+    - name: Setup | Node Install
+      run: npm ci
+    - name: Lint
+      run: |
+        npm run lint-base
+        npm run lint-ts
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup | Checkout
+      uses: actions/checkout@v2
+    - name: Setup | Node Install
+      run: npm ci
+    - name: Test
+      run: npm run test-all -- --watchAll=false
+
+  build:
+    name: Build
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup | Checkout
+      uses: actions/checkout@v2
+    - name: Setup | Node Install
+      run: npm ci
+    - name: Build
+      run: npm run build
+
+  build-deploy:
+    name: Build and Deploy
+    if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup | Checkout
+      uses: actions/checkout@v2
+    - name: Setup | Node Install
+      run: npm ci
+    - name: Build
+      run: npm run build
+    - name: Deploy | Upload Artifact
+      uses: actions/upload-pages-artifact@v1.0.4
+      with:
+        path: build
+        retention-days: 30
+    - name: Deploy | GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v1

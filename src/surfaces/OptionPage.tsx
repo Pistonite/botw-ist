@@ -27,7 +27,7 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 	const [fileName, setFileName] = useState<string>("");
 	const [showDirectUrl, setShowDirectUrl] = useState<boolean>(false);
 	const [showCopiedMessage, setShowCopiedMessage] = useState<boolean>(false);
-	
+
 	const uploadRef = useRef<HTMLInputElement>(null);
 
 	const directUrl = useMemo(()=>{
@@ -61,7 +61,7 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 			<TitledList title="Options">
 				<div className="OtherPageContent">
 					<SubHeader>
-						Interlace Inventory with GameData 
+						Interlace Inventory with GameData
 						<button className="MainButton" onClick={()=>{
 							setInterlaceInventory(!interlaceInventory);
 						}}>
@@ -95,7 +95,7 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 						}}>
 							Export
 						</button>
-						<input 
+						<input
 							className="MainInput"
 							spellCheck={false}
 							value={fileName}
@@ -104,14 +104,14 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 							}}
 							placeholder="File name"
 						/>
-						<textarea 
+						<textarea
 							className="MainInput"
-							spellCheck={false} 
+							spellCheck={false}
 							value={currentText}
 							onChange={(e)=>{
 								setCurrentText(e.target.value);
 							}}
-							
+
 						/>
 						{
 							currentText !== commandText &&
@@ -144,7 +144,7 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 									<p className="Reference" style={{
 										fontSize: "10pt",
 										color: "#aaaaaa",
-									
+
 										...!showDirectUrl && {
 											textOverflow: "ellipsis",
 											overflowX: "hidden",
@@ -153,7 +153,7 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 									}}>
 										{directUrl}
 									</p>
-									
+
 									<BodyText>
 										<button className="MainButton" onClick={()=>{
 											setShowDirectUrl(!showDirectUrl);
@@ -167,7 +167,7 @@ export const OptionPage: React.FC<OptionPageProps> = ({
 										{
 											showCopiedMessage && <span className="Example">Link copied!</span>
 										}
-										
+
 									</BodyText>
 								</>
 						}

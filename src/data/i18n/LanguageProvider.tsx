@@ -45,7 +45,7 @@ export const LanguageProvider: React.FC<PropsWithChildren> = ({children}) => {
 				console.warn(`Unlocalized: ${key}`); // eslint-disable-line no-console
 				UnlocalizedSet.add(key);
 			}
-            
+
 			return key;
 		}
 		return flatLangMap[key];
@@ -82,7 +82,7 @@ const loadFlatLangMapAsync = async ():Promise<FlatLangMap> => {
 	return flatMap;
 };
 
-const flattenInTo = (key: string, obj: StringTree | string, outMap: FlatLangMap) => { 
+const flattenInTo = (key: string, obj: StringTree | string, outMap: FlatLangMap) => {
 	if(typeof obj === "string"){
 		outMap[key] = obj;
 		return;

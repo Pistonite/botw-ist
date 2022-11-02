@@ -15,7 +15,7 @@ export const GalleryPage: React.FC<Prop> = React.memo(({isIconAnimated})=>{
 			<TitledList title="Item Gallery">
 				<div className="OtherPageContent">
 					<BodyText>
-						You can find every single item here. 
+						You can find every single item here.
 					</BodyText>
 					<BodyText>
 						The value at the bottom left of equipments is the default durability
@@ -32,7 +32,7 @@ export const GalleryPage: React.FC<Prop> = React.memo(({isIconAnimated})=>{
 						}
 					</div>
 				</div>
-                
+
 			</TitledList>
 		</div>
 	);

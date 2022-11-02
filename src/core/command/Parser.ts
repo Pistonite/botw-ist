@@ -2,17 +2,17 @@ import { ItemStack, parseMetadata } from "data/item";
 import { tokenize } from "data/tokenize";
 import { CommandHint } from "./CommandHint";
 import { CommandInitGameData } from "./CommandInitGameData";
-import {  
-	CommandAdd, 
-	CommandBreakSlots, 
-	CommandCloseGame, 
-	CommandDaP, 
-	CommandEquip, 
-	CommandEventide, 
-	CommandInitialize, 
-	CommandNop, 
-	CommandReload, 
-	CommandRemove, 
+import {
+	CommandAdd,
+	CommandBreakSlots,
+	CommandCloseGame,
+	CommandDaP,
+	CommandEquip,
+	CommandEventide,
+	CommandInitialize,
+	CommandNop,
+	CommandReload,
+	CommandRemove,
 	CommandSave,
 	CommandSaveAs,
 	CommandShootArrow,
@@ -130,7 +130,7 @@ export const parseCommand = (cmdString: string, searchFunc: (word: string)=>Item
 			return new CommandRemove(tokens[0], stacks, 0);
 		}
 	}
-	
+
 	//Shortcut for drop and pick up
 	if (tokens.length >2 && keywordMatchAny(tokens[0], ["d&p", "dnp", "dap"])){
 		const stacks = parseItemStacks(tokens, 1, searchFunc);
@@ -189,7 +189,7 @@ export const parseCommand = (cmdString: string, searchFunc: (word: string)=>Item
 			return new CommandUnequip(stack.item, -1, true);
 		}
 	}
-	
+
 	// Shoot X Arrow
 	if (tokens.length === 3 && keywordMatch(tokens[0], "shoot") && keywordMatch(tokens[2], "arrow")){
 		const count = parseInteger(tokens[1]);
@@ -199,7 +199,7 @@ export const parseCommand = (cmdString: string, searchFunc: (word: string)=>Item
 		return new CommandShootArrow(count);
 	}
 
-	// Write [meta] on item 
+	// Write [meta] on item
 	if(tokens.length > 2 && keywordMatch(tokens[0], "write") && tokens[1]==="["){
 		let metaString = "";
 		let i = 2;
@@ -239,7 +239,7 @@ export const parseCommand = (cmdString: string, searchFunc: (word: string)=>Item
 	if(tokens.length > 0){
 		return new CommandHint(tokens[0]);
 	}
-	
+
 	return new CommandNop(cmdString, "Unknown command");
 };
 
@@ -293,7 +293,7 @@ const parseItemStacks = (tokens: string[], from: number, searchFunc: (word: stri
 	let i = from;
 	while(i<tokens.length){
 		// read a number
-		
+
 		const num = parseInteger(tokens[i]);
 		if(num === undefined){
 			return numberError(tokens[i]);
@@ -328,7 +328,7 @@ const parseItemStacks = (tokens: string[], from: number, searchFunc: (word: stri
 		// process meta
 		stack = stack.modifyMeta(meta);
 		stacks.push(new ItemStackCommandWrapper(stack, num));
-		
+
 	}
 
 	return stacks;

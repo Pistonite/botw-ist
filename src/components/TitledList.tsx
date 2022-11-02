@@ -14,7 +14,7 @@ export const TitledList: React.FC<TitledListProps> = ({title, children}) => {
 			}}>
 				{title}
 			</h3>
-			<div style={{ 
+			<div style={{
 				height: "calc( 100% - 40px )",
 				overflowY: "auto"}}
 			>

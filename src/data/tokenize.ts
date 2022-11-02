@@ -6,7 +6,7 @@ export const tokenize = (str: string, regex: RegExp): string[] => {
 			//Prevent empty tokens
 			tokens.push(str.substring(0, j));
 		}
-        
+
 		tokens.push(str[j]);
 		str = str.substring(j+1);
 		j = str.search(regex);

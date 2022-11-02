@@ -139,7 +139,7 @@ export class CommandDaP extends CommandImpl  {
 		processWrappers(this.stacks).forEach(stack=>{
 			state.remove(stack, 0);
 			state.obtain(stack);
-		});	
+		});
 	}
 	public getDisplayString(): string {
 		return joinItemStackString("D&P", this.stacks);
@@ -156,7 +156,7 @@ export class CommandEquip extends CommandImpl  {
 		this.slot = slot;
 		this.noSlot = noSlot;
 	}
-	
+
 	public execute(state: SimulationState): void {
 		state.equip(this.item, this.slot);
 	}
@@ -176,7 +176,7 @@ export class CommandUnequip extends CommandImpl {
 		this.slot = slot;
 		this.noSlot = noSlot;
 	}
-	
+
 	public execute(state: SimulationState): void {
 		state.unequip(this.item, this.slot);
 	}
@@ -192,7 +192,7 @@ export class CommandShootArrow extends CommandImpl  {
 		super();
 		this.count = count;
 	}
-	
+
 	public execute(state: SimulationState): void {
 		state.shootArrow(this.count);
 	}
@@ -242,7 +242,7 @@ export class CommandNop extends CommandImpl  {
 		this.error = error;
 	}
 	public getError(): string | undefined {
-		return this.error;	
+		return this.error;
 	}
 	public execute(_state: SimulationState): void {
 		// nothing

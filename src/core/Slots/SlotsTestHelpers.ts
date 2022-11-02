@@ -20,7 +20,7 @@ class MockItem implements Item {
 	createDefaultStack(): ItemStack {
 		return createMaterialStack(this, 1);
 	}
-    
+
 }
 
 export const createArrowMockItem = (id: string): Item => new MockItem(id, ItemType.Arrow, true, true);

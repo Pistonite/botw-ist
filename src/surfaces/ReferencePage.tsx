@@ -32,7 +32,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 						When specifying number of items, you can use an integer or <Emphasized>all</Emphasized>, which is equivalent to -1.
 						When using -1 as the count in Remove commands, it will remove all items.
 					</BodyText>
-					
+
 					<SubHeader>Metadata</SubHeader>
 					<BodyText>
 						Metadata is used to specify extra information. The syntax is <Emphasized>[key1=value1,key2=value2,...]</Emphasized>.
@@ -81,13 +81,13 @@ export const ReferencePage: React.FC = React.memo(()=>{
 
 					<h4 className="Reference">Simulates a hard save or auto save action</h4>
 					<p className="Reference">
-                        Writes Game Data to the corresponding save slot. The auto saves are specified by NAME. 
+                        Writes Game Data to the corresponding save slot. The auto saves are specified by NAME.
                         You can have as many auto saves as you want in the simulator.
 					</p>
 					<p className="Reference">
                         You cannot save on Eventide/ToTS. However, the simulator does not enforce that.
 					</p>
-                    
+
 					<p className="Reference Example">Example 1: Save</p>
 					<p className="Reference Example">Example 2: Save As MySave</p>
 					<p className="Reference">
@@ -98,15 +98,15 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<h3 className="Reference">Reload (NAME)</h3>
 					<h4 className="Reference">Simulates reloading a save</h4>
 					<p className="Reference">
-                        First, reads Game Data from the corresponding save slot. 
+                        First, reads Game Data from the corresponding save slot.
                         If NAME is not given, the manual save is used unless "Use" commands are used before this (see below).
                         If NAME is given, the corresponding save slot with that name is used
 					</p>
 					<p className="Reference">
-                        After that, the first Count items in the visible inventory is removed, and Count is decreased accordingly. 
+                        After that, the first Count items in the visible inventory is removed, and Count is decreased accordingly.
                         Then, each item slot in the Game Data is added to the inventory.
 					</p>
-                    
+
 					<p className="Reference Example">Example 1: Reload</p>
 					<p className="Reference Example">Example 2: Reload MySave</p>
 
@@ -116,10 +116,10 @@ export const ReferencePage: React.FC = React.memo(()=>{
                         Decrease inventory Count by X
 					</p>
 					<p className="Reference">
-                        This command does not automatically simulate the hold smuggle and sell process. 
+                        This command does not automatically simulate the hold smuggle and sell process.
                         It just changes count (i.e. make broken slots) with magic.
 					</p>
-                    
+
 					<p className="Reference Example">Example: Break 4 Slots</p>
 
 					<h3 className="Reference">Get/Add/Cook/Pickup/Buy item</h3>
@@ -129,7 +129,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
                         Add the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
 					</p>
 					<p className="Reference">
-                        Like in game, you won't be able to obtain multiple unstackable key items, or multiple master sword in this way. 
+                        Like in game, you won't be able to obtain multiple unstackable key items, or multiple master sword in this way.
                         If a stackable item is at 999 or more when you invoke this command, the count is set to 999 (not fully accurate since you won't be able to pick up more items in game).
 					</p>
 					<p className="Reference">
@@ -138,21 +138,21 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<p className="Reference">
                         Try to avoid plural forms as they often make search fail
 					</p>
-                    
+
 					<p className="Reference Example">Example 1: Add Apple</p>
 					<p className="Reference Example">Example 2: Get 10 Apple</p>
 					<p className="Reference Example">Example 3: Pickup 10 Apple 5 Diamond 1 Slate 5 MasterSword[life=700]</p>
 
 					<h3 className="Reference">With/Remove/Sell/Eat/Drop item</h3>
 					<h3 className="Reference2">With/Remove/Sell/Eat/Drop item From Slot Y</h3>
-					<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item From Slot Y</h3>				
+					<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item From Slot Y</h3>
 					<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item1[meta] Y item2[meta] Z item3[meta] ...</h3>
 					<h4 className="Reference">Simulate removing items in game</h4>
 					<p className="Reference">
                         Remove the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
 					</p>
 					<p className="Reference">
-                        When number of item is not specified, it defaults to 1. Up to X items will be removed from inventory, even when they span multiple slots. 
+                        When number of item is not specified, it defaults to 1. Up to X items will be removed from inventory, even when they span multiple slots.
                         If X &gt; total number of items in inventory, all of them will be removed.
 					</p>
 					<p className="Reference">
@@ -164,7 +164,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<p className="Reference">
                         Try to avoid plural forms as they often make search fail
 					</p>
-                    
+
 					<p className="Reference Example">Example 1: Remove Apple</p>
 					<p className="Reference Example">Example 2: Drop 10 Diamond</p>
 					<p className="Reference Example">Example 3: Sell 10 Apple 5 Diamond</p>
@@ -190,7 +190,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
                         When equipping an item, all other item of the same type in the first tab is unequipped, then the item selected is equipped.
 					</p>
 					<p className="Reference">
-                        Slot can be used if you have multiple of the same item. When slot is not specified, the leftmost item will be equipped. 
+                        Slot can be used if you have multiple of the same item. When slot is not specified, the leftmost item will be equipped.
                         Note that you can use this command to equip something that is already equipped, which is not possible in game.
                         You can also equip unequippable items like materials, but it is not meaningful
 					</p>
@@ -250,17 +250,17 @@ export const ReferencePage: React.FC = React.memo(()=>{
                         To corrupt the equipped arrow slot, you need to shoot an arrow.
 					</p>
 					<p className="Reference">
-                        This command does not let you select which arrow to shoot. 
+                        This command does not let you select which arrow to shoot.
                         When you reload a save, Link should have the last equipped arrow slot equipped in the overworld.
 						<span className="Example">[needs confirmation]</span>
 					</p>
 					<p className="Reference Example">Example: Shoot 1 Arrow</p>
-                    
+
 					<h3 className="Reference">Enter/Exit Eventide</h3>
 					<h3 className="Reference2">Enter/Exit TOTS</h3>
 					<h4 className="Reference">Simulates entering/exiting Eventide or Trial of the Sword</h4>
 					<p className="Reference">
-                        When entering Eventide or TotS, the entire inventory is cleared except for key items regardless of inventory count. 
+                        When entering Eventide or TotS, the entire inventory is cleared except for key items regardless of inventory count.
                         While the challenge is active, none of the inventory changes are synced to game data.
 					</p>
 					<p className="Reference">
@@ -280,7 +280,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<BodyText emphasized>Example: Write [life=1000] To pot lid</BodyText>
 					<BodyText emphasized>Example: Write [life=1000] To pot lid In Slot 3</BodyText>
 				</div>
-                
+
 			</TitledList>
 		</div>
 	);
