@@ -11,7 +11,7 @@ import { createEquipmentStack } from "./ItemStack";
  * Load items from items.yaml files and registers them in memory
  */
 
-type ItemSearchMap = { [id: string]: string}; // id to search phrase
+type ItemSearchMap = { [id: string]: string}; // id -> search phrase
 
 type ItemContextFunctions = {
     getItem: (id: string) => Item|undefined,
@@ -91,12 +91,13 @@ const loadItemDataAsync = async ():Promise<[ItemIdMap, ItemSearchMap]> => {
 	const itemDataModule = await import("./all.items.yaml");
 	const itemData = itemDataModule["default"];
 	return loadItemData(itemData);
-	//const imgModule = await import("assets/img");
-	//const { getImage }= imgModule
-
 };
 
-export const loadItemData = (itemData: (typeof import("*.items.yaml"))["default"]): [ItemIdMap, ItemSearchMap] => {
+type ItemData = (typeof import("*.items.yaml"))["default"];
+type ItemCategory = Exclude<ItemData[keyof ItemData], undefined>;
+type ItemOption = Exclude<(ItemCategory["entries"][number]), string>[string];
+
+export const loadItemData = (itemData: ItemData): [ItemIdMap, ItemSearchMap] => {
 	const idMap: ItemIdMap = {};
 	const searchMap: ItemSearchMap = {};
 	// Register each type
@@ -113,10 +114,6 @@ export const loadItemData = (itemData: (typeof import("*.items.yaml"))["default"
 
 	return [idMap, searchMap];
 };
-
-type ItemData = (typeof import("*.items.yaml"))["default"];
-type ItemCategory = Exclude<ItemData[keyof ItemData], undefined>;
-type ItemOption = Exclude<(ItemCategory["entries"][number]), string>[string];
 
 const DefaultOption: ItemOption = {
 	stackable: true,
