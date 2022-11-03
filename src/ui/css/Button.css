@@ -1,0 +1,32 @@
+button.Button {
+    font-family: CalamitySans;
+    font-weight: bold;
+    display: inline-block;
+    padding: 5px;
+    margin: 5px;
+    background-color: #00000099;
+    color: #ffffff;
+    border-radius: 0;
+    border: 2px solid #888888;
+}
+
+button.Button.FixedWidth {
+    width: 100px;
+}
+
+button.Button:hover {
+    border-color: #eeeeee;
+    box-shadow: 0 0 5px #eeeeee;
+}
+
+button.Button:active {
+    background-color: #888888;
+}
+
+button.Button:disabled{
+    color: #888888;
+    background-color: #333333;
+    border-color: #888888;
+    box-shadow: none;
+}
+  

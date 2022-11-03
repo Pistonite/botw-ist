@@ -1,9 +1,10 @@
 import { ItemSlot } from "components/ItemSlot";
 import { BodyText} from "components/Text";
-import { TitledList } from "components/TitledList";
+import { Section } from "ui/components";
 import { itemStackToDisplayableSlot } from "core/DisplayableInventory";
 import { useAllItems } from "data/item";
 import React, { PropsWithChildren } from "react";
+import { Page } from "ui/surfaces";
 
 type Prop = PropsWithChildren<{
     isIconAnimated: boolean
@@ -11,9 +12,8 @@ type Prop = PropsWithChildren<{
 export const GalleryPage: React.FC<Prop> = React.memo(({isIconAnimated})=>{
 	const allItems = useAllItems();
 	return (
-		<div className="OtherPage">
-			<TitledList title="Item Gallery">
-				<div className="OtherPageContent">
+		<Page title="Item Gallery">
+				
 					<BodyText>
 						You can find every single item here.
 					</BodyText>
@@ -31,9 +31,8 @@ export const GalleryPage: React.FC<Prop> = React.memo(({isIconAnimated})=>{
 							})
 						}
 					</div>
-				</div>
+				
 
-			</TitledList>
-		</div>
+		</Page>
 	);
 });

@@ -27,6 +27,8 @@ const ForkTsCheckerWebpackPlugin =
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+const calculateVersion = paths.calculateVersion;
+
 const enableBundleAnalyzerPlugin = false;
 
 const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash');
@@ -328,11 +330,6 @@ module.exports = function (webpackEnv) {
         ...(modules.webpackAliases || {}),
       },
       plugins: [
-        // Work around for Buffer is undefined:
-        // https://github.com/webpack/changelog-v5/issues/10
-        // new webpack.ProvidePlugin({
-        //   Buffer: ['buffer', 'Buffer'],
-        // }),
         // Prevents users from importing files from outside of src/ (or node_modules/).
         // This often causes confusion because we only process files within src/ with babel.
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
@@ -579,6 +576,10 @@ module.exports = function (webpackEnv) {
       ].filter(Boolean),
     },
     plugins: [
+      new webpack.DefinePlugin({
+        __PROD__: JSON.stringify(isEnvProduction),
+        __VERSION__: JSON.stringify(calculateVersion(isEnvProduction))
+      }),
       // Work around for Buffer is undefined:
       // https://github.com/webpack/changelog-v5/issues/10
       new webpack.ProvidePlugin({

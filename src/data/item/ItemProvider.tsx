@@ -1,5 +1,4 @@
 import { CrashScreen } from "components/CrashScreen";
-import { measurePerformance } from "data/measurePerformance";
 import { LoadingScreen } from "components/LoadingScreen";
 import React, { PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 import { ItemImpl } from "./Item";
@@ -46,9 +45,7 @@ export const ItemProvider: React.FC<PropsWithChildren> = ({children}) => {
 				setItemSearchMap(null);
 			}
 		};
-		measurePerformance("Load Item: ", ()=>{
-			loadFuncAync();
-		});
+		loadFuncAync();
 
 	},[]);
 

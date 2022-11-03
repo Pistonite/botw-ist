@@ -1,5 +1,4 @@
 import { CrashScreen } from "components/CrashScreen";
-import { measurePerformance } from "data/measurePerformance";
 import { LoadingScreen } from "components/LoadingScreen";
 import React, { PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
 
@@ -29,9 +28,7 @@ export const LanguageProvider: React.FC<PropsWithChildren> = ({children}) => {
 				setFlatLangMap(null);
 			}
 		};
-		measurePerformance("Load Language: ", ()=>{
-			loadFuncAync();
-		});
+		loadFuncAync();
 
 	},[]);
 

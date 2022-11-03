@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { DoubleItemSlot } from "components/ItemSlot";
-import { TitledList } from "components/TitledList";
+import { Section } from "ui/components";
 
 import { SimulationState } from "core/SimulationState";
 import Background from "assets/Background.png";
@@ -54,7 +54,7 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 
 	}else if(overlaySave){
 		content =
-			<div style={{
+			<Section title={`Game Data / Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
 				borderTop: "1px solid black",
 				boxSizing: "border-box",
 				height: "100%",
@@ -65,7 +65,7 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 				color: "white",
 			} }>
 
-				<TitledList title={`Game Data / Visible Inventory (Count=${simulationState.inventoryMCount})`}>
+				
 					{
 						(()=>{
 							const doubleSlots: JSX.Element[] = [];
@@ -93,15 +93,15 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 							return doubleSlots;
 						})()
 					}
-				</TitledList>
+				
 
-			</div>
+			</Section>
 		;
 	}else{
 		content =
 			<>
 
-				<div style={{
+				<Section title="Game Data" style={{
 					borderTop: "1px solid black",
 					background: `url(${Background})`,
 					color: "white",
@@ -110,12 +110,9 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 					height: "50%",
 					overflowY: "auto"
 				} }>
-					<TitledList title="Game Data">
 						<ItemList slots={simulationState.displayableGameData.getDisplayedSlots(isIconAnimated)}/>
-					</TitledList>
-
-				</div>
-				<div style={{
+				</Section>
+				<Section title={`Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
 					borderTop: "1px solid black",
 					background: `url(${InGameBackground})`,
 					backgroundPosition: "center",
@@ -125,11 +122,9 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 					overflowY: "auto",
 					color: "white"
 				} }>
-					<TitledList title={`Visible Inventory (Count=${simulationState.inventoryMCount})`}>
 						<ItemList slots={simulationState.displayablePouch.getDisplayedSlots(isIconAnimated)}/>
-					</TitledList>
 
-				</div>
+				</Section>
 			</>;
 
 	}

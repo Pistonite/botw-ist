@@ -6,12 +6,13 @@ import { CommandItem } from "./components/CommandItem";
 
 import { DisplayPane } from "surfaces/DisplayPane";
 import { ItemList } from "components/ItemList";
-import { TitledList } from "components/TitledList";
+import { Section } from "ui/components";
 import { createSimulationState, SimulationState } from "core/SimulationState";
 import { ReferencePage } from "surfaces/ReferencePage";
 import { OptionPage } from "surfaces/OptionPage";
 import { useSearchItem } from "data/item";
 import { GalleryPage } from "surfaces/GalleryPage";
+import { SettingPage } from "ui/pages";
 
 const getDefaultCommandTexts = (): string[]=>{
 	const encoded = localStorage.getItem("HDS.CurrentCommandsText");
@@ -172,10 +173,13 @@ export const App: React.FC =  () => {
 			</div>
 
 			<div id="SidePane" style={{
-				width: 300,
-				float: "left"
+				width: page === "#setting" ? 500 : 300,
+				float: "left",
+				height: "calc( 100vh - 40px )",
 			}}>
-				<div style={{
+				{
+					page === "#simulation" && <>
+					<Section title="Saves" style={{
 					maxHeight: 220,
 					height: "30vh",
 					border: "1px solid black",
@@ -183,7 +187,7 @@ export const App: React.FC =  () => {
 					overflowY: "hidden",
 
 				}}>
-					<TitledList title="Saves">
+					
 						{
 							displayIndex >=0 && displayIndex < simulationStates.length &&
 							<ol>
@@ -220,9 +224,9 @@ export const App: React.FC =  () => {
 							</ol>
 						}
 
-					</TitledList>
-				</div>
-				<div style={{
+					
+				</Section>
+				<Section title="Instructions" style={{
 					minHeight: "calc( 70vh - 40px )",
 					height: "calc( 100vh - 40px - 220px )",
 					border: "1px solid black",
@@ -230,7 +234,6 @@ export const App: React.FC =  () => {
 					overflowY: "hidden"
 
 				}}>
-					<TitledList title="Instructions">
 						<ol style={{
 						}}>
 							{
@@ -271,9 +274,14 @@ export const App: React.FC =  () => {
 							}}>(new)</CommandItem>
 
 						</ol>
-					</TitledList>
 
-				</div>
+				</Section>
+					</>
+				}
+				{
+					page==="#setting" && <SettingPage />
+				}
+				
 
 			</div>
 			<div id="MainPane" style={{
@@ -281,11 +289,11 @@ export const App: React.FC =  () => {
 				top: 40,
 				right: 0,
 				bottom: 0,
-				left: 300,
+				left: page === "#setting" ? 500 : 300,
 				backgroundColor: "#262626"
 			}}>
 				{
-					page === "#simulation" && <>
+					(page === "#simulation" || page === "#setting") && <>
 						<div style={{
 							maxHeight: 220,
 							height: "30vh",
@@ -295,7 +303,7 @@ export const App: React.FC =  () => {
 						} }>
 							{
 								displayIndex >= 0 && displayIndex < commands.length ?
-									<TitledList title="Save Data">
+									<Section title="Save Data">
 										{
 											(()=>{
 												if (selectedSaveName === ""){
@@ -313,11 +321,11 @@ export const App: React.FC =  () => {
 												return null;
 											})()
 										}
-									</TitledList>
+									</Section>
 									:
-									<TitledList title="Select an instruction on the left to view it">
+									<Section title="Select an instruction on the left to view it">
 
-									</TitledList>
+									</Section>
 							}
 
 						</div>

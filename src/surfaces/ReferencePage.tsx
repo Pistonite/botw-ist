@@ -1,13 +1,13 @@
 import { BodyText, Emphasized, Header, SubHeader, SubTitle } from "components/Text";
-import { TitledList } from "components/TitledList";
+import { Section } from "ui/components";
 import React from "react";
+import { Page } from "ui/surfaces";
 
 export const ReferencePage: React.FC = React.memo(()=>{
 
 	return (
-		<div className="OtherPage">
-			<TitledList title="Command Reference">
-				<div className="OtherPageContent">
+		<Page title="Command Reference">
+				
 					<Header>Item Syntax</Header>
 					<BodyText>
 						Item are specified by using <Emphasized>search keys</Emphasized> and <Emphasized>metadata</Emphasized>.
@@ -279,9 +279,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					</BodyText>
 					<BodyText emphasized>Example: Write [life=1000] To pot lid</BodyText>
 					<BodyText emphasized>Example: Write [life=1000] To pot lid In Slot 3</BodyText>
-				</div>
 
-			</TitledList>
-		</div>
+		</Page>
 	);
 });
