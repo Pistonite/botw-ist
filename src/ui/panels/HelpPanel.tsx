@@ -4,7 +4,7 @@ import { Page } from "ui/surfaces";
 export const HelpPanel: React.FC = () => {
 	return (
 		<Page title="Help">
-			<code>botw-ist {Version}</code> 
+			<code>botw-ist {Version}</code>
 			<br/>
 			still working on this page
 			<br></br>

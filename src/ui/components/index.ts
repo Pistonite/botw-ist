@@ -1,2 +1,2 @@
-export * from "./basic"
-export * from "./Section"
+export * from "./basic";
+export * from "./Section";

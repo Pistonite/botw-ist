@@ -6,9 +6,9 @@ div.Page {
     border-right: 2px solid #333333;
     box-sizing: border-box;
 }
-  
+
 div.PageContent{
     padding: 0 10px;
     overflow-wrap: break-word;
-    
+
 }

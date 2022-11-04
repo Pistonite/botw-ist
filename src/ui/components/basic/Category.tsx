@@ -7,13 +7,13 @@ type CategoryProps = {
 }
 
 export const Category: React.FC<PropsWithChildren<DivProps & CategoryProps>> = ({className, title, children, ...restProps}) => {
-    return (
-        <div className={clsx("Category", className)} {...restProps}>
-            <h3 className="CategoryHeader">{title}</h3>
-            <hr />
-            <div className="CategoryContent">
-                {children}
-            </div>
-        </div>
-    );
+	return (
+		<div className={clsx("Category", className)} {...restProps}>
+			<h3 className="CategoryHeader">{title}</h3>
+			<hr />
+			<div className="CategoryContent">
+				{children}
+			</div>
+		</div>
+	);
 };

@@ -1,12 +1,8 @@
 import { parseCommand } from "core/command";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import "./App.css";
 import { CommandItem } from "./components/CommandItem";
-
-import { DisplayPane } from "surfaces/DisplayPane";
-import { ItemList } from "components/ItemList";
-import { Button, Section } from "ui/components";
 import { createSimulationState, SimulationState } from "core/SimulationState";
 import { ReferencePage } from "surfaces/ReferencePage";
 import { useSearchItem } from "data/item";
@@ -17,18 +13,13 @@ import { ContextMenuState } from "ui/types";
 import produce from "immer";
 import { SimulationSidePanel } from "ui/panels/SimulationSidePanel";
 import { SimulationMainPanel } from "ui/panels/SimulationMainPanel";
-import { Tooltip } from "ui/surfaces";
 import { NavPanel } from "ui/panels/NavPanel";
 import { HelpPanel } from "ui/panels/HelpPanel";
-
-
 
 export const App: React.FC =  () => {
 
 	const { commandData, setCommandData, page, setting } = useRuntime();
 	const searchItem = useSearchItem();
-
-
 
 	// Layout Components
 	// Core Logic States
@@ -43,7 +34,6 @@ export const App: React.FC =  () => {
 	const contextMenuRef = useRef<HTMLDivElement>(null);
 	// compute props
 
-
 	const commands = useMemo(()=>{
 		return commandData.map(c=> parseCommand(c, searchItem));
 	}, [commandData, searchItem]);
@@ -57,10 +47,9 @@ export const App: React.FC =  () => {
 		});
 		return simulationStates;
 	}, [commands]);
-	const theSimulationState = displayIndex >=0 && displayIndex < simulationStates.length 
+	const theSimulationState = displayIndex >=0 && displayIndex < simulationStates.length
 		? simulationStates[displayIndex]
 		: null;
-	
 
 	useEffect(()=>{
 		window.onkeydown=(e)=>{
@@ -107,18 +96,17 @@ export const App: React.FC =  () => {
 
 	const sideWidth = page === "#setting" ? 500 : 300;
 	const showSavesSetting = setting("showSaves");
-    let showSaves: boolean;
-    if(showSavesSetting === "auto"){
-        if(theSimulationState){
-            showSaves = theSimulationState.numberOfSaves() > 1;
-        }else{
-            showSaves = false;
-        }
-        
-    }else{
-        showSaves = showSavesSetting;
-    }
-	
+	let showSaves: boolean;
+	if(showSavesSetting === "auto"){
+		if(theSimulationState){
+			showSaves = theSimulationState.numberOfSaves() > 1;
+		}else{
+			showSaves = false;
+		}
+
+	}else{
+		showSaves = showSavesSetting;
+	}
 
 	return (
 		<div className='Calamity'>
@@ -132,7 +120,7 @@ export const App: React.FC =  () => {
 			}}>
 				{
 					page !== "#setting" &&
-					<SimulationSidePanel 
+					<SimulationSidePanel
 						commands={commands}
 						displayIndex={displayIndex}
 						setDisplayIndex={setDisplayIndex}
@@ -140,14 +128,14 @@ export const App: React.FC =  () => {
 						setSelectedSaveName={setSelectedSaveName}
 						contextMenuState={contextMenuState}
 						setContextMenuState={setContextMenuState}
-						simulationState={theSimulationState} 
+						simulationState={theSimulationState}
 						showSaves={showSaves}
 					/>
 				}
 				{
 					page === "#setting" && <SettingPage />
 				}
-				
+
 			</div>
 			<div id="MainPane" style={{
 				position: "absolute",
@@ -157,13 +145,13 @@ export const App: React.FC =  () => {
 				left: sideWidth,
 				backgroundColor: "#262626"
 			}}>
-				{	(page === "#simulation" || page === "#setting") && 
+				{	(page === "#simulation" || page === "#setting") &&
 					<SimulationMainPanel
 						displayIndex={displayIndex}
-						selectedSaveName={selectedSaveName} 
-						command={commandData[displayIndex]} 
+						selectedSaveName={selectedSaveName}
+						command={commandData[displayIndex]}
 						commandError={commands[displayIndex].getError()}
-						simulationState={theSimulationState} 
+						simulationState={theSimulationState}
 						showSaves={showSaves}
 					/>
 				}

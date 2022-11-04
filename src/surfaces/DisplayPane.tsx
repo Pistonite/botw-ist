@@ -9,7 +9,6 @@ import InGameBackground from "assets/InGame.png";
 import React, { useMemo } from "react";
 import { ItemList } from "components/ItemList";
 import { CrashScreen } from "ui/surfaces/CrashScreen";
-import { Emphasized } from "components/Text";
 import { useRuntime } from "data/runtime";
 
 type DisplayPaneProps = {
@@ -49,11 +48,10 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 				height: "100%"
 			}}>
 
-				<CrashScreen 
+				<CrashScreen
 					primaryText="The game has crashed"
 					secondaryText="(This is NOT a simulator bug)"
 				/>
-			
 
 			</div>;
 
@@ -70,35 +68,33 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 				color: "white",
 			} }>
 
-				
-					{
-						(()=>{
-							const doubleSlots: JSX.Element[] = [];
-							const gameDataSlots = simulationState.displayableGameData.getDisplayedSlots(isIconAnimated);
-							const inventorySlots = simulationState.displayablePouch.getDisplayedSlots(isIconAnimated);
-							for(let i=0;i<gameDataSlots.length && i<inventorySlots.length;i++){
-								doubleSlots.push(<DoubleItemSlot key={i}
+				{
+					(()=>{
+						const doubleSlots: JSX.Element[] = [];
+						const gameDataSlots = simulationState.displayableGameData.getDisplayedSlots(isIconAnimated);
+						const inventorySlots = simulationState.displayablePouch.getDisplayedSlots(isIconAnimated);
+						for(let i=0;i<gameDataSlots.length && i<inventorySlots.length;i++){
+							doubleSlots.push(<DoubleItemSlot key={i}
+								first={{slot: gameDataSlots[i]}}
+								second={{slot: inventorySlots[i]}}
+							/>);
+						}
+						if(gameDataSlots.length>inventorySlots.length){
+							for(let i=inventorySlots.length;i<gameDataSlots.length;i++){
+								doubleSlots.push(<DoubleItemSlot key={i+inventorySlots.length}
 									first={{slot: gameDataSlots[i]}}
+								/>);
+							}
+						}else if(inventorySlots.length > gameDataSlots.length){
+							for(let i=gameDataSlots.length;i<inventorySlots.length;i++){
+								doubleSlots.push(<DoubleItemSlot key={i + gameDataSlots.length}
 									second={{slot: inventorySlots[i]}}
 								/>);
 							}
-							if(gameDataSlots.length>inventorySlots.length){
-								for(let i=inventorySlots.length;i<gameDataSlots.length;i++){
-									doubleSlots.push(<DoubleItemSlot key={i+inventorySlots.length}
-										first={{slot: gameDataSlots[i]}}
-									/>);
-								}
-							}else if(inventorySlots.length > gameDataSlots.length){
-								for(let i=gameDataSlots.length;i<inventorySlots.length;i++){
-									doubleSlots.push(<DoubleItemSlot key={i + gameDataSlots.length}
-										second={{slot: inventorySlots[i]}}
-									/>);
-								}
-							}
-							return doubleSlots;
-						})()
-					}
-				
+						}
+						return doubleSlots;
+					})()
+				}
 
 			</Section>
 		;
@@ -119,10 +115,10 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 						flex: 1,
 						overflowY: "auto"
 					} }>
-							<ItemList slots={simulationState.displayableGameData.getDisplayedSlots(isIconAnimated)}/>
+						<ItemList slots={simulationState.displayableGameData.getDisplayedSlots(isIconAnimated)}/>
 					</Section>
 				}
-				
+
 				<Section titleText={`Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
 					borderTop: "1px solid black",
 					backgroundImage: `url(${InGameBackground})`,
@@ -134,7 +130,7 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 					overflowY: "auto",
 					color: "white"
 				} }>
-						<ItemList slots={simulationState.displayablePouch.getDisplayedSlots(isIconAnimated)}/>
+					<ItemList slots={simulationState.displayablePouch.getDisplayedSlots(isIconAnimated)}/>
 
 				</Section>
 			</div>;

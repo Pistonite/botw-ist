@@ -8,7 +8,6 @@ import { ItemProvider } from "data/item";
 import { StoreProvider } from "data/storage";
 import { RuntimeProvider } from "data/runtime";
 import { CrashScreen } from "ui/surfaces/CrashScreen";
-import { Description } from "ui/components";
 import { TooltipHost } from "ui/surfaces/Tooltip";
 
 const root = ReactDOM.createRoot(
@@ -32,14 +31,14 @@ class CatchCrash extends React.Component<PropsWithChildren, CrashState> {
 	render() {
 		if (this.state.error) {
 			return (
-				<CrashScreen 
+				<CrashScreen
 					primaryText="Oops, the simulator crashed. Please let the maintainers know."
 					secondaryText={this.state.error}
 				/>
-			); 
+			);
 		}
 
-		return this.props.children; 
+		return this.props.children;
 	}
 }
 root.render(

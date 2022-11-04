@@ -71,7 +71,7 @@ export const ItemProvider: React.FC<PropsWithChildren> = ({children}) => {
 	if(!itemIdMap || !itemSearchMap){
 		if(error){
 			return (
-				<CrashScreen 
+				<CrashScreen
 					primaryText="An error has occured while loading items"
 					secondaryText="This is most likely a network error. Please try refreshing."
 				/>

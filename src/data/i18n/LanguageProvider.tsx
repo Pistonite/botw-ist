@@ -51,7 +51,7 @@ export const LanguageProvider: React.FC<PropsWithChildren> = ({children}) => {
 	if(!flatLangMap){
 		if(error){
 			return (
-				<CrashScreen 
+				<CrashScreen
 					primaryText="An error has occured while loading language"
 					secondaryText="This is most likely a network error. Please try refreshing."
 				/>

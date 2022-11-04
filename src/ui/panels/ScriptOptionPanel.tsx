@@ -1,16 +1,11 @@
-import { BodyText, SubHeader, SubTitle } from "components/Text";
-import { Section } from "ui/components/Section";
 import { saveAs } from "data/FileSaver";
 import { serialize } from "data/serialize";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Category, Control, Description, Label } from "ui/components";
-import { Version } from "data/const";
-import { Page, Tooltip } from "ui/surfaces";
+import { Page } from "ui/surfaces";
 import { useRuntime } from "data/runtime";
 
 const URL_MAX = 2048;
-
-
 
 export const ScriptOptionPanel: React.FC = () => {
 	const {
@@ -74,7 +69,7 @@ export const ScriptOptionPanel: React.FC = () => {
 						{saving ? "Saving is enabled" : "Saving is disabled" }
 					</Label>
 					{
-						!editing && 
+						!editing &&
 						<Description className="Primary">
 							Editing must be enabled first to change if saving should be enabled
 						</Description>
@@ -93,7 +88,7 @@ export const ScriptOptionPanel: React.FC = () => {
 			</Category>
 
 			<Category title="Import and Export">
-				
+
 				<Control disabled={!editing}>
 					<Button className="Full Action" disabled={!unsaved} onClick={()=>{
 						setCommandData(currentText.split("\n"));
@@ -122,7 +117,7 @@ export const ScriptOptionPanel: React.FC = () => {
 						}}
 						placeholder="File name"
 					/>
-					
+
 					<textarea
 						style={{width: "calc( 100% - 10px )"}}
 						className="MainInput"
@@ -133,13 +128,12 @@ export const ScriptOptionPanel: React.FC = () => {
 						}}
 
 					/>
-					
+
 					<Description className="Error">
 						{editing?"":"You need to enable editing to change the script here"}
 					</Description>
 				</Control>
-				
-				
+
 				<Description className="Primary Paragraph">You can use a direct URL to open the simulator with the steps automatically loaded.</Description>
 				{
 					unsaved && <Description className="Primary Warning">
@@ -170,7 +164,7 @@ export const ScriptOptionPanel: React.FC = () => {
 				}}>
 					{showDirectUrl ? "Hide" : "Expand"}
 				</Button>
-									
+
 				<Description style={{
 					...!showDirectUrl && {
 						textOverflow: "ellipsis",
