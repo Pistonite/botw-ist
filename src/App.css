@@ -2,11 +2,6 @@ h1 {
   margin: 0
 }
 
-@font-face {
-  font-family: CalamitySans;
-  src: url("assets/Calamity-Regular.otf") format("opentype");
-}
-
 .Calamity {
   font-family: CalamitySans;
 }
@@ -126,10 +121,7 @@ h1 {
   padding: 0 1px;
 }
 
-h3.ListHeader {
-  margin: 0;
-  padding: 10px;
-}
+
 
 h4.Reference {
   margin: 0;
@@ -154,74 +146,8 @@ h3.Reference2 {
   margin-bottom: 0;
 }
 
-button.MainButton {
-  font-family: CalamitySans;
-  font-weight: bold;
-  display: inline-block;
-  padding: 5px;
-  width: 100px;
-  margin: 5px;
-  background-color: #00000099;
-  color: #ffffff;
-  border-radius: 0;
-  border: 2px solid #888888;
-}
-
-button.MainButton:hover {
-  border-color: #eeeeee;
-  box-shadow: 0 0 5px #eeeeee;
-}
-
-button.MainButton:active {
-  background-color: #888888;
-}
-
-button.MainButton:disabled{
-  color: #888888;
-  background-color: #333333;
-  border-color: #888888;
-  box-shadow: none;
-}
-
 .FullWidth {
   width: 100% !important;
-}
-
-div.OtherPage {
-  height: 100%;
-  width: 100%;
-  color: #ffffff;
-}
-
-div.OtherPageContent{
-  padding: 10px;
-  overflow-wrap: break-word;
-}
-
-.MainInput {
-  display: block;
-  width: 100%;
-  background-color: #00000099;
-  color: #ffffff;
-  border-radius: 0;
-  border: 2px solid #888888;
-  margin-bottom: 5px;
-}
-
-input.MainInput {
-  font-size: 14pt;
-  font-family: CalamitySans;
-}
-
-textarea {
-  resize: none;
-  height: 300px;
-}
-
-.MainInput:focus-visible {
-  outline: none;
-  border-color: #eeeeee;
-  box-shadow: 0 0 5px #eeeeee;
 }
 
 .SpecialScreen {

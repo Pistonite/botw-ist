@@ -1,0 +1,7 @@
+span.Label {
+    padding: 0 5px;
+}
+
+span.Label[disabled] {
+    color: #888888;
+}

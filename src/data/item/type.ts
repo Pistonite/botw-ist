@@ -93,7 +93,7 @@ export interface ItemStack {
     modify(option: Partial<ItemStack>): ItemStack,
     // function to create a new stack based on this stack and meta option
     modifyMeta(metaOption: MetaOption): ItemStack,
-    // check if 2 stacks are equal: same item, count, equipped nd metadata
+    // check if 2 stacks are equal: same item, count, equipped and metadata
     equals(other: ItemStack): boolean,
     // check if everything equals except for equipped
     equalsExceptForEquipped(other: ItemStack): boolean,

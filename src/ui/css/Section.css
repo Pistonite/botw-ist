@@ -1,0 +1,13 @@
+h3.SectionHeader {
+    margin: 0;
+    padding: 10px;
+    height: 40px;
+	border-bottom: 2px solid;
+	box-sizing: border-box;
+    cursor: default;
+}
+
+div.SectionContent {
+    height: calc( 100% - 40px );
+    overflow-y: auto;
+}

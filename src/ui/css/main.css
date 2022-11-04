@@ -1,0 +1,39 @@
+@font-face {
+	font-family: CalamitySans;
+	src: url("assets/Calamity-Regular.otf") format("opentype");
+}
+
+body {
+	margin: 0;
+	overflow: hidden;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+		'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+		sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+	monospace;
+}
+
+a {
+	color: #b7f1ff;
+}
+
+a:visited{
+	color: #b7afff;
+}
+
+.Highlight {
+	color:#00ffcc !important;
+}
+
+.Warning {
+	color:#eeee00 !important;
+}
+
+.Error {
+	color: #ee7777 !important;
+}

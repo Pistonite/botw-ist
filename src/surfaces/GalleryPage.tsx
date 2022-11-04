@@ -1,39 +1,35 @@
 import { ItemSlot } from "components/ItemSlot";
 import { BodyText} from "components/Text";
-import { TitledList } from "components/TitledList";
 import { itemStackToDisplayableSlot } from "core/DisplayableInventory";
 import { useAllItems } from "data/item";
-import React, { PropsWithChildren } from "react";
+import { Page } from "ui/surfaces";
+import { useRuntime } from "data/runtime";
 
-type Prop = PropsWithChildren<{
-    isIconAnimated: boolean
-}>;
-export const GalleryPage: React.FC<Prop> = React.memo(({isIconAnimated})=>{
+export const GalleryPage: React.FC = ()=>{
 	const allItems = useAllItems();
+	const { setting } = useRuntime();
+	const isIconAnimated = setting("animatedIcon");
 	return (
-		<div className="OtherPage">
-			<TitledList title="Item Gallery">
-				<div className="OtherPageContent">
-					<BodyText>
-						You can find every single item here.
-					</BodyText>
-					<BodyText>
-						The value at the bottom left of equipments is the default durability
-					</BodyText>
-					<div>
-						{
-							Object.values(allItems).map((item, i)=>{
-								return <ItemSlot key={i} slot={itemStackToDisplayableSlot(
-									item.createDefaultStack(),
-									false,
-									isIconAnimated
-								)} />;
-							})
-						}
-					</div>
-				</div>
+		<Page title="Item Gallery">
 
-			</TitledList>
-		</div>
+			<BodyText>
+						You can find every single item here.
+			</BodyText>
+			<BodyText>
+						The value at the bottom left of equipments is the default durability
+			</BodyText>
+			<div>
+				{
+					Object.values(allItems).map((item, i)=>{
+						return <ItemSlot key={i} slot={itemStackToDisplayableSlot(
+							item.createDefaultStack(),
+							false,
+							isIconAnimated
+						)} />;
+					})
+				}
+			</div>
+
+		</Page>
 	);
-});
+};

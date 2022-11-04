@@ -50,6 +50,10 @@ export class SimulationState {
 		return newState;
 	}
 
+	public isGameDataSyncedWithPouch(): boolean{
+		return this.gameData.isSyncedWith(this.pouch);
+	}
+
 	// this is a wrapper that also have pre- and post-command checks
 	public executeCommand(command: Command){
 		this.crashed = false;
@@ -95,6 +99,15 @@ export class SimulationState {
 				}
 			}
 		}
+	}
+
+	public numberOfSaves(): number {
+		let count = 0;
+		if (this.manualSave){
+			count++;
+		}
+		count += Object.values(this.namedSaves).filter(Boolean).length;
+		return count;
 	}
 
 	private reloadFrom(data: GameData) {

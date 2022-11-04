@@ -8,6 +8,7 @@ const getPublicUrlOrPath = require('react-dev-utils/getPublicUrlOrPath');
 // https://github.com/facebook/create-react-app/issues/637
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const packageJson = require(resolveApp('package.json'));
 
 // We use `PUBLIC_URL` environment variable or "homepage" field to infer
 // "public path" at which the app is served.
@@ -17,7 +18,7 @@ const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 // like /todos/42/static/js/bundle.7289d.js. We have to know the root.
 const publicUrlOrPath = getPublicUrlOrPath(
   process.env.NODE_ENV === 'development',
-  require(resolveApp('package.json')).homepage,
+  packageJson.homepage,
   process.env.PUBLIC_URL
 );
 
@@ -75,3 +76,7 @@ module.exports = {
 
 
 module.exports.moduleFileExtensions = moduleFileExtensions;
+
+module.exports.calculateVersion = function(isProduction) {
+    return isProduction ? `v${packageJson.version}` : "v99.99.99";
+};

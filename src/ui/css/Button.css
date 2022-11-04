@@ -1,0 +1,68 @@
+button.Button {
+    font-family: CalamitySans;
+    font-weight: bold;
+    font-size: small;
+    display: inline-block;
+    padding: 5px 15px;
+    margin: 5px;
+    background-color: #00000099;
+    color: #ffffff;
+    border-radius: 0;
+    height: 30px;
+    border: 2px solid #888888;
+}
+
+button.Button.Full {
+    width: 100px;
+}
+
+button.Button.Small {
+    width: 60px;
+    padding: 5px;
+}
+
+button.Button.Square {
+    width: 30px;
+    padding: 5px;
+}
+
+button.Button.Thin {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+}
+
+button.Button:hover {
+    border-color: #eeeeee;
+    box-shadow: 0 0 5px #eeeeee;
+}
+
+button.Button:active {
+    background-color: #888888;
+}
+
+button.Button.Action {
+    color: #b7f1ff;
+    background-color: #002244;
+    border-color: #0088ff;
+}
+
+button.Button.Action:hover {
+    color: #b7f1ff;
+    background-color: #004488;
+    border-color: #0099ff;
+    text-shadow: 0 0 5px #3aa0ff,0 0 5px #3aa0ff,0 0 5px #3aa0ff;
+    box-shadow: 0 0 5px #3aa0ff;
+}
+
+button.Button.Action:active {
+    background-color: #0099ff;
+}
+
+button.Button:disabled, button.Button.Action:disabled{
+    color: #888888;
+    background-color: #333333;
+    border-color: #888888;
+    box-shadow: none;
+    text-shadow: none;
+}

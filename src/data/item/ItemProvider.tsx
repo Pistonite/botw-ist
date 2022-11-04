@@ -1,5 +1,4 @@
-import { CrashScreen } from "components/CrashScreen";
-import { measurePerformance } from "data/measurePerformance";
+import { CrashScreen } from "ui/surfaces/CrashScreen";
 import { LoadingScreen } from "components/LoadingScreen";
 import React, { PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 import { ItemImpl } from "./Item";
@@ -46,9 +45,7 @@ export const ItemProvider: React.FC<PropsWithChildren> = ({children}) => {
 				setItemSearchMap(null);
 			}
 		};
-		measurePerformance("Load Item: ", ()=>{
-			loadFuncAync();
-		});
+		loadFuncAync();
 
 	},[]);
 
@@ -73,7 +70,12 @@ export const ItemProvider: React.FC<PropsWithChildren> = ({children}) => {
 
 	if(!itemIdMap || !itemSearchMap){
 		if(error){
-			return <CrashScreen>An error has occured while loading items</CrashScreen>;
+			return (
+				<CrashScreen
+					primaryText="An error has occured while loading items"
+					secondaryText="This is most likely a network error. Please try refreshing."
+				/>
+			);
 		}else{
 			return <LoadingScreen>Loading items...</LoadingScreen>;
 		}
