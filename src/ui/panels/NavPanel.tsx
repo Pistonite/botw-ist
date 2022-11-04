@@ -11,8 +11,8 @@ export const NavPanel: React.FC = ()=>{
 			<Tooltip title={["Not Saved", "Any change you make won't be saved. You can enable saving in the \"Script\" tab"]}>
                 Not Saving
 			</Tooltip>
-        
-		: 
+
+		:
 		<Tooltip title={["Read Only", "Data loaded by direct URL is read only by default. You can enable editing in the \"Script\" tab"]}>
             Read Only
 		</Tooltip>
