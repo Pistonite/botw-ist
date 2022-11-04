@@ -1,4 +1,4 @@
-import { CrashScreen } from "components/CrashScreen";
+import { CrashScreen } from "ui/surfaces/CrashScreen";
 import { LoadingScreen } from "components/LoadingScreen";
 import React, { PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
 
@@ -50,7 +50,12 @@ export const LanguageProvider: React.FC<PropsWithChildren> = ({children}) => {
 
 	if(!flatLangMap){
 		if(error){
-			return <CrashScreen>An error has occured while loading language</CrashScreen>;
+			return (
+				<CrashScreen 
+					primaryText="An error has occured while loading language"
+					secondaryText="This is most likely a network error. Please try refreshing."
+				/>
+			);
 		}else{
 			return <LoadingScreen>Loading language...</LoadingScreen>;
 		}

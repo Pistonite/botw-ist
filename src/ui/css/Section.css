@@ -4,6 +4,7 @@ h3.SectionHeader {
     height: 40px;
 	border-bottom: 2px solid;
 	box-sizing: border-box;
+    cursor: default;
 }
 
 div.SectionContent {

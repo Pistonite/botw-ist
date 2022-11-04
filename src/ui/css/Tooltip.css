@@ -1,0 +1,20 @@
+div.TooltipWindow {
+    border: 2px solid #0088ff;
+    color: #ffffff;
+    background-color: #001122cc;
+    padding: 5px;
+    min-width: 100px;
+}
+
+p.TooltipLine {
+    margin: 0;
+    font-size: smaller;
+    color: #cccccc;
+}
+
+p.TooltipHeader {
+    color: #ffffff;
+    font-size: medium;
+}
+
+

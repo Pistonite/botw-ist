@@ -5,12 +5,13 @@ import { itemStackToDisplayableSlot } from "core/DisplayableInventory";
 import { useAllItems } from "data/item";
 import React, { PropsWithChildren } from "react";
 import { Page } from "ui/surfaces";
+import { useRuntime } from "data/runtime";
 
-type Prop = PropsWithChildren<{
-    isIconAnimated: boolean
-}>;
-export const GalleryPage: React.FC<Prop> = React.memo(({isIconAnimated})=>{
+
+export const GalleryPage: React.FC = ()=>{
 	const allItems = useAllItems();
+	const { setting } = useRuntime();
+	const isIconAnimated = setting("animatedIcon");
 	return (
 		<Page title="Item Gallery">
 				
@@ -35,4 +36,4 @@ export const GalleryPage: React.FC<Prop> = React.memo(({isIconAnimated})=>{
 
 		</Page>
 	);
-});
+};

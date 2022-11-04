@@ -1,14 +1,19 @@
+import clsx from "clsx";
 import { PropsWithChildren } from "react";
 
+type DivProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 type CategoryProps = {
     title: string,
 }
 
-export const Category: React.FC<PropsWithChildren<CategoryProps>> = ({title, children}) => {
+export const Category: React.FC<PropsWithChildren<DivProps & CategoryProps>> = ({className, title, children, ...restProps}) => {
     return (
-        <div>
-            <h3>{title}</h3>
-            {children}
+        <div className={clsx("Category", className)} {...restProps}>
+            <h3 className="CategoryHeader">{title}</h3>
+            <hr />
+            <div className="CategoryContent">
+                {children}
+            </div>
         </div>
     );
 };

@@ -2,8 +2,8 @@ import React, { PropsWithChildren, useCallback, useContext, useEffect, useState 
 import { produce } from "immer";
 
 type StoreSetting = {
-    showGameData: boolean,
-    showSaves: boolean,
+    showGameData: boolean | "auto",
+    showSaves: boolean | "auto",
     interlaceGameData: boolean,
     showSuperCommand: boolean,
     animatedIcon: boolean,
@@ -27,12 +27,22 @@ const store = function <T>(key: string, value: T) {
 }
 
 const DefaultSetting: StoreSetting = {
-    showGameData: true,
-    showSaves: false,
-    interlaceGameData: false,
+    showGameData: "auto",
+    showSaves: "auto",
+    interlaceGameData: true,
     showSuperCommand: false,
     animatedIcon: true,
 }
+
+const DefaultCommands = [
+    "Get 5 Diamond 1 Slate 1 Glider 4 SpiritOrb",
+    "Save",
+    "# Magically break 4 slots",
+    "Break 4 Slots",
+    "Reload",
+    "Save",
+    "Reload",
+];
 
 export type SettingFunction = <T extends keyof StoreSetting>(key: T, value?: StoreSetting[T]) => StoreSetting[T];
 
@@ -46,6 +56,7 @@ const StoreContext = React.createContext<Store>({} as Store);
 
 // The old command key
 const LegacyCommandKey = "HDS.CurrentCommandsText";
+const LegacySettingKey = "HDS.Setting";
 const KEY_COMMAND_DATA = "botw-ist-data";
 const KEY_SETTING = "botw-ist-setting";
 export const StoreProvider: React.FC<PropsWithChildren> = ({children}) => {
@@ -65,16 +76,21 @@ export const StoreProvider: React.FC<PropsWithChildren> = ({children}) => {
         store(KEY_SETTING, settingState);
     }, [settingState]);
 
-    const [commandData, setCommandData] = useState<string[]>(loadOrDefault(KEY_COMMAND_DATA, []));
+    const [commandData, setCommandData] = useState<string[]>(loadOrDefault(KEY_COMMAND_DATA, DefaultCommands));
     // Remove legacy data and convert it to new form
     useEffect(()=>{
-        const legacyData = localStorage.load(LegacyCommandKey);
+        const legacyData = localStorage.getItem(LegacyCommandKey);
         if (legacyData){
             const commands = legacyData.split("\n");
             setCommandData(commands);
         }
         localStorage.removeItem(LegacyCommandKey);
+        localStorage.removeItem(LegacySettingKey);
     }, []);
+
+    useEffect(()=>{
+        store(KEY_COMMAND_DATA, commandData);
+    }, [commandData])
 
     return (
         <StoreContext.Provider value={{

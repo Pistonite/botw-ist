@@ -24,6 +24,20 @@ export class Slots {
 		return this.internalSlots.length;
 	}
 
+	// Used to decide if game data is synced with inventory
+	// Two Slots are equal if the ItemStacks equal, including metadata equality
+	public equals(other: Slots): boolean {
+		if (this.length != other.length){
+			return false;
+		}
+		for (let i = 0;i<this.length;i++){
+			if (!this.internalSlots[i].equals(other.internalSlots[i])){
+				return false;
+			}
+		}
+		return true;
+	}
+
 	// Sort the item types as they appear in game. Arrows are also sorted amongst each other
 	// Individual tabs are not sorted
 	// input mCount = null will skip the optimization. Otherwise if mCount <= 1, do nothing

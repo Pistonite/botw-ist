@@ -2,8 +2,6 @@ h1 {
   margin: 0
 }
 
-
-
 .Calamity {
   font-family: CalamitySans;
 }
@@ -150,34 +148,6 @@ h3.Reference2 {
 
 .FullWidth {
   width: 100% !important;
-}
-
-
-
-.MainInput {
-  display: block;
-  width: 100%;
-  background-color: #00000099;
-  color: #ffffff;
-  border-radius: 0;
-  border: 2px solid #888888;
-  margin-bottom: 5px;
-}
-
-input.MainInput {
-  font-size: 14pt;
-  font-family: CalamitySans;
-}
-
-textarea {
-  resize: none;
-  height: 300px;
-}
-
-.MainInput:focus-visible {
-  outline: none;
-  border-color: #eeeeee;
-  box-shadow: 0 0 5px #eeeeee;
 }
 
 .SpecialScreen {

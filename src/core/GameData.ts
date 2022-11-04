@@ -27,6 +27,10 @@ export class GameData implements DisplayableInventory {
 		}
 	}
 
+	public isSyncedWith(pouch: VisibleInventory) {
+		return this.slots.equals(pouch.getSlots());
+	}
+
 	public updateLife(life: number, slot: number){
 		this.slots.updateLife(life, slot);
 	}

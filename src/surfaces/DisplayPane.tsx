@@ -8,26 +8,28 @@ import InGameBackground from "assets/InGame.png";
 
 import React, { useMemo } from "react";
 import { ItemList } from "components/ItemList";
-import { CrashScreen } from "components/CrashScreen";
+import { CrashScreen } from "ui/surfaces/CrashScreen";
 import { Emphasized } from "components/Text";
+import { useRuntime } from "data/runtime";
 
 type DisplayPaneProps = {
     command: string,
 	commandError: string|undefined,
+	showGameData: boolean,
     simulationState: SimulationState,
-    overlaySave: boolean,
-    isIconAnimated: boolean,
     editCommand: (c: string)=>void
 }
 
 export const DisplayPane: React.FC<DisplayPaneProps> = ({
 	command,
 	commandError,
+	showGameData,
 	editCommand,
 	simulationState,
-	overlaySave,
-	isIconAnimated
 })=>{
+	const { setting } = useRuntime();
+	const isIconAnimated = setting("animatedIcon");
+	const isGameDataInterlaced = setting("interlaceGameData");
 	//const searchItem = useSearchItem();
 	// const
 	const error = useMemo(()=>{
@@ -46,15 +48,18 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 				position: "relative",
 				height: "100%"
 			}}>
-				<CrashScreen>
-					The game has crashed (This is <Emphasized>not</Emphasized> a simulator bug)
 
-				</CrashScreen>
+				<CrashScreen 
+					primaryText="The game has crashed"
+					secondaryText="(This is NOT a simulator bug)"
+				/>
+			
+
 			</div>;
 
-	}else if(overlaySave){
+	}else if(isGameDataInterlaced && showGameData){
 		content =
-			<Section title={`Game Data / Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
+			<Section titleText={`Game Data / Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
 				borderTop: "1px solid black",
 				boxSizing: "border-box",
 				height: "100%",
@@ -99,33 +104,40 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 		;
 	}else{
 		content =
-			<>
-
-				<Section title="Game Data" style={{
+			<div style={{
+				display: "flex",
+				flexDirection: "column",
+				minHeight: "100%"
+			}}>
+				{
+					showGameData && <Section titleText="Game Data" style={{
+						borderTop: "1px solid black",
+						background: `url(${Background})`,
+						color: "white",
+						borderBottom: "1px solid black",
+						boxSizing: "border-box",
+						flex: 1,
+						overflowY: "auto"
+					} }>
+							<ItemList slots={simulationState.displayableGameData.getDisplayedSlots(isIconAnimated)}/>
+					</Section>
+				}
+				
+				<Section titleText={`Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
 					borderTop: "1px solid black",
-					background: `url(${Background})`,
-					color: "white",
-					borderBottom: "1px solid black",
-					boxSizing: "border-box",
-					height: "50%",
-					overflowY: "auto"
-				} }>
-						<ItemList slots={simulationState.displayableGameData.getDisplayedSlots(isIconAnimated)}/>
-				</Section>
-				<Section title={`Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
-					borderTop: "1px solid black",
-					background: `url(${InGameBackground})`,
+					backgroundImage: `url(${InGameBackground})`,
 					backgroundPosition: "center",
-					backgroundSize: "100%",
+					backgroundRepeat: "no-repeat",
+					backgroundSize: "cover",
 					boxSizing: "border-box",
-					height: "50%",
+					flex: 1,
 					overflowY: "auto",
 					color: "white"
 				} }>
 						<ItemList slots={simulationState.displayablePouch.getDisplayedSlots(isIconAnimated)}/>
 
 				</Section>
-			</>;
+			</div>;
 
 	}
 
