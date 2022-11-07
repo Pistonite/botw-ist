@@ -1,24 +1,25 @@
-import { ItemList } from "components/ItemList";
+import { ItemList } from "ui/components/item/ItemList";
+import { Command } from "core/command/command";
 import { SimulationState } from "core/SimulationState";
 import { useRuntime } from "data/runtime";
 import produce from "immer";
-import { DisplayPane } from "surfaces/DisplayPane";
+import { DisplayPane } from "ui/surfaces/DisplayPane";
 import { Section } from "ui/components";
 
 type SimulationMainPanelProps = {
 	displayIndex: number,
 	selectedSaveName: string,
 	simulationState: SimulationState | null,
-	command?: string,
-	commandError?: string,
+	commandText: string,
+	command: Command,
 	showSaves: boolean,
 }
 export const SimulationMainPanel: React.FC<SimulationMainPanelProps> = ({
 	displayIndex,
 	selectedSaveName,
 	simulationState,
+	commandText,
 	command,
-	commandError,
 	showSaves
 }) => {
 	const { setting, commandData, setCommandData} = useRuntime();
@@ -83,11 +84,11 @@ export const SimulationMainPanel: React.FC<SimulationMainPanelProps> = ({
 				boxSizing: "border-box",
 				overflowY: "hidden"
 			}}>
-				{!!simulationState && !!command &&
+				{!!simulationState && command!==undefined &&
 
 						<DisplayPane
+							commandText={commandText}
 							command={command}
-							commandError={commandError}
 							showGameData={showGameData}
 							simulationState={simulationState}
 							editCommand={(c)=>{

@@ -4,7 +4,7 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
-import { Command, parseCommand } from "core/command";
+import { CmdErr, Command, ItemSearchFunction, parseCommand } from "core/command";
 import { createSimulationState, SimulationState } from "core/SimulationState";
 import { ItemStack, loadItemData, searchItemMemoized } from "data/item";
 import fs from "fs";
@@ -57,7 +57,7 @@ expect.extend({
 const [IdMap, SearchMap] = loadItemData(ItemData);
 const SearchResultMemo = {};
 const searchFunc = (word: string): ItemStack | undefined => {
-	return searchItemMemoized(word, IdMap, SearchMap, SearchResultMemo);
+	return searchItemMemoized(word, IdMap, SearchMap, SearchResultMemo)[0];
 };
 const getCommandsFromString = (str: string): Command[] => {
 	const lines = str.split("\n");
@@ -161,6 +161,10 @@ const runE2ETest = (name: string, debug: boolean): [string, string]=>{
 	return [resultString, expectedString];
 };
 
+(window as any).debugAST = (ast: any) => {
+	fs.writeFileSync("src/core/command/ast/debug.ast.json", JSON.stringify(ast), "utf-8");
+}
+
 expect.extend({
 	toPassE2ESimulation: (receivedName: string, expectDebug?: boolean) => {
 		const [resultString, expectedString] = runE2ETest(receivedName, !!expectDebug);
@@ -175,5 +179,71 @@ expect.extend({
 			message: ()=>"E2E simulation passed.",
 			pass: true
 		};
+	},
+	toMatchItemSearch: (receivedSearchString: string, expectedSearch: string | ItemStack | undefined) => {
+		const result = searchFunc(receivedSearchString);
+		const expected = typeof expectedSearch === "string" ? searchFunc(expectedSearch) : expectedSearch;
+		if(result === undefined || expected === undefined){
+			if(result === expected){
+				return {
+					message: ()=>"Item search match passed.",
+					pass: true
+				};
+			}
+			return {
+				message: ()=>`Item search match failed. Actual: ${result && result.item.id}`,
+				pass: false
+			};
+		}
+		if(result.equals(expected)){
+			return {
+				message: ()=>"Item search match passed.",
+				pass: true
+			};
+		}
+		return {
+			message: ()=>`Item search match failed. Actual: ${result && result.item.id}`,
+			pass: false
+		};
+	},
+	toParseIntoCommand: (receivedString: string, search: ItemSearchFunction, expectedCommand: Command | CmdErr) => {
+		// we want to make sure we don't crash when typing the command
+		for(let i=0;i<receivedString.length-1;i++){
+			const part = receivedString.substring(0, i);
+			parseCommand(part, search);
+			// no need to assert here, because the command might or might not equal the final one
+		}
+		const command = parseCommand(receivedString, search);
+		if(typeof expectedCommand === typeof CmdErr.AST){
+			if(command === expectedCommand){
+				return {
+					message: ()=>`Parsed cmderr is ${command}, expected: ${expectedCommand}`,
+					pass: false
+				};
+			}
+			return {
+				message: ()=>`Parsed cmderr is the same as expected`,
+				pass: true
+			};
+		}
+		expectedCommand = expectedCommand as Command;
+		const equal1 = expectedCommand.equals(command);
+		const equal2 = command.equals(expectedCommand);
+		if(equal1 !== equal2){
+			throw new Error("Command equality function must be commutative")
+		}
+		if(!equal1){
+			console.log(command);
+			console.log(expectedCommand);
+			return {
+				message: ()=>"Parsed command is different from expected",
+				pass: false
+			};
+		}
+		return {
+			message: ()=>"Parsed command is same as expected",
+			pass: true
+		};
 	}
+	
 });

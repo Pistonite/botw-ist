@@ -61,6 +61,8 @@ export interface Item {
     // The id of Item, which is its name in UpperCamelCase in English as it appears in English, with special characters like ' removed and + turned into Plus
     // The only special case is that the key item Thunderhelm is named ThunderHelmKey
     readonly id: string,
+    // key for localization
+    readonly localizationKey: string,
     // The type of the item
     readonly type: ItemType
     // if this is false, the item will not be added to pouch if one already exists
@@ -75,6 +77,8 @@ export interface Item {
     readonly image: string,
     // animated image. If the item is not animated, this is the same as image
     readonly animatedImage: string,
+    // priority when matching items in the same category. Can be positive or negative
+    readonly priority: number,
     // create item stack with this item and default metadata (durability and default state for weapons, cookdata for meals, etc)
     createDefaultStack(): ItemStack,
 }
@@ -99,6 +103,8 @@ export interface ItemStack {
     equalsExceptForEquipped(other: ItemStack): boolean,
     // check if item and meta equal, used for stacking
     canStack(other: ItemStack): boolean,
+    // get tooltip strings. Return: [text, className][]
+    getTooltip(translate: (s:string)=>string): [string, string][],
 }
 
 export type ItemIdMap = { [id: string]: Item};

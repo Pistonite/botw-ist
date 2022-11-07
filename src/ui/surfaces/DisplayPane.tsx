@@ -1,44 +1,35 @@
 import clsx from "clsx";
-import { DoubleItemSlot } from "components/ItemSlot";
-import { Section } from "ui/components";
+import { Section, DoubleItemSlot } from "ui/components";
 
 import { SimulationState } from "core/SimulationState";
-import Background from "assets/Background.png";
 import InGameBackground from "assets/InGame.png";
 
 import React, { useMemo } from "react";
-import { ItemList } from "components/ItemList";
+import { ItemList } from "ui/components/item/ItemList";
 import { CrashScreen } from "ui/surfaces/CrashScreen";
 import { useRuntime } from "data/runtime";
+import { CmdErr, Command } from "core/command/command";
+import { CommandTextArea } from "ui/surfaces/CommandTextArea";
 
 type DisplayPaneProps = {
-    command: string,
-	commandError: string|undefined,
+    commandText: string,
+	command: Command,
 	showGameData: boolean,
     simulationState: SimulationState,
     editCommand: (c: string)=>void
 }
 
 export const DisplayPane: React.FC<DisplayPaneProps> = ({
+	commandText,
 	command,
-	commandError,
 	showGameData,
 	editCommand,
 	simulationState,
 })=>{
+	
 	const { setting } = useRuntime();
 	const isIconAnimated = setting("animatedIcon");
 	const isGameDataInterlaced = setting("interlaceGameData");
-	//const searchItem = useSearchItem();
-	// const
-	const error = useMemo(()=>{
-		if(command === ""){
-			return "";
-		}else if (command.startsWith("#")){
-			return "";
-		}
-		return commandError;
-	}, [command, commandError]);
 
 	let content: JSX.Element;
 	if(simulationState.isCrashed()){
@@ -62,9 +53,10 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 				boxSizing: "border-box",
 				height: "100%",
 				overflowY: "auto",
-				background: `url(${InGameBackground})`,
+				backgroundImage: `url(${InGameBackground})`,
 				backgroundPosition: "center",
-				backgroundSize: "auto 100%",
+				backgroundRepeat: "no-repeat",
+				backgroundSize: "cover",
 				color: "white",
 			} }>
 
@@ -106,9 +98,8 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 				minHeight: "100%"
 			}}>
 				{
-					showGameData && <Section titleText="Game Data" style={{
+					showGameData && <Section titleText="Game Data" className="SheikaBackground" style={{
 						borderTop: "1px solid black",
-						background: `url(${Background})`,
 						color: "white",
 						borderBottom: "1px solid black",
 						boxSizing: "border-box",
@@ -139,45 +130,52 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 
 	return <div id="DisplayPane" style={{
 		height: "100%",
+		display: "flex",
+		flexDirection: "column"
 	} }>
 		<div style={{
 			boxSizing: "border-box",
-			height: "40px",
-			position: "relative",
 		} }>
-			<input id="CommandInputField" className={clsx("Calamity", "CommandInput", error && "InputError")} style={{
-				background: `url(${Background})`,
-				width: "100%",
-				height: "40px",
-				paddingLeft: 10,
-				margin: 0,
-				boxSizing: "border-box",
-				fontSize: "16pt",
-				outline: "none",
-			}}value={command}
-			placeholder="Type command here..."
-			spellCheck={false}
-			onChange={(e)=>{
-				const cmdString = e.target.value;
-				editCommand(cmdString);
-			}}></input>
-			{
-				error && <div style={{
-					boxSizing: "border-box",
-					border: "2px solid #ee0000",
-					borderTop: "none",
-					backgroundColor: "#333333bb",
-					padding: 3,
-					color: "#eeeeee",
-				}}>{error}</div>
-			}
+			{/* <div> */}
+				<CommandTextArea
+					className="MainInput"
+					scrollBehavior="expand"
+					large
+					blocks={[command.codeBlocks]} 
+					value={[commandText]} 
+					setValue={(v)=>editCommand(v.join(" "))} 
+				/>
+			{/* </div> */}
+			
+
+			
 
 		</div>
 		<div style={{
-			height: "calc( 100% - 40px )"
+			flexGrow: 1,
+			position: "relative"
 		}}>
+			
 			{content}
+			{
+				command.err.length > 0 && 
+				<div className={clsx(
+						"TooltipWindow", 
+						command.cmdErr === CmdErr.Parse && "TooltipWarn",
+						command.cmdErr === CmdErr.Execute && "TooltipError"
+					)} style={{
+					position: "absolute",
+					top: 0,
+					right: 0,
+					left: 0
+				}}>
+					{
+						command.err.map((error,i)=><p className={clsx("TooltipLine", i==0 && "TooltipHeader")} key={i}>{error}</p>)
+					}
+				</div>
+			}
 		</div>
+		
 
 	</div>;
 };

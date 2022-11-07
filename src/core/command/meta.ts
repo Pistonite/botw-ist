@@ -1,4 +1,4 @@
-import { MetaOption } from "./type";
+import { MetaOption } from "data/item";
 
 export const parseMetadata = (metaString: string): MetaOption | string => {
 	if(metaString.trim().length === 0){

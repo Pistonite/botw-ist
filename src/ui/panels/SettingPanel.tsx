@@ -26,7 +26,7 @@ const settingToButtonString = (value: boolean | "auto"): string => {
 	return settingToString(value, "ON", "OFF", "AUTO");
 };
 
-export const SettingPage: React.FC = () => {
+export const SettingPanel: React.FC = () => {
 	const { setting, setPage } = useRuntime();
 
 	const isIconAnimated = setting("animatedIcon");

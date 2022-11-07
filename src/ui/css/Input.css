@@ -1,6 +1,4 @@
 .MainInput {
-    margin: 5px;
-    display: inline-block;
     height: 30px;
     background-color: #00000099;
     color: #ffffff;
@@ -11,17 +9,18 @@
 }
 
 input.MainInput {
+    display: inline-block;
     font-size: small;
     font-weight: bold;
     font-family: CalamitySans;
 }
 
-textarea.MainInput {
-    resize: none;
+div.MultiLineInput {
+    margin: 5px;
     height: 300px;
 }
 
-textarea.MainInput:disabled, input.MainInput:disabled {
+div.MainInput textarea:disabled, input.MainInput:disabled {
     color: #888888;
     background-color: #333333;
     border-color: #888888;
@@ -29,8 +28,8 @@ textarea.MainInput:disabled, input.MainInput:disabled {
     text-shadow: none;
 }
 
-.MainInput:focus-visible {
+.MainInput:focus-visible, textarea:focus-visible {
     outline: none;
     border-color: #eeeeee;
     box-shadow: 0 0 5px #eeeeee;
-  }
+}

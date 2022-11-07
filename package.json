@@ -71,6 +71,7 @@
     "yaml-loader": "^0.8.0"
   },
   "scripts": {
+    "generate": "python3 src/core/command/ast/generate_parser.py src/core/command/ast/grammar.txt src/core/command/ast/ast.generated.ts",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test-all": "node scripts/test.js",

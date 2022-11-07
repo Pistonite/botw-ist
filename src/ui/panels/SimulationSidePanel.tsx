@@ -1,11 +1,11 @@
-import { CommandItem } from "components/CommandItem";
-import { Command } from "core/command";
+import { CommandItem } from "ui/components/basic/ListItem";
+import { Command } from "core/command/command";
 import { SimulationState } from "core/SimulationState";
 import { useRuntime } from "data/runtime";
 import { GetSetPair } from "data/types";
 import produce from "immer";
 import { useCallback } from "react";
-import { Section } from "ui/components";
+import { ColoredCodeBlocks, Section } from "ui/components";
 import { ContextMenuState } from "ui/types";
 
 type SimulationSidePanelProps = {
@@ -41,7 +41,7 @@ export const SimulationSidePanel: React.FC<SimulationSidePanelProps> = ({
 		setCommandData(produce(commandData, newData=>{
 			newData.push("");
 		}));
-	}, [commandData]);
+	}, [commandData, setCommandData]);
 
 	return (
 		<>
@@ -104,6 +104,7 @@ export const SimulationSidePanel: React.FC<SimulationSidePanelProps> = ({
 
 			}}>
 				<ol style={{
+					margin: 0
 				}}>
 					{
 						commandData.map((c,i)=>
@@ -131,11 +132,11 @@ export const SimulationSidePanel: React.FC<SimulationSidePanelProps> = ({
 								key={i}
 								isSelected={displayIndex===i}
 								isContextSelected={contextMenuState.index===i}
-								isComment={c.startsWith("#")}
-								useListItem={!c.startsWith("#")}
-								isInvalid={commands[i].getError() !== undefined}
+								small={false}
+								useListItem={true}
+								isInvalid={false}
 							>
-								{c}
+								<ColoredCodeBlocks blocks={[commands[i].codeBlocks]} value={[c]} />
 							</CommandItem>
 						)
 					}

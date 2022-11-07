@@ -1,5 +1,5 @@
 import { Item, ItemStack, MetaOption } from "data/item";
-import { Command } from "./command";
+import { Command } from "./command/command";
 import { DisplayableInventory } from "./DisplayableInventory";
 import { GameData } from "./GameData";
 import { Slots } from "./Slots";

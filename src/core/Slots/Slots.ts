@@ -1,4 +1,4 @@
-import { stableSort } from "data/stableSort";
+import { arrayEqual, stableSort } from "data/util";
 import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaOption } from "data/item";
 
 /*
@@ -27,15 +27,7 @@ export class Slots {
 	// Used to decide if game data is synced with inventory
 	// Two Slots are equal if the ItemStacks equal, including metadata equality
 	public equals(other: Slots): boolean {
-		if (this.length != other.length){
-			return false;
-		}
-		for (let i = 0;i<this.length;i++){
-			if (!this.internalSlots[i].equals(other.internalSlots[i])){
-				return false;
-			}
-		}
-		return true;
+		return arrayEqual(this.internalSlots, other.internalSlots);
 	}
 
 	// Sort the item types as they appear in game. Arrows are also sorted amongst each other

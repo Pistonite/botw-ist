@@ -1,15 +1,14 @@
 import clsx from "clsx";
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { PropsWithChildren } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState, PropsWithChildren } from "react";
 
-type SetTooltipFunction = (screenX: number, screenY: number, tooltip: string[]) => void;
+type SetTooltipFunction = (screenX: number, screenY: number, tooltip: React.ReactNode[]) => void;
 const TooltipContext = React.createContext<SetTooltipFunction>(()=>{/* empty */});
 export const TooltipHost: React.FC<PropsWithChildren> = ({children}) => {
 	const toolTipDivRef = useRef<HTMLDivElement>(null);
-	const [tooltip, setTooltip] = useState<string[]>([]);
+	const [tooltip, setTooltip] = useState<React.ReactNode[]>([]);
 	const [tooltipX, setTooltipX] = useState<number>(0);
 	const [tooltipY, setTooltipY] = useState<number>(0);
-	const setScreenTooltip = useCallback((x: number, y: number, tooltips: string[])=>{
+	const setScreenTooltip = useCallback((x: number, y: number, tooltips: React.ReactNode[])=>{
 		setTooltipX(x+10);
 		setTooltipY(y+10);
 		setTooltip(tooltips);
@@ -35,7 +34,7 @@ export const TooltipHost: React.FC<PropsWithChildren> = ({children}) => {
 const useSetTooltip = ()=>useContext(TooltipContext);
 
 type TooltipProps = {
-	title: string[]
+	title: React.ReactNode[]
 }
 
 export const Tooltip: React.FC<PropsWithChildren<TooltipProps>> = ({title, children}) => {
@@ -47,7 +46,7 @@ export const Tooltip: React.FC<PropsWithChildren<TooltipProps>> = ({title, child
 			return;
 		}
 		setTooltip(coord[0], coord[1], title);
-	}, [setTooltip, ...coord, ...title]);
+	}, [setTooltip, coord, title]);
 
 	return (
 		<span onMouseMove={(e)=>{

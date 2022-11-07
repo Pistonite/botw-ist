@@ -18,6 +18,9 @@ const TypeToCount: Omit<{
 
 export class ItemImpl implements Item {
 	id: string;
+	get localizationKey(): string {
+		return `items.${ItemType[this.type]}.${this.id}`;
+	}
 	type: ItemType;
 	get tab(): ItemTab {
 		return getTabFromType(this.type);
@@ -27,6 +30,7 @@ export class ItemImpl implements Item {
 	sortOrder = -1;
 	image: string;
 	configuredAnimatedImage?: string;
+	priority: number;
 	defaultStackFactory?: (item: Item)=>ItemStack;
 	constructor(
 		id: string,
@@ -35,6 +39,7 @@ export class ItemImpl implements Item {
 		stackable: boolean,
 		image: string,
 		animatedImage: string|undefined,
+		priority: number,
 		defaultStackFactory: ((item: Item)=>ItemStack)|undefined
 	){
 		this.id = id;
@@ -43,6 +48,7 @@ export class ItemImpl implements Item {
 		this.stackable = stackable;
 		this.image = image;
 		this.configuredAnimatedImage = animatedImage;
+		this.priority = priority;
 		this.defaultStackFactory = defaultStackFactory;
 		if(type !== ItemType.Flag){
 			this.sortOrder = TypeToCount[type];

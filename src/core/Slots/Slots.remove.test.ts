@@ -1,6 +1,6 @@
 import { createEquipmentStack, createMaterialStack, ItemStack, ItemType } from "data/item";
 import { Slots } from "./Slots";
-import { createEquipmentMockItem, createMaterialMockItem } from "./SlotsTestHelpers";
+import { createEquipmentMockItem, createMaterialMockItem } from "data/item/TestHelpers";
 
 describe("core/Slots.remove", ()=>{
 	it("Does nothing if item doesn't exist", ()=>{

@@ -1,4 +1,4 @@
-import { Item, ItemStack, MetaOption } from "./type";
+import { Item, ItemStack, ItemType, MetaOption } from "./type";
 
 class ItemStackImpl implements ItemStack {
 	public item: Item;
@@ -55,6 +55,18 @@ class ItemStackImpl implements ItemStack {
 	public canStack(other: ItemStack): boolean {
 		// TODO metadata
 		return this.item === other.item;
+	}
+
+	public getTooltip(translate: (s:string)=>string): [string, string][] {
+		return [
+			[translate(this.item.localizationKey), ""],
+			[[ItemType.Weapon, ItemType.Shield, ItemType.Bow].includes(this.item.type)
+				? `Durability: ${this.durability}`
+				: `Stack size: ${this.count}`, ""],
+
+			this.equipped && [translate("state.Equipped"), ""],
+			[translate(`category.${ItemType[this.item.type]}`), "ItemTooltipType"]
+		].filter(Boolean) as [string, string][];
 	}
 
 }

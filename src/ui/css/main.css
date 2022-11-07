@@ -37,3 +37,7 @@ a:visited{
 .Error {
 	color: #ee7777 !important;
 }
+
+.SheikaBackground {
+    background-image: url("assets/Background.png");
+}

@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { PropsWithChildren } from "react";
 
 type DivProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
@@ -7,9 +8,9 @@ type SectionProps = {
 	titleProps?: HeadingProps
 };
 
-export const Section: React.FC<PropsWithChildren<DivProps & SectionProps>> = ({titleText, titleProps, children, ...restProps}) => {
+export const Section: React.FC<PropsWithChildren<DivProps & SectionProps>> = ({className, titleText, titleProps, children, ...restProps}) => {
 	return (
-		<div {...restProps}>
+		<div className={clsx("Section", className)} {...restProps} >
 			<h3 {...titleProps} className="SectionHeader">
 				{titleText}
 			</h3>

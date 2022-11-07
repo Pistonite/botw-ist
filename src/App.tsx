@@ -1,20 +1,25 @@
-import { parseCommand } from "core/command";
+import produce from "immer";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import "./App.css";
-import { CommandItem } from "./components/CommandItem";
+import { CommandItem } from "ui/components";
 import { createSimulationState, SimulationState } from "core/SimulationState";
-import { ReferencePage } from "surfaces/ReferencePage";
 import { useSearchItem } from "data/item";
-import { GalleryPage } from "surfaces/GalleryPage";
-import { ScriptOptionPanel, SettingPage } from "ui/panels";
 import { useRuntime } from "data/runtime";
 import { ContextMenuState } from "ui/types";
-import produce from "immer";
-import { SimulationSidePanel } from "ui/panels/SimulationSidePanel";
-import { SimulationMainPanel } from "ui/panels/SimulationMainPanel";
-import { NavPanel } from "ui/panels/NavPanel";
-import { HelpPanel } from "ui/panels/HelpPanel";
+
+import { 
+	ItemExplorerPanel,
+	NavPanel,
+	HelpPanel,
+	ScriptOptionPanel,
+	SettingPanel,
+	SimulationMainPanel,
+	SimulationSidePanel,
+	ReferencePage
+} from "ui/panels";
+
+import { parseCommand } from "core/command/parsev2";
 
 export const App: React.FC =  () => {
 
@@ -55,7 +60,7 @@ export const App: React.FC =  () => {
 		window.onkeydown=(e)=>{
 			if(e.code==="ArrowDown"){
 				let nextCommandIndex = displayIndex+1;
-				while(nextCommandIndex<commandData.length && commands[nextCommandIndex].getError() !== undefined){
+				while(nextCommandIndex<commandData.length && commands[nextCommandIndex].isNop){
 					nextCommandIndex++;
 				}
 				if(nextCommandIndex===commandData.length-1){
@@ -69,13 +74,13 @@ export const App: React.FC =  () => {
 				}
 			}else if(e.code==="ArrowUp"){
 				let nextCommandIndex = displayIndex-1;
-				while(nextCommandIndex>=0 && commands[nextCommandIndex].getError() !== undefined){
+				while(nextCommandIndex>=0 && commands[nextCommandIndex].isNop){
 					nextCommandIndex--;
 				}
 				setDisplayIndex(Math.max(0, nextCommandIndex));
 			}
 		};
-	}, [commandData, displayIndex, commands]);
+	}, [commandData, displayIndex, commands, setCommandData]);
 
 	useEffect(()=>{
 		if(contextMenuState.index >= commandData.length){
@@ -133,7 +138,7 @@ export const App: React.FC =  () => {
 					/>
 				}
 				{
-					page === "#setting" && <SettingPage />
+					page === "#setting" && <SettingPanel />
 				}
 
 			</div>
@@ -149,8 +154,8 @@ export const App: React.FC =  () => {
 					<SimulationMainPanel
 						displayIndex={displayIndex}
 						selectedSaveName={selectedSaveName}
-						command={commandData[displayIndex]}
-						commandError={commands[displayIndex].getError()}
+						command={commands[displayIndex]}
+						commandText={commandData[displayIndex]}
 						simulationState={theSimulationState}
 						showSaves={showSaves}
 					/>
@@ -159,7 +164,7 @@ export const App: React.FC =  () => {
 					page === "#reference" && <ReferencePage />
 				}
 				{
-					page === "#items" && <GalleryPage />
+					page === "#items" && <ItemExplorerPanel />
 				}
 				{
 					page === "#options" && <ScriptOptionPanel />
@@ -176,6 +181,8 @@ export const App: React.FC =  () => {
 					left: 0,
 					width: "100vw",
 					height: "100vh",
+					
+					color: "white"
 				}} onClick={()=>{
 					setContextMenuState({
 						index: -1,
@@ -195,8 +202,8 @@ export const App: React.FC =  () => {
 						top: contextMenuState.y,
 						left: contextMenuState.x,
 						width: "200px",
-						backgroundColor: "white",
-						border: "1px solid black"
+						backgroundColor: "#262626",
+						border: "1px solid white"
 					}}>
 						<ul style={{
 							margin: 0,

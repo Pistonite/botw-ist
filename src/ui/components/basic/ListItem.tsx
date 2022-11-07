@@ -4,7 +4,7 @@ import React, { PropsWithChildren, useCallback } from "react";
 type CommandItemProps = PropsWithChildren<{
 	useListItem?: boolean,
     isSelected?: boolean,
-	isComment?: boolean,
+	small?: boolean,
 	isInvalid?: boolean,
     isContextSelected?: boolean,
     onClick: (x: number, y: number)=>void,
@@ -15,18 +15,17 @@ export const CommandItem: React.FC<CommandItemProps> = ({
 	useListItem,
 	isSelected,
 	isContextSelected,
-	isComment,
+	small,
 	isInvalid,
 	onClick,
 	onContextMenu,
 	children
 }) => {
 	const className = clsx(
-		"CommandItem",
-		isSelected && "CommandItemSelected",
-		isContextSelected && "CommandItemContextSelected",
-		isComment && "CommandItemComment",
-		isInvalid && !isComment && "CommandItemInvalid",
+		"ListItem",
+		isSelected && "ListItemSelected",
+		isContextSelected && "ListItemContextSelected",
+		small && "Small",
 	);
 
 	const clickHandler = useCallback((e: React.MouseEvent)=>{
@@ -42,13 +41,13 @@ export const CommandItem: React.FC<CommandItemProps> = ({
 	if(!useListItem){
 		return (
 			<div className={className} onClick={clickHandler} onContextMenu={contextMenuHandler}>
-				{children}&nbsp;
+				{children}
 			</div>
 		);
 	}
 	return (
 		<li className={className} onClick={clickHandler} onContextMenu={contextMenuHandler}>
-			{children}&nbsp;
+			{children}
 		</li>
 	);
 };

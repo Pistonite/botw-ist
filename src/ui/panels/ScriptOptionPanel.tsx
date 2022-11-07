@@ -4,6 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Category, Control, Description, Label } from "ui/components";
 import { Page } from "ui/surfaces";
 import { useRuntime } from "data/runtime";
+import { CommandTextArea } from "ui/surfaces/CommandTextArea";
+import { useSearchItem } from "data/item";
+import { parseCommand } from "core/command/parsev2";
+import { arrayShallowEqual } from "data/util";
 
 const URL_MAX = 2048;
 
@@ -16,17 +20,22 @@ export const ScriptOptionPanel: React.FC = () => {
 		enableEditing,
 		setSaving,
 	} = useRuntime();
-	const commandText = useMemo(()=>commandData.join("\n"), [commandData]);
+	//const commandText = useMemo(()=>commandData.join("\n"), [commandData]);
 
-	const [currentText, setCurrentText] = useState<string>(commandText);
+	const [currentText, setCurrentText] = useState<string[]>(commandData);
 	const [fileName, setFileName] = useState<string>("");
 	const [showDirectUrl, setShowDirectUrl] = useState<boolean>(false);
 	const [showCopiedMessage, setShowCopiedMessage] = useState<boolean>(false);
 
+	const searchItem = useSearchItem();
+	const codeblocks = useMemo(()=>{
+		return currentText.map(c=> parseCommand(c, searchItem).codeBlocks);
+	}, [currentText, searchItem]);
+
 	const uploadRef = useRef<HTMLInputElement>(null);
 
 	const directUrl = useMemo(()=>{
-		const serializedCommands = serialize(currentText);
+		const serializedCommands = serialize(currentText.join("\n"));
 		const query = new URLSearchParams(serializedCommands).toString();
 		return `${window.location.origin}/?${query}`;
 	}, [currentText]);
@@ -37,7 +46,7 @@ export const ScriptOptionPanel: React.FC = () => {
 		setShowCopiedMessage(false);
 	}, [currentText]);
 
-	const unsaved = currentText !== commandText;
+	const unsaved = useMemo(()=>!arrayShallowEqual(currentText, commandData), [currentText, commandData]);
 
 	return (
 		<Page title="Script Options">
@@ -48,8 +57,9 @@ export const ScriptOptionPanel: React.FC = () => {
 					const fileName = file.name.endsWith(".txt") ? file.name.substring(0, file.name.length-4) : file.name;
 					setFileName(fileName);
 					file.text().then(text=>{
-						setCurrentText(text);
-						setCommandData(text.split("\n"));
+						const splitted= text.split("\n");
+						setCurrentText(splitted);
+						setCommandData(splitted);
 					});
 				}
 			}}/>
@@ -91,7 +101,7 @@ export const ScriptOptionPanel: React.FC = () => {
 
 				<Control disabled={!editing}>
 					<Button className="Full Action" disabled={!unsaved} onClick={()=>{
-						setCommandData(currentText.split("\n"));
+						setCommandData(currentText);
 					}}>
 						Save
 					</Button>
@@ -103,7 +113,7 @@ export const ScriptOptionPanel: React.FC = () => {
 						Import
 					</Button>
 					<Button className="Full" onClick={()=>{
-						saveAs(currentText, fileName+".txt" || "IST-Export.txt");
+						saveAs(currentText.join("\n"), fileName+".txt" || "IST-Export.txt");
 					}}>
 						Export
 					</Button>
@@ -117,17 +127,16 @@ export const ScriptOptionPanel: React.FC = () => {
 						}}
 						placeholder="File name"
 					/>
-
-					<textarea
-						style={{width: "calc( 100% - 10px )"}}
-						className="MainInput"
-						spellCheck={false}
-						value={currentText}
-						onChange={(e)=>{
-							setCurrentText(e.target.value);
-						}}
-
-					/>
+					{/* <div> */}
+						<CommandTextArea
+							className="MainInput MultiLineInput" 
+							scrollBehavior="scroll"
+							value={currentText}
+							setValue={setCurrentText}
+							blocks={codeblocks}
+						/>
+					{/* </div> */}
+					
 
 					<Description className="Error">
 						{editing?"":"You need to enable editing to change the script here"}
