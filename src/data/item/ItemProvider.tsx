@@ -241,6 +241,24 @@ export const searchItemMemoized = (
 };
 
 const searchItemInMap = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMap): [ItemStack | undefined, ItemStack[]] => {
+	const firstAttempt = searchItemInMapCore(name, idMap, searchMap);
+	if(firstAttempt[0] !== undefined){
+		return firstAttempt;
+	}
+	// try removing "s" or "es" (lower case only)
+	const tries = ["es", "s"];
+	for(let i=0;i<tries.length;i++){
+		if(name.endsWith(tries[i])){
+			const attempt = searchItemInMapCore(name.substring(0, name.length-tries[i].length), idMap, searchMap);
+			if(attempt[0] !== undefined){
+				return attempt;
+			}
+		}
+	}
+	return firstAttempt;
+}
+
+const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMap): [ItemStack | undefined, ItemStack[]] => {
 	// if name is an id exactly, return that
 	const idItem = idMap[name];
 	if(idItem){
