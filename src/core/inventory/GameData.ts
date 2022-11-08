@@ -1,5 +1,5 @@
-import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "./DisplayableInventory";
-import { Slots } from "./Slots";
+import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "../DisplayableInventory";
+import { Slots } from ".";
 import { VisibleInventory } from "./VisibleInventory";
 
 /*
@@ -17,7 +17,7 @@ export class GameData implements DisplayableInventory {
 	}
 
 	public syncWith(pouch: VisibleInventory) {
-		if(pouch.getCount() <=0){
+		if(pouch.getMCount() <=0){
 			// inventory nuking.
 			// [confirmed] when mCount <=0, gamedata is nuked when syncing with pouch
 			// https://discord.com/channels/269611402854006785/269616041435332608/998326332813480016

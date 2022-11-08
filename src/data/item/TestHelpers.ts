@@ -35,7 +35,7 @@ export const createKeyMockItem = (id: string): Item => new MockItem(id, ItemType
 export const createKeyMockItemStackable = (id: string): Item => new MockItem(id, ItemType.Key, true, true);
 export const createEquipmentMockItem = (id: string, type: ItemType): Item => new MockItem(id, type, false, true);
 
-export const equalsExceptEquip = (a: ItemStack, b: ItemStack): boolean => a.equalsExceptForEquipped(b);
+export const equalsExceptEquip = (a: ItemStack, b: ItemStack): boolean => a.equalsExcept(b, "equip");
 
 export const createMockItems = (ids: string[]): Record<string, Item> =>  {
 	const items: Record<string, Item> = {}; 

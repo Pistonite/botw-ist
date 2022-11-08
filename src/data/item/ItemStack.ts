@@ -47,14 +47,21 @@ class ItemStackImpl implements ItemStack {
 	}
 
 	public equals(other: ItemStack): boolean {
-		return this.equalsExceptForEquipped(other) && this.equipped === other.equipped;
+		return this.equalsExcept(other);
 	}
-	public equalsExceptForEquipped(other: ItemStack): boolean {
-		return this.canStack(other) && this.life === other.count;
-	}
-	public canStack(other: ItemStack): boolean {
-		// TODO metadata
-		return this.item === other.item;
+
+	public equalsExcept(other: ItemStack, ...keys: (keyof MetaOption)[]): boolean {
+		// If we grow to like 20 keys we could use a set.. but I doubt it
+		if(this.item !== other.item){
+			return false;
+		}
+		if(!keys.includes("equip") && this.equipped !== other.equipped){
+			return false;
+		}
+		if(!keys.includes("life") && this.life !== other.count){
+			return false;
+		}
+		return true;
 	}
 
 	public getTooltip(translate: (s:string)=>string): [string, string][] {

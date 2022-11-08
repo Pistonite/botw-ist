@@ -2,7 +2,6 @@ import { SimulationState } from "core/SimulationState";
 import { arrayEqual } from "data/util";
 import { ASTCommandBreakSlots } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
-import { processWrappers } from "./helper";
 import { ItemStackArg } from "./ItemStackArg";
 import { parseASTInteger } from "./parse.basis";
 import { parseASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot } from "./parse.clause.with.fromslot";
@@ -20,7 +19,7 @@ export class CommandBreakSlots extends AbstractProperCommand {
 	}
 
 	public execute(state: SimulationState): void {
-        processWrappers(this.stacks).forEach(stack=>state.remove(stack, this.slot));
+        this.stacks.forEach(stackArg=>state.remove(stackArg.stack, stackArg.number, this.slot));
 
 		state.breakSlots(this.numToBreak);
 	}

@@ -120,7 +120,6 @@ export class CommandHint implements Command {
         // Do nothing;
     }
     equals(other: Command): boolean {
-        console.log(this.descriptor);
         return other instanceof CommandHint && this.descriptor === other.descriptor && this.delegate.equals(other.delegate);
     }
     get cmdErr(): CmdErr {return this.delegate.cmdErr; }

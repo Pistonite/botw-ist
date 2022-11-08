@@ -99,10 +99,8 @@ export interface ItemStack {
     modifyMeta(metaOption: MetaOption): ItemStack,
     // check if 2 stacks are equal: same item, count, equipped and metadata
     equals(other: ItemStack): boolean,
-    // check if everything equals except for equipped
-    equalsExceptForEquipped(other: ItemStack): boolean,
-    // check if item and meta equal, used for stacking
-    canStack(other: ItemStack): boolean,
+    // equals except the specified meta keys
+    equalsExcept(other: ItemStack, ...keys: (keyof MetaOption)[]): boolean,
     // get tooltip strings. Return: [text, className][]
     getTooltip(translate: (s:string)=>string): [string, string][],
 }

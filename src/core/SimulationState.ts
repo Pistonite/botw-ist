@@ -1,16 +1,16 @@
 import { Item, ItemStack, MetaOption } from "data/item";
 import { Command } from "./command/command";
+import { AmountAllType, ItemStackArg } from "./command/ItemStackArg";
 import { DisplayableInventory } from "./DisplayableInventory";
-import { GameData } from "./GameData";
-import { Slots } from "./Slots";
-import { VisibleInventory } from "./VisibleInventory";
+import { GameData, Slots } from "./inventory";
+import { VisibleInventory } from "./inventory";
 
 export const createSimulationState = (): SimulationState => {
 	return new SimulationState(
 		new GameData(new Slots([])),
 		null,
 		{},
-		new VisibleInventory(new Slots([]), 0)
+		new VisibleInventory(new Slots([]))
 	);
 };
 /*
@@ -65,7 +65,7 @@ export class SimulationState {
 	}
 
 	public initialize(stacks: ItemStack[]) {
-		this.pouch = new VisibleInventory(new Slots([]), 0);
+		this.pouch = new VisibleInventory(new Slots([]));
 		stacks.forEach((stack)=>this.pouch.addDirectly(stack));
 		this.gameData.syncWith(this.pouch);
 	}
@@ -123,7 +123,7 @@ export class SimulationState {
 	}
 
 	public breakSlots(n: number) {
-		this.pouch.modifyCount(-n);
+		this.pouch.modifyOffset(n);
 	}
 
 	public obtain(stack: ItemStack) {
@@ -131,8 +131,8 @@ export class SimulationState {
 		this.syncGameDataWithPouch();
 	}
 
-	public remove(stack: ItemStack, slot: number) {
-		this.pouch.remove(stack, slot);
+	public remove(stack: ItemStack, count: number | AmountAllType, slot: number) {
+		this.pouch.remove(stack, count, slot);
 		this.syncGameDataWithPouch();
 	}
 
@@ -157,7 +157,7 @@ export class SimulationState {
 	}
 
 	public closeGame() {
-		this.pouch = new VisibleInventory(new Slots([]), 0);
+		this.pouch = new VisibleInventory(new Slots([]));
 		this.gameData = new GameData(new Slots([]));
 		this.isOnEventide = false;
 	}
@@ -197,7 +197,7 @@ export class SimulationState {
 	}
 
 	public get inventoryMCount(): number {
-		return this.pouch.getCount();
+		return this.pouch.getMCount();
 	}
 
 	public isCrashed(): boolean{

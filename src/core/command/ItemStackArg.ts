@@ -5,14 +5,14 @@ export type AmountAllType = typeof AmountAll;
 
 
 export class ItemStackArg{
-	stack: ItemStack;
-	number: number | AmountAllType;
+	public stack: ItemStack;
+	public number: number | AmountAllType;
 	constructor(stack: ItemStack, number: number | AmountAllType){
 		this.stack = stack;
 		this.number = number;
 	}
 
-	public getStackAndSlotCount(): [ItemStack, number | AmountAllType] {
+	public getContextStackAndSlotCount(): [ItemStack, number | AmountAllType] {
 		if(this.number !== AmountAll && this.stack.item.stackable){
 			return [this.stack.modify({count: this.number}), 1];
 		}

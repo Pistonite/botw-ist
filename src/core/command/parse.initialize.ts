@@ -2,7 +2,7 @@ import { SimulationState } from "core/SimulationState";
 import { arrayEqual } from "data/util";
 import { ASTCommandInitialize } from "./ast/";
 import { AbstractProperCommand, Command } from "./command";
-import { processWrappers } from "./helper";
+import { getSlotsToAdd } from "./helper";
 import { ItemStackArg } from "./ItemStackArg";
 import { parseASTItems } from "./parse.item";
 import { codeBlockFromRangeObj, CodeBlockTree, delegateParseItem, ParserItem } from "./type";
@@ -15,7 +15,7 @@ export class CommandInitialize extends AbstractProperCommand {
 	}
 
 	public execute(state: SimulationState): void {
-		state.initialize(processWrappers(this.stacks));
+		state.initialize(getSlotsToAdd(this.stacks));
 	}
 
 	public equals(other: Command): boolean {

@@ -15,10 +15,10 @@ import { ItemStackArg } from "./ItemStackArg";
 // };
 
 // converts stacks from command to stacks to add
-export const processWrappers = (stacks: ItemStackArg[]): ItemStack[] => {
+export const getSlotsToAdd = (stacks: ItemStackArg[]): ItemStack[] => {
 	const returnStacks: ItemStack[] = [];
 	stacks.forEach(stack=>{
-		const [actualStack, count] = stack.getStackAndSlotCount();
+		const [actualStack, count] = stack.getContextStackAndSlotCount();
 		if(count === "All"){
 			console.log("temp fix");
 			returnStacks.push(actualStack.modify({count: -1}));

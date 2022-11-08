@@ -1,26 +1,44 @@
-import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "./DisplayableInventory";
+import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "../DisplayableInventory";
 import { GameData } from "./GameData";
 import { Slots } from "./Slots";
 import { Item, ItemStack, ItemType, MetaOption } from "data/item";
+import { AmountAllType } from "core/command/ItemStackArg";
 
 /*
  * Implementation of Visible Inventory (PauseMenuDataMgr) in botw
  */
 export class VisibleInventory implements DisplayableInventory{
 	private slots: Slots = new Slots([]);
-	/* Implementation of mCount in botw */
-	private count = 0;
-	constructor(slots: Slots, count: number){
+	// Difference between this.slots.length and what the game thinks the inventory size is
+	// i.e. number of broken slots
+	private offset: number;
+	constructor(slots: Slots){
 		this.slots = slots;
-		this.count = count;
+		this.offset = 0;
+	}
+
+	// Get "mCount", the number of items tracked by the linked list in botw
+	public getMCount(): number {
+		return this.slots.length - this.offset;
+	}
+
+	public getOffset(): number {
+		return this.offset;
+	}
+
+	public modifyOffset(delta: number): void {
+		this.offset+=delta;
 	}
 
 	public deepClone(): VisibleInventory {
-		return new VisibleInventory(this.slots.deepClone(), this.count);
+		const copy = new VisibleInventory(this.slots.deepClone());
+		copy.offset = this.offset;
+		return copy;
 	}
 
 	public getDisplayedSlots(isIconAnimated: boolean): DisplayableSlot[] {
-		return this.slots.getSlotsRef().map((stack, i)=>itemStackToDisplayableSlot(stack, i>=this.count, isIconAnimated));
+		const mCount = this.getMCount();
+		return this.slots.getSlotsRef().map((stack, i)=>itemStackToDisplayableSlot(stack, i>=mCount, isIconAnimated));
 	}
 
 	public getSlots(): Slots {
@@ -28,26 +46,30 @@ export class VisibleInventory implements DisplayableInventory{
 	}
 
 	public addDirectly(stack: ItemStack){
-		this.count+=this.slots.addStackDirectly(stack);
+		this.slots.addStackDirectly(stack);
 	}
 
 	public addWhenReload(stack: ItemStack) {
-		const slotsAdded = this.slots.add(stack, true, this.count);
-		this.count+=slotsAdded;
+		this.slots.add(stack, true, this.getMCount());
 	}
 
 	public addInGame(stack: ItemStack) {
-		const slotsAdded = this.slots.add(stack, false, this.count);
-		this.count+=slotsAdded;
+		this.slots.add(stack, false, this.getMCount());
 	}
 
-	public remove(stack: ItemStack, slot: number) {
-		const slotsRemoved = this.slots.remove(stack, slot);
-		this.count-=slotsRemoved;
+	// Standard remove: magically remove item from inventory
+	// sell is also this
+	public remove(stack: ItemStack, count: number | AmountAllType, startSlot: number) {
+		this.slots.remove(stack, count, { startSlot });
+	}
+
+	// Eat: food are treated as stackable to handle corrupted case, and 
+	public eat(stack: ItemStack, count: number | AmountAllType, startSlot: number) {
+		this.slots.remove(stack, count, { startSlot, forceStackableFood: true });
 	}
 
 	public equip(item: Item, slot: number) {
-		this.slots.equip(item, slot, this.count);
+		this.slots.equip(item, slot, this.getMCount());
 	}
 
 	public unequip(item: Item, slot: number) {
@@ -56,9 +78,9 @@ export class VisibleInventory implements DisplayableInventory{
 
 	// Only clears first this.count
 	public clearForReload() {
-		if(this.count > 0){
-			this.slots.clearFirst(this.count);
-			this.count = 0;
+		const count = this.getMCount();
+		if(count > 0){
+			this.slots.clearFirst(count);
 		}
 	}
 
@@ -109,19 +131,7 @@ export class VisibleInventory implements DisplayableInventory{
 		this.slots.setMetadata(item, slot, meta);
 	}
 
-	public getCount(): number {
-		return this.count;
-	}
-
-	public modifyCount(delta: number): void {
-		this.count+=delta;
-	}
-
-	public resetCount(): void {
-		this.count = this.slots.length;
-	}
-
 	public clearForEventide(): void {
-		this.count-=this.slots.clearAllButKeyItems();
+		this.slots.clearAllButKeyItems();
 	}
 }
