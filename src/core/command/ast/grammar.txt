@@ -34,15 +34,16 @@ Command =>
  | CommandInitialize    # initialize|init ...                   
  | CommandComment       # #comment
  | CommandCook          # cook with ...
+ | CommandCookCrit      # cook heart crit with ...
  | CommandAdd           # get|add|buy|cook ...                  
  | CommandPickUp        # pickup|pick [up] ...
- | CommandRemoveAll     # remove all of Type                   
+ | CommandRemoveAll     # remove all Type                   
  | CommandRemove        # with|remove|sell ... [from slot X]
  | CommandDrop          # drop ... [from slot X]
  | CommandEat           # eat ... [from slot X]
  | CommandDnp           # DNP ... [from slot X]
  | CommandEquip         # equip X [in slot Y]
- | CommandUnequipAll    # unequip all of Type                
+ | CommandUnequipAll    # unequip [all] Type             
  | CommandUnequip       # unequip X [in slot Y]
  | CommandShoot         # shoot X arrow(s)
  | CommandEnterTrial    # enter X
@@ -67,15 +68,16 @@ CommandInitGameData => LiteralInitialize <gamedata> ZeroOrMoreItems
 CommandComment => <#> IdentifierPrime
 CommandInitialize => LiteralInitialize ZeroOrMoreItems
 CommandCook => <cook> <with> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
+CommandCookCrit => <cook> <heart> <crit> <with> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 CommandAdd => LiteralAdd OneOrMoreItems
 CommandPickUp => LiteralPickUp OneOrMoreItems
-CommandRemoveAll => <remove> <all> <of> LiteralItemType
+CommandRemoveAll => <remove> <all> LiteralItemType
 CommandRemove => LiteralRemove ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 CommandDrop => <drop> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 CommandEat => <eat> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 CommandDnp => LiteralDnp ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 CommandEquip => <equip> ArgumentOneItemMaybeInSlot
-CommandUnequipAll => <unequip> <all> <of> LiteralItemType
+CommandUnequipAll => <unequip> LiteralMaybeAllItemType
 CommandUnequip => <unequip> ArgumentOneItemMaybeInSlot
 CommandShoot => <shoot> AmountOrAll LiteralArrow
 CommandEnterTrial => <enter> LiteralTrial
@@ -88,7 +90,7 @@ CommandCloseGame => LiteralClose <game>
 CommandSyncGameData => <sync> <gamedata>
 
 SuperCommandAddSlot => <!> <add> LiteralSlot ArgumentOneOrMoreItemsMaybeFromSlot
-SuperCommandRemoveSlot => <!> <remove> LiteralSlot ArgumentOneOrMoreItemsMaybeFromSlot
+SuperCommandRemoveSlot => <!> <remove> LiteralSlot Integer
 
 # Literals
 LiteralInitialize => <initialize> | <init>
@@ -99,6 +101,7 @@ LiteralDnp => <d&p> | <dnp> | <dap>
 LiteralLeave => <exit> | <leave>
 LiteralClose => <exit> | <close>
 LiteralTrial => <eventide> | <tots>
+LiteralMaybeAllItemType => LiteralMaybeAll LiteralItemType
 LiteralItemType => LiteralWeapon | LiteralBow | LiteralArrow | LiteralShield | LiteralArmor | LiteralMaterial | LiteralFood | LiteralKeyItem
 LiteralWeapon => <weapon> | <weapons>
 LiteralBow => <bow> | <bows>
@@ -110,6 +113,7 @@ LiteralFood => <food> | <foods>
 LiteralKeyItem => <key> LiteralItem
 LiteralItem => <item> | <items>
 LiteralSlot => <slot> | <slots>
+LiteralMaybeAll => LiteralAll | Epsilon
 LiteralAll => <all>
 
 # Arguments: large piece of command needed to make sure parsing is done in the right order
@@ -118,20 +122,18 @@ LiteralAll => <all>
 MaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot => ArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot | Epsilon
 ArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot => <with> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 
-# I [in slot ...]
-# A I [meta] [in slot ...]
-ArgumentOneItemMaybeInSlot => ArgumentSingleItemMaybeInSlot | ArgumentOneItemStackMaybeInSlot
-ArgumentSingleItemMaybeInSlot => Identifier ArgumentOneItemStackMaybeInSlotAIdentifier
-ArgumentOneItemStackMaybeInSlot => AmountOrAll Identifier ArgumentOneItemStackMaybeInSlotAIdentifier
+# I [meta] [in slot ...]
+ArgumentOneItemMaybeInSlot => ArgumentSingleItemMaybeInSlot
+ArgumentSingleItemMaybeInSlot => Identifier ArgumentSingleItemMaybeInSlotAIdentifier
 ---
-ArgumentOneItemStackMaybeInSlotAIdentifier =>
+ArgumentSingleItemMaybeInSlotAIdentifier =>
  ClauseInSlot
- | ArgumentOneItemStackMaybeInSlotAIdentifierC1
- | ArgumentOneItemStackMaybeInSlotAIdentifierC2
+ | ArgumentSingleItemMaybeInSlotAIdentifierC1
+ | ArgumentSingleItemMaybeInSlotAIdentifierC2
  | Epsilon
 ---
-ArgumentOneItemStackMaybeInSlotAIdentifierC1 => Metadata MaybeClauseInSlot
-ArgumentOneItemStackMaybeInSlotAIdentifierC2 => Identifier ArgumentOneItemStackMaybeInSlotAIdentifier
+ArgumentSingleItemMaybeInSlotAIdentifierC1 => Metadata MaybeClauseInSlot
+ArgumentSingleItemMaybeInSlotAIdentifierC2 => Identifier ArgumentSingleItemMaybeInSlotAIdentifier
 
 # I [from slot X]
 # A I [meta] A I [from slot X]
@@ -194,13 +196,13 @@ ClauseSaveTarget => <as> Identifier IdentifierPrime
 # Items
 ZeroOrMoreItems => SingleItem | ItemStackPrime
 OneOrMoreItems => SingleItem | OneOrMoreItemStacks
-OneOrMoreItemsAllowAll => OneOrMoreItemStacksAllowAll | SingleItem
+# OneOrMoreItemsAllowAll => OneOrMoreItemStacksAllowAll | SingleItem
 OneOrMoreItemStacks => ItemStack ItemStackPrime
-OneOrMoreItemStacksAllowAll => ItemStackAllowAll ItemStackAllowAllPrime
+# OneOrMoreItemStacksAllowAll => ItemStackAllowAll ItemStackAllowAllPrime
 ItemStack => Integer SingleItem
-ItemStackAllowAll => AmountOrAll SingleItem
+# ItemStackAllowAll => AmountOrAll SingleItem
 ItemStackPrime => OneOrMoreItemStacks | Epsilon
-ItemStackAllowAllPrime => OneOrMoreItemStacksAllowAll | Epsilon
+# ItemStackAllowAllPrime => OneOrMoreItemStacksAllowAll | Epsilon
 
 # Basic
 AmountOrAll => Integer | LiteralAll

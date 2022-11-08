@@ -41,7 +41,7 @@ const guessCommand = (cmdString: string): Command => {
     const parts = cmdString.split(" ");
     return (
         tryGuessCommand(cmdString, parts, [ ["initialize", "init"] ], 
-            ["initialize|init items...", "Initialize the simulator with items. Also clears the number of broken slots."])
+            ["init items...", "Initialize the simulator with items. Also clears the number of broken slots."])
         || tryGuessCommand(cmdString, parts, [ ["break"] ], 
             ["break X slots [with <items> [from slot Y]].", "Break the slots. Optionally remove the specified items after \"with\""])
         || new CommandHint(cmdString, parts, 0, ["Unknown command", "The command is not recognized"])
