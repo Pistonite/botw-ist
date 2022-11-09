@@ -1,4 +1,4 @@
-import { arrayEqual, stableSort, inPlaceFilter } from "data/util";
+import { arrayEqual, stableSort, inPlaceFilter } from "data/util/util";
 import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaOption } from "data/item";
 
 // This is the "core" of Slots with basic getter and manipulation methods

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { DisplayableSlot } from "core/DisplayableInventory";
+import { DisplayableSlot } from "core/inventory/DisplayableInventory";
 import { useI18n } from "data/i18n";
 import { Tooltip } from "ui/surfaces";
 

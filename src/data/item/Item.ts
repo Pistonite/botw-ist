@@ -31,6 +31,12 @@ export class ItemImpl implements Item {
 	image: string;
 	configuredAnimatedImage?: string;
 	priority: number;
+	// bow has default zoom. default false
+	bowZoom: boolean;
+	// bow has default (spread) multishot, default 0
+	bowMultishot: number;
+	// bow has default rapid fire (centralized multishot), default 0
+	bowRapidfire: number;
 	defaultStackFactory?: (item: Item)=>ItemStack;
 	constructor(
 		id: string,
@@ -40,6 +46,9 @@ export class ItemImpl implements Item {
 		image: string,
 		animatedImage: string|undefined,
 		priority: number,
+		bowZoom: boolean,
+		bowMultishot: number,
+		bowRapidfire: number,
 		defaultStackFactory: ((item: Item)=>ItemStack)|undefined
 	){
 		this.id = id;
@@ -54,6 +63,9 @@ export class ItemImpl implements Item {
 			this.sortOrder = TypeToCount[type];
 			TypeToCount[type]++;
 		}
+		this.bowZoom = bowZoom;
+		this.bowMultishot = bowMultishot;
+		this.bowRapidfire = bowRapidfire;
 	}
 
 	get animatedImage(): string {

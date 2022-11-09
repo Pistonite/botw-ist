@@ -128,7 +128,10 @@ const DefaultOption: ItemOption = {
 	stackable: true,
 	animated: false,
 	repeatable: true,
-	priority: 0
+	priority: 0,
+	bowZoom: false,
+	bowMultishot: 0,
+	bowRapidfire: 0
 };
 
 const registerItemCategoryByName = (itemData: ItemData, category: keyof ItemData, type: ItemType, outIdMap: ItemIdMap, outSearchMap: ItemSearchMap) => {
@@ -190,7 +193,18 @@ const registerItem = (idAndSearch: string, option: ItemOption, type: ItemType, o
 		}
 	}
 
-	const item = new ItemImpl(id, type, option.repeatable ?? true, stackable ?? true, image, animatedImage, option.priority ?? 0, defaultStackFactory);
+	const item = new ItemImpl(
+		id, 
+		type, 
+		option.repeatable ?? true, 
+		stackable ?? true, 
+		image, 
+		animatedImage, 
+		option.priority ?? 0,
+		option.bowZoom ?? false,
+		option.bowMultishot,
+		option.bowRapidfire,
+		defaultStackFactory);
 	outIdMap[id] = item;
 	outSearchMap[id] = search;
 };

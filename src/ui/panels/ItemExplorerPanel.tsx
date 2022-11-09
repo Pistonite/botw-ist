@@ -1,6 +1,6 @@
 import { Category, Description, ItemSlot, Label } from "ui/components";
 import { BodyText} from "components/Text";
-import { itemStackToDisplayableSlot } from "core/DisplayableInventory";
+import { itemStackToDisplayableSlot } from "core/inventory/DisplayableInventory";
 import { ItemStack, useAllItems, useSearchItem } from "data/item";
 import { Page } from "ui/surfaces";
 import { useRuntime } from "data/runtime";

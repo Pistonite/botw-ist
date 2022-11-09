@@ -79,6 +79,10 @@ export interface Item {
     readonly animatedImage: string,
     // priority when matching items in the same category. Can be positive or negative
     readonly priority: number,
+    // Default bow properties
+    readonly bowZoom: boolean,
+    readonly bowMultishot: number,
+    readonly bowRapidfire: number,
     // create item stack with this item and default metadata (durability and default state for weapons, cookdata for meals, etc)
     createDefaultStack(): ItemStack,
 }
@@ -93,6 +97,18 @@ export interface ItemStack {
     readonly durability: number,
     // if slot is equipped
     readonly equipped: boolean,
+    // Cook effect (None if not food)
+    readonly foodEffect: CookEffect,
+    // Weapon modifier bits (None if not weapon)
+    readonly weaponModifier: number,
+    // Sell price (0 if not food)
+    readonly foodSellPrice: number,
+    // Hearts recovered for food (0 if not food)
+    readonly foodHpRecover: number,
+    // Weapon modifier value (0 if not weapon/bow/shield)
+    readonly weaponValue: number,
+    // Multishot value (-1 if not bow, 0 means )
+    readonly multiShotValue: number,
     // function to create a new stack based on this stack and option
     modify(option: Partial<ItemStack>): ItemStack,
     // function to create a new stack based on this stack and meta option
@@ -114,3 +130,41 @@ export type MetaOption = {
     //equipped.
     equip?: boolean,
 }
+
+// JS bitwise operations are 32 bits
+// but the numbers are 64 bits
+export const WeaponModifier = {
+    None: 0,
+    AttackUp: 1,
+    DurabilityUp: 1 << 1,
+    CriticalHit: 1 << 2,
+    LongThrow: 1 << 3,
+    MultiShot: 1 << 4,
+    Zoom: 1 << 5,
+    QuickShot: 1 << 6,
+    SurfMaster: 1 << 7,
+    GuardUp: 1 << 8,
+    Yellow: 1 << 31
+} as const;
+
+export enum CookEffect {
+    None,
+    HotResist,
+    ColdResist,
+    ElectricResist,
+    Stealth,
+    Energizing,
+    Enduring,
+    Speed,
+    Attack,
+    Defense,
+    Fireproof,
+    Hearty,
+};
+
+export interface ExData {
+    hearts: number,
+    modifierValue: number,
+    sellPrice: number,
+    modifierType: number
+};

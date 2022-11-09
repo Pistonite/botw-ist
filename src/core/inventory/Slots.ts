@@ -1,4 +1,4 @@
-import { arrayEqual, stableSort } from "data/util";
+import { arrayEqual, stableSort } from "data/util/util";
 import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaOption } from "data/item";
 import { SlotsCore } from "./SlotsCore";
 import { AmountAllType } from "core/command/ItemStackArg";

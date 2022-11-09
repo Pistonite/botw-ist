@@ -1,4 +1,4 @@
-import { Version } from "data/const";
+import { Version } from "data/util";
 import { Page } from "ui/surfaces";
 
 export const HelpPanel: React.FC = () => {

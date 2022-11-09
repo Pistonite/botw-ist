@@ -1,4 +1,4 @@
-import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "../DisplayableInventory";
+import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "./DisplayableInventory";
 import { GameData } from "./GameData";
 import { Slots } from "./Slots";
 import { Item, ItemStack, ItemType, MetaOption } from "data/item";

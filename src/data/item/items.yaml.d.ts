@@ -12,7 +12,13 @@ declare module '*.items.yaml' {
         subtype: "upper" | "middle" | "lower",
         // Higher priority will make the item match first in the same category when searching. 
         // Default 0. Can be both positive and negative
-        priority: integer
+        priority: integer,
+        // bow has default zoom. default false
+        bowZoom: boolean,
+        // bow has default (spread) multishot, default 0
+        bowMultishot: integer,
+        // bow has default rapid fire (centralized multishot), default 0
+        bowRapidfire: integer
     }>>;
     type ItemEntry = {
         [id: string]: ItemOption

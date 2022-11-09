@@ -1,4 +1,4 @@
-import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "../DisplayableInventory";
+import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "./DisplayableInventory";
 import { Slots } from ".";
 import { VisibleInventory } from "./VisibleInventory";
 

@@ -1,7 +1,7 @@
 import { Item, ItemStack, MetaOption } from "data/item";
 import { Command } from "./command/command";
 import { AmountAllType, ItemStackArg } from "./command/ItemStackArg";
-import { DisplayableInventory } from "./DisplayableInventory";
+import { DisplayableInventory } from "./inventory/DisplayableInventory";
 import { GameData, Slots } from "./inventory";
 import { VisibleInventory } from "./inventory";
 

@@ -1,4 +1,4 @@
-import { DisplayableSlot } from "core/DisplayableInventory";
+import { DisplayableSlot } from "core/inventory/DisplayableInventory";
 import { ItemSlot } from "./ItemSlot";
 
 export type ItemListProps = {

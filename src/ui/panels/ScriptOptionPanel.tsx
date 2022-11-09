@@ -7,7 +7,7 @@ import { useRuntime } from "data/runtime";
 import { CommandTextArea } from "ui/surfaces/CommandTextArea";
 import { useSearchItem } from "data/item";
 import { parseCommand } from "core/command/parsev2";
-import { arrayShallowEqual } from "data/util";
+import { arrayShallowEqual } from "data/util/util";
 
 const URL_MAX = 2048;
 
