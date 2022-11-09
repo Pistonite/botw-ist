@@ -1,8 +1,8 @@
-import { DisplayableSlot } from "core/inventory/DisplayableInventory";
+import { SlotDisplay } from "core/inventory";
 import { ItemSlot } from "./ItemSlot";
 
 export type ItemListProps = {
-    slots: DisplayableSlot[]
+    slots: SlotDisplay[]
 }
 
 export const ItemList: React.FC<ItemListProps> = ({slots}) => {

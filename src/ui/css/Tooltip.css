@@ -4,6 +4,7 @@ div.TooltipWindow {
     color: #ffffff;
     padding: 5px;
     background-image: url("assets/Background.png");
+    white-space: nowrap;
 }
 
 div.TooltipWindow.TooltipWarn {

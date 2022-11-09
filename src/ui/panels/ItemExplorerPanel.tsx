@@ -1,28 +1,38 @@
 import { Category, Description, ItemSlot, Label } from "ui/components";
 import { BodyText} from "components/Text";
-import { itemStackToDisplayableSlot } from "core/inventory/DisplayableInventory";
 import { ItemStack, useAllItems, useSearchItem } from "data/item";
 import { Page } from "ui/surfaces";
 import { useRuntime } from "data/runtime";
 import { useMemo, useState } from "react";
+import { SlotDisplay } from "core/inventory";
+import { SlotDisplayForItemStack } from "core/inventory/DisplayableInventory";
 
 export const ItemExplorerPanel: React.FC = ()=>{
 	const [searchString, setSearchString] = useState<string>("");
 	const allItems = useAllItems();
 	const search = useSearchItem();
+	const { setting } = useRuntime();
+	const isIconAnimated = setting("animatedIcon");
 
-	const [selected, rest] = useMemo(()=>{
+	const displaySlots = useMemo(()=>{
 		if(!searchString){
-			return [undefined, Object.values(allItems).map((item)=>item.createDefaultStack())];
+			return Object.values(allItems).map((item)=>
+				new SlotDisplayForItemStack(item.defaultStack).init(false, isIconAnimated)
+			);
 		}
 		const rest: ItemStack[] = [];
 		const result = search(searchString.replaceAll(" ", "*"), rest);
-		return [result, rest];
-	}, [searchString]);
+		
+		const displaySlots: SlotDisplay[] = [];
+		if(result){
+			displaySlots.push(new SlotDisplayForItemStack(result).init(false, isIconAnimated));
+		}
+		rest.forEach(stack=>displaySlots.push(new SlotDisplayForItemStack(stack).init(false, isIconAnimated)));
+		return displaySlots;
+	}, [searchString, isIconAnimated]);
 	 
 
-	const { setting } = useRuntime();
-	const isIconAnimated = setting("animatedIcon");
+	
 	return (
 		<Page title="Item Reference">
 			<Category title="Item Slot">
@@ -35,7 +45,8 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					durability: "40",
 					isEquipped: false,
 					isBrokenSlot: false,
-					propertyString: ["",""],
+					propertyString: "",
+					propertyClassName: "",
 					getTooltip: ()=>[]
 				}} />
 				<ItemSlot slot={{
@@ -44,7 +55,8 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					durability: undefined,
 					isEquipped: false,
 					isBrokenSlot: false,
-					propertyString: ["",""],
+					propertyString: "",
+					propertyClassName: "",
 					getTooltip: ()=>[]
 				}} />
 				<Description>
@@ -59,7 +71,8 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					durability: "40",
 					isEquipped: false,
 					isBrokenSlot: true,
-					propertyString: ["",""],
+					propertyString: "",
+					propertyClassName: "",
 					getTooltip: ()=>[]
 				}} />
 				<Description>
@@ -76,7 +89,8 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					durability: undefined,
 					isEquipped: true,
 					isBrokenSlot: false,
-					propertyString: ["",""],
+					propertyString: "",
+					propertyClassName: "",
 					getTooltip: ()=>[]
 				}} />
 				<Description className="Primary">
@@ -112,23 +126,8 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					overflowY: "auto"
 				}}>
 					{
-						selected &&
-						<ItemSlot slot={
-							itemStackToDisplayableSlot(
-								selected,
-								false /* broken */,
-								isIconAnimated,
-								["\u2713", "Highlight"]
-							)
-						} />
-					}
-					{
-						rest.map((item, i)=>{
-							return <ItemSlot key={i} slot={itemStackToDisplayableSlot(
-								item,
-								false,
-								isIconAnimated
-							)} />;
+						displaySlots.map((item, i)=>{
+							return <ItemSlot key={i} slot={item} />;
 						})
 					}
 				</Description>

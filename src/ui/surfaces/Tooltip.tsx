@@ -14,12 +14,31 @@ export const TooltipHost: React.FC<PropsWithChildren> = ({children}) => {
 		setTooltip(tooltips);
 	}, []);
 
+	useEffect(()=>{
+		if(toolTipDivRef.current){
+			const rect = toolTipDivRef.current.getBoundingClientRect();
+			if (rect.bottom > window.innerHeight){
+				
+				setTooltipY(tooltipY - rect.height- 20);
+				
+			}
+			if( rect.right > window.innerWidth){
+				setTooltipX(tooltipX - rect.width -20);
+			}
+		}
+	}, [
+		tooltipX, 
+		tooltipY, 
+		toolTipDivRef.current && toolTipDivRef.current.getBoundingClientRect().width,
+		toolTipDivRef.current && toolTipDivRef.current.getBoundingClientRect().height,
+	]);
+
 	return <TooltipContext.Provider value={setScreenTooltip}>
 		{children}
 		{
 			tooltip.length > 0 &&
 			<div ref={toolTipDivRef} className="TooltipWindow" style={{
-				position: "fixed",
+				position: "absolute",
 				left: tooltipX,
 				top: tooltipY,
 			}}>

@@ -1,6 +1,6 @@
-import { createEquipmentStack, createMaterialStack, ItemStack, ItemType } from "data/item";
+import { ItemStack, ItemType } from "data/item";
 import { Slots } from "./Slots";
-import { createArrowMockItem, createEquipmentMockItem, createFoodMockItem, createKeyMockItemStackable, createMaterialMockItem } from "data/item/TestHelpers";
+import { createArrowMockItem, createEquipmentMockItem, createEquipmentStack, createFoodMockItem, createKeyMockItemStackable, createMaterialMockItem, createMaterialStack } from "data/item/TestHelpers";
 
 describe.only("core/Slots.updateLife", ()=>{
 	it("should update life", ()=>{

@@ -290,7 +290,7 @@ bow:
       durability: 60
   - ForestDwellersBow:
       durability: 35
-      bowMultiShot: 3
+      bowMultishot: 3
   - SilverBow:
       durability: 40
   - SwallowBow:
@@ -299,7 +299,7 @@ bow:
       durability: 50
   - GreatEagleBow:
       durability: 60
-      bowMultiShot: 3
+      bowMultishot: 3
   - GoldenBow:
       durability: 60
       bowZoom: true
@@ -326,13 +326,13 @@ bow:
       durability: 50
   - LynelBow:
       durability: 30
-      bowMultiShot: 3
+      bowMultishot: 3
   - MightyLynelBow:
       durability: 35
-      bowMultiShot: 3
+      bowMultishot: 3
   - SavageLynelBow:
       durability: 45
-      bowMultiShot: 3
+      bowMultishot: 3
   - DuplexBow:
       durability: 18
       bowRapidfire: 2

@@ -1,3 +1,5 @@
+import { CookEffect, ItemStack } from "./type";
+
 export {};
 describe("data/item.legacy", ()=>{
     it("should match exactly for legacy items", ()=>{
@@ -45,10 +47,14 @@ describe("data/item.legacy", ()=>{
         expect("zoraarmor").toMatchItemSearch("ZoraArmor");
 
         // Legacy food. Need to add metadata
-        expect("speedfood").toMatchItemSearch("steamedfruit");
-        expect("endurafood").toMatchItemSearch("mushroomskewer");
+        expect("speedfood").toMatchItemSearch((stack: ItemStack)=>{
+			expect(stack.item.id).toEqual("SteamedFruit");
+			return stack.modifyMeta({cookEffect: CookEffect.Speed});
+		});
+        expect("endurafood").toMatchItemSearch((stack: ItemStack)=>{
+			expect(stack.item.id).toEqual("MushroomSkewer");
+			return stack.modifyMeta({cookEffect: CookEffect.Enduring});
+		});
 
-        // Legacy elixir. They are dynamic now
-        fail("no impl");
     });
 });

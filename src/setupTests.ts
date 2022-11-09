@@ -9,6 +9,7 @@ import { createSimulationState, SimulationState } from "core/SimulationState";
 import { ItemStack, loadItemData, searchItemMemoized } from "data/item";
 import fs from "fs";
 import YAML from "yaml";
+(window as any).__VERSION__ = "test";
 const ItemDataString = fs.readFileSync("src/data/item/all.items.yaml", "utf-8");
 const ItemData = YAML.parse(ItemDataString);
 expect.extend({
@@ -180,9 +181,9 @@ expect.extend({
 			pass: true
 		};
 	},
-	toMatchItemSearch: (receivedSearchString: string, expectedSearch: string | ItemStack | undefined) => {
+	toMatchItemSearch: (receivedSearchString: string, expectedSearch: string | ItemStack | ((stack: ItemStack)=>ItemStack) |undefined) => {
 		const result = searchFunc(receivedSearchString);
-		const expected = typeof expectedSearch === "string" ? searchFunc(expectedSearch) : expectedSearch;
+		let expected = typeof expectedSearch === "string" ? searchFunc(expectedSearch) : expectedSearch;
 		if(result === undefined || expected === undefined){
 			if(result === expected){
 				return {
@@ -194,6 +195,9 @@ expect.extend({
 				message: ()=>`Item search match failed. Actual: ${result && result.item.id}`,
 				pass: false
 			};
+		}
+		if(expected instanceof Function){
+			expected = expected(result);
 		}
 		if(result.equals(expected)){
 			return {

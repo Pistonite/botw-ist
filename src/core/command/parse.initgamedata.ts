@@ -1,8 +1,8 @@
 import { SimulationState } from "core/SimulationState";
-import { arrayEqual } from "data/util/util";
+import { arrayEqual } from "data/util";
 import { ASTCommandInitGameData } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
-import { processWrappers } from "./helper";
+import { getSlotsToAdd } from "./helper";
 import { ItemStackArg } from "./ItemStackArg";
 import { parseASTItems } from "./parse.item";
 import { codeBlockFromRange, codeBlockFromRangeObj, CodeBlockTree, delegateParseItem, ParserItem } from "./type";
@@ -16,7 +16,7 @@ export class CommandInitGameData extends AbstractProperCommand {
 	}
 
 	public execute(state: SimulationState): void {
-		state.setGameData(processWrappers(this.stacks));
+		state.setGameData(getSlotsToAdd(this.stacks));
 	}
 
 	public equals(other: Command): boolean {

@@ -1,5 +1,4 @@
-import { MetaOption } from "data/item";
-import { is } from "immer/dist/internal";
+import { MetaModifyOption } from "data/item";
 import { ASTArgumentItemStacksAllowAllMaybeFromSlot, ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier, ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1, ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2, ASTArgumentItemStacksAllowAllMaybeFromSlotAMetadata, ASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot, ASTArgumentSingleItemAllowAllMaybeFromSlot, ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifier, ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1, ASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot, isArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1, isArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2, isArgumentSingleItemAllowAllMaybeFromSlot, isArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1, isClauseFromSlot, isEpsilon } from "./ast";
 import { AmountAllType, ItemStackArg } from "./ItemStackArg";
 import { parseASTIdentifier } from "./parse.basis";
@@ -62,7 +61,7 @@ export const parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot:
 }
 
 const parseASTArgumentSingleItemAllowAllMaybeFromSlot:
-    Parser<ASTArgumentSingleItemAllowAllMaybeFromSlot, [string[], MetaOption, number]>
+    Parser<ASTArgumentSingleItemAllowAllMaybeFromSlot, [string[], MetaModifyOption, number]>
 = (ast) => {
     const [ firstIdentifier, firstIdentifierBlocks ] = parseASTIdentifier(ast.mIdentifier0);
    
@@ -78,7 +77,7 @@ const parseASTArgumentSingleItemAllowAllMaybeFromSlot:
 }
 
 const parseSingleItemAIdentifier: 
-    Parser<ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifier, [string[], MetaOption, number]>
+    Parser<ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifier, [string[], MetaModifyOption, number]>
 = (ast) => {
     if(isEpsilon(ast)){
         return [[[], {}, 0], [], ""];
@@ -93,7 +92,7 @@ const parseSingleItemAIdentifier:
     return parseASTArgumentSingleItemAllowAllMaybeFromSlot(ast);
 }
 
-const parseC1: Parser<ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1, [MetaOption, number]> = (ast) => {
+const parseC1: Parser<ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1, [MetaModifyOption, number]> = (ast) => {
     const [meta, metaBlocks, metaError] = parseASTMetadata(ast.mMetadata0);
     if(!meta){
         return [undefined, metaBlocks, metaError];
@@ -106,7 +105,7 @@ const parseC1: Parser<ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1, [
 }
 
 const parseASTArgumentItemStacksAllowAllMaybeFromSlot:
-    Parser<ASTArgumentItemStacksAllowAllMaybeFromSlot, [[(number|AmountAllType|undefined), string[], MetaOption][], number]>
+    Parser<ASTArgumentItemStacksAllowAllMaybeFromSlot, [[(number|AmountAllType|undefined), string[], MetaModifyOption][], number]>
 = (ast) => {
     const [amount, amountBlocks] = parseASTAmountOrAll(ast.mAmountOrAll0);
     const [firstId, idBlocks] = parseASTIdentifier(ast.mIdentifier1);
@@ -138,7 +137,7 @@ const parseASTArgumentItemStacksAllowAllMaybeFromSlot:
 };
 
 const parseASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier:
-    Parser<ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier, [[(number|AmountAllType|undefined), string[], MetaOption][], number]>
+    Parser<ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier, [[(number|AmountAllType|undefined), string[], MetaModifyOption][], number]>
 = (ast) => {
     if(isEpsilon(ast)){
         return [[[], 0], [], ""];
@@ -158,7 +157,7 @@ const parseASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier:
 }
 
 const parseItemStackC1:
-    Parser<ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1, [[(number|AmountAllType|undefined), string[], MetaOption][], number]>
+    Parser<ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1, [[(number|AmountAllType|undefined), string[], MetaModifyOption][], number]>
 = (ast) => {
     const [meta, metaBlocks, metaError] = parseASTMetadata(ast.mMetadata0);
     if(!meta){
@@ -177,7 +176,7 @@ const parseItemStackC1:
 }
 
 const parseItemStackC2:
-    Parser<ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2, [[(number|AmountAllType|undefined), string[], MetaOption][], number]>
+    Parser<ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2, [[(number|AmountAllType|undefined), string[], MetaModifyOption][], number]>
 = (ast) => {
     // this is middle of identifiers
     const [id, idBlocks] = parseASTIdentifier(ast.mIdentifier0);
@@ -209,7 +208,7 @@ const parseItemStackC2:
 }
 
 const parseItemStackAMetadata:
-    Parser<ASTArgumentItemStacksAllowAllMaybeFromSlotAMetadata, [[(number|AmountAllType|undefined), string[], MetaOption][], number]>
+    Parser<ASTArgumentItemStacksAllowAllMaybeFromSlotAMetadata, [[(number|AmountAllType|undefined), string[], MetaModifyOption][], number]>
 = (ast) => {
     if(isEpsilon(ast)){
         return [[[], 0], [], ""];

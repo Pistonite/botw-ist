@@ -83,8 +83,10 @@ export interface Item {
     readonly bowZoom: boolean,
     readonly bowMultishot: number,
     readonly bowRapidfire: number,
-    // create item stack with this item and default metadata (durability and default state for weapons, cookdata for meals, etc)
-    createDefaultStack(): ItemStack,
+    // if the item is an elixir
+    readonly isElixir: boolean,
+    // get item stack with this item and default metadata (durability and default state for weapons, cookdata for meals, etc)
+    readonly defaultStack: ItemStack,
 }
 
 // ItemStack is an immutable object holding information of a slot
@@ -107,29 +109,31 @@ export interface ItemStack {
     readonly foodHpRecover: number,
     // Weapon modifier value (0 if not weapon/bow/shield)
     readonly weaponValue: number,
-    // Multishot value (-1 if not bow, 0 means )
-    readonly multiShotValue: number,
     // function to create a new stack based on this stack and option
     modify(option: Partial<ItemStack>): ItemStack,
     // function to create a new stack based on this stack and meta option
-    modifyMeta(metaOption: MetaOption): ItemStack,
+    modifyMeta(metaOption: MetaModifyOption): ItemStack,
     // check if 2 stacks are equal: same item, count, equipped and metadata
     equals(other: ItemStack): boolean,
     // equals except the specified meta keys
-    equalsExcept(other: ItemStack, ...keys: (keyof MetaOption)[]): boolean,
-    // get tooltip strings. Return: [text, className][]
-    getTooltip(translate: (s:string)=>string): [string, string][],
+    equalsExcept(other: ItemStack, ...keys: (keyof ItemStack)[]): boolean,
 }
 
 export type ItemIdMap = { [id: string]: Item};
 
-// the extra data supported when inputing an item
-export type MetaOption = {
-    //life value, count or durability*100
-    life?: number,
-    //equipped.
-    equip?: boolean,
-}
+// the extra data on an item stack
+export type MetaModifyOption = Partial<{
+    // life value, count or durability*100
+    life: number,
+    // equipped.
+    equip: boolean,
+    // food sell price or weapon modifier
+    price: number,
+    // modifier hearts recover value
+    hp: number,
+    // food effect
+    cookEffect: CookEffect
+}>;
 
 // JS bitwise operations are 32 bits
 // but the numbers are 64 bits
@@ -161,6 +165,21 @@ export enum CookEffect {
     Fireproof,
     Hearty,
 };
+
+export const iterateCookEffect = (): CookEffect[] => [
+    CookEffect.None,
+    CookEffect.HotResist,
+    CookEffect.ColdResist,
+    CookEffect.ElectricResist,
+    CookEffect.Stealth,
+    CookEffect.Energizing,
+    CookEffect.Enduring,
+    CookEffect.Speed,
+    CookEffect.Attack,
+    CookEffect.Defense,
+    CookEffect.Fireproof,
+    CookEffect.Hearty,
+];
 
 export interface ExData {
     hearts: number,

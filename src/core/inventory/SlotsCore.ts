@@ -1,5 +1,5 @@
-import { arrayEqual, stableSort, inPlaceFilter } from "data/util/util";
-import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaOption } from "data/item";
+import { arrayEqual, stableSort, inPlaceFilter } from "data/util";
+import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaModifyOption } from "data/item";
 
 // This is the "core" of Slots with basic getter and manipulation methods
 export class SlotsCore {
@@ -84,7 +84,7 @@ export class SlotsCore {
 	}
 
 	// set item metadata
-	public setMetadata(item: Item, slot: number, meta: MetaOption) {
+	public setMetadata(item: Item, slot: number, meta: MetaModifyOption) {
 		let s = 0;
 		for(let i = 0; i<this.internalSlots.length;i++){
 			const stack = this.internalSlots[i];

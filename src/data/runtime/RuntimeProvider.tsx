@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, useCallback, useContext, useState } from "react";
 import { SettingFunction, useStore } from "data/storage";
-import { GetSetPair } from "data/types";
+import { GetSetPair } from "data/util";
 import { useWarnOnClose } from "./warnOnClose";
 import { usePage } from "./page";
 import { useDirectLoader } from "./directLoad";

@@ -1,24 +1,25 @@
 import clsx from "clsx";
-import { DisplayableSlot } from "core/inventory/DisplayableInventory";
+import { SlotDisplay } from "core/inventory";
 import { useI18n } from "data/i18n";
 import { Tooltip } from "ui/surfaces";
 
 type ItemSlotProps = {
-  slot: DisplayableSlot
+  slot: SlotDisplay
 };
 
-export const ItemSlot: React.FC<ItemSlotProps> = ({slot: {
-	image,
-	getTooltip,
-	count,
-	durability,
-	isBrokenSlot,
-	isEquipped,
-	propertyString
-}})=>{
+export const ItemSlot: React.FC<ItemSlotProps> = ({slot})=>{
+	const {
+		image,
+		modifierImage,
+		count,
+		durability,
+		isBrokenSlot,
+		isEquipped,
+		propertyString,
+		propertyClassName
+	} = slot;
 	const t = useI18n();
-	const [propertyText, propertyClass] = propertyString;
-	const tooltips = getTooltip(t);
+	const tooltips = slot.getTooltip(t);
 	if(isBrokenSlot){
 		tooltips.push(["Will not be removed on reload", "ItemTooltipBrokenSlot"]);
 	}
@@ -54,11 +55,17 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot: {
 					</div>
 				}
 				{
-					propertyText && 
+					propertyString && 
 					<div className="ItemLayer" style={{zIndex: 2}}>
-						<span className={clsx("ItemFloatWindow ItemPropertyString", propertyClass)}>
-							{propertyText}
+						<span className={clsx("ItemFloatWindow ItemPropertyString", propertyClassName)}>
+							{propertyString}
 						</span>
+					</div>
+				}
+				{
+					modifierImage &&
+					<div className="ItemLayer" style={{zIndex: 2}}>
+						<img className={clsx("ItemModifierImage")} src={modifierImage}/>
 					</div>
 				}
 

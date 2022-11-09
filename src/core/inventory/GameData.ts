@@ -1,5 +1,6 @@
-import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "./DisplayableInventory";
-import { Slots } from ".";
+import { SlotDisplayForItemStack } from "./DisplayableInventory";
+import { Slots } from "./Slots";
+import { DisplayableInventory, SlotDisplay } from "./types";
 import { VisibleInventory } from "./VisibleInventory";
 
 /*
@@ -39,7 +40,9 @@ export class GameData implements DisplayableInventory {
 		this.slots.getSlotsRef().forEach(stack=>pouch.addWhenReload(stack));
 	}
 
-	public getDisplayedSlots(isIconAnimated: boolean): DisplayableSlot[] {
-		return this.slots.getSlotsRef().map(stack=>itemStackToDisplayableSlot(stack, false, isIconAnimated));
+	public getDisplayedSlots(isIconAnimated: boolean): SlotDisplay[] {
+		return this.slots.getSlotsRef().map(stack=>
+			new SlotDisplayForItemStack(stack).init(false, isIconAnimated)
+		);
 	}
 }

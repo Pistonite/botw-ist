@@ -1,4 +1,4 @@
-import { createMaterialStack } from "./ItemStack";
+import { ItemStackImpl } from "./ItemStack";
 import { getTabFromType, Item, ItemStack, ItemTab, ItemType } from "./type";
 
 const TypeToCount: Omit<{
@@ -37,7 +37,8 @@ export class ItemImpl implements Item {
 	bowMultishot: number;
 	// bow has default rapid fire (centralized multishot), default 0
 	bowRapidfire: number;
-	defaultStackFactory?: (item: Item)=>ItemStack;
+	isElixir: boolean;
+	defaultStack: ItemStack;
 	constructor(
 		id: string,
 		type: ItemType,
@@ -49,6 +50,7 @@ export class ItemImpl implements Item {
 		bowZoom: boolean,
 		bowMultishot: number,
 		bowRapidfire: number,
+		isElixir: boolean,
 		defaultStackFactory: ((item: Item)=>ItemStack)|undefined
 	){
 		this.id = id;
@@ -58,7 +60,12 @@ export class ItemImpl implements Item {
 		this.image = image;
 		this.configuredAnimatedImage = animatedImage;
 		this.priority = priority;
-		this.defaultStackFactory = defaultStackFactory;
+		if(defaultStackFactory){
+			this.defaultStack = defaultStackFactory(this);
+		}else{
+			this.defaultStack = new ItemStackImpl(this);
+		}
+		
 		if(type !== ItemType.Flag){
 			this.sortOrder = TypeToCount[type];
 			TypeToCount[type]++;
@@ -66,17 +73,10 @@ export class ItemImpl implements Item {
 		this.bowZoom = bowZoom;
 		this.bowMultishot = bowMultishot;
 		this.bowRapidfire = bowRapidfire;
+		this.isElixir = isElixir;
 	}
 
 	get animatedImage(): string {
 		return this.configuredAnimatedImage || this.image;
 	}
-
-	createDefaultStack(): ItemStack {
-		if(this.defaultStackFactory){
-			return this.defaultStackFactory(this);
-		}
-		return createMaterialStack(this, 1);
-	}
-
 }

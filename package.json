@@ -102,6 +102,9 @@
     ]
   },
   "jest": {
+    "globals": {
+      "__VERSION__": "test"
+    },
     "roots": [
       "<rootDir>/src"
     ],

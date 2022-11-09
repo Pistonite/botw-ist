@@ -1,6 +1,6 @@
 import { AmountAll, AmountAllType } from "core/command/ItemStackArg";
 import { Item, ItemStack, ItemType } from "data/item";
-import { circularForEachFromIndex, inPlaceFilter } from "data/util/util";
+import { circularForEachFromIndex, inPlaceFilter } from "data/util";
 import { RemoveOption } from "./options";
 import { SlotsCore } from "./SlotsCore";
 
@@ -52,7 +52,7 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
     });
     // 2. Everything matches except stack size/durability
     circularForEachFromIndex(stacks, startSlot, (currentStack, i)=>{
-        if(currentStack.equalsExcept(stackToRemove, "life")){
+        if(currentStack.equalsExcept(stackToRemove, "count")){
             slotsToRemoveFrom.push(i);
         }
     });
@@ -60,7 +60,7 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
     // this is because when specifying an equipment, it will have a default durability and default equipped=false
     // being equipped does not make the item different from the user's perspective
     circularForEachFromIndex(stacks, startSlot, (currentStack, i)=>{
-        if(currentStack.equalsExcept(stackToRemove, "life", "equip")){
+        if(currentStack.equalsExcept(stackToRemove, "count", "equipped")){
             slotsToRemoveFrom.push(i);
         }
     });

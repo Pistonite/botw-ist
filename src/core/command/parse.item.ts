@@ -1,21 +1,21 @@
-import { ItemStack, joinItemSearchStrings, MetaOption } from "data/item";
-import { ASTAmountOrAll, ASTItemStack, ASTItemStackAllowAll, ASTOneOrMoreItems, ASTOneOrMoreItemsAllowAll, ASTOneOrMoreItemStacks, ASTOneOrMoreItemStacksAllowAll, ASTSingleItem, ASTZeroOrMoreItems, isEpsilon, isInteger, isItemStack, isItemStackAllowAll, isOneOrMoreIdentifiers, isOneOrMoreItemStacks, isOneOrMoreItemStacksAllowAll, isSingleItem } from "./ast";
+import { ItemStack, joinItemSearchStrings, MetaModifyOption } from "data/item";
+import { ASTAmountOrAll, ASTItemStack, ASTOneOrMoreItems, ASTOneOrMoreItemStacks, ASTSingleItem, ASTZeroOrMoreItems, isEpsilon, isInteger, isOneOrMoreItemStacks, isSingleItem } from "./ast";
 import { AmountAll, AmountAllType, ItemStackArg } from "./ItemStackArg";
 import { parseASTInteger, parseASTOneOrMoreIdentifiers } from "./parse.basis";
 import { parseASTMetadata } from "./parse.metadata";
-import { codeBlockFromRange, CodeBlockTree, delegateParseItem, flattenCodeBlocks, ItemSearchFunction, ParserItem, ParserSafe } from "./type";
+import { codeBlockFromRange, CodeBlockTree, delegateParseItem, flattenCodeBlocks, ParserItem, ParserSafe } from "./type";
 
-export const parseASTItems: ParserItem<ASTZeroOrMoreItems | ASTOneOrMoreItems | ASTOneOrMoreItemsAllowAll, ItemStackArg[]> = (ast, search) => {
+export const parseASTItems: ParserItem<ASTZeroOrMoreItems | ASTOneOrMoreItems, ItemStackArg[]> = (ast, search) => {
     if(isEpsilon(ast)){
         return [[], [], ""];
     }
     if(isSingleItem(ast)){
         return delegateParseItem(ast, search, parseASTSingleItemIntoArg, (x)=>[x]);
     }
-    if(isOneOrMoreItemStacks(ast)){
+    //if(isOneOrMoreItemStacks(ast)){
         return parseASTItemStacks(ast, search);
-    }
-    return parseASTItemStacksAllowAll(ast, search);
+    //}
+    //return parseASTItemStacksAllowAll(ast, search);
 }
 
 const MaxItemStackDepth = 500;
@@ -49,42 +49,42 @@ const parseASTItemStacks: ParserItem<ASTOneOrMoreItemStacks, ItemStackArg[]> = (
     return [items, codeBlocks, ""];
 }
 
-const parseASTItemStacksAllowAll: ParserItem<ASTOneOrMoreItemStacksAllowAll, ItemStackArg[]> = (ast, search) => {
-    const [first, firstCodeBlocks, firstError] = parseASTItemStack(ast.mItemStackAllowAll0, search);
-    if(!first){
-        return [undefined, firstCodeBlocks, firstError];
-    }
+// const parseASTItemStacksAllowAll: ParserItem<ASTOneOrMoreItemStacksAllowAll, ItemStackArg[]> = (ast, search) => {
+//     const [first, firstCodeBlocks, firstError] = parseASTItemStack(ast.mItemStackAllowAll0, search);
+//     if(!first){
+//         return [undefined, firstCodeBlocks, firstError];
+//     }
 
-    const codeBlocks: CodeBlockTree = [firstCodeBlocks];
-    const items: ItemStackArg[] = [first];
+//     const codeBlocks: CodeBlockTree = [firstCodeBlocks];
+//     const items: ItemStackArg[] = [first];
 
-    let depth = 0;
-    let current = ast.mItemStackAllowAllPrime1;
-    while(isOneOrMoreItemStacksAllowAll(current)){
-        if(depth > MaxItemStackDepth){
-            return [undefined, codeBlocks, "Max item depth exceeded"];
-        }
-        const [more, moreCodeBlocks, moreError] = parseASTItemStack(current.mItemStackAllowAll0, search);
-        if(!more){
-            return [undefined, moreCodeBlocks, moreError];
-        }
-        codeBlocks.push(moreCodeBlocks);
-        items.push(more);
-        depth++;
-        current = current.mItemStackAllowAllPrime1;
-    }
+//     let depth = 0;
+//     let current = ast.mItemStackAllowAllPrime1;
+//     while(isOneOrMoreItemStacksAllowAll(current)){
+//         if(depth > MaxItemStackDepth){
+//             return [undefined, codeBlocks, "Max item depth exceeded"];
+//         }
+//         const [more, moreCodeBlocks, moreError] = parseASTItemStack(current.mItemStackAllowAll0, search);
+//         if(!more){
+//             return [undefined, moreCodeBlocks, moreError];
+//         }
+//         codeBlocks.push(moreCodeBlocks);
+//         items.push(more);
+//         depth++;
+//         current = current.mItemStackAllowAllPrime1;
+//     }
 
-    return [items, codeBlocks, ""];
-}
+//     return [items, codeBlocks, ""];
+// }
 
-export const parseASTItemStack: ParserItem<ASTItemStack | ASTItemStackAllowAll, ItemStackArg> = (ast, search) => {
+export const parseASTItemStack: ParserItem<ASTItemStack, ItemStackArg> = (ast, search) => {
     let amount: number | AmountAllType;
     let amountCodeBlocks: CodeBlockTree;
-    if(isItemStack(ast)){
+    //if(isItemStack(ast)){
         [amount, amountCodeBlocks] = parseASTInteger(ast.mInteger0);
-    }else{
-        [amount, amountCodeBlocks] = parseASTAmountOrAll(ast.mAmountOrAll0);
-    }
+    //}else{
+        //[amount, amountCodeBlocks] = parseASTAmountOrAll(ast.mAmountOrAll0);
+    //}
     
     const [item, itemCodeBlocks, itemError] = parseASTSingleItem(ast.mSingleItem1, search);
     const codeBlocks = [
@@ -132,7 +132,7 @@ export const parseASTSingleItem: ParserItem<ASTSingleItem, ItemStack> = (ast, se
 }
 
 
-export const parsedItemSearch: ParserItem<[string[], CodeBlockTree, MetaOption], ItemStack> = ([ids, blocks, meta], search) => {
+export const parsedItemSearch: ParserItem<[string[], CodeBlockTree, MetaModifyOption], ItemStack> = ([ids, blocks, meta], search) => {
     const itemSearchString = joinItemSearchStrings(ids);
     const item = search(itemSearchString);
     if(!item){

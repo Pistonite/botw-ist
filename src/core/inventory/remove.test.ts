@@ -1,12 +1,12 @@
-import { createEquipmentStack, createMaterialStack, ItemStack, ItemType } from "data/item";
-import { createArrowMockItem, createEquipmentMockItem, createFoodMockItem, createFoodMockItemStackable, createMaterialMockItem } from "data/item/TestHelpers";
+import { ItemStack, ItemType } from "data/item";
+import { createArrowMockItem, createEquipmentMockItem, createEquipmentStack, createFoodMockItem, createFoodMockItemStackable, createMaterialMockItem, createMaterialStack } from "data/item/TestHelpers";
 import { SlotsCore } from "./SlotsCore";
 import { remove } from "./remove";
 
 describe("core/inventory/remove single slot", ()=>{
 	it("Returns false if item doesn't exist", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [];
 		const slots = new SlotsCore(stacks);
@@ -18,7 +18,7 @@ describe("core/inventory/remove single slot", ()=>{
 	});
 	it("Removes item, remove count < stack count", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -30,7 +30,7 @@ describe("core/inventory/remove single slot", ()=>{
 	});
 	it("Removes item, remove count = stack count", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -42,7 +42,7 @@ describe("core/inventory/remove single slot", ()=>{
 	});
 	it("Removes item, remove count > stack count", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -54,7 +54,7 @@ describe("core/inventory/remove single slot", ()=>{
 	});
 	it("Removes item from slot 1 (no wrap), remove < count", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5), createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -66,7 +66,7 @@ describe("core/inventory/remove single slot", ()=>{
 	});
 	it("Removes item from slot 1 (no wrap), remove = count", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 6), createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -78,7 +78,7 @@ describe("core/inventory/remove single slot", ()=>{
 	});
 	it("Removes all items", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -90,7 +90,7 @@ describe("core/inventory/remove single slot", ()=>{
 	});
 	it("Keeps arrow slot", ()=>{
 		const mockItem1 = createArrowMockItem("Arrow1");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -158,7 +158,7 @@ describe("core/inventory/remove single slot", ()=>{
 	});
 	it("Deletes arrow slot if forced", ()=>{
 		const mockItem1 = createArrowMockItem("Arrow1");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -170,7 +170,7 @@ describe("core/inventory/remove single slot", ()=>{
 	});
 	it("Removes 1 stackable food", ()=>{
 		const mockItem1 = createFoodMockItemStackable("Food");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -182,7 +182,7 @@ describe("core/inventory/remove single slot", ()=>{
 	});
 	it("Removes 1 unstackable food", ()=>{
 		const mockItem1 = createFoodMockItem("Food");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -194,7 +194,7 @@ describe("core/inventory/remove single slot", ()=>{
 	});
 	it("Removes 1 unstackable food slot when forced", ()=>{
 		const mockItem1 = createFoodMockItem("Food");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -210,7 +210,7 @@ describe("core/inventory/remove multiple slots", ()=>{
 
 	it("Removes item from 2 slots, remove < count", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5), createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -222,7 +222,7 @@ describe("core/inventory/remove multiple slots", ()=>{
 	});
 	it("Removes item from 2 slots, remove = count", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5), createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -234,7 +234,7 @@ describe("core/inventory/remove multiple slots", ()=>{
 	});
 	it("Removes item from 2 slots, remove > count", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5), createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -246,7 +246,7 @@ describe("core/inventory/remove multiple slots", ()=>{
 	});
 	it("Removes item from 3 slots, remove < count", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5), createMaterialStack(mockItem1, 5), createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -258,7 +258,7 @@ describe("core/inventory/remove multiple slots", ()=>{
 	});
 	it("Removes item from slot 1 (wrap), remove > count", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 8), createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -270,7 +270,7 @@ describe("core/inventory/remove multiple slots", ()=>{
 	});
 	it("Removes item from slot 1 (wrap), remove > count, 3 slots", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 8), createMaterialStack(mockItem1, 7), createMaterialStack(mockItem1, 6)];
 		const slots = new SlotsCore(stacks);
@@ -282,7 +282,7 @@ describe("core/inventory/remove multiple slots", ()=>{
 	});
 	it("Removes all items from 2 slots", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5), createMaterialStack(mockItem1, 6)];
 		const slots = new SlotsCore(stacks);
@@ -294,7 +294,7 @@ describe("core/inventory/remove multiple slots", ()=>{
 	});
 	it("Removes all items from 3 slots", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5), createMaterialStack(mockItem1, 6), createMaterialStack(mockItem1, 7)];
 		const slots = new SlotsCore(stacks);
@@ -306,7 +306,7 @@ describe("core/inventory/remove multiple slots", ()=>{
 	});
 	it("Keeps multiple arrow slots", ()=>{
 		const mockItem1 = createArrowMockItem("Arrow1");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5), createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);
@@ -379,7 +379,7 @@ describe("core/inventory/remove multiple slots", ()=>{
 	});
 	it("Deletes multiple arrow slots if forced", ()=>{
 		const mockItem1 = createArrowMockItem("Arrow1");
-		const stackToRemove = mockItem1.createDefaultStack();
+		const stackToRemove = mockItem1.defaultStack;
 
 		const stacks: ItemStack[] = [createMaterialStack(mockItem1, 5), createMaterialStack(mockItem1, 5)];
 		const slots = new SlotsCore(stacks);

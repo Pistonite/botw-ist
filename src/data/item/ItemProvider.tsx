@@ -2,9 +2,10 @@ import { CrashScreen } from "ui/surfaces/CrashScreen";
 import { LoadingScreen } from "components/LoadingScreen";
 import React, { PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 import { ItemImpl } from "./Item";
-import { getTabFromType, Item, ItemIdMap, ItemStack, ItemTab, ItemType } from "./type";
-import { createEquipmentStack } from "./ItemStack";
+import { CookEffect, getTabFromType, Item, ItemIdMap, ItemStack, ItemTab, ItemType } from "./type";
 import { searchLegacyItemNames } from "./legacy";
+import { ItemStackImpl } from "./ItemStack";
+import { addElixir } from "./elixir";
 
 /*
  * Load items from items.yaml files and registers them in memory
@@ -184,14 +185,38 @@ const registerItem = (idAndSearch: string, option: ItemOption, type: ItemType, o
 		if(option.durability !== undefined){
 			const durability = option.durability;
 			defaultStackFactory = (item)=>{
-				return createEquipmentStack(item, durability, false);
+				return new ItemStackImpl(item).modify({durability});
 			};
 		}else{
 			defaultStackFactory = (item)=>{
-				return createEquipmentStack(item, 10 /* default durability for placeholders */, false);
+				return new ItemStackImpl(item).modify({durability: 10});
 			};
 		}
 	}
+
+	const ElixirIdToEffect = {
+		"Elixir": CookEffect.None,
+		"HeartyElixir": CookEffect.Hearty,
+		"EnergizingElixir": CookEffect.Energizing,
+		"EnduringElixir": CookEffect.Enduring,
+		"HastyElixir": CookEffect.Speed,
+		"FireproofElixir": CookEffect.Fireproof,
+		"SpicyElixir": CookEffect.ColdResist,
+		"ChillyElixir": CookEffect.HotResist,
+		"ElectroElixir": CookEffect.ElectricResist,
+		"MightyElixir": CookEffect.Attack,
+		"ToughElixir": CookEffect.Defense,
+		"SneakyElixir": CookEffect.Stealth,
+	};
+
+	let elixirEffect: CookEffect | undefined = undefined;
+	if(id in ElixirIdToEffect){
+		elixirEffect = ElixirIdToEffect[id as keyof typeof ElixirIdToEffect];
+		defaultStackFactory = (item)=>{
+			return new ItemStackImpl(item).modify({foodEffect: elixirEffect});
+		};
+	}
+
 
 	const item = new ItemImpl(
 		id, 
@@ -204,7 +229,11 @@ const registerItem = (idAndSearch: string, option: ItemOption, type: ItemType, o
 		option.bowZoom ?? false,
 		option.bowMultishot,
 		option.bowRapidfire,
+		elixirEffect!==undefined,
 		defaultStackFactory);
+	if(elixirEffect !== undefined){
+		addElixir(item, elixirEffect);
+	}
 	outIdMap[id] = item;
 	outSearchMap[id] = search;
 };
@@ -276,7 +305,7 @@ const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSear
 	// if name is an id exactly, return that
 	const idItem = idMap[name];
 	if(idItem){
-		const result = idItem.createDefaultStack();
+		const result = idItem.defaultStack;
 		return [result, []];
 	}
 	// break name into dot separated search phrases
@@ -301,7 +330,7 @@ const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSear
 		if(filteredResult.length === 1){
 			// exactly 1 found, can end
 			const foundId = filteredResult[0];
-			return [idMap[foundId].createDefaultStack(), []];
+			return [idMap[foundId].defaultStack, []];
 		}
 		// continue filtering
 	}
@@ -350,8 +379,8 @@ const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSear
 	});
 	const [first, ...rest] = filteredResult;
 	return [
-		idMap[first].createDefaultStack(),
-		rest.map(id=>idMap[id].createDefaultStack())
+		idMap[first].defaultStack,
+		rest.map(id=>idMap[id].defaultStack)
 	];
 
 };

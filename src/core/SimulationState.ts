@@ -1,7 +1,7 @@
-import { Item, ItemStack, MetaOption } from "data/item";
+import { Item, ItemStack, MetaModifyOption } from "data/item";
 import { Command } from "./command/command";
 import { AmountAllType, ItemStackArg } from "./command/ItemStackArg";
-import { DisplayableInventory } from "./inventory/DisplayableInventory";
+import { DisplayableInventory } from "./inventory";
 import { GameData, Slots } from "./inventory";
 import { VisibleInventory } from "./inventory";
 
@@ -151,7 +151,7 @@ export class SimulationState {
 		// does not sync
 	}
 
-	public setMetadata(item: Item, slot: number, meta: MetaOption) {
+	public setMetadata(item: Item, slot: number, meta: MetaModifyOption) {
 		this.pouch.setMetadata(item, slot, meta);
 		this.syncGameDataWithPouch();
 	}

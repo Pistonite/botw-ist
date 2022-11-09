@@ -1,8 +1,9 @@
-import { DisplayableInventory, DisplayableSlot, itemStackToDisplayableSlot } from "./DisplayableInventory";
+import { DisplayableInventory, SlotDisplay } from "./types";
 import { GameData } from "./GameData";
 import { Slots } from "./Slots";
-import { Item, ItemStack, ItemType, MetaOption } from "data/item";
+import { Item, ItemStack, ItemType, MetaModifyOption } from "data/item";
 import { AmountAllType } from "core/command/ItemStackArg";
+import { SlotDisplayForItemStack } from "./DisplayableInventory";
 
 /*
  * Implementation of Visible Inventory (PauseMenuDataMgr) in botw
@@ -36,9 +37,11 @@ export class VisibleInventory implements DisplayableInventory{
 		return copy;
 	}
 
-	public getDisplayedSlots(isIconAnimated: boolean): DisplayableSlot[] {
+	public getDisplayedSlots(isIconAnimated: boolean): SlotDisplay[] {
 		const mCount = this.getMCount();
-		return this.slots.getSlotsRef().map((stack, i)=>itemStackToDisplayableSlot(stack, i>=mCount, isIconAnimated));
+		return this.slots.getSlotsRef().map((stack, i)=>
+			new SlotDisplayForItemStack(stack).init(i>=mCount, isIconAnimated)
+		);
 	}
 
 	public getSlots(): Slots {
@@ -127,7 +130,7 @@ export class VisibleInventory implements DisplayableInventory{
 		}
 	}
 
-	public setMetadata(item: Item, slot: number, meta: MetaOption) {
+	public setMetadata(item: Item, slot: number, meta: MetaModifyOption) {
 		this.slots.setMetadata(item, slot, meta);
 	}
 

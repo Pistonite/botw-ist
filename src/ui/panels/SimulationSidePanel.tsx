@@ -2,7 +2,7 @@ import { CommandItem } from "ui/components/basic/ListItem";
 import { Command } from "core/command/command";
 import { SimulationState } from "core/SimulationState";
 import { useRuntime } from "data/runtime";
-import { GetSetPair } from "data/types";
+import { GetSetPair } from "data/util";
 import produce from "immer";
 import { useCallback } from "react";
 import { ColoredCodeBlocks, Section } from "ui/components";

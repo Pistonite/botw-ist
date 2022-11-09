@@ -1,5 +1,5 @@
-import { arrayEqual, stableSort } from "data/util/util";
-import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaOption } from "data/item";
+import { arrayEqual, stableSort } from "data/util";
+import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaModifyOption } from "data/item";
 import { SlotsCore } from "./SlotsCore";
 import { AmountAllType } from "core/command/ItemStackArg";
 import { RemoveOption } from "./options";
@@ -63,7 +63,7 @@ export class Slots {
 			// [needs confirm] arrow special case works not during reload? for now, does not consider arrow case when not reloading
 			// Check if there's already a slot, if so, add it to that and cap it at 999
 			for(let i = 0; i<internalSlots.length;i++){
-				if(internalSlots[i].equalsExcept(stack, "life")){
+				if(internalSlots[i].equalsExcept(stack, "count")){
 					if(reloading){
 						if(shouldCapAt999){
 							if(internalSlots[i].count + stack.count > 999){
@@ -245,7 +245,7 @@ export class Slots {
 		return this.core.findLastEquippedSlot(type);
 	}
 
-	public setMetadata(item: Item, slot: number, meta: MetaOption) {
+	public setMetadata(item: Item, slot: number, meta: MetaModifyOption) {
 		this.core.setMetadata(item, slot, meta);
 	}
 

@@ -1,4 +1,5 @@
-import { createMaterialStack, getTabFromType, Item, ItemStack, ItemTab, ItemType } from "data/item";
+import { getTabFromType, Item, ItemStack, ItemTab, ItemType } from "./type";
+import { ItemStackImpl } from "./ItemStack";
 
 class MockItem implements Item {
 	id: string;
@@ -15,17 +16,31 @@ class MockItem implements Item {
 	image = "";
 	animatedImage= "";
 	priority = 0;
+	
+	bowZoom: boolean = false;
+    bowMultishot: number = 0;
+    bowRapidfire: number = 0;
+	isElixir: boolean = false;
 	constructor(id: string, type: ItemType, stackable: boolean, repeatable: boolean){
 		this.id = id;
 		this.type = type;
 		this.stackable = stackable;
 		this.repeatable = repeatable;
 	}
-	createDefaultStack(): ItemStack {
-		return createMaterialStack(this, 1);
+
+	get defaultStack(): ItemStack{
+		return new ItemStackImpl(this);
 	}
 
 }
+
+export const createMaterialStack = (item: Item, count: number): ItemStack => {
+	return item.defaultStack.modify({count});
+};
+
+export const createEquipmentStack = (item: Item, durability: number, equipped: boolean): ItemStack => {
+	return item.defaultStack.modify({durability, equipped});
+};
 
 export const createArrowMockItem = (id: string): Item => new MockItem(id, ItemType.Arrow, true, true);
 export const createMaterialMockItem = (id: string): Item => new MockItem(id, ItemType.Material, true, true);
@@ -35,7 +50,7 @@ export const createKeyMockItem = (id: string): Item => new MockItem(id, ItemType
 export const createKeyMockItemStackable = (id: string): Item => new MockItem(id, ItemType.Key, true, true);
 export const createEquipmentMockItem = (id: string, type: ItemType): Item => new MockItem(id, type, false, true);
 
-export const equalsExceptEquip = (a: ItemStack, b: ItemStack): boolean => a.equalsExcept(b, "equip");
+export const equalsExceptEquip = (a: ItemStack, b: ItemStack): boolean => a.equalsExcept(b, "equipped");
 
 export const createMockItems = (ids: string[]): Record<string, Item> =>  {
 	const items: Record<string, Item> = {}; 
@@ -72,5 +87,5 @@ export const createMockItems = (ids: string[]): Record<string, Item> =>  {
 
 
 export const createMockItemSearch = (items: Record<string, Item>) => (id: string): ItemStack | undefined => {
-	return items[id.replaceAll("*", "").toLowerCase()]?.createDefaultStack();
+	return items[id.replaceAll("*", "").toLowerCase()]?.defaultStack;
 }

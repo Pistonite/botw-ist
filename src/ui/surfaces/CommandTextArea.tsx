@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { useRef } from "react";
 import { ColoredCodeBlocks } from "ui/components";
 import { CodeBlock } from "core/command";
-import { GetSetPair } from "data/types";
+import { GetSetPair } from "data/util";
 
 type DivProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 type CommandTextAreaProps = {

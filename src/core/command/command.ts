@@ -1,6 +1,5 @@
 // Main Command interface.
 import { SimulationState } from "core/SimulationState";
-import { arrayShallowEqual } from "data/util/util";
 import { CodeBlock, codeBlockFromRange, CodeBlockTree, flattenCodeBlocks } from "./type";
 
 // Command error enum

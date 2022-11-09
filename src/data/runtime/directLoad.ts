@@ -1,4 +1,4 @@
-import { deserialize } from "data/serialize";
+import { deserialize } from "data/storage";
 import { parse } from "query-string";
 import { useEffect } from "react";
 

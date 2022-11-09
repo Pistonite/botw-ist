@@ -1,5 +1,5 @@
 import { SimulationState } from "core/SimulationState";
-import { arrayEqual } from "data/util/util";
+import { arrayEqual } from "data/util";
 import { ASTCommandInitialize } from "./ast/";
 import { AbstractProperCommand, Command } from "./command";
 import { getSlotsToAdd } from "./helper";

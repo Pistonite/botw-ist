@@ -1,13 +1,31 @@
-import { MetaOption } from "data/item";
+import { CookEffect, iterateCookEffect, MetaModifyOption, WeaponModifier } from "data/item";
 import { ASTKeyValuePair, ASTKeyValuePairPrime, ASTMaybeMetadata, ASTMetadata, isEpsilon, isInteger, isKeyValuePairPrimeC1 } from "./ast";
 import { parseASTIdentifier, parseASTInteger } from "./parse.basis";
 import { codeBlockFromRange, codeBlockFromRangeObj, CodeBlockTree, flattenCodeBlocks, Parser, ParserSafe } from "./type";
 
 const MetaTypes = {
     "life": "number",
-    "equip": "boolean"
+    "equip": "boolean",
+    "price": "number",
+    "hp": "number",
+    "modifier": "string"
 } as const;
-export const parseASTMetadata: Parser<ASTMaybeMetadata | ASTMetadata, MetaOption> = (ast) => {
+export type MetaOption = Partial<{
+    // life value, count or durability*100
+    life: number,
+    // equipped.
+    equip: boolean,
+    // modifier can be either cook or weapon, but can only specify one
+    // specifying a cook effect does not clear the sell price (which contains weapon modifier)
+    // matched by prefix
+    modifier: string,
+    // food sell price. Use this to specify more modifiers
+    price: number,
+    // modifier hearts recover value
+    hp: number,
+}>;
+
+export const parseASTMetadata: Parser<ASTMaybeMetadata | ASTMetadata, MetaModifyOption> = (ast) => {
     if(isEpsilon(ast)){
         return [{}, [], ""];
     }
@@ -27,11 +45,16 @@ export const parseASTMetadata: Parser<ASTMaybeMetadata | ASTMetadata, MetaOption
             return [undefined, codeBlocks, `${key} is not a valid metadata name`];
         }
         
-        const value = meta[key];
+        const value = meta[key as keyof MetaOption];
         const expectedType = MetaTypes[key as keyof typeof MetaTypes];
         if(typeof value !== expectedType){
             return [undefined, codeBlocks, `metadata ${key} requires a ${expectedType} value, but got: ${value}`];
         }
+    }
+    
+    const modifir = meta.modifier;
+    if(!parseModifierName(meta)){
+        return [undefined, codeBlocks, `${modifir} is not a valid modifier name`];
     }
 
     return [meta, codeBlocks, ""];
@@ -41,7 +64,7 @@ const MaxKeyValuePairDepth = 15;
 
 const parseKeyValuePairs: Parser<
     [ASTKeyValuePair, ASTKeyValuePairPrime], 
-    Record<string, string|number|boolean>
+    MetaOption
 > = ([first, more]) => {
     const result: Record<string, string|number|boolean> = {};
     const codeBlocks: CodeBlockTree = [];
@@ -97,6 +120,33 @@ const parseKeyValuePair: ParserSafe<ASTKeyValuePair, [string, string|number|bool
             flattenCodeBlocks([], valueCodeBlocks, type)
         ]
     ];
+}
+
+const parseModifierName = (meta: MetaOption): meta is MetaModifyOption => {
+    const casted = meta as MetaModifyOption;
+    if(meta.modifier){
+    	// Try match a cook effect
+    	const matchString = meta.modifier.toLowerCase();
+        delete meta.modifier;
+    	const cookEffects = iterateCookEffect();
+    	for(let i=0;i<cookEffects.length;i++){
+    		const effectName = CookEffect[cookEffects[i]].toLowerCase();
+    		if(effectName.startsWith(matchString)){
+    			casted.cookEffect = cookEffects[i];
+    			return true;
+    		}
+    	}
+    	// if cook effect not matched, try match a weapon modifier
+    	for(const weaponModifierKey in WeaponModifier) {
+            if(weaponModifierKey.toLowerCase().startsWith(matchString)){
+                casted.price = WeaponModifier[weaponModifierKey as keyof typeof WeaponModifier];
+                return true;
+            }
+        }
+    	// if not matched, indicate error by returning undefined
+    	return false;
+    }
+    return true;
 }
 
 

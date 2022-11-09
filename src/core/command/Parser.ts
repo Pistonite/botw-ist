@@ -1,5 +1,4 @@
 import { ItemStack } from "data/item";
-import {parseMetadata} from "core/command/meta";
 import { tokenize } from "core/command/ast/tokenize";
 import { CommandInitGameData } from "./parse.initgamedata";
 
@@ -304,12 +303,12 @@ const parseItemStacks = (tokens: string[], from: number, searchFunc: (word: stri
 		if(!stack){
 			return itemNotFoundError(stackSearchNames.join(" "));
 		}
-		const meta = parseMetadata(stackMeta);
-		if(typeof meta === "string"){
-			return meta;
-		}
-		// process meta
-		stack = stack.modifyMeta(meta);
+		// const meta = parseMetadata(stackMeta);
+		// if(typeof meta === "string"){
+		// 	return meta;
+		// }
+		// // process meta
+		// stack = stack.modifyMeta(meta);
 		stacks.push(new ItemStackArg(stack, num));
 
 	}
