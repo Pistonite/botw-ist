@@ -578,12 +578,12 @@ const parseCommandDnp: ParseFunction<ASTCommandDnp> = (tokens) => {
 		mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1,
 	};
 };
-// (derivation) CommandEquip => <equip> ArgumentOneItemMaybeInSlot
+// (derivation) CommandEquip => <equip> ArgumentSingleItemMaybeInSlot
 export const isCommandEquip = <T extends {type: string}>(node: T | ASTCommandEquip | null): node is ASTCommandEquip => Boolean(node && node.type === "ASTCommandEquip");
 export type ASTCommandEquip = {
 	readonly type: "ASTCommandEquip",
 	readonly literal0: readonly [number, number],
-	readonly mArgumentOneItemMaybeInSlot1: ASTArgumentOneItemMaybeInSlot,
+	readonly mArgumentSingleItemMaybeInSlot1: ASTArgumentSingleItemMaybeInSlot,
 };
 const parseCommandEquip: ParseFunction<ASTCommandEquip> = (tokens) => {
 	let rangeTokens: Token[];
@@ -595,8 +595,8 @@ const parseCommandEquip: ParseFunction<ASTCommandEquip> = (tokens) => {
 		return ParseResultFail;
 	}
 	const literal0 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
-	const mArgumentOneItemMaybeInSlot1 = parseArgumentOneItemMaybeInSlot(tokens);
-	if(mArgumentOneItemMaybeInSlot1 === ParseResultFail) {
+	const mArgumentSingleItemMaybeInSlot1 = parseArgumentSingleItemMaybeInSlot(tokens);
+	if(mArgumentSingleItemMaybeInSlot1 === ParseResultFail) {
 		tokens.restore();
 		tokens.pop();
 		return ParseResultFail;
@@ -605,7 +605,7 @@ const parseCommandEquip: ParseFunction<ASTCommandEquip> = (tokens) => {
 	return {
 		type: "ASTCommandEquip",
 		literal0,
-		mArgumentOneItemMaybeInSlot1,
+		mArgumentSingleItemMaybeInSlot1,
 	};
 };
 // (derivation) CommandUnequipAll => <unequip> LiteralMaybeAllItemType
@@ -638,12 +638,12 @@ const parseCommandUnequipAll: ParseFunction<ASTCommandUnequipAll> = (tokens) => 
 		mLiteralMaybeAllItemType1,
 	};
 };
-// (derivation) CommandUnequip => <unequip> ArgumentOneItemMaybeInSlot
+// (derivation) CommandUnequip => <unequip> ArgumentSingleItemMaybeInSlot
 export const isCommandUnequip = <T extends {type: string}>(node: T | ASTCommandUnequip | null): node is ASTCommandUnequip => Boolean(node && node.type === "ASTCommandUnequip");
 export type ASTCommandUnequip = {
 	readonly type: "ASTCommandUnequip",
 	readonly literal0: readonly [number, number],
-	readonly mArgumentOneItemMaybeInSlot1: ASTArgumentOneItemMaybeInSlot,
+	readonly mArgumentSingleItemMaybeInSlot1: ASTArgumentSingleItemMaybeInSlot,
 };
 const parseCommandUnequip: ParseFunction<ASTCommandUnequip> = (tokens) => {
 	let rangeTokens: Token[];
@@ -655,8 +655,8 @@ const parseCommandUnequip: ParseFunction<ASTCommandUnequip> = (tokens) => {
 		return ParseResultFail;
 	}
 	const literal0 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
-	const mArgumentOneItemMaybeInSlot1 = parseArgumentOneItemMaybeInSlot(tokens);
-	if(mArgumentOneItemMaybeInSlot1 === ParseResultFail) {
+	const mArgumentSingleItemMaybeInSlot1 = parseArgumentSingleItemMaybeInSlot(tokens);
+	if(mArgumentSingleItemMaybeInSlot1 === ParseResultFail) {
 		tokens.restore();
 		tokens.pop();
 		return ParseResultFail;
@@ -665,7 +665,7 @@ const parseCommandUnequip: ParseFunction<ASTCommandUnequip> = (tokens) => {
 	return {
 		type: "ASTCommandUnequip",
 		literal0,
-		mArgumentOneItemMaybeInSlot1,
+		mArgumentSingleItemMaybeInSlot1,
 	};
 };
 // (derivation) CommandShoot => <shoot> AmountOrAll LiteralArrow
@@ -765,14 +765,14 @@ const parseCommandExitTrial: ParseFunction<ASTCommandExitTrial> = (tokens) => {
 		mLiteralTrial1,
 	};
 };
-// (derivation) CommandWriteMetadata => <write> Metadata <to> ArgumentOneItemMaybeInSlot
+// (derivation) CommandWriteMetadata => <write> Metadata <to> ArgumentSingleItemMaybeInSlot
 export const isCommandWriteMetadata = <T extends {type: string}>(node: T | ASTCommandWriteMetadata | null): node is ASTCommandWriteMetadata => Boolean(node && node.type === "ASTCommandWriteMetadata");
 export type ASTCommandWriteMetadata = {
 	readonly type: "ASTCommandWriteMetadata",
 	readonly literal0: readonly [number, number],
 	readonly mMetadata1: ASTMetadata,
 	readonly literal2: readonly [number, number],
-	readonly mArgumentOneItemMaybeInSlot3: ASTArgumentOneItemMaybeInSlot,
+	readonly mArgumentSingleItemMaybeInSlot3: ASTArgumentSingleItemMaybeInSlot,
 };
 const parseCommandWriteMetadata: ParseFunction<ASTCommandWriteMetadata> = (tokens) => {
 	let rangeTokens: Token[];
@@ -797,8 +797,8 @@ const parseCommandWriteMetadata: ParseFunction<ASTCommandWriteMetadata> = (token
 		return ParseResultFail;
 	}
 	const literal2 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
-	const mArgumentOneItemMaybeInSlot3 = parseArgumentOneItemMaybeInSlot(tokens);
-	if(mArgumentOneItemMaybeInSlot3 === ParseResultFail) {
+	const mArgumentSingleItemMaybeInSlot3 = parseArgumentSingleItemMaybeInSlot(tokens);
+	if(mArgumentSingleItemMaybeInSlot3 === ParseResultFail) {
 		tokens.restore();
 		tokens.pop();
 		return ParseResultFail;
@@ -809,7 +809,7 @@ const parseCommandWriteMetadata: ParseFunction<ASTCommandWriteMetadata> = (token
 		literal0,
 		mMetadata1,
 		literal2,
-		mArgumentOneItemMaybeInSlot3,
+		mArgumentSingleItemMaybeInSlot3,
 	};
 };
 // (derivation) CommandSave => <save> MaybeClauseSaveTarget
@@ -1772,27 +1772,6 @@ const parseArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot: ParseFunction<ASTArg
 		mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1,
 	};
 };
-// (derivation) ArgumentOneItemMaybeInSlot => ArgumentSingleItemMaybeInSlot
-export const isArgumentOneItemMaybeInSlot = <T extends {type: string}>(node: T | ASTArgumentOneItemMaybeInSlot | null): node is ASTArgumentOneItemMaybeInSlot => Boolean(node && node.type === "ASTArgumentOneItemMaybeInSlot");
-export type ASTArgumentOneItemMaybeInSlot = {
-	readonly type: "ASTArgumentOneItemMaybeInSlot",
-	readonly mArgumentSingleItemMaybeInSlot0: ASTArgumentSingleItemMaybeInSlot,
-};
-const parseArgumentOneItemMaybeInSlot: ParseFunction<ASTArgumentOneItemMaybeInSlot> = (tokens) => {
-	let rangeTokens: Token[];
-	tokens.push();
-	const mArgumentSingleItemMaybeInSlot0 = parseArgumentSingleItemMaybeInSlot(tokens);
-	if(mArgumentSingleItemMaybeInSlot0 === ParseResultFail) {
-		tokens.restore();
-		tokens.pop();
-		return ParseResultFail;
-	}
-	tokens.pop();
-	return {
-		type: "ASTArgumentOneItemMaybeInSlot",
-		mArgumentSingleItemMaybeInSlot0,
-	};
-};
 // (derivation) ArgumentSingleItemMaybeInSlot => Identifier ArgumentSingleItemMaybeInSlotAIdentifier
 export const isArgumentSingleItemMaybeInSlot = <T extends {type: string}>(node: T | ASTArgumentSingleItemMaybeInSlot | null): node is ASTArgumentSingleItemMaybeInSlot => Boolean(node && node.type === "ASTArgumentSingleItemMaybeInSlot");
 export type ASTArgumentSingleItemMaybeInSlot = {
@@ -2410,13 +2389,12 @@ const parseMaybeClauseSaveTarget: ParseFunction<ASTMaybeClauseSaveTarget> = (tok
 	return ParseResultFail;
 };
 export type ASTMaybeClauseSaveTarget = ASTClauseSaveTarget | ASTEpsilon;
-// (derivation) ClauseSaveTarget => <as> Identifier IdentifierPrime
+// (derivation) ClauseSaveTarget => <as> OneOrMoreIdentifiers
 export const isClauseSaveTarget = <T extends {type: string}>(node: T | ASTClauseSaveTarget | null): node is ASTClauseSaveTarget => Boolean(node && node.type === "ASTClauseSaveTarget");
 export type ASTClauseSaveTarget = {
 	readonly type: "ASTClauseSaveTarget",
 	readonly literal0: readonly [number, number],
-	readonly mIdentifier1: ASTIdentifier,
-	readonly mIdentifierPrime2: ASTIdentifierPrime,
+	readonly mOneOrMoreIdentifiers1: ASTOneOrMoreIdentifiers,
 };
 const parseClauseSaveTarget: ParseFunction<ASTClauseSaveTarget> = (tokens) => {
 	let rangeTokens: Token[];
@@ -2428,14 +2406,8 @@ const parseClauseSaveTarget: ParseFunction<ASTClauseSaveTarget> = (tokens) => {
 		return ParseResultFail;
 	}
 	const literal0 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
-	const mIdentifier1 = parseIdentifier(tokens);
-	if(mIdentifier1 === ParseResultFail) {
-		tokens.restore();
-		tokens.pop();
-		return ParseResultFail;
-	}
-	const mIdentifierPrime2 = parseIdentifierPrime(tokens);
-	if(mIdentifierPrime2 === ParseResultFail) {
+	const mOneOrMoreIdentifiers1 = parseOneOrMoreIdentifiers(tokens);
+	if(mOneOrMoreIdentifiers1 === ParseResultFail) {
 		tokens.restore();
 		tokens.pop();
 		return ParseResultFail;
@@ -2444,8 +2416,7 @@ const parseClauseSaveTarget: ParseFunction<ASTClauseSaveTarget> = (tokens) => {
 	return {
 		type: "ASTClauseSaveTarget",
 		literal0,
-		mIdentifier1,
-		mIdentifierPrime2,
+		mOneOrMoreIdentifiers1,
 	};
 };
 // (derivation union) ZeroOrMoreItems => SingleItem | ItemStackPrime

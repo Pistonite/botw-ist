@@ -5,7 +5,7 @@ import { parseASTIdentifier } from "./parse.basis";
 import { parseASTClauseSlot } from "./parse.clause.slot";
 import { parseASTAmountOrAll, parsedItemSearch } from "./parse.item";
 import { parseASTMetadata } from "./parse.metadata";
-import { codeBlockFromRange, codeBlockFromRangeObj, CodeBlockTree, delegateParse, delegateParseItem, flattenCodeBlocks, Parser, ParserItem } from "./type";
+import { codeBlockFromRange, CodeBlockTree, delegateParse, delegateParseItem, flattenCodeBlocks, Parser, ParserItem } from "./type";
 
 export const parseASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot: 
     ParserItem<ASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot, [ItemStackArg[], number]>

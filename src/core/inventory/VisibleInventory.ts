@@ -3,7 +3,7 @@ import { GameData } from "./GameData";
 import { Slots } from "./Slots";
 import { Item, ItemStack, ItemType, MetaModifyOption } from "data/item";
 import { AmountAllType } from "core/command/ItemStackArg";
-import { SlotDisplayForItemStack } from "./DisplayableInventory";
+import { SlotDisplayForItemStack } from "./SlotDisplayForItemStack";
 
 /*
  * Implementation of Visible Inventory (PauseMenuDataMgr) in botw

@@ -199,14 +199,14 @@ const registerItem = (idAndSearch: string, option: ItemOption, type: ItemType, o
 		"HeartyElixir": CookEffect.Hearty,
 		"EnergizingElixir": CookEffect.Energizing,
 		"EnduringElixir": CookEffect.Enduring,
-		"HastyElixir": CookEffect.Speed,
+		"HastyElixir": CookEffect.Hasty,
 		"FireproofElixir": CookEffect.Fireproof,
-		"SpicyElixir": CookEffect.ColdResist,
-		"ChillyElixir": CookEffect.HotResist,
-		"ElectroElixir": CookEffect.ElectricResist,
-		"MightyElixir": CookEffect.Attack,
-		"ToughElixir": CookEffect.Defense,
-		"SneakyElixir": CookEffect.Stealth,
+		"SpicyElixir": CookEffect.Spicy,
+		"ChillyElixir": CookEffect.Chilly,
+		"ElectroElixir": CookEffect.Electro,
+		"MightyElixir": CookEffect.Mighty,
+		"ToughElixir": CookEffect.Tough,
+		"SneakyElixir": CookEffect.Sneaky,
 	};
 
 	let elixirEffect: CookEffect | undefined = undefined;

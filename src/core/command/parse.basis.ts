@@ -1,17 +1,17 @@
 import { ASTOneOrMoreIdentifiers, ASTIdentifier, ASTInteger, isOneOrMoreIdentifiers } from "./ast";
-import { codeBlockFromRangeObj, CodeBlockTree, flattenCodeBlocks, Parser, ParserSafe } from "./type";
+import { codeBlockFromRange, CodeBlockTree, flattenCodeBlocks, Parser, ParserSafe } from "./type";
 
 export const parseASTInteger: ParserSafe<ASTInteger, number> = (ast) => {
     return [
         ast.value,
-        [codeBlockFromRangeObj(ast, "unknown")]// cannot decide the color at this level
+        [codeBlockFromRange(ast, "unknown")]// cannot decide the color at this level
     ];
 };
 
 export const parseASTIdentifier: ParserSafe<ASTIdentifier, string> = (ast) => {
     return [
         ast.value,
-        [codeBlockFromRangeObj(ast, "unknown")]// cannot decide the color at this level
+        [codeBlockFromRange(ast, "unknown")]// cannot decide the color at this level
     ];
 };
 

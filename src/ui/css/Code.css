@@ -49,6 +49,10 @@
     color: #C586C0 !important;
 }
 
+.CommandColorIdentifierOther {
+    color: #9CDCFE !important;
+}
+
 .CommandTextArea {
     width: 100%;
     

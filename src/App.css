@@ -6,46 +6,7 @@ h1 {
   font-family: CalamitySans;
 }
 
-.InputError {
-  color: #ff3333;
-  text-shadow: 0 0 5px #ee7777,0 0 5px #ee7777,0 0 5px #ee7777;
-  border-bottom: 2px solid #dd0000;
-}
 
-.InputError:focus-visible {
-  border-bottom: 2px solid #ff3333;
-}
-
-.GameDataBackground {
-  background-color: #003300;
-}
-
-
-
-
-
-h4.Reference {
-  margin: 0;
-  color: #cccccc;
-}
-
-p.Reference {
-  padding-left: 20px;
-}
-
-.Example {
-  color:#eeee00;
-}
-
-h3.Reference {
-  margin-top: 30px;
-  margin-bottom: 0;
-}
-
-h3.Reference2 {
-  margin-top: 0;
-  margin-bottom: 0;
-}
 
 .FullWidth {
   width: 100% !important;

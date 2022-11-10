@@ -1,10 +1,11 @@
 import { ItemStack } from "data/item";
-import { ASTTarget, createASTFromString, isCommandBreakSlots, isCommandInitGameData, isCommandInitialize } from "./ast";
+import { ASTTarget, createASTFromString, isCommandAdd, isCommandBreakSlots, isCommandInitGameData, isCommandInitialize, isCommandSave } from "./ast";
 import { CmdErr, Command, CommandHint, CommandNop, ErrorCommand } from "./command";
 import { parseASTCommandBreakSlots } from "./parse.breakslot";
 import { parseASTCommandInitGamedata } from "./parse.initgamedata";
 import { parseASTCommandInitialize } from "./parse.initialize";
-import { codeBlockFromRange, codeBlockFromRangeObj, ParserItem, withNoError } from "./type";
+import { parseASTCommandSave } from "./parse.save";
+import { codeBlockFromRange, ParserItem, withNoError } from "./type";
 
 export const parseCommand = (cmdString: string, searchFunc: (word: string)=>ItemStack|undefined): Command => {
     if(!cmdString){
@@ -24,11 +25,11 @@ export const parseCommand = (cmdString: string, searchFunc: (word: string)=>Item
         ],codeblocks);
     }
     if(extra){
-        codeblocks.push(codeBlockFromRangeObj(extra, "unknown"));
+        codeblocks.push(codeBlockFromRange(extra, "unknown"));
         return new ErrorCommand(CmdErr.AST, [
-            "Hmmm",
-            "Some parts at the end of the command may be incomplete",
-            `Not processed: ${extra.value}`
+            "Incomplete command",
+            "The greyed out parts at the end of the command cannot be parsed",
+            `Extra tokens: ${extra.value}`
         ],codeblocks);
     }
     // TODO: check extra
@@ -44,6 +45,10 @@ const guessCommand = (cmdString: string): Command => {
             ["init items...", "Initialize the simulator with items. Also clears the number of broken slots."])
         || tryGuessCommand(cmdString, parts, [ ["break"] ], 
             ["break X slots [with <items> [from slot Y]].", "Break the slots. Optionally remove the specified items after \"with\""])
+        || tryGuessCommand(cmdString, parts, [ ["save"] ], 
+            ["save [as file name ...]", "Making a manual or named (auto) save"])
+        || tryGuessCommand(cmdString, parts, [ ["save as"] ], 
+            ["save as file name ...", "Making a named (auto) save"])
         || new CommandHint(cmdString, parts, 0, ["Unknown command", "The command is not recognized"])
     );
 }
@@ -82,6 +87,9 @@ const parseASTTarget: ParserItem<ASTTarget, Command> = (ast, search) => {
         return parseASTCommandInitGamedata(ast, search);
     }
 
+    if(isCommandSave(ast)){
+        return parseASTCommandSave(ast);
+    }
     if(isCommandBreakSlots(ast)){
         return parseASTCommandBreakSlots(ast, search);
     }

@@ -1,7 +1,7 @@
 import { CookEffect, iterateCookEffect, MetaModifyOption, WeaponModifier } from "data/item";
 import { ASTKeyValuePair, ASTKeyValuePairPrime, ASTMaybeMetadata, ASTMetadata, isEpsilon, isInteger, isKeyValuePairPrimeC1 } from "./ast";
 import { parseASTIdentifier, parseASTInteger } from "./parse.basis";
-import { codeBlockFromRange, codeBlockFromRangeObj, CodeBlockTree, flattenCodeBlocks, Parser, ParserSafe } from "./type";
+import { codeBlockFromRange, CodeBlockTree, flattenCodeBlocks, Parser, ParserSafe } from "./type";
 
 const MetaTypes = {
     "life": "number",
@@ -95,7 +95,7 @@ const parseKeyValuePair: ParserSafe<ASTKeyValuePair, [string, string|number|bool
             flattenCodeBlocks([], keyCodeBlocks, "meta.key")
         ];
     }
-    const valueDelimiterBlocks = codeBlockFromRangeObj(ast.mValue1.mValueSpecifier0, "delimiter");
+    const valueDelimiterBlocks = codeBlockFromRange(ast.mValue1.mValueSpecifier0, "delimiter");
     const valueAst = ast.mValue1.mValueValue1;
     let value: string|number|boolean;
     let valueCodeBlocks: CodeBlockTree;
@@ -125,9 +125,16 @@ const parseKeyValuePair: ParserSafe<ASTKeyValuePair, [string, string|number|bool
 const parseModifierName = (meta: MetaOption): meta is MetaModifyOption => {
     const casted = meta as MetaModifyOption;
     if(meta.modifier){
-    	// Try match a cook effect
-    	const matchString = meta.modifier.toLowerCase();
+        const matchString = meta.modifier.toLowerCase();
         delete meta.modifier;
+        // Try match weapon modifier first
+    	for(const weaponModifierKey in WeaponModifier) {
+            if(weaponModifierKey.toLowerCase().startsWith(matchString)){
+                casted.price = WeaponModifier[weaponModifierKey as keyof typeof WeaponModifier];
+                return true;
+            }
+        }
+    	// If not, match a cook effect
     	const cookEffects = iterateCookEffect();
     	for(let i=0;i<cookEffects.length;i++){
     		const effectName = CookEffect[cookEffects[i]].toLowerCase();
@@ -136,13 +143,20 @@ const parseModifierName = (meta: MetaOption): meta is MetaModifyOption => {
     			return true;
     		}
     	}
-    	// if cook effect not matched, try match a weapon modifier
-    	for(const weaponModifierKey in WeaponModifier) {
-            if(weaponModifierKey.toLowerCase().startsWith(matchString)){
-                casted.price = WeaponModifier[weaponModifierKey as keyof typeof WeaponModifier];
-                return true;
-            }
-        }
+        // if not, match an alias
+        const alias = {
+            "hotresist": CookEffect.Chilly,
+            "coldresist": CookEffect.Spicy,
+            "stealth": CookEffect.Sneaky,
+            "speed": CookEffect.Hasty
+        };
+        for(const aliasName in alias){
+    		if(aliasName.startsWith(matchString)){
+    			casted.cookEffect = alias[aliasName as keyof typeof alias];
+    			return true;
+    		}
+    	}
+    	
     	// if not matched, indicate error by returning undefined
     	return false;
     }

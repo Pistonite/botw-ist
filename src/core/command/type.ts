@@ -11,7 +11,8 @@ export const Colors = {
 	"item.amount": "CommandColorItemAmount",
 	"keyword.command": "CommandColorKeywordCommand",
 	"slot.number": "CommandColorSlotNumber",
-	"keyword.other": "CommandColorKeywordOther"
+	"keyword.other": "CommandColorKeywordOther",
+	"identifier.other": "CommandColorIdentifierOther"
 
 };
 
@@ -23,7 +24,10 @@ export type CodeBlock = {
 	end: number // exclusive
 };
 
-export const codeBlockFromRange = (range: readonly [number, number], color: keyof typeof Colors): CodeBlock => {
+export const codeBlockFromRange = (range: readonly [number, number] | {range: readonly [number, number]}, color: keyof typeof Colors): CodeBlock => {
+	if("range" in range){
+		return codeBlockFromRange(range.range, color);
+	}
 	return {
 		color,
 		start: range[0],
@@ -31,9 +35,6 @@ export const codeBlockFromRange = (range: readonly [number, number], color: keyo
 	};
 }
 
-export const codeBlockFromRangeObj = <T extends {range: readonly [number, number]}>(t: T, color: keyof typeof Colors): CodeBlock => {
-	return codeBlockFromRange(t.range, color);
-}
 
 export type CodeBlockTree = (CodeBlock | CodeBlockTree)[]
 const firstCodeBlock = (blocks: CodeBlockTree): CodeBlock => {
@@ -85,7 +86,7 @@ export const withNoError = <T>(result: (T|CodeBlockTree|string)[]): [T, CodeBloc
 export const delegateParse = <A, T, T2>(
 	ast: A, 
 	f: Parser<A, T>, 
-	transformer: (t: T) => T2, 
+	transformer: (t: T, c: CodeBlockTree) => T2, 
 	codeBlocks?: CodeBlockTree
 ): [T2 | undefined, CodeBlockTree, string] => {
 	const result: [T|T2|undefined, CodeBlockTree, string] = f(ast);
@@ -97,7 +98,7 @@ export const delegateParse = <A, T, T2>(
 		return result as [undefined, CodeBlockTree, string];
 	}
 	//in place replace
-	result[0] = transformer(result[0] as T);
+	result[0] = transformer(result[0] as T, result[1]);
 	
 	return result as [T2, CodeBlockTree, string];
 }

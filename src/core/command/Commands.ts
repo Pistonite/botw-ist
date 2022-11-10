@@ -3,29 +3,7 @@ import { Item } from "data/item";
 // import { processWrappers } from "./helper";
 // import { ItemStackArg } from "./ItemStackArg";
 
-// export class CommandSave extends CommandImpl {
 
-// 	public execute(state: SimulationState): void {
-// 		state.save();
-// 	}
-// 	public getDisplayString(): string {
-// 		return "Save";
-// 	}
-// }
-
-// export class CommandSaveAs extends CommandImpl {
-// 	private name: string;
-// 	constructor(name: string){
-// 		super();
-// 		this.name = name;
-// 	}
-// 	public execute(state: SimulationState): void {
-// 		state.save(this.name);
-// 	}
-// 	public getDisplayString(): string {
-// 		return `Save As ${this.name}`;
-// 	}
-// }
 
 // export class CommandReload extends CommandImpl {
 // 	private name?: string;

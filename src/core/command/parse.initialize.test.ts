@@ -1,8 +1,7 @@
 import { createMockItemSearch, createMockItems } from "data/item/TestHelpers";
 import { CommandInitialize } from "./parse.initialize";
 import { ItemStackArg } from "./ItemStackArg";
-import { parseCommand } from "./parsev2";
-import { CmdErr, ErrorCommand } from "./command";
+import { CmdErr } from "./command";
 
 describe("core/command/parse.initialize", ()=>{
     const MockItems = createMockItems([
@@ -19,7 +18,7 @@ describe("core/command/parse.initialize", ()=>{
         expect("initialize").toParseIntoCommand(mockSearchItem, new CommandInitialize([], []));
     });
     it("parses single item", ()=>{
-        expect("initialize Material A").toParseIntoCommand(mockSearchItem, new CommandInitialize([
+        expect("initialize Mat eri al A").toParseIntoCommand(mockSearchItem, new CommandInitialize([
             new ItemStackArg(MockItems["materiala"].defaultStack, 1)
         ], []));
     });

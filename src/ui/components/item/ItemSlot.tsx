@@ -16,7 +16,9 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot})=>{
 		isBrokenSlot,
 		isEquipped,
 		propertyString,
-		propertyClassName
+		propertyClassName,
+		modifierText,
+		modifierClassName,
 	} = slot;
 	const t = useI18n();
 	const tooltips = slot.getTooltip(t);
@@ -65,7 +67,13 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot})=>{
 				{
 					modifierImage &&
 					<div className="ItemLayer" style={{zIndex: 2}}>
-						<img className={clsx("ItemModifierImage")} src={modifierImage}/>
+						<span className="ItemFloatWindow ItemModifierString">
+							<img className={clsx("ItemModifierImage")} src={modifierImage}/>
+							<span className={modifierClassName}>
+								{modifierText}
+							</span>
+						</span>
+						
 					</div>
 				}
 

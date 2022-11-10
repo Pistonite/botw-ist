@@ -44,64 +44,17 @@ export const SimulationSidePanel: React.FC<SimulationSidePanelProps> = ({
 	}, [commandData, setCommandData]);
 
 	return (
-		<>
-			{ showSaves &&
-				<Section titleText="Saves" style={{
-					maxHeight: 220,
-					height: "30vh",
-					border: "1px solid black",
-					boxSizing: "border-box",
-					overflowY: "hidden",
-
-				}}
-				>
-
-					{
-						!!simulationState &&
-							<ol>
-								{
-									!!simulationState.getManualSave() &&
-									<CommandItem
-										onClick={()=>{
-											setSelectedSaveName("");
-											setPage("#simulation");
-										}}
-										useListItem
-										isSelected={selectedSaveName===""}
-
-									>
-								Manual Save
-									</CommandItem>
-								}
-
-								{
-									Object.entries(simulationState.getNamedSaves()).map(([name, _gamedata], i)=>
-										<CommandItem
-											key={i}
-											onClick={()=>{
-												setSelectedSaveName(name);
-												setPage("#simulation");
-											}}
-											isSelected={selectedSaveName===name}
-											useListItem
-										>
-											{name}
-										</CommandItem>
-									)
-								}
-							</ol>
-					}
-
-				</Section>
-			}
-
+		<div style={{
+			height: "100%"
+		}}>
+			
 			<Section titleText="Steps" style={{
-				minHeight: "calc( 70vh - 40px )",
-				height: showSaves ? "calc( 100vh - 40px - 220px )" : "calc( 100vh - 40px )",
+				//minHeight: "calc( 70vh - 40px )",
+				//height: showSaves ? "calc( 100vh - 40px - 220px )" : "calc( 100vh - 40px )",
 				border: "1px solid black",
 				boxSizing: "border-box",
-				overflowY: "hidden"
-
+				overflowY: "hidden",
+				height: "100%"
 			}}>
 				<ol style={{
 					margin: 0
@@ -145,7 +98,9 @@ export const SimulationSidePanel: React.FC<SimulationSidePanelProps> = ({
 				</ol>
 
 			</Section>
-
-		</>
+			
+			
+			
+		</div>
 	);
 };

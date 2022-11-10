@@ -49,7 +49,7 @@ describe("data/item.legacy", ()=>{
         // Legacy food. Need to add metadata
         expect("speedfood").toMatchItemSearch((stack: ItemStack)=>{
 			expect(stack.item.id).toEqual("SteamedFruit");
-			return stack.modifyMeta({cookEffect: CookEffect.Speed});
+			return stack.modifyMeta({cookEffect: CookEffect.Hasty});
 		});
         expect("endurafood").toMatchItemSearch((stack: ItemStack)=>{
 			expect(stack.item.id).toEqual("MushroomSkewer");

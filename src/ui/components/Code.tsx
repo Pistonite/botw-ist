@@ -1,10 +1,28 @@
 import clsx from "clsx";
-import { CodeBlock, Colors } from "core/command"
-import { useMemo } from "react";
+import { CodeBlock, Colors, parseCommand } from "core/command"
+import { useSearchItem } from "data/item";
+import { PropsWithChildren, useMemo } from "react";
 
 type ColoredCodeBlocksProps = {
     blocks: CodeBlock[][],
     value: string[]
+}
+
+export const ParseCode: React.FC<PropsWithChildren> = ({children}) => {
+    if (typeof children !== "string"){
+        throw new Error("In ParseCode. Children must be string");
+    }
+    const search = useSearchItem();
+    const text = children;
+    const command = useMemo(()=>{
+        return parseCommand(text, search);
+    }, [text]);
+    return (
+        <ColoredCodeBlocks
+            blocks={[command.codeBlocks]}
+            value={[text]}
+        />
+    );
 }
 
 export const ColoredCodeBlocks: React.FC<ColoredCodeBlocksProps> = ({blocks, value}) => {
@@ -44,6 +62,13 @@ const ColoredCodeBlock: React.FC<ColoredCodeBlockProps> = ({blocks, value})=>{
         const result: ColoredSingleBlockProps[][] = [last];
         
         let currentStart = 0;
+        if(blocks.length === 0){
+            blocks = [{
+                color: "unknown",
+                start: 0,
+                end: value.length
+            }];
+        }
 
         if (blocks.length > 0 && blocks[blocks.length-1].end < value.length){
             blocks = [...blocks, {

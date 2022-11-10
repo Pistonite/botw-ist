@@ -1,4 +1,4 @@
-import { SlotDisplayForItemStack } from "./DisplayableInventory";
+import { SlotDisplayForItemStack } from "./SlotDisplayForItemStack";
 import { Slots } from "./Slots";
 import { DisplayableInventory, SlotDisplay } from "./types";
 import { VisibleInventory } from "./VisibleInventory";

@@ -1,283 +1,581 @@
 import { BodyText, Emphasized, Header, SubHeader, SubTitle } from "components/Text";
 import React from "react";
+import { Category, Description, ItemSlot, Label, ParseCode } from "ui/components";
 import { Page } from "ui/surfaces";
 
 export const ReferencePage: React.FC = React.memo(()=>{
 
 	return (
 		<Page title="Command Reference">
+			<Description />
+			<Label>This page will help you with writing and understanding commands</Label>
+			<Category title="Syntax for Items">
+				<Label>
+					By 
+					<span className="Highlight"> name</span>
+					: <code>apple = </code>
+				</Label>
+				<ItemSlot slot={{
+					image: "assets/img/Material/Apple.png",
+					count: 1,
+					durability: undefined,
+					isEquipped: false,
+					isBrokenSlot: false,
+					getTooltip: ()=>[]
+				}} />
+				<Label><code>royal claym = </code></Label>
+				<ItemSlot slot={{
+					image: "assets/img/Weapon/RoyalClaymore.png",
+					count: undefined,
+					durability: "40",
+					isEquipped: false,
+					isBrokenSlot: false,
+					getTooltip: ()=>[]
+				}} />
+				<Description className="Primary">
+					You can get an item by putting the name of the item or parts of the name. 
+					<span className="Important"> The names are case-insensitive.</span>
+				</Description>
+				<Description>
+					You can also specify the name without spaces like <code>royalclaymore</code>.
+					However, space-separated names are easier to read.
+				</Description>
+				<Label>
+					By 
+					<span className="Highlight"> amount + name</span>
+					: <code>3 apples = </code>
+				</Label>
+				<ItemSlot slot={{
+					image: "assets/img/Material/Apple.png",
+					count: 3,
+					durability: undefined,
+					isEquipped: false,
+					isBrokenSlot: false,
+					getTooltip: ()=>[]
+				}} />
+				<Label><code>3 royal claym = </code></Label>
+				<ItemSlot slot={{
+					image: "assets/img/Weapon/RoyalClaymore.png",
+					count: undefined,
+					durability: "40",
+					isEquipped: false,
+					isBrokenSlot: false,
+					getTooltip: ()=>[]
+				}} />
+				<ItemSlot slot={{
+					image: "assets/img/Weapon/RoyalClaymore.png",
+					count: undefined,
+					durability: "40",
+					isEquipped: false,
+					isBrokenSlot: false,
+					getTooltip: ()=>[]
+				}} />
+				<ItemSlot slot={{
+					image: "assets/img/Weapon/RoyalClaymore.png",
+					count: undefined,
+					durability: "40",
+					isEquipped: false,
+					isBrokenSlot: false,
+					getTooltip: ()=>[]
+				}} />
+				<Description className="Primary">
+					By adding a number before the item, you can specify how many of that item you want.
+				</Description>
+				<Description className="Primary">
+					If the item is unstackble, the amount usually translates to how many slots of the item you want.
+					For some commands, you can specify <span className="Highlight"> "all"</span> in the place of the amount.
+				</Description>
+				<Description className="Important">
+					Plurals are accepted.
+				</Description>
+				<Label>
+					By 
+					<span className="Highlight"> name[metadata]</span>
+					: <code>elixir[modifier=speed] = </code>
+				</Label>
+				<ItemSlot slot={{
+					image: "assets/img/Food/HastyElixir.png",
+					count: undefined,
+					durability: undefined,
+					isEquipped: false,
+					isBrokenSlot: false,
+					modifierImage: "assets/img/Modifiers/CookHasty.png",
+					getTooltip: ()=>[]
+				}} />
+				<Label><code>royal claym[equip, life:80000] = </code></Label>
+				<ItemSlot slot={{
+					image: "assets/img/Weapon/RoyalClaymore.png",
+					count: undefined,
+					durability: "800",
+					isEquipped: true,
+					isBrokenSlot: false,
+					getTooltip: ()=>[]
+				}} />
+				<Description className="Primary">
+					You can put additional property on the item by putting them in <code className="Highlight"> [ ] </code>
+					after the item name.
+				</Description>
+				<Description className="Primary">
+					Inside the bracket, the metadata values are specified like <code className="Important">key=value</code> or <code className="Important">key:value</code>, separated by commas.
+				</Description>
+				<Description className="Primary">
+					The value can be an integer, true/false, or text depending on the key. If you specify a key without a value, the value is default to true (like <code>[equip]</code>)
+				</Description>
+				<Description useDiv>
+					List of metadata keys:
+					<ul>
+						<li><code className="Important">life=integer</code>: For equipments, durability*100, for others, stack size</li>
+						<li><code className="Important">equip=true/false</code>: Whether the slot is equipped</li>
+						<li><code className="Important">hp=integer</code>: For equipments, the modifier value. For food, how many quarter hearts it recovers. (4 = 1 heart)</li>
+						<li><code className="Important">price=integer</code>: For equipments, the corrupted modifier. For food, the price when you sell</li>
+						<li><code className="Important">modifier=text</code>: Either a food effect (like <code>mighty</code>) or a single weapon modifier name (like <code>durability</code>). You don't need to put the full modifier name to match one</li>
+					</ul>
+				</Description>
+				<Label>
+					You can also mix them like
+					<span className="Highlight"> amount + name[metadata]</span>
+				</Label>
+			</Category>
+			<Category title="Common Commands">
+				<Label className="Important">All commands are case-insensitive</Label>
+				<Description />
+				
+				<div>
+					<code className="CommandColorKeywordCommand">init </code>
+					<code className="CommandColorItemName">[items ...]</code>
+				</div>
+				
+				<ParseCode>
+					init apple
+				</ParseCode>
+				<ParseCode>
+					init 1 apple
+				</ParseCode>
+				<ParseCode>
+					init 3 pot lid 5 diamonds 1 slate 1 glider 4 orb
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Initialize inventory before simulation</Label>
+				
+				<Description className="Primary">
+					Fully resets the inventory by clearing all items and set Count to 0, then forcefully write the item list to inventory.
+                    This would reset any broken slot you already have, and any in-game checks that happen when adding items are disabled.
+                    For example, the items will appear in the order you specify, not in the in-game tab order
+				</Description>
+				<Description className="Primary Important">
+					Game Data will be synced with Visible Inventory after the reset
+				</Description>
+				<Description>
+                    Note that this will not clear saves. You can use this command to initialize multiple saves
+				</Description>
 
-			<Header>Item Syntax</Header>
-			<BodyText>
-						Item are specified by using <Emphasized>search keys</Emphasized> and <Emphasized>metadata</Emphasized>.
-			</BodyText>
-			<SubHeader>Search Keys</SubHeader>
-			<BodyText>
-						Search keys are used to find the item. For example, in the command <Emphasized>"Add 1 master sword"</Emphasized>,
-				<Emphasized>1</Emphasized> specifies the count, and <Emphasized>master sword</Emphasized> are 2 search keys to locate the item.
-						Search keys are designed to "just work", but they sometimes find the wrong item. In this case you can add more keys to narrow the search.
-						For example, <Emphasized>shroom</Emphasized> will match <Emphasized>Rushroom</Emphasized>, but <Emphasized>shroom hy</Emphasized> will match <Emphasized>HylianShroom</Emphasized>.
-						Another example, <Emphasized>hammer</Emphasized> will match <Emphasized>IronSledgeHammer</Emphasized>, but <Emphasized>spr ham</Emphasized> will match <Emphasized>SpringLoadedHammer</Emphasized>
-			</BodyText>
-			<BodyText>
-						In certain commands like <Emphasized>Equip</Emphasized>, you can only use 1 search key. In this case, you can use "*" to combine search keys into 1.
-						For example, <Emphasized>snow*head</Emphasized> is one search key that functions like <Emphasized>snow head</Emphasized>, which will give you the snowquill headdress
-			</BodyText>
-			<BodyText>
-						The order of the keys doesn't matter and they are case-insensitive.
-			</BodyText>
-			<SubHeader>Number of Items</SubHeader>
-			<BodyText>
-						When specifying number of items, you can use an integer or <Emphasized>all</Emphasized>, which is equivalent to -1.
-						When using -1 as the count in Remove commands, it will remove all items.
-			</BodyText>
+				<div>
+					<code className="CommandColorKeywordCommand">break </code>
+					<code className="CommandColorSlotNumber">X </code>
+					<code className="CommandColorKeywordCommand">slot(s) </code>
+					<code className="CommandColorKeywordOther">[with </code>
+					<code className="CommandColorItemName">items ... </code>
+					<code className="CommandColorKeywordOther">[from slot </code>
+					<code className="CommandColorSlotNumber">Y</code>
+					<code className="CommandColorKeywordOther">]] </code>
+				</div>
+				
+				<ParseCode>
+					break 1 slot
+				</ParseCode>
+				<ParseCode>
+					break 5 slots with 2 apple 2 pepper 2 durian 2 lotus 2 shroom
+				</ParseCode>
+				<ParseCode>
+					break 1 slots with apple from slot 3
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Simulate making X broken slots with the glitch</Label>
+				
+				<Description className="Primary">
+					If you add <code className="CommandColorKeywordOther"> with</code>, the items after <code className="CommandColorKeywordOther"> with</code> are automatically removed.
+				</Description>
+				<Description className="Primary">
+					If you add <code className="CommandColorKeywordOther"> from slot</code>. The items are removed from the n-th matched slot. In the 3rd example above, the apple is removed from the 3rd slot of apples
+				</Description>
+				<Description className="Highlight">
+					<code className="CommandColorKeywordOther"> from slot</code> or <code className="CommandColorKeywordOther"> in slot</code> or <code className="CommandColorKeywordOther"> to slot</code> appear
+					in many commands and they behave the same way.
+				</Description>
 
-			<SubHeader>Metadata</SubHeader>
-			<BodyText>
-						Metadata is used to specify extra information. The syntax is <Emphasized>[key1=value1,key2=value2,...]</Emphasized>.
-						Metadata is not available in all commands. If you see <Emphasized>item[meta]</Emphasized>, then it's supported in that particular command.
-			</BodyText>
-			<BodyText>
-						Here is a list of available metadata. More will be added as they are implemented in the future
-			</BodyText>
-			<SubTitle>life (integer)</SubTitle>
-			<BodyText>Used to specify stack size or durability</BodyText>
-			<BodyText emphasized>
-						Example: hammer[life=300] makes a hammer with 3 durability
-			</BodyText>
-			<SubTitle>equip (boolean)</SubTitle>
-			<BodyText>Used to specify if a slot is equipped</BodyText>
-			<BodyText emphasized>
-						Example: hammer[equip] makes the hammer equipped. [equip] and [equip=true] are the same
-			</BodyText>
+				<Description className="Error">
+					The following commands will be available in future updates
+				</Description>
 
-			<Header>Command List</Header>
-			<BodyText>
-                        This is a list of available commands. All commands and items are case-insensitive
-			</BodyText>
-			<SubHeader>Initialize</SubHeader>
-			<SubHeader connected>Initialize X item1[meta] Y item2[meta] Z item3[meta] ...</SubHeader>
-			<SubTitle>Used for initializing inventory before simulation</SubTitle>
-			<BodyText>
-                        Fully resets the inventory by clearing all items and set Count to 0, then forcefully write the item list to inventory.
-                        This would reset any broken slot you already have, and any in-game checks that happen when adding items are disabled.
-                        For example, the items will appear in the order you specify, not in the in-game tab order
-			</BodyText>
-			<BodyText>
-                        If you specify count &gt; 1 for unstackable items like weapon or sheika slate, multiple of that item would be added.
-                        Game Data will be synced with Visible Inventory after the reset
-			</BodyText>
-			<BodyText>
-                        If you don't specify any item, it will make an empty inventory
-			</BodyText>
-			<BodyText>
-                        Note that this will not clear saves. You can use this command to initialize multiple saves
-			</BodyText>
-			<BodyText emphasized>Example: Initialize 1 Apple 2 Axe 3 Slate 4 SpiritOrb</BodyText>
+				<div>
+					<code className="CommandColorKeywordCommand">get|add|buy|pickup </code>
+					<code className="CommandColorItemName">[items ...]</code>
+				</div>
+				
+				<ParseCode>
+					get apple
+				</ParseCode>
+				<ParseCode>
+					add 3 pot lid 5 diamonds 1 slate 1 glider 4 orb
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Add items to inventory</Label>
+				
+				<Description className="Primary">
+					Add the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
+				</Description>
+				<Description className="Primary">
+					Like in game, you won't be able to obtain multiple unstackable key items, or multiple master sword in this way.
+					If a stackable item is at 999 or more when you invoke this command, the count is set to 999 (not fully accurate since you won't be able to pick up more items in game).
+				</Description>
+				<Description>
+					If you specify a count for unstackable items, they are added in different slots as if you pick them up in game, one after another.
+				</Description>
 
-			<h3 className="Reference">Save</h3>
-			<h3 className="Reference2">Save As NAME</h3>
+				<div>
+					<code className="CommandColorKeywordCommand">remove|sell|eat|drop </code>
+					<code className="CommandColorItemName">items ... </code>
+					<code className="CommandColorKeywordOther">[from slot </code>
+					<code className="CommandColorSlotNumber">X</code>
+					<code className="CommandColorKeywordOther">] </code>
+				</div>
+				
+				<ParseCode>
+					remove apple
+				</ParseCode>
+				<ParseCode>
+					sell 5 diamonds from slot 3
+				</ParseCode>
+				<ParseCode>
+					remove all diamonds
+				</ParseCode>
+				<ParseCode>
+					drop axe[equip=true]
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Simulate removing items in game</Label>
+				
+				<Description className="Primary">
+					Remove the item(s) from visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
+				</Description>
+				<Description>
+					When removing items, the simulator will try to match the stack exactly first, including metadata. 
+					In the 4th example, the equipped axe will be dropped instead of the left most one.
+				</Description>
+				<div>
+					<code className="CommandColorKeywordCommand">remove all</code>
+					<code className="CommandColorIdentifierOther"> type</code>
+				</div>
+				
+				<ParseCode>
+					remove all materials
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Easy way to get rid of everything</Label>
+				<Description className="Primary">
+					Remove the all items of a type from visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
+				</Description>
 
-			<h4 className="Reference">Simulates a hard save or auto save action</h4>
-			<p className="Reference">
-                        Writes Game Data to the corresponding save slot. The auto saves are specified by NAME.
-                        You can have as many auto saves as you want in the simulator.
-			</p>
-			<p className="Reference">
-                        You cannot save on Eventide/ToTS. However, the simulator does not enforce that.
-			</p>
+				<div>
+					<code className="CommandColorKeywordCommand">save </code>
+					<code className="CommandColorKeywordCommand">[as </code>
+					<code className="CommandColorIdentifierOther">file name ...</code>
+					<code className="CommandColorKeywordCommand">] </code>
+				</div>
+				
+				<ParseCode>
+					save
+				</ParseCode>
+				<ParseCode>
+					save as auto save at shop
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Simulates a hard save or auto save</Label>
+				
+				<Description className="Primary">
+					Writes Game Data to the corresponding save slot. The auto saves are specified by <code className="CommandColorIdentifierOther">file name</code>.
+                    You can have as many auto saves as you want in the simulator. If no file is specified, it will save to the manual save slot.
+				</Description>
+				<Description className="Primary Important">
+					The save file name is case-insensitive
+				</Description>
+				<Description className="Error">
+					You cannot save on Eventide/ToTS. However, the simulator does not enforce that.
+				</Description>
 
-			<p className="Reference Example">Example 1: Save</p>
-			<p className="Reference Example">Example 2: Save As MySave</p>
-			<p className="Reference">
-                        Example 1 will save to the manual save slot, while example 2 will save to the slot named "MySave".
-                        There cannot be spaces in the name. If "MySave" doesn't exist, a new slot is created
-			</p>
+				<div>
+					<code className="CommandColorKeywordCommand">reload </code>
+					<code className="CommandColorIdentifierOther">[file name ...]</code>
+				</div>
+				
+				<ParseCode>
+					reload
+				</ParseCode>
+				<ParseCode>
+					reload auto save at shop
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Simulates reloading a save</Label>
+				
+				<Description className="Primary">
+					First, reads Game Data from the corresponding save slot (manual or specified by <code className="CommandColorIdentifierOther">file name</code>)
+				</Description>
+				<Description className="Primary">
+					After that, the first mCount items in the visible inventory is removed, and mCount is decreased accordingly.
+                    Then, each item slot in the Game Data is added to the inventory.
+				</Description>
+				<Description className="Important">
+					The save file name is case-insensitive
+				</Description>
 
-			<h3 className="Reference">Reload (NAME)</h3>
-			<h4 className="Reference">Simulates reloading a save</h4>
-			<p className="Reference">
-                        First, reads Game Data from the corresponding save slot.
-                        If NAME is not given, the manual save is used unless "Use" commands are used before this (see below).
-                        If NAME is given, the corresponding save slot with that name is used
-			</p>
-			<p className="Reference">
-                        After that, the first Count items in the visible inventory is removed, and Count is decreased accordingly.
-                        Then, each item slot in the Game Data is added to the inventory.
-			</p>
+				<div>
+					<code className="CommandColorKeywordCommand">equip </code>
+					<code className="CommandColorItemName">item name </code>
+					<code className="CommandColorKeywordOther">[in slot </code>
+					<code className="CommandColorSlotNumber">X</code>
+					<code className="CommandColorKeywordOther">] </code>
+				</div>
+				
+				<ParseCode>
+					equip royal claymore
+				</ParseCode>
+				<ParseCode>
+					equip potlid in slot 3
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Simulates equipping something</Label>
+				
+				<Description className="Primary">
+					When equipping an item, all other item of the same type in the first tab is unequipped, then the item selected is equipped.
+				</Description>
+				<Description className="Primary">
+					Slot can be used if you have multiple of the same item. When slot is not specified, the leftmost item will be equipped.
+                    Note that you can use this command to equip something that is already equipped, which is not possible in game.
+                    You can also equip unequippable items like materials, but it is not meaningful
+				</Description>
+				<Description className="Error">
+					Note that you can specify metadata but it is ignored. 
+				</Description>
 
-			<p className="Reference Example">Example 1: Reload</p>
-			<p className="Reference Example">Example 2: Reload MySave</p>
+				<div>
+					<code className="CommandColorKeywordCommand">unequip </code>
+					<code className="CommandColorItemName">item name </code>
+					<code className="CommandColorKeywordOther">[in slot </code>
+					<code className="CommandColorSlotNumber">X</code>
+					<code className="CommandColorKeywordOther">] </code>
+				</div>
+				<div>
+					<code className="CommandColorKeywordCommand">unequip </code>
+					<code className="CommandColorKeywordCommand">[all] </code>
+					<code className="CommandColorIdentifierOther">type</code>
+				</div>
+				
+				<ParseCode>
+					unequip royal claymore
+				</ParseCode>
+				<ParseCode>
+					unequip potlid in slot 3
+				</ParseCode>
+				<ParseCode>
+					unequip weapon
+				</ParseCode>
+				<ParseCode>
+					unequip all shields
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Simulates unequipping something</Label>
+				
+				<Description className="Primary">
+					When unequipping an item, only the selected item is unequipped, not the other equipped items of the same type.
+				</Description>
+				<Description className="Primary">
+					Slot can be used if you have multiple of the same item. When slot is not specified, the leftmost equipped item will be unequipped.
+                    Note that you can use this command to unequip something that is already unequipped, which is useless.
+				</Description>
+				<Description className="Primary Important">
+					You cannot unequip arrows. However, you can use the <code className="CommandColorKeywordCommand">write</code> command to do that.	
+				</Description>
+				<Description className="Error">
+					Note that you can specify metadata but it is ignored. 
+				</Description>
 
-			<h3 className="Reference">Break X Slots</h3>
-			<h4 className="Reference">Simulate making X broken slots with hold smuggle glitch</h4>
-			<p className="Reference">
-                        Decrease inventory Count by X
-			</p>
-			<p className="Reference">
-                        This command does not automatically simulate the hold smuggle and sell process.
-                        It just changes count (i.e. make broken slots) with magic.
-			</p>
+				<div>
+					<code className="CommandColorKeywordCommand">shoot </code>
+					<code className="CommandColorItemAmount">X </code>
+					<code className="CommandColorKeywordCommand">arrow(s) </code>
+				</div>
+				
+				<ParseCode>
+					shoot 1 arrow
+				</ParseCode>
+				<ParseCode>
+					shoot 2 arrows
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Simulates shooting arrow without opening inventory</Label>
+				
+				<Description className="Primary">
+					When reloading a save with desynced game data, the equipped weapon/bow/shield are automatically corrupted, but not the arrows.
+                    To corrupt the equipped arrow slot, you need to shoot an arrow.
+				</Description>
+				<Description className="Important">
+					This command does not let you select which arrow to shoot.
+                    When you reload a save, Link should have the last equipped arrow slot equipped in the overworld.
+					<span className="Highlight">[needs confirmation]</span>
+				</Description>
+				
+				<ParseCode>
+					close game
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Simulates closing the game and restarting</Label>
+				
+				<Description>
+					This command does exactly what you think it does.
+				</Description>
 
-			<p className="Reference Example">Example: Break 4 Slots</p>
+				<ParseCode>
+					# comment
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Add comment to make your steps easier to understand</Label>
+				<Description />
+				
+			</Category>
+			<Category title="Advanced Commands">
+				<code className="CommandColorKeywordCommand">dnp </code>
+				<code className="CommandColorItemName">items ... </code>
+				<code className="CommandColorKeywordOther">[from slot </code>
+				<code className="CommandColorSlotNumber">X</code>
+				<code className="CommandColorKeywordOther">] </code>
+				
+				<ParseCode>
+					dnp 5 lizalfos tails 5 farosh horns
+				</ParseCode>
+				<ParseCode>
+					dnp apple from slot 2
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Shortcut for drop and pick up, for sorting inventory</Label>
+				
+				<Description>
+					This command drops and pick up each item stack in the specified order.
+                    You can also repeat items if you are combining more than 2 slots.
+				</Description>
 
-			<h3 className="Reference">Get/Add/Cook/Pickup/Buy item</h3>
-			<h3 className="Reference2">Get/Add/Cook/Pickup/Buy X item1[meta] Y item2[meta] Z item3[meta] ...</h3>
-			<h4 className="Reference">Simulate obtaining items in game</h4>
-			<p className="Reference">
-                        Add the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
-			</p>
-			<p className="Reference">
-                        Like in game, you won't be able to obtain multiple unstackable key items, or multiple master sword in this way.
-                        If a stackable item is at 999 or more when you invoke this command, the count is set to 999 (not fully accurate since you won't be able to pick up more items in game).
-			</p>
-			<p className="Reference">
-                        If you specify a count for unstackable items, they are added in different slots as if you pick them up in game, one after another.
-			</p>
-			<p className="Reference">
-                        Try to avoid plural forms as they often make search fail
-			</p>
+				<ParseCode>
+					sync gamedata
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Copy Visible Inventory to Game Data</Label>
+				<Description className="Primary">
+					Certain actions in game will cause gamedata be synced with visible inventory, including but not limited to: open and close inventory, dpad quick menu, drop items.
+				</Description>
+				<Description className="Important">
+					Furthermore, if visible inventory has Count = 0, Game Data will be empty.
+				</Description>
 
-			<p className="Reference Example">Example 1: Add Apple</p>
-			<p className="Reference Example">Example 2: Get 10 Apple</p>
-			<p className="Reference Example">Example 3: Pickup 10 Apple 5 Diamond 1 Slate 5 MasterSword[life=700]</p>
+				<div>
+					<code className="CommandColorKeywordCommand">init gamedata </code>
+					<code className="CommandColorItemName">[items ...]</code>
+				</div>
+				
+				<ParseCode>
+					init gamedata apple
+				</ParseCode>
+				<ParseCode>
+					init gamedata 3 pot lid 5 diamonds 1 slate 1 glider 4 orb
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Initialize Game Data</Label>
+				
+				<Description>
+					Like init, but only changes Game Data, not Visible Inventory. Use this to force Game Data to desync.
+				</Description>
 
-			<h3 className="Reference">With/Remove/Sell/Eat/Drop item</h3>
-			<h3 className="Reference2">With/Remove/Sell/Eat/Drop item From Slot Y</h3>
-			<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item From Slot Y</h3>
-			<h3 className="Reference2">With/Remove/Sell/Eat/Drop X item1[meta] Y item2[meta] Z item3[meta] ...</h3>
-			<h4 className="Reference">Simulate removing items in game</h4>
-			<p className="Reference">
-                        Remove the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
-			</p>
-			<p className="Reference">
-                        When number of item is not specified, it defaults to 1. Up to X items will be removed from inventory, even when they span multiple slots.
-                        If X &gt; total number of items in inventory, all of them will be removed.
-			</p>
-			<p className="Reference">
-                        When slot is specified, it starts removing from slot X (slot 1 is the leftmost slot with that item, slot 2 is the second leftmost slot with that item).
-			</p>
-			<BodyText>
-						When removing items, the simulator will try to match the stack exactly, including metadata. If no items are found this way, the simulator will then try to match an item while ignoring the metadata
-			</BodyText>
-			<p className="Reference">
-                        Try to avoid plural forms as they often make search fail
-			</p>
+				<div>
+					<code className="CommandColorKeywordCommand">enter|exit eventide|tots </code>
+				</div>
+				
+				<ParseCode>
+					enter eventide
+				</ParseCode>
+				<ParseCode>
+					exit eventide
+				</ParseCode>
+				<ParseCode>
+					enter tots
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Simulates entering/exiting Eventide or Trial of the Sword</Label>
+				
+				<Description className="Primary">
+					When entering Eventide or TotS, the entire inventory is cleared except for key items regardless of inventory count.
+                    While the challenge is active, none of the inventory changes are synced to game data.
+				</Description>
+				<Description>
+					When exiting the challenge, the game reloads the game data as if reloading a save
+				</Description>
 
-			<p className="Reference Example">Example 1: Remove Apple</p>
-			<p className="Reference Example">Example 2: Drop 10 Diamond</p>
-			<p className="Reference Example">Example 3: Sell 10 Apple 5 Diamond</p>
-			<p className="Reference Example">Example 4: Sell 5 Apple From Slot 3</p>
+				<div>
+					<code className="CommandColorKeywordCommand">write </code>
+					<code className="CommandColorMetaKey">meta </code>
+					<code className="CommandColorKeywordCommand">to </code>
+					<code className="CommandColorItemName">item </code>
+					<code className="CommandColorKeywordOther">[in slot </code>
+					<code className="CommandColorSlotNumber">X</code>
+					<code className="CommandColorKeywordOther">]</code>
+				</div>
+				
+				<ParseCode>
+					write [life=700] to potlid
+				</ParseCode>
+				<ParseCode>
+					write [life=700] to potlid in slot 2
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Change the metadata of item</Label>
+				
+				<Description className="Primary">
+					This can be used to modify durability on weapon or count on items. This will NOT sync inventory to game data.
+				</Description>
+				<Description className="Important">
+					if you write 0 to life, it will not cause the slot to be removed
+				</Description>
 
-			<h3 className="Reference">D&amp;P X item1[meta] Y item2[meta] Z item3[meta] ...</h3>
-			<h4 className="Reference">Shortcut for drop and pick up, for sorting inventory</h4>
-			<p className="Reference">
-                        This command drops and pick up each item stack in the specified order.
-                        You can also repeat items if you are combining more than 2 slots.
-			</p>
-			<p className="Reference">
-                        You can only drop from slot 1 with this shortcut.
-			</p>
-			<p className="Reference Example">Example 1: D&amp;P 5 Diamond</p>
-			<p className="Reference Example">Example 2: D&amp;P 20 Shaft 5 Diamond</p>
-			<p className="Reference Example">Example 3: D&amp;P 5 Diamond 10 Diamond</p>
-
-			<h3 className="Reference">Equip item</h3>
-			<h3 className="Reference2">Equip item In Slot X</h3>
-			<h4 className="Reference">Simulates equipping something</h4>
-			<p className="Reference">
-                        When equipping an item, all other item of the same type in the first tab is unequipped, then the item selected is equipped.
-			</p>
-			<p className="Reference">
-                        Slot can be used if you have multiple of the same item. When slot is not specified, the leftmost item will be equipped.
-                        Note that you can use this command to equip something that is already equipped, which is not possible in game.
-                        You can also equip unequippable items like materials, but it is not meaningful
-			</p>
-			<BodyText emphasized>
-						Note that you cannot specify metadata. If you need to equip a specific item among others of the same type, use slot to specify which
-			</BodyText>
-			<p className="Reference Example">Example 1: Equip Weapon</p>
-			<p className="Reference Example">Example 2: Equip Weapon In Slot 3</p>
-
-			<h3 className="Reference">Unequip item</h3>
-			<h3 className="Reference2">Unequip item In Slot X</h3>
-			<h4 className="Reference">Simulates unequipping something</h4>
-			<p className="Reference">
-                        When unequipping an item, only the selected item is unequipped.
-			</p>
-			<p className="Reference">
-                        Slot can be used if you have multiple of the same item. When slot is not specified, the leftmost equipped item will be unequipped.
-                        Note that you can use this command to unequip something that is already unequipped, which is useless.
-                        You cannot unequip arrows.
-			</p>
-			<BodyText emphasized>
-						Note that you cannot specify metadata. If you need to equip a specific item among others of the same type, use slot to specify which
-			</BodyText>
-			<p className="Reference Example">Example 1: Unequip Shield</p>
-			<p className="Reference Example">Example 2: Unequip Shield In Slot 5</p>
-
-			<h3 className="Reference">Close Game</h3>
-			<h4 className="Reference">Simulates closing the game and restarting</h4>
-			<p className="Reference">
-                        When closing the game, Visible Inventory and Game Data are erased
-			</p>
-			<p className="Reference Example">Example: Close Game</p>
-
-			<SubHeader>Sync GameData</SubHeader>
-			<SubTitle>Copy Visible Inventory to Game Data</SubTitle>
-			<BodyText>
-                        Certain actions in game will cause gamedata be synced with visible inventory, including but not limited to: open and close inventory, dpad quick menu, drop items.
-			</BodyText>
-			<BodyText>
-                        Furthermore, if visible inventory has Count = 0, Game Data will be empty.
-			</BodyText>
-			<BodyText emphasized>Example: Sync GameData</BodyText>
-
-			<SubHeader>Init GameData</SubHeader>
-			<SubHeader connected>Init GameData X item1[meta] Y item2[meta] Z item3[meta] ...</SubHeader>
-			<SubTitle>Used for forcing the game data to be desynced with visible inventory in simulation</SubTitle>
-			<BodyText>
-                        Similar to <Emphasized>Initialize</Emphasized>, this command sets up game data with items in the specified order. However, this command does not change visible inventory.
-						This can be used to set up an initial state where Game Data is desynced.
-			</BodyText>
-			<BodyText emphasized>Example: Init GameData 1 Apple 2 Axe 3 Slate 4 SpiritOrb</BodyText>
-
-			<h3 className="Reference">Shoot X Arrow</h3>
-			<h4 className="Reference">Simulates shooting arrow without opening inventory</h4>
-			<p className="Reference">
-                        When reloading a save with desynced game data, the equipped weapon/bow/shield are automatically corrupted, but not the arrows.
-                        To corrupt the equipped arrow slot, you need to shoot an arrow.
-			</p>
-			<p className="Reference">
-                        This command does not let you select which arrow to shoot.
-                        When you reload a save, Link should have the last equipped arrow slot equipped in the overworld.
-				<span className="Example">[needs confirmation]</span>
-			</p>
-			<p className="Reference Example">Example: Shoot 1 Arrow</p>
-
-			<h3 className="Reference">Enter/Exit Eventide</h3>
-			<h3 className="Reference2">Enter/Exit TOTS</h3>
-			<h4 className="Reference">Simulates entering/exiting Eventide or Trial of the Sword</h4>
-			<p className="Reference">
-                        When entering Eventide or TotS, the entire inventory is cleared except for key items regardless of inventory count.
-                        While the challenge is active, none of the inventory changes are synced to game data.
-			</p>
-			<p className="Reference">
-                        When exiting the challenge, the game reloads the game data as if reloading a save
-			</p>
-			<p className="Reference Example">Example: Enter Eventide</p>
-
-			<SubHeader>Write [meta] To item</SubHeader>
-			<SubHeader connected>Write [meta] To item In Slot X</SubHeader>
-			<SubTitle>Change the metadata of item</SubTitle>
-			<BodyText>
-						This can be used to modify durability on weapon or count on items. This will sync inventory to game data.
-			</BodyText>
-			<BodyText>
-						if you write 0 to life, it will not cause the slot to be removed
-			</BodyText>
-			<BodyText emphasized>Example: Write [life=1000] To pot lid</BodyText>
-			<BodyText emphasized>Example: Write [life=1000] To pot lid In Slot 3</BodyText>
+				<div>
+					<code className="CommandColorKeywordCommand">cook [heart crit] with </code>
+					<code className="CommandColorItemName">items ... </code>
+					<code className="CommandColorKeywordOther">[from slot </code>
+					<code className="CommandColorSlotNumber">X</code>
+					<code className="CommandColorKeywordOther">]</code>
+				</div>
+				
+				<ParseCode>
+					cook with 1 farosh horn 3 lotus 1 swift carrot
+				</ParseCode>
+				<ParseCode>
+					cook heart crit with apple from slot 3
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Simulate cooking</Label>
+				
+				<Description className="Primary">
+					Removes the list of items and add the cook result to inventory. If you specify more than 5 items, all of them will be removed, but only the first 5 will be used in cooking.
+				</Description>
+				<Description className="Primary">
+					If <code>heart crit</code> is specified, will simulate a critical cooking on hearts.
+				</Description>
+				<Description className="Error">
+					You cannot cook in game if you have 60 food. This is NOT enforced in the simulator.
+				</Description>
+				
+			</Category>
+			<Category title="Super Commands">
+				<Description className="Error">
+					This feature will be available in a future update
+				</Description>
+			</Category>
 
 		</Page>
 	);

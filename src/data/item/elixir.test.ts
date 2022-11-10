@@ -22,14 +22,14 @@ describe("data/item/elixir", ()=>{
         CookEffect.Hearty,
         CookEffect.Energizing,
         CookEffect.Enduring,
-        CookEffect.Speed,
+        CookEffect.Hasty,
         CookEffect.Fireproof,
-        CookEffect.ColdResist,
-        CookEffect.HotResist,
-        CookEffect.ElectricResist,
-        CookEffect.Attack,
-        CookEffect.Defense,
-        CookEffect.Stealth,
+        CookEffect.Chilly,
+        CookEffect.Spicy,
+        CookEffect.Electro,
+        CookEffect.Mighty,
+        CookEffect.Tough,
+        CookEffect.Sneaky,
     ];
     it("converts elixirs correctly", ()=>{
 

@@ -5,7 +5,7 @@ import { AbstractProperCommand, Command } from "./command";
 import { getSlotsToAdd } from "./helper";
 import { ItemStackArg } from "./ItemStackArg";
 import { parseASTItems } from "./parse.item";
-import { codeBlockFromRange, codeBlockFromRangeObj, CodeBlockTree, delegateParseItem, ParserItem } from "./type";
+import { codeBlockFromRange, CodeBlockTree, delegateParseItem, ParserItem } from "./type";
 
 
 export class CommandInitGameData extends AbstractProperCommand {
@@ -27,7 +27,7 @@ export class CommandInitGameData extends AbstractProperCommand {
 
 export const parseASTCommandInitGamedata: ParserItem<ASTCommandInitGameData, CommandInitGameData> = (ast, search) => {
     const codeBlocks: CodeBlockTree = [];
-    codeBlocks.push(codeBlockFromRangeObj(ast.mLiteralInitialize0, "keyword.command"));
+    codeBlocks.push(codeBlockFromRange(ast.mLiteralInitialize0, "keyword.command"));
 	codeBlocks.push(codeBlockFromRange(ast.literal1, "keyword.command"));
     return delegateParseItem(ast.mZeroOrMoreItems2, search, parseASTItems, (i,c)=>new CommandInitGameData(i,c), codeBlocks);
 }

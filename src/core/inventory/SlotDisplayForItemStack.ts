@@ -1,4 +1,5 @@
-import { CookEffect, ItemStack, ItemType, WeaponModifier } from "data/item";
+import clsx from "clsx";
+import { CookEffect, getWeaponModifierName, ItemStack, ItemType, WeaponModifier } from "data/item";
 import { SlotDisplay } from "./types";
 
 export class SlotDisplayForItemStack implements SlotDisplay {
@@ -49,59 +50,77 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 	}
 
 	get modifierImage(): string | undefined{
+		const root = "assets/img/Modifiers/";
 		if(!this.isEquipment()){
 			// try food effect
 			if(this.stack.foodEffect === CookEffect.None){
 				return undefined;
 			}
-			return `assets/img/Modifiers/${CookEffect[this.stack.foodEffect]}.png`;
+			return `${root}Cook${CookEffect[this.stack.foodEffect]}.png`;
 		}
-		const applicableModifiers: number[] = [
-			WeaponModifier.AttackUp,
-			WeaponModifier.DurabilityUp
-		];
-		// Add the right modifiers for the type
-		switch(this.stack.item.type){
-			case ItemType.Weapon:
-				applicableModifiers.push(
-					WeaponModifier.CriticalHit,
-					WeaponModifier.LongThrow
-				);
-				break;
-			case ItemType.Bow:
-				applicableModifiers.push(
-					WeaponModifier.MultiShot,
-					WeaponModifier.Zoom,
-					WeaponModifier.QuickShot
-				);
-				break;
-			case ItemType.Shield:
-				applicableModifiers.push(
-					WeaponModifier.SurfMaster,
-					WeaponModifier.GuardUp
-				);
-		}
-		let selectedModifier: number = WeaponModifier.None;
-		for(let i=0;i<applicableModifiers.length;i++){
-			if((applicableModifiers[i] & this.stack.weaponModifier) !== WeaponModifier.None){
-				selectedModifier = applicableModifiers[i];
+
+		const selectedModifier = selectModifier(this.stack);
+		if(!selectedModifier){
+			if(this.stack.item.bowMultishot > 0){
+				// Default multishot
+				return `${root}Multishot3.png`;
 			}
-		}
-		// Add default bow modifier (only disable multishot)
-		if(selectedModifier === WeaponModifier.None && this.stack.item.type === ItemType.Bow){
-			if (this.stack.item.bowMultishot > 0 || this.stack.item.bowRapidfire > 0){
-				selectedModifier = WeaponModifier.MultiShot;
-			}
-		}
-		if(selectedModifier === WeaponModifier.None){
 			return undefined;
 		}
-		// TODO: return the image
+		
+		const isYellow = (this.stack.weaponModifier & WeaponModifier.Yellow) !== WeaponModifier.None;
+		const yellowString = isYellow ? "Yellow" : "";
+		
+		
+		if(selectedModifier === WeaponModifier.AttackUp){
+			if (this.stack.item.type === ItemType.Bow){
+				return `${root}BowAttackUp${yellowString}.png`;
+			}else{
+				return `${root}WeaponAttackUp${yellowString}.png`;
+			}
+		}
+		if(selectedModifier === WeaponModifier.MultiShot){
+			if(this.stack.weaponValue <= 3){
+				return `${root}Multishot3.png`;
+			}else if(this.stack.weaponValue === 5){
+				return `${root}Multishot5.png`;
+			}
+			return `${root}MultishotX.png`;
+		}
+
+		
+		return `${root}${getWeaponModifierName(selectedModifier)}${yellowString}.png`;
 		
 	}
 
-	get modifierText(): string | undefined{
-		return undefined; //TODO
+	get modifierText(): string{
+		if(!this.isEquipment()){
+			return "";
+		}
+		const selectedModifier = selectModifier(this.stack);
+		
+		if(selectedModifier){
+			// currently we only display attack up and guard up numbers
+			if((selectedModifier & WeaponModifier.AttackUp) !== WeaponModifier.None){
+				return `+${this.stack.weaponValue}`;
+			}
+			if((selectedModifier & WeaponModifier.GuardUp) !== WeaponModifier.None){
+				let value = this.stack.weaponValue;
+				if((this.stack.weaponModifier & WeaponModifier.AttackUp) !== WeaponModifier.None){
+					// if attack up is also present, guard up value is doubled
+					value += this.stack.weaponValue;
+				}
+				return `+${value}`;
+			}
+		}
+		return "";
+	}
+
+	get modifierClassName(): string {
+		if(!this.modifierText){
+			return "";
+		}
+		return clsx("ItemModifierStringValue", (this.stack.weaponModifier & WeaponModifier.Yellow) !== WeaponModifier.None && "ItemModifierStringValueYellow");
 	}
 
 	public getTooltip(translate: (s: string) => string): [string, string][] {
@@ -172,4 +191,45 @@ const getFixedPointReductionString = (value: number): string => {
 	const percentage = (value-1000)/10;
 
 	return `${percentage > 0 ? "+":""}${percentage}%`;
+}
+
+const selectModifier = (stack: ItemStack): number | undefined=> {
+	const applicableModifiers: number[] = [];
+	if(stack.item.type === ItemType.Weapon || stack.item.type === ItemType.Bow){
+		applicableModifiers.push(WeaponModifier.AttackUp);
+	}
+	applicableModifiers.push(WeaponModifier.DurabilityUp);
+	// Add the right modifiers for the type
+	switch(stack.item.type){
+		case ItemType.Weapon:
+			applicableModifiers.push(
+				WeaponModifier.CriticalHit,
+				WeaponModifier.LongThrow
+			);
+			break;
+		case ItemType.Bow:
+			applicableModifiers.push(
+				WeaponModifier.MultiShot,
+				WeaponModifier.Zoom,
+				WeaponModifier.QuickShot
+			);
+			break;
+		case ItemType.Shield:
+			applicableModifiers.push(
+				WeaponModifier.SurfMaster,
+				WeaponModifier.GuardUp
+			);
+	}
+	let selectedModifier: number = WeaponModifier.None;
+	for(let i=0;i<applicableModifiers.length;i++){
+		if((applicableModifiers[i] & stack.weaponModifier) !== WeaponModifier.None){
+			selectedModifier = applicableModifiers[i];
+			break;
+		}
+	}
+
+	if(selectedModifier === WeaponModifier.None){
+		return undefined;
+	}
+	return selectedModifier;
 }

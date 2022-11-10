@@ -5,7 +5,7 @@ import { Page } from "ui/surfaces";
 import { useRuntime } from "data/runtime";
 import { useMemo, useState } from "react";
 import { SlotDisplay } from "core/inventory";
-import { SlotDisplayForItemStack } from "core/inventory/DisplayableInventory";
+import { SlotDisplayForItemStack } from "core/inventory/SlotDisplayForItemStack";
 
 export const ItemExplorerPanel: React.FC = ()=>{
 	const [searchString, setSearchString] = useState<string>("");
@@ -25,7 +25,11 @@ export const ItemExplorerPanel: React.FC = ()=>{
 		
 		const displaySlots: SlotDisplay[] = [];
 		if(result){
-			displaySlots.push(new SlotDisplayForItemStack(result).init(false, isIconAnimated));
+			const firstSlot = new SlotDisplayForItemStack(result);
+			firstSlot.init(false, isIconAnimated);
+			firstSlot.propertyClassName = "Highlight";
+			firstSlot.propertyString = "\u2713"
+			displaySlots.push(firstSlot);
 		}
 		rest.forEach(stack=>displaySlots.push(new SlotDisplayForItemStack(stack).init(false, isIconAnimated)));
 		return displaySlots;
@@ -45,8 +49,6 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					durability: "40",
 					isEquipped: false,
 					isBrokenSlot: false,
-					propertyString: "",
-					propertyClassName: "",
 					getTooltip: ()=>[]
 				}} />
 				<ItemSlot slot={{
@@ -55,8 +57,6 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					durability: undefined,
 					isEquipped: false,
 					isBrokenSlot: false,
-					propertyString: "",
-					propertyClassName: "",
 					getTooltip: ()=>[]
 				}} />
 				<Description>
@@ -71,8 +71,6 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					durability: "40",
 					isEquipped: false,
 					isBrokenSlot: true,
-					propertyString: "",
-					propertyClassName: "",
 					getTooltip: ()=>[]
 				}} />
 				<Description>
@@ -89,8 +87,6 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					durability: undefined,
 					isEquipped: true,
 					isBrokenSlot: false,
-					propertyString: "",
-					propertyClassName: "",
 					getTooltip: ()=>[]
 				}} />
 				<Description className="Primary">

@@ -93,9 +93,7 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 	}else{
 		content =
 			<div style={{
-				display: "flex",
-				flexDirection: "column",
-				minHeight: "100%"
+				height: "100%"
 			}}>
 				{
 					showGameData && <Section titleText="Game Data" className="SheikaBackground" style={{
@@ -103,7 +101,7 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 						color: "white",
 						borderBottom: "1px solid black",
 						boxSizing: "border-box",
-						flex: 1,
+						height: "50%",
 						overflowY: "auto"
 					} }>
 						<ItemList slots={simulationState.displayableGameData.getDisplayedSlots(isIconAnimated)}/>
@@ -117,7 +115,7 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 					backgroundRepeat: "no-repeat",
 					backgroundSize: "cover",
 					boxSizing: "border-box",
-					flex: 1,
+					height: showGameData ? "50%" : "100%",
 					overflowY: "auto",
 					color: "white"
 				} }>
@@ -130,8 +128,6 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 
 	return <div id="DisplayPane" style={{
 		height: "100%",
-		display: "flex",
-		flexDirection: "column"
 	} }>
 		<div style={{
 			boxSizing: "border-box",
@@ -152,8 +148,8 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 
 		</div>
 		<div style={{
-			flexGrow: 1,
-			position: "relative"
+			position: "relative",
+			height: "calc( 100% - 40px )"
 		}}>
 			
 			{content}

@@ -25,8 +25,8 @@ export interface Command {
     readonly cmdErr: CmdErr;
     // Get the error string, empty string if no error
     readonly err: string[];
-    // if the command doesn't do anything (will be skipped when using keyboard control)
-    readonly isNop: boolean;
+    // if the command should be skipped with keyboard (like comments)
+    readonly shouldSkipWithKeyboard: boolean;
 };
 
 // Shared command functions
@@ -61,7 +61,7 @@ export class AbstractProperCommand implements Command {
     get err(): string[] {
         return [];
     }
-    isNop = false;
+    shouldSkipWithKeyboard = false;
 };
 
 // Nop command: does nothing (like a comment)
@@ -76,7 +76,7 @@ export class CommandNop extends AbstractProperCommand {
     equals(other: Command): boolean {
         return other instanceof CommandNop;
     }
-    isNop = true;
+    shouldSkipWithKeyboard = true;
 }
 
 // Error command: does nothing, but because of error
@@ -97,7 +97,7 @@ export class ErrorCommand implements Command {
         // error message doesn't have to match
         return other instanceof ErrorCommand && this.cmdErr === other.cmdErr;
     }
-    isNop = true;
+    shouldSkipWithKeyboard = false;
 };
 
 export class CommandHint implements Command {
@@ -124,5 +124,5 @@ export class CommandHint implements Command {
     get cmdErr(): CmdErr {return this.delegate.cmdErr; }
     get err(): string[] {return this.delegate.err; }
     get codeBlocks(): CodeBlock[] { return this.delegate.codeBlocks; }
-    isNop = true;
+    shouldSkipWithKeyboard = false;
 }

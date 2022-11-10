@@ -2,22 +2,7 @@
 
 import { CookEffect, Item } from "./type";
 
-const ElixirCache: {
-    [C in CookEffect]: Item | undefined
-} = {
-    [CookEffect.None]: undefined,
-    [CookEffect.HotResist]: undefined,
-    [CookEffect.ColdResist]: undefined,
-    [CookEffect.ElectricResist]: undefined,
-    [CookEffect.Stealth]: undefined,
-    [CookEffect.Energizing]: undefined,
-    [CookEffect.Enduring]: undefined,
-    [CookEffect.Speed]: undefined,
-    [CookEffect.Attack]: undefined,
-    [CookEffect.Defense]: undefined,
-    [CookEffect.Fireproof]: undefined,
-    [CookEffect.Hearty]: undefined,
-};
+const ElixirCache = {} as Record<CookEffect, Item>;
 
 // Elixirs are dynamic and the item changes depending on the cook effect
 export const addElixir = (elixir: Item, effect: CookEffect): void => {

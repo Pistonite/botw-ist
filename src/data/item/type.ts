@@ -151,32 +151,41 @@ export const WeaponModifier = {
     Yellow: 1 << 31
 } as const;
 
+export const getWeaponModifierName = (modifier: number): string => {
+    for(const name in WeaponModifier){
+        if (WeaponModifier[name as keyof typeof WeaponModifier] === modifier){
+            return name;
+        }
+    }
+    return "";
+}
+
 export enum CookEffect {
     None,
-    HotResist,
-    ColdResist,
-    ElectricResist,
-    Stealth,
+    Chilly, // Alias: hotresist
+    Spicy, // Alias: coldresist
+    Electro,
+    Sneaky,// Alias: stealth
     Energizing,
     Enduring,
-    Speed,
-    Attack,
-    Defense,
+    Hasty, // Alias: speed
+    Mighty, 
+    Tough,
     Fireproof,
     Hearty,
 };
 
 export const iterateCookEffect = (): CookEffect[] => [
     CookEffect.None,
-    CookEffect.HotResist,
-    CookEffect.ColdResist,
-    CookEffect.ElectricResist,
-    CookEffect.Stealth,
+    CookEffect.Chilly,
+    CookEffect.Spicy,
+    CookEffect.Electro,
+    CookEffect.Sneaky,
     CookEffect.Energizing,
     CookEffect.Enduring,
-    CookEffect.Speed,
-    CookEffect.Attack,
-    CookEffect.Defense,
+    CookEffect.Hasty,
+    CookEffect.Mighty,
+    CookEffect.Tough,
     CookEffect.Fireproof,
     CookEffect.Hearty,
 ];

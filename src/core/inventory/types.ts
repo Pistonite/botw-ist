@@ -15,11 +15,12 @@ export interface SlotDisplay {
     readonly isBrokenSlot: boolean,
 	// Override the property string, displayed at the bottom right
 	readonly propertyString?: string,
-    readonly propertyClassName: string,
+    readonly propertyClassName?: string,
 	// Modifier image displayed at the top right
 	readonly modifierImage?: string,
 	// Modifier string, displayed at the top right next to modifier image
 	readonly modifierText?: string,
+	readonly modifierClassName?: string,
 	// tooltip
 	getTooltip: (translate: (s:string)=>string)=>[string, string][],
 }

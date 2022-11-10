@@ -20,6 +20,7 @@ import {
 } from "ui/panels";
 
 import { parseCommand } from "core/command/parsev2";
+import { SavePanel } from "ui/panels/SavePanel";
 
 export const App: React.FC =  () => {
 
@@ -60,21 +61,21 @@ export const App: React.FC =  () => {
 		window.onkeydown=(e)=>{
 			if(e.code==="ArrowDown"){
 				let nextCommandIndex = displayIndex+1;
-				while(nextCommandIndex<commandData.length && commands[nextCommandIndex].isNop){
+				while(nextCommandIndex<commandData.length && commands[nextCommandIndex].shouldSkipWithKeyboard){
 					nextCommandIndex++;
 				}
-				if(nextCommandIndex===commandData.length-1){
-					const arrCopy = [...commandData];
-					arrCopy.push("");
-					setCommandData(arrCopy);
-					setDisplayIndex(arrCopy.length-1);
+				if(nextCommandIndex>=commandData.length-1){
+					setCommandData(produce(commandData, newData=>{
+						newData.push("");
+					}))
+					setDisplayIndex(commandData.length);
 				}else{
 
 					setDisplayIndex(Math.min(commandData.length-1, nextCommandIndex));
 				}
 			}else if(e.code==="ArrowUp"){
 				let nextCommandIndex = displayIndex-1;
-				while(nextCommandIndex>=0 && commands[nextCommandIndex].isNop){
+				while(nextCommandIndex>=0 && commands[nextCommandIndex].shouldSkipWithKeyboard){
 					nextCommandIndex--;
 				}
 				setDisplayIndex(Math.max(0, nextCommandIndex));
@@ -101,78 +102,108 @@ export const App: React.FC =  () => {
 
 	const sideWidth = page === "#setting" ? 500 : 300;
 	const showSavesSetting = setting("showSaves");
-	let showSaves: boolean;
-	if(showSavesSetting === "auto"){
-		if(theSimulationState){
-			showSaves = theSimulationState.numberOfSaves() > 1;
+	let showSaves: boolean = false;
+	if(page === "#simulation"){
+		if(showSavesSetting === "auto"){
+			if(theSimulationState){
+				showSaves = theSimulationState.numberOfSaves() > 1;
+			}else{
+				showSaves = false;
+			}
+	
 		}else{
-			showSaves = false;
+			showSaves = showSavesSetting;
 		}
-
-	}else{
-		showSaves = showSavesSetting;
 	}
+	
+	
 
 	return (
 		<div className='Calamity'>
 
 			<NavPanel />
-
-			<div id="SidePane" style={{
-				width: sideWidth,
-				float: "left",
+			<div id="Main" style={{
 				height: "calc( 100vh - 40px )",
+				backgroundColor: "#262626",
 			}}>
-				{
-					page !== "#setting" &&
-					<SimulationSidePanel
-						commands={commands}
-						displayIndex={displayIndex}
-						setDisplayIndex={setDisplayIndex}
-						selectedSaveName={selectedSaveName}
-						setSelectedSaveName={setSelectedSaveName}
-						contextMenuState={contextMenuState}
-						setContextMenuState={setContextMenuState}
-						simulationState={theSimulationState}
-						showSaves={showSaves}
-					/>
-				}
-				{
-					page === "#setting" && <SettingPanel />
-				}
+				<div style={{
+					height: showSaves?"calc( 100vh - 40px - 220px )":"calc( 100vh - 40px )"
+				}}>
+					<div style={{
+						display: "flex",
+						height: "100%"
+					}}>
+						<div id="SidePane" style={{
+							flexShrink: 0,
+							width: sideWidth,
+						}}>
+							{
+								page !== "#setting" &&
+								<SimulationSidePanel
+									commands={commands}
+									displayIndex={displayIndex}
+									setDisplayIndex={setDisplayIndex}
+									selectedSaveName={selectedSaveName}
+									setSelectedSaveName={setSelectedSaveName}
+									contextMenuState={contextMenuState}
+									setContextMenuState={setContextMenuState}
+									simulationState={theSimulationState}
+									showSaves={showSaves}
+								/>
+							}
+							{
+								page === "#setting" && <SettingPanel />
+							}
 
+						</div>
+						<div style={{
+							flexGrow: 1
+						}}>
+						{	(page === "#simulation" || page === "#setting") &&
+								<SimulationMainPanel
+									displayIndex={displayIndex}
+									selectedSaveName={selectedSaveName}
+									command={commands[displayIndex]}
+									commandText={commandData[displayIndex]}
+									simulationState={theSimulationState}
+									showSaves={showSaves}
+								/>
+							}
+							{
+								page === "#reference" && <ReferencePage />
+							}
+							{
+								page === "#items" && <ItemExplorerPanel />
+							}
+							{
+								page === "#options" && <ScriptOptionPanel />
+							}
+							{
+								page === "#help" && <HelpPanel />
+							}
+						</div>
+						
+							
+						
+					</div>
+					
+				</div>
+				{
+					showSaves && 
+					<div style={{
+						height: 220
+					}}>
+						<SavePanel 
+							selectedSaveName={selectedSaveName}
+							setSelectedSaveName={setSelectedSaveName}
+							simulationState={theSimulationState}
+							showSaves={showSaves}
+						/>
+					</div>
+				}
 			</div>
-			<div id="MainPane" style={{
-				position: "absolute",
-				top: 40,
-				right: 0,
-				bottom: 0,
-				left: sideWidth,
-				backgroundColor: "#262626"
-			}}>
-				{	(page === "#simulation" || page === "#setting") &&
-					<SimulationMainPanel
-						displayIndex={displayIndex}
-						selectedSaveName={selectedSaveName}
-						command={commands[displayIndex]}
-						commandText={commandData[displayIndex]}
-						simulationState={theSimulationState}
-						showSaves={showSaves}
-					/>
-				}
-				{
-					page === "#reference" && <ReferencePage />
-				}
-				{
-					page === "#items" && <ItemExplorerPanel />
-				}
-				{
-					page === "#options" && <ScriptOptionPanel />
-				}
-				{
-					page === "#help" && <HelpPanel />
-				}
-			</div>
+
+			
 
 			{
 				contextMenuState.index >= 0 && contextMenuState.index < commands.length && <div style={{

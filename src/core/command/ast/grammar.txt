@@ -76,13 +76,13 @@ CommandRemove => LiteralRemove ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 CommandDrop => <drop> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 CommandEat => <eat> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 CommandDnp => LiteralDnp ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
-CommandEquip => <equip> ArgumentOneItemMaybeInSlot
+CommandEquip => <equip> ArgumentSingleItemMaybeInSlot
 CommandUnequipAll => <unequip> LiteralMaybeAllItemType
-CommandUnequip => <unequip> ArgumentOneItemMaybeInSlot
+CommandUnequip => <unequip> ArgumentSingleItemMaybeInSlot
 CommandShoot => <shoot> AmountOrAll LiteralArrow
 CommandEnterTrial => <enter> LiteralTrial
 CommandExitTrial => LiteralLeave LiteralTrial
-CommandWriteMetadata => <write> Metadata <to> ArgumentOneItemMaybeInSlot
+CommandWriteMetadata => <write> Metadata <to> ArgumentSingleItemMaybeInSlot
 CommandSave => <save> MaybeClauseSaveTarget
 CommandReload => <reload> IdentifierPrime
 CommandBreakSlots => <break> Integer LiteralSlot MaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot
@@ -123,7 +123,6 @@ MaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot => ArgumentWithOneOrMoreIte
 ArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot => <with> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 
 # I [meta] [in slot ...]
-ArgumentOneItemMaybeInSlot => ArgumentSingleItemMaybeInSlot
 ArgumentSingleItemMaybeInSlot => Identifier ArgumentSingleItemMaybeInSlotAIdentifier
 ---
 ArgumentSingleItemMaybeInSlotAIdentifier =>
@@ -191,7 +190,7 @@ ClauseFromSlot => <from> LiteralSlot Integer
 MaybeClauseInSlot => ClauseInSlot | Epsilon
 ClauseInSlot => <in> LiteralSlot Integer
 MaybeClauseSaveTarget => ClauseSaveTarget | Epsilon
-ClauseSaveTarget => <as> Identifier IdentifierPrime
+ClauseSaveTarget => <as> OneOrMoreIdentifiers
 
 # Items
 ZeroOrMoreItems => SingleItem | ItemStackPrime

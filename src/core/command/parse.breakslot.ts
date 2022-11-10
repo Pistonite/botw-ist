@@ -5,7 +5,7 @@ import { AbstractProperCommand, Command } from "./command";
 import { ItemStackArg } from "./ItemStackArg";
 import { parseASTInteger } from "./parse.basis";
 import { parseASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot } from "./parse.clause.with.fromslot";
-import { CodeBlock, codeBlockFromRange, codeBlockFromRangeObj, CodeBlockTree, delegateParseItem, flattenCodeBlocks, Parser, ParserItem, ParserSafe } from "./type";
+import { CodeBlock, codeBlockFromRange, CodeBlockTree, delegateParseItem, flattenCodeBlocks, Parser, ParserItem, ParserSafe } from "./type";
 
 export class CommandBreakSlots extends AbstractProperCommand {
     private slot: number;
@@ -34,7 +34,7 @@ export const parseASTCommandBreakSlots: ParserItem<ASTCommandBreakSlots, Command
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     const [numberToBreak, numberBlocks] = parseASTInteger(ast.mInteger1);
     flattenCodeBlocks(codeBlocks, numberBlocks, "slot.number");
-	codeBlocks.push(codeBlockFromRangeObj(ast.mLiteralSlot2, "keyword.command"));
+	codeBlocks.push(codeBlockFromRange(ast.mLiteralSlot2, "keyword.command"));
     return delegateParseItem(
         ast.mMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot3, 
         search, 
@@ -42,5 +42,4 @@ export const parseASTCommandBreakSlots: ParserItem<ASTCommandBreakSlots, Command
         ([stacks, slot],codeBlocks)=>new CommandBreakSlots(numberToBreak, stacks, slot ,codeBlocks), 
         codeBlocks
     );
-
 }
