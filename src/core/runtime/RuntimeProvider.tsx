@@ -1,10 +1,12 @@
-import React, { PropsWithChildren, useCallback, useContext, useState } from "react";
+import React, { PropsWithChildren, useCallback, useContext, useMemo, useState } from "react";
 import { SettingFunction, useStore } from "data/storage";
 import { GetSetPair } from "data/util";
 import { useWarnOnClose } from "./warnOnClose";
 import { usePage } from "./page";
 import { useDirectLoader } from "./directLoad";
 import { useWarnReadOnly } from "./warnReadOnly";
+import { Command, MemoizedParser } from "core/command";
+import { useSearchItem } from "data/item";
 
 export type Runtime = {
     setting: SettingFunction,
@@ -22,6 +24,9 @@ export const RuntimeProvider: React.FC<PropsWithChildren> = ({children}) => {
 	const [editing, setEditing] = useState<boolean>(false);
 	const [temporaryCommandData, setTemporaryCommandData] = useState<string[]|null>(null);
 	const {setting, commandData, setCommandData} = useStore();
+
+
+	
 
 	// Warn user if they are doing an editing action in read only mode
 	const [warnReadOnly, setWarnReadOnly] = useWarnReadOnly();

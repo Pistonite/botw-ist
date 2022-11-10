@@ -1,32 +1,26 @@
 import { CommandItem } from "ui/components/basic/ListItem";
 import { Command } from "core/command/command";
 import { SimulationState } from "core/SimulationState";
-import { useRuntime } from "data/runtime";
+import { useRuntime } from "core/runtime";
 import { GetSetPair } from "data/util";
 import produce from "immer";
 import { useCallback } from "react";
 import { ColoredCodeBlocks, Section } from "ui/components";
 import { ContextMenuState } from "ui/types";
 
-type SimulationSidePanelProps = {
-	simulationState: SimulationState | null,
+type SimStepsPanelProps = {
 	commands: Command[],
-	showSaves: boolean,
 }
 & GetSetPair<"displayIndex", number>
-& GetSetPair<"selectedSaveName", string>
+
 & GetSetPair<"contextMenuState", ContextMenuState>;
 
-export const SimulationSidePanel: React.FC<SimulationSidePanelProps> = ({
-	simulationState,
+export const SimStepsPanel: React.FC<SimStepsPanelProps> = ({
 	commands,
-	selectedSaveName,
-	setSelectedSaveName,
 	displayIndex,
 	setDisplayIndex,
 	contextMenuState,
 	setContextMenuState,
-	showSaves
 })=>{
 
 	const {
@@ -44,28 +38,18 @@ export const SimulationSidePanel: React.FC<SimulationSidePanelProps> = ({
 	}, [commandData, setCommandData]);
 
 	return (
-		<div style={{
-			height: "100%"
-		}}>
-			
+		
 			<Section titleText="Steps" style={{
-				//minHeight: "calc( 70vh - 40px )",
-				//height: showSaves ? "calc( 100vh - 40px - 220px )" : "calc( 100vh - 40px )",
-				border: "1px solid black",
-				boxSizing: "border-box",
-				overflowY: "hidden",
 				height: "100%"
 			}}>
-				<ol style={{
-					margin: 0
-				}}>
+				<ol >
 					{
 						commandData.map((c,i)=>
 							<CommandItem
 								onClick={()=>{
 									setDisplayIndex(i);
 									setPage("#simulation");
-									const inputField = document.getElementById("CommandInputField");
+									const inputField = document.getElementById("SimulationCommandTextField");
 									if(inputField){
 										inputField.focus();
 									}
@@ -98,9 +82,6 @@ export const SimulationSidePanel: React.FC<SimulationSidePanelProps> = ({
 				</ol>
 
 			</Section>
-			
-			
-			
-		</div>
+		
 	);
 };

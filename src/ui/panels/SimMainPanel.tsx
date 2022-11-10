@@ -4,14 +4,14 @@ import { Section, DoubleItemSlot } from "ui/components";
 import { SimulationState } from "core/SimulationState";
 import InGameBackground from "assets/InGame.png";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { ItemList } from "ui/components/item/ItemList";
 import { CrashScreen } from "ui/surfaces/CrashScreen";
-import { useRuntime } from "data/runtime";
+import { useRuntime } from "core/runtime";
 import { CmdErr, Command } from "core/command/command";
 import { CommandTextArea } from "ui/surfaces/CommandTextArea";
 
-type DisplayPaneProps = {
+type SimMainPanelProps = {
     commandText: string,
 	command: Command,
 	showGameData: boolean,
@@ -19,7 +19,7 @@ type DisplayPaneProps = {
     editCommand: (c: string)=>void
 }
 
-export const DisplayPane: React.FC<DisplayPaneProps> = ({
+export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 	commandText,
 	command,
 	showGameData,
@@ -48,16 +48,13 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 
 	}else if(isGameDataInterlaced && showGameData){
 		content =
-			<Section titleText={`Game Data / Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
-				borderTop: "1px solid black",
-				boxSizing: "border-box",
+			<Section className="HatenoBackground" titleText={`Game Data / Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
 				height: "100%",
 				overflowY: "auto",
 				backgroundImage: `url(${InGameBackground})`,
 				backgroundPosition: "center",
 				backgroundRepeat: "no-repeat",
 				backgroundSize: "cover",
-				color: "white",
 			} }>
 
 				{
@@ -97,27 +94,19 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 			}}>
 				{
 					showGameData && <Section titleText="Game Data" className="SheikaBackground" style={{
-						borderTop: "1px solid black",
-						color: "white",
-						borderBottom: "1px solid black",
 						boxSizing: "border-box",
 						height: "50%",
-						overflowY: "auto"
+						overflowY: "auto",
+						borderBottom: "1px solid black"
 					} }>
 						<ItemList slots={simulationState.displayableGameData.getDisplayedSlots(isIconAnimated)}/>
 					</Section>
 				}
 
-				<Section titleText={`Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
-					borderTop: "1px solid black",
-					backgroundImage: `url(${InGameBackground})`,
-					backgroundPosition: "center",
-					backgroundRepeat: "no-repeat",
-					backgroundSize: "cover",
+				<Section className="HatenoBackground" titleText={`Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
 					boxSizing: "border-box",
 					height: showGameData ? "50%" : "100%",
 					overflowY: "auto",
-					color: "white"
 				} }>
 					<ItemList slots={simulationState.displayablePouch.getDisplayedSlots(isIconAnimated)}/>
 
@@ -125,15 +114,19 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 			</div>;
 
 	}
+	const textAreaRef = useRef<HTMLDivElement>(null);
+	
+	const textAreaHeight = textAreaRef.current?.getBoundingClientRect().height;
 
-	return <div id="DisplayPane" style={{
-		height: "100%",
-	} }>
-		<div style={{
-			boxSizing: "border-box",
+	return (
+		<div id="DisplayPane" style={{
+			height: "100%",
 		} }>
-			{/* <div> */}
+			<div ref={textAreaRef} style={{
+				boxSizing: "border-box",
+			} }>
 				<CommandTextArea
+					textAreaId="SimulationCommandTextField"
 					className="MainInput"
 					scrollBehavior="expand"
 					large
@@ -141,37 +134,31 @@ export const DisplayPane: React.FC<DisplayPaneProps> = ({
 					value={[commandText]} 
 					setValue={(v)=>editCommand(v.join(" "))} 
 				/>
-			{/* </div> */}
-			
-
-			
-
+			</div>
+			<div style={{
+				position: "relative", // for command tooltip to anchor
+				height: `calc( 100% - ${textAreaHeight}px )`
+			}}>
+				
+				{content}
+				{
+					command.err.length > 0 && 
+					<div className={clsx(
+							"TooltipWindow", 
+							command.cmdErr === CmdErr.Parse && "TooltipWarn",
+							command.cmdErr === CmdErr.Execute && "TooltipError"
+						)} style={{
+						position: "absolute",
+						top: 0,
+						right: 0,
+						left: 0
+					}}>
+						{
+							command.err.map((error,i)=><p className={clsx("TooltipLine", i==0 && "TooltipHeader")} key={i}>{error}</p>)
+						}
+					</div>
+				}
+			</div>
 		</div>
-		<div style={{
-			position: "relative",
-			height: "calc( 100% - 40px )"
-		}}>
-			
-			{content}
-			{
-				command.err.length > 0 && 
-				<div className={clsx(
-						"TooltipWindow", 
-						command.cmdErr === CmdErr.Parse && "TooltipWarn",
-						command.cmdErr === CmdErr.Execute && "TooltipError"
-					)} style={{
-					position: "absolute",
-					top: 0,
-					right: 0,
-					left: 0
-				}}>
-					{
-						command.err.map((error,i)=><p className={clsx("TooltipLine", i==0 && "TooltipHeader")} key={i}>{error}</p>)
-					}
-				</div>
-			}
-		</div>
-		
-
-	</div>;
+	);
 };

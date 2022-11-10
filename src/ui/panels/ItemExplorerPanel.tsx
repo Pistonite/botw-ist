@@ -2,7 +2,7 @@ import { Category, Description, ItemSlot, Label } from "ui/components";
 import { BodyText} from "components/Text";
 import { ItemStack, useAllItems, useSearchItem } from "data/item";
 import { Page } from "ui/surfaces";
-import { useRuntime } from "data/runtime";
+import { useRuntime } from "core/runtime";
 import { useMemo, useState } from "react";
 import { SlotDisplay } from "core/inventory";
 import { SlotDisplayForItemStack } from "core/inventory/SlotDisplayForItemStack";

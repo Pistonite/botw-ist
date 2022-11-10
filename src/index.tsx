@@ -6,7 +6,7 @@ import { reportWebVitalsAsync } from "data/web-vitals";
 import { LanguageProvider } from "data/i18n";
 import { ItemProvider } from "data/item";
 import { StoreProvider } from "data/storage";
-import { RuntimeProvider } from "data/runtime";
+import { RuntimeProvider } from "core/runtime";
 import { CrashScreen, TooltipHost } from "ui/surfaces";
 
 const root = ReactDOM.createRoot(

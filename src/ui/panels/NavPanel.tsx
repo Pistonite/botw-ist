@@ -1,4 +1,4 @@
-import { useRuntime } from "data/runtime";
+import { useRuntime } from "core/runtime";
 import { Button } from "ui/components";
 import { Tooltip } from "ui/surfaces";
 

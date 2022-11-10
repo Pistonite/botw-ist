@@ -4,5 +4,5 @@ export * from "./HelpPanel";
 export * from "./NavPanel";
 export * from "./ScriptOptionPanel";
 export * from "./SettingPanel";
-export * from "./SimulationMainPanel";
-export * from "./SimulationSidePanel";
+export * from "./SimMainPanel";
+export * from "./SimStepsPanel";

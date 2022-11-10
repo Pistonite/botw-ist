@@ -4,6 +4,7 @@
 }
 
 body {
+	color-scheme: dark;
 	margin: 0;
 	overflow: hidden;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -40,4 +41,15 @@ a:visited{
 
 .SheikaBackground {
     background-image: url("assets/Background.png");
+}
+
+.HatenoBackground {
+    background-image: url("assets/InGame.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.Calamity {
+	font-family: CalamitySans;
 }

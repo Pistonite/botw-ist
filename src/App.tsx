@@ -1,11 +1,10 @@
 import produce from "immer";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
-import "./App.css";
 import { CommandItem } from "ui/components";
 import { createSimulationState, SimulationState } from "core/SimulationState";
 import { useSearchItem } from "data/item";
-import { useRuntime } from "data/runtime";
+import { useRuntime } from "core/runtime";
 import { ContextMenuState } from "ui/types";
 
 import { 
@@ -14,23 +13,27 @@ import {
 	HelpPanel,
 	ScriptOptionPanel,
 	SettingPanel,
-	SimulationMainPanel,
-	SimulationSidePanel,
+	SimMainPanel,
+	SimStepsPanel,
 	ReferencePage
 } from "ui/panels";
 
-import { parseCommand } from "core/command/parsev2";
 import { SavePanel } from "ui/panels/SavePanel";
+import { MemoizedParser } from "core/command";
+const parser = new MemoizedParser();
 
 export const App: React.FC =  () => {
 
 	const { commandData, setCommandData, page, setting } = useRuntime();
 	const searchItem = useSearchItem();
+	const commands = useMemo(()=>{
+		return parser.parseCommands(commandData, searchItem);
+	}, [commandData, searchItem]);
 
 	// Layout Components
 	// Core Logic States
 	const [selectedSaveName, setSelectedSaveName] = useState<string>("");
-	const [displayIndex, setDisplayIndex] = useState<number>(0);
+	const [_displayIndex, setDisplayIndex] = useState<number>(0);
 	const [contextMenuState, setContextMenuState] = useState<ContextMenuState>({
 		index: -1,
 		x: 0,
@@ -39,11 +42,6 @@ export const App: React.FC =  () => {
 
 	const contextMenuRef = useRef<HTMLDivElement>(null);
 	// compute props
-
-	const commands = useMemo(()=>{
-		return commandData.map(c=> parseCommand(c, searchItem));
-	}, [commandData, searchItem]);
-
 	const simulationStates = useMemo(()=>{
 		const simulationStates: SimulationState[] = [];
 		const state = createSimulationState();
@@ -53,9 +51,11 @@ export const App: React.FC =  () => {
 		});
 		return simulationStates;
 	}, [commands]);
-	const theSimulationState = displayIndex >=0 && displayIndex < simulationStates.length
-		? simulationStates[displayIndex]
-		: null;
+
+	const displayIndex = (_displayIndex < 0 || _displayIndex >= simulationStates.length)
+		? 0
+		: _displayIndex;
+	const theSimulationState = simulationStates[displayIndex];
 
 	useEffect(()=>{
 		window.onkeydown=(e)=>{
@@ -105,15 +105,17 @@ export const App: React.FC =  () => {
 	let showSaves: boolean = false;
 	if(page === "#simulation"){
 		if(showSavesSetting === "auto"){
-			if(theSimulationState){
-				showSaves = theSimulationState.numberOfSaves() > 1;
-			}else{
-				showSaves = false;
-			}
-	
+			showSaves = theSimulationState.numberOfSaves() > 1;
 		}else{
 			showSaves = showSavesSetting;
 		}
+	}
+	const showGameDataSetting = setting("showGameData");
+	let showGameData: boolean;
+	if(showGameDataSetting === "auto"){
+		showGameData = !theSimulationState.isGameDataSyncedWithPouch();
+	}else{
+		showGameData = showGameDataSetting;
 	}
 	
 	
@@ -130,25 +132,21 @@ export const App: React.FC =  () => {
 					height: showSaves?"calc( 100vh - 40px - 220px )":"calc( 100vh - 40px )"
 				}}>
 					<div style={{
-						display: "flex",
 						height: "100%"
 					}}>
 						<div id="SidePane" style={{
-							flexShrink: 0,
 							width: sideWidth,
+							float: "left",
+							height: "100%"
 						}}>
 							{
 								page !== "#setting" &&
-								<SimulationSidePanel
+								<SimStepsPanel
 									commands={commands}
 									displayIndex={displayIndex}
 									setDisplayIndex={setDisplayIndex}
-									selectedSaveName={selectedSaveName}
-									setSelectedSaveName={setSelectedSaveName}
 									contextMenuState={contextMenuState}
 									setContextMenuState={setContextMenuState}
-									simulationState={theSimulationState}
-									showSaves={showSaves}
 								/>
 							}
 							{
@@ -157,16 +155,23 @@ export const App: React.FC =  () => {
 
 						</div>
 						<div style={{
-							flexGrow: 1
+							position: "absolute",
+							height: "100%",
+							width: `calc( 100vw - ${sideWidth} )`,
+							left: sideWidth
 						}}>
 						{	(page === "#simulation" || page === "#setting") &&
-								<SimulationMainPanel
-									displayIndex={displayIndex}
-									selectedSaveName={selectedSaveName}
-									command={commands[displayIndex]}
+								
+								<SimMainPanel
 									commandText={commandData[displayIndex]}
+									command={commands[displayIndex]}
+									showGameData={showGameData}
 									simulationState={theSimulationState}
-									showSaves={showSaves}
+									editCommand={(c)=>{
+										setCommandData(produce(commandData, newData=>{
+											newData[displayIndex] = c;
+										}));
+									}}
 								/>
 							}
 							{

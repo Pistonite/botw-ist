@@ -1,6 +1,6 @@
 import { Button, Category, Control, Description, Label } from "ui/components";
 import { Page } from "ui/surfaces";
-import { useRuntime } from "data/runtime";
+import { useRuntime } from "core/runtime";
 
 const cycleOnOffAuto = (value: boolean | "auto"): boolean | "auto" => {
 	if (!value){

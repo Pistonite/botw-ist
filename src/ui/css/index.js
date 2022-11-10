@@ -1,5 +1,6 @@
 import "./Button.css";
 import "./Category.css";
+import "./CrashScreen.css";
 import "./Code.css";
 import "./Description.css";
 import "./Input.css";

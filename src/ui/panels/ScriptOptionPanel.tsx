@@ -2,7 +2,7 @@ import { saveAs } from "data/FileSaver";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Category, Control, Description, Label } from "ui/components";
 import { Page } from "ui/surfaces";
-import { useRuntime } from "data/runtime";
+import { useRuntime } from "core/runtime";
 import { CommandTextArea } from "ui/surfaces/CommandTextArea";
 import { useSearchItem } from "data/item";
 import { parseCommand } from "core/command/parsev2";
@@ -175,7 +175,10 @@ export const ScriptOptionPanel: React.FC = () => {
 				</Button>
 
 				<Description style={{
+					wordBreak: "break-all",
+					// 
 					...!showDirectUrl && {
+						width: "calc( 90vw - 400px )",
 						textOverflow: "ellipsis",
 						overflowX: "hidden",
 						whiteSpace: "nowrap",

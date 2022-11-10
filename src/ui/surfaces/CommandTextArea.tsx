@@ -9,11 +9,12 @@ type CommandTextAreaProps = {
     blocks: CodeBlock[][],
     large?: boolean,
     disabled?: boolean,
-    scrollBehavior: "scroll" | "expand"
+    scrollBehavior: "scroll" | "expand",
+    textAreaId?: string,
 } & GetSetPair<"value", string[]>;
 
 export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
-    className, large, value, setValue, blocks, disabled, scrollBehavior, ...restProps
+    className, large, value, setValue, blocks, disabled, scrollBehavior, textAreaId, ...restProps
 }) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const highlightAreaRef = useRef<HTMLDivElement>(null);
@@ -41,6 +42,7 @@ export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
                 <ColoredCodeBlocks blocks={blocks} value={value} />
             </div>
             <textarea
+                id={textAreaId}
                 ref={textAreaRef}
                 disabled={disabled}
                 className={clsx("CommandTextArea", large && "Large")}

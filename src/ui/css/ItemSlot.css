@@ -19,6 +19,7 @@
   
 .ItemSlotEquipped {
   background-color: #0088ff;
+  box-shadow: inset -2px -2px 2px 1px #ffffff, inset 2px 2px 2px 1px #ffffff;
 }
   
 .ItemImage {
