@@ -28,6 +28,10 @@
     background-color: #5a3636;
 }
 
+.ListItem.ListItemInvalid.ListItemSelected {
+    background-color: #5a3636;
+}
+
 .ListItem.ListItemInvalid:hover {
     background-color: #794a4a;
 }

@@ -1,5 +1,5 @@
 import produce from "immer";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { CommandItem } from "ui/components";
 import { createSimulationState, SimulationState } from "core/SimulationState";
@@ -63,6 +63,22 @@ export const App: React.FC =  () => {
 		? 0
 		: _displayIndex;
 	const theSimulationState = simulationStates[displayIndex];
+	useLayoutEffect(()=>{
+		const panel = document.getElementById("SimStepsPanel");
+		const selected = document.getElementById("SimStepSelectedItem");
+		const margin = 150; // how close to edge to start scrolling
+		if(panel && selected){
+			const height = panel.getBoundingClientRect().height;
+			const top = selected.offsetTop;
+			const bottom = selected.offsetTop+selected.getBoundingClientRect().height;
+			if(top-margin < panel.scrollTop){
+				panel.scrollTop = top-margin;
+			}
+			if(bottom+margin > panel.scrollTop+height){
+				panel.scrollTop = bottom+margin-height;
+			}
+		}
+	}, [displayIndex]);
 
 	useEffect(()=>{
 		window.onkeydown=(e)=>{
@@ -77,7 +93,6 @@ export const App: React.FC =  () => {
 					}))
 					setDisplayIndex(commandData.length);
 				}else{
-
 					setDisplayIndex(Math.min(commandData.length-1, nextCommandIndex));
 				}
 			}else if(e.code==="ArrowUp"){

@@ -14,15 +14,9 @@ div.Section {
     color: #ffffff;
 }
 
-/* .CommandInput {
-    border-top: none;
-      border-left: none;
-      border-right: none;
-      border-bottom: 2px solid #0074d9;
-    
-  } */
 
 div.SectionContent {
     height: calc( 100% - 40px );
     overflow-y: auto;
+    scroll-behavior: smooth;
 }

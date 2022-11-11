@@ -2,6 +2,7 @@ import clsx from "clsx";
 import React, { PropsWithChildren, useCallback } from "react";
 
 type CommandItemProps = PropsWithChildren<{
+	htmlId?: string,
 	useListItem?: boolean,
     isSelected?: boolean,
 	small?: boolean,
@@ -12,6 +13,7 @@ type CommandItemProps = PropsWithChildren<{
 }>;
 
 export const CommandItem: React.FC<CommandItemProps> = ({
+	htmlId,
 	useListItem,
 	isSelected,
 	isContextSelected,
@@ -41,13 +43,13 @@ export const CommandItem: React.FC<CommandItemProps> = ({
 
 	if(!useListItem){
 		return (
-			<div className={className} onClick={clickHandler} onContextMenu={contextMenuHandler}>
+			<div id={htmlId} className={className} onClick={clickHandler} onContextMenu={contextMenuHandler}>
 				{children}
 			</div>
 		);
 	}
 	return (
-		<li className={className} onClick={clickHandler} onContextMenu={contextMenuHandler}>
+		<li id={htmlId} className={className} onClick={clickHandler} onContextMenu={contextMenuHandler}>
 			{children}
 		</li>
 	);

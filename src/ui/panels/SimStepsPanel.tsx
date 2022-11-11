@@ -39,13 +39,14 @@ export const SimStepsPanel: React.FC<SimStepsPanelProps> = ({
 
 	return (
 		
-			<Section titleText="Steps" style={{
+			<Section contentId="SimStepsPanel" titleText="Steps" style={{
 				height: "100%"
 			}}>
 				<ol >
 					{
 						commandData.map((c,i)=>
 							<CommandItem
+								htmlId={displayIndex===i ? "SimStepSelectedItem":undefined}
 								onClick={()=>{
 									setDisplayIndex(i);
 									setPage("#simulation");
