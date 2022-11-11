@@ -8,10 +8,12 @@ export enum CmdErr {
     None = 0,
     // AST is not generated
     AST = 1,
+    // AST is not generated but we guessed something
+    Guess = 2,
     // error when parsing AST
-    Parse = 2,
+    Parse = 3,
     // error when executing
-    Execute = 3
+    Execute = 4
 };
 // Each command is parsed from a string
 export interface Command {
@@ -66,20 +68,22 @@ export class AbstractProperCommand implements Command {
 
 // Nop command: does nothing (like a comment)
 export class CommandNop extends AbstractProperCommand {
-    constructor(codeBlocks?: CodeBlockTree){
+    shouldSkipWithKeyboard: boolean;
+    constructor(shouldSkipWithKeyboard: boolean, codeBlocks?: CodeBlockTree){
         super(codeBlocks);
+        this.shouldSkipWithKeyboard = shouldSkipWithKeyboard;
     }
     get codeBlocks() { return this.base.codeBlocks; }
     execute(_state: SimulationState): void {
         // Do nothing
     }
     equals(other: Command): boolean {
-        return other instanceof CommandNop;
+        return other instanceof CommandNop && this.shouldSkipWithKeyboard === other.shouldSkipWithKeyboard;
     }
-    shouldSkipWithKeyboard = true;
+    
 }
 
-// Error command: does nothing, but because of error
+// Error command: does nothing, because of error
 export class ErrorCommand implements Command {
     base: CommandBase;
     cmdErr: CmdErr;
@@ -100,17 +104,34 @@ export class ErrorCommand implements Command {
     shouldSkipWithKeyboard = false;
 };
 
+// Error command: does nothing, because of error
+export class ExecErrorDecorator implements Command {
+    cmdErr = CmdErr.Execute;
+    err: string[];
+    delegate: Command;
+    constructor(command: Command, err: string[]){
+        this.err= err;
+        this.delegate = command;
+    }
+    get codeBlocks() { return this.delegate.codeBlocks; }
+    execute(_state: SimulationState): void {
+        throw new Error("Attempt to execute error decorator");
+    }
+    equals(other: Command): boolean {
+        // error message doesn't have to match
+        return other instanceof ExecErrorDecorator && this.delegate.equals(other.delegate);
+    }
+    shouldSkipWithKeyboard = false;
+};
+
 export class CommandHint implements Command {
     delegate: ErrorCommand;
     descriptor: string;
     constructor(original: string, parts: string[], index: number, usage: string[]){
-        let start = 0;
-        this.descriptor = "";
-        for(let i=0;i<index;i++){
-            start += parts[i].length+1;
-            this.descriptor+=parts[i]+" ";
-        }
-        this.delegate = new ErrorCommand(CmdErr.AST, usage, [
+        
+        this.descriptor = parts.filter((_,i)=>i<index).join(" ");
+        const start = this.descriptor.length;
+        this.delegate = new ErrorCommand(CmdErr.Guess, usage, [
             codeBlockFromRange([0, start], "keyword.command"),
             codeBlockFromRange([start, original.length], "unknown")
         ]);

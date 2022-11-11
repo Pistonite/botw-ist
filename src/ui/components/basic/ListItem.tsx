@@ -23,6 +23,7 @@ export const CommandItem: React.FC<CommandItemProps> = ({
 }) => {
 	const className = clsx(
 		"ListItem",
+		isInvalid && "ListItemInvalid",
 		isSelected && "ListItemSelected",
 		isContextSelected && "ListItemContextSelected",
 		small && "Small",

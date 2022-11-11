@@ -19,14 +19,14 @@ import {
 } from "ui/panels";
 
 import { SavePanel } from "ui/panels/SavePanel";
-import { MemoizedParser } from "core/command";
+import { Command, ExecErrorDecorator, MemoizedParser } from "core/command";
 const parser = new MemoizedParser();
 
 export const App: React.FC =  () => {
 
 	const { commandData, setCommandData, page, setting } = useRuntime();
 	const searchItem = useSearchItem();
-	const commands = useMemo(()=>{
+	const rawCommands = useMemo(()=>{
 		return parser.parseCommands(commandData, searchItem);
 	}, [commandData, searchItem]);
 
@@ -42,15 +42,21 @@ export const App: React.FC =  () => {
 
 	const contextMenuRef = useRef<HTMLDivElement>(null);
 	// compute props
-	const simulationStates = useMemo(()=>{
+	const [commands, simulationStates] = useMemo(()=>{
 		const simulationStates: SimulationState[] = [];
 		const state = createSimulationState();
-		commands.forEach(c=>{
+		const commands: Command[] = [];
+		rawCommands.forEach(c=>{
 			state.executeCommand(c);
 			simulationStates.push(state.deepClone());
+			if(state.errors.length === 0){
+				commands.push(c);
+			}else{
+				commands.push(new ExecErrorDecorator(c, state.errors));
+			}
 		});
-		return simulationStates;
-	}, [commands]);
+		return [commands, simulationStates];
+	}, [rawCommands]);
 
 	const displayIndex = (_displayIndex < 0 || _displayIndex >= simulationStates.length)
 		? 0
@@ -118,7 +124,10 @@ export const App: React.FC =  () => {
 		showGameData = showGameDataSetting;
 	}
 	
-	
+	const saveHeight = 220;
+	const fullMainHeight = "calc( 100vh - 40px )";
+	const middleHeight = showSaves?`calc( 100vh - 40px - ${saveHeight}px )`:fullMainHeight;
+
 
 	return (
 		<div className='Calamity'>
@@ -127,73 +136,68 @@ export const App: React.FC =  () => {
 			<div id="Main" style={{
 				position: "absolute",
 				top: 40,
-				height: "calc( 100vh - 40px )",
+				height: fullMainHeight,
 				width: "100vw",
 				backgroundColor: "#262626",
 			}}>
 				<div style={{
-					height: showSaves?"calc( 100vh - 40px - 220px )":"calc( 100vh - 40px )",
+					height: middleHeight,
 					width: "100vw",
 					display: "flex" // so they show up side by side
 				}}>
 					
-						<div id="SidePane" style={{
-							width: sideWidth,
-							height: showSaves?"calc( 100vh - 40px - 220px )":"calc( 100vh - 40px )"
-						}}>
-							{
-								page !== "#setting" &&
-								<SimStepsPanel
-									commands={commands}
-									displayIndex={displayIndex}
-									setDisplayIndex={setDisplayIndex}
-									contextMenuState={contextMenuState}
-									setContextMenuState={setContextMenuState}
-								/>
-							}
-							{
-								page === "#setting" && <SettingPanel />
-							}
+					<div id="SidePane" style={{
+						width: sideWidth,
+						height: middleHeight
+					}}>
+						{
+							page !== "#setting" &&
+							<SimStepsPanel
+								commands={commands}
+								displayIndex={displayIndex}
+								setDisplayIndex={setDisplayIndex}
+								contextMenuState={contextMenuState}
+								setContextMenuState={setContextMenuState}
+							/>
+						}
+						{
+							page === "#setting" && <SettingPanel />
+						}
 
-						</div>
-						<div style={{
-							position: "absolute",
-							height: showSaves?"calc( 100vh - 40px - 220px )":"calc( 100vh - 40px )",
-							width: `calc( 100vw - ${sideWidth}px - 2px )`,
-							left: sideWidth
-						}}>
-						{	(page === "#simulation" || page === "#setting") &&
-								
-								<SimMainPanel
-									commandText={commandData[displayIndex]}
-									command={commands[displayIndex]}
-									showGameData={showGameData}
-									simulationState={theSimulationState}
-									editCommand={(c)=>{
-										setCommandData(produce(commandData, newData=>{
-											newData[displayIndex] = c;
-										}));
-									}}
-								/>
-							}
-							{
-								page === "#reference" && <ReferencePage />
-							}
-							{
-								page === "#items" && <ItemExplorerPanel />
-							}
-							{
-								page === "#options" && <ScriptOptionPanel />
-							}
-							{
-								page === "#help" && <HelpPanel />
-							}
-						</div>
-						
+					</div>
+					<div style={{
+						position: "absolute",
+						height: middleHeight,
+						width: `calc( 100vw - ${sideWidth}px)`,
+						left: sideWidth
+					}}>
+					{	(page === "#simulation" || page === "#setting") &&
 							
-						
-					
-					
+							<SimMainPanel
+								commandText={commandData[displayIndex]}
+								command={commands[displayIndex]}
+								showGameData={showGameData}
+								simulationState={theSimulationState}
+								editCommand={(c)=>{
+									setCommandData(produce(commandData, newData=>{
+										newData[displayIndex] = c;
+									}));
+								}}
+							/>
+						}
+						{
+							page === "#reference" && <ReferencePage />
+						}
+						{
+							page === "#items" && <ItemExplorerPanel />
+						}
+						{
+							page === "#options" && <ScriptOptionPanel />
+						}
+						{
+							page === "#help" && <HelpPanel />
+						}
+					</div>
 				</div>
 				{
 					showSaves && 
@@ -209,9 +213,6 @@ export const App: React.FC =  () => {
 					</div>
 				}
 			</div>
-
-			
-
 			{
 				contextMenuState.index >= 0 && contextMenuState.index < commands.length && <div style={{
 					position: "absolute",

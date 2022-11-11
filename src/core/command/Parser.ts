@@ -1,340 +1,340 @@
 import { ItemStack } from "data/item";
 import { tokenize } from "core/command/ast/tokenize";
-import { CommandInitGameData } from "./parse.initgamedata";
+import { CommandInitGameData } from "./parse.cmd.initgamedata";
 
 
 import { ItemStackArg } from "./ItemStackArg";
-import { CommandInitialize } from "./parse.initialize";
+import { CommandInitialize } from "./parse.cmd.initialize";
 import { Command, CommandNop } from "./command";
-import { CommandBreakSlots } from "./parse.breakslot";
+import { CommandBreakSlots } from "./parse.cmd.breakslot";
 
-export const parseCommand = (cmdString: string, searchFunc: (word: string)=>ItemStack|undefined): Command => {
-	//return parseV2(cmdString, searchFunc);
-	const tokens = tokenize(cmdString, /[\s.[\]]/).filter(s=>!s.match(/^\s*$/));
-	if(tokens.length===0){
-		return new CommandNop([]);
-	}
-
-	const simple = parseSimpleCommands(tokens);
-	if(simple){
-		return simple;
-	}
-
-	const searchFuncWithError = (word: string): ItemStack|string => {
-		const result = searchFunc(word);
-		if(!result){
-			return `Item not found: ${word}`;
-		}
-		return result;
-	};
-	// intialize
-	if(tokens.length>0 && keywordMatch(tokens[0],"initialize")){
-		const stacks = parseItemStacks(tokens, 1, searchFunc);
-		if(typeof stacks === "string"){
-			return new CommandNop([]);
-		}
-		return new CommandInitialize(stacks, []);
-	}
-	// init gamedata
-	if(tokens.length>1 && keywordMatch(tokens[0],"init") && keywordMatch(tokens[1],"gamedata")){
-		const stacks = parseItemStacks(tokens, 2, searchFunc);
-		if(typeof stacks === "string"){
-			return new CommandNop([]);
-		}
-		return new CommandInitGameData(stacks, []);
-	}
-	// if(isAddVerb(tokens[0])){
-	// 	// add item
-	// 	if (tokens.length === 2){
-	// 		const item = tokens[1];
-	// 		const stack = searchFuncWithError(item);
-	// 		if(typeof stack === "string"){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		return new CommandAdd(tokens[0], [new ItemStackArg(stack, 1)]);
-	// 	}else
-	// 	// add X item1 Y item2 Z item3
-	// 	if(tokens.length>2 ){
-	// 		const stacks = parseItemStacks(tokens, 1, searchFunc);
-	// 		if(typeof stacks === "string"){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		return new CommandAdd(tokens[0], stacks);
-	// 	}
-	// }
-	// if(isRemoveVerb(tokens[0])){
-	// 	// remove X item From Slot Y
-	// 	if (tokens.length === 6 && keywordMatch(tokens[3], "from") && keywordMatch(tokens[4], "slot") ){
-	// 		const count = parseInteger(tokens[1]);
-	// 		if(count===undefined){
-	// 			return new CommandNop(cmdString, numberError(tokens[1]));
-	// 		}
-	// 		const item = tokens[2];
-	// 		const slot = parseInt(tokens[5]);
-	// 		if(!Number.isInteger(slot)){
-	// 			return new CommandNop(cmdString, numberError(tokens[5]));
-	// 		}
-	// 		const stack = searchFuncWithError(item);
-	// 		if(typeof stack === "string"){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		return new CommandRemove(tokens[0], [new ItemStackArg(stack, count)], slot-1);
-	// 	} else
-	// 	// remove item From Slot Y
-	// 	if (tokens.length === 5 && keywordMatch(tokens[2], "from") && keywordMatch(tokens[3], "slot")){
-	// 		const item = tokens[1];
-	// 		const slot = parseInt(tokens[4]);
-	// 		if(!Number.isInteger(slot)){
-	// 			return new CommandNop(cmdString, numberError(tokens[4]));
-	// 		}
-	// 		const stack = searchFuncWithError(item);
-	// 		if(typeof stack === "string"){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		return new CommandRemove(tokens[0], [new ItemStackArg(stack, 1)], slot-1);
-	// 	} else
-	// 	// remove item
-	// 	if (tokens.length === 2){
-	// 		const item = tokens[1];
-	// 		const stack = searchFuncWithError(item);
-	// 		if(typeof stack === "string"){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		return new CommandRemove(tokens[0], [new ItemStackArg(stack, 1)], 0);
-
-	// 	} else
-	// 	// remove multiple
-	// 	if(tokens.length>2){
-	// 		const stacks = parseItemStacks(tokens, 1, searchFunc);
-	// 		if(typeof stacks === "string"){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		return new CommandRemove(tokens[0], stacks, 0);
-	// 	}
-	// }
-
-	// //Shortcut for drop and pick up
-	// if (tokens.length >2 && keywordMatchAny(tokens[0], ["d&p", "dnp", "dap"])){
-	// 	const stacks = parseItemStacks(tokens, 1, searchFunc);
-	// 	if(typeof stacks === "string"){
-	// 		return new CommandNop([]);
-	// 	}
-	// 	return new CommandDaP(stacks);
-	// }
-
-	// if(keywordMatch(tokens[0], "equip")){
-	// 	// Equip item In Slot X
-	// 	if (tokens.length === 5 && keywordMatch(tokens[2], "in") && keywordMatch(tokens[3], "slot") ){
-	// 		const item = tokens[1];
-	// 		const slot = parseInt(tokens[4]);
-	// 		if(!Number.isInteger(slot)){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		const stack = searchFuncWithError(item);
-	// 		if(typeof stack === "string"){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		return new CommandEquip(stack.item, slot-1, false);
-	// 	}
-	// 	// Equip item
-	// 	if (tokens.length === 2){
-	// 		const item = tokens[1];
-	// 		const stack = searchFuncWithError(item);
-	// 		if(typeof stack === "string"){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		return new CommandEquip(stack.item, 0, true);
-	// 	}
-	// }
-
-	// if(keywordMatch(tokens[0], "unequip")){
-	// 	// Unequip item in slot X
-	// 	if (tokens.length === 5 && keywordMatch(tokens[2], "in") && keywordMatch(tokens[3], "slot")){
-	// 		const item = tokens[1];
-	// 		const slot = parseInt(tokens[4]);
-	// 		if(!Number.isInteger(slot)){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		const stack = searchFuncWithError(item);
-	// 		if(typeof stack === "string"){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		return new CommandUnequip(stack.item, slot-1, false);
-	// 	}
-	// 	// Unequip item
-	// 	if (tokens.length === 2){
-	// 		const item = tokens[1];
-	// 		const stack = searchFuncWithError(item);
-	// 		if(typeof stack === "string"){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		return new CommandUnequip(stack.item, -1, true);
-	// 	}
-	// }
-
-	// // Shoot X Arrow
-	// if (tokens.length === 3 && keywordMatch(tokens[0], "shoot") && keywordMatch(tokens[2], "arrow")){
-	// 	const count = parseInteger(tokens[1]);
-	// 	if(count===undefined){
-	// 		return new CommandNop([]);
-	// 	}
-	// 	return new CommandShootArrow(count);
-	// }
-
-	// // Write [meta] on item
-	// if(tokens.length > 2 && keywordMatch(tokens[0], "write") && tokens[1]==="["){
-	// 	let metaString = "";
-	// 	let i = 2;
-	// 	while(i<tokens.length && tokens[i] !== "]"){
-	// 		if(tokens[i] === "["){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		metaString+=tokens[i];
-	// 		i++;
-	// 	}
-	// 	const meta = parseMetadata(metaString);
-	// 	if(typeof meta === "string"){
-	// 		return new CommandNop(cmdString, meta);
-	// 	}
-	// 	i++; // pass ]
-	// 	if(tokens.length <= i || tokens[i] !== "to"){
-	// 		return new CommandNop([]);
-	// 	}
-	// 	i++;
-	// 	const item = tokens[i];
-	// 	const stack = searchFuncWithError(item);
-	// 	if(typeof stack === "string"){
-	// 		return new CommandNop([]);
-	// 	}
-	// 	if(tokens.length <=i+1){
-	// 		return new CommandWrite(stack.item, 0, meta);
-	// 	}
-	// 	if(tokens.length === i+4 && keywordMatch(tokens[i+1], "in") && keywordMatch(tokens[i+2], "slot")){
-	// 		const slot = parseInt(tokens[i+3]);
-	// 		if(!Number.isInteger(slot)){
-	// 			return new CommandNop([]);
-	// 		}
-	// 		return new CommandWrite(stack.item, slot-1, meta);
-	// 	}
-	// }
-	// // Write [meta] on item in slot X
-	// if(tokens.length > 0){
-	// 	return new CommandHint(tokens[0]);
-	// }
-
-	return new CommandNop([]);
-};
-
-const parseSimpleCommands = (tokens: string[]): Command | undefined => {
-// 	// Save/Reload
-// 	if(tokens.length===1 && keywordMatch(tokens[0],"save")){
-// 		return new CommandSave();
+// export const parseCommand = (cmdString: string, searchFunc: (word: string)=>ItemStack|undefined): Command => {
+// 	//return parseV2(cmdString, searchFunc);
+// 	const tokens = tokenize(cmdString, /[\s.[\]]/).filter(s=>!s.match(/^\s*$/));
+// 	if(tokens.length===0){
+// 		return new CommandNop([]);
 // 	}
-// 	// Multi Save
-// 	if (tokens.length === 3 && keywordMatch(tokens[0],"save") && keywordMatch(tokens[1],"as")){
-// 		const name = tokens[2];
-// 		return new CommandSaveAs(name);
-// 	}
-// 	if (tokens.length === 2 && keywordMatch(tokens[0],"use")){
-// 		const name = tokens[1];
-// 		return new CommandUse(name);
-// 	}
-// 	if(tokens.length===1 && keywordMatch(tokens[0],"reload")){
-// 		return new CommandReload();
-// 	}
-// 	if(tokens.length===2 && keywordMatch(tokens[0],"reload")){
-// 		return new CommandReload(tokens[1]);
-// 	}
-	// break
-	if (tokens.length > 2 && keywordMatch(tokens[0],"break") && keywordMatch(tokens[2],"slots") ){
-		const slots = parseInt(tokens[1]);
-		if(Number.isInteger(slots)){
-			return new CommandBreakSlots(slots, [], 0, []);
-		}
-	}
 
-// 	if(tokens.length===2 && keywordMatch(tokens[0],"sort") && keywordMatch(tokens[1],"key")){
-// 		return new CommandSortKey();
+// 	const simple = parseSimpleCommands(tokens);
+// 	if(simple){
+// 		return simple;
 // 	}
-// 	if(tokens.length===2 && keywordMatch(tokens[0],"sort") && keywordMatch(tokens[1],"material")){
-// 		return new CommandSortMaterial();
+
+// 	const searchFuncWithError = (word: string): ItemStack|string => {
+// 		const result = searchFunc(word);
+// 		if(!result){
+// 			return `Item not found: ${word}`;
+// 		}
+// 		return result;
+// 	};
+// 	// intialize
+// 	if(tokens.length>0 && keywordMatch(tokens[0],"initialize")){
+// 		const stacks = parseItemStacks(tokens, 1, searchFunc);
+// 		if(typeof stacks === "string"){
+// 			return new CommandNop([]);
+// 		}
+// 		return new CommandInitialize(stacks, []);
 // 	}
-// 	if(tokens.length===2 && keywordMatchAny(tokens[0],["close", "exit"]) && keywordMatch(tokens[1],"game")){
-// 		return new CommandCloseGame();
+// 	// init gamedata
+// 	if(tokens.length>1 && keywordMatch(tokens[0],"init") && keywordMatch(tokens[1],"gamedata")){
+// 		const stacks = parseItemStacks(tokens, 2, searchFunc);
+// 		if(typeof stacks === "string"){
+// 			return new CommandNop([]);
+// 		}
+// 		return new CommandInitGameData(stacks, []);
 // 	}
-// 	if(tokens.length===2 && keywordMatch(tokens[0],"sync") && keywordMatch(tokens[1],"gamedata")){
-// 		return new CommandSync();
+// 	// if(isAddVerb(tokens[0])){
+// 	// 	// add item
+// 	// 	if (tokens.length === 2){
+// 	// 		const item = tokens[1];
+// 	// 		const stack = searchFuncWithError(item);
+// 	// 		if(typeof stack === "string"){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		return new CommandAdd(tokens[0], [new ItemStackArg(stack, 1)]);
+// 	// 	}else
+// 	// 	// add X item1 Y item2 Z item3
+// 	// 	if(tokens.length>2 ){
+// 	// 		const stacks = parseItemStacks(tokens, 1, searchFunc);
+// 	// 		if(typeof stacks === "string"){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		return new CommandAdd(tokens[0], stacks);
+// 	// 	}
+// 	// }
+// 	// if(isRemoveVerb(tokens[0])){
+// 	// 	// remove X item From Slot Y
+// 	// 	if (tokens.length === 6 && keywordMatch(tokens[3], "from") && keywordMatch(tokens[4], "slot") ){
+// 	// 		const count = parseInteger(tokens[1]);
+// 	// 		if(count===undefined){
+// 	// 			return new CommandNop(cmdString, numberError(tokens[1]));
+// 	// 		}
+// 	// 		const item = tokens[2];
+// 	// 		const slot = parseInt(tokens[5]);
+// 	// 		if(!Number.isInteger(slot)){
+// 	// 			return new CommandNop(cmdString, numberError(tokens[5]));
+// 	// 		}
+// 	// 		const stack = searchFuncWithError(item);
+// 	// 		if(typeof stack === "string"){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		return new CommandRemove(tokens[0], [new ItemStackArg(stack, count)], slot-1);
+// 	// 	} else
+// 	// 	// remove item From Slot Y
+// 	// 	if (tokens.length === 5 && keywordMatch(tokens[2], "from") && keywordMatch(tokens[3], "slot")){
+// 	// 		const item = tokens[1];
+// 	// 		const slot = parseInt(tokens[4]);
+// 	// 		if(!Number.isInteger(slot)){
+// 	// 			return new CommandNop(cmdString, numberError(tokens[4]));
+// 	// 		}
+// 	// 		const stack = searchFuncWithError(item);
+// 	// 		if(typeof stack === "string"){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		return new CommandRemove(tokens[0], [new ItemStackArg(stack, 1)], slot-1);
+// 	// 	} else
+// 	// 	// remove item
+// 	// 	if (tokens.length === 2){
+// 	// 		const item = tokens[1];
+// 	// 		const stack = searchFuncWithError(item);
+// 	// 		if(typeof stack === "string"){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		return new CommandRemove(tokens[0], [new ItemStackArg(stack, 1)], 0);
+
+// 	// 	} else
+// 	// 	// remove multiple
+// 	// 	if(tokens.length>2){
+// 	// 		const stacks = parseItemStacks(tokens, 1, searchFunc);
+// 	// 		if(typeof stacks === "string"){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		return new CommandRemove(tokens[0], stacks, 0);
+// 	// 	}
+// 	// }
+
+// 	// //Shortcut for drop and pick up
+// 	// if (tokens.length >2 && keywordMatchAny(tokens[0], ["d&p", "dnp", "dap"])){
+// 	// 	const stacks = parseItemStacks(tokens, 1, searchFunc);
+// 	// 	if(typeof stacks === "string"){
+// 	// 		return new CommandNop([]);
+// 	// 	}
+// 	// 	return new CommandDaP(stacks);
+// 	// }
+
+// 	// if(keywordMatch(tokens[0], "equip")){
+// 	// 	// Equip item In Slot X
+// 	// 	if (tokens.length === 5 && keywordMatch(tokens[2], "in") && keywordMatch(tokens[3], "slot") ){
+// 	// 		const item = tokens[1];
+// 	// 		const slot = parseInt(tokens[4]);
+// 	// 		if(!Number.isInteger(slot)){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		const stack = searchFuncWithError(item);
+// 	// 		if(typeof stack === "string"){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		return new CommandEquip(stack.item, slot-1, false);
+// 	// 	}
+// 	// 	// Equip item
+// 	// 	if (tokens.length === 2){
+// 	// 		const item = tokens[1];
+// 	// 		const stack = searchFuncWithError(item);
+// 	// 		if(typeof stack === "string"){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		return new CommandEquip(stack.item, 0, true);
+// 	// 	}
+// 	// }
+
+// 	// if(keywordMatch(tokens[0], "unequip")){
+// 	// 	// Unequip item in slot X
+// 	// 	if (tokens.length === 5 && keywordMatch(tokens[2], "in") && keywordMatch(tokens[3], "slot")){
+// 	// 		const item = tokens[1];
+// 	// 		const slot = parseInt(tokens[4]);
+// 	// 		if(!Number.isInteger(slot)){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		const stack = searchFuncWithError(item);
+// 	// 		if(typeof stack === "string"){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		return new CommandUnequip(stack.item, slot-1, false);
+// 	// 	}
+// 	// 	// Unequip item
+// 	// 	if (tokens.length === 2){
+// 	// 		const item = tokens[1];
+// 	// 		const stack = searchFuncWithError(item);
+// 	// 		if(typeof stack === "string"){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		return new CommandUnequip(stack.item, -1, true);
+// 	// 	}
+// 	// }
+
+// 	// // Shoot X Arrow
+// 	// if (tokens.length === 3 && keywordMatch(tokens[0], "shoot") && keywordMatch(tokens[2], "arrow")){
+// 	// 	const count = parseInteger(tokens[1]);
+// 	// 	if(count===undefined){
+// 	// 		return new CommandNop([]);
+// 	// 	}
+// 	// 	return new CommandShootArrow(count);
+// 	// }
+
+// 	// // Write [meta] on item
+// 	// if(tokens.length > 2 && keywordMatch(tokens[0], "write") && tokens[1]==="["){
+// 	// 	let metaString = "";
+// 	// 	let i = 2;
+// 	// 	while(i<tokens.length && tokens[i] !== "]"){
+// 	// 		if(tokens[i] === "["){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		metaString+=tokens[i];
+// 	// 		i++;
+// 	// 	}
+// 	// 	const meta = parseMetadata(metaString);
+// 	// 	if(typeof meta === "string"){
+// 	// 		return new CommandNop(cmdString, meta);
+// 	// 	}
+// 	// 	i++; // pass ]
+// 	// 	if(tokens.length <= i || tokens[i] !== "to"){
+// 	// 		return new CommandNop([]);
+// 	// 	}
+// 	// 	i++;
+// 	// 	const item = tokens[i];
+// 	// 	const stack = searchFuncWithError(item);
+// 	// 	if(typeof stack === "string"){
+// 	// 		return new CommandNop([]);
+// 	// 	}
+// 	// 	if(tokens.length <=i+1){
+// 	// 		return new CommandWrite(stack.item, 0, meta);
+// 	// 	}
+// 	// 	if(tokens.length === i+4 && keywordMatch(tokens[i+1], "in") && keywordMatch(tokens[i+2], "slot")){
+// 	// 		const slot = parseInt(tokens[i+3]);
+// 	// 		if(!Number.isInteger(slot)){
+// 	// 			return new CommandNop([]);
+// 	// 		}
+// 	// 		return new CommandWrite(stack.item, slot-1, meta);
+// 	// 	}
+// 	// }
+// 	// // Write [meta] on item in slot X
+// 	// if(tokens.length > 0){
+// 	// 	return new CommandHint(tokens[0]);
+// 	// }
+
+// 	return new CommandNop([]);
+// };
+
+// const parseSimpleCommands = (tokens: string[]): Command | undefined => {
+// // 	// Save/Reload
+// // 	if(tokens.length===1 && keywordMatch(tokens[0],"save")){
+// // 		return new CommandSave();
+// // 	}
+// // 	// Multi Save
+// // 	if (tokens.length === 3 && keywordMatch(tokens[0],"save") && keywordMatch(tokens[1],"as")){
+// // 		const name = tokens[2];
+// // 		return new CommandSaveAs(name);
+// // 	}
+// // 	if (tokens.length === 2 && keywordMatch(tokens[0],"use")){
+// // 		const name = tokens[1];
+// // 		return new CommandUse(name);
+// // 	}
+// // 	if(tokens.length===1 && keywordMatch(tokens[0],"reload")){
+// // 		return new CommandReload();
+// // 	}
+// // 	if(tokens.length===2 && keywordMatch(tokens[0],"reload")){
+// // 		return new CommandReload(tokens[1]);
+// // 	}
+// 	// break
+// 	if (tokens.length > 2 && keywordMatch(tokens[0],"break") && keywordMatch(tokens[2],"slots") ){
+// 		const slots = parseInt(tokens[1]);
+// 		if(Number.isInteger(slots)){
+// 			return new CommandBreakSlots(slots, [], 0, []);
+// 		}
 // 	}
-// 	if(tokens.length===2 && (keywordMatch(tokens[0],"enter") || keywordMatch(tokens[0],"exit")) && (keywordMatch(tokens[1],"eventide") || keywordMatch(tokens[1],"tots"))){
-// 		return new CommandEventide(keywordMatch(tokens[0],"enter"));
+
+// // 	if(tokens.length===2 && keywordMatch(tokens[0],"sort") && keywordMatch(tokens[1],"key")){
+// // 		return new CommandSortKey();
+// // 	}
+// // 	if(tokens.length===2 && keywordMatch(tokens[0],"sort") && keywordMatch(tokens[1],"material")){
+// // 		return new CommandSortMaterial();
+// // 	}
+// // 	if(tokens.length===2 && keywordMatchAny(tokens[0],["close", "exit"]) && keywordMatch(tokens[1],"game")){
+// // 		return new CommandCloseGame();
+// // 	}
+// // 	if(tokens.length===2 && keywordMatch(tokens[0],"sync") && keywordMatch(tokens[1],"gamedata")){
+// // 		return new CommandSync();
+// // 	}
+// // 	if(tokens.length===2 && (keywordMatch(tokens[0],"enter") || keywordMatch(tokens[0],"exit")) && (keywordMatch(tokens[1],"eventide") || keywordMatch(tokens[1],"tots"))){
+// // 		return new CommandEventide(keywordMatch(tokens[0],"enter"));
+// // 	}
+// };
+
+// const parseItemStacks = (tokens: string[], from: number, searchFunc: (word: string)=>ItemStack|undefined): ItemStackArg[] | string => {
+// 	const stacks: ItemStackArg[] = [];
+// 	let i = from;
+// 	while(i<tokens.length){
+// 		// read a number
+
+// 		const num = parseInteger(tokens[i]);
+// 		if(num === undefined){
+// 			return numberError(tokens[i]);
+// 		}
+// 		i++;
+// 		// read a stack <item> [ <meta> ], meta not supported atm
+// 		const stackSearchNames: string[] = [];
+// 		let stackMeta = "";
+// 		let isReadingMeta = false;
+// 		while(i<tokens.length && parseInteger(tokens[i])===undefined){
+// 			if(tokens[i] === "["){
+// 				isReadingMeta = true;
+// 			}else if(tokens[i] === "]"){
+// 				isReadingMeta = false;
+// 			}else{
+// 				if(isReadingMeta){
+// 					stackMeta+=tokens[i];
+// 				}else{
+// 					stackSearchNames.push(tokens[i]);
+// 				}
+// 			}
+// 			i++;
+// 		}
+// 		let stack = searchFunc(stackSearchNames.join("*"));
+// 		if(!stack){
+// 			return itemNotFoundError(stackSearchNames.join(" "));
+// 		}
+// 		// const meta = parseMetadata(stackMeta);
+// 		// if(typeof meta === "string"){
+// 		// 	return meta;
+// 		// }
+// 		// // process meta
+// 		// stack = stack.modifyMeta(meta);
+// 		stacks.push(new ItemStackArg(stack, num));
+
 // 	}
-};
 
-const parseItemStacks = (tokens: string[], from: number, searchFunc: (word: string)=>ItemStack|undefined): ItemStackArg[] | string => {
-	const stacks: ItemStackArg[] = [];
-	let i = from;
-	while(i<tokens.length){
-		// read a number
+// 	return stacks;
+// };
 
-		const num = parseInteger(tokens[i]);
-		if(num === undefined){
-			return numberError(tokens[i]);
-		}
-		i++;
-		// read a stack <item> [ <meta> ], meta not supported atm
-		const stackSearchNames: string[] = [];
-		let stackMeta = "";
-		let isReadingMeta = false;
-		while(i<tokens.length && parseInteger(tokens[i])===undefined){
-			if(tokens[i] === "["){
-				isReadingMeta = true;
-			}else if(tokens[i] === "]"){
-				isReadingMeta = false;
-			}else{
-				if(isReadingMeta){
-					stackMeta+=tokens[i];
-				}else{
-					stackSearchNames.push(tokens[i]);
-				}
-			}
-			i++;
-		}
-		let stack = searchFunc(stackSearchNames.join("*"));
-		if(!stack){
-			return itemNotFoundError(stackSearchNames.join(" "));
-		}
-		// const meta = parseMetadata(stackMeta);
-		// if(typeof meta === "string"){
-		// 	return meta;
-		// }
-		// // process meta
-		// stack = stack.modifyMeta(meta);
-		stacks.push(new ItemStackArg(stack, num));
+// const parseInteger = (token: string): number|undefined => {
+// 	if(keywordMatch(token, "all")){
+// 		return -1;
+// 	}
+// 	const num = parseInt(token);
+// 	if(!Number.isInteger(num)){
+// 		return undefined;
+// 	}
+// 	return num;
+// };
 
-	}
+// const numberError = (token: string): string => {
+// 	return `Failed to parse number: ${token}`;
+// };
 
-	return stacks;
-};
+// const itemNotFoundError = (token: string): string => {
+// 	return `Item not found: ${token}`;
+// };
 
-const parseInteger = (token: string): number|undefined => {
-	if(keywordMatch(token, "all")){
-		return -1;
-	}
-	const num = parseInt(token);
-	if(!Number.isInteger(num)){
-		return undefined;
-	}
-	return num;
-};
-
-const numberError = (token: string): string => {
-	return `Failed to parse number: ${token}`;
-};
-
-const itemNotFoundError = (token: string): string => {
-	return `Item not found: ${token}`;
-};
-
-const keywordMatch = (token: string, match: string) => {
-	return token.toLowerCase() === match;
-}
+// const keywordMatch = (token: string, match: string) => {
+// 	return token.toLowerCase() === match;
+// }

@@ -12,8 +12,8 @@ export const Colors = {
 	"keyword.command": "CommandColorKeywordCommand",
 	"slot.number": "CommandColorSlotNumber",
 	"keyword.other": "CommandColorKeywordOther",
-	"identifier.other": "CommandColorIdentifierOther"
-
+	"identifier.other": "CommandColorIdentifierOther",
+	"comment": "CommandColorComment",
 };
 
 export type ItemSearchFunction = (word: string)=>ItemStack|undefined;
@@ -54,6 +54,10 @@ const lastCodeBlock = (blocks: CodeBlockTree): CodeBlock => {
 }
 
 export const flattenCodeBlocks = (output: CodeBlock[], blocks: CodeBlockTree, color?: keyof typeof Colors):CodeBlock[] => {
+	if(blocks.length === 0){
+		return output;
+	}
+	
 	if(color){
 		output.push({
 			color,

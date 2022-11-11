@@ -1,5 +1,4 @@
 import { Category, Description, ItemSlot, Label } from "ui/components";
-import { BodyText} from "components/Text";
 import { ItemStack, useAllItems, useSearchItem } from "data/item";
 import { Page } from "ui/surfaces";
 import { useRuntime } from "core/runtime";

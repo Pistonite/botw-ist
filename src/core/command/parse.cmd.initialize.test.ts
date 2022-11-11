@@ -1,5 +1,5 @@
 import { createMockItemSearch, createMockItems } from "data/item/TestHelpers";
-import { CommandInitialize } from "./parse.initialize";
+import { CommandInitialize } from "./parse.cmd.initialize";
 import { ItemStackArg } from "./ItemStackArg";
 import { CmdErr } from "./command";
 
@@ -12,7 +12,7 @@ describe("core/command/parse.initialize", ()=>{
     ]);
     const mockSearchItem = createMockItemSearch(MockItems);
     it("parses hint when failed", ()=>{
-        expect("initialize ???").toParseIntoCommand(mockSearchItem, CmdErr.AST);
+        expect("initialize ???").toParseIntoCommand(mockSearchItem, CmdErr.Guess);
     });
     it("parses empty items", ()=>{
         expect("initialize").toParseIntoCommand(mockSearchItem, new CommandInitialize([], []));

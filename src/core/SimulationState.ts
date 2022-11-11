@@ -21,9 +21,9 @@ export class SimulationState {
 	private manualSave: GameData | null;
 	private namedSaves: {[name: string]: GameData} = {};
 	private pouch: VisibleInventory;
-	private nextReloadName?: string;
 	private isOnEventide = false;
 	private crashed = false;
+	public errors: string[] = [];
 
 	constructor(gameData: GameData, manualSave: GameData | null, namedSaves: {[name: string]: GameData}, pouch: VisibleInventory){
 		this.gameData = gameData;
@@ -43,7 +43,6 @@ export class SimulationState {
 			copyNamedSaves,
 			this.pouch.deepClone()
 		);
-		newState.nextReloadName = this.nextReloadName;
 		newState.isOnEventide = this.isOnEventide;
 		newState.crashed = this.crashed;
 
@@ -56,6 +55,7 @@ export class SimulationState {
 
 	// this is a wrapper that also have pre- and post-command checks
 	public executeCommand(command: Command){
+		this.errors = [];
 		this.crashed = false;
 		command.execute(this);
 		if(this.shouldCrash()){
@@ -75,6 +75,13 @@ export class SimulationState {
 	}
 
 	public save(name?: string) {
+		if(this.isOnEventide){
+			this.errors.push(
+				"Save failed",
+				"You cannot save while on Eventide or inside Trial of the Sword"
+			);
+			return;
+		}
 		if(name){
 			this.namedSaves[name] = this.gameData.deepClone();
 		}else{
@@ -86,17 +93,21 @@ export class SimulationState {
 		if(name){
 			if(name in this.namedSaves){
 				this.reloadFrom(this.namedSaves[name]);
+			}else{
+				this.errors.push(
+					"Reload failed",
+					`You are trying to reload the file "${name}", which doesn't exist`
+				)
 			}
 		}else{
-			if(this.nextReloadName){
-				if(this.nextReloadName in this.namedSaves){
-					this.reloadFrom(this.namedSaves[this.nextReloadName]);
-				}
+			const save = this.manualSave;
+			if(save){
+				this.reloadFrom(save);
 			}else{
-				const save = this.manualSave;
-				if(save){
-					this.reloadFrom(save);
-				}
+				this.errors.push(
+					"Reload failed",
+					"There's no manual save to reload from"
+				)
 			}
 		}
 	}
@@ -116,10 +127,6 @@ export class SimulationState {
 		this.gameData.addAllToPouchOnReload(this.pouch);
 		this.pouch.updateEquipmentDurability(this.gameData);
 		this.isOnEventide = false;
-	}
-
-	public useSaveForNextReload(name: string){
-		this.nextReloadName = name;
 	}
 
 	public breakSlots(n: number) {

@@ -1,5 +1,5 @@
 import { CrashScreen } from "ui/surfaces/CrashScreen";
-import { LoadingScreen } from "components/LoadingScreen";
+import { LoadingScreen } from "ui/surfaces/LoadingScreen";
 import React, { PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
 
 /*

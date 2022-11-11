@@ -42,6 +42,7 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 				<CrashScreen
 					primaryText="The game has crashed"
 					secondaryText="(This is NOT a simulator bug)"
+					hideReloadButton
 				/>
 
 			</div>;
@@ -51,10 +52,6 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 			<Section className="HatenoBackground" titleText={`Game Data / Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
 				height: "100%",
 				overflowY: "auto",
-				backgroundImage: `url(${InGameBackground})`,
-				backgroundPosition: "center",
-				backgroundRepeat: "no-repeat",
-				backgroundSize: "cover",
 			} }>
 
 				{
@@ -89,10 +86,7 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 		;
 	}else{
 		content =
-			<div style={{
-				width: "100%",
-				height: "100%"
-			}}>
+			<>
 				{
 					showGameData && <Section titleText="Game Data" className="SheikaBackground" style={{
 						boxSizing: "border-box",
@@ -112,13 +106,10 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 					<ItemList slots={simulationState.displayablePouch.getDisplayedSlots(isIconAnimated)}/>
 
 				</Section>
-			</div>;
+			</>;
 
 	}
 	const [textAreaHeight, setTextAreaHeight] = useState<number>(40);
-	//const textAreaRef = useRef<HTMLDivElement>(null);
-	
-	//const textAreaHeight = textAreaRef.current?.getBoundingClientRect().height;
 
 	return (
 		<div id="DisplayPane" style={{
@@ -135,15 +126,12 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 				paddingRight: 0
 			} }>
 				<CommandTextArea
-					// style={{
-					// 	height: textAreaHeight+10
-					// }}
 					textAreaId="SimulationCommandTextField"
-					
 					large
 					onAutoResize={setTextAreaHeight}
 					blocks={[command.codeBlocks]} 
 					value={[commandText]} 
+					//setValue={()=>{}}
 					setValue={(v)=>editCommand(v.join(" "))} 
 				/>
 			</div>

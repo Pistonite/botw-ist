@@ -1,5 +1,5 @@
 import { CrashScreen } from "ui/surfaces/CrashScreen";
-import { LoadingScreen } from "components/LoadingScreen";
+import { LoadingScreen } from "ui/surfaces/LoadingScreen";
 import React, { PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 import { ItemImpl } from "./Item";
 import { CookEffect, getTabFromType, Item, ItemIdMap, ItemStack, ItemTab, ItemType } from "./type";

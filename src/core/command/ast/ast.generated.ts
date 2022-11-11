@@ -16,64 +16,16 @@ export type ASTEpsilon = null;
 export const isEpsilon = <T>(node: T | ASTEpsilon): node is ASTEpsilon => node === null;
 const parseEpsilon = (_: TokenStream) => ParseResultEpsilon;
 
-// (derivation union) Target => Command | SuperCommand | NamedSuperCommand
+// (derivation union) Target => Command | SuperCommand
 const parseTarget: ParseFunction<ASTTarget> = (tokens) => {
 	let result: ASTTarget | undefined;
 	result = parseCommand(tokens);
 	if(result !== ParseResultFail) return result;
 	result = parseSuperCommand(tokens);
 	if(result !== ParseResultFail) return result;
-	result = parseNamedSuperCommand(tokens);
-	if(result !== ParseResultFail) return result;
 	return ParseResultFail;
 };
-export type ASTTarget = ASTCommand | ASTSuperCommand | ASTNamedSuperCommand;
-// (derivation) NamedSuperCommand => <\"> Identifier IdentifierPrime SuperCommand
-export const isNamedSuperCommand = <T extends {type: string}>(node: T | ASTNamedSuperCommand | null): node is ASTNamedSuperCommand => Boolean(node && node.type === "ASTNamedSuperCommand");
-export type ASTNamedSuperCommand = {
-	readonly type: "ASTNamedSuperCommand",
-	readonly literal0: readonly [number, number],
-	readonly mIdentifier1: ASTIdentifier,
-	readonly mIdentifierPrime2: ASTIdentifierPrime,
-	readonly mSuperCommand3: ASTSuperCommand,
-};
-const parseNamedSuperCommand: ParseFunction<ASTNamedSuperCommand> = (tokens) => {
-	let rangeTokens: Token[];
-	tokens.push();
-	rangeTokens = [];
-	if(tokens.consume(rangeTokens) !== "\"") {
-		tokens.restore();
-		tokens.pop();
-		return ParseResultFail;
-	}
-	const literal0 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
-	const mIdentifier1 = parseIdentifier(tokens);
-	if(mIdentifier1 === ParseResultFail) {
-		tokens.restore();
-		tokens.pop();
-		return ParseResultFail;
-	}
-	const mIdentifierPrime2 = parseIdentifierPrime(tokens);
-	if(mIdentifierPrime2 === ParseResultFail) {
-		tokens.restore();
-		tokens.pop();
-		return ParseResultFail;
-	}
-	const mSuperCommand3 = parseSuperCommand(tokens);
-	if(mSuperCommand3 === ParseResultFail) {
-		tokens.restore();
-		tokens.pop();
-		return ParseResultFail;
-	}
-	tokens.pop();
-	return {
-		type: "ASTNamedSuperCommand",
-		literal0,
-		mIdentifier1,
-		mIdentifierPrime2,
-		mSuperCommand3,
-	};
-};
+export type ASTTarget = ASTCommand | ASTSuperCommand;
 // (derivation) SuperCommandForCommand => <!> Command
 export const isSuperCommandForCommand = <T extends {type: string}>(node: T | ASTSuperCommandForCommand | null): node is ASTSuperCommandForCommand => Boolean(node && node.type === "ASTSuperCommandForCommand");
 export type ASTSuperCommandForCommand = {
@@ -104,14 +56,12 @@ const parseSuperCommandForCommand: ParseFunction<ASTSuperCommandForCommand> = (t
 		mCommand1,
 	};
 };
-// (derivation union) Command => CommandInitGameData | CommandInitialize | CommandComment | CommandCook | CommandCookCrit | CommandAdd | CommandPickUp | CommandRemoveAll | CommandRemove | CommandDrop | CommandEat | CommandDnp | CommandEquip | CommandUnequipAll | CommandUnequip | CommandShoot | CommandEnterTrial | CommandExitTrial | CommandWriteMetadata | CommandSave | CommandReload | CommandBreakSlots | CommandCloseGame | CommandSyncGameData
+// (derivation union) Command => CommandInitGameData | CommandInitialize | CommandCook | CommandCookCrit | CommandAdd | CommandPickUp | CommandRemoveAll | CommandRemove | CommandDrop | CommandEat | CommandDnp | CommandEquip | CommandUnequipAll | CommandUnequip | CommandShoot | CommandEnterTrial | CommandExitTrial | CommandWriteMetadata | CommandSave | CommandReload | CommandBreakSlots | CommandCloseGame | CommandSyncGameData
 const parseCommand: ParseFunction<ASTCommand> = (tokens) => {
 	let result: ASTCommand | undefined;
 	result = parseCommandInitGameData(tokens);
 	if(result !== ParseResultFail) return result;
 	result = parseCommandInitialize(tokens);
-	if(result !== ParseResultFail) return result;
-	result = parseCommandComment(tokens);
 	if(result !== ParseResultFail) return result;
 	result = parseCommandCook(tokens);
 	if(result !== ParseResultFail) return result;
@@ -157,7 +107,7 @@ const parseCommand: ParseFunction<ASTCommand> = (tokens) => {
 	if(result !== ParseResultFail) return result;
 	return ParseResultFail;
 };
-export type ASTCommand = ASTCommandInitGameData | ASTCommandInitialize | ASTCommandComment | ASTCommandCook | ASTCommandCookCrit | ASTCommandAdd | ASTCommandPickUp | ASTCommandRemoveAll | ASTCommandRemove | ASTCommandDrop | ASTCommandEat | ASTCommandDnp | ASTCommandEquip | ASTCommandUnequipAll | ASTCommandUnequip | ASTCommandShoot | ASTCommandEnterTrial | ASTCommandExitTrial | ASTCommandWriteMetadata | ASTCommandSave | ASTCommandReload | ASTCommandBreakSlots | ASTCommandCloseGame | ASTCommandSyncGameData;
+export type ASTCommand = ASTCommandInitGameData | ASTCommandInitialize | ASTCommandCook | ASTCommandCookCrit | ASTCommandAdd | ASTCommandPickUp | ASTCommandRemoveAll | ASTCommandRemove | ASTCommandDrop | ASTCommandEat | ASTCommandDnp | ASTCommandEquip | ASTCommandUnequipAll | ASTCommandUnequip | ASTCommandShoot | ASTCommandEnterTrial | ASTCommandExitTrial | ASTCommandWriteMetadata | ASTCommandSave | ASTCommandReload | ASTCommandBreakSlots | ASTCommandCloseGame | ASTCommandSyncGameData;
 // (derivation union) SuperCommand => SuperCommandAddSlot | SuperCommandRemoveSlot | SuperCommandForCommand
 const parseSuperCommand: ParseFunction<ASTSuperCommand> = (tokens) => {
 	let result: ASTSuperCommand | undefined;
@@ -206,36 +156,6 @@ const parseCommandInitGameData: ParseFunction<ASTCommandInitGameData> = (tokens)
 		mLiteralInitialize0,
 		literal1,
 		mZeroOrMoreItems2,
-	};
-};
-// (derivation) CommandComment => <#> IdentifierPrime
-export const isCommandComment = <T extends {type: string}>(node: T | ASTCommandComment | null): node is ASTCommandComment => Boolean(node && node.type === "ASTCommandComment");
-export type ASTCommandComment = {
-	readonly type: "ASTCommandComment",
-	readonly literal0: readonly [number, number],
-	readonly mIdentifierPrime1: ASTIdentifierPrime,
-};
-const parseCommandComment: ParseFunction<ASTCommandComment> = (tokens) => {
-	let rangeTokens: Token[];
-	tokens.push();
-	rangeTokens = [];
-	if(tokens.consume(rangeTokens) !== "#") {
-		tokens.restore();
-		tokens.pop();
-		return ParseResultFail;
-	}
-	const literal0 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
-	const mIdentifierPrime1 = parseIdentifierPrime(tokens);
-	if(mIdentifierPrime1 === ParseResultFail) {
-		tokens.restore();
-		tokens.pop();
-		return ParseResultFail;
-	}
-	tokens.pop();
-	return {
-		type: "ASTCommandComment",
-		literal0,
-		mIdentifierPrime1,
 	};
 };
 // (derivation) CommandInitialize => LiteralInitialize ZeroOrMoreItems

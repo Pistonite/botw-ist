@@ -5,55 +5,6 @@ import { Item } from "data/item";
 
 
 
-// export class CommandReload extends CommandImpl {
-// 	private name?: string;
-// 	constructor(name?: string){
-// 		super();
-// 		this.name = name;
-// 	}
-// 	public execute(state: SimulationState): void {
-// 		state.reload(this.name);
-// 	}
-// 	public getDisplayString(): string {
-// 		return `Reload${this.name?` ${this.name}`:""}`;
-// 	}
-// }
-
-// export class CommandUse extends CommandImpl{
-// 	private name: string;
-// 	constructor(name: string){
-// 		super();
-// 		this.name = name;
-// 	}
-// 	public execute(state: SimulationState): void {
-// 		state.useSaveForNextReload(this.name);
-// 	}
-// 	public getDisplayString(): string {
-// 		return `Use ${this.name}`;
-// 	}
-// 	public getError(): string|undefined {
-// 		return `This command is deprecated. Use "Reload ${this.name}" directly`;
-// 	}
-// }
-
-
-
-// export class CommandAdd extends CommandImpl {
-// 	private _verb: string;
-// 	private stacks: ItemStackArg[];
-// 	constructor(verb: string, stacks: ItemStackArg[]){
-// 		super();
-// 		this._verb = verb;
-// 		this.stacks = stacks;
-// 	}
-
-// 	public execute(state: SimulationState): void {
-// 		processWrappers(this.stacks).forEach(stack=>state.obtain(stack));
-// 	}
-// 	// public getDisplayString(): string {
-// 	// 	return `${this.verb} ${this.count} ${this.item}`;
-// 	// }
-// }
 
 // export class CommandRemove extends CommandImpl  {
 // 	private _verb: string;

@@ -219,9 +219,9 @@ expect.extend({
 		}
 		const command = parseCommand(receivedString, search);
 		if(typeof expectedCommand === typeof CmdErr.AST){
-			if(command === expectedCommand){
+			if(command.cmdErr !== expectedCommand){
 				return {
-					message: ()=>`Parsed cmderr is ${command}, expected: ${expectedCommand}`,
+					message: ()=>`Parsed cmderr is ${command.cmdErr}, expected: ${expectedCommand}`,
 					pass: false
 				};
 			}

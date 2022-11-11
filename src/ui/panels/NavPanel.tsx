@@ -3,7 +3,7 @@ import { Button } from "ui/components";
 import { Tooltip } from "ui/surfaces";
 
 export const NavPanel: React.FC = ()=>{
-	const { setPage, editing, saving, warnReadOnly } = useRuntime();
+	const { page, setPage, editing, saving, warnReadOnly } = useRuntime();
 	const status = editing
 		? saving
 			? ""
@@ -27,7 +27,7 @@ export const NavPanel: React.FC = ()=>{
 				alignItems: "center",
 			}}>
 				<Button className="Full" onClick={()=>{
-					setPage("#setting");
+					setPage(page === "#setting" ? "#simulation" : "#setting");
 				}}>Setting</Button>
 				<Button className="Full" onClick={()=>{
 					setPage("#simulation");

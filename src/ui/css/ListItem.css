@@ -20,7 +20,14 @@
     font-size: small;
 }
 
+.ListItem.ListItemInvalid {
+    background-color: #674141;
+}
 
+.ListItem.ListItemInvalid.ListItemContextSelected {
+    background-color: #5a3636;
+}
 
-
-
+.ListItem.ListItemInvalid:hover {
+    background-color: #794a4a;
+}

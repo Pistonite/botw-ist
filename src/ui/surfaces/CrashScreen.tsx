@@ -4,14 +4,15 @@ import { Button, Description, Label } from "ui/components";
 
 type CrashProps = {
 	primaryText: string,
-	secondaryText: string | Error
+	secondaryText: string | Error,
+	hideReloadButton?:boolean
 }
 
 const redirectToMainApp = ()=>{
 	window.location.href = window.location.origin;
 };
 
-export const CrashScreen: React.FC<CrashProps> = ({primaryText, secondaryText})=>{
+export const CrashScreen: React.FC<CrashProps> = ({primaryText, secondaryText, hideReloadButton})=>{
 	return (
 		<div className="SpecialScreen" style={{
 			textAlign: "center",
@@ -44,7 +45,10 @@ export const CrashScreen: React.FC<CrashProps> = ({primaryText, secondaryText})=
 			}}>
 				<Label>{primaryText}</Label>
 				<Description>{`${secondaryText}`}</Description>
-				<Button onClick={redirectToMainApp}>Reload Simulator</Button>
+				{
+					!hideReloadButton && <Button onClick={redirectToMainApp}>Reload Simulator</Button>
+				}
+				
 			</div>
 		</div>
 	);

@@ -1,11 +1,12 @@
 import { createMockItems, createMockItemSearch } from "data/item/TestHelpers";
 import { CmdErr } from "./command";
 import { ItemStackArg } from "./ItemStackArg";
-import { CommandBreakSlots } from "./parse.breakslot";
+import { CommandBreakSlots } from "./parse.cmd.breakslot";
 
 describe("core/command/parse.breakslot normal", ()=>{
     it("parses hint when failed", ()=>{
-        expect("break ???").toParseIntoCommand(()=>undefined, CmdErr.AST);
+        expect("br").toParseIntoCommand(()=>undefined, CmdErr.Guess);
+        expect("break ???").toParseIntoCommand(()=>undefined, CmdErr.Guess);
     });
     it("break 1 slot", ()=>{
         expect("break 1 slot").toParseIntoCommand(()=>undefined, new CommandBreakSlots(1, [], 0, []));

@@ -1,4 +1,3 @@
-import { BodyText, Emphasized, Header, SubHeader, SubTitle } from "components/Text";
 import React from "react";
 import { Category, Description, ItemSlot, Label, ParseCode } from "ui/components";
 import { Page } from "ui/surfaces";
@@ -209,7 +208,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 
 				<div>
 					<code className="CommandColorKeywordCommand">get|add|buy|pickup </code>
-					<code className="CommandColorItemName">[items ...]</code>
+					<code className="CommandColorItemName">items ...</code>
 				</div>
 				
 				<ParseCode>
@@ -296,11 +295,8 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					Writes Game Data to the corresponding save slot. The auto saves are specified by <code className="CommandColorIdentifierOther">file name</code>.
                     You can have as many auto saves as you want in the simulator. If no file is specified, it will save to the manual save slot.
 				</Description>
-				<Description className="Primary Important">
+				<Description className="Important">
 					The save file name is case-insensitive
-				</Description>
-				<Description className="Error">
-					You cannot save on Eventide/ToTS. However, the simulator does not enforce that.
 				</Description>
 
 				<div>

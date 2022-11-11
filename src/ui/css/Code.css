@@ -53,6 +53,10 @@
     color: #9CDCFE !important;
 }
 
+.CommandColorComment {
+    color: #6A9955 !important;
+}
+
 .CommandTextArea {
     width: 100%;
     

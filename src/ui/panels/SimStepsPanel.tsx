@@ -1,5 +1,5 @@
 import { CommandItem } from "ui/components/basic/ListItem";
-import { Command } from "core/command/command";
+import { CmdErr, Command } from "core/command/command";
 import { SimulationState } from "core/SimulationState";
 import { useRuntime } from "core/runtime";
 import { GetSetPair } from "data/util";
@@ -70,8 +70,8 @@ export const SimStepsPanel: React.FC<SimStepsPanelProps> = ({
 								isSelected={displayIndex===i}
 								isContextSelected={contextMenuState.index===i}
 								small={false}
-								useListItem={true}
-								isInvalid={false}
+								useListItem={!commands[i].shouldSkipWithKeyboard}
+								isInvalid={commands[i].cmdErr !== CmdErr.None}
 							>
 								<ColoredCodeBlocks blocks={[commands[i].codeBlocks]} value={[c]} />
 							</CommandItem>

@@ -23,8 +23,7 @@
 
 
 # Top Level
-Target => Command | SuperCommand | NamedSuperCommand
-NamedSuperCommand => <\"> Identifier IdentifierPrime SuperCommand
+Target => Command | SuperCommand
 SuperCommandForCommand => <!> Command
 
 # All Commands (Order matters!)
@@ -32,7 +31,6 @@ SuperCommandForCommand => <!> Command
 Command => 
  CommandInitGameData    # initialize|init gamedata ...        
  | CommandInitialize    # initialize|init ...                   
- | CommandComment       # #comment
  | CommandCook          # cook with ...
  | CommandCookCrit      # cook heart crit with ...
  | CommandAdd           # get|add|buy|cook ...                  
@@ -65,7 +63,6 @@ SuperCommand =>
 
 # Individual Commands
 CommandInitGameData => LiteralInitialize <gamedata> ZeroOrMoreItems
-CommandComment => <#> IdentifierPrime
 CommandInitialize => LiteralInitialize ZeroOrMoreItems
 CommandCook => <cook> <with> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 CommandCookCrit => <cook> <heart> <crit> <with> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot

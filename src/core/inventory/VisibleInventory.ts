@@ -38,13 +38,10 @@ export class VisibleInventory implements DisplayableInventory{
 	}
 
 	public getDisplayedSlots(isIconAnimated: boolean): SlotDisplay[] {
-		const t0 = performance.now();
 		const mCount = this.getMCount();
 		const result = this.slots.getSlotsRef().map((stack, i)=>
 			new SlotDisplayForItemStack(stack).init(i>=mCount, isIconAnimated)
 		);
-		const t1 = performance.now();
-		console.log(`Rendering slots took ${t1 - t0} ms for ${result.length} slots.`);
 		return result;
 	}
 

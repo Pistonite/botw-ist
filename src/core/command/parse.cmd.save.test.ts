@@ -1,12 +1,12 @@
 import { CmdErr } from "./command";
-import { CommandSave } from "./parse.save";
+import { CommandSave } from "./parse.cmd.save";
 
 describe("core/command/parse.save", ()=>{
     it("parses hint when failed", ()=>{
-        expect("save ???").toParseIntoCommand(undefined, CmdErr.AST);
+        expect("save ???").toParseIntoCommand(undefined, CmdErr.Guess);
     });
     it("parses error with named save with no words", ()=>{
-        expect("save as").toParseIntoCommand(undefined, CmdErr.AST);
+        expect("save as").toParseIntoCommand(undefined, CmdErr.Guess);
     });
     it("parses manual save", ()=>{
         expect("save").toParseIntoCommand(undefined, new CommandSave(undefined, []));
