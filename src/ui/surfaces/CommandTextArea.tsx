@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useRef } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { ColoredCodeBlocks } from "ui/components";
 import { CodeBlock } from "core/command";
 import { GetSetPair } from "data/util";
@@ -9,28 +9,41 @@ type CommandTextAreaProps = {
     blocks: CodeBlock[][],
     large?: boolean,
     disabled?: boolean,
-    scrollBehavior: "scroll" | "expand",
+    onAutoResize?: (newHeight: number)=>void,
     textAreaId?: string,
+    stopPropagation?:boolean,
 } & GetSetPair<"value", string[]>;
 
+const MIN_HEIGHT = 30;
+
 export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
-    className, large, value, setValue, blocks, disabled, scrollBehavior, textAreaId, ...restProps
+    className, stopPropagation,
+    large, value, setValue, blocks, disabled, onAutoResize, textAreaId, ...restProps
 }) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const highlightAreaRef = useRef<HTMLDivElement>(null);
 
     const joinedValue = value.join("\n");
-    const rootStyle = scrollBehavior === "expand" ? {height: "unset"} : {};
+    useLayoutEffect(()=>{
+        if(onAutoResize && textAreaRef.current && highlightAreaRef.current){
+            // Reset height - important to shrink on delete
+            textAreaRef.current.style.height = "inherit";
+            // Set height
+            const height = Math.max(
+                textAreaRef.current.scrollHeight,
+                MIN_HEIGHT
+            );
+            textAreaRef.current.style.height = `${height}px`;
+            highlightAreaRef.current.style.height = `${height}px`;
+            onAutoResize(height);
+        }
+        
+        
+    }, [value, onAutoResize]);
+    //const rootStyle = scrollBehavior === "expand" ? {height: "unset"} : {};
     
     return (
-        <div className={clsx(className, "CommandInputRoot", large && "Large")} {...restProps} style={rootStyle}>
-            <div className={clsx(large && "Large")} style= {{
-                pointerEvents: "none",
-                opacity: 0,
-                maxHeight: 290,
-            }}>
-                <ColoredCodeBlocks blocks={blocks} value={value} />
-            </div>
+        <div className={clsx(className, "CommandInputRoot", large && "Large")} {...restProps}>
             <div 
                 ref={highlightAreaRef}
                 aria-hidden={true} 
@@ -46,18 +59,24 @@ export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
                 ref={textAreaRef}
                 disabled={disabled}
                 className={clsx("CommandTextArea", large && "Large")}
-                style={{
-                    zIndex: 1
-                }}
                 spellCheck={false}
                 value={joinedValue}
                 onChange={(e)=>{
                     setValue(e.target.value.split("\n"));
+                    // console.log(e.target.rows);
+                    // if(onHeightChange){
+                    //     onHeightChange(e.target.scrollHeight);
+                    // }
                 }}
                 onScroll={()=>{
                     if(textAreaRef.current && highlightAreaRef.current){
                         highlightAreaRef.current.scrollTop = textAreaRef.current.scrollTop;
                         highlightAreaRef.current.scrollLeft = textAreaRef.current.scrollLeft;
+                    }
+                }}
+                onKeyDown={(e)=>{
+                    if(stopPropagation){
+                        e.stopPropagation();
                     }
                 }}
             />

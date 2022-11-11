@@ -4,7 +4,7 @@ import { Section, DoubleItemSlot } from "ui/components";
 import { SimulationState } from "core/SimulationState";
 import InGameBackground from "assets/InGame.png";
 
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { ItemList } from "ui/components/item/ItemList";
 import { CrashScreen } from "ui/surfaces/CrashScreen";
 import { useRuntime } from "core/runtime";
@@ -90,6 +90,7 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 	}else{
 		content =
 			<div style={{
+				width: "100%",
 				height: "100%"
 			}}>
 				{
@@ -114,22 +115,33 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 			</div>;
 
 	}
-	const textAreaRef = useRef<HTMLDivElement>(null);
+	const [textAreaHeight, setTextAreaHeight] = useState<number>(40);
+	//const textAreaRef = useRef<HTMLDivElement>(null);
 	
-	const textAreaHeight = textAreaRef.current?.getBoundingClientRect().height;
+	//const textAreaHeight = textAreaRef.current?.getBoundingClientRect().height;
 
 	return (
 		<div id="DisplayPane" style={{
 			height: "100%",
+			width: "100%",
+			overflowWrap: "break-word"
 		} }>
-			<div ref={textAreaRef} style={{
-				boxSizing: "border-box",
+			<div className="MainInput" style={{
+				boxSizing: "content-box",
+				height: textAreaHeight,
+				paddingBottom: 0,
+				paddingTop: 0,
+				paddingLeft: 0,
+				paddingRight: 0
 			} }>
 				<CommandTextArea
+					// style={{
+					// 	height: textAreaHeight+10
+					// }}
 					textAreaId="SimulationCommandTextField"
-					className="MainInput"
-					scrollBehavior="expand"
+					
 					large
+					onAutoResize={setTextAreaHeight}
 					blocks={[command.codeBlocks]} 
 					value={[commandText]} 
 					setValue={(v)=>editCommand(v.join(" "))} 
@@ -137,7 +149,7 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 			</div>
 			<div style={{
 				position: "relative", // for command tooltip to anchor
-				height: `calc( 100% - ${textAreaHeight}px )`
+				height: `calc( 100% - ${textAreaHeight}px)`
 			}}>
 				
 				{content}

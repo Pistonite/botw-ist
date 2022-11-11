@@ -125,19 +125,21 @@ export const App: React.FC =  () => {
 
 			<NavPanel />
 			<div id="Main" style={{
+				position: "absolute",
+				top: 40,
 				height: "calc( 100vh - 40px )",
+				width: "100vw",
 				backgroundColor: "#262626",
 			}}>
 				<div style={{
-					height: showSaves?"calc( 100vh - 40px - 220px )":"calc( 100vh - 40px )"
+					height: showSaves?"calc( 100vh - 40px - 220px )":"calc( 100vh - 40px )",
+					width: "100vw",
+					display: "flex" // so they show up side by side
 				}}>
-					<div style={{
-						height: "100%"
-					}}>
+					
 						<div id="SidePane" style={{
 							width: sideWidth,
-							float: "left",
-							height: "100%"
+							height: showSaves?"calc( 100vh - 40px - 220px )":"calc( 100vh - 40px )"
 						}}>
 							{
 								page !== "#setting" &&
@@ -156,8 +158,8 @@ export const App: React.FC =  () => {
 						</div>
 						<div style={{
 							position: "absolute",
-							height: "100%",
-							width: `calc( 100vw - ${sideWidth} )`,
+							height: showSaves?"calc( 100vh - 40px - 220px )":"calc( 100vh - 40px )",
+							width: `calc( 100vw - ${sideWidth}px - 2px )`,
 							left: sideWidth
 						}}>
 						{	(page === "#simulation" || page === "#setting") &&
@@ -190,7 +192,7 @@ export const App: React.FC =  () => {
 						
 							
 						
-					</div>
+					
 					
 				</div>
 				{

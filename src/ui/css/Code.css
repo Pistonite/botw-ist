@@ -72,22 +72,24 @@
     overflow-y: auto;
     
 }
-.CommandTextArea.Large, .CommandInputRoot > div.Large {
-    line-height: 14pt;
-    font: 14pt monospace;
+.CommandTextArea.Large {
+    line-height: 16pt;
+    font: 16pt monospace;
 }
 
 textarea.CommandTextArea {
     background-color: transparent;
     color: transparent;
     caret-color: white;
+    max-width: 100%;
+    z-index: 1;
     /* height: 100%; */
     
 }
 
 div.CommandInputRoot {
     position: relative !important;
-    padding: 5px;
+    max-width: 100%;
 }
 
 div.CommandInputRoot.Large {

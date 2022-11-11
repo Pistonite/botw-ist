@@ -8,8 +8,11 @@ import { useSearchItem } from "data/item";
 import { parseCommand } from "core/command/parsev2";
 import { arrayShallowEqual } from "data/util";
 import { serialize } from "data/storage";
+import { MemoizedParser } from "core/command";
 
 const URL_MAX = 2048;
+
+const parser = new MemoizedParser();
 
 export const ScriptOptionPanel: React.FC = () => {
 	const {
@@ -29,7 +32,8 @@ export const ScriptOptionPanel: React.FC = () => {
 
 	const searchItem = useSearchItem();
 	const codeblocks = useMemo(()=>{
-		return currentText.map(c=> parseCommand(c, searchItem).codeBlocks);
+		const commands = parser.parseCommands(currentText, searchItem);
+		return commands.map(c=>c.codeBlocks);
 	}, [currentText, searchItem]);
 
 	const uploadRef = useRef<HTMLInputElement>(null);
@@ -86,7 +90,7 @@ export const ScriptOptionPanel: React.FC = () => {
 					}
 					{
 						editing && window.location.search &&
-						<Description className="Primary Warning">
+						<Description className="Primary Important">
 							Warning: It looks like you might be editing a script from a direct URL. If you enable save, the script will overwrite the existing saved script.
 						</Description>
 					}
@@ -130,10 +134,10 @@ export const ScriptOptionPanel: React.FC = () => {
 					{/* <div> */}
 						<CommandTextArea
 							className="MainInput MultiLineInput" 
-							scrollBehavior="scroll"
 							value={currentText}
 							setValue={setCurrentText}
 							blocks={codeblocks}
+							stopPropagation
 						/>
 					{/* </div> */}
 					
@@ -145,12 +149,12 @@ export const ScriptOptionPanel: React.FC = () => {
 
 				<Description className="Primary Paragraph">You can use a direct URL to open the simulator with the steps automatically loaded.</Description>
 				{
-					unsaved && <Description className="Primary Warning">
+					unsaved && <Description className="Primary Important">
 						Warning: The script above contains unsaved changes. The URL will reflect the unsaved script instead of what is in the simulator.
 					</Description>
 				}
 				{
-					directUrlLength > URL_MAX && <Description className="Primary Warning">
+					directUrlLength > URL_MAX && <Description className="Primary Important">
 						Warning: The URL is too long ({directUrlLength} characters) and may not work in certain browsers. Export as file instead if you encounter any problems.
 					</Description>
 				}

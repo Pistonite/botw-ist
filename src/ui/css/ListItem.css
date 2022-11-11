@@ -1,6 +1,7 @@
 .ListItem {
     padding: 2px 2px 2px 10px;
     cursor: pointer;
+    overflow-wrap: break-word;
 }
 
 .ListItem:hover {

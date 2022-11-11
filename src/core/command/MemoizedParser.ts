@@ -14,7 +14,7 @@ export class MemoizedParser {
     private lastSearchItem: ItemSearchFunction | undefined = undefined;
     private memo: {[command: string]: Command} = {};
     public parseCommands(commandData: string[], searchItem: ItemSearchFunction): Command[] {
-        //const t0 = performance.now();
+        const t0 = performance.now();
         if(this.lastSearchItem !== searchItem){
             this.memo = {};
         }
@@ -28,8 +28,8 @@ export class MemoizedParser {
             return result;
         })
 
-        //const t1 = performance.now();
-        //console.log(`Command parsing took ${t1 - t0} ms for ${commandData.length} commands.`);
+        const t1 = performance.now();
+        console.log(`Command parsing took ${t1 - t0} ms for ${commandData.length} commands.`);
         if(EnableMemoizedParser){
             this.memo = newMemo;
         }
