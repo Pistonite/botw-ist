@@ -104,13 +104,7 @@ import { Item } from "data/item";
 // 	}
 // }
 
-// export class CommandSync extends CommandImpl  {
 
-// 	public execute(state: SimulationState): void {
-// 		state.syncGameDataWithPouch();
-// 	}
-
-// }
 
 // export class CommandEventide extends CommandImpl  {
 // 	private enter: boolean;

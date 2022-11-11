@@ -20,6 +20,7 @@ import {
 
 import { SavePanel } from "ui/panels/SavePanel";
 import { Command, ExecErrorDecorator, MemoizedParser } from "core/command";
+import { Version } from "data/util";
 const parser = new MemoizedParser();
 
 export const App: React.FC =  () => {
@@ -285,6 +286,13 @@ export const App: React.FC =  () => {
 					</div>
 				</div>
 			}
+			<div style={{
+				position: "absolute",
+				top: 0,
+				right: 2
+			}}>
+				<code className="CommandColorUnknown">{Version}</code>
+			</div>
 		</div>
 	);
 };

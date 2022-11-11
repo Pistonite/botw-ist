@@ -9,7 +9,8 @@ import {
     isCommandInitialize, 
     isCommandPickUp, 
     isCommandReload, 
-    isCommandSave 
+    isCommandSave, 
+    isCommandSyncGameData
 } from "./ast";
 import { CmdErr, Command, CommandHint, CommandNop, ErrorCommand } from "./command";
 import { parseASTCommandAdd, parseASTCommandPickup } from "./parse.cmd.add";
@@ -18,6 +19,7 @@ import { parseASTCommandInitGamedata } from "./parse.cmd.initgamedata";
 import { parseASTCommandInitialize } from "./parse.cmd.initialize";
 import { parseASTCommandReload } from "./parse.cmd.reload";
 import { parseASTCommandSave } from "./parse.cmd.save";
+import { parseASTCommandSyncGameData } from "./parse.cmd.sync";
 import { codeBlockFromRange, ParserItem, withNoError } from "./type";
 
 export const parseCommand = (cmdString: string, searchFunc: (word: string)=>ItemStack|undefined): Command => {
@@ -85,8 +87,10 @@ const guessCommand = (cmdString: string): Command => {
             ["reload [file name ...]", "Reload a manual or named (auto) save"])
         || tryGuessCommand(cmdString, parts, [ "save", "a" ], 
             ["save as file name ...", "Making a named (auto) save"])
-        || tryGuessCommand(cmdString, parts, [ "s" ], 
+        || tryGuessCommand(cmdString, parts, [ "sa" ], 
             ["save [as file name ...]", "Making a manual or named (auto) save"])
+        || tryGuessCommand(cmdString, parts, [ "sy" ], 
+            ["sync gamedata", "Sync the inventory to gamedata."])
         
         
         || new ErrorCommand(CmdErr.AST, ["Unknown command", "The command is not recognized"])
@@ -141,6 +145,10 @@ const parseASTTarget: ParserItem<ASTTarget, Command> = (ast, search) => {
     }
     if(isCommandBreakSlots(ast)){
         return parseASTCommandBreakSlots(ast, search);
+    }
+
+    if(isCommandSyncGameData(ast)){
+        return parseASTCommandSyncGameData(ast);
     }
     return [undefined, [], "todo: impl parser"];
 }
