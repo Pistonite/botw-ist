@@ -19,7 +19,7 @@ export const parseASTArgumentSingleItemMaybeInSlot:
     const [ids, slot] = result;
     ids.splice(0,0, id);
     return delegateParseItem(
-        [ids, codeBlocks, {}],
+        [ids, [], {}],
         search,
         parsedItemSearch,
         stack=>[stack, slot],
@@ -50,7 +50,7 @@ const parseASTArgumentSingleItemMaybeInSlotAIdentifier:
 const parseC2: Parser<ASTArgumentSingleItemMaybeInSlotAIdentifierC2, [string[], number]>
 = (ast) => {
     const [id, idBlocks] = parseASTIdentifier(ast.mIdentifier0);
-    const codeBlocks = flattenCodeBlocks([], idBlocks, "item.name");
+    const codeBlocks = [flattenCodeBlocks([], idBlocks, "item.name")];
     return delegateParse(
         ast.mArgumentSingleItemMaybeInSlotAIdentifier1,
         parseASTArgumentSingleItemMaybeInSlotAIdentifier,

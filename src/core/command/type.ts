@@ -96,6 +96,9 @@ export const delegateParse = <A, T, T2>(
 ): [T2 | undefined, CodeBlockTree, string] => {
 	const result: [T|T2|undefined, CodeBlockTree, string] = f(ast);
 	if(codeBlocks){
+		if(codeBlocks === result[1]){
+			throw new Error("Circular reference in code blocks. Make sure the parser is not returning the input code blocks!");
+		}
 		codeBlocks.push(result[1]);
 		result[1] = codeBlocks;
 	}
@@ -115,8 +118,12 @@ export const delegateParseSafe = <A, T, T2>(
 	codeBlocks?: CodeBlockTree
 ): [T2, CodeBlockTree] => {
 	const result: [T|T2, CodeBlockTree] = f(ast);
+	
 	//in place replace
 	if(codeBlocks){
+		if(codeBlocks === result[1]){
+			throw new Error("Circular reference in code blocks. Make sure the parser is not returning the input code blocks!");
+		}
 		codeBlocks.push(result[1]);
 		result[1] = codeBlocks;
 	}
@@ -134,7 +141,10 @@ export const delegateParseItem = <A, T, T2>(
 ): [T2 | undefined, CodeBlockTree, string] => {
 	const result: [T|T2|undefined, CodeBlockTree, string] = f(ast, searchFunc);
 	//in place replace
-	if(codeBlocks){
+	if(codeBlocks ){
+		if(codeBlocks === result[1]){
+			throw new Error("Circular reference in code blocks. Make sure the parser is not returning the input code blocks!");
+		}
 		codeBlocks.push(result[1]);
 		result[1] = codeBlocks;
 	}

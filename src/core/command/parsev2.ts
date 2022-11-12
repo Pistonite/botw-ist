@@ -7,6 +7,7 @@ import {
     isCommandBreakSlots, 
     isCommandDrop, 
     isCommandEat, 
+    isCommandEquip, 
     isCommandInitGameData, 
     isCommandInitialize, 
     isCommandPickUp, 
@@ -19,6 +20,7 @@ import {
 import { CmdErr, Command, CommandHint, CommandNop, ErrorCommand } from "./command";
 import { parseASTCommandAdd, parseASTCommandPickup } from "./parse.cmd.add";
 import { parseASTCommandBreakSlots } from "./parse.cmd.breakslot";
+import { parseASTCommandEquip } from "./parse.cmd.equip";
 import { parseASTCommandInitGamedata } from "./parse.cmd.initgamedata";
 import { parseASTCommandInitialize } from "./parse.cmd.initialize";
 import { parseASTCommandReload } from "./parse.cmd.reload";
@@ -45,10 +47,19 @@ export const parseCommand = (cmdString: string, searchFunc: (word: string)=>Item
     const {data, extra} = ast;
     const[ command, codeblocks, error] = parseASTTarget(data, searchFunc);
     if(!command){
-        return new ErrorCommand(CmdErr.Parse, [
+        // see if we can guess something first        
+        const guess = guessCommand(cmdString);
+        const errorMessages = [
             error,
-            "The command cannot be parsed due to the above error",
-        ],codeblocks);
+            "The command cannot be parsed due to the above error"
+        ]
+        if(guess.cmdErr === CmdErr.Guess){
+            errorMessages.push(
+                "---",
+                ...guess.err
+            );
+        }
+        return new ErrorCommand(CmdErr.Parse, errorMessages, codeblocks);
     }
     if(extra){
         codeblocks.push(codeBlockFromRange(extra, "unknown"));
@@ -82,8 +93,10 @@ const guessCommand = (cmdString: string): Command => {
             ["cook items ...", "Add items to inventory"])
         || tryGuessCommand(cmdString, parts, [ "d" ], 
             ["drop items ... [from slot X]", "Drop items from inventory to the ground"])
-        || tryGuessCommand(cmdString, parts, [ "e" ], 
+        || tryGuessCommand(cmdString, parts, [ "ea" ], 
             ["eat items ... [from slot X]", "Eat items from inventory"])
+        || tryGuessCommand(cmdString, parts, [ "eq" ], 
+            ["equip item [in slot X]", "Equip an item."])
         || tryGuessCommand(cmdString, parts, [ "g" ], 
             ["get items ...", "Add items to inventory"])
         || tryGuessCommand(cmdString, parts, [ "init", "ga" ], 
@@ -161,6 +174,11 @@ const parseASTTarget: ParserItem<ASTTarget, Command> = (ast, search) => {
     }
     if(isCommandEat(ast)){
         return parseASTCommandEat(ast, search);
+    }
+    //TODO: dnp
+
+    if(isCommandEquip(ast)){
+        return parseASTCommandEquip(ast, search);
     }
     
 

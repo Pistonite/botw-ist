@@ -38,35 +38,35 @@ describe("core/command/parse.breakslot with",()=>{
     it("break 1 slots with single item", ()=>{
         expect("break 1 slots with material a").toParseIntoCommand(mockSearchItem, new CommandBreakSlots(1, [
             new ItemStackArg(MockItems["materiala"].defaultStack, 1)
-        ], 0, []));
+        ], 1, []));
     });
     it("break 2 slots with 1 item stack", ()=>{
         expect("break 2 slots with 100 material b").toParseIntoCommand(mockSearchItem, new CommandBreakSlots(2, [
             new ItemStackArg(MockItems["materialb"].defaultStack, 100)
-        ], 0, []));
+        ], 1, []));
     });
     it("break 3 slots with 1 all item stack", ()=>{
         expect("break 3 slots with all material c").toParseIntoCommand(mockSearchItem, new CommandBreakSlots(3, [
             new ItemStackArg(MockItems["materialc"].defaultStack, "All")
-        ], 0, []));
+        ], 1, []));
     });
     it("break 3 slots with multiple item stacks", ()=>{
         expect("break 3 slots with 2 material c 3 material b").toParseIntoCommand(mockSearchItem, new CommandBreakSlots(3, [
             new ItemStackArg(MockItems["materialc"].defaultStack, 2),
             new ItemStackArg(MockItems["materialb"].defaultStack, 3)
-        ], 0, []));
+        ], 1, []));
     });
     it("break 3 slots with multiple item stacks with all", ()=>{
         expect("break 3 slots with all materialc 3 material b").toParseIntoCommand(mockSearchItem, new CommandBreakSlots(3, [
             new ItemStackArg(MockItems["materialc"].defaultStack, "All"),
             new ItemStackArg(MockItems["materialb"].defaultStack, 3)
-        ], 0, []));
+        ], 1, []));
     });
     it("break 3 slots with multiple item stacks with all and meta", ()=>{
         expect("break 3 slots with all material c 3 materialb[equip, life=700]").toParseIntoCommand(mockSearchItem, new CommandBreakSlots(3, [
             new ItemStackArg(MockItems["materialc"].defaultStack, "All"),
             new ItemStackArg(MockItems["materialb"].defaultStack.modifyMeta({equip: true, life: 700}), 3)
-        ], 0, []));
+        ], 1, []));
     });
 });
 
