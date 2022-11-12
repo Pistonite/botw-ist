@@ -131,8 +131,8 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 					onAutoResize={setTextAreaHeight}
 					blocks={[command.codeBlocks]} 
 					value={[commandText]} 
-					//setValue={()=>{}}
 					setValue={(v)=>editCommand(v.join(" "))} 
+					removeLines
 				/>
 			</div>
 			<div style={{

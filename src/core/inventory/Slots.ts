@@ -32,8 +32,8 @@ export class Slots {
 	}
 
 	// remove item(s) start from slot
-	// return if removal is successful
-	public remove(toRemove: ItemStack, count: number | AmountAllType, option: Partial<RemoveOption> = {}): boolean {
+	// return number of items removed
+	public remove(toRemove: ItemStack, count: number | AmountAllType, option: Partial<RemoveOption> = {}): number {
 		return remove(this.core, toRemove, count, option);
 	}
 
@@ -249,8 +249,8 @@ export class Slots {
 		this.core.setMetadata(item, slot, meta);
 	}
 
-	public clearAllButKeyItems() {
-		this.core.clearAllButKeyItems();
+	public removeAll(types: ItemType[]) {
+		this.core.removeAll(types);
 	}
 
 }

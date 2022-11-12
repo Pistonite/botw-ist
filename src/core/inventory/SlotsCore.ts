@@ -100,8 +100,8 @@ export class SlotsCore {
 		}
 	}
 
-	public clearAllButKeyItems() {
-		inPlaceFilter(this.internalSlots, stack=>stack.item.type === ItemType.Key);
+	public removeAll(types: ItemType[]) {
+		inPlaceFilter(this.internalSlots, stack=>!types.includes(stack.item.type));
 	}
 
     public findFirstTabIndex(type: ItemType, mCount: number): number {

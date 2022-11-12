@@ -1410,7 +1410,7 @@ const parseLiteralArrow: ParseFunction<ASTLiteralArrow> = (tokens) => {
 	tokens.pop();
 	return ParseResultFail;
 };
-// (literal union) LiteralShield => <shield> | <shield>
+// (literal union) LiteralShield => <shield> | <shields>
 export const isLiteralShield = <T extends {type: string}>(node: T | ASTLiteralShield | null): node is ASTLiteralShield => Boolean(node && node.type === "ASTLiteralShield");
 export type ASTLiteralShield = {
 	type: "ASTLiteralShield";
@@ -1429,7 +1429,7 @@ const parseLiteralShield: ParseFunction<ASTLiteralShield> = (tokens) => {
 	}
 		tokens.restore();
 	rangeTokens = [];
-	if(tokens.consume(rangeTokens) === "shield"){
+	if(tokens.consume(rangeTokens) === "shields"){
 		tokens.pop();
 		return {
 			type: "ASTLiteralShield",
@@ -1721,12 +1721,10 @@ const parseArgumentSingleItemMaybeInSlot: ParseFunction<ASTArgumentSingleItemMay
 		mArgumentSingleItemMaybeInSlotAIdentifier1,
 	};
 };
-// (derivation union) ArgumentSingleItemMaybeInSlotAIdentifier => ClauseInSlot | ArgumentSingleItemMaybeInSlotAIdentifierC1 | ArgumentSingleItemMaybeInSlotAIdentifierC2 | Epsilon
+// (derivation union) ArgumentSingleItemMaybeInSlotAIdentifier => ClauseInSlot | ArgumentSingleItemMaybeInSlotAIdentifierC2 | Epsilon
 const parseArgumentSingleItemMaybeInSlotAIdentifier: ParseFunction<ASTArgumentSingleItemMaybeInSlotAIdentifier> = (tokens) => {
 	let result: ASTArgumentSingleItemMaybeInSlotAIdentifier | undefined;
 	result = parseClauseInSlot(tokens);
-	if(result !== ParseResultFail) return result;
-	result = parseArgumentSingleItemMaybeInSlotAIdentifierC1(tokens);
 	if(result !== ParseResultFail) return result;
 	result = parseArgumentSingleItemMaybeInSlotAIdentifierC2(tokens);
 	if(result !== ParseResultFail) return result;
@@ -1734,36 +1732,7 @@ const parseArgumentSingleItemMaybeInSlotAIdentifier: ParseFunction<ASTArgumentSi
 	if(result !== ParseResultFail) return result;
 	return ParseResultFail;
 };
-export type ASTArgumentSingleItemMaybeInSlotAIdentifier = ASTClauseInSlot | ASTArgumentSingleItemMaybeInSlotAIdentifierC1 | ASTArgumentSingleItemMaybeInSlotAIdentifierC2 | ASTEpsilon;
-// (derivation) ArgumentSingleItemMaybeInSlotAIdentifierC1 => Metadata MaybeClauseInSlot
-export const isArgumentSingleItemMaybeInSlotAIdentifierC1 = <T extends {type: string}>(node: T | ASTArgumentSingleItemMaybeInSlotAIdentifierC1 | null): node is ASTArgumentSingleItemMaybeInSlotAIdentifierC1 => Boolean(node && node.type === "ASTArgumentSingleItemMaybeInSlotAIdentifierC1");
-export type ASTArgumentSingleItemMaybeInSlotAIdentifierC1 = {
-	readonly type: "ASTArgumentSingleItemMaybeInSlotAIdentifierC1",
-	readonly mMetadata0: ASTMetadata,
-	readonly mMaybeClauseInSlot1: ASTMaybeClauseInSlot,
-};
-const parseArgumentSingleItemMaybeInSlotAIdentifierC1: ParseFunction<ASTArgumentSingleItemMaybeInSlotAIdentifierC1> = (tokens) => {
-	let rangeTokens: Token[];
-	tokens.push();
-	const mMetadata0 = parseMetadata(tokens);
-	if(mMetadata0 === ParseResultFail) {
-		tokens.restore();
-		tokens.pop();
-		return ParseResultFail;
-	}
-	const mMaybeClauseInSlot1 = parseMaybeClauseInSlot(tokens);
-	if(mMaybeClauseInSlot1 === ParseResultFail) {
-		tokens.restore();
-		tokens.pop();
-		return ParseResultFail;
-	}
-	tokens.pop();
-	return {
-		type: "ASTArgumentSingleItemMaybeInSlotAIdentifierC1",
-		mMetadata0,
-		mMaybeClauseInSlot1,
-	};
-};
+export type ASTArgumentSingleItemMaybeInSlotAIdentifier = ASTClauseInSlot | ASTArgumentSingleItemMaybeInSlotAIdentifierC2 | ASTEpsilon;
 // (derivation) ArgumentSingleItemMaybeInSlotAIdentifierC2 => Identifier ArgumentSingleItemMaybeInSlotAIdentifier
 export const isArgumentSingleItemMaybeInSlotAIdentifierC2 = <T extends {type: string}>(node: T | ASTArgumentSingleItemMaybeInSlotAIdentifierC2 | null): node is ASTArgumentSingleItemMaybeInSlotAIdentifierC2 => Boolean(node && node.type === "ASTArgumentSingleItemMaybeInSlotAIdentifierC2");
 export type ASTArgumentSingleItemMaybeInSlotAIdentifierC2 = {
@@ -2251,16 +2220,6 @@ const parseClauseFromSlot: ParseFunction<ASTClauseFromSlot> = (tokens) => {
 		mInteger2,
 	};
 };
-// (derivation union) MaybeClauseInSlot => ClauseInSlot | Epsilon
-const parseMaybeClauseInSlot: ParseFunction<ASTMaybeClauseInSlot> = (tokens) => {
-	let result: ASTMaybeClauseInSlot | undefined;
-	result = parseClauseInSlot(tokens);
-	if(result !== ParseResultFail) return result;
-	result = parseEpsilon(tokens);
-	if(result !== ParseResultFail) return result;
-	return ParseResultFail;
-};
-export type ASTMaybeClauseInSlot = ASTClauseInSlot | ASTEpsilon;
 // (derivation) ClauseInSlot => <in> LiteralSlot Integer
 export const isClauseInSlot = <T extends {type: string}>(node: T | ASTClauseInSlot | null): node is ASTClauseInSlot => Boolean(node && node.type === "ASTClauseInSlot");
 export type ASTClauseInSlot = {

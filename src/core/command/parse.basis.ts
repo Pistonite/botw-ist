@@ -1,4 +1,5 @@
-import { ASTOneOrMoreIdentifiers, ASTIdentifier, ASTInteger, isOneOrMoreIdentifiers, ASTIdentifierPrime } from "./ast";
+import { ItemType } from "data/item";
+import { ASTOneOrMoreIdentifiers, ASTIdentifier, ASTInteger, isOneOrMoreIdentifiers, ASTIdentifierPrime, ASTLiteralItemType, isLiteralKeyItem, isLiteralFood, isLiteralMaterial, isLiteralArmor, isLiteralShield, isLiteralArrow, isLiteralBow } from "./ast";
 import { codeBlockFromRange, CodeBlockTree, flattenCodeBlocks, Parser, ParserSafe } from "./type";
 
 export const parseASTInteger: ParserSafe<ASTInteger, number> = (ast) => {
@@ -44,4 +45,38 @@ export const parseASTIdentifierPrime: Parser<ASTIdentifierPrime, string[]> = (as
         depth++;
     }
     return [ids, flattenCodeBlocks([], codeBlocks, "unknown"), ""];
+}
+
+export const parseASTItemType: ParserSafe<ASTLiteralItemType, ItemType[]> = (ast) => {
+    if(isLiteralKeyItem(ast)){
+        return [
+            [ItemType.Key],
+            [
+                codeBlockFromRange(ast.literal0, "item.type"),
+                codeBlockFromRange(ast.mLiteralItem1, "item.type")
+            ]
+        ];
+    }
+    if(isLiteralArmor(ast)){
+        return [[ItemType.ArmorLower, ItemType.ArmorMiddle, ItemType.ArmorUpper], [codeBlockFromRange(ast, "item.type")]];
+    }
+    let type = ItemType.Weapon;
+    if(isLiteralFood(ast)){
+        type = ItemType.Food;
+    }
+    if(isLiteralMaterial(ast)){
+        type = ItemType.Material;
+    }
+    if(isLiteralShield(ast)){
+        type = ItemType.Shield;
+    }
+    if(isLiteralArrow(ast)){
+        type = ItemType.Arrow;
+    }
+    if(isLiteralBow(ast)){
+        type = ItemType.Bow;
+    }
+    
+    
+    return [[type], [codeBlockFromRange(ast, "item.type")]];
 }

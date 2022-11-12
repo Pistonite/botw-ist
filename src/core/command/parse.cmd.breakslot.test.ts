@@ -9,22 +9,22 @@ describe("core/command/parse.breakslot normal", ()=>{
         expect("break ???").toParseIntoCommand(()=>undefined, CmdErr.Guess);
     });
     it("break 1 slot", ()=>{
-        expect("break 1 slot").toParseIntoCommand(()=>undefined, new CommandBreakSlots(1, [], 0, []));
+        expect("break 1 slot").toParseIntoCommand(()=>undefined, new CommandBreakSlots(1, [], 1, []));
     });
     it("break 1 slots", ()=>{
-        expect("break 1 slots").toParseIntoCommand(()=>undefined, new CommandBreakSlots(1, [], 0, []));
+        expect("break 1 slots").toParseIntoCommand(()=>undefined, new CommandBreakSlots(1, [], 1, []));
     });
     it("break 5 slot", ()=>{
-        expect("break 5 slot").toParseIntoCommand(()=>undefined, new CommandBreakSlots(5, [], 0, []));
+        expect("break 5 slot").toParseIntoCommand(()=>undefined, new CommandBreakSlots(5, [], 1, []));
     });
     it("break 5 slot", ()=>{
-        expect("break 5 slots").toParseIntoCommand(()=>undefined, new CommandBreakSlots(5, [], 0, []));
+        expect("break 5 slots").toParseIntoCommand(()=>undefined, new CommandBreakSlots(5, [], 1, []));
     });
     it("break -5 slot", ()=>{
-        expect("break -5 slot").toParseIntoCommand(()=>undefined, new CommandBreakSlots(-5, [], 0, []));
+        expect("break -5 slot").toParseIntoCommand(()=>undefined, new CommandBreakSlots(-5, [], 1, []));
     });
     it("break 0 slot", ()=>{
-        expect("break 0 slots").toParseIntoCommand(()=>undefined, new CommandBreakSlots(0, [], 0, []));
+        expect("break 0 slots").toParseIntoCommand(()=>undefined, new CommandBreakSlots(0, [], 1, []));
     });
 });
 describe("core/command/parse.breakslot with",()=>{

@@ -11,8 +11,8 @@ import { SlotsCore } from "./SlotsCore";
 // count is the number of "items" to remove, or All
 //  For stackable items, count respects the stack size
 //  For unstackble items, count is the number of slots. However, if option.forceStackableFood is set, all food will be treated as stackble
-// return false if requested remove count is more than the total of the inventory
-export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number | AmountAllType, option: Partial<RemoveOption> = {}): boolean => {
+// returns the total amount removed
+export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number | AmountAllType, option: Partial<RemoveOption> = {}): number => {
 
     const {
         // The slot of matched item to start processing the remove.
@@ -35,6 +35,8 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
     // the slot indices to process the removal. Order matters. Duplicate OK
     const slotsToRemoveFrom: number[] = [];
     let countLeft = count;
+    // countLeft could be "All", so we need another variable to track how many are removed
+    let removedCount = 0; 
     const stacks = core.internalSlots;
     const specialIsStackable = (item: Item) => {
         if(forceStackableFood && item.type === ItemType.Food){
@@ -43,34 +45,46 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
         return item.stackable;
     }
 
+    const matchedSlots: number[][] = [[],[],[],[]];
     // we want to match in this order:
     // 1. Everything matches
-    circularForEachFromIndex(stacks, startSlot, (currentStack, i)=>{
+    stacks.forEach((currentStack,i)=>{
         if(currentStack.equals(stackToRemove)){
-            slotsToRemoveFrom.push(i);
+            matchedSlots[0].push(i);
         }
     });
+    
     // 2. Everything matches except stack size/durability
-    circularForEachFromIndex(stacks, startSlot, (currentStack, i)=>{
+    stacks.forEach((currentStack,i)=>{
         if(currentStack.equalsExcept(stackToRemove, "count")){
-            slotsToRemoveFrom.push(i);
+            matchedSlots[1].push(i);
         }
     });
+    
     // 3. Everything matches except stack size/durability and equipped/unequipped
     // this is because when specifying an equipment, it will have a default durability and default equipped=false
     // being equipped does not make the item different from the user's perspective
-    circularForEachFromIndex(stacks, startSlot, (currentStack, i)=>{
+    stacks.forEach((currentStack,i)=>{
         if(currentStack.equalsExcept(stackToRemove, "count", "equipped")){
-            slotsToRemoveFrom.push(i);
+            matchedSlots[2].push(i);
         }
     });
 
     // last: only item matches
-    circularForEachFromIndex(stacks, startSlot, (currentStack, i)=>{
+    stacks.forEach((currentStack,i)=>{
         if(currentStack.item === stackToRemove.item){
-            slotsToRemoveFrom.push(i);
+            matchedSlots[3].push(i);
         }
     });
+
+    // For each matched set, circular process it and add to the big remove list
+    matchedSlots.forEach(matchedArray=>{
+        if(startSlot>=matchedArray.length){
+            //if slot is greater, user probably didn't intend to remove like this. skip.
+            return;
+        }
+        circularForEachFromIndex(matchedArray, startSlot, i=>slotsToRemoveFrom.push(i));
+    })
 
     for(let j = 0;j<slotsToRemoveFrom.length && (countLeft === AmountAll || countLeft > 0);j++){
         const i = slotsToRemoveFrom[j];
@@ -85,11 +99,13 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
                 // because when forceDeleteZeroSlot = 0, it needs to push the index to the delete list
                 if(currentStack.count > countLeft){
                     // this stack is enough
+                    removedCount+=countLeft;
                     stacks[i] = currentStack.modify({count: currentStack.count - countLeft});
                     countLeft = 0;
                 }else{
                     // this stack is not enough
                     stacks[i] = currentStack.modify({count: 0});
+                    removedCount += currentStack.count;
                     countLeft -= currentStack.count;
                     if(forceDeleteZeroSlot){
                         slotIndexToRemove.push(i);
@@ -97,6 +113,7 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
                 }
             }else{
                 // removing all stackable
+                removedCount += currentStack.count;
                 stacks[i] = currentStack.modify({count: 0});
                 if(forceDeleteZeroSlot){
                     slotIndexToRemove.push(i);
@@ -105,6 +122,7 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
         }else{
             // countLeft is definitely > 0 because of loop condition, no need to check
             // Also make the count 0 so it's skipped in case of duplicates
+            removedCount += 1;
             stacks[i] = currentStack.modify({count: 0});
             if(forceDeleteZeroSlot){
                 slotIndexToRemove.push(i);
@@ -129,5 +147,5 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
     }
 
     core.removeZeroStackExceptArrows();
-    return countLeft === AmountAll || countLeft === 0;
+    return removedCount;
 };

@@ -1,6 +1,6 @@
-import { Item, ItemStack, MetaModifyOption } from "data/item";
+import { Item, ItemStack, ItemType, MetaModifyOption } from "data/item";
 import { Command } from "./command/command";
-import { AmountAllType, ItemStackArg } from "./command/ItemStackArg";
+import { AmountAll, AmountAllType, ItemStackArg } from "./command/ItemStackArg";
 import { DisplayableInventory } from "./inventory";
 import { GameData, Slots } from "./inventory";
 import { VisibleInventory } from "./inventory";
@@ -23,7 +23,8 @@ export class SimulationState {
 	private pouch: VisibleInventory;
 	private isOnEventide = false;
 	private crashed = false;
-	public errors: string[] = [];
+	private errorTitles: string[] = [];
+	private errorMessages: string[] = [];
 
 	constructor(gameData: GameData, manualSave: GameData | null, namedSaves: {[name: string]: GameData}, pouch: VisibleInventory){
 		this.gameData = gameData;
@@ -55,7 +56,8 @@ export class SimulationState {
 
 	// this is a wrapper that also have pre- and post-command checks
 	public executeCommand(command: Command){
-		this.errors = [];
+		this.errorTitles = [];
+		this.errorMessages = [];
 		this.crashed = false;
 		command.execute(this);
 		if(this.shouldCrash()){
@@ -76,8 +78,10 @@ export class SimulationState {
 
 	public save(name?: string) {
 		if(this.isOnEventide){
-			this.errors.push(
+			this.errorTitles.push(
 				"Save failed",
+			);
+			this.errorMessages.push(
 				"You cannot save while on Eventide or inside Trial of the Sword"
 			);
 			return;
@@ -94,8 +98,8 @@ export class SimulationState {
 			if(name in this.namedSaves){
 				this.reloadFrom(this.namedSaves[name]);
 			}else{
-				this.errors.push(
-					"Reload failed",
+				this.errorTitles.push("Reload failed");
+				this.errorMessages.push(
 					`You are trying to reload the file "${name}", which doesn't exist`
 				)
 			}
@@ -104,8 +108,8 @@ export class SimulationState {
 			if(save){
 				this.reloadFrom(save);
 			}else{
-				this.errors.push(
-					"Reload failed",
+				this.errorTitles.push("Reload failed");
+				this.errorMessages.push(
 					"There's no manual save to reload from"
 				)
 			}
@@ -139,7 +143,27 @@ export class SimulationState {
 	}
 
 	public remove(stack: ItemStack, count: number | AmountAllType, slot: number) {
-		this.pouch.remove(stack, count, slot);
+		const removedCount = this.pouch.remove(stack, count, slot);
+		this.syncGameDataWithPouch();
+		if(count !== AmountAll && removedCount < count){
+			this.errorTitles.push("Cannot remove item(s)");
+			this.errorMessages.push(
+				`Need to remove ${count}x${stack.item.id}, only ${removedCount} can be removed`
+			);
+		}
+	}
+	public eat(stack: ItemStack, count: number | AmountAllType, slot: number) {
+		const removedCount = this.pouch.eat(stack, count, slot);
+		this.syncGameDataWithPouch();
+		if(count !== AmountAll && removedCount < count){
+			this.errorTitles.push("Cannot eat item(s)");
+			this.errorMessages.push(
+				`Need to eat ${count}x${stack.item.id}, only ${removedCount} can be eaten`
+			);
+		}
+	}
+	public removeAll(types: ItemType[]) {
+		this.pouch.removeAll(types);
 		this.syncGameDataWithPouch();
 	}
 
@@ -217,6 +241,21 @@ export class SimulationState {
 
 	public getNamedSaves(): {[name: string]: GameData} {
 		return this.namedSaves;
+	}
+
+	public get errors(): string[] {
+		if (this.errorTitles.length === 0){
+			return [];
+		}
+		const returnResult = [];
+		const titleSet = new Set(this.errorTitles);
+		if(titleSet.size === 1){
+			returnResult.push(this.errorTitles[0]);
+		}else{
+			returnResult.push("This command gave multiple errors when executing:");
+		}
+		returnResult.push(...this.errorMessages);
+		return returnResult;
 	}
 
 }

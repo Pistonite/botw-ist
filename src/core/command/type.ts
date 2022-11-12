@@ -14,6 +14,7 @@ export const Colors = {
 	"keyword.other": "CommandColorKeywordOther",
 	"identifier.other": "CommandColorIdentifierOther",
 	"comment": "CommandColorComment",
+	"item.type": "CommandColorItemType"
 };
 
 export type ItemSearchFunction = (word: string)=>ItemStack|undefined;
@@ -110,16 +111,17 @@ export const delegateParse = <A, T, T2>(
 export const delegateParseSafe = <A, T, T2>(
 	ast: A, 
 	f: ParserSafe<A, T>, 
-	transformer: (t: T) => T2, 
+	transformer: (t: T, c: CodeBlockTree) => T2, 
 	codeBlocks?: CodeBlockTree
 ): [T2, CodeBlockTree] => {
 	const result: [T|T2, CodeBlockTree] = f(ast);
 	//in place replace
-	result[0] = transformer(result[0] as T);
 	if(codeBlocks){
 		codeBlocks.push(result[1]);
 		result[1] = codeBlocks;
 	}
+	result[0] = transformer(result[0] as T, result[1]);
+	
 	return result as [T2, CodeBlockTree];
 }
 

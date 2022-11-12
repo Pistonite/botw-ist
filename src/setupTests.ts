@@ -212,9 +212,10 @@ expect.extend({
 	},
 	toParseIntoCommand: (receivedString: string, search: ItemSearchFunction, expectedCommand: Command | CmdErr) => {
 		// we want to make sure we don't crash when typing the command
+		const safeSearch = search ?? (()=>{});
 		for(let i=0;i<receivedString.length-1;i++){
 			const part = receivedString.substring(0, i);
-			parseCommand(part, search);
+			parseCommand(part, safeSearch);
 			// no need to assert here, because the command might or might not equal the final one
 		}
 		const command = parseCommand(receivedString, search);

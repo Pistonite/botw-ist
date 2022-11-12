@@ -4,27 +4,6 @@ import { Item } from "data/item";
 // import { ItemStackArg } from "./ItemStackArg";
 
 
-
-
-// export class CommandRemove extends CommandImpl  {
-// 	private _verb: string;
-// 	private stacks: ItemStackArg[];
-// 	private slot: number;
-// 	constructor(verb: string, stacks: ItemStackArg[], slot: number){
-// 		super();
-// 		this._verb = verb;
-// 		this.stacks = stacks;
-// 		this.slot = slot;
-// 	}
-// 	public execute(state: SimulationState): void {
-// 		processWrappers(this.stacks).forEach(stack=>state.remove(stack, this.slot));
-// 	}
-// 	// public getDisplayString(): string {
-// 	// 	const slotString = this.noSlot ? "" : ` From Slot ${this.slot+1}`;
-// 	// 	return `${this.verb} ${this.count} ${this.item}${slotString}`;
-// 	// }
-// }
-
 // export class CommandDaP extends CommandImpl  {
 // 	private stacks: ItemStackArg[];
 

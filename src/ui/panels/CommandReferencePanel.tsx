@@ -249,6 +249,9 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					remove all diamonds
 				</ParseCode>
 				<ParseCode>
+					eat all normal arrows
+				</ParseCode>
+				<ParseCode>
 					drop axe[equip=true]
 				</ParseCode>
 				<Description className="Secondary"/>
@@ -257,9 +260,12 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				<Description className="Primary">
 					Remove the item(s) from visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
 				</Description>
-				<Description>
+				<Description className="Primary">
 					When removing items, the simulator will try to match the stack exactly first, including metadata. 
 					In the 4th example, the equipped axe will be dropped instead of the left most one.
+				</Description>
+				<Description className="Important">
+					Eat: only 1 of the corrupted food will be eaten, and can be used to remove empty arrow slots
 				</Description>
 				<div>
 					<code className="CommandColorKeywordCommand">remove all</code>
@@ -269,9 +275,12 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				<ParseCode>
 					remove all materials
 				</ParseCode>
+				<ParseCode>
+					remove all key items
+				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Easy way to get rid of everything</Label>
-				<Description className="Primary">
+				<Description >
 					Remove the all items of a type from visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
 				</Description>
 
@@ -344,13 +353,10 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				<Description className="Primary">
 					When equipping an item, all other item of the same type in the first tab is unequipped, then the item selected is equipped.
 				</Description>
-				<Description className="Primary">
+				<Description >
 					Slot can be used if you have multiple of the same item. When slot is not specified, the leftmost item will be equipped.
                     Note that you can use this command to equip something that is already equipped, which is not possible in game.
                     You can also equip unequippable items like materials, but it is not meaningful
-				</Description>
-				<Description className="Error">
-					Note that you can specify metadata but it is ignored. 
 				</Description>
 
 				<div>
@@ -388,11 +394,8 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					Slot can be used if you have multiple of the same item. When slot is not specified, the leftmost equipped item will be unequipped.
                     Note that you can use this command to unequip something that is already unequipped, which is useless.
 				</Description>
-				<Description className="Primary Important">
+				<Description className="Important">
 					You cannot unequip arrows. However, you can use the <code className="CommandColorKeywordCommand">write</code> command to do that.	
-				</Description>
-				<Description className="Error">
-					Note that you can specify metadata but it is ignored. 
 				</Description>
 
 				<div>

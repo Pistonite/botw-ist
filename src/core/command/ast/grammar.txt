@@ -22,11 +22,11 @@
 # Make sure to also update the special symbols in types.ts if needed
 
 
-# Top Level
+## Top Level
 Target => Command | SuperCommand
 SuperCommandForCommand => <!> Command
 
-# All Commands (Order matters!)
+## All Commands (Order matters!)
 ---
 Command => 
  CommandInitGameData    # initialize|init gamedata ...        
@@ -61,7 +61,7 @@ SuperCommand =>
 ---
 
 
-# Individual Commands
+## Individual Commands
 CommandInitGameData => LiteralInitialize <gamedata> ZeroOrMoreItems
 CommandInitialize => LiteralInitialize ZeroOrMoreItems
 CommandCook => <cook> <with> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
@@ -89,7 +89,7 @@ CommandSyncGameData => <sync> <gamedata>
 SuperCommandAddSlot => <!> <add> LiteralSlot ArgumentOneOrMoreItemsMaybeFromSlot
 SuperCommandRemoveSlot => <!> <remove> LiteralSlot Integer
 
-# Literals
+## Literals
 LiteralInitialize => <initialize> | <init>
 LiteralAdd => <get> | <add> | <buy> | <cook>
 LiteralPickUp => <pickup> | <pick> <up>
@@ -103,7 +103,7 @@ LiteralItemType => LiteralWeapon | LiteralBow | LiteralArrow | LiteralShield | L
 LiteralWeapon => <weapon> | <weapons>
 LiteralBow => <bow> | <bows>
 LiteralArrow => <arrow> | <arrows>
-LiteralShield => <shield> | <shield>
+LiteralShield => <shield> | <shields>
 LiteralArmor => <armor> | <armors>
 LiteralMaterial => <material> | <materials>
 LiteralFood => <food> | <foods>
@@ -113,22 +113,20 @@ LiteralSlot => <slot> | <slots>
 LiteralMaybeAll => LiteralAll | Epsilon
 LiteralAll => <all>
 
-# Arguments: large piece of command needed to make sure parsing is done in the right order
+## Arguments: large piece of command needed to make sure parsing is done in the right order
 # This is usually because a clause can appear after any item, and needs to be considered before considering the next item
 
 MaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot => ArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot | Epsilon
 ArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot => <with> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
 
-# I [meta] [in slot ...]
+# I ... [in slot ...]
 ArgumentSingleItemMaybeInSlot => Identifier ArgumentSingleItemMaybeInSlotAIdentifier
 ---
 ArgumentSingleItemMaybeInSlotAIdentifier =>
  ClauseInSlot
- | ArgumentSingleItemMaybeInSlotAIdentifierC1
  | ArgumentSingleItemMaybeInSlotAIdentifierC2
  | Epsilon
 ---
-ArgumentSingleItemMaybeInSlotAIdentifierC1 => Metadata MaybeClauseInSlot
 ArgumentSingleItemMaybeInSlotAIdentifierC2 => Identifier ArgumentSingleItemMaybeInSlotAIdentifier
 
 # I [from slot X]
@@ -181,15 +179,15 @@ ArgumentItemStacksMaybeFromSlotAIdentifierC1 => Metadata ArgumentItemStacksMaybe
 ArgumentItemStacksMaybeFromSlotAIdentifierC2 => Identifier ArgumentItemStacksMaybeFromSlotAIdentifier
 ArgumentItemStacksMaybeFromSlotAMetadata => ClauseFromSlot | ArgumentItemStacksMaybeFromSlot | Epsilon
 
-# Clauses
+## Clauses
 MaybeClauseFromSlot => ClauseFromSlot | Epsilon
 ClauseFromSlot => <from> LiteralSlot Integer
-MaybeClauseInSlot => ClauseInSlot | Epsilon
+# MaybeClauseInSlot => ClauseInSlot | Epsilon
 ClauseInSlot => <in> LiteralSlot Integer
 MaybeClauseSaveTarget => ClauseSaveTarget | Epsilon
 ClauseSaveTarget => <as> OneOrMoreIdentifiers
 
-# Items
+## Items
 ZeroOrMoreItems => SingleItem | ItemStackPrime
 OneOrMoreItems => SingleItem | OneOrMoreItemStacks
 # OneOrMoreItemsAllowAll => OneOrMoreItemStacksAllowAll | SingleItem
@@ -200,7 +198,7 @@ ItemStack => Integer SingleItem
 ItemStackPrime => OneOrMoreItemStacks | Epsilon
 # ItemStackAllowAllPrime => OneOrMoreItemStacksAllowAll | Epsilon
 
-# Basic
+## Basic
 AmountOrAll => Integer | LiteralAll
 SingleItem => OneOrMoreIdentifiers MaybeMetadata
 IdentifierPrime => OneOrMoreIdentifiers | Epsilon

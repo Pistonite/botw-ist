@@ -12,13 +12,14 @@ type CommandTextAreaProps = {
     onAutoResize?: (newHeight: number)=>void,
     textAreaId?: string,
     stopPropagation?:boolean,
+    removeLines?:boolean,
 } & GetSetPair<"value", string[]>;
 
 const MIN_HEIGHT = 30;
 const MAX_HEIGHT = 300;
 
 export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
-    className, stopPropagation,
+    className, stopPropagation, removeLines,
     large, value, setValue, blocks, disabled, onAutoResize, textAreaId, ...restProps
 }) => {
     const [cachedValue, setCachedValue] = useState<string>("");
@@ -27,12 +28,19 @@ export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
     const [updateHandle, setUpdateHandle] = useState<number|undefined>(undefined);
 
     const splitedCachedValue = useMemo(()=>{
+        if(removeLines){
+            return [cachedValue]
+        }
         return cachedValue.split("\n");
-    }, [cachedValue]);
+    }, [cachedValue, removeLines]);
 
     useEffect(()=>{
         if(updateHandle === undefined){
-            setCachedValue(value.join("\n"));
+            if(removeLines){
+                setCachedValue(value[0] || "");
+            }else{
+                setCachedValue(value.join("\n"));
+            }
         }
     }, [value, updateHandle]);
 
@@ -82,9 +90,18 @@ export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
                     if(updateHandle){
                         clearTimeout(updateHandle);
                     }
-                    setCachedValue(e.target.value);
+                    let value = e.target.value;
+                    if(removeLines){
+                        value = value.replaceAll("\n", " ");
+                    }
+                    setCachedValue(value);
                     const newHandle: any = setTimeout(()=>{
-                        setValue(e.target.value.split("\n"));
+                        if(removeLines){
+                            setValue([value]);
+                        }else{
+                            setValue(e.target.value.split("\n"));
+                        }
+                        
                         setUpdateHandle(undefined);
                     },50);
                     setUpdateHandle(newHandle);
@@ -95,6 +112,11 @@ export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
                     if(textAreaRef.current && highlightAreaRef.current){
                         highlightAreaRef.current.scrollTop = textAreaRef.current.scrollTop;
                         highlightAreaRef.current.scrollLeft = textAreaRef.current.scrollLeft;
+                    }
+                }}
+                onKeyDown={(e)=>{
+                    if(stopPropagation){
+                        e.stopPropagation();
                     }
                 }}
             />

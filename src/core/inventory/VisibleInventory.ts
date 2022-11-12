@@ -63,13 +63,18 @@ export class VisibleInventory implements DisplayableInventory{
 
 	// Standard remove: magically remove item from inventory
 	// sell is also this
-	public remove(stack: ItemStack, count: number | AmountAllType, startSlot: number) {
-		this.slots.remove(stack, count, { startSlot });
+	// returns number of items removed
+	public remove(stack: ItemStack, count: number | AmountAllType, startSlot: number): number {
+		return this.slots.remove(stack, count, { startSlot });
 	}
 
-	// Eat: food are treated as stackable to handle corrupted case, and 
-	public eat(stack: ItemStack, count: number | AmountAllType, startSlot: number) {
-		this.slots.remove(stack, count, { startSlot, forceStackableFood: true });
+	// Eat: food are treated as stackable to handle corrupted case, and 0 slot are removed
+	public eat(stack: ItemStack, count: number | AmountAllType, startSlot: number): number {
+		return this.slots.remove(stack, count, { 
+			startSlot, 
+			forceStackableFood: true,
+			forceDeleteZeroSlot: true
+		});
 	}
 
 	public equip(item: Item, slot: number) {
@@ -136,6 +141,20 @@ export class VisibleInventory implements DisplayableInventory{
 	}
 
 	public clearForEventide(): void {
-		this.slots.clearAllButKeyItems();
+		this.slots.removeAll([
+			ItemType.Weapon,
+			ItemType.Bow,
+			ItemType.Arrow,
+			ItemType.Shield,
+			ItemType.ArmorLower,
+			ItemType.ArmorMiddle,
+			ItemType.ArmorUpper,
+			ItemType.Material,
+			ItemType.Food
+		]);
+	}
+
+	public removeAll(types: ItemType[]): void {
+		this.slots.removeAll(types);
 	}
 }

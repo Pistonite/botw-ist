@@ -30,7 +30,7 @@ export const circularForEachFromIndex = <T>(array: T[], from: number, act: (elem
 	for(let i = from;i<array.length;i++){
         act(array[i], i, array);
     }
-	for(let i = 0;i<from;i++){
+	for(let i = 0;i<from && i<array.length;i++){
         act(array[i], i, array);
     }
 }

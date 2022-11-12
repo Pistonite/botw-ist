@@ -5,10 +5,14 @@ import {
     createASTFromString, 
     isCommandAdd, 
     isCommandBreakSlots, 
+    isCommandDrop, 
+    isCommandEat, 
     isCommandInitGameData, 
     isCommandInitialize, 
     isCommandPickUp, 
     isCommandReload, 
+    isCommandRemove, 
+    isCommandRemoveAll, 
     isCommandSave, 
     isCommandSyncGameData
 } from "./ast";
@@ -18,6 +22,7 @@ import { parseASTCommandBreakSlots } from "./parse.cmd.breakslot";
 import { parseASTCommandInitGamedata } from "./parse.cmd.initgamedata";
 import { parseASTCommandInitialize } from "./parse.cmd.initialize";
 import { parseASTCommandReload } from "./parse.cmd.reload";
+import { parseASTCommandDrop, parseASTCommandEat, parseASTCommandRemove, parseASTCommandRemoveAll } from "./parse.cmd.remove";
 import { parseASTCommandSave } from "./parse.cmd.save";
 import { parseASTCommandSyncGameData } from "./parse.cmd.sync";
 import { codeBlockFromRange, ParserItem, withNoError } from "./type";
@@ -75,6 +80,10 @@ const guessCommand = (cmdString: string): Command => {
             ["buy items ...", "Add items to inventory"])
         || tryGuessCommand(cmdString, parts, [ "c" ], 
             ["cook items ...", "Add items to inventory"])
+        || tryGuessCommand(cmdString, parts, [ "d" ], 
+            ["drop items ... [from slot X]", "Drop items from inventory to the ground"])
+        || tryGuessCommand(cmdString, parts, [ "e" ], 
+            ["eat items ... [from slot X]", "Eat items from inventory"])
         || tryGuessCommand(cmdString, parts, [ "g" ], 
             ["get items ...", "Add items to inventory"])
         || tryGuessCommand(cmdString, parts, [ "init", "ga" ], 
@@ -85,10 +94,14 @@ const guessCommand = (cmdString: string): Command => {
             ["pick up items ...", "Add items to inventory"])
         || tryGuessCommand(cmdString, parts, [ "rel" ], 
             ["reload [file name ...]", "Reload a manual or named (auto) save"])
+        || tryGuessCommand(cmdString, parts, [ "rem" ], 
+            ["remove items ... [from slot X]", "Remove items from inventory"])
         || tryGuessCommand(cmdString, parts, [ "save", "a" ], 
             ["save as file name ...", "Making a named (auto) save"])
         || tryGuessCommand(cmdString, parts, [ "sa" ], 
             ["save [as file name ...]", "Making a manual or named (auto) save"])
+        || tryGuessCommand(cmdString, parts, [ "se" ], 
+            ["sell items ... [from slot X]", "Remove items from inventory"])
         || tryGuessCommand(cmdString, parts, [ "sy" ], 
             ["sync gamedata", "Sync the inventory to gamedata."])
         
@@ -136,6 +149,20 @@ const parseASTTarget: ParserItem<ASTTarget, Command> = (ast, search) => {
     if(isCommandPickUp(ast)){
         return parseASTCommandPickup(ast, search);
     }
+
+    if(isCommandRemoveAll(ast)){
+        return withNoError(parseASTCommandRemoveAll(ast));
+    }
+    if(isCommandRemove(ast)){
+        return parseASTCommandRemove(ast, search);
+    }
+    if(isCommandDrop(ast)){
+        return parseASTCommandDrop(ast, search);
+    }
+    if(isCommandEat(ast)){
+        return parseASTCommandEat(ast, search);
+    }
+    
 
     if(isCommandSave(ast)){
         return parseASTCommandSave(ast);
