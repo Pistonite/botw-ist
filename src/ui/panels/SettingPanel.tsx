@@ -33,6 +33,7 @@ export const SettingPanel: React.FC = () => {
 	const showSaves = setting("showSaves");
 	const showGameData = setting("showGameData");
 	const interlaceGameData = setting("interlaceGameData");
+	const showHint = setting("showCommandHint");
 
 	return (
 		<Page title="Setting">
@@ -81,6 +82,15 @@ export const SettingPanel: React.FC = () => {
 				<Label>{settingToString(isIconAnimated, "Show animated icons", "Show static icons")}</Label>
 				<Description>
                     Toggle if icons should be animated for available items.
+				</Description>
+			</Category>
+			<Category title="Commands">
+				<Button className="Small" onClick={()=>setting("showCommandHint", !showHint)}>
+					{settingToButtonString(showHint)}
+				</Button>
+				<Label>{settingToString(showHint, "Show command hints", "Do not show command hints")}</Label>
+				<Description>
+                    Toggle if the simulator should guess which command you are trying to use, and show the usage info. (Will still show errors)
 				</Description>
 			</Category>
 			<Category title="Advanced">

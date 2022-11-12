@@ -26,6 +26,12 @@ export const inPlaceFilter = <T>(array: T[], condition: (elem:T, i:number, arr:T
 	array.length = j;
 }
 
+export const inPlaceMap = <T>(array: T[], act: (elem:T, i:number, arr:T[])=>T): void => {
+	for(let i=0;i<array.length;i++){
+		array[i] = act(array[i], i, array);
+	}
+}
+
 export const circularForEachFromIndex = <T>(array: T[], from: number, act: (elem:T, i:number, arr:T[])=>void): void => {
 	for(let i = from;i<array.length;i++){
         act(array[i], i, array);

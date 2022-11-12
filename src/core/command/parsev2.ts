@@ -15,12 +15,14 @@ import {
     isCommandRemove, 
     isCommandRemoveAll, 
     isCommandSave, 
-    isCommandSyncGameData
+    isCommandSyncGameData,
+    isCommandUnequip,
+    isCommandUnequipAll
 } from "./ast";
 import { CmdErr, Command, CommandHint, CommandNop, ErrorCommand } from "./command";
 import { parseASTCommandAdd, parseASTCommandPickup } from "./parse.cmd.add";
 import { parseASTCommandBreakSlots } from "./parse.cmd.breakslot";
-import { parseASTCommandEquip } from "./parse.cmd.equip";
+import { parseASTCommandEquip, parseASTCommandUnequip, parseASTCommandUnequipAll } from "./parse.cmd.equip";
 import { parseASTCommandInitGamedata } from "./parse.cmd.initgamedata";
 import { parseASTCommandInitialize } from "./parse.cmd.initialize";
 import { parseASTCommandReload } from "./parse.cmd.reload";
@@ -109,6 +111,8 @@ const guessCommand = (cmdString: string): Command => {
             ["reload [file name ...]", "Reload a manual or named (auto) save"])
         || tryGuessCommand(cmdString, parts, [ "rem" ], 
             ["remove items ... [from slot X]", "Remove items from inventory"])
+        || tryGuessCommand(cmdString, parts, [ "rem", "a" ], 
+            ["remove all type", "Remove all items of a type from inventory"])
         || tryGuessCommand(cmdString, parts, [ "save", "a" ], 
             ["save as file name ...", "Making a named (auto) save"])
         || tryGuessCommand(cmdString, parts, [ "sa" ], 
@@ -117,8 +121,10 @@ const guessCommand = (cmdString: string): Command => {
             ["sell items ... [from slot X]", "Remove items from inventory"])
         || tryGuessCommand(cmdString, parts, [ "sy" ], 
             ["sync gamedata", "Sync the inventory to gamedata."])
-        
-        
+        || tryGuessCommand(cmdString, parts, [ "u" ], 
+            ["unequip item [in slot X]", "Unequip an item or a type of item (weapon, bow, shield, etc)"])
+        || tryGuessCommand(cmdString, parts, [ "unequip", "a" ], 
+            ["unequip type", "Unequip a type of items"])
         || new ErrorCommand(CmdErr.AST, ["Unknown command", "The command is not recognized"])
     );
 }
@@ -180,7 +186,12 @@ const parseASTTarget: ParserItem<ASTTarget, Command> = (ast, search) => {
     if(isCommandEquip(ast)){
         return parseASTCommandEquip(ast, search);
     }
-    
+    if(isCommandUnequip(ast)){
+        return parseASTCommandUnequip(ast, search);
+    }
+    if(isCommandUnequipAll(ast)){
+        return withNoError(parseASTCommandUnequipAll(ast));
+    }
 
     if(isCommandSave(ast)){
         return parseASTCommandSave(ast);

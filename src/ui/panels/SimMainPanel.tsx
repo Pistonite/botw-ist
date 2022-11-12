@@ -30,6 +30,7 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 	const { setting } = useRuntime();
 	const isIconAnimated = setting("animatedIcon");
 	const isGameDataInterlaced = setting("interlaceGameData");
+	const showHint = setting("showCommandHint");
 
 	let content: JSX.Element;
 	if(simulationState.isCrashed()){
@@ -142,7 +143,7 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 				
 				{content}
 				{
-					command.err.length > 0 && 
+					command.err.length > 0 && (showHint || command.cmdErr !== CmdErr.Guess) && 
 					<div className={clsx(
 							"TooltipWindow", 
 							command.cmdErr === CmdErr.Parse && "TooltipWarn",

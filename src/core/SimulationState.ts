@@ -177,6 +177,11 @@ export class SimulationState {
 		this.syncGameDataWithPouch();
 	}
 
+	public unequipAll(types: ItemType[]){
+		this.pouch.unequipAll(types);
+		this.syncGameDataWithPouch();
+	}
+
 	public shootArrow(count: number){
 		this.pouch.shootArrow(count, this.gameData);
 		// does not sync

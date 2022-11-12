@@ -1,4 +1,4 @@
-import { arrayEqual, stableSort, inPlaceFilter } from "data/util";
+import { arrayEqual, stableSort, inPlaceFilter, inPlaceMap } from "data/util";
 import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaModifyOption } from "data/item";
 
 // This is the "core" of Slots with basic getter and manipulation methods
@@ -102,6 +102,14 @@ export class SlotsCore {
 
 	public removeAll(types: ItemType[]) {
 		inPlaceFilter(this.internalSlots, stack=>!types.includes(stack.item.type));
+	}
+
+	public unequipAll(types: ItemType[]) {
+		inPlaceMap(this.internalSlots, stack=>(
+			(stack.equipped && types.includes(stack.item.type))
+			? stack.modify({equipped: false})
+			: stack
+		));
 	}
 
     public findFirstTabIndex(type: ItemType, mCount: number): number {

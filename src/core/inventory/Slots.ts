@@ -1,4 +1,4 @@
-import { arrayEqual, stableSort } from "data/util";
+import { arrayEqual, inPlaceMap, stableSort } from "data/util";
 import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaModifyOption } from "data/item";
 import { SlotsCore } from "./SlotsCore";
 import { AmountAllType } from "core/command/ItemStackArg";
@@ -172,7 +172,7 @@ export class Slots {
 		// [needs confirm] checks entire inventory?
 		for(let i = 0; i<internalSlots.length;i++){
 			if(internalSlots[i].item === item){
-				if(slot < 0){
+				if(slot <= 0){
 					if(internalSlots[i].equipped){
 						this.core.modifySlot(i, {equipped: false});
 						break;
@@ -251,6 +251,10 @@ export class Slots {
 
 	public removeAll(types: ItemType[]) {
 		this.core.removeAll(types);
+	}
+
+	public unequipAll(types: ItemType[]) {
+		this.core.unequipAll(types);
 	}
 
 }

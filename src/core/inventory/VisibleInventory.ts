@@ -157,4 +157,8 @@ export class VisibleInventory implements DisplayableInventory{
 	public removeAll(types: ItemType[]): void {
 		this.slots.removeAll(types);
 	}
+
+	public unequipAll(types: ItemType[]): void {
+		this.slots.unequipAll(types);
+	}
 }
