@@ -26,14 +26,12 @@ export const ItemExplorerPanel: React.FC = ()=>{
 			const firstSlot = new SlotDisplayForItemStack(result);
 			firstSlot.init(false, isIconAnimated);
 			firstSlot.propertyClassName = "Highlight";
-			firstSlot.propertyString = "\u2713"
+			firstSlot.propertyString = "\u2713";
 			displaySlots.push(firstSlot);
 		}
 		rest.forEach(stack=>displaySlots.push(new SlotDisplayForItemStack(stack).init(false, isIconAnimated)));
 		return displaySlots;
 	}, [searchString, isIconAnimated]);
-
-
 
 	return (
 		<Page title="Item Reference">
@@ -95,7 +93,7 @@ export const ItemExplorerPanel: React.FC = ()=>{
 				</Description>
 			</Category>
 			<Category title="Explorer">
-					<Description className="Primary">
+				<Description className="Primary">
 					Type item name (or part of item name) below to filter the items.
 				</Description>
 				<Description >
@@ -104,7 +102,7 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					it picks the one marked <span className="Highlight">"&#x2713;"</span>
 				</Description>
 				<Description>
-				<input
+					<input
 						style={{width: "calc( 100% )"}}
 						className="MainInput"
 						spellCheck={false}
@@ -126,8 +124,6 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					}
 				</Description>
 			</Category>
-
-
 
 		</Page>
 	);

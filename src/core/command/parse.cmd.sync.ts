@@ -9,20 +9,20 @@ export class CommandSync extends AbstractProperCommand  {
 		state.syncGameDataWithPouch();
 	}
 
-    public equals(other: Command): boolean {
-        return other instanceof CommandSync;
-    }
+	public equals(other: Command): boolean {
+		return other instanceof CommandSync;
+	}
 
 }
 
 export const parseASTCommandSyncGameData: Parser<ASTCommandSyncGameData, CommandSync> = (ast)=>{
-    const codeBlocks = [
-        codeBlockFromRange(ast.literal0, "keyword.command"),
-        codeBlockFromRange(ast.literal1, "keyword.command")
-    ];
-    return [
-        new CommandSync(codeBlocks),
-        codeBlocks,
-        ""
-    ];
-}
+	const codeBlocks = [
+		codeBlockFromRange(ast.literal0, "keyword.command"),
+		codeBlockFromRange(ast.literal1, "keyword.command")
+	];
+	return [
+		new CommandSync(codeBlocks),
+		codeBlocks,
+		""
+	];
+};

@@ -9,7 +9,7 @@ import YAML from "yaml";
 import { createSimulationState, SimulationState } from "core/SimulationState";
 import { CmdErr, Command, ItemSearchFunction, parseCommand } from "core/command";
 import { ItemStack, loadItemData, searchItemMemoized } from "data/item";
-(window as any).__VERSION__ = "test";
+
 const ItemDataString = fs.readFileSync("src/data/item/all.items.yaml", "utf-8");
 const ItemData = YAML.parse(ItemDataString);
 expect.extend({
@@ -162,10 +162,6 @@ const runE2ETest = (name: string, debug: boolean): [string, string]=>{
 	return [resultString, expectedString];
 };
 
-(window as any).debugAST = (ast: any) => {
-	fs.writeFileSync("src/core/command/ast/debug.ast.json", JSON.stringify(ast), "utf-8");
-}
-
 expect.extend({
 	toPassE2ESimulation: (receivedName: string, expectDebug?: boolean) => {
 		const [resultState, expectedState] = runE2ETest(receivedName, !!expectDebug);
@@ -212,7 +208,7 @@ expect.extend({
 	},
 	toParseIntoCommand: (receivedString: string, search: ItemSearchFunction, expectedCommand: Command | CmdErr) => {
 		// we want to make sure we don't crash when typing the command
-		const safeSearch = search ?? (()=>{});
+		const safeSearch = search ?? (()=>{}); // eslint-disable-line @typescript-eslint/no-empty-function
 		for(let i=0;i<receivedString.length-1;i++){
 			const part = receivedString.substring(0, i);
 			parseCommand(part, safeSearch);
@@ -227,7 +223,7 @@ expect.extend({
 				};
 			}
 			return {
-				message: ()=>`Parsed cmderr is the same as expected`,
+				message: ()=>"Parsed cmderr is the same as expected",
 				pass: true
 			};
 		}
@@ -235,11 +231,11 @@ expect.extend({
 		const equal1 = expectedCommand.equals(command);
 		const equal2 = command.equals(expectedCommand);
 		if(equal1 !== equal2){
-			throw new Error("Command equality function must be commutative")
+			throw new Error("Command equality function must be commutative");
 		}
 		if(!equal1){
-			console.log(command);
-			console.log(expectedCommand);
+			console.log(command); // eslint-disable-line no-console
+			console.log(expectedCommand); // eslint-disable-line no-console
 			return {
 				message: ()=>"Parsed command is different from expected",
 				pass: false

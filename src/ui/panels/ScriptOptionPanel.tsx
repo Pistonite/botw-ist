@@ -130,15 +130,14 @@ export const ScriptOptionPanel: React.FC = () => {
 						placeholder="File name"
 					/>
 					{/* <div> */}
-						<CommandTextArea
-							className="MainInput MultiLineInput"
-							value={currentText}
-							setValue={setCurrentText}
-							blocks={codeblocks}
-							stopPropagation
-						/>
+					<CommandTextArea
+						className="MainInput MultiLineInput"
+						value={currentText}
+						setValue={setCurrentText}
+						blocks={codeblocks}
+						stopPropagation
+					/>
 					{/* </div> */}
-
 
 					<Description className="Error">
 						{editing?"":"You need to enable editing to change the script here"}

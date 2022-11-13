@@ -6,7 +6,6 @@ import { SimulationState } from "core/SimulationState";
 import { CmdErr, Command } from "core/command";
 import { useRuntime } from "core/runtime";
 
-
 type SimMainPanelProps = {
     commandText: string,
 	command: Command,
@@ -141,10 +140,10 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 				{
 					command.err.length > 0 && (showHint || command.cmdErr !== CmdErr.Guess) &&
 					<div className={clsx(
-							"TooltipWindow",
-							command.cmdErr === CmdErr.Parse && "TooltipWarn",
-							command.cmdErr === CmdErr.Execute && "TooltipError"
-						)} style={{
+						"TooltipWindow",
+						command.cmdErr === CmdErr.Parse && "TooltipWarn",
+						command.cmdErr === CmdErr.Execute && "TooltipError"
+					)} style={{
 						position: "absolute",
 						top: 0,
 						right: 0,

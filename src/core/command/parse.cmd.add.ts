@@ -23,13 +23,13 @@ export class CommandAdd extends AbstractProperCommand {
 }
 
 export const parseASTCommandAdd: ParserItem<ASTCommandAdd, CommandAdd> = (ast, search) => {
-    const codeBlocks: CodeBlockTree = [];
-    codeBlocks.push(codeBlockFromRange(ast.mLiteralAdd0, "keyword.command"));
-    return delegateParseItem(ast.mOneOrMoreItems1, search, parseASTItems, (i,c)=>new CommandAdd(i,c), codeBlocks);
-}
+	const codeBlocks: CodeBlockTree = [];
+	codeBlocks.push(codeBlockFromRange(ast.mLiteralAdd0, "keyword.command"));
+	return delegateParseItem(ast.mOneOrMoreItems1, search, parseASTItems, (i,c)=>new CommandAdd(i,c), codeBlocks);
+};
 
 export const parseASTCommandPickup: ParserItem<ASTCommandPickUp, CommandAdd> = (ast, search) => {
-    const codeBlocks: CodeBlockTree = [];
-    codeBlocks.push(codeBlockFromRange(ast.mLiteralPickUp0, "keyword.command"));
-    return delegateParseItem(ast.mOneOrMoreItems1, search, parseASTItems, (i,c)=>new CommandAdd(i,c), codeBlocks);
-}
+	const codeBlocks: CodeBlockTree = [];
+	codeBlocks.push(codeBlockFromRange(ast.mLiteralPickUp0, "keyword.command"));
+	return delegateParseItem(ast.mOneOrMoreItems1, search, parseASTItems, (i,c)=>new CommandAdd(i,c), codeBlocks);
+};

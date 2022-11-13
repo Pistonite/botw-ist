@@ -37,50 +37,50 @@ export const SimStepsPanel: React.FC<SimStepsPanelProps> = ({
 
 	return (
 
-			<Section contentId="SimStepsPanel" titleText="Steps" style={{
-				height: "100%"
-			}}>
-				<ol >
-					{
-						commandData.map((c,i)=>
-							<CommandItem
-								htmlId={displayIndex===i ? "SimStepSelectedItem":undefined}
-								onClick={()=>{
-									setDisplayIndex(i);
-									setPage("#simulation");
-									const inputField = document.getElementById("SimulationCommandTextField");
-									if(inputField){
-										inputField.focus();
-									}
-								}}
-								onContextMenu={(x,y)=>{
-									if(editing){
-										setContextMenuState({
-											index: i,
-											x,
-											y
-										});
-									}else{
-										setWarnReadOnly(true);
-									}
+		<Section contentId="SimStepsPanel" titleText="Steps" style={{
+			height: "100%"
+		}}>
+			<ol >
+				{
+					commandData.map((c,i)=>
+						<CommandItem
+							htmlId={displayIndex===i ? "SimStepSelectedItem":undefined}
+							onClick={()=>{
+								setDisplayIndex(i);
+								setPage("#simulation");
+								const inputField = document.getElementById("SimulationCommandTextField");
+								if(inputField){
+									inputField.focus();
+								}
+							}}
+							onContextMenu={(x,y)=>{
+								if(editing){
+									setContextMenuState({
+										index: i,
+										x,
+										y
+									});
+								}else{
+									setWarnReadOnly(true);
+								}
 
-								}}
-								key={i}
-								isSelected={displayIndex===i}
-								isContextSelected={contextMenuState.index===i}
-								small={false}
-								useListItem={!commands[i].shouldSkipWithKeyboard}
-								isInvalid={commands[i].cmdErr !== CmdErr.None}
-							>
-								<ColoredCodeBlocks blocks={[commands[i].codeBlocks]} value={[c]} />
-							</CommandItem>
-						)
-					}
-					<CommandItem onClick={createNewStep} onContextMenu={createNewStep}>(new)</CommandItem>
+							}}
+							key={i}
+							isSelected={displayIndex===i}
+							isContextSelected={contextMenuState.index===i}
+							small={false}
+							useListItem={!commands[i].shouldSkipWithKeyboard}
+							isInvalid={commands[i].cmdErr !== CmdErr.None}
+						>
+							<ColoredCodeBlocks blocks={[commands[i].codeBlocks]} value={[c]} />
+						</CommandItem>
+					)
+				}
+				<CommandItem onClick={createNewStep} onContextMenu={createNewStep}>(new)</CommandItem>
 
-				</ol>
+			</ol>
 
-			</Section>
+		</Section>
 
 	);
 };

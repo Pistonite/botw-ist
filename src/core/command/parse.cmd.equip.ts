@@ -1,7 +1,7 @@
 import { SimulationState } from "core/SimulationState";
 import { Item, ItemType } from "data/item";
 import { arrayShallowEqual } from "data/util";
-import { ASTCommandEquip, ASTCommandUnequip, ASTCommandUnequipAll, isEpsilon, isLiteralAll } from "./ast";
+import { ASTCommandEquip, ASTCommandUnequip, ASTCommandUnequipAll, isLiteralAll } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
 import { parseASTItemType } from "./parse.basis";
 import { parseASTArgumentSingleItemMaybeInSlot } from "./parse.clause.inslot";
@@ -19,9 +19,9 @@ export class CommandEquip extends AbstractProperCommand  {
 	public execute(state: SimulationState): void {
 		state.equip(this.item, this.slot);
 	}
-    public equals(other: Command): boolean {
-        return other instanceof CommandEquip && other.item === this.item && this.slot === other.slot;
-    }
+	public equals(other: Command): boolean {
+		return other instanceof CommandEquip && other.item === this.item && this.slot === other.slot;
+	}
 }
 
 export class CommandUnequip extends AbstractProperCommand {
@@ -36,9 +36,9 @@ export class CommandUnequip extends AbstractProperCommand {
 	public execute(state: SimulationState): void {
 		state.unequip(this.item, this.slot);
 	}
-    public equals(other: Command): boolean {
-        return other instanceof CommandUnequip && other.item === this.item && this.slot === other.slot;
-    }
+	public equals(other: Command): boolean {
+		return other instanceof CommandUnequip && other.item === this.item && this.slot === other.slot;
+	}
 }
 
 export class CommandUnequipAll extends AbstractProperCommand  {
@@ -48,51 +48,51 @@ export class CommandUnequipAll extends AbstractProperCommand  {
 		this.types = types;
 	}
 	public execute(state: SimulationState): void {
-        state.unequipAll(this.types);
+		state.unequipAll(this.types);
 	}
-    public equals(other: Command): boolean {
-        return other instanceof CommandUnequipAll && arrayShallowEqual(this.types, other.types);
-    }
+	public equals(other: Command): boolean {
+		return other instanceof CommandUnequipAll && arrayShallowEqual(this.types, other.types);
+	}
 }
 
 export const parseASTCommandEquip: ParserItem<ASTCommandEquip, CommandEquip> = (ast, search) => {
-    const codeBlocks: CodeBlockTree = [];
-    codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
-    return delegateParseItem(
-        ast.mArgumentSingleItemMaybeInSlot1,
-        search,
-        parseASTArgumentSingleItemMaybeInSlot,
-        ([stack, slot],c)=>new CommandEquip(stack.item, slot,c),
-        codeBlocks
-    );
-}
+	const codeBlocks: CodeBlockTree = [];
+	codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
+	return delegateParseItem(
+		ast.mArgumentSingleItemMaybeInSlot1,
+		search,
+		parseASTArgumentSingleItemMaybeInSlot,
+		([stack, slot],c)=>new CommandEquip(stack.item, slot,c),
+		codeBlocks
+	);
+};
 
 export const parseASTCommandUnequip: ParserItem<ASTCommandUnequip, CommandUnequip> = (ast, search) => {
-    const codeBlocks: CodeBlockTree = [];
-    codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
-    return delegateParseItem(
-        ast.mArgumentSingleItemMaybeInSlot1,
-        search,
-        parseASTArgumentSingleItemMaybeInSlot,
-        ([stack, slot],c)=>new CommandUnequip(stack.item, slot,c),
-        codeBlocks
-    );
-}
+	const codeBlocks: CodeBlockTree = [];
+	codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
+	return delegateParseItem(
+		ast.mArgumentSingleItemMaybeInSlot1,
+		search,
+		parseASTArgumentSingleItemMaybeInSlot,
+		([stack, slot],c)=>new CommandUnequip(stack.item, slot,c),
+		codeBlocks
+	);
+};
 
 export const parseASTCommandUnequipAll: ParserSafe<ASTCommandUnequipAll, CommandUnequipAll> = (ast) => {
-    const codeBlocks: CodeBlockTree = [];
-    codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
-    const argItemType = ast.mLiteralMaybeAllItemType1;
-    const astAll = argItemType.mLiteralMaybeAll0;
-    if(isLiteralAll(astAll)){
-        codeBlocks.push(codeBlockFromRange(astAll.literal0, "item.type"));
-    }
-    const astItemType = argItemType.mLiteralItemType1;
-    return delegateParseSafe(
+	const codeBlocks: CodeBlockTree = [];
+	codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
+	const argItemType = ast.mLiteralMaybeAllItemType1;
+	const astAll = argItemType.mLiteralMaybeAll0;
+	if(isLiteralAll(astAll)){
+		codeBlocks.push(codeBlockFromRange(astAll.literal0, "item.type"));
+	}
+	const astItemType = argItemType.mLiteralItemType1;
+	return delegateParseSafe(
 		astItemType,
 		parseASTItemType,
 		(itemTypes, c) => new CommandUnequipAll(itemTypes, c),
 		codeBlocks
 	);
 
-}
+};

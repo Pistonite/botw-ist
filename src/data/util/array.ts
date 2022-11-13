@@ -18,28 +18,28 @@ export const inPlaceFilter = <T>(array: T[], condition: (elem:T, i:number, arr:T
 	let i = 0, j = 0;
 
 	while (i < array.length) {
-	  const val = array[i];
-	  if (condition(val, i, array)) array[j++] = val;
-	  i++;
+		const val = array[i];
+		if (condition(val, i, array)) {array[j++] = val;}
+		i++;
 	}
 
 	array.length = j;
-}
+};
 
 export const inPlaceMap = <T>(array: T[], act: (elem:T, i:number, arr:T[])=>T): void => {
 	for(let i=0;i<array.length;i++){
 		array[i] = act(array[i], i, array);
 	}
-}
+};
 
 export const circularForEachFromIndex = <T>(array: T[], from: number, act: (elem:T, i:number, arr:T[])=>void): void => {
 	for(let i = from;i<array.length;i++){
-        act(array[i], i, array);
-    }
+		act(array[i], i, array);
+	}
 	for(let i = 0;i<from && i<array.length;i++){
-        act(array[i], i, array);
-    }
-}
+		act(array[i], i, array);
+	}
+};
 
 interface Equalable<A> {
 	equals(a: A): boolean;
@@ -47,7 +47,7 @@ interface Equalable<A> {
 
 // Compare 2 arrays by invoking B's equals method using A as input
 export const arrayEqual = <A, B extends Equalable<A>>(arrayA: A[], arrayB: B[]): boolean => {
-	if(arrayA === arrayB as any){
+	if(arrayA === arrayB as unknown as A[]){
 		return true;
 	}
 	if(arrayA.length !== arrayB.length){
@@ -59,10 +59,10 @@ export const arrayEqual = <A, B extends Equalable<A>>(arrayA: A[], arrayB: B[]):
 		}
 	}
 	return true;
-}
+};
 
 export const arrayShallowEqual = <A>(arrayA: A[], arrayB: A[]): boolean => {
-	if(arrayA === arrayB as any){
+	if(arrayA === arrayB){
 		return true;
 	}
 	if(arrayA.length !== arrayB.length){
@@ -74,4 +74,4 @@ export const arrayShallowEqual = <A>(arrayA: A[], arrayB: A[]): boolean => {
 		}
 	}
 	return true;
-}
+};

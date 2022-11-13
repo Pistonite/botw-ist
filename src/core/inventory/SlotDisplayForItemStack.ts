@@ -4,10 +4,10 @@ import { SlotDisplay } from "./types";
 
 export class SlotDisplayForItemStack implements SlotDisplay {
 	private stack: ItemStack;
-	isBrokenSlot: boolean = false;
-	isIconAnimated: boolean = false;
-	propertyString: string = "";
-	propertyClassName: string = "";
+	isBrokenSlot = false;
+	isIconAnimated = false;
+	propertyString = "";
+	propertyClassName = "";
 	constructor(stack: ItemStack){
 		this.stack = stack;
 	}
@@ -71,7 +71,6 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 		const isYellow = (this.stack.weaponModifier & WeaponModifier.Yellow) !== WeaponModifier.None;
 		const yellowString = isYellow ? "Yellow" : "";
 
-
 		if(selectedModifier === WeaponModifier.AttackUp){
 			if (this.stack.item.type === ItemType.Bow){
 				return `${root}BowAttackUp${yellowString}.png`;
@@ -87,7 +86,6 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 			}
 			return `${root}MultishotX.png`;
 		}
-
 
 		return `${root}${getWeaponModifierName(selectedModifier)}${yellowString}.png`;
 
@@ -157,15 +155,15 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 			isEquipment && (weaponModifier & WeaponModifier.AttackUp) !== 0
 			&& [`Attack +${weaponValue}`, "ItemTooltipWeaponModifier"],
 			isEquipment && (weaponModifier & WeaponModifier.DurabilityUp) !== 0
-			&& [`Durablity Up`, "ItemTooltipWeaponModifier"],
+			&& ["Durablity Up", "ItemTooltipWeaponModifier"],
 			isEquipment && (weaponModifier & WeaponModifier.CriticalHit) !== 0
-			&& [`Critical Hit`, item.type === ItemType.Weapon ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
+			&& ["Critical Hit", item.type === ItemType.Weapon ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
 			isEquipment && (weaponModifier & WeaponModifier.LongThrow) !== 0
 			&& [`Throw Speed ${getFixedPointReductionString(weaponValue)}`, item.type === ItemType.Weapon ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
 			isEquipment && (weaponModifier & WeaponModifier.MultiShot) !== 0
 			&& [`Multishot x${Math.min(weaponValue, 10)} Max`, isBow? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
 			isEquipment && (weaponModifier & WeaponModifier.Zoom) !== 0
-			&& [`Zoom`, isBow ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
+			&& ["Zoom", isBow ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
 			isEquipment && (weaponModifier & WeaponModifier.QuickShot) !== 0
 			&& [`Bow Draw Speed ${getFixedPointReductionString(weaponValue)}`, isBow ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
 			isEquipment && (weaponModifier & WeaponModifier.SurfMaster) !== 0
@@ -191,7 +189,7 @@ const getFixedPointReductionString = (value: number): string => {
 	const percentage = (value-1000)/10;
 
 	return `${percentage > 0 ? "+":""}${percentage}%`;
-}
+};
 
 const selectModifier = (stack: ItemStack): number | undefined=> {
 	const applicableModifiers: number[] = [];
@@ -232,4 +230,4 @@ const selectModifier = (stack: ItemStack): number | undefined=> {
 		return undefined;
 	}
 	return selectedModifier;
-}
+};

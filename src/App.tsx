@@ -58,7 +58,7 @@ export const App: React.FC =  () => {
 		return [commands, simulationStates];
 	}, [rawCommands]);
 
-	const displayIndex = (_displayIndex < 0 || _displayIndex >= simulationStates.length)
+	const displayIndex = _displayIndex < 0 || _displayIndex >= simulationStates.length
 		? 0
 		: _displayIndex;
 	const theSimulationState = simulationStates[displayIndex];
@@ -89,7 +89,7 @@ export const App: React.FC =  () => {
 				if(nextCommandIndex>=commandData.length-1){
 					setCommandData(produce(commandData, newData=>{
 						newData.push("");
-					}))
+					}));
 					setDisplayIndex(commandData.length);
 				}else{
 					setDisplayIndex(Math.min(commandData.length-1, nextCommandIndex));
@@ -123,7 +123,7 @@ export const App: React.FC =  () => {
 
 	const sideWidth = page === "#setting" ? 500 : 300;
 	const showSavesSetting = setting("showSaves");
-	let showSaves: boolean = false;
+	let showSaves = false;
 	if(page === "#simulation"){
 		if(showSavesSetting === "auto"){
 			showSaves = theSimulationState.numberOfSaves() > 1;
@@ -142,7 +142,6 @@ export const App: React.FC =  () => {
 	const saveHeight = 220;
 	const fullMainHeight = "calc( 100vh - 40px )";
 	const middleHeight = showSaves?`calc( 100vh - 40px - ${saveHeight}px )`:fullMainHeight;
-
 
 	return (
 		<div className='Calamity'>
@@ -186,7 +185,7 @@ export const App: React.FC =  () => {
 						width: `calc( 100vw - ${sideWidth}px)`,
 						left: sideWidth
 					}}>
-					{	(page === "#simulation" || page === "#setting") &&
+						{	(page === "#simulation" || page === "#setting") &&
 
 							<SimMainPanel
 								commandText={commandData[displayIndex]}

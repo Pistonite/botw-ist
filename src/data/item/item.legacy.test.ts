@@ -2,8 +2,8 @@ import { CookEffect, ItemStack } from "./type";
 
 export {};
 describe("data/item.legacy", ()=>{
-    it("should match exactly for legacy items", ()=>{
-        expect("slate").toMatchItemSearch("SheikahSlate");
+	it("should match exactly for legacy items", ()=>{
+		expect("slate").toMatchItemSearch("SheikahSlate");
 		expect("glider").toMatchItemSearch("Paraglider");
 		expect("spiritorb").toMatchItemSearch("SpiritOrb");
 		expect("lotus").toMatchItemSearch("FleetLotusSeeds");
@@ -44,17 +44,17 @@ describe("data/item.legacy", ()=>{
 		expect("bigheartyradish").toMatchItemSearch("BigHeartyRadish");
 		expect("fairy").toMatchItemSearch("Fairy");
 		expect("masterSword").toMatchItemSearch("MasterSword");
-        expect("zoraarmor").toMatchItemSearch("ZoraArmor");
+		expect("zoraarmor").toMatchItemSearch("ZoraArmor");
 
-        // Legacy food. Need to add metadata
-        expect("speedfood").toMatchItemSearch((stack: ItemStack)=>{
+		// Legacy food. Need to add metadata
+		expect("speedfood").toMatchItemSearch((stack: ItemStack)=>{
 			expect(stack.item.id).toEqual("SteamedFruit");
 			return stack.modifyMeta({cookEffect: CookEffect.Hasty});
 		});
-        expect("endurafood").toMatchItemSearch((stack: ItemStack)=>{
+		expect("endurafood").toMatchItemSearch((stack: ItemStack)=>{
 			expect(stack.item.id).toEqual("MushroomSkewer");
 			return stack.modifyMeta({cookEffect: CookEffect.Enduring});
 		});
 
-    });
+	});
 });

@@ -13,23 +13,23 @@ export class CommandTrial extends AbstractProperCommand  {
 	public execute(state: SimulationState): void {
 		state.setEventide(this.enter);
 	}
-    public equals(other: Command): boolean {
-        return other instanceof CommandTrial && this.enter === other.enter;
-    }
+	public equals(other: Command): boolean {
+		return other instanceof CommandTrial && this.enter === other.enter;
+	}
 }
 
 export const parseASTCommandEnterTrial: ParserSafe<ASTCommandEnterTrial, CommandTrial> = (ast) => {
-    const codeBlocks = [
-        codeBlockFromRange(ast.literal0, "keyword.command"),
-        codeBlockFromRange(ast.mLiteralTrial1, "keyword.command")
-    ];
-    return [new CommandTrial(true, codeBlocks), codeBlocks];
-}
+	const codeBlocks = [
+		codeBlockFromRange(ast.literal0, "keyword.command"),
+		codeBlockFromRange(ast.mLiteralTrial1, "keyword.command")
+	];
+	return [new CommandTrial(true, codeBlocks), codeBlocks];
+};
 
 export const parseASTCommandExitTrial: ParserSafe<ASTCommandExitTrial, CommandTrial> = (ast) => {
-    const codeBlocks = [
-        codeBlockFromRange(ast.mLiteralLeave0, "keyword.command"),
-        codeBlockFromRange(ast.mLiteralTrial1, "keyword.command")
-    ];
-    return [new CommandTrial(false, codeBlocks), codeBlocks];
-}
+	const codeBlocks = [
+		codeBlockFromRange(ast.mLiteralLeave0, "keyword.command"),
+		codeBlockFromRange(ast.mLiteralTrial1, "keyword.command")
+	];
+	return [new CommandTrial(false, codeBlocks), codeBlocks];
+};

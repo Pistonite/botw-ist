@@ -121,17 +121,17 @@ export interface ItemStack {
 
 export const dumpItemStack = (stack: ItemStack) => {
 
-    return {
-        item: {
-            id: stack.item.id
-        },
-        count: stack.count,
-        equipped: stack.equipped,
-        foodEffect: stack.foodEffect,
-        weaponModifier: stack.weaponModifier,
-        weaponValue: stack.weaponValue
-    }
-}
+	return {
+		item: {
+			id: stack.item.id
+		},
+		count: stack.count,
+		equipped: stack.equipped,
+		foodEffect: stack.foodEffect,
+		weaponModifier: stack.weaponModifier,
+		weaponValue: stack.weaponValue
+	};
+};
 
 export type ItemIdMap = { [id: string]: Item};
 
@@ -152,27 +152,27 @@ export type MetaModifyOption = Partial<{
 // JS bitwise operations are 32 bits
 // but the numbers are 64 bits
 export const WeaponModifier = {
-    None: 0,
-    AttackUp: 1,
-    DurabilityUp: 1 << 1,
-    CriticalHit: 1 << 2,
-    LongThrow: 1 << 3,
-    MultiShot: 1 << 4,
-    Zoom: 1 << 5,
-    QuickShot: 1 << 6,
-    SurfMaster: 1 << 7,
-    GuardUp: 1 << 8,
-    Yellow: 1 << 31
+	None: 0,
+	AttackUp: 1,
+	DurabilityUp: 1 << 1,
+	CriticalHit: 1 << 2,
+	LongThrow: 1 << 3,
+	MultiShot: 1 << 4,
+	Zoom: 1 << 5,
+	QuickShot: 1 << 6,
+	SurfMaster: 1 << 7,
+	GuardUp: 1 << 8,
+	Yellow: 1 << 31
 } as const;
 
 export const getWeaponModifierName = (modifier: number): string => {
-    for(const name in WeaponModifier){
-        if (WeaponModifier[name as keyof typeof WeaponModifier] === modifier){
-            return name;
-        }
-    }
-    return "";
-}
+	for(const name in WeaponModifier){
+		if (WeaponModifier[name as keyof typeof WeaponModifier] === modifier){
+			return name;
+		}
+	}
+	return "";
+};
 
 export enum CookEffect {
     None,
@@ -187,21 +187,21 @@ export enum CookEffect {
     Tough,
     Fireproof,
     Hearty,
-};
+}
 
 export const iterateCookEffect = (): CookEffect[] => [
-    CookEffect.None,
-    CookEffect.Chilly,
-    CookEffect.Spicy,
-    CookEffect.Electro,
-    CookEffect.Sneaky,
-    CookEffect.Energizing,
-    CookEffect.Enduring,
-    CookEffect.Hasty,
-    CookEffect.Mighty,
-    CookEffect.Tough,
-    CookEffect.Fireproof,
-    CookEffect.Hearty,
+	CookEffect.None,
+	CookEffect.Chilly,
+	CookEffect.Spicy,
+	CookEffect.Electro,
+	CookEffect.Sneaky,
+	CookEffect.Energizing,
+	CookEffect.Enduring,
+	CookEffect.Hasty,
+	CookEffect.Mighty,
+	CookEffect.Tough,
+	CookEffect.Fireproof,
+	CookEffect.Hearty,
 ];
 
 export interface ExData {
@@ -209,4 +209,4 @@ export interface ExData {
     modifierValue: number,
     sellPrice: number,
     modifierType: number
-};
+}

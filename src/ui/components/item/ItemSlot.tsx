@@ -29,7 +29,7 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot})=>{
 		if (!className){
 			return text;
 		}
-		return <span className={className}>{text}</span>
+		return <span className={className}>{text}</span>;
 	});
 	return (
 		<Tooltip title={tooltipNodes}>
@@ -43,9 +43,9 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot})=>{
 				{
 					count!==undefined &&
 					<div className="ItemLayer" style={{zIndex: 2}}>
-							<span className={"ItemCount"}>
+						<span className={"ItemCount"}>
 							x{count}
-							</span>
+						</span>
 					</div>
 				}
 				{

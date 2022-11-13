@@ -84,7 +84,7 @@ describe("core/Slots.add", ()=>{
 
 				slots.add(stackToAdd, true, null);
 				const expected = [alreadyHaveStack];
-								expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+				expect(slots.getSlotsRef()).toEqualItemStacks(expected);
 			});
 			it("should add new stack when same type is present but unstackable, >999", ()=>{
 				const mockItem1 = createFoodMockItem("FoodA");
@@ -395,7 +395,7 @@ describe("core/Slots.add", ()=>{
 				const toAdd = createMaterialStack(mockItem3, 999);
 				const slots = new Slots(stacks);
 				slots.add(toAdd, true, null);
-								expect(slots.getSlotsRef()).toEqualItemStacks([existing1, existing3, toAdd, existing2]); // sorted
+				expect(slots.getSlotsRef()).toEqualItemStacks([existing1, existing3, toAdd, existing2]); // sorted
 			});
 			it("should NOT skip arrow 999 check for [bow, weapon, arrow]", ()=>{
 				const mockItem1 = createEquipmentMockItem("BowA", ItemType.Bow);
@@ -412,7 +412,7 @@ describe("core/Slots.add", ()=>{
 				const toAdd = createMaterialStack(mockItem3, 999);
 				const slots = new Slots(stacks);
 				slots.add(toAdd, true, null);
-								expect(slots.getSlotsRef()).toEqualItemStacks([existing1, existing2, existing3]); // not sorted
+				expect(slots.getSlotsRef()).toEqualItemStacks([existing1, existing2, existing3]); // not sorted
 			});
 			it("should skip arrow 999 check for [bow, weapon, arrow] if mCount = 0", ()=>{
 				const mockItem1 = createEquipmentMockItem("BowA", ItemType.Bow);
@@ -429,7 +429,7 @@ describe("core/Slots.add", ()=>{
 				const toAdd = createMaterialStack(mockItem3, 999);
 				const slots = new Slots(stacks);
 				slots.add(toAdd, true, 0);
-								expect(slots.getSlotsRef()).toEqualItemStacks([existing1, existing2, existing3, toAdd]); // not sorted
+				expect(slots.getSlotsRef()).toEqualItemStacks([existing1, existing2, existing3, toAdd]); // not sorted
 			});
 			it("should skip arrow 999 check for [shield, arrow]", ()=>{
 				const mockItem2 = createEquipmentMockItem("ShieldA", ItemType.Shield);
@@ -443,7 +443,7 @@ describe("core/Slots.add", ()=>{
 				const toAdd = createMaterialStack(mockItem3, 999);
 				const slots = new Slots(stacks);
 				slots.add(toAdd, true, null);
-								expect(slots.getSlotsRef()).toEqualItemStacks([existing3, toAdd, existing2]); // sorted
+				expect(slots.getSlotsRef()).toEqualItemStacks([existing3, toAdd, existing2]); // sorted
 			});
 			it("should add unrepeatable if mCount = 0", ()=>{
 				const mockItem1 = createKeyMockItem("KeyA");

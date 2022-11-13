@@ -216,7 +216,6 @@ const registerItem = (idAndSearch: string, option: ItemOption, type: ItemType, o
 		};
 	}
 
-
 	const item = new ItemImpl(
 		id,
 		type,
@@ -298,7 +297,7 @@ const searchItemInMap = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMa
 		}
 	}
 	return firstAttempt;
-}
+};
 
 const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMap): [ItemStack | undefined, ItemStack[]] => {
 	// if name is an id exactly, return that
@@ -364,7 +363,6 @@ const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSear
 		if (itemA.priority !== itemB.priority){
 			return itemB.priority - itemA.priority;
 		}
-
 
 		// first see if the result starts with any search key, and prioritize those with more matches
 		const diffInCount = resultStartCountMap[b] - resultStartCountMap[a];

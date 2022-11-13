@@ -30,8 +30,9 @@ export class SimulationState {
 		this.pouch = pouch;
 	}
 
+	// Only used in E2E tests
 	public dump() {
-		const namedSaveDump: any = {};
+		const namedSaveDump: any = {}; // eslint-disable-line @typescript-eslint/no-explicit-any
 		for(const name in this.namedSaves){
 			namedSaveDump[name] = this.namedSaves[name].dump();
 		}
@@ -113,7 +114,7 @@ export class SimulationState {
 				this.errorTitles.push("Reload failed");
 				this.errorMessages.push(
 					`You are trying to reload the file "${name}", which doesn't exist`
-				)
+				);
 			}
 		}else{
 			const save = this.manualSave;
@@ -123,7 +124,7 @@ export class SimulationState {
 				this.errorTitles.push("Reload failed");
 				this.errorMessages.push(
 					"There's no manual save to reload from"
-				)
+				);
 			}
 		}
 	}

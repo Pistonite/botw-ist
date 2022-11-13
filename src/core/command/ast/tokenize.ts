@@ -40,11 +40,11 @@ const tokenizeCore = (str: string, regex: RegExp): Token[] => {
 		});
 	}
 	return tokens.filter(s=>!s.value.match(/^\s*$/));
-}
+};
 
 export const tokenizeV2 = (str: string, regex: RegExp): TokenStream => {
 	return new TokenStreamImpl(tokenizeCore(str.toLowerCase(), regex));
-}
+};
 
 export interface TokenStream {
 	// Push the current position to stack so it can be restored
@@ -55,12 +55,12 @@ export interface TokenStream {
 	restore: ()=> void,
 	// Consume the next token,
 	consume: (out?: Token[])=>string | undefined
-};
+}
 
 class TokenStreamImpl implements TokenStream {
 	data: Token[];
 	index: number;
-	stack: number[]
+	stack: number[];
 
 	constructor(data: Token[]){
 		this.data = data;
@@ -70,9 +70,6 @@ class TokenStreamImpl implements TokenStream {
 
 	consume(out?: Token[]) {
 		const token = this.data[this.index];
-		if((window as any).__debug){
-			console.log(token);
-		}
 		if(!token){
 			return undefined;
 		}

@@ -28,8 +28,7 @@ export const getSlotsToAdd = (stacks: ItemStackArg[]): ItemStack[] => {
 	stacks.forEach(stack=>{
 		const [actualStack, count] = stack.getContextStackAndSlotCount();
 		if(count === "All"){
-			console.log("temp fix");
-			returnStacks.push(actualStack.modify({count: -1}));
+			console.error("Unexpected count === All when all is not allowed by grammar");
 		}else{
 			for(let i=0;i<count;i++){
 				returnStacks.push(actualStack);

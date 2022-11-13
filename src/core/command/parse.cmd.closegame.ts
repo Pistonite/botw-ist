@@ -8,14 +8,14 @@ export class CommandCloseGame extends AbstractProperCommand  {
 		state.closeGame();
 	}
 	public equals(other: Command): boolean {
-        return other instanceof CommandCloseGame;
-    }
+		return other instanceof CommandCloseGame;
+	}
 }
 
 export const parseASTCommandCloseGame: ParserSafe<ASTCommandCloseGame, CommandCloseGame> = (ast) => {
-    const codeBlocks = [
-        codeBlockFromRange(ast.mLiteralClose0, "keyword.command"),
-        codeBlockFromRange(ast.literal1, "keyword.command")
-    ];
-    return [new CommandCloseGame(codeBlocks), codeBlocks];
-}
+	const codeBlocks = [
+		codeBlockFromRange(ast.mLiteralClose0, "keyword.command"),
+		codeBlockFromRange(ast.literal1, "keyword.command")
+	];
+	return [new CommandCloseGame(codeBlocks), codeBlocks];
+};

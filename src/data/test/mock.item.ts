@@ -17,10 +17,10 @@ class MockItem implements Item {
 	animatedImage= "";
 	priority = 0;
 
-	bowZoom: boolean = false;
-    bowMultishot: number = 0;
-    bowRapidfire: number = 0;
-	isElixir: boolean = false;
+	bowZoom = false;
+	bowMultishot = 0;
+	bowRapidfire = 0;
+	isElixir = false;
 	constructor(id: string, type: ItemType, stackable: boolean, repeatable: boolean){
 		this.id = id;
 		this.type = type;
@@ -83,9 +83,8 @@ export const createMockItems = (ids: string[]): Record<string, Item> =>  {
 		}
 	});
 	return items;
-}
-
+};
 
 export const createMockItemSearch = (items: Record<string, Item>) => (id: string): ItemStack | undefined => {
 	return items[id.replaceAll("*", "").toLowerCase()]?.defaultStack;
-}
+};

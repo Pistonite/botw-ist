@@ -3,7 +3,7 @@ import { arrayEqual, stableSort, inPlaceFilter, inPlaceMap } from "data/util";
 
 // This is the "core" of Slots with basic getter and manipulation methods
 export class SlotsCore {
-    // Internal array. Must guarantee that the reference doesn't change
+	// Internal array. Must guarantee that the reference doesn't change
 	public internalSlots: ItemStack[] = [];
 	constructor(slots: ItemStack[]) {
 		this.internalSlots = slots;
@@ -59,7 +59,7 @@ export class SlotsCore {
 		});
 	}
 
-    public modifySlot(i: number, option: Partial<ItemStack>) {
+	public modifySlot(i: number, option: Partial<ItemStack>) {
 		this.internalSlots[i] = this.internalSlots[i].modify(option);
 	}
 
@@ -105,14 +105,14 @@ export class SlotsCore {
 	}
 
 	public unequipAll(types: ItemType[]) {
-		inPlaceMap(this.internalSlots, stack=>(
-			(stack.equipped && types.includes(stack.item.type))
-			? stack.modify({equipped: false})
-			: stack
-		));
+		inPlaceMap(this.internalSlots, stack=>
+			stack.equipped && types.includes(stack.item.type)
+				? stack.modify({equipped: false})
+				: stack
+		);
 	}
 
-    public findFirstTabIndex(type: ItemType, mCount: number): number {
+	public findFirstTabIndex(type: ItemType, mCount: number): number {
 		// figure out the tabs first
 		const tabArray: [ItemTab, number][] = [];
 		const tabAdded = new Set();

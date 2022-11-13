@@ -24,7 +24,7 @@ export class CommandInitialize extends AbstractProperCommand {
 }
 
 export const parseASTCommandInitialize: ParserItem<ASTCommandInitialize, CommandInitialize> = (ast, search) => {
-    const codeBlocks: CodeBlockTree = [];
-    codeBlocks.push(codeBlockFromRange(ast.mLiteralInitialize0, "keyword.command"));
-    return delegateParseItem(ast.mZeroOrMoreItems1, search, parseASTItems, (i,c)=>new CommandInitialize(i,c), codeBlocks);
-}
+	const codeBlocks: CodeBlockTree = [];
+	codeBlocks.push(codeBlockFromRange(ast.mLiteralInitialize0, "keyword.command"));
+	return delegateParseItem(ast.mZeroOrMoreItems1, search, parseASTItems, (i,c)=>new CommandInitialize(i,c), codeBlocks);
+};

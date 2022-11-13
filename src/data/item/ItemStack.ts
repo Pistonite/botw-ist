@@ -1,6 +1,6 @@
 import { getElixir } from "./elixir";
 import { ExDataImpl } from "./extra";
-import { CookEffect, ExData, Item, ItemStack, ItemType, MetaModifyOption } from "./type";
+import { CookEffect, ExData, Item, ItemStack, MetaModifyOption } from "./type";
 
 type ItemStackModifyOption = {
 	-readonly [P in keyof ItemStack]: ItemStack[P]
@@ -15,14 +15,14 @@ export class ItemStackImpl implements ItemStack {
 		}
 		return this._item;
 	}
-	private life: number = 1;
+	private life = 1;
 	get count(): number {
 		return this.life;
 	}
 	get durability(): number {
 		return this.life/100.0;
 	}
-	public equipped: boolean = false;
+	public equipped = false;
 	public foodEffect: CookEffect = CookEffect.None;
 	private exData: ExData = new ExDataImpl();
 	get weaponModifier(): number {
@@ -61,7 +61,7 @@ export class ItemStackImpl implements ItemStack {
 	}
 
 	public modifyMeta(metaOption: MetaModifyOption): ItemStack {
-		let modifyOption: Partial<ItemStackModifyOption> = {};
+		const modifyOption: Partial<ItemStackModifyOption> = {};
 		if("life" in metaOption){
 			modifyOption.count = metaOption.life ?? 0;
 		}

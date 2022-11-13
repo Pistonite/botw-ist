@@ -1,4 +1,3 @@
-import { SimulationState } from "core/SimulationState";
 import { ItemStack } from "data/item";
 
 export const Colors = {
@@ -34,8 +33,7 @@ export const codeBlockFromRange = (range: readonly [number, number] | {range: re
 		start: range[0],
 		end: range[1]
 	};
-}
-
+};
 
 export type CodeBlockTree = (CodeBlock | CodeBlockTree)[]
 const firstCodeBlock = (blocks: CodeBlockTree): CodeBlock => {
@@ -44,7 +42,7 @@ const firstCodeBlock = (blocks: CodeBlockTree): CodeBlock => {
 		current = current[0];
 	}
 	return current;
-}
+};
 
 const lastCodeBlock = (blocks: CodeBlockTree): CodeBlock => {
 	let current = blocks[blocks.length-1];
@@ -52,7 +50,7 @@ const lastCodeBlock = (blocks: CodeBlockTree): CodeBlock => {
 		current = current[current.length-1];
 	}
 	return current;
-}
+};
 
 export const flattenCodeBlocks = (output: CodeBlock[], blocks: CodeBlockTree, color?: keyof typeof Colors):CodeBlock[] => {
 	if(blocks.length === 0){
@@ -76,7 +74,7 @@ export const flattenCodeBlocks = (output: CodeBlock[], blocks: CodeBlockTree, co
 		}
 	});
 	return output;
-}
+};
 
 // Function to parse AST
 export type Parser<A, T> = (ast: A) => [T | undefined, CodeBlockTree, string];
@@ -86,7 +84,7 @@ export type ParserItem<A, T> = (ast: A, searchFunc: ItemSearchFunction) => [T | 
 export const withNoError = <T>(result: (T|CodeBlockTree|string)[]): [T, CodeBlockTree, string] => {
 	result.push("");
 	return result as [T, CodeBlockTree, string];
-}
+};
 
 export const delegateParse = <A, T, T2>(
 	ast: A,
@@ -109,7 +107,7 @@ export const delegateParse = <A, T, T2>(
 	result[0] = transformer(result[0] as T, result[1]);
 
 	return result as [T2, CodeBlockTree, string];
-}
+};
 
 export const delegateParseSafe = <A, T, T2>(
 	ast: A,
@@ -130,7 +128,7 @@ export const delegateParseSafe = <A, T, T2>(
 	result[0] = transformer(result[0] as T, result[1]);
 
 	return result as [T2, CodeBlockTree];
-}
+};
 
 export const delegateParseItem = <A, T, T2>(
 	ast: A,
@@ -154,7 +152,7 @@ export const delegateParseItem = <A, T, T2>(
 
 	result[0] = transformer(result[0] as T, result[1]);
 	return result as [T2, CodeBlockTree, string];
-}
+};
 
 export const AmountAll = "All";
 export type AmountAllType = typeof AmountAll;
