@@ -38,10 +38,10 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot})=>{
 					<div className={clsx("ItemSlot", "ItemSlotNoBg", isEquipped && "ItemSlotEquipped")}>
 						<img className={clsx("ItemImage")} src={image}/>
 					</div>
-					
+
 				</div>
 				{
-					count!==undefined && 
+					count!==undefined &&
 					<div className="ItemLayer" style={{zIndex: 2}}>
 							<span className={"ItemCount"}>
 							x{count}
@@ -49,7 +49,7 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot})=>{
 					</div>
 				}
 				{
-					durability!==undefined && 
+					durability!==undefined &&
 					<div className="ItemLayer" style={{zIndex: 2}}>
 						<span className="ItemFloatWindow ItemDurability">
 							{durability}
@@ -57,7 +57,7 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot})=>{
 					</div>
 				}
 				{
-					propertyString && 
+					propertyString &&
 					<div className="ItemLayer" style={{zIndex: 2}}>
 						<span className={clsx("ItemFloatWindow ItemPropertyString", propertyClassName)}>
 							{propertyString}
@@ -73,13 +73,13 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot})=>{
 								{modifierText}
 							</span>
 						</span>
-						
+
 					</div>
 				}
 
 			</span>
 		</Tooltip>
-		
+
 	);
 };
 

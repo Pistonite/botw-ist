@@ -75,7 +75,7 @@ def generate(in_lines, out_lines: list[str]):
     if undefined:
         print(f"{undefined=}")
         raise ValueError("some symbols are not defined")
-    
+
 def add_extern_symbol(extern_symbol: str, extern_imports, rule_symbols: set[str]):
     parts = extern_symbol.split(" ", 1)
     symbol = parts[0]
@@ -165,12 +165,12 @@ def generate_derivation_union_rule(target: str, out_lines: list[str], derivation
     for symbols in derivations:
         if len(symbols) > 1:
             raise ValueError(f"union derivation can only have 1 symbol each: {symbols}")
-        symbol = symbols[0]       
+        symbol = symbols[0]
         if is_literal(symbol):
             raise ValueError(f"union derivation cannot have literal: {symbols}")
         referenced_symbols.add(symbol)
         type_names.append(symbol)
-        out_lines.append(f"\tresult = parse{symbol}(tokens);\n") 
+        out_lines.append(f"\tresult = parse{symbol}(tokens);\n")
         out_lines.append(f"\tif(result !== ParseResultFail) return result;\n")
     out_lines.append("\treturn ParseResultFail;\n")
     out_lines.append("};\n")
@@ -208,11 +208,11 @@ def generate_derivation_rule(target: str, out_lines: list[str], symbols: list[st
             # Stack: 0, return (failing at symbol i)
             out_lines.append(f"\t\treturn ParseResultFail;\n")
             out_lines.append("\t}\n")
-            out_lines.append(f"\tconst literal{i} = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;\n") 
+            out_lines.append(f"\tconst literal{i} = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;\n")
             # Stack: 1, new position
         else:
             referenced_symbols.add(symbol)
-            out_lines.append(f"\tconst m{symbol}{i} = parse{symbol}(tokens);\n") 
+            out_lines.append(f"\tconst m{symbol}{i} = parse{symbol}(tokens);\n")
             out_lines.append(f"\tif(m{symbol}{i} === ParseResultFail) {{\n")
             out_lines.append("\t\ttokens.restore();\n")
             out_lines.append("\t\ttokens.pop();\n")
@@ -227,14 +227,14 @@ def generate_derivation_rule(target: str, out_lines: list[str], symbols: list[st
     out_lines.append(f"\treturn {{\n")
     out_lines.append(f"\t\ttype: \"{ast_type}\",\n")
     for i, symbol in enumerate(symbols):
-        if not is_literal(symbol): 
+        if not is_literal(symbol):
             out_lines.append(f"\t\tm{symbol}{i},\n")
         else:
             out_lines.append(f"\t\tliteral{i},\n")
     out_lines.append("\t};\n")
     out_lines.append("};\n")
-    
-def split_rule(line: str) -> tuple[str, str]: 
+
+def split_rule(line: str) -> tuple[str, str]:
     if line.find(" = ") != -1:
         raise ValueError("Did you put = instead of =>")
     #print(line)

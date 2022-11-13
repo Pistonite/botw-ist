@@ -38,7 +38,7 @@ export const getSlotsToAdd = (stacks: ItemStackArg[]): ItemStack[] => {
 				returnStacks.push(actualStack);
 			}
 		}
-		
+
 	});
 	return returnStacks;
 };

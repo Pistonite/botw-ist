@@ -59,10 +59,10 @@ export const parseASTCommandEquip: ParserItem<ASTCommandEquip, CommandEquip> = (
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     return delegateParseItem(
-        ast.mArgumentSingleItemMaybeInSlot1, 
+        ast.mArgumentSingleItemMaybeInSlot1,
         search,
-        parseASTArgumentSingleItemMaybeInSlot, 
-        ([stack, slot],c)=>new CommandEquip(stack.item, slot,c), 
+        parseASTArgumentSingleItemMaybeInSlot,
+        ([stack, slot],c)=>new CommandEquip(stack.item, slot,c),
         codeBlocks
     );
 }
@@ -71,10 +71,10 @@ export const parseASTCommandUnequip: ParserItem<ASTCommandUnequip, CommandUnequi
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     return delegateParseItem(
-        ast.mArgumentSingleItemMaybeInSlot1, 
+        ast.mArgumentSingleItemMaybeInSlot1,
         search,
-        parseASTArgumentSingleItemMaybeInSlot, 
-        ([stack, slot],c)=>new CommandUnequip(stack.item, slot,c), 
+        parseASTArgumentSingleItemMaybeInSlot,
+        ([stack, slot],c)=>new CommandUnequip(stack.item, slot,c),
         codeBlocks
     );
 }

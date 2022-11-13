@@ -17,5 +17,5 @@ describe("core/command/parse.reload", ()=>{
     it("parses reload named save with 3 words", ()=>{
         expect("reload test test test").toParseIntoCommand(undefined, new CommandReload("test test test", []));
     });
-    
+
 });

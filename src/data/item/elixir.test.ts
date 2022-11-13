@@ -38,15 +38,15 @@ describe("data/item/elixir", ()=>{
         for(let i=0;i<Elixirs.length;i++){
             addElixir(items[Elixirs[i].toLowerCase()], Effects[i]);
         }
-        
+
         for(let i=0;i<Elixirs.length;i++){
             const convertTo = Elixirs[i];
             const convertEffect = Effects[i];
-            
+
             const actual = getElixir(convertEffect);
             expect(actual).toBe(items[convertTo.toLowerCase()]);
         }
-        
+
     });
 
 })

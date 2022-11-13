@@ -84,10 +84,10 @@ export const parseASTCommandRemove: ParserItem<ASTCommandRemove, CommandRemove> 
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.mLiteralRemove0, "keyword.command"));
     return delegateParseItem(
-		ast.mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1, 
+		ast.mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1,
 		search,
-		parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot, 
-		(i,c)=>new CommandRemove(...i,c), 
+		parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot,
+		(i,c)=>new CommandRemove(...i,c),
 		codeBlocks
 	);
 }
@@ -96,10 +96,10 @@ export const parseASTCommandDrop: ParserItem<ASTCommandDrop, CommandRemove> = (a
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     return delegateParseItem(
-		ast.mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1, 
+		ast.mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1,
 		search,
-		parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot, 
-		(i,c)=>new CommandRemove(...i,c), 
+		parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot,
+		(i,c)=>new CommandRemove(...i,c),
 		codeBlocks
 	);
 }
@@ -108,10 +108,10 @@ export const parseASTCommandEat: ParserItem<ASTCommandEat, CommandEat> = (ast, s
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     return delegateParseItem(
-		ast.mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1, 
+		ast.mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1,
 		search,
-		parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot, 
-		(i,c)=>new CommandEat(...i,c), 
+		parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot,
+		(i,c)=>new CommandEat(...i,c),
 		codeBlocks
 	);
 }
@@ -133,10 +133,10 @@ export const parseASTCommandDnp: ParserItem<ASTCommandDnp, CommandDnp> = (ast, s
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.mLiteralDnp0, "keyword.command"));
     return delegateParseItem(
-		ast.mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1, 
+		ast.mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1,
 		search,
-		parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot, 
-		(i,c)=>new CommandDnp(...i,c), 
+		parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot,
+		(i,c)=>new CommandDnp(...i,c),
 		codeBlocks
 	);
 }

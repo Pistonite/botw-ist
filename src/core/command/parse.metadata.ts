@@ -36,7 +36,7 @@ export const parseASTMetadata: Parser<ASTMaybeMetadata | ASTMetadata, MetaModify
     if(!meta){
         return [undefined, codeBlocks, metaError];
     }
-    
+
     codeBlocks.push(metaCodeBlocks);
     codeBlocks.push(codeBlockFromRange(ast.literal3, "delimiter"))
     // Metadata validation
@@ -44,14 +44,14 @@ export const parseASTMetadata: Parser<ASTMaybeMetadata | ASTMetadata, MetaModify
         if(!(key in MetaTypes)){
             return [undefined, codeBlocks, `${key} is not a valid metadata name`];
         }
-        
+
         const value = meta[key as keyof MetaOption];
         const expectedType = MetaTypes[key as keyof typeof MetaTypes];
         if(typeof value !== expectedType){
             return [undefined, codeBlocks, `metadata ${key} requires a ${expectedType} value, but got: ${value}`];
         }
     }
-    
+
     const modifir = meta.modifier;
     if(!parseModifierName(meta)){
         return [undefined, codeBlocks, `${modifir} is not a valid modifier name`];
@@ -63,7 +63,7 @@ export const parseASTMetadata: Parser<ASTMaybeMetadata | ASTMetadata, MetaModify
 const MaxKeyValuePairDepth = 15;
 
 const parseKeyValuePairs: Parser<
-    [ASTKeyValuePair, ASTKeyValuePairPrime], 
+    [ASTKeyValuePair, ASTKeyValuePairPrime],
     MetaOption
 > = ([first, more]) => {
     const result: Record<string, string|number|boolean> = {};
@@ -156,11 +156,9 @@ const parseModifierName = (meta: MetaOption): meta is MetaModifyOption => {
     			return true;
     		}
     	}
-    	
+
     	// if not matched, indicate error by returning undefined
     	return false;
     }
     return true;
 }
-
-

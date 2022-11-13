@@ -232,7 +232,7 @@ export class Slots {
 				}else{
 					this.core.modifySlot(j, {count: Math.max(0, this.core.internalSlots[j].count-count)});
 				}
-				
+
 				return j;
 			}
 		}

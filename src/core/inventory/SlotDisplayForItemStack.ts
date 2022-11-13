@@ -67,11 +67,11 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 			}
 			return undefined;
 		}
-		
+
 		const isYellow = (this.stack.weaponModifier & WeaponModifier.Yellow) !== WeaponModifier.None;
 		const yellowString = isYellow ? "Yellow" : "";
-		
-		
+
+
 		if(selectedModifier === WeaponModifier.AttackUp){
 			if (this.stack.item.type === ItemType.Bow){
 				return `${root}BowAttackUp${yellowString}.png`;
@@ -88,9 +88,9 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 			return `${root}MultishotX.png`;
 		}
 
-		
+
 		return `${root}${getWeaponModifierName(selectedModifier)}${yellowString}.png`;
-		
+
 	}
 
 	get modifierText(): string{
@@ -98,7 +98,7 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 			return "";
 		}
 		const selectedModifier = selectModifier(this.stack);
-		
+
 		if(selectedModifier){
 			// currently we only display attack up and guard up numbers
 			if((selectedModifier & WeaponModifier.AttackUp) !== WeaponModifier.None){
@@ -154,25 +154,25 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 			isFood && [`Recover ${foodHpRecover/4} Hearts`, "ItemTooltipFoodEffect"],
 			isFood && [`Sell Price: ${foodSellPrice}`, "ItemTooltipFoodEffect"],
 
-			isEquipment && (weaponModifier & WeaponModifier.AttackUp) !== 0 
+			isEquipment && (weaponModifier & WeaponModifier.AttackUp) !== 0
 			&& [`Attack +${weaponValue}`, "ItemTooltipWeaponModifier"],
-			isEquipment && (weaponModifier & WeaponModifier.DurabilityUp) !== 0 
+			isEquipment && (weaponModifier & WeaponModifier.DurabilityUp) !== 0
 			&& [`Durablity Up`, "ItemTooltipWeaponModifier"],
-			isEquipment && (weaponModifier & WeaponModifier.CriticalHit) !== 0 
+			isEquipment && (weaponModifier & WeaponModifier.CriticalHit) !== 0
 			&& [`Critical Hit`, item.type === ItemType.Weapon ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
-			isEquipment && (weaponModifier & WeaponModifier.LongThrow) !== 0 
+			isEquipment && (weaponModifier & WeaponModifier.LongThrow) !== 0
 			&& [`Throw Speed ${getFixedPointReductionString(weaponValue)}`, item.type === ItemType.Weapon ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
-			isEquipment && (weaponModifier & WeaponModifier.MultiShot) !== 0 
+			isEquipment && (weaponModifier & WeaponModifier.MultiShot) !== 0
 			&& [`Multishot x${Math.min(weaponValue, 10)} Max`, isBow? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
-			isEquipment && (weaponModifier & WeaponModifier.Zoom) !== 0 
+			isEquipment && (weaponModifier & WeaponModifier.Zoom) !== 0
 			&& [`Zoom`, isBow ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
-			isEquipment && (weaponModifier & WeaponModifier.QuickShot) !== 0 
+			isEquipment && (weaponModifier & WeaponModifier.QuickShot) !== 0
 			&& [`Bow Draw Speed ${getFixedPointReductionString(weaponValue)}`, isBow ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
-			isEquipment && (weaponModifier & WeaponModifier.SurfMaster) !== 0 
+			isEquipment && (weaponModifier & WeaponModifier.SurfMaster) !== 0
 			&& [`Surf Friction =${weaponValue}`, item.type === ItemType.Shield ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
-			isEquipment && (weaponModifier & WeaponModifier.GuardUp) !== 0 
+			isEquipment && (weaponModifier & WeaponModifier.GuardUp) !== 0
 			&& [`Shield Guard +${weaponValue}`, item.type === ItemType.Shield ? "ItemTooltipWeaponModifier" : "ItemTooltipWeaponModifierInactive"],
-			isEquipment && (weaponModifier & WeaponModifier.Yellow) !== 0 
+			isEquipment && (weaponModifier & WeaponModifier.Yellow) !== 0
 			&& ["Yellow Modifier", "ItemTooltipFoodEffect"],
 
 			[translate(`category.${ItemType[item.type]}`), "ItemTooltipType"]

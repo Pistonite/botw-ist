@@ -10,7 +10,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 			<Label>This page will help you with writing and understanding commands</Label>
 			<Category title="Syntax for Items">
 				<Label>
-					By 
+					By
 					<span className="Highlight"> name</span>
 					: <code>apple = </code>
 				</Label>
@@ -32,7 +32,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					getTooltip: ()=>[]
 				}} />
 				<Description className="Primary">
-					You can get an item by putting the name of the item or parts of the name. 
+					You can get an item by putting the name of the item or parts of the name.
 					<span className="Important"> The names are case-insensitive.</span>
 				</Description>
 				<Description>
@@ -40,7 +40,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					However, space-separated names are easier to read.
 				</Description>
 				<Label>
-					By 
+					By
 					<span className="Highlight"> amount + name</span>
 					: <code>3 apples = </code>
 				</Label>
@@ -88,7 +88,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					Plurals are accepted.
 				</Description>
 				<Label>
-					By 
+					By
 					<span className="Highlight"> name[metadata]</span>
 					: <code>elixir[modifier=speed] = </code>
 				</Label>
@@ -138,12 +138,12 @@ export const ReferencePage: React.FC = React.memo(()=>{
 			<Category title="Common Commands">
 				<Label className="Important">All commands are case-insensitive</Label>
 				<Description />
-				
+
 				<div>
 					<code className="CommandColorKeywordCommand">init </code>
 					<code className="CommandColorItemName">[items ...]</code>
 				</div>
-				
+
 				<ParseCode>
 					init apple
 				</ParseCode>
@@ -155,7 +155,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Initialize inventory before simulation</Label>
-				
+
 				<Description className="Primary">
 					Fully resets the inventory by clearing all items and set Count to 0, then forcefully write the item list to inventory.
                     This would reset any broken slot you already have, and any in-game checks that happen when adding items are disabled.
@@ -178,7 +178,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorSlotNumber">Y</code>
 					<code className="CommandColorKeywordOther">]] </code>
 				</div>
-				
+
 				<ParseCode>
 					break 1 slot
 				</ParseCode>
@@ -190,7 +190,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulate making X broken slots with the glitch</Label>
-				
+
 				<Description className="Primary">
 					If you add <code className="CommandColorKeywordOther"> with</code>, the items after <code className="CommandColorKeywordOther"> with</code> are automatically removed.
 				</Description>
@@ -206,7 +206,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorKeywordCommand">get|add|buy|pickup </code>
 					<code className="CommandColorItemName">items ...</code>
 				</div>
-				
+
 				<ParseCode>
 					get apple
 				</ParseCode>
@@ -215,7 +215,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Add items to inventory</Label>
-				
+
 				<Description className="Primary">
 					Add the item(s) to visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
 				</Description>
@@ -234,7 +234,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorSlotNumber">X</code>
 					<code className="CommandColorKeywordOther">] </code>
 				</div>
-				
+
 				<ParseCode>
 					remove apple
 				</ParseCode>
@@ -252,12 +252,12 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulate removing items in game</Label>
-				
+
 				<Description className="Primary">
 					Remove the item(s) from visible inventory. Sync with Game Data unless you are on Eventide or inside TOTS
 				</Description>
 				<Description className="Primary">
-					When removing items, the simulator will try to match the stack exactly first, including metadata. 
+					When removing items, the simulator will try to match the stack exactly first, including metadata.
 					In the 4th example, the equipped axe will be dropped instead of the left most one.
 				</Description>
 				<Description className="Important">
@@ -267,7 +267,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorKeywordCommand">remove all</code>
 					<code className="CommandColorIdentifierOther"> type</code>
 				</div>
-				
+
 				<ParseCode>
 					remove all materials
 				</ParseCode>
@@ -286,7 +286,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorIdentifierOther">file name ...</code>
 					<code className="CommandColorKeywordCommand">] </code>
 				</div>
-				
+
 				<ParseCode>
 					save
 				</ParseCode>
@@ -295,7 +295,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulates a hard save or auto save</Label>
-				
+
 				<Description className="Primary">
 					Writes Game Data to the corresponding save slot. The auto saves are specified by <code className="CommandColorIdentifierOther">file name</code>.
                     You can have as many auto saves as you want in the simulator. If no file is specified, it will save to the manual save slot.
@@ -308,7 +308,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorKeywordCommand">reload </code>
 					<code className="CommandColorIdentifierOther">[file name ...]</code>
 				</div>
-				
+
 				<ParseCode>
 					reload
 				</ParseCode>
@@ -317,7 +317,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulates reloading a save</Label>
-				
+
 				<Description className="Primary">
 					First, reads Game Data from the corresponding save slot (manual or specified by <code className="CommandColorIdentifierOther">file name</code>)
 				</Description>
@@ -336,7 +336,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorSlotNumber">X</code>
 					<code className="CommandColorKeywordOther">] </code>
 				</div>
-				
+
 				<ParseCode>
 					equip royal claymore
 				</ParseCode>
@@ -345,7 +345,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulates equipping something</Label>
-				
+
 				<Description className="Primary">
 					When equipping an item, all other item of the same type in the first tab is unequipped, then the item selected is equipped.
 				</Description>
@@ -367,7 +367,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorKeywordCommand">[all] </code>
 					<code className="CommandColorIdentifierOther">type</code>
 				</div>
-				
+
 				<ParseCode>
 					unequip royal claymore
 				</ParseCode>
@@ -382,7 +382,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulates unequipping something</Label>
-				
+
 				<Description className="Primary">
 					When unequipping an item, only the selected item is unequipped, not the other equipped items of the same type.
 				</Description>
@@ -391,7 +391,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
                     Note that you can use this command to unequip something that is already unequipped, which is useless.
 				</Description>
 				<Description className="Important">
-					You cannot unequip arrows. However, you can use the <code className="CommandColorKeywordCommand">write</code> command to do that.	
+					You cannot unequip arrows. However, you can use the <code className="CommandColorKeywordCommand">write</code> command to do that.
 				</Description>
 
 				<div>
@@ -399,7 +399,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorItemAmount">X </code>
 					<code className="CommandColorKeywordCommand">arrow(s) </code>
 				</div>
-				
+
 				<ParseCode>
 					shoot 1 arrow
 				</ParseCode>
@@ -411,7 +411,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulates shooting arrow without opening inventory</Label>
-				
+
 				<Description className="Primary">
 					When reloading a save with desynced game data, the equipped weapon/bow/shield are automatically corrupted, but not the arrows.
                     To corrupt the equipped arrow slot, you need to shoot an arrow.
@@ -424,13 +424,13 @@ export const ReferencePage: React.FC = React.memo(()=>{
                     When you reload a save, Link should have the last equipped arrow slot equipped in the overworld.
 					<span className="Highlight">[needs confirmation]</span>
 				</Description>
-				
+
 				<ParseCode>
 					close game
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulates closing the game and restarting</Label>
-				
+
 				<Description>
 					This command does exactly what you think it does.
 				</Description>
@@ -441,7 +441,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				<Description className="Secondary"/>
 				<Label>Add comments to make your steps easier to understand</Label>
 				<Description />
-				
+
 			</Category>
 			<Category title="Advanced Commands">
 				<code className="CommandColorKeywordCommand">dnp </code>
@@ -449,7 +449,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				<code className="CommandColorKeywordOther">[from slot </code>
 				<code className="CommandColorSlotNumber">X</code>
 				<code className="CommandColorKeywordOther">] </code>
-				
+
 				<ParseCode>
 					dnp 5 lizalfos tails 5 farosh horns
 				</ParseCode>
@@ -458,7 +458,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Shortcut for drop and pick up, for sorting inventory</Label>
-				
+
 				<Description>
 					This command drops and pick up each item stack in the specified order.
                     You can also repeat items if you are combining more than 2 slots.
@@ -480,7 +480,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorKeywordCommand">init gamedata </code>
 					<code className="CommandColorItemName">[items ...]</code>
 				</div>
-				
+
 				<ParseCode>
 					init gamedata apple
 				</ParseCode>
@@ -489,7 +489,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Initialize Game Data</Label>
-				
+
 				<Description>
 					Like init, but only changes Game Data, not Visible Inventory. Use this to force Game Data to desync.
 				</Description>
@@ -497,7 +497,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				<div>
 					<code className="CommandColorKeywordCommand">enter|exit|leave eventide|tots </code>
 				</div>
-				
+
 				<ParseCode>
 					enter eventide
 				</ParseCode>
@@ -512,7 +512,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulates entering/exiting Eventide or Trial of the Sword</Label>
-				
+
 				<Description className="Primary">
 					When entering Eventide or TotS, the entire inventory is cleared except for key items regardless of inventory count.
                     While the challenge is active, none of the inventory changes are synced to game data.
@@ -530,7 +530,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorSlotNumber">X</code>
 					<code className="CommandColorKeywordOther">]</code>
 				</div>
-				
+
 				<ParseCode>
 					write [life=700] to potlid
 				</ParseCode>
@@ -539,7 +539,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Change the metadata of item</Label>
-				
+
 				<Description className="Primary">
 					This can be used to modify durability on weapon or count on items. This will NOT sync inventory to game data.
 				</Description>
@@ -554,7 +554,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					<code className="CommandColorSlotNumber">X</code>
 					<code className="CommandColorKeywordOther">]</code>
 				</div>
-				
+
 				<ParseCode>
 					cook with 1 farosh horn 3 lotus 1 swift carrot
 				</ParseCode>
@@ -566,7 +566,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				<Description className="Primary Error">
 					This command will be available in a future update
 				</Description>
-				
+
 				<Description className="Primary">
 					Removes the list of items and add the cook result to inventory. If you specify more than 5 items, all of them will be removed, but only the first 5 will be used in cooking.
 				</Description>
@@ -576,7 +576,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				<Description className="Error">
 					You cannot cook in game if you have 60 food. This is NOT enforced in the simulator.
 				</Description>
-				
+
 			</Category>
 			<Category title="Super Commands">
 				<Description className="Error">

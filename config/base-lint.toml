@@ -1,6 +1,8 @@
 ignore = [
     "CNAME",
-    "scripts/base-lint/"
+    "scripts/base-lint/",
+    "scripts/typescript-layers/",
+    ".log"
 ]
 
 windows = []

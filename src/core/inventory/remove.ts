@@ -36,7 +36,7 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
     const slotsToRemoveFrom: number[] = [];
     let countLeft = count;
     // countLeft could be "All", so we need another variable to track how many are removed
-    let removedCount = 0; 
+    let removedCount = 0;
     const stacks = core.internalSlots;
     const specialIsStackable = (item: Item) => {
         if(forceStackableFood && item.type === ItemType.Food){
@@ -53,14 +53,14 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
             matchedSlots[0].push(i);
         }
     });
-    
+
     // 2. Everything matches except stack size/durability
     stacks.forEach((currentStack,i)=>{
         if(currentStack.equalsExcept(stackToRemove, "count")){
             matchedSlots[1].push(i);
         }
     });
-    
+
     // 3. Everything matches except stack size/durability and equipped/unequipped
     // this is because when specifying an equipment, it will have a default durability and default equipped=false
     // being equipped does not make the item different from the user's perspective
@@ -131,7 +131,7 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
                 countLeft--;
             }
         }
-    
+
     }
 
     if(slotIndexToRemove.length > 0){

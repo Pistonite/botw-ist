@@ -58,7 +58,7 @@ export const flattenCodeBlocks = (output: CodeBlock[], blocks: CodeBlockTree, co
 	if(blocks.length === 0){
 		return output;
 	}
-	
+
 	if(color){
 		output.push({
 			color,
@@ -89,9 +89,9 @@ export const withNoError = <T>(result: (T|CodeBlockTree|string)[]): [T, CodeBloc
 }
 
 export const delegateParse = <A, T, T2>(
-	ast: A, 
-	f: Parser<A, T>, 
-	transformer: (t: T, c: CodeBlockTree) => T2, 
+	ast: A,
+	f: Parser<A, T>,
+	transformer: (t: T, c: CodeBlockTree) => T2,
 	codeBlocks?: CodeBlockTree
 ): [T2 | undefined, CodeBlockTree, string] => {
 	const result: [T|T2|undefined, CodeBlockTree, string] = f(ast);
@@ -107,18 +107,18 @@ export const delegateParse = <A, T, T2>(
 	}
 	//in place replace
 	result[0] = transformer(result[0] as T, result[1]);
-	
+
 	return result as [T2, CodeBlockTree, string];
 }
 
 export const delegateParseSafe = <A, T, T2>(
-	ast: A, 
-	f: ParserSafe<A, T>, 
-	transformer: (t: T, c: CodeBlockTree) => T2, 
+	ast: A,
+	f: ParserSafe<A, T>,
+	transformer: (t: T, c: CodeBlockTree) => T2,
 	codeBlocks?: CodeBlockTree
 ): [T2, CodeBlockTree] => {
 	const result: [T|T2, CodeBlockTree] = f(ast);
-	
+
 	//in place replace
 	if(codeBlocks){
 		if(codeBlocks === result[1]){
@@ -128,15 +128,15 @@ export const delegateParseSafe = <A, T, T2>(
 		result[1] = codeBlocks;
 	}
 	result[0] = transformer(result[0] as T, result[1]);
-	
+
 	return result as [T2, CodeBlockTree];
 }
 
 export const delegateParseItem = <A, T, T2>(
-	ast: A, 
-	searchFunc: ItemSearchFunction, 
-	f: ParserItem<A, T>, 
-	transformer: (t: T, c: CodeBlockTree) => T2, 
+	ast: A,
+	searchFunc: ItemSearchFunction,
+	f: ParserItem<A, T>,
+	transformer: (t: T, c: CodeBlockTree) => T2,
 	codeBlocks?: CodeBlockTree
 ): [T2 | undefined, CodeBlockTree, string] => {
 	const result: [T|T2|undefined, CodeBlockTree, string] = f(ast, searchFunc);
@@ -151,9 +151,7 @@ export const delegateParseItem = <A, T, T2>(
 	if(result[0] === undefined) {
 		return result as [undefined, CodeBlockTree, string];
 	}
-	
+
 	result[0] = transformer(result[0] as T, result[1]);
 	return result as [T2, CodeBlockTree, string];
 }
-
-

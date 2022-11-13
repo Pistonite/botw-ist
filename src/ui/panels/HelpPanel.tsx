@@ -7,15 +7,15 @@ export const HelpPanel: React.FC = () => {
 		<Page title="Help">
 			<Category title="What is IST? What is this app?">
 				<Description>
-					<span className="Highlight">Inventory Slot Transfer</span>, or IST, 
-					is a glitch in BOTW that desyncs the 
-					number of items you have in the inventory 
+					<span className="Highlight">Inventory Slot Transfer</span>, or IST,
+					is a glitch in BOTW that desyncs the
+					number of items you have in the inventory
 					and number of items
 					<span className="Important"> the game thinks you have </span>.
 					By making the game thinks we have fewer items than we actually do, all sorts of crazy things can happen.
 				</Description>
 				<Description>
-					Because the things that can happen are too crazy, I made this tool to help visualize what is happening 
+					Because the things that can happen are too crazy, I made this tool to help visualize what is happening
 					in the inventory and in the game internally for each step in an IST setup.
 				</Description>
 			</Category>

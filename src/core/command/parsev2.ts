@@ -1,25 +1,25 @@
 import { ItemStack } from "data/item";
 import { is } from "immer/dist/internal";
-import { 
+import {
     ASTTarget,
-    createASTFromString, 
-    isCommandAdd, 
-    isCommandBreakSlots, 
-    isCommandCloseGame, 
-    isCommandDnp, 
-    isCommandDrop, 
-    isCommandEat, 
-    isCommandEnterTrial, 
-    isCommandEquip, 
-    isCommandExitTrial, 
-    isCommandInitGameData, 
-    isCommandInitialize, 
-    isCommandPickUp, 
-    isCommandReload, 
-    isCommandRemove, 
-    isCommandRemoveAll, 
-    isCommandSave, 
-    isCommandShoot, 
+    createASTFromString,
+    isCommandAdd,
+    isCommandBreakSlots,
+    isCommandCloseGame,
+    isCommandDnp,
+    isCommandDrop,
+    isCommandEat,
+    isCommandEnterTrial,
+    isCommandEquip,
+    isCommandExitTrial,
+    isCommandInitGameData,
+    isCommandInitialize,
+    isCommandPickUp,
+    isCommandReload,
+    isCommandRemove,
+    isCommandRemoveAll,
+    isCommandSave,
+    isCommandShoot,
     isCommandSyncGameData,
     isCommandUnequip,
     isCommandUnequipAll,
@@ -59,7 +59,7 @@ export const parseCommand = (cmdString: string, searchFunc: (word: string)=>Item
     const {data, extra} = ast;
     const[ command, codeblocks, error] = parseASTTarget(data, searchFunc);
     if(!command){
-        // see if we can guess something first        
+        // see if we can guess something first
         const guess = guessCommand(cmdString);
         const errorMessages = [
             error,
@@ -75,7 +75,7 @@ export const parseCommand = (cmdString: string, searchFunc: (word: string)=>Item
     }
     if(extra){
         codeblocks.push(codeBlockFromRange(extra, "unknown"));
-        // see if we can guess something first        
+        // see if we can guess something first
         const guess = guessCommand(cmdString);
         if(guess.cmdErr === CmdErr.Guess){
             return guess;
@@ -95,65 +95,65 @@ export const parseCommand = (cmdString: string, searchFunc: (word: string)=>Item
 const guessCommand = (cmdString: string): Command => {
     const parts = cmdString.split(" ").filter(Boolean);
     return (
-        tryGuessCommand(cmdString, parts, [ "a" ], 
+        tryGuessCommand(cmdString, parts, [ "a" ],
             ["add items ...", "Add items to inventory"])
-        || tryGuessCommand(cmdString, parts, [ "br" ], 
+        || tryGuessCommand(cmdString, parts, [ "br" ],
             ["break X slots [with <items> [from slot Y]].", "Break the slots. Optionally remove the specified items after \"with\""])
-        || tryGuessCommand(cmdString, parts, [ "bu" ], 
+        || tryGuessCommand(cmdString, parts, [ "bu" ],
             ["buy items ...", "Add items to inventory"])
-        || tryGuessCommand(cmdString, parts, [ "cl" ], 
+        || tryGuessCommand(cmdString, parts, [ "cl" ],
             ["close game", "Close the game. Wipes inventory and gamedata and reset broken slots."])
-        || tryGuessCommand(cmdString, parts, [ "co" ], 
+        || tryGuessCommand(cmdString, parts, [ "co" ],
             ["cook items ...", "Add items to inventory"])
-        || tryGuessCommand(cmdString, parts, [ "d&" ], 
+        || tryGuessCommand(cmdString, parts, [ "d&" ],
             ["dnp items ... [from slot X]", "Drop items from inventory to the ground then pick them up"])
-        || tryGuessCommand(cmdString, parts, [ "d1" ], 
+        || tryGuessCommand(cmdString, parts, [ "d1" ],
             ["dnp items ... [from slot X]", "Drop items from inventory to the ground then pick them up"])
-        || tryGuessCommand(cmdString, parts, [ "dn" ], 
+        || tryGuessCommand(cmdString, parts, [ "dn" ],
             ["dnp items ... [from slot X]", "Drop items from inventory to the ground then pick them up"])
-        || tryGuessCommand(cmdString, parts, [ "dr" ], 
+        || tryGuessCommand(cmdString, parts, [ "dr" ],
             ["drop items ... [from slot X]", "Drop items from inventory to the ground then pick them up"])
-        || tryGuessCommand(cmdString, parts, [ "ea" ], 
+        || tryGuessCommand(cmdString, parts, [ "ea" ],
             ["eat items ... [from slot X]", "Eat items from inventory"])
-        || tryGuessCommand(cmdString, parts, [ "en" ], 
+        || tryGuessCommand(cmdString, parts, [ "en" ],
             ["enter eventide|tots", "Enter the quest and clear inventory except for key items. Also pauses syncing with gamedata until quest is done or aborted."])
-        || tryGuessCommand(cmdString, parts, [ "eq" ], 
+        || tryGuessCommand(cmdString, parts, [ "eq" ],
             ["equip item [in slot X]", "Equip an item."])
-        || tryGuessCommand(cmdString, parts, [ "exit", "g" ], 
+        || tryGuessCommand(cmdString, parts, [ "exit", "g" ],
             ["exit game", "Close the game. Wipes inventory and gamedata and reset broken slots."])
-        || tryGuessCommand(cmdString, parts, [ "ex" ], 
+        || tryGuessCommand(cmdString, parts, [ "ex" ],
             ["exit eventide|tots", "Leave the quest and reload inventory from game data"])
-        || tryGuessCommand(cmdString, parts, [ "g" ], 
+        || tryGuessCommand(cmdString, parts, [ "g" ],
             ["get items ...", "Add items to inventory"])
-        || tryGuessCommand(cmdString, parts, [ "init", "ga" ], 
+        || tryGuessCommand(cmdString, parts, [ "init", "ga" ],
             ["init gamedata items...", "Initialize the simulator with items. Also clears the number of broken slots."])
-        || tryGuessCommand(cmdString, parts, [ "i" ], 
+        || tryGuessCommand(cmdString, parts, [ "i" ],
             ["init items...", "Initialize the simulator with items. Also clears the number of broken slots."])
-        || tryGuessCommand(cmdString, parts, [ "l" ], 
+        || tryGuessCommand(cmdString, parts, [ "l" ],
             ["leave eventide|tots", "Leave the quest and reload inventory from game data"])
-        || tryGuessCommand(cmdString, parts, [ "p" ], 
+        || tryGuessCommand(cmdString, parts, [ "p" ],
             ["pick up items ...", "Add items to inventory"])
-        || tryGuessCommand(cmdString, parts, [ "rel" ], 
+        || tryGuessCommand(cmdString, parts, [ "rel" ],
             ["reload [file name ...]", "Reload a manual or named (auto) save"])
-        || tryGuessCommand(cmdString, parts, [ "rem" ], 
+        || tryGuessCommand(cmdString, parts, [ "rem" ],
             ["remove items ... [from slot X]", "Remove items from inventory"])
-        || tryGuessCommand(cmdString, parts, [ "rem", "a" ], 
+        || tryGuessCommand(cmdString, parts, [ "rem", "a" ],
             ["remove all type", "Remove all items of a type from inventory"])
-        || tryGuessCommand(cmdString, parts, [ "save", "a" ], 
+        || tryGuessCommand(cmdString, parts, [ "save", "a" ],
             ["save as file name ...", "Making a named (auto) save"])
-        || tryGuessCommand(cmdString, parts, [ "sa" ], 
+        || tryGuessCommand(cmdString, parts, [ "sa" ],
             ["save [as file name ...]", "Making a manual or named (auto) save"])
-        || tryGuessCommand(cmdString, parts, [ "se" ], 
+        || tryGuessCommand(cmdString, parts, [ "se" ],
             ["sell items ... [from slot X]", "Remove items from inventory"])
-        || tryGuessCommand(cmdString, parts, [ "sh" ], 
+        || tryGuessCommand(cmdString, parts, [ "sh" ],
             ["shoot X arrow(s)", "Shoot arrow without opening inventory"])
-        || tryGuessCommand(cmdString, parts, [ "sy" ], 
+        || tryGuessCommand(cmdString, parts, [ "sy" ],
             ["sync gamedata", "Sync the inventory to gamedata."])
-        || tryGuessCommand(cmdString, parts, [ "unequip", "a" ], 
+        || tryGuessCommand(cmdString, parts, [ "unequip", "a" ],
             ["unequip [all] type", "Unequip a type of items"])
-        || tryGuessCommand(cmdString, parts, [ "u" ], 
+        || tryGuessCommand(cmdString, parts, [ "u" ],
             ["unequip item [in slot X]", "Unequip an item or a type of item (weapon, bow, shield, etc)"])
-        || tryGuessCommand(cmdString, parts, [ "w"], 
+        || tryGuessCommand(cmdString, parts, [ "w"],
             ["write meta to item [in slot X]", "Write metadata to an item"])
         || new ErrorCommand(CmdErr.AST, ["Unknown command", "The command is not recognized"], [])
     );

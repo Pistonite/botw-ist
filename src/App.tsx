@@ -7,7 +7,7 @@ import { useSearchItem } from "data/item";
 import { useRuntime } from "core/runtime";
 import { ContextMenuState } from "ui/types";
 
-import { 
+import {
 	ItemExplorerPanel,
 	NavPanel,
 	HelpPanel,
@@ -139,7 +139,7 @@ export const App: React.FC =  () => {
 	}else{
 		showGameData = showGameDataSetting;
 	}
-	
+
 	const saveHeight = 220;
 	const fullMainHeight = "calc( 100vh - 40px )";
 	const middleHeight = showSaves?`calc( 100vh - 40px - ${saveHeight}px )`:fullMainHeight;
@@ -161,7 +161,7 @@ export const App: React.FC =  () => {
 					width: "100vw",
 					display: "flex" // so they show up side by side
 				}}>
-					
+
 					<div id="SidePane" style={{
 						width: sideWidth,
 						height: middleHeight
@@ -188,7 +188,7 @@ export const App: React.FC =  () => {
 						left: sideWidth
 					}}>
 					{	(page === "#simulation" || page === "#setting") &&
-							
+
 							<SimMainPanel
 								commandText={commandData[displayIndex]}
 								command={commands[displayIndex]}
@@ -216,11 +216,11 @@ export const App: React.FC =  () => {
 					</div>
 				</div>
 				{
-					showSaves && 
+					showSaves &&
 					<div style={{
 						height: 220
 					}}>
-						<SavePanel 
+						<SavePanel
 							selectedSaveName={selectedSaveName}
 							setSelectedSaveName={setSelectedSaveName}
 							simulationState={theSimulationState}
@@ -236,7 +236,7 @@ export const App: React.FC =  () => {
 					left: 0,
 					width: "100vw",
 					height: "100vh",
-					
+
 					color: "white"
 				}} onClick={()=>{
 					setContextMenuState({

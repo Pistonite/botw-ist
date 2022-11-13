@@ -28,20 +28,20 @@ SuperCommandForCommand => <!> Command
 
 ## All Commands (Order matters!)
 ---
-Command => 
- CommandInitGameData    # initialize|init gamedata ...        
- | CommandInitialize    # initialize|init ...                   
+Command =>
+ CommandInitGameData    # initialize|init gamedata ...
+ | CommandInitialize    # initialize|init ...
  | CommandCook          # cook with ...
  | CommandCookCrit      # cook heart crit with ...
- | CommandAdd           # get|add|buy|cook ...                  
+ | CommandAdd           # get|add|buy|cook ...
  | CommandPickUp        # pickup|pick [up] ...
- | CommandRemoveAll     # remove all Type                   
+ | CommandRemoveAll     # remove all Type
  | CommandRemove        # with|remove|sell ... [from slot X]
  | CommandDrop          # drop ... [from slot X]
  | CommandEat           # eat ... [from slot X]
  | CommandDnp           # DNP ... [from slot X]
  | CommandEquip         # equip X [in slot Y]
- | CommandUnequipAll    # unequip [all] Type             
+ | CommandUnequipAll    # unequip [all] Type
  | CommandUnequip       # unequip X [in slot Y]
  | CommandShoot         # shoot X arrow(s)
  | CommandEnterTrial    # enter X
@@ -54,9 +54,9 @@ Command =>
  | CommandSyncGameData  # sync gamedata
 ---
 ---
-SuperCommand => 
+SuperCommand =>
  SuperCommandAddSlot        # ! add slot ... [at slot X]
- | SuperCommandRemoveSlot   # ! remove slot X 
+ | SuperCommandRemoveSlot   # ! remove slot X
  | SuperCommandForCommand
 ---
 
@@ -143,7 +143,7 @@ ArgumentSingleItemAllowAllMaybeFromSlotAIdentifier =>
 ArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 => Metadata MaybeClauseFromSlot
 ArgumentItemStacksAllowAllMaybeFromSlot => AmountOrAll Identifier ArgumentItemStacksAllowAllMaybeFromSlotAIdentifier
 ---
-ArgumentItemStacksAllowAllMaybeFromSlotAIdentifier => 
+ArgumentItemStacksAllowAllMaybeFromSlotAIdentifier =>
  ClauseFromSlot
  | ArgumentItemStacksAllowAllMaybeFromSlot
  | ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1
@@ -168,7 +168,7 @@ ArgumentSingleItemMaybeFromSlotAIdentifier =>
 ArgumentSingleItemMaybeFromSlotAIdentifierC1 => Metadata MaybeClauseFromSlot
 ArgumentItemStacksMaybeFromSlot => Integer Identifier ArgumentItemStacksMaybeFromSlotAIdentifier
 ---
-ArgumentItemStacksMaybeFromSlotAIdentifier => 
+ArgumentItemStacksMaybeFromSlotAIdentifier =>
  ClauseFromSlot
  | ArgumentItemStacksMaybeFromSlotAIdentifierC1
  | ArgumentItemStacksMaybeFromSlotAIdentifierC2

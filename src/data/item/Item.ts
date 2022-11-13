@@ -65,7 +65,7 @@ export class ItemImpl implements Item {
 		}else{
 			this.defaultStack = new ItemStackImpl(this);
 		}
-		
+
 		if(type !== ItemType.Flag){
 			this.sortOrder = TypeToCount[type];
 			TypeToCount[type]++;

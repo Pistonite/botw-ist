@@ -48,7 +48,7 @@ export const CrashScreen: React.FC<CrashProps> = ({primaryText, secondaryText, h
 				{
 					!hideReloadButton && <Button onClick={redirectToMainApp}>Reload Simulator</Button>
 				}
-				
+
 			</div>
 		</div>
 	);

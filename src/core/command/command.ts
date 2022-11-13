@@ -34,7 +34,7 @@ export interface Command {
 // Shared command functions
 class CommandBase {
     codeBlocks: CodeBlock[];
-    
+
     constructor(codeBlocks?: CodeBlockTree) {// TODO: not allow undefined
 		if(codeBlocks){
 			this.codeBlocks = flattenCodeBlocks([], codeBlocks);
@@ -80,7 +80,7 @@ export class CommandNop extends AbstractProperCommand {
     equals(other: Command): boolean {
         return other instanceof CommandNop && this.shouldSkipWithKeyboard === other.shouldSkipWithKeyboard;
     }
-    
+
 }
 
 // Error command: does nothing, because of error
@@ -128,7 +128,7 @@ export class CommandHint implements Command {
     delegate: ErrorCommand;
     descriptor: string;
     constructor(original: string, parts: string[], index: number, usage: string[]){
-        
+
         this.descriptor = parts.filter((_,i)=>i<index).join(" ");
         const start = this.descriptor.length;
         this.delegate = new ErrorCommand(CmdErr.Guess, usage, [

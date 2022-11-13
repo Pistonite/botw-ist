@@ -133,14 +133,14 @@ export const ScriptOptionPanel: React.FC = () => {
 					/>
 					{/* <div> */}
 						<CommandTextArea
-							className="MainInput MultiLineInput" 
+							className="MainInput MultiLineInput"
 							value={currentText}
 							setValue={setCurrentText}
 							blocks={codeblocks}
 							stopPropagation
 						/>
 					{/* </div> */}
-					
+
 
 					<Description className="Error">
 						{editing?"":"You need to enable editing to change the script here"}
@@ -180,7 +180,7 @@ export const ScriptOptionPanel: React.FC = () => {
 
 				<Description style={{
 					wordBreak: "break-all",
-					// 
+					//
 					...!showDirectUrl && {
 						width: "calc( 90vw - 400px )",
 						textOverflow: "ellipsis",

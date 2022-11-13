@@ -36,10 +36,10 @@ export const parseASTCommandBreakSlots: ParserItem<ASTCommandBreakSlots, Command
     flattenCodeBlocks(codeBlocks, numberBlocks, "slot.number");
 	codeBlocks.push(codeBlockFromRange(ast.mLiteralSlot2, "keyword.command"));
     return delegateParseItem(
-        ast.mMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot3, 
-        search, 
+        ast.mMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot3,
+        search,
         parseASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot,
-        ([stacks, slot],codeBlocks)=>new CommandBreakSlots(numberToBreak, stacks, slot ,codeBlocks), 
+        ([stacks, slot],codeBlocks)=>new CommandBreakSlots(numberToBreak, stacks, slot ,codeBlocks),
         codeBlocks
     );
 }

@@ -20,5 +20,5 @@ describe("core/command/parse.save", ()=>{
     it("parses named save with 3 words", ()=>{
         expect("save as test test test").toParseIntoCommand(undefined, new CommandSave("test test test", []));
     });
-    
+
 });

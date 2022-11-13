@@ -178,5 +178,3 @@ export class SlotsCore {
 		return true;
 	}
 }
-
-

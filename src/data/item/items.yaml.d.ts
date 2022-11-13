@@ -10,7 +10,7 @@ declare module '*.items.yaml' {
         durability: number,
         // armor subtype
         subtype: "upper" | "middle" | "lower",
-        // Higher priority will make the item match first in the same category when searching. 
+        // Higher priority will make the item match first in the same category when searching.
         // Default 0. Can be both positive and negative
         priority: integer,
         // bow has default zoom. default false

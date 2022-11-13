@@ -18,17 +18,17 @@ export const TooltipHost: React.FC<PropsWithChildren> = ({children}) => {
 		if(toolTipDivRef.current){
 			const rect = toolTipDivRef.current.getBoundingClientRect();
 			if (rect.bottom > window.innerHeight){
-				
+
 				setTooltipY(tooltipY - rect.height- 20);
-				
+
 			}
 			if( rect.right > window.innerWidth){
 				setTooltipX(tooltipX - rect.width -20);
 			}
 		}
 	}, [
-		tooltipX, 
-		tooltipY, 
+		tooltipX,
+		tooltipY,
 		toolTipDivRef.current && toolTipDivRef.current.getBoundingClientRect().width,
 		toolTipDivRef.current && toolTipDivRef.current.getBoundingClientRect().height,
 	]);

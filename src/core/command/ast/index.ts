@@ -9,7 +9,7 @@ export type AbstractSyntaxTree = {
 }
 
 export const createASTFromString = (input: string): AbstractSyntaxTree | undefined => {
-    
+
     const tokens = tokenizeV2(input, SpecialSymbols);
     const ast = parse(tokens);
     if(!ast){
@@ -18,7 +18,7 @@ export const createASTFromString = (input: string): AbstractSyntaxTree | undefin
     const extraTokens: Token[] = [];
     let extra: ASTIdentifier | undefined = undefined;
     if(tokens.consume(extraTokens) !== undefined){
-        
+
         for (let i=0;i<2000 && tokens.consume(extraTokens) !== undefined;i++){
             // do nothing
         }

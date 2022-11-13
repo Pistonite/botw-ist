@@ -40,7 +40,7 @@ const parseASTItemStacks: ParserItem<ASTOneOrMoreItemStacks, ItemStackArg[]> = (
         if(!more){
             return [undefined, codeBlocks, moreError];
         }
-        
+
         items.push(more);
         depth++;
         current = current.mItemStackPrime1;
@@ -85,7 +85,7 @@ export const parseASTItemStack: ParserItem<ASTItemStack, ItemStackArg> = (ast, s
     //}else{
         //[amount, amountCodeBlocks] = parseASTAmountOrAll(ast.mAmountOrAll0);
     //}
-    
+
     const [item, itemCodeBlocks, itemError] = parseASTSingleItem(ast.mSingleItem1, search);
     const codeBlocks = [
         flattenCodeBlocks([], amountCodeBlocks, "item.amount"),

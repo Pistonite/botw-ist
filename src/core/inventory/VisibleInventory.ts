@@ -81,8 +81,8 @@ export class VisibleInventory implements DisplayableInventory{
 
 	// Eat: food are treated as stackable to handle corrupted case, and 0 slot are removed
 	public eat(stack: ItemStack, count: number | AmountAllType, startSlot: number): number {
-		return this.slots.remove(stack, count, { 
-			startSlot, 
+		return this.slots.remove(stack, count, {
+			startSlot,
 			forceStackableFood: true,
 			forceDeleteZeroSlot: true
 		});

@@ -250,5 +250,5 @@ expect.extend({
 			pass: true
 		};
 	}
-	
+
 });

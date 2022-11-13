@@ -76,7 +76,7 @@ export const parseASTItemType: ParserSafe<ASTLiteralItemType, ItemType[]> = (ast
     if(isLiteralBow(ast)){
         type = ItemType.Bow;
     }
-    
-    
+
+
     return [[type], [codeBlockFromRange(ast, "item.type")]];
 }

@@ -22,7 +22,7 @@ export class CommandWrite extends AbstractProperCommand {
 	}
 
     public equals(other: Command): boolean {
-        return other instanceof CommandWrite && this.itemTarget === other.itemTarget && this.slot === other.slot && 
+        return other instanceof CommandWrite && this.itemTarget === other.itemTarget && this.slot === other.slot &&
             JSON.stringify(this.meta) === JSON.stringify(other.meta);
     }
 }

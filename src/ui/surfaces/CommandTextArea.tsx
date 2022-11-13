@@ -46,7 +46,7 @@ export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
 
     useLayoutEffect(()=>{
         if(onAutoResize && textAreaRef.current && highlightAreaRef.current){
-            
+
             // Reset height - important to shrink on delete
             textAreaRef.current.style.height = "inherit";
             // Set height
@@ -66,17 +66,17 @@ export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
             onAutoResize(height);
         }
     }, [cachedValue, onAutoResize]);
-    
+
     return (
         <div className={clsx(className, "CommandInputRoot", large && "Large")} {...restProps}>
-            <div 
+            <div
                 ref={highlightAreaRef}
-                aria-hidden={true} 
+                aria-hidden={true}
                 className={clsx("CommandTextArea", large && "Large")}
                 style={{
                     zIndex: 0
                 }}
-            > 
+            >
                 <ColoredCodeBlocks blocks={blocks} value={splitedCachedValue} />
             </div>
             <textarea
@@ -101,12 +101,12 @@ export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
                         }else{
                             setValue(e.target.value.split("\n"));
                         }
-                        
+
                         setUpdateHandle(undefined);
                     },50);
                     setUpdateHandle(newHandle);
 
-                    
+
                 }}
                 onScroll={()=>{
                     if(textAreaRef.current && highlightAreaRef.current){
@@ -120,8 +120,8 @@ export const CommandTextArea: React.FC<CommandTextAreaProps & DivProps> = ({
                     }
                 }}
             />
-            
-            
+
+
         </div>
     );
 }

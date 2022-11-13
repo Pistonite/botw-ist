@@ -16,7 +16,7 @@ class MockItem implements Item {
 	image = "";
 	animatedImage= "";
 	priority = 0;
-	
+
 	bowZoom: boolean = false;
     bowMultishot: number = 0;
     bowRapidfire: number = 0;
@@ -53,7 +53,7 @@ export const createEquipmentMockItem = (id: string, type: ItemType): Item => new
 export const equalsExceptEquip = (a: ItemStack, b: ItemStack): boolean => a.equalsExcept(b, "equipped");
 
 export const createMockItems = (ids: string[]): Record<string, Item> =>  {
-	const items: Record<string, Item> = {}; 
+	const items: Record<string, Item> = {};
 	ids.forEach(id=>{
 		const idLower = id.toLowerCase();
 		if (id.startsWith("Arrow")){

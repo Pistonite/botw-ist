@@ -120,7 +120,7 @@ export interface ItemStack {
 }
 
 export const dumpItemStack = (stack: ItemStack) => {
-    
+
     return {
         item: {
             id: stack.item.id
@@ -183,7 +183,7 @@ export enum CookEffect {
     Energizing,
     Enduring,
     Hasty, // Alias: speed
-    Mighty, 
+    Mighty,
     Tough,
     Fireproof,
     Hearty,

@@ -60,7 +60,7 @@ const ColoredCodeBlock: React.FC<ColoredCodeBlockProps> = ({blocks, value})=>{
     const mappedProps  = useMemo(()=>{
         let last: ColoredSingleBlockProps[] = []; // blocks without whitespace
         const result: ColoredSingleBlockProps[][] = [last];
-        
+
         let currentStart = 0;
         if(blocks.length === 0){
             blocks = [{
@@ -77,7 +77,7 @@ const ColoredCodeBlock: React.FC<ColoredCodeBlockProps> = ({blocks, value})=>{
                 end: value.length
             }];
         }
-        
+
         blocks.forEach(({color, start, end})=>{
             const toAdd: string[] = [];
             if (start > currentStart){
@@ -89,20 +89,20 @@ const ColoredCodeBlock: React.FC<ColoredCodeBlockProps> = ({blocks, value})=>{
                 const addColor = (i < toAdd.length - 1)
                     ? "unknown"
                     : color;
-                // if sub has spaces, need to break it 
+                // if sub has spaces, need to break it
                 const parts = sub.split(" ");
                 parts.forEach((part,i)=>{
-                    
+
                     if(part){
                         last.push({color: addColor, value: part});
                     }
-                    
+
                     if(i<parts.length-1){
                         last = [];
                         result.push([{color: "delimiter", value: " "}]);
                         result.push(last);
                     }
-                    
+
                 })
                 currentStart = end;
             })
@@ -120,7 +120,7 @@ const ColoredCodeBlock: React.FC<ColoredCodeBlockProps> = ({blocks, value})=>{
                             ))
                         }
                     </span>
-                    
+
                 ))
             }
         </pre>
@@ -138,7 +138,7 @@ const ColoredSingleBlock: React.FC<ColoredSingleBlockProps> = ({color, value})=>
             <code className={clsx("CodeBlock", Colors[color])}>
                 {value}
             </code>
-            
-       
+
+
     )
 }

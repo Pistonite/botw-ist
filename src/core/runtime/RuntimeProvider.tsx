@@ -26,7 +26,7 @@ export const RuntimeProvider: React.FC<PropsWithChildren> = ({children}) => {
 	const {setting, commandData, setCommandData} = useStore();
 
 
-	
+
 
 	// Warn user if they are doing an editing action in read only mode
 	const [warnReadOnly, setWarnReadOnly] = useWarnReadOnly();

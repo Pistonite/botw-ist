@@ -16,13 +16,13 @@ export const stableSort = <T>(array: T[], cmp: (a:T, b:T) => number): void => {
 //https://stackoverflow.com/questions/37318808/what-is-the-in-place-alternative-to-array-prototype-filter
 export const inPlaceFilter = <T>(array: T[], condition: (elem:T, i:number, arr:T[])=>boolean): void => {
 	let i = 0, j = 0;
-  
+
 	while (i < array.length) {
 	  const val = array[i];
 	  if (condition(val, i, array)) array[j++] = val;
 	  i++;
 	}
-  
+
 	array.length = j;
 }
 

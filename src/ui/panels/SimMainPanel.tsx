@@ -26,7 +26,7 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 	editCommand,
 	simulationState,
 })=>{
-	
+
 	const { setting } = useRuntime();
 	const isIconAnimated = setting("animatedIcon");
 	const isGameDataInterlaced = setting("interlaceGameData");
@@ -130,9 +130,9 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 					textAreaId="SimulationCommandTextField"
 					large
 					onAutoResize={setTextAreaHeight}
-					blocks={[command.codeBlocks]} 
-					value={[commandText]} 
-					setValue={(v)=>editCommand(v.join(" "))} 
+					blocks={[command.codeBlocks]}
+					value={[commandText]}
+					setValue={(v)=>editCommand(v.join(" "))}
 					removeLines
 				/>
 			</div>
@@ -140,12 +140,12 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 				position: "relative", // for command tooltip to anchor
 				height: `calc( 100% - ${textAreaHeight}px)`
 			}}>
-				
+
 				{content}
 				{
-					command.err.length > 0 && (showHint || command.cmdErr !== CmdErr.Guess) && 
+					command.err.length > 0 && (showHint || command.cmdErr !== CmdErr.Guess) &&
 					<div className={clsx(
-							"TooltipWindow", 
+							"TooltipWindow",
 							command.cmdErr === CmdErr.Parse && "TooltipWarn",
 							command.cmdErr === CmdErr.Execute && "TooltipError"
 						)} style={{

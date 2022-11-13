@@ -6,9 +6,9 @@ import { parsedItemSearch } from "./parse.item";
 import { CodeBlockTree, delegateParse, delegateParseItem, flattenCodeBlocks, Parser, ParserItem } from "./type";
 
 export const parseASTArgumentSingleItemMaybeInSlot:
-    ParserItem<ASTArgumentSingleItemMaybeInSlot, [ItemStack, number]> 
+    ParserItem<ASTArgumentSingleItemMaybeInSlot, [ItemStack, number]>
 = (ast, search) => {
-    
+
     const [id, idBlocks] = parseASTIdentifier(ast.mIdentifier0);
     const codeBlocks: CodeBlockTree = [flattenCodeBlocks([], idBlocks, "item.name")];
     const [result, restBlocks, restError] = parseASTArgumentSingleItemMaybeInSlotAIdentifier(ast.mArgumentSingleItemMaybeInSlotAIdentifier1);

@@ -62,14 +62,14 @@ export const SavePanel: React.FC<SavePanelProps> = ({
                     </ol>
                 </Section>
             </div>
-            
-            
+
+
             <div style={{
                 height: "100%",
                 color: "white",
                 backgroundColor: "#262626",
                 flexGrow: 1
-            } }> 
+            } }>
                 <Section titleText="Save Data" style={{
                     height:"100%"
                 }}>

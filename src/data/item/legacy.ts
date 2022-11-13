@@ -10,4 +10,3 @@ export const searchLegacyItemNames = (name: string, idMap: ItemIdMap): ItemStack
 	}
 	return undefined;
 };
-

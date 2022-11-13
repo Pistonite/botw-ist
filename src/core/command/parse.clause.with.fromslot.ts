@@ -7,7 +7,7 @@ import { parseASTAmountOrAll, parsedItemSearch } from "./parse.item";
 import { parseASTMetadata } from "./parse.metadata";
 import { codeBlockFromRange, CodeBlockTree, delegateParse, delegateParseItem, flattenCodeBlocks, Parser, ParserItem } from "./type";
 
-export const parseASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot: 
+export const parseASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot:
     ParserItem<ASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot, [ItemStackArg[], number]>
 = (ast, search) => {
     if(isEpsilon(ast)){
@@ -64,7 +64,7 @@ const parseASTArgumentSingleItemAllowAllMaybeFromSlot:
     Parser<ASTArgumentSingleItemAllowAllMaybeFromSlot, [string[], MetaModifyOption, number]>
 = (ast) => {
     const [ firstIdentifier, firstIdentifierBlocks ] = parseASTIdentifier(ast.mIdentifier0);
-   
+
     const codeBlocks: CodeBlockTree = [flattenCodeBlocks([],firstIdentifierBlocks, "item.name")];
     return delegateParse(
         ast.mArgumentSingleItemAllowAllMaybeFromSlotAIdentifier1,
@@ -76,7 +76,7 @@ const parseASTArgumentSingleItemAllowAllMaybeFromSlot:
         codeBlocks);
 }
 
-const parseSingleItemAIdentifier: 
+const parseSingleItemAIdentifier:
     Parser<ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifier, [string[], MetaModifyOption, number]>
 = (ast) => {
     if(isEpsilon(ast)){
@@ -136,7 +136,7 @@ const parseASTArgumentItemStacksAllowAllMaybeFromSlot:
                 firstTempItem[0] = amount;
                 firstTempItem[1].splice(0,0,firstId);
             }
-            
+
             return result;
         },
         codeBlocks
@@ -211,7 +211,7 @@ const parseItemStackC2:
                 // otherwise add id to the list of ids for current item
                 tempIds.splice(0,0, id);
             }
-            
+
             return result;
         },
         codeBlocks
@@ -230,7 +230,7 @@ const parseItemStackAMetadata:
             parseASTClauseSlot,
             number=>[[], number]
         );
-     
+
     }
     return parseASTArgumentItemStacksAllowAllMaybeFromSlot(ast);
 }

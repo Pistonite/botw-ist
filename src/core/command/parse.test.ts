@@ -32,4 +32,3 @@ describe("core/command/parse comment", ()=>{
         expect("######  text text , text").toParseIntoCommand(undefined, new CommandNop(true, []));
     });
 });
-

@@ -1,6 +1,6 @@
 .CodeBlock {
     display: inline;
-    
+
 }
 
 .CodeBlockLine {
@@ -63,7 +63,7 @@
 
 .CommandTextArea {
     width: 100%;
-    
+
     line-height: 12pt;
     max-height: 300px;
     font: 12pt monospace;
@@ -78,7 +78,7 @@
     resize: none;
     overflow-x: hidden;
     overflow-y: auto;
-    
+
 }
 .CommandTextArea.Large {
     line-height: 16pt;
@@ -92,7 +92,7 @@ textarea.CommandTextArea {
     max-width: 100%;
     z-index: 1;
     /* height: 100%; */
-    
+
 }
 
 div.CommandInputRoot {

@@ -219,12 +219,12 @@ const registerItem = (idAndSearch: string, option: ItemOption, type: ItemType, o
 
 
 	const item = new ItemImpl(
-		id, 
-		type, 
-		option.repeatable ?? true, 
-		stackable ?? true, 
-		image, 
-		animatedImage, 
+		id,
+		type,
+		option.repeatable ?? true,
+		stackable ?? true,
+		image,
+		animatedImage,
 		option.priority ?? 0,
 		option.bowZoom ?? false,
 		option.bowMultishot,
@@ -259,9 +259,9 @@ const splitIdAndSearch = (idAndSearch: string): [string, string] => {
 };
 
 export const searchItemMemoized = (
-	name: string, 
-	idMap: ItemIdMap, 
-	searchMap: ItemSearchMap, 
+	name: string,
+	idMap: ItemIdMap,
+	searchMap: ItemSearchMap,
 	memo: MemoizedSearchResultMap
 ): [ItemStack | undefined, ItemStack[]] => {
 	if(!name){
@@ -365,14 +365,14 @@ const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSear
 		if (itemA.priority !== itemB.priority){
 			return itemB.priority - itemA.priority;
 		}
-		
+
 
 		// first see if the result starts with any search key, and prioritize those with more matches
 		const diffInCount = resultStartCountMap[b] - resultStartCountMap[a];
 		if(diffInCount!==0){
 			return diffInCount;
 		}
-		
+
 		// if same, prioritize the shorter one
 		// since the longer ones can always be found by adding more words
 		return a.length-b.length;

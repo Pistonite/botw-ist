@@ -21,7 +21,7 @@ export const ItemExplorerPanel: React.FC = ()=>{
 		}
 		const rest: ItemStack[] = [];
 		const result = search(searchString.replaceAll(" ", "*"), rest);
-		
+
 		const displaySlots: SlotDisplay[] = [];
 		if(result){
 			const firstSlot = new SlotDisplayForItemStack(result);
@@ -33,9 +33,9 @@ export const ItemExplorerPanel: React.FC = ()=>{
 		rest.forEach(stack=>displaySlots.push(new SlotDisplayForItemStack(stack).init(false, isIconAnimated)));
 		return displaySlots;
 	}, [searchString, isIconAnimated]);
-	 
 
-	
+
+
 	return (
 		<Page title="Item Reference">
 			<Category title="Item Slot">
@@ -73,8 +73,8 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					getTooltip: ()=>[]
 				}} />
 				<Description>
-					If the slot has a dark red background, it is referred to as a 
-					<span className="Highlight"> "broken slot"</span>. 
+					If the slot has a dark red background, it is referred to as a
+					<span className="Highlight"> "broken slot"</span>.
 					This slot won't be removed on reload.
 				</Description>
 				<Label>
@@ -100,8 +100,8 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					Type item name (or part of item name) below to filter the items.
 				</Description>
 				<Description >
-					The command system searches the items in the same way. 
-					After the items are filtered down to the list below based on the search string, 
+					The command system searches the items in the same way.
+					After the items are filtered down to the list below based on the search string,
 					it picks the one marked <span className="Highlight">"&#x2713;"</span>
 				</Description>
 				<Description>
@@ -127,8 +127,8 @@ export const ItemExplorerPanel: React.FC = ()=>{
 					}
 				</Description>
 			</Category>
-	
-			
+
+
 
 		</Page>
 	);

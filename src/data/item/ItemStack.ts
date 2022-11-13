@@ -108,4 +108,3 @@ export class ItemStackImpl implements ItemStack {
 		return true;
 	}
 }
-

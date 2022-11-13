@@ -42,5 +42,5 @@ describe("core/command/parse.initialize", ()=>{
             new ItemStackArg(MockItems["materialb"].defaultStack, 2),
         ], []));
     });
-    
+
 });

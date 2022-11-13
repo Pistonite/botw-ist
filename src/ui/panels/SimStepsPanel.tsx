@@ -38,7 +38,7 @@ export const SimStepsPanel: React.FC<SimStepsPanelProps> = ({
 	}, [commandData, setCommandData]);
 
 	return (
-		
+
 			<Section contentId="SimStepsPanel" titleText="Steps" style={{
 				height: "100%"
 			}}>
@@ -83,6 +83,6 @@ export const SimStepsPanel: React.FC<SimStepsPanelProps> = ({
 				</ol>
 
 			</Section>
-		
+
 	);
 };

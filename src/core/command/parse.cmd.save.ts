@@ -13,7 +13,7 @@ export class CommandSave extends AbstractProperCommand {
         }else{
             this.name = name;
         }
-		
+
 	}
 	public execute(state: SimulationState): void {
 		state.save(this.name);
