@@ -12,6 +12,7 @@ export enum ItemType {
     Key = 9,
     Flag = -1 // flags in game data, not actual items. such as HasRitoSoulPlus
 }
+
 // Which tab the item is in. These specifically matches ItemType in case we need it in the future
 export enum ItemTab {
     Weapon = 0,
@@ -23,6 +24,17 @@ export enum ItemTab {
     Key = 9,
     None = -1,
 }
+
+export const ItemMaxes = {
+    [ItemType.Weapon]: 20,
+    [ItemType.Bow]: 14,
+    [ItemType.Arrow]: 6,
+    [ItemType.Shield]: 20,
+    [ItemTab.Armor]: 100,
+    [ItemType.Material]: 160,
+    [ItemType.Food]: 60,
+    [ItemType.Key]: 40
+} as const;
 
 export const iterateItemTabs = (): ItemTab[] => [
 	ItemTab.Weapon,

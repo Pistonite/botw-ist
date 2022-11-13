@@ -12,7 +12,7 @@ describe.only("core/Slots.updateLife", ()=>{
 		slots.updateLife(2, 0);
 
 		const expected = [slot.modify({count: 2})];
-		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+		expect(slots.getView()).toEqualItemStacks(expected);
 	});
 	it("should update life in the correct slot", ()=>{
 		const mockItem1 = createMaterialMockItem("MaterialA");
@@ -23,7 +23,7 @@ describe.only("core/Slots.updateLife", ()=>{
 		slots.updateLife(2, 1);
 
 		const expected = [slot, slot.modify({count: 2})];
-		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+		expect(slots.getView()).toEqualItemStacks(expected);
 	});
 	it("should not 999 cap for weapon", ()=>{
 		const mockItem1 = createEquipmentMockItem("Weapon", ItemType.Weapon);
@@ -34,7 +34,7 @@ describe.only("core/Slots.updateLife", ()=>{
 		slots.updateLife(1000, 0);
 
 		const expected = [slot.modify({durability: 10})];
-		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+		expect(slots.getView()).toEqualItemStacks(expected);
 	});
 	it("should not 999 cap for bow", ()=>{
 		const mockItem1 = createEquipmentMockItem("Bow", ItemType.Bow);
@@ -45,7 +45,7 @@ describe.only("core/Slots.updateLife", ()=>{
 		slots.updateLife(1000, 0);
 
 		const expected = [slot.modify({durability: 10})];
-		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+		expect(slots.getView()).toEqualItemStacks(expected);
 	});
 	it("should not 999 cap for shield", ()=>{
 		const mockItem1 = createEquipmentMockItem("Shield", ItemType.Shield);
@@ -56,7 +56,7 @@ describe.only("core/Slots.updateLife", ()=>{
 		slots.updateLife(1000, 0);
 
 		const expected = [slot.modify({durability: 10})];
-		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+		expect(slots.getView()).toEqualItemStacks(expected);
 	});
 	it("should not 999 cap for arrow", ()=>{
 		const mockItem1 = createArrowMockItem("Arrow");
@@ -67,7 +67,7 @@ describe.only("core/Slots.updateLife", ()=>{
 		slots.updateLife(1000, 0);
 
 		const expected = [slot.modify({count: 1000})];
-		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+		expect(slots.getView()).toEqualItemStacks(expected);
 	});
 	it("should 999 cap for material", ()=>{
 		const mockItem1 = createMaterialMockItem("A");
@@ -78,7 +78,7 @@ describe.only("core/Slots.updateLife", ()=>{
 		slots.updateLife(1000, 0);
 
 		const expected = [slot.modify({count: 999})];
-		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+		expect(slots.getView()).toEqualItemStacks(expected);
 	});
 	it("should 999 cap for food", ()=>{
 		const mockItem1 = createFoodMockItem("A");
@@ -89,7 +89,7 @@ describe.only("core/Slots.updateLife", ()=>{
 		slots.updateLife(1000, 0);
 
 		const expected = [slot.modify({count: 999})];
-		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+		expect(slots.getView()).toEqualItemStacks(expected);
 	});
 	it("should 999 cap for stackable key items", ()=>{
 		const mockItem1 = createKeyMockItemStackable("A");
@@ -100,7 +100,7 @@ describe.only("core/Slots.updateLife", ()=>{
 		slots.updateLife(1000, 0);
 
 		const expected = [slot.modify({count: 999})];
-		expect(slots.getSlotsRef()).toEqualItemStacks(expected);
+		expect(slots.getView()).toEqualItemStacks(expected);
 	});
 });
 

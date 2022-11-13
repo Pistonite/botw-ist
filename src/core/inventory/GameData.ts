@@ -2,6 +2,8 @@ import { SlotDisplayForItemStack } from "./SlotDisplayForItemStack";
 import { Slots } from "./Slots";
 import { VisibleInventory } from "./VisibleInventory";
 import { DisplayableInventory, SlotDisplay } from "./types";
+import { Ref } from "data/util";
+import { ItemStack } from "data/item";
 
 /*
  * Implementation of GameData in botw
@@ -46,11 +48,14 @@ export class GameData implements DisplayableInventory {
 	}
 
 	public addAllToPouchOnReload(pouch: VisibleInventory) {
-		this.slots.getSlotsRef().forEach(stack=>pouch.addWhenReload(stack));
+		let lastAdded: Ref<ItemStack> | undefined = undefined;
+		this.slots.getView().forEach(stack=>{
+			lastAdded = pouch.addWhenReload(stack, lastAdded);
+		});
 	}
 
 	public getDisplayedSlots(isIconAnimated: boolean): SlotDisplay[] {
-		return this.slots.getSlotsRef().map(stack=>
+		return this.slots.getView().map(stack=>
 			new SlotDisplayForItemStack(stack).init(false, isIconAnimated)
 		);
 	}

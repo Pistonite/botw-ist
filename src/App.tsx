@@ -86,7 +86,7 @@ export const App: React.FC =  () => {
 				while(nextCommandIndex<commandData.length && commands[nextCommandIndex].shouldSkipWithKeyboard){
 					nextCommandIndex++;
 				}
-				if(nextCommandIndex>=commandData.length-1){
+				if(nextCommandIndex>=commandData.length){
 					setCommandData(produce(commandData, newData=>{
 						newData.push("");
 					}));
