@@ -1,22 +1,22 @@
 import { MetaModifyOption } from "data/item";
 import { ItemStackArg } from "./ItemStackArg";
-import { 
-	ASTArgumentItemStacksAllowAllMaybeFromSlot, 
-	ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier, 
-	ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1, 
-	ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2, 
-	ASTArgumentItemStacksAllowAllMaybeFromSlotAMetadata, 
-	ASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot, 
-	ASTArgumentSingleItemAllowAllMaybeFromSlot, 
-	ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifier, 
-	ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1, 
-	ASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot, 
-	isArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1, 
-	isArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2, 
-	isArgumentSingleItemAllowAllMaybeFromSlot, 
-	isArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1, 
-	isClauseFromSlot, 
-	isEpsilon 
+import {
+	ASTArgumentItemStacksAllowAllMaybeFromSlot,
+	ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier,
+	ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1,
+	ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2,
+	ASTArgumentItemStacksAllowAllMaybeFromSlotAMetadata,
+	ASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot,
+	ASTArgumentSingleItemAllowAllMaybeFromSlot,
+	ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifier,
+	ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1,
+	ASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot,
+	isArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1,
+	isArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2,
+	isArgumentSingleItemAllowAllMaybeFromSlot,
+	isArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1,
+	isClauseFromSlot,
+	isEpsilon
 } from "./ast";
 import { parseASTIdentifier } from "./parse.basis";
 import { parseASTClauseSlot } from "./parse.clause.slot";
