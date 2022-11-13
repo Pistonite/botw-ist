@@ -1,5 +1,5 @@
 # Initialization. At Hateno
-Initialize 2 tree 1 w axe 1 boko spear 1 boko club 1 hammer 1 roy Bow[equip] 11 n*Arrow[equip] 0 AncientArrow 1 pot[equip] 2 Hylianshroom 2 s*pepper 1 amber 2 sunshroom 2 silentshroom 2 ironshroom 2 razorshroom 2 durian 2 Wood 2 rushroom 2 Spring 2 Shaft 2 Screw 1 Core 2 fairy 2 hot frog 1 Slate 8 SpiritOrb 1 Glider
+Initialize 2 tree branch 1 w axe 1 boko spear 1 boko club 1 hammer 1 roy Bow[equip] 11 n*Arrow[equip] 0 AncientArrow 1 pot[equip] 2 Hylianshroom 2 s*pepper 1 amber 2 sunshroom 2 silentshroom 2 ironshroom 2 razorshroom 2 durian 2 Wood 2 rushroom 2 Spring 2 Shaft 2 Screw 1 Core 2 fairy 2 hot frog 1 Slate 8 SpiritOrb 1 Glider
 # Initialization Done
 dnp 2 sunshroom
 with 2 hylianshroom 2 spicypepper 2 silentshroom 2 ironshroom 2 razorshroom
@@ -26,11 +26,11 @@ Drop potlid
 # Corruption
 #wb to shop
 # drop all weapon except hammer
-drop 2 weapon 2 tree 1 boko spear 1 boko club 1 w*axe
+drop 2 treebranch 1 boko spear 1 boko club 1 w*axe
 Equip hammer
 Save
 # pick up the weapons
-get  2 tree 1 boko spear 1 boko club 1 w*axe
+get  2 tree branch 1 boko spear 1 boko club 1 w*axe
 drop all wood all fairy all rush all amber all a*spring all sunshroom all core all Shaft 1 hasty
 Drop potlid
 unequip hammer
@@ -47,7 +47,7 @@ drop ro*bow
 equip w*axe
 Reload
 Save
-Drop 99 fairy 99 wood
+Drop all fairy all wood
 Reload
 # sell spring for money
 Sell 300 Spring
@@ -64,7 +64,7 @@ get 1 seafood pae
 #orbs along the way
 Get 5 orb
 Remove 1 n*arrow
-Drop ro*b
+Drop royal bow
 Drop pot
 Drop hammer
 Drop 5 fairy

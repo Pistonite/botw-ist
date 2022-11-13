@@ -1,6 +1,6 @@
 {
   "name": "botw-ist",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "homepage": "https://ist.itntpiston.app/",
   "private": true,
   "dependencies": {
@@ -81,6 +81,7 @@
     "test-all": "node scripts/test.js",
     "test": "node scripts/test.js test.ts",
     "lint-base": "python3 scripts/base-lint . -c -p config/base-lint.toml",
+    "layer": "python3 scripts/typescript-layers src -b . -b .. -l ui -l core -l data -s 1",
     "lint-ts": "eslint src --ext .ts,.tsx --max-warnings 0"
   },
   "eslintConfig": {

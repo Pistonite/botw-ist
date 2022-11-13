@@ -1801,20 +1801,20 @@ const parseArgumentSingleItemAllowAllMaybeFromSlot: ParseFunction<ASTArgumentSin
 		mArgumentSingleItemAllowAllMaybeFromSlotAIdentifier1,
 	};
 };
-// (derivation union) ArgumentSingleItemAllowAllMaybeFromSlotAIdentifier => ClauseFromSlot | ArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 | ArgumentSingleItemAllowAllMaybeFromSlot | Epsilon
+// (derivation union) ArgumentSingleItemAllowAllMaybeFromSlotAIdentifier => ClauseFromSlot | ArgumentSingleItemAllowAllMaybeFromSlot | ArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 | Epsilon
 const parseArgumentSingleItemAllowAllMaybeFromSlotAIdentifier: ParseFunction<ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifier> = (tokens) => {
 	let result: ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifier | undefined;
 	result = parseClauseFromSlot(tokens);
 	if(result !== ParseResultFail) return result;
-	result = parseArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1(tokens);
-	if(result !== ParseResultFail) return result;
 	result = parseArgumentSingleItemAllowAllMaybeFromSlot(tokens);
+	if(result !== ParseResultFail) return result;
+	result = parseArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1(tokens);
 	if(result !== ParseResultFail) return result;
 	result = parseEpsilon(tokens);
 	if(result !== ParseResultFail) return result;
 	return ParseResultFail;
 };
-export type ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifier = ASTClauseFromSlot | ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 | ASTArgumentSingleItemAllowAllMaybeFromSlot | ASTEpsilon;
+export type ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifier = ASTClauseFromSlot | ASTArgumentSingleItemAllowAllMaybeFromSlot | ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 | ASTEpsilon;
 // (derivation) ArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 => Metadata MaybeClauseFromSlot
 export const isArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 = <T extends {type: string}>(node: T | ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 | null): node is ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 => Boolean(node && node.type === "ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1");
 export type ASTArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 = {
@@ -1881,22 +1881,22 @@ const parseArgumentItemStacksAllowAllMaybeFromSlot: ParseFunction<ASTArgumentIte
 		mArgumentItemStacksAllowAllMaybeFromSlotAIdentifier2,
 	};
 };
-// (derivation union) ArgumentItemStacksAllowAllMaybeFromSlotAIdentifier => ClauseFromSlot | ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1 | ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2 | ArgumentItemStacksAllowAllMaybeFromSlot | Epsilon
+// (derivation union) ArgumentItemStacksAllowAllMaybeFromSlotAIdentifier => ClauseFromSlot | ArgumentItemStacksAllowAllMaybeFromSlot | ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1 | ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2 | Epsilon
 const parseArgumentItemStacksAllowAllMaybeFromSlotAIdentifier: ParseFunction<ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier> = (tokens) => {
 	let result: ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier | undefined;
 	result = parseClauseFromSlot(tokens);
+	if(result !== ParseResultFail) return result;
+	result = parseArgumentItemStacksAllowAllMaybeFromSlot(tokens);
 	if(result !== ParseResultFail) return result;
 	result = parseArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1(tokens);
 	if(result !== ParseResultFail) return result;
 	result = parseArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2(tokens);
 	if(result !== ParseResultFail) return result;
-	result = parseArgumentItemStacksAllowAllMaybeFromSlot(tokens);
-	if(result !== ParseResultFail) return result;
 	result = parseEpsilon(tokens);
 	if(result !== ParseResultFail) return result;
 	return ParseResultFail;
 };
-export type ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier = ASTClauseFromSlot | ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1 | ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2 | ASTArgumentItemStacksAllowAllMaybeFromSlot | ASTEpsilon;
+export type ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier = ASTClauseFromSlot | ASTArgumentItemStacksAllowAllMaybeFromSlot | ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1 | ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2 | ASTEpsilon;
 // (derivation) ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1 => Metadata ArgumentItemStacksAllowAllMaybeFromSlotAMetadata
 export const isArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1 = <T extends {type: string}>(node: T | ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1 | null): node is ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1 => Boolean(node && node.type === "ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1");
 export type ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1 = {

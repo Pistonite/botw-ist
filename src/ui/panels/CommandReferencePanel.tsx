@@ -202,10 +202,6 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					in many commands and they behave the same way.
 				</Description>
 
-				<Description className="Error">
-					The following commands will be available in future updates
-				</Description>
-
 				<div>
 					<code className="CommandColorKeywordCommand">get|add|buy|pickup </code>
 					<code className="CommandColorItemName">items ...</code>
@@ -410,12 +406,18 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				<ParseCode>
 					shoot 2 arrows
 				</ParseCode>
+				<ParseCode>
+					shoot all arrows
+				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulates shooting arrow without opening inventory</Label>
 				
 				<Description className="Primary">
 					When reloading a save with desynced game data, the equipped weapon/bow/shield are automatically corrupted, but not the arrows.
                     To corrupt the equipped arrow slot, you need to shoot an arrow.
+				</Description>
+				<Description className="Primary">
+					Note that equipped arrow can only be found in the first arrow tab. If there is no equipped arrow before the first shield/armor/material/food/key item, the game cannot find the equipped arrow and will have no arrow equipped
 				</Description>
 				<Description className="Important">
 					This command does not let you select which arrow to shoot.
@@ -437,7 +439,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					# comment
 				</ParseCode>
 				<Description className="Secondary"/>
-				<Label>Add comment to make your steps easier to understand</Label>
+				<Label>Add comments to make your steps easier to understand</Label>
 				<Description />
 				
 			</Category>
@@ -493,17 +495,20 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</Description>
 
 				<div>
-					<code className="CommandColorKeywordCommand">enter|exit eventide|tots </code>
+					<code className="CommandColorKeywordCommand">enter|exit|leave eventide|tots </code>
 				</div>
 				
 				<ParseCode>
 					enter eventide
 				</ParseCode>
 				<ParseCode>
-					exit eventide
+					leave eventide
 				</ParseCode>
 				<ParseCode>
 					enter tots
+				</ParseCode>
+				<ParseCode>
+					exit tots
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulates entering/exiting Eventide or Trial of the Sword</Label>
@@ -558,6 +563,9 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Simulate cooking</Label>
+				<Description className="Primary Error">
+					This command will be available in a future update
+				</Description>
 				
 				<Description className="Primary">
 					Removes the list of items and add the cook result to inventory. If you specify more than 5 items, all of them will be removed, but only the first 5 will be used in cooking.

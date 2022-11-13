@@ -119,6 +119,20 @@ export interface ItemStack {
     equalsExcept(other: ItemStack, ...keys: (keyof ItemStack)[]): boolean,
 }
 
+export const dumpItemStack = (stack: ItemStack) => {
+    
+    return {
+        item: {
+            id: stack.item.id
+        },
+        count: stack.count,
+        equipped: stack.equipped,
+        foodEffect: stack.foodEffect,
+        weaponModifier: stack.weaponModifier,
+        weaponValue: stack.weaponValue
+    }
+}
+
 export type ItemIdMap = { [id: string]: Item};
 
 // the extra data on an item stack

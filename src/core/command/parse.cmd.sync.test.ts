@@ -10,6 +10,4 @@ describe("core/command/parse.sync", ()=>{
     it("parses sync gamedata", ()=>{
         expect("sync gamedata").toParseIntoCommand(undefined, new CommandSync([]));
     });
-
-    
 });

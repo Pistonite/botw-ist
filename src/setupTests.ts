@@ -141,17 +141,17 @@ const diffObjects = (obj1: any, obj2: any, path: string, out: string[]) => {
 const runE2ETest = (name: string, debug: boolean): [string, string]=>{
 	const script = fs.readFileSync(`src/__tests__/${name}.in.txt`, "utf-8");
 	const result = runE2ESimulation(script);
-	const resultString = JSON.stringify(result, null, 2);
+	const resultString = JSON.stringify(result.dump(), null, 2);
 	const expected = fs.readFileSync(`src/__tests__/${name}.out.txt`, "utf-8");
 
 	const expectedState = runE2ESimulation(expected);
-	const expectedString = JSON.stringify(expectedState, null, 2);
+	const expectedString = JSON.stringify(expectedState.dump(), null, 2);
 	if(debug){
 		fs.writeFileSync("src/__tests__/debug.actual.log", resultString, "utf-8");
 		fs.writeFileSync("src/__tests__/debug.expected.log", expectedString, "utf-8");
 		if(expectedString !== resultString){
 			const out: string[] = [];
-			diffObjects(expectedState, result, "", out);
+			diffObjects(expectedState.dump(), result.dump(), "", out);
 			fs.writeFileSync(
 				"src/__tests__/debug.mismatches.log",
 				out.join("\n"),
@@ -168,8 +168,8 @@ const runE2ETest = (name: string, debug: boolean): [string, string]=>{
 
 expect.extend({
 	toPassE2ESimulation: (receivedName: string, expectDebug?: boolean) => {
-		const [resultString, expectedString] = runE2ETest(receivedName, !!expectDebug);
-		if (resultString !== expectedString) {
+		const [resultState, expectedState] = runE2ETest(receivedName, !!expectDebug);
+		if (resultState !== expectedState) {
 			return {
 				message: () =>
 					"E2E simulation failed. Pass true to toPassE2ESimulation() to emit debug logs",

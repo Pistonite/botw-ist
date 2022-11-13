@@ -2,8 +2,7 @@ import { SimulationState } from "core/SimulationState";
 import { arrayEqual } from "data/util";
 import { ASTCommandInitialize } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
-import { getSlotsToAdd } from "./helper";
-import { ItemStackArg } from "./ItemStackArg";
+import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
 import { parseASTItems } from "./parse.item";
 import { codeBlockFromRange, CodeBlockTree, delegateParseItem, ParserItem } from "./type";
 

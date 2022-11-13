@@ -1,6 +1,6 @@
 initialize 1 hammer[equip] 1 royal bow[equip] 11 normal arrow[equip] 4000 ancient arrow 1 potlid [equip] 999 wood 999 rush 999 Spring 10 amber 1 core 999 fairy 4 Shaft 1 Hasty Elixir[life=999] 1 slate 1 Glider
 Save
-initialize 1 hammer 2 tree 1 boko spear 1 boko club 1 wood*axe 1 royal bow[equip] 11 normal arrow[equip] 0 ancient arrow 1 slate 1 Glider
+initialize 1 hammer 2 tree branch 1 boko spear 1 boko club 1 wood*axe 1 royal bow[equip] 11 normal arrow[equip] 0 ancient arrow 1 slate 1 Glider
 Save as AutoSave
 initialize 1 hammer[equip] 1 royal bow[equip] 1 normal arrow[equip] 10 normal arrow[equip] 4000 ancient arrow 1 potlid [equip] 5 fairy 999 rush 699 Spring 1 Shaft 969 Wood 10 amber 994 fairy 4 Shaft 1 sapphire 1 Hasty Elixir[life=999] 1 Hasty Elixir[life=999] 1 seafood paella 1 slate 1 Glider 5 orb 5 orb
 break 10 slots

@@ -47,7 +47,7 @@ class CommandBase {
 // Super type for commands that have no error and does something
 export class AbstractProperCommand implements Command {
     base: CommandBase;
-    constructor(codeBlocks?: CodeBlockTree){
+    constructor(codeBlocks: CodeBlockTree){
         this.base = new CommandBase(codeBlocks);
     }
     get codeBlocks() { return this.base.codeBlocks; }
@@ -69,7 +69,7 @@ export class AbstractProperCommand implements Command {
 // Nop command: does nothing (like a comment)
 export class CommandNop extends AbstractProperCommand {
     shouldSkipWithKeyboard: boolean;
-    constructor(shouldSkipWithKeyboard: boolean, codeBlocks?: CodeBlockTree){
+    constructor(shouldSkipWithKeyboard: boolean, codeBlocks: CodeBlockTree){
         super(codeBlocks);
         this.shouldSkipWithKeyboard = shouldSkipWithKeyboard;
     }
@@ -88,7 +88,7 @@ export class ErrorCommand implements Command {
     base: CommandBase;
     cmdErr: CmdErr;
     err: string[];
-    constructor(errType: CmdErr, err: string[], codeBlocks?: CodeBlockTree){
+    constructor(errType: CmdErr, err: string[], codeBlocks: CodeBlockTree){
         this.base = new CommandBase(codeBlocks);
         this.cmdErr = errType;
         this.err= err;

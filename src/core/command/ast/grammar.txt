@@ -136,8 +136,8 @@ ArgumentSingleItemAllowAllMaybeFromSlot => Identifier ArgumentSingleItemAllowAll
 ---
 ArgumentSingleItemAllowAllMaybeFromSlotAIdentifier =>
  ClauseFromSlot
- | ArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1
  | ArgumentSingleItemAllowAllMaybeFromSlot
+ | ArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1
  | Epsilon
 ---
 ArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 => Metadata MaybeClauseFromSlot
@@ -145,9 +145,9 @@ ArgumentItemStacksAllowAllMaybeFromSlot => AmountOrAll Identifier ArgumentItemSt
 ---
 ArgumentItemStacksAllowAllMaybeFromSlotAIdentifier => 
  ClauseFromSlot
+ | ArgumentItemStacksAllowAllMaybeFromSlot
  | ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1
  | ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2
- | ArgumentItemStacksAllowAllMaybeFromSlot
  | Epsilon
 ---
 ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1 => Metadata ArgumentItemStacksAllowAllMaybeFromSlotAMetadata

@@ -1,7 +1,7 @@
 import { arrayEqual, inPlaceMap, stableSort } from "data/util";
-import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaModifyOption } from "data/item";
+import { dumpItemStack, getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaModifyOption } from "data/item";
 import { SlotsCore } from "./SlotsCore";
-import { AmountAllType } from "core/command/ItemStackArg";
+import { AmountAll, AmountAllType } from "core/command/ItemStackArg";
 import { RemoveOption } from "./options";
 import { remove } from "./remove";
 
@@ -15,6 +15,9 @@ export class Slots {
 	}
 	public getSlotsRef(): ItemStack[] {
 		return this.core.internalSlots;
+	}
+	public dump() {
+		return this.core.internalSlots.map(stack=>dumpItemStack(stack));
 	}
 	public deepClone(): Slots {
 		// ItemStack is immutable so they do not need to be copied
@@ -214,7 +217,7 @@ export class Slots {
 	}
 
 	// shoot count arrows. return the slot that was updated, or -1
-	public shootArrow(count: number): number {
+	public shootArrow(count: number | AmountAllType): number {
 		// first find equipped arrow, search entire inventory
 		const lastEquippedArrowSlot = this.findLastEquippedSlot(ItemType.Arrow);
 		if(lastEquippedArrowSlot < 0){
@@ -224,7 +227,12 @@ export class Slots {
 		// now find the first slot of that arrow and update
 		for(let j=0;j<this.core.internalSlots.length;j++){
 			if(this.core.internalSlots[j].item === equippedArrow){
-				this.core.modifySlot(j, {count: Math.max(0, this.core.internalSlots[j].count-count)});
+				if(count === AmountAll){
+					this.core.modifySlot(j, {count: 0});
+				}else{
+					this.core.modifySlot(j, {count: Math.max(0, this.core.internalSlots[j].count-count)});
+				}
+				
 				return j;
 			}
 		}

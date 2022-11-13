@@ -3,7 +3,7 @@ import { createMockItems, createMockItemSearch } from "data/item/TestHelpers";
 import { CmdErr } from "./command";
 import { ItemStackArg } from "./ItemStackArg";
 import { CommandBreakSlots } from "./parse.cmd.breakslot";
-import { CommandEat, CommandRemove, CommandRemoveAll } from "./parse.cmd.remove";
+import { CommandDnp, CommandEat, CommandRemove, CommandRemoveAll } from "./parse.cmd.remove";
 
 describe("core/command/parse.remove", ()=>{
     it("parses hint when failed", ()=>{
@@ -11,6 +11,7 @@ describe("core/command/parse.remove", ()=>{
         expect("sell").toParseIntoCommand(()=>undefined, CmdErr.Guess);
         expect("drop").toParseIntoCommand(()=>undefined, CmdErr.Guess);
         expect("eat").toParseIntoCommand(()=>undefined, CmdErr.Guess);
+        expect("dnp").toParseIntoCommand(()=>undefined, CmdErr.Guess);
     });
     const MockItems = createMockItems([
         "MaterialA",
@@ -30,7 +31,7 @@ describe("core/command/parse.remove", ()=>{
         ], 1, []));
     });
     it("remove 1 all item stack", ()=>{
-        expect("remove all materialc").toParseIntoCommand(mockSearchItem, new CommandRemove([
+        expect("dnp all materialc").toParseIntoCommand(mockSearchItem, new CommandDnp([
             new ItemStackArg(MockItems["materialc"].defaultStack, "All")
         ], 1, []));
     });
@@ -44,6 +45,12 @@ describe("core/command/parse.remove", ()=>{
         expect("eat all materialc 3 material b").toParseIntoCommand(mockSearchItem, new CommandEat([
             new ItemStackArg(MockItems["materialc"].defaultStack, "All"),
             new ItemStackArg(MockItems["materialb"].defaultStack, 3)
+        ], 1, []));
+    });
+    it("remove multiple item stacks with multiple all", ()=>{
+        expect("remove all materialc all material b").toParseIntoCommand(mockSearchItem, new CommandRemove([
+            new ItemStackArg(MockItems["materialc"].defaultStack, "All"),
+            new ItemStackArg(MockItems["materialb"].defaultStack, "All")
         ], 1, []));
     });
     it("remove multiple item stacks with all and meta", ()=>{
@@ -89,8 +96,8 @@ describe("core/command/parse.remove from",()=>{
             new ItemStackArg(MockItems["materialb"].defaultStack, 3)
         ], 6, []));
     });
-    it("remove multiple item stacks with all and meta", ()=>{
-        expect("remove all materialc[life: 666] 3 materialb[equip, life=700] from slot 8").toParseIntoCommand(mockSearchItem, new CommandRemove([
+    it("dnp multiple item stacks with all and meta", ()=>{
+        expect("dnp all materialc[life: 666] 3 materialb[equip, life=700] from slot 8").toParseIntoCommand(mockSearchItem, new CommandDnp([
             new ItemStackArg(MockItems["materialc"].defaultStack.modifyMeta({life: 666}), "All"),
             new ItemStackArg(MockItems["materialb"].defaultStack.modifyMeta({equip: true, life: 700}), 3)
         ], 8, []));

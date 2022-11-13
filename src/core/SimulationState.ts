@@ -33,6 +33,21 @@ export class SimulationState {
 		this.pouch = pouch;
 	}
 
+	public dump() {
+		const namedSaveDump: any = {};
+		for(const name in this.namedSaves){
+			namedSaveDump[name] = this.namedSaves[name].dump();
+		}
+		return {
+			gameData: this.gameData.dump(),
+			pouch: this.pouch.dump(),
+			manualSave: this.manualSave?.dump(),
+			namedSaves: namedSaveDump,
+			isOnEventide: this.isOnEventide,
+			crashed: this.crashed
+		};
+	}
+
 	public deepClone(): SimulationState {
 		const copyNamedSaves: {[name: string]: GameData} = {};
 		for(const name in this.namedSaves){
@@ -142,7 +157,7 @@ export class SimulationState {
 		this.syncGameDataWithPouch();
 	}
 
-	public remove(stack: ItemStack, count: number | AmountAllType, slot: number) {
+	public remove(stack: ItemStack, count: number | AmountAllType, slot: number): number {
 		const removedCount = this.pouch.remove(stack, count, slot);
 		this.syncGameDataWithPouch();
 		if(count !== AmountAll && removedCount < count){
@@ -151,6 +166,7 @@ export class SimulationState {
 				`Need to remove ${count}x${stack.item.id}, only ${removedCount} can be removed`
 			);
 		}
+		return removedCount;
 	}
 	public eat(stack: ItemStack, count: number | AmountAllType, slot: number) {
 		const removedCount = this.pouch.eat(stack, count, slot);
@@ -162,6 +178,7 @@ export class SimulationState {
 			);
 		}
 	}
+
 	public removeAll(types: ItemType[]) {
 		this.pouch.removeAll(types);
 		this.syncGameDataWithPouch();
@@ -182,7 +199,7 @@ export class SimulationState {
 		this.syncGameDataWithPouch();
 	}
 
-	public shootArrow(count: number){
+	public shootArrow(count: number | AmountAllType){
 		this.pouch.shootArrow(count, this.gameData);
 		// does not sync
 	}
@@ -199,19 +216,25 @@ export class SimulationState {
 	}
 
 	public setEventide(onEventide: boolean){
-		if(this.isOnEventide !== onEventide){
-			if(onEventide){
+		if(onEventide){
+			if(this.isOnEventide){
+				this.errorTitles.push("Cannot enter trial");
+				this.errorMessages.push("You are in another trial. Please exit first.");
+			}else{
 				// clear everything except for key items
 				this.pouch.clearForEventide();
 				// game data is not updated (?)
-
+			}
+		}else{
+			if(!this.isOnEventide){
+				this.errorTitles.push("Cannot leave trial");
+				this.errorMessages.push("You are not in a trial. Please enter one first.");
 			}else{
 				// reload pouch from gamedata as if reloading a save
 				this.reloadFrom(this.gameData);
 			}
-			this.isOnEventide = onEventide;
 		}
-
+		this.isOnEventide = onEventide;
 	}
 
 	public syncGameDataWithPouch() {

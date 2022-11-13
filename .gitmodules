@@ -1,3 +1,7 @@
 [submodule "scripts/base-lint"]
 	path = scripts/base-lint
 	url = git@github.com:iTNTPiston/base-lint
+
+[submodule "scripts/typescript-layers"]
+	path = scripts/typescript-layers
+	url = git@github.com:iTNTPiston/typescript-layers

@@ -17,6 +17,8 @@ To update submodules, go to the submodule directory and pull. Example:
 ```
 cd scripts/base-lint
 git pull
+cd scripts/typescript-layers
+git pull
 ```
 
 To install node modules `npm install`

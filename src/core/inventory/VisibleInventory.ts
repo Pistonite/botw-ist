@@ -18,6 +18,17 @@ export class VisibleInventory implements DisplayableInventory{
 		this.offset = 0;
 	}
 
+	public dump() {
+		return {
+			slots: this.slots.dump(),
+			offset: this.offset
+		};
+	}
+
+	public equals(other: VisibleInventory): boolean {
+		return this.slots.equals(other.slots) && this.offset === other.offset;
+	}
+
 	// Get "mCount", the number of items tracked by the linked list in botw
 	public getMCount(): number {
 		return this.slots.length - this.offset;
@@ -128,7 +139,7 @@ export class VisibleInventory implements DisplayableInventory{
 		}
 	}
 
-	public shootArrow(count: number, gameData: GameData) {
+	public shootArrow(count: number | AmountAllType, gameData: GameData) {
 		const updatedSlot = this.slots.shootArrow(count);
 		if(updatedSlot>=0){
 			const durability = this.slots.getSlotsRef()[updatedSlot].count;

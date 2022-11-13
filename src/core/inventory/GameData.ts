@@ -12,6 +12,15 @@ export class GameData implements DisplayableInventory {
 	constructor(slots: Slots){
 		this.slots = slots;
 	}
+	public dump() {
+		return {
+			slots: this.slots.dump(),
+		};
+	}
+
+	public equals(other: GameData): boolean {
+		return this.slots.equals(other.slots);
+	}
 
 	public deepClone(): GameData {
 		return new GameData(this.slots.deepClone());

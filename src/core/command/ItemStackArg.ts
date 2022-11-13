@@ -22,4 +22,23 @@ export class ItemStackArg{
 	public equals(other: ItemStackArg): boolean {
 		return this.stack.equals(other.stack) && this.number === other.number;
 	}
+
 }
+
+// converts stacks from command to stacks to add
+export const getSlotsToAdd = (stacks: ItemStackArg[]): ItemStack[] => {
+	const returnStacks: ItemStack[] = [];
+	stacks.forEach(stack=>{
+		const [actualStack, count] = stack.getContextStackAndSlotCount();
+		if(count === "All"){
+			console.log("temp fix");
+			returnStacks.push(actualStack.modify({count: -1}));
+		}else{
+			for(let i=0;i<count;i++){
+				returnStacks.push(actualStack);
+			}
+		}
+		
+	});
+	return returnStacks;
+};
