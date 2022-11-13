@@ -1,4 +1,4 @@
-p.Description {
+.Description {
     padding-left: 8px;
     font-size: smaller;
     margin-top: 0.2em;
@@ -6,15 +6,19 @@ p.Description {
     color: #bbbbbb;
 }
 
-p.Description.Primary {
+.Description.Primary {
     margin-bottom: 0.3em;
 }
 
-p.Description.Paragraph {
+.Description.Secondary {
+    margin-bottom: 0.5em;
+}
+
+.Description.Paragraph {
     color: #ffffff;
 }
 
 
-p.Description.Disabled {
+.Description.Disabled {
     color: #888888;
 }

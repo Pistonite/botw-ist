@@ -1,4 +1,4 @@
-import { createMaterialStack } from "./ItemStack";
+import { ItemStackImpl } from "./ItemStack";
 import { getTabFromType, Item, ItemStack, ItemTab, ItemType } from "./type";
 
 const TypeToCount: Omit<{
@@ -18,6 +18,9 @@ const TypeToCount: Omit<{
 
 export class ItemImpl implements Item {
 	id: string;
+	get localizationKey(): string {
+		return `items.${ItemType[this.type]}.${this.id}`;
+	}
 	type: ItemType;
 	get tab(): ItemTab {
 		return getTabFromType(this.type);
@@ -27,7 +30,15 @@ export class ItemImpl implements Item {
 	sortOrder = -1;
 	image: string;
 	configuredAnimatedImage?: string;
-	defaultStackFactory?: (item: Item)=>ItemStack;
+	priority: number;
+	// bow has default zoom. default false
+	bowZoom: boolean;
+	// bow has default (spread) multishot, default 0
+	bowMultishot: number;
+	// bow has default rapid fire (centralized multishot), default 0
+	bowRapidfire: number;
+	isElixir: boolean;
+	defaultStack: ItemStack;
 	constructor(
 		id: string,
 		type: ItemType,
@@ -35,6 +46,11 @@ export class ItemImpl implements Item {
 		stackable: boolean,
 		image: string,
 		animatedImage: string|undefined,
+		priority: number,
+		bowZoom: boolean,
+		bowMultishot: number,
+		bowRapidfire: number,
+		isElixir: boolean,
 		defaultStackFactory: ((item: Item)=>ItemStack)|undefined
 	){
 		this.id = id;
@@ -43,22 +59,24 @@ export class ItemImpl implements Item {
 		this.stackable = stackable;
 		this.image = image;
 		this.configuredAnimatedImage = animatedImage;
-		this.defaultStackFactory = defaultStackFactory;
+		this.priority = priority;
+		if(defaultStackFactory){
+			this.defaultStack = defaultStackFactory(this);
+		}else{
+			this.defaultStack = new ItemStackImpl(this);
+		}
+
 		if(type !== ItemType.Flag){
 			this.sortOrder = TypeToCount[type];
 			TypeToCount[type]++;
 		}
+		this.bowZoom = bowZoom;
+		this.bowMultishot = bowMultishot;
+		this.bowRapidfire = bowRapidfire;
+		this.isElixir = isElixir;
 	}
 
 	get animatedImage(): string {
 		return this.configuredAnimatedImage || this.image;
 	}
-
-	createDefaultStack(): ItemStack {
-		if(this.defaultStackFactory){
-			return this.defaultStackFactory(this);
-		}
-		return createMaterialStack(this, 1);
-	}
-
 }

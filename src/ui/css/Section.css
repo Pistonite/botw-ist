@@ -2,12 +2,21 @@ h3.SectionHeader {
     margin: 0;
     padding: 10px;
     height: 40px;
-	border-bottom: 2px solid;
+	border-bottom: 2px solid #ffffff;
 	box-sizing: border-box;
     cursor: default;
+    color: #b7f1ff;
+    text-shadow: 0 0 5px #3aa0ff,0 0 5px #3aa0ff,0 0 5px #3aa0ff;
 }
+
+div.Section {
+    background-color: #262626;
+    color: #ffffff;
+}
+
 
 div.SectionContent {
     height: calc( 100% - 40px );
     overflow-y: auto;
+    scroll-behavior: smooth;
 }

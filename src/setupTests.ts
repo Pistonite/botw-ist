@@ -4,11 +4,12 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
-import { Command, parseCommand } from "core/command";
-import { createSimulationState, SimulationState } from "core/SimulationState";
-import { ItemStack, loadItemData, searchItemMemoized } from "data/item";
 import fs from "fs";
 import YAML from "yaml";
+import { createSimulationState, SimulationState } from "core/SimulationState";
+import { CmdErr, Command, ItemSearchFunction, parseCommand } from "core/command";
+import { ItemStack, loadItemData, searchItemMemoized } from "data/item";
+
 const ItemDataString = fs.readFileSync("src/data/item/all.items.yaml", "utf-8");
 const ItemData = YAML.parse(ItemDataString);
 expect.extend({
@@ -57,7 +58,7 @@ expect.extend({
 const [IdMap, SearchMap] = loadItemData(ItemData);
 const SearchResultMemo = {};
 const searchFunc = (word: string): ItemStack | undefined => {
-	return searchItemMemoized(word, IdMap, SearchMap, SearchResultMemo);
+	return searchItemMemoized(word, IdMap, SearchMap, SearchResultMemo)[0];
 };
 const getCommandsFromString = (str: string): Command[] => {
 	const lines = str.split("\n");
@@ -140,17 +141,17 @@ const diffObjects = (obj1: any, obj2: any, path: string, out: string[]) => {
 const runE2ETest = (name: string, debug: boolean): [string, string]=>{
 	const script = fs.readFileSync(`src/__tests__/${name}.in.txt`, "utf-8");
 	const result = runE2ESimulation(script);
-	const resultString = JSON.stringify(result, null, 2);
+	const resultString = JSON.stringify(result.dump(), null, 2);
 	const expected = fs.readFileSync(`src/__tests__/${name}.out.txt`, "utf-8");
 
 	const expectedState = runE2ESimulation(expected);
-	const expectedString = JSON.stringify(expectedState, null, 2);
+	const expectedString = JSON.stringify(expectedState.dump(), null, 2);
 	if(debug){
 		fs.writeFileSync("src/__tests__/debug.actual.log", resultString, "utf-8");
 		fs.writeFileSync("src/__tests__/debug.expected.log", expectedString, "utf-8");
 		if(expectedString !== resultString){
 			const out: string[] = [];
-			diffObjects(expectedState, result, "", out);
+			diffObjects(expectedState.dump(), result.dump(), "", out);
 			fs.writeFileSync(
 				"src/__tests__/debug.mismatches.log",
 				out.join("\n"),
@@ -163,8 +164,8 @@ const runE2ETest = (name: string, debug: boolean): [string, string]=>{
 
 expect.extend({
 	toPassE2ESimulation: (receivedName: string, expectDebug?: boolean) => {
-		const [resultString, expectedString] = runE2ETest(receivedName, !!expectDebug);
-		if (resultString !== expectedString) {
+		const [resultState, expectedState] = runE2ETest(receivedName, !!expectDebug);
+		if (resultState !== expectedState) {
 			return {
 				message: () =>
 					"E2E simulation failed. Pass true to toPassE2ESimulation() to emit debug logs",
@@ -175,5 +176,75 @@ expect.extend({
 			message: ()=>"E2E simulation passed.",
 			pass: true
 		};
+	},
+	toMatchItemSearch: (receivedSearchString: string, expectedSearch: string | ItemStack | ((stack: ItemStack)=>ItemStack) |undefined) => {
+		const result = searchFunc(receivedSearchString);
+		let expected = typeof expectedSearch === "string" ? searchFunc(expectedSearch) : expectedSearch;
+		if(result === undefined || expected === undefined){
+			if(result === expected){
+				return {
+					message: ()=>"Item search match passed.",
+					pass: true
+				};
+			}
+			return {
+				message: ()=>`Item search match failed. Actual: ${result && result.item.id}`,
+				pass: false
+			};
+		}
+		if(expected instanceof Function){
+			expected = expected(result);
+		}
+		if(result.equals(expected)){
+			return {
+				message: ()=>"Item search match passed.",
+				pass: true
+			};
+		}
+		return {
+			message: ()=>`Item search match failed. Actual: ${result && result.item.id}`,
+			pass: false
+		};
+	},
+	toParseIntoCommand: (receivedString: string, search: ItemSearchFunction, expectedCommand: Command | CmdErr) => {
+		// we want to make sure we don't crash when typing the command
+		const safeSearch = search ?? (()=>{}); // eslint-disable-line @typescript-eslint/no-empty-function
+		for(let i=0;i<receivedString.length-1;i++){
+			const part = receivedString.substring(0, i);
+			parseCommand(part, safeSearch);
+			// no need to assert here, because the command might or might not equal the final one
+		}
+		const command = parseCommand(receivedString, search);
+		if(typeof expectedCommand === typeof CmdErr.AST){
+			if(command.cmdErr !== expectedCommand){
+				return {
+					message: ()=>`Parsed cmderr is ${command.cmdErr}, expected: ${expectedCommand}`,
+					pass: false
+				};
+			}
+			return {
+				message: ()=>"Parsed cmderr is the same as expected",
+				pass: true
+			};
+		}
+		expectedCommand = expectedCommand as Command;
+		const equal1 = expectedCommand.equals(command);
+		const equal2 = command.equals(expectedCommand);
+		if(equal1 !== equal2){
+			throw new Error("Command equality function must be commutative");
+		}
+		if(!equal1){
+			console.log(command); // eslint-disable-line no-console
+			console.log(expectedCommand); // eslint-disable-line no-console
+			return {
+				message: ()=>"Parsed command is different from expected",
+				pass: false
+			};
+		}
+		return {
+			message: ()=>"Parsed command is same as expected",
+			pass: true
+		};
 	}
+
 });

@@ -1,0 +1,37 @@
+.ListItem {
+    padding: 2px 2px 2px 10px;
+    cursor: pointer;
+    overflow-wrap: break-word;
+}
+
+.ListItem:hover {
+    background-color: #444444;
+}
+
+.ListItemSelected {
+    background-color: #333333;
+}
+
+.ListItemContextSelected {
+    background-color: #333333;
+}
+
+.ListItem.Small{
+    font-size: small;
+}
+
+.ListItem.ListItemInvalid {
+    background-color: #674141;
+}
+
+.ListItem.ListItemInvalid.ListItemContextSelected {
+    background-color: #5a3636;
+}
+
+.ListItem.ListItemInvalid.ListItemSelected {
+    background-color: #5a3636;
+}
+
+.ListItem.ListItemInvalid:hover {
+    background-color: #794a4a;
+}

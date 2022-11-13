@@ -1,6 +1,5 @@
-import { CrashScreen } from "ui/surfaces/CrashScreen";
-import { LoadingScreen } from "components/LoadingScreen";
 import React, { PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
+/*import-validate-exempt*/import { CrashScreen, LoadingScreen } from "ui/surfaces";
 
 /*
  * Provide the language file to component tree

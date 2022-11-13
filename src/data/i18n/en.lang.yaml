@@ -672,7 +672,7 @@ items:
     SpiritOrb: Spirit Orb
     KorokSeed: Korok Seed
     HestusMaracas: Hestu's Maracas
-    ThunderHelmKeyItem: Thunder Helm
+    ThunderHelmKey: Thunder Helm
     ClassifiedEnvelope: Classified Envelope
     HestusGift: Hestu's Gift
     PictureOfTheChampions: Picture of the Champions
@@ -692,3 +692,17 @@ items:
     MonsterSaddle: Monster Saddle
     AncientSaddle: Ancient Saddle
     TravelMedallion: Travel Medallion
+category:
+  Weapon: Weapon
+  Bow: Bow
+  Arrow: Arrow
+  Shield: Shield
+  ArmorUpper: Armor (Upper)
+  ArmorMiddle: Armor (Middle)
+  ArmorLower: Armor (Lower)
+  Armor: Armor
+  Material: Material
+  Food: Food
+  Key: Key Item
+state:
+  Equipped: Equipped

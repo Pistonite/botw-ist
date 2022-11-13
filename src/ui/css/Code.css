@@ -1,0 +1,105 @@
+.CodeBlock {
+    display: inline;
+
+}
+
+.CodeBlockLine {
+    display: block;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    margin: 0;
+}
+
+.CommandColorKeywordCommand {
+    color: #DCDCAA !important;
+}
+
+.CommandColorItemAmount {
+    color: #B5CEA8 !important;
+}
+
+.CommandColorItemName {
+    color: #CE9178 !important;
+}
+
+.ComandColorDelimiter {
+    color: #ffffff !important;
+}
+
+.CommandColorMetaValue {
+    color: #9CDCFE !important;
+}
+.CommandColorMetaConst {
+    color: #4EC9B0 !important;
+}
+
+.CommandColorMetaKey {
+    color: #4FC1FF !important;
+}
+
+.CommandColorUnknown {
+    color: #cccccc !important;
+}
+
+.CommandColorSlotNumber {
+    color: #569CD6 !important;
+}
+
+.CommandColorKeywordOther {
+    color: #C586C0 !important;
+}
+
+.CommandColorIdentifierOther {
+    color: #9CDCFE !important;
+}
+
+.CommandColorComment {
+    color: #6A9955 !important;
+}
+
+.CommandColorItemType {
+    color: #4EC9B0 !important;
+}
+
+.CommandTextArea {
+    width: 100%;
+
+    line-height: 12pt;
+    max-height: 300px;
+    font: 12pt monospace;
+    border:none;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    padding: 5px;
+    margin: 0;
+    resize: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+}
+.CommandTextArea.Large {
+    line-height: 16pt;
+    font: 16pt monospace;
+}
+
+textarea.CommandTextArea {
+    background-color: transparent;
+    color: transparent;
+    caret-color: white;
+    max-width: 100%;
+    z-index: 1;
+    /* height: 100%; */
+
+}
+
+div.CommandInputRoot {
+    position: relative !important;
+    max-width: 100%;
+}
+
+div.CommandInputRoot.Large {
+    min-height: 40px;
+}

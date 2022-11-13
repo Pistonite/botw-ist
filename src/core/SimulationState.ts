@@ -1,16 +1,13 @@
-import { Item, ItemStack, MetaOption } from "data/item";
-import { Command } from "./command";
-import { DisplayableInventory } from "./DisplayableInventory";
-import { GameData } from "./GameData";
-import { Slots } from "./Slots";
-import { VisibleInventory } from "./VisibleInventory";
+import { Item, ItemStack, ItemType, MetaModifyOption } from "data/item";
+import { AmountAll, AmountAllType, Command } from "./command";
+import { DisplayableInventory, GameData, Slots, VisibleInventory } from "./inventory";
 
 export const createSimulationState = (): SimulationState => {
 	return new SimulationState(
 		new GameData(new Slots([])),
 		null,
 		{},
-		new VisibleInventory(new Slots([]), 0)
+		new VisibleInventory(new Slots([]))
 	);
 };
 /*
@@ -21,15 +18,32 @@ export class SimulationState {
 	private manualSave: GameData | null;
 	private namedSaves: {[name: string]: GameData} = {};
 	private pouch: VisibleInventory;
-	private nextReloadName?: string;
 	private isOnEventide = false;
 	private crashed = false;
+	private errorTitles: string[] = [];
+	private errorMessages: string[] = [];
 
 	constructor(gameData: GameData, manualSave: GameData | null, namedSaves: {[name: string]: GameData}, pouch: VisibleInventory){
 		this.gameData = gameData;
 		this.manualSave = manualSave;
 		this.namedSaves = namedSaves;
 		this.pouch = pouch;
+	}
+
+	// Only used in E2E tests
+	public dump() {
+		const namedSaveDump: any = {}; // eslint-disable-line @typescript-eslint/no-explicit-any
+		for(const name in this.namedSaves){
+			namedSaveDump[name] = this.namedSaves[name].dump();
+		}
+		return {
+			gameData: this.gameData.dump(),
+			pouch: this.pouch.dump(),
+			manualSave: this.manualSave?.dump(),
+			namedSaves: namedSaveDump,
+			isOnEventide: this.isOnEventide,
+			crashed: this.crashed
+		};
 	}
 
 	public deepClone(): SimulationState {
@@ -43,7 +57,6 @@ export class SimulationState {
 			copyNamedSaves,
 			this.pouch.deepClone()
 		);
-		newState.nextReloadName = this.nextReloadName;
 		newState.isOnEventide = this.isOnEventide;
 		newState.crashed = this.crashed;
 
@@ -56,6 +69,8 @@ export class SimulationState {
 
 	// this is a wrapper that also have pre- and post-command checks
 	public executeCommand(command: Command){
+		this.errorTitles = [];
+		this.errorMessages = [];
 		this.crashed = false;
 		command.execute(this);
 		if(this.shouldCrash()){
@@ -65,7 +80,7 @@ export class SimulationState {
 	}
 
 	public initialize(stacks: ItemStack[]) {
-		this.pouch = new VisibleInventory(new Slots([]), 0);
+		this.pouch = new VisibleInventory(new Slots([]));
 		stacks.forEach((stack)=>this.pouch.addDirectly(stack));
 		this.gameData.syncWith(this.pouch);
 	}
@@ -75,6 +90,15 @@ export class SimulationState {
 	}
 
 	public save(name?: string) {
+		if(this.isOnEventide){
+			this.errorTitles.push(
+				"Save failed",
+			);
+			this.errorMessages.push(
+				"You cannot save while on Eventide or inside Trial of the Sword"
+			);
+			return;
+		}
 		if(name){
 			this.namedSaves[name] = this.gameData.deepClone();
 		}else{
@@ -86,17 +110,21 @@ export class SimulationState {
 		if(name){
 			if(name in this.namedSaves){
 				this.reloadFrom(this.namedSaves[name]);
+			}else{
+				this.errorTitles.push("Reload failed");
+				this.errorMessages.push(
+					`You are trying to reload the file "${name}", which doesn't exist`
+				);
 			}
 		}else{
-			if(this.nextReloadName){
-				if(this.nextReloadName in this.namedSaves){
-					this.reloadFrom(this.namedSaves[this.nextReloadName]);
-				}
+			const save = this.manualSave;
+			if(save){
+				this.reloadFrom(save);
 			}else{
-				const save = this.manualSave;
-				if(save){
-					this.reloadFrom(save);
-				}
+				this.errorTitles.push("Reload failed");
+				this.errorMessages.push(
+					"There's no manual save to reload from"
+				);
 			}
 		}
 	}
@@ -118,12 +146,8 @@ export class SimulationState {
 		this.isOnEventide = false;
 	}
 
-	public useSaveForNextReload(name: string){
-		this.nextReloadName = name;
-	}
-
 	public breakSlots(n: number) {
-		this.pouch.modifyCount(-n);
+		this.pouch.modifyOffset(n);
 	}
 
 	public obtain(stack: ItemStack) {
@@ -131,8 +155,30 @@ export class SimulationState {
 		this.syncGameDataWithPouch();
 	}
 
-	public remove(stack: ItemStack, slot: number) {
-		this.pouch.remove(stack, slot);
+	public remove(stack: ItemStack, count: number | AmountAllType, slot: number): number {
+		const removedCount = this.pouch.remove(stack, count, slot);
+		this.syncGameDataWithPouch();
+		if(count !== AmountAll && removedCount < count){
+			this.errorTitles.push("Cannot remove item(s)");
+			this.errorMessages.push(
+				`Need to remove ${count}x${stack.item.id}, only ${removedCount} can be removed`
+			);
+		}
+		return removedCount;
+	}
+	public eat(stack: ItemStack, count: number | AmountAllType, slot: number) {
+		const removedCount = this.pouch.eat(stack, count, slot);
+		this.syncGameDataWithPouch();
+		if(count !== AmountAll && removedCount < count){
+			this.errorTitles.push("Cannot eat item(s)");
+			this.errorMessages.push(
+				`Need to eat ${count}x${stack.item.id}, only ${removedCount} can be eaten`
+			);
+		}
+	}
+
+	public removeAll(types: ItemType[]) {
+		this.pouch.removeAll(types);
 		this.syncGameDataWithPouch();
 	}
 
@@ -146,36 +192,47 @@ export class SimulationState {
 		this.syncGameDataWithPouch();
 	}
 
-	public shootArrow(count: number){
+	public unequipAll(types: ItemType[]){
+		this.pouch.unequipAll(types);
+		this.syncGameDataWithPouch();
+	}
+
+	public shootArrow(count: number | AmountAllType){
 		this.pouch.shootArrow(count, this.gameData);
 		// does not sync
 	}
 
-	public setMetadata(item: Item, slot: number, meta: MetaOption) {
+	public setMetadata(item: Item, slot: number, meta: MetaModifyOption) {
 		this.pouch.setMetadata(item, slot, meta);
 		this.syncGameDataWithPouch();
 	}
 
 	public closeGame() {
-		this.pouch = new VisibleInventory(new Slots([]), 0);
+		this.pouch = new VisibleInventory(new Slots([]));
 		this.gameData = new GameData(new Slots([]));
 		this.isOnEventide = false;
 	}
 
 	public setEventide(onEventide: boolean){
-		if(this.isOnEventide !== onEventide){
-			if(onEventide){
+		if(onEventide){
+			if(this.isOnEventide){
+				this.errorTitles.push("Cannot enter trial");
+				this.errorMessages.push("You are in another trial. Please exit first.");
+			}else{
 				// clear everything except for key items
 				this.pouch.clearForEventide();
 				// game data is not updated (?)
-
+			}
+		}else{
+			if(!this.isOnEventide){
+				this.errorTitles.push("Cannot leave trial");
+				this.errorMessages.push("You are not in a trial. Please enter one first.");
 			}else{
 				// reload pouch from gamedata as if reloading a save
 				this.reloadFrom(this.gameData);
 			}
-			this.isOnEventide = onEventide;
 		}
-
+		this.isOnEventide = onEventide;
 	}
 
 	public syncGameDataWithPouch() {
@@ -197,7 +254,7 @@ export class SimulationState {
 	}
 
 	public get inventoryMCount(): number {
-		return this.pouch.getCount();
+		return this.pouch.getMCount();
 	}
 
 	public isCrashed(): boolean{
@@ -210,6 +267,21 @@ export class SimulationState {
 
 	public getNamedSaves(): {[name: string]: GameData} {
 		return this.namedSaves;
+	}
+
+	public get errors(): string[] {
+		if (this.errorTitles.length === 0){
+			return [];
+		}
+		const returnResult = [];
+		const titleSet = new Set(this.errorTitles);
+		if(titleSet.size === 1){
+			returnResult.push(this.errorTitles[0]);
+		}else{
+			returnResult.push("This command gave multiple errors when executing:");
+		}
+		returnResult.push(...this.errorMessages);
+		return returnResult;
 	}
 
 }

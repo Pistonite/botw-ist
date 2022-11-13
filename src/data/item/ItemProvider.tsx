@@ -1,10 +1,10 @@
-import { CrashScreen } from "ui/surfaces/CrashScreen";
-import { LoadingScreen } from "components/LoadingScreen";
 import React, { PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
+/*import-validation-exempt*/import { CrashScreen, LoadingScreen } from "ui/surfaces";
 import { ItemImpl } from "./Item";
-import { getTabFromType, Item, ItemIdMap, ItemStack, ItemTab, ItemType } from "./type";
+import { ItemStackImpl } from "./ItemStack";
+import { addElixir } from "./elixir";
 import { searchLegacyItemNames } from "./legacy";
-import { createEquipmentStack } from "./ItemStack";
+import { CookEffect, getTabFromType, Item, ItemIdMap, ItemStack, ItemTab, ItemType } from "./type";
 
 /*
  * Load items from items.yaml files and registers them in memory
@@ -15,13 +15,16 @@ type ItemSearchMap = { [id: string]: string}; // id -> search phrase
 type ItemContextFunctions = {
     getItem: (id: string) => Item|undefined,
     getAllItems: ()=>ItemIdMap,
-    searchItem: (word: string) => ItemStack|undefined
+    searchItem: (word: string, output?: ItemStack[]) => ItemStack|undefined
 }
 
 const ItemContext = React.createContext<ItemContextFunctions>({} as ItemContextFunctions);
 // Memoize search results to accelerate searching, since user typically use the same phrase for the same items
 // Note that ItemStack is immutable so it's safe to return the same instance every time
-let MemoizedSearchResults: {[phrase: string]: ItemStack|undefined} = {};
+let MemoizedSearchResults: {
+	[phrase: string]: [ItemStack|undefined, ItemStack[]] // [firstResult, otherResults]
+} = {};
+type MemoizedSearchResultMap = typeof MemoizedSearchResults;
 
 export const useGetItem = () => useContext(ItemContext).getItem;
 export const useAllItems = ()=>useContext(ItemContext).getAllItems();
@@ -54,8 +57,12 @@ export const ItemProvider: React.FC<PropsWithChildren> = ({children}) => {
 		MemoizedSearchResults = {};
 		if(itemIdMap && itemSearchMap){
 			const getItem = (id: string): Item | undefined => itemIdMap[id];
-			const searchItem = (word: string): ItemStack | undefined => {
-				return searchItemMemoized(word, itemIdMap, itemSearchMap, MemoizedSearchResults);
+			const searchItem = (word: string, output?: ItemStack[]): ItemStack | undefined => {
+				const [ result, otherResults ] = searchItemMemoized(word, itemIdMap, itemSearchMap, MemoizedSearchResults);
+				if (output){
+					output.push(...otherResults);
+				}
+				return result;
 			};
 			return [getItem, searchItem, ()=>itemIdMap];
 		}else{
@@ -120,7 +127,11 @@ export const loadItemData = (itemData: ItemData): [ItemIdMap, ItemSearchMap] => 
 const DefaultOption: ItemOption = {
 	stackable: true,
 	animated: false,
-	repeatable: true
+	repeatable: true,
+	priority: 0,
+	bowZoom: false,
+	bowMultishot: 0,
+	bowRapidfire: 0
 };
 
 const registerItemCategoryByName = (itemData: ItemData, category: keyof ItemData, type: ItemType, outIdMap: ItemIdMap, outSearchMap: ItemSearchMap) => {
@@ -173,16 +184,54 @@ const registerItem = (idAndSearch: string, option: ItemOption, type: ItemType, o
 		if(option.durability !== undefined){
 			const durability = option.durability;
 			defaultStackFactory = (item)=>{
-				return createEquipmentStack(item, durability, false);
+				return new ItemStackImpl(item).modify({durability});
 			};
 		}else{
 			defaultStackFactory = (item)=>{
-				return createEquipmentStack(item, 10 /* default durability for placeholders */, false);
+				return new ItemStackImpl(item).modify({durability: 10});
 			};
 		}
 	}
 
-	const item = new ItemImpl(id, type, option.repeatable ?? true, stackable ?? true, image, animatedImage, defaultStackFactory);
+	const ElixirIdToEffect = {
+		"Elixir": CookEffect.None,
+		"HeartyElixir": CookEffect.Hearty,
+		"EnergizingElixir": CookEffect.Energizing,
+		"EnduringElixir": CookEffect.Enduring,
+		"HastyElixir": CookEffect.Hasty,
+		"FireproofElixir": CookEffect.Fireproof,
+		"SpicyElixir": CookEffect.Spicy,
+		"ChillyElixir": CookEffect.Chilly,
+		"ElectroElixir": CookEffect.Electro,
+		"MightyElixir": CookEffect.Mighty,
+		"ToughElixir": CookEffect.Tough,
+		"SneakyElixir": CookEffect.Sneaky,
+	};
+
+	let elixirEffect: CookEffect | undefined = undefined;
+	if(id in ElixirIdToEffect){
+		elixirEffect = ElixirIdToEffect[id as keyof typeof ElixirIdToEffect];
+		defaultStackFactory = (item)=>{
+			return new ItemStackImpl(item).modify({foodEffect: elixirEffect});
+		};
+	}
+
+	const item = new ItemImpl(
+		id,
+		type,
+		option.repeatable ?? true,
+		stackable ?? true,
+		image,
+		animatedImage,
+		option.priority ?? 0,
+		option.bowZoom ?? false,
+		option.bowMultishot,
+		option.bowRapidfire,
+		elixirEffect!==undefined,
+		defaultStackFactory);
+	if(elixirEffect !== undefined){
+		addElixir(item, elixirEffect);
+	}
 	outIdMap[id] = item;
 	outSearchMap[id] = search;
 };
@@ -207,19 +256,24 @@ const splitIdAndSearch = (idAndSearch: string): [string, string] => {
 	}
 };
 
-export const searchItemMemoized = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMap, memo: {[phrase: string]: ItemStack|undefined}): ItemStack | undefined => {
+export const searchItemMemoized = (
+	name: string,
+	idMap: ItemIdMap,
+	searchMap: ItemSearchMap,
+	memo: MemoizedSearchResultMap
+): [ItemStack | undefined, ItemStack[]] => {
 	if(!name){
-		return undefined;
+		return [undefined, []];
 	}
 	if (name in memo){
 		return memo[name];
 	}
 
-	// legacy search must happen first to make sure legacy items are matched exactly
+	// legacy search special handler for the ones that cannot be matched using the modern system (e.g. "faroshscale")
 	const legacyItem = searchLegacyItemNames(name, idMap);
 	if(legacyItem){
-		memo[name] = legacyItem;
-		return legacyItem;
+		memo[name] = [legacyItem, []];
+		return memo[name];
 	}
 
 	const result = searchItemInMap(name, idMap, searchMap);
@@ -227,11 +281,30 @@ export const searchItemMemoized = (name: string, idMap: ItemIdMap, searchMap: It
 	return result;
 };
 
-const searchItemInMap = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMap): ItemStack | undefined => {
+const searchItemInMap = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMap): [ItemStack | undefined, ItemStack[]] => {
+	const firstAttempt = searchItemInMapCore(name, idMap, searchMap);
+	if(firstAttempt[0] !== undefined){
+		return firstAttempt;
+	}
+	// try removing "s" or "es" (lower case only)
+	const tries = ["es", "s"];
+	for(let i=0;i<tries.length;i++){
+		if(name.endsWith(tries[i])){
+			const attempt = searchItemInMapCore(name.substring(0, name.length-tries[i].length), idMap, searchMap);
+			if(attempt[0] !== undefined){
+				return attempt;
+			}
+		}
+	}
+	return firstAttempt;
+};
+
+const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMap): [ItemStack | undefined, ItemStack[]] => {
 	// if name is an id exactly, return that
 	const idItem = idMap[name];
 	if(idItem){
-		return idItem.createDefaultStack();
+		const result = idItem.defaultStack;
+		return [result, []];
 	}
 	// break name into dot separated search phrases
 	const parts = name.split("*");
@@ -250,12 +323,12 @@ const searchItemInMap = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMa
 
 		if(filteredResult.length === 0){
 			// nothing found
-			return undefined;
+			return [undefined, []];
 		}
 		if(filteredResult.length === 1){
 			// exactly 1 found, can end
 			const foundId = filteredResult[0];
-			return idMap[foundId].createDefaultStack();
+			return [idMap[foundId].defaultStack, []];
 		}
 		// continue filtering
 	}
@@ -267,17 +340,46 @@ const searchItemInMap = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMa
 	filteredResult.forEach((resultId)=>{
 		resultStartCountMap[resultId] = parts.filter(p=>resultId.toLowerCase().startsWith(p)).length;
 	});
+	const typeOrder = [
+		ItemType.Arrow,
+		ItemType.Material
+	];
 	filteredResult.sort((a,b)=>{
+		const itemA = idMap[a];
+		const itemB = idMap[b];
+		// Prioritize:
+		// Arrow > Materials > Other
+		if(itemA.type !== itemB.type){
+			for(let i=0;i<typeOrder.length;i++){
+				if(itemA.type === typeOrder[i]){
+					return -1;
+				}
+				if(itemB.type === typeOrder[i]){
+					return 1;
+				}
+			}
+		}
+		// compare priority
+		if (itemA.priority !== itemB.priority){
+			return itemB.priority - itemA.priority;
+		}
+
 		// first see if the result starts with any search key, and prioritize those with more matches
 		const diffInCount = resultStartCountMap[b] - resultStartCountMap[a];
 		if(diffInCount!==0){
 			return diffInCount;
 		}
+
 		// if same, prioritize the shorter one
 		// since the longer ones can always be found by adding more words
 		return a.length-b.length;
 	});
-	const foundId = filteredResult[0];
-	return idMap[foundId].createDefaultStack();
+	const [first, ...rest] = filteredResult;
+	return [
+		idMap[first].defaultStack,
+		rest.map(id=>idMap[id].defaultStack)
+	];
 
 };
+
+export const joinItemSearchStrings = (parts: string[]) => parts.join("*");

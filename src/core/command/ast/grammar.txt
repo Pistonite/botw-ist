@@ -1,0 +1,217 @@
+# Generator script for the parser
+# run generate_parser.py to generate
+
+# Each rule is one of:
+# 1. Union of derivation: ExampleA => ExampleB | ExampleC
+# or
+# 2. Concatenation of symbols: ExampleD => ExampleE ExampleF
+# or
+# 3. Union of terminal derivation: literal ExampleG => <hello> | <world>
+# Note that 1 and 3 cannot be mixed (for simplicity)
+
+# A literal (terminal) symbol is either a single character like this: ,
+# or a word surround by <> like <initialize>
+# A non terminal symbol that requires special parsing should be declared with extern:
+#  ExampleA => ExampleB <hello>
+#  extern ExampleB file
+
+# Use Epsilon for empty derivation
+
+# STOP! Don't touch this file unless you really know what you are doing
+
+# Make sure to also update the special symbols in types.ts if needed
+
+
+## Top Level
+Target => Command | SuperCommand
+SuperCommandForCommand => <!> Command
+
+## All Commands (Order matters!)
+---
+Command =>
+ CommandInitGameData    # initialize|init gamedata ...
+ | CommandInitialize    # initialize|init ...
+ | CommandCook          # cook with ...
+ | CommandCookCrit      # cook heart crit with ...
+ | CommandAdd           # get|add|buy|cook ...
+ | CommandPickUp        # pickup|pick [up] ...
+ | CommandRemoveAll     # remove all Type
+ | CommandRemove        # with|remove|sell ... [from slot X]
+ | CommandDrop          # drop ... [from slot X]
+ | CommandEat           # eat ... [from slot X]
+ | CommandDnp           # DNP ... [from slot X]
+ | CommandEquip         # equip X [in slot Y]
+ | CommandUnequipAll    # unequip [all] Type
+ | CommandUnequip       # unequip X [in slot Y]
+ | CommandShoot         # shoot X arrow(s)
+ | CommandEnterTrial    # enter X
+ | CommandExitTrial     # exit|leave Trial
+ | CommandWriteMetadata # write X to Y [in slot Z]
+ | CommandSave          # save [as ...]
+ | CommandReload        # reload [...]
+ | CommandBreakSlots    # break X slot(s) [with ...] [from slot Y]
+ | CommandCloseGame     # close|exit game
+ | CommandSyncGameData  # sync gamedata
+---
+---
+SuperCommand =>
+ SuperCommandAddSlot        # ! add slot ... [at slot X]
+ | SuperCommandRemoveSlot   # ! remove slot X
+ | SuperCommandForCommand
+---
+
+
+## Individual Commands
+CommandInitGameData => LiteralInitialize <gamedata> ZeroOrMoreItems
+CommandInitialize => LiteralInitialize ZeroOrMoreItems
+CommandCook => <cook> <with> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
+CommandCookCrit => <cook> <heart> <crit> <with> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
+CommandAdd => LiteralAdd OneOrMoreItems
+CommandPickUp => LiteralPickUp OneOrMoreItems
+CommandRemoveAll => <remove> <all> LiteralItemType
+CommandRemove => LiteralRemove ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
+CommandDrop => <drop> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
+CommandEat => <eat> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
+CommandDnp => LiteralDnp ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
+CommandEquip => <equip> ArgumentSingleItemMaybeInSlot
+CommandUnequipAll => <unequip> LiteralMaybeAllItemType
+CommandUnequip => <unequip> ArgumentSingleItemMaybeInSlot
+CommandShoot => <shoot> AmountOrAll LiteralArrow
+CommandEnterTrial => <enter> LiteralTrial
+CommandExitTrial => LiteralLeave LiteralTrial
+CommandWriteMetadata => <write> Metadata <to> ArgumentSingleItemMaybeInSlot
+CommandSave => <save> MaybeClauseSaveTarget
+CommandReload => <reload> IdentifierPrime
+CommandBreakSlots => <break> Integer LiteralSlot MaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot
+CommandCloseGame => LiteralClose <game>
+CommandSyncGameData => <sync> <gamedata>
+
+SuperCommandAddSlot => <!> <add> LiteralSlot ArgumentOneOrMoreItemsMaybeFromSlot
+SuperCommandRemoveSlot => <!> <remove> LiteralSlot Integer
+
+## Literals
+LiteralInitialize => <initialize> | <init>
+LiteralAdd => <get> | <add> | <buy> | <cook>
+LiteralPickUp => <pickup> | <pick> <up>
+LiteralRemove => <with> | <remove> | <sell>
+LiteralDnp => <d&p> | <dnp> | <dap>
+LiteralLeave => <exit> | <leave>
+LiteralClose => <exit> | <close>
+LiteralTrial => <eventide> | <tots>
+LiteralMaybeAllItemType => LiteralMaybeAll LiteralItemType
+LiteralItemType => LiteralWeapon | LiteralBow | LiteralArrow | LiteralShield | LiteralArmor | LiteralMaterial | LiteralFood | LiteralKeyItem
+LiteralWeapon => <weapon> | <weapons>
+LiteralBow => <bow> | <bows>
+LiteralArrow => <arrow> | <arrows>
+LiteralShield => <shield> | <shields>
+LiteralArmor => <armor> | <armors>
+LiteralMaterial => <material> | <materials>
+LiteralFood => <food> | <foods>
+LiteralKeyItem => <key> LiteralItem
+LiteralItem => <item> | <items>
+LiteralSlot => <slot> | <slots>
+LiteralMaybeAll => LiteralAll | Epsilon
+LiteralAll => <all>
+
+## Arguments: large piece of command needed to make sure parsing is done in the right order
+# This is usually because a clause can appear after any item, and needs to be considered before considering the next item
+
+MaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot => ArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot | Epsilon
+ArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot => <with> ArgumentOneOrMoreItemsAllowAllMaybeFromSlot
+
+# I ... [in slot ...]
+ArgumentSingleItemMaybeInSlot => Identifier ArgumentSingleItemMaybeInSlotAIdentifier
+---
+ArgumentSingleItemMaybeInSlotAIdentifier =>
+ ClauseInSlot
+ | ArgumentSingleItemMaybeInSlotAIdentifierC2
+ | Epsilon
+---
+ArgumentSingleItemMaybeInSlotAIdentifierC2 => Identifier ArgumentSingleItemMaybeInSlotAIdentifier
+
+# I [from slot X]
+# A I [meta] A I [from slot X]
+ArgumentOneOrMoreItemsAllowAllMaybeFromSlot => ArgumentItemStacksAllowAllMaybeFromSlot | ArgumentSingleItemAllowAllMaybeFromSlot
+ArgumentSingleItemAllowAllMaybeFromSlot => Identifier ArgumentSingleItemAllowAllMaybeFromSlotAIdentifier
+---
+ArgumentSingleItemAllowAllMaybeFromSlotAIdentifier =>
+ ClauseFromSlot
+ | ArgumentSingleItemAllowAllMaybeFromSlot
+ | ArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1
+ | Epsilon
+---
+ArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1 => Metadata MaybeClauseFromSlot
+ArgumentItemStacksAllowAllMaybeFromSlot => AmountOrAll Identifier ArgumentItemStacksAllowAllMaybeFromSlotAIdentifier
+---
+ArgumentItemStacksAllowAllMaybeFromSlotAIdentifier =>
+ ClauseFromSlot
+ | ArgumentItemStacksAllowAllMaybeFromSlot
+ | ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1
+ | ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2
+ | Epsilon
+---
+ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1 => Metadata ArgumentItemStacksAllowAllMaybeFromSlotAMetadata
+ArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2 => Identifier ArgumentItemStacksAllowAllMaybeFromSlotAIdentifier
+ArgumentItemStacksAllowAllMaybeFromSlotAMetadata => ClauseFromSlot | ArgumentItemStacksAllowAllMaybeFromSlot | Epsilon
+
+# I [from slot X]
+# n I [meta] n I [from slot X]
+ArgumentOneOrMoreItemsMaybeFromSlot => ArgumentSingleItemMaybeFromSlot | ArgumentItemStacksMaybeFromSlot
+ArgumentSingleItemMaybeFromSlot => Identifier ArgumentSingleItemMaybeFromSlotAIdentifier
+---
+ArgumentSingleItemMaybeFromSlotAIdentifier =>
+ ClauseFromSlot
+ | ArgumentSingleItemMaybeFromSlotAIdentifierC1
+ | ArgumentSingleItemMaybeFromSlot
+ | Epsilon
+---
+ArgumentSingleItemMaybeFromSlotAIdentifierC1 => Metadata MaybeClauseFromSlot
+ArgumentItemStacksMaybeFromSlot => Integer Identifier ArgumentItemStacksMaybeFromSlotAIdentifier
+---
+ArgumentItemStacksMaybeFromSlotAIdentifier =>
+ ClauseFromSlot
+ | ArgumentItemStacksMaybeFromSlotAIdentifierC1
+ | ArgumentItemStacksMaybeFromSlotAIdentifierC2
+ | ArgumentItemStacksMaybeFromSlot
+ | Epsilon
+---
+ArgumentItemStacksMaybeFromSlotAIdentifierC1 => Metadata ArgumentItemStacksMaybeFromSlotAMetadata
+ArgumentItemStacksMaybeFromSlotAIdentifierC2 => Identifier ArgumentItemStacksMaybeFromSlotAIdentifier
+ArgumentItemStacksMaybeFromSlotAMetadata => ClauseFromSlot | ArgumentItemStacksMaybeFromSlot | Epsilon
+
+## Clauses
+MaybeClauseFromSlot => ClauseFromSlot | Epsilon
+ClauseFromSlot => <from> LiteralSlot Integer
+# MaybeClauseInSlot => ClauseInSlot | Epsilon
+ClauseInSlot => <in> LiteralSlot Integer
+MaybeClauseSaveTarget => ClauseSaveTarget | Epsilon
+ClauseSaveTarget => <as> OneOrMoreIdentifiers
+
+## Items
+ZeroOrMoreItems => SingleItem | ItemStackPrime
+OneOrMoreItems => SingleItem | OneOrMoreItemStacks
+# OneOrMoreItemsAllowAll => OneOrMoreItemStacksAllowAll | SingleItem
+OneOrMoreItemStacks => ItemStack ItemStackPrime
+# OneOrMoreItemStacksAllowAll => ItemStackAllowAll ItemStackAllowAllPrime
+ItemStack => Integer SingleItem
+# ItemStackAllowAll => AmountOrAll SingleItem
+ItemStackPrime => OneOrMoreItemStacks | Epsilon
+# ItemStackAllowAllPrime => OneOrMoreItemStacksAllowAll | Epsilon
+
+## Basic
+AmountOrAll => Integer | LiteralAll
+SingleItem => OneOrMoreIdentifiers MaybeMetadata
+IdentifierPrime => OneOrMoreIdentifiers | Epsilon
+OneOrMoreIdentifiers => Identifier IdentifierPrime
+MaybeMetadata => Metadata | Epsilon
+Metadata => <[> KeyValuePair KeyValuePairPrime <]>
+KeyValuePair => Identifier Value
+Value => SpecifiedValue | Epsilon
+SpecifiedValue => ValueSpecifier ValueValue
+ValueSpecifier => <=> | <:>
+ValueValue => Integer | Identifier
+KeyValuePairPrime => KeyValuePairPrimeC1 | Epsilon
+KeyValuePairPrimeC1 => <,> KeyValuePair KeyValuePairPrime
+
+extern Integer basis
+extern Identifier basis

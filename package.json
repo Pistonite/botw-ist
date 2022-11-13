@@ -1,10 +1,14 @@
 {
   "name": "botw-ist",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "homepage": "https://ist.itntpiston.app/",
   "private": true,
   "dependencies": {
     "@babel/core": "^7.16.0",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.10.9",
+    "@mui/material": "^5.10.13",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^6.2.1",
     "@testing-library/jest-dom": "^5.16.4",
@@ -71,11 +75,13 @@
     "yaml-loader": "^0.8.0"
   },
   "scripts": {
+    "generate": "python3 src/core/command/ast/generate_parser.py src/core/command/ast/grammar.txt src/core/command/ast/ast.generated.ts",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test-all": "node scripts/test.js",
     "test": "node scripts/test.js test.ts",
     "lint-base": "python3 scripts/base-lint . -c -p config/base-lint.toml",
+    "layer": "python3 scripts/typescript-layers src -b . -b .. -l ui -l core -l data -s 1",
     "lint-ts": "eslint src --ext .ts,.tsx --max-warnings 0"
   },
   "eslintConfig": {
@@ -97,6 +103,9 @@
     ]
   },
   "jest": {
+    "globals": {
+      "__VERSION__": "test"
+    },
     "roots": [
       "<rootDir>/src"
     ],

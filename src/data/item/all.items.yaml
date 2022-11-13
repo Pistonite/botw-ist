@@ -9,10 +9,13 @@ weapon:
       durability: 40
   - TreeBranch:
       durability: 4
+      priority: 1
   - Torch:
       durability: 8
+      priority: 1
   - SoupLadle:
       durability: 5
+      priority: 1
   - Boomerang:
       durability: 18
   - SpringLoadedHammer:
@@ -69,6 +72,7 @@ weapon:
       durability: 23
   - LizalTriBoomerang:
       durability: 27
+      priority: 1
   - GuardianSword:
       durability: 17
   - GuardianSwordPlus:
@@ -112,6 +116,7 @@ weapon:
       durability: 8
   - WoodcuttersAxe:
       durability: 47
+      priority: 1
   - DoubleAxe:
       durability: 52
   - IronSledgehammer:
@@ -213,6 +218,7 @@ weapon:
       durability: 40
   - LightscaleTrident:
       durability: 70
+      priority: 1
   - Drillshaft:
       durability: 40
   - FeatheredSpear:
@@ -235,6 +241,7 @@ weapon:
       durability: 50
   - BokoSpear:
       durability: 12
+      priority: 1
   - SpikedBokoSpear:
       durability: 15
   - DragonboneBokoSpear:
@@ -283,6 +290,7 @@ bow:
       durability: 60
   - ForestDwellersBow:
       durability: 35
+      bowMultishot: 3
   - SilverBow:
       durability: 40
   - SwallowBow:
@@ -291,10 +299,13 @@ bow:
       durability: 50
   - GreatEagleBow:
       durability: 60
+      bowMultishot: 3
   - GoldenBow:
       durability: 60
+      bowZoom: true
   - PhrenicBow:
       durability: 45
+      bowZoom: true
   - AncientBow:
       durability: 120
   - RoyalGuardsBow:
@@ -315,17 +326,22 @@ bow:
       durability: 50
   - LynelBow:
       durability: 30
+      bowMultishot: 3
   - MightyLynelBow:
       durability: 35
+      bowMultishot: 3
   - SavageLynelBow:
       durability: 45
+      bowMultishot: 3
   - DuplexBow:
       durability: 18
+      bowRapidfire: 2
   # "ANY" placeholder
   - Bow
 arrow:
   entries:
-  - NormalArrow
+  - NormalArrow:
+      priority: 1
   - FireArrow
   - IceArrow
   - ShockArrow
@@ -339,6 +355,7 @@ shield:
       durability: 800
   - PotLid:
       durability: 10
+      priority: 1
   - WoodenShield:
       durability: 12
   - EmblazonedShield:
@@ -590,7 +607,7 @@ armor:
   - PhantomGreaves:
       subtype: lower
   - IslandLobsterShirt:
-      subtype: upper
+      subtype: middle
   - RaviosHood:
       subtype: upper
   - ZantsHelmet:
@@ -685,10 +702,10 @@ material:
   - NaydrasClaw
   - ShardOfNaydrasFang
   - ShardOfNaydrasHorn
-  - FaroshsScale
-  - FaroshsClaw
+  - FaroshsScale:faroshscale
+  - FaroshsClaw:faroshclaw
   - ShardOfFaroshsFang
-  - ShardOfFaroshsHorn
+  - ShardOfFaroshsHorn:faroshhorn
   - HeartySalmon
   - HeartyBlueshellSnail
   - HeartyBass
@@ -718,7 +735,8 @@ material:
   - RestlessCricket
   - BladedRhinoBeetle
   - RuggedRhinoBeetle
-  - EnergeticRhinoBeetle
+  - EnergeticRhinoBeetle:
+      priority: 1
   - SunsetFirefly
   - HotFootedFrog
   - TirelessFrog

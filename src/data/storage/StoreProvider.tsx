@@ -1,5 +1,5 @@
-import React, { PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
 import { produce } from "immer";
+import React, { PropsWithChildren, useCallback, useContext, useEffect, useState } from "react";
 
 type StoreSetting = {
     showGameData: boolean | "auto",
@@ -7,6 +7,7 @@ type StoreSetting = {
     interlaceGameData: boolean,
     showSuperCommand: boolean,
     animatedIcon: boolean,
+	showCommandHint: boolean,
 };
 
 const loadOrDefault = function <T>(key: string, defaultValue: T) {
@@ -32,6 +33,7 @@ const DefaultSetting: StoreSetting = {
 	interlaceGameData: true,
 	showSuperCommand: false,
 	animatedIcon: true,
+	showCommandHint: true,
 };
 
 const DefaultCommands = [
@@ -60,7 +62,10 @@ const LegacySettingKey = "HDS.Setting";
 const KEY_COMMAND_DATA = "botw-ist-data";
 const KEY_SETTING = "botw-ist-setting";
 export const StoreProvider: React.FC<PropsWithChildren> = ({children}) => {
-	const [settingState, setSettingState] = useState<StoreSetting>(loadOrDefault(KEY_SETTING, DefaultSetting));
+	const [settingState, setSettingState] = useState<StoreSetting>({
+		...DefaultSetting,
+		...loadOrDefault(KEY_SETTING, {})
+	});
 
 	const settingFunction: SettingFunction = useCallback((key, value)=>{
 		if (value !== undefined){

@@ -1,14 +1,13 @@
 import React, { PropsWithChildren } from "react";
 import ReactDOM from "react-dom/client";
 import "ui/css";
-import {App} from "./App";
-import { reportWebVitalsAsync } from "data/web-vitals";
+import { CrashScreen, TooltipHost } from "ui/surfaces";
+import { RuntimeProvider } from "core/runtime";
 import { LanguageProvider } from "data/i18n";
 import { ItemProvider } from "data/item";
 import { StoreProvider } from "data/storage";
-import { RuntimeProvider } from "data/runtime";
-import { CrashScreen } from "ui/surfaces/CrashScreen";
-import { TooltipHost } from "ui/surfaces/Tooltip";
+import { reportWebVitalsAsync } from "data/web-vitals";
+import {App} from "./App";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

@@ -1,11 +1,16 @@
-import { saveAs } from "data/FileSaver";
-import { serialize } from "data/serialize";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Category, Control, Description, Label } from "ui/components";
-import { Page } from "ui/surfaces";
-import { useRuntime } from "data/runtime";
+import { Page, CommandTextArea } from "ui/surfaces";
+import { MemoizedParser } from "core/command";
+import { useRuntime } from "core/runtime";
+import { saveAs } from "data/FileSaver";
+import { useSearchItem } from "data/item";
+import { serialize } from "data/storage";
+import { arrayShallowEqual } from "data/util";
 
 const URL_MAX = 2048;
+
+const parser = new MemoizedParser();
 
 export const ScriptOptionPanel: React.FC = () => {
 	const {
@@ -16,17 +21,23 @@ export const ScriptOptionPanel: React.FC = () => {
 		enableEditing,
 		setSaving,
 	} = useRuntime();
-	const commandText = useMemo(()=>commandData.join("\n"), [commandData]);
+	//const commandText = useMemo(()=>commandData.join("\n"), [commandData]);
 
-	const [currentText, setCurrentText] = useState<string>(commandText);
+	const [currentText, setCurrentText] = useState<string[]>(commandData);
 	const [fileName, setFileName] = useState<string>("");
 	const [showDirectUrl, setShowDirectUrl] = useState<boolean>(false);
 	const [showCopiedMessage, setShowCopiedMessage] = useState<boolean>(false);
 
+	const searchItem = useSearchItem();
+	const codeblocks = useMemo(()=>{
+		const commands = parser.parseCommands(currentText, searchItem);
+		return commands.map(c=>c.codeBlocks);
+	}, [currentText, searchItem]);
+
 	const uploadRef = useRef<HTMLInputElement>(null);
 
 	const directUrl = useMemo(()=>{
-		const serializedCommands = serialize(currentText);
+		const serializedCommands = serialize(currentText.join("\n"));
 		const query = new URLSearchParams(serializedCommands).toString();
 		return `${window.location.origin}/?${query}`;
 	}, [currentText]);
@@ -37,7 +48,7 @@ export const ScriptOptionPanel: React.FC = () => {
 		setShowCopiedMessage(false);
 	}, [currentText]);
 
-	const unsaved = currentText !== commandText;
+	const unsaved = useMemo(()=>!arrayShallowEqual(currentText, commandData), [currentText, commandData]);
 
 	return (
 		<Page title="Script Options">
@@ -48,8 +59,9 @@ export const ScriptOptionPanel: React.FC = () => {
 					const fileName = file.name.endsWith(".txt") ? file.name.substring(0, file.name.length-4) : file.name;
 					setFileName(fileName);
 					file.text().then(text=>{
-						setCurrentText(text);
-						setCommandData(text.split("\n"));
+						const splitted= text.split("\n");
+						setCurrentText(splitted);
+						setCommandData(splitted);
 					});
 				}
 			}}/>
@@ -76,7 +88,7 @@ export const ScriptOptionPanel: React.FC = () => {
 					}
 					{
 						editing && window.location.search &&
-						<Description className="Primary Warning">
+						<Description className="Primary Important">
 							Warning: It looks like you might be editing a script from a direct URL. If you enable save, the script will overwrite the existing saved script.
 						</Description>
 					}
@@ -91,7 +103,7 @@ export const ScriptOptionPanel: React.FC = () => {
 
 				<Control disabled={!editing}>
 					<Button className="Full Action" disabled={!unsaved} onClick={()=>{
-						setCommandData(currentText.split("\n"));
+						setCommandData(currentText);
 					}}>
 						Save
 					</Button>
@@ -103,7 +115,7 @@ export const ScriptOptionPanel: React.FC = () => {
 						Import
 					</Button>
 					<Button className="Full" onClick={()=>{
-						saveAs(currentText, fileName+".txt" || "IST-Export.txt");
+						saveAs(currentText.join("\n"), fileName+".txt" || "IST-Export.txt");
 					}}>
 						Export
 					</Button>
@@ -117,17 +129,15 @@ export const ScriptOptionPanel: React.FC = () => {
 						}}
 						placeholder="File name"
 					/>
-
-					<textarea
-						style={{width: "calc( 100% - 10px )"}}
-						className="MainInput"
-						spellCheck={false}
+					{/* <div> */}
+					<CommandTextArea
+						className="MainInput MultiLineInput"
 						value={currentText}
-						onChange={(e)=>{
-							setCurrentText(e.target.value);
-						}}
-
+						setValue={setCurrentText}
+						blocks={codeblocks}
+						stopPropagation
 					/>
+					{/* </div> */}
 
 					<Description className="Error">
 						{editing?"":"You need to enable editing to change the script here"}
@@ -136,12 +146,12 @@ export const ScriptOptionPanel: React.FC = () => {
 
 				<Description className="Primary Paragraph">You can use a direct URL to open the simulator with the steps automatically loaded.</Description>
 				{
-					unsaved && <Description className="Primary Warning">
+					unsaved && <Description className="Primary Important">
 						Warning: The script above contains unsaved changes. The URL will reflect the unsaved script instead of what is in the simulator.
 					</Description>
 				}
 				{
-					directUrlLength > URL_MAX && <Description className="Primary Warning">
+					directUrlLength > URL_MAX && <Description className="Primary Important">
 						Warning: The URL is too long ({directUrlLength} characters) and may not work in certain browsers. Export as file instead if you encounter any problems.
 					</Description>
 				}
@@ -166,7 +176,10 @@ export const ScriptOptionPanel: React.FC = () => {
 				</Button>
 
 				<Description style={{
+					wordBreak: "break-all",
+					//
 					...!showDirectUrl && {
+						width: "calc( 90vw - 400px )",
 						textOverflow: "ellipsis",
 						overflowX: "hidden",
 						whiteSpace: "nowrap",

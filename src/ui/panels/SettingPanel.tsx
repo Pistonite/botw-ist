@@ -1,6 +1,6 @@
 import { Button, Category, Control, Description, Label } from "ui/components";
 import { Page } from "ui/surfaces";
-import { useRuntime } from "data/runtime";
+import { useRuntime } from "core/runtime";
 
 const cycleOnOffAuto = (value: boolean | "auto"): boolean | "auto" => {
 	if (!value){
@@ -26,13 +26,14 @@ const settingToButtonString = (value: boolean | "auto"): string => {
 	return settingToString(value, "ON", "OFF", "AUTO");
 };
 
-export const SettingPage: React.FC = () => {
+export const SettingPanel: React.FC = () => {
 	const { setting, setPage } = useRuntime();
 
 	const isIconAnimated = setting("animatedIcon");
 	const showSaves = setting("showSaves");
 	const showGameData = setting("showGameData");
 	const interlaceGameData = setting("interlaceGameData");
+	const showHint = setting("showCommandHint");
 
 	return (
 		<Page title="Setting">
@@ -81,6 +82,15 @@ export const SettingPage: React.FC = () => {
 				<Label>{settingToString(isIconAnimated, "Show animated icons", "Show static icons")}</Label>
 				<Description>
                     Toggle if icons should be animated for available items.
+				</Description>
+			</Category>
+			<Category title="Commands">
+				<Button className="Small" onClick={()=>setting("showCommandHint", !showHint)}>
+					{settingToButtonString(showHint)}
+				</Button>
+				<Label>{settingToString(showHint, "Show command hints", "Do not show command hints")}</Label>
+				<Description>
+                    Toggle if the simulator should guess which command you are trying to use, and show the usage info. (Will still show errors)
 				</Description>
 			</Category>
 			<Category title="Advanced">

@@ -1,23 +1,49 @@
-import { Item, ItemStack, MetaOption } from "./type";
+import { getElixir } from "./elixir";
+import { ExDataImpl } from "./extra";
+import { CookEffect, ExData, Item, ItemStack, MetaModifyOption } from "./type";
 
-class ItemStackImpl implements ItemStack {
-	public item: Item;
-	life: number;
+type ItemStackModifyOption = {
+	-readonly [P in keyof ItemStack]: ItemStack[P]
+}
+
+export class ItemStackImpl implements ItemStack {
+	_item: Item;
+	get item(): Item {
+		// elixir check
+		if(this._item.isElixir){
+			return getElixir(this.foodEffect);
+		}
+		return this._item;
+	}
+	private life = 1;
 	get count(): number {
 		return this.life;
 	}
 	get durability(): number {
 		return this.life/100.0;
 	}
-	public equipped: boolean;
-	constructor(item: Item, life: number, equipped: boolean) {
-		this.item = item;
-		this.life = life;
-		this.equipped = equipped;
+	public equipped = false;
+	public foodEffect: CookEffect = CookEffect.None;
+	private exData: ExData = new ExDataImpl();
+	get weaponModifier(): number {
+		return this.exData.modifierType;
+	}
+	get weaponValue(): number {
+		return this.exData.modifierValue;
+	}
+	get foodSellPrice(): number {
+		return this.exData.sellPrice;
+	}
+	get foodHpRecover(): number {
+		return this.exData.hearts;
+	}
+	constructor(item: Item) {
+		this._item = item;
 	}
 
 	public modify(option: Partial<ItemStack>): ItemStack {
 		const newItem = "item" in option ? option.item as Item : this.item;
+		const newStack = new ItemStackImpl(newItem);
 		let newLife = this.life;
 		if("count" in option){
 			newLife = option.count as number;
@@ -25,44 +51,60 @@ class ItemStackImpl implements ItemStack {
 			newLife = option.durability as number;
 			newLife*=100;
 		}
-		const newEquipped = "equipped" in option ? !!option.equipped:this.equipped;
-		return new ItemStackImpl(newItem, newLife, newEquipped);
+		newStack.life = newLife;
+		newStack.equipped = "equipped" in option ? !!option.equipped:this.equipped;
+		newStack.foodEffect = option.foodEffect ?? this.foodEffect;
+		newStack.exData.modifierType = option.weaponModifier ?? option.foodSellPrice ?? this.weaponModifier;
+		newStack.exData.modifierValue = option.weaponValue ?? option.foodHpRecover ?? this.weaponValue;
+
+		return newStack;
 	}
 
-	public modifyMeta(metaOption: MetaOption): ItemStack {
-		let modifyOption: Partial<ItemStack> = {};
+	public modifyMeta(metaOption: MetaModifyOption): ItemStack {
+		const modifyOption: Partial<ItemStackModifyOption> = {};
 		if("life" in metaOption){
-			modifyOption = {
-				...modifyOption,
-				count: metaOption.life
-			};
+			modifyOption.count = metaOption.life ?? 0;
 		}
 		if("equip" in metaOption){
-			modifyOption = {
-				...modifyOption,
-				equipped: metaOption.equip
-			};
+			modifyOption.equipped = !!metaOption.equip;
+		}
+		if("price" in metaOption){
+			modifyOption.foodSellPrice = metaOption.price ?? 0;
+		}
+		if("hp" in metaOption){
+			modifyOption.foodHpRecover = metaOption.hp ?? 0;
+		}
+		if("cookEffect" in metaOption){
+			modifyOption.foodEffect = metaOption.cookEffect ?? 0;
 		}
 		return this.modify(modifyOption);
 	}
 
 	public equals(other: ItemStack): boolean {
-		return this.equalsExceptForEquipped(other) && this.equipped === other.equipped;
-	}
-	public equalsExceptForEquipped(other: ItemStack): boolean {
-		return this.canStack(other) && this.life === other.count;
-	}
-	public canStack(other: ItemStack): boolean {
-		// TODO metadata
-		return this.item === other.item;
+		return this.equalsExcept(other);
 	}
 
+	public equalsExcept(other: ItemStack, ...keys: (keyof ItemStack)[]): boolean {
+		// If we grow to like 20 keys we could use a set.. but I doubt it
+		if(this.item !== other.item){
+			return false;
+		}
+		if(!keys.includes("equipped") && this.equipped !== other.equipped){
+			return false;
+		}
+		if(!keys.includes("count") && !keys.includes("durability") && this.life !== other.count){
+			return false;
+		}
+		if(!keys.includes("foodSellPrice") && !keys.includes("weaponModifier") && this.foodSellPrice !== other.foodSellPrice){
+			return false;
+		}
+		if(!keys.includes("foodHpRecover") && !keys.includes("weaponValue") && this.foodHpRecover !== other.foodHpRecover){
+			return false;
+		}
+		if(!keys.includes("foodEffect") && this.foodEffect !== other.foodEffect){
+			return false;
+		}
+
+		return true;
+	}
 }
-
-export const createMaterialStack = (item: Item, count: number): ItemStack => {
-	return new ItemStackImpl(item, count, false);
-};
-
-export const createEquipmentStack = (item: Item, durability: number, equipped: boolean): ItemStack => {
-	return new ItemStackImpl(item, durability*100, equipped);
-};
