@@ -1,9 +1,9 @@
-import { DisplayableInventory, SlotDisplay } from "./types";
-import { GameData } from "./GameData";
-import { Slots } from "./Slots";
+import { AmountAllType } from "core/command";
 import { Item, ItemStack, ItemType, MetaModifyOption } from "data/item";
-import { AmountAllType } from "core/command/ItemStackArg";
+import { GameData } from "./GameData";
 import { SlotDisplayForItemStack } from "./SlotDisplayForItemStack";
+import { Slots } from "./Slots";
+import { DisplayableInventory, SlotDisplay } from "./types";
 
 /*
  * Implementation of Visible Inventory (PauseMenuDataMgr) in botw

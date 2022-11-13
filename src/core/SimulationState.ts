@@ -1,9 +1,6 @@
 import { Item, ItemStack, ItemType, MetaModifyOption } from "data/item";
-import { Command } from "./command/command";
-import { AmountAll, AmountAllType, ItemStackArg } from "./command/ItemStackArg";
-import { DisplayableInventory } from "./inventory";
-import { GameData, Slots } from "./inventory";
-import { VisibleInventory } from "./inventory";
+import { AmountAll, AmountAllType, Command } from "./command";
+import { DisplayableInventory, GameData, Slots, VisibleInventory } from "./inventory";
 
 export const createSimulationState = (): SimulationState => {
 	return new SimulationState(

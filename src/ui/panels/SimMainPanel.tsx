@@ -1,15 +1,11 @@
 import clsx from "clsx";
-import { Section, DoubleItemSlot } from "ui/components";
-
+import React, { useState } from "react";
+import { Section, DoubleItemSlot, ItemList } from "ui/components";
+import { CrashScreen, CommandTextArea } from "ui/surfaces";
 import { SimulationState } from "core/SimulationState";
-import InGameBackground from "assets/InGame.png";
-
-import React, { useMemo, useRef, useState } from "react";
-import { ItemList } from "ui/components/item/ItemList";
-import { CrashScreen } from "ui/surfaces/CrashScreen";
+import { CmdErr, Command } from "core/command";
 import { useRuntime } from "core/runtime";
-import { CmdErr, Command } from "core/command/command";
-import { CommandTextArea } from "ui/surfaces/CommandTextArea";
+
 
 type SimMainPanelProps = {
     commandText: string,

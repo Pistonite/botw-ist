@@ -1,5 +1,4 @@
 import { ItemStack } from "data/item";
-import { is } from "immer/dist/internal";
 import {
     ASTTarget,
     createASTFromString,

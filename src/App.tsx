@@ -2,25 +2,24 @@ import produce from "immer";
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { CommandItem } from "ui/components";
-import { createSimulationState, SimulationState } from "core/SimulationState";
-import { useSearchItem } from "data/item";
-import { useRuntime } from "core/runtime";
-import { ContextMenuState } from "ui/types";
-
 import {
 	ItemExplorerPanel,
 	NavPanel,
 	HelpPanel,
+	SavePanel,
 	ScriptOptionPanel,
 	SettingPanel,
 	SimMainPanel,
 	SimStepsPanel,
 	ReferencePage
 } from "ui/panels";
-
-import { SavePanel } from "ui/panels/SavePanel";
+import { ContextMenuState } from "ui/types";
+import { createSimulationState, SimulationState } from "core/SimulationState";
 import { Command, ExecErrorDecorator, MemoizedParser } from "core/command";
+import { useRuntime } from "core/runtime";
+import { useSearchItem } from "data/item";
 import { Version } from "data/util";
+
 const parser = new MemoizedParser();
 
 export const App: React.FC =  () => {

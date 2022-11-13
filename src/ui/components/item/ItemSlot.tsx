@@ -1,7 +1,7 @@
 import clsx from "clsx";
+import { Tooltip } from "ui/surfaces";
 import { SlotDisplay } from "core/inventory";
 import { useI18n } from "data/i18n";
-import { Tooltip } from "ui/surfaces";
 
 type ItemSlotProps = {
   slot: SlotDisplay

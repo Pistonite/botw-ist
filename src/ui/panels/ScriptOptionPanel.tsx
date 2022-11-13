@@ -1,14 +1,12 @@
-import { saveAs } from "data/FileSaver";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Category, Control, Description, Label } from "ui/components";
-import { Page } from "ui/surfaces";
-import { useRuntime } from "core/runtime";
-import { CommandTextArea } from "ui/surfaces/CommandTextArea";
-import { useSearchItem } from "data/item";
-import { parseCommand } from "core/command/parsev2";
-import { arrayShallowEqual } from "data/util";
-import { serialize } from "data/storage";
+import { Page, CommandTextArea } from "ui/surfaces";
 import { MemoizedParser } from "core/command";
+import { useRuntime } from "core/runtime";
+import { saveAs } from "data/FileSaver";
+import { useSearchItem } from "data/item";
+import { serialize } from "data/storage";
+import { arrayShallowEqual } from "data/util";
 
 const URL_MAX = 2048;
 

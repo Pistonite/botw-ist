@@ -1,6 +1,6 @@
-import { deserialize } from "data/storage";
 import { parse } from "query-string";
 import { useEffect } from "react";
+import { deserialize } from "data/storage";
 
 export const useDirectLoader = (setTemporaryCommandData: (data: string[]|null)=>void, setEditing: (editing: boolean)=>void) => {
 	useEffect(()=>{

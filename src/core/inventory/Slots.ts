@@ -1,7 +1,6 @@
-import { arrayEqual, inPlaceMap, stableSort } from "data/util";
-import { dumpItemStack, getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaModifyOption } from "data/item";
+import { AmountAll, AmountAllType } from "core/command";
+import { dumpItemStack, Item, ItemStack, ItemType, MetaModifyOption } from "data/item";
 import { SlotsCore } from "./SlotsCore";
-import { AmountAll, AmountAllType } from "core/command/ItemStackArg";
 import { RemoveOption } from "./options";
 import { remove } from "./remove";
 

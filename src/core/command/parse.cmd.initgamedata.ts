@@ -1,8 +1,8 @@
 import { SimulationState } from "core/SimulationState";
 import { arrayEqual } from "data/util";
+import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
 import { ASTCommandInitGameData } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
-import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
 import { parseASTItems } from "./parse.item";
 import { codeBlockFromRange, CodeBlockTree, delegateParseItem, ParserItem } from "./type";
 

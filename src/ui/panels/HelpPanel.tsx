@@ -1,4 +1,3 @@
-import { Version } from "data/util";
 import { Category, Description } from "ui/components";
 import { Page } from "ui/surfaces";
 

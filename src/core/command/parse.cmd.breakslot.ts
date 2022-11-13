@@ -1,11 +1,11 @@
 import { SimulationState } from "core/SimulationState";
 import { arrayEqual } from "data/util";
+import { ItemStackArg } from "./ItemStackArg";
 import { ASTCommandBreakSlots } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
-import { ItemStackArg } from "./ItemStackArg";
 import { parseASTInteger } from "./parse.basis";
 import { parseASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot } from "./parse.clause.with.fromslot";
-import { CodeBlock, codeBlockFromRange, CodeBlockTree, delegateParseItem, flattenCodeBlocks, Parser, ParserItem, ParserSafe } from "./type";
+import { CodeBlock, codeBlockFromRange, CodeBlockTree, delegateParseItem, flattenCodeBlocks, ParserItem } from "./type";
 
 export class CommandBreakSlots extends AbstractProperCommand {
     private slot: number;

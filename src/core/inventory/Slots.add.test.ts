@@ -1,6 +1,6 @@
 import { ItemStack, ItemType } from "data/item";
+import { createArrowMockItem, createEquipmentMockItem, createEquipmentStack, createFoodMockItem, createKeyMockItem, createMaterialMockItem, createMaterialStack, equalsExceptEquip } from "data/test";
 import { Slots } from "./Slots";
-import { createArrowMockItem, createEquipmentMockItem, createEquipmentStack, createFoodMockItem, createKeyMockItem, createMaterialMockItem, createMaterialStack, equalsExceptEquip } from "data/item/TestHelpers";
 
 describe("core/Slots.add", ()=>{
 	describe("sorted", ()=>{

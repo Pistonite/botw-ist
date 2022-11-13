@@ -1,7 +1,7 @@
-import { createMockItemSearch, createMockItems } from "data/item/TestHelpers";
-import { CommandInitialize } from "./parse.cmd.initialize";
+import { createMockItemSearch, createMockItems } from "data/test";
 import { ItemStackArg } from "./ItemStackArg";
 import { CmdErr } from "./command";
+import { CommandInitialize } from "./parse.cmd.initialize";
 
 describe("core/command/parse.initialize", ()=>{
     const MockItems = createMockItems([

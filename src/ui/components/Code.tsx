@@ -1,7 +1,7 @@
 import clsx from "clsx";
-import { CodeBlock, Colors, parseCommand } from "core/command"
-import { useSearchItem } from "data/item";
 import { PropsWithChildren, useMemo } from "react";
+import { CodeBlock, Colors, parseCommand } from "core/command";
+import { useSearchItem } from "data/item";
 
 type ColoredCodeBlocksProps = {
     blocks: CodeBlock[][],

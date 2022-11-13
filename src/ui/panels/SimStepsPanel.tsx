@@ -1,12 +1,10 @@
-import { CommandItem } from "ui/components/basic/ListItem";
-import { CmdErr, Command } from "core/command/command";
-import { SimulationState } from "core/SimulationState";
-import { useRuntime } from "core/runtime";
-import { GetSetPair } from "data/util";
 import produce from "immer";
 import { useCallback } from "react";
-import { ColoredCodeBlocks, Section } from "ui/components";
+import { CommandItem, ColoredCodeBlocks, Section } from "ui/components";
 import { ContextMenuState } from "ui/types";
+import { CmdErr, Command } from "core/command";
+import { useRuntime } from "core/runtime";
+import { GetSetPair } from "data/util";
 
 type SimStepsPanelProps = {
 	commands: Command[],

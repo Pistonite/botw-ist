@@ -1,9 +1,8 @@
 import { SimulationState } from "core/SimulationState";
 import { ASTCommandShoot } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
-import { AmountAllType } from "./ItemStackArg";
 import { parseASTAmountOrAll } from "./parse.item";
-import { codeBlockFromRange, CodeBlockTree, Parser } from "./type";
+import { codeBlockFromRange, CodeBlockTree, Parser, AmountAllType } from "./type";
 
 export class CommandShootArrow extends AbstractProperCommand  {
 	private count: number | AmountAllType;

@@ -1,6 +1,6 @@
-import { useRuntime } from "core/runtime";
 import { Button } from "ui/components";
 import { Tooltip } from "ui/surfaces";
+import { useRuntime } from "core/runtime";
 
 export const NavPanel: React.FC = ()=>{
 	const { page, setPage, editing, saving, warnReadOnly } = useRuntime();

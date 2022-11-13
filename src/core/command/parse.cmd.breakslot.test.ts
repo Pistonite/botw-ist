@@ -1,6 +1,6 @@
-import { createMockItems, createMockItemSearch } from "data/item/TestHelpers";
-import { CmdErr } from "./command";
+import { createMockItems, createMockItemSearch } from "data/test";
 import { ItemStackArg } from "./ItemStackArg";
+import { CmdErr } from "./command";
 import { CommandBreakSlots } from "./parse.cmd.breakslot";
 
 describe("core/command/parse.breakslot normal", ()=>{

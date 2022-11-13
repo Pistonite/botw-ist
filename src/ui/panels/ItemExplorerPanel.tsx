@@ -1,10 +1,9 @@
-import { Category, Description, ItemSlot, Label } from "ui/components";
-import { ItemStack, useAllItems, useSearchItem } from "data/item";
-import { Page } from "ui/surfaces";
-import { useRuntime } from "core/runtime";
 import { useMemo, useState } from "react";
-import { SlotDisplay } from "core/inventory";
-import { SlotDisplayForItemStack } from "core/inventory/SlotDisplayForItemStack";
+import { Category, Description, ItemSlot, Label } from "ui/components";
+import { Page } from "ui/surfaces";
+import { SlotDisplay, SlotDisplayForItemStack } from "core/inventory";
+import { useRuntime } from "core/runtime";
+import { ItemStack, useAllItems, useSearchItem } from "data/item";
 
 export const ItemExplorerPanel: React.FC = ()=>{
 	const [searchString, setSearchString] = useState<string>("");

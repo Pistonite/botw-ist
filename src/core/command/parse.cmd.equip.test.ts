@@ -1,10 +1,7 @@
-import { createMockItemSearch, createMockItems } from "data/item/TestHelpers";
-import { CommandInitialize } from "./parse.cmd.initialize";
-import { ItemStackArg } from "./ItemStackArg";
-import { CmdErr } from "./command";
-import { CommandAdd } from "./parse.cmd.add";
-import { CommandEquip, CommandUnequip, CommandUnequipAll } from "./parse.cmd.equip";
 import { ItemType } from "data/item";
+import { createMockItemSearch, createMockItems } from "data/test";
+import { CmdErr } from "./command";
+import { CommandEquip, CommandUnequip, CommandUnequipAll } from "./parse.cmd.equip";
 
 describe("core/command/parse.equip equip", ()=>{
     const MockItems = createMockItems([

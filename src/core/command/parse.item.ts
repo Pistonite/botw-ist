@@ -1,9 +1,9 @@
 import { ItemStack, joinItemSearchStrings, MetaModifyOption } from "data/item";
+import { ItemStackArg } from "./ItemStackArg";
 import { ASTAmountOrAll, ASTItemStack, ASTOneOrMoreItems, ASTOneOrMoreItemStacks, ASTSingleItem, ASTZeroOrMoreItems, isEpsilon, isInteger, isOneOrMoreItemStacks, isSingleItem } from "./ast";
-import { AmountAll, AmountAllType, ItemStackArg } from "./ItemStackArg";
 import { parseASTInteger, parseASTOneOrMoreIdentifiers } from "./parse.basis";
 import { parseASTMetadata } from "./parse.metadata";
-import { codeBlockFromRange, CodeBlockTree, delegateParseItem, flattenCodeBlocks, ParserItem, ParserSafe } from "./type";
+import { AmountAll, AmountAllType, codeBlockFromRange, CodeBlockTree, delegateParseItem, flattenCodeBlocks, ParserItem, ParserSafe } from "./type";
 
 export const parseASTItems: ParserItem<ASTZeroOrMoreItems | ASTOneOrMoreItems, ItemStackArg[]> = (ast, search) => {
     if(isEpsilon(ast)){

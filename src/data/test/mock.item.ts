@@ -1,5 +1,5 @@
-import { getTabFromType, Item, ItemStack, ItemTab, ItemType } from "./type";
-import { ItemStackImpl } from "./ItemStack";
+import { getTabFromType, Item, ItemStack, ItemTab, ItemType } from "data/item";
+/* import-validate-exempt*/import { ItemStackImpl } from "data/item/ItemStack";
 
 class MockItem implements Item {
 	id: string;

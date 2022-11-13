@@ -1,8 +1,7 @@
-import { createMockItems, createMockItemSearch } from "data/item/TestHelpers";
-import { CmdErr, CommandHint, ErrorCommand } from "./command";
-import { CommandInitGameData } from "./parse.cmd.initgamedata";
+import { createMockItems, createMockItemSearch } from "data/test";
 import { ItemStackArg } from "./ItemStackArg";
-import { parseCommand } from "./parsev2";
+import { CmdErr } from "./command";
+import { CommandInitGameData } from "./parse.cmd.initgamedata";
 
 describe("core/command/parse.initgamedata", ()=>{
     const MockItems = createMockItems([

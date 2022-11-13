@@ -1,7 +1,6 @@
 import { CookEffect } from "data/item";
-import { createMockItems, createMockItemSearch } from "data/item/TestHelpers";
+import { createMockItems, createMockItemSearch } from "data/test";
 import { CmdErr } from "./command";
-import { CommandEquip } from "./parse.cmd.equip";
 import { CommandWrite } from "./parse.cmd.write";
 
 describe("core/command/parse.write", ()=>{

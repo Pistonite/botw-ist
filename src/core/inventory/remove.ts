@@ -1,8 +1,8 @@
-import { AmountAll, AmountAllType } from "core/command/ItemStackArg";
+import { AmountAll, AmountAllType } from "core/command";
 import { Item, ItemStack, ItemType } from "data/item";
 import { circularForEachFromIndex, inPlaceFilter } from "data/util";
-import { RemoveOption } from "./options";
 import { SlotsCore } from "./SlotsCore";
+import { RemoveOption } from "./options";
 
 // REMOVE function
 // This function does not have IST related logic. It is purely made up by the simulator for easy access

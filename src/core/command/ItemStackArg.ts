@@ -1,8 +1,5 @@
 import { ItemStack } from "data/item";
-
-export const AmountAll = "All";
-export type AmountAllType = typeof AmountAll;
-
+import { AmountAll, AmountAllType } from "./type";
 
 export class ItemStackArg{
 	public stack: ItemStack;

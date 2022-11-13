@@ -1,7 +1,7 @@
 import { SlotDisplayForItemStack } from "./SlotDisplayForItemStack";
 import { Slots } from "./Slots";
-import { DisplayableInventory, SlotDisplay } from "./types";
 import { VisibleInventory } from "./VisibleInventory";
+import { DisplayableInventory, SlotDisplay } from "./types";
 
 /*
  * Implementation of GameData in botw

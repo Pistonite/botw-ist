@@ -4,11 +4,11 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
-import { CmdErr, Command, ItemSearchFunction, parseCommand } from "core/command";
-import { createSimulationState, SimulationState } from "core/SimulationState";
-import { ItemStack, loadItemData, searchItemMemoized } from "data/item";
 import fs from "fs";
 import YAML from "yaml";
+import { createSimulationState, SimulationState } from "core/SimulationState";
+import { CmdErr, Command, ItemSearchFunction, parseCommand } from "core/command";
+import { ItemStack, loadItemData, searchItemMemoized } from "data/item";
 (window as any).__VERSION__ = "test";
 const ItemDataString = fs.readFileSync("src/data/item/all.items.yaml", "utf-8");
 const ItemData = YAML.parse(ItemDataString);

@@ -1,13 +1,9 @@
-
-
-
-import { ItemStack } from "data/item";
 import { Command } from "./command";
 import { parseCommand } from "./parsev2";
 import { ItemSearchFunction } from "./type";
 
 // When debugging, it's useful to turn memoized parser off to make sure commands are reparsed when the parser changes
-const EnableMemoizedParser = false;
+const EnableMemoizedParser = true;
 // When command data updates, usually most of the commands are the same
 // So we could memoize the result from last iteration, and use that in the next iteration
 export class MemoizedParser {

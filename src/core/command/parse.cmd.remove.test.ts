@@ -1,8 +1,7 @@
 import { ItemType } from "data/item";
-import { createMockItems, createMockItemSearch } from "data/item/TestHelpers";
-import { CmdErr } from "./command";
+import { createMockItems, createMockItemSearch } from "data/test";
 import { ItemStackArg } from "./ItemStackArg";
-import { CommandBreakSlots } from "./parse.cmd.breakslot";
+import { CmdErr } from "./command";
 import { CommandDnp, CommandEat, CommandRemove, CommandRemoveAll } from "./parse.cmd.remove";
 
 describe("core/command/parse.remove", ()=>{

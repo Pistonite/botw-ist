@@ -9,7 +9,7 @@
 import { Token, TokenStream } from "./tokenize";
 import { ParseFunction, ParseResultEpsilon, ParseResultFail } from "./types";
 
-import { parseInteger, ASTInteger, parseIdentifier, ASTIdentifier } from "./ast.basis";
+/*import-validation-exempt*/import { parseInteger, ASTInteger, parseIdentifier, ASTIdentifier } from "./ast.basis";
 
 
 export type ASTEpsilon = null;

@@ -1,8 +1,8 @@
 import { SimulationState } from "core/SimulationState";
 import { arrayEqual } from "data/util";
-import { ASTCommandAdd, ASTCommandInitialize, ASTCommandPickUp } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
 import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
+import { ASTCommandAdd, ASTCommandPickUp } from "./ast";
+import { AbstractProperCommand, Command } from "./command";
 import { parseASTItems } from "./parse.item";
 import { codeBlockFromRange, CodeBlockTree, delegateParseItem, ParserItem } from "./type";
 

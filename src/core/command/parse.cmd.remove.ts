@@ -1,9 +1,9 @@
 import { SimulationState } from "core/SimulationState";
 import { ItemType } from "data/item";
 import { arrayEqual, arrayShallowEqual } from "data/util";
+import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
 import { ASTCommandDnp, ASTCommandDrop, ASTCommandEat, ASTCommandRemove, ASTCommandRemoveAll } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
-import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
 import { parseASTItemType } from "./parse.basis";
 import { parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot } from "./parse.clause.with.fromslot";
 import { codeBlockFromRange, CodeBlockTree, delegateParseItem, delegateParseSafe, ParserItem, ParserSafe } from "./type";

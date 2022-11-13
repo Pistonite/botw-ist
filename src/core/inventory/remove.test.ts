@@ -1,5 +1,5 @@
 import { ItemStack, ItemType } from "data/item";
-import { createArrowMockItem, createEquipmentMockItem, createEquipmentStack, createFoodMockItem, createFoodMockItemStackable, createMaterialMockItem, createMaterialStack } from "data/item/TestHelpers";
+import { createArrowMockItem, createEquipmentMockItem, createEquipmentStack, createFoodMockItem, createFoodMockItemStackable, createMaterialMockItem, createMaterialStack } from "data/test";
 import { SlotsCore } from "./SlotsCore";
 import { remove } from "./remove";
 

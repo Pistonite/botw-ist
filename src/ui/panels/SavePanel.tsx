@@ -1,7 +1,7 @@
+import { CommandItem, ItemList, Section } from "ui/components";
 import { SimulationState } from "core/SimulationState";
 import { useRuntime } from "core/runtime";
 import { GetSetPair } from "data/util";
-import { CommandItem, ItemList, Section } from "ui/components";
 
 type SavePanelProps = {
 	simulationState: SimulationState,

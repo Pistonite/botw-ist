@@ -155,3 +155,6 @@ export const delegateParseItem = <A, T, T2>(
 	result[0] = transformer(result[0] as T, result[1]);
 	return result as [T2, CodeBlockTree, string];
 }
+
+export const AmountAll = "All";
+export type AmountAllType = typeof AmountAll;

@@ -89,7 +89,7 @@ def add_extern_symbol(extern_symbol: str, extern_imports, rule_symbols: set[str]
 def generate_extern_imports(extern_imports: dict, out_lines: list[str]):
     for file, imports in extern_imports.items():
         import_list = ", ".join(imports)
-        statement = f"import {{ {import_list} }} from \"./ast.{file}\";\n"
+        statement = f"/*import-validation-exempt*/import {{ {import_list} }} from \"./ast.{file}\";\n"
         out_lines.append(statement)
 
 def generate_rule(rule: str, out_lines: list[str], referenced_symbols: set[str], rule_symbols: set[str]):

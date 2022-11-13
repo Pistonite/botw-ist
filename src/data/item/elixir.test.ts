@@ -1,5 +1,5 @@
+import { createMockItems } from "data/test";
 import { getElixir, addElixir } from "./elixir";
-import { createFoodMockItem, createMockItems } from "./TestHelpers";
 import { CookEffect } from "./type";
 
 describe("data/item/elixir", ()=>{
