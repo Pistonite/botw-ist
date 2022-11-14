@@ -28,7 +28,7 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 	const isGameDataInterlaced = setting("interlaceGameData");
 	const showHint = setting("showCommandHint");
 
-	const inventoryInfo = 
+	const inventoryInfo =
 		<span style={{marginLeft: 8}}>
 			<Tooltip title={simulationState.getInventoryInfo()}>
 				<InfoOutlined />
