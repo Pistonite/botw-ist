@@ -1,7 +1,8 @@
 import clsx from "clsx";
 import React, { useState } from "react";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import { Section, DoubleItemSlot, ItemList } from "ui/components";
-import { CrashScreen, CommandTextArea } from "ui/surfaces";
+import { CrashScreen, CommandTextArea, Tooltip } from "ui/surfaces";
 import { SimulationState } from "core/SimulationState";
 import { CmdErr, Command } from "core/command";
 import { useRuntime } from "core/runtime";
@@ -27,6 +28,14 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 	const isGameDataInterlaced = setting("interlaceGameData");
 	const showHint = setting("showCommandHint");
 
+	const inventoryInfo = (
+		<span style={{marginLeft: 8}}>
+			<Tooltip title={simulationState.getInventoryInfo()}>
+				<InfoOutlined />
+			</Tooltip>
+		</span>
+	)
+
 	let content: JSX.Element;
 	if(simulationState.isCrashed()){
 		content =
@@ -45,7 +54,12 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 
 	}else if(isGameDataInterlaced && showGameData){
 		content =
-			<Section className="HatenoBackground" titleText={`Game Data / Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
+			<Section className="HatenoBackground" titleText={
+				<div style={{display: "flex"}}>
+					<span>Visible Inventory (Count={simulationState.inventoryMCount})</span>
+					{inventoryInfo}
+				</div>
+			} style={{
 				height: "100%",
 				overflowY: "auto",
 			} }>
@@ -94,7 +108,12 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 					</Section>
 				}
 
-				<Section className="HatenoBackground" titleText={`Visible Inventory (Count=${simulationState.inventoryMCount})`} style={{
+				<Section className="HatenoBackground" titleText={
+					<div style={{display: "flex"}}>
+						<span>Visible Inventory (Count={simulationState.inventoryMCount})</span>
+						{inventoryInfo}
+					</div>
+				} style={{
 					boxSizing: "border-box",
 					height: showGameData ? "50%" : "100%",
 					overflowY: "auto",

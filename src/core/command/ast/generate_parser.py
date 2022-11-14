@@ -27,7 +27,7 @@ def run(in_name, out_name):
     out_lines = []
     with open(in_name, "r", encoding="utf-8") as in_lines:
         generate(in_lines, out_lines)
-    with open(out_name, "w+", encoding="utf-8") as out_file:
+    with open(out_name, "w+", encoding="utf-8", newline="\n") as out_file:
         out_file.writelines(out_lines)
 
 def generate(in_lines, out_lines: list[str]):

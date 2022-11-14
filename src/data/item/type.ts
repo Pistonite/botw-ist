@@ -26,6 +26,7 @@ export enum ItemTab {
 }
 
 export const ItemMaxes = {
+    [ItemTab.None]: 0,
     [ItemType.Weapon]: 20,
     [ItemType.Bow]: 14,
     [ItemType.Arrow]: 6,
@@ -85,6 +86,8 @@ export interface Item {
     readonly sortOrder: number,
     // which tab the item is in
     readonly tab: ItemTab,
+    // which tab the item is in, but return arrow if it is arrow
+    readonly tabOrArrow: ItemTab | ItemType.Arrow,
     // webpack loaded image
     readonly image: string,
     // animated image. If the item is not animated, this is the same as image

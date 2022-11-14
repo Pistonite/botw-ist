@@ -31,6 +31,16 @@ export class SlotsCore {
 		inPlaceFilter(this.internalSlots, ref=>!refs.includes(ref));
 	}
 
+	public swap(i: number, j: number) {
+		if(i < 0 || j < 0 || i >= this.internalSlots.length || j >= this.internalSlots.length){
+			return;
+		}
+
+		const temp = this.internalSlots[i];
+		this.internalSlots[i] = this.internalSlots[j];
+		this.internalSlots[j] = temp;
+	}
+
 	// Used to decide if game data is synced with inventory
 	// Two Slots are equal if the ItemStacks equal, including metadata equality
 	public equals(other: SlotsCore): boolean {

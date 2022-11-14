@@ -13,6 +13,9 @@ class MockItem implements Item {
 	get tab(): ItemTab {
 		return getTabFromType(this.type);
 	}
+	get tabOrArrow(): ItemTab | ItemType.Arrow {
+		return this.type === ItemType.Arrow ? ItemType.Arrow : this.tab;
+	}
 	image = "";
 	animatedImage= "";
 	priority = 0;

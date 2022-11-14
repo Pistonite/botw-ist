@@ -548,6 +548,41 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</Description>
 
 				<div>
+					<code className="CommandColorKeywordOther">has </code>
+					<code className="CommandColorKeywordOther">[not] </code>
+					<code className="CommandColorMetaValue">value </code>
+					<code className="CommandColorMetaKey">flag name ... </code>
+
+				</div>
+
+				<ParseCode>
+					has 10 weapon slots
+				</ParseCode>
+				<ParseCode>
+					has 20 shield slots
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Change game flags</Label>
+
+				<Description className="Primary">
+					This can be used to modify state that are not part of the inventory. For example, how many slots you have. The <code className="CommandColorMetaKey">flag name ... </code> part is concatenated and matched by prefix.
+				</Description>
+				<Description className="Primary">
+					If the flag is a boolean, the value will be ignored and you will always get <code>true</code>. You can get <code>false</code> by adding <code className="CommandColorKeywordOther">not</code>.
+				</Description>
+				<Description className="Primary Error">
+					Flag system is new so it's very unstable. Please report inconsistencies with discord DM or on github.
+				</Description>
+				<Description useDiv>
+					List of flag names:
+					<ul>
+						<li><code className="Important">weaponSlots=integer</code>: Number of weapon slots</li>
+						<li><code className="Important">bowSlots=integer</code>: Number of bow slots</li>
+						<li><code className="Important">shieldSlots=integer</code>: Number of shield slots</li>
+					</ul>
+				</Description>
+
+				<div>
 					<code className="CommandColorKeywordCommand">cook [heart crit] with </code>
 					<code className="CommandColorItemName">items ... </code>
 					<code className="CommandColorKeywordOther">[from slot </code>
@@ -582,6 +617,23 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				<Description className="Error">
 					This feature will be available in a future update
 				</Description>
+				{/* <Description className="Important">
+					Slot indices in commands below are all 0-based 
+				</Description>
+
+				<div>
+					<code className="CommandColorKeywordSuper">!swap </code>
+					<code className="CommandColorSlotNumber">i j</code>
+				</div>
+
+				<ParseCode>
+					!swap 3 5
+				</ParseCode>
+				<Description className="Secondary"/>
+				<Label>Swap 2 slots</Label>
+				<Description>
+					Swap the i-th and j-th slot. Does not sync GameData. 
+				</Description> */}
 			</Category>
 
 		</Page>

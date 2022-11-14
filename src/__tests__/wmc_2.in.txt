@@ -1,0 +1,80 @@
+# Taken from https://www.speedrun.com/botw-extension/run/z1g4dv9z
+get 1 slate 1 shroom 1 tree branch 2 apples 1 axe 2 shroom 1 seared steak 1 potlid[life=800] 6 peppers 2 shroom 1 traveler bow 5 arrows 5 bomb arrows 4 orb 1 glider 1 nightshade 1 phrenic bow 2 fairies 3 nightshade 3 enduracarrot 3 silent princess 2 apple
+sell 4 orbs
+save
+break 8 slots with all shroom all apple all pepper all nightshades all fairy all silent princess
+pick up 1 apple 1 fairy 1 shroom
+buy hylian hood
+reload
+with 1 endura carrot
+cook roasted endura carrot
+shoot 4 arrows
+with 1 endura carrot
+cook wildgreen[modifier=endur]
+eat 1 seared steak
+with 4 endura carrot
+cook 4 wildgreen[modifier=endur]
+with 5 pepper
+cook 5 sauteed peppers
+break 4 slots with all nightshades all silent princess
+equip axe
+remove 5 shrooms 4 apples from slot 2
+get 1 silent princess 1 nightshade
+save
+reload
+sync gamedata
+save
+reload
+sync gamedata
+save
+reload
+# sort food
+sync gamedata
+init 1 tree branch 1 axe[equip] 1 travel bow[equip] 1 phrenic bow 1 arrow[equip] 5 bomb arrows[equip] 1 potlid[equip, life=800] 1 hylian hood 1 apple 1 fairy 1 shroom 1 pepper 2 fairy 1 silent princess 1 nightshade 20 wildgreen[modifier=endur] 20 sauteed pepper 1 roasted endura carrot 1 seared steak 1 slate 1 glider
+break 12 slots
+eat 1 arrows 1 hylian hood
+get 2 roasted endura carrot
+with 3 roasted endura carrot 1 fairy 1 apple
+cook simmer fruit[hp=116, price=307, modifier=spicy]
+save
+reload
+eat seared steak
+save
+reload
+eat seared steak
+save
+reload
+eat 7 sauteed pepper
+eat 28 sauteed pepper from slot 3
+eat all simmered fruit
+eat 14 wildgreen
+eat seared steak from slot 2
+drop travel bow
+equip phrenic bow
+remove all materials
+get 1 fairy
+save
+eat all fairy all sauteed pepper all seared steak
+drop 1 tree branch 1 axe 1 phrenic bow 1 potlid
+pick up 1 tree branch 1 axe 1 phrenic bow 1 potlid
+unequip bow
+unequip weapon
+unequip shield
+reload
+save
+eat seared steak
+reload
+eat 4 sauteed pepper 8 wildgreen
+drop all shield
+save
+unequip weapon
+unequip bow
+eat 2 wildgreen
+reload
+shoot 1 arrow
+save
+eat 4 wild green
+unequip bow
+reload
+pick up potlid
+save

@@ -2,7 +2,7 @@ import { SimulationState } from "core/SimulationState";
 import { ItemType } from "data/item";
 import { arrayEqual, arrayShallowEqual } from "data/util";
 import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
-import { ASTCommandDnp, ASTCommandDrop, ASTCommandEat, ASTCommandRemove, ASTCommandRemoveAll } from "./ast";
+import { ASTCommandDnp, ASTCommandDrop, ASTCommandEat, ASTCommandRemove, ASTCommandRemoveAll, isLiteralDrop } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
 import { parseASTItemType } from "./parse.basis";
 import { parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot } from "./parse.clause.with.fromslot";
@@ -117,8 +117,9 @@ export const parseASTCommandEat: ParserItem<ASTCommandEat, CommandEat> = (ast, s
 };
 
 export const parseASTCommandRemoveAll: ParserSafe<ASTCommandRemoveAll, CommandRemoveAll> = (ast) => {
+	const literal0 = isLiteralDrop(ast.mLiteralRemoveOrDrop0) ? ast.mLiteralRemoveOrDrop0.literal0 : ast.mLiteralRemoveOrDrop0;
 	const codeBlocks: CodeBlockTree = [
-		codeBlockFromRange(ast.literal0, "keyword.command"),
+		codeBlockFromRange(literal0, "keyword.command"),
 		codeBlockFromRange(ast.literal1, "item.type")
 	];
 	return delegateParseSafe(

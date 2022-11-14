@@ -68,7 +68,15 @@ export const HelpPanel: React.FC = () => {
 					</a> made by Player 5 for the IST in All Dungeons.
 				</Description>
 			</Category>
-
+			<Category title="Can I Contribute?">
+				<Description>
+					Yes - If you are familiar with web app development, you can contribute to the project <a href="https://github.com/iTNTPiston/botw-ist">on github</a> 
+				</Description>
+				<Description className="Primary">
+					Even if you are only familiar with IST, not coding, you can still contribute by adding your (complicated) scripts to the testing suite to improve stability.
+					If you want to do that, please contact me (iTNTPiston#5339) on discord.
+				</Description>
+			</Category>
 		</Page>
 	);
 };

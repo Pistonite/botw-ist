@@ -4,7 +4,7 @@ import { Ref } from "data/util";
 import { GameData } from "./GameData";
 import { SlotDisplayForItemStack } from "./SlotDisplayForItemStack";
 import { Slots } from "./Slots";
-import { DisplayableInventory, SlotDisplay } from "./types";
+import { DisplayableInventory, GameFlags, SlotDisplay } from "./types";
 
 /*
  * Implementation of Visible Inventory (PauseMenuDataMgr) in botw
@@ -66,8 +66,8 @@ export class VisibleInventory implements DisplayableInventory{
 	}
 
 	// return newly added ref, or lastAdded if no new slots are added
-	public addWhenReload(stack: ItemStack, lastAdded: Ref<ItemStack> | undefined): Ref<ItemStack> | undefined {
-		const newlyAdded = this.slots.add(stack, true, this.getMCount());
+	public addWhenReload(stack: ItemStack, lastAdded: Ref<ItemStack> | undefined, flags: GameFlags): Ref<ItemStack> | undefined {
+		const newlyAdded = this.slots.add(stack, true, this.getMCount(), flags);
 		const mostRecentlyAdded = newlyAdded || lastAdded;
 		if(mostRecentlyAdded){
 			// set cook data
@@ -81,8 +81,8 @@ export class VisibleInventory implements DisplayableInventory{
 		return mostRecentlyAdded;
 	}
 
-	public addInGame(stack: ItemStack) {
-		this.slots.add(stack, false, this.getMCount());
+	public addInGame(stack: ItemStack, flags: GameFlags) {
+		this.slots.add(stack, false, this.getMCount(), flags);
 	}
 
 	// Standard remove: magically remove item from inventory
@@ -184,6 +184,18 @@ export class VisibleInventory implements DisplayableInventory{
 
 	public unequipAll(types: ItemType[]): void {
 		this.slots.unequipAll(types);
+	}
+
+	public getItemSlotCounts(): number[] {
+		const array: number[] = [];
+		this.slots.getView().forEach(stack=>{
+			array[stack.item.type]=(array[stack.item.type]||0)+1;
+		});
+		return array;
+	}
+
+	public swap(i: number, j: number) {
+		this.slots.swap(i,j);
 	}
 
 	// public countItems(type: ItemType, countAnyWeapon: boolean): number {

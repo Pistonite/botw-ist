@@ -1,10 +1,10 @@
 import { Item, ItemStack, ItemType, MetaModifyOption } from "data/item";
 import { AmountAll, AmountAllType, Command } from "./command";
-import { DisplayableInventory, GameData, Slots, VisibleInventory } from "./inventory";
+import { DisplayableInventory, GameData, GameFlags, Slots, VisibleInventory } from "./inventory";
 
 export const createSimulationState = (): SimulationState => {
 	return new SimulationState(
-		new GameData(new Slots([])),
+		new GameData(new Slots([]), {}),
 		null,
 		{},
 		new VisibleInventory(new Slots([]))
@@ -86,7 +86,7 @@ export class SimulationState {
 	}
 
 	public setGameData(stacks: ItemStack[]) {
-		this.gameData = new GameData(new Slots([...stacks]));
+		this.gameData = new GameData(new Slots([...stacks]), {});
 	}
 
 	public save(name?: string) {
@@ -151,7 +151,7 @@ export class SimulationState {
 	}
 
 	public obtain(stack: ItemStack) {
-		this.pouch.addInGame(stack);
+		this.pouch.addInGame(stack, this.gameData.getFlags());
 		this.syncGameDataWithPouch();
 	}
 
@@ -209,7 +209,7 @@ export class SimulationState {
 
 	public closeGame() {
 		this.pouch = new VisibleInventory(new Slots([]));
-		this.gameData = new GameData(new Slots([]));
+		this.gameData = new GameData(new Slots([]), {});
 		this.isOnEventide = false;
 	}
 
@@ -282,6 +282,27 @@ export class SimulationState {
 		}
 		returnResult.push(...this.errorMessages);
 		return returnResult;
+	}
+
+	public getInventoryInfo(): string[] {
+		const text: string[] = [];
+		text.push("Inventory Info");
+		const itemCounts = this.pouch.getItemSlotCounts();
+		itemCounts.forEach((count, itemType)=>{
+			text.push(`${ItemType[itemType]} slot count: ${count}`);
+		});
+		text.push(`Max weapons: ${this.gameData.getFlag("weaponSlots")}`);
+		text.push(`Max bows: ${this.gameData.getFlag("bowSlots")}`);
+		text.push(`Max shields: ${this.gameData.getFlag("shieldSlots")}`);
+		return text;
+	}
+
+	public setGameFlag(key: keyof GameFlags, value: string | number | boolean) {
+		this.gameData.setFlag(key, value);
+	}
+
+	public swap(i: number, j: number) {
+		this.pouch.swap(i,j);
 	}
 
 }

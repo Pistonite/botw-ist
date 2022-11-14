@@ -5,6 +5,7 @@ import { RemoveOption } from "./options";
 import { remove } from "./remove";
 import { Ref } from "data/util";
 import { off } from "process";
+import { GameFlags } from "./types";
 
 /*
  * This is the data model common to GameData and VisibleInventory
@@ -43,7 +44,7 @@ export class Slots {
 
 	// Add something to inventory in game
 	// returns the added slot ref, or undefined if no new slot is added
-	public add(stack: ItemStack, reloading: boolean, mCount: number | null): Ref<ItemStack> | undefined {
+	public add(stack: ItemStack, reloading: boolean, mCount: number | null, flags: GameFlags): Ref<ItemStack> | undefined {
 		if(mCount === null){
 			mCount = this.core.length;
 		}
@@ -139,9 +140,22 @@ export class Slots {
 		
 		// [no test coverage] limit check - detail too complicated, only basic case for wmc for now
 		if(reloading){
-			if(!stack.item.stackable && stack.item.type === ItemType.Food){
-				const max = ItemMaxes[ItemType.Food];
-				const current = this.core.getView().filter(stack=>stack.item.type===ItemType.Food).length;
+			if(!stack.item.stackable){
+				
+				let max: number = ItemMaxes[stack.item.tabOrArrow];
+				switch(stack.item.type){
+					case ItemType.Weapon:
+						max = Math.min(flags.weaponSlots, max);
+						break;
+					case ItemType.Bow:
+						max = Math.min(flags.bowSlots, max);
+						break;
+					case ItemType.Shield:
+						max = Math.min(flags.shieldSlots, max);
+						break
+
+				}
+				const current = this.core.getView().filter(s=>s.item.tabOrArrow===stack.item.tabOrArrow).length;
 				if(current >= max){
 					return undefined;
 				}
@@ -276,6 +290,10 @@ export class Slots {
 
 	public unequipAll(types: ItemType[]) {
 		this.core.unequipAll(types);
+	}
+
+	public swap(i: number, j: number){
+		this.core.swap(i, j);
 	}
 
 }

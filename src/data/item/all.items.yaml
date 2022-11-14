@@ -652,7 +652,8 @@ material:
   - BigHeartyTruffle
   - HeartyTruffle
   - EnduraShroom
-  - HylianShroom
+  - HylianShroom:
+      priority: 1
   - StamellaShroom
   - Chillshroom
   - Sunshroom
