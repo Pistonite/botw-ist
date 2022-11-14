@@ -26,15 +26,15 @@ export enum ItemTab {
 }
 
 export const ItemMaxes = {
-    [ItemTab.None]: 0,
-    [ItemType.Weapon]: 20,
-    [ItemType.Bow]: 14,
-    [ItemType.Arrow]: 6,
-    [ItemType.Shield]: 20,
-    [ItemTab.Armor]: 100,
-    [ItemType.Material]: 160,
-    [ItemType.Food]: 60,
-    [ItemType.Key]: 40
+	[ItemTab.None]: 0,
+	[ItemType.Weapon]: 20,
+	[ItemType.Bow]: 14,
+	[ItemType.Arrow]: 6,
+	[ItemType.Shield]: 20,
+	[ItemTab.Armor]: 100,
+	[ItemType.Material]: 160,
+	[ItemType.Food]: 60,
+	[ItemType.Key]: 40
 } as const;
 
 export const iterateItemTabs = (): ItemTab[] => [

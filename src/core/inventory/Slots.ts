@@ -151,7 +151,7 @@ export class Slots {
 						break;
 					case ItemType.Shield:
 						max = Math.min(flags.shieldSlots, max);
-						break
+						break;
 
 				}
 				const current = this.core.getView().filter(s=>s.item.tabOrArrow===stack.item.tabOrArrow).length;

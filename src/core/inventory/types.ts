@@ -25,7 +25,6 @@ export interface SlotDisplay {
 	getTooltip: (translate: (s:string)=>string)=>[string, string][],
 }
 
-
 export type GameFlags = {
 	weaponSlots: number,
 	bowSlots: number,

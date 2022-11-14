@@ -7,7 +7,7 @@ const TestFlags: GameFlags = {
 	weaponSlots: 5,
 	bowSlots: 5,
 	shieldSlots: 5
-}
+};
 
 describe("core/Slots.add", ()=>{
 	describe("sorted", ()=>{

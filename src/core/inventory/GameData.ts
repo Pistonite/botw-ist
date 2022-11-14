@@ -19,7 +19,7 @@ export class GameData implements DisplayableInventory {
 			bowSlots: 5,
 			shieldSlots: 4,
 			...flags
-		}
+		};
 	}
 
 	public getFlags(): GameFlags {

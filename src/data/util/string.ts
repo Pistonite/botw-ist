@@ -22,26 +22,26 @@ function LCSubStr(a: string, b: string ,m: number , n: number): number {
 // logical meaning, they are
 // used only for simplicity of program
 
-const LCStuff = Array(m + 1).fill(undefined).map(()=>Array(n + 1).fill(0));
+	const LCStuff = Array(m + 1).fill(undefined).map(()=>Array(n + 1).fill(0));
 
-    // To store length of the longest
-    // common substring
-    let result = 0;
+	// To store length of the longest
+	// common substring
+	let result = 0;
 
-    // Following steps build
-    // LCSuff[m+1][n+1] in bottom up fashion
-    for (let i = 0; i <= m; i++) {
-        for (let j = 0; j <= n; j++) {
-            if (i == 0 || j == 0)
-                LCStuff[i][j] = 0;
-            else if (a[i - 1] == b[j - 1]) {
-                LCStuff[i][j] = LCStuff[i - 1][j - 1] + 1;
-                result = Math.max(result, LCStuff[i][j]);
-            } else
-                LCStuff[i][j] = 0;
-        }
-    }
-    return result;
+	// Following steps build
+	// LCSuff[m+1][n+1] in bottom up fashion
+	for (let i = 0; i <= m; i++) {
+		for (let j = 0; j <= n; j++) {
+			if (i == 0 || j == 0)
+			{LCStuff[i][j] = 0;}
+			else if (a[i - 1] == b[j - 1]) {
+				LCStuff[i][j] = LCStuff[i - 1][j - 1] + 1;
+				result = Math.max(result, LCStuff[i][j]);
+			} else
+			{LCStuff[i][j] = 0;}
+		}
+	}
+	return result;
 }
 
 // Driver Code
@@ -55,7 +55,6 @@ const LCStuff = Array(m + 1).fill(undefined).map(()=>Array(n + 1).fill(0));
 // document.write("Length of Longest Common Substring is " +
 // LCSubStr(X, Y, m, n));
 
-
 export const longestCommonSubstringLength = (a: string, b: string): number => {
-    return LCSubStr(a,b,a.length,b.length);
-}
+	return LCSubStr(a,b,a.length,b.length);
+};

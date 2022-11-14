@@ -1,6 +1,6 @@
 import { AmountAll, AmountAllType } from "core/command";
-import { Item, ItemStack, ItemStackImpl, ItemType } from "data/item";
-import { circularForEachFromIndex, inPlaceFilter, Ref } from "data/util";
+import { Item, ItemStack, ItemType } from "data/item";
+import { circularForEachFromIndex, Ref } from "data/util";
 import { SlotsCore } from "./SlotsCore";
 import { RemoveOption } from "./options";
 

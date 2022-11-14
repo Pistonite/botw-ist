@@ -28,13 +28,12 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 	const isGameDataInterlaced = setting("interlaceGameData");
 	const showHint = setting("showCommandHint");
 
-	const inventoryInfo = (
+	const inventoryInfo = 
 		<span style={{marginLeft: 8}}>
 			<Tooltip title={simulationState.getInventoryInfo()}>
 				<InfoOutlined />
 			</Tooltip>
-		</span>
-	)
+		</span>;
 
 	let content: JSX.Element;
 	if(simulationState.isCrashed()){

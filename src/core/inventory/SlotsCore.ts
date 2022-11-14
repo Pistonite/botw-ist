@@ -1,5 +1,5 @@
 import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaModifyOption } from "data/item";
-import { arrayEqual, stableSort, inPlaceFilter, inPlaceMap, Ref, newRef } from "data/util";
+import { arrayEqual, stableSort, inPlaceFilter, Ref, newRef } from "data/util";
 
 // This is the "core" of Slots with basic getter and manipulation methods
 export class SlotsCore {
@@ -147,7 +147,7 @@ export class SlotsCore {
 			if(stack.equipped && types.includes(stack.item.type)){
 				ref.set(stack.modify({equipped: false}));
 			}
-		})
+		});
 	}
 
 	public findFirstTab(type: ItemType, mCount: number): [Ref<ItemStack> | undefined, number] {

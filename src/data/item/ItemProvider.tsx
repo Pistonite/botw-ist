@@ -361,7 +361,6 @@ const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSear
 	// if name is an id exactly, return that
 	const idItem = idMap[name];
 	if(idItem){
-		const result = idItem;
 		return [name];
 	}
 	// break name into dot separated search phrases
