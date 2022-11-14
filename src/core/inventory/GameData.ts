@@ -1,17 +1,39 @@
+import { ItemStack } from "data/item";
+import { Ref } from "data/util";
 import { SlotDisplayForItemStack } from "./SlotDisplayForItemStack";
 import { Slots } from "./Slots";
 import { VisibleInventory } from "./VisibleInventory";
-import { DisplayableInventory, SlotDisplay } from "./types";
+import { DisplayableInventory, GameFlags, SlotDisplay } from "./types";
 
 /*
  * Implementation of GameData in botw
  */
 export class GameData implements DisplayableInventory {
 
-	private slots: Slots = new Slots([]);
-	constructor(slots: Slots){
+	private flags: GameFlags;
+	private slots: Slots;
+	constructor(slots: Slots, flags: Partial<GameFlags>){
 		this.slots = slots;
+		this.flags = {
+			weaponSlots: 8,
+			bowSlots: 5,
+			shieldSlots: 4,
+			...flags
+		};
 	}
+
+	public getFlags(): GameFlags {
+		return this.flags;
+	}
+
+	public getFlag<T extends keyof GameFlags>(key: T): GameFlags[T] {
+		return this.flags[key];
+	}
+
+	public setFlag(key: keyof GameFlags, value: string | number | boolean) {
+		this.flags[key] = value as unknown as number;
+	}
+
 	public dump() {
 		return {
 			slots: this.slots.dump(),
@@ -23,7 +45,7 @@ export class GameData implements DisplayableInventory {
 	}
 
 	public deepClone(): GameData {
-		return new GameData(this.slots.deepClone());
+		return new GameData(this.slots.deepClone(), this.flags);
 	}
 
 	public syncWith(pouch: VisibleInventory) {
@@ -46,11 +68,14 @@ export class GameData implements DisplayableInventory {
 	}
 
 	public addAllToPouchOnReload(pouch: VisibleInventory) {
-		this.slots.getSlotsRef().forEach(stack=>pouch.addWhenReload(stack));
+		let lastAdded: Ref<ItemStack> | undefined = undefined;
+		this.slots.getView().forEach(stack=>{
+			lastAdded = pouch.addWhenReload(stack, lastAdded, this.flags);
+		});
 	}
 
 	public getDisplayedSlots(isIconAnimated: boolean): SlotDisplay[] {
-		return this.slots.getSlotsRef().map(stack=>
+		return this.slots.getView().map(stack=>
 			new SlotDisplayForItemStack(stack).init(false, isIconAnimated)
 		);
 	}

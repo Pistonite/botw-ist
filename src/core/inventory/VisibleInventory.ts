@@ -1,9 +1,10 @@
 import { AmountAllType } from "core/command";
 import { Item, ItemStack, ItemType, MetaModifyOption } from "data/item";
+import { Ref } from "data/util";
 import { GameData } from "./GameData";
 import { SlotDisplayForItemStack } from "./SlotDisplayForItemStack";
 import { Slots } from "./Slots";
-import { DisplayableInventory, SlotDisplay } from "./types";
+import { DisplayableInventory, GameFlags, SlotDisplay } from "./types";
 
 /*
  * Implementation of Visible Inventory (PauseMenuDataMgr) in botw
@@ -50,7 +51,7 @@ export class VisibleInventory implements DisplayableInventory{
 
 	public getDisplayedSlots(isIconAnimated: boolean): SlotDisplay[] {
 		const mCount = this.getMCount();
-		const result = this.slots.getSlotsRef().map((stack, i)=>
+		const result = this.slots.getView().map((stack, i)=>
 			new SlotDisplayForItemStack(stack).init(i>=mCount, isIconAnimated)
 		);
 		return result;
@@ -64,12 +65,24 @@ export class VisibleInventory implements DisplayableInventory{
 		this.slots.addStackDirectly(stack);
 	}
 
-	public addWhenReload(stack: ItemStack) {
-		this.slots.add(stack, true, this.getMCount());
+	// return newly added ref, or lastAdded if no new slots are added
+	public addWhenReload(stack: ItemStack, lastAdded: Ref<ItemStack> | undefined, flags: GameFlags): Ref<ItemStack> | undefined {
+		const newlyAdded = this.slots.add(stack, true, this.getMCount(), flags);
+		const mostRecentlyAdded = newlyAdded || lastAdded;
+		if(mostRecentlyAdded){
+			// set cook data
+			if(stack.item.type === ItemType.Food){
+				mostRecentlyAdded.set(mostRecentlyAdded.get().modify({
+					foodHpRecover: stack.foodHpRecover,
+					foodSellPrice: stack.foodSellPrice
+				}));
+			}
+		}
+		return mostRecentlyAdded;
 	}
 
-	public addInGame(stack: ItemStack) {
-		this.slots.add(stack, false, this.getMCount());
+	public addInGame(stack: ItemStack, flags: GameFlags) {
+		this.slots.add(stack, false, this.getMCount(), flags);
 	}
 
 	// Standard remove: magically remove item from inventory
@@ -110,7 +123,7 @@ export class VisibleInventory implements DisplayableInventory{
 		let firstEquippedWeaponSlot = -1;
 		let firstEquippedBowSlot = -1;
 		let firstEquippedShieldSlot = -1;
-		this.slots.getSlotsRef().forEach(({item, equipped}, i)=>{
+		this.slots.getView().forEach(({item, equipped}, i)=>{
 			if(equipped){
 				const type = item.type;
 				if(type === ItemType.Weapon && firstEquippedWeaponSlot === -1){
@@ -125,24 +138,24 @@ export class VisibleInventory implements DisplayableInventory{
 			}
 		});
 		// get life value from last equipped
-		const lastEquippedWeaponSlot = this.slots.findLastEquippedSlot(ItemType.Weapon);
-		if(firstEquippedWeaponSlot >=0 && lastEquippedWeaponSlot >=0){
-			gameData.updateLife(this.slots.getSlotsRef()[lastEquippedWeaponSlot].count, firstEquippedWeaponSlot);
+		const lastEquippedWeapon = this.slots.findLastEquipped(ItemType.Weapon);
+		if(firstEquippedWeaponSlot >=0 && lastEquippedWeapon){
+			gameData.updateLife(lastEquippedWeapon.get().count, firstEquippedWeaponSlot);
 		}
-		const lastEquippedBowSlot = this.slots.findLastEquippedSlot(ItemType.Bow);
-		if(firstEquippedBowSlot >=0 && lastEquippedBowSlot >=0){
-			gameData.updateLife(this.slots.getSlotsRef()[lastEquippedBowSlot].count, firstEquippedBowSlot);
+		const lastEquippedBow = this.slots.findLastEquipped(ItemType.Bow);
+		if(firstEquippedBowSlot >=0 && lastEquippedBow){
+			gameData.updateLife(lastEquippedBow.get().count, firstEquippedBowSlot);
 		}
-		const lastEquippedShieldSlot = this.slots.findLastEquippedSlot(ItemType.Shield);
-		if(firstEquippedShieldSlot >=0 && lastEquippedShieldSlot >=0){
-			gameData.updateLife(this.slots.getSlotsRef()[lastEquippedShieldSlot].count, firstEquippedShieldSlot);
+		const lastEquippedShield = this.slots.findLastEquipped(ItemType.Shield);
+		if(firstEquippedShieldSlot >=0 && lastEquippedShield){
+			gameData.updateLife(lastEquippedShield.get().count, firstEquippedShieldSlot);
 		}
 	}
 
 	public shootArrow(count: number | AmountAllType, gameData: GameData) {
 		const updatedSlot = this.slots.shootArrow(count);
 		if(updatedSlot>=0){
-			const durability = this.slots.getSlotsRef()[updatedSlot].count;
+			const durability = this.slots.getView()[updatedSlot].count;
 			gameData.updateLife(durability, updatedSlot);
 		}
 	}
@@ -172,4 +185,25 @@ export class VisibleInventory implements DisplayableInventory{
 	public unequipAll(types: ItemType[]): void {
 		this.slots.unequipAll(types);
 	}
+
+	public getItemSlotCounts(): number[] {
+		const array: number[] = [];
+		this.slots.getView().forEach(stack=>{
+			array[stack.item.type]=(array[stack.item.type]||0)+1;
+		});
+		return array;
+	}
+
+	public swap(i: number, j: number) {
+		this.slots.swap(i,j);
+	}
+
+	// public countItems(type: ItemType, countAnyWeapon: boolean): number {
+	// 	// [confirmed] iTNTPiston: when mcount === 0, nothing is checked (only when =0)
+	// 	const mcount = this.getMCount();
+	// 	if(mcount === 0){
+	// 		return 0;
+	// 	}
+	// 	return -999;
+	// }
 }

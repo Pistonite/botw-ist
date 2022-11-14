@@ -56,7 +56,7 @@ const parseSuperCommandForCommand: ParseFunction<ASTSuperCommandForCommand> = (t
 		mCommand1,
 	};
 };
-// (derivation union) Command => CommandInitGameData | CommandInitialize | CommandCook | CommandCookCrit | CommandAdd | CommandPickUp | CommandRemoveAll | CommandRemove | CommandDrop | CommandEat | CommandDnp | CommandEquip | CommandUnequipAll | CommandUnequip | CommandShoot | CommandEnterTrial | CommandExitTrial | CommandWriteMetadata | CommandSave | CommandReload | CommandBreakSlots | CommandCloseGame | CommandSyncGameData
+// (derivation union) Command => CommandInitGameData | CommandInitialize | CommandCook | CommandCookCrit | CommandAdd | CommandPickUp | CommandRemoveAll | CommandRemove | CommandDrop | CommandEat | CommandDnp | CommandEquip | CommandUnequipAll | CommandUnequip | CommandShoot | CommandEnterTrial | CommandExitTrial | CommandWriteMetadata | CommandSave | CommandReload | CommandBreakSlots | CommandCloseGame | CommandSyncGameData | CommandHas
 const parseCommand: ParseFunction<ASTCommand> = (tokens) => {
 	let result: ASTCommand | undefined;
 	result = parseCommandInitGameData(tokens);
@@ -105,21 +105,25 @@ const parseCommand: ParseFunction<ASTCommand> = (tokens) => {
 	if(result !== ParseResultFail) return result;
 	result = parseCommandSyncGameData(tokens);
 	if(result !== ParseResultFail) return result;
+	result = parseCommandHas(tokens);
+	if(result !== ParseResultFail) return result;
 	return ParseResultFail;
 };
-export type ASTCommand = ASTCommandInitGameData | ASTCommandInitialize | ASTCommandCook | ASTCommandCookCrit | ASTCommandAdd | ASTCommandPickUp | ASTCommandRemoveAll | ASTCommandRemove | ASTCommandDrop | ASTCommandEat | ASTCommandDnp | ASTCommandEquip | ASTCommandUnequipAll | ASTCommandUnequip | ASTCommandShoot | ASTCommandEnterTrial | ASTCommandExitTrial | ASTCommandWriteMetadata | ASTCommandSave | ASTCommandReload | ASTCommandBreakSlots | ASTCommandCloseGame | ASTCommandSyncGameData;
-// (derivation union) SuperCommand => SuperCommandAddSlot | SuperCommandRemoveSlot | SuperCommandForCommand
+export type ASTCommand = ASTCommandInitGameData | ASTCommandInitialize | ASTCommandCook | ASTCommandCookCrit | ASTCommandAdd | ASTCommandPickUp | ASTCommandRemoveAll | ASTCommandRemove | ASTCommandDrop | ASTCommandEat | ASTCommandDnp | ASTCommandEquip | ASTCommandUnequipAll | ASTCommandUnequip | ASTCommandShoot | ASTCommandEnterTrial | ASTCommandExitTrial | ASTCommandWriteMetadata | ASTCommandSave | ASTCommandReload | ASTCommandBreakSlots | ASTCommandCloseGame | ASTCommandSyncGameData | ASTCommandHas;
+// (derivation union) SuperCommand => SuperCommandAddSlot | SuperCommandRemoveSlot | SuperCommandSwap | SuperCommandForCommand
 const parseSuperCommand: ParseFunction<ASTSuperCommand> = (tokens) => {
 	let result: ASTSuperCommand | undefined;
 	result = parseSuperCommandAddSlot(tokens);
 	if(result !== ParseResultFail) return result;
 	result = parseSuperCommandRemoveSlot(tokens);
 	if(result !== ParseResultFail) return result;
+	result = parseSuperCommandSwap(tokens);
+	if(result !== ParseResultFail) return result;
 	result = parseSuperCommandForCommand(tokens);
 	if(result !== ParseResultFail) return result;
 	return ParseResultFail;
 };
-export type ASTSuperCommand = ASTSuperCommandAddSlot | ASTSuperCommandRemoveSlot | ASTSuperCommandForCommand;
+export type ASTSuperCommand = ASTSuperCommandAddSlot | ASTSuperCommandRemoveSlot | ASTSuperCommandSwap | ASTSuperCommandForCommand;
 // (derivation) CommandInitGameData => LiteralInitialize <gamedata> ZeroOrMoreItems
 export const isCommandInitGameData = <T extends {type: string}>(node: T | ASTCommandInitGameData | null): node is ASTCommandInitGameData => Boolean(node && node.type === "ASTCommandInitGameData");
 export type ASTCommandInitGameData = {
@@ -341,24 +345,23 @@ const parseCommandPickUp: ParseFunction<ASTCommandPickUp> = (tokens) => {
 		mOneOrMoreItems1,
 	};
 };
-// (derivation) CommandRemoveAll => <remove> <all> LiteralItemType
+// (derivation) CommandRemoveAll => LiteralRemoveOrDrop <all> LiteralItemType
 export const isCommandRemoveAll = <T extends {type: string}>(node: T | ASTCommandRemoveAll | null): node is ASTCommandRemoveAll => Boolean(node && node.type === "ASTCommandRemoveAll");
 export type ASTCommandRemoveAll = {
 	readonly type: "ASTCommandRemoveAll",
-	readonly literal0: readonly [number, number],
+	readonly mLiteralRemoveOrDrop0: ASTLiteralRemoveOrDrop,
 	readonly literal1: readonly [number, number],
 	readonly mLiteralItemType2: ASTLiteralItemType,
 };
 const parseCommandRemoveAll: ParseFunction<ASTCommandRemoveAll> = (tokens) => {
 	let rangeTokens: Token[];
 	tokens.push();
-	rangeTokens = [];
-	if(tokens.consume(rangeTokens) !== "remove") {
+	const mLiteralRemoveOrDrop0 = parseLiteralRemoveOrDrop(tokens);
+	if(mLiteralRemoveOrDrop0 === ParseResultFail) {
 		tokens.restore();
 		tokens.pop();
 		return ParseResultFail;
 	}
-	const literal0 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
 	rangeTokens = [];
 	if(tokens.consume(rangeTokens) !== "all") {
 		tokens.restore();
@@ -375,7 +378,7 @@ const parseCommandRemoveAll: ParseFunction<ASTCommandRemoveAll> = (tokens) => {
 	tokens.pop();
 	return {
 		type: "ASTCommandRemoveAll",
-		literal0,
+		mLiteralRemoveOrDrop0,
 		literal1,
 		mLiteralItemType2,
 	};
@@ -899,6 +902,52 @@ const parseCommandSyncGameData: ParseFunction<ASTCommandSyncGameData> = (tokens)
 		literal1,
 	};
 };
+// (derivation) CommandHas => <has> LiteralMaybeNot ValueValue OneOrMoreIdentifiers
+export const isCommandHas = <T extends {type: string}>(node: T | ASTCommandHas | null): node is ASTCommandHas => Boolean(node && node.type === "ASTCommandHas");
+export type ASTCommandHas = {
+	readonly type: "ASTCommandHas",
+	readonly literal0: readonly [number, number],
+	readonly mLiteralMaybeNot1: ASTLiteralMaybeNot,
+	readonly mValueValue2: ASTValueValue,
+	readonly mOneOrMoreIdentifiers3: ASTOneOrMoreIdentifiers,
+};
+const parseCommandHas: ParseFunction<ASTCommandHas> = (tokens) => {
+	let rangeTokens: Token[];
+	tokens.push();
+	rangeTokens = [];
+	if(tokens.consume(rangeTokens) !== "has") {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	const literal0 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
+	const mLiteralMaybeNot1 = parseLiteralMaybeNot(tokens);
+	if(mLiteralMaybeNot1 === ParseResultFail) {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	const mValueValue2 = parseValueValue(tokens);
+	if(mValueValue2 === ParseResultFail) {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	const mOneOrMoreIdentifiers3 = parseOneOrMoreIdentifiers(tokens);
+	if(mOneOrMoreIdentifiers3 === ParseResultFail) {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	tokens.pop();
+	return {
+		type: "ASTCommandHas",
+		literal0,
+		mLiteralMaybeNot1,
+		mValueValue2,
+		mOneOrMoreIdentifiers3,
+	};
+};
 // (derivation) SuperCommandAddSlot => <!> <add> LiteralSlot ArgumentOneOrMoreItemsMaybeFromSlot
 export const isSuperCommandAddSlot = <T extends {type: string}>(node: T | ASTSuperCommandAddSlot | null): node is ASTSuperCommandAddSlot => Boolean(node && node.type === "ASTSuperCommandAddSlot");
 export type ASTSuperCommandAddSlot = {
@@ -990,6 +1039,53 @@ const parseSuperCommandRemoveSlot: ParseFunction<ASTSuperCommandRemoveSlot> = (t
 		literal0,
 		literal1,
 		mLiteralSlot2,
+		mInteger3,
+	};
+};
+// (derivation) SuperCommandSwap => <!> <swap> Integer Integer
+export const isSuperCommandSwap = <T extends {type: string}>(node: T | ASTSuperCommandSwap | null): node is ASTSuperCommandSwap => Boolean(node && node.type === "ASTSuperCommandSwap");
+export type ASTSuperCommandSwap = {
+	readonly type: "ASTSuperCommandSwap",
+	readonly literal0: readonly [number, number],
+	readonly literal1: readonly [number, number],
+	readonly mInteger2: ASTInteger,
+	readonly mInteger3: ASTInteger,
+};
+const parseSuperCommandSwap: ParseFunction<ASTSuperCommandSwap> = (tokens) => {
+	let rangeTokens: Token[];
+	tokens.push();
+	rangeTokens = [];
+	if(tokens.consume(rangeTokens) !== "!") {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	const literal0 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
+	rangeTokens = [];
+	if(tokens.consume(rangeTokens) !== "swap") {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	const literal1 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
+	const mInteger2 = parseInteger(tokens);
+	if(mInteger2 === ParseResultFail) {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	const mInteger3 = parseInteger(tokens);
+	if(mInteger3 === ParseResultFail) {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	tokens.pop();
+	return {
+		type: "ASTSuperCommandSwap",
+		literal0,
+		literal1,
+		mInteger2,
 		mInteger3,
 	};
 };
@@ -1100,6 +1196,38 @@ const parseLiteralPickUp: ParseFunction<ASTLiteralPickUp> = (tokens) => {
 		tokens.restore();
 	tokens.pop();
 	return ParseResultFail;
+};
+// (derivation union) LiteralRemoveOrDrop => LiteralRemove | LiteralDrop
+const parseLiteralRemoveOrDrop: ParseFunction<ASTLiteralRemoveOrDrop> = (tokens) => {
+	let result: ASTLiteralRemoveOrDrop | undefined;
+	result = parseLiteralRemove(tokens);
+	if(result !== ParseResultFail) return result;
+	result = parseLiteralDrop(tokens);
+	if(result !== ParseResultFail) return result;
+	return ParseResultFail;
+};
+export type ASTLiteralRemoveOrDrop = ASTLiteralRemove | ASTLiteralDrop;
+// (derivation) LiteralDrop => <drop>
+export const isLiteralDrop = <T extends {type: string}>(node: T | ASTLiteralDrop | null): node is ASTLiteralDrop => Boolean(node && node.type === "ASTLiteralDrop");
+export type ASTLiteralDrop = {
+	readonly type: "ASTLiteralDrop",
+	readonly literal0: readonly [number, number],
+};
+const parseLiteralDrop: ParseFunction<ASTLiteralDrop> = (tokens) => {
+	let rangeTokens: Token[];
+	tokens.push();
+	rangeTokens = [];
+	if(tokens.consume(rangeTokens) !== "drop") {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	const literal0 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
+	tokens.pop();
+	return {
+		type: "ASTLiteralDrop",
+		literal0,
+	};
 };
 // (literal union) LiteralRemove => <with> | <remove> | <sell>
 export const isLiteralRemove = <T extends {type: string}>(node: T | ASTLiteralRemove | null): node is ASTLiteralRemove => Boolean(node && node.type === "ASTLiteralRemove");
@@ -1649,6 +1777,38 @@ const parseLiteralAll: ParseFunction<ASTLiteralAll> = (tokens) => {
 	tokens.pop();
 	return {
 		type: "ASTLiteralAll",
+		literal0,
+	};
+};
+// (derivation union) LiteralMaybeNot => LiteralNot | Epsilon
+const parseLiteralMaybeNot: ParseFunction<ASTLiteralMaybeNot> = (tokens) => {
+	let result: ASTLiteralMaybeNot | undefined;
+	result = parseLiteralNot(tokens);
+	if(result !== ParseResultFail) return result;
+	result = parseEpsilon(tokens);
+	if(result !== ParseResultFail) return result;
+	return ParseResultFail;
+};
+export type ASTLiteralMaybeNot = ASTLiteralNot | ASTEpsilon;
+// (derivation) LiteralNot => <not>
+export const isLiteralNot = <T extends {type: string}>(node: T | ASTLiteralNot | null): node is ASTLiteralNot => Boolean(node && node.type === "ASTLiteralNot");
+export type ASTLiteralNot = {
+	readonly type: "ASTLiteralNot",
+	readonly literal0: readonly [number, number],
+};
+const parseLiteralNot: ParseFunction<ASTLiteralNot> = (tokens) => {
+	let rangeTokens: Token[];
+	tokens.push();
+	rangeTokens = [];
+	if(tokens.consume(rangeTokens) !== "not") {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	const literal0 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
+	tokens.pop();
+	return {
+		type: "ASTLiteralNot",
 		literal0,
 	};
 };

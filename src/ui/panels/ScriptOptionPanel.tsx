@@ -59,7 +59,7 @@ export const ScriptOptionPanel: React.FC = () => {
 					const fileName = file.name.endsWith(".txt") ? file.name.substring(0, file.name.length-4) : file.name;
 					setFileName(fileName);
 					file.text().then(text=>{
-						const splitted= text.split("\n");
+						const splitted= text.replaceAll("\r", "").split("\n");
 						setCurrentText(splitted);
 						setCommandData(splitted);
 					});

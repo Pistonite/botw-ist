@@ -652,7 +652,8 @@ material:
   - BigHeartyTruffle
   - HeartyTruffle
   - EnduraShroom
-  - HylianShroom
+  - HylianShroom:
+      priority: 1
   - StamellaShroom
   - Chillshroom
   - Sunshroom
@@ -1129,16 +1130,20 @@ key:
       repeatable: false
       animated: false # not supported yet
   - MiphasGracePlus:
-      repeatable: false
+      repeatable: true
+      stackable: false
       animated: false # not supported yet
   - RevalisGalePlus:
-      repeatable: false
+      repeatable: true
+      stackable: false
       animated: false # not supported yet
   - DaruksProtectionPlus:
-      repeatable: false
+      repeatable: true
+      stackable: false
       animated: false # not supported yet
   - UrbosasFuryPlus:
-      repeatable: false
+      repeatable: true
+      stackable: false
       animated: false # not supported yet
   - Paraglider:
       repeatable: false

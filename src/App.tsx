@@ -86,7 +86,7 @@ export const App: React.FC =  () => {
 				while(nextCommandIndex<commandData.length && commands[nextCommandIndex].shouldSkipWithKeyboard){
 					nextCommandIndex++;
 				}
-				if(nextCommandIndex>=commandData.length-1){
+				if(nextCommandIndex>=commandData.length){
 					setCommandData(produce(commandData, newData=>{
 						newData.push("");
 					}));
@@ -256,7 +256,8 @@ export const App: React.FC =  () => {
 						left: contextMenuState.x,
 						width: "200px",
 						backgroundColor: "#262626",
-						border: "1px solid white"
+						border: "1px solid white",
+						zIndex: 999
 					}}>
 						<ul style={{
 							margin: 0,

@@ -19,7 +19,7 @@
 
 .ItemSlotEquipped {
   background-color: #0088ff;
-  box-shadow: inset -2px -2px 2px 1px #ffffff, inset 2px 2px 2px 1px #ffffff;
+  box-shadow: inset -2px -2px 5px 0px #ffffffaa, inset 2px 2px 5px 0px #ffffffaa;
 }
 
 .ItemImage {
@@ -31,8 +31,6 @@
 	height:62px;
 	display:inline-block;
 }
-
-
 
 .ItemLayer {
 	width: 72px;

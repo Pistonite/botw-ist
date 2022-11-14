@@ -13,7 +13,8 @@ export const Colors = {
 	"keyword.other": "CommandColorKeywordOther",
 	"identifier.other": "CommandColorIdentifierOther",
 	"comment": "CommandColorComment",
-	"item.type": "CommandColorItemType"
+	"item.type": "CommandColorItemType",
+	"keyword.super": "CommandColorKeywordSuper"
 };
 
 export type ItemSearchFunction = (word: string)=>ItemStack|undefined;

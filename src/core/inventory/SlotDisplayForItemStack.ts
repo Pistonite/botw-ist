@@ -93,6 +93,9 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 
 	get modifierText(): string{
 		if(!this.isEquipment()){
+			if(this.stack.foodSellPrice){
+				return `$${this.stack.foodSellPrice}`;
+			}
 			return "";
 		}
 		const selectedModifier = selectModifier(this.stack);
@@ -117,6 +120,9 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 	get modifierClassName(): string {
 		if(!this.modifierText){
 			return "";
+		}
+		if(!this.isEquipment()){
+			return "ItemModifierStringValue";
 		}
 		return clsx("ItemModifierStringValue", (this.stack.weaponModifier & WeaponModifier.Yellow) !== WeaponModifier.None && "ItemModifierStringValueYellow");
 	}
@@ -192,32 +198,19 @@ const getFixedPointReductionString = (value: number): string => {
 };
 
 const selectModifier = (stack: ItemStack): number | undefined=> {
-	const applicableModifiers: number[] = [];
-	if(stack.item.type === ItemType.Weapon || stack.item.type === ItemType.Bow){
-		applicableModifiers.push(WeaponModifier.AttackUp);
-	}
-	applicableModifiers.push(WeaponModifier.DurabilityUp);
-	// Add the right modifiers for the type
-	switch(stack.item.type){
-		case ItemType.Weapon:
-			applicableModifiers.push(
-				WeaponModifier.CriticalHit,
-				WeaponModifier.LongThrow
-			);
-			break;
-		case ItemType.Bow:
-			applicableModifiers.push(
-				WeaponModifier.MultiShot,
-				WeaponModifier.Zoom,
-				WeaponModifier.QuickShot
-			);
-			break;
-		case ItemType.Shield:
-			applicableModifiers.push(
-				WeaponModifier.SurfMaster,
-				WeaponModifier.GuardUp
-			);
-	}
+	// https://discord.com/channels/269611402854006785/269616041435332608/1041497732474482698
+	const applicableModifiers: number[] = [
+		WeaponModifier.AttackUp,
+		WeaponModifier.DurabilityUp,
+		WeaponModifier.GuardUp,
+		WeaponModifier.CriticalHit,
+		WeaponModifier.LongThrow,
+		WeaponModifier.MultiShot,
+		WeaponModifier.Zoom,
+		WeaponModifier.QuickShot,
+		WeaponModifier.SurfMaster
+	];
+
 	let selectedModifier: number = WeaponModifier.None;
 	for(let i=0;i<applicableModifiers.length;i++){
 		if((applicableModifiers[i] & stack.weaponModifier) !== WeaponModifier.None){

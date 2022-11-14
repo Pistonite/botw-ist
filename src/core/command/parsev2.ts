@@ -11,6 +11,7 @@ import {
 	isCommandEnterTrial,
 	isCommandEquip,
 	isCommandExitTrial,
+	isCommandHas,
 	isCommandInitGameData,
 	isCommandInitialize,
 	isCommandPickUp,
@@ -22,19 +23,22 @@ import {
 	isCommandSyncGameData,
 	isCommandUnequip,
 	isCommandUnequipAll,
-	isCommandWriteMetadata
+	isCommandWriteMetadata,
+	isSuperCommandSwap
 } from "./ast";
 import { CmdErr, Command, CommandHint, CommandNop, ErrorCommand } from "./command";
 import { parseASTCommandAdd, parseASTCommandPickup } from "./parse.cmd.add";
 import { parseASTCommandBreakSlots } from "./parse.cmd.breakslot";
 import { parseASTCommandCloseGame } from "./parse.cmd.closegame";
 import { parseASTCommandEquip, parseASTCommandUnequip, parseASTCommandUnequipAll } from "./parse.cmd.equip";
+import { parseASTCommandHas } from "./parse.cmd.has";
 import { parseASTCommandInitGamedata } from "./parse.cmd.initgamedata";
 import { parseASTCommandInitialize } from "./parse.cmd.initialize";
 import { parseASTCommandReload } from "./parse.cmd.reload";
 import { parseASTCommandDnp, parseASTCommandDrop, parseASTCommandEat, parseASTCommandRemove, parseASTCommandRemoveAll } from "./parse.cmd.remove";
 import { parseASTCommandSave } from "./parse.cmd.save";
 import { parseASTCommandShoot } from "./parse.cmd.shoot";
+import { parseASTSuperCommandSwap } from "./parse.cmd.super";
 import { parseASTCommandSyncGameData } from "./parse.cmd.sync";
 import { parseASTCommandEnterTrial, parseASTCommandExitTrial } from "./parse.cmd.trial";
 import { parseASTCommandWriteMetadata } from "./parse.cmd.write";
@@ -124,6 +128,8 @@ const guessCommand = (cmdString: string): Command => {
 			["exit eventide|tots", "Leave the quest and reload inventory from game data"])
 		|| tryGuessCommand(cmdString, parts, [ "g" ],
 			["get items ...", "Add items to inventory"])
+		|| tryGuessCommand(cmdString, parts, [ "h" ],
+			["has [not] value flag name ...", "Set game flag"])
 		|| tryGuessCommand(cmdString, parts, [ "init", "ga" ],
 			["init gamedata items...", "Initialize the simulator with items. Also clears the number of broken slots."])
 		|| tryGuessCommand(cmdString, parts, [ "i" ],
@@ -252,6 +258,12 @@ const parseASTTarget: ParserItem<ASTTarget, Command> = (ast, search) => {
 
 	if(isCommandSyncGameData(ast)){
 		return parseASTCommandSyncGameData(ast);
+	}
+	if(isCommandHas(ast)){
+		return parseASTCommandHas(ast);
+	}
+	if(isSuperCommandSwap(ast)){
+		return withNoError(parseASTSuperCommandSwap(ast));
 	}
 	return [
 		new ErrorCommand(CmdErr.Parse, [

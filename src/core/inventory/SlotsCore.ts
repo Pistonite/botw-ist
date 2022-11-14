@@ -1,18 +1,50 @@
 import { getTabFromType, Item, ItemStack, ItemTab, ItemType, iterateItemTabs, MetaModifyOption } from "data/item";
-import { arrayEqual, stableSort, inPlaceFilter, inPlaceMap } from "data/util";
+import { arrayEqual, stableSort, inPlaceFilter, Ref, newRef } from "data/util";
 
 // This is the "core" of Slots with basic getter and manipulation methods
 export class SlotsCore {
 	// Internal array. Must guarantee that the reference doesn't change
-	public internalSlots: ItemStack[] = [];
+	private internalSlots: Ref<ItemStack>[] = [];
 	constructor(slots: ItemStack[]) {
-		this.internalSlots = slots;
+		this.internalSlots = slots.map(newRef);
+	}
+
+	public getView(): ItemStack[] {
+		return this.internalSlots.map(ref=>ref.get());
+	}
+
+	public get length(): number {
+		return this.internalSlots.length;
+	}
+
+	public get(index: number): ItemStack {
+		return this.internalSlots[index].get();
+	}
+
+	public getMatchingRefs(matchers: ((stack: ItemStack)=>boolean)[]): Ref<ItemStack>[][] {
+		return matchers.map(match=>{
+			return this.internalSlots.filter(ref=>match(ref.get()));
+		});
+	}
+
+	public removeRefs(refs: Ref<ItemStack>[]) {
+		inPlaceFilter(this.internalSlots, ref=>!refs.includes(ref));
+	}
+
+	public swap(i: number, j: number) {
+		if(i < 0 || j < 0 || i >= this.internalSlots.length || j >= this.internalSlots.length){
+			return;
+		}
+
+		const temp = this.internalSlots[i];
+		this.internalSlots[i] = this.internalSlots[j];
+		this.internalSlots[j] = temp;
 	}
 
 	// Used to decide if game data is synced with inventory
 	// Two Slots are equal if the ItemStacks equal, including metadata equality
 	public equals(other: SlotsCore): boolean {
-		return arrayEqual(this.internalSlots, other.internalSlots);
+		return arrayEqual(this.getView(), other.getView());
 	}
 
 	// Sort the item types as they appear in game. Arrows are also sorted amongst each other
@@ -26,17 +58,17 @@ export class SlotsCore {
 			return;
 		}
 		stableSort(this.internalSlots, (a,b)=>{
-			//const aData = itemToItemData(a.item);
-			//const bData = itemToItemData(b.item);
-			if(a.item.type === ItemType.Arrow && b.item.type === ItemType.Arrow){
-				return a.item.sortOrder - b.item.sortOrder;
+			const itemA = a.get().item;
+			const itemB = b.get().item;
+			if(itemA.type === ItemType.Arrow && itemB.type === ItemType.Arrow){
+				return itemA.sortOrder - itemB.sortOrder;
 			}
-			if(a.item.tab === b.item.tab && a.item.tab === ItemTab.Bow){
+			if(itemA.tab === itemB.tab && itemA.tab === ItemTab.Bow){
 				// arrows are always after bow
-				return a.item.type - b.item.type;
+				return itemA.type - itemB.type;
 			}
 			// otherwise sort by tab
-			return a.item.tab - b.item.tab;
+			return itemA.tab - itemB.tab;
 		});
 	}
 
@@ -44,42 +76,47 @@ export class SlotsCore {
 		this.internalSlots.splice(0, count);
 	}
 
-	public addStackDirectly(stack: ItemStack) {
-		this.internalSlots.push(stack);
+	public addStackDirectly(stack: ItemStack): Ref<ItemStack> {
+		const newStackRef = newRef(stack);
+		this.internalSlots.push(newStackRef);
+		return newStackRef;
 	}
 
 	public addSlot(stack: ItemStack, mCount: number | null) {
-		this.internalSlots.push(stack);
+		const newStackRef = this.addStackDirectly(stack);
 		this.sortItemByTab(mCount);
+		return newStackRef;
 	}
 
 	public removeZeroStackExceptArrows(): void {
-		inPlaceFilter(this.internalSlots, ({item, count})=>{
+		inPlaceFilter(this.internalSlots, (ref)=>{
+			const {item, count} = ref.get();
 			return item.type === ItemType.Arrow || count > 0;
 		});
 	}
 
 	public modifySlot(i: number, option: Partial<ItemStack>) {
-		this.internalSlots[i] = this.internalSlots[i].modify(option);
+		this.internalSlots[i].set(this.internalSlots[i].get().modify(option));
 	}
 
-	public findLastEquippedSlot(type: ItemType): number {
+	public findLastEquipped(type: ItemType): Ref<ItemStack> | undefined{
 		let i = 0;
-		let result = -1;
+		let result = undefined;
 		// [needs confirm] does this check entire inventory?
 		for(;i<this.internalSlots.length;i++){
+			const {item, equipped} = this.internalSlots[i].get();
 			// [needs confirm] does this break when == type+1?
 			// [needs confirm] does this matter when tabs are undiscovered?
-			if(this.internalSlots[i].item.type > type+1){
+			if(item.type > type+1){
 				break;
 			}
-			if(this.internalSlots[i].equipped && this.internalSlots[i].item.type === type){
+			if(equipped && item.type === type){
 				// constantly update result as long as a new slot is found
 				// In the end, this will be the last equipped slots of that type
-				result = i;
+				result = this.internalSlots[i];
 			}
 		}
-		// will be -1 if never found
+		// will be undefined if never found
 		return result;
 	}
 
@@ -87,13 +124,13 @@ export class SlotsCore {
 	public setMetadata(item: Item, slot: number, meta: MetaModifyOption) {
 		let s = 0;
 		for(let i = 0; i<this.internalSlots.length;i++){
-			const stack = this.internalSlots[i];
+			const stack = this.internalSlots[i].get();
 			if(stack.item === item){
 				if(s<slot){
 					// find the right slot
 					s++;
 				}else{
-					this.internalSlots[i] = stack.modifyMeta(meta);
+					this.internalSlots[i].set(stack.modifyMeta(meta));
 					break;
 				}
 			}
@@ -101,18 +138,19 @@ export class SlotsCore {
 	}
 
 	public removeAll(types: ItemType[]) {
-		inPlaceFilter(this.internalSlots, stack=>!types.includes(stack.item.type));
+		inPlaceFilter(this.internalSlots, ref=>!types.includes(ref.get().item.type));
 	}
 
 	public unequipAll(types: ItemType[]) {
-		inPlaceMap(this.internalSlots, stack=>
-			stack.equipped && types.includes(stack.item.type)
-				? stack.modify({equipped: false})
-				: stack
-		);
+		this.internalSlots.forEach((ref)=>{
+			const stack = ref.get();
+			if(stack.equipped && types.includes(stack.item.type)){
+				ref.set(stack.modify({equipped: false}));
+			}
+		});
 	}
 
-	public findFirstTabIndex(type: ItemType, mCount: number): number {
+	public findFirstTab(type: ItemType, mCount: number): [Ref<ItemStack> | undefined, number] {
 		// figure out the tabs first
 		const tabArray: [ItemTab, number][] = [];
 		const tabAdded = new Set();
@@ -120,7 +158,7 @@ export class SlotsCore {
 			// scan inventory array for tabs
 			let lastTab = ItemTab.None;
 			for(let i =0;i<this.internalSlots.length;i++){
-				const currentItemTab = this.internalSlots[i].item.tab;
+				const currentItemTab = this.internalSlots[i].get().item.tab;
 				if(currentItemTab != lastTab){
 					// add missing empty tabs if already discovered
 					iterateItemTabs().filter(t=>t<currentItemTab).forEach(t=>{
@@ -144,31 +182,35 @@ export class SlotsCore {
 			});
 		}
 
-		// first first tab of that type
+		// then find tab of that type
 		// if type is arrow, find the first arrow in that tab
 		const tabToFind = getTabFromType(type);
 		let foundTabItemIndex = -1;
 		for(let i =0;i<tabArray.length;i++){
-			const [tab, itemIndex] = tabArray[i];
+			const [tab, ref] = tabArray[i];
 			if(tab === tabToFind){
-				foundTabItemIndex = itemIndex;
+				foundTabItemIndex = ref;
 				break;
 			}
 		}
-		if(type === ItemType.Arrow && foundTabItemIndex !== -1){
+		if(foundTabItemIndex < 0){
+			return [undefined, -1]; // not found
+		}
+		if(type === ItemType.Arrow){
 			// [confirmed] even if there are weapons in between bows, the check will continue to find the arrow
 			// https://github.com/zeldaret/botw/blob/9d3bc8cfe1c4ddd74c3b072bbe6418665aa06de1/src/Game/UI/uiPauseMenuDataMgr.cpp#L1215
 			for(;foundTabItemIndex<this.internalSlots.length; foundTabItemIndex++){
-				if(this.internalSlots[foundTabItemIndex].item.type > ItemType.Arrow){
+				const type = this.internalSlots[foundTabItemIndex].get().item.type;
+				if(type > ItemType.Arrow){
 					// arrow not found
-					return -1;
+					return [undefined, -1];
 				}
-				if(this.internalSlots[foundTabItemIndex].item.type === ItemType.Arrow){
-					return foundTabItemIndex;
+				if(type === ItemType.Arrow){
+					break;
 				}
 			}
 		}
-		return foundTabItemIndex;
+		return [this.internalSlots[foundTabItemIndex], foundTabItemIndex];
 	}
 
 	public isTabDiscovered(_tab: ItemTab): boolean {
@@ -177,4 +219,13 @@ export class SlotsCore {
 		// for now we assume tabs are always already discovered
 		return true;
 	}
+
+	// public findFirstIndex(tab: ItemTab): number {
+	// 	for(let i=0;i<this.internalSlots.length;i++){
+	// 		if(this.internalSlots[i].item.tab === tab){
+	// 			return i;
+	// 		}
+	// 	}
+	// 	return -1;
+	// }
 }

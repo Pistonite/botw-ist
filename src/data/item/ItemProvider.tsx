@@ -1,5 +1,6 @@
 import React, { PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 /*import-validation-exempt*/import { CrashScreen, LoadingScreen } from "ui/surfaces";
+import { longestCommonSubstringLength } from "data/util";
 import { ItemImpl } from "./Item";
 import { ItemStackImpl } from "./ItemStack";
 import { addElixir } from "./elixir";
@@ -282,69 +283,41 @@ export const searchItemMemoized = (
 };
 
 const searchItemInMap = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMap): [ItemStack | undefined, ItemStack[]] => {
-	const firstAttempt = searchItemInMapCore(name, idMap, searchMap);
-	if(firstAttempt[0] !== undefined){
-		return firstAttempt;
-	}
-	// try removing "s" or "es" (lower case only)
-	const tries = ["es", "s"];
+
+	const allResults: Set<string> = new Set();
+	// try removing "s" or "es" or "ies" (lower case only)
+	const tries = [
+		["ies", "y"],
+		["es", ""],
+		["s", ""]
+	];
 	for(let i=0;i<tries.length;i++){
-		if(name.endsWith(tries[i])){
-			const attempt = searchItemInMapCore(name.substring(0, name.length-tries[i].length), idMap, searchMap);
-			if(attempt[0] !== undefined){
-				return attempt;
-			}
+		const [find, replace] = tries[i];
+		if(name.endsWith(find)){
+			const newName = name.substring(0, name.length-find.length)+replace;
+			const attemptResult = searchItemInMapCore(newName, idMap, searchMap);
+			attemptResult.forEach(id=>allResults.add(id));
 		}
 	}
-	return firstAttempt;
-};
+	const lastAttempt = searchItemInMapCore(name, idMap, searchMap);
+	lastAttempt.forEach(id=>allResults.add(id));
 
-const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMap): [ItemStack | undefined, ItemStack[]] => {
-	// if name is an id exactly, return that
-	const idItem = idMap[name];
-	if(idItem){
-		const result = idItem.defaultStack;
-		return [result, []];
-	}
-	// break name into dot separated search phrases
-	const parts = name.split("*");
-	// search is O(mn), where m is number of items and n is number of phrases
-	let filteredResult = Object.keys(searchMap);
-	// it's faster to filter by each phrase, since the sample sizes decreases every time
-	// we can return the result when sample size is 1, even if later phrases might exclude that result
-	// ^ might want to make this togglable in the future
-	for(let i=0;i<parts.length;i++){
-		const searchKeyLower = parts[i].toLowerCase();
-		filteredResult = filteredResult.filter(id=>{
-			const searchPhrase = searchMap[id];
-			// searchPhrase must be nonnull because the initial array contains all keys
-			return searchPhrase.includes(searchKeyLower);
-		});
+	const results = Array.from(allResults);
+	//console.log(results);
 
-		if(filteredResult.length === 0){
-			// nothing found
-			return [undefined, []];
-		}
-		if(filteredResult.length === 1){
-			// exactly 1 found, can end
-			const foundId = filteredResult[0];
-			return [idMap[foundId].defaultStack, []];
-		}
-		// continue filtering
-	}
 	// after all phrases are passed and still have more than 1 result
 
 	// we can either reject the search or return the first result.
 	// returning the first result here to make the search more generous
-	const resultStartCountMap: {[id: string]: number} = {};
-	filteredResult.forEach((resultId)=>{
-		resultStartCountMap[resultId] = parts.filter(p=>resultId.toLowerCase().startsWith(p)).length;
+	const scoreMap: {[id: string]: number} = {};
+	results.forEach((resultId)=>{
+		scoreMap[resultId] = longestCommonSubstringLength(resultId.toLowerCase(), name.toLowerCase());
 	});
 	const typeOrder = [
 		ItemType.Arrow,
 		ItemType.Material
 	];
-	filteredResult.sort((a,b)=>{
+	results.sort((a,b)=>{
 		const itemA = idMap[a];
 		const itemB = idMap[b];
 		// Prioritize:
@@ -365,7 +338,7 @@ const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSear
 		}
 
 		// first see if the result starts with any search key, and prioritize those with more matches
-		const diffInCount = resultStartCountMap[b] - resultStartCountMap[a];
+		const diffInCount = scoreMap[b] - scoreMap[a];
 		if(diffInCount!==0){
 			return diffInCount;
 		}
@@ -374,12 +347,50 @@ const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSear
 		// since the longer ones can always be found by adding more words
 		return a.length-b.length;
 	});
-	const [first, ...rest] = filteredResult;
+	if(results.length === 0){
+		return [undefined, []];
+	}
+	const [first, ...rest] = results;
 	return [
 		idMap[first].defaultStack,
 		rest.map(id=>idMap[id].defaultStack)
 	];
+};
 
+const searchItemInMapCore = (name: string, idMap: ItemIdMap, searchMap: ItemSearchMap): string[] => {
+	// if name is an id exactly, return that
+	const idItem = idMap[name];
+	if(idItem){
+		return [name];
+	}
+	// break name into dot separated search phrases
+	const parts = name.split("*");
+	// search is O(mn), where m is number of items and n is number of phrases
+	let filteredResult = Object.keys(searchMap);
+	// it's faster to filter by each phrase, since the sample sizes decreases every time
+	// we can return the result when sample size is 1, even if later phrases might exclude that result
+	// ^ might want to make this togglable in the future
+	for(let i=0;i<parts.length;i++){
+		const searchKeyLower = parts[i].toLowerCase();
+		filteredResult = filteredResult.filter(id=>{
+			const searchPhrase = searchMap[id];
+			// searchPhrase must be nonnull because the initial array contains all keys
+			return searchPhrase.includes(searchKeyLower);
+		});
+
+		if(filteredResult.length === 0){
+			// nothing found
+			return [];
+		}
+		if(filteredResult.length === 1){
+			// exactly 1 found, can end
+			const foundId = filteredResult[0];
+			return [foundId];
+		}
+		// continue filtering
+	}
+
+	return filteredResult;
 };
 
 export const joinItemSearchStrings = (parts: string[]) => parts.join("*");

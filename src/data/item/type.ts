@@ -12,6 +12,7 @@ export enum ItemType {
     Key = 9,
     Flag = -1 // flags in game data, not actual items. such as HasRitoSoulPlus
 }
+
 // Which tab the item is in. These specifically matches ItemType in case we need it in the future
 export enum ItemTab {
     Weapon = 0,
@@ -23,6 +24,18 @@ export enum ItemTab {
     Key = 9,
     None = -1,
 }
+
+export const ItemMaxes = {
+	[ItemTab.None]: 0,
+	[ItemType.Weapon]: 20,
+	[ItemType.Bow]: 14,
+	[ItemType.Arrow]: 6,
+	[ItemType.Shield]: 20,
+	[ItemTab.Armor]: 100,
+	[ItemType.Material]: 160,
+	[ItemType.Food]: 60,
+	[ItemType.Key]: 40
+} as const;
 
 export const iterateItemTabs = (): ItemTab[] => [
 	ItemTab.Weapon,
@@ -73,6 +86,8 @@ export interface Item {
     readonly sortOrder: number,
     // which tab the item is in
     readonly tab: ItemTab,
+    // which tab the item is in, but return arrow if it is arrow
+    readonly tabOrArrow: ItemTab | ItemType.Arrow,
     // webpack loaded image
     readonly image: string,
     // animated image. If the item is not animated, this is the same as image
