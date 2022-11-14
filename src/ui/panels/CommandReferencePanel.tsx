@@ -621,7 +621,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					This feature will be available in a future update
 				</Description>
 				{/* <Description className="Important">
-					Slot indices in commands below are all 0-based 
+					Slot indices in commands below are all 0-based
 				</Description>
 
 				<div>
@@ -635,7 +635,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				<Description className="Secondary"/>
 				<Label>Swap 2 slots</Label>
 				<Description>
-					Swap the i-th and j-th slot. Does not sync GameData. 
+					Swap the i-th and j-th slot. Does not sync GameData.
 				</Description> */}
 			</Category>
 

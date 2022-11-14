@@ -219,7 +219,7 @@ describe("core/Slots.add", ()=>{
 				const expected = [alreadyHaveStack.modify({count: 2})];
 				const addedSlot = slots.add(stackToAdd, false, null, TestFlags);
 				expect(addedSlot).toBe(undefined);// merged
-				
+
 				expect(slots.getView()).toEqualItemStacks(expected);
 			});
 			it("should merge with existing same type is present, =998", ()=>{

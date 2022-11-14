@@ -1,6 +1,6 @@
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import clsx from "clsx";
 import React, { useState } from "react";
-import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import { Section, DoubleItemSlot, ItemList } from "ui/components";
 import { CrashScreen, CommandTextArea, Tooltip } from "ui/surfaces";
 import { SimulationState } from "core/SimulationState";

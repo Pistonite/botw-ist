@@ -1,11 +1,11 @@
 import React, { PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 /*import-validation-exempt*/import { CrashScreen, LoadingScreen } from "ui/surfaces";
+import { longestCommonSubstringLength } from "data/util";
 import { ItemImpl } from "./Item";
 import { ItemStackImpl } from "./ItemStack";
 import { addElixir } from "./elixir";
 import { searchLegacyItemNames } from "./legacy";
 import { CookEffect, getTabFromType, Item, ItemIdMap, ItemStack, ItemTab, ItemType } from "./type";
-import { longestCommonSubstringLength } from "data/util/string";
 
 /*
  * Load items from items.yaml files and registers them in memory

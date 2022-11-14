@@ -1,5 +1,5 @@
-import { GameFlags } from "core/inventory";
 import { SimulationState } from "core/SimulationState";
+import { GameFlags } from "core/inventory";
 import { ASTCommandHas, isEpsilon, isInteger } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
 import { parseASTIdentifier, parseASTInteger, parseASTOneOrMoreIdentifiers } from "./parse.basis";

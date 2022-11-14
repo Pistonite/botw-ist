@@ -1,6 +1,6 @@
 import { SimulationState } from "core/SimulationState";
 import { ASTSuperCommandSwap } from "./ast";
-import { AbstractProperCommand, Command } from "./command"
+import { AbstractProperCommand, Command } from "./command";
 import { parseASTInteger } from "./parse.basis";
 import { codeBlockFromRange, CodeBlockTree, flattenCodeBlocks, ParserSafe } from "./type";
 

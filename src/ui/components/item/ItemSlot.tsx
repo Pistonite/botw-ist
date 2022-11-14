@@ -77,7 +77,7 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot})=>{
 									{modifierText}
 								</span>
 							}
-							
+
 						</span>
 
 					</div>

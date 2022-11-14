@@ -1,10 +1,9 @@
 import { AmountAll, AmountAllType } from "core/command";
 import { dumpItemStack, Item, ItemMaxes, ItemStack, ItemType, MetaModifyOption } from "data/item";
+import { Ref } from "data/util";
 import { SlotsCore } from "./SlotsCore";
 import { RemoveOption } from "./options";
 import { remove } from "./remove";
-import { Ref } from "data/util";
-import { off } from "process";
 import { GameFlags } from "./types";
 
 /*
@@ -137,11 +136,11 @@ export class Slots {
 				}
 			}
 		}
-		
+
 		// [no test coverage] limit check - detail too complicated, only basic case for wmc for now
 		if(reloading){
 			if(!stack.item.stackable){
-				
+
 				let max: number = ItemMaxes[stack.item.tabOrArrow];
 				switch(stack.item.type){
 					case ItemType.Weapon:
@@ -216,7 +215,7 @@ export class Slots {
 	}
 
 	public updateLife(life: number, slot: number) {
-		
+
 		if(slot < 0 || slot >= this.core.length){
 			return;
 		}

@@ -1,12 +1,12 @@
 # This is the first autosave when starting a new game.
 Save as SoR
 Get 1 Slate
-# Pickup total of 6 weapons on the way to ToT, pickup the steak at boko camp to enable food tab 
+# Pickup total of 6 weapons on the way to ToT, pickup the steak at boko camp to enable food tab
 Get 4 Branch 1 Flint 1 WoodcuttersAxe 1 Torch 1 PotLid 1 SearedSteak 6 Pepper 2 HylianShroom
 # After clipping into ToT, before opening bow chest
 Unequip Branch
 Drop 1 PotLid 1 Flint 6 Pepper 2 HylianShroom
-Get TravelersBow 
+Get TravelersBow
 # An autosave would trigger after opening the chest
 Save as ToT
 # When loading the ToT autosave later, Link will spawn outside ToT, it's fine

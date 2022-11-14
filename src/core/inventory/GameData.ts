@@ -1,9 +1,9 @@
+import { ItemStack } from "data/item";
+import { Ref } from "data/util";
 import { SlotDisplayForItemStack } from "./SlotDisplayForItemStack";
 import { Slots } from "./Slots";
 import { VisibleInventory } from "./VisibleInventory";
 import { DisplayableInventory, GameFlags, SlotDisplay } from "./types";
-import { Ref } from "data/util";
-import { ItemStack } from "data/item";
 
 /*
  * Implementation of GameData in botw

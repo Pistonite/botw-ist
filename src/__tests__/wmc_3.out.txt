@@ -1,6 +1,6 @@
 init 4 tree branch 1 torch 1 axe[equip] 1 travelersbow[equip] 999 roasted endura carrot[hp=120, price=319] 1 speedfood[life=999] 1 baked apple 1 seared steak 1 slate 1 glider
 save
-init 
+init
 save as sor
 init 4 tree branch 1 axe 1 torch 1 TravelersBow[equip] 1 seared steak 1 slate
 save as tot

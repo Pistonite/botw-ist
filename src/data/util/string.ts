@@ -4,7 +4,7 @@
 // finding length of longest
 // Common substring using
 // Dynamic Programming
- 
+
 /*
 Returns length of longest common
 substring of X[0..m-1] and Y[0..n-1]
@@ -21,7 +21,7 @@ function LCSubStr(a: string, b: string ,m: number , n: number): number {
 // column entries have no
 // logical meaning, they are
 // used only for simplicity of program
-    
+
 const LCStuff = Array(m + 1).fill(undefined).map(()=>Array(n + 1).fill(0));
 
     // To store length of the longest
@@ -54,7 +54,7 @@ const LCStuff = Array(m + 1).fill(undefined).map(()=>Array(n + 1).fill(0));
 
 // document.write("Length of Longest Common Substring is " +
 // LCSubStr(X, Y, m, n));
- 
+
 
 export const longestCommonSubstringLength = (a: string, b: string): number => {
     return LCSubStr(a,b,a.length,b.length);
