@@ -3,6 +3,11 @@
 	src: url("assets/Calamity-Regular.otf") format("opentype");
 }
 
+@font-face {
+	font-family: DejaVuSansMono;
+	src: url("assets/DejaVuSansMono.ttf") format("truetype");
+}
+
 body {
 	color-scheme: dark;
 	margin: 0;
@@ -15,8 +20,7 @@ body {
 }
 
 code {
-	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-	monospace;
+	font-family: DejaVuSansMono;
 }
 
 a {

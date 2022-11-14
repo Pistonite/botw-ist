@@ -70,7 +70,7 @@
 
     line-height: 12pt;
     max-height: 300px;
-    font: 12pt monospace;
+    font: 12pt DejaVuSansMono;
     border:none;
     box-sizing: border-box;
     position: absolute;
@@ -86,7 +86,7 @@
 }
 .CommandTextArea.Large {
     line-height: 16pt;
-    font: 16pt monospace;
+    font: 16pt DejaVuSansMono;
 }
 
 textarea.CommandTextArea {
