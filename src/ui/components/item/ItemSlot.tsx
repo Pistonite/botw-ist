@@ -65,13 +65,19 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({slot})=>{
 					</div>
 				}
 				{
-					modifierImage &&
+					(modifierImage || modifierText) &&
 					<div className="ItemLayer" style={{zIndex: 2}}>
 						<span className="ItemFloatWindow ItemModifierString">
-							<img className={clsx("ItemModifierImage")} src={modifierImage}/>
-							<span className={modifierClassName}>
-								{modifierText}
-							</span>
+							{
+								modifierImage && <img className={clsx("ItemModifierImage")} src={modifierImage}/>
+							}
+							{
+								modifierText &&
+								<span className={modifierClassName}>
+									{modifierText}
+								</span>
+							}
+							
 						</span>
 
 					</div>

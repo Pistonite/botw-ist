@@ -264,7 +264,7 @@ export const ReferencePage: React.FC = React.memo(()=>{
 					Eat: only 1 of the corrupted food will be eaten, and can be used to remove empty arrow slots
 				</Description>
 				<div>
-					<code className="CommandColorKeywordCommand">remove all</code>
+					<code className="CommandColorKeywordCommand">remove|drop|sell|with all</code>
 					<code className="CommandColorIdentifierOther"> type</code>
 				</div>
 
@@ -273,6 +273,9 @@ export const ReferencePage: React.FC = React.memo(()=>{
 				</ParseCode>
 				<ParseCode>
 					remove all key items
+				</ParseCode>
+				<ParseCode>
+					drop all shield
 				</ParseCode>
 				<Description className="Secondary"/>
 				<Label>Easy way to get rid of everything</Label>
