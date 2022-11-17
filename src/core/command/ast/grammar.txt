@@ -56,7 +56,7 @@ Command =>
 ---
 ---
 SuperCommand =>
- SuperCommandAddSlot        # ! add slot ... [at slot X]
+ SuperCommandAddSlot        # ! add slot ... [from slot X]
  | SuperCommandRemoveSlot   # ! remove slot X
  | SuperCommandSwap         # ! swap i j
  | SuperCommandForCommand

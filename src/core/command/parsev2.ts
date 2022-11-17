@@ -24,6 +24,8 @@ import {
 	isCommandUnequip,
 	isCommandUnequipAll,
 	isCommandWriteMetadata,
+	isSuperCommandAddSlot,
+	isSuperCommandForCommand,
 	isSuperCommandSwap
 } from "./ast";
 import { CmdErr, Command, CommandHint, CommandNop, ErrorCommand } from "./command";
@@ -38,11 +40,11 @@ import { parseASTCommandReload } from "./parse.cmd.reload";
 import { parseASTCommandDnp, parseASTCommandDrop, parseASTCommandEat, parseASTCommandRemove, parseASTCommandRemoveAll } from "./parse.cmd.remove";
 import { parseASTCommandSave } from "./parse.cmd.save";
 import { parseASTCommandShoot } from "./parse.cmd.shoot";
-import { parseASTSuperCommandSwap } from "./parse.cmd.super";
+import { parseASTSuperCommandAddSlot, parseASTSuperCommandSwap } from "./parse.cmd.super";
 import { parseASTCommandSyncGameData } from "./parse.cmd.sync";
 import { parseASTCommandEnterTrial, parseASTCommandExitTrial } from "./parse.cmd.trial";
 import { parseASTCommandWriteMetadata } from "./parse.cmd.write";
-import { codeBlockFromRange, ParserItem, withNoError } from "./type";
+import { codeBlockFromRange, delegateParseItem, ParserItem, withNoError } from "./type";
 
 export const parseCommand = (cmdString: string, searchFunc: (word: string)=>ItemStack|undefined): Command => {
 	if(!cmdString){
@@ -262,8 +264,23 @@ const parseASTTarget: ParserItem<ASTTarget, Command> = (ast, search) => {
 	if(isCommandHas(ast)){
 		return parseASTCommandHas(ast);
 	}
+
+	if(isSuperCommandAddSlot(ast)){
+		return parseASTSuperCommandAddSlot(ast, search);
+	}
 	if(isSuperCommandSwap(ast)){
 		return withNoError(parseASTSuperCommandSwap(ast));
+	}
+
+	if(isSuperCommandForCommand(ast)){
+		const codeBlocks = [codeBlockFromRange(ast.literal0, "keyword.super")];
+		return delegateParseItem(
+			ast.mCommand1,
+			search,
+			parseASTTarget,
+			(t)=>t, //TODO: this doesn't make the command render codeblocks correctly
+			codeBlocks
+		);
 	}
 	return [
 		new ErrorCommand(CmdErr.Parse, [

@@ -81,8 +81,17 @@ export class SimulationState {
 
 	public initialize(stacks: ItemStack[]) {
 		this.pouch = new VisibleInventory(new Slots([]));
-		stacks.forEach((stack)=>this.pouch.addDirectly(stack));
+		this.addSlotsDirectly(stacks);
 		this.gameData.syncWith(this.pouch);
+	}
+
+	public addSlotsDirectly(stacks: ItemStack[], index?: number) {
+		if(index !== undefined){
+			stacks.forEach((stack, i)=>this.pouch.addDirectly(stack, index+i));
+		}else{
+			stacks.forEach((stack)=>this.pouch.addDirectly(stack));
+		}
+		
 	}
 
 	public setGameData(stacks: ItemStack[]) {
