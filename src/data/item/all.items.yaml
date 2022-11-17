@@ -1164,7 +1164,7 @@ key:
       repeatable: false
   - ClassifiedEnvelope:
       repeatable: false
-  - HestusGift:
+  - HestusGift:poop:
       repeatable: false
   - PictureOfTheChampions:
       repeatable: false

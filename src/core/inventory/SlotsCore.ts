@@ -76,9 +76,17 @@ export class SlotsCore {
 		this.internalSlots.splice(0, count);
 	}
 
-	public addStackDirectly(stack: ItemStack): Ref<ItemStack> {
+	public addStackDirectly(stack: ItemStack, index?: number): Ref<ItemStack> {
+		if(!index || index < 0 || index > this.internalSlots.length){
+			index = this.internalSlots.length;
+		}
 		const newStackRef = newRef(stack);
-		this.internalSlots.push(newStackRef);
+		if(index === this.internalSlots.length){
+			this.internalSlots.push(newStackRef);
+		}else{
+			this.internalSlots.splice(index, 0, newStackRef);
+		}
+
 		return newStackRef;
 	}
 

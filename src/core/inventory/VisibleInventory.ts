@@ -61,8 +61,8 @@ export class VisibleInventory implements DisplayableInventory{
 		return this.slots;
 	}
 
-	public addDirectly(stack: ItemStack){
-		this.slots.addStackDirectly(stack);
+	public addDirectly(stack: ItemStack, index?: number): Ref<ItemStack>{
+		return this.slots.addStackDirectly(stack, index);
 	}
 
 	// return newly added ref, or lastAdded if no new slots are added
@@ -137,18 +137,23 @@ export class VisibleInventory implements DisplayableInventory{
 				}
 			}
 		});
-		// get life value from last equipped
+		// get life value from last equipped, and update it to first slot
+		// [confirmed] Jhent: updates both in visible inventory and gamedata
+		// https://discord.com/channels/269611402854006785/269616041435332608/1042504927286657044
 		const lastEquippedWeapon = this.slots.findLastEquipped(ItemType.Weapon);
 		if(firstEquippedWeaponSlot >=0 && lastEquippedWeapon){
 			gameData.updateLife(lastEquippedWeapon.get().count, firstEquippedWeaponSlot);
+			this.slots.updateLife(lastEquippedWeapon.get().count, firstEquippedWeaponSlot);
 		}
 		const lastEquippedBow = this.slots.findLastEquipped(ItemType.Bow);
 		if(firstEquippedBowSlot >=0 && lastEquippedBow){
 			gameData.updateLife(lastEquippedBow.get().count, firstEquippedBowSlot);
+			this.slots.updateLife(lastEquippedBow.get().count, firstEquippedBowSlot);
 		}
 		const lastEquippedShield = this.slots.findLastEquipped(ItemType.Shield);
 		if(firstEquippedShieldSlot >=0 && lastEquippedShield){
 			gameData.updateLife(lastEquippedShield.get().count, firstEquippedShieldSlot);
+			this.slots.updateLife(lastEquippedShield.get().count, firstEquippedShieldSlot);
 		}
 	}
 

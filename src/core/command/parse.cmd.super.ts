@@ -1,8 +1,11 @@
 import { SimulationState } from "core/SimulationState";
-import { ASTSuperCommandSwap } from "./ast";
+import { arrayEqual } from "data/util";
+import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
+import { ASTSuperCommandAddSlot, ASTSuperCommandSwap } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
 import { parseASTInteger } from "./parse.basis";
-import { codeBlockFromRange, CodeBlockTree, flattenCodeBlocks, ParserSafe } from "./type";
+import { parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot } from "./parse.clause.with.fromslot";
+import { codeBlockFromRange, CodeBlockTree, delegateParseItem, flattenCodeBlocks, ParserItem, ParserSafe } from "./type";
 
 export class SuperCommandSwap extends AbstractProperCommand {
 	private i: number;
@@ -33,4 +36,36 @@ export const parseASTSuperCommandSwap: ParserSafe<ASTSuperCommandSwap, SuperComm
 	codeBlocks.push(flattenCodeBlocks([], [iBlock, jBlock], "slot.number"));
 
 	return [new SuperCommandSwap(i, j, codeBlocks), codeBlocks];
+};
+
+export class SuperCommandAddSlot extends AbstractProperCommand  {
+	private stacks: ItemStackArg[];
+	private slot: number;
+	constructor(stacks: ItemStackArg[], slot: number, codeBlocks: CodeBlockTree){
+		super(codeBlocks);
+		this.stacks = stacks;
+		this.slot = slot-1;//change to 0 based
+	}
+	public execute(state: SimulationState): void {
+		state.addSlotsDirectly(getSlotsToAdd(this.stacks), this.slot);
+	}
+	public equals(other: Command): boolean {
+		return other instanceof SuperCommandAddSlot && arrayEqual(this.stacks, other.stacks) && this.slot === other.slot;
+	}
+}
+
+export const parseASTSuperCommandAddSlot: ParserItem<ASTSuperCommandAddSlot, SuperCommandAddSlot> = (ast, search) => {
+	const codeBlocks: CodeBlockTree = [
+		codeBlockFromRange(ast.literal0, "keyword.super"),
+		codeBlockFromRange(ast.literal1, "keyword.super"),
+		codeBlockFromRange(ast.mLiteralSlot2, "keyword.super"),
+	];
+
+	return delegateParseItem(
+		ast.mArgumentOneOrMoreItemsMaybeFromSlot3,
+		search,
+		parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot,
+		([stacks, slot], codeBlocks)=>new SuperCommandAddSlot(stacks, slot, codeBlocks),
+		codeBlocks
+	);
 };

@@ -1,7 +1,8 @@
 import { AmountAll, AmountAllType } from "core/command";
-import { dumpItemStack, Item, ItemMaxes, ItemStack, ItemType, MetaModifyOption } from "data/item";
+import { dumpItemStack, Item, ItemStack, ItemType, MetaModifyOption } from "data/item";
 import { Ref } from "data/util";
 import { SlotsCore } from "./SlotsCore";
+import { add } from "./add";
 import { RemoveOption } from "./options";
 import { remove } from "./remove";
 import { GameFlags } from "./types";
@@ -44,124 +45,7 @@ export class Slots {
 	// Add something to inventory in game
 	// returns the added slot ref, or undefined if no new slot is added
 	public add(stack: ItemStack, reloading: boolean, mCount: number | null, flags: GameFlags): Ref<ItemStack> | undefined {
-		if(mCount === null){
-			mCount = this.core.length;
-		}
-
-		// If item is stackable (arrow, material, spirit orbs), do 999 Cap Check
-		// [confirmed] the 999 cap check always happens, even when mCount = 0
-		// https://discord.com/channels/269611402854006785/269616041435332608/997404941754839060
-		if(stack.item.stackable){
-			let shouldCapAt999 = true;
-			// [confirmed] kinak: for arrow, if there's "no arrow", 999 check is skipped
-			if(stack.item.type === ItemType.Arrow){
-				// [needs confirm] index will be -1 if mCount is 0, since we won't find any tabs, so arrow check is skipped regardless
-				const [firstArrowItem] = this.core.findFirstTab(ItemType.Arrow, mCount);
-				if(!firstArrowItem){
-					shouldCapAt999 = false;
-				}
-			}
-			// [confirmed] 999 check (i.e. merge check) scans entire inventory
-			// https://discord.com/channels/269611402854006785/269616041435332608/997764628492865572
-			// [needs confirm] arrow special case works not during reload? for now, does not consider arrow case when not reloading
-			// Check if there's already a slot, if so, add it to that and cap it at 999
-			for(let i = 0; i<this.core.length;i++){
-				const ithItem = this.core.get(i);
-				if(ithItem.equalsExcept(stack, "count")){
-					if(reloading){
-						if(shouldCapAt999){
-							if(ithItem.count + stack.count > 999){
-								// [confirmed] do not add new stack during loading save, if it would exceed 999
-								return undefined;
-							}
-						}
-					}else{
-						// [needs confirm] if not reloading, cap the slot at 999
-						const newCount = Math.min(999, ithItem.count+stack.count);
-						if(newCount != ithItem.count){
-							this.core.modifySlot(i, {count: newCount});
-						}
-
-						return undefined;
-					}
-
-				}
-			}
-
-		}
-
-		// [confirmed] this check does not happen if mCount = 0 (which is covered by i!==-1 line below)
-		// unrepeatable check: if a (unstackable) key item or master sword already exists in the first tab, do not add
-		if(!stack.item.repeatable) {// only unstackable key items and master sword is not repeatable
-			const [firstTabItem, firstTabIndex] = this.core.findFirstTab(stack.item.type, mCount);
-			if(firstTabItem){
-				for(let i=firstTabIndex;i<this.core.length && this.core.get(i).item.type === stack.item.type;i++){
-					if(this.core.get(i).item === stack.item){
-						// Found the key item/master sword, do not add
-						return undefined;
-					}
-				}
-				// past first (maybe empty) tab, check pass
-			}
-		}
-		// Checks finish, do add new slot
-
-		// Auto equip check
-		if(!reloading){
-			if(stack.item.type===ItemType.Weapon || stack.item.type===ItemType.Bow || stack.item.type===ItemType.Shield || stack.item.type === ItemType.Arrow){
-				// [needs confirm] does auto equip check check entire inventory or only first tab? (for now, entire inventory)
-				// [needs confirm] does this check happen for count = 0 ? (or just equip by force)
-				// check if none of that type is equipped
-				const equippedItems = this.getView().filter(s=>
-					s.item.type === stack.item.type && s.equipped
-				);
-				let shouldEquipNew = equippedItems.length === 0;
-				if(!shouldEquipNew && stack.item.type === ItemType.Arrow){
-					shouldEquipNew = equippedItems.filter(s=>
-						s.count > 0
-					).length === 0;
-				}
-				if(shouldEquipNew){
-					stack = stack.modify({equipped: true});
-					if(stack.item.type === ItemType.Arrow){
-						// unequip other arrows
-						// [needs confirm] only first tab?
-						const [firstTabItem, firstTabIndex] = this.core.findFirstTab(ItemType.Arrow, mCount);
-						if(firstTabItem){
-							for(let i = firstTabIndex;i<this.core.length && this.core.get(i).item.type === ItemType.Arrow;i++){
-								this.core.modifySlot(i, {equipped: false});
-							}
-						}
-					}
-				}
-			}
-		}
-
-		// [no test coverage] limit check - detail too complicated, only basic case for wmc for now
-		if(reloading){
-			if(!stack.item.stackable){
-
-				let max: number = ItemMaxes[stack.item.tabOrArrow];
-				switch(stack.item.type){
-					case ItemType.Weapon:
-						max = Math.min(flags.weaponSlots, max);
-						break;
-					case ItemType.Bow:
-						max = Math.min(flags.bowSlots, max);
-						break;
-					case ItemType.Shield:
-						max = Math.min(flags.shieldSlots, max);
-						break;
-
-				}
-				const current = this.core.getView().filter(s=>s.item.tabOrArrow===stack.item.tabOrArrow).length;
-				if(current >= max){
-					return undefined;
-				}
-			}
-		}
-
-		return this.core.addSlot(stack, mCount+1);
+		return add(this.core, stack, reloading, mCount, flags);
 	}
 
 	// this is for all types of item
@@ -190,10 +74,7 @@ export class Slots {
 	}
 	public unequip(item: Item, slot: number) {
 		let s = 0;
-		const type = item.type;
-		if (type===ItemType.Arrow){
-			return; // cannot unequip arrow
-		}
+
 		// [needs confirm] checks entire inventory?
 		for(let i = 0; i<this.core.length;i++){
 			if(this.core.get(i).item === item){
@@ -271,8 +152,8 @@ export class Slots {
 		this.core.clearFirst(count);
 	}
 
-	public addStackDirectly(stack: ItemStack) {
-		this.core.addStackDirectly(stack);
+	public addStackDirectly(stack: ItemStack, index?: number): Ref<ItemStack> {
+		return this.core.addStackDirectly(stack, index);
 	}
 
 	public findLastEquipped(type: ItemType): Ref<ItemStack> | undefined{
