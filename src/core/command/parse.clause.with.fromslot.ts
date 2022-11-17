@@ -97,7 +97,7 @@ const parseASTArgumentSingleItemAllowAllMaybeFromSlot:
 	const [ firstIdentifier, firstIdentifierBlocks ] = parseASTIdentifier(ast.mIdentifier0);
 
 	const codeBlocks: CodeBlockTree = [flattenCodeBlocks([],firstIdentifierBlocks, "item.name")];
-	
+
 	return delegateParse(
 		isArgumentSingleItemAllowAllMaybeFromSlot(ast)
 			? ast.mArgumentSingleItemAllowAllMaybeFromSlotAIdentifier1
@@ -108,7 +108,7 @@ const parseASTArgumentSingleItemAllowAllMaybeFromSlot:
 			return result;
 		},
 		codeBlocks);
-	
+
 };
 
 const parseSingleItemAIdentifier:

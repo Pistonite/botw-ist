@@ -1,8 +1,8 @@
 import { SimulationState } from "core/SimulationState";
 import { arrayEqual } from "data/util";
+import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
 import { ASTSuperCommandAddSlot, ASTSuperCommandSwap } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
-import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
 import { parseASTInteger } from "./parse.basis";
 import { parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot } from "./parse.clause.with.fromslot";
 import { codeBlockFromRange, CodeBlockTree, delegateParseItem, flattenCodeBlocks, ParserItem, ParserSafe } from "./type";

@@ -86,7 +86,7 @@ export class SlotsCore {
 		}else{
 			this.internalSlots.splice(index, 0, newStackRef);
 		}
-		
+
 		return newStackRef;
 	}
 

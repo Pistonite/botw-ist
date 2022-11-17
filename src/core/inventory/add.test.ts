@@ -1,7 +1,7 @@
 import { ItemStack, ItemType } from "data/item";
 import { createArrowMockItem, createEquipmentMockItem, createEquipmentStack, createFoodMockItem, createKeyMockItem, createMaterialMockItem, createMaterialStack, equalsExceptEquip } from "data/test";
-import { add } from "./add";
 import { SlotsCore } from "./SlotsCore";
+import { add } from "./add";
 import { GameFlags } from "./types";
 
 const TestFlags: GameFlags = {

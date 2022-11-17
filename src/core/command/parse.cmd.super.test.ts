@@ -24,4 +24,4 @@ describe("core/command/parse.super !add slot", ()=>{
 			new ItemStackArg(MockItems.materialb.defaultStack.modifyMeta({equip: true, life: 700}), 3)
 		], 7, []));
 	});
-})
+});

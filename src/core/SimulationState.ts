@@ -91,7 +91,7 @@ export class SimulationState {
 		}else{
 			stacks.forEach((stack)=>this.pouch.addDirectly(stack));
 		}
-		
+
 	}
 
 	public setGameData(stacks: ItemStack[]) {

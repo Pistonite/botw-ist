@@ -1,11 +1,11 @@
 import { AmountAll, AmountAllType } from "core/command";
-import { dumpItemStack, Item, ItemMaxes, ItemStack, ItemType, MetaModifyOption } from "data/item";
+import { dumpItemStack, Item, ItemStack, ItemType, MetaModifyOption } from "data/item";
 import { Ref } from "data/util";
 import { SlotsCore } from "./SlotsCore";
+import { add } from "./add";
 import { RemoveOption } from "./options";
 import { remove } from "./remove";
 import { GameFlags } from "./types";
-import { add } from "./add";
 
 /*
  * This is the data model common to GameData and VisibleInventory
