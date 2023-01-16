@@ -78,9 +78,8 @@ export class VisibleInventory implements DisplayableInventory{
 		return mostRecentlyAdded;
 	}
 
-	// Add item in game, return true if add is successful
-	public addInGame(stack: ItemStack, flags: GameFlags): boolean {
-		return this.slots.add(stack, false, this.getMCount(), flags) !== undefined;
+	public addInGame(stack: ItemStack, flags: GameFlags) {
+		this.slots.add(stack, false, this.getMCount(), flags);
 	}
 
 	// Standard remove: magically remove item from inventory
