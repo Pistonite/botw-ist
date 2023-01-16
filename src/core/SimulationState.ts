@@ -160,12 +160,7 @@ export class SimulationState {
 	}
 
 	public obtain(stack: ItemStack) {
-		if(!this.pouch.addInGame(stack, this.gameData.getFlags())){
-			this.errorTitles.push("Cannot add item(s)");
-			this.errorMessages.push(
-				`${stack.count}x${stack.item.id} cannot be added`
-			);
-		}
+		this.pouch.addInGame(stack, this.gameData.getFlags());
 		this.syncGameDataWithPouch();
 	}
 
