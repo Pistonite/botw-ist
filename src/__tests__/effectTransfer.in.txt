@@ -1,0 +1,4 @@
+init 59 food 1 food[modifier=speed, price=100]
+break 1 slots
+save
+reload

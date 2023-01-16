@@ -72,10 +72,7 @@ export class VisibleInventory implements DisplayableInventory{
 		if(mostRecentlyAdded){
 			// set cook data
 			if(stack.item.type === ItemType.Food){
-				mostRecentlyAdded.set(mostRecentlyAdded.get().modify({
-					foodHpRecover: stack.foodHpRecover,
-					foodSellPrice: stack.foodSellPrice
-				}));
+				mostRecentlyAdded.set(mostRecentlyAdded.get().transferExDataFrom(stack));
 			}
 		}
 		return mostRecentlyAdded;

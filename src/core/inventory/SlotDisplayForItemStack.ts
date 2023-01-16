@@ -142,6 +142,9 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 		const isFood = item.type===ItemType.Food;
 		const isEquipment = this.isEquipment();
 		const isBow = item.type ===ItemType.Bow;
+		const hasExtraFoodData = foodHpRecover > 0 || foodSellPrice > 0 || foodEffect !== CookEffect.None;
+		const isFoodModifierInactive = item.stackable && hasExtraFoodData;
+		const foodModifierClass = isFoodModifierInactive ? "ItemTooltipFoodEffectInactive" : "ItemTooltipFoodEffect";
 		return [
 			[translate(item.localizationKey), ""],
 			[isEquipment
@@ -154,9 +157,10 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 			item.bowRapidfire && [`Initial Rapidfire x${item.bowRapidfire}`, ""],
 			item.bowMultishot && [`Initial Multishot x${item.bowMultishot}`, ""],
 
-			isFood && [`Food Effect: ${CookEffect[foodEffect]}`, "ItemTooltipFoodEffect"],
-			isFood && [`Recover ${foodHpRecover/4} Hearts`, "ItemTooltipFoodEffect"],
-			isFood && [`Sell Price: ${foodSellPrice}`, "ItemTooltipFoodEffect"],
+			isFood && foodEffect !== CookEffect.None && [`Food Effect: ${CookEffect[foodEffect]}`, foodModifierClass],
+			isFood && foodHpRecover > 0 && [`Recover ${foodHpRecover/4} Hearts`, foodModifierClass],
+			isFood && foodSellPrice > 0 && [`Sell Price: ${foodSellPrice}`, foodModifierClass],
+			isFood && isFoodModifierInactive &&	["Food data is not visible", foodModifierClass],
 
 			isEquipment && (weaponModifier & WeaponModifier.AttackUp) !== 0
 			&& [`Attack +${weaponValue}`, "ItemTooltipWeaponModifier"],

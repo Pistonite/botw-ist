@@ -1,5 +1,6 @@
-init 1 tree branch 1 axe[equip] 2 phrenic bow[hp=116, price=307, life=4500] 4699 bomb arrow[equip] 1 potlid[equip] 999 fairy 800 seared steak[hp=116, price=307] 12 wild green[modifier=endur] 1 slate 1 glider
+init 1 tree branch 1 axe[equip] 2 phrenic bow[modifier=spicy, hp=116, price=307, life=4500] 4699 bomb arrow[equip] 1 potlid[equip] 999 fairy 800 seared steak[modifier=spicy, hp=116, price=307] 12 wild green[modifier=endur] 1 slate 1 glider
 equip phrenic bow in slot 2
 write [life=999] to wild green in slot 7
+sync gamedata
 break 12 slots
 save

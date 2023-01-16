@@ -1,8 +1,9 @@
-import { ExData } from "./type";
+import { CookEffect, ExData } from "./type";
 
 export class ExDataImpl implements ExData{
 	public hearts = 0;
 	public sellPrice = 0;
+	public cookEffect = CookEffect.None;
 	public get modifierType(): number {
 		return this.sellPrice;
 	}

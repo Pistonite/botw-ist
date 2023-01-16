@@ -1,6 +1,5 @@
-
-// Author: iTNTPiston
-const TEST = "aqFinished1";
+// Author: YOUR_NAME
+const TEST = "effectTransfer";
 it(TEST, ()=>{
 	expect(TEST).toPassE2ESimulation();
 });

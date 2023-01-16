@@ -87,6 +87,10 @@ span.ItemTooltipFoodEffect {
 	color: #DCDCAA;
 }
 
+span.ItemTooltipFoodEffectInactive {
+	color: #DC8833;
+}
+
 span.ItemTooltipWeaponModifier {
 	color: #9CDCFE;
 }
