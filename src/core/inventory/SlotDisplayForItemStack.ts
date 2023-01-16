@@ -160,7 +160,7 @@ export class SlotDisplayForItemStack implements SlotDisplay {
 			isFood && foodEffect !== CookEffect.None && [`Food Effect: ${CookEffect[foodEffect]}`, foodModifierClass],
 			isFood && foodHpRecover > 0 && [`Recover ${foodHpRecover/4} Hearts`, foodModifierClass],
 			isFood && foodSellPrice > 0 && [`Sell Price: ${foodSellPrice}`, foodModifierClass],
-			isFood && isFoodModifierInactive &&	["Food data is not visible", foodModifierClass],
+			isFood && isFoodModifierInactive && ["Food data is not visible", foodModifierClass],
 
 			isEquipment && (weaponModifier & WeaponModifier.AttackUp) !== 0
 			&& [`Attack +${weaponValue}`, "ItemTooltipWeaponModifier"],

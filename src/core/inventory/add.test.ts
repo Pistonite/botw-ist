@@ -76,8 +76,8 @@ describe("core/inventory/add", ()=>{
 			});
 			it("should add multiple new stacks when same type is present, =999", ()=>{
 				const mockItem1 = createMaterialMockItem("MaterialA");
-				const stackToAdd = createMaterialStack(mockItem1, 400);
-				const alreadyHaveStack = createMaterialStack(mockItem1, 599);
+				const stackToAdd = createMaterialStack(mockItem1, 998);
+				const alreadyHaveStack = createMaterialStack(mockItem1, 1);
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
