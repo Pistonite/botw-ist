@@ -213,7 +213,7 @@ export class SimulationState {
 
 	public setMetadata(item: Item, slot: number, meta: MetaModifyOption) {
 		this.pouch.setMetadata(item, slot, meta);
-		this.syncGameDataWithPouch();
+		// does not sync
 	}
 
 	public closeGame() {

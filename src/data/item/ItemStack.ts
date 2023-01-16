@@ -7,7 +7,8 @@ type ItemStackModifyOption = {
 }
 
 export class ItemStackImpl implements ItemStack {
-	_item: Item;
+	// The underlying item
+	private _item: Item;
 	get item(): Item {
 		// elixir check
 		if(this._item.isElixir){
@@ -15,6 +16,8 @@ export class ItemStackImpl implements ItemStack {
 		}
 		return this._item;
 	}
+
+	// Life (Count or Durability)
 	private life = 1;
 	get count(): number {
 		return this.life;
@@ -22,8 +25,11 @@ export class ItemStackImpl implements ItemStack {
 	get durability(): number {
 		return this.life/100.0;
 	}
+
+	// If the slot is equipped
 	public equipped = false;
-	public foodEffect: CookEffect = CookEffect.None;
+
+	// WMC Transferrable Data: Modifier/Price, Value/HpRecover, CookEffect
 	private exData: ExData = new ExDataImpl();
 	get weaponModifier(): number {
 		return this.exData.modifierType;
@@ -36,6 +42,9 @@ export class ItemStackImpl implements ItemStack {
 	}
 	get foodHpRecover(): number {
 		return this.exData.hearts;
+	}
+	get foodEffect(): CookEffect {
+		return this.exData.cookEffect;
 	}
 	constructor(item: Item) {
 		this._item = item;
@@ -53,7 +62,7 @@ export class ItemStackImpl implements ItemStack {
 		}
 		newStack.life = newLife;
 		newStack.equipped = "equipped" in option ? !!option.equipped:this.equipped;
-		newStack.foodEffect = option.foodEffect ?? this.foodEffect;
+		newStack.exData.cookEffect = option.foodEffect ?? this.foodEffect;
 		newStack.exData.modifierType = option.weaponModifier ?? option.foodSellPrice ?? this.weaponModifier;
 		newStack.exData.modifierValue = option.weaponValue ?? option.foodHpRecover ?? this.weaponValue;
 
@@ -75,9 +84,17 @@ export class ItemStackImpl implements ItemStack {
 			modifyOption.foodHpRecover = metaOption.hp ?? 0;
 		}
 		if("cookEffect" in metaOption){
-			modifyOption.foodEffect = metaOption.cookEffect ?? 0;
+			modifyOption.foodEffect = metaOption.cookEffect ?? CookEffect.None;
 		}
 		return this.modify(modifyOption);
+	}
+
+	public transferExDataFrom(other: ItemStack): ItemStack {
+		return this.modify({
+			foodHpRecover: other.foodHpRecover,
+			foodSellPrice: other.foodSellPrice,
+			foodEffect: other.foodEffect
+		});
 	}
 
 	public equals(other: ItemStack): boolean {

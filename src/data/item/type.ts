@@ -128,6 +128,8 @@ export interface ItemStack {
     modify(option: Partial<ItemStack>): ItemStack,
     // function to create a new stack based on this stack and meta option
     modifyMeta(metaOption: MetaModifyOption): ItemStack,
+    // function to create a nwe stack based on this stack, but uses the other stack's extra data
+    transferExDataFrom(other: ItemStack): ItemStack,
     // check if 2 stacks are equal: same item, count, equipped and metadata
     equals(other: ItemStack): boolean,
     // equals except the specified meta keys
@@ -223,5 +225,7 @@ export interface ExData {
     hearts: number,
     modifierValue: number,
     sellPrice: number,
-    modifierType: number
+    modifierType: number,
+    // [confirmed] cooking effect is also transferred as part of wmc
+    cookEffect: CookEffect,
 }
