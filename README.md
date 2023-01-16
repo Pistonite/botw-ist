@@ -30,7 +30,7 @@ When code changes, the dev server will hot reload
 ### Grammar
 The simulator uses a LL parser with infinite look ahead to generate an Abstract Syntax Tree from which commands are parsed.
 
-The grammar is at src/core/command/ast/grammar.txt and the ast parser is generated with `npm run generate`
+The grammar is at `src/core/command/ast/grammar.txt` and the ast parser is generated with `npm run generate` (Python needed)
 
 If you want to introduce new commands, most of the heavy lifting for the parsers is already done. You should be able to define a new derivation in the grammar and implement the parser by looking at one of the `parse.cmd.*` files. However, you should probably contact the maintainer to have a discussion about the new command.
 
@@ -42,5 +42,5 @@ Do before PR:
     - `src/data` is the bottom layer. It cannot depend on core or ui components
     - `src/core` is the core logic. It can depend on data, but not ui
     - `src/ui` is the ui layer. It can depend on everything
-  - `npm run lint`: This is the standard eslint
+  - `npm run lint-ts`: This is the standard eslint
 - Run tests `npm run test-all`

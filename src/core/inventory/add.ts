@@ -20,6 +20,9 @@ export const add = (
 		mCount = core.length;
 	}
 
+	// This flag controls some behavior, like tab limit check
+	let treatAsAddingNewSlot = true;
+
 	// If item is stackable (arrow, material, spirit orbs), do 999 Cap Check
 	// [confirmed] the 999 cap check always happens, even when mCount = 0
 	// https://discord.com/channels/269611402854006785/269616041435332608/997404941754839060
@@ -56,10 +59,10 @@ export const add = (
 
 					return undefined;
 				}
-
+				treatAsAddingNewSlot = false;
+				break;
 			}
 		}
-
 	}
 
 	// [confirmed] this check does not happen if mCount = 0 (which is covered by the nested if, because 0 mCount will return no tabs)
@@ -109,9 +112,9 @@ export const add = (
 		}
 	}
 
-	// [no test coverage] limit check - detail too complicated, only basic case for wmc for now
+	// [no unit test coverage] limit check - detail too complicated, only basic case for wmc for now
 	if(reloading){
-		if(!stack.item.stackable){
+		if(treatAsAddingNewSlot){
 
 			let max: number = ItemMaxes[stack.item.tabOrArrow];
 			switch(stack.item.type){

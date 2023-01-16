@@ -1,0 +1,6 @@
+init 58 food 1 hasty elixir 1 baked apple
+break 1 slot
+save
+eat baked apple
+reload
+sync gamedata

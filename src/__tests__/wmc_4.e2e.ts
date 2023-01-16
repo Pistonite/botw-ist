@@ -1,5 +1,5 @@
-// Author: Minghao
-const TEST = "wmc_3";
+// Author: iTNTPiston
+const TEST = "wmc_4";
 it(TEST, ()=>{
 	expect(TEST).toPassE2ESimulation();
 });

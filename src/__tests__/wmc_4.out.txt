@@ -1,0 +1,4 @@
+init 58 food 1 hasty elixir 1 baked apple
+save
+init 1 hasty elixir 58 food 1 elixir
+break 1 slot
