@@ -1,0 +1,5 @@
+Init 999 Apple 1 Slate 1 Glider
+Save
+#
+Init 999 Apple 1 Slate 1 Glider 999 Apple
+Break 3 Slots
