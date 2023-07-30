@@ -588,6 +588,21 @@ describe("core/inventory/add", ()=>{
 					acquiredKeyItem,
 				]);
 			});
+			it("should allow 1000+ materials in two stacks if tab data is missing", ()=>{
+				const mockMaterial = createMaterialMockItem("MaterialA");
+				const transferredStack = createMaterialStack(mockMaterial, 999);
+				const gameDataLeadingStack = createMaterialStack(mockMaterial, 500);
+				const stacks: ItemStack[] = [
+					transferredStack,
+				];
+				const slots = new SlotsCore(stacks);
+				const addedSlot = add(slots, gameDataLeadingStack, true, 0, TestFlags, false);
+				expect(addedSlot?.get().equals(gameDataLeadingStack)).toBe(true);
+				expect(slots.getView()).toEqualItemStacks([
+					transferredStack,
+					gameDataLeadingStack,
+				]);
+			});
 		});
 		describe("reloading = false", ()=>{
 			it("should allow key item dupes in-game when tab data is missing", ()=>{
