@@ -75,7 +75,7 @@ export class VisibleInventory implements DisplayableInventory{
 
 	// return newly added ref, or lastAdded if no new slots are added
 	public addWhenReload(stack: ItemStack, lastAdded: Ref<ItemStack> | undefined, flags: GameFlags): Ref<ItemStack> | undefined {
-		const newlyAdded = this.slots.add(stack, true, this.getMCount(), flags);
+		const newlyAdded = this.slots.add(stack, true, this.getMCount(), flags, this.listHeadsInit);
 		// if something was added, tab data is present and de-dupe checks can work
 		this.listHeadsInit ||= newlyAdded !== undefined;
 		const mostRecentlyAdded = newlyAdded || lastAdded;
@@ -123,6 +123,8 @@ export class VisibleInventory implements DisplayableInventory{
 		if(count > 0){
 			this.slots.clearFirst(count);
 		}
+		// reloading clears tab data
+		this.listHeadsInit = false;
 	}
 
 	public updateEquipmentDurability(gameData: GameData) {
