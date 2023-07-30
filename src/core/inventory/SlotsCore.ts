@@ -158,11 +158,11 @@ export class SlotsCore {
 		});
 	}
 
-	public findFirstTab(type: ItemType, mCount: number): [Ref<ItemStack> | undefined, number] {
+	public findFirstTab(type: ItemType, listHeadsInit: Boolean): [Ref<ItemStack> | undefined, number] {
 		// figure out the tabs first
 		const tabArray: [ItemTab, number][] = [];
 		const tabAdded = new Set();
-		if(mCount !== 0){
+		if(listHeadsInit){
 			// scan inventory array for tabs
 			let lastTab = ItemTab.None;
 			for(let i =0;i<this.internalSlots.length;i++){

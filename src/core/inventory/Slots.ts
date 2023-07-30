@@ -44,15 +44,16 @@ export class Slots {
 
 	// Add something to inventory in game
 	// returns the added slot ref, or undefined if no new slot is added
-	public add(stack: ItemStack, reloading: boolean, mCount: number | null, flags: GameFlags): Ref<ItemStack> | undefined {
-		return add(this.core, stack, reloading, mCount, flags);
+	public add(stack: ItemStack, reloading: boolean, mCount: number | null, flags: GameFlags, listHeadsInit?: Boolean): Ref<ItemStack> | undefined {
+		return add(this.core, stack, reloading, mCount, flags, listHeadsInit);
 	}
 
 	// this is for all types of item
-	public equip(item: Item, slot: number, mCount: number) {
+	public equip(item: Item, slot: number) {
 		let s = 0;
 		// unequip same type in first tab
-		const [firstTabItem, firstTabIndex] = this.core.findFirstTab(item.type, mCount);
+		// PF: all methods of handling equipping in-game seem to be unaffected by mListHeads
+		const [firstTabItem, firstTabIndex] = this.core.findFirstTab(item.type, true);
 		if(firstTabItem){
 			for(let i = firstTabIndex;i<this.core.length && this.core.get(i).item.tab === item.tab;i++){
 				if( this.core.get(i).item.type === item.type){

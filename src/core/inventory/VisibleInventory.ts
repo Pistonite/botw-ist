@@ -14,6 +14,11 @@ export class VisibleInventory implements DisplayableInventory{
 	// Difference between this.slots.length and what the game thinks the inventory size is
 	// i.e. number of broken slots
 	private offset: number;
+	// Between an inventory wipe (load/new game) and the first item add (from GameData or in the world), tab
+	// data is empty, which causes de-dupe checks to always be bypassed. Instead of simulating mListHeads
+	// fully, we just indicate whether to pretend tabs are empty or not.
+	// https://discord.com/channels/872350971383140422/1000992154140811325/1131656653561925824
+	private listHeadsInit: Boolean = false;
 	constructor(slots: Slots){
 		this.slots = slots;
 		this.offset = 0;
@@ -62,12 +67,17 @@ export class VisibleInventory implements DisplayableInventory{
 	}
 
 	public addDirectly(stack: ItemStack, index?: number): Ref<ItemStack>{
-		return this.slots.addStackDirectly(stack, index);
+		const r = this.slots.addStackDirectly(stack, index);
+		// adding an item *always* inits list heads, even if you're bumped up into mCount 0
+		this.listHeadsInit = true;
+		return r;
 	}
 
 	// return newly added ref, or lastAdded if no new slots are added
 	public addWhenReload(stack: ItemStack, lastAdded: Ref<ItemStack> | undefined, flags: GameFlags): Ref<ItemStack> | undefined {
 		const newlyAdded = this.slots.add(stack, true, this.getMCount(), flags);
+		// if something was added, tab data is present and de-dupe checks can work
+		this.listHeadsInit ||= newlyAdded !== undefined;
 		const mostRecentlyAdded = newlyAdded || lastAdded;
 		if(mostRecentlyAdded){
 			// set cook data
@@ -79,7 +89,8 @@ export class VisibleInventory implements DisplayableInventory{
 	}
 
 	public addInGame(stack: ItemStack, flags: GameFlags) {
-		this.slots.add(stack, false, this.getMCount(), flags);
+		this.slots.add(stack, false, this.getMCount(), flags, this.listHeadsInit);
+		this.listHeadsInit = true;
 	}
 
 	// Standard remove: magically remove item from inventory
@@ -99,7 +110,7 @@ export class VisibleInventory implements DisplayableInventory{
 	}
 
 	public equip(item: Item, slot: number) {
-		this.slots.equip(item, slot, this.getMCount());
+		this.slots.equip(item, slot);
 	}
 
 	public unequip(item: Item, slot: number) {
@@ -197,7 +208,7 @@ export class VisibleInventory implements DisplayableInventory{
 	}
 
 	public swap(i: number, j: number) {
-		this.slots.swap(i,j);
+		this.slots.swap(i, j);
 	}
 
 	// public countItems(type: ItemType, countAnyWeapon: boolean): number {

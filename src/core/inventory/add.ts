@@ -14,10 +14,16 @@ export const add = (
 	stack: ItemStack,
 	reloading: boolean,
 	mCount: number | null,
-	flags: GameFlags
+	flags: GameFlags,
+	listHeadsInit?: Boolean
 ): Ref<ItemStack> | undefined => {
 	if(mCount === null){
 		mCount = core.length;
+	}
+
+	if (listHeadsInit === undefined) {
+		// in most cases, assume tab data exists
+		listHeadsInit = true;
 	}
 
 	// This flag controls some behavior, like tab limit check
@@ -30,9 +36,10 @@ export const add = (
 		let shouldCapAt999 = true;
 		// [confirmed] kinak: for arrow, if there's "no arrow", 999 check is skipped
 		if(stack.item.type === ItemType.Arrow){
-			// [needs confirm] index will be -1 if mCount is 0, since we won't find any tabs, so arrow check is skipped regardless
-			const [firstArrowItem] = core.findFirstTab(ItemType.Arrow, mCount);
-			if(!firstArrowItem){
+			// index will be -1 if list heads are not init, since we won't find any tabs, so arrow check is skipped regardless
+			const [firstArrowItem] = core.findFirstTab(ItemType.Arrow, listHeadsInit);
+			// 999 cap does also not apply for arrows if the first stack is 0x
+			if(!firstArrowItem || firstArrowItem.get().count == 0){
 				shouldCapAt999 = false;
 			}
 		}
@@ -44,7 +51,9 @@ export const add = (
 			const ithItem = core.get(i);
 			if(ithItem.item === stack.item){
 				if(reloading){
-					if(shouldCapAt999){
+					// 999 caps are disregarded, even for materials, for the first load item
+					// (they *always* apply for mats obtained in-game)
+					if(shouldCapAt999 && (listHeadsInit || !reloading)){
 						if(ithItem.count + stack.count > 999){
 							// [confirmed] do not add new stack during loading save, if it would exceed 999
 							return undefined;
@@ -68,7 +77,7 @@ export const add = (
 	// [confirmed] this check does not happen if mCount = 0 (which is covered by the nested if, because 0 mCount will return no tabs)
 	// unrepeatable check: if a (unstackable) key item or master sword already exists in the first tab, do not add
 	if(!stack.item.repeatable) {// only unstackable key items and master sword is not repeatable
-		const [firstTabItem, firstTabIndex] = core.findFirstTab(stack.item.type, mCount);
+		const [firstTabItem, firstTabIndex] = core.findFirstTab(stack.item.type, listHeadsInit);
 		if(firstTabItem){
 			for(let i=firstTabIndex;i<core.length && core.get(i).item.type === stack.item.type;i++){
 				if(core.get(i).item === stack.item){
@@ -101,7 +110,7 @@ export const add = (
 				if(stack.item.type === ItemType.Arrow){
 					// unequip other arrows
 					// [needs confirm] only first tab?
-					const [firstTabItem, firstTabIndex] = core.findFirstTab(ItemType.Arrow, mCount);
+					const [firstTabItem, firstTabIndex] = core.findFirstTab(ItemType.Arrow, listHeadsInit);
 					if(firstTabItem){
 						for(let i = firstTabIndex;i<core.length && core.get(i).item.type === ItemType.Arrow;i++){
 							core.modifySlot(i, {equipped: false});
