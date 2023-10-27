@@ -147,6 +147,7 @@ export class SlotsCore {
 
 	public removeAll(types: ItemType[]) {
 		inPlaceFilter(this.internalSlots, ref=>!types.includes(ref.get().item.type));
+		this.removeZeroStackExceptArrows();
 	}
 
 	public unequipAll(types: ItemType[]) {
