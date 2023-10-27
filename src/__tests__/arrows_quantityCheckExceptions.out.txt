@@ -1,0 +1,8 @@
+Init 2200 arrow [equip] 2200 arrow [equip] 1 apple 1 slate
+Save
+
+Init 1 axe 1 axe 1 bow [life=2200, equip] 0 arrow [equip] 1 slate
+Save as A1
+
+Init 0 arrow [equip] 2200 arrow [equip] 2200 arrow[equip] 1 apple 1 slate
+Break 2 slots

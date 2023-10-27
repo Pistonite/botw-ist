@@ -1,9 +1,12 @@
 ignore = [
     "CNAME",
+    "build/",
     "scripts/base-lint/",
     "scripts/typescript-layers/",
     ".log",
-    ".ttf"
+    ".ttf",
+    ".DS_Store",
+    "Thumbs.db"
 ]
 
 windows = []

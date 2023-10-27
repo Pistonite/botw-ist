@@ -485,7 +485,7 @@ describe("core/inventory/add", ()=>{
 
 				expect(slots.getView()).toEqualItemStacks([existing1, existing2, existing3]); // not sorted
 			});
-			it("should skip arrow 999 check for [bow, weapon, arrow] if mCount = 0", ()=>{
+			it("should skip arrow 999 check for [bow, weapon, arrow] if no tabs", ()=>{
 				const mockItem1 = createEquipmentMockItem("BowA", ItemType.Bow);
 				const mockItem2 = createEquipmentMockItem("WeaponA", ItemType.Weapon);
 				const mockItem3 = createArrowMockItem("ArrowA");
@@ -499,7 +499,7 @@ describe("core/inventory/add", ()=>{
 				];
 				const toAdd = createMaterialStack(mockItem3, 999);
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, toAdd, true, 0, TestFlags);
+				const addedSlot = add(slots, toAdd, true, 0, TestFlags, false);
 				expect(addedSlot?.get().equals(toAdd)).toBe(true);
 
 				expect(slots.getView()).toEqualItemStacks([existing1, existing2, existing3, toAdd]); // not sorted
@@ -520,7 +520,7 @@ describe("core/inventory/add", ()=>{
 
 				expect(slots.getView()).toEqualItemStacks([existing3, toAdd, existing2]); // sorted
 			});
-			it("should add unrepeatable if mCount = 0", ()=>{
+			it("should add unrepeatable if no tab data", ()=>{
 				const mockItem1 = createKeyMockItem("KeyA");
 				const mockItem2 = createMaterialMockItem("ItemA");
 				const existing1 = createMaterialStack(mockItem1, 1);
@@ -530,11 +530,115 @@ describe("core/inventory/add", ()=>{
 					existing2,
 				];
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, existing1, true, 0, TestFlags);
+				const addedSlot = add(slots, existing1, true, 0, TestFlags, false);
 				expect(addedSlot?.get().equals(existing1)).toBe(true);
 
 				expect(slots.getView()).toEqualItemStacks([existing1, existing2, existing1]); // not sorted
 			});
+			it("should skip unrepeatable if tab data present", ()=>{
+				const mockKey1 = createKeyMockItem("KeyA");
+				const existing1 = createMaterialStack(mockKey1, 1);
+				const stacks: ItemStack[] = [
+					existing1,
+				];
+				const slots = new SlotsCore(stacks);
+				const addedSlot = add(slots, existing1, true, 0, TestFlags, true);
+				expect(addedSlot === undefined).toBe(true);
+			});
+			it("should allow arrows >999 when reloading if existing stack is 0", ()=>{
+				const mockWeaponItem = createEquipmentMockItem("WeaponA", ItemType.Weapon);
+				const mockArrowItem = createArrowMockItem("ArrowA");
+				const highArrowStack = createMaterialStack(mockArrowItem, 4000);
+				const stacks: ItemStack[] = [
+					createEquipmentStack(mockWeaponItem, 10, false),
+					createMaterialStack(mockArrowItem, 0),
+				];
+				const slots = new SlotsCore(stacks);
+				const addedSlot = add(slots, highArrowStack, true, null, TestFlags, true);
+				expect(addedSlot?.get().equals(highArrowStack)).toBe(true);
+			});
+			it("should allow duped arrows >999 when reloading save stack is first item", ()=>{
+				const mockWeaponItem = createEquipmentMockItem("WeaponA", ItemType.Weapon);
+				const mockArrowItem = createArrowMockItem("ArrowA");
+				const highArrowStack = createMaterialStack(mockArrowItem, 4000);
+				const stacks: ItemStack[] = [
+					createEquipmentStack(mockWeaponItem, 10, false),
+					createMaterialStack(mockArrowItem, 5000),
+				];
+				const slots = new SlotsCore(stacks);
+				const addedSlot = add(slots, highArrowStack, true, null, TestFlags, false);
+				expect(addedSlot?.get().equals(highArrowStack)).toBe(true);
+			});
+			it("should allow key item dupes when tab data is missing", ()=>{
+				const mockWeaponItem = createEquipmentMockItem("WeaponA", ItemType.Weapon);
+				const mockKeyItem = createKeyMockItem("KeyA");
+				const stackWeapon = createEquipmentStack(mockWeaponItem, 10, false);
+				const existingKeyItem = mockKeyItem.defaultStack;
+				const acquiredKeyItem = mockKeyItem.defaultStack;
+				const stacks: ItemStack[] = [
+					stackWeapon,
+					existingKeyItem,
+				];
+				const slots = new SlotsCore(stacks);
+				const addedSlot = add(slots, acquiredKeyItem, true, -1, TestFlags, false);
+				expect(addedSlot?.get().equals(acquiredKeyItem)).toBe(true);
+				expect(slots.getView()).toEqualItemStacks([
+					stackWeapon,
+					existingKeyItem,
+					acquiredKeyItem,
+				]);
+			});
+			it("should allow 1000+ materials in two stacks if tab data is missing", ()=>{
+				const mockMaterial = createMaterialMockItem("MaterialA");
+				const transferredStack = createMaterialStack(mockMaterial, 999);
+				const gameDataLeadingStack = createMaterialStack(mockMaterial, 500);
+				const stacks: ItemStack[] = [
+					transferredStack,
+				];
+				const slots = new SlotsCore(stacks);
+				const addedSlot = add(slots, gameDataLeadingStack, true, 0, TestFlags, false);
+				expect(addedSlot?.get().equals(gameDataLeadingStack)).toBe(true);
+				expect(slots.getView()).toEqualItemStacks([
+					transferredStack,
+					gameDataLeadingStack,
+				]);
+			});
 		});
+		describe("reloading = false", ()=>{
+			it("should allow key item dupes in-game when tab data is missing", ()=>{
+				const mockWeaponItem = createEquipmentMockItem("WeaponA", ItemType.Weapon);
+				const mockKeyItem = createKeyMockItem("KeyA");
+				const stackWeapon = createEquipmentStack(mockWeaponItem, 10, false);
+				const existingKeyItem = mockKeyItem.defaultStack;
+				const acquiredKeyItem = mockKeyItem.defaultStack;
+				const stacks: ItemStack[] = [
+					stackWeapon,
+					existingKeyItem,
+				];
+				const slots = new SlotsCore(stacks);
+				const addedSlot = add(slots, acquiredKeyItem, false, -1, TestFlags, false);
+				expect(addedSlot?.get().equals(acquiredKeyItem)).toBe(true);
+				expect(slots.getView()).toEqualItemStacks([
+					stackWeapon,
+					existingKeyItem,
+					acquiredKeyItem,
+				]);
+			});
+			it("should prevent key item dupes in-game after non-0 mCount sync", ()=>{
+				const mockWeaponItem = createEquipmentMockItem("WeaponA", ItemType.Weapon);
+				const mockKeyItem = createKeyMockItem("KeyA");
+				const stackWeapon = createEquipmentStack(mockWeaponItem, 10, false);
+				const existingKeyItem = mockKeyItem.defaultStack;
+				const acquiredKeyItem = mockKeyItem.defaultStack;
+				const stacks: ItemStack[] = [
+					stackWeapon,
+					existingKeyItem,
+				];
+				const slots = new SlotsCore(stacks);
+				const addedSlot = add(slots, acquiredKeyItem, false, 0, TestFlags, true);
+				expect(addedSlot).toBe(undefined);
+				expect(slots.getView()).toEqualItemStacks(stacks);
+			});
+		})
 	});
 });

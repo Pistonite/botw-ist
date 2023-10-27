@@ -37,7 +37,7 @@ If you want to introduce new commands, most of the heavy lifting for the parsers
 ### PR
 Do before PR:
 - Lint your code
-  1. `npm run lint-base`: This checks that your files have unix line endings, have no traling whitespaces, and have exactly 1 trailing new line. This might fail if you have auto crlf on git for windows. If you do, **please make sure the remote still has UNIX line ending so the PR automation passes**
+  1. `npm run lint-base`: This checks that your files have unix line endings, have no traling whitespaces, and have exactly 1 trailing new line. This might fail if you have auto crlf on git for windows. If you do, **please make sure the remote still has UNIX line ending so the PR automation passes**. To debug unexpected errors, run again as `npm run lint-base -- -v` to see which file is failing
   - `npm run layer`: This makes sure your imports follow the layer rules (and are sorted correctly)
     - `src/data` is the bottom layer. It cannot depend on core or ui components
     - `src/core` is the core logic. It can depend on data, but not ui
