@@ -44,7 +44,7 @@ export class Slots {
 
 	// Add something to inventory in game
 	// returns the added slot ref, or undefined if no new slot is added
-	public add(stack: ItemStack, reloading: boolean, mCount: number | null, flags: GameFlags, listHeadsInit?: Boolean): Ref<ItemStack> | undefined {
+	public add(stack: ItemStack, reloading: boolean, mCount: number | null, flags: GameFlags, listHeadsInit?: boolean): Ref<ItemStack> | undefined {
 		return add(this.core, stack, reloading, mCount, flags, listHeadsInit);
 	}
 

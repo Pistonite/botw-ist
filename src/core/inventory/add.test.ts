@@ -639,6 +639,6 @@ describe("core/inventory/add", ()=>{
 				expect(addedSlot).toBe(undefined);
 				expect(slots.getView()).toEqualItemStacks(stacks);
 			});
-		})
+		});
 	});
 });

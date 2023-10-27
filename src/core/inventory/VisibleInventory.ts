@@ -18,7 +18,7 @@ export class VisibleInventory implements DisplayableInventory{
 	// data is empty, which causes de-dupe checks to always be bypassed. Instead of simulating mListHeads
 	// fully, we just indicate whether to pretend tabs are empty or not.
 	// https://discord.com/channels/872350971383140422/1000992154140811325/1131656653561925824
-	private listHeadsInit: Boolean = false;
+	private listHeadsInit = false;
 	constructor(slots: Slots){
 		this.slots = slots;
 		this.offset = 0;
