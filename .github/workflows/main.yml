@@ -59,7 +59,7 @@ jobs:
     - name: Build | React Build
       run: npm run build
     - name: Build | Upload Artifact
-      uses: actions/upload-pages-artifact@v1.0.4
+      uses: actions/upload-pages-artifact@v2
       with:
         path: build
         retention-days: 30
@@ -80,4 +80,4 @@ jobs:
     steps:
     - name: Deploy | GitHub Pages
       id: deployment
-      uses: actions/deploy-pages@v1
+      uses: actions/deploy-pages@v2
