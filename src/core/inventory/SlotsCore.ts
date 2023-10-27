@@ -159,7 +159,7 @@ export class SlotsCore {
 		});
 	}
 
-	public findFirstTab(type: ItemType, listHeadsInit: Boolean): [Ref<ItemStack> | undefined, number] {
+	public findFirstTab(type: ItemType, listHeadsInit: boolean): [Ref<ItemStack> | undefined, number] {
 		// figure out the tabs first
 		const tabArray: [ItemTab, number][] = [];
 		const tabAdded = new Set();

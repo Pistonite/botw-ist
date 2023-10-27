@@ -15,7 +15,7 @@ export const add = (
 	reloading: boolean,
 	mCount: number | null,
 	flags: GameFlags,
-	listHeadsInit?: Boolean
+	listHeadsInit?: boolean
 ): Ref<ItemStack> | undefined => {
 	if(mCount === null){
 		mCount = core.length;
