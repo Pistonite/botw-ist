@@ -3,8 +3,15 @@ Simulator for Inventory Slot Transfer in BOTW
 
 Visit the app at https://ist.itntpiston.app
 
+**Notice**
+
+Bug fixes and improvements for the current simulation core will not be continued because of the intrinsic difficulty with the core
+to accurately simulate the remaining cases. A rewrite of the core is planned but not actively worked on at the moment. Please still open issues
+if you want, but don't expect it to be fixed until much later
+
+
 ## Contribute
-Contributions are welcomed. For small issues, you can open PRs directly. For big issues contact me on discord iTNTPiston#5339
+Contributions are welcomed. For small issues, you can open PRs directly. For big issues contact me on discord (username: Pistonight)
 
 ## Development
 ### Clone Repo
