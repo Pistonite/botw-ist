@@ -129,7 +129,7 @@ describe("core/inventory/add", ()=>{
 			it("should NOT add new arrow when same arrow is present, >999", ()=>{
 				const mockItem1 = createArrowMockItem("ArrowA");
 				const stackToAdd = createMaterialStack(mockItem1, 400);
-				
+
 				const stacks: ItemStack[] = [];
 				const slots = new SlotsCore(stacks);
 				const alreadyHaveStack = createMaterialStack(mockItem1, 600);

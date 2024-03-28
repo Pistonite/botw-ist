@@ -88,7 +88,7 @@ export class VisibleInventory implements DisplayableInventory{
 		if(stack.item.type === ItemType.Food){
 			newlyAdded.set(newlyAdded.get().transferExDataFrom(cookDataSource));
 		}
-		
+
 		return newlyAdded;
 	}
 
