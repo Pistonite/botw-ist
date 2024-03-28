@@ -9,12 +9,17 @@ import { GameFlags } from "./types";
 // reloading: if adding the stack is during reload
 // mCount: the mCount before adding the stack (if null, length of entire inventory is used)
 // flags: other flags
+// lastAdded: reference to the last added item (mLastAddedItem)
+//
+// Returns: what the next lastAdded should be. It will be reference to the newly added item if added succesfully,
+// or most of the times lastAdded that's passed in if the item fails to load. In certain cases, undefined is returned.
 export const add = (
 	core: SlotsCore,
 	stack: ItemStack,
 	reloading: boolean,
 	mCount: number | null,
 	flags: GameFlags,
+	lastAdded: Ref<ItemStack> | undefined,
 	listHeadsInit?: boolean
 ): Ref<ItemStack> | undefined => {
 	if(mCount === null){
@@ -56,7 +61,7 @@ export const add = (
 					if(shouldCapAt999 && (listHeadsInit || !reloading)){
 						if(ithItem.count + stack.count > 999){
 							// [confirmed] do not add new stack during loading save, if it would exceed 999
-							return undefined;
+							return lastAdded;
 						}
 					}
 				}else{
@@ -66,7 +71,7 @@ export const add = (
 						core.modifySlot(i, {count: newCount});
 					}
 
-					return undefined;
+					return lastAdded;
 				}
 				treatAsAddingNewSlot = false;
 				break;
@@ -82,7 +87,18 @@ export const add = (
 			for(let i=firstTabIndex;i<core.length && core.get(i).item.type === stack.item.type;i++){
 				if(core.get(i).item === stack.item){
 					// Found the key item/master sword, do not add
-					return undefined;
+
+					// special case for master sword, where if the sword to add is broken, lastAdded is cleared
+					// https://github.com/zeldaret/botw/blob/f62a7262665befb193f9f1986524622f036bb128/src/Game/UI/uiPauseMenuDataMgr.cpp#L882C1-L903C6
+					// notice the logic is not duplicate 1:1 here
+					if (stack.item.type === ItemType.Weapon && stack.item.id === "MasterSword") {
+						if (stack.durability <= 0) {
+							core.modifySlot(i, { durability: 0, equipped: false });
+							return undefined;
+						}
+					}
+
+					return lastAdded;
 				}
 			}
 			// past first (maybe empty) tab, check pass
@@ -140,7 +156,7 @@ export const add = (
 			}
 			const current = core.getView().filter(s=>s.item.tabOrArrow===stack.item.tabOrArrow).length;
 			if(current >= max){
-				return undefined;
+				return lastAdded;
 			}
 		}
 	}

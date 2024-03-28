@@ -121,6 +121,6 @@ export const remove = (core: SlotsCore, stackToRemove: ItemStack, count: number 
 		core.removeRefs(slotsToDelete);
 	}
 
-	core.removeZeroStackExceptArrows();
+	core.removeZeroStackExceptArrowsAndMasterSword();
 	return removedCount;
 };

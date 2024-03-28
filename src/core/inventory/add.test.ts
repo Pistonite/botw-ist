@@ -20,7 +20,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(stackToAdd)).toBe(true);
 				const expected = [stackToAdd.modify({})];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -33,7 +33,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd);
 				const expected = [alreadyHaveStack, stackToAdd.modify({})];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -45,7 +45,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd);
 				const expected = [alreadyHaveStack, stackToAdd.modify({})];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -57,7 +57,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd);
 				const expected = [alreadyHaveStack, stackToAdd.modify({})];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -69,7 +69,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd);
 				const expected = [alreadyHaveStack, stackToAdd.modify({})];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -81,11 +81,11 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				let addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				let addedSlot = add(slots, stackToAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd);
 				const expected = [alreadyHaveStack, stackToAdd];
 				expect(slots.getView()).toEqualItemStacks(expected);
-				addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				addedSlot = add(slots, stackToAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd);
 				expect(slots.getView()).toEqualItemStacks([alreadyHaveStack, stackToAdd, stackToAdd]);
 
@@ -97,7 +97,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, true, null, TestFlags, undefined);
 				expect(addedSlot).toBe(undefined);
 				const expected = [alreadyHaveStack];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -109,7 +109,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd);
 				const expected = [alreadyHaveStack, stackToAdd];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -121,7 +121,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(undefined);
 				const expected = [alreadyHaveStack];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -129,13 +129,14 @@ describe("core/inventory/add", ()=>{
 			it("should NOT add new arrow when same arrow is present, >999", ()=>{
 				const mockItem1 = createArrowMockItem("ArrowA");
 				const stackToAdd = createMaterialStack(mockItem1, 400);
-				const alreadyHaveStack = createMaterialStack(mockItem1, 600);
-				const stacks: ItemStack[] = [alreadyHaveStack];
 
+				const stacks: ItemStack[] = [];
 				const slots = new SlotsCore(stacks);
+				const alreadyHaveStack = createMaterialStack(mockItem1, 600);
+				const alreadyHaveStackRef = slots.addSlot(alreadyHaveStack, null);
 
-				const addedSlot = add(slots, stackToAdd, true, null, TestFlags);
-				expect(addedSlot?.get()).toBe(undefined);
+				const addedSlot = add(slots, stackToAdd, true, null, TestFlags, alreadyHaveStackRef);
+				expect(addedSlot).toBe(alreadyHaveStackRef);
 				const expected = [alreadyHaveStack];
 				expect(slots.getView()).toEqualItemStacks(expected);
 			});
@@ -145,7 +146,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd);
 				const expected = [stackToAdd];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -154,12 +155,13 @@ describe("core/inventory/add", ()=>{
 				const mockItem1 = createArrowMockItem("ArrowA");
 				const stackToAdd = createMaterialStack(mockItem1, 99999);
 				const mockItem2 = createArrowMockItem("ArrowB");
-				const alreadyHaveStack = createMaterialStack(mockItem2, 600);
 
-				const stacks: ItemStack[] = [alreadyHaveStack];
+				const stacks: ItemStack[] = [];
 				const slots = new SlotsCore(stacks);
+				const alreadyHaveStack = createMaterialStack(mockItem2, 600);
+				const alreadyHaveStackRef = slots.addSlot(alreadyHaveStack, null);
 
-				const addedSlot = add(slots, stackToAdd, true, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, true, null, TestFlags, alreadyHaveStackRef);
 				expect(addedSlot?.get()).toBe(stackToAdd);
 				const expected = [alreadyHaveStack,stackToAdd];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -174,13 +176,26 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [];
 				const slots = new SlotsCore(stacks);
 
-				let addedSlot = add(slots, stackToAdd1, true, null, TestFlags);
+				let addedSlot = add(slots, stackToAdd1, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd1);
-				addedSlot = add(slots, stackToAdd2, true, null, TestFlags);
+				addedSlot = add(slots, stackToAdd2, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd2);
-				addedSlot = add(slots, stackToAdd3, true, null, TestFlags);
+				addedSlot = add(slots, stackToAdd3, true, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd3);
 				const expected = [stackToAdd1,stackToAdd2,stackToAdd3];
+				expect(slots.getView()).toEqualItemStacks(expected);
+			});
+			it("should reset broken master sword and unequip", () => {
+				const mockItem = createEquipmentMockItem("MasterSword", ItemType.Weapon);
+				const stackToAdd1 = createEquipmentStack(mockItem, 1, true);
+				const stackToAdd2 = createEquipmentStack(mockItem, 0, true);
+				const stacks: ItemStack[] = [];
+				const slots = new SlotsCore(stacks);
+				const stackToAdd1Ref = add(slots, stackToAdd1, true, null, TestFlags, undefined);
+				expect(stackToAdd1Ref?.get()).toBe(stackToAdd1);
+				const stackToAdd2Ref = add(slots, stackToAdd2, true, null, TestFlags, stackToAdd1Ref);
+				expect(stackToAdd2Ref).toBe(undefined);
+				const expected = [stackToAdd1.modify({durability: 0, equipped: false})];
 				expect(slots.getView()).toEqualItemStacks(expected);
 			});
 		});
@@ -192,7 +207,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd);
 				const expected = [stackToAdd.modify({})];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -205,7 +220,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				expect(addedSlot?.get()).toBe(stackToAdd);
 				const expected = [alreadyHaveStack, stackToAdd.modify({})];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -217,7 +232,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				expect(addedSlot).toBe(undefined);
 				const expected = [alreadyHaveStack.modify({count: 2})];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -230,7 +245,7 @@ describe("core/inventory/add", ()=>{
 				const slots = new SlotsCore(stacks);
 
 				const expected = [alreadyHaveStack.modify({count: 2})];
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				expect(addedSlot).toBe(undefined);// merged
 
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -242,7 +257,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				const expected = [alreadyHaveStack.modify({count: 998})];
 				expect(addedSlot).toBe(undefined); // merged
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -254,7 +269,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				const expected = [alreadyHaveStack.modify({count: 999})];
 				expect(addedSlot).toBe(undefined); // merged
 
@@ -267,7 +282,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				const expected = [alreadyHaveStack.modify({count: 999})];
 				expect(addedSlot).toBe(undefined);
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -279,7 +294,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(stackToAdd)).toBe(true);
 				const expected = [alreadyHaveStack, stackToAdd];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -291,7 +306,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				expect(addedSlot).toBe(undefined);
 				const expected = [alreadyHaveStack];
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -303,7 +318,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				const expected = [alreadyHaveStack.modify({count: 999})];
 				expect(addedSlot).toBe(undefined);
 				expect(slots.getView()).toEqualItemStacks(expected, equalsExceptEquip);
@@ -314,7 +329,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				const expected = [stackToAdd];
 				expect(addedSlot?.get().equalsExcept(expected[0], "equipped")).toBe(true);
 				expect(slots.getView()).toEqualItemStacks(expected, equalsExceptEquip);
@@ -328,7 +343,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [alreadyHaveStack];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				const expected = [alreadyHaveStack,stackToAdd];
 				expect(addedSlot?.get().equalsExcept(expected[1], "equipped")).toBe(true);
 				expect(slots.getView()).toEqualItemStacks(expected, equalsExceptEquip);
@@ -345,11 +360,11 @@ describe("core/inventory/add", ()=>{
 
 				const expected = [stackToAdd1.modify({equipped:true}),stackToAdd2.modify({equipped:true}),stackToAdd3.modify({equipped:true})];
 
-				let addedSlot = add(slots, stackToAdd1, false, null, TestFlags);
+				let addedSlot = add(slots, stackToAdd1, false, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(expected[0])).toBe(true);
-				addedSlot = add(slots, stackToAdd2, false, null, TestFlags);
+				addedSlot = add(slots, stackToAdd2, false, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(expected[1])).toBe(true);
-				addedSlot = add(slots, stackToAdd3, false, null, TestFlags);
+				addedSlot = add(slots, stackToAdd3, false, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(expected[2])).toBe(true);
 				expect(slots.getView()).toEqualItemStacks(expected);
 			});
@@ -368,11 +383,11 @@ describe("core/inventory/add", ()=>{
 
 				const expected = [existing1,stackToAdd1.modify({equipped:true}),existing2,stackToAdd2.modify({equipped:true}),existing3,stackToAdd3.modify({equipped:true})];
 
-				let addedSlot = add(slots, stackToAdd1, false, null, TestFlags);
+				let addedSlot = add(slots, stackToAdd1, false, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(expected[1])).toBe(true);
-				addedSlot = add(slots, stackToAdd2, false, null, TestFlags);
+				addedSlot = add(slots, stackToAdd2, false, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(expected[3])).toBe(true);
-				addedSlot = add(slots, stackToAdd3, false, null, TestFlags);
+				addedSlot = add(slots, stackToAdd3, false, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(expected[5])).toBe(true);
 
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -384,7 +399,7 @@ describe("core/inventory/add", ()=>{
 				const stacks: ItemStack[] = [];
 				const slots = new SlotsCore(stacks);
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				const expected = [stackToAdd.modify({equipped:true})];
 				expect(addedSlot?.get().equals(expected[0])).toBe(true);
 
@@ -400,7 +415,7 @@ describe("core/inventory/add", ()=>{
 				const slots = new SlotsCore(stacks);
 				const expected = [existing.modify({equipped:false}), stackToAdd.modify({equipped:true})];
 
-				const addedSlot = add(slots, stackToAdd, false, null, TestFlags);
+				const addedSlot = add(slots, stackToAdd, false, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(expected[1])).toBe(true);
 
 				expect(slots.getView()).toEqualItemStacks(expected);
@@ -418,13 +433,13 @@ describe("core/inventory/add", ()=>{
 				const stackToAdd2 = createMaterialStack(mockItem3, 1);
 				const stacks: ItemStack[] = [existing];
 				const slots = new SlotsCore(stacks);
-				let addedSlot = add(slots, stackToAdd1, true, -1, TestFlags); // 0 now
+				let addedSlot = add(slots, stackToAdd1, true, -1, TestFlags, undefined); // 0 now
 				expect(addedSlot?.get().equals(stackToAdd1)).toBe(true);
 				expect(slots.getView()).toEqualItemStacks([existing, stackToAdd1]);
-				addedSlot = add(slots, stackToAdd2, true, 0, TestFlags); // 1 now
+				addedSlot = add(slots, stackToAdd2, true, 0, TestFlags, undefined); // 1 now
 				expect(addedSlot?.get().equals(stackToAdd2)).toBe(true);
 				expect(slots.getView()).toEqualItemStacks([existing, stackToAdd1, stackToAdd2]);
-				addedSlot = add(slots, stackToAdd1, true, 1, TestFlags); // 2 now, sort
+				addedSlot = add(slots, stackToAdd1, true, 1, TestFlags, undefined); // 2 now, sort
 				expect(addedSlot?.get().equals(stackToAdd1)).toBe(true);
 				expect(slots.getView()).toEqualItemStacks([stackToAdd1, stackToAdd1, existing, stackToAdd2]);
 			});
@@ -441,7 +456,7 @@ describe("core/inventory/add", ()=>{
 					existing3
 				];
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, existing3, true, null, TestFlags);
+				const addedSlot = add(slots, existing3, true, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(existing3)).toBe(true);
 
 				expect(slots.getView()).toEqualItemStacks([existing2, existing1, existing3, existing3]); // sorted
@@ -461,7 +476,7 @@ describe("core/inventory/add", ()=>{
 				];
 				const toAdd = createMaterialStack(mockItem3, 999);
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, toAdd, true, null, TestFlags);
+				const addedSlot = add(slots, toAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(toAdd)).toBe(true);
 
 				expect(slots.getView()).toEqualItemStacks([existing1, existing3, toAdd, existing2]); // sorted
@@ -480,7 +495,7 @@ describe("core/inventory/add", ()=>{
 				];
 				const toAdd = createMaterialStack(mockItem3, 999);
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, toAdd, true, null, TestFlags);
+				const addedSlot = add(slots, toAdd, true, null, TestFlags, undefined);
 				expect(addedSlot).toBe(undefined);
 
 				expect(slots.getView()).toEqualItemStacks([existing1, existing2, existing3]); // not sorted
@@ -499,7 +514,7 @@ describe("core/inventory/add", ()=>{
 				];
 				const toAdd = createMaterialStack(mockItem3, 999);
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, toAdd, true, 0, TestFlags, false);
+				const addedSlot = add(slots, toAdd, true, 0, TestFlags, undefined, false);
 				expect(addedSlot?.get().equals(toAdd)).toBe(true);
 
 				expect(slots.getView()).toEqualItemStacks([existing1, existing2, existing3, toAdd]); // not sorted
@@ -515,7 +530,7 @@ describe("core/inventory/add", ()=>{
 				];
 				const toAdd = createMaterialStack(mockItem3, 999);
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, toAdd, true, null, TestFlags);
+				const addedSlot = add(slots, toAdd, true, null, TestFlags, undefined);
 				expect(addedSlot?.get().equals(toAdd)).toBe(true);
 
 				expect(slots.getView()).toEqualItemStacks([existing3, toAdd, existing2]); // sorted
@@ -530,7 +545,7 @@ describe("core/inventory/add", ()=>{
 					existing2,
 				];
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, existing1, true, 0, TestFlags, false);
+				const addedSlot = add(slots, existing1, true, 0, TestFlags, undefined, false);
 				expect(addedSlot?.get().equals(existing1)).toBe(true);
 
 				expect(slots.getView()).toEqualItemStacks([existing1, existing2, existing1]); // not sorted
@@ -542,7 +557,7 @@ describe("core/inventory/add", ()=>{
 					existing1,
 				];
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, existing1, true, 0, TestFlags, true);
+				const addedSlot = add(slots, existing1, true, 0, TestFlags, undefined, true);
 				expect(addedSlot === undefined).toBe(true);
 			});
 			it("should allow arrows >999 when reloading if existing stack is 0", ()=>{
@@ -554,7 +569,7 @@ describe("core/inventory/add", ()=>{
 					createMaterialStack(mockArrowItem, 0),
 				];
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, highArrowStack, true, null, TestFlags, true);
+				const addedSlot = add(slots, highArrowStack, true, null, TestFlags, undefined, true);
 				expect(addedSlot?.get().equals(highArrowStack)).toBe(true);
 			});
 			it("should allow duped arrows >999 when reloading save stack is first item", ()=>{
@@ -566,7 +581,7 @@ describe("core/inventory/add", ()=>{
 					createMaterialStack(mockArrowItem, 5000),
 				];
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, highArrowStack, true, null, TestFlags, false);
+				const addedSlot = add(slots, highArrowStack, true, null, TestFlags, undefined, false);
 				expect(addedSlot?.get().equals(highArrowStack)).toBe(true);
 			});
 			it("should allow key item dupes when tab data is missing", ()=>{
@@ -580,7 +595,7 @@ describe("core/inventory/add", ()=>{
 					existingKeyItem,
 				];
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, acquiredKeyItem, true, -1, TestFlags, false);
+				const addedSlot = add(slots, acquiredKeyItem, true, -1, TestFlags, undefined, false);
 				expect(addedSlot?.get().equals(acquiredKeyItem)).toBe(true);
 				expect(slots.getView()).toEqualItemStacks([
 					stackWeapon,
@@ -596,7 +611,7 @@ describe("core/inventory/add", ()=>{
 					transferredStack,
 				];
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, gameDataLeadingStack, true, 0, TestFlags, false);
+				const addedSlot = add(slots, gameDataLeadingStack, true, 0, TestFlags, undefined, false);
 				expect(addedSlot?.get().equals(gameDataLeadingStack)).toBe(true);
 				expect(slots.getView()).toEqualItemStacks([
 					transferredStack,
@@ -616,7 +631,7 @@ describe("core/inventory/add", ()=>{
 					existingKeyItem,
 				];
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, acquiredKeyItem, false, -1, TestFlags, false);
+				const addedSlot = add(slots, acquiredKeyItem, false, -1, TestFlags, undefined, false);
 				expect(addedSlot?.get().equals(acquiredKeyItem)).toBe(true);
 				expect(slots.getView()).toEqualItemStacks([
 					stackWeapon,
@@ -635,7 +650,7 @@ describe("core/inventory/add", ()=>{
 					existingKeyItem,
 				];
 				const slots = new SlotsCore(stacks);
-				const addedSlot = add(slots, acquiredKeyItem, false, 0, TestFlags, true);
+				const addedSlot = add(slots, acquiredKeyItem, false, 0, TestFlags, undefined, true);
 				expect(addedSlot).toBe(undefined);
 				expect(slots.getView()).toEqualItemStacks(stacks);
 			});

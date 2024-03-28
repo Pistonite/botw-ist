@@ -1,0 +1,7 @@
+init 1 boko spear[equip] 1 master sword[life=0] 1200 normal arrows[equip] 999 seared steak 1 sheika slate 4 orb 1 glider 1 fried wild green[price=57, hp=28] 1 soldier bow[equip] 999 charred pepper 1 potlid[equip]
+save
+init 1 boko spear 1 soldier bow[equip] 5 arrow[equip] 1 potlid[life=100] 1 potlid 4 pepper 3 shroom 3 apple 3 herb 1 wood 1 seared steak 1 slate 4 orb 1 glider
+save as hc autosave
+init 1 boko spear 1 soldier bow[equip, price=57, hp=28] 1 soldier bow[equip] 15 normal arrow[equip] 5 normal arrow[equip] 5 normal arrow[equip] 1 potlid[equip] 1 potlid[life=100] 1 potlid 4 pepper 3 shroom 3 apple 3 herb 1 wood 1 mighty elixir 1 seared steak 1 slate 4 orb 1 glider 4 orb 4 orb 4 orb
+init gamedata 1 boko spear 1 soldier bow[equip] 5 arrow[equip] 1 potlid[life=100] 1 potlid 4 pepper 999 shroom 3 apple 3 herb 1 wood 1 seared steak 1 slate 4 orb 1 glider
+break 10 slots
