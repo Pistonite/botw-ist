@@ -74,22 +74,26 @@ export class VisibleInventory implements DisplayableInventory{
 	}
 
 	// return newly added ref, or lastAdded if no new slots are added
-	public addWhenReload(stack: ItemStack, lastAdded: Ref<ItemStack> | undefined, flags: GameFlags): Ref<ItemStack> | undefined {
-		const newlyAdded = this.slots.add(stack, true, this.getMCount(), flags, this.listHeadsInit);
-		// if something was added, tab data is present and de-dupe checks can work
-		this.listHeadsInit ||= newlyAdded !== undefined;
-		const mostRecentlyAdded = newlyAdded || lastAdded;
-		if(mostRecentlyAdded){
-			// set cook data
-			if(stack.item.type === ItemType.Food){
-				mostRecentlyAdded.set(mostRecentlyAdded.get().transferExDataFrom(stack));
-			}
+	// in certain cases, undefined is returned, corresponding to setting mLastAddedItem to nullptr
+	// for example, when a broken master sword fails to load in
+	public addWhenReload(stack: ItemStack, cookDataSource: ItemStack, lastAdded: Ref<ItemStack> | undefined, flags: GameFlags): Ref<ItemStack> | undefined {
+		const newlyAdded = this.slots.add(stack, true, this.getMCount(), flags, lastAdded, this.listHeadsInit);
+		if (!newlyAdded) {
+			return newlyAdded;
 		}
-		return mostRecentlyAdded;
+		// if something was added, tab data is present and de-dupe checks can work
+		this.listHeadsInit = true;
+
+		// set cook data
+		if(stack.item.type === ItemType.Food){
+			newlyAdded.set(newlyAdded.get().transferExDataFrom(cookDataSource));
+		}
+		
+		return newlyAdded;
 	}
 
 	public addInGame(stack: ItemStack, flags: GameFlags) {
-		this.slots.add(stack, false, this.getMCount(), flags, this.listHeadsInit);
+		this.slots.add(stack, false, this.getMCount(), flags, undefined, this.listHeadsInit);
 		this.listHeadsInit = true;
 	}
 

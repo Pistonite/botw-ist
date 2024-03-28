@@ -96,10 +96,10 @@ export class SlotsCore {
 		return newStackRef;
 	}
 
-	public removeZeroStackExceptArrows(): void {
+	public removeZeroStackExceptArrowsAndMasterSword(): void {
 		inPlaceFilter(this.internalSlots, (ref)=>{
 			const {item, count} = ref.get();
-			return item.type === ItemType.Arrow || count > 0;
+			return item.type === ItemType.Arrow || item.id === "MasterSword" || count > 0;
 		});
 	}
 
@@ -147,7 +147,7 @@ export class SlotsCore {
 
 	public removeAll(types: ItemType[]) {
 		inPlaceFilter(this.internalSlots, ref=>!types.includes(ref.get().item.type));
-		this.removeZeroStackExceptArrows();
+		this.removeZeroStackExceptArrowsAndMasterSword();
 	}
 
 	public unequipAll(types: ItemType[]) {

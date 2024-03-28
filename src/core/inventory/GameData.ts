@@ -1,4 +1,4 @@
-import { ItemStack } from "data/item";
+import { ItemStack, ItemType } from "data/item";
 import { Ref } from "data/util";
 import { SlotDisplayForItemStack } from "./SlotDisplayForItemStack";
 import { Slots } from "./Slots";
@@ -69,8 +69,20 @@ export class GameData implements DisplayableInventory {
 
 	public addAllToPouchOnReload(pouch: VisibleInventory) {
 		let lastAdded: Ref<ItemStack> | undefined = undefined;
-		this.slots.getView().forEach(stack=>{
-			lastAdded = pouch.addWhenReload(stack, lastAdded, this.flags);
+
+		const allItems = this.slots.getView();
+		// This is needed to simulate a case where the game load a food, but does not increment
+		// the food counter, causing food data to be offset
+		const allFood = allItems.filter(stack=>stack.item.type === ItemType.Food);
+		let nextFood = 0;
+
+		allItems.forEach(stack=>{
+			const isFood = stack.item.type === ItemType.Food;
+			const cookDataSource = isFood ? allFood[nextFood] : stack;
+			lastAdded = pouch.addWhenReload(stack, cookDataSource, lastAdded, this.flags);
+			if (lastAdded && isFood) {
+				nextFood++;
+			}
 		});
 	}
 
