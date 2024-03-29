@@ -314,4 +314,9 @@ export class SimulationState {
 		this.pouch.swap(i,j);
 	}
 
+	public inaccuratelySortMaterials() {
+		this.pouch.inaccuratelySortMaterials();
+		this.syncGameDataWithPouch();
+	}
+
 }

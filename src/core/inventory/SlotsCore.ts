@@ -41,6 +41,17 @@ export class SlotsCore {
 		this.internalSlots[j] = temp;
 	}
 
+	public sortMaterials() {
+		stableSort(this.internalSlots, (a,b)=>{
+			const itemA = a.get().item;
+			const itemB = b.get().item;
+			if(itemA.type === ItemType.Material && itemB.type === ItemType.Material){
+				return itemA.sortOrder - itemB.sortOrder;
+			}
+			return 0;
+		});
+	}
+
 	// Used to decide if game data is synced with inventory
 	// Two Slots are equal if the ItemStacks equal, including metadata equality
 	public equals(other: SlotsCore): boolean {

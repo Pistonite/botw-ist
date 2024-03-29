@@ -59,6 +59,7 @@ SuperCommand =>
  SuperCommandAddSlot        # ! add slot ... [from slot X]
  | SuperCommandRemoveSlot   # ! remove slot X
  | SuperCommandSwap         # ! swap i j
+ | SuperCommandSortMaterial # ! sort material
  | SuperCommandForCommand
 ---
 
@@ -92,6 +93,7 @@ CommandHas => <has> LiteralMaybeNot ValueValue OneOrMoreIdentifiers
 SuperCommandAddSlot => <!> <add> LiteralSlot ArgumentOneOrMoreItemsMaybeFromSlot
 SuperCommandRemoveSlot => <!> <remove> LiteralSlot Integer
 SuperCommandSwap => <!> <swap> Integer Integer
+SuperCommandSortMaterial => <!> <sort> LiteralMaterial
 
 ## Literals
 LiteralInitialize => <initialize> | <init>
