@@ -110,7 +110,7 @@ const parseCommand: ParseFunction<ASTCommand> = (tokens) => {
 	return ParseResultFail;
 };
 export type ASTCommand = ASTCommandInitGameData | ASTCommandInitialize | ASTCommandCook | ASTCommandCookCrit | ASTCommandAdd | ASTCommandPickUp | ASTCommandRemoveAll | ASTCommandRemove | ASTCommandDrop | ASTCommandEat | ASTCommandDnp | ASTCommandEquip | ASTCommandUnequipAll | ASTCommandUnequip | ASTCommandShoot | ASTCommandEnterTrial | ASTCommandExitTrial | ASTCommandWriteMetadata | ASTCommandSave | ASTCommandReload | ASTCommandBreakSlots | ASTCommandCloseGame | ASTCommandSyncGameData | ASTCommandHas;
-// (derivation union) SuperCommand => SuperCommandAddSlot | SuperCommandRemoveSlot | SuperCommandSwap | SuperCommandForCommand
+// (derivation union) SuperCommand => SuperCommandAddSlot | SuperCommandRemoveSlot | SuperCommandSwap | SuperCommandSortMaterial | SuperCommandForCommand
 const parseSuperCommand: ParseFunction<ASTSuperCommand> = (tokens) => {
 	let result: ASTSuperCommand | undefined;
 	result = parseSuperCommandAddSlot(tokens);
@@ -119,11 +119,13 @@ const parseSuperCommand: ParseFunction<ASTSuperCommand> = (tokens) => {
 	if(result !== ParseResultFail) return result;
 	result = parseSuperCommandSwap(tokens);
 	if(result !== ParseResultFail) return result;
+	result = parseSuperCommandSortMaterial(tokens);
+	if(result !== ParseResultFail) return result;
 	result = parseSuperCommandForCommand(tokens);
 	if(result !== ParseResultFail) return result;
 	return ParseResultFail;
 };
-export type ASTSuperCommand = ASTSuperCommandAddSlot | ASTSuperCommandRemoveSlot | ASTSuperCommandSwap | ASTSuperCommandForCommand;
+export type ASTSuperCommand = ASTSuperCommandAddSlot | ASTSuperCommandRemoveSlot | ASTSuperCommandSwap | ASTSuperCommandSortMaterial | ASTSuperCommandForCommand;
 // (derivation) CommandInitGameData => LiteralInitialize <gamedata> ZeroOrMoreItems
 export const isCommandInitGameData = <T extends {type: string}>(node: T | ASTCommandInitGameData | null): node is ASTCommandInitGameData => Boolean(node && node.type === "ASTCommandInitGameData");
 export type ASTCommandInitGameData = {
@@ -1087,6 +1089,45 @@ const parseSuperCommandSwap: ParseFunction<ASTSuperCommandSwap> = (tokens) => {
 		literal1,
 		mInteger2,
 		mInteger3,
+	};
+};
+// (derivation) SuperCommandSortMaterial => <!> <sort> LiteralMaterial
+export const isSuperCommandSortMaterial = <T extends {type: string}>(node: T | ASTSuperCommandSortMaterial | null): node is ASTSuperCommandSortMaterial => Boolean(node && node.type === "ASTSuperCommandSortMaterial");
+export type ASTSuperCommandSortMaterial = {
+	readonly type: "ASTSuperCommandSortMaterial",
+	readonly literal0: readonly [number, number],
+	readonly literal1: readonly [number, number],
+	readonly mLiteralMaterial2: ASTLiteralMaterial,
+};
+const parseSuperCommandSortMaterial: ParseFunction<ASTSuperCommandSortMaterial> = (tokens) => {
+	let rangeTokens: Token[];
+	tokens.push();
+	rangeTokens = [];
+	if(tokens.consume(rangeTokens) !== "!") {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	const literal0 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
+	rangeTokens = [];
+	if(tokens.consume(rangeTokens) !== "sort") {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	const literal1 = [rangeTokens[0].start, rangeTokens[rangeTokens.length-1].end] as const;
+	const mLiteralMaterial2 = parseLiteralMaterial(tokens);
+	if(mLiteralMaterial2 === ParseResultFail) {
+		tokens.restore();
+		tokens.pop();
+		return ParseResultFail;
+	}
+	tokens.pop();
+	return {
+		type: "ASTSuperCommandSortMaterial",
+		literal0,
+		literal1,
+		mLiteralMaterial2,
 	};
 };
 // (literal union) LiteralInitialize => <initialize> | <init>

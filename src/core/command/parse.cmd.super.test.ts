@@ -1,10 +1,17 @@
 import { createMockItems, createMockItemSearch } from "data/test";
 import { ItemStackArg } from "./ItemStackArg";
-import { SuperCommandAddSlot, SuperCommandSwap } from "./parse.cmd.super";
+import { SuperCommandAddSlot, SuperCommandSortMaterial, SuperCommandSwap } from "./parse.cmd.super";
 
 describe("core/command/parse.super !swap", ()=>{
 	it("parses", ()=>{
 		expect("!swap 5 8").toParseIntoCommand(undefined, new SuperCommandSwap(5, 8, []));
+	});
+
+});
+
+describe("core/command/parse.super !sort material", ()=>{
+	it("parses", ()=>{
+		expect("!sort material").toParseIntoCommand(undefined, new SuperCommandSortMaterial([]));
 	});
 
 });

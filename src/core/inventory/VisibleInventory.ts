@@ -217,6 +217,10 @@ export class VisibleInventory implements DisplayableInventory{
 		this.slots.swap(i, j);
 	}
 
+	public inaccuratelySortMaterials() {
+		this.slots.inaccuratelySortMaterials();
+	}
+
 	// public countItems(type: ItemType, countAnyWeapon: boolean): number {
 	// 	// [confirmed] iTNTPiston: when mcount === 0, nothing is checked (only when =0)
 	// 	const mcount = this.getMCount();

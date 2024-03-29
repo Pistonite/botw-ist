@@ -1,7 +1,7 @@
 import { SimulationState } from "core/SimulationState";
 import { arrayEqual } from "data/util";
 import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
-import { ASTSuperCommandAddSlot, ASTSuperCommandSwap } from "./ast";
+import { ASTSuperCommandAddSlot, ASTSuperCommandSortMaterial, ASTSuperCommandSwap } from "./ast";
 import { AbstractProperCommand, Command } from "./command";
 import { parseASTInteger } from "./parse.basis";
 import { parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot } from "./parse.clause.with.fromslot";
@@ -68,4 +68,26 @@ export const parseASTSuperCommandAddSlot: ParserItem<ASTSuperCommandAddSlot, Sup
 		([stacks, slot], codeBlocks)=>new SuperCommandAddSlot(stacks, slot, codeBlocks),
 		codeBlocks
 	);
+};
+
+export class SuperCommandSortMaterial extends AbstractProperCommand  {
+
+	constructor(codeBlocks: CodeBlockTree){
+		super(codeBlocks);
+	}
+	public execute(state: SimulationState): void {
+		state.inaccuratelySortMaterials();
+	}
+	public equals(other: Command): boolean {
+		return other instanceof SuperCommandSortMaterial;
+	}
+}
+
+export const parseASTSuperCommandSortMaterial: ParserSafe<ASTSuperCommandSortMaterial, SuperCommandSortMaterial> = (ast) => {
+	const codeBlocks: CodeBlockTree = [
+		codeBlockFromRange(ast.literal0, "keyword.super"),
+		codeBlockFromRange(ast.literal1, "keyword.super"),
+	];
+
+	return [new SuperCommandSortMaterial(codeBlocks), codeBlocks];
 };

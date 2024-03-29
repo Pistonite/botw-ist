@@ -26,6 +26,7 @@ import {
 	isCommandWriteMetadata,
 	isSuperCommandAddSlot,
 	isSuperCommandForCommand,
+	isSuperCommandSortMaterial,
 	isSuperCommandSwap
 } from "./ast";
 import { CmdErr, Command, CommandHint, CommandNop, ErrorCommand } from "./command";
@@ -40,7 +41,7 @@ import { parseASTCommandReload } from "./parse.cmd.reload";
 import { parseASTCommandDnp, parseASTCommandDrop, parseASTCommandEat, parseASTCommandRemove, parseASTCommandRemoveAll } from "./parse.cmd.remove";
 import { parseASTCommandSave } from "./parse.cmd.save";
 import { parseASTCommandShoot } from "./parse.cmd.shoot";
-import { parseASTSuperCommandAddSlot, parseASTSuperCommandSwap } from "./parse.cmd.super";
+import { parseASTSuperCommandAddSlot, parseASTSuperCommandSortMaterial, parseASTSuperCommandSwap } from "./parse.cmd.super";
 import { parseASTCommandSyncGameData } from "./parse.cmd.sync";
 import { parseASTCommandEnterTrial, parseASTCommandExitTrial } from "./parse.cmd.trial";
 import { parseASTCommandWriteMetadata } from "./parse.cmd.write";
@@ -270,6 +271,9 @@ const parseASTTarget: ParserItem<ASTTarget, Command> = (ast, search) => {
 	}
 	if(isSuperCommandSwap(ast)){
 		return withNoError(parseASTSuperCommandSwap(ast));
+	}
+	if(isSuperCommandSortMaterial(ast)){
+		return withNoError(parseASTSuperCommandSortMaterial(ast));
 	}
 
 	if(isSuperCommandForCommand(ast)){

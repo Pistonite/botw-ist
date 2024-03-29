@@ -177,4 +177,8 @@ export class Slots {
 		this.core.swap(i, j);
 	}
 
+	public inaccuratelySortMaterials() {
+		this.core.sortMaterials();
+	}
+
 }
