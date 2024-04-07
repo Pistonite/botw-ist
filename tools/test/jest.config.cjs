@@ -30,7 +30,5 @@ module.exports = {
             },
         ],
     },
-    transformIgnorePatterns: [
-        "/node_modules/(?!yaml)"
-    ],
+    transformIgnorePatterns: ["/node_modules/(?!yaml)"],
 };

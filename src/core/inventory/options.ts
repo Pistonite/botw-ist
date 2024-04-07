@@ -1,5 +1,5 @@
 export type RemoveOption = {
-    startSlot: number,
-    forceStackableFood: boolean,
-    forceDeleteZeroSlot: boolean
+    startSlot: number;
+    forceStackableFood: boolean;
+    forceDeleteZeroSlot: boolean;
 };

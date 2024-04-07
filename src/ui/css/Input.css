@@ -19,7 +19,8 @@ div.MultiLineInput {
     height: 300px;
 }
 
-div.MainInput textarea:disabled, input.MainInput:disabled {
+div.MainInput textarea:disabled,
+input.MainInput:disabled {
     color: #888888;
     background-color: #333333;
     border-color: #888888;
@@ -27,7 +28,8 @@ div.MainInput textarea:disabled, input.MainInput:disabled {
     text-shadow: none;
 }
 
-.MainInput:focus-visible, textarea:focus-visible {
+.MainInput:focus-visible,
+textarea:focus-visible {
     outline: none;
     border-color: #eeeeee;
     box-shadow: 0 0 5px #eeeeee;
