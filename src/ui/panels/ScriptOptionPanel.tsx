@@ -3,7 +3,7 @@ import { Button, Category, Control, Description, Label } from "ui/components";
 import { Page, CommandTextArea } from "ui/surfaces";
 import { MemoizedParser } from "core/command";
 import { useRuntime } from "core/runtime";
-import { saveAs } from "data/FileSaver";
+import { saveAs } from "data/saveAs";
 import { useSearchItem } from "data/item";
 import { serialize } from "data/storage";
 import { arrayShallowEqual } from "data/util";

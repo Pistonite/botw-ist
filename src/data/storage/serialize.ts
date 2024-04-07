@@ -1,3 +1,4 @@
+import { Buffer } from "buffer/";
 import { gzip, ungzip } from "pako";
 
 const ZLIB_OPTIONS = {

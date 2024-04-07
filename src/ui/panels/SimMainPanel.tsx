@@ -1,4 +1,4 @@
-import InfoOutlined from "@mui/icons-material/InfoOutlined";
+import { Info24Regular } from "@fluentui/react-icons";
 import clsx from "clsx";
 import React, { useState } from "react";
 import { Section, DoubleItemSlot, ItemList } from "ui/components";
@@ -31,7 +31,7 @@ export const SimMainPanel: React.FC<SimMainPanelProps> = ({
 	const inventoryInfo =
 		<span style={{marginLeft: 8}}>
 			<Tooltip title={simulationState.getInventoryInfo()}>
-				<InfoOutlined />
+				<Info24Regular />
 			</Tooltip>
 		</span>;
 
