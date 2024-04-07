@@ -24,9 +24,7 @@ tasks:
 
   check:
     desc: Check for errors
-    deps: [ast]
     cmds:
-    - npx tsc
     - task: eslint
       vars:
         ESLINT_ARGS: ""
@@ -53,6 +51,7 @@ tasks:
     desc: Build production bundle
     deps: [ast]
     cmds:
+    - npx tsc
     - npx vite build
 
   eslint:
