@@ -20,15 +20,15 @@ weapon:
       durability: 18
   - SpringLoadedHammer:
       durability: 80
-  - TravelersSword:
+  - TravelersSword:travelersword:
       durability: 20
-  - SoldiersBroadsword:
+  - SoldiersBroadsword:soldiersword:
       durability: 23
-  - KnightsBroadsword:
+  - KnightsBroadsword:knightsword:
       durability: 27
-  - RoyalBroadsword:
+  - RoyalBroadsword:royalswordrsword:
       durability: 36
-  - ForestDwellersSword:
+  - ForestDwellersSword:fdsword:
       durability: 27
   - ZoraSword:
       durability: 27
@@ -46,7 +46,7 @@ weapon:
       durability: 54
   - RustyBroadsword:
       durability: 8
-  - RoyalGuardsSword:
+  - RoyalGuardsSword:rgsword:
       durability: 14
   - Flameblade:
       durability: 36
@@ -123,13 +123,13 @@ weapon:
       durability: 40
   - GiantBoomerang:
       durability: 40
-  - TravelersClaymore:
+  - TravelersClaymore:travelerclaymore:
       durability: 20
-  - SoldiersClaymore:
+  - SoldiersClaymore:soldierclaymore:
       durability: 25
-  - KnightsClaymore:
+  - KnightsClaymore:knightclaymore:
       durability: 30
-  - RoyalClaymore:
+  - RoyalClaymore:rclaymore:
       durability: 40
   - SilverLongsword:
       durability: 30
@@ -143,13 +143,13 @@ weapon:
       durability: 30
   - EightfoldLongblade:
       durability: 25
-  - EdgeOfDuality:
+  - EdgeOfDuality:eod:
       durability: 35
   - AncientBladesaw:
       durability: 50
   - RustyClaymore:
       durability: 10
-  - RoyalGuardsClaymore:
+  - RoyalGuardsClaymore:rgclaymore:
       durability: 15
   - GreatFlameblade:
       durability: 50
@@ -208,7 +208,7 @@ weapon:
       durability: 40
   - RoyalHalberd:
       durability: 50
-  - ForestDwellersSpear:
+  - ForestDwellersSpear:fdspear:
       durability: 35
   - ZoraSpear:
       durability: 40
@@ -231,7 +231,7 @@ weapon:
       durability: 50
   - RustyHalberd:
       durability: 15
-  - RoyalGuardsSpear:
+  - RoyalGuardsSpear:rgspear:
       durability: 15
   - Flamespear:
       durability: 50
@@ -280,15 +280,15 @@ bow:
       durability: 100
   - WoodenBow:
       durability: 20
-  - TravelersBow:
+  - TravelersBow:travellerbow:
       durability: 22
-  - SoldiersBow:
+  - SoldiersBow:soldierbow:
       durability: 36
-  - KnightsBow:
+  - KnightsBow:knightbow:
       durability: 48
-  - RoyalBow:
+  - RoyalBow:rbow:
       durability: 60
-  - ForestDwellersBow:
+  - ForestDwellersBow:fdbow:
       durability: 35
       bowMultishot: 3
   - SilverBow:
@@ -297,7 +297,7 @@ bow:
       durability: 30
   - FalconBow:
       durability: 50
-  - GreatEagleBow:
+  - GreatEagleBow:gebow:
       durability: 60
       bowMultishot: 3
   - GoldenBow:
@@ -308,7 +308,7 @@ bow:
       bowZoom: true
   - AncientBow:
       durability: 120
-  - RoyalGuardsBow:
+  - RoyalGuardsBow:rgbow:
       durability: 20
   - TwilightBow:
       durability: 100
@@ -370,9 +370,9 @@ shield:
       durability: 16
   - KnightsShield:
       durability: 23
-  - RoyalShield:
+  - RoyalShield:rshield:
       durability: 29
-  - ForestDwellersShield:
+  - ForestDwellersShield:fdshield:
       durability: 18
   - SilverShield:
       durability: 20
@@ -390,7 +390,7 @@ shield:
       durability: 32
   - RustyShield:
       durability: 16
-  - RoyalGuardsShield:
+  - RoyalGuardsShield:rgshield:
       durability: 14
   - HerosShield:
       durability: 90
