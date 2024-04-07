@@ -27,11 +27,16 @@ tasks:
     deps: [ast]
     cmds:
     - npx tsc
+    - task: eslint
+      vars:
+        ESLINT_ARGS: ""
 
   fix:
     desc: Fix errors
     cmds:
-    - echo "Fix not available yet"
+    - task: eslint
+      vars: 
+        ESLINT_ARGS: --fix
 
   test:
     desc: Run tests (Jest arguments apply)
@@ -43,3 +48,7 @@ tasks:
     deps: [ast]
     cmds:
     - npx vite build
+
+  eslint:
+    cmds:
+    - npx eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --cache {{.ESLINT_ARGS}}
