@@ -38,7 +38,7 @@ export const LanguageProvider: React.FC<PropsWithChildren> = ({children}) => {
 		if(!(key in flatLangMap)){
 			if(!UnlocalizedSet.has(key)){
 				// in the future, need to add fallback logic (i.e. on the spot load the default lang file and return new translation later)
-				console.warn(`Unlocalized: ${key}`); // eslint-disable-line no-console
+				console.warn(`Unlocalized: ${key}`);
 				UnlocalizedSet.add(key);
 			}
 
