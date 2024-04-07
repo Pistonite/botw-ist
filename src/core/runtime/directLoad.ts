@@ -1,10 +1,10 @@
-import { parse } from "query-string";
+import queryString from "query-string";
 import { useEffect } from "react";
 import { deserialize } from "data/storage";
 
 export const useDirectLoader = (setTemporaryCommandData: (data: string[]|null)=>void, setEditing: (editing: boolean)=>void) => {
 	useEffect(()=>{
-		const query = parse(window.location.search);
+		const query = queryString.parse(window.location.search);
 		try {
 			const commandTextToLoad = deserialize(query);
 

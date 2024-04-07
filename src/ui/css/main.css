@@ -1,11 +1,11 @@
 @font-face {
 	font-family: CalamitySans;
-	src: url("assets/Calamity-Regular.otf") format("opentype");
+	src: url("assets/font/Calamity-Regular.otf") format("opentype");
 }
 
 @font-face {
 	font-family: DejaVuSansMono;
-	src: url("assets/DejaVuSansMono.ttf") format("truetype");
+	src: url("assets/font/DejaVuSansMono.ttf") format("truetype");
 }
 
 body {

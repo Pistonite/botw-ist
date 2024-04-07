@@ -1,4 +1,4 @@
-import produce from "immer";
+import { produce } from "immer";
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import { CommandItem } from "ui/components";

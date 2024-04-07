@@ -16,53 +16,59 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - name: Setup | Checkout
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+    - uses: arduino/setup-task@v2
       with:
-        submodules: recursive
-    - name: Setup | Python 3.10
-      uses: actions/setup-python@v3.0.0
+        version: 3.x
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
-    - name: Setup | toml
-      uses: BSFishy/pip-action@v1
+        python-version: '3.11'
+    - uses: actions/setup-node@v4
       with:
-        packages: |
-          toml
-    - name: Setup | Node Install
-      run: npm ci
-    - name: Lint
-      run: |
-        npm run lint-base
-        npm run layer
-        npm run lint-ts
+        node-version: 18.x
+    - run: npm ci
+    - run: task check
 
   test:
     name: Test
     runs-on: ubuntu-latest
     steps:
-    - name: Setup | Checkout
-      uses: actions/checkout@v3
-    - name: Setup | Node Install
-      run: npm ci
-    - name: Test
-      run: npm run test-all -- --watchAll=false
+    - uses: actions/checkout@v4
+    - uses: arduino/setup-task@v2
+      with:
+        version: 3.x
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18.x
+    - run: npm ci
+    - run: task test
 
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: Setup | Checkout
-      uses: actions/checkout@v3
-    - name: Setup | Node Install
-      run: npm ci
-    - name: Build | React Build
-      run: npm run build
-    - name: Build | Upload Artifact
-      uses: actions/upload-pages-artifact@v2
+    - uses: actions/checkout@v4
+    - uses: arduino/setup-task@v2
       with:
-        path: build
-        retention-days: 30
+        version: 3.x
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18.x
+    - run: npm ci
+    - run: task build
+    - uses: actions/upload-pages-artifact@v3
+      with:
+        path: dist
+        retention-days: 3
 
   deploy:
     name: Deploy
@@ -78,6 +84,5 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy | GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v2
+    - id: deployment
+      uses: actions/deploy-pages@v4

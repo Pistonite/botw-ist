@@ -1,4 +1,4 @@
-import produce from "immer";
+import { produce } from "immer";
 import { useCallback } from "react";
 import { CommandItem, ColoredCodeBlocks, Section } from "ui/components";
 import { ContextMenuState } from "ui/types";

@@ -25,7 +25,7 @@ export const parseASTCommandShoot: Parser<ASTCommandShoot, CommandShootArrow> = 
 	const [amount, amountBlocks] = parseASTAmountOrAll(ast.mAmountOrAll1);
 	codeBlocks.push(amountBlocks);
 	codeBlocks.push(codeBlockFromRange(ast.mLiteralArrow2, "keyword.command"));
-	if(amount <= 0){
+	if(typeof amount != "string" && amount <= 0){
 		return [undefined, codeBlocks, "Must shoot at least 1 arrow"];
 	}
 	return [new CommandShootArrow(amount, codeBlocks), codeBlocks, ""];

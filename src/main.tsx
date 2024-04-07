@@ -6,7 +6,6 @@ import { RuntimeProvider } from "core/runtime";
 import { LanguageProvider } from "data/i18n";
 import { ItemProvider } from "data/item";
 import { StoreProvider } from "data/storage";
-import { reportWebVitalsAsync } from "data/web-vitals";
 import {App} from "./App";
 
 const root = ReactDOM.createRoot(
@@ -57,8 +56,3 @@ root.render(
 		</CatchCrash>
 	</React.StrictMode>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitalsAsync();

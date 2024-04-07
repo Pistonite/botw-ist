@@ -1,8 +1,8 @@
-import FileSaverFunction from "./FileSaver";
+import { saveAs as save } from "file-saver";
 
 export const saveAs = (content: string, filename: string): void =>{
 	const blob = new Blob([content], {
 		type: "text/plain;charset=utf-8"
 	});
-	FileSaverFunction(blob, filename);
+	save(blob, filename);
 };
