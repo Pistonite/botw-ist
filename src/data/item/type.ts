@@ -10,7 +10,7 @@ export enum ItemType {
     Material = 7,
     Food = 8,
     Key = 9,
-    Flag = -1 // flags in game data, not actual items. such as HasRitoSoulPlus
+    Flag = -1, // flags in game data, not actual items. such as HasRitoSoulPlus
 }
 
 // Which tab the item is in. These specifically matches ItemType in case we need it in the future
@@ -26,169 +26,168 @@ export enum ItemTab {
 }
 
 export const ItemMaxes = {
-	[ItemTab.None]: 0,
-	[ItemType.Weapon]: 20,
-	[ItemType.Bow]: 14,
-	[ItemType.Arrow]: 6,
-	[ItemType.Shield]: 20,
-	[ItemTab.Armor]: 100,
-	[ItemType.Material]: 160,
-	[ItemType.Food]: 60,
-	[ItemType.Key]: 40
+    [ItemTab.None]: 0,
+    [ItemType.Weapon]: 20,
+    [ItemType.Bow]: 14,
+    [ItemType.Arrow]: 6,
+    [ItemType.Shield]: 20,
+    [ItemTab.Armor]: 100,
+    [ItemType.Material]: 160,
+    [ItemType.Food]: 60,
+    [ItemType.Key]: 40,
 } as const;
 
 export const iterateItemTabs = (): ItemTab[] => [
-	ItemTab.Weapon,
-	ItemTab.Bow,
-	ItemTab.Shield,
-	ItemTab.Armor,
-	ItemTab.Material,
-	ItemTab.Food,
-	ItemTab.Key
+    ItemTab.Weapon,
+    ItemTab.Bow,
+    ItemTab.Shield,
+    ItemTab.Armor,
+    ItemTab.Material,
+    ItemTab.Food,
+    ItemTab.Key,
 ];
 
 export const getTabFromType = (type: ItemType): ItemTab => {
-	switch(type){
-		case ItemType.Weapon:
-			return ItemTab.Weapon;
-		case ItemType.Bow:
-		case ItemType.Arrow:
-			return ItemTab.Bow;
-		case ItemType.Shield:
-			return ItemTab.Shield;
-		case ItemType.ArmorUpper:
-		case ItemType.ArmorMiddle:
-		case ItemType.ArmorLower:
-			return ItemTab.Armor;
-		case ItemType.Material:
-			return ItemTab.Material;
-		case ItemType.Food:
-			return ItemTab.Food;
-		case ItemType.Key:
-			return ItemTab.Key;
-		default:
-			return ItemTab.None;
-	}
+    switch (type) {
+        case ItemType.Weapon:
+            return ItemTab.Weapon;
+        case ItemType.Bow:
+        case ItemType.Arrow:
+            return ItemTab.Bow;
+        case ItemType.Shield:
+            return ItemTab.Shield;
+        case ItemType.ArmorUpper:
+        case ItemType.ArmorMiddle:
+        case ItemType.ArmorLower:
+            return ItemTab.Armor;
+        case ItemType.Material:
+            return ItemTab.Material;
+        case ItemType.Food:
+            return ItemTab.Food;
+        case ItemType.Key:
+            return ItemTab.Key;
+        default:
+            return ItemTab.None;
+    }
 };
 export interface Item {
     // The id of Item, which is its name in UpperCamelCase in English as it appears in English, with special characters like ' removed and + turned into Plus
     // The only special case is that the key item Thunderhelm is named ThunderHelmKey
-    readonly id: string,
+    readonly id: string;
     // key for localization
-    readonly localizationKey: string,
+    readonly localizationKey: string;
     // The type of the item
-    readonly type: ItemType
+    readonly type: ItemType;
     // if this is false, the item will not be added to pouch if one already exists
-    readonly repeatable: boolean,
+    readonly repeatable: boolean;
     // if the item is stackable
-    readonly stackable: boolean,
+    readonly stackable: boolean;
     // sort order of the item
-    readonly sortOrder: number,
+    readonly sortOrder: number;
     // which tab the item is in
-    readonly tab: ItemTab,
+    readonly tab: ItemTab;
     // which tab the item is in, but return arrow if it is arrow
-    readonly tabOrArrow: ItemTab | ItemType.Arrow,
+    readonly tabOrArrow: ItemTab | ItemType.Arrow;
     // webpack loaded image
-    readonly image: string,
+    readonly image: string;
     // animated image. If the item is not animated, this is the same as image
-    readonly animatedImage: string,
+    readonly animatedImage: string;
     // priority when matching items in the same category. Can be positive or negative
-    readonly priority: number,
+    readonly priority: number;
     // Default bow properties
-    readonly bowZoom: boolean,
-    readonly bowMultishot: number,
-    readonly bowRapidfire: number,
+    readonly bowZoom: boolean;
+    readonly bowMultishot: number;
+    readonly bowRapidfire: number;
     // if the item is an elixir
-    readonly isElixir: boolean,
+    readonly isElixir: boolean;
     // get item stack with this item and default metadata (durability and default state for weapons, cookdata for meals, etc)
-    readonly defaultStack: ItemStack,
+    readonly defaultStack: ItemStack;
 }
 
 // ItemStack is an immutable object holding information of a slot
 export interface ItemStack {
     // type of the item
-    readonly item: Item,
+    readonly item: Item;
     // how many in slot. for weapon, this is durability*100
-    readonly count: number,
+    readonly count: number;
     // durability of equipment. for material, this is count/100
-    readonly durability: number,
+    readonly durability: number;
     // if slot is equipped
-    readonly equipped: boolean,
+    readonly equipped: boolean;
     // Cook effect (None if not food)
-    readonly foodEffect: CookEffect,
+    readonly foodEffect: CookEffect;
     // Weapon modifier bits (None if not weapon)
-    readonly weaponModifier: number,
+    readonly weaponModifier: number;
     // Sell price (0 if not food)
-    readonly foodSellPrice: number,
+    readonly foodSellPrice: number;
     // Hearts recovered for food (0 if not food)
-    readonly foodHpRecover: number,
+    readonly foodHpRecover: number;
     // Weapon modifier value (0 if not weapon/bow/shield)
-    readonly weaponValue: number,
+    readonly weaponValue: number;
     // function to create a new stack based on this stack and option
-    modify(option: Partial<ItemStack>): ItemStack,
+    modify(option: Partial<ItemStack>): ItemStack;
     // function to create a new stack based on this stack and meta option
-    modifyMeta(metaOption: MetaModifyOption): ItemStack,
+    modifyMeta(metaOption: MetaModifyOption): ItemStack;
     // function to create a nwe stack based on this stack, but uses the other stack's extra data
-    transferExDataFrom(other: ItemStack): ItemStack,
+    transferExDataFrom(other: ItemStack): ItemStack;
     // check if 2 stacks are equal: same item, count, equipped and metadata
-    equals(other: ItemStack): boolean,
+    equals(other: ItemStack): boolean;
     // equals except the specified meta keys
-    equalsExcept(other: ItemStack, ...keys: (keyof ItemStack)[]): boolean,
+    equalsExcept(other: ItemStack, ...keys: (keyof ItemStack)[]): boolean;
 }
 
 export const dumpItemStack = (stack: ItemStack) => {
-
-	return {
-		item: {
-			id: stack.item.id
-		},
-		count: stack.count,
-		equipped: stack.equipped,
-		foodEffect: stack.foodEffect,
-		weaponModifier: stack.weaponModifier,
-		weaponValue: stack.weaponValue
-	};
+    return {
+        item: {
+            id: stack.item.id,
+        },
+        count: stack.count,
+        equipped: stack.equipped,
+        foodEffect: stack.foodEffect,
+        weaponModifier: stack.weaponModifier,
+        weaponValue: stack.weaponValue,
+    };
 };
 
-export type ItemIdMap = { [id: string]: Item};
+export type ItemIdMap = { [id: string]: Item };
 
 // the extra data on an item stack
 export type MetaModifyOption = Partial<{
     // life value, count or durability*100
-    life: number,
+    life: number;
     // equipped.
-    equip: boolean,
+    equip: boolean;
     // food sell price or weapon modifier
-    price: number,
+    price: number;
     // modifier hearts recover value
-    hp: number,
+    hp: number;
     // food effect
-    cookEffect: CookEffect
+    cookEffect: CookEffect;
 }>;
 
 // JS bitwise operations are 32 bits
 // but the numbers are 64 bits
 export const WeaponModifier = {
-	None: 0,
-	AttackUp: 1,
-	DurabilityUp: 1 << 1,
-	CriticalHit: 1 << 2,
-	LongThrow: 1 << 3,
-	MultiShot: 1 << 4,
-	Zoom: 1 << 5,
-	QuickShot: 1 << 6,
-	SurfMaster: 1 << 7,
-	GuardUp: 1 << 8,
-	Yellow: 1 << 31
+    None: 0,
+    AttackUp: 1,
+    DurabilityUp: 1 << 1,
+    CriticalHit: 1 << 2,
+    LongThrow: 1 << 3,
+    MultiShot: 1 << 4,
+    Zoom: 1 << 5,
+    QuickShot: 1 << 6,
+    SurfMaster: 1 << 7,
+    GuardUp: 1 << 8,
+    Yellow: 1 << 31,
 } as const;
 
 export const getWeaponModifierName = (modifier: number): string => {
-	for(const name in WeaponModifier){
-		if (WeaponModifier[name as keyof typeof WeaponModifier] === modifier){
-			return name;
-		}
-	}
-	return "";
+    for (const name in WeaponModifier) {
+        if (WeaponModifier[name as keyof typeof WeaponModifier] === modifier) {
+            return name;
+        }
+    }
+    return "";
 };
 
 export enum CookEffect {
@@ -196,7 +195,7 @@ export enum CookEffect {
     Chilly, // Alias: hotresist
     Spicy, // Alias: coldresist
     Electro,
-    Sneaky,// Alias: stealth
+    Sneaky, // Alias: stealth
     Energizing,
     Enduring,
     Hasty, // Alias: speed
@@ -207,25 +206,25 @@ export enum CookEffect {
 }
 
 export const iterateCookEffect = (): CookEffect[] => [
-	CookEffect.None,
-	CookEffect.Chilly,
-	CookEffect.Spicy,
-	CookEffect.Electro,
-	CookEffect.Sneaky,
-	CookEffect.Energizing,
-	CookEffect.Enduring,
-	CookEffect.Hasty,
-	CookEffect.Mighty,
-	CookEffect.Tough,
-	CookEffect.Fireproof,
-	CookEffect.Hearty,
+    CookEffect.None,
+    CookEffect.Chilly,
+    CookEffect.Spicy,
+    CookEffect.Electro,
+    CookEffect.Sneaky,
+    CookEffect.Energizing,
+    CookEffect.Enduring,
+    CookEffect.Hasty,
+    CookEffect.Mighty,
+    CookEffect.Tough,
+    CookEffect.Fireproof,
+    CookEffect.Hearty,
 ];
 
 export interface ExData {
-    hearts: number,
-    modifierValue: number,
-    sellPrice: number,
-    modifierType: number,
+    hearts: number;
+    modifierValue: number;
+    sellPrice: number;
+    modifierType: number;
     // [confirmed] cooking effect is also transferred as part of wmc
-    cookEffect: CookEffect,
+    cookEffect: CookEffect;
 }

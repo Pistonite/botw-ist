@@ -25,6 +25,7 @@ dist-ssr
 *.sw?
 
 debug.ast.json
+ast.generated.ts
 
 # Dev certificates
 /cert

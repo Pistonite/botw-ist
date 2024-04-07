@@ -8,8 +8,7 @@ div.Page {
     box-sizing: border-box;
 }
 
-div.PageContent{
+div.PageContent {
     padding: 0 10px;
     overflow-wrap: break-word;
-
 }

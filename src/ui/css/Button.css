@@ -51,7 +51,10 @@ button.Button.Action:hover {
     color: #b7f1ff;
     background-color: #004488;
     border-color: #0099ff;
-    text-shadow: 0 0 5px #3aa0ff,0 0 5px #3aa0ff,0 0 5px #3aa0ff;
+    text-shadow:
+        0 0 5px #3aa0ff,
+        0 0 5px #3aa0ff,
+        0 0 5px #3aa0ff;
     box-shadow: 0 0 5px #3aa0ff;
 }
 
@@ -59,7 +62,8 @@ button.Button.Action:active {
     background-color: #0099ff;
 }
 
-button.Button:disabled, button.Button.Action:disabled{
+button.Button:disabled,
+button.Button.Action:disabled {
     color: #888888;
     background-color: #333333;
     border-color: #888888;

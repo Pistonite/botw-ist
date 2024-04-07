@@ -1,6 +1,5 @@
 .CodeBlock {
     display: inline;
-
 }
 
 .CodeBlockLine {
@@ -11,15 +10,15 @@
 }
 
 .CommandColorKeywordCommand {
-    color: #DCDCAA !important;
+    color: #dcdcaa !important;
 }
 
 .CommandColorItemAmount {
-    color: #B5CEA8 !important;
+    color: #b5cea8 !important;
 }
 
 .CommandColorItemName {
-    color: #CE9178 !important;
+    color: #ce9178 !important;
 }
 
 .ComandColorDelimiter {
@@ -27,14 +26,14 @@
 }
 
 .CommandColorMetaValue {
-    color: #9CDCFE !important;
+    color: #9cdcfe !important;
 }
 .CommandColorMetaConst {
-    color: #4EC9B0 !important;
+    color: #4ec9b0 !important;
 }
 
 .CommandColorMetaKey {
-    color: #4FC1FF !important;
+    color: #4fc1ff !important;
 }
 
 .CommandColorUnknown {
@@ -42,34 +41,34 @@
 }
 
 .CommandColorSlotNumber {
-    color: #569CD6 !important;
+    color: #569cd6 !important;
 }
 
 .CommandColorKeywordOther {
-    color: #C586C0 !important;
+    color: #c586c0 !important;
 }
 
 .CommandColorIdentifierOther {
-    color: #9CDCFE !important;
+    color: #9cdcfe !important;
 }
 
 .CommandColorComment {
-    color: #6A9955 !important;
+    color: #6a9955 !important;
 }
 
 .CommandColorItemType {
-    color: #4EC9B0 !important;
+    color: #4ec9b0 !important;
 }
 
 .CommandColorKeywordSuper {
-    color: #D16969 !important;
+    color: #d16969 !important;
 }
 
 .CommandTextArea {
     width: 100%;
     max-height: 300px;
     font: 12pt DejaVuSansMono;
-    border:none;
+    border: none;
     box-sizing: border-box;
     position: absolute;
     top: 0;
@@ -80,7 +79,6 @@
     resize: none;
     overflow-x: hidden;
     overflow-y: auto;
-
 }
 .CommandTextArea.Large {
     font: 16pt DejaVuSansMono;
@@ -93,7 +91,6 @@ textarea.CommandTextArea {
     max-width: 100%;
     z-index: 1;
     height: 100%;
-
 }
 
 div.CommandInputRoot {
