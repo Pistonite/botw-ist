@@ -44,6 +44,7 @@ tasks:
 
   test:
     desc: Run tests (Jest arguments apply)
+    deps: [ast]
     cmds:
     - npx jest --config tools/test/jest.config.cjs {{.ARGS}}
 
