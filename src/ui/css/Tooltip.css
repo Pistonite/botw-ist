@@ -3,7 +3,7 @@ div.TooltipWindow {
     border: 2px solid #0088ff;
     color: #ffffff;
     padding: 5px;
-    background-image: url("assets/Background.png");
+    background-image: url("/assets/Background.png");
     white-space: nowrap;
 }
 

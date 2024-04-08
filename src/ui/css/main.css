@@ -1,11 +1,11 @@
 @font-face {
     font-family: CalamitySans;
-    src: url("assets/font/Calamity-Regular.otf") format("opentype");
+    src: url("/assets/font/Calamity-Regular.otf") format("opentype");
 }
 
 @font-face {
     font-family: DejaVuSansMono;
-    src: url("assets/font/DejaVuSansMono.ttf") format("truetype");
+    src: url("/assets/font/DejaVuSansMono.ttf") format("truetype");
 }
 
 body {
@@ -44,11 +44,11 @@ a:visited {
 }
 
 .SheikaBackground {
-    background-image: url("assets/Background.png");
+    background-image: url("/assets/Background.png");
 }
 
 .HatenoBackground {
-    background-image: url("assets/InGame.png");
+    background-image: url("/assets/InGame.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
