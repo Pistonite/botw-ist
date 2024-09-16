@@ -6,8 +6,7 @@ Visit the app at https://ist.itntpiston.app
 **Notice**
 
 Bug fixes and improvements for the current simulation core will not be continued because of the intrinsic difficulty with the core
-to accurately simulate the remaining cases. A rewrite of the core is planned but not actively worked on at the moment. Please still open issues
-if you want, but don't expect it to be fixed until much later
+to accurately simulate the remaining cases. A rewrite of the core is actively being developed and should be expected to be ready by June 2025
 
 
 ## Contribute
