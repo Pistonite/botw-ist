@@ -1,0 +1,6 @@
+[book]
+authors = ["Pistonight"]
+language = "en"
+multilingual = false
+src = "src"
+title = "The IST Simulator Manual"

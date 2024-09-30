@@ -39,7 +39,8 @@ export const ScriptOptionPanel: React.FC = () => {
     const directUrl = useMemo(() => {
         const serializedCommands = serialize(currentText.join("\n"));
         const query = new URLSearchParams(serializedCommands).toString();
-        return `${window.location.origin}/?${query}`;
+        // hard-coding the "legacy" path here
+        return `${window.location.origin}/legacy/?${query}`;
     }, [currentText]);
 
     const directUrlLength = directUrl.length;

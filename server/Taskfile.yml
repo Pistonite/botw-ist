@@ -1,0 +1,33 @@
+version: '3'
+
+tasks:
+  check:
+    desc: Check for errors
+    cmds:
+      - go vet
+      - mkdir -p build
+      - gofmt -l . > build/fmt.txt
+      - cmd: if ! [ -z $(cat build/fmt.txt) ]; then echo 'Run `go fmt` to format the following files:'; cat build/fmt.txt; exit 1; fi
+        silent: true
+
+  fix:
+    desc: Fix errors
+    cmds:
+      - go fmt
+
+  build:
+    desc: Build the server executable
+    cmds:
+      - mkdir -p build
+      - go build -o build/server
+
+  dev:
+    desc: Run the server in watch mode
+    env:
+      ISS_LEGACY_APP: ../legacy/dist
+      ISS_MANUAL_APP: ../manual/book
+      ISS_DEV: 1
+    cmds:
+      - cargo watch -C . -s 'go run .'
+
+

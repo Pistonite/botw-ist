@@ -21,4 +21,5 @@ const https = createHttpsConfig();
 export default defineConfig({
     plugins: [react(), tsconfigPaths(), yaml()],
     server: { https },
+    base: "/legacy/",
 });
