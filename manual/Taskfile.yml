@@ -1,0 +1,21 @@
+version: '3'
+
+tasks:
+  dev:
+    desc: Start mdbook in watch mode
+    cmds:
+      - task: build
+      - mdbook watch &
+      - live-server book -p 8081
+
+  build:
+    desc: (Re-)build the book
+    cmds:
+      - rm -rf book
+      - mdbook build
+
+  check:
+    desc: Check for errors
+    cmds:
+      - echo "no check for now"
+

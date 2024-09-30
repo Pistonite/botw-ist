@@ -3,9 +3,6 @@
     "private": true,
     "version": "0.0.0",
     "type": "module",
-    "scripts": {
-        "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
-    },
     "dependencies": {
         "@fluentui/react-icons": "^2.0.234",
         "buffer": "^6.0.3",
@@ -41,5 +38,9 @@
         "vite": "^5.2.0",
         "vite-tsconfig-paths": "^4.3.2",
         "yaml": "^2.4.1"
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "endOfLine": "auto"
     }
 }
