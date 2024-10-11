@@ -24,8 +24,11 @@ tasks:
   dev:
     desc: Run the server in watch mode
     env:
-      ISS_LEGACY_APP: ../legacy/dist
-      ISS_MANUAL_APP: ../manual/book
+      ISS_LOG: info
+      ISS_ADDRESS: https://pistonite.local:8000
+      ISS_CERT: ../cert
+      ISS_MANUAL_PATH: ../manual/book
+      # ISS_LEGACY_APP: ../legacy/dist
       ISS_DEV: 1
     cmds:
       - cargo watch -C . -s 'go run .'

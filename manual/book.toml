@@ -1,6 +1,12 @@
 [book]
+
 authors = ["Pistonight"]
 language = "en"
 multilingual = false
 src = "src"
 title = "The IST Simulator Manual"
+
+[output.html]
+site-url = "/manual/"
+smart-punctuation = true
+git-repository-url = "https://github.com/Pistonite/botw-ist"
