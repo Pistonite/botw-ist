@@ -34,6 +34,12 @@ func main() {
         MaxAge: 3600,
     })
 
+    DrawLine("Legacy", env.LegacyPath)
+    app.Static("/legacy", env.LegacyPath, fiber.Static {
+        Compress: true,
+        MaxAge: 3600,
+    })
+
     DrawEnd()
 
     addr := env.Address

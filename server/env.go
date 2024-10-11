@@ -19,6 +19,7 @@ type RawEnv struct {
     Address string `envvar:"ISS_ADDRESS"`
     Cert string `envvar:"ISS_CERT" default:""`
     ManualPath string `envvar:"ISS_MANUAL_PATH"`
+    LegacyPath string `envvar:"ISS_LEGACY_PATH"`
 }
 
 type EnvConfig struct {
@@ -28,6 +29,8 @@ type EnvConfig struct {
     LogColor bool
     // Path to the manual app
     ManualPath string
+    // Path to the legacy app
+    LegacyPath string
     // Addresses
     Address EnvAddress
 }
@@ -63,6 +66,7 @@ func ParseEnvConfig() *EnvConfig {
         LogLevel: raw.ParseLogLevel(),
         LogColor: raw.LogColor,
         ManualPath: raw.ManualPath,
+        LegacyPath: raw.LegacyPath,
         Address: *address,
     }
 }

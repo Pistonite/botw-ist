@@ -97,6 +97,7 @@ export const NavPanel: React.FC = () => {
                 >
                     {status}
                 </div>
+                IST Simulator v4 is under development!
             </div>
         </nav>
     );

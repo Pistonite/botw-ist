@@ -28,7 +28,7 @@ tasks:
       ISS_ADDRESS: https://pistonite.local:8000
       ISS_CERT: ../cert
       ISS_MANUAL_PATH: ../manual/book
-      # ISS_LEGACY_APP: ../legacy/dist
+      ISS_LEGACY_PATH: ../legacy/dist
       ISS_DEV: 1
     cmds:
       - cargo watch -C . -s 'go run .'
