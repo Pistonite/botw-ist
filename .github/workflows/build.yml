@@ -36,7 +36,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: cargo-bins/cargo-binstall@main
       - run: cargo-binstall --no-confirm mdbook
-      - run: task server:build
+      - run: task manual:build
       - uses: actions/upload-artifact@v4
         with:
           path: manual/book
