@@ -87,7 +87,6 @@ export const NavPanel: React.FC = () => {
                 >
                     HELP
                 </Button>
-
                 <div
                     style={{
                         padding: "0 10px",

@@ -51,7 +51,10 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({ slot }) => {
                             isEquipped && "ItemSlotEquipped",
                         )}
                     >
-                        <img className={clsx("ItemImage")} src={`/legacy/${image}`} />
+                        <img
+                            className={clsx("ItemImage")}
+                            src={`/legacy/${image}`}
+                        />
                     </div>
                 </div>
                 {count !== undefined && (
