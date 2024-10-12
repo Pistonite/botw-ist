@@ -2,10 +2,10 @@ name: Check
 on:
   push:
     branches:
-    - next
+    - main
   pull_request:
     branches:
-    - next
+    - main
 
 jobs:
   check-server:
