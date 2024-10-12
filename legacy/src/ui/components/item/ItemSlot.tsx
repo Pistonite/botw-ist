@@ -51,7 +51,10 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({ slot }) => {
                             isEquipped && "ItemSlotEquipped",
                         )}
                     >
-                        <img className={clsx("ItemImage")} src={image} />
+                        <img
+                            className={clsx("ItemImage")}
+                            src={`/legacy/${image}`}
+                        />
                     </div>
                 </div>
                 {count !== undefined && (
@@ -84,7 +87,7 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({ slot }) => {
                             {modifierImage && (
                                 <img
                                     className={clsx("ItemModifierImage")}
-                                    src={modifierImage}
+                                    src={`/legacy/${modifierImage}`}
                                 />
                             )}
                             {modifierText && (

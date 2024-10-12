@@ -2,6 +2,7 @@
 /cert
 *.pem
 *.pfx
+*.key
 
 # Task runner
 .task

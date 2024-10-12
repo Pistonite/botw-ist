@@ -87,7 +87,6 @@ export const NavPanel: React.FC = () => {
                 >
                     HELP
                 </Button>
-
                 <div
                     style={{
                         padding: "0 10px",
@@ -97,6 +96,7 @@ export const NavPanel: React.FC = () => {
                 >
                     {status}
                 </div>
+                IST Simulator v4 is under development!
             </div>
         </nav>
     );
