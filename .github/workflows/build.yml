@@ -2,10 +2,10 @@ name: Build
 on:
   push:
     branches:
-    - next
+    - main
   pull_request:
     branches:
-    - next
+    - main
 
 jobs:
   build-server:
