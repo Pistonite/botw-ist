@@ -11,6 +11,7 @@ jobs:
   build-server:
     name: Server
     runs-on: ubuntu-latest
+    container: golang:alpine
     steps:
       - uses: actions/checkout@v4
       - uses: arduino/setup-task@v2
@@ -21,7 +22,7 @@ jobs:
       - run: task server:build
       - uses: actions/upload-artifact@v4
         with:
-          path: server/build/server
+          path: server/build/botw-iss
           name: server
           retention-days: 3
 
