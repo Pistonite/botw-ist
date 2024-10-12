@@ -15,9 +15,13 @@ includes:
     taskfile: ./legacy
     dir: ./legacy
 
+  server:
+    taskfile: ./server
+    dir: ./server
+
 tasks:
   install:
     desc: Install tools
     cmds:
-      - cargo install mdbook live-server cargo-watch
+      - cargo install mdbook live-server cargo-watch wasm-pack
 

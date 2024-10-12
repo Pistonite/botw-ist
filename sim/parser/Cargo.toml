@@ -5,3 +5,5 @@ edition = "2021"
 publish = false
 
 [dependencies]
+teleparse = "0.0.4"
+logos = "0.14.1" # not needed after teleparse fix the bug

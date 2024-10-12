@@ -7,3 +7,4 @@ publish = false
 [dependencies]
 ist-parser = { path = "../../../sim/parser" }
 ist-runtime = { path = "../../../sim/runtime" }
+wasm-bindgen = "0.2.93"

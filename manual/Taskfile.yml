@@ -14,8 +14,3 @@ tasks:
       - rm -rf book
       - mdbook build
 
-  check:
-    desc: Check for errors
-    cmds:
-      - echo "no check for now"
-
