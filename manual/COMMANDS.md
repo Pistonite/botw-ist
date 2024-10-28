@@ -4,18 +4,16 @@ A WIP list of commands...
 
 
 core commands:
+
+  # PMDM
+
+  # Stage 1
   !core-add ITEM:
     Add ITEM to PMDM
   !core-add-one ITEM:
     Add one ITEM to PMDM
   !core-remove-held:
     Remove held items
-  !core-check-can-cook:
-    Check if the player can cook (inventory space)
-  !core-eat-once SLOT:
-    Perform EAT action on SLOT once
-  !core-sell SLOT:
-    Perform SELL action on SLOT
   !core-hold SLOT:
     Perform HOLD/DROP action on SLOT
   !core-unhold:
@@ -24,14 +22,39 @@ core commands:
     Perform EQUIP action on SLOT
   !core-unequip SLOT:
     Perform UNEQUIP action on SLOT
-  !core-shoot-arrow:
-    Use the bow to shoow an arrow
+
+  # Stage 2
+  !core-eat-once SLOT:
+    Perform EAT action on SLOT once
+  !core-sell SLOT:
+    Perform SELL action on SLOT
   !core-use-weapon:
     Use the weapon
   !core-use-shield:
     Use the shield
+  !core-shoot-arrow:
+    Use the bow to shoow an arrow
+  !core-sync-gdt:
+    Sync PMDM to GDT
+
+  # Stage 3
+  !core-check-can-cook:
+    Check if the player can cook (inventory space)
+  !core-check-can-add ITEM:
+    Check if ITEM can be added to inventory
+  !core-check-has ITEM:
+    Check if ITEM currently exists in inventory 
+  !core-check-can-remove ITEM:
+    Check if ITEM can be removed from inventory
+  !core-check-can-access-inventory:
+    Check if the player can access the inventory (mCount != 0)
+    
   !core-sort TAB_INDEX:
     Perform SORT while on TAB_INDEX
+  !core-set-gdt FLAG VALUE:
+    Set GDT FLAG to VALUE
+
+  
 
   extra:
     set_state() (many setter methods...)
@@ -45,11 +68,14 @@ runtime:
     dropped
   saves
   features:
-    strict-simulation:
+    strict-mode:
       Disallow deprecated actions implemented by runtime instead of the core
     core-check-can-cook:
       checks if the player has enough inventory space to cook
       default: true
+    core-check-can-add
+    core-check-can-remove
+    core-check-can-access-inventory
     area-check:
       checks if the current area has the items
       default: false, unless (area)
@@ -78,11 +104,71 @@ runtime:
     holdable-check-limit:
       check if there's room to hold item
 
+annotations:
+  global:
+    // I guess these are technically features?
+    (FEATURE)
+      Enable Feature
+    (no-FEATURE)
+      Disable Feature
+    (menu-overload)
+      Start menu overload
+    (no-menu-overload)
+      Stop menu overload
+    (drop-after-dialog)
+      Make holding items drop when dialog scope deactivates, instead of when inventory scope deactivates
+      (Effect triggers only once)
+    (drop-bomb-arrow)
+      Make bomb arrows drop on ground after shooting them (i.e. rain)
+    (no-drop-bomb-arrow)
+      Stop bomb arrows from dropping on ground after shooting them
+
+    // other
+    (obtained PROGRESSION_FLAG)
+      Set PROGRESSION_FLAG (calls !core-set-gdt interally)
+    (group) { 
+      (note) NOTES;
+      COMMANDS
+    }
+      Group commands to be one action in view mode
+    (note) NOTES
+      Set notes for the next command/action
+    // comment
+    # comment
+    (area) AREA {
+      AREA_ANOTATIONS
+    }
+      Declare an area
+
+    (autoist) {
+      AUTOIST_ANOTATIONS
+    }
+      Declare Auto IST
+
+  area:
+    (has) ITEMS:
+      args:
+        ITEMS: ItemListInfinityForAdd
+    (sells) ITEMS:
+    (has-statue)
+    (has-pot)
+    (has-fire)
+       Allow roasting without your own fire
+    (freezing)
+       Items on the ground can freeze by themselves, allowing freeze without your own ice
+    (has-hot-spring)
+       Eggs can be boiled
+    (time-from) AREA X;
+    
+
+  
+       
+
    
 
 rtcommands:
   !requires-not-strict:
-    Warn if strict-simulation is enabled
+    Error if strict-mode is enabled
   !area-check ITEMS:
     Check current area has ITEMS
   !area-deduct ITEMS:
@@ -95,6 +181,12 @@ rtcommands:
     Check can sell in current area
   !area-check-cook:
     Check current area has a cooking pot
+  !area-check-statue:
+    Check current area has a goddess statue
+  !area-check-hot-spring:
+    Check current area has a hot spring
+  !area-check-freezing:
+    Check current area is freezing
   
   !ovwd-check-dropped ITEMS:
     Check if ITEMS are currently dropped in the overworld
@@ -117,15 +209,14 @@ rtcommands:
   !ovwd-reset:
     Reset the overworld items
 
-  (menu-overload-once)
-  (menu-overload)
-  (stop-menu-overload)
-  (drop-after-dialog)
-  (drop-bomb-arrow-once)
+  !trade:
+    Trade 1 heart or stamina
 
-scopes:
-  game:
-    The game scope
+  !auto-scope SCOPE:
+    Attempt to automatically adjust the scope
+
+  !go AREA:
+    Go to an area
 
 
 actions:
@@ -216,6 +307,16 @@ actions:
     - !area-check-shop
     - loop SLOT in ITEMS:
         !core-sell SLOT
+
+  trade X hearts:
+  trade X stamina:
+    cmds:
+    - !auto-scope game dialog
+    - !area-check-statue
+    - loop X:
+        !trade X
+      
+      
 
   remove ITEMS: (deprecated)
   with ITEMS: 
