@@ -6,7 +6,7 @@ tasks:
     cmds:
       - task: build
       - mdbook watch &
-      - live-server book -p 8081
+      - live-server book -p 8081 {{.CLI_ARGS}}
 
   build:
     desc: (Re-)build the book
