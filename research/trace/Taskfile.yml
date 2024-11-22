@@ -1,0 +1,51 @@
+version: '3'
+
+env:
+  # can be overriden in .env
+  CONSOLE_ADDR: 192.168.0.161:5000
+  DEBUG_ADDR: 192.168.0.161:5001
+dotenv: [".env"]
+
+tasks:
+  libs:
+    desc: Pull the libs (local modifications will be lost)
+    cmds:
+      - rm -rf libs
+      - task: lib:botw
+      - task: lib:botw-symbols
+      - task: lib:nnheaders
+
+  lib:botw:
+    desc: Pull the botw lib (local modifications will be lost)
+    cmds:
+      - mkdir -p libs
+      - rm -rf libs/botw
+      - git clone --recursive --branch dev https://github.com/Pistonight/botw-decomp libs/botw
+
+  lib:botw-symbols:
+    desc: Pull the botw-symbols lib (local modifications will be lost)
+    cmds:
+      - mkdir -p libs
+      - rm -rf libs/botw-symbols
+      - git clone https://github.com/Pistonight/botw-symbols libs/botw-symbols
+
+  lib:nnheaders:
+    desc: Pull the nnheaders lib (local modifications will be lost)
+    cmds:
+      - mkdir -p libs
+      - rm -rf libs/nnheaders
+      - git clone --branch dev https://github.com/Pistonight/nnheaders libs/nnheaders
+
+  build:
+    cmds:
+      - megaton build
+
+  test:
+    cmds:
+      - python libs/botw-symbols/tcp-client.py $DEBUG_ADDR
+
+  upload:
+    aliases: [u]
+    desc: Upload build to console via FTP
+    cmds:
+      - lftp $CONSOLE_ADDR < scripts/lftp-upload.sh
