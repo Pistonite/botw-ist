@@ -1,8 +1,16 @@
 //! Event messaging of the application
 
-use std::{sync::{atomic::AtomicBool, mpsc::{self, Receiver, Sender}, Arc}, thread::{self, JoinHandle}, time::Duration};
+use std::{
+    sync::{
+        atomic::AtomicBool,
+        mpsc::{self, Receiver, Sender},
+        Arc,
+    },
+    thread::{self, JoinHandle},
+    time::Duration,
+};
 
-use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind, KeyModifiers};
 
 /// Event messages
 pub enum Msg {
@@ -106,7 +114,16 @@ impl EventSender {
 fn event_channel() -> (EventSender, EventReceiver) {
     let (send, recv) = mpsc::channel();
     let (send2, recv2) = mpsc::channel();
-    (EventSender { send, resume: recv2 }, EventReceiver { recv, resume: send2 })
+    (
+        EventSender {
+            send,
+            resume: recv2,
+        },
+        EventReceiver {
+            recv,
+            resume: send2,
+        },
+    )
 }
 
 /// Abstract event loop that may have one or more event sources
@@ -164,13 +181,7 @@ impl Drop for FileModeEventLoop {
 
 fn start_terminal_event_thread(stop: &StopSignal, send: EventSender) -> JoinHandle<()> {
     let stop = stop.clone();
-    {
-        let send = send.send.clone();
-        let _ = ctrlc::set_handler(move || {
-            let _ = send.send(Msg::Terminate);
-        });
-    }
-    thread::spawn(move||{
+    thread::spawn(move || {
         while !stop.is_stopped() {
             match event::read() {
                 Err(_) => {
@@ -180,39 +191,24 @@ fn start_terminal_event_thread(stop: &StopSignal, send: EventSender) -> JoinHand
                 Ok(Event::Key(e)) if e.kind == KeyEventKind::Press => {
                     // handle key bindings
                     let msg = match e.code {
-                        KeyCode::Char('h') | KeyCode::Left => {
-                            Some(Msg::Key(Key::Left))
-                        }
-                        KeyCode::Char('j') | KeyCode::Down => {
-                            Some(Msg::Key(Key::Down))
-                        }
-                        KeyCode::Char('k') | KeyCode::Up => {
-                            Some(Msg::Key(Key::Up))
-                        }
-                        KeyCode::Char('l') | KeyCode::Right => {
-                            Some(Msg::Key(Key::Right))
-                        }
-                        KeyCode::Esc | KeyCode::Char('q') => {
-                            Some(Msg::Key(Key::Quit))
-                        }
+                        KeyCode::Char('h') | KeyCode::Left => Some(Msg::Key(Key::Left)),
+                        KeyCode::Char('j') | KeyCode::Down => Some(Msg::Key(Key::Down)),
+                        KeyCode::Char('k') | KeyCode::Up => Some(Msg::Key(Key::Up)),
+                        KeyCode::Char('l') | KeyCode::Right => Some(Msg::Key(Key::Right)),
+                        KeyCode::Esc | KeyCode::Char('q') => Some(Msg::Key(Key::Quit)),
                         KeyCode::Enter | KeyCode::Char(' ') | KeyCode::Char('o') => {
                             Some(Msg::Key(Key::Enter))
                         }
-                        KeyCode::Char('v') => {
-                            Some(Msg::Key(Key::View))
-                        }
+                        KeyCode::Char('v') => Some(Msg::Key(Key::View)),
                         KeyCode::Char('u') | KeyCode::PageUp | KeyCode::Char('[') => {
                             Some(Msg::Key(Key::PageUp))
                         }
                         KeyCode::Char('d') | KeyCode::PageDown | KeyCode::Char(']') => {
                             Some(Msg::Key(Key::PageDown))
                         }
-                        KeyCode::Char('g') => {
-                            Some(Msg::Key(Key::First))
-                        }
-                        KeyCode::Char('G') => {
-                            Some(Msg::Key(Key::Last))
-                        }
+                        KeyCode::Char('g') => Some(Msg::Key(Key::First)),
+                        KeyCode::Char('G') => Some(Msg::Key(Key::Last)),
+                        KeyCode::Char('c') if (e.modifiers & KeyModifiers::CONTROL) !=KeyModifiers::NONE => Some(Msg::Terminate),
                         _ => None,
                     };
                     if let Some(msg) = msg {
@@ -222,9 +218,9 @@ fn start_terminal_event_thread(stop: &StopSignal, send: EventSender) -> JoinHand
                     }
                 }
                 Ok(Event::Resize(_, _)) => {
-                        if !send.send(Msg::Rerender) {
-                            break;
-                        }
+                    if !send.send(Msg::Rerender) {
+                        break;
+                    }
                 }
                 _ => {}
             }

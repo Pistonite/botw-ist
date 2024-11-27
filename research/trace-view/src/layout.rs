@@ -18,10 +18,7 @@ impl Default for LayoutDefinition {
     fn default() -> Self {
         let side_main_split = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints([
-                Constraint::Length(32),
-                Constraint::Percentage(100),
-            ]);
+            .constraints([Constraint::Length(32), Constraint::Percentage(100)]);
         let side_vertical_split = Layout::default()
             .direction(Direction::Vertical)
             .constraints([
@@ -34,9 +31,13 @@ impl Default for LayoutDefinition {
             .constraints([
                 Constraint::Length(2),
                 Constraint::Percentage(100),
-                Constraint::Min(5),
+                Constraint::Min(10),
             ]);
-        Self { side_main_split, side_vertical_split, main_vertical_split }
+        Self {
+            side_main_split,
+            side_vertical_split,
+            main_vertical_split,
+        }
     }
 }
 
@@ -46,9 +47,12 @@ impl LayoutDefinition {
         let side = self.side_vertical_split.split(side_main[0]);
         let main = self.main_vertical_split.split(side_main[1]);
         ResolvedLayout {
-            mode:    side[0], status: main[0],
-            threads: side[1], events: main[1],
-            help:    side[2], message: main[2],
+            mode: side[0],
+            status: main[0],
+            threads: side[1],
+            events: main[1],
+            help: side[2],
+            message: main[2],
         }
     }
 }

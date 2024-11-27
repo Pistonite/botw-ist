@@ -2,30 +2,26 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 use std::path::Path;
-use std::sync::mpsc::Receiver;
-use std::thread;
 
 use anyhow::Result;
-use chrono::{DateTime, Local, NaiveDateTime, TimeZone};
-use derive_more::derive::{Deref, DerefMut};
+use chrono::{Local, TimeZone};
 use event::{EventLoop, FileModeEventLoop, Key, Msg, StopSignal};
 use layout::LayoutDefinition;
 use ratatui::prelude::*;
 use ratatui::widgets::{Block, Borders, List, ListState, Paragraph};
-// use ratatui::layout::{Constraint, Direction, Layout, Rect};
-// use ratatui::widgets::Widget;
 use ratatui::DefaultTerminal;
-use serde::{Deserialize, Serialize};
+use trace::{Trace, TraceEvent, TraceNode, TraceThreadMap, TraceTree};
 
 mod event;
 mod layout;
+mod trace;
 
 fn main() {
-        let mut screen = ratatui::init();
+    let mut screen = ratatui::init();
     let e = main_internal(&mut screen);
-        // ratatui sets up panic hooks internally,
-        // so restore will be called if app panics
-        ratatui::restore();
+    // ratatui sets up panic hooks internally,
+    // so restore will be called if app panics
+    ratatui::restore();
     if let Err(e) = e {
         eprintln!("fatal: {:?}", e);
     }
@@ -55,7 +51,7 @@ enum Mode {
 enum Focus {
     Threads,
     Events,
-    Message
+    Message,
 }
 
 struct App<E: EventLoop> {
@@ -71,8 +67,8 @@ struct App<E: EventLoop> {
     /// Current drawing area
     area: Rect,
 
-    /// Main trace data
-    trace: Trace,
+    /// Main trace data for each thread
+    trace: TraceThreadMap<TraceTree>,
     /// Writers for writing trace events to temporary files as they come in
     trace_writers: BTreeMap<String, BufWriter<File>>,
 
@@ -93,22 +89,18 @@ struct App<E: EventLoop> {
     /// State of the threads list
     thread_list_state: ListState,
     /// States of the events list
-    trace_event_list_states: BTreeMap<String, TraceView>,
+    trace_event_list_states: TraceThreadMap<TraceView>,
 }
 
 impl App<FileModeEventLoop> {
     /// Open a previous JSON trace dump file
     pub fn open_file(stop: &StopSignal, path: impl AsRef<Path>) -> Result<Self> {
         let path = path.as_ref();
-        let file = File::open(path)?;
-        let buf_reader = BufReader::new(file);
-        let trace: Trace = serde_json::from_reader(buf_reader)?;
+        let trace = trace::load_trace_tree_file(path)?;
         let event_loop = FileModeEventLoop::new(stop);
 
         let path_text = path.display().to_string();
-        let mut app = Self::create(
-            stop, event_loop,trace,
-            Mode::File, path_text);
+        let mut app = Self::create(stop, event_loop, trace, Mode::File, path_text);
         app.set_status(StatusLevel::Info, "file opened successfully");
 
         Ok(app)
@@ -116,15 +108,13 @@ impl App<FileModeEventLoop> {
 }
 
 impl<E: EventLoop> App<E> {
-
     fn create(
         stop: &StopSignal,
         event_loop: E,
-        trace: Trace, 
-        mode: Mode, 
+        trace: TraceThreadMap<TraceTree>,
+        mode: Mode,
         mode_text: String,
     ) -> Self {
-
         let mut app = Self {
             stop: stop.clone(),
             layout: Default::default(),
@@ -155,21 +145,21 @@ impl<E: EventLoop> App<E> {
     pub fn update_thread_list(&mut self) {
         // get the selected thread id
         let selected_id = self.get_selected_thread_id().map(|x| x.to_string());
-        let mut data = self.trace.data.iter().map(|(k,v)| (k, v.events.len())).collect::<Vec<_>>();
+        let mut data = self.trace.iter().map(|(k,v)| (k, v.len())).collect::<Vec<_>>();
         // sort by number of events
         data.sort_by_key(|x| std::cmp::Reverse(x.1));
         let thread_list = data.into_iter().map(|(k,v)| format!("{} ({})", k, v)).collect::<Vec<_>>();
-
+        
         // if there are no threads, clear the selection
         if thread_list.is_empty() {
             self.thread_list_state.select(None);
         } else if let Some(selected) = &selected_id{
             // if the selected thread is not in the list, clear the selection
-            if !self.trace.data.contains_key(selected) {
+            if !self.trace.contains_key(selected) {
             self.thread_list_state.select(None);
             }
         }
-
+        
         // if there is no selection, select the first thread if possible
         if self.thread_list_state.selected().is_none() && !thread_list.is_empty() {
                 self.thread_list_state.select(Some(0));
@@ -181,18 +171,19 @@ impl<E: EventLoop> App<E> {
                 }
             }
         }
-
+        
         self.thread_list = thread_list;
     }
 
     fn get_selected_thread_id(&self) -> Option<&str> {
-        self.thread_list_state.selected().and_then(|x| {
-            match self.thread_list.get(x) {
+        self.thread_list_state
+            .selected()
+            .and_then(|x| match self.thread_list.get(x) {
                 Some(x) => Some(x),
-                None=> self.thread_list.last()
-            }
-        })
-        .and_then(|x| x.split_once(" (")).map(|x| x.0)
+                None => self.thread_list.last(),
+            })
+            .and_then(|x| x.split_once(" ("))
+            .map(|x| x.0)
     }
 
     /// Main application event loop
@@ -204,12 +195,12 @@ impl<E: EventLoop> App<E> {
                     self.focus = Focus::Threads;
                 }
                 Some(id) => {
-                    match self.trace.data.get(id) {
+                    match self.trace.get(id) {
                         None => {
                             self.focus = Focus::Threads;
                         }
                         Some(trace) => {
-                            if trace.events.is_empty() {
+                            if trace.is_empty() {
                                 self.focus = Focus::Threads;
                             }
                         }
@@ -232,7 +223,7 @@ impl<E: EventLoop> App<E> {
         f.render_widget(self, area);
     }
 
-    fn handle_event(&mut self, event: Msg ) -> Result<()> {
+    fn handle_event(&mut self, event: Msg) -> Result<()> {
         match event {
             Msg::Terminate => {
                 self.stop.stop();
@@ -248,89 +239,106 @@ impl<E: EventLoop> App<E> {
         Ok(())
     }
 
-    fn handle_key(&mut self, key: Key ) {
+    fn handle_key(&mut self, key: Key) {
         match self.focus {
-            Focus::Threads => {
-                match key {
-                    Key::Quit => {
-                        self.stop.stop();
-                    },
-                    Key::Enter | Key::Right => {
-                        self.focus = Focus::Events;
-                    }
-                    Key::Up => {
-                        self.thread_list_state.select_previous();
-                    }
-                    Key::Down => {
-                        self.thread_list_state.select_next();
-                    }
-                    Key::PageUp => {
-                        let page = self.layout.resolve(self.area).threads.height as usize;
-                        let previous = self.thread_list_state.selected().map_or(usize::MAX, |i| i.saturating_sub(page));
-                        self.thread_list_state.select(Some(previous));
-                    }
-                    Key::PageDown => {
-                        let page = self.layout.resolve(self.area).threads.height as usize;
-                        let next = self.thread_list_state.selected().map_or(0, |i| i.saturating_add(page));
-                        self.thread_list_state.select(Some(next));
-                    }
-                    Key::First => {
-                        self.thread_list_state.select_first();
-                    }
-                    Key::Last => {
-                        self.thread_list_state.select_last();
-                    }
-                    _ => {}
+            Focus::Threads => match key {
+                Key::Quit => {
+                    self.stop.stop();
                 }
-            }
+                Key::Enter | Key::Right => {
+                    self.focus = Focus::Events;
+                }
+                Key::Up => {
+                    self.thread_list_state.select_previous();
+                }
+                Key::Down => {
+                    self.thread_list_state.select_next();
+                }
+                Key::PageUp => {
+                    let page = self.layout.resolve(self.area).threads.height as usize;
+                    let previous = self
+                        .thread_list_state
+                        .selected()
+                        .map_or(usize::MAX, |i| i.saturating_sub(page));
+                    self.thread_list_state.select(Some(previous));
+                }
+                Key::PageDown => {
+                    let page = self.layout.resolve(self.area).threads.height as usize;
+                    let next = self
+                        .thread_list_state
+                        .selected()
+                        .map_or(0, |i| i.saturating_add(page));
+                    self.thread_list_state.select(Some(next));
+                }
+                Key::First => {
+                    self.thread_list_state.select_first();
+                }
+                Key::Last => {
+                    self.thread_list_state.select_last();
+                }
+                _ => {}
+            },
             Focus::Events => {
-                match self.get_selected_thread_id().map(|x|x.to_string()).and_then(|x| self.trace_event_list_states.get_mut(&x).map(|y| (x, y))) {
+                match self
+                    .get_selected_thread_id()
+                    .map(|x| x.to_string())
+                    .and_then(|x| self.trace_event_list_states.get_mut(&x).map(|y| (x, y)))
+                {
                     None => {
                         self.focus = Focus::Threads;
                     }
                     Some((id, view)) => {
-                        let events = self.trace.data.get(&id).map(|x| &x.events);
+                        let tree = self.trace.get_mut(&id);
                         match key {
                             Key::Left => {
                                 self.focus = Focus::Threads;
                             }
                             Key::Enter => {
-                                view.toggle_expanded(events.map(|x|x.len()).unwrap_or_default());
+                                if let Some(tree) = tree {
+                                    view.toggle_expanded(tree);
+                                }
                             }
+                            // expand and enter
                             Key::Right => {
-                                if let Some(events) = events {
-                                    view.select_parent(events);
-                                    view.set_expanded(false);
+                                if let Some(tree) = tree {
+                                    view.set_expanded(tree, true);
+                                    view.select_next(tree, 1);
                                 }
                             }
                             Key::Quit => {
-                                if let Some(events) = events {
-                                    view.set_expanded(true);
-                                    view.select_next(1, events.len());
+                                // goto parent
+                                if let Some(tree) = tree {
+                                    if !view.select_parent(tree) {
+                                        self.focus = Focus::Threads;
+                                    }
                                 }
                             }
                             Key::Up => {
-                                view.select_previous(1);
+                                if let Some(tree) = tree {
+                                    view.select_previous(tree, 1);
+                                }
                             }
                             Key::Down => {
-                                if let Some(events) = events {
-                                    view.select_next(1, events.len());
+                                if let Some(tree) = tree {
+                                    view.select_next(tree, 1);
                                 }
                             }
                             Key::PageUp => {
-                                view.select_previous(self.layout.resolve(self.area).events.height as usize);
+                                if let Some(tree) = tree {
+                                view.select_previous(tree, self.layout.resolve(self.area).events.height as usize);
+                                }
                             }
                             Key::PageDown => {
-                                if let Some(events) = events {
-                                    view.select_next(self.layout.resolve(self.area).events.height as usize, events.len());
+                                if let Some(tree) = tree {
+                                    view.select_next(tree, self.layout.resolve(self.area).events.height as usize);
                                 }
                             }
                             Key::First => {
-                                view.select_previous(usize::MAX);
+                                view.set_selected(0);
                             }
                             Key::Last => {
-                                if let Some(events) = events {
-                                    view.select_next(usize::MAX, events.len());
+                                if let Some(tree) = tree {
+                                    view.select_last(tree);
                                 }
                             }
                             Key::View => {
@@ -340,17 +348,14 @@ impl<E: EventLoop> App<E> {
                     }
                 }
             }
-            Focus::Message => {
-                match key {
-                    Key::Quit => {
-                        self.focus = Focus::Events;
-                    }
-                    _ => {}
+            Focus::Message => match key {
+                Key::Quit => {
+                    self.focus = Focus::Events;
                 }
-            }
+                _ => {}
+            },
         }
     }
-
 }
 
 impl<E: EventLoop> Widget for &mut App<E> {
@@ -360,14 +365,27 @@ impl<E: EventLoop> Widget for &mut App<E> {
         // draw mode
         match self.mode {
             Mode::File => {
-                Paragraph::new(
-                        Line::styled(&self.mode_text, Style::default().fg(Color::LightMagenta)),
-                ).block(Block::default().borders(Borders::TOP | Borders::RIGHT | Borders::LEFT).title("File"))
+                Paragraph::new(Line::styled(
+                    &self.mode_text,
+                    Style::default().fg(Color::LightMagenta),
+                ))
+                .block(
+                    Block::default()
+                        .borders(Borders::TOP | Borders::RIGHT | Borders::LEFT)
+                        .title("File"),
+                )
                 .render(layout.mode, buf);
             }
             Mode::Live => {
-                Paragraph::new( Line::styled(&self.mode_text, Style::default().fg(Color::LightRed)))
-                    .block(Block::default().borders(Borders::TOP | Borders::RIGHT | Borders::LEFT).title("Live"))
+                Paragraph::new(Line::styled(
+                    &self.mode_text,
+                    Style::default().fg(Color::LightRed),
+                ))
+                .block(
+                    Block::default()
+                        .borders(Borders::TOP | Borders::RIGHT | Borders::LEFT)
+                        .title("Live"),
+                )
                 .render(layout.mode, buf);
             }
         }
@@ -379,52 +397,62 @@ impl<E: EventLoop> Widget for &mut App<E> {
         };
 
         // draw status
-        Paragraph::new(
-            Line::raw( &self.status)
-        )
+        Paragraph::new(Line::raw(&self.status))
             .style(status_style)
-            .block(Block::default().borders(Borders::TOP | Borders::RIGHT | Borders::LEFT).title(status_title))
-        .render(layout.status, buf);
+            .block(
+                Block::default()
+                    .borders(Borders::TOP | Borders::RIGHT | Borders::LEFT)
+                    .title(status_title),
+            )
+            .render(layout.status, buf);
 
         // draw thread list
-        let thread_list = List::new(self.thread_list.clone())
-            .scroll_padding(4);
+        let thread_list = List::new(self.thread_list.clone()).scroll_padding(4);
         let thread_list = if self.focus == Focus::Threads {
             thread_list.highlight_style(Style::default().fg(Color::Black).bg(Color::White))
         } else {
             thread_list.highlight_style(Style::default().fg(Color::LightYellow))
-            };
-        let thread_list = thread_list
-        .block(
-                make_block("Threads", self.thread_list_state.selected(), self.thread_list.len(), self.focus == Focus::Threads, true)
-            );
+        };
+        let thread_list = thread_list.block(make_block(
+            "Threads",
+            self.thread_list_state.selected(),
+            self.thread_list.len(),
+            self.focus == Focus::Threads,
+            true,
+        ));
 
-        StatefulWidget::render(thread_list, layout.threads, buf, &mut self.thread_list_state);
+        StatefulWidget::render(
+            thread_list,
+            layout.threads,
+            buf,
+            &mut self.thread_list_state,
+        );
 
         // draw event list
         let selected_thread_id = self.get_selected_thread_id();
-        let trace_events = selected_thread_id.clone().and_then(|x| self.trace.data.get(x).map(|y| (x, y)));
+        let trace_events = selected_thread_id.clone().and_then(|x| self.trace.get(x).map(|y| (x, y)));
         match trace_events {
             None => {
                 Paragraph::new("No thread selected")
                     .block(Block::default().borders(Borders::TOP | Borders::LEFT | Borders::RIGHT).title("Events"))
                 .render(layout.events, buf);
-
+        
                 Paragraph::new("")
                     .block(Block::default().borders(Borders::ALL).title("Message"))
                 .render(layout.message, buf);
-
+        
             }
-            Some((id, trace)) => {
+            Some((id, tree)) => {
                 let view = self.trace_event_list_states.entry(id.to_string()).or_default();
-                let block = make_block("Events", view.selected(trace.events.len()), trace.events.len(), self.focus == Focus::Events, false);
+                let block = make_block("Events", Some(view.selected), tree.len(), self.focus == Focus::Events, false);
                 let inner_area = block.inner(layout.events);
-
-                view.update_rendered(&trace.events, inner_area.width, inner_area.height, self.focus == Focus::Events);
+                
+                view.update(tree, inner_area.width, inner_area.height, self.focus == Focus::Events);
                 block.render(layout.events, buf);
                 view.render(inner_area, buf);
-
-                if let Some(event) = view.selected(trace.events.len()).and_then(|x| trace.events.get(x)) {
+                
+                // draw message
+                if let Some(event) = tree.get(view.selected) {
                         let block = Block::default().borders(Borders::ALL).title("Message");
                         let block = if self.focus == Focus::Message {
                             block.border_style(Style::default().fg(Color::LightGreen))
@@ -438,28 +466,31 @@ impl<E: EventLoop> Widget for &mut App<E> {
                     .block(Block::default().borders(Borders::ALL).title("Message"))
                 .render(layout.message, buf);
                 }
-
-
+        
+        
             }
         }
 
         // draw help
         help_text().render(layout.help, buf);
-
-        
-
     }
 }
 
-fn make_block(title: &str, current: Option<usize>, total: usize, focused: bool, bottom: bool) -> Block<'static> {
+fn make_block(
+    title: &str,
+    current: Option<usize>,
+    total: usize,
+    focused: bool,
+    bottom: bool,
+) -> Block<'static> {
     let block = Block::default();
-        let block = if bottom {
-            block.borders(Borders::ALL)
-        } else {
-            block.borders(Borders::TOP | Borders::RIGHT | Borders::LEFT)
-        };
+    let block = if bottom {
+        block.borders(Borders::ALL)
+    } else {
+        block.borders(Borders::TOP | Borders::RIGHT | Borders::LEFT)
+    };
     let block = match current {
-        Some(x) => block.title(format!("{} ({}/{})", title, x + 1, total)),
+        Some(x) => block.title(format!("{} ({}/{})", title, x.saturating_add(1), total)),
         None => block.title(format!("{} ({})", title, total)),
     };
     if focused {
@@ -469,60 +500,58 @@ fn make_block(title: &str, current: Option<usize>, total: usize, focused: bool, 
     }
 }
 
-
-
 fn help_text() -> Paragraph<'static> {
-        Paragraph::new(Text::from(vec![
-            Line::from(vec![
-                Span::raw("Move   : "),
-                Span::styled("<h><j><k><l>", Style::new().fg(Color::LightCyan)),]),
-
-            Line::from(vec![
-                Span::raw("       | "),
-                Span::styled("<←><↓><↑><→>", Style::new().fg(Color::LightCyan)),
-            ]),
-            Line::from(vec![
-                Span::raw("Page   : "),
-                Span::styled("<u><d>", Style::new().fg(Color::LightCyan)),
-                Span::raw(" | "),
-                Span::styled("<[><]>", Style::new().fg(Color::LightCyan)),
-            ]),
-            Line::from(vec![
-                Span::raw("       | "),
-                Span::styled("<PAGEUP><PAGEDOWN>", Style::new().fg(Color::LightCyan)),
-            ]),
-            Line::from(vec![
-                Span::raw("First  : "),
-                Span::styled("<g>", Style::new().fg(Color::LightCyan)),
-            ]),
-            Line::from(vec![
-                Span::raw("Last   : "),
-                Span::styled("<G>", Style::new().fg(Color::LightCyan)),
-            ]),
-            Line::from(""),
-            Line::from(vec![
-                Span::raw("Select : "),
-                Span::styled("<ENTER>", Style::new().fg(Color::LightCyan)),
-                Span::raw(" | "),
-                Span::styled("<SPACE>", Style::new().fg(Color::LightCyan)),
-            ]),
-            Line::from(vec![
-                Span::raw("       | "),
-                Span::styled("<o>", Style::new().fg(Color::LightCyan)),
-            ]),
-            Line::from(vec![
-                Span::raw("Quit   : "),
-                Span::styled("<ESC>", Style::new().fg(Color::LightCyan)),
-                Span::raw(" | "),
-                Span::styled("<q>", Style::new().fg(Color::LightCyan)),
-                Span::raw(" | "),
-                Span::styled("<C-c>", Style::new().fg(Color::LightCyan)),
-            ]),
-            Line::from(vec![
-                Span::raw("View   : "),
-                Span::styled("<v>", Style::new().fg(Color::LightCyan)),
-            ]),
-        ]))
+    Paragraph::new(Text::from(vec![
+        Line::from(vec![
+            Span::raw("Move   : "),
+            Span::styled("<h><j><k><l>", Style::new().fg(Color::LightCyan)),
+        ]),
+        Line::from(vec![
+            Span::raw("       | "),
+            Span::styled("<←><↓><↑><→>", Style::new().fg(Color::LightCyan)),
+        ]),
+        Line::from(vec![
+            Span::raw("Page   : "),
+            Span::styled("<u><d>", Style::new().fg(Color::LightCyan)),
+            Span::raw(" | "),
+            Span::styled("<[><]>", Style::new().fg(Color::LightCyan)),
+        ]),
+        Line::from(vec![
+            Span::raw("       | "),
+            Span::styled("<PAGEUP><PAGEDOWN>", Style::new().fg(Color::LightCyan)),
+        ]),
+        Line::from(vec![
+            Span::raw("First  : "),
+            Span::styled("<g>", Style::new().fg(Color::LightCyan)),
+        ]),
+        Line::from(vec![
+            Span::raw("Last   : "),
+            Span::styled("<G>", Style::new().fg(Color::LightCyan)),
+        ]),
+        Line::from(""),
+        Line::from(vec![
+            Span::raw("Select : "),
+            Span::styled("<ENTER>", Style::new().fg(Color::LightCyan)),
+            Span::raw(" | "),
+            Span::styled("<SPACE>", Style::new().fg(Color::LightCyan)),
+        ]),
+        Line::from(vec![
+            Span::raw("       | "),
+            Span::styled("<o>", Style::new().fg(Color::LightCyan)),
+        ]),
+        Line::from(vec![
+            Span::raw("Quit   : "),
+            Span::styled("<ESC>", Style::new().fg(Color::LightCyan)),
+            Span::raw(" | "),
+            Span::styled("<q>", Style::new().fg(Color::LightCyan)),
+            Span::raw(" | "),
+            Span::styled("<C-c>", Style::new().fg(Color::LightCyan)),
+        ]),
+        Line::from(vec![
+            Span::raw("View   : "),
+            Span::styled("<v>", Style::new().fg(Color::LightCyan)),
+        ]),
+    ]))
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -532,9 +561,10 @@ struct TraceView {
     last_width: u16,
     last_height: u16,
     last_focused: bool,
-    padding: usize,
+
+    /// index of the first line in the view
     offset: usize,
-    expanded: BTreeSet<usize>,
+    /// index of the selected line
     selected: usize,
     rendered: Vec<Line<'static>>,
 }
@@ -547,9 +577,7 @@ impl Default for TraceView {
             last_width: 0,
             last_height: 0,
             last_focused: false,
-            padding: 4,
             offset: 0,
-            expanded: Default::default(),
             selected: 0,
             rendered: Default::default(),
         }
@@ -557,193 +585,266 @@ impl Default for TraceView {
 }
 
 impl TraceView {
-    pub fn select_previous(&mut self, count: usize) {
-        let new = if self.selected >= count {
-            self.selected - count
-        } else {
-            0
-        };
-        if self.selected != new {
-            self.selected = new;
-            if new < self.offset + self.padding {
-                self.offset = if new < self.padding {
-                    0
-                } else {
-                    new - self.padding
-                };
-            }
-            self.dirty = true;
-        }
+    pub fn select_previous(&mut self, tree: &TraceTree, count: usize) {
+        self.set_selected(self.find_previous(tree, count));
     }
 
-    pub fn select_next(&mut self, count: usize, max: usize) {
-        let new = if self.selected.saturating_add(count) < max {
-            self.selected + count
-        } else {
-            max - 1
-        };
-        if self.selected != new {
-            self.selected = new;
-            self.dirty = true;
+    fn find_previous(&self, tree: &TraceTree, count: usize) -> usize {
+        let mut new = Some(self.selected);
+        for _ in 0..count {
+            match new {
+                Some(x) => {
+                    new = tree.find_list_previous(x);
+                }
+                None => {
+                    break;
+                }
+            }
         }
+        new.unwrap_or_default()
+    }
+
+    pub fn select_next(&mut self, tree: &TraceTree, count: usize) {
+        self.set_selected(self.find_next(tree, count));
+    }
+
+    fn find_next(&self, tree: &TraceTree, count: usize) -> usize {
+        let mut new = Some(self.selected);
+        for _ in 0..count {
+            match new {
+                Some(x) => {
+                    new = tree.find_list_next(x);
+                }
+                None => {
+                    break;
+                }
+            }
+        }
+        new.unwrap_or(tree.len().saturating_sub(1))
     }
 
     /// Toggle expanded state of the selected line
-    pub fn toggle_expanded(&mut self, max: usize) {
-        if self.selected >= max {
-            self.expanded.remove(&self.selected);
-            self.selected = max - 1;
-        }
-        if !self.expanded.remove(&self.selected) {
-            self.expanded.insert(self.selected);
-        }
+    pub fn toggle_expanded(&mut self, tree: &mut TraceTree) {
+        tree.set_expanded(self.selected, !tree.is_expanded(self.selected));
         self.dirty = true;
     }
 
-    pub fn set_expanded(&mut self, expanded: bool) {
-        if expanded {
-            if self.expanded.insert(self.selected) {
-                self.dirty = true;
-            }
-        } else {
-            if self.expanded.remove(&self.selected) {
-                self.dirty = true;
-            }
-        }
-    }
-
-    /// Check if the selected event is expanded
-    pub fn is_expanded(&self) -> bool {
-        self.expanded.contains(&self.selected)
-    }
-
-    pub fn selected(&self, max: usize) -> Option<usize> {
-        if self.selected < max {
-            Some(self.selected)
-        } else {
-            None
-        }
+    pub fn set_expanded(&mut self, tree: &mut TraceTree, expanded: bool) {
+        tree.set_expanded(self.selected, expanded);
+        self.dirty = true;
     }
 
     /// Select the first event before the selected event that has a lower level
     /// or the first event in the list
-    pub fn select_parent(&mut self, list: &[TraceEvent]) {
-        let mut current = self.selected;
-        if current >= list.len() {
-            current = list.len() - 1;
-        }
-        let level = list[current].level;
-        while current > 0 {
-            current -= 1;
-            if list[current].level < level {
-                break;
+    pub fn select_parent(&mut self, tree: &TraceTree) -> bool {
+        match tree.find_parent(self.selected) {
+            Some(x) => {
+                self.set_selected(x);
+                true
             }
+            None => false,
         }
-        if current != self.selected {
-            self.selected = current;
+    }
+
+    pub fn select_last(&mut self, tree: &TraceTree) {
+        self.set_selected(tree.find_list_last().unwrap_or_default());
+    }
+
+    fn set_selected(&mut self, selected: usize) {
+        if self.selected != selected {
+            self.selected = selected;
             self.dirty = true;
         }
     }
 
-    pub fn update_rendered(&mut self, list: &[TraceEvent], width: u16, height: u16, focused: bool) {
-        if list.is_empty() {
+    pub fn update(&mut self, tree: &TraceTree, width: u16, height: u16, focused: bool) {
+        if tree.is_empty() {
             self.rendered.clear();
             return;
         }
-        if !self.too_small && !self.dirty && self.last_width == width && self.last_height == height && self.last_focused == focused {
+        if !self.too_small
+            && !self.dirty
+            && self.last_width == width
+            && self.last_height == height
+            && self.last_focused == focused
+        {
             return;
         }
-        if (height as usize) < self.padding * 2 + 1 {
-            self.too_small = true;
-            return;
-        }
-        self.dirty = false;
-        self.too_small = false;
-        self.last_width = width;
-        self.last_height = height;
-        self.last_focused = focused;
-        // update offset if scrolled out of view below
-        let height = height as usize;
-        if self.selected + self.padding > self.offset + height {
-            // rhs will not overflow because the line above
-            self.offset = self.selected + self.padding - height;
-        }
-        if self.offset + height > list.len() {
-            self.offset = list.len().saturating_sub(height);
-        }
-        // count the entries based on expanded state
-        let mut entry_count = 0;
-        for i in self.offset.. {
-            let entry = match list.get(i) {
-                Some(x) => x,
-                None => break,
-            };
-        }
+        // compute the layout:
+        // - context lines, up to 25% of height, min 1
+        // - scroll padding, min 1, max 4, 10% of remaining height
+        let mut context = {
+            let context_max = (height as usize / 4).max(1);
+            let context = tree.get_context(self.selected, context_max);
+            if (height as usize) < context.len() {
+                self.too_small = true;
+                return;
+            }
+            context
+        };
 
-        let selected = self.selected;
-
-        let line_number_size = (selected+1).to_string().len().max(3) + 1;
+        let line_number_size = (self.selected + 1).to_string().len().max(3) + 1;
         let timestamp_size = 10; // |HH:MM:SS|
         let available = width as usize - line_number_size - timestamp_size - 2; // 2 for border
-        
-        self.rendered.clear();
-        
-        for i in self.offset..list.len().min(self.offset + height) {
-            let entry = &list[i];
-            // line number
-            let line_number = match i.cmp(&selected) {
-                std::cmp::Ordering::Less=> format!("{:>width$}", selected - i, width=line_number_size),
-                std::cmp::Ordering::Equal => format!(" {:<width$}", selected + 1, width=line_number_size-1),
-                std::cmp::Ordering::Greater => format!("{:>width$}", i - selected, width=line_number_size),
-            };
-            // timestamp
-            let raw_timestamp: Option<i64> = entry.timestamp.try_into().ok();
-            let timestamp = raw_timestamp
-                .and_then(|x| Local.timestamp_opt(x, 0).earliest())
-                .map(|x| x.format("%H:%M:%S").to_string())
-                .unwrap_or_else(|| "--:--:--".to_string());
+        let mut indices = Vec::with_capacity(height as usize);
+        let mut context_size: usize;
+        let mut main_height: usize;
 
-            // indentation for nesting
-            let nest_space: usize = (entry.level * 2).try_into().unwrap_or_default();
-
-            // expand indicator
-            let expandable = i < list.len() - 1 && list[i + 1].level > entry.level;
-            let expand_indicator = if !expandable {
-                Span::raw("  ")
-            } else if self.expanded.contains(&i) {
-                Span::raw("- ")
-            } else if i == selected{
-                Span::raw("+ ")
+        // render in a loop, if a line in the context becomes visible as
+        // a result of rendering, adjust the context and try again
+        'render: loop {
+            context_size = if context.is_empty() {
+                0
             } else {
-                Span::styled("+ ", Style::default().fg(Color::LightRed))
+                context.len() + 1
             };
-
-            let (message, ellipsis) = truncate_message(&entry.message, available-nest_space-2);
-
-            let line = Line::from(vec![
-                Span::raw(format!("{}|", line_number)),
-                if i == selected {
-                        Span::raw(timestamp)
+            let scroll_padding = ((height as usize - context_size) / 10).min(4).max(1);
+            // plus 1 for main content
+            if (height as usize) < scroll_padding * 2 + context_size + 1 {
+                self.too_small = true;
+                return;
+            }
+            self.dirty = false;
+            self.too_small = false;
+            self.last_width = width;
+            self.last_height = height;
+            self.last_focused = focused;
+            let height = height as usize;
+            main_height = height - context_size;
+            // update offset if scrolled out of view
+            {
+                let lower = self.find_previous(tree, scroll_padding);
+                if self.offset > lower {
+                    self.offset = lower;
                 } else {
-                        Span::styled(timestamp, Style::default().fg(Color::Magenta))
-                },
-                Span::raw("| "),
-                Span::raw(" ".repeat(nest_space)),
-                expand_indicator,
-                Span::raw(message.to_string()),
-                Span::raw(ellipsis),
-            ]);
-            let line = if i == selected {
-                if focused {
-                    line.style(Style::new().fg(Color::Black).bg(Color::White))
-                } else {
-                    line.style(Style::new().fg(Color::LightYellow))
+                    let upper = self.find_next(tree, scroll_padding);
+                    if self.offset + main_height < upper {
+                        self.offset = upper.saturating_sub(main_height);
+                    }
                 }
-            } else {
-                line
-            };
-            self.rendered.push(line);
+            }
+            // compute indices and relative line number for the main content
+            indices.clear();
+            let mut i = Some(self.offset);
+            for _ in 0..main_height {
+                let idx = match i {
+                    Some(x) => x,
+                    None => break,
+                };
+                // adjust context and recalculate layout if needed
+                if let Some(x) = context.iter().position(|&y| y == idx) {
+                    context.truncate(x);
+                    continue 'render;
+                }
+                indices.push(idx);
+                i = tree.find_list_next(idx);
+            }
+            break;
         }
+        // reset render
+        self.rendered.clear();
+
+        // render context
+        if !context.is_empty() {
+            let line_number_space = " ".repeat(line_number_size);
+            for i in context {
+                self.render_line(
+                    available,
+                    &line_number_space,
+                    i,
+                    tree.node(i).unwrap(),
+                    focused,
+                );
+            }
+            // context separator
+            self.rendered.push(Line::styled(
+                ">".repeat(width as usize),
+                Style::new().fg(Color::LightBlue),
+            ));
+        }
+        // compute relative line numbers for the main content
+        let mut line_numbers = Vec::with_capacity(main_height);
+        let mut line_number_after = 1;
+        for (line_number_before, idx) in indices.iter().enumerate() {
+            if *idx == self.selected {
+                // line numbers before
+                for j in (0..line_number_before).rev() {
+                    line_numbers.push(format!("{:>width$}", j+1, width = line_number_size))
+                }
+                // line number of selected line
+                line_numbers.push(format!(
+                    "{:>width$}",
+                    "-",
+                    width = line_number_size
+                ));
+            } else if *idx > self.selected {
+                // line numbers after
+                line_numbers.push(format!("{:>width$}", line_number_after, width = line_number_size));
+                line_number_after += 1;
+            }
+        }
+        while line_numbers.len() < main_height {
+            line_numbers.push(format!("{:>width$}", "~", width = line_number_size));
+        }
+        // render main content
+        for (idx, line_number) in indices.into_iter().zip(line_numbers) {
+            self.render_line(
+                available,
+                &line_number,
+                idx,
+                tree.node(idx).unwrap(),
+                focused,
+            );
+        }
+    }
+
+    fn render_line(
+        &mut self,
+        available: usize,
+        line_number: &str,
+        i: usize,
+        node: &TraceNode,
+        focused: bool,
+    ) {
+        // timestamp
+        let raw_timestamp: Option<i64> = node.timestamp.try_into().ok();
+        let timestamp = raw_timestamp
+            .and_then(|x| Local.timestamp_opt(x, 0).earliest())
+            .map(|x| x.format("%H:%M:%S").to_string())
+            .unwrap_or_else(|| "--:--:--".to_string());
+        // indentation for nesting
+        let nest_space: usize = (node.level * 2).try_into().unwrap_or_default();
+
+        let expand_indicator = if node.expanded {
+            "🞃 "
+        } else if node.last_child.is_none() {
+            // not a parent node
+            "  "
+        } else {
+            "🞂 "
+        };
+
+        let (message, ellipsis) = truncate_message(&node.message, available - nest_space - 2);
+
+        let line = Line::from(vec![
+            Span::raw(format!("{}|", line_number)),
+            Span::raw(timestamp),
+            Span::raw("| "),
+            Span::raw(" ".repeat(nest_space)),
+            Span::raw(expand_indicator),
+            Span::raw(message.to_string()),
+            Span::raw(ellipsis),
+        ]);
+        let line = if i == self.selected {
+            if focused {
+                line.style(Style::new().fg(Color::Black).bg(Color::White))
+            } else {
+                line.style(Style::new().fg(Color::LightYellow))
+            }
+        } else {
+            line
+        };
+        self.rendered.push(line);
     }
 }
 
@@ -758,8 +859,7 @@ fn truncate_message(message: &str, available: usize) -> (&str, &'static str) {
 impl Widget for &TraceView {
     fn render(self, area: Rect, buf: &mut Buffer) {
         if self.too_small {
-            Paragraph::new("Terminal is too small")
-                .render(area, buf);
+            Paragraph::new("Terminal is too small").render(area, buf);
             return;
         }
         for (i, line) in self.rendered.iter().enumerate() {
@@ -768,71 +868,8 @@ impl Widget for &TraceView {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-struct TraceEvent {
-    timestamp: u64,
-    level: u64,
-    message: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Deref, DerefMut)]
-struct TraceEventPayload {
-    thread_id: String,
-    #[deref]
-    #[deref_mut]
-    event: TraceEvent,
-}
-
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-struct ThreadTrace {
-    events: Vec<TraceEvent>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-struct Trace {
-    #[serde(flatten)]
-    data: BTreeMap<String, ThreadTrace>,
-}
-
 #[derive(Debug, thiserror::Error)]
-enum Error {
+pub enum Error {
     #[error("failed to parse trace event")]
     TraceParseError,
-}
-
-/// Parse the raw buffer into the trace object
-///
-/// The buffer should have the following format:
-/// ```text
-/// <time> <thread> <level> <message>
-/// ```
-/// `time`, `thread` and `level` are hex strings with no `0x` prefix
-/// and no space in between
-fn parse_trace_event(raw_input: &[u8]) -> Result<TraceEventPayload> {
-    let mut iter = raw_input.split(|x| *x == b' ');
-    let timestamp = iter.next().ok_or(Error::TraceParseError)?;
-    let timestamp = parse_hex(timestamp)?;
-    let thread_id = iter.next().ok_or(Error::TraceParseError)?;
-    let thread_id = format!("0x{}", std::str::from_utf8(thread_id)?);
-    let level = iter.next().ok_or(Error::TraceParseError)?;
-    let level = parse_hex(level)?;
-
-    let message = iter.map(|x| std::str::from_utf8(x))
-        .collect::<std::result::Result<Vec<_>, _>>()?.join(" ");
-
-    let event = TraceEvent {
-        timestamp,
-        level,
-        message,
-    };
-
-    Ok(TraceEventPayload {
-        thread_id,
-        event,
-    })
-}
-
-fn parse_hex(buf: &[u8]) -> Result<u64> {
-    let s = std::str::from_utf8(buf)?;
-    Ok(u64::from_str_radix(s, 16)?)
 }
