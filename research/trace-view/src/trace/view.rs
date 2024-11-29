@@ -188,6 +188,10 @@ impl TraceView {
         }
     }
 
+    pub fn is_auto_scroll(&self) -> bool {
+        self.auto_scroll
+    }
+
     fn render_extra_text(&self, tree: &TraceTree, live: bool) -> Line<'static> {
         if !self.debug.is_empty() {
             return Line::styled(

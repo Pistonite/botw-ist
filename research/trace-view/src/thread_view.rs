@@ -83,6 +83,7 @@ impl ThreadView {
     pub fn select_next(&mut self, count: usize) {
         if count <= 1 {
             self.state.select_next();
+            return;
         }
         let next = self.state.selected().map_or(0, |i| {
             i.saturating_add(count)

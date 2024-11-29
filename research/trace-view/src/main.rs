@@ -266,14 +266,17 @@ impl<E: EventLoop> App<E> {
                 self.status.set(level, msg);
             }
             Msg::Trace(payload) => {
-                if let Err(e) = self
-                    .trace
-                    .entry(payload.thread_id)
-                    .or_default()
-                    .add_event(payload.event)
+                let view = self.trace_views.get_mut(&payload.thread_id);
+                let tree = self.trace.entry(payload.thread_id).or_default();
+                if let Err(e) = tree.add_event(payload.event)
                 {
                     self.status
                         .set(StatusLevel::Error, format!("failed to add event: {}", e));
+                }
+                if let Some(view) = view {
+                    if view.is_auto_scroll() {
+                        view.select_last(tree);
+                    }
                 }
                 self.thread_view.update(&self.trace);
             }
@@ -484,8 +487,12 @@ impl<E: EventLoop> Widget for &mut App<E> {
                     } else {
                         block
                     };
-                    let spans = layout::highlight_message(&event.message, &self.search_input);
-                    Paragraph::new(Line::from(spans))
+                    let mut lines = vec![];
+                    for line in event.message.lines() {
+                        let spans = layout::highlight_message(&line, &self.search_input);
+                        lines.push(Line::from(spans));
+                    }
+                    Paragraph::new(lines)
                         .scroll((event.message_scroll, 0))
                         .block(block)
                         .render(layout.message, buf);
