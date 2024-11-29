@@ -19,6 +19,16 @@ includes:
     taskfile: ./server
     dir: ./server
 
+  trace:
+    taskfile: ./research/trace
+    aliases: [tr]
+    dir: ./research/trace
+
+  trace-view:
+    taskfile: ./research/trace-view
+    aliases: [trv]
+    dir: ./research/trace-view
+
 tasks:
   install:
     desc: Install tools

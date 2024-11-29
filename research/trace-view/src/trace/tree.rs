@@ -4,14 +4,18 @@ use anyhow::{bail, ensure, Result};
 use derive_more::derive::{Deref, DerefMut};
 use serde::{Deserialize, Serialize};
 
-use crate::Error;
-
 /// A trace event
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TraceEvent {
     pub timestamp: u64,
     pub level: u64,
     pub message: String,
+}
+
+impl TraceEvent {
+    pub fn single_line_message(&self) -> String {
+        self.message.lines().collect::<Vec<_>>().join(" ")
+    }
 }
 
 /// Node in the trace event tree
@@ -28,6 +32,9 @@ pub struct TraceNode {
     /// If the node is expanded
     #[serde(skip)]
     pub expanded: bool,
+
+    /// Scroll amount for the message view for this event
+    pub message_scroll: u16,
 
     /// Position of the parent in the tree
     ///
@@ -71,6 +78,7 @@ impl TraceNode {
         Self {
             event,
             expanded: false,
+            message_scroll: 0,
             parent,
             prev_sibling,
             next_sibling: None,
@@ -80,17 +88,23 @@ impl TraceNode {
 }
 
 /// Tree representation of the trace
-#[derive(Debug, PartialEq, Default, Serialize)]
+#[derive(Debug, PartialEq, Default)]
 pub struct TraceTree {
     /// Current node stack at the end of the tree
-    #[serde(skip)]
     stack: Vec<usize>,
     /// Current level at the end of the tree
-    #[serde(skip)]
     level: u64,
     /// The nodes in the tree
-    #[serde(flatten)]
     tree: Vec<TraceNode>,
+}
+
+impl Serialize for TraceTree {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.collect_seq(self.tree.iter())
+    }
 }
 
 impl TraceTree {
@@ -265,7 +279,7 @@ impl TraceTree {
             match node.next_sibling {
                 Some(x) => {
                     // if node has a next sibling, return it
-                    return self.ensure_valid_idx(Some(x))
+                    return self.ensure_valid_idx(Some(x));
                 }
                 None => {
                     // otherwise, use the next sibling of parent
@@ -312,6 +326,61 @@ impl TraceTree {
         stack
     }
 
+    /// Expand all parents of idx, excluding idx
+    pub fn expand_parents(&mut self, idx: usize) {
+        let mut node = self.tree.get_mut(idx);
+        let idx = match node.and_then(|x| x.parent) {
+            Some(x) => x,
+            None => return,
+        };
+        node = self.tree.get_mut(idx);
+        while let Some(n) = node {
+            n.expanded = true;
+            let idx = match n.parent {
+                Some(x) => x,
+                None => break,
+            };
+            node = self.tree.get_mut(idx);
+        }
+    }
+
+    /// Select the previous item that matches the substring in the message
+    pub fn find_previous_contains(&mut self, idx: usize, search: &str) -> Option<usize> {
+        if search.is_empty() || self.is_empty() || idx == 0 {
+            return None;
+        }
+        let mut idx = idx - 1;
+        loop {
+            let node = self.node(idx)?;
+            if node.message.contains(search) {
+                self.expand_parents(idx);
+                return Some(idx);
+            }
+            if idx == 0 {
+                return None;
+            }
+            idx -= 1;
+        }
+    }
+
+    pub fn find_next_contains(&mut self, idx: usize, search: &str) -> Option<usize> {
+        if search.is_empty() || self.is_empty() || idx == self.len() - 1 {
+            return None;
+        }
+        let mut idx = idx + 1;
+        loop {
+            let node = self.node(idx)?;
+            if node.message.contains(search) {
+                self.expand_parents(idx);
+                return Some(idx);
+            }
+            if idx == self.len() - 1 {
+                return None;
+            }
+            idx += 1;
+        }
+    }
+
     /// If node at idx is expanded, return find_last_expanded_recursive(last_child)
     fn find_last_expanded_recursive(&self, idx: usize, node: &TraceNode) -> usize {
         if node.expanded {
@@ -331,30 +400,40 @@ impl TraceTree {
             _ => None,
         }
     }
+
+    pub fn scroll_message_up(&mut self, idx: usize, count: u16) {
+        if let Some(node) = self.tree.get_mut(idx) {
+            node.message_scroll = node.message_scroll.saturating_sub(count);
+        }
+    }
+
+    pub fn scroll_message_down(&mut self, idx: usize, height: u16, count: u16) {
+        if let Some(node) = self.tree.get_mut(idx) {
+            let max: u16 = node
+                .event
+                .message
+                .lines()
+                .count()
+                .try_into()
+                .unwrap_or(u16::MAX)
+                .saturating_sub(height);
+            node.message_scroll = node.message_scroll.saturating_add(count).min(max);
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Deref, DerefMut)]
 pub struct TraceEventPayload {
-    thread_id: String,
+    pub thread_id: String,
     #[deref]
     #[deref_mut]
-    event: TraceEvent,
-}
-
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
-pub struct ThreadTrace {
-    events: Vec<TraceEvent>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Trace {
-    #[serde(flatten)]
-    data: BTreeMap<String, ThreadTrace>,
+    pub event: TraceEvent,
 }
 
 pub type TraceThreadMap<T> = BTreeMap<String, T>;
 
-pub fn load_trace_tree_file(path: impl AsRef<Path>) -> Result<TraceThreadMap<TraceTree>> {
+/// Load a trace JSON file previous stored
+pub fn load_trace_file(path: impl AsRef<Path>) -> Result<TraceThreadMap<TraceTree>> {
     let file = File::open(path)?;
     let buf_reader = BufReader::new(file);
     let trace: TraceThreadMap<Vec<TraceEvent>> = serde_json::from_reader(buf_reader)?;
@@ -367,42 +446,6 @@ pub fn load_trace_tree_file(path: impl AsRef<Path>) -> Result<TraceThreadMap<Tra
     }
 
     Ok(map)
-}
-
-/// Parse the raw buffer into the trace object
-///
-/// The buffer should have the following format:
-/// ```text
-/// <time> <thread> <level> <message>
-/// ```
-/// `time`, `thread` and `level` are hex strings with no `0x` prefix
-/// and no space in between
-fn parse_trace_event(raw_input: &[u8]) -> Result<TraceEventPayload> {
-    let mut iter = raw_input.split(|x| *x == b' ');
-    let timestamp = iter.next().ok_or(Error::TraceParseError)?;
-    let timestamp = parse_hex(timestamp)?;
-    let thread_id = iter.next().ok_or(Error::TraceParseError)?;
-    let thread_id = format!("0x{}", std::str::from_utf8(thread_id)?);
-    let level = iter.next().ok_or(Error::TraceParseError)?;
-    let level = parse_hex(level)?;
-
-    let message = iter
-        .map(|x| std::str::from_utf8(x))
-        .collect::<std::result::Result<Vec<_>, _>>()?
-        .join(" ");
-
-    let event = TraceEvent {
-        timestamp,
-        level,
-        message,
-    };
-
-    Ok(TraceEventPayload { thread_id, event })
-}
-
-fn parse_hex(buf: &[u8]) -> Result<u64> {
-    let s = std::str::from_utf8(buf)?;
-    Ok(u64::from_str_radix(s, 16)?)
 }
 
 #[cfg(test)]

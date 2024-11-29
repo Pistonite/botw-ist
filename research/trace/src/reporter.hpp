@@ -20,7 +20,7 @@ class LevelScope {
 
 public:
     LevelScope(Reporter& reporter, const char* name) : reporter(&reporter) {
-        reporter.sendf("SCOPE %s", name);
+        reporter.sendf("%s", name);
         reporter.level++;
     }
 

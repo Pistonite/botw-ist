@@ -17,8 +17,8 @@ hook_trampoline_(test_tcp) {
                     bool is_inventory_load) {
 
         auto& reporter = botw::ist::trace::current_reporter();
-        reporter.scope("addToPouch");
-        reporter.sendf("args: %s %d %d %d %d %d", 
+        auto scope = reporter.scope("addToPouch");
+        reporter.sendf("args: %s\n%d\n%d\n%d\n%d\n%d", 
                        name.cstr(), 
                        type, 
                        lists, 
