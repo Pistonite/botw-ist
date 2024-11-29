@@ -1,5 +1,11 @@
 version: '3'
 
+env:
+  # can be overriden in .env
+  DEBUG_ADDR: 192.168.0.161:5001
+  CONSOLE_ADDR: 192.168.0.161:5000
+dotenv: [".env"]
+
 includes:
   app:
     taskfile: ./app

@@ -37,12 +37,18 @@ public:
 
     Reporter() = default;
     Reporter(u64 thread_id) : thread_id(thread_id) {}
+    /** Send a message */
+    void send(const char* msg) const;
     /** Send a formatted message */
     void sendf(const char* format, ...) const;
 
     /** Increment the level for this scope and send an enter message */
     LevelScope scope(const char* name) {
         return LevelScope(*this, name);
+    }
+
+    bool is_top() const {
+        return level == 0;
     }
 
 private:

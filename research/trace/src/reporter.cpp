@@ -80,4 +80,8 @@ void Reporter::sendf(const char* format, ...) const {
     send_event(thread_id, level, buffer);
 }
 
+void Reporter::send(const char* msg) const {
+    send_event(thread_id, level, msg);
+}
+
 }
