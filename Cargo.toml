@@ -3,5 +3,5 @@ resolver = "2"
 members = [ "app/src/sim",
     "sim/parser",
     "sim/runtime",
-    "next/botw-ist-command",
+    "next/botw-ist-command", "research/trace-view",
 ]

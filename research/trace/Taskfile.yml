@@ -1,11 +1,5 @@
 version: '3'
 
-env:
-  # can be overriden in .env
-  CONSOLE_ADDR: 192.168.0.161:5000
-  DEBUG_ADDR: 192.168.0.161:5001
-dotenv: [".env"]
-
 tasks:
   libs:
     desc: Pull the libs (local modifications will be lost)
@@ -37,6 +31,7 @@ tasks:
       - git clone --branch dev https://github.com/Pistonight/nnheaders libs/nnheaders
 
   build:
+    aliases: [b]
     cmds:
       - megaton build
 

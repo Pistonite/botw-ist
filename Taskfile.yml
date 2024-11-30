@@ -1,5 +1,11 @@
 version: '3'
 
+env:
+  # can be overriden in .env
+  DEBUG_ADDR: 192.168.0.161:5001
+  CONSOLE_ADDR: 192.168.0.161:5000
+dotenv: [".env"]
+
 includes:
   app:
     taskfile: ./app
@@ -18,6 +24,16 @@ includes:
   server:
     taskfile: ./server
     dir: ./server
+
+  trace:
+    taskfile: ./research/trace
+    aliases: [tr]
+    dir: ./research/trace
+
+  trace-view:
+    taskfile: ./research/trace-view
+    aliases: [trv]
+    dir: ./research/trace-view
 
 tasks:
   install:
