@@ -8,8 +8,8 @@ dotenv: [".env"]
 
 includes:
   app:
-    taskfile: ./app
-    dir: ./app
+    taskfile: ./packages/app
+    dir: ./packages/app
 
   manual:
     aliases: [man]
