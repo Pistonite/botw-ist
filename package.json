@@ -1,0 +1,10 @@
+{
+    "workspaces": [
+        "packages/app",
+        "packages/intwc"
+    ],
+  "prettier": {
+    "tabWidth": 4,
+    "endOfLine": "auto"
+  }
+}

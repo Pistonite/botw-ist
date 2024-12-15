@@ -1,0 +1,31 @@
+{
+    "name": "@pistonite/intwc",
+    "private": true,
+    "version": "0.0.1",
+    "description": "TODO",
+    "homepage": "TODO",
+    "bugs": {
+        "url": "TODO"
+    },
+    "license": "MIT",
+    "author": "Pistonight <pistonknight@outlook.com>",
+    "files": [
+        "src/**/*"
+    ],
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "todo.repository": {
+        "type": "git",
+        "url": "https://github.com"
+    },
+    "peerDependencies": {
+        "react": "^18",
+        "@types/react": "^18"
+    },
+    "dependencies": {
+        "@types/vscode": "^1.96.0",
+        "monaco-editor": "npm:@codingame/monaco-vscode-editor-api@^11.1.2",
+        "vscode": "npm:@codingame/monaco-vscode-api@^11.1.2"
+    }
+}
