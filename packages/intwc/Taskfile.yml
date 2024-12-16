@@ -1,0 +1,6 @@
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      - deno generateThemes.ts > src/theme/themes.gen.ts

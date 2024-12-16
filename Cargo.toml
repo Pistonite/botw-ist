@@ -1,7 +1,10 @@
 [workspace]
 resolver = "2"
-members = [ "app/src/sim",
+members = [
+    # "app/src/sim",
     "sim/parser",
     "sim/runtime",
-    "next/botw-ist-command", "research/trace-view",
+    "next/botw-ist-command", 
+    "research/trace-view", 
+    "packages/intwc/src/typescript-tokenizer", "packages/intwc/src/semantic-tokens",
 ]
