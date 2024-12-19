@@ -17,8 +17,8 @@ import { initCodeEditor } from '@pistonite/intwc';
 async function boot() {
     await initCodeEditor({
         language: {
-            typescript: {}
-        }
+            typescript: {
+            } }
     });
     createRoot(document.getElementById('root')!).render(
         <StrictMode>

@@ -1,5 +1,5 @@
-import { isDark } from '@pistonite/pure/pref';
-import * as monaco from 'monaco-editor';
+// import { isDark } from '@pistonite/pure/pref';
+import * as monaco from 'monaco-editor-contrib';
 
 
 export type CodeEditorApi = {
@@ -30,7 +30,7 @@ export type CodeEditorApi = {
 
 export class EditorState {
     private node: HTMLDivElement;
-    private currentFile: string | undefined;
+    // private currentFile: string | undefined;
     private instance: monaco.editor.IStandaloneCodeEditor;
     private models: Map<string, monaco.editor.ITextModel>;
 
@@ -39,7 +39,7 @@ export class EditorState {
     constructor(node: HTMLDivElement) {
         this.node = node;
         this.models = new Map();
-        const dark = isDark();
+        // const dark = isDark();
 
 
         this.instance = monaco.editor.create(this.node, {

@@ -1,7 +1,9 @@
 {
     "workspaces": [
         "packages/app",
-        "packages/intwc"
+        "packages/intwc",
+        "packages/monaco-typescript-contrib",
+        "packages/monaco-editor-contrib"
     ],
   "prettier": {
     "tabWidth": 4,

@@ -1,0 +1,21 @@
+{
+  "name": "monaco-editor-contrib",
+  "version": "0.52.2",
+  "license": "MIT",
+  "typings": "./esm/vs/editor/editor.api.d.ts",
+  "module": "./esm/vs/editor/editor.main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/monaco-editor"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+        "monaco-editor": "0.52.2"
+  },
+  "alias": {
+    "process": false,
+    "buffer": false
+  },
+  "vscodeCommitId": "a7d9e2c32d573e29e68975838196722ae9bb0f15",
+  "monacoCommitId": "404545bded1df6ffa41ea0af4e8ddb219018c6c1"
+}

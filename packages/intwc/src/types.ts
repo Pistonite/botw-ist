@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor";
+import * as monaco from "monaco-editor-contrib";
 
 /** Option to pass in to init */
 export type InitOption = {
@@ -75,18 +75,16 @@ export type EditorOption = {
 
 export type TSOption = {
     /** 
-     * TypeScript library options.
+     * If DOM API should be enabled for type checking
      *
-     * Each library can be a string identifier as specified
-     * in https://www.typescriptlang.org/tsconfig/#lib, or
-     * it can be a custom .ts file using TSExtraLib
-     *
-     * The default is ["esnext"]
+     * Default is true
      */
-    lib?: TSLib[];
-    // createTypeScriptWorker: () => Worker;
+    dom?: boolean;
+    /** 
+     * Extra libraries to load
+     */
+    extraLibs?: TSExtraLib[];
 };
-export type TSLib = string | TSExtraLib;
 
 export type TSExtraLib = {
     /**

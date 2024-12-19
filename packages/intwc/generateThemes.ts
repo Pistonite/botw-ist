@@ -37,6 +37,7 @@ function createKeywordTokenStyle(style: Record<string, unknown>) {
 function createOperatorTokenStyle(style: Record<string, unknown>) {
     return createTokenStyle([
         "keyword.operator",
+        "operator",
     ], style);
 }
 
@@ -49,7 +50,7 @@ function createVariableTokenStyle(style: Record<string, unknown>) {
 
 function createVariableLibraryTokenStyle(style: Record<string, unknown>) {
     return createTokenStyle([
-        "variable.defaultLibrary",
+        "variable.language",
     ], style);
 }
 
@@ -61,7 +62,8 @@ function createVariableConstTokenStyle(style: Record<string, unknown>) {
 
 function createFunctionTokenStyle(style: Record<string, unknown>) {
     return createTokenStyle([
-        "variable.function",
+        "support.function",
+        "function"
     ], style);
 }
 
@@ -103,6 +105,13 @@ function createLiteralRegExpTokenStyle(style: Record<string, unknown>) {
 function createSourceTokenStyle(style: Record<string, unknown>) {
     return createTokenStyle([
         "source",
+    ], style);
+}
+
+function createEscapeTokenStyle(style: Record<string, unknown>) {
+    return createTokenStyle([
+        "constant.character.escape",
+        "string.escape",
     ], style);
 }
 
@@ -181,6 +190,9 @@ function createDarkTheme() {
             }),
             ...createSourceTokenStyle({
                 foreground: mocha.text.hex
+            }),
+            ...createEscapeTokenStyle({
+                foreground: mocha.pink.hex
             }),
         ]
     } as const;

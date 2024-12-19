@@ -11,6 +11,10 @@ includes:
     taskfile: ./packages/app
     dir: ./packages/app
 
+  monaco-editor:
+    taskfile: ./packages/monaco-editor-contrib
+    dir: ./packages/monaco-editor-contrib
+
   manual:
     aliases: [man]
     taskfile: ./manual
@@ -36,7 +40,22 @@ includes:
     dir: ./research/trace-view
 
 tasks:
-  install:
+  npm-install:
+    aliases: [npmi]
+    desc: Wrapper for npm install
+    cmds:
+      - task: monaco-editor:clean
+      - npm install
+      - task: fix-npm-installs
+
+  fix-npm-installs:
+    cmds:
+      - mv node_modules/monaco-editor packages/monaco-editor-contrib/lib
+      - task: monaco-editor:patch
+
+
+
+  install-tools:
     desc: Install tools
     cmds:
       - cargo install mdbook live-server cargo-watch wasm-pack
