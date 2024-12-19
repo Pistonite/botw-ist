@@ -6,8 +6,8 @@ function App() {
   return (
     <>
       <div style={{height: "500px"}}>
-                <CodeEditor onCreated={async (api) => {
-                    api.openFile("/main.tsx", "print('Hello, World!')", "typescript");
+            <CodeEditor onCreated={async (api) => {
+                    api.openFile("/main.ts", "const f = console.log; console.log('Hello, World!')", "typescript");
                 }}/>
       </div>
     </>
