@@ -62,7 +62,7 @@ export class DocumentRangeSemanticTokensProviderAdapter
 
     constructor(
         private maxLength: number = 50000,
-        private debounceInterval: number = 2000,
+        private debounceInterval: number = 500,
     ) {
     }
 
