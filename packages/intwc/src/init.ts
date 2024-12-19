@@ -58,6 +58,8 @@ export async function initCodeEditor({preferences, language, editor}: InitOption
             });
         }
 
-        patchMonacoTypeScript();
+        patchMonacoTypeScript({
+            semanticTokensMaxLength: -1
+        });
     }
 }

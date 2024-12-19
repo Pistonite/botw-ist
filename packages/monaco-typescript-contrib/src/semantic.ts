@@ -89,7 +89,7 @@ export class DocumentRangeSemanticTokensProviderAdapter
     }
 
     private shouldRun(model: monaco.editor.ITextModel): boolean {
-        if (model.getValueLength() > this.maxLength) {
+        if (this.maxLength > 0 && model.getValueLength() > this.maxLength) {
             return false;
         }
         return true;
@@ -288,8 +288,19 @@ export class DocumentRangeSemanticTokensProviderAdapter
 
     // lazy get the worker, since typescript may not be loaded yet
     private async getWorker(resource: monaco.Uri): Promise<monaco.languages.typescript.TypeScriptWorker> {
-        if (!this.worker) {
-            this.worker = await monaco.languages.typescript.getTypeScriptWorker();
+        while (!this.worker) {
+            console.log("getting instance of TypeScript worker...");
+            try {
+                this.worker = await monaco.languages.typescript.getTypeScriptWorker();
+                if (!this.worker) {
+                    throw new Error("getTypeScriptWorker returned undefined");
+                }
+                break;
+            } catch (e) {
+                console.error("Failed to get worker", e);
+                console.warn("will try again in a bit. This should not happen when this is initialized as part of TS mode");
+                await new Promise(r => setTimeout(r, 1000));
+            }
         }
         return await this.worker(resource);
     }
