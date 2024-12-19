@@ -49,6 +49,7 @@ export class EditorState {
                 independentColorPoolPerBracketType: false,
             },
             "semanticHighlighting.enabled": true,
+            automaticLayout: true,
         });
 
         this.extraCleanup = () => {
