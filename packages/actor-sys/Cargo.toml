@@ -1,0 +1,16 @@
+[package]
+name = "actor-sys"
+private = true
+version = "0.0.0"
+edition = "2021"
+description = "Binding for actor parameters"
+
+[dependencies]
+
+
+[[bin]] # Script to generate the source files
+name = "actor-sys-generate"
+path = "generate.rs"
+
+# The features are auto-generated!!!
+[features]
