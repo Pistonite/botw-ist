@@ -1,2 +1,3 @@
 *.yaml
 *.yml
+packages/item-sprites/src/sprites/**/*

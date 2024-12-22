@@ -1,0 +1,16 @@
+{
+    "name": "skybook-item-sprites",
+    "private": true,
+    "version": "0.0.0",
+    "files": [
+        "src/**/*"
+    ],
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "peerDependencies": {
+        "@griffel/react": "*",
+        "@types/react": "*",
+        "react": "*"
+    }
+}

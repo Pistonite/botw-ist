@@ -42,7 +42,7 @@ includes:
 tasks:
   npm-install:
     aliases: [npmi]
-    desc: Wrapper for npm install
+    desc: Wrapper for npm install to put everything in the right place
     cmds:
       - task: monaco-editor:clean
       - npm install
