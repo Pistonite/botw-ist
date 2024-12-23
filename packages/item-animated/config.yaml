@@ -1,30 +1,26 @@
 encoder:
-  fast:
-    # range: [0 = off .. 100 = strongest]
-    filter_strength: 1
-    # range: [0 = off .. 7 = least sharp]
-    filter_sharpness: 1
-    # Between 0 (smallest size) and 100 (lossless).
-    alpha_quality: 25
-    # number of entropy-analysis passes (in [1..10])
-    pass: 1
-    # overall quality
-    quality: 50
-    # Quality/speed trade-off (0=fast, 6=slower-better)
-    method: 0
-  best:
-    # range: [0 = off .. 100 = strongest]
-    filter_strength: 100
-    # range: [0 = off .. 7 = least sharp]
-    filter_sharpness: 1
-    # Between 0 (smallest size) and 100 (lossless).
-    alpha_quality: 75
-    # number of entropy-analysis passes (in [1..10])
-    pass: 10
-    # overall quality
-    quality: 75
-    # Quality/speed trade-off (0=fast, 6=slower-better)
-    method: 6
+  base_dimension: 118 # match the decoder
+  target_dimension: 64
+  # These values are optimized for size at 64x64 viewing mode
+  # while still looking good
+
+  # range: [0 = off .. 100 = strongest]
+  # higher value will be smoother
+  filter_strength: 0
+  # range: [0 = off .. 7 = least sharp]
+  filter_sharpness: 0
+  # 0 - none, 1 - fast, 2 - best
+  alpha_filtering: 2
+  # Between 0 (smallest size) and 100 (lossless).
+  alpha_quality: 50
+  # number of entropy-analysis passes (in [1..10])
+  pass: 10
+  # overall quality
+  quality: 90
+  # Quality/speed trade-off (0=fast, 6=slower-better)
+  method: 6
+  # 1-4
+  segments: 4
 
 decoder:
   measurements:
