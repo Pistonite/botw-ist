@@ -5,5 +5,8 @@ members = [
     "sim/parser",
     "sim/runtime",
     "next/botw-ist-command", 
-    "research/trace-view", "packages/actor-sys", "packages/item-sprites", 
+    "research/trace-view", 
+    "packages/actor-sys", 
+    "packages/item-sprites", 
+    "packages/item-animated",
 ]
