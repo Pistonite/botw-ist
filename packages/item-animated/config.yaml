@@ -1,7 +1,10 @@
 encoder:
-  base_dimension: 118 # match the decoder
+  # "Normal" input frame size - match the decoder config
+  base_dimension: 118
+  # Target frame size. If size == base then output == target
   target_dimension: 64
-  # These values are optimized for size at 64x64 viewing mode
+
+  # These values are optimized for size at 64x64
   # while still looking good
 
   # range: [0 = off .. 100 = strongest]

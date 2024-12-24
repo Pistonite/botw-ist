@@ -31,6 +31,8 @@ def main():
     home = os.path.dirname(__file__)
 
     config = load_config()
+    if not objects:
+        objects = ["*"]
     for obj in objects:
         if obj.endswith("*"):
             prefix = obj[:-1]
@@ -62,14 +64,14 @@ def main():
         top_clean_frame = -1
         if "top_clean_frame" in object_config:
             top_clean_frame = object_config["top_clean_frame"]
-        args.append((video_file, profile, name, row, col, top_expand, expected_frame_count, erase_count, side_expand, top_clean, top_clean_frame))
+        args.append((config, video_file, profile, name, row, col, top_expand, expected_frame_count, erase_count, side_expand, top_clean, top_clean_frame))
 
     frame_args = []
-    for _, _, name, _, _, top_expand, frame_count, erase_count, side_expand, top_clean, _ in args:
+    for config, _, _, name, _, _, top_expand, frame_count, erase_count, side_expand, top_clean, _ in args:
         output_dir = os.path.join(home, "target", "decode", name)
         for i in range(frame_count):
             frame_path = os.path.join(output_dir, f"frame_{i}.png")
-            frame_args.append((frame_path, i, name, erase_count, top_expand, side_expand, top_clean))
+            frame_args.append((config, frame_path, i, name, erase_count, top_expand, side_expand, top_clean))
 
     with multiprocessing.Pool() as pool:
         # python is pretty limited and it's not worth to optimize here
@@ -83,15 +85,14 @@ def main():
 
 
 def decode_frames_shim(args):
-    video_file, profile, object_name, row, col, top_expand, expected_frame_count, _erase_count, side_expand, top_clean, top_clean_frame = args
-    decode_frames(video_file, profile, object_name, row, col, top_expand, expected_frame_count, side_expand, top_clean, top_clean_frame)
-def decode_frames(video_file, profile, object_name, row, col, top_expand, expected_frame_count, side_expand, top_clean, top_clean_frame):
+    config, video_file, profile, object_name, row, col, top_expand, expected_frame_count, _erase_count, side_expand, top_clean, top_clean_frame = args
+    decode_frames(config, video_file, profile, object_name, row, col, top_expand, expected_frame_count, side_expand, top_clean, top_clean_frame)
+def decode_frames(config, video_file, profile, object_name, row, col, top_expand, expected_frame_count, side_expand, top_clean, top_clean_frame):
     print(f"[{video_file}] decoding frames (row={row}, col={col})")
     home = os.path.dirname(__file__)
     cap = cv2.VideoCapture(os.path.join(home, video_file))
     frame_count = 0
     # Measurements
-    config = load_config()
         
     decoder = config["decoder"]
     measurements = decoder["measurements"]
@@ -150,11 +151,9 @@ def decode_frames(video_file, profile, object_name, row, col, top_expand, expect
         raise ValueError(f"[{video_file}] expected {expected_frame_count} frames, got {frame_count} frames")
     
 def fix_frame_shim(args):
-    frame_path, ithframe, object_name, erase_count, top_expand, side_expand, top_clean = args
-    fix_frame(frame_path, ithframe, object_name, erase_count, top_expand, side_expand, top_clean)
-def fix_frame(frame_path, ithframe, object_name, erase_count, top_expand, side_expand, top_clean):
-    # Measurements
-    config = load_config()
+    config, frame_path, ithframe, object_name, erase_count, top_expand, side_expand, top_clean = args
+    fix_frame(config, frame_path, ithframe, object_name, erase_count, top_expand, side_expand, top_clean)
+def fix_frame(config, frame_path, ithframe, object_name, erase_count, top_expand, side_expand, top_clean):
     MEASUREMENTS = config["decoder"]["measurements"]
     BACKGROUND_THRESHOLD = MEASUREMENTS["background_threshold"]
 

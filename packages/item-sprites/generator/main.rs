@@ -2,34 +2,27 @@
 
 use std::path::{Path, PathBuf};
 
-use anyhow::bail;
+use anyhow::{anyhow, bail};
 use codize::{cblock, cconcat, clist};
-use item_sprites_generator::{Metadata, SpriteSheet};
 use threadpool::ThreadPool;
+
+mod error;
+use error::Error;
+
+mod sprite_sheet;
+use sprite_sheet::{Metadata, SpriteSheet, MAX_SPRITES};
 
 fn main() {
     if let Err(e) = generate() {
-        eprintln!("Error: {:?}", e);
+        eprintln!("error: {:?}", e);
     }
 }
 
-// #[derive(Debug, Clone, Parser)]
-// struct Cli {
-//     /// The secret URL used to download the sprites
-//     #[clap(short, long)]
-//     pub secret: String,
-//
-//     /// If set, generate the sprites instead of downloading them
-//     /// from secrets. Requires the input image files at /packages/item-sprites/data
-//     #[clap(long, conflicts_with("secret"))]
-//     pub generate: bool,
-// }
-
 fn generate() -> anyhow::Result<()> {
-    let home = item_sprites_generator::find_home()?;
-    let data = home.join("data");
-    if !data.exists() {
-        bail!("Data directory does not exist: {}", data.display());
+    let home = find_home()?;
+    let icons_dir = home.join("icons");
+    if !icons_dir.exists() {
+        bail!("icons directory does not exist: {}", icons_dir.display());
     }
 
     let sprites_dir = home.join("src").join("sprites");
@@ -40,10 +33,10 @@ fn generate() -> anyhow::Result<()> {
 
     let mut chunks = vec![
         // chunk 0
-        find_images(&data, &["CapturedActor", "Item", "PlayerItem"])?,
+        find_images(&icons_dir, &["CapturedActor", "Item", "PlayerItem"])?,
         // chunk 1
         find_images(
-            &data,
+            &icons_dir,
             &[
                 "Bullet",
                 "WeaponBow",
@@ -55,7 +48,7 @@ fn generate() -> anyhow::Result<()> {
         )?,
         // chunk 2
         find_images(
-            &data,
+            &icons_dir,
             &[
                 "ArmorHead",
                 "ArmorLower",
@@ -66,21 +59,27 @@ fn generate() -> anyhow::Result<()> {
             ],
         )?,
     ];
-    let dummy_path = data.join("Dummy.png");
+
+    let special_dir = icons_dir.join("SP");
+
+    // add the fallback "dummy" image
+    let dummy_path = special_dir.join("Dummy.png");
     if !dummy_path.exists() {
         bail!("Dummy image does not exist: {}", dummy_path.display());
     }
     println!("adding dummy image to last chunk");
     chunks.last_mut().unwrap().push(dummy_path);
 
+    // print stat
     for (i, chunk) in chunks.iter().enumerate() {
         println!("chunk {}: {} images", i, chunk.len());
-        if chunk.len() > item_sprites_generator::MAX_SPRITES as usize {
+        if chunk.len() > MAX_SPRITES as usize {
             bail!("Too many sprites in chunk {}: {}", i, chunk.len());
         }
     }
-
     println!("loading sprites...");
+
+    // load the individual icons into sprite sheets
     let pool = ThreadPool::new(num_cpus::get().saturating_sub(1).max(1));
     let sprite_sheets = (0..chunks.len())
         .map(|i| SpriteSheet::new(i as u16))
@@ -125,12 +124,15 @@ fn generate() -> anyhow::Result<()> {
         .join("|");
     let metadata = serde_json::to_string(&metadata)?;
     let metadata_ts = cconcat![
+        // imports
         cconcat!((0..sprite_sheets.len())
             .map(|i| { format!("import chunk{i}x32 from \"./chunk{i}x32.webp?url\";") })),
         cconcat!((0..sprite_sheets.len())
             .map(|i| { format!("import chunk{i}x64 from \"./chunk{i}x64.webp?url\";") })),
+
+        // chunkmap classnames
         cblock! {
-            "export const ChunkMap = {",
+            "export const ChunkClasses = {",
             [
                 clist!("" => (0..sprite_sheets.len()).map(|i| {
                     format!("\".sprite-chunk{i}x32\": {{ backgroundImage: `url(${{chunk{i}x32}})` }},")
@@ -138,9 +140,17 @@ fn generate() -> anyhow::Result<()> {
                 clist!("" => (0..sprite_sheets.len()).map(|i| {
                     format!("\".sprite-chunk{i}x64\": {{ backgroundImage: `url(${{chunk{i}x64}})` }},")
                 })),
+                clist!("" => (0..sprite_sheets.len()).map(|i| {
+                    format!("\".sprite-mask-chunk{i}x32\": {{ maskImage: `url(${{chunk{i}x32}})` }},")
+                })),
+                clist!("" => (0..sprite_sheets.len()).map(|i| {
+                    format!("\".sprite-mask-chunk{i}x64\": {{ maskImage: `url(${{chunk{i}x64}})` }},")
+                })),
             ],
             "} as const;"
         },
+
+        // metadata for finding where an actor is
         "/** Sprite metadata, Actor => [Chunk, Position]*/",
         format!(
             "export type Metadata = Record<string,[{},number]>;",
@@ -152,7 +162,7 @@ fn generate() -> anyhow::Result<()> {
         ),
     ];
 
-    std::fs::write(sprites_dir.join("metadata.ts"), metadata_ts.to_string())?;
+    std::fs::write(sprites_dir.join("Metadata.gen.ts"), metadata_ts.to_string())?;
 
     println!("done!");
 
@@ -186,4 +196,19 @@ fn find_images(data_dir: &Path, profiles: &[&str]) -> anyhow::Result<Vec<PathBuf
         out.extend(images);
     }
     Ok(out)
+}
+
+/// Find the item-sprites package directory
+/// if running from cargo
+fn find_home() -> anyhow::Result<PathBuf> {
+    let e = std::env::current_exe()?;
+    let root_path = e
+        .parent() // /target/release
+        .and_then(|x| x.parent()) // /target
+        .and_then(|x| x.parent()) // /
+        .ok_or_else(|| anyhow!("Could not find parent of exe"))?;
+    let mut path = root_path.to_path_buf();
+    path.push("packages");
+    path.push("item-sprites");
+    Ok(path)
 }

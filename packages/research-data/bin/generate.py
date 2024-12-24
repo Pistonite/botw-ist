@@ -88,7 +88,7 @@ def download_data_if_needed():
         print("found data files, skipping cloning.")
 
 def emit_actor_data(actors, gparamlists, localization):
-    actor_dir = os.path.join(DATA_DIR, "actor")
+    actor_dir = os.path.join(DATA_DIR, "Actor")
     if os.path.exists(actor_dir):
         shutil.rmtree(actor_dir)
     os.makedirs(actor_dir)
@@ -807,11 +807,11 @@ def emit_effects():
 if __name__ == "__main__":
     extend_yaml()
     download_data_if_needed()
-    # gparamkeys = load_gparam_keys()
-    # actors = load_actor_links()
-    # gparamlists = load_gparamlist(gparamkeys)
-    # localization = load_actor_localization()
+    gparamkeys = load_gparam_keys()
+    actors = load_actor_links()
+    gparamlists = load_gparamlist(gparamkeys)
+    localization = load_actor_localization()
 
-    # emit_actor_data(actors, gparamlists, localization)
+    emit_actor_data(actors, gparamlists, localization)
     emit_effects()
 
