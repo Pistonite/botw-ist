@@ -715,6 +715,27 @@ def emit_effects():
             for locale in LOCALE_MAP:
                 text = special_status_localization[special_status][locale]
                 f.write(f"  {locale}: {json.dumps(text)}\n")
+    # Special file for zoom
+    ZOOM_STATUS = """
+name: Zoom
+cook_effect: null
+weapon_modifier: Zoom
+localization:
+  en-US: "Zoom"
+  ja-JP: "\\u30ba\\u30fc\\u30e0"
+  de-DE: "Zoom"
+  es-ES: "Zoom"
+  it-IT: "Zoom"
+  fr-FR: "Zoom"
+  ru-RU: "\\u0431\\u0435\\u043a\\u0430\\u0441"
+  zh-CN: "\\u500d\\u955c"
+  zh-TW: "\\u500d\\u93e1"
+  ko-KR: "\\ub3cb\\ubcf4\\uae30"
+  nl-NL: "Zoom"
+"""
+    with open(os.path.join(SPECIAL_STATUS_DIR, "Zoom.yaml"), "w", encoding="utf-8", newline="\n") as f:
+        f.write(ZOOM_STATUS)
+
     print("loading cook effects...")
     cook_effect_localization = {}
     for locale, locale_nin in LOCALE_MAP.items():
@@ -807,11 +828,11 @@ def emit_effects():
 if __name__ == "__main__":
     extend_yaml()
     download_data_if_needed()
-    gparamkeys = load_gparam_keys()
-    actors = load_actor_links()
-    gparamlists = load_gparamlist(gparamkeys)
-    localization = load_actor_localization()
-
-    emit_actor_data(actors, gparamlists, localization)
+    # gparamkeys = load_gparam_keys()
+    # actors = load_actor_links()
+    # gparamlists = load_gparamlist(gparamkeys)
+    # localization = load_actor_localization()
+    #
+    # emit_actor_data(actors, gparamlists, localization)
     emit_effects()
 

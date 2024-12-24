@@ -3,14 +3,16 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::{anyhow, bail};
+use canvas::Canvas;
 use codize::{cblock, cconcat, clist};
-use threadpool::ThreadPool;
 
 mod error;
 use error::Error;
 
 mod sprite_sheet;
-use sprite_sheet::{Metadata, SpriteSheet, MAX_SPRITES};
+use sprite_sheet::{Metadata, SpriteSheet};
+
+mod canvas;
 
 fn main() {
     if let Err(e) = generate() {
@@ -29,7 +31,7 @@ fn generate() -> anyhow::Result<()> {
     if !sprites_dir.exists() {
         std::fs::create_dir_all(&sprites_dir)?;
     }
-    println!("configuring chunks...");
+    println!("configuring actor chunks...");
 
     let mut chunks = vec![
         // chunk 0
@@ -73,47 +75,40 @@ fn generate() -> anyhow::Result<()> {
     // print stat
     for (i, chunk) in chunks.iter().enumerate() {
         println!("chunk {}: {} images", i, chunk.len());
-        if chunk.len() > MAX_SPRITES as usize {
-            bail!("Too many sprites in chunk {}: {}", i, chunk.len());
-        }
     }
-    println!("loading sprites...");
+    println!("loading actor sprites...");
 
     // load the individual icons into sprite sheets
-    let pool = ThreadPool::new(num_cpus::get().saturating_sub(1).max(1));
-    let sprite_sheets = (0..chunks.len())
-        .map(|i| SpriteSheet::new(i as u16))
+    let mut sprite_sheets = (0..chunks.len())
+        .map(|i| {
+            let mut sprite_sheet = SpriteSheet::new(i as u16);
+            let lo_res_path = sprites_dir.join(format!("chunk{}x32.webp", i));
+            let lo_res = Canvas::new(lo_res_path, 16, 32, 28, 75f32);
+            let hi_res_path = sprites_dir.join(format!("chunk{}x64.webp", i));
+            let hi_res = Canvas::new(hi_res_path, 16, 64, 56, 90f32);
+            sprite_sheet.add_canvas(lo_res);
+            sprite_sheet.add_canvas(hi_res);
+            sprite_sheet
+        })
         .collect::<Vec<_>>();
-    let mut handles = Vec::new();
 
-    for (sheet, chunk) in sprite_sheets.iter().zip(chunks) {
-        let sheet = sheet.clone();
+    for (sheet, chunk) in sprite_sheets.iter_mut().zip(chunks) {
         for file in chunk {
             let name = file.file_stem().unwrap().to_string_lossy().into_owned();
-            let sheet = sheet.clone();
-            let (tx, rx) = oneshot::channel();
-            pool.execute(move || {
-                let _ = tx.send(sheet.add_sprite(&name, file));
-            });
-            handles.push(rx);
+            sheet.add_sprite(&name, file)?;
         }
     }
 
-    for handle in handles {
-        handle.recv()??;
-    }
 
-    pool.join();
-
-    println!("encoding sprite sheets...");
+    println!("encoding actor sprite sheets...");
     for (i, sheet) in sprite_sheets.iter().enumerate() {
-        let (lo_size, hi_size) = sheet.write_to_directory(&sprites_dir)?;
         println!("-- chunk {}", i);
-        println!("     low resolution: {} bytes", lo_size);
-        println!("     high resolution: {} bytes", hi_size);
+        let sizes = sheet.write()?;
+        println!("     low resolution: {} bytes", sizes[0]);
+        println!("     high resolution: {} bytes", sizes[1]);
     }
 
-    println!("writing metadata...");
+    println!("writing actor metadata...");
     let mut metadata = Metadata::default();
     for sheet in &sprite_sheets {
         sheet.add_metadata(&mut metadata)?;
@@ -132,7 +127,7 @@ fn generate() -> anyhow::Result<()> {
 
         // chunkmap classnames
         cblock! {
-            "export const ChunkClasses = {",
+            "export const ActorChunkClasses = {",
             [
                 clist!("" => (0..sprite_sheets.len()).map(|i| {
                     format!("\".sprite-chunk{i}x32\": {{ backgroundImage: `url(${{chunk{i}x32}})` }},")
@@ -151,18 +146,62 @@ fn generate() -> anyhow::Result<()> {
         },
 
         // metadata for finding where an actor is
-        "/** Sprite metadata, Actor => [Chunk, Position]*/",
+        "/** Actor => [Chunk, Position]*/",
         format!(
-            "export type Metadata = Record<string,[{},number]>;",
+            "export type ActorMetadata = Record<string,[{},number]>;",
             ts_chunk_type
         ),
         format!(
-            "export const Metadata: Metadata = JSON.parse(`{}`)",
+            "export const ActorMetadata: ActorMetadata = JSON.parse(`{}`)",
             metadata
         ),
     ];
 
-    std::fs::write(sprites_dir.join("Metadata.gen.ts"), metadata_ts.to_string())?;
+    std::fs::write(sprites_dir.join("ActorMetadata.gen.ts"), metadata_ts.to_string())?;
+
+    println!("configuring modifier chunks...");
+    let modifier_chunk = find_images(&icons_dir, &["SpecialStatus"])?;
+    let mut modifier_sheet = SpriteSheet::new(0);
+    let modifier_path = sprites_dir.join("modifiers.webp");
+    let modifier_canvas = Canvas::new(modifier_path, 8, 48, 48, 90f32);
+    modifier_sheet.add_canvas(modifier_canvas);
+
+    println!("loading modifier sprites...");
+    for file in modifier_chunk {
+        let name = file.file_stem().unwrap().to_string_lossy().into_owned();
+        modifier_sheet.add_sprite(&name, file)?;
+    }
+
+    println!("encoding modifier sprite sheet...");
+    let sizes = modifier_sheet.write()?;
+    println!("     modifiers: {} bytes", sizes[0]);
+
+    println!("writing modifier metadata...");
+    let mut metadata = Metadata::default();
+    modifier_sheet.add_metadata(&mut metadata)?;
+    let metadata = serde_json::to_string(&metadata)?;
+    let metadata_ts = cconcat![
+        // imports
+        "import modifiers from \"./modifiers.webp?url\";",
+
+        // chunkmap classnames
+        cblock! {
+            "export const ModifierChunkClasses = {",
+            [
+                "\".sprite-modifiers\": { backgroundImage: `url(${modifiers})` },",
+            ],
+            "} as const;"
+        },
+
+        "/** Modifier => [Chunk, Position]*/",
+        "export type ModifierMetadata = Record<string,[0,number]>;",
+        format!(
+            "export const ModifierMetadata: ModifierMetadata = JSON.parse(`{}`)",
+            metadata
+        ),
+    ];
+
+    std::fs::write(sprites_dir.join("ModifierMetadata.gen.ts"), metadata_ts.to_string())?;
 
     println!("done!");
 
