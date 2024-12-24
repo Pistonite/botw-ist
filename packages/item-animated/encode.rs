@@ -47,10 +47,16 @@ struct Cli {
 }
 
 fn main() -> anyhow::Result<()> {
-    let cli = Cli::parse();
+    let mut cli = Cli::parse();
+    // load config
     let config_file = std::fs::read("config.yaml")?;
     let config: Config = serde_yaml_ng::from_slice(&config_file)?;
     let mut expanded_objects = BTreeSet::new();
+
+    // parse inputs
+    if cli.objects.is_empty() {
+        cli.objects.push("*".to_string());
+    }
     for obj in cli.objects {
         if let Some(object) = obj.strip_suffix('*') {
             if object.is_empty() {
@@ -77,6 +83,8 @@ fn main() -> anyhow::Result<()> {
             }
         }
     }
+
+    // encode each object
     let profile = Arc::new(config.encoder);
     let mut handles = Vec::new();
     for object in expanded_objects {
@@ -110,8 +118,15 @@ fn encode(object: &str, profile: &EncoderProfile) -> anyhow::Result<()> {
         bail!("[{object}] cannot find first frame");
     }
     let image = image::open(input_path)?;
-    // try to avoid precision loss
     let (w, h) = image.dimensions();
+    // save the first frame as png in original resolution
+    let first_frame = process_image(&image, w, h);
+    let mut output_png = output_name.clone();
+    output_png.set_extension("png");
+    first_frame.save(output_dir.join(output_png))?;
+    println!("[{object}] saved first frame");
+
+    // try to avoid precision loss when converting to target dimension
     let ratio = profile.target_dimension as f64 / profile.base_dimension as f64;
     let target_w = if w == profile.base_dimension {
         profile.target_dimension
@@ -123,7 +138,8 @@ fn encode(object: &str, profile: &EncoderProfile) -> anyhow::Result<()> {
     } else {
         (h as f64 * ratio) as u32
     };
-    println!("[{object}] dimension will be {target_w}x{target_h}");
+
+    println!("[{object}] webp dimension will be {target_w}x{target_h}");
 
     println!("[{object}] loading and transforming frames...");
 
@@ -133,7 +149,8 @@ fn encode(object: &str, profile: &EncoderProfile) -> anyhow::Result<()> {
         if !input_path.exists() {
             break;
         }
-        let image = process_image(image::open(input_path)?, target_w, target_h);
+        let image = image::open(input_path)?;
+        let image = process_image(&image, target_w, target_h);
         frame_images.push(image);
     }
     println!(
@@ -204,7 +221,7 @@ fn timestamp(i: u32) -> i32 {
     }
 }
 
-fn process_image(input: DynamicImage, target_w: u32, target_h: u32) -> DynamicImage {
+fn process_image(input: &DynamicImage, target_w: u32, target_h: u32) -> DynamicImage {
     let (w, h) = input.dimensions();
     let mut output = DynamicImage::new_rgba8(w, h);
     for x in 0..w {

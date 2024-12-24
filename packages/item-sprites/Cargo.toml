@@ -6,7 +6,6 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.94"
-clap = { version = "4.5.23", features = ["derive"] }
 codize = "0.3.3"
 image = "0.25.5"
 num_cpus = "1.16.0"
@@ -19,10 +18,5 @@ webp = "0.3.0"
 
 
 [[bin]]
-name = "item-sprites"
+name = "skybook-item-sprites-generator"
 path = "generator/main.rs"
-
-[lib]
-name = "item_sprites_generator"
-path = "generator/lib.rs"
-

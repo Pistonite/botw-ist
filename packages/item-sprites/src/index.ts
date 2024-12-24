@@ -1,2 +1,2 @@
-export * from "./sprites/metadata.ts";
+export * from "./sprites/Metadata.gen.ts";
 export * from "./Sprite.tsx";

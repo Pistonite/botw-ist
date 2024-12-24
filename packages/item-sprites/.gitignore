@@ -1,2 +1,4 @@
 /data
-/src/sprites/*.webp
+/icons
+*.webp
+*.png
