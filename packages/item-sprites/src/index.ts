@@ -1,2 +1,3 @@
-export * from "./sprites/Metadata.gen.ts";
-export * from "./Sprite.tsx";
+export * from "./sprites/ActorMetadata.gen.ts";
+export * from "./sprites/ModifierMetadata.gen.ts";
+export * from "./ActorSprite.tsx";

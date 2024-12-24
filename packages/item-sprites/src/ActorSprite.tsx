@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { makeStaticStyles, makeStyles, mergeClasses } from "@griffel/react";
 
-import { ChunkClasses, Metadata } from "./sprites/Metadata.gen.ts";
+import { ActorChunkClasses, ActorMetadata } from "./sprites/ActorMetadata.gen.ts";
 import { ActorRemap } from "./ActorRemap.gen.ts";
 
 export type SpriteProps = {
@@ -50,7 +50,7 @@ export type SpriteProps = {
     powered?: boolean;
 };
 
-const useChunkClasses = makeStaticStyles(ChunkClasses);
+const useChunkClasses = makeStaticStyles(ActorChunkClasses);
 
 const useStyles = makeStyles({
     sprite: {
@@ -171,7 +171,7 @@ const SpriteImpl: React.FC<SpriteProps> = ({ actor, effect, cheap, deactive, pow
         }
     }
 
-    const [chunk, position] = Metadata[iconActor];
+    const [chunk, position] = ActorMetadata[iconActor];
     const backgroundPosition = getBackgroundPosition(position);
 
     const chunkClass = `chunk${chunk}x${cheap ? "32" : "64"}`
@@ -196,7 +196,7 @@ const SpriteImpl: React.FC<SpriteProps> = ({ actor, effect, cheap, deactive, pow
     );
 };
 
-export const Sprite = memo(SpriteImpl);
+export const ActorSprite = memo(SpriteImpl);
 
 /**
  * Remap an actor to its icon actor name
@@ -247,7 +247,7 @@ const mapActor = (
         actor = `${actor}_${effect}`;
     }
 
-    if (!(actor in Metadata)) {
+    if (!(actor in ActorMetadata)) {
         return "Dummy";
     }
     return actor;
