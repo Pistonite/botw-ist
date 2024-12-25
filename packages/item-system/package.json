@@ -1,0 +1,27 @@
+{
+  "name": "skybook-item-system",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fluentui/react-icons": "^2.0.270",
+    "react": "*",
+    "react-dom": "*",
+    "skybook-item-assets": "*"
+  },
+  "peerDependencies": {
+    "@griffel/react": "*"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@fluentui/react-components": "^9.56.8"
+  }
+}

@@ -4,8 +4,10 @@ tasks:
   pull-priv: 
     desc: Pull private assets for building the package. Requires gcloud access
     cmds:
-      - rm -rf icons
+      - rm -rf icons src/images
       - gcloud storage cp -r gs://ist-private/icons .
+      - gcloud storage cp -r gs://ist-private/images src
+
 
   build:
     desc: Build the sprite sheets
@@ -15,13 +17,13 @@ tasks:
       - cp -R icons/SP/Item src/special
 
   pull:
-    desc: Pull the generated assets for development
+    desc: Pull the assets for development
     cmds:
       - cmd: echo "this command is not yet available"
         silent: true
 
   push:
-    desc: Push the generated assets. Requres gcloud access
+    desc: Push the generated assets. Requires gcloud access
     cmds:
       - gcloud storage cp src/sprites/*.webp gs://ist-private/sprites
 

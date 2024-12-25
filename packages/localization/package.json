@@ -1,0 +1,14 @@
+{
+  "name": "skybook-localization",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "@pistonite/pure": "*",
+    "i18next": "^24.2.0",
+    "react-i18next": "^15.2.0"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

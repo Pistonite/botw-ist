@@ -4,7 +4,7 @@ import { makeStaticStyles, makeStyles, mergeClasses } from "@griffel/react";
 import { ActorChunkClasses, ActorMetadata } from "./sprites/ActorMetadata.gen.ts";
 import { ActorRemap } from "./ActorRemap.gen.ts";
 
-export type SpriteProps = {
+export type ActorSpriteProps = {
     /** Name of the Actor to display */
     actor: string;
 
@@ -21,6 +21,11 @@ export type SpriteProps = {
      * disables animations
      */
     cheap?: boolean;
+
+    /** 
+     * Disable all animations even if `cheap` is false
+     */
+    disableAnimation?: boolean;
 
     /**
      * Use styles to indicate that this slot is supposed to
@@ -90,6 +95,13 @@ const useStyles = makeStyles({
         height: "1024px",
         backgroundColor: "rgba(255, 0, 0, 0.6)",
     },
+    damageCheap: {
+        transformOrigin: "top left",
+        scale: 2,
+        width: "512px",
+        height: "512px",
+        backgroundColor: "rgba(255, 0, 0, 0.6)",
+    },
     damageAnimation: {
         animationIterationCount: "infinite",
         animationDuration: "1s",
@@ -113,15 +125,17 @@ const useStyles = makeStyles({
     }
 });
 
-const SpriteImpl: React.FC<SpriteProps> = ({ actor, effect, cheap, deactive, powered, blank, badlyDamaged}) => {
+const SpriteImpl: React.FC<ActorSpriteProps> = ({ actor, effect, cheap, disableAnimation, deactive, powered, blank, badlyDamaged}) => {
     useChunkClasses();
     const styles = useStyles();
 
     let baseClass = mergeClasses(styles.sprite, blank && styles.blank);
 
+    disableAnimation = disableAnimation || cheap;
+
     // Handle simple animated images - Travel Medallion, 5 orbs
     // if not animated, it's in the sprite sheet
-    if (!cheap) {
+    if (!disableAnimation) {
     if (/Obj_(WarpDLC|DungeonClearSeal|HeroSeal_(Gerudo|Goron|Rito|Zora))/.test(actor)) {
             return (
                 <div
@@ -146,7 +160,7 @@ const SpriteImpl: React.FC<SpriteProps> = ({ actor, effect, cheap, deactive, pow
         const dlc = iconActor.includes("DLC");
         // active - either animated or not, with offset
         if (!deactive) {
-            const ext = cheap ? "png" : "webp";
+            const ext = disableAnimation ? "png" : "webp";
             return (
                 <div aria-hidden className={baseClass}>
                     <img 
@@ -159,7 +173,7 @@ const SpriteImpl: React.FC<SpriteProps> = ({ actor, effect, cheap, deactive, pow
             );
         }
         // inactive - if animated, use different sprite
-        if (!cheap) {
+        if (!disableAnimation) {
             return (
                 <div
                 aria-hidden
@@ -185,7 +199,7 @@ const SpriteImpl: React.FC<SpriteProps> = ({ actor, effect, cheap, deactive, pow
             {
                 badlyDamaged && (
                     <div
-                        className={mergeClasses(`sprite-mask-${chunkClass}`, styles.damage, styles.damageAnimation)}
+                        className={mergeClasses(`sprite-mask-${chunkClass}`, cheap ? styles.damageCheap : styles.damage, !disableAnimation && styles.damageAnimation, )}
                         style={{
                             translate: backgroundPosition,
                         }}
