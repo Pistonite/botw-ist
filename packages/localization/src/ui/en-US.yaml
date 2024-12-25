@@ -1,0 +1,21 @@
+# Item Slot Tooltip
+tooltip.durability: "Durability: {durability}"
+tooltip.count: "Count: {value}"
+tooltip.dye_color: "Dye Color: {dye_color}"
+tooltip.equipped: "Equipped"
+tooltip.translucent: "Translucent"
+tooltip.holding: "Holding {holding}"
+
+tooltip.cook.life_recover: "Recovers {life_recover_hearts} hearts"
+tooltip.cook.price: "Sells for {price}"
+
+tooltip.category: "Category: {pouch_category}"
+tooltip.slot: "Slot #{slot_number}, Pos #{position}"
+tooltip.transfer_slot: "Will be transferred"
+
+tooltip.profile: "Profile: {profile}"
+tooltip.power: "Power: {gparam_attack_power}"
+tooltip.life: "Life: {gparam_general_life}"
+tooltip.life_infinite: "Life: Infinite [{gparam_general_life}]" # generalIsLifeInfinite
+tooltip.buy_price: "Buying Price: {gparam_item_buying_price}"
+tooltip.sell_price: "Selling Price: {gparam_item_selling_price}"

@@ -1,0 +1,7 @@
+version: '3'
+
+tasks:
+  push:
+    desc: Push generated files. Requires gcloud access
+    cmds:
+      - gcloud storage cp src/generated/*.yaml gs://ist-private/i18n/generated

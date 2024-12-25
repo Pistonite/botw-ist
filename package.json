@@ -2,8 +2,9 @@
     "workspaces": [
         "packages/app",
         "packages/intwc",
-        "packages/item-slots",
-        "packages/item-sprites",
+        "packages/item-assets",
+        "packages/item-system",
+        "packages/localization",
         "packages/monaco-typescript-contrib",
         "packages/monaco-editor-contrib"
     ],

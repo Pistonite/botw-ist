@@ -813,7 +813,7 @@ localization:
                     f.write(f"    desc:\n")
                     for desc in data["desc"]:
                         f.write(f"      - {json.dumps(desc)}\n")
-                    f.write(f"  elixir_desc:\n")
+                    f.write(f"    elixir_desc:\n")
                     for desc in data["elixir_desc"]:
                         f.write(f"      - {json.dumps(desc)}\n")
             else:

@@ -7,6 +7,6 @@ members = [
     "next/botw-ist-command", 
     "research/trace-view", 
     "packages/actor-sys", 
-    "packages/item-sprites", 
+    "packages/item-assets", 
     "packages/item-animated",
 ]
