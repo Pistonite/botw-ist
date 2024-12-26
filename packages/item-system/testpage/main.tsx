@@ -3,8 +3,12 @@ import { createRoot } from "react-dom/client";
 import { FluentProvider, Switch, webDarkTheme, webLightTheme } from "@fluentui/react-components";
 
 import { ItemTooltipProvider } from "../src/ItemTooltipProvider";
-import { ItemSlotInfo, ItemUse, PouchItemType } from "../src/ItemSlotInfo";
+import { ItemSlotInfo } from "../src/data/ItemSlotInfo.ts";
+import { CookEffect, ItemUse, PouchItemType } from "../src/data/enums.ts";
+
 import { ItemSlot } from "../src/ItemSlot";
+import { ItemTooltip } from "../src/ItemTooltip.tsx";
+import { initI18n } from "skybook-localization";
 
 const DUMMY: ItemSlotInfo = {
     actorName: "Dummy",
@@ -12,7 +16,7 @@ const DUMMY: ItemSlotInfo = {
     itemUse: ItemUse.WeaponSmallSword,
     value: 0,
     isEquipped: false,
-    isInInventory: false,
+    isInInventory: true,
     modEffectValue: 0,
     modEffectDuration: 0,
     modSellPrice: 0,
@@ -60,12 +64,84 @@ const TEST_ITEMS: ItemSlotInfo[] = [
         value: 5,
         holdingCount: 4,
     },
+    {
+        ...DUMMY,
+        actorName: "Obj_DLC_HeroSoul_Goron",
+        itemType: PouchItemType.KeyItem,
+    },
+    {
+        ...DUMMY,
+        actorName: "Weapon_Sword_502",
+        itemType: PouchItemType.Sword,
+        itemUse: ItemUse.WeaponSmallSword,
+        value: 100,
+    },
+    {
+        ...DUMMY,
+        actorName: "Armor_011_Lower",
+        itemType: PouchItemType.ArmorLower,
+        itemUse: ItemUse.ArmorLower,
+        value: 1,
+    },
+    {
+        ...DUMMY,
+        actorName: "Weapon_Bow_028",
+        itemType: PouchItemType.Bow,
+        itemUse: ItemUse.WeaponBow,
+        value: 6000,
+    },
+    {
+        ...DUMMY,
+        actorName: "Weapon_Bow_028",
+        itemType: PouchItemType.Bow,
+        itemUse: ItemUse.WeaponBow,
+        value: 6000,
+        modEffectValue: 120,
+        modSellPrice: 147,
+    },
+    {
+        ...DUMMY,
+        actorName: "Weapon_Shield_001",
+        itemType: PouchItemType.Shield,
+        itemUse: ItemUse.WeaponShield,
+        value: 1000,
+        modEffectValue: 120,
+        modSellPrice: 0xffffffff,
+    },
+    {
+        ...DUMMY,
+        actorName: "Item_Cook_A_01",
+        itemType: PouchItemType.Food,
+        itemUse: ItemUse.CureItem,
+        value: 1,
+        modEffectValue: 120,
+        isInInventory: false,
+        modSellPrice: 115,
+    },
+    {
+        ...DUMMY,
+        actorName: "Item_Cook_C_17",
+        itemType: PouchItemType.Food,
+        itemUse: ItemUse.CureItem,
+        value: 1,
+        modEffectValue: 120,
+        modEffectId: CookEffect.ExGutsMaxUp,
+        modSellPrice: 115,
+    },
+    {
+        ...DUMMY,
+        actorName: "Armor_075_Head",
+        itemType: PouchItemType.ArmorUpper,
+        itemUse: ItemUse.ArmorUpper,
+        value: 1,
+    },
 ];
 
 const App: React.FC = () => {
     const [cheap, setCheap] = useState(false);
     const [isEquipped, setIsEquipped] = useState(false);
     const [isInBrokenSlot, setIsInBrokenSlot] = useState(false);
+    const [deactive, setDeactive] = useState(false);
     const [badlyDamaged, setBadlyDamaged] = useState(false);
     const [animation, setAnimation] = useState(true);
     const [entangled, setEntangled] = useState(false);
@@ -89,6 +165,9 @@ const App: React.FC = () => {
             <Switch checked={isInBrokenSlot} label="Broken" onChange={(_, {checked}) => {
                 setIsInBrokenSlot(!!checked);
             }} />
+            <Switch checked={deactive} label="Deactive" onChange={(_, {checked}) => {
+                setDeactive(!!checked);
+            }} />
             <Switch checked={badlyDamaged} label="Badly Damaged" onChange={(_, {checked}) => {
                 setBadlyDamaged(!!checked);
             }} />
@@ -99,31 +178,41 @@ const App: React.FC = () => {
                 setEntangled(!!checked);
             }} />
     </div>
-        <div style={{display: "flex"}}>
+        <div style={{display: "flex", flexWrap: "wrap"}}>
             {
                 items.map((item, index) => {
-                    return <ItemSlot 
-                        key={index} 
-                        info={item}
-                        cheap={cheap}
-                        disableAnimation={!animation}
-                    />;
+                    return (
+                        <ItemTooltip info={item} key={index}>
+                        <ItemSlot 
+                            info={item}
+                            cheap={cheap}
+                            deactive={deactive}
+                            disableAnimation={!animation}
+                        />
+                        </ItemTooltip>
+                    );
                 })
             }
         </div>
     </>;
 };
 
-const root = document.getElementById('root');
-if (root) {
-    createRoot(root).render(
-        <React.StrictMode>
-            <FluentProvider theme={webLightTheme}>
-                <ItemTooltipProvider>
-                    <App />
-                </ItemTooltipProvider>
-            </FluentProvider>
-        </React.StrictMode>
-    );
-}
+void (async function main(){
+    await initI18n();
+
+
+    const root = document.getElementById('root');
+    if (root) {
+        createRoot(root).render(
+            <React.StrictMode>
+                <FluentProvider theme={webLightTheme}>
+                    <ItemTooltipProvider>
+                        <App />
+                    </ItemTooltipProvider>
+                </FluentProvider>
+            </React.StrictMode>
+        );
+    }
+
+})()
 

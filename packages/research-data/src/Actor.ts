@@ -45,14 +45,14 @@ export type ActorL10nEntry = {
      * The name of the actor
      *
      * If the actor is a CookResult, 
-     * the effect is represented as {effect}
+     * the effect is represented as {{effect}}
      */
     name: ActorL10nString;
     /** 
      * The description of the actor
      *
      * If the actor is a CookResult, 
-     * the effect is represented as {effect_desc}
+     * the effect is represented as {{effect_desc}}
      */
     desc: string;
     /**
@@ -70,8 +70,8 @@ export type ActorL10nString = {
      *
      * Katakana marking aboce kanji in Japanese texts are stripped out
      *
-     * {effect}: The effect of the CookResult
-     * {effect_desc}: The effect description of the CookResult
+     * {{effect}}: The effect of the CookResult
+     * {{effect_desc}}: The effect description of the CookResult
      */
     text: string;
 

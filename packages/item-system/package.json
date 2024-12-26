@@ -13,7 +13,8 @@
     "@fluentui/react-icons": "^2.0.270",
     "react": "*",
     "react-dom": "*",
-    "skybook-item-assets": "*"
+    "skybook-item-assets": "*",
+    "skybook-localization": "*"
   },
   "peerDependencies": {
     "@griffel/react": "*"

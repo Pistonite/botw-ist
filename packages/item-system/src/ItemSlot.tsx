@@ -2,10 +2,13 @@ import "./CalamitySans.css";
 import { makeStyles, mergeClasses } from "@griffel/react";
 import { Text } from "@fluentui/react-components";
 
-import { ActorSprite, ActorSpriteProps } from "skybook-item-assets";
+import { ActorSprite, ActorSpriteProps, ModifierSprite } from "skybook-item-assets";
 
-import { PouchItemType, type ItemSlotInfo } from "./ItemSlotInfo.ts";
+import { type ItemSlotInfo } from "./data/ItemSlotInfo.ts";
 import { Link24Regular, Link32Regular } from "@fluentui/react-icons";
+import { CookEffect, PouchItemType, SpecialStatus } from "./data/enums.ts";
+import { getModifierInfo } from "./data/ModifierInfo.ts";
+import { getActorParam } from "./data/ActorData.ts";
 
 const useStyles = makeStyles({
     container: {
@@ -65,6 +68,9 @@ const useStyles = makeStyles({
     image: {
         padding: "4px",
     },
+    imageTranslucent: {
+        opacity: 0.6,
+    },
     // The "xCOUNT" text
     itemCount: {
         fontFamily: "CalamitySans",
@@ -83,12 +89,20 @@ const useStyles = makeStyles({
         backgroundColor: "#333b",
         boxSizing: "border-box",
         border: "1px solid #999999",
-        padding: "0px 2px",
         position: "absolute",
         display: "flex",
-        height: "18px",
+        minWidth: "20px",
+        height: "20px",
+        "& span": {
+            position: "relative",
+            display: "inline-block",
+            top: "1px",
+            flex: "1",
+            textAlign: "center",
+        }
     },
     durability: {
+        padding: "0px 2px",
         left: "2px",
         bottom: "2px",
     },
@@ -110,8 +124,6 @@ const useStyles = makeStyles({
     entangle: {
         color: "#b7f1ff",
         display: "flex",
-        // width: "100%",
-        // height: "100%",
         alignItems: "center",
         justifyContent: "center",
         filter: "drop-shadow(0 0 5px #3aa0ff)",
@@ -130,6 +142,23 @@ const useStyles = makeStyles({
                 opacity: 0,
             },
         }
+    },
+    modifierOverlay: {
+        top: "2px",
+        left: "2px",
+    },
+    modifier: {
+        position: "relative",
+        top: "-1px",
+        left: "-1px",
+        width: "18px",
+    },
+    modifierText: {
+        paddingRight: "2px",
+        color: "#64E793",
+    },
+    modifierTextBeginPad: {
+        paddingLeft: "2px",
     }
 });
 
@@ -138,24 +167,28 @@ export type ItemSlotProps = {
 } & Pick<ActorSpriteProps, "cheap" | "blank" | "powered" | "deactive" | "disableAnimation">;
 
 /** The Item slot display */
-export const ItemSlot: React.FC<ItemSlotProps> = ({ info, cheap, disableAnimation }) => {
+export const ItemSlot: React.FC<ItemSlotProps> = ({ info, cheap, deactive, disableAnimation }) => {
     const styles = useStyles();
     const {
         actorName,
+        modEffectId,
         itemType,
         value,
         isEquipped,
         isInBrokenSlot,
+        isInInventory,
         holdingCount,
         promptEntangled
     } = info;
 
     disableAnimation = disableAnimation || cheap;
 
-    const canStack = itemType === PouchItemType.Material; // TODO: get from actor data
+    const canStack = getActorParam(actorName, "canStack");
 
     const isEquipment = itemType === PouchItemType.Sword || itemType === PouchItemType.Shield || itemType === PouchItemType.Bow;
     const badlyDamaged = isEquipment && value < 300;
+
+    const modifier = getModifierInfo(info);
     return (
         <div className={styles.container}>
             {/* Background & box*/}
@@ -163,6 +196,7 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({ info, cheap, disableAnimatio
                 className={mergeClasses(
                     styles.layer,
                     isInBrokenSlot && styles.broken,
+                    !isInInventory && styles.imageTranslucent
                 )}
                 // style={{ zIndex: 1 }}
             >
@@ -177,7 +211,9 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({ info, cheap, disableAnimatio
             <div className={mergeClasses(styles.layer, styles.image)}>
                 <ActorSprite 
                     actor={actorName} 
+                    effect={CookEffect[modEffectId]}
                     cheap={cheap}
+                    deactive={deactive}
                     disableAnimation={disableAnimation}
                     badlyDamaged={badlyDamaged}
                 />
@@ -203,7 +239,9 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({ info, cheap, disableAnimatio
                     </span>
                     </div>
                 }
-                { !isEquipment && (canStack || value > 0) &&
+                { 
+                // > 1 for displaying corrupted stacks
+                !isEquipment && (canStack || value > 1) &&
             <div className={mergeClasses(styles.layer)}>
                             <span className={mergeClasses(styles.itemCount, !isEquipped && styles.itemCountShadow)}>x{value}</span>
                     </div>
@@ -233,37 +271,28 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({ info, cheap, disableAnimatio
                     </div>
                 </>
             }
+            {
+                (!!modifier.iconValue || modifier.status !== SpecialStatus.None) && (
+            <div className={mergeClasses(styles.layer)}>
+                            <span className={mergeClasses(styles.overlayText, styles.modifierOverlay )}>
+                            {
+                                modifier.status !== SpecialStatus.None && modifier.statusIcon && (
+                                    <div className={styles.modifier}>
+                                        <ModifierSprite status={modifier.statusIcon} />
+                                    </div>
+                                )
+                            }
+                            {
+                                modifier.iconValue && (
+                                <Text font="numeric" className={mergeClasses(styles.modifierText, (modifier.status === SpecialStatus.None || !modifier.statusIcon) && styles.modifierTextBeginPad)}>{modifier.iconValue}</Text>
+                                )
+                            }
+                        </span>
+                    </div>
+                )
+            }
         </div>
     );
-// {propertyString && (
-//         <div className="ItemLayer" style={{ zIndex: 2 }}>
-//             <span
-//                 className={clsx(
-//                     "ItemFloatWindow ItemPropertyString",
-//                     propertyClassName,
-//                 )}
-//             >
-//                 {propertyString}
-//             </span>
-//         </div>
-//     )}
-// {(modifierImage || modifierText) && (
-//         <div className="ItemLayer" style={{ zIndex: 2 }}>
-//             <span className="ItemFloatWindow ItemModifierString">
-//                 {modifierImage && (
-//                     <img
-//                         className={clsx("ItemModifierImage")}
-//                         src={`/legacy/${modifierImage}`}
-//                     />
-//                 )}
-//                 {modifierText && (
-//                     <span className={modifierClassName}>
-//                         {modifierText}
-//                     </span>
-//                 )}
-//             </span>
-//         </div>
-//     )}
 };
 
 const formatDurability = (value: number): string => {

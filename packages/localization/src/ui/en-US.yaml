@@ -1,12 +1,9 @@
 # Item Slot Tooltip
-tooltip.durability: "Durability: {durability}"
-tooltip.count: "Count: {value}"
-tooltip.dye_color: "Dye Color: {dye_color}"
+tooltip.value: "Value: {{value}}"
 tooltip.equipped: "Equipped"
 tooltip.translucent: "Translucent"
-tooltip.holding: "Holding {holding}"
+tooltip.holding: "Holding {{holding}}"
 
-tooltip.cook.life_recover: "Recovers {life_recover_hearts} hearts"
 tooltip.cook.price: "Sells for {price}"
 
 tooltip.category: "Category: {pouch_category}"
