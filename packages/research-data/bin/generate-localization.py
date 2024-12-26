@@ -75,7 +75,7 @@ def load_entries_for_actor(actor_file) -> dict[str, dict[str, str]] | None:
         name = l10n[locale]["name"]["text"]
         name_attr = l10n[locale]["name"]["attr"]
         if name_attr:
-            name = name.replace("{effect}", f"{{effect_{name_attr}}}")
+            name = name.replace("{{effect}}", "{{effect_"+name_attr+"}}")
         desc = l10n[locale]["desc"]
         album_desc = l10n[locale]["album_desc"]
         # use album desc if desc is not provided
@@ -128,17 +128,21 @@ def load_entries_for_special_status(special_status_file) -> dict[str, dict[str, 
     if not l10n:
         return None
     data = {}
+    name = special_status["name"]
     for locale in LOCALE_MAP:
-        name = special_status["name"]
         value = l10n[locale]
         # Some modifiers doesn't show the value in game
         # we add it
-        if name in ["RapidFire", "LongThrow", "SpreadFire", "Shield Surf Up"]:
+        if name in ["RapidFire", "LongThrow", "SpreadFire", "SurfMaster"]:
             value += " [{{modifier_value}}]"
+        if name == "SurfMaster" and (locale == "zh-CN" or locale == "zh-TW"):
+            value = "\u76fe\u6ed1\u884c\u63d0\u5347 [{{modifier_value}}]"
 
         data[locale] = {
             f"status.{name}": value,
         }
+
+    # patch for missing entries for Shield Surf Up
     return data
 
 if __name__ == "__main__":

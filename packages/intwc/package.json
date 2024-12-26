@@ -20,7 +20,7 @@
         "url": "https://github.com"
     },
     "dependencies": {
-        "@pistonite/pure": "^0.0.13",
+        "@pistonite/pure": "^0.0.15",
         "@pistonite/monaco-typescript-contrib": "0.0.1",
         "monaco-editor-contrib": "0.52.2"
     },

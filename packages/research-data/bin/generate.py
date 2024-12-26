@@ -438,11 +438,11 @@ def parse_localization(name, data, allow_attr):
                 # effect and effect description placeholder
                 one_field_value = c["two"]["one_field"][0]
                 if one_field_value == 7:
-                    text += "{effect}"
+                    text += "{{effect}}"
                 elif one_field_value == 8:
-                    text += "{effect_desc}"
+                    text += "{{effect_desc}}"
                 elif one_field_value == 13:
-                    text += "{modifier_value}"
+                    text += "{{modifier_value}}"
                 else:
                     raise ValueError(f"{name} invalid two.one_field0: {one_field_value}")
                 continue
@@ -828,11 +828,11 @@ localization:
 if __name__ == "__main__":
     extend_yaml()
     download_data_if_needed()
-    # gparamkeys = load_gparam_keys()
-    # actors = load_actor_links()
-    # gparamlists = load_gparamlist(gparamkeys)
-    # localization = load_actor_localization()
-    #
-    # emit_actor_data(actors, gparamlists, localization)
+    gparamkeys = load_gparam_keys()
+    actors = load_actor_links()
+    gparamlists = load_gparamlist(gparamkeys)
+    localization = load_actor_localization()
+    
+    emit_actor_data(actors, gparamlists, localization)
     emit_effects()
 

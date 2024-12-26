@@ -77,8 +77,8 @@ const useStyles = makeStyles({
         top: "-11.4px",
     },
     soulOffsetDLC: {
-        top: "-21.7px",
-        left: "-1.6px",
+        top: "-19px",
+        left: "0px",
     },
     blank: {
         filter: "grayscale(100%)",

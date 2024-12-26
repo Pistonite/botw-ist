@@ -237,7 +237,7 @@ fn find_images(data_dir: &Path, profiles: &[&str]) -> anyhow::Result<Vec<PathBuf
     Ok(out)
 }
 
-/// Find the item-sprites package directory
+/// Find the item-assets package directory
 /// if running from cargo
 fn find_home() -> anyhow::Result<PathBuf> {
     let e = std::env::current_exe()?;
@@ -248,6 +248,6 @@ fn find_home() -> anyhow::Result<PathBuf> {
         .ok_or_else(|| anyhow!("Could not find parent of exe"))?;
     let mut path = root_path.to_path_buf();
     path.push("packages");
-    path.push("item-sprites");
+    path.push("item-assets");
     Ok(path)
 }

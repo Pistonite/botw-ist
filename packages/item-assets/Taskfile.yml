@@ -4,7 +4,7 @@ tasks:
   pull-priv: 
     desc: Pull private assets for building the package. Requires gcloud access
     cmds:
-      - rm -rf icons src/images
+      - rm -rf icons src/images/*.png
       - gcloud storage cp -r gs://ist-private/icons .
       - gcloud storage cp -r gs://ist-private/images src
 

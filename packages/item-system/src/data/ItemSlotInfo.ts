@@ -1,3 +1,5 @@
+import type { CookEffect, ItemUse, PouchItemType } from "./enums.ts";
+
 /**
  * Information to display an item slot
  *
@@ -107,58 +109,4 @@ export type ItemSlotInfo = {
      * Enable the prompt entangled state for this slot
      */
     promptEntangled: boolean,
-}
-
-/** 
- * uking::ui::PouchItemType
- */
-export enum PouchItemType {
-    Sword = 0,
-    Bow = 1,
-    Arrow = 2,
-    Shield = 3,
-    ArmorHead = 4,
-    ArmorUpper = 5,
-    ArmorLower = 6,
-    Material = 7,
-    Food = 8,
-    KeyItem = 9,
-    Invalid = -1,
-}
-
-/** 
- * uking::ui::ItemUse
- */
-export enum ItemUse {
-    WeaponSmallSword = 0,
-    WeaponLargeSword = 1,
-    WeaponSpear = 2,
-    WeaponBow = 3,
-    WeaponShield = 4,
-    ArmorHead = 5,
-    ArmorUpper = 6,
-    ArmorLower = 7,
-    Item = 8,
-    ImportantItem = 9,
-    CureItem = 10,
-    Invalid = -1,
-}
-
-/** uking::CookEffectId */
-export enum CookEffect {
-    None = -1,
-    LifeRecover = 1,
-    LifeMaxUp = 2,
-    ResistHot = 4,
-    ResistCold = 5,
-    ResistElectric = 6,
-    AttackUp = 10,
-    DefenseUp = 11,
-    Quietness = 12,
-    // note the name we use internally for skybook is different
-    // for decomp, it's MovingSpeed
-    AllSpeed = 13, 
-    GutsRecover = 14,
-    ExGutsMaxUp = 15,
-    Fireproof = 16,
 }
