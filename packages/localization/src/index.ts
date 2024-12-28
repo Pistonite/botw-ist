@@ -15,13 +15,17 @@ export const backend: BackendModule = {
             return undefined;
         }
         const locale = convertToSupportedLocale(language);
+        console.log(locale, namespace);
         let strings;
         try {
             strings  = await import(`./${namespace}/${locale}.yaml`);
-        } catch {
+            console.log(strings);
+        } catch(e) {
+            console.error(e);
             try {
                 strings = await import(`./${namespace}/en-US.yaml`);
-            } catch {
+            } catch(e) {
+                console.error(e);
                 return undefined;
             }
             console.warn(`${language} is not supported for ${namespace} namespace. Falling back to en-US.`);

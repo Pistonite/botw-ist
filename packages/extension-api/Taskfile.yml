@@ -1,0 +1,6 @@
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      - workex -p skyb-0.0.1 src/protocol.ts --lib-path workex --no-lib

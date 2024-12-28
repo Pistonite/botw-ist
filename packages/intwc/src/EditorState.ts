@@ -1,5 +1,6 @@
 // import { isDark } from '@pistonite/pure/pref';
 import * as monaco from 'monaco-editor-contrib';
+import { getProvideMarkersCallback } from './language/MarkerProviderRegistry';
 
 
 export type CodeEditorApi = {
@@ -26,6 +27,10 @@ export type CodeEditorApi = {
      * If the file is already opened, just switch to it.
      */
     openFile(filename: string, content: string, language: string): void;
+
+    getFileContent: (filename: string) => string;
+
+    subscribe: (callback: (filename: string) => void) => void;
 }
 
 export class EditorState {
@@ -70,8 +75,12 @@ export class EditorState {
         const model = this.models.get(filename);
         if (!model) {
             const model = monaco.editor.createModel(content, language, monaco.Uri.file(filename));
+            const provideMarkersCallback = getProvideMarkersCallback();
+            // there can be only one change event listener, so this is not exposed
+            model.onDidChangeContent(() => {
+                provideMarkersCallback(model);
+            });
             model.updateOptions({
-
                 bracketColorizationOptions: {
                     enabled: false,
                     independentColorPoolPerBracketType: false,

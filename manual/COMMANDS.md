@@ -107,9 +107,9 @@ runtime:
 annotations:
   global:
     // I guess these are technically features?
-    (FEATURE)
+    :enable FEATURE
       Enable Feature
-    (no-FEATURE)
+    :disable FEATURE
       Disable Feature
     (menu-overload)
       Start menu overload

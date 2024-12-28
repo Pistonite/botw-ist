@@ -10,19 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fluentui/react-icons": "^2.0.270",
+        "@fluentui/react-components": "*",
+    "@fluentui/react-icons": "*",
     "react": "*",
     "react-dom": "*",
     "skybook-item-assets": "*",
     "skybook-localization": "*"
   },
-  "peerDependencies": {
-    "@griffel/react": "*"
-  },
   "exports": {
     ".": "./src/index.ts"
-  },
-  "devDependencies": {
-    "@fluentui/react-components": "^9.56.8"
   }
 }

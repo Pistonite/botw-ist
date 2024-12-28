@@ -1,4 +1,5 @@
 import * as monaco from "monaco-editor-contrib";
+import type { LanguageClient } from "./language/LanguageClient.ts";
 
 /** Option to pass in to init */
 export type InitOption = {
@@ -48,17 +49,14 @@ export type LanguageOption = {
     /** If JSON language support should be enabled */
     json?: boolean;
 
-    /** If YAML language support should be enabled */
-    yaml?: boolean;
-
     /** If CSS language support should be enabled */
     css?: boolean;
 
     /** If HTML language support should be enabled */
     html?: boolean;
 
-    /** If TOML language support should be enabled */
-    toml?: boolean;
+    /** Custom language support */
+    custom: LanguageClient[];
 }
 
 export type EditorOption = {

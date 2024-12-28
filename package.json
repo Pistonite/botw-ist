@@ -1,12 +1,15 @@
 {
     "workspaces": [
         "packages/app",
+        "packages/extension-api",
         "packages/intwc",
         "packages/item-assets",
         "packages/item-system",
         "packages/localization",
         "packages/monaco-typescript-contrib",
-        "packages/monaco-editor-contrib"
+        "packages/monaco-editor-contrib",
+        "packages/runtime-wasm/pkg",
+        "packages/workex"
     ],
     "devDependencies": {
         "@eslint/js": "^9.17.0",

@@ -19,4 +19,4 @@
 # NPM
 /node_modules
 
-*storybook.log
+/packages/workex

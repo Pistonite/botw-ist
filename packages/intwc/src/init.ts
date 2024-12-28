@@ -9,7 +9,7 @@ import { patchMonacoTypeScript } from "@pistonite/monaco-typescript-contrib";
 export async function initCodeEditor({preferences, language, editor}: InitOption) {
     initPreference(preferences || {});
 
-    const {typescript, json, yaml, css, html, toml} = language || {};
+    const {typescript, json, css, html, custom} = language || {};
 
     // initialize monaco
     window.MonacoEnvironment = {
@@ -60,6 +60,49 @@ export async function initCodeEditor({preferences, language, editor}: InitOption
 
         patchMonacoTypeScript({
             semanticTokensMaxLength: -1
+        });
+    }
+
+    if (custom) {
+        custom.forEach((client) => {
+            const id = client.getId();
+            monaco.languages.register({ 
+                id ,
+                extensions: client.getExtensions?.()
+            });
+            const tokenizer = client.getTokenizer?.();
+            if (tokenizer) {
+                monaco.languages.setMonarchTokensProvider(id, tokenizer);
+            }
+            const configuration = client.getConfiguration?.();
+            if (configuration) {
+                monaco.languages.setLanguageConfiguration(id, configuration);
+            }
+
+            const getLegend = client.getSemanticTokensLegend?.bind(client);
+            const provideDocumentRangeSemanticTokens = client.provideDocumentRangeSemanticTokens?.bind(client);
+
+            if (getLegend && provideDocumentRangeSemanticTokens) {
+                monaco.languages.registerDocumentRangeSemanticTokensProvider(id, {
+                    getLegend,
+                    provideDocumentRangeSemanticTokens
+                });
+            }
+
+            const provideMarkers = client.provideMarkers?.bind(client);
+            if (provideMarkers) {
+            }
+
+            const provideCompletionItems = client.provideCompletionItems?.bind(client);
+            if (provideCompletionItems) {
+                const completionTriggerCharacters = client.getCompletionTriggerCharacters?.();
+                const resolveCompletionItem = client.resolveCompletionItem?.bind(client);
+                monaco.languages.registerCompletionItemProvider(id, {
+                    triggerCharacters: completionTriggerCharacters,
+                    provideCompletionItems,
+                    resolveCompletionItem
+                });
+            }
         });
     }
 }

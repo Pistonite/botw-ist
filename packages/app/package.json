@@ -10,9 +10,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fluentui/react-components": "^9.56.8",
+    "@fluentui/react-icons": "^2.0.270",
     "@pistonite/intwc": "0.0.1",
+    "@pistonite/pure": "^0.0.17",
+    "@pistonite/pure-react": "^0.0.5",
+    "@pistonite/skybook-extension-api": "^0.0.1",
+    "@tanstack/react-query": "^5.62.11",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+        "skybook-localization": "*",
+        "skybook-runtime-wasm": "*",
+        "workex": "*",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

@@ -1,0 +1,15 @@
+[package]
+name = "skybook-runtime-wasm"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+skybook-runtime = { path = "../runtime" }
+skybook-parser = { path = "../parser" }
+wasm-bindgen = { version = "0.2.99", features = ["serde", "serde-serialize"] }
+teleparse = "0.0.5"
+
+[lib]
+crate-type = ["cdylib"]
+

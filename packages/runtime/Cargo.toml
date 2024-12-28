@@ -1,9 +1,9 @@
 [package]
-name = "ist-runtime"
+name = "skybook-runtime"
 version = "0.0.0"
 edition = "2021"
 publish = false
 
 [dependencies]
-ist-parser = { path = "../parser" }
+skybook-parser = { path = "../parser" }
 
