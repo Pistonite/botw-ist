@@ -1,12 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
-    # "app/src/sim",
-    "sim/parser",
-    "sim/runtime",
+    "packages/runtime",
     "next/botw-ist-command", 
     "research/trace-view", 
     "packages/actor-sys", 
     "packages/item-assets", 
-    "packages/item-animated",
+    "packages/item-animated", 
+    "packages/parser", "packages/runtime-wasm",
 ]

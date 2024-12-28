@@ -1,0 +1,8 @@
+[package]
+name = "skybook-parser"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+teleparse = "0.0.5"

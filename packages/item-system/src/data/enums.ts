@@ -139,7 +139,7 @@ export const modifierToStatus = (modifier: WeaponModifier, yellow: boolean): Spe
 export const effectToStatus = (effect: CookEffect): SpecialStatus => {
     switch(effect) {
         case CookEffect.LifeMaxUp:
-            return SpecialStatus.AddLife;
+            return SpecialStatus.LifeMaxUp;
         case CookEffect.ResistHot:
             return SpecialStatus.ResistHot;
         case CookEffect.ResistCold:

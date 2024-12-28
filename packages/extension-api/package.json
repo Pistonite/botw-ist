@@ -1,5 +1,5 @@
 {
-    "name": "@pistonite/intwc",
+    "name": "@pistonite/skybook-extension-api",
     "private": true,
     "version": "0.0.1",
     "description": "TODO",
@@ -13,21 +13,16 @@
         "src/**/*"
     ],
     "exports": {
-        ".": "./src/index.ts"
+        ".": "./src/index.ts",
+        "./workex": "./src/workex/index.ts",
+        "./sides/*": "./src/sides/*.ts",
+        "./interfaces/*": "./src/interfaces/*.ts"
     },
     "todo.repository": {
         "type": "git",
         "url": "https://github.com"
     },
     "dependencies": {
-        "@pistonite/pure": "*",
-        "@pistonite/monaco-typescript-contrib": "0.0.1",
-        "monaco-editor-contrib": "0.52.2"
-    },
-    "devDependencies": {
-        "@catppuccin/palette": "^1.7.1",
-        "@types/react": "^18.3.16",
-        "react": "^18.3.1",
-        "vite": "^5.4.11"
+        "@pistonite/pure": "*"
     }
 }

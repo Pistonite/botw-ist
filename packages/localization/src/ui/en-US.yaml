@@ -1,10 +1,14 @@
+
+extension.editor.name: Editor
+
+
 # Item Slot Tooltip
 tooltip.value: "Value: {{value}}"
 tooltip.equipped: "Equipped"
 tooltip.translucent: "Translucent"
 tooltip.holding: "Holding {{holding}}"
 
-tooltip.cook.price: "Sells for {price}"
+tooltip.cook.price: "Sells for ${{price}}"
 
 tooltip.category: "Category: {pouch_category}"
 tooltip.slot: "Slot #{slot_number}, Pos #{position}"

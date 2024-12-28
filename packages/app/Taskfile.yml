@@ -6,6 +6,10 @@ tasks:
     cmds:
       - npx vite --host
 
+  runtime-workex:
+    cmds:
+      - workex -p runtime src/runtime/protocol.ts --lib-path workex --no-lib
+
   build:
     desc: Build production bundle
     cmds:
