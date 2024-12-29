@@ -5,8 +5,10 @@ import { InitOption } from "./types.ts";
 import { initThemes } from './theme';
 
 import { patchMonacoTypeScript } from "@pistonite/monaco-typescript-contrib";
+import { registerMarkerProvider } from './language/MarkerProviderRegistry.ts';
+import { setEditorOptions } from './EditorState.ts';
 
-export async function initCodeEditor({preferences, language, editor}: InitOption) {
+export function initCodeEditor({preferences, language, editor}: InitOption) {
     initPreference(preferences || {});
 
     const {typescript, json, css, html, custom} = language || {};
@@ -65,6 +67,7 @@ export async function initCodeEditor({preferences, language, editor}: InitOption
 
     if (custom) {
         custom.forEach((client) => {
+            console.log("registering", client.getId(), client);
             const id = client.getId();
             monaco.languages.register({ 
                 id ,
@@ -72,7 +75,10 @@ export async function initCodeEditor({preferences, language, editor}: InitOption
             });
             const tokenizer = client.getTokenizer?.();
             if (tokenizer) {
-                monaco.languages.setMonarchTokensProvider(id, tokenizer);
+                monaco.languages.registerTokensProviderFactory(id, {
+                    create: () => tokenizer
+                    });
+                // monaco.languages.setMonarchTokensProvider(id, tokenizer);
             }
             const configuration = client.getConfiguration?.();
             if (configuration) {
@@ -91,6 +97,10 @@ export async function initCodeEditor({preferences, language, editor}: InitOption
 
             const provideMarkers = client.provideMarkers?.bind(client);
             if (provideMarkers) {
+                registerMarkerProvider(id, {
+                    owner: client.getMarkerOwner?.() || id,
+                    provide: provideMarkers
+                });
             }
 
             const provideCompletionItems = client.provideCompletionItems?.bind(client);
@@ -104,5 +114,9 @@ export async function initCodeEditor({preferences, language, editor}: InitOption
                 });
             }
         });
+    }
+
+    if (editor) {
+        setEditorOptions(editor);
     }
 }

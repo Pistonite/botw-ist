@@ -1,9 +1,10 @@
-import { Dropdown, Option } from "@fluentui/react-components";
+import { Dropdown, makeStyles, Option } from "@fluentui/react-components";
 import { useQuery } from "@tanstack/react-query";
 
 import { useUITranslation } from "skybook-localization";
 
 import { getExtensionComponent } from "./registry";
+import { connectExtensionToApp } from "application/extensionManager";
 
 export type ExtensionWindowProps = {
     primary: boolean;
@@ -12,10 +13,22 @@ export type ExtensionWindowProps = {
     onSelect: (id: string) => void;
 }
 
-export const ExtensionWindow: React.FC<ExtensionWindowProps> = ({ primary: isPrimary, ids, currentId, onSelect }) => {
+const useStyles = makeStyles({
+    container: {
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+    },
+    extension: {
+        flex: 1,
+    }
+});
+
+export const ExtensionWindow: React.FC<ExtensionWindowProps> = ({ primary, ids, currentId, onSelect }) => {
     const t = useUITranslation();
+    const styles = useStyles();
     return (
-        <div>
+        <div className={styles.container}>
         <Dropdown
             value={t(`extension.${currentId}.name`)}
             selectedOptions={[currentId]}
@@ -31,7 +44,7 @@ export const ExtensionWindow: React.FC<ExtensionWindowProps> = ({ primary: isPri
         </Dropdown>
         {
             ids.map((id, i) => (
-            <div key={i} data-extension-id={id} style={{
+            <div key={i} data-extension-id={id} className={styles.extension} style={{
                         display: id === currentId ? "block" : "none",
                     }}>
                 <ExtensionWrapper id={id} />
@@ -58,5 +71,8 @@ export const ExtensionWrapper: React.FC<ExtensionWrapperProps> = ({ id }) => {
     if (isPending || !ExtComp) {
         return <div>Loading...</div>
     }
-    return <ExtComp />;
+    return <ExtComp 
+        standalone={false} 
+        connect={connectExtensionToApp}
+         />;
 }

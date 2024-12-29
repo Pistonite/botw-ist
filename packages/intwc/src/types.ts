@@ -16,7 +16,7 @@ export type InitOption = {
     /**
      * Option for the editor
      */
-    editor?: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions
+    editor?: EditorOption;
 }
 
 export type PreferenceOption = {
@@ -66,9 +66,6 @@ export type EditorOption = {
      * These are added on top of the defaults provided by this wrapper
      */
     options: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions
-
-    /** Options used when switching languages */
-    languageOptions?: Record<string, monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions>
 }
 
 export type TSOption = {

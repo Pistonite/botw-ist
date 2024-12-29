@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+import { persist } from "@pistonite/pure/sync";
+
 import { InputMode, Preference, PreferenceOption } from "./types.ts";
 
 const getDefaultPreference = (): Preference => {
@@ -6,87 +8,9 @@ const getDefaultPreference = (): Preference => {
         inputMode: "code"
     };
 }
-let preference: Preference = getDefaultPreference();
-const subscribers: ((preference: Preference) => void)[] = [];
-
-export const initPreference = ({persist, defaults}: PreferenceOption) => {
-    let value: Preference = {
-        ...getDefaultPreference(),
-        ...defaults,
-    }
-    if (persist) {
-        value = loadPreference();
-        addPreferenceSubscriber((preference) => {
-            localStorage.setItem(KEY, JSON.stringify(preference));
-        });
-    } else {
-        localStorage.removeItem(KEY);
-    }
-
-    setPreference(value);
-}
-
-export const addPreferenceSubscriber = (subscriber: (preference: Preference) => void
-    , notifyImmediately?: boolean
-) => {
-    subscribers.push(subscriber);
-    if (notifyImmediately) {
-        subscriber(preference);
-    }
-}
-
-export const removePreferenceSubscriber = (
-    subscriber: (preference: Preference) => void
-): void => {
-    const index = subscribers.indexOf(subscriber);
-    if (index >= 0) {
-        subscribers.splice(index, 1);
-    }
-};
-
-const KEY = "Intwc.Preference";
-
-export function getPreference(): Preference {
-    return preference;
-}
-
-export const setPreference = (newPreference: Partial<Preference>) => {
-    preference = {
-        ...preference,
-        ...newPreference,
-    };
-    const len = subscribers.length;
-    for (let i = 0; i < len; i++) {
-        subscribers[i](preference);
-    }
-}
-
-export function useInputMode(): InputMode {
-    const [value, setValue] = useState(getPreference().inputMode);
-    useEffect(() => {
-        const { inputMode } = getPreference();
-        if (inputMode !== value) {
-            setValue(inputMode);
-        }
-        const subscriber = ({inputMode}: Preference) => {
-            setValue(inputMode);
-        };
-        addPreferenceSubscriber(subscriber);
-        return () => {
-            removePreferenceSubscriber(subscriber);
-        };
-    }, []);
-
-    return value;
-}
-
-const loadPreference = (): Preference => {
+const deserializePreference = (value: string): Preference => {
     try {
-        const objString = localStorage.getItem(KEY);
-        if (!objString) {
-            return getDefaultPreference();
-        }
-        return validatePreference(JSON.parse(objString));
+        return validatePreference(JSON.parse(value));
     } catch  {
         return getDefaultPreference();
     }
@@ -107,5 +31,48 @@ const validatePreference = (obj: unknown): Preference => {
         ...getDefaultPreference(),
         inputMode,
     }
+}
+
+const preference = persist({
+    storage: localStorage,
+    initial: getDefaultPreference(),
+    key: "Intwc.Preference",
+    deserialize: deserializePreference,
+});
+
+export const initPreference = ({persist, defaults}: PreferenceOption) => {
+    let value: Preference = {
+        ...getDefaultPreference(),
+        ...defaults,
+    }
+    if (persist) {
+        preference.init(value);
+    } else {
+        preference.disable();
+        preference.set(value);
+    }
+}
+
+export const addPreferenceSubscriber = (subscriber: (preference: Preference) => void
+    , notifyImmediately?: boolean
+): () => void => {
+    return preference.subscribe(subscriber, notifyImmediately);
+}
+
+export function getPreference(): Preference {
+    return preference.get();
+}
+
+export const setPreference = (newPreference: Partial<Preference>) => {
+    const newPreferenceMerged = {
+        ...preference.get(),
+        ...newPreference,
+    };
+    preference.set(newPreferenceMerged);
+}
+
+export function useInputMode(): InputMode {
+    const preference = useSyncExternalStore(addPreferenceSubscriber, getPreference);
+    return preference.inputMode;
 }
 

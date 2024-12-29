@@ -1,6 +1,7 @@
 // import { isDark } from '@pistonite/pure/pref';
 import * as monaco from 'monaco-editor-contrib';
 import { getProvideMarkersCallback } from './language/MarkerProviderRegistry';
+import { EditorOption } from './types.ts';
 
 
 export type CodeEditorApi = {
@@ -28,26 +29,36 @@ export type CodeEditorApi = {
      */
     openFile(filename: string, content: string, language: string): void;
 
+    /** Get the content of the given file */
     getFileContent: (filename: string) => string;
 
-    subscribe: (callback: (filename: string) => void) => void;
+    /** Set the content of the given file in the editor */
+    setFileContent: (filename: string, content: string) => void;
+
+    /** Subscribe to when files are changed */
+    subscribe: (callback: (filename: string) => void) => () => void;
 }
 
-export class EditorState {
-    private node: HTMLDivElement;
-    // private currentFile: string | undefined;
+let editorOptions: EditorOption = {
+    options: {},
+}
+
+export const setEditorOptions = (options: EditorOption) => {
+    editorOptions = options;
+}
+
+export class EditorState implements CodeEditorApi {
     private instance: monaco.editor.IStandaloneCodeEditor;
     private models: Map<string, monaco.editor.ITextModel>;
-
     private extraCleanup: () => void;
+    private subscribers: ((filename: string) => void)[];
 
     constructor(node: HTMLDivElement) {
-        this.node = node;
         this.models = new Map();
-        // const dark = isDark();
+        this.subscribers = [];
 
-
-        this.instance = monaco.editor.create(this.node, {
+        this.instance = monaco.editor.create(node, {
+            autoDetectHighContrast: true,
             wordBasedSuggestions: "off",
             bracketPairColorization: {
                 enabled: false,
@@ -55,6 +66,9 @@ export class EditorState {
             },
             "semanticHighlighting.enabled": true,
             automaticLayout: true,
+            tabSize: 2,
+            insertSpaces: true,
+            ...editorOptions.options,
         });
 
         this.extraCleanup = () => {
@@ -62,6 +76,7 @@ export class EditorState {
         };
     }
 
+    /** Dispose the editor */
     public dispose() {
         this.extraCleanup();
         this.instance.setModel(null);
@@ -71,6 +86,53 @@ export class EditorState {
         this.instance.dispose();
     }
 
+    public getFiles(): string[] {
+        return Array.from(this.models.keys());
+    }
+
+    public getCurrentFile(): string | undefined {
+        return this.instance.getModel()?.uri.path;
+    }
+
+    public closeFile(filename: string) {
+        const model = this.models.get(filename);
+        if (model) {
+            if (model === this.instance.getModel()) {
+                this.instance.setModel(null);
+            }
+            model.dispose();
+            this.models.delete(filename);
+        }
+    }
+
+    public getFileContent(filename: string): string {
+        const model = this.models.get(filename);
+        if (model) {
+            console.log("get", model.getValue());
+            return model.getValue();
+        }
+        return "";
+    }
+
+    public setFileContent(filename: string, content: string) {
+        const model = this.models.get(filename);
+        if (model && model.getValue() !== content) {
+            console.log(model.getValue(), content);
+            // model.setValue(content);
+        }
+    }
+
+    public subscribe(callback: (filename: string) => void): () => void {
+        this.subscribers.push(callback);
+        return () => {
+            const index = this.subscribers.indexOf(callback);
+            if (index !== -1) {
+                this.subscribers.splice(index, 1);
+            }
+        };
+    }
+
+
     public openFile(filename: string, content: string, language: string) {
         const model = this.models.get(filename);
         if (!model) {
@@ -78,9 +140,15 @@ export class EditorState {
             const provideMarkersCallback = getProvideMarkersCallback();
             // there can be only one change event listener, so this is not exposed
             model.onDidChangeContent(() => {
+                console.log("changed", model.getValue());
                 provideMarkersCallback(model);
+                this.subscribers.forEach(subscriber => subscriber(filename));
             });
             model.updateOptions({
+                tabSize: 2,
+                indentSize: 2,
+                insertSpaces: true,
+                trimAutoWhitespace: true,
                 bracketColorizationOptions: {
                     enabled: false,
                     independentColorPoolPerBracketType: false,
@@ -94,7 +162,6 @@ export class EditorState {
     public switchToFile(filename: string) {
         const model = this.models.get(filename);
         if (model) {
-            this.currentFile = filename;
             this.instance.setModel(model);
         }
     }
