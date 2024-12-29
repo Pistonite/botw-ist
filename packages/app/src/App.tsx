@@ -18,49 +18,29 @@
 // }
 // `
 
-import { Button, makeStyles } from "@fluentui/react-components"
-import { useRef, useState } from "react";
+import { Button, makeStyles, mergeClasses } from "@fluentui/react-components"
+import { useEffect, useRef, useState } from "react";
 import { create } from "zustand"
 import { SideToolbar } from "./SideToolbar";
-import { setPrimary, useExtensionStore } from "./extensions/extensionStore";
+import { useExtensionStore } from "./application/extensionStore";
 import { ExtensionWindow } from "./extensions/ExtensionWindow";
-import { RuntimeApiClient } from "./runtime/interfaces/RuntimeApi.send";
-
-import RuntimeWorker from "./worker.ts?worker";
-
-let runtime: RuntimeApiClient | undefined = undefined;
-
-async function initWorker() {
-    const worker = new RuntimeWorker();
-    const _runtime = new RuntimeApiClient({worker});
-    await _runtime.handshake().established();
-    runtime = _runtime;
-}
-initWorker();
+import { ExtensionPanel } from "ui/ExtensionPanel";
 
 type RootLayoutState = {
     /** Percentage of widget area in horizontal mode */
-    horizontalWidget: number;
-    /** Percentage of widget area in vertical mode */
-    verticalWidget: number;
+    sideAreaPercentage: number;
     /** Percentage of primary widget in horizontal mode */
     primaryWidget: number;
 
-    resizeMainLayoutHorizontal: (percent: number) => void;
-    resizeMainLayoutVertical: (percent: number) => void;
+    resizeMainLayout: (percent: number) => void;
 }
 
 const useRootLayout = create<RootLayoutState>((set) => ({
-    horizontalWidget: 40,
-    verticalWidget: 40,
+    sideAreaPercentage: 40,
     primaryWidget: 50,
 
-    resizeMainLayoutHorizontal: (percent: number) => {
-            set({ horizontalWidget: percent })
-    }
-    ,
-    resizeMainLayoutVertical: (percent: number) => {
-        set({ verticalWidget: percent })
+    resizeMainLayout: (percent: number) => {
+            set({ sideAreaPercentage: percent })
     }
 }))
 
@@ -73,8 +53,12 @@ const useRootStyles = makeStyles({
             flexDirection: "column",
         },
     },
+    rootNoExtensionPanel: {
+        flexDirection: "column",
+    },
     widget: {
         position: "relative",
+        minWidth: "320px",
         // minWidth: "40%",
         // minHeight: "40%",
         
@@ -95,6 +79,7 @@ const useRootStyles = makeStyles({
             cursor: "ns-resize",
         },
         cursor: "ew-resize",
+        // zIndex: 10000,
     },
     drag2: {
         position: "absolute",
@@ -108,6 +93,7 @@ const useRootStyles = makeStyles({
             cursor: "ns-resize",
         },
         cursor: "ew-resize",
+        // zIndex: 10000,
     }
 })
 
@@ -115,24 +101,58 @@ function App() {
     const styles = useRootStyles();
     const [resizing, setResizing] = useState<number[] | undefined>(undefined);
     const widgetRef = useRef<HTMLDivElement>(null);
-    const horizontalWidget = useRootLayout((state) => state.horizontalWidget)
-    const verticalWidget = useRootLayout((state) => state.verticalWidget)
-    const resizeMainLayoutHorizontal = useRootLayout((state) => state.resizeMainLayoutHorizontal)
-    const resizeMainLayoutVertical = useRootLayout((state) => state.resizeMainLayoutVertical)
+    const sideAreaPercentage = useRootLayout((state) => state.sideAreaPercentage)
+    const resizeMainLayout = useRootLayout((state) => state.resizeMainLayout)
 
-    const primaryIds = useExtensionStore((state) => state.primaryIds)
-    const currentPrimary = useExtensionStore((state) => state.currentPrimary)
+    // const primaryIds = useExtensionStore((state) => state.primaryIds)
+    // const currentPrimary = useExtensionStore((state) => state.currentPrimary)
+
+    const currentPrimaryId = useExtensionStore(state => state.currentPrimary);
+    const currentSecondaryId = useExtensionStore(state => state.currentSecondary);
+    const showExtensionPanel = currentPrimaryId || currentSecondaryId;
+
+    useEffect(() => {
+        if (!widgetRef.current) {
+            return;
+        }
+        if (!showExtensionPanel) {
+            widgetRef.current.style.width = "100%";
+            widgetRef.current.style.height = "";
+            return;
+        }
+        const listener = () => {
+            if (!widgetRef.current) {
+                return;
+            }
+            const widget = widgetRef.current;
+            if (window.innerWidth < 800) {
+                widget.style.height = `${sideAreaPercentage}%`;
+                widget.style.width = "100%";
+            } else {
+                widget.style.width = `${sideAreaPercentage}%`;
+                widget.style.height = "100%";
+            }
+        };
+        listener();
+        window.addEventListener("resize", listener);
+        return () => {
+            window.removeEventListener("resize", listener);
+        }
+    }, [sideAreaPercentage, showExtensionPanel])
     
 
   return (
-    <div className={styles.root}
+    <div className={mergeClasses(styles.root, !showExtensionPanel && styles.rootNoExtensionPanel)}
 
+            onMouseLeave={(e) => {
+                setResizing(undefined)
+            }}
 
                     onMouseUp={(e) => {
                         setResizing(undefined)
                     }}
                     onMouseMove={(e) => {
-                        if (!resizing || !widgetRef.current) {
+                        if (!showExtensionPanel || !resizing || !widgetRef.current) {
                             return
                         }
                         const [startX, startY, startWidth, startHeight] = resizing;
@@ -140,29 +160,27 @@ function App() {
                         const deltaY = e.clientY - startY;
                         if (window.innerWidth < 800) {
                             const newHeight = startHeight + deltaY;
-                            resizeMainLayoutVertical((newHeight / window.innerHeight) * 100)
+                            resizeMainLayout((newHeight / window.innerHeight) * 100)
                         } else {
                             const newWidth = startWidth + deltaX;
-                            resizeMainLayoutHorizontal((newWidth / window.innerWidth) * 100)
+                            resizeMainLayout((newWidth / window.innerWidth) * 100)
                         }
                     }}
 
         >
-      <div ref={widgetRef} className={styles.widget} style={{
-                minWidth: `${horizontalWidget}%`,
-                minHeight: `${verticalWidget}%`,
-            }}>
-                <SideToolbar />
-                <Button onClick={async () => {
-                    const result = await runtime?.parseScript("init 1 apple 2 orange[foo=bar] 3 <Hello>");
-                    console.log(result);
-                }} />
-                <ExtensionWindow 
-                    currentId={currentPrimary} 
-                    ids={primaryIds} 
-                    onSelect={(id) => setPrimary(id)} 
-                    primary 
-                />
+            {
+            }
+      <div ref={widgetRef} className={styles.widget}>
+                    <SideToolbar />
+                { showExtensionPanel && <>
+                    <ExtensionPanel />
+                {/*
+                    <ExtensionWindow 
+                        currentId={currentPrimary} 
+                        ids={primaryIds} 
+                        onSelect={(id) => setPrimary(id)} 
+                        primary 
+                    />*/}
                 <div 
                     className={styles.drag} 
                     onMouseDown={(e) => {
@@ -175,20 +193,25 @@ function App() {
                         setResizing([e.clientX, e.clientY, widget.width, widget.height])
                     }}
                 ></div>
+                    </>
+                }
       </div>
       <main className={styles.main} style={{background: "green"}}>
-                <div 
-                    className={styles.drag2} 
-                    onMouseDown={(e) => {
-                        if (!widgetRef.current) {
-                            return
-                        }
-                        e.preventDefault()
-                        e.stopPropagation()
-                        const widget = widgetRef.current.getBoundingClientRect();
-                        setResizing([e.clientX, e.clientY, widget.width, widget.height])
-                    }}
-                ></div>
+                {
+                    showExtensionPanel && 
+                        <div 
+                            className={styles.drag2} 
+                            onMouseDown={(e) => {
+                                if (!widgetRef.current) {
+                                    return
+                                }
+                                e.preventDefault()
+                                e.stopPropagation()
+                                const widget = widgetRef.current.getBoundingClientRect();
+                                setResizing([e.clientX, e.clientY, widget.width, widget.height])
+                            }}
+                        ></div>
+                }
                 main
       </main>
     </div>

@@ -1,5 +1,25 @@
 
-extension.editor.name: Editor
+button.close: Close
+button.popout: Pop-out to a new window
+
+button.open_extension: Extensions
+button.launch: Launch
+button.cancel: Cancel
+
+status.not_available_platform: Not available for current platform
+
+dialog.extensions.title: Extensions
+dialog.extensions.desc: Launch an extension tool or change its configuration
+field.select_extension: Select an extension
+radio.extension.open.primary: Open in primary view
+radio.extension.open.secondary: Open in secondary view
+radio.extension.open.popout: Pop-out to a new window
+field.extension.remember: Remember my choice
+field.extension.remember.desc: Only effective after clicking "Launch". You can always come back here and change your preference
+
+extension.editor.name: Script Editor
+extension.editor.desc: Edit the script to modify the steps in the simulation
+extension.stub1.name: blaasldkfjasd asdgak sdgfa lskdhgal
 
 
 # Item Slot Tooltip

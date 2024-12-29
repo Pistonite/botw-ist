@@ -8,5 +8,9 @@ import { WorkexPromise } from "workex";
  */
 export interface RuntimeApi {
 
-    parseScript(script: string): WorkexPromise<string>;
+    /** 
+     * Set the script for the runtime, which starts executing
+     * the script immediately
+     */
+    setScript(script: string): WorkexPromise<string>;
 }

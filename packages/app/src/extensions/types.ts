@@ -1,7 +1,16 @@
-import { Application, Extension } from "@pistonite/skybook-extension-api"
+import { Extension } from "@pistonite/skybook-extension-api"
 
 export type ExtensionComponentProps = {
-    app: Application
+    /** 
+     * If the extension is loaded as part of the app,
+     * or in its standalone window
+     */
+    standalone: boolean;
+
+    /**
+     * Callback to connect the extension to the app, once it's ready
+     */
+    connect: (ext: Extension) => () => void;
 }
 
 export type ExtensionComponent = React.ComponentType<ExtensionComponentProps>

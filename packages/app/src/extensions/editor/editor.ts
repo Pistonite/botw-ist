@@ -1,24 +1,33 @@
+import { CodeEditorApi } from "@pistonite/intwc";
+import { setDark, setLocale } from "@pistonite/pure/pref";
 import { Extension } from "@pistonite/skybook-extension-api";
-import { WorkexPromise } from "@pistonite/skybook-extension-api/workex";
+import { WorkexPromise } from "workex";
 
 
 export class EditorExtension implements Extension {
-    onStart(): WorkexPromise<void> {
-        throw new Error("Method not implemented.");
+
+    constructor(
+        private scriptFile: string,
+        private standalone: boolean, private editor: CodeEditorApi) {
     }
-    onStop(): WorkexPromise<void> {
-        throw new Error("Method not implemented.");
+    public async onDarkModeChanged(dark: boolean): WorkexPromise<void> {
+        if (this.standalone) {
+            setDark(dark);
+        }
+        return {};
     }
-    onDarkModeChanged(dark: boolean): WorkexPromise<void> {
-        throw new Error("Method not implemented.");
+    public async onLocaleChanged(locale: string): WorkexPromise<void> {
+        if (this.standalone) {
+            setLocale(locale);
+        }
+        return {};
     }
-    onLocaleChanged(locale: string): WorkexPromise<void> {
-        throw new Error("Method not implemented.");
-    }
-    async getLocalizedName(locale: string): WorkexPromise<string> {
-        return { val: "Editor" };
-    }
-    onScriptChanged(script: string): WorkexPromise<void> {
-        throw new Error("Method not implemented.");
+    public async onScriptChanged(script: string): WorkexPromise<void> {
+        if (!this.editor.getFiles().includes(this.scriptFile)) {
+            this.editor.openFile(this.scriptFile, script, "skyb");
+        } else {
+            this.editor.setFileContent(this.scriptFile, script);
+        }
+        return {};
     }
 }
