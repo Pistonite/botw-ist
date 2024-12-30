@@ -1,6 +1,18 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { openExtensionPopup } from "./extensionManager";
+import { createSelector } from "reselect";
+import { isLessProductive } from "ui/platform";
+
+export const ExtensionIds = ["editor", "stub1", "stub2"] as const;
+// Use the sort index to display the extensions in a deterministic order
+const ExtensionIdToSortIndex: Record<string, number> = (() => {
+    const result: Record<string, number> = {};
+    ExtensionIds.forEach((id, index) => {
+        result[id] = index;
+    });
+    return result;
+})();
 
 export type ExtensionStore = {
     /**
@@ -21,22 +33,17 @@ export type ExtensionStore = {
      * Set the open preference for the extension with the id
      */
     // setExtensionPreference(id: string, preference: "primary" | "secondary" | "none"): void;
-
-    /** 
-     * Set the extension with the id as the current primary extension 
-     *
-     * If the extension is not currently in primaryIds, it will be added,
-     * and removed from other slots
-     */
-    setPrimary: (id: string) => void;
-
+    
     /**
-     * Set the extension with the id as the current secondary extension
-     *
-     * If the extension is not currently in secondaryIds, it will be added,
-     * and removed from other slots
+     * Open an extension in the primary or secondary slot, optionally
+     * update the open mode for the extension for the future
      */
-    setSecondary: (id: string) => void;
+    open: (id: string, slot: "primary" | "secondary", updateOpenMode?: boolean) => void;
+    
+    /**
+     * Update the open mode for the extension with the id
+     */
+    updateOpenMode: (id: string, openMode: ExtensionOpenMode) => void;
 
     /** 
      * Close the primary extension window
@@ -57,31 +64,59 @@ export const useExtensionStore = create<ExtensionStore>()((set) => ({
     currentPrimary: "editor",
     currentSecondary: "stub1",
 
-    setPrimary: (id: string) => {
+    open: (id: string, slot: "primary" | "secondary", updateOpenMode = false) => {
         set(({primaryIds, secondaryIds}) => {
-            const newState: Partial<ExtensionStore> = {
-                currentPrimary: id,
-            };
-            if (secondaryIds.includes(id)) {
-                newState.secondaryIds = secondaryIds.filter((i) => i !== id);
-            }
-            if (!primaryIds.includes(id)) {
-                newState.primaryIds = [...primaryIds, id];
+            const newState: Partial<ExtensionStore> = { };
+            if (slot === "primary") {
+                newState.currentPrimary = id;
+                if (updateOpenMode) {
+                    if (secondaryIds.includes(id)) {
+                        newState.secondaryIds = secondaryIds.filter((i) => i !== id);
+                    }
+                    if (!primaryIds.includes(id)) {
+                        newState.primaryIds = [...primaryIds, id];
+                    }
+                }
+            } else {
+                newState.currentSecondary = id;
+                if (updateOpenMode) {
+                    if (primaryIds.includes(id)) {
+                        newState.primaryIds = primaryIds.filter((i) => i !== id);
+                    }
+                    if (!secondaryIds.includes(id)) {
+                        newState.secondaryIds = [...secondaryIds, id];
+                    }
+                }
             }
             return newState;
         });
     },
 
-    setSecondary: (id: string) => {
+    updateOpenMode: (id: string, openMode: ExtensionOpenMode) => {
         set(({primaryIds, secondaryIds}) => {
-            const newState: Partial<ExtensionStore> = {
-                currentSecondary: id,
-            };
-            if (primaryIds.includes(id)) {
-                newState.primaryIds = primaryIds.filter((i) => i !== id);
-            }
-            if (!secondaryIds.includes(id)) {
-                newState.secondaryIds = [...secondaryIds, id];
+            const newState: Partial<ExtensionStore> = { };
+            if (openMode === "primary") {
+                if (secondaryIds.includes(id)) {
+                    newState.secondaryIds = secondaryIds.filter((i) => i !== id);
+                }
+                if (!primaryIds.includes(id)) {
+                    newState.primaryIds = [...primaryIds, id];
+                }
+            } else if (openMode === "secondary") {
+                newState.currentSecondary = id;
+                if (primaryIds.includes(id)) {
+                    newState.primaryIds = primaryIds.filter((i) => i !== id);
+                }
+                if (!secondaryIds.includes(id)) {
+                    newState.secondaryIds = [...secondaryIds, id];
+                }
+            } else {
+                if (primaryIds.includes(id)) {
+                    newState.primaryIds = primaryIds.filter((i) => i !== id);
+                }
+                if (secondaryIds.includes(id)) {
+                    newState.secondaryIds = secondaryIds.filter((i) => i !== id);
+                }
             }
             return newState;
         });
@@ -102,7 +137,67 @@ export const useExtensionStore = create<ExtensionStore>()((set) => ({
 //     }));
 //
 
+export const useAllExtensionIds = () => {
+    return ExtensionIds;
+}
+
+const getAllNonPopoutExtensionIds = createSelector([
+    (state: ExtensionStore) => state.primaryIds,
+    (state: ExtensionStore) => state.secondaryIds
+], (p, s) => {
+    return sortExtensionIds([...p, ...s]);
+    });
+export const useAllNonPopoutExtensionIds = () => {
+    return useExtensionStore(getAllNonPopoutExtensionIds);
+}
+
+const getPrimaryExtensionIds = createSelector([
+    (state: ExtensionStore) => state.primaryIds
+], (p) => {
+    return sortExtensionIds([...p]);
+});
+export const usePrimaryExtensionIds = () => {
+    return useExtensionStore(getPrimaryExtensionIds);
+}
+
+const getSecondaryExtensionIds = createSelector([
+    (state: ExtensionStore) => state.secondaryIds
+], (s) => {
+    return sortExtensionIds([...s]);
+});
+export const useSecondaryExtensionIds = () => {
+    return useExtensionStore(getSecondaryExtensionIds);
+}
+
+const sortExtensionIds = (ids: string[]): string[] => {
+    // toSorted
+    return ids.sort((a, b) => {
+        const aIndex = a in ExtensionIdToSortIndex ? ExtensionIdToSortIndex[a] : 9999;
+        const bIndex = b in ExtensionIdToSortIndex ? ExtensionIdToSortIndex[b] : 9999;
+        return aIndex - bIndex;
+    });
+}
+
+export const useCurrentPrimaryExtensionId = () => {
+    return useExtensionStore((state) => state.currentPrimary);
+}
+
+const getSecondaryExtensionId = createSelector([
+    (state: ExtensionStore) => state.currentSecondary,
+], (id) => {
+        // don't show secondary extension if on less productive platform
+    return isLessProductive ? "" : id;
+});
+export const useCurrentSecondaryExtensionId = () => {
+    return useExtensionStore(getSecondaryExtensionId);
+}
+
+const getIsShowingSecondaryExtension = createSelector([
+    (state: ExtensionStore) => state.currentPrimary,
+    getSecondaryExtensionId
+], (p, s) => {
+    return p || s;
+});
 export const useIsShowingExtensionPanel = () => {
-    const x=  useExtensionStore((state) => state.currentPrimary || state.currentSecondary);
-    return !!x;
+    return  useExtensionStore(getIsShowingSecondaryExtension);
 }

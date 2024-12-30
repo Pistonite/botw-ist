@@ -1,4 +1,4 @@
-import { Button, Dropdown, Option, Tooltip, makeStyles } from "@fluentui/react-components";
+import { Button, Dropdown, Option, Tooltip, makeStyles, mergeClasses } from "@fluentui/react-components";
 import { Dismiss20Regular, WindowNew20Regular } from "@fluentui/react-icons";
 
 import { useUITranslation } from "skybook-localization";
@@ -14,8 +14,12 @@ export type ExtensionToolbarProps = {
      */
     allIds: string[];
 
-    /** Callback when the pop out button is pressed */
-    onClickPopout: () => void;
+    /** 
+     * Callback when the pop out button is pressed
+     *
+     * If not provided, the pop out button will be hidden
+     */
+    onClickPopout?: () => void;
 
     /** 
      * Callback when the close button is pressed
@@ -31,6 +35,12 @@ export type ExtensionToolbarProps = {
      * from the drop down
      */
     onSelect: (id: string) => void;
+
+    /**
+     * If enabled, will add flex: 1 to the container and dropdown container
+     * so it's full width in the flex box parent
+     */
+    fullWidth?: boolean;
 };
 
 const useStyles = makeStyles({
@@ -39,6 +49,9 @@ const useStyles = makeStyles({
         flexDirection: "row",
         gap: "4px",
     },
+    fullWidth: {
+        flex: 1,
+        },
     selectorButton: {
         // truncate text
         overflowX: "hidden",
@@ -49,21 +62,22 @@ const useStyles = makeStyles({
 });
 
 export const ExtensionToolbar: React.FC<ExtensionToolbarProps> = ({ 
-    id, allIds, onClickPopout, onClickClose, onSelect }) => {
+    id, allIds, onClickPopout, onClickClose, onSelect, fullWidth
+}) => {
     const t = useUITranslation();
     const styles = useStyles();
     return (
-        <div className={styles.container}>
+        <div className={mergeClasses(styles.container, fullWidth && styles.fullWidth)}>
             <Dropdown
+                className={mergeClasses(fullWidth && styles.fullWidth)}
                 appearance="filled-darker"
                 button={
                     <span
-                    className={styles.selectorButton}
-                    >{t(`extension.${id}.name`)}</span>}
-                //     {
-                //     className: styles.selectorButton,
-                // }}
-                // value={t(`extension.${id}.name`)}
+                        className={styles.selectorButton}
+                    >
+                        {t(`extension.${id}.name`)}
+                    </span>
+                }
                 selectedOptions={[id]}
                 onOptionSelect={(_, {optionValue}) => {
                     if (optionValue && optionValue !== id) {
@@ -78,20 +92,22 @@ export const ExtensionToolbar: React.FC<ExtensionToolbarProps> = ({
                             positioning="after"
                             content={t(`extension.${id}.desc`)} 
                             relationship="description">
-                        <Option value={id}>
-                            {t(`extension.${id}.name`)}
-                        </Option>
+                            <Option value={id}>
+                                {t(`extension.${id}.name`)}
+                            </Option>
                         </Tooltip>
                     ))
                 }
             </Dropdown>
-            <Tooltip content={t("button.popout")} relationship="label">
-                <Button 
-                    onClick={onClickPopout}
-                    icon={<WindowNew20Regular />}
-                    appearance="subtle"
-                />
-            </Tooltip>
+            { onClickPopout && (
+                <Tooltip content={t("button.popout")} relationship="label">
+                    <Button 
+                        onClick={onClickPopout}
+                        icon={<WindowNew20Regular />}
+                        appearance="subtle"
+                    />
+                </Tooltip> )
+            }
             {
                 onClickClose && (
                     <Tooltip content={t("button.close")} relationship="label">

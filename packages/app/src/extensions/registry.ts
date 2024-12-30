@@ -1,7 +1,6 @@
 import { makeStub } from "./Stub1.tsx";
 import type { ExtensionComponentProps } from "./types.ts";
 
-export const ExtensionIds = ["editor", "stub1", "stub2"] as const;
 
 export const getExtensionComponent = async (id: string): Promise<React.ComponentType<ExtensionComponentProps> | undefined> => {
     switch (id) {

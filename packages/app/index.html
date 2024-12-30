@@ -2,7 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="theme-color" content="#FF0000">
+        <!-- <meta name="apple-mobile-web-app-capable" content="yes"> -->
+        <!-- <link ref="manifest" href="/manifest.json" /> -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IST Simulator</title>
         <style>
@@ -15,18 +19,15 @@
 body {
     margin: 0;
     width: 100vw;
-    height: 100vh;
-    overflow: hidden;
 }
 
 #-root- {
     width: 100vw;
-    height: 100vh;
 }
         </style>
   </head>
-  <body>
-    <div id="-root-"></div>
+    <body style="height: 100vh;overflow: hidden">
+    <div id="-root-" style="height: 100vh"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

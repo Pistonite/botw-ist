@@ -9,8 +9,44 @@ import { initExtensionManager } from './application/extensionManager.ts'
 import { initRuntime } from 'runtime/init.ts'
 import { ApplicationApi } from 'application/api.ts'
 import { ApplicationProvider } from 'application/ApplicationProvider.tsx'
+import { initNarrow } from 'pure-contrib/narrow.ts'
+import { isLessProductive } from 'ui/platform.ts'
 
 async function boot() {
+    const root = document.getElementById('-root-') as HTMLDivElement;
+    if (isLessProductive) {
+        // window.setStatus
+        // await new Promise<void>((resolve) => {
+        //     const button = document.createElement('button');
+        //     button.innerText = 'fullscreen' + window.innerWidth;
+        //     button.onclick = async () => {
+        //     // document.body.style.height = 'calc ( 100vh + 1px )';
+        //     // document.body.style.overflow = 'visible';
+        //     // root.style.height = 'calc ( 100vh + 1px )';
+        //     // window.scrollTo(0, 100);
+        //         await document.body.requestFullscreen({
+        //             navigationUI: "hide"});
+        //         resolve();
+        //     };
+        //     root.appendChild(button);
+        // });
+        initNarrow({
+            threshold: 800,
+            override: (narrow) => {
+                if (window.innerWidth < window.innerHeight) {
+                    return true;
+                }
+                if (narrow && window.innerHeight < window.innerWidth) {
+                    return false;
+                }
+                return narrow;
+            },
+        });
+    } else {
+        initNarrow({
+            threshold: 800,
+        });
+    }
     initDark({
         persist: false,
     });
@@ -22,7 +58,8 @@ async function boot() {
 
     const app = new ApplicationApi();
 
-    createRoot(document.getElementById('-root-')!).render(
+
+    createRoot(root).render(
         <StrictMode>
             <ApplicationProvider app={app}>
             <QueryClientProvider client={queryClient}>
