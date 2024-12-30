@@ -1,15 +1,25 @@
-import { Text, Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Tooltip, Field, Combobox } from "@fluentui/react-components";
+import { Text, Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Tooltip, Field, Combobox, RadioGroup, Radio, Checkbox } from "@fluentui/react-components";
 import { WindowDevTools20Regular } from "@fluentui/react-icons";
 import { ExtensionOpenMode } from "application/extensionStore";
+import { useNarrow } from "pure-contrib/narrow";
 import { useState } from "react";
 import { useUITranslation } from "skybook-localization";
+import { isLessProductive } from "./platform";
 
 export const ExtensionOpenButton: React.FC = () => {
     const t = useUITranslation();
 
+    const narrow = useNarrow();
+
     const [selectedId, setSelectedId] = useState<string>("");
     const [selectedOpenMode, setSelectedOpenMode] = useState<ExtensionOpenMode>("secondary");
     const [isPersistChecked, setIsPersistChecked] = useState(true);
+
+    let displayedOpenMode = selectedOpenMode;
+    const secondaryAvailable = !narrow && !isLessProductive;
+    if (!secondaryAvailable && selectedOpenMode === "secondary") {
+        displayedOpenMode = "primary";
+    }
 
 
     return (
@@ -31,9 +41,42 @@ export const ExtensionOpenButton: React.FC = () => {
                             <Combobox>
                             </Combobox>
                         </Field>
-                        <Field label={t("field.select_extension")}>
-                            <Combobox>
-                            </Combobox>
+                            <RadioGroup value={displayedOpenMode} onChange={(_, {value}) => {
+                                setSelectedOpenMode(value as ExtensionOpenMode);
+                            }}>
+                                <Radio value="primary" label={t("radio.extension_open_mode.primary")} />
+                                <Field
+                                    validationState={(!secondaryAvailable) ? "warning" : undefined}
+                                    validationMessage={narrow ? 
+                                    t("status.not_available_window_size") : 
+                                    isLessProductive ?
+                                    t("status.not_available_platform") : 
+                                    undefined}
+                                >
+                                    <Radio 
+                                    value="secondary" 
+                                    label={t("radio.extension_open_mode.secondary")}
+                                    disabled={!secondaryAvailable}
+                                />
+                                </Field>
+                                <Field
+                                    validationState={isLessProductive ? "warning" : undefined}
+                                    validationMessage={
+                                    isLessProductive ?
+                                    t("status.not_available_platform") : 
+                                    undefined}
+                                >
+                                <Radio 
+                                    value="popout" 
+                                    label={t("radio.extension_open_mode.popout")}
+                                    disabled={isLessProductive}
+                                />
+                                </Field>
+                            </RadioGroup>
+                        <Field
+                            hint={"Only effective after pressing Open"}
+                        >
+                            <Checkbox label={t("field.persist")} />
                         </Field>
 
                     </DialogContent>

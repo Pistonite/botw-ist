@@ -17,11 +17,13 @@
     "@pistonite/pure-react": "^0.0.5",
     "@pistonite/skybook-extension-api": "*",
     "@tanstack/react-query": "^5.62.11",
+    "mobile-device-detect": "^0.4.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-        "skybook-localization": "*",
-        "skybook-runtime-wasm": "*",
-        "workex": "*",
+    "reselect": "^5.1.1",
+    "skybook-localization": "*",
+    "skybook-runtime-wasm": "*",
+    "workex": "*",
     "zustand": "^5.0.2"
   },
   "devDependencies": {

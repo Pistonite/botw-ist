@@ -1,11 +1,10 @@
-import { Button, Divider, Dropdown, makeStyles, Tooltip } from "@fluentui/react-components";
-import { useExtensionStore } from "application/extensionStore";
+import { Divider, makeStyles } from "@fluentui/react-components";
+import { useAllNonPopoutExtensionIds, useCurrentPrimaryExtensionId, useCurrentSecondaryExtensionId, useExtensionStore, usePrimaryExtensionIds, useSecondaryExtensionIds } from "application/extensionStore";
 import { ExtensionToolbar } from "./components/ExtensionToolbar";
 import { openExtensionPopup } from "application/extensionManager";
-import { WindowDevTools20Regular } from "@fluentui/react-icons";
-import { useUITranslation } from "skybook-localization";
 import { ExtensionOpenButton } from "./ExtensionOpenButton";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useState } from "react";
+import { isLessProductive } from "./platform";
 
 const useStyles = makeStyles({
     bar: {
@@ -18,17 +17,15 @@ const useStyles = makeStyles({
     }
 });
 
-export const ExtensionTitlebar: React.FC = () => {
-    const t = useUITranslation();
+const ExtensionTitlebarConnected: React.FC = () => {
     const styles = useStyles();
 
-    const currentPrimaryId = useExtensionStore(state => state.currentPrimary);
-    const primaryIds = useExtensionStore(state => state.primaryIds);
-    const currentSecondaryId = useExtensionStore(state => state.currentSecondary);
-    const secondaryIds = useExtensionStore(state => state.secondaryIds);
-    const setPrimary = useExtensionStore(state => state.setPrimary);
+    const currentPrimaryId = useCurrentPrimaryExtensionId();
+    const currentSecondaryId = useCurrentSecondaryExtensionId();
+    const primaryIds = usePrimaryExtensionIds();
+    const secondaryIds = useSecondaryExtensionIds();
+    const openExtension = useExtensionStore(state => state.open);
     const closePrimary = useExtensionStore(state => state.closePrimary);
-    const setSecondary = useExtensionStore(state => state.setSecondary);
     const closeSecondary = useExtensionStore(state => state.closeSecondary);
 
     const [barRef, setBarRef] = useState<HTMLDivElement | null>(null);
@@ -47,41 +44,45 @@ export const ExtensionTitlebar: React.FC = () => {
     }, [barRef]);
 
     const primaryToolbar =
-                currentPrimaryId && (
-                    <ExtensionToolbar 
-                        id={currentPrimaryId}
-                        allIds={primaryIds}
-                        onClickPopout={() => {
-                            openExtensionPopup(currentPrimaryId);
-                            closePrimary();
-                        }}
-                        onSelect={setPrimary}
-                    />
-                );
+        currentPrimaryId && (
+            <ExtensionToolbar 
+                id={currentPrimaryId}
+                allIds={primaryIds}
+                onClickPopout={isLessProductive ? undefined : () => {
+                    openExtensionPopup(currentPrimaryId);
+                    closePrimary();
+                }}
+                onSelect={(id) => {
+                    openExtension(id, "primary");
+                }}
+            />
+        );
 
     const secondaryToolbar =
                 currentSecondaryId && (
                     <ExtensionToolbar 
                         id={currentSecondaryId}
                         allIds={secondaryIds}
-                        onClickPopout={() => {
+                        onClickPopout={isLessProductive ? undefined : () => {
                             openExtensionPopup(currentSecondaryId);
                             closeSecondary();
                         }}
-                        onSelect={setSecondary}
+                onSelect={(id) => {
+                    openExtension(id, "secondary");
+                }}
                         onClickClose={closeSecondary}
                     />);
 
     const twoLine = isNarrowLayout && currentPrimaryId && currentSecondaryId;
     if (twoLine) {
         return (
-        <div ref={setBarRef}>
-    <div className={styles.bar}>
+            <div ref={setBarRef}>
+                <div className={styles.bar}>
                     {primaryToolbar}
-            <ExtensionOpenButton />
-    </div>
+                    <ExtensionOpenButton />
+                </div>
                 {secondaryToolbar}
-        </div>
+            </div>
         );
     }
 
@@ -94,9 +95,40 @@ export const ExtensionTitlebar: React.FC = () => {
                 )
             }
             {secondaryToolbar}
-            <Divider vertical className={styles.divider}/>
+            {
+                currentPrimaryId && currentSecondaryId && (
+                    <Divider vertical className={styles.divider}/>
+                )
+            }
             <ExtensionOpenButton />
     </div>
     );
 
 };
+
+export const ExtensionTitlebar = memo(ExtensionTitlebarConnected);
+
+/** Titlebar for mobile platform with simplified controls */
+const ExtensionTitlebarMobileConnected: React.FC = () => {
+    const styles = useStyles();
+    
+    const allIds = useAllNonPopoutExtensionIds();
+    const currentId = useCurrentPrimaryExtensionId();
+    const openExtension = useExtensionStore(state => state.open);
+
+
+    return (
+        <div className={styles.bar}>
+                    <ExtensionToolbar 
+                        id={currentId}
+                        allIds={allIds}
+                        onSelect={(id) => {
+                    openExtension(id, "primary");
+                }}
+                fullWidth
+                    />
+        </div>
+    );
+};
+
+export const ExtensionTitlebarMobile = memo(ExtensionTitlebarMobileConnected);
