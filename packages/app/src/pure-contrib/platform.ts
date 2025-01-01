@@ -5,8 +5,8 @@ import { isMobile, isSmartTV, isWearable } from "mobile-device-detect";
 const lessProductive = cell({ initial: isMobile || isSmartTV || isWearable })
 
 export type PlatformOptions = {
-    /** Width threshold to start displaying*/
-    portraitWidth: number;
+    /** Width threshold to start displaying the app in narrow mode */
+    narrowModeThreadhold: number;
 };
 
 

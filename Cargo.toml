@@ -7,5 +7,7 @@ members = [
     "packages/actor-sys", 
     "packages/item-assets", 
     "packages/item-animated", 
-    "packages/parser", "packages/runtime-wasm",
+    "packages/parser", 
+    "packages/runtime-wasm", 
+    "packages/acorn",
 ]
