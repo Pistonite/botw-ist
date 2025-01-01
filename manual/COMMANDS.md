@@ -8,10 +8,8 @@ core commands:
   # PMDM
 
   # Stage 1
-  !core-add ITEM:
-    Add ITEM to PMDM
-  !core-add-one ITEM:
-    Add one ITEM to PMDM
+  !core-add Item:
+    Add Item to PMDM
   !core-remove-held:
     Remove held items
   !core-hold SLOT:
@@ -53,6 +51,10 @@ core commands:
     Perform SORT while on TAB_INDEX
   !core-set-gdt FLAG VALUE:
     Set GDT FLAG to VALUE
+
+  !core-aslr NUMBER:
+    Set the upper 32 bits of address in ASLR region.
+    This can only be done when the game is closed
 
   
 

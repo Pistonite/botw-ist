@@ -1,0 +1,12 @@
+[package]
+name = "skybook-acorn"
+version = "0.0.0"
+description = "Core of the skybook IST simulator"
+edition = "2021"
+
+[dependencies]
+enumset = "1.1.5"
+heck = "0.5.0"
+serde = { version = "1.0.217", features = ["derive"] }
+serde_variant = "0.1.3"
+serde_yaml_ng = "0.10.0"
