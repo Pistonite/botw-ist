@@ -1,0 +1,13 @@
+[package]
+name = "blueflame"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+derive_more = { version = "1.0.0", features = ["constructor", "deref", "deref_mut"] }
+enumset = "1.1.5"
+thiserror = "2.0.9"
+
+[dependencies.uking-relocate-lib]
+git = "https://github.com/Pistonight/symbotw"
+rev = "ac30ade3606d17a427fad3296a426013b36f0143"

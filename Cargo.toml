@@ -9,5 +9,7 @@ members = [
     "packages/item-animated", 
     "packages/parser", 
     "packages/runtime-wasm", 
-    "packages/acorn",
+    "packages/acorn", 
+    "packages/blueflame", 
+    "packages/blueflame-macros",
 ]
