@@ -2,7 +2,7 @@ use crate::memory;
 
 pub enum Crash {
 
-    Boot, // Boot crash (?)
+    Boot, // TODO: Boot crash (?)
 
     Cpu, // TODO: CPU errors
 

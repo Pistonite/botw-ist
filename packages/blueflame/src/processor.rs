@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{memory::Memory, Core};
+use crate::{memory::{Memory, Proxies}, Core};
 
 pub struct Processor {
     // TODO: registers
@@ -15,10 +15,11 @@ impl Default for Processor {
 
 impl Processor {
     /// Attach the processor to a memory instance
-    pub fn attach<'p, 'm>(&'p mut self, mem: &'m mut Memory) -> Core<'p, 'm> {
+    pub fn attach<'p, 'm, 'x>(&'p mut self, mem: &'m mut Memory, proxies: &'x Proxies) -> Core<'p, 'm, 'x> {
         Core {
             cpu: self,
             mem,
+            proxies,
         }
     }
 }
