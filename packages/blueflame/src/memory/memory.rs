@@ -148,6 +148,10 @@ impl Memory {
             RegionType::Heap => Arc::make_mut(&mut self.heap).deref_mut()
         }
     }
+
+    pub fn heap_mut(&mut self) -> &mut SimpleHeap {
+        Arc::make_mut(&mut self.heap)
+    }
 }
 
 #[derive(Debug, Clone)]

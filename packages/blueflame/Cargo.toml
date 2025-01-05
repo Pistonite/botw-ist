@@ -6,8 +6,10 @@ edition = "2021"
 [dependencies]
 derive_more = { version = "1.0.0", features = ["constructor", "deref", "deref_mut"] }
 enumset = "1.1.5"
+rand_xoshiro = "0.6.0"
+sha2 = "0.10.8"
 thiserror = "2.0.9"
 
 [dependencies.uking-relocate-lib]
 git = "https://github.com/Pistonight/symbotw"
-rev = "ac30ade3606d17a427fad3296a426013b36f0143"
+rev = "57e51a922e4e3c83d13d97d6e183a32f0533113e"

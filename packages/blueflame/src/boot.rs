@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
-use uking_relocate_lib::singleton::{Singleton, SingletonCreator};
+use uking_relocate_lib::singleton::{ObjType, Singleton, SingletonCreator};
 use uking_relocate_lib::{Env, Program};
 
-use crate::memory::{align_down, align_up, Memory, MemoryFlags, Region, RegionType, SimpleHeap, PAGE_SIZE, REGION_ALIGN};
+use crate::memory::{align_down, align_up, Memory, MemoryFlags, Proxies, Region, RegionType, SimpleHeap, PAGE_SIZE, REGION_ALIGN};
 use crate::processor::Processor;
 
 
@@ -16,7 +16,7 @@ pub fn init_memory(
     stack_size: u32,
     pmdm_address: u64,
     heap_free_size: u32,
-) -> Arc<Memory> {
+) -> (Arc<Memory>, Proxies) {
 
 
     let pmdm_info = image.singleton_by_id(Singleton::PauseMenuDataMgr).unwrap(); // TODO: error
@@ -77,12 +77,14 @@ pub fn init_memory(
     // create the processor to initialize the singletons
 
     let mut processor = Processor::default();
+    let proxies = Proxies::default();
 
     let mut singleton_init = SingletonInit {
         env: image.env,
         program_start: image.program_start,
         processor: &mut processor,
         memory: &mut memory,
+        proxies: &proxies,
         heap_start_adjusted: heap_start + heap_adjustment,
     };
 
@@ -90,7 +92,7 @@ pub fn init_memory(
         singleton.create_instance(&mut singleton_init).unwrap(); // TODO: error
     }
 
-    Arc::new(memory)
+    (Arc::new(memory), proxies)
 }
 
 fn overlaps(a_start: u64, a_size: u32, b_start: u64, b_size: u32) -> bool {
@@ -99,15 +101,16 @@ fn overlaps(a_start: u64, a_size: u32, b_start: u64, b_size: u32) -> bool {
     (b_start < a_end && b_start >= a_start) || (b_end < a_end && b_end >= a_start)
 }
 
-pub struct SingletonInit<'p, 'm> {
+pub struct SingletonInit<'p, 'm, 'x> {
     env: Env,
     program_start: u64,
     processor: &'p mut Processor,
     memory: &'m mut Memory,
+    proxies: &'x Proxies,
     heap_start_adjusted: u64,
 }
 
-impl SingletonCreator for SingletonInit<'_, '_> {
+impl SingletonCreator for SingletonInit<'_, '_, '_> {
     type Error = (); // TODO: error type from executing code
 
     fn set_main_rel_pc(&mut self, pc: u32) -> Result<(), Self::Error> {
@@ -136,6 +139,10 @@ impl SingletonCreator for SingletonInit<'_, '_> {
     }
 
     fn stop(&mut self) -> Result<(), Self::Error> {
+        todo!()
+    }
+
+    fn make_proxy(&mut self, obj_type: ObjType, reg: u32) -> Result<(), Self::Error> {
         todo!()
     }
 }

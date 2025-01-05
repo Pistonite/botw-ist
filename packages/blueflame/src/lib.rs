@@ -1,9 +1,10 @@
-use memory::Memory;
+use memory::{Memory, Proxies};
 use processor::Processor;
 
-pub struct Core<'p, 'm> {
+pub struct Core<'p, 'm, 'x> {
     pub cpu: &'p mut Processor,
     pub mem: &'m mut Memory,
+    pub proxies: &'x Proxies,
 }
 
 /// Internal bindings to invoke functions
@@ -23,6 +24,7 @@ trait CoreInternal {
 
 /// Memory implementation
 mod memory;
+
 
 mod error;
 

@@ -15,6 +15,8 @@ mod write;
 pub use write::*;
 mod memory;
 pub use memory::*;
+mod proxy;
+pub use proxy::*;
 
 macro_rules! align_down {
     ($addr:expr, $align:expr) => {
