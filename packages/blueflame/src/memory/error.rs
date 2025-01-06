@@ -4,7 +4,7 @@ use super::region::RegionType;
 use super::access::MemAccess;
 
 /// Memory errors
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {
     #[error("permission denied: {0}")]
     PermissionDenied(MemAccess),

@@ -1,14 +1,13 @@
 mod page;
 pub use page::*;
-pub mod error;
+mod error;
+pub use error::*;
 mod heap;
 pub use heap::*;
 mod region;
 pub use region::*;
 mod access;
 pub use access::*;
-mod program;
-pub use program::*;
 mod read;
 pub use read::*;
 mod write;

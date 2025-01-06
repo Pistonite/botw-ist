@@ -1,11 +1,12 @@
-use crate::memory;
+#[derive(Debug, Clone, thiserror::Error)]
+pub enum Error {
 
-pub enum Crash {
+    #[error("boot crash: {0}")]
+    Boot(#[from] crate::boot::Error),
 
-    Boot, // TODO: Boot crash (?)
-
+    #[error("execution error")]
     Cpu, // TODO: CPU errors
 
-    /// Memory error
-    Mem(memory::error::Error),
+    #[error("memory error: {0}")]
+    Mem(crate::memory::Error),
 }

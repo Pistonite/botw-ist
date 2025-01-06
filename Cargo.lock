@@ -1881,14 +1881,16 @@ dependencies = [
 name = "skybook-parser"
 version = "0.0.0"
 dependencies = [
+ "derive_more",
  "teleparse 0.0.5",
+ "thiserror 2.0.9",
 ]
 
 [[package]]
 name = "skybook-runtime"
 version = "0.0.0"
 dependencies = [
- "skybook-acorn",
+ "blueflame",
  "skybook-parser",
 ]
 
