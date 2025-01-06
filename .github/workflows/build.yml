@@ -1,48 +1,48 @@
-name: Build
-on:
-  push:
-    branches:
-    - main
-  pull_request:
-    branches:
-    - main
-
-jobs:
-  build-server:
-    name: Server
-    runs-on: ubuntu-latest
-    container: golang:alpine
-    steps:
-      - uses: actions/checkout@v4
-      - uses: arduino/setup-task@v2
-        with:
-          version: 3.x
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-go@v5
-      - run: task server:build
-      - uses: actions/upload-artifact@v4
-        with:
-          path: server/build/botw-iss
-          name: server
-          retention-days: 3
-
-  build-manual:
-    name: Manual
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: arduino/setup-task@v2
-        with:
-          version: 3.x
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: cargo-bins/cargo-binstall@main
-      - run: cargo-binstall --no-confirm mdbook
-      - run: task manual:build
-      - uses: actions/upload-artifact@v4
-        with:
-          path: manual/book
-          name: manual
-          retention-days: 3
+# name: Build
+# on:
+#   push:
+#     branches:
+#     - main
+#   pull_request:
+#     branches:
+#     - main
+#
+# jobs:
+#   build-server:
+#     name: Server
+#     runs-on: ubuntu-latest
+#     container: golang:alpine
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: arduino/setup-task@v2
+#         with:
+#           version: 3.x
+#           repo-token: ${{ secrets.GITHUB_TOKEN }}
+#       - uses: actions/setup-go@v5
+#       - run: task server:build
+#       - uses: actions/upload-artifact@v4
+#         with:
+#           path: server/build/botw-iss
+#           name: server
+#           retention-days: 3
+#
+#   build-manual:
+#     name: Manual
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: arduino/setup-task@v2
+#         with:
+#           version: 3.x
+#           repo-token: ${{ secrets.GITHUB_TOKEN }}
+#       - uses: cargo-bins/cargo-binstall@main
+#       - run: cargo-binstall --no-confirm mdbook
+#       - run: task manual:build
+#       - uses: actions/upload-artifact@v4
+#         with:
+#           path: manual/book
+#           name: manual
+#           retention-days: 3
 
   # build-legacy:
   #   name: Legacy App
