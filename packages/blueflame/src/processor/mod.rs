@@ -1,3 +1,4 @@
+
 use std::collections::HashMap;
 
 use crate::{memory::{Memory, Proxies}, Core};
@@ -15,7 +16,7 @@ impl Default for Processor {
 
 impl Processor {
     /// Attach the processor to a memory instance
-    pub fn attach<'p, 'm, 'x>(&'p mut self, mem: &'m mut Memory, proxies: &'x Proxies) -> Core<'p, 'm, 'x> {
+    pub fn attach<'p, 'm, 'x>(&'p mut self, mem: &'m mut Memory, proxies: &'x mut Proxies) -> Core<'p, 'm, 'x> {
         Core {
             cpu: self,
             mem,

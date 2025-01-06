@@ -3,8 +3,23 @@ use std::sync::Arc;
 use uking_relocate_lib::singleton::{ObjType, Singleton, SingletonCreator};
 use uking_relocate_lib::{Env, Program};
 
+use crate::error::Error as CrateError;
 use crate::memory::{align_down, align_up, Memory, MemoryFlags, Proxies, Region, RegionType, SimpleHeap, PAGE_SIZE, REGION_ALIGN};
 use crate::processor::Processor;
+use crate::Core;
+
+/// Error that only happens during boot
+#[derive(Debug, Clone, thiserror::Error)]
+pub enum Error {
+    #[error("no PMDM singleton found in program image")]
+    NoPmdm,
+    #[error("PMDM address is impossible to satisfy: 0x{0:08x}")]
+    InvalidPmdmAddress(u64),
+    #[error("heap is too small: need at least {0} bytes")]
+    HeapTooSmall(u32),
+    #[error("region overlap: {0} and {1}")]
+    RegionOverlap(RegionType, RegionType),
+}
 
 
 /// Initialize memory for the process
@@ -15,44 +30,67 @@ pub fn init_memory(
     stack_start: u64,
     stack_size: u32,
     pmdm_address: u64,
-    heap_free_size: u32,
-) -> (Arc<Memory>, Proxies) {
+    heap_size: u32,
+) -> Result<(Memory, Proxies), CrateError> {
 
-
-    let pmdm_info = image.singleton_by_id(Singleton::PauseMenuDataMgr).unwrap(); // TODO: error
-    // type
-    // heap_start + rel_start = pmdm_address
-    // heap_start = pmdm_address - rel_start
-    let pmdm_rel_start = pmdm_info.rel_start;
-    if pmdm_rel_start as u64 > pmdm_address {
-        panic!("pmdm_rel_start > pmdm_address"); // TODO: handle error
+    // calculate heap start address
+    // we need the heap to be as small as possible,
+    // but the relative address of the singleton could be really big
+    // (e.g. a few GBs), so we need to adjust the heap start accordingly
+    //
+    // 0                              heap_start s1             pmdm            s2
+    //          |<--heap_adjustment-->|
+    //                                |<----pmdm_rel_address--->|
+    //          |<----------pmdm.rel_start--------------------->|
+    //          |<----------min_rel_start------->|
+    //          |<---------------------------max_rel_start--------------------->|
+    // |<------------------------pmdm_address------------------>|
+    // |<min_hs>|
+    //
+    // for any singleton:
+    // rel_start - heap_adjustment + heap_start = address
+    //
+    // heap_adjustment is positive and guarateed to be less than rel_start
+    // of any singleton
+    let pmdm = image.singleton_by_id(Singleton::PauseMenuDataMgr).ok_or(Error::NoPmdm)?;
+    if pmdm.rel_start as u64 > pmdm_address {
+        return Err(Error::InvalidPmdmAddress(pmdm_address).into());
     }
-    let heap_start = align_down!(pmdm_address - pmdm_rel_start as u64, REGION_ALIGN);
-    let heap_adjustment = (pmdm_address - heap_start) - pmdm_rel_start as u64;
-
-    // heap_start + heap_adjustment + singleton.rel_start = address for that singleton
+    let min_heap_start = pmdm_address - pmdm.rel_start as u64;
+    let min_rel_start = image.singletons().iter().map(|s| s.rel_start).min().unwrap_or_default();
+    let max_heap_start = min_heap_start + min_rel_start as u64;
+    let heap_start = align_down!(max_heap_start, REGION_ALIGN);
+    if heap_start < min_heap_start {
+        // somehow align down made it smaller
+        // maybe possible with some pmdm_address
+        return Err(Error::InvalidPmdmAddress(pmdm_address).into());
+    }
+    let heap_adjustment = heap_start - min_heap_start;
 
     // calculate how much space will be needed for all the singletons
-    let mut heap_end = heap_start;
-    let singletons = image.singletons();
-    for singleton in singletons {
-        let singleton_end = heap_start + heap_adjustment + singleton.rel_start as u64 + singleton.size as u64;
-        heap_end = heap_end.max(singleton_end);
-    }
+    let max_rel_start = image.singletons().iter().map(|s| s.rel_start).max().unwrap_or_default();
+    let heap_end = min_heap_start + max_rel_start as u64;
     // align up to the next page, and reserve 1 page for some spacing
-    heap_end = align_up!(heap_end, PAGE_SIZE as u64) + PAGE_SIZE as u64;
-    let heap_size = (heap_end - heap_start) as u32 + heap_free_size;
-    let heap_start_alloc = heap_end + 0x428; // make it look random
+    let heap_singletons_end = align_up!(heap_end, PAGE_SIZE as u64) + PAGE_SIZE as u64;
+    let heap_singletons_size = (heap_singletons_end - heap_start) as u32;
+    // make the first alloc look random
+    let page_off_alloc_start = 0x428;
+    let heap_min_size = heap_singletons_size + page_off_alloc_start;
+    let heap_size = align_up!(heap_size, PAGE_SIZE);
+
+    if heap_size < heap_min_size {
+        return Err(Error::HeapTooSmall(heap_min_size).into());
+    }
     
-    // check if program/stack/heap overlap (TODO: remove the panics)
+    // check the regions don't overlap before allocating memory
     if overlaps(image.program_start, image.program_size, stack_start, stack_size) {
-        panic!("program and stack overlap");
+        return Err(Error::RegionOverlap(RegionType::Program, RegionType::Stack).into());
     }
     if overlaps(image.program_start, image.program_size, heap_start, heap_size) {
-        panic!("program and heap overlap");
+        return Err(Error::RegionOverlap(RegionType::Program, RegionType::Heap).into());
     }
     if overlaps(stack_start, stack_size, heap_start, heap_size) {
-        panic!("stack and heap overlap");
+        return Err(Error::RegionOverlap(RegionType::Stack, RegionType::Heap).into());
     }
 
     // construct the memory
@@ -64,7 +102,8 @@ pub fn init_memory(
         image.regions()).unwrap()); // TODO: error type
     //
     let stack_region = Arc::new(Region::new_rw(RegionType::Stack, stack_start, stack_size));
-    let heap_region = Arc::new(SimpleHeap::new(heap_start, heap_size, heap_start_alloc));
+    let heap_region = Arc::new(SimpleHeap::new(
+        heap_start, heap_size, heap_min_size as u64 + heap_start));
 
     let flags = MemoryFlags {
         enable_strict_region: true,
@@ -74,25 +113,23 @@ pub fn init_memory(
 
     let mut memory = Memory::new(flags, program_region, stack_region, heap_region);
 
-    // create the processor to initialize the singletons
+    // create a temporary processor to initialize the singletons
 
     let mut processor = Processor::default();
-    let proxies = Proxies::default();
+    let mut proxies = Proxies::default();
 
     let mut singleton_init = SingletonInit {
         env: image.env,
         program_start: image.program_start,
-        processor: &mut processor,
-        memory: &mut memory,
-        proxies: &proxies,
-        heap_start_adjusted: heap_start + heap_adjustment,
+        core: processor.attach(&mut memory, &mut proxies),
+        heap_start_adjusted: heap_start - heap_adjustment,
     };
 
-    for singleton in singletons {
-        singleton.create_instance(&mut singleton_init).unwrap(); // TODO: error
+    for singleton in image.singletons() {
+        singleton.create_instance(&mut singleton_init)?;
     }
 
-    (Arc::new(memory), proxies)
+    Ok((memory, proxies))
 }
 
 fn overlaps(a_start: u64, a_size: u32, b_start: u64, b_size: u32) -> bool {
@@ -104,14 +141,12 @@ fn overlaps(a_start: u64, a_size: u32, b_start: u64, b_size: u32) -> bool {
 pub struct SingletonInit<'p, 'm, 'x> {
     env: Env,
     program_start: u64,
-    processor: &'p mut Processor,
-    memory: &'m mut Memory,
-    proxies: &'x Proxies,
+    core: Core<'p, 'm, 'x>,
     heap_start_adjusted: u64,
 }
 
 impl SingletonCreator for SingletonInit<'_, '_, '_> {
-    type Error = (); // TODO: error type from executing code
+    type Error = CrateError;
 
     fn set_main_rel_pc(&mut self, pc: u32) -> Result<(), Self::Error> {
         let main_offset = self.env.main_offset();

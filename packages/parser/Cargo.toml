@@ -5,4 +5,6 @@ edition = "2021"
 publish = false
 
 [dependencies]
+derive_more = { version = "1.0.0", features = ["deref", "deref_mut"] }
 teleparse = "0.0.5"
+thiserror = "2.0.9"

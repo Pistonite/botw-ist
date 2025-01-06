@@ -5,6 +5,6 @@ edition = "2021"
 publish = false
 
 [dependencies]
-skybook-acorn = { path = "../acorn" }
+blueflame = { path = "../blueflame" }
 skybook-parser = { path = "../parser" }
 

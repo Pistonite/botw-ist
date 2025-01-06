@@ -4,11 +4,11 @@ use processor::Processor;
 pub struct Core<'p, 'm, 'x> {
     pub cpu: &'p mut Processor,
     pub mem: &'m mut Memory,
-    pub proxies: &'x Proxies,
+    pub proxies: &'x mut Proxies,
 }
 
 /// Internal bindings to invoke functions
-trait CoreInternal {
+impl Core<'_, '_, '_> {
 
     // these functions are called internally by the call
     // to execute commands
@@ -18,19 +18,24 @@ trait CoreInternal {
 
 
     // 0x96efb8
-    fn pmdm_item_get(&self, actor: &str, value: i32, modifier_info: u64) -> 
-    Result<(), ()>;
+    pub fn pmdm_item_get(&self, actor: &str, value: i32, modifier_info: u64) -> 
+    Result<(), error::Error> {
+        todo!();
+    }
 }
 
 /// Memory implementation
-mod memory;
+pub mod memory;
 
 
-mod error;
+pub mod error;
 
 mod loader;
 
-mod processor;
+pub mod processor;
 
 /// Initialization for the memory
 mod boot;
+
+/// Proxy objects
+mod proxy;
