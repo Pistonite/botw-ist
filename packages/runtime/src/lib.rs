@@ -5,6 +5,13 @@ use blueflame::{error::Error, memory::{Memory, Proxies}};
 mod scheduler;
 use scheduler::Scheduler;
 
+mod armor_upgrade_gen;
+mod item_name_gen;
+mod item_name;
+pub mod cook_effect_name;
+
+pub mod item_search;
+
 
 pub struct Runtime<S: scheduler::Scheduler> {
     scheduler: S,

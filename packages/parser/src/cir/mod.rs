@@ -5,6 +5,7 @@ use crate::syn;
 use crate::{error::ErrorReport};
 
 mod item_meta;
+pub use item_meta::*;
 
 
 pub trait MetaParser {

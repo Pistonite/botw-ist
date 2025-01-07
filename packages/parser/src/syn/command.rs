@@ -5,7 +5,7 @@ use teleparse::{derive_syntax, tp};
 use super::token::{KwGet, KwBuy, KwHoldAttach
 };
 use super::item_list::{ItemListFinite, ItemListConstrained};
-use super::{Category, ItemMeta, ItemWithSlot, ItemWithSlotOrCategory, KwBake, KwBoil, KwCloseGame, KwCloseInventory, KwCook, KwDestroy, KwDnp, KwDrop, KwEat, KwEntangle, KwEnter, KwEquip, KwExit, KwFreeze, KwHold, KwHoldSmuggle, KwLeave, KwNewGame, KwOpenInventory, KwPickUp, KwReload, KwRoast, KwSave, KwSaveAs, KwSell, KwShoot, KwSort, KwTalkTo, KwUnequip, KwUnhold, KwUntalk, KwUse, TimesClause, Word};
+use super::{Category, ItemMeta, ItemOrCategoryWithSlot, KwBake, KwBoil, KwCloseGame, KwCloseInventory, KwCook, KwDestroy, KwDnp, KwDrop, KwEat, KwEntangle, KwEnter, KwEquip, KwExit, KwFreeze, KwHold, KwHoldSmuggle, KwLeave, KwNewGame, KwOpenInventory, KwPickUp, KwReload, KwRoast, KwSave, KwSaveAs, KwSell, KwShoot, KwSort, KwTalkTo, KwUnequip, KwUnhold, KwUntalk, KwUse, TimesClause, Word};
 
 #[derive_syntax]
 #[derive(Debug)]
@@ -206,7 +206,7 @@ pub struct CmdSell {
 #[derive(Debug)]
 pub struct CmdEquip {
     pub lit: KwEquip,
-    pub items: ItemWithSlot,
+    pub items: ItemOrCategoryWithSlot,
 }
 
 /// `unequip ITEM` - unequip one thing, or (all items) in one category
@@ -214,7 +214,7 @@ pub struct CmdEquip {
 #[derive(Debug)]
 pub struct CmdUnequip {
     pub lit: KwUnequip,
-    pub items: ItemWithSlotOrCategory,
+    pub items: ItemOrCategoryWithSlot,
 }
 
 /// `use CATEGORY X times` - use the item

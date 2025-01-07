@@ -1,12 +1,21 @@
+use crate::cir;
+
 
 pub trait ItemResolver {
-    type Future<T>: std::future::Future<Output = T> + Send + 'static;
 
     /// Resolve an item to its actor name
-    fn resolve(&self, word: &str) -> Self::Future<Option<String>>;
+    async fn resolve(&self, word: &str) -> ResolvedItem;
 
     /// Resolve a quote item word "like this" to its actor name
-    fn resolve_quoted(&self, word: &str) -> Self::Future<Option<String>>;
+    async fn resolve_quoted(&self, word: &str) -> ResolvedItem;
 
 
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ResolvedItem {
+    /// The actor found
+    pub actor: String,
+    /// The meta data of the item, if any
+    pub meta: Option<cir::ItemMeta>,
 }

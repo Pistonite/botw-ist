@@ -19,11 +19,20 @@ pub struct NumberedItem {
     pub item: Item,
 }
 
+/// Syntax for an item or category prefixed with a numeric amount
+#[derive_syntax]
+#[derive(Debug)]
+pub struct NumberedItemOrCategory {
+    #[teleparse(semantic(Amount))]
+    pub num: Number,
+    pub items: ItemOrCategory,
+}
+
 /// Syntax for an item prefixed with an amount or "all"
 #[derive_syntax]
 #[derive(Debug)]
 pub enum NumberedOrAllItemOrCategory {
-    Numbered(NumberedItem),
+    Numbered(NumberedItemOrCategory),
     All(AllItemOrCategory),
 }
 
@@ -47,18 +56,18 @@ pub enum ItemOrCategory {
 /// Syntax for specifying a single item with a slot
 #[derive_syntax]
 #[derive(Debug)]
-pub struct ItemWithSlot {
-    pub item: Item,
+pub struct ItemOrCategoryWithSlot {
+    pub item: ItemOrCategory,
     pub slot: tp::Option<SlotClause>,
 }
 
-/// Syntax for an item with a slot or a category
-#[derive_syntax]
-#[derive(Debug)]
-pub enum ItemWithSlotOrCategory {
-    Item(ItemWithSlot),
-    Category(Category),
-}
+// /// Syntax for an item with a slot or a category
+// #[derive_syntax]
+// #[derive(Debug)]
+// pub enum ItemWithSlotOrCategory {
+//     Item(ItemWithSlot),
+//     Category(Category),
+// }
 
 /// Syntax for an item prefixed with an amount or "infinite"
 #[derive_syntax]

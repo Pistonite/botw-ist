@@ -2,7 +2,7 @@
 
 use teleparse::{derive_syntax, tp};
 
-use super::item::{Item, ItemWithSlot, NumberedItem, NumberedOrInfiniteItem, NumberedOrAllItemOrCategory};
+use super::item::{Item, ItemOrCategoryWithSlot, NumberedItem, NumberedOrInfiniteItem, NumberedOrAllItemOrCategory};
 use super::token::SlotClause;
 
 /// Specifying an unconstrained, finite list of items 
@@ -36,7 +36,7 @@ pub enum ItemListInfinite {
 #[derive(Debug)]
 pub enum ItemListConstrained {
     /// Single item, e.g. `apple :from slot 3`
-    Single(ItemWithSlot),
+    Single(ItemOrCategoryWithSlot),
     /// multiple items with amounts, e.g. `5 apples 3 royal_claymore :from slot 3`
     List(ItemListWithSlot),
 }
