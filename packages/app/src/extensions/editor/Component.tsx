@@ -10,7 +10,7 @@ import { useApplication } from "application/useApplication.ts";
 const FILE = "script.skyb";
 
 
-export const EditorComponent: React.FC<ExtensionComponentProps> = ({
+export const Component: React.FC<ExtensionComponentProps> = ({
     standalone, connect
 }) => {
     const app = useApplication();

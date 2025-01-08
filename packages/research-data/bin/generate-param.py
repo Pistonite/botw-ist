@@ -48,6 +48,10 @@ def process_actor(actor_file) -> tuple[str, dict] | None:
             data["canStack"] = True
         if tag == "CannotSell":
             data["cannotSell"] = True
+        if tag == "CureItem":
+            data["isCureItem"] = True
+        if tag == "Important":
+            data["isImportant"] = True
 
     gparam = actor["gparamlist"]
     if gparam:

@@ -1,0 +1,16 @@
+# Generic messages
+generic.error.internal: "内部错误: {{error}}"
+
+# Extension names
+extension.editor.name: 脚本编辑器
+extension.editor.desc: 编辑模拟器步骤
+extension.item-explorer.name: 搜索物品
+extension.item-explorer.desc: 测试物品搜索结果
+
+# Item Explorer Extension
+item_explorer.search_error.unknown_tag: 未知语言标签 "{{tag}}"
+item_explorer.label.search_localized: 全语言搜索
+item_explorer.label.search_placeholder: 搜索
+item_explorer.desc.search_tip_ident: 使用下划线 `_` 连接多个词，比如 `royal_claymore`.
+item_explorer.desc.search_tip_localized: 必要时可使用语言代码锁定语言，比如 `fr:espadon royal`。在脚本中，可使用带引号文本进行全语言搜索。
+item_explorer.label.no_results: 无结果

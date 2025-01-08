@@ -16,6 +16,10 @@ export enum PouchItemType {
     Invalid = -1,
 }
 
+export const isEquipment = (itemUse: PouchItemType): boolean => {
+    return itemUse === PouchItemType.Sword || itemUse === PouchItemType.Bow || itemUse === PouchItemType.Shield;
+}
+
 /** 
  * uking::ui::ItemUse
  */

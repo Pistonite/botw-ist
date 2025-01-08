@@ -1,3 +1,4 @@
+import { Result } from "@pistonite/pure/result";
 import { WorkexPromise } from "workex";
 
 /** 
@@ -44,6 +45,14 @@ export interface Application {
 
     /** Set the simulator script. */
     setScript(script: string): WorkexPromise<void>;
+
+    /** 
+     * Resolve an item from a query
+     *
+     * If localized is true, treat the query as a localized item search query (i.e. "[tag:]words"),
+     * otherwise, treat it as an identifier search query.
+     */
+    resolveItem(query: string, localized: boolean, limit: number): WorkexPromise<Result<{ actor: string, cookEffect: number}[], string>>;
 
     // /** Get the semantic tokens for the current script */
     // provideSemanticTokens(start: number, end: number): WorkexPromise<Uint32Array>;

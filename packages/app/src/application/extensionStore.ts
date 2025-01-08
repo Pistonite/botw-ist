@@ -59,10 +59,10 @@ export type ExtensionStore = {
 export type ExtensionOpenMode = "primary" | "secondary" | "popout";
 
 export const useExtensionStore = create<ExtensionStore>()((set) => ({
-    primaryIds: ["editor", "stub2"],
-    secondaryIds: ["stub1"],
+    primaryIds: ["editor", "stub1"],
+    secondaryIds: ["item-explorer"],
     currentPrimary: "editor",
-    currentSecondary: "stub1",
+    currentSecondary: "item-explorer",
 
     open: (id: string, slot: "primary" | "secondary", updateOpenMode = false) => {
         set(({primaryIds, secondaryIds}) => {
@@ -182,22 +182,13 @@ export const useCurrentPrimaryExtensionId = () => {
     return useExtensionStore((state) => state.currentPrimary);
 }
 
-const getSecondaryExtensionId = createSelector([
-    (state: ExtensionStore) => state.currentSecondary,
-], (id) => {
-        // don't show secondary extension if on less productive platform
-    return isLessProductive ? "" : id;
-});
 export const useCurrentSecondaryExtensionId = () => {
-    return useExtensionStore(getSecondaryExtensionId);
+    const secondary = useExtensionStore(state => state.currentSecondary);
+    return isLessProductive ? "" : secondary;
 }
 
-const getIsShowingSecondaryExtension = createSelector([
-    (state: ExtensionStore) => state.currentPrimary,
-    getSecondaryExtensionId
-], (p, s) => {
-    return p || s;
-});
 export const useIsShowingExtensionPanel = () => {
-    return  useExtensionStore(getIsShowingSecondaryExtension);
+    const primary = useExtensionStore((state) => state.currentPrimary);
+    const secondary = useCurrentSecondaryExtensionId();
+    return !!(primary || secondary);
 }
