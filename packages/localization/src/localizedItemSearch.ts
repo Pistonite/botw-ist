@@ -431,6 +431,9 @@ function filterActorName(actor: string): string | undefined {
     }
 
     if (actor.startsWith("Armor_")) {
+        if (actor === "Armor_140_Lower") {
+            return undefined; // borrowed snow boots
+        }
         if (actor.startsWith("Armor_Default")) {
             return undefined;
         }

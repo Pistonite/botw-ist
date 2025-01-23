@@ -3,4 +3,17 @@ version: '3'
 tasks:
   build:
     cmds:
-      - deno generateThemes.ts > src/theme/themes.gen.ts
+      - bun scripts/build-themes.ts > src/theme/colors.ts
+
+  patch-monaco-editor:
+    cmds:
+      - rm -rf monaco-editor-patch
+      - pnpm install
+      - pnpm patch monaco-editor@0.52.2 --edit-dir monaco-editor-patch
+      - bun scripts/patch.ts
+      - rm -r monaco-editor-patch/dev
+      - rm -r monaco-editor-patch/min
+      - rm -r monaco-editor-patch/min-maps
+      - pnpm patch-commit monaco-editor-patch || true
+      - pnpm install
+      - rm -rf monaco-editor-patch

@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as monaco from "monaco-editor-contrib/esm/vs/editor/editor.api.ts";
+import * as monaco from "monaco-editor/esm/vs/editor/editor.api.ts";
 
-// @ts-ignore no types
-import { language as original } from "monaco-editor-contrib/esm/vs/basic-languages/typescript/typescript.js";
+// @ts-ignore no type
+import { language as original } from "monaco-editor/esm/vs/basic-languages/typescript/typescript.js";
 
 export const language = <monaco.languages.IMonarchLanguage>{
     ...original,

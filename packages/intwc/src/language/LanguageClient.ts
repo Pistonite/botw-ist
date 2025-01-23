@@ -1,5 +1,4 @@
-import * as monaco from 'monaco-editor-contrib';
-
+import * as monaco from 'monaco-editor';
 
 export type TextModel = monaco.editor.ITextModel;
 export type MarkerData = monaco.editor.IMarkerData;

@@ -20,14 +20,13 @@
         "url": "https://github.com"
     },
     "dependencies": {
-        "@pistonite/pure": "*",
-        "@pistonite/monaco-typescript-contrib": "0.0.1",
-        "monaco-editor-contrib": "0.52.2"
+        "@pistonite/pure": "catalog:",
+        "monaco-editor": "0.52.2",
+        "react": "catalog:"
     },
     "devDependencies": {
         "@catppuccin/palette": "^1.7.1",
-        "@types/react": "^18.3.16",
-        "react": "^18.3.1",
-        "vite": "^5.4.11"
+        "@types/react": "catalog:",
+        "vite": "catalog:"
     }
 }

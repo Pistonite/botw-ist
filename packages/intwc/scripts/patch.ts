@@ -52,7 +52,7 @@ const addPatch = (content: string) => {
     outLines.push(...content.split("\n").filter(Boolean).map(line => line.trimEnd()));
 }
 
-patchFile("lib/monaco-editor/esm/vs/language/typescript/ts.worker.js", () => {
+patchFile("monaco-editor-patch/esm/vs/language/typescript/ts.worker.js", () => {
     skipUntil(line => line.trim() === "// src/language/typescript/tsWorker.ts");
     skipUntil(line => line.trim().includes("class _TypeScriptWorker {"))
     skipUntil(line => line.trim().startsWith("async provideInlayHints("));
@@ -66,8 +66,8 @@ patchFile("lib/monaco-editor/esm/vs/language/typescript/ts.worker.js", () => {
 `);
 });
 
-patchFile("lib/monaco-editor/monaco.d.ts", patchTypeScriptWorkerInterface);
-patchFile("lib/monaco-editor/esm/vs/editor/editor.api.d.ts", patchTypeScriptWorkerInterface);
+patchFile("monaco-editor-patch/monaco.d.ts", patchTypeScriptWorkerInterface);
+patchFile("monaco-editor-patch/esm/vs/editor/editor.api.d.ts", patchTypeScriptWorkerInterface);
 
 function patchTypeScriptWorkerInterface() {
     skipUntil(line => line.trim() === "export interface TypeScriptWorker {");

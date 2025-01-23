@@ -17,6 +17,8 @@
 /target
 
 # NPM
-/node_modules
+node_modules
 
 /packages/workex
+
+/patches

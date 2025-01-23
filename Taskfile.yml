@@ -40,23 +40,21 @@ includes:
     dir: ./research/trace-view
 
 tasks:
-  npm-install:
-    aliases: [npmi]
-    desc: Wrapper for npm install to put everything in the right place
-    cmds:
-      - task: monaco-editor:clean
-      - npm install
-      - task: fix-npm-installs
-
-  fix-npm-installs:
-    cmds:
-      - mv node_modules/monaco-editor packages/monaco-editor-contrib/lib
-      - task: monaco-editor:patch
-
-
-
-  install-tools:
-    desc: Install tools
+  install-cargo-extra-tools:
+    aliases: [icets]
     cmds:
       - cargo install mdbook live-server cargo-watch wasm-pack
+      - cargo install --git https://github.com/Pistonite/workex
+
+  install:
+    desc: Install packages
+    aliases: [i]
+    cmds:
+      - task: install-workex
+      - pnpm i
+
+  install-workex:
+    cmds:
+      - rm -rf packages/workex
+      - workex --lib-out-path packages/workex --lib-package --lib-only
 

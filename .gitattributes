@@ -1,0 +1,5 @@
+*.h linguist-language=C++
+*.js linguist-language=TypeScript
+*.cjs linguist-language=TypeScript
+*.mjs linguist-language=TypeScript
+*.jsx linguist-language=TypeScript

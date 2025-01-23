@@ -1,5 +1,4 @@
-// import { isDark } from '@pistonite/pure/pref';
-import * as monaco from 'monaco-editor-contrib';
+import * as monaco from 'monaco-editor';
 import { getProvideMarkersCallback } from './language/MarkerProviderRegistry';
 import { EditorOption } from './types.ts';
 

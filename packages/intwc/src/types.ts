@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor-contrib";
+import * as monaco from "monaco-editor";
 import type { LanguageClient } from "./language/LanguageClient.ts";
 
 /** Option to pass in to init */

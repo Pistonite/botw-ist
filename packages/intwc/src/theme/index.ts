@@ -1,6 +1,6 @@
-import * as monaco from 'monaco-editor-contrib';
+import * as monaco from 'monaco-editor';
 
-import { DarkTheme, type Theme } from './themes.gen.ts';
+import { DarkTheme, type Theme } from './colors.ts';
 
 export const initThemes = () => {
     defineTheme("intwc-dark", "vs-dark", DarkTheme);
