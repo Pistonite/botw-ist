@@ -234,7 +234,7 @@ dependencies = [
  "enumset",
  "rand_xoshiro",
  "sha2",
- "thiserror 2.0.9",
+ "thiserror 2.0.11",
  "uking-relocate-lib",
 ]
 
@@ -243,12 +243,33 @@ name = "blueflame-macros"
 version = "0.0.0"
 
 [[package]]
+name = "blueflame-program"
+version = "0.1.0"
+dependencies = [
+ "blueflame-utils",
+ "deku",
+ "derive_more",
+ "flate2",
+ "thiserror 2.0.11",
+]
+
+[[package]]
 name = "blueflame-singleton"
 version = "0.0.0"
 dependencies = [
+ "blueflame-utils",
  "deku",
  "serde",
  "static_assertions",
+]
+
+[[package]]
+name = "blueflame-utils"
+version = "0.0.0"
+dependencies = [
+ "deku",
+ "enum-map",
+ "serde",
 ]
 
 [[package]]
@@ -662,6 +683,26 @@ name = "either"
 version = "1.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "60b1af1c220855b6ceac025d3f6ecdd2b7c4894bfe9cd9bda4fbb4bc7c0d4cf0"
+
+[[package]]
+name = "enum-map"
+version = "2.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6866f3bfdf8207509a033af1a75a7b08abda06bbaaeae6669323fd5a097df2e9"
+dependencies = [
+ "enum-map-derive",
+]
+
+[[package]]
+name = "enum-map-derive"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f282cfdfe92516eb26c2af8589c274c7c17681f5ecc03c18255fe741c6aa64eb"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.92",
+]
 
 [[package]]
 name = "enumset"
@@ -1909,7 +1950,7 @@ dependencies = [
  "image 0.25.5",
  "serde",
  "serde_json",
- "thiserror 2.0.9",
+ "thiserror 2.0.11",
  "webp",
 ]
 
@@ -1919,7 +1960,7 @@ version = "0.0.0"
 dependencies = [
  "derive_more",
  "teleparse 0.0.5",
- "thiserror 2.0.9",
+ "thiserror 2.0.11",
 ]
 
 [[package]]
@@ -1955,7 +1996,7 @@ dependencies = [
  "ratatui",
  "serde",
  "serde_json",
- "thiserror 2.0.9",
+ "thiserror 2.0.11",
 ]
 
 [[package]]
@@ -2072,7 +2113,7 @@ dependencies = [
  "logos 0.15.0",
  "num",
  "teleparse-macros 0.0.5",
- "thiserror 2.0.9",
+ "thiserror 2.0.11",
 ]
 
 [[package]]
@@ -2118,11 +2159,11 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "2.0.9"
+version = "2.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f072643fd0190df67a8bab670c20ef5d8737177d6ac6b2e9a236cb096206b2cc"
+checksum = "d452f284b73e6d76dd36758a0c8684b1d5be31f92b89d07fd5822175732206fc"
 dependencies = [
- "thiserror-impl 2.0.9",
+ "thiserror-impl 2.0.11",
 ]
 
 [[package]]
@@ -2138,9 +2179,9 @@ dependencies = [
 
 [[package]]
 name = "thiserror-impl"
-version = "2.0.9"
+version = "2.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b50fa271071aae2e6ee85f842e2e28ba8cd2c5fb67f11fcb1fd70b276f9e7d4"
+checksum = "26afc1baea8a989337eeb52b6e72a039780ce45c3edfcc9c5b9d112feeb173c2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2228,7 +2269,7 @@ dependencies = [
  "deku",
  "flate2",
  "serde",
- "thiserror 2.0.9",
+ "thiserror 2.0.11",
 ]
 
 [[package]]

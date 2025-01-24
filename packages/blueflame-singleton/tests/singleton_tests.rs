@@ -1,14 +1,9 @@
-use blueflame_singleton::singleton::{self, Singleton};
-use blueflame_singleton::Environment;
-
-
+use blueflame_singleton::Singleton;
+use blueflame_utils::{DlcVer, Environment, GameVer};
 
 #[test]
 fn test_not_overlap() {
-    let singletons = get_singletons(Environment {
-        game_ver: blueflame_singleton::GameVer::X150,
-        dlc_ver: blueflame_singleton::DlcVer::None,
-    });
+    let singletons = get_singletons(Environment::new(GameVer::X150, DlcVer::V300));
 
     for i in 0..singletons.len() {
         for j in i+1..singletons.len() {
@@ -24,10 +19,10 @@ fn test_not_overlap() {
 
 fn get_singletons(env: Environment) -> Vec<Singleton> {
     vec![
-        singleton::pmdm(env),
-        singleton::gdt_manager(env),
-        singleton::info_data(env),
-        singleton::aoc_manager(env),
+        blueflame_singleton::pmdm(env),
+        blueflame_singleton::gdt_manager(env),
+        blueflame_singleton::info_data(env),
+        blueflame_singleton::aoc_manager(env),
     ]
 }
 

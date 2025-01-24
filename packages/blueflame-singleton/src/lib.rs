@@ -1,11 +1,9 @@
 mod bytecode;
 pub use bytecode::*;
 
-mod env;
-pub use env::*;
-
 /// Singleton definitions
-pub mod singleton;
+mod singleton;
+pub use singleton::*;
 
 mod vm;
 pub use vm::*;

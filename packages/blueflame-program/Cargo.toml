@@ -1,0 +1,16 @@
+[package]
+name = "blueflame-program"
+version = "0.1.0"
+edition = "2021"
+description = "Library for processing BlueFlame program images"
+
+[dependencies.blueflame-utils]
+path = "../blueflame-utils"
+features = ["deku"]
+
+[dependencies]
+deku = "0.18.1"
+derive_more = { version = "1.0.0", features = ["deref"] }
+# explicitly request pure-rust backend
+flate2 = { version = "1.0.35", default-features = false, features = ["rust_backend"] }
+thiserror = "2.0.11"

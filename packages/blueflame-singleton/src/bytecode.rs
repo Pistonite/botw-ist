@@ -1,3 +1,5 @@
+use blueflame_utils::{DataType, ProxyType};
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "deku", derive(deku::DekuRead, deku::DekuWrite))]
@@ -92,26 +94,3 @@ pub enum Bytecode {
 }
 // make sure the binary size doesn't explode
 static_assertions::assert_eq_size!(Bytecode, u64);
-
-/// Proxy type identifiers
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "deku", derive(deku::DekuRead, deku::DekuWrite))]
-#[cfg_attr(feature = "deku", deku(id_type = "u8"))]
-#[repr(u8)]
-pub enum ProxyType {
-    /// ksys::gdt::TriggerParam, the storage for game data flags
-    #[cfg_attr(feature = "deku", deku(id = 0x01))]
-    TriggerParam,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "deku", derive(deku::DekuRead, deku::DekuWrite))]
-#[cfg_attr(feature = "deku", deku(id_type = "u8"))]
-#[repr(u8)]
-pub enum DataType {
-    /// Actor/ActorInfo.product.byml (decompressed version of the sbyml)
-    #[cfg_attr(feature = "deku", deku(id = 0x01))]
-    ActorInfoByml,
-}

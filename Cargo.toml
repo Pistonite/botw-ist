@@ -11,4 +11,6 @@ members = [
     "packages/blueflame", 
     "packages/blueflame-macros", 
     "packages/blueflame-singleton",
+    "packages/blueflame-utils",
+    "packages/blueflame-program",
 ]

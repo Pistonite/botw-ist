@@ -1,4 +1,6 @@
-use crate::{Bytecode, DataType, ProxyType};
+use crate::Bytecode;
+
+use blueflame_utils::{DataType, ProxyType};
 
 /// Trait implemented by external consumers to visit the singleton creation process
 pub trait VirtualMachine {

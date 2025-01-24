@@ -4,11 +4,14 @@ version = "0.0.0"
 edition = "2021"
 description = "System for initializaing singletons in BlueFlame"
 
+[dependencies.blueflame-utils]
+path = "../blueflame-utils"
+
 [dependencies]
 deku = { version = "0.18.1", optional = true }
 serde = { version = "1.0.217", features = ["derive"], optional = true }
 static_assertions = "1.1.0"
 
 [features]
-deku = ["dep:deku"]
-serde = ["dep:serde"]
+deku = ["dep:deku", "blueflame-utils/deku"]
+serde = ["dep:serde", "blueflame-utils/serde"]
