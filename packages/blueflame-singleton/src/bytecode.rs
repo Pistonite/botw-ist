@@ -90,6 +90,7 @@ pub enum Bytecode {
     #[cfg_attr(feature = "deku", deku(id = 0x41))]
     ExecuteToComplete,
 }
+// make sure the binary size doesn't explode
 static_assertions::assert_eq_size!(Bytecode, u64);
 
 /// Proxy type identifiers
@@ -110,7 +111,7 @@ pub enum ProxyType {
 #[cfg_attr(feature = "deku", deku(id_type = "u8"))]
 #[repr(u8)]
 pub enum DataType {
-    /// Actor/ActorInfo.product.sbyml
+    /// Actor/ActorInfo.product.byml (decompressed version of the sbyml)
     #[cfg_attr(feature = "deku", deku(id = 0x01))]
-    ActorInfoData,
+    ActorInfoByml,
 }

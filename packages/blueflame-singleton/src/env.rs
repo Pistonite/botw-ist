@@ -12,8 +12,8 @@ pub struct Environment {
 
 impl Environment {
     #[inline]
-    pub fn is150(self) -> bool {
-        self.game_ver == GameVer::X150
+    pub const fn is150(self) -> bool {
+        matches!(self.game_ver, GameVer::X150)
     }
 }
 
@@ -45,4 +45,15 @@ pub enum DlcVer {
     V200,
     /// Version 3.0.0 (Champions Ballad)
     V300,
+}
+
+impl DlcVer {
+    pub const fn to_repr(self) -> u32 {
+        match self {
+            DlcVer::None => 0,
+            DlcVer::V100 => 0x100,
+            DlcVer::V200 => 0x200,
+            DlcVer::V300 => 0x300,
+        }
+    }
 }

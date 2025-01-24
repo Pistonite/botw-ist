@@ -16,79 +16,16 @@ pub struct Singleton {
 impl Singleton {
     /// Create the singleton by executing the bytecode on the virtual machine
     pub fn create<V: VirtualMachine>(&self, vm: &mut V) -> Result<(), V::Error> {
-        if self.bytecode.is_empty() {
-            return Ok(());
-        }
-        let mut prev_lo_value = 0u32;
-        for bytecode in self.bytecode {
-            match *bytecode {
-                Bytecode::Enter(target) => {
-                    vm.enter(target)?
-                },
-                Bytecode::SetRegHi(reg, value) => {
-                    vm.set_reg(reg, (value as u64) << 32 | prev_lo_value as u64)?;
-                    prev_lo_value = 0;
-                }
-                Bytecode::SetRegLo(reg, value) => {
-                    vm.set_reg(reg, value as u64)?
-                }
-                Bytecode::RegLoNextHi(value) => {
-                    prev_lo_value = value;
-                },
-                Bytecode::CopyReg(from, to) => {
-                    vm.copy_reg(from, to)?
-                },
-                Bytecode::ExecuteUntil(target) => {
-                    vm.execute_until(target)?
-                }
-                Bytecode::ExecuteUntilThenSkipOne(target) => {
-                    vm.execute_until(target)?;
-                    vm.jump(target + 4)?
-                }
-                Bytecode::ExecuteUntilThenAllocSingletonSkipOne(target) => {
-                    vm.execute_until(target)?;
-                    vm.allocate_singleton(self.rel_start, self.size)?;
-                    vm.jump(target + 4)?
-                }
-                Bytecode::Jump(target) => {
-                    vm.jump(target)?
-                },
-                Bytecode::JumpExecute(target) => {
-                    vm.jump(target)?;
-                    vm.execute_until(target + 4)?
-                },
-                Bytecode::Allocate(bytes) => {
-                    vm.allocate_memory(bytes)?
-                },
-                Bytecode::AllocateProxy(proxy_type) => {
-                    vm.allocate_proxy(proxy_type)?
-                },
-                Bytecode::AllocateData(data_type) => {
-                    vm.allocate_data(data_type)?
-                }
-                Bytecode::AllocateSingleton => {
-                    vm.allocate_singleton(self.rel_start, self.size)?
-                }
-                Bytecode::GetSingleton(reg) => {
-                    vm.get_singleton(reg, self.rel_start)?
-                }
-                Bytecode::ExecuteToComplete => {
-                    vm.execute_to_complete()?
-                }
-            }
-        }
-        vm.finish()?;
-
-        Ok(())
+        vm.execute_bytecode_program(self.bytecode, self.rel_start, self.size)
     }
 }
 
 /// uking::ui::PauseMenuDataMgr
-pub fn pmdm(env: Environment) -> Singleton {
-    let rel_start = 0xaaaaaaa0; // TODO, based on env
+pub const fn pmdm(env: Environment) -> Singleton {
+    let rel_start = 0x0; // TODO, based on env
     let size = 0x44808; // should be the same for all envs
                         //
-    let bytecode = if env.is150() {
+    let bytecode: &[Bytecode] = if env.is150() {
         &[
             Bytecode::Enter(0x0096b1cc),
         
@@ -102,7 +39,7 @@ pub fn pmdm(env: Environment) -> Singleton {
             // no init needed
         ]
     } else {
-        todo!()
+        &[] //TODO
     };
 
     Singleton {
@@ -113,11 +50,11 @@ pub fn pmdm(env: Environment) -> Singleton {
 }
 
 /// ksys::gdt::Manager
-pub fn gdt_manager(env: Environment) -> Singleton {
-    let rel_start = 0xaaaaaaa0; // TODO, based on env
+pub const fn gdt_manager(env: Environment) -> Singleton {
+    let rel_start = 0x100000; // TODO, based on env
     let size = 0xdc8;
 
-    let bytecode = if env.is150() {
+    let bytecode: &[Bytecode] = if env.is150() {
         &[
             Bytecode::Enter(0x00dce964),
 
@@ -198,7 +135,7 @@ pub fn gdt_manager(env: Environment) -> Singleton {
             Bytecode::ExecuteToComplete,
         ]
     } else {
-        todo!()
+        &[] //TODO
     };
 
     Singleton {
@@ -209,11 +146,11 @@ pub fn gdt_manager(env: Environment) -> Singleton {
 }
 
 /// ksys::act::InfoData
-pub fn info_data(env: Environment) -> Singleton {
-    let rel_start = 0xaaaaaaa0; // TODO, based on env
+pub const fn info_data(env: Environment) -> Singleton {
+    let rel_start = 0x200000; // TODO, based on env
     let size = 0x98;
 
-    let bytecode = if env.is150() {
+    let bytecode: &[Bytecode] = if env.is150() {
         &[
             Bytecode::Enter(0x00d2e16c),
             Bytecode::ExecuteUntilThenAllocSingletonSkipOne(0x00d2e19c),
@@ -223,7 +160,7 @@ pub fn info_data(env: Environment) -> Singleton {
             Bytecode::Jump(0x00d2e2d8),
             Bytecode::GetSingleton(0),
             // load data into args
-            Bytecode::AllocateData(DataType::ActorInfoData),
+            Bytecode::AllocateData(DataType::ActorInfoByml),
             Bytecode::CopyReg(0, 1),
             Bytecode::SetRegLo(2, 0),
             Bytecode::SetRegLo(3, 0),
@@ -240,7 +177,9 @@ pub fn info_data(env: Environment) -> Singleton {
             Bytecode::ExecuteToComplete,
         ]
     } else {
-        todo!()
+        &[
+            Bytecode::Enter(0x00d2e16c),
+        ] // TODO
     };
     
     Singleton {
@@ -248,4 +187,51 @@ pub fn info_data(env: Environment) -> Singleton {
         size,
         bytecode,
     }
+}
+
+/// uking::aoc::Manager - note initializing the DLC version is separate
+pub const fn aoc_manager(env: Environment) -> Singleton {
+    let rel_start = 0x300000; // TODO, based on env
+    let size = 0x598;
+
+    let bytecode: &'static [Bytecode] = if env.is150() {
+        &[
+            Bytecode::Enter(0x00d69170),
+            Bytecode::ExecuteUntilThenAllocSingletonSkipOne(0x00d691a0),
+            Bytecode::ExecuteUntilThenSkipOne(0x00d691b0),
+            // --- ctor
+            Bytecode::ExecuteUntilThenSkipOne(0x00d69240),
+            Bytecode::ExecuteUntilThenSkipOne(0x00d69294),
+            Bytecode::ExecuteUntilThenSkipOne(0x00d69788),
+
+            Bytecode::ExecuteToComplete,
+        ]
+    } else {
+        &[
+        ] // TODO
+    };
+    
+    Singleton {
+        rel_start,
+        size,
+        bytecode,
+    }
+}
+
+/// Initialize the DLC version field in AocManager
+pub fn init_dlc_version<V: VirtualMachine>(aoc_manager: u64, env: Environment, vm: &mut V) -> Result<(), V::Error> {
+    let address = if env.is150() {
+        0x00d6c3f4
+    } else {
+        0 // TODO
+    };
+    let version = env.dlc_ver.to_repr();
+    let program: &[Bytecode] = &[
+        Bytecode::Enter(address),
+        Bytecode::RegLoNextHi(aoc_manager as u32),
+        Bytecode::SetRegHi(19, (aoc_manager >> 32) as u32),
+        Bytecode::SetRegLo(8, version),
+        Bytecode::ExecuteUntil(address + 4),
+    ];
+    vm.execute_bytecode_program(program, 0, 0)
 }
