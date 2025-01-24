@@ -77,6 +77,16 @@ pub enum DlcVer {
 }
 
 impl DlcVer {
+    /// Convert a number from 0-3 to a DLC version
+    pub fn from_num(num: u32) -> Option<Self> {
+        match num {
+            0 => Some(DlcVer::None),
+            1 => Some(DlcVer::V100),
+            2 => Some(DlcVer::V200),
+            3 => Some(DlcVer::V300),
+            _ => None,
+        }
+    }
     pub const fn to_repr(self) -> u32 {
         match self {
             DlcVer::None => 0,
