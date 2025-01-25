@@ -45,6 +45,17 @@ pub struct ProgramData {
     bytes: Vec<u8>,
 }
 
+impl ProgramData {
+    pub fn new(data_type: DataType, bytes: Vec<u8>) -> Self {
+        let bytes_len = bytes.len() as u32;
+        Self {
+            data_type,
+            bytes_len,
+            bytes,
+        }
+    }
+}
+
 /// Builder for a program
 ///
 /// The binary serialization requires that the length
