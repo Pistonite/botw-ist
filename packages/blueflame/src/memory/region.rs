@@ -1,7 +1,7 @@
-use std::{sync::Arc};
+use std::sync::Arc;
 
 use enumset::{EnumSet, EnumSetType};
-use uking_relocate_lib::ProgramRegion;
+use blueflame_program::ProgramRegion;
 
 
 use super::access::AccessType;

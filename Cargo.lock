@@ -230,12 +230,14 @@ dependencies = [
 name = "blueflame"
 version = "0.0.0"
 dependencies = [
+ "blueflame-program",
+ "blueflame-singleton",
+ "blueflame-utils",
  "derive_more",
  "enumset",
  "rand_xoshiro",
  "sha2",
  "thiserror 2.0.11",
- "uking-relocate-lib",
 ]
 
 [[package]]
@@ -2260,17 +2262,6 @@ name = "typenum"
 version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42ff0bf0c66b8238c6f3b578df37d0b7848e55df8577b3f74f92a69acceeb825"
-
-[[package]]
-name = "uking-relocate-lib"
-version = "0.0.0"
-source = "git+https://github.com/Pistonight/symbotw?rev=57e51a922e4e3c83d13d97d6e183a32f0533113e#57e51a922e4e3c83d13d97d6e183a32f0533113e"
-dependencies = [
- "deku",
- "flate2",
- "serde",
- "thiserror 2.0.11",
-]
 
 [[package]]
 name = "unicode-ident"

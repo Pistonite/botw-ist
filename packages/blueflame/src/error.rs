@@ -8,5 +8,5 @@ pub enum Error {
     Cpu, // TODO: CPU errors
 
     #[error("memory error: {0}")]
-    Mem(crate::memory::Error),
+    Mem(#[from] crate::memory::Error),
 }
