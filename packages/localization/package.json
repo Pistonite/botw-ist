@@ -1,16 +1,25 @@
 {
-  "name": "skybook-localization",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "dependencies": {
-    "@pistonite/pure": "*",
-    "fuse.js": "^7.0.0",
-    "i18next": "^24.2.0",
-    "lru-cache": "^11.0.2",
-    "react-i18next": "^15.2.0"
-  },
-  "exports": {
-    ".": "./src/index.ts"
-  }
+    "name": "skybook-localization",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "dependencies": {
+        "@pistonite/pure": "catalog:",
+        "fuse.js": "^7.0.0",
+        "i18next": "^24.2.0",
+        "lru-cache": "^11.0.2",
+        "react": "catalog:",
+        "react-i18next": "^15.2.0"
+    },
+    "devDependencies": {
+        "@modyfi/vite-plugin-yaml": "catalog:",
+        "@types/react": "catalog:",
+        "eslint": "catalog:",
+        "mono-dev": "workspace:*",
+        "typescript": "catalog:",
+        "vite": "catalog:"
+    },
+    "exports": {
+        ".": "./src/index.ts"
+    }
 }

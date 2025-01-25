@@ -1,7 +1,11 @@
 import type { BackendModule } from "i18next";
 import i18next from "i18next";
 import { initReactI18next, useTranslation } from "react-i18next";
-import { convertToSupportedLocale, detectLocale, initLocale } from "@pistonite/pure/pref";
+import {
+    convertToSupportedLocale,
+    detectLocale,
+    initLocale,
+} from "@pistonite/pure/pref";
 import { useCallback } from "react";
 
 export const backend: BackendModule = {
@@ -17,32 +21,36 @@ export const backend: BackendModule = {
         const locale = convertToSupportedLocale(language);
         let strings;
         try {
-            strings  = await import(`./${namespace}/${locale}.yaml`);
-        } catch(e) {
+            strings = await import(`./${namespace}/${locale}.yaml`);
+        } catch (e) {
             console.error(e);
             try {
                 strings = await import(`./${namespace}/en-US.yaml`);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 return undefined;
             }
-            console.warn(`${language} is not supported for ${namespace} namespace. Falling back to en-US.`);
+            console.warn(
+                `${language} is not supported for ${namespace} namespace. Falling back to en-US.`,
+            );
         }
         return strings.default;
-    }
-}
+    },
+};
 
-export const SupportedLocales = 
-    [
-        "de-DE", 
-        "en-US", 
-        "es-ES", 
-        "fr-FR", 
-        "it-IT", 
-        "ja-JP", "ko-KR", 
-        "nl-NL", 
-        "ru-RU", "zh-CN", "zh-TW"
-    ] as const;
+export const SupportedLocales = [
+    "de-DE",
+    "en-US",
+    "es-ES",
+    "fr-FR",
+    "it-IT",
+    "ja-JP",
+    "ko-KR",
+    "nl-NL",
+    "ru-RU",
+    "zh-CN",
+    "zh-TW",
+] as const;
 
 export const initI18n = async () => {
     initLocale({
@@ -52,32 +60,38 @@ export const initI18n = async () => {
     });
 
     await i18next.use(detectLocale).use(backend).use(initReactI18next).init();
-}
+};
 
 export const translateUI = (key: string, options?: Record<string, unknown>) => {
     return i18next.t(`ui:${key}`, options);
-}
-export const translateGenerated = (key: string, options?: Record<string, unknown>) => {
+};
+export const translateGenerated = (
+    key: string,
+    options?: Record<string, unknown>,
+) => {
     const value = i18next.t(`generated:${key}`, options);
     if (value === key) {
         return "";
     }
     return value;
-}
+};
 
 export const useUITranslation = () => {
-    const {t} = useTranslation("ui");
+    const { t } = useTranslation("ui");
     return t;
-}
+};
 
 export const useGeneratedTranslation = () => {
-    const {t} = useTranslation("generated", {nsMode: "default"});
+    const { t } = useTranslation("generated", { nsMode: "default" });
     // return empty string if the key is not found, similar to the game
-    return useCallback((key: string, options?: Record<string, unknown>) => {
-        const value = t(key, options);
-        if (value === key) {
-            return "";
-        }
-        return value;
-    }, [t]);
-}
+    return useCallback(
+        (key: string, options?: Record<string, unknown>) => {
+            const value = t(key, options);
+            if (value === key) {
+                return "";
+            }
+            return value;
+        },
+        [t],
+    );
+};

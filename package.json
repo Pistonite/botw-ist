@@ -1,7 +1,7 @@
 {
-	"pnpm": {
-		"patchedDependencies": {
-			"monaco-editor@0.52.2": "patches/monaco-editor@0.52.2.patch"
-		}
-	}
+    "pnpm": {
+        "patchedDependencies": {
+            "monaco-editor@0.52.2": "packages/intwc/patches/monaco-editor@0.52.2.patch"
+        }
+    }
 }

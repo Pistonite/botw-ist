@@ -8,19 +8,19 @@ import { translateUI } from "./backend.ts";
 /** Localized item search result */
 export type SearchResult = {
     /** Actor name */
-    actor: string,
-    /** 
+    actor: string;
+    /**
      * Cook effect on the item.
      *
      * 0 for no effect, otherwise it's a CookEffectId enum value.
      */
-    cookEffect: number,
+    cookEffect: number;
 
     /**
      * score of the result (lower is better, 0 is best, 1 is worst)
      */
-    score: number,
-}
+    score: number;
+};
 
 type SearchResultNoScore = Omit<SearchResult, "score">;
 
@@ -28,7 +28,7 @@ const cache = new LRUCache<string, SearchResultNoScore[]>({
     max: 512, // probably good enough
 });
 
-/** 
+/**
  * Perform localized search for an item.
  *
  * The query is optionally prefixed with a language tag, e.g. "de:Apfel" to search for "Apfel" in German.
@@ -39,10 +39,13 @@ const cache = new LRUCache<string, SearchResultNoScore[]>({
  *
  * If any error occurs, a localized error message is returned
  */
-export async function searchItemLocalized(query: string, limit: number): Promise<Result<SearchResultNoScore[], string>> {
+export async function searchItemLocalized(
+    query: string,
+    limit: number,
+): Promise<Result<SearchResultNoScore[], string>> {
     const cachedResult = cache.get(query);
     if (cachedResult) {
-        return { val: limit > 0 ? cachedResult.slice(0, limit) : cachedResult};
+        return { val: limit > 0 ? cachedResult.slice(0, limit) : cachedResult };
     }
     const result = await searchItemLocalizedInternal(query);
     if ("err" in result) {
@@ -52,13 +55,19 @@ export async function searchItemLocalized(query: string, limit: number): Promise
     return { val: limit > 0 ? result.val.slice(0, limit) : result.val };
 }
 
-async function searchItemLocalizedInternal(query: string): Promise<Result<SearchResultNoScore[], string>> {
+async function searchItemLocalizedInternal(
+    query: string,
+): Promise<Result<SearchResultNoScore[], string>> {
     const parts = query.split(":", 2);
     if (parts.length === 2) {
         const tag = parts[0];
         const query = parts[1];
         if (!(tag in SearchFns)) {
-            return {err: translateUI("item_explorer.search_error.unknown_tag", { tag })};
+            return {
+                err: translateUI("item_explorer.search_error.unknown_tag", {
+                    tag,
+                }),
+            };
         }
         const searchFn = SearchFns[parts[0] as keyof typeof SearchFns];
         const results = (await searchFn())(query);
@@ -69,9 +78,13 @@ async function searchItemLocalizedInternal(query: string): Promise<Result<Search
     const languages = detectLanguage(query);
     let searchFns;
     if (languages.length) {
-        searchFns = await Promise.all(languages.map((lang) => SearchFns[lang]()));
+        searchFns = await Promise.all(
+            languages.map((lang) => SearchFns[lang]()),
+        );
     } else {
-        searchFns = await Promise.all(Object.values(SearchFns).map((fn) => fn()));
+        searchFns = await Promise.all(
+            Object.values(SearchFns).map((fn) => fn()),
+        );
     }
 
     const results: SearchResult[] = [];
@@ -90,7 +103,10 @@ async function searchItemLocalizedInternal(query: string): Promise<Result<Search
             continue;
         }
         seen.add(key);
-        dedupedResults.push({ actor: result.actor, cookEffect: result.cookEffect });
+        dedupedResults.push({
+            actor: result.actor,
+            cookEffect: result.cookEffect,
+        });
     }
     return { val: dedupedResults };
 }
@@ -98,41 +114,45 @@ async function searchItemLocalizedInternal(query: string): Promise<Result<Search
 // https://github.com/liyt96/is-japanese/blob/main/lib/is_japanese.js
 // LICENSE: MIT
 const RangeJa = [
-    [0x3041, 0x3096],  // Hiragana
-    [0x30a0, 0x30ff],  // Katakana
-    [0xff00, 0xffef],  // Full-width roman characters and half-width katakana
-    [0x4e00, 0x9faf],  // Common and uncommon kanji
-    [0x3000, 0x303f],  // Japanese Symbols and Punctuation
-  ] as const;
+    [0x3041, 0x3096], // Hiragana
+    [0x30a0, 0x30ff], // Katakana
+    [0xff00, 0xffef], // Full-width roman characters and half-width katakana
+    [0x4e00, 0x9faf], // Common and uncommon kanji
+    [0x3000, 0x303f], // Japanese Symbols and Punctuation
+] as const;
 
 // https://github.com/alsotang/is-chinese/blob/master/src/is_chinese.ts
 // LICENSE: MIT
 const RangeZh = [
-      // sequence is determine by occurrence probability
+    // sequence is determine by occurrence probability
 
-  [0x4e00, 0x9fff], // CJK Unified Ideographs
+    [0x4e00, 0x9fff], // CJK Unified Ideographs
 
-  [0x3400, 0x4dbf], // CJK Unified Ideographs Extension A
-  [0x20000, 0x2a6df], // CJK Unified Ideographs Extension B
-  [0x2a700, 0x2b73f], // CJK Unified Ideographs Extension C
-  [0x2b740, 0x2b81f], // CJK Unified Ideographs Extension D
-  [0x2b820, 0x2ceaf], // CJK Unified Ideographs Extension E
+    [0x3400, 0x4dbf], // CJK Unified Ideographs Extension A
+    [0x20000, 0x2a6df], // CJK Unified Ideographs Extension B
+    [0x2a700, 0x2b73f], // CJK Unified Ideographs Extension C
+    [0x2b740, 0x2b81f], // CJK Unified Ideographs Extension D
+    [0x2b820, 0x2ceaf], // CJK Unified Ideographs Extension E
 
-  [0x3300, 0x33ff], // https://en.wikipedia.org/wiki/CJK_Compatibility
-  [0xfe30, 0xfe4f], // https://en.wikipedia.org/wiki/CJK_Compatibility_Forms
-  [0xf900, 0xfaff], // https://en.wikipedia.org/wiki/CJK_Compatibility_Ideographs
-  [0x2f800, 0x2fa1f], // https://en.wikipedia.org/wiki/CJK_Compatibility_Ideographs_Supplement
+    [0x3300, 0x33ff], // https://en.wikipedia.org/wiki/CJK_Compatibility
+    [0xfe30, 0xfe4f], // https://en.wikipedia.org/wiki/CJK_Compatibility_Forms
+    [0xf900, 0xfaff], // https://en.wikipedia.org/wiki/CJK_Compatibility_Ideographs
+    [0x2f800, 0x2fa1f], // https://en.wikipedia.org/wiki/CJK_Compatibility_Ideographs_Supplement
 ] as const;
 
-function convertCharRangeToRegExp(range: readonly (readonly [number, number])[]): RegExp {
-  const reStr = range.map(range => {
-    if (range[0] === range[1]) {
-      return `\\u{${range[0].toString(16)}}`
-    }
-    return `[\\u{${range[0].toString(16)}}-\\u{${range[1].toString(16)}}]`
-  }).join('|')
+function convertCharRangeToRegExp(
+    range: readonly (readonly [number, number])[],
+): RegExp {
+    const reStr = range
+        .map((range) => {
+            if (range[0] === range[1]) {
+                return `\\u{${range[0].toString(16)}}`;
+            }
+            return `[\\u{${range[0].toString(16)}}-\\u{${range[1].toString(16)}}]`;
+        })
+        .join("|");
 
-  return new RegExp(reStr, 'v')
+    return new RegExp(reStr, "v");
 }
 
 const reJa = convertCharRangeToRegExp(RangeJa);
@@ -150,104 +170,112 @@ function detectLanguage(text: string): (keyof typeof SearchFns)[] {
 }
 
 const SearchFns = {
-    "de": once({
+    de: once({
         fn: async () => {
             const s = (await import("./generated/de-DE.yaml")).default;
             return createSearchFnFromTranslation("de", [s]);
-        }
+        },
     }),
-    "en": once({
+    en: once({
         fn: async () => {
             const s = (await import("./generated/en-US.yaml")).default;
             return createSearchFnFromTranslation("en", [s]);
         },
     }),
-    "es": once({
+    es: once({
         fn: async () => {
             const s = (await import("./generated/es-ES.yaml")).default;
             return createSearchFnFromTranslation("es", [s]);
-        }
+        },
     }),
-    "fr": once({
+    fr: once({
         fn: async () => {
             const s = (await import("./generated/fr-FR.yaml")).default;
             return createSearchFnFromTranslation("fr", [s]);
-        }
+        },
     }),
-    "it": once({
+    it: once({
         fn: async () => {
             const s = (await import("./generated/it-IT.yaml")).default;
             return createSearchFnFromTranslation("it", [s]);
-        }
+        },
     }),
-    "ja": once({
+    ja: once({
         fn: async () => {
             const s = (await import("./generated/ja-JP.yaml")).default;
             return createSearchFnFromTranslation("ja", [s]);
-        }
+        },
     }),
-    "ko": once({
+    ko: once({
         fn: async () => {
             const s = (await import("./generated/ko-KR.yaml")).default;
             return createSearchFnFromTranslation("ko", [s]);
-        }
+        },
     }),
-    "nl": once({
+    nl: once({
         fn: async () => {
             const s = (await import("./generated/nl-NL.yaml")).default;
             return createSearchFnFromTranslation("nl", [s]);
-        }
+        },
     }),
-    "ru": once({
+    ru: once({
         fn: async () => {
             const s = (await import("./generated/ru-RU.yaml")).default;
             return createSearchFnFromTranslation("ru", [s]);
-        }
+        },
     }),
-    "zh": once({
+    zh: once({
         fn: async () => {
             const s1 = (await import("./generated/zh-CN.yaml")).default;
             const s2 = (await import("./generated/zh-TW.yaml")).default;
             return createSearchFnFromTranslation("zh", [s1, s2]);
-        }
+        },
     }),
 } as const;
-    
-function createSearchFnFromTranslation(tag: string, translation: Record<string, any>[]) {
+
+function createSearchFnFromTranslation(
+    tag: string,
+    translation: Record<string, string>[],
+) {
     console.log(`initializing localized searcher for "${tag}"`);
     const searchableActors = getSearchableActors(Object.keys(translation[0]));
 
-    const cookEffectTranslations: Record<number, {
-        effect: string,
-        effect_feminine: string,
-        effect_masculine: string,
-        effect_neuter: string,
-        effect_plural: string,
-    }[]> = {
-        [0]: [{
-            effect: "",
-            effect_feminine: "",
-            effect_masculine: "",
-            effect_neuter: "",
-            effect_plural: "",
-        }]
+    const cookEffectTranslations: Record<
+        number,
+        {
+            effect: string;
+            effect_feminine: string;
+            effect_masculine: string;
+            effect_neuter: string;
+            effect_plural: string;
+        }[]
+    > = {
+        [0]: [
+            {
+                effect: "",
+                effect_feminine: "",
+                effect_masculine: "",
+                effect_neuter: "",
+                effect_plural: "",
+            },
+        ],
     };
     const CookEffect = {
-        LifeMaxUp : 2,
-        ResistHot : 4,
-        ResistCold : 5,
-        ResistElectric : 6,
-        AttackUp : 10,
-        DefenseUp : 11,
-        Quietness : 12,
-        AllSpeed : 13, 
-        GutsRecover : 14,
-        ExGutsMaxUp : 15,
-        Fireproof : 16,
+        LifeMaxUp: 2,
+        ResistHot: 4,
+        ResistCold: 5,
+        ResistElectric: 6,
+        AttackUp: 10,
+        DefenseUp: 11,
+        Quietness: 12,
+        AllSpeed: 13,
+        GutsRecover: 14,
+        ExGutsMaxUp: 15,
+        Fireproof: 16,
     } as const;
 
     Object.entries(CookEffect).forEach(([key, value]) => {
-        cookEffectTranslations[value] = translation.map(t => ({
+        cookEffectTranslations[value] = translation.map((t) => ({
             effect: t[`cook.${key}.name`] || "",
             effect_feminine: t[`cook.${key}.name_feminine`] || "",
             effect_masculine: t[`cook.${key}.name_masculine`] || "",
@@ -257,13 +285,17 @@ function createSearchFnFromTranslation(tag: string, translation: Record<string, 
     });
 
     const entries: {
-        actor: string,
-        names: string[],
-        cookEffect: number
+        actor: string;
+        names: string[];
+        cookEffect: number;
     }[] = [];
     searchableActors.forEach((actor) => {
-        const actorNames= translation.map(t => t["actor." + actor + ".name"]);
-        if (actorNames.find((name) => name.includes("{{effect")) !== undefined) {
+        const actorNames = translation.map(
+            (t) => t["actor." + actor + ".name"],
+        );
+        if (
+            actorNames.find((name) => name.includes("{{effect")) !== undefined
+        ) {
             // add one entry for every effect
             Object.values(CookEffect).forEach((effect) => {
                 const cookEffectTranslation = cookEffectTranslations[effect];
@@ -271,7 +303,10 @@ function createSearchFnFromTranslation(tag: string, translation: Record<string, 
                 cookEffectTranslation.forEach((args) => {
                     actorNames.forEach((actorName) => {
                         Object.entries(args).forEach(([key, value]) => {
-                            actorName = actorName.replace(`{{${key}}}`, `${value}`);
+                            actorName = actorName.replace(
+                                `{{${key}}}`,
+                                `${value}`,
+                            );
                         });
                         names.add(actorName);
                     });
@@ -324,18 +359,19 @@ function createSearchFnFromTranslation(tag: string, translation: Record<string, 
 let SearchableActors: string[] = [];
 const getSearchableActors = (keys: string[]) => {
     if (SearchableActors.length === 0) {
-        const actors = keys.map((key) => {
-            if (key.startsWith("actor.") && key.endsWith(".name")) {
-                return filterActorName(key.slice(6, -5))
-            }
-            return undefined;
-        }).filter((x) => x !== undefined);
+        const actors = keys
+            .map((key) => {
+                if (key.startsWith("actor.") && key.endsWith(".name")) {
+                    return filterActorName(key.slice(6, -5));
+                }
+                return undefined;
+            })
+            .filter((x) => x !== undefined) as string[];
         SearchableActors = Array.from(new Set(actors));
         console.log(`initialized ${SearchableActors.length} searchable actors`);
     }
     return SearchableActors;
-}
-
+};
 
 const AdditionalSearchableActors = new Set([
     "AncientArrow",
@@ -383,7 +419,6 @@ const AdditionalSearchableActors = new Set([
     "Obj_WarpDLC",
     "Obj_DRStone_Get",
     "PlayerStole2",
-
 ]);
 
 /**
@@ -397,25 +432,32 @@ function filterActorName(actor: string): string | undefined {
         return undefined;
     }
     if (actor.startsWith("Weapon_Sword_")) {
-        if (actor.endsWith("_071")) { // Cutscene MS
+        if (actor.endsWith("_071")) {
+            // Cutscene MS
             return undefined;
         }
-        if (actor.endsWith("_072")) { // True MS for icon (?)
+        if (actor.endsWith("_072")) {
+            // True MS for icon (?)
             return undefined;
         }
-        if (actor.endsWith("_080")) { // TOTS Cutscene MS
+        if (actor.endsWith("_080")) {
+            // TOTS Cutscene MS
             return undefined;
         }
-        if (actor.endsWith("_081")) { // TOTS Cutscene True MS
+        if (actor.endsWith("_081")) {
+            // TOTS Cutscene True MS
             return undefined;
         }
-        if (actor.endsWith("_500")) { // ?
+        if (actor.endsWith("_500")) {
+            // ?
             return undefined;
         }
-        if (actor.endsWith("_501")) { // Korok Stick
+        if (actor.endsWith("_501")) {
+            // Korok Stick
             return undefined;
         }
-        if (actor.endsWith("_503")) { // Cutscene OHO
+        if (actor.endsWith("_503")) {
+            // Cutscene OHO
             return undefined;
         }
         return actor;
