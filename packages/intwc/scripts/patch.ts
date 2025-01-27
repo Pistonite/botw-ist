@@ -4,6 +4,7 @@
  * https://github.com/Pistonight/monaco-editor/commit/ac884678bc17c0eafe174a9cab84510f3b68b4ed
  */
 
+// @ts-ignore
 import fs from "node:fs";
 
 let lines: string[] = [];

@@ -1,4 +1,7 @@
+/src/generated/sprites
+/src/special
 /data
 /icons
+/target
 *.webp
 *.png

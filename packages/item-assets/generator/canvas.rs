@@ -23,11 +23,17 @@ pub struct Canvas {
     /// The encoding quality
     pub quality: f32,
 
-    image: DynamicImage
+    image: DynamicImage,
 }
 
 impl Canvas {
-    pub fn new(output: PathBuf, sprite_per_side: u32, outer_resolution: u32, inner_resolution: u32, quality: f32) -> Self {
+    pub fn new(
+        output: PathBuf,
+        sprite_per_side: u32,
+        outer_resolution: u32,
+        inner_resolution: u32,
+        quality: f32,
+    ) -> Self {
         let padding2 = outer_resolution - inner_resolution;
         if padding2 % 2 != 0 {
             panic!("padding must be even");
@@ -43,16 +49,20 @@ impl Canvas {
             padding,
             scale_to: inner_resolution,
             quality,
-            image
+            image,
         }
     }
 
-    pub fn load_image(&mut self, position: usize, image: &DynamicImage) -> anyhow::Result<()>{
+    pub fn load_image(&mut self, position: usize, image: &DynamicImage) -> anyhow::Result<()> {
         if position >= self.sprite_per_side as usize * self.sprite_per_side as usize {
             bail!("position out of bounds");
         }
-    let resized =
-        DynamicImage::ImageRgba8(imageops::resize(image, self.scale_to, self.scale_to, FilterType::Lanczos3));
+        let resized = DynamicImage::ImageRgba8(imageops::resize(
+            image,
+            self.scale_to,
+            self.scale_to,
+            FilterType::Lanczos3,
+        ));
         let outer_res = self.scale_to + self.padding * 2;
         let y = (position / self.sprite_per_side as usize) * (outer_res as usize);
         let y = y as u32 + self.padding;
@@ -63,20 +73,22 @@ impl Canvas {
         Ok(())
     }
 
-/// Encode a webp image and write it to a file
-///
-/// Return the file size
-pub fn write(&self) -> anyhow::Result<usize> {
-    let encoder = match Encoder::from_image(&self.image) {
-        Ok(e) => e,
-        Err(e) => Err(anyhow!("Could not create encoder: {}", e))?,
-    };
+    /// Encode a webp image and write it to a file
+    ///
+    /// Return the file size
+    pub fn write(&self) -> anyhow::Result<usize> {
+        let encoder = match Encoder::from_image(&self.image) {
+            Ok(e) => e,
+            Err(e) => Err(anyhow!("Could not create encoder: {}", e))?,
+        };
 
-        let memory = encoder.encode_simple(false, self.quality).map_err(Error::from)?;
-    let len = memory.len();
+        let memory = encoder
+            .encode_simple(false, self.quality)
+            .map_err(Error::from)?;
+        let len = memory.len();
 
-    std::fs::write(&self.output, &*memory)?;
+        std::fs::write(&self.output, &*memory)?;
 
-    Ok(len)
-}
+        Ok(len)
+    }
 }

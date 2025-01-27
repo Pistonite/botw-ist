@@ -1,7 +1,0 @@
-version: '3'
-
-tasks:
-  generate-data:
-    aliases: [gd]
-    cmds:
-      - python bin/generate.py

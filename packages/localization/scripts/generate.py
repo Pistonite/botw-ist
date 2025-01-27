@@ -2,8 +2,8 @@ import yaml
 import os
 import multiprocessing
 import shutil
-LOCALIZATION_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-RESEARCH_SCRIPTS_DIR = os.path.join(os.path.dirname(LOCALIZATION_DIR), "research-scripts")
+SELF_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+RESEARCH_SCRIPTS_DIR = os.path.join(os.path.dirname(SELF_DIR), "research-scripts")
 import sys
 sys.path.append(os.path.join(RESEARCH_SCRIPTS_DIR, "src"))
 import msyt # type: ignore
@@ -47,7 +47,7 @@ def main():
                     data[locale].update(result[locale])
         progress.done()
 
-    output_dir = os.path.join(LOCALIZATION_DIR, "src", "generated")
+    output_dir = os.path.join(SELF_DIR, "src", "generated")
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir)
     os.makedirs(output_dir)

@@ -59,6 +59,31 @@ importers:
         specifier: 'catalog:'
         version: 5.4.14
 
+  packages/item-assets:
+    dependencies:
+      '@griffel/react':
+        specifier: ^1.5.29
+        version: 1.5.29(react@18.3.1)
+      react:
+        specifier: 'catalog:'
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      eslint:
+        specifier: 'catalog:'
+        version: 9.18.0
+      mono-dev:
+        specifier: workspace:*
+        version: link:../mono-dev
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+      vite:
+        specifier: 'catalog:'
+        version: 5.4.14
+
   packages/localization:
     dependencies:
       '@pistonite/pure':
@@ -133,6 +158,9 @@ packages:
 
   '@catppuccin/palette@1.7.1':
     resolution: {integrity: sha512-aRc1tbzrevOTV7nFTT9SRdF26w/MIwT4Jwt4fDMc9itRZUDXCuEDBLyz4TQMlqO9ZP8mf5Hu4Jr6D03NLFc6Gw==}
+
+  '@emotion/hash@0.9.2':
+    resolution: {integrity: sha512-MyqliTZGuOm3+5ZRSaaBGP3USLw6+EGykkwZns2EPC5g8jJ4z9OrdZY9apkl3+UP9+sdz76YYkwCKP5gh8iY3g==}
 
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
@@ -305,6 +333,17 @@ packages:
   '@eslint/plugin-kit@0.2.5':
     resolution: {integrity: sha512-lB05FkqEdUg2AA0xEbUz0SnkXT1LcCTa438W4IWTUh4hdOnVbQyOJ81OrDXsJk/LSiJHubgGEFoR5EHq1NsH1A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@griffel/core@1.19.1':
+    resolution: {integrity: sha512-ZItAAOm8YH1FW0ebzOxS3jwENqd+Dz4CGiPEdgkL4kr7D6mBpjjBbQC6VRXxnA+VqHeEQGy69Ll4M1peY8MX/g==}
+
+  '@griffel/react@1.5.29':
+    resolution: {integrity: sha512-xKenEIfV2PnLKVsM8yp2ZCUTknh2790937XlI88zDaO9TC8ylG10mZ3MrcgCdSecrVjKq9JKmm24tsODpkh4pw==}
+    peerDependencies:
+      react: '>=16.8.0 <19.0.0'
+
+  '@griffel/style-types@1.3.0':
+    resolution: {integrity: sha512-bHwD3sUE84Xwv4dH011gOKe1jul77M1S6ZFN9Tnq8pvZ48UMdY//vtES6fv7GRS5wXYT4iqxQPBluAiYAfkpmw==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -1326,6 +1365,9 @@ packages:
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
+  rtl-css-js@1.16.1:
+    resolution: {integrity: sha512-lRQgou1mu19e+Ya0LsTvKrVJ5TYUbqCVPAiImX3UfLTenarvPUl1QFdvu5Z3PYmHT9RCcwIfbjRQBntExyj3Zg==}
+
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
@@ -1425,6 +1467,9 @@ packages:
   stubborn-fs@1.2.5:
     resolution: {integrity: sha512-H2N9c26eXjzL/S/K+i/RHHcFanE74dptvvjM8iwzwbVcWY/zjBbgRqF3K0DY4+OD+uTTASTBvDoxPDaPN02D7g==}
 
+  stylis@4.3.5:
+    resolution: {integrity: sha512-K7npNOKGRYuhAFFzkzMGfxFDpN6gDwf8hcMiE+uveTVbBgm93HrNP3ZDUpKqzZ4pG7TP6fmb+EMAQPjq9FqqvA==}
+
   supports-color@7.2.0:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
     engines: {node: '>=8'}
@@ -1482,6 +1527,9 @@ packages:
     engines: {node: '>=18.12'}
     peerDependencies:
       typescript: '>=4.8.4'
+
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -1621,6 +1669,8 @@ snapshots:
 
   '@catppuccin/palette@1.7.1': {}
 
+  '@emotion/hash@0.9.2': {}
+
   '@esbuild/aix-ppc64@0.21.5':
     optional: true
 
@@ -1731,6 +1781,25 @@ snapshots:
     dependencies:
       '@eslint/core': 0.10.0
       levn: 0.4.1
+
+  '@griffel/core@1.19.1':
+    dependencies:
+      '@emotion/hash': 0.9.2
+      '@griffel/style-types': 1.3.0
+      csstype: 3.1.3
+      rtl-css-js: 1.16.1
+      stylis: 4.3.5
+      tslib: 2.8.1
+
+  '@griffel/react@1.5.29(react@18.3.1)':
+    dependencies:
+      '@griffel/core': 1.19.1
+      react: 18.3.1
+      tslib: 2.8.1
+
+  '@griffel/style-types@1.3.0':
+    dependencies:
+      csstype: 3.1.3
 
   '@humanfs/core@0.19.1': {}
 
@@ -2934,6 +3003,10 @@ snapshots:
       '@rollup/rollup-win32-x64-msvc': 4.31.0
       fsevents: 2.3.3
 
+  rtl-css-js@1.16.1:
+    dependencies:
+      '@babel/runtime': 7.26.7
+
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
@@ -3078,6 +3151,8 @@ snapshots:
 
   stubborn-fs@1.2.5: {}
 
+  stylis@4.3.5: {}
+
   supports-color@7.2.0:
     dependencies:
       has-flag: 4.0.0
@@ -3149,6 +3224,8 @@ snapshots:
   ts-api-utils@2.0.0(typescript@5.7.3):
     dependencies:
       typescript: 5.7.3
+
+  tslib@2.8.1: {}
 
   type-check@0.4.0:
     dependencies:

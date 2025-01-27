@@ -3,6 +3,9 @@
     "private": true,
     "version": "0.0.0",
     "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
     "dependencies": {
         "@pistonite/pure": "catalog:",
         "fuse.js": "^7.0.0",
@@ -18,8 +21,5 @@
         "mono-dev": "workspace:*",
         "typescript": "catalog:",
         "vite": "catalog:"
-    },
-    "exports": {
-        ".": "./src/index.ts"
     }
 }

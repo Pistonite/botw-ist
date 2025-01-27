@@ -32,7 +32,6 @@ impl SpriteSheet {
         self.canvases.push(canvas);
     }
 
-
     /// Add the metadata of the sprite sheet to the metadata object
     ///
     /// Returns how many sprites were added
@@ -54,13 +53,10 @@ impl SpriteSheet {
         Ok(())
     }
     /// Load an image file into sprite sheet canvas
-    fn load_image(
-        &mut self,
-        path: impl AsRef<Path>,
-        position: usize,
-    ) -> anyhow::Result<()> {
+    fn load_image(&mut self, path: impl AsRef<Path>, position: usize) -> anyhow::Result<()> {
         let path = path.as_ref();
-        let image = image::open(&path).context(format!("Could not open image: {}", path.display()))?;
+        let image =
+            image::open(path).context(format!("Could not open image: {}", path.display()))?;
         let (w, h) = image.dimensions();
         if w != h {
             Err(Error::NotSquare(path.display().to_string(), w, h))?;

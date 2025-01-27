@@ -1,8 +1,8 @@
 import { memo } from "react";
 import { makeStaticStyles, makeStyles, mergeClasses } from "@griffel/react";
 
-import { ActorChunkClasses, ActorMetadata } from "./sprites/ActorMetadata.gen.ts";
-import { ActorRemap } from "./ActorRemap.gen.ts";
+import { ActorChunkClasses, ActorMetadata } from "./generated/ActorMetadata.ts";
+import { ActorRemap } from "./generated/ActorRemap.ts";
 
 export type ActorSpriteProps = {
     /** Name of the Actor to display */
@@ -22,7 +22,7 @@ export type ActorSpriteProps = {
      */
     cheap?: boolean;
 
-    /** 
+    /**
      * Disable all animations even if `cheap` is false
      */
     disableAnimation?: boolean;
@@ -41,7 +41,7 @@ export type ActorSpriteProps = {
      */
     badlyDamaged?: boolean;
 
-    /** 
+    /**
      * Use the deactivated state of certain actors
      * - Master Sword (any): The state where the sword is recharging
      * - One-hit Obliterator (502): The state where weapon is recharging
@@ -87,7 +87,7 @@ const useStyles = makeStyles({
     deactiveMasterSword: {
         opacity: 0.5,
     },
-    damageContainer:{
+    damageContainer: {
         overflow: "hidden",
     },
     damage: {
@@ -121,11 +121,20 @@ const useStyles = makeStyles({
             "100%": {
                 opacity: 0,
             },
-        }
-    }
+        },
+    },
 });
 
-const SpriteImpl: React.FC<ActorSpriteProps> = ({ actor, effect, cheap, disableAnimation, deactive, powered, blank, badlyDamaged}) => {
+const SpriteImpl: React.FC<ActorSpriteProps> = ({
+    actor,
+    effect,
+    cheap,
+    disableAnimation,
+    deactive,
+    powered,
+    blank,
+    badlyDamaged,
+}) => {
     useChunkClasses();
     const styles = useStyles();
 
@@ -136,16 +145,21 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({ actor, effect, cheap, disableA
     // Handle simple animated images - Travel Medallion, 5 orbs
     // if not animated, it's in the sprite sheet
     if (!disableAnimation) {
-    if (/Obj_(WarpDLC|DungeonClearSeal|HeroSeal_(Gerudo|Goron|Rito|Zora))/.test(actor)) {
+        if (
+            /Obj_(WarpDLC|DungeonClearSeal|HeroSeal_(Gerudo|Goron|Rito|Zora))/.test(
+                actor,
+            )
+        ) {
             return (
                 <div
                     aria-hidden
                     className={mergeClasses(baseClass, styles.animatedSimple)}
                     style={{
                         backgroundImage: `url(${new URL(`./special/${actor}.webp`, import.meta.url).href})`,
-                    }} />
+                    }}
+                />
             );
-    }
+        }
     }
 
     const iconActor = mapActor(actor, !!deactive, !!powered, effect);
@@ -163,12 +177,19 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({ actor, effect, cheap, disableA
             const ext = disableAnimation ? "png" : "webp";
             return (
                 <div aria-hidden className={baseClass}>
-                    <img 
-                        className={mergeClasses(styles.spriteSoulImage, dlc ? styles.soulOffsetDLC : styles.soulOffset)}
-                        src={new URL(`./special/${iconActor}.${ext}`, import.meta.url).href}
+                    <img
+                        className={mergeClasses(
+                            styles.spriteSoulImage,
+                            dlc ? styles.soulOffsetDLC : styles.soulOffset,
+                        )}
+                        src={
+                            new URL(
+                                `./special/${iconActor}.${ext}`,
+                                import.meta.url,
+                            ).href
+                        }
                         width={64}
                     />
-
                 </div>
             );
         }
@@ -176,11 +197,12 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({ actor, effect, cheap, disableA
         if (!disableAnimation) {
             return (
                 <div
-                aria-hidden
-                className={mergeClasses(baseClass, styles.animatedSimple)}
-                style={{
-                    backgroundImage: `url(${new URL(`./special/${iconActor}.webp`, import.meta.url).href})`,
-                }} />
+                    aria-hidden
+                    className={mergeClasses(baseClass, styles.animatedSimple)}
+                    style={{
+                        backgroundImage: `url(${new URL(`./special/${iconActor}.webp`, import.meta.url).href})`,
+                    }}
+                />
             );
         }
     }
@@ -188,25 +210,32 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({ actor, effect, cheap, disableA
     const [chunk, position] = ActorMetadata[iconActor];
     const backgroundPosition = getBackgroundPosition(position);
 
-    const chunkClass = `chunk${chunk}x${cheap ? "32" : "64"}`
+    const chunkClass = `chunk${chunk}x${cheap ? "32" : "64"}`;
 
     return (
-    <div
+        <div
             aria-hidden
-            className={mergeClasses(`sprite-${chunkClass}`, baseClass, cheap && styles.cheap, badlyDamaged && styles.damageContainer)}
-            style={{ backgroundPosition, }}
+            className={mergeClasses(
+                `sprite-${chunkClass}`,
+                baseClass,
+                cheap && styles.cheap,
+                badlyDamaged && styles.damageContainer,
+            )}
+            style={{ backgroundPosition }}
         >
-            {
-                badlyDamaged && (
-                    <div
-                        className={mergeClasses(`sprite-mask-${chunkClass}`, cheap ? styles.damageCheap : styles.damage, !disableAnimation && styles.damageAnimation, )}
-                        style={{
-                            translate: backgroundPosition,
-                        }}
-                    />
-                )
-            }
-    </div>
+            {badlyDamaged && (
+                <div
+                    className={mergeClasses(
+                        `sprite-mask-${chunkClass}`,
+                        cheap ? styles.damageCheap : styles.damage,
+                        !disableAnimation && styles.damageAnimation,
+                    )}
+                    style={{
+                        translate: backgroundPosition,
+                    }}
+                />
+            )}
+        </div>
     );
 };
 
@@ -216,10 +245,10 @@ export const ActorSprite = memo(SpriteImpl);
  * Remap an actor to its icon actor name
  */
 const mapActor = (
-    actor: string, 
-    deactive: boolean, 
-    powered: boolean, 
-    effect: string | undefined
+    actor: string,
+    deactive: boolean,
+    powered: boolean,
+    effect: string | undefined,
 ): string => {
     // cannot manually pass in a "Disabled" actor
     if (actor.endsWith("_Disabled")) {
@@ -267,15 +296,16 @@ const mapActor = (
     return actor;
 };
 
-
 const getBackgroundPosition = (position: number) => {
     const NUM = 16;
     const SIZE = 64;
     const x = position % NUM;
     const y = Math.floor(position / NUM);
     return `-${x * SIZE}px -${y * SIZE}px`;
-}
+};
 
 const isChampionAbility = (actor: string) => {
-    return /^Obj_(DLC_)?HeroSoul_(Gerudo|Goron|Rito|Zora)(_Disabled)?$/.test(actor);
-}
+    return /^Obj_(DLC_)?HeroSoul_(Gerudo|Goron|Rito|Zora)(_Disabled)?$/.test(
+        actor,
+    );
+};

@@ -1,12 +1,15 @@
 import { makeStaticStyles, makeStyles, mergeClasses } from "@griffel/react";
 import { memo } from "react";
 
-import { ModifierChunkClasses, ModifierMetadata } from "./sprites/ModifierMetadata.gen.ts";
+import {
+    ModifierChunkClasses,
+    ModifierMetadata,
+} from "./generated/ModifierMetadata.ts";
 
 export type ModifierSpriteProps = {
     /** Name of the special status to show */
     status: string;
-}
+};
 
 const useChunkClasses = makeStaticStyles(ModifierChunkClasses);
 
@@ -17,7 +20,7 @@ const useStyles = makeStyles({
         width: "20px",
         height: "20px",
         display: "block",
-    }
+    },
 });
 
 const SpriteImpl: React.FC<ModifierSpriteProps> = ({ status }) => {
@@ -29,14 +32,12 @@ const SpriteImpl: React.FC<ModifierSpriteProps> = ({ status }) => {
     const [_, position] = ModifierMetadata[status];
     const backgroundPosition = getBackgroundPosition(position);
 
-
     return (
-    <div
+        <div
             aria-hidden
             className={mergeClasses("sprite-modifiers", styles.sprite)}
-            style={{ backgroundPosition, }}
-        >
-    </div>
+            style={{ backgroundPosition }}
+        ></div>
     );
 };
 
@@ -48,4 +49,4 @@ const getBackgroundPosition = (position: number) => {
     const x = position % NUM;
     const y = Math.floor(position / NUM);
     return `-${x * SIZE}px -${y * SIZE}px`;
-}
+};

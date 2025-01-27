@@ -2,15 +2,19 @@
     "name": "skybook-item-assets",
     "private": true,
     "version": "0.0.0",
-    "files": [
-        "src/**/*"
-    ],
+    "type": "module",
     "exports": {
         ".": "./src/index.ts"
     },
-    "peerDependencies": {
-        "@griffel/react": "*",
-        "@types/react": "*",
-        "react": "*"
+    "dependencies": {
+        "@griffel/react": "catalog:",
+        "react": "catalog:"
+    },
+    "devDependencies": {
+        "@types/react": "catalog:",
+        "eslint": "catalog:",
+        "mono-dev": "workspace:*",
+        "typescript": "catalog:",
+        "vite": "catalog:"
     }
 }

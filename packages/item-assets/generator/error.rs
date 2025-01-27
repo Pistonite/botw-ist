@@ -2,7 +2,6 @@ use std::sync::PoisonError;
 
 use webp::WebPEncodingError;
 
-
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("lock is poisoned: {0}")]

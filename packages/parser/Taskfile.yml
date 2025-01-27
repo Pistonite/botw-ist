@@ -1,0 +1,11 @@
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      - $(which mkdir) -p src/generated
+      - python scripts/generate.py
+
+  clean:
+    cmds:
+      - rm -rf src/generated

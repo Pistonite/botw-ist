@@ -1,18 +1,31 @@
 version: '3'
 
+includes:
+  cargo:
+    taskfile: ../mono-dev/task/cargo.yaml
+    internal: true
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+
 tasks:
   pull-priv: 
     desc: Pull private assets for building the package. Requires gcloud access
     cmds:
-      - rm -rf icons src/images/*.png
+      - rm -rf icons src/assets
+      - $(which mkdir) -p src/assets
       - gcloud storage cp -r gs://ist-private/icons .
-      - gcloud storage cp -r gs://ist-private/images src
 
+  clean:
+    desc: Clean the build output
+    cmds:
+      - rm -rf src/generated src/special
 
   build:
     desc: Build the sprite sheets
     cmds:
-      - rm -rf src/special src/sprites
+      - $(which mkdir) -p src/generated
+      - python scripts/generate.py
       - cargo run --release
       - cp -R icons/SP/Item src/special
 
@@ -27,5 +40,18 @@ tasks:
     cmds:
       - gcloud storage cp src/sprites/*.webp gs://ist-private/sprites
 
+  check:
+    cmds:
+      - task: cargo:clippy-all
+      - task: cargo:fmt-check
+      - task: ecma:tsc-check
+      - task: ecma:eslint-check
+      - task: ecma:prettier-check
+
+  fix:
+    cmds:
+      - task: cargo:fmt-fix
+      - task: ecma:eslint-fix
+      - task: ecma:prettier-fix
 
 

@@ -1,3 +1,5 @@
+# This script was used to generate the V3 items
+# It's here only for reference, not used
 import yaml
 
 ITEM_YAML = "../../../legacy/src/data/item/all.items.yaml"
