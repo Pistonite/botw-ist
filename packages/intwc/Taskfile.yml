@@ -21,3 +21,8 @@ tasks:
       - bun scripts/post-patch.ts
       - pnpm install
       - rm -rf monaco-editor-patch
+
+  apply-patch:
+    cmds:
+      - bun scripts/post-patch.ts
+      - pnpm install

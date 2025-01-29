@@ -2,7 +2,18 @@
 import fs from "node:fs";
 
 const ROOT_PACKAGE = "../../package.json";
-const rootPackageJson = JSON.parse(fs.readFileSync(ROOT_PACKAGE, "utf-8"));
+let rootPackageJson: Record<string, any> = {};
+try {
+rootPackageJson = JSON.parse(fs.readFileSync(ROOT_PACKAGE, "utf-8"));
+} catch{
+    console.log("No root package.json found, will create one");
+}
+if (!rootPackageJson.pnpm) {
+    rootPackageJson.pnpm = {};
+}
+if (!rootPackageJson.pnpm.patchedDependencies) {
+    rootPackageJson.pnpm.patchedDependencies = {};
+}
 const packageJson = JSON.parse(fs.readFileSync("package.json", "utf-8"));
 const monacoEditorVersion = packageJson.dependencies["monaco-editor"];
 const patchedDependencies = rootPackageJson.pnpm.patchedDependencies;
@@ -24,7 +35,8 @@ for (const key in patchedDependencies) {
 }
 
 if (!found) {
-    throw new Error("monaco-editor not found in patchedDependencies");
+    console.log("Adding patch");
+    patchedDependencies[`monaco-editor@${monacoEditorVersion}`] = `packages/intwc/patches/monaco-editor@${monacoEditorVersion}.patch`;
 }
 
 fs.writeFileSync(ROOT_PACKAGE, JSON.stringify(rootPackageJson, null, 4));
