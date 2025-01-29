@@ -4,7 +4,6 @@ members = [
     "packages/runtime",
     "next/botw-ist-command", 
     "research/trace-view", 
-    # "packages/item-assets", 
     "packages/parser", 
     "packages/runtime-wasm", 
     "packages/blueflame", 
