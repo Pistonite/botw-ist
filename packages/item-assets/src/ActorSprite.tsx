@@ -8,6 +8,9 @@ export type ActorSpriteProps = {
     /** Name of the Actor to display */
     actor: string;
 
+    /** Optional size of the sprite, default is 64 */
+    size?: number;
+
     /**
      * Name of the Cook effect if any (as in msyt translation files)
      *
@@ -60,25 +63,10 @@ const useChunkClasses = makeStaticStyles(ActorChunkClasses);
 const useStyles = makeStyles({
     sprite: {
         backgroundRepeat: "no-repeat",
-        width: "64px",
-        height: "64px",
         display: "block",
-    },
-    cheap: {
-        backgroundSize: "1024px", // for some reason 200% doesn't work
     },
     spriteSoulImage: {
         position: "relative",
-    },
-    animatedSimple: {
-        backgroundSize: "64px",
-    },
-    soulOffset: {
-        top: "-11.4px",
-    },
-    soulOffsetDLC: {
-        top: "-19px",
-        left: "0px",
     },
     blank: {
         filter: "grayscale(100%)",
@@ -88,19 +76,9 @@ const useStyles = makeStyles({
         opacity: 0.5,
     },
     damageContainer: {
+        // Only the damage overlay should have overflow hidden,
+        // since animated sprites can overlay by design
         overflow: "hidden",
-    },
-    damage: {
-        width: "1024px",
-        height: "1024px",
-        backgroundColor: "rgba(255, 0, 0, 0.6)",
-    },
-    damageCheap: {
-        transformOrigin: "top left",
-        scale: 2,
-        width: "512px",
-        height: "512px",
-        backgroundColor: "rgba(255, 0, 0, 0.6)",
     },
     damageAnimation: {
         animationIterationCount: "infinite",
@@ -127,6 +105,7 @@ const useStyles = makeStyles({
 
 const SpriteImpl: React.FC<ActorSpriteProps> = ({
     actor,
+    size,
     effect,
     cheap,
     disableAnimation,
@@ -138,28 +117,26 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({
     useChunkClasses();
     const styles = useStyles();
 
+    size = size || 64;
+
     let baseClass = mergeClasses(styles.sprite, blank && styles.blank);
 
     disableAnimation = disableAnimation || cheap;
 
     // Handle simple animated images - Travel Medallion, 5 orbs
     // if not animated, it's in the sprite sheet
-    if (!disableAnimation) {
-        if (
-            /Obj_(WarpDLC|DungeonClearSeal|HeroSeal_(Gerudo|Goron|Rito|Zora))/.test(
-                actor,
-            )
-        ) {
-            return (
-                <div
-                    aria-hidden
-                    className={mergeClasses(baseClass, styles.animatedSimple)}
-                    style={{
-                        backgroundImage: `url(${new URL(`./special/${actor}.webp`, import.meta.url).href})`,
-                    }}
-                />
-            );
-        }
+    const isSimpleAnimated =
+        /Obj_(WarpDLC|DungeonClearSeal|HeroSeal_(Gerudo|Goron|Rito|Zora))/.test(
+            actor,
+        );
+    if (!disableAnimation && isSimpleAnimated) {
+        return (
+            <div
+                aria-hidden
+                className={baseClass}
+                style={getSpecialActorStyle(actor, size)}
+            />
+        );
     }
 
     const iconActor = mapActor(actor, !!deactive, !!powered, effect);
@@ -170,25 +147,27 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({
     // Special handling for Champion Abilities:
     // - Active ones are larger and needs to be offseted
     // - Deactive ones has animation
-    if (isChampionAbility(iconActor)) {
+    const isAbility = isChampionAbility(actor);
+    if (isAbility) {
         const dlc = iconActor.includes("DLC");
         // active - either animated or not, with offset
         if (!deactive) {
             const ext = disableAnimation ? "png" : "webp";
+            const topOffset = ((dlc ? -19 : -11.4) / 64) * size;
             return (
                 <div aria-hidden className={baseClass}>
                     <img
-                        className={mergeClasses(
-                            styles.spriteSoulImage,
-                            dlc ? styles.soulOffsetDLC : styles.soulOffset,
-                        )}
+                        className={mergeClasses(styles.spriteSoulImage)}
+                        style={{
+                            top: topOffset,
+                        }}
                         src={
                             new URL(
                                 `./special/${iconActor}.${ext}`,
                                 import.meta.url,
                             ).href
                         }
-                        width={64}
+                        width={size}
                     />
                 </div>
             );
@@ -198,19 +177,23 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({
             return (
                 <div
                     aria-hidden
-                    className={mergeClasses(baseClass, styles.animatedSimple)}
-                    style={{
-                        backgroundImage: `url(${new URL(`./special/${iconActor}.webp`, import.meta.url).href})`,
-                    }}
+                    className={baseClass}
+                    style={getSpecialActorStyle(iconActor, size)}
                 />
             );
         }
     }
 
-    const [chunk, position] = ActorMetadata[iconActor];
-    const backgroundPosition = getBackgroundPosition(position);
+    // don't show badly damaged effect for images that would be animated (but disabled)
+    badlyDamaged = badlyDamaged && !isSimpleAnimated && !isAbility;
 
-    const chunkClass = `chunk${chunk}x${cheap ? "32" : "64"}`;
+    const [chunk, position] = ActorMetadata[iconActor];
+    const backgroundPosition = getBackgroundPosition(position, size);
+    const spriteSize = cheap ? 32 : 64;
+
+    const chunkClass = `chunk${chunk}x${spriteSize}`;
+
+    const damageOverlayScale = size / spriteSize;
 
     return (
         <div
@@ -218,20 +201,28 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({
             className={mergeClasses(
                 `sprite-${chunkClass}`,
                 baseClass,
-                cheap && styles.cheap,
                 badlyDamaged && styles.damageContainer,
             )}
-            style={{ backgroundPosition }}
+            style={{
+                backgroundPosition,
+                backgroundSize: NUM * size,
+                width: size,
+                height: size,
+            }}
         >
             {badlyDamaged && (
                 <div
                     className={mergeClasses(
                         `sprite-mask-${chunkClass}`,
-                        cheap ? styles.damageCheap : styles.damage,
                         !disableAnimation && styles.damageAnimation,
                     )}
                     style={{
                         translate: backgroundPosition,
+                        transform: `scale(${damageOverlayScale},${damageOverlayScale})`,
+                        transformOrigin: "top left",
+                        width: 1024,
+                        height: 1024,
+                        backgroundColor: "rgba(255, 0, 0, 0.6)",
                     }}
                 />
             )}
@@ -296,16 +287,24 @@ const mapActor = (
     return actor;
 };
 
-const getBackgroundPosition = (position: number) => {
-    const NUM = 16;
-    const SIZE = 64;
+const NUM = 16; // number of sprites in a row/column
+const getBackgroundPosition = (position: number, size: number) => {
     const x = position % NUM;
     const y = Math.floor(position / NUM);
-    return `-${x * SIZE}px -${y * SIZE}px`;
+    return `-${x * size}px -${y * size}px`;
 };
 
 const isChampionAbility = (actor: string) => {
     return /^Obj_(DLC_)?HeroSoul_(Gerudo|Goron|Rito|Zora)(_Disabled)?$/.test(
         actor,
     );
+};
+
+const getSpecialActorStyle = (actor: string, size: number) => {
+    return {
+        width: size,
+        height: size,
+        backgroundImage: `url(${new URL(`./special/${actor}.webp`, import.meta.url).href})`,
+        backgroundSize: size,
+    };
 };

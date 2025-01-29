@@ -53,21 +53,31 @@ impl Canvas {
         }
     }
 
-    pub fn load_image(&mut self, position: usize, image: &DynamicImage) -> anyhow::Result<()> {
+    pub fn load_image(
+        &mut self,
+        position: usize,
+        image: &DynamicImage,
+        use_padding: bool,
+    ) -> anyhow::Result<()> {
         if position >= self.sprite_per_side as usize * self.sprite_per_side as usize {
             bail!("position out of bounds");
         }
+        let outer_res = self.scale_to + self.padding * 2;
+        let (scale_to, padding) = if use_padding {
+            (self.scale_to, self.padding)
+        } else {
+            (outer_res, 0)
+        };
         let resized = DynamicImage::ImageRgba8(imageops::resize(
             image,
-            self.scale_to,
-            self.scale_to,
+            scale_to,
+            scale_to,
             FilterType::Lanczos3,
         ));
-        let outer_res = self.scale_to + self.padding * 2;
         let y = (position / self.sprite_per_side as usize) * (outer_res as usize);
-        let y = y as u32 + self.padding;
+        let y = y as u32 + padding;
         let x = (position % self.sprite_per_side as usize) * (outer_res as usize);
-        let x = x as u32 + self.padding;
+        let x = x as u32 + padding;
         imageops::overlay(&mut self.image, &resized, x as i64, y as i64);
 
         Ok(())
