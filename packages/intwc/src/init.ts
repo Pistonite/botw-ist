@@ -1,10 +1,10 @@
-import * as monaco from 'monaco-editor-contrib';
+import * as monaco from 'monaco-editor';
 
 import { initPreference } from "./preference.ts";
 import { InitOption } from "./types.ts";
 import { initThemes } from './theme';
 
-import { patchMonacoTypeScript } from "@pistonite/monaco-typescript-contrib";
+import { patchMonacoTypeScript } from "./typescript";
 import { registerMarkerProvider } from './language/MarkerProviderRegistry.ts';
 import { setEditorOptions } from './EditorState.ts';
 

@@ -1,16 +1,23 @@
 {
-    "name": "skybook-item-assets",
+    "name": "botw-item-assets",
     "private": true,
     "version": "0.0.0",
-    "files": [
-        "src/**/*"
-    ],
+    "type": "module",
     "exports": {
         ".": "./src/index.ts"
     },
-    "peerDependencies": {
-        "@griffel/react": "*",
-        "@types/react": "*",
-        "react": "*"
+    "dependencies": {
+        "@griffel/react": "catalog:",
+        "react": "catalog:"
+    },
+    "devDependencies": {
+        "@types/react": "catalog:",
+        "@types/react-dom": "catalog:",
+        "@vitejs/plugin-react": "catalog:",
+        "eslint": "catalog:",
+        "mono-dev": "workspace:*",
+        "react-dom": "catalog:",
+        "typescript": "catalog:",
+        "vite": "catalog:"
     }
 }

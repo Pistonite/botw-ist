@@ -8,7 +8,7 @@ use crate::cir;
 use super::MetaParser;
 
 /// Item metadata used to select or specify item
-#[derive(Debug, Default)]
+#[derive(Debug, Default, PartialEq)]
 pub struct ItemMeta {
     /// The value of the item
     /// 
@@ -36,6 +36,9 @@ pub struct ItemMeta {
 
     /// Settable by `ingr`
     pub ingredients: Vec<String>,
+
+    /// Number of upgrades on armor
+    pub star: Option<i32>,
 }
 
 impl ItemMeta {
@@ -244,18 +247,19 @@ impl<R: ItemResolver> MetaParser for Parser<'_, R> {
                 }
                 match cir::MetaValue::parse_option(value.as_ref()) {
                     Ok(cir::MetaValue::String(x)) => {
-                        // currently we only support looking up by english
-                        match self.resolver.resolve(&x).await {
-                            Some(item) => {
-                                self.meta.ingredients.push(item);
-                            }
-                            None => {
-                                errors.push(
-                                Error::InvalidItem(x)
-                                    .spanned(value)
-                                );
-                            }
-                        }
+                        todo!()
+                        // // currently we only support looking up by english
+                        // match self.resolver.resolve(&x).await {
+                        //     Some(item) => {
+                        //         self.meta.ingredients.push(item);
+                        //     }
+                        //     None => {
+                        //         errors.push(
+                        //         Error::InvalidItem(x)
+                        //             .spanned(value)
+                        //         );
+                        //     }
+                        // }
                     }
                     Ok(mv) => {
                         errors.push(
@@ -268,6 +272,29 @@ impl<R: ItemResolver> MetaParser for Parser<'_, R> {
                     }
                 }
             }
+            "star" => {
+                match cir::MetaValue::parse_option(value.as_ref()) {
+                    Ok(cir::MetaValue::Int(x)) => {
+                        if x < 0 || x > 4 {
+                            errors.push(
+                            Error::InvalidArmorStarNum(x as i32)
+                                .spanned(value)
+                            );
+                            return;
+                        }
+                        self.meta.star = Some(x as i32);
+                    }
+                    Ok(mv) => {
+                        errors.push(
+                        Error::InvalidMetaValue(key_str, mv)
+                            .spanned(value)
+                        );
+                    }
+                    Err(e) => {
+                        errors.push(e);
+                    }
+                }
+            },
             _ => {
                 errors.push(
                 Error::UnusedMetaKey(key_str).spanned_warning(&span)
@@ -276,12 +303,12 @@ impl<R: ItemResolver> MetaParser for Parser<'_, R> {
         }
     }
 
-    async fn visit_end(&mut self, meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) {
-        todo!()
+    async fn visit_end(&mut self, _meta: &syn::ItemMeta, _errors: &mut Vec<ErrorReport>) {
+        
     }
 
     async fn finish(self) -> Self::Output {
-        todo!()
+        self.meta
     }
 }
 

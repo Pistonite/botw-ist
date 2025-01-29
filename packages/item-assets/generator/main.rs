@@ -21,15 +21,15 @@ fn main() {
 }
 
 fn generate() -> anyhow::Result<()> {
-    let home = find_home()?;
+    let home = find_root()?;
     let icons_dir = home.join("icons");
     if !icons_dir.exists() {
         bail!("icons directory does not exist: {}", icons_dir.display());
     }
 
-    let sprites_dir = home.join("src").join("sprites");
-    if !sprites_dir.exists() {
-        std::fs::create_dir_all(&sprites_dir)?;
+    let generated_dir = home.join("src").join("generated").join("sprites");
+    if !generated_dir.exists() {
+        std::fs::create_dir_all(&generated_dir)?;
     }
     println!("configuring actor chunks...");
 
@@ -82,9 +82,9 @@ fn generate() -> anyhow::Result<()> {
     let mut sprite_sheets = (0..chunks.len())
         .map(|i| {
             let mut sprite_sheet = SpriteSheet::new(i as u16);
-            let lo_res_path = sprites_dir.join(format!("chunk{}x32.webp", i));
+            let lo_res_path = generated_dir.join(format!("chunk{}x32.webp", i));
             let lo_res = Canvas::new(lo_res_path, 16, 32, 28, 75f32);
-            let hi_res_path = sprites_dir.join(format!("chunk{}x64.webp", i));
+            let hi_res_path = generated_dir.join(format!("chunk{}x64.webp", i));
             let hi_res = Canvas::new(hi_res_path, 16, 64, 56, 90f32);
             sprite_sheet.add_canvas(lo_res);
             sprite_sheet.add_canvas(hi_res);
@@ -98,7 +98,6 @@ fn generate() -> anyhow::Result<()> {
             sheet.add_sprite(&name, file)?;
         }
     }
-
 
     println!("encoding actor sprite sheets...");
     for (i, sheet) in sprite_sheets.iter().enumerate() {
@@ -121,10 +120,9 @@ fn generate() -> anyhow::Result<()> {
     let metadata_ts = cconcat![
         // imports
         cconcat!((0..sprite_sheets.len())
-            .map(|i| { format!("import chunk{i}x32 from \"./chunk{i}x32.webp?url\";") })),
+            .map(|i| { format!("import chunk{i}x32 from \"./sprites/chunk{i}x32.webp?url\";") })),
         cconcat!((0..sprite_sheets.len())
-            .map(|i| { format!("import chunk{i}x64 from \"./chunk{i}x64.webp?url\";") })),
-
+            .map(|i| { format!("import chunk{i}x64 from \"./sprites/chunk{i}x64.webp?url\";") })),
         // chunkmap classnames
         cblock! {
             "export const ActorChunkClasses = {",
@@ -144,7 +142,6 @@ fn generate() -> anyhow::Result<()> {
             ],
             "} as const;"
         },
-
         // metadata for finding where an actor is
         "/** Actor => [Chunk, Position]*/",
         format!(
@@ -157,12 +154,17 @@ fn generate() -> anyhow::Result<()> {
         ),
     ];
 
-    std::fs::write(sprites_dir.join("ActorMetadata.gen.ts"), metadata_ts.to_string())?;
+    let metadata_dir = generated_dir.parent().unwrap();
+
+    std::fs::write(
+        metadata_dir.join("ActorMetadata.ts"),
+        metadata_ts.to_string(),
+    )?;
 
     println!("configuring modifier chunks...");
     let modifier_chunk = find_images(&icons_dir, &["SpecialStatus"])?;
     let mut modifier_sheet = SpriteSheet::new(0);
-    let modifier_path = sprites_dir.join("modifiers.webp");
+    let modifier_path = generated_dir.join("modifiers.webp");
     let modifier_canvas = Canvas::new(modifier_path, 8, 48, 48, 90f32);
     modifier_sheet.add_canvas(modifier_canvas);
 
@@ -182,8 +184,7 @@ fn generate() -> anyhow::Result<()> {
     let metadata = serde_json::to_string(&metadata)?;
     let metadata_ts = cconcat![
         // imports
-        "import modifiers from \"./modifiers.webp?url\";",
-
+        "import modifiers from \"./sprites/modifiers.webp?url\";",
         // chunkmap classnames
         cblock! {
             "export const ModifierChunkClasses = {",
@@ -192,7 +193,6 @@ fn generate() -> anyhow::Result<()> {
             ],
             "} as const;"
         },
-
         "/** Modifier => [Chunk, Position]*/",
         "export type ModifierMetadata = Record<string,[0,number]>;",
         format!(
@@ -201,7 +201,10 @@ fn generate() -> anyhow::Result<()> {
         ),
     ];
 
-    std::fs::write(sprites_dir.join("ModifierMetadata.gen.ts"), metadata_ts.to_string())?;
+    std::fs::write(
+        metadata_dir.join("ModifierMetadata.ts"),
+        metadata_ts.to_string(),
+    )?;
 
     println!("done!");
 
@@ -237,9 +240,8 @@ fn find_images(data_dir: &Path, profiles: &[&str]) -> anyhow::Result<Vec<PathBuf
     Ok(out)
 }
 
-/// Find the item-assets package directory
-/// if running from cargo
-fn find_home() -> anyhow::Result<PathBuf> {
+/// Find the package root directory, only works when running from cargo
+fn find_root() -> anyhow::Result<PathBuf> {
     let e = std::env::current_exe()?;
     let root_path = e
         .parent() // /target/release
@@ -247,7 +249,19 @@ fn find_home() -> anyhow::Result<PathBuf> {
         .and_then(|x| x.parent()) // /
         .ok_or_else(|| anyhow!("Could not find parent of exe"))?;
     let mut path = root_path.to_path_buf();
-    path.push("packages");
-    path.push("item-assets");
+    // check
+    path.push("package.json");
+    if !path.exists() {
+        bail!("could not find package.json. make sure you are running the generator with cargo");
+    }
+    match std::fs::read_to_string(&path) {
+        Ok(x) if x.contains("skybook-item-assets") => {
+            // found the package
+        }
+        _ => {
+            bail!("could not verify the root directory is correct. make sure you are running the generator with cargo");
+        }
+    };
+    path.pop();
     Ok(path)
 }

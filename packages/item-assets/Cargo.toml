@@ -1,8 +1,10 @@
 [package]
-name = "skybook-item-sprites-generator"
+name = "item-sprites-generator"
 version = "0.0.0"
 publish = false
 edition = "2021"
+
+[workspace]
 
 [dependencies]
 anyhow = "1.0.94"
@@ -15,5 +17,5 @@ webp = "0.3.0"
 
 
 [[bin]]
-name = "skybook-item-sprites-generator"
+name = "item-sprites-generator"
 path = "generator/main.rs"

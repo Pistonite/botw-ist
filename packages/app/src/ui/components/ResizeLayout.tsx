@@ -181,7 +181,8 @@ export const ResizeLayout: React.FC<PropsWithChildren<ResizeLayoutProps>> = ({
                     )
                 }
             </div>
-            <div className={mergeClasses(styles.childContainer, styles.secondChild)}>
+            <div className={mergeClasses(styles.childContainer, styles.secondChild)}
+            >
                 {
                     !disabled && (
                         <div className={mergeClasses(
@@ -192,13 +193,14 @@ export const ResizeLayout: React.FC<PropsWithChildren<ResizeLayoutProps>> = ({
                                 : 
                                 (touch ? styles.dragHandleTouchHorizontal : styles.dragHandleHorizontal),
                             resizing && styles.dragHandleResizing
-                        )}
+                        )
+                        }
                             onMouseDown={startResize}
                             onTouchStart={startResize}
                         />
                     )
                 }
-                {secondChild}
+                    {secondChild}
             </div>
         </div>
     );

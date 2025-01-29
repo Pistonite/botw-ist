@@ -3,6 +3,7 @@ import { useIsShowingExtensionPanel } from "application/extensionStore";
 import { ExtensionOpenButton } from "ui/ExtensionOpenButton";
 import icon from "./icon.svg";
 import { BookQuestionMark20Regular, Globe20Regular, Settings20Regular } from "@fluentui/react-icons";
+import { LanguagePicker } from "ui/LanguagePicker";
 
 const useStyles = makeStyles({
     container: {
@@ -22,6 +23,7 @@ export const SideToolbar: React.FC = () => {
                 v4.0.0
             </span>
             
+            <LanguagePicker />
             <Button appearance="subtle" icon={<Globe20Regular />}>
             </Button>
             <Button appearance="subtle" icon={<Globe20Regular />}/>

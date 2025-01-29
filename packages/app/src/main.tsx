@@ -4,13 +4,17 @@ import App from './App.tsx'
 import { ThemeProvider } from './theme/ThemeProvider.tsx'
 import { initDark } from '@pistonite/pure/pref'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { initI18n } from 'skybook-localization'
+
+import { initI18n } from 'skybook-localization';
+import { ItemTooltipProvider } from 'skybook-item-system'
+
 import { initExtensionManager } from './application/extensionManager.ts'
 import { initRuntime } from 'runtime/init.ts'
 import { ApplicationApi } from 'application/api.ts'
 import { ApplicationProvider } from 'application/ApplicationProvider.tsx'
 import { initNarrow } from 'pure-contrib/narrow.ts'
 import { isLessProductive } from 'ui/platform.ts'
+
 
 async function boot() {
     const root = document.getElementById('-root-') as HTMLDivElement;
@@ -64,7 +68,9 @@ async function boot() {
             <ApplicationProvider app={app}>
             <QueryClientProvider client={queryClient}>
                 <ThemeProvider>
+                        <ItemTooltipProvider>
                     <App />
+                        </ItemTooltipProvider>
                 </ThemeProvider>
             </QueryClientProvider>
             </ApplicationProvider>

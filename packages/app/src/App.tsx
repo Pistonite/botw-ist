@@ -7,6 +7,16 @@ import { useNarrow } from "pure-contrib/narrow";
 import { ResizeLayout } from "ui/components/ResizeLayout";
 import { useUIStore } from "ui/store";
 import { isLessProductive } from "ui/platform";
+import { useEffect } from "react";
+
+// const testOnce = () => {
+// }
+
+// const doFoo = () => {
+//     console.log('foo3')
+// }
+//
+// setInterval(doFoo, 1000) 2
 
 const useStyles = makeStyles({
     root: {
@@ -29,6 +39,13 @@ function App() {
 
     const extensionPanelPercentage = useUIStore(state => state.extensionPanelPercentage);
     const setExtensionPanelPercentage = useUIStore(state => state.setExtensionPanelPercentage);
+
+    useEffect(() => {
+        console.log('App mounted')
+        return () => {
+            console.log('App unmounted')
+        }
+    }, [])
 
     return (
     <ResizeLayout 

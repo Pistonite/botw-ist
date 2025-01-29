@@ -1,31 +1,72 @@
 version: '3'
 
-tasks:
-  pull-priv: 
-    desc: Pull private assets for building the package. Requires gcloud access
-    cmds:
-      - rm -rf icons src/images/*.png
-      - gcloud storage cp -r gs://ist-private/icons .
-      - gcloud storage cp -r gs://ist-private/images src
+includes:
+  cargo:
+    taskfile: ../mono-dev/task/cargo.yaml
+    internal: true
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
 
+tasks:
+  clean:
+    desc: Clean the build output
+    cmds:
+      - rm -rf src/generated src/special
+
+  dev:
+    desc: Run test page dev server
+    cmds:
+      - task: ecma:vite-dev
 
   build:
-    desc: Build the sprite sheets
+    desc: Build the generated data and sprites
     cmds:
-      - rm -rf src/special src/sprites
-      - cargo run --release
-      - cp -R icons/SP/Item src/special
+      - task: build-data
+      - task: build-sprites
 
-  pull:
-    desc: Pull the assets for development
+  build-data:
     cmds:
-      - cmd: echo "this command is not yet available"
-        silent: true
+      - $(which mkdir) -p src/generated
+      - python scripts/generate.py
+      - task: ecma:prettier-fix
+
+  build-sprites:
+    cmds:
+      - cargo run --release # It's insanely slow without --release
+      - cp -R icons/SP/Item src/special
+      - task: ecma:prettier-fix
+
+  pull-build-priv: 
+    desc: Pull private assets for building the package. Requires gcloud access
+    cmds:
+      - rm -rf icons src/assets
+      - $(which mkdir) -p src/assets
+      - gcloud storage cp -r gs://ist-private/icons .
+
+  pull-priv:
+    desc: Pull built assets for the package. Requires gcloud access
+    cmds:
+      - rm -rf src/generated/sprites
+      - gcloud storage cp -r gs://ist-private/sprites src/generated
 
   push:
     desc: Push the generated assets. Requires gcloud access
     cmds:
-      - gcloud storage cp src/sprites/*.webp gs://ist-private/sprites
+      - gcloud storage cp src/generated/sprites/*.webp gs://ist-private/sprites
 
+  check:
+    cmds:
+      - task: cargo:clippy-all
+      - task: cargo:fmt-check
+      - task: ecma:tsc-check-build
+      - task: ecma:eslint-check
+      - task: ecma:prettier-check
+
+  fix:
+    cmds:
+      - task: cargo:fmt-fix
+      - task: ecma:eslint-fix
+      - task: ecma:prettier-fix
 
 

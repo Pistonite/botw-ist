@@ -18,6 +18,12 @@ export const DefaultActorData = {
     /** Whether the item not is sellable (has CannotSell tag) */
     cannotSell: false as boolean,
 
+    /** Whether the item has the CureItem tag */
+    isCureItem: false as boolean,
+
+    /** Whether the item has the Important tag */
+    isImportant: false as boolean,
+
     /**
      * The derived special status to display
      *
@@ -143,7 +149,7 @@ export const getActorParam = <K extends keyof ActorData>(actor: string, key: K):
     if (!data || !(key in data)) {
         return DefaultActorData[key];
     }
-    return data[key];
+    return (data as ActorData)[key];
 }
 
 /** Check if the actor has the property */

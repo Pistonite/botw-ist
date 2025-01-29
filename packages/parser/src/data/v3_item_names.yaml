@@ -1,0 +1,2672 @@
+acorn:
+  actor: Item_Fruit_K
+  is_material: True
+  id_len: 5
+amber:
+  actor: Item_Ore_F
+  is_material: True
+  id_len: 5
+amberearrings:
+  actor: Armor_029_Head
+  is_material: False
+  id_len: 13
+ancientarrowaa:
+  actor: AncientArrow
+  is_material: False
+  id_len: 12
+ancientbattleaxe:
+  actor: Weapon_Lsword_013
+  is_material: False
+  id_len: 16
+ancientbattleaxeplus:
+  actor: Weapon_Lsword_014
+  is_material: False
+  id_len: 20
+ancientbattleaxeplusplus:
+  actor: Weapon_Lsword_015
+  is_material: False
+  id_len: 24
+ancientbladesaw:
+  actor: Weapon_Lsword_023
+  is_material: False
+  id_len: 15
+ancientbow:
+  actor: Weapon_Bow_023
+  is_material: False
+  id_len: 10
+ancientbridle:
+  actor: GameRomHorseReins_10
+  is_material: False
+  id_len: 13
+ancientcore:
+  actor: Item_Enemy_30
+  is_material: True
+  id_len: 11
+ancientcuirass:
+  actor: Armor_021_Upper
+  is_material: False
+  id_len: 14
+ancientgear:
+  actor: Item_Enemy_26
+  is_material: True
+  id_len: 11
+ancientgreaves:
+  actor: Armor_021_Lower
+  is_material: False
+  id_len: 14
+ancienthelm:
+  actor: Armor_021_Head
+  is_material: False
+  id_len: 11
+ancientsaddle:
+  actor: GameRomHorseSaddle_10
+  is_material: False
+  id_len: 13
+ancientscrew:
+  actor: Item_Enemy_27
+  is_material: True
+  id_len: 12
+ancientshaft:
+  actor: Item_Enemy_29
+  is_material: True
+  id_len: 12
+ancientshield:
+  actor: Weapon_Shield_038
+  is_material: False
+  id_len: 13
+ancientshortsword:
+  actor: Weapon_Sword_023
+  is_material: False
+  id_len: 17
+ancientspear:
+  actor: Weapon_Spear_023
+  is_material: False
+  id_len: 12
+ancientspring:
+  actor: Item_Enemy_28
+  is_material: True
+  id_len: 13
+apple:
+  actor: Item_Fruit_A
+  is_material: True
+  id_len: 5
+applepie:
+  actor: Item_Cook_I_02
+  is_material: False
+  id_len: 8
+armoranth:
+  actor: Item_PlantGet_H
+  is_material: True
+  id_len: 9
+armoredcarp:
+  actor: Item_FishGet_H
+  is_material: True
+  id_len: 11
+armoredporgy:
+  actor: Item_FishGet_G
+  is_material: True
+  id_len: 12
+bakedapple:
+  actor: Item_Roast_03
+  is_material: False
+  id_len: 10
+bakedfortifiedpumpkin:
+  actor: Item_Roast_15
+  is_material: False
+  id_len: 21
+bakedpalmfruit:
+  actor: Item_Roast_10
+  is_material: False
+  id_len: 14
+barbarianarmor:
+  actor: Armor_048_Upper
+  is_material: False
+  id_len: 14
+barbarianhelm:
+  actor: Armor_048_Head
+  is_material: False
+  id_len: 13
+barbarianlegwraps:
+  actor: Armor_048_Lower
+  is_material: False
+  id_len: 17
+biggoronssword:
+  actor: Weapon_Lsword_059
+  is_material: False
+  id_len: 14
+bigheartyradish:
+  actor: Item_PlantGet_C
+  is_material: True
+  id_len: 15
+bigheartytruffle:
+  actor: Item_Mushroom_N
+  is_material: True
+  id_len: 16
+birdegg:
+  actor: Item_Material_04
+  is_material: True
+  id_len: 7
+blackenedcrab:
+  actor: Item_RoastFish_15
+  is_material: False
+  id_len: 13
+bladedrhinobeetle:
+  actor: Animal_Insect_G
+  is_material: True
+  id_len: 17
+blizzardrod:
+  actor: Weapon_Sword_049
+  is_material: False
+  id_len: 11
+bluenightshade:
+  actor: Item_PlantGet_I
+  is_material: True
+  id_len: 14
+blueshellescargot:
+  actor: Item_RoastFish_11
+  is_material: False
+  id_len: 17
+boatoar:
+  actor: Weapon_Lsword_038
+  is_material: False
+  id_len: 7
+bokobat:
+  actor: Weapon_Lsword_004
+  is_material: False
+  id_len: 7
+bokoblinarm:
+  actor: Weapon_Sword_019
+  is_material: False
+  id_len: 11
+bokoblinfang:
+  actor: Item_Enemy_01
+  is_material: True
+  id_len: 12
+bokoblinguts:
+  actor: Item_Enemy_02
+  is_material: True
+  id_len: 12
+bokoblinhorn:
+  actor: Item_Enemy_00
+  is_material: True
+  id_len: 12
+bokoblinmask:
+  actor: Armor_022_Head
+  is_material: False
+  id_len: 12
+bokobow:
+  actor: Weapon_Bow_004
+  is_material: False
+  id_len: 7
+bokoclub:
+  actor: Weapon_Sword_004
+  is_material: False
+  id_len: 8
+bokoshield:
+  actor: Weapon_Shield_004
+  is_material: False
+  id_len: 10
+bokospear:
+  actor: Weapon_Spear_004
+  is_material: False
+  id_len: 9
+bombarrow:
+  actor: BombArrow_A
+  is_material: False
+  id_len: 9
+boomerang:
+  actor: Weapon_Sword_051
+  is_material: False
+  id_len: 9
+boulderbreaker:
+  actor: Weapon_Lsword_054
+  is_material: False
+  id_len: 14
+bowoflight:
+  actor: Weapon_Bow_071
+  is_material: False
+  id_len: 10
+brighteyedcrab:
+  actor: Item_InsectGet_Z
+  is_material: True
+  id_len: 14
+campfireegg:
+  actor: Item_Roast_51
+  is_material: False
+  id_len: 11
+canesugar:
+  actor: Item_Material_01
+  is_material: True
+  id_len: 9
+capofthehero:
+  actor: Armor_230_Head
+  is_material: False
+  id_len: 12
+capofthesky:
+  actor: Armor_215_Head
+  is_material: False
+  id_len: 11
+capofthewild:
+  actor: Armor_005_Head
+  is_material: False
+  id_len: 12
+capofthewind:
+  actor: Armor_205_Head
+  is_material: False
+  id_len: 12
+capoftime:
+  actor: Armor_200_Head
+  is_material: False
+  id_len: 9
+capoftwilight:
+  actor: Armor_210_Head
+  is_material: False
+  id_len: 13
+carrotcake:
+  actor: Item_Cook_I_05
+  is_material: False
+  id_len: 10
+carrotstew:
+  actor: Item_Cook_K_08
+  is_material: False
+  id_len: 10
+ceremonialtrident:
+  actor: Weapon_Spear_049
+  is_material: False
+  id_len: 17
+championstunic:
+  actor: Armor_116_Upper
+  is_material: False
+  id_len: 14
+charredpepper:
+  actor: Item_Roast_13
+  is_material: False
+  id_len: 13
+chickalootreenut:
+  actor: Item_Fruit_L
+  is_material: True
+  id_len: 16
+chillfintrout:
+  actor: Item_FishGet_C
+  is_material: True
+  id_len: 13
+chillshroom:
+  actor: Item_Mushroom_B
+  is_material: True
+  id_len: 11
+chuchujelly:
+  actor: Item_Enemy_40
+  is_material: True
+  id_len: 11
+clamchowder:
+  actor: Item_Cook_K_04
+  is_material: False
+  id_len: 11
+classifiedenvelope:
+  actor: Obj_ProofBook
+  is_material: False
+  id_len: 18
+climbersbandanna:
+  actor: Armor_014_Head
+  is_material: False
+  id_len: 16
+climbingboots:
+  actor: Armor_014_Lower
+  is_material: False
+  id_len: 13
+climbinggear:
+  actor: Armor_014_Upper
+  is_material: False
+  id_len: 12
+cobblecrusher:
+  actor: Weapon_Lsword_036
+  is_material: False
+  id_len: 13
+colddarner:
+  actor: Animal_Insect_C
+  is_material: True
+  id_len: 10
+coolsafflina:
+  actor: Item_PlantGet_E
+  is_material: True
+  id_len: 12
+copiousfriedwildgreens:
+  actor: Item_Cook_B_11
+  is_material: False
+  id_len: 22
+copiousmeatskewers:
+  actor: Item_Cook_B_16
+  is_material: False
+  id_len: 18
+copiousmushroomskewers:
+  actor: Item_Cook_B_13
+  is_material: False
+  id_len: 22
+copiousseafoodskewers:
+  actor: Item_Cook_B_15
+  is_material: False
+  id_len: 21
+copioussimmeredfruit:
+  actor: Item_Cook_B_12
+  is_material: False
+  id_len: 20
+courserbeehoney:
+  actor: BeeHome
+  is_material: True
+  id_len: 15
+crabomeletwithrice:
+  actor: Item_Cook_G_16
+  is_material: False
+  id_len: 18
+crabrisotto:
+  actor: Item_Cook_G_17
+  is_material: False
+  id_len: 11
+crabstirfry:
+  actor: Item_Cook_D_10
+  is_material: False
+  id_len: 11
+creamofmushroomsoup:
+  actor: Item_Cook_K_06
+  is_material: False
+  id_len: 19
+creamofvegetablesoup:
+  actor: Item_Cook_K_07
+  is_material: False
+  id_len: 20
+creamyheartsoup:
+  actor: Item_Cook_F_04
+  is_material: False
+  id_len: 15
+creamymeatsoup:
+  actor: Item_Cook_F_01
+  is_material: False
+  id_len: 14
+creamyseafoodsoup:
+  actor: Item_Cook_F_02
+  is_material: False
+  id_len: 17
+currypilaf:
+  actor: Item_Cook_G_11
+  is_material: False
+  id_len: 10
+curryrice:
+  actor: Item_Cook_J_01
+  is_material: False
+  id_len: 9
+darkhood:
+  actor: Armor_160_Head
+  is_material: False
+  id_len: 8
+darktrousers:
+  actor: Armor_160_Lower
+  is_material: False
+  id_len: 12
+darktunic:
+  actor: Armor_160_Upper
+  is_material: False
+  id_len: 9
+daruksprotection:
+  actor: Obj_HeroSoul_Goron
+  is_material: False
+  id_len: 16
+daruksprotectionplus:
+  actor: Obj_DLC_HeroSoul_Goron
+  is_material: False
+  id_len: 20
+daybreaker:
+  actor: Weapon_Shield_037
+  is_material: False
+  id_len: 10
+demoncarver:
+  actor: Weapon_Sword_073
+  is_material: False
+  id_len: 11
+desertvoeheadband:
+  actor: Armor_008_Head
+  is_material: False
+  id_len: 17
+desertvoespaulder:
+  actor: Armor_008_Upper
+  is_material: False
+  id_len: 17
+desertvoetrousers:
+  actor: Armor_008_Lower
+  is_material: False
+  id_len: 17
+diamond:
+  actor: Item_Ore_A
+  is_material: True
+  id_len: 7
+diamondcirclet:
+  actor: Armor_024_Head
+  is_material: False
+  id_len: 14
+dinraalsclaw:
+  actor: Item_Enemy_39
+  is_material: True
+  id_len: 12
+dinraalsscale:
+  actor: Item_Enemy_38
+  is_material: True
+  id_len: 13
+doubleaxe:
+  actor: Weapon_Lsword_030
+  is_material: False
+  id_len: 9
+dragonbonebokobat:
+  actor: Weapon_Lsword_006
+  is_material: False
+  id_len: 17
+dragonbonebokobow:
+  actor: Weapon_Bow_027
+  is_material: False
+  id_len: 17
+dragonbonebokoclub:
+  actor: Weapon_Sword_006
+  is_material: False
+  id_len: 18
+dragonbonebokoshield:
+  actor: Weapon_Shield_006
+  is_material: False
+  id_len: 20
+dragonbonebokospear:
+  actor: Weapon_Spear_006
+  is_material: False
+  id_len: 19
+dragonbonemoblinclub:
+  actor: Weapon_Lsword_012
+  is_material: False
+  id_len: 20
+dragonbonemoblinspear:
+  actor: Weapon_Spear_012
+  is_material: False
+  id_len: 21
+drillshaft:
+  actor: Weapon_Spear_031
+  is_material: False
+  id_len: 10
+dubiousfood:
+  actor: Item_Cook_O_01
+  is_material: False
+  id_len: 11
+duplexbow:
+  actor: Weapon_Bow_040
+  is_material: False
+  id_len: 9
+edgeofdualityeod:
+  actor: Weapon_Lsword_055
+  is_material: False
+  id_len: 13
+eggpudding:
+  actor: Item_Cook_I_14
+  is_material: False
+  id_len: 10
+eggtart:
+  actor: Item_Cook_I_03
+  is_material: False
+  id_len: 7
+eightfoldblade:
+  actor: Weapon_Sword_041
+  is_material: False
+  id_len: 14
+eightfoldlongblade:
+  actor: Weapon_Lsword_041
+  is_material: False
+  id_len: 18
+electricdarner:
+  actor: Animal_Insect_I
+  is_material: True
+  id_len: 14
+electrickeesewing:
+  actor: Item_Enemy_45
+  is_material: True
+  id_len: 17
+electricsafflina:
+  actor: Item_PlantGet_L
+  is_material: True
+  id_len: 16
+elixir:
+  actor: Item_Cook_C_17
+  is_material: False
+  id_len: 6
+emblazonedshield:
+  actor: Weapon_Shield_034
+  is_material: False
+  id_len: 16
+enduracarrot:
+  actor: Item_PlantGet_Q
+  is_material: True
+  id_len: 12
+endurashroom:
+  actor: Item_Mushroom_O
+  is_material: True
+  id_len: 12
+energeticrhinobeetle:
+  actor: Animal_Insect_AA
+  is_material: True
+  id_len: 20
+enhancedlizalspear:
+  actor: Weapon_Spear_008
+  is_material: False
+  id_len: 18
+extravagantbridle:
+  actor: GameRomHorseReins_05
+  is_material: False
+  id_len: 17
+extravagantsaddle:
+  actor: GameRomHorseSaddle_05
+  is_material: False
+  id_len: 17
+fairy:
+  actor: Animal_Insect_F
+  is_material: True
+  id_len: 5
+fairytonic:
+  actor: Item_Cook_C_16
+  is_material: False
+  id_len: 10
+falconbow:
+  actor: Weapon_Bow_017
+  is_material: False
+  id_len: 9
+farmerspitchfork:
+  actor: Weapon_Spear_022
+  is_material: False
+  id_len: 16
+farminghoe:
+  actor: Weapon_Lsword_045
+  is_material: False
+  id_len: 10
+faroshsclawfaroshclaw:
+  actor: Item_Enemy_54
+  is_material: True
+  id_len: 11
+faroshsscalefaroshscale:
+  actor: Item_Enemy_53
+  is_material: True
+  id_len: 12
+featherededge:
+  actor: Weapon_Sword_031
+  is_material: False
+  id_len: 13
+featheredspear:
+  actor: Weapon_Spear_032
+  is_material: False
+  id_len: 14
+fiercedeityarmor:
+  actor: Armor_225_Upper
+  is_material: False
+  id_len: 16
+fiercedeityboots:
+  actor: Armor_225_Lower
+  is_material: False
+  id_len: 16
+fiercedeitymask:
+  actor: Armor_225_Head
+  is_material: False
+  id_len: 15
+fiercedeitysword:
+  actor: Weapon_Lsword_060
+  is_material: False
+  id_len: 16
+firearrow:
+  actor: FireArrow
+  is_material: False
+  id_len: 9
+firekeesewing:
+  actor: Item_Enemy_44
+  is_material: True
+  id_len: 13
+fireprooflizard:
+  actor: Animal_Insect_X
+  is_material: True
+  id_len: 15
+firerod:
+  actor: Weapon_Sword_060
+  is_material: False
+  id_len: 7
+fishandmushroomskewer:
+  actor: Item_Cook_A_08
+  is_material: False
+  id_len: 21
+fishermansshield:
+  actor: Weapon_Shield_032
+  is_material: False
+  id_len: 16
+fishingharpoon:
+  actor: Weapon_Spear_038
+  is_material: False
+  id_len: 14
+fishpie:
+  actor: Item_Cook_I_15
+  is_material: False
+  id_len: 7
+fishskewer:
+  actor: Item_Cook_B_05
+  is_material: False
+  id_len: 10
+flameblade:
+  actor: Weapon_Sword_033
+  is_material: False
+  id_len: 10
+flamebreakerarmor:
+  actor: Armor_011_Upper
+  is_material: False
+  id_len: 17
+flamebreakerboots:
+  actor: Armor_011_Lower
+  is_material: False
+  id_len: 17
+flamebreakerhelm:
+  actor: Armor_011_Head
+  is_material: False
+  id_len: 16
+flamespear:
+  actor: Weapon_Spear_033
+  is_material: False
+  id_len: 10
+fleetlotusseeds:
+  actor: Item_Fruit_E
+  is_material: True
+  id_len: 15
+flint:
+  actor: Item_Ore_I
+  is_material: True
+  id_len: 5
+forestdwellersbowfdbow:
+  actor: Weapon_Bow_013
+  is_material: False
+  id_len: 17
+forestdwellersshieldfdshield:
+  actor: Weapon_Shield_023
+  is_material: False
+  id_len: 20
+forestdwellersspearfdspear:
+  actor: Weapon_Spear_025
+  is_material: False
+  id_len: 19
+forestdwellersswordfdsword:
+  actor: Weapon_Sword_025
+  is_material: False
+  id_len: 19
+forkedlizalspear:
+  actor: Weapon_Spear_009
+  is_material: False
+  id_len: 16
+fortifiedpumpkin:
+  actor: Item_Fruit_J
+  is_material: True
+  id_len: 16
+fragrantmushroomsaute:
+  actor: Item_Cook_P_01
+  is_material: False
+  id_len: 21
+freshmilk:
+  actor: Item_Material_05
+  is_material: True
+  id_len: 9
+friedbananas:
+  actor: Item_Cook_I_13
+  is_material: False
+  id_len: 12
+friedeggandrice:
+  actor: Item_Cook_E_04
+  is_material: False
+  id_len: 15
+friedwildgreens:
+  actor: Item_Cook_B_01
+  is_material: False
+  id_len: 15
+frostblade:
+  actor: Weapon_Sword_034
+  is_material: False
+  id_len: 10
+frostspear:
+  actor: Weapon_Spear_034
+  is_material: False
+  id_len: 10
+frozenbass:
+  actor: Item_ChilledFish_01
+  is_material: False
+  id_len: 10
+frozenbirddrumstick:
+  actor: Item_Chilled_04
+  is_material: False
+  id_len: 19
+frozenbirdthigh:
+  actor: Item_Chilled_05
+  is_material: False
+  id_len: 15
+frozencarp:
+  actor: Item_ChilledFish_04
+  is_material: False
+  id_len: 10
+frozencrab:
+  actor: Item_ChilledFish_07
+  is_material: False
+  id_len: 10
+frozenheartybass:
+  actor: Item_ChilledFish_06
+  is_material: False
+  id_len: 16
+frozenheartysalmon:
+  actor: Item_ChilledFish_02
+  is_material: False
+  id_len: 18
+frozenporgy:
+  actor: Item_ChilledFish_05
+  is_material: False
+  id_len: 11
+frozenriversnail:
+  actor: Item_ChilledFish_08
+  is_material: False
+  id_len: 16
+frozentrout:
+  actor: Item_ChilledFish_03
+  is_material: False
+  id_len: 11
+frozenwholebird:
+  actor: Item_Chilled_06
+  is_material: False
+  id_len: 15
+fruitandmushroommix:
+  actor: Item_Cook_A_07
+  is_material: False
+  id_len: 19
+fruitcake:
+  actor: Item_Cook_N_02
+  is_material: False
+  id_len: 9
+fruitpie:
+  actor: Item_Cook_I_01
+  is_material: False
+  id_len: 8
+gerudoscimitar:
+  actor: Weapon_Sword_029
+  is_material: False
+  id_len: 14
+gerudoshield:
+  actor: Weapon_Shield_026
+  is_material: False
+  id_len: 12
+gerudosirwal:
+  actor: Armor_053_Lower
+  is_material: False
+  id_len: 12
+gerudospear:
+  actor: Weapon_Spear_029
+  is_material: False
+  id_len: 11
+gerudotop:
+  actor: Armor_053_Upper
+  is_material: False
+  id_len: 9
+gerudoveil:
+  actor: Armor_053_Head
+  is_material: False
+  id_len: 10
+giantancientcore:
+  actor: Item_Enemy_31
+  is_material: True
+  id_len: 16
+giantboomerang:
+  actor: Weapon_Lsword_051
+  is_material: False
+  id_len: 14
+glazedmeat:
+  actor: Item_Cook_A_12
+  is_material: False
+  id_len: 10
+glazedmushrooms:
+  actor: Item_Cook_A_11
+  is_material: False
+  id_len: 15
+glazedseafood:
+  actor: Item_Cook_A_13
+  is_material: False
+  id_len: 13
+glazedveggies:
+  actor: Item_Cook_A_14
+  is_material: False
+  id_len: 13
+goatbutter:
+  actor: Item_Material_06
+  is_material: True
+  id_len: 10
+goddesssword:
+  actor: Weapon_Sword_057
+  is_material: False
+  id_len: 12
+goldenbow:
+  actor: Weapon_Bow_015
+  is_material: False
+  id_len: 9
+goldenclaymore:
+  actor: Weapon_Lsword_029
+  is_material: False
+  id_len: 14
+goronspice:
+  actor: Item_Material_02
+  is_material: True
+  id_len: 10
+gourmetmeatandricebowl:
+  actor: Item_Cook_G_09
+  is_material: False
+  id_len: 22
+gourmetmeatandseafoodfry:
+  actor: Item_Cook_B_19
+  is_material: False
+  id_len: 24
+gourmetmeatcurry:
+  actor: Item_Cook_J_09
+  is_material: False
+  id_len: 16
+gourmetmeatstew:
+  actor: Item_Cook_K_05
+  is_material: False
+  id_len: 15
+gourmetpoultrycurry:
+  actor: Item_Cook_J_08
+  is_material: False
+  id_len: 19
+gourmetpoultrypilaf:
+  actor: Item_Cook_E_03
+  is_material: False
+  id_len: 19
+gourmetspicedmeatskewer:
+  actor: Item_Cook_P_05
+  is_material: False
+  id_len: 23
+greateaglebowgebow:
+  actor: Weapon_Bow_028
+  is_material: False
+  id_len: 13
+greatflameblade:
+  actor: Weapon_Lsword_033
+  is_material: False
+  id_len: 15
+greatfrostblade:
+  actor: Weapon_Lsword_034
+  is_material: False
+  id_len: 15
+greatthunderblade:
+  actor: Weapon_Lsword_035
+  is_material: False
+  id_len: 17
+guardianshield:
+  actor: Weapon_Shield_013
+  is_material: False
+  id_len: 14
+guardianshieldplus:
+  actor: Weapon_Shield_014
+  is_material: False
+  id_len: 18
+guardianshieldplusplus:
+  actor: Weapon_Shield_015
+  is_material: False
+  id_len: 22
+guardianspear:
+  actor: Weapon_Spear_013
+  is_material: False
+  id_len: 13
+guardianspearplus:
+  actor: Weapon_Spear_014
+  is_material: False
+  id_len: 17
+guardianspearplusplus:
+  actor: Weapon_Spear_015
+  is_material: False
+  id_len: 21
+guardiansword:
+  actor: Weapon_Sword_013
+  is_material: False
+  id_len: 13
+guardianswordplus:
+  actor: Weapon_Sword_014
+  is_material: False
+  id_len: 17
+guardianswordplusplus:
+  actor: Weapon_Sword_015
+  is_material: False
+  id_len: 21
+hardboiledegg:
+  actor: Item_Boiled_01
+  is_material: False
+  id_len: 13
+heartybass:
+  actor: Item_FishGet_B
+  is_material: True
+  id_len: 10
+heartyblueshellsnail:
+  actor: Item_FishGet_K
+  is_material: True
+  id_len: 20
+heartydurian:
+  actor: Item_Fruit_D
+  is_material: True
+  id_len: 12
+heartylizard:
+  actor: Animal_Insect_M
+  is_material: True
+  id_len: 12
+heartyradish:
+  actor: Item_PlantGet_B
+  is_material: True
+  id_len: 12
+heartysalmon:
+  actor: Item_FishGet_I
+  is_material: True
+  id_len: 12
+heartytruffle:
+  actor: Item_Mushroom_F
+  is_material: True
+  id_len: 13
+herbsaute:
+  actor: Item_Cook_P_02
+  is_material: False
+  id_len: 9
+herosshield:
+  actor: Weapon_Shield_057
+  is_material: False
+  id_len: 11
+hestusgiftpoop:
+  actor: Obj_ProofKorok
+  is_material: False
+  id_len: 10
+hestusmaracas:
+  actor: Obj_Maracas
+  is_material: False
+  id_len: 13
+hightaillizard:
+  actor: Animal_Insect_S
+  is_material: True
+  id_len: 14
+hinoxguts:
+  actor: Item_Enemy_34
+  is_material: True
+  id_len: 9
+hinoxtoenail:
+  actor: Item_Enemy_32
+  is_material: True
+  id_len: 12
+hinoxtooth:
+  actor: Item_Enemy_33
+  is_material: True
+  id_len: 10
+honeycandy:
+  actor: Item_Cook_I_16
+  is_material: False
+  id_len: 10
+honeycrepe:
+  actor: Item_Cook_I_17
+  is_material: False
+  id_len: 10
+honeyedapple:
+  actor: Item_Cook_I_08
+  is_material: False
+  id_len: 12
+honeyedfruits:
+  actor: Item_Cook_I_09
+  is_material: False
+  id_len: 13
+hotbutteredapple:
+  actor: Item_Cook_I_07
+  is_material: False
+  id_len: 16
+hotfootedfrog:
+  actor: Animal_Insect_A
+  is_material: True
+  id_len: 13
+huntersshield:
+  actor: Weapon_Shield_031
+  is_material: False
+  id_len: 13
+hydromelon:
+  actor: Item_Fruit_F
+  is_material: True
+  id_len: 10
+hylianhood:
+  actor: Armor_001_Head
+  is_material: False
+  id_len: 10
+hylianrice:
+  actor: Item_Material_03
+  is_material: True
+  id_len: 10
+hylianshield:
+  actor: Weapon_Shield_030
+  is_material: False
+  id_len: 12
+hylianshroom:
+  actor: Item_Mushroom_E
+  is_material: True
+  id_len: 12
+hyliantrousers:
+  actor: Armor_001_Lower
+  is_material: False
+  id_len: 14
+hyliantunic:
+  actor: Armor_001_Upper
+  is_material: False
+  id_len: 11
+hyrulebass:
+  actor: Item_FishGet_A
+  is_material: True
+  id_len: 10
+hyruleherb:
+  actor: Item_PlantGet_A
+  is_material: True
+  id_len: 10
+icearrow:
+  actor: IceArrow
+  is_material: False
+  id_len: 8
+icekeesewing:
+  actor: Item_Enemy_46
+  is_material: True
+  id_len: 12
+icerod:
+  actor: Weapon_Sword_061
+  is_material: False
+  id_len: 6
+icygourmetmeat:
+  actor: Item_Chilled_03
+  is_material: False
+  id_len: 14
+icyheartyblueshellsnail:
+  actor: Item_ChilledFish_09
+  is_material: False
+  id_len: 23
+icylizalfostail:
+  actor: Item_Enemy_42
+  is_material: True
+  id_len: 15
+icymeat:
+  actor: Item_Chilled_01
+  is_material: False
+  id_len: 7
+icyprimemeat:
+  actor: Item_Chilled_02
+  is_material: False
+  id_len: 12
+ironshellcrab:
+  actor: Item_InsectGet_O
+  is_material: True
+  id_len: 13
+ironshroom:
+  actor: Item_Mushroom_M
+  is_material: True
+  id_len: 10
+ironsledgehammer:
+  actor: Weapon_Lsword_031
+  is_material: False
+  id_len: 16
+islandlobstershirt:
+  actor: Armor_175_Upper
+  is_material: False
+  id_len: 18
+keeseeyeball:
+  actor: Item_Enemy_19
+  is_material: True
+  id_len: 12
+keesewing:
+  actor: Item_Enemy_18
+  is_material: True
+  id_len: 9
+kiteshield:
+  actor: Weapon_Shield_042
+  is_material: False
+  id_len: 10
+knightsbowknightbow:
+  actor: Weapon_Bow_035
+  is_material: False
+  id_len: 10
+knightsbridle:
+  actor: GameRomHorseReins_03
+  is_material: False
+  id_len: 13
+knightsbroadswordknightsword:
+  actor: Weapon_Sword_003
+  is_material: False
+  id_len: 17
+knightsclaymoreknightclaymore:
+  actor: Weapon_Lsword_003
+  is_material: False
+  id_len: 15
+knightshalberd:
+  actor: Weapon_Spear_003
+  is_material: False
+  id_len: 14
+knightssaddle:
+  actor: GameRomHorseSaddle_03
+  is_material: False
+  id_len: 13
+knightsshield:
+  actor: Weapon_Shield_003
+  is_material: False
+  id_len: 13
+korokleaf:
+  actor: Weapon_Lsword_056
+  is_material: False
+  id_len: 9
+korokmask:
+  actor: Armor_176_Head
+  is_material: False
+  id_len: 9
+korokseed:
+  actor: Obj_KorokNuts
+  is_material: False
+  id_len: 9
+lightarrow:
+  actor: BrightArrow
+  is_material: False
+  id_len: 10
+lightarrowtp:
+  actor: BrightArrowTP
+  is_material: False
+  id_len: 12
+lightningrod:
+  actor: Weapon_Sword_062
+  is_material: False
+  id_len: 12
+lightscaletrident:
+  actor: Weapon_Spear_050
+  is_material: False
+  id_len: 17
+lizalboomerang:
+  actor: Weapon_Sword_007
+  is_material: False
+  id_len: 14
+lizalbow:
+  actor: Weapon_Bow_006
+  is_material: False
+  id_len: 8
+lizalforkedboomerang:
+  actor: Weapon_Sword_008
+  is_material: False
+  id_len: 20
+lizalfosarm:
+  actor: Weapon_Sword_020
+  is_material: False
+  id_len: 11
+lizalfoshorn:
+  actor: Item_Enemy_03
+  is_material: True
+  id_len: 12
+lizalfosmask:
+  actor: Armor_055_Head
+  is_material: False
+  id_len: 12
+lizalfostail:
+  actor: Item_Enemy_05
+  is_material: True
+  id_len: 12
+lizalfostalon:
+  actor: Item_Enemy_04
+  is_material: True
+  id_len: 13
+lizalshield:
+  actor: Weapon_Shield_007
+  is_material: False
+  id_len: 11
+lizalspear:
+  actor: Weapon_Spear_007
+  is_material: False
+  id_len: 10
+lizaltriboomerang:
+  actor: Weapon_Sword_009
+  is_material: False
+  id_len: 17
+luminousstone:
+  actor: Item_Ore_G
+  is_material: True
+  id_len: 13
+lynelbow:
+  actor: Weapon_Bow_009
+  is_material: False
+  id_len: 8
+lynelcrusher:
+  actor: Weapon_Lsword_016
+  is_material: False
+  id_len: 12
+lynelguts:
+  actor: Item_Enemy_14
+  is_material: True
+  id_len: 9
+lynelhoof:
+  actor: Item_Enemy_13
+  is_material: True
+  id_len: 9
+lynelhorn:
+  actor: Item_Enemy_12
+  is_material: True
+  id_len: 9
+lynelmask:
+  actor: Armor_056_Head
+  is_material: False
+  id_len: 9
+lynelshield:
+  actor: Weapon_Shield_016
+  is_material: False
+  id_len: 11
+lynelspear:
+  actor: Weapon_Spear_016
+  is_material: False
+  id_len: 10
+lynelsword:
+  actor: Weapon_Sword_016
+  is_material: False
+  id_len: 10
+majorasmask:
+  actor: Armor_172_Head
+  is_material: False
+  id_len: 11
+mastersword:
+  actor: Weapon_Sword_070
+  is_material: False
+  id_len: 11
+meatandmushroomskewer:
+  actor: Item_Cook_A_09
+  is_material: False
+  id_len: 21
+meatandricebowl:
+  actor: Item_Cook_G_05
+  is_material: False
+  id_len: 15
+meatandseafoodfry:
+  actor: Item_Cook_B_17
+  is_material: False
+  id_len: 17
+meatcurry:
+  actor: Item_Cook_J_06
+  is_material: False
+  id_len: 9
+meatpie:
+  actor: Item_Cook_I_04
+  is_material: False
+  id_len: 7
+meatskewer:
+  actor: Item_Cook_B_06
+  is_material: False
+  id_len: 10
+meatstew:
+  actor: Item_Cook_K_01
+  is_material: False
+  id_len: 8
+meatstuffedpumpkin:
+  actor: Item_Cook_B_20
+  is_material: False
+  id_len: 18
+meatyriceballs:
+  actor: Item_Cook_G_15
+  is_material: False
+  id_len: 14
+medalofhonorhinox:
+  actor: Obj_ProofGiantKiller
+  is_material: False
+  id_len: 17
+medalofhonormolduga:
+  actor: Obj_ProofSandwormKiller
+  is_material: False
+  id_len: 19
+medalofhonortalus:
+  actor: Obj_ProofGolemKiller
+  is_material: False
+  id_len: 17
+medohsemblem:
+  actor: Obj_DLC_HeroSeal_Rito
+  is_material: False
+  id_len: 12
+meteorrod:
+  actor: Weapon_Sword_048
+  is_material: False
+  id_len: 9
+midnashelmet:
+  actor: Armor_173_Head
+  is_material: False
+  id_len: 12
+mightybananas:
+  actor: Item_Fruit_H
+  is_material: True
+  id_len: 13
+mightycarp:
+  actor: Item_FishGet_E
+  is_material: True
+  id_len: 10
+mightylynelbow:
+  actor: Weapon_Bow_026
+  is_material: False
+  id_len: 14
+mightylynelcrusher:
+  actor: Weapon_Lsword_017
+  is_material: False
+  id_len: 18
+mightylynelshield:
+  actor: Weapon_Shield_017
+  is_material: False
+  id_len: 17
+mightylynelspear:
+  actor: Weapon_Spear_017
+  is_material: False
+  id_len: 16
+mightylynelsword:
+  actor: Weapon_Sword_017
+  is_material: False
+  id_len: 16
+mightyporgy:
+  actor: Item_FishGet_F
+  is_material: True
+  id_len: 11
+mightythistle:
+  actor: Item_PlantGet_G
+  is_material: True
+  id_len: 13
+miphasgrace:
+  actor: Obj_HeroSoul_Zora
+  is_material: False
+  id_len: 11
+miphasgraceplus:
+  actor: Obj_DLC_HeroSoul_Zora
+  is_material: False
+  id_len: 15
+moblinarm:
+  actor: Weapon_Lsword_019
+  is_material: False
+  id_len: 9
+moblinclub:
+  actor: Weapon_Lsword_010
+  is_material: False
+  id_len: 10
+moblinfang:
+  actor: Item_Enemy_07
+  is_material: True
+  id_len: 10
+moblinguts:
+  actor: Item_Enemy_08
+  is_material: True
+  id_len: 10
+moblinhorn:
+  actor: Item_Enemy_06
+  is_material: True
+  id_len: 10
+moblinmask:
+  actor: Armor_045_Head
+  is_material: False
+  id_len: 10
+moblinspear:
+  actor: Weapon_Spear_010
+  is_material: False
+  id_len: 11
+moldugafin:
+  actor: Item_Enemy_24
+  is_material: True
+  id_len: 10
+moldugaguts:
+  actor: Item_Enemy_25
+  is_material: True
+  id_len: 11
+monsterbridle:
+  actor: GameRomHorseReins_04
+  is_material: False
+  id_len: 13
+monstercake:
+  actor: Item_Cook_L_03
+  is_material: False
+  id_len: 11
+monstercurry:
+  actor: Item_Cook_L_05
+  is_material: False
+  id_len: 12
+monsterextract:
+  actor: Item_Material_08
+  is_material: True
+  id_len: 14
+monsterriceballs:
+  actor: Item_Cook_L_04
+  is_material: False
+  id_len: 16
+monstersaddle:
+  actor: GameRomHorseSaddle_04
+  is_material: False
+  id_len: 13
+monstersoup:
+  actor: Item_Cook_L_02
+  is_material: False
+  id_len: 11
+monsterstew:
+  actor: Item_Cook_L_01
+  is_material: False
+  id_len: 11
+moonlightscimitar:
+  actor: Weapon_Sword_030
+  is_material: False
+  id_len: 17
+mushroomomelet:
+  actor: Item_Cook_N_04
+  is_material: False
+  id_len: 14
+mushroomriceballs:
+  actor: Item_Cook_G_04
+  is_material: False
+  id_len: 17
+mushroomrisotto:
+  actor: Item_Cook_G_12
+  is_material: False
+  id_len: 15
+mushroomskewer:
+  actor: Item_Cook_A_01
+  is_material: False
+  id_len: 14
+naborissemblem:
+  actor: Obj_DLC_HeroSeal_Gerudo
+  is_material: False
+  id_len: 14
+naydrasclaw:
+  actor: Item_Enemy_50
+  is_material: True
+  id_len: 11
+naydrasscale:
+  actor: Item_Enemy_49
+  is_material: True
+  id_len: 12
+nintendoswitchshirt:
+  actor: Armor_170_Upper
+  is_material: False
+  id_len: 19
+normalarrow:
+  actor: NormalArrow
+  is_material: False
+  id_len: 11
+nutcake:
+  actor: Item_Cook_I_12
+  is_material: False
+  id_len: 7
+octoballoon:
+  actor: Item_Enemy_57
+  is_material: True
+  id_len: 11
+octorokeyeball:
+  actor: Item_Enemy_21
+  is_material: True
+  id_len: 14
+octoroktentacle:
+  actor: Item_Enemy_20
+  is_material: True
+  id_len: 15
+oldshirt:
+  actor: Armor_043_Upper
+  is_material: False
+  id_len: 8
+omelet:
+  actor: Item_Cook_A_10
+  is_material: False
+  id_len: 6
+onehitobliteratoroho:
+  actor: Weapon_Sword_502
+  is_material: False
+  id_len: 17
+opal:
+  actor: Item_Ore_E
+  is_material: True
+  id_len: 4
+opalearrings:
+  actor: Armor_028_Head
+  is_material: False
+  id_len: 12
+palmfruit:
+  actor: Item_Fruit_G
+  is_material: True
+  id_len: 9
+paraglider:
+  actor: PlayerStole2
+  is_material: False
+  id_len: 10
+pepperseafood:
+  actor: Item_Cook_D_08
+  is_material: False
+  id_len: 13
+peppersteak:
+  actor: Item_Cook_D_07
+  is_material: False
+  id_len: 11
+phantomarmor:
+  actor: Armor_171_Upper
+  is_material: False
+  id_len: 12
+phantomganonarmor:
+  actor: Armor_180_Upper
+  is_material: False
+  id_len: 17
+phantomganongreaves:
+  actor: Armor_180_Lower
+  is_material: False
+  id_len: 19
+phantomganonskull:
+  actor: Armor_180_Head
+  is_material: False
+  id_len: 17
+phantomgreaves:
+  actor: Armor_171_Lower
+  is_material: False
+  id_len: 14
+phantomhelmet:
+  actor: Armor_171_Head
+  is_material: False
+  id_len: 13
+phrenicbow:
+  actor: Weapon_Bow_029
+  is_material: False
+  id_len: 10
+pictureofthechampions:
+  actor: Get_TwnObj_DLC_MemorialPicture_A_01
+  is_material: False
+  id_len: 21
+plaincrepe:
+  actor: Item_Cook_I_10
+  is_material: False
+  id_len: 10
+porgymeuniere:
+  actor: Item_Cook_H_02
+  is_material: False
+  id_len: 13
+potlid:
+  actor: Weapon_Shield_040
+  is_material: False
+  id_len: 6
+poultrycurry:
+  actor: Item_Cook_J_04
+  is_material: False
+  id_len: 12
+poultrypilaf:
+  actor: Item_Cook_E_01
+  is_material: False
+  id_len: 12
+primemeatandricebowl:
+  actor: Item_Cook_G_06
+  is_material: False
+  id_len: 20
+primemeatandseafoodfry:
+  actor: Item_Cook_B_18
+  is_material: False
+  id_len: 22
+primemeatcurry:
+  actor: Item_Cook_J_07
+  is_material: False
+  id_len: 14
+primemeatstew:
+  actor: Item_Cook_K_02
+  is_material: False
+  id_len: 13
+primepoultrycurry:
+  actor: Item_Cook_J_05
+  is_material: False
+  id_len: 17
+primepoultrypilaf:
+  actor: Item_Cook_E_02
+  is_material: False
+  id_len: 17
+primespicedmeatskewer:
+  actor: Item_Cook_P_04
+  is_material: False
+  id_len: 21
+pumpkinpie:
+  actor: Item_Cook_I_06
+  is_material: False
+  id_len: 10
+pumpkinstew:
+  actor: Item_Cook_K_03
+  is_material: False
+  id_len: 11
+radiantmask:
+  actor: Armor_017_Head
+  is_material: False
+  id_len: 11
+radiantshield:
+  actor: Weapon_Shield_036
+  is_material: False
+  id_len: 13
+radiantshirt:
+  actor: Armor_017_Upper
+  is_material: False
+  id_len: 12
+radianttights:
+  actor: Armor_017_Lower
+  is_material: False
+  id_len: 13
+ravioshood:
+  actor: Armor_177_Head
+  is_material: False
+  id_len: 10
+rawbirddrumstick:
+  actor: Item_Meat_06
+  is_material: True
+  id_len: 16
+rawbirdthigh:
+  actor: Item_Meat_07
+  is_material: True
+  id_len: 12
+rawgourmetmeat:
+  actor: Item_Meat_11
+  is_material: True
+  id_len: 14
+rawmeat:
+  actor: Item_Meat_01
+  is_material: True
+  id_len: 7
+rawprimemeat:
+  actor: Item_Meat_02
+  is_material: True
+  id_len: 12
+rawwholebird:
+  actor: Item_Meat_12
+  is_material: True
+  id_len: 12
+razorclawcrab:
+  actor: Item_InsectGet_K
+  is_material: True
+  id_len: 13
+razorshroom:
+  actor: Item_Mushroom_L
+  is_material: True
+  id_len: 11
+redchuchujelly:
+  actor: Item_Enemy_15
+  is_material: True
+  id_len: 14
+redlizalfostail:
+  actor: Item_Enemy_41
+  is_material: True
+  id_len: 15
+reinforcedlizalshield:
+  actor: Weapon_Shield_008
+  is_material: False
+  id_len: 21
+restlesscricket:
+  actor: Animal_Insect_H
+  is_material: True
+  id_len: 15
+revalisgale:
+  actor: Obj_HeroSoul_Rito
+  is_material: False
+  id_len: 11
+revalisgaleplus:
+  actor: Obj_DLC_HeroSoul_Rito
+  is_material: False
+  id_len: 15
+roastedacorn:
+  actor: Item_Roast_48
+  is_material: False
+  id_len: 12
+roastedarmoranth:
+  actor: Item_Roast_28
+  is_material: False
+  id_len: 16
+roastedbass:
+  actor: Item_RoastFish_01
+  is_material: False
+  id_len: 11
+roastedbigradish:
+  actor: Item_Roast_19
+  is_material: False
+  id_len: 16
+roastedbirddrumstick:
+  actor: Item_Roast_02
+  is_material: False
+  id_len: 20
+roastedbirdthigh:
+  actor: Item_Roast_41
+  is_material: False
+  id_len: 16
+roastedcarp:
+  actor: Item_RoastFish_07
+  is_material: False
+  id_len: 11
+roastedenduracarrot:
+  actor: Item_Roast_50
+  is_material: False
+  id_len: 19
+roastedheartybass:
+  actor: Item_RoastFish_02
+  is_material: False
+  id_len: 17
+roastedheartydurian:
+  actor: Item_Roast_09
+  is_material: False
+  id_len: 19
+roastedheartysalmon:
+  actor: Item_RoastFish_04
+  is_material: False
+  id_len: 19
+roastedhydromelon:
+  actor: Item_Roast_12
+  is_material: False
+  id_len: 17
+roastedlotusseeds:
+  actor: Item_Roast_16
+  is_material: False
+  id_len: 17
+roastedmightybananas:
+  actor: Item_Roast_11
+  is_material: False
+  id_len: 20
+roastedmightythistle:
+  actor: Item_Roast_27
+  is_material: False
+  id_len: 20
+roastedporgy:
+  actor: Item_RoastFish_09
+  is_material: False
+  id_len: 12
+roastedradish:
+  actor: Item_Roast_18
+  is_material: False
+  id_len: 13
+roastedswiftcarrot:
+  actor: Item_Roast_24
+  is_material: False
+  id_len: 18
+roastedtreenut:
+  actor: Item_Roast_52
+  is_material: False
+  id_len: 14
+roastedtrout:
+  actor: Item_RoastFish_03
+  is_material: False
+  id_len: 12
+roastedvoltfruit:
+  actor: Item_Roast_08
+  is_material: False
+  id_len: 16
+roastedwholebird:
+  actor: Item_Roast_46
+  is_material: False
+  id_len: 16
+roastedwildberry:
+  actor: Item_Roast_07
+  is_material: False
+  id_len: 16
+rockhardfood:
+  actor: Item_Cook_O_02
+  is_material: False
+  id_len: 12
+rocksalt:
+  actor: Item_Ore_H
+  is_material: True
+  id_len: 8
+royalbowrbow:
+  actor: Weapon_Bow_036
+  is_material: False
+  id_len: 8
+royalbridle:
+  actor: GameRomHorseReins_02
+  is_material: False
+  id_len: 11
+royalbroadswordroyalswordrsword:
+  actor: Weapon_Sword_024
+  is_material: False
+  id_len: 15
+royalclaymorerclaymore:
+  actor: Weapon_Lsword_024
+  is_material: False
+  id_len: 13
+royalguardboots:
+  actor: Armor_179_Lower
+  is_material: False
+  id_len: 15
+royalguardcap:
+  actor: Armor_179_Head
+  is_material: False
+  id_len: 13
+royalguardsbowrgbow:
+  actor: Weapon_Bow_033
+  is_material: False
+  id_len: 14
+royalguardsclaymorergclaymore:
+  actor: Weapon_Lsword_047
+  is_material: False
+  id_len: 19
+royalguardsshieldrgshield:
+  actor: Weapon_Shield_033
+  is_material: False
+  id_len: 17
+royalguardsspearrgspear:
+  actor: Weapon_Spear_047
+  is_material: False
+  id_len: 16
+royalguardsswordrgsword:
+  actor: Weapon_Sword_047
+  is_material: False
+  id_len: 16
+royalguarduniform:
+  actor: Armor_179_Upper
+  is_material: False
+  id_len: 17
+royalhalberd:
+  actor: Weapon_Spear_024
+  is_material: False
+  id_len: 12
+royalsaddle:
+  actor: GameRomHorseSaddle_02
+  is_material: False
+  id_len: 11
+royalshieldrshield:
+  actor: Weapon_Shield_022
+  is_material: False
+  id_len: 11
+rubberarmor:
+  actor: Armor_046_Upper
+  is_material: False
+  id_len: 11
+rubberhelm:
+  actor: Armor_046_Head
+  is_material: False
+  id_len: 10
+rubbertights:
+  actor: Armor_046_Lower
+  is_material: False
+  id_len: 12
+ruby:
+  actor: Item_Ore_B
+  is_material: True
+  id_len: 4
+rubycirclet:
+  actor: Armor_025_Head
+  is_material: False
+  id_len: 11
+rudaniasemblem:
+  actor: Obj_DLC_HeroSeal_Goron
+  is_material: False
+  id_len: 14
+ruggedrhinobeetle:
+  actor: Animal_Insect_P
+  is_material: True
+  id_len: 17
+rushroom:
+  actor: Item_MushroomGet_D
+  is_material: True
+  id_len: 8
+rustybroadsword:
+  actor: Weapon_Sword_021
+  is_material: False
+  id_len: 15
+rustyclaymore:
+  actor: Weapon_Lsword_020
+  is_material: False
+  id_len: 13
+rustyhalberd:
+  actor: Weapon_Spear_021
+  is_material: False
+  id_len: 12
+rustyshield:
+  actor: Weapon_Shield_021
+  is_material: False
+  id_len: 11
+rutasemblem:
+  actor: Obj_DLC_HeroSeal_Zora
+  is_material: False
+  id_len: 11
+salmonmeuniere:
+  actor: Item_Cook_H_03
+  is_material: False
+  id_len: 14
+salmonrisotto:
+  actor: Item_Cook_G_14
+  is_material: False
+  id_len: 13
+saltgrilledcrab:
+  actor: Item_Cook_D_09
+  is_material: False
+  id_len: 15
+saltgrilledfish:
+  actor: Item_Cook_D_03
+  is_material: False
+  id_len: 15
+saltgrilledgourmetmeat:
+  actor: Item_Cook_D_06
+  is_material: False
+  id_len: 22
+saltgrilledgreens:
+  actor: Item_Cook_D_02
+  is_material: False
+  id_len: 17
+saltgrilledmeat:
+  actor: Item_Cook_D_04
+  is_material: False
+  id_len: 15
+saltgrilledmushrooms:
+  actor: Item_Cook_D_01
+  is_material: False
+  id_len: 20
+saltgrilledprimemeat:
+  actor: Item_Cook_D_05
+  is_material: False
+  id_len: 20
+salvagerheadwear:
+  actor: Armor_185_Head
+  is_material: False
+  id_len: 16
+salvagertrousers:
+  actor: Armor_185_Lower
+  is_material: False
+  id_len: 16
+salvagervest:
+  actor: Armor_185_Upper
+  is_material: False
+  id_len: 12
+sandboots:
+  actor: Armor_049_Lower
+  is_material: False
+  id_len: 9
+sankecarp:
+  actor: Item_FishGet_Z
+  is_material: True
+  id_len: 9
+sapphire:
+  actor: Item_Ore_C
+  is_material: True
+  id_len: 8
+sapphirecirclet:
+  actor: Armor_026_Head
+  is_material: False
+  id_len: 15
+sauteednuts:
+  actor: Item_Cook_B_22
+  is_material: False
+  id_len: 11
+sauteedpeppers:
+  actor: Item_Cook_B_21
+  is_material: False
+  id_len: 14
+savagelynelbow:
+  actor: Weapon_Bow_032
+  is_material: False
+  id_len: 14
+savagelynelcrusher:
+  actor: Weapon_Lsword_018
+  is_material: False
+  id_len: 18
+savagelynelshield:
+  actor: Weapon_Shield_018
+  is_material: False
+  id_len: 17
+savagelynelspear:
+  actor: Weapon_Spear_018
+  is_material: False
+  id_len: 16
+savagelynelsword:
+  actor: Weapon_Sword_018
+  is_material: False
+  id_len: 16
+scimitaroftheseven:
+  actor: Weapon_Sword_052
+  is_material: False
+  id_len: 18
+seabreezeboomerang:
+  actor: Weapon_Sword_059
+  is_material: False
+  id_len: 18
+seafoodcurry:
+  actor: Item_Cook_J_03
+  is_material: False
+  id_len: 12
+seafoodfriedrice:
+  actor: Item_Cook_G_10
+  is_material: False
+  id_len: 16
+seafoodmeuniere:
+  actor: Item_Cook_H_01
+  is_material: False
+  id_len: 15
+seafoodpaella:
+  actor: Item_Cook_N_01
+  is_material: False
+  id_len: 13
+seafoodriceballs:
+  actor: Item_Cook_G_02
+  is_material: False
+  id_len: 16
+seafoodskewer:
+  actor: Item_Cook_B_23
+  is_material: False
+  id_len: 13
+searedgourmetsteak:
+  actor: Item_Roast_45
+  is_material: False
+  id_len: 18
+searedprimesteak:
+  actor: Item_Roast_40
+  is_material: False
+  id_len: 16
+searedsteak:
+  actor: Item_Roast_01
+  is_material: False
+  id_len: 11
+serpentinespear:
+  actor: Weapon_Spear_037
+  is_material: False
+  id_len: 15
+shardofdinraalsfang:
+  actor: Item_Enemy_47
+  is_material: True
+  id_len: 19
+shardofdinraalshorn:
+  actor: Item_Enemy_48
+  is_material: True
+  id_len: 19
+shardoffaroshsfang:
+  actor: Item_Enemy_55
+  is_material: True
+  id_len: 18
+shardoffaroshshornfaroshhorn:
+  actor: Item_Enemy_56
+  is_material: True
+  id_len: 18
+shardofnaydrasfang:
+  actor: Item_Enemy_51
+  is_material: True
+  id_len: 18
+shardofnaydrashorn:
+  actor: Item_Enemy_52
+  is_material: True
+  id_len: 18
+sheikahslate:
+  actor: Obj_DRStone_Get
+  is_material: False
+  id_len: 12
+sheiksmask:
+  actor: Armor_220_Head
+  is_material: False
+  id_len: 10
+shieldofthemindseye:
+  actor: Weapon_Shield_041
+  is_material: False
+  id_len: 19
+shockarrow:
+  actor: ElectricArrow
+  is_material: False
+  id_len: 10
+silentprincess:
+  actor: Item_PlantGet_J
+  is_material: True
+  id_len: 14
+silentshroom:
+  actor: Item_Mushroom_J
+  is_material: True
+  id_len: 12
+silverbow:
+  actor: Weapon_Bow_014
+  is_material: False
+  id_len: 9
+silverlongsword:
+  actor: Weapon_Lsword_027
+  is_material: False
+  id_len: 15
+silverscalespear:
+  actor: Weapon_Spear_028
+  is_material: False
+  id_len: 16
+silvershield:
+  actor: Weapon_Shield_025
+  is_material: False
+  id_len: 12
+simmeredfruit:
+  actor: Item_Cook_B_02
+  is_material: False
+  id_len: 13
+sizzlefintrout:
+  actor: Item_FishGet_J
+  is_material: True
+  id_len: 14
+smotherwingbutterfly:
+  actor: Animal_Insect_AB
+  is_material: True
+  id_len: 20
+sneakyriverescargot:
+  actor: Item_RoastFish_13
+  is_material: False
+  id_len: 19
+sneakyriversnail:
+  actor: Item_FishGet_M
+  is_material: True
+  id_len: 16
+snowboots:
+  actor: Armor_140_Lower
+  is_material: False
+  id_len: 9
+snowquillheaddress:
+  actor: Armor_009_Head
+  is_material: False
+  id_len: 18
+snowquilltrousers:
+  actor: Armor_009_Lower
+  is_material: False
+  id_len: 17
+snowquilltunic:
+  actor: Armor_009_Upper
+  is_material: False
+  id_len: 14
+soldiersarmor:
+  actor: Armor_020_Upper
+  is_material: False
+  id_len: 13
+soldiersbowsoldierbow:
+  actor: Weapon_Bow_002
+  is_material: False
+  id_len: 11
+soldiersbroadswordsoldiersword:
+  actor: Weapon_Sword_002
+  is_material: False
+  id_len: 18
+soldiersclaymoresoldierclaymore:
+  actor: Weapon_Lsword_002
+  is_material: False
+  id_len: 16
+soldiersgreaves:
+  actor: Armor_020_Lower
+  is_material: False
+  id_len: 15
+soldiershelm:
+  actor: Armor_020_Head
+  is_material: False
+  id_len: 12
+soldiersshield:
+  actor: Weapon_Shield_002
+  is_material: False
+  id_len: 14
+soldiersspear:
+  actor: Weapon_Spear_002
+  is_material: False
+  id_len: 13
+soupladle:
+  actor: Weapon_Sword_022
+  is_material: False
+  id_len: 9
+spicedmeatskewer:
+  actor: Item_Cook_P_03
+  is_material: False
+  id_len: 16
+spicypepper:
+  actor: Item_Fruit_I
+  is_material: True
+  id_len: 11
+spikedbokobat:
+  actor: Weapon_Lsword_005
+  is_material: False
+  id_len: 13
+spikedbokobow:
+  actor: Weapon_Bow_003
+  is_material: False
+  id_len: 13
+spikedbokoclub:
+  actor: Weapon_Sword_005
+  is_material: False
+  id_len: 14
+spikedbokoshield:
+  actor: Weapon_Shield_005
+  is_material: False
+  id_len: 16
+spikedbokospear:
+  actor: Weapon_Spear_005
+  is_material: False
+  id_len: 15
+spikedmoblinclub:
+  actor: Weapon_Lsword_011
+  is_material: False
+  id_len: 16
+spikedmoblinspear:
+  actor: Weapon_Spear_011
+  is_material: False
+  id_len: 17
+spiritorb:
+  actor: Obj_DungeonClearSeal
+  is_material: False
+  id_len: 9
+springloadedhammer:
+  actor: Weapon_Sword_040
+  is_material: False
+  id_len: 18
+stamellashroom:
+  actor: Item_Mushroom_A
+  is_material: True
+  id_len: 14
+staminokabass:
+  actor: Item_FishGet_L
+  is_material: True
+  id_len: 13
+starfragment:
+  actor: Item_Ore_J
+  is_material: True
+  id_len: 12
+stealthchestguard:
+  actor: Armor_012_Upper
+  is_material: False
+  id_len: 17
+stealthfintrout:
+  actor: Item_FishGet_X
+  is_material: True
+  id_len: 15
+stealthmask:
+  actor: Armor_012_Head
+  is_material: False
+  id_len: 11
+stealthtights:
+  actor: Armor_012_Lower
+  is_material: False
+  id_len: 13
+steamedfish:
+  actor: Item_Cook_A_04
+  is_material: False
+  id_len: 11
+steamedfruit:
+  actor: Item_Cook_A_03
+  is_material: False
+  id_len: 12
+steamedmeat:
+  actor: Item_Cook_A_05
+  is_material: False
+  id_len: 11
+steamedmushrooms:
+  actor: Item_Cook_A_02
+  is_material: False
+  id_len: 16
+steellizalbow:
+  actor: Weapon_Bow_030
+  is_material: False
+  id_len: 13
+steellizalshield:
+  actor: Weapon_Shield_009
+  is_material: False
+  id_len: 16
+stonesmasher:
+  actor: Weapon_Lsword_037
+  is_material: False
+  id_len: 12
+strengthenedlizalbow:
+  actor: Weapon_Bow_011
+  is_material: False
+  id_len: 20
+summerwingbutterfly:
+  actor: Animal_Insect_Q
+  is_material: True
+  id_len: 19
+sunsetfirefly:
+  actor: Animal_Insect_E
+  is_material: True
+  id_len: 13
+sunshroom:
+  actor: Item_Mushroom_C
+  is_material: True
+  id_len: 9
+swallowbow:
+  actor: Weapon_Bow_016
+  is_material: False
+  id_len: 10
+swiftcarrot:
+  actor: Item_PlantGet_M
+  is_material: True
+  id_len: 11
+swiftviolet:
+  actor: Item_PlantGet_O
+  is_material: True
+  id_len: 11
+sword:
+  actor: Weapon_Sword_058
+  is_material: False
+  id_len: 5
+swordofthesixsages:
+  actor: Weapon_Lsword_057
+  is_material: False
+  id_len: 18
+tabanthawheat:
+  actor: Item_Material_07
+  is_material: True
+  id_len: 13
+throwingspear:
+  actor: Weapon_Spear_030
+  is_material: False
+  id_len: 13
+thunderblade:
+  actor: Weapon_Sword_035
+  is_material: False
+  id_len: 12
+thunderhelm:
+  actor: Armor_115_Head
+  is_material: False
+  id_len: 11
+thunderhelmkey:
+  actor: Obj_Armor_115_Head
+  is_material: False
+  id_len: 14
+thunderspear:
+  actor: Weapon_Spear_035
+  is_material: False
+  id_len: 12
+thunderstormrod:
+  actor: Weapon_Sword_050
+  is_material: False
+  id_len: 15
+thunderwingbutterfly:
+  actor: Animal_Insect_R
+  is_material: True
+  id_len: 20
+tingleshood:
+  actor: Armor_174_Head
+  is_material: False
+  id_len: 11
+tinglesshirt:
+  actor: Armor_174_Upper
+  is_material: False
+  id_len: 12
+tinglestights:
+  actor: Armor_174_Lower
+  is_material: False
+  id_len: 13
+tirelessfrog:
+  actor: Animal_Insect_B
+  is_material: True
+  id_len: 12
+toastedbigheartytruffle:
+  actor: Item_Roast_49
+  is_material: False
+  id_len: 23
+toastedheartytruffle:
+  actor: Item_Roast_05
+  is_material: False
+  id_len: 20
+toastychillshroom:
+  actor: Item_Roast_31
+  is_material: False
+  id_len: 17
+toastyendurashroom:
+  actor: Item_Roast_53
+  is_material: False
+  id_len: 18
+toastyhylianshroom:
+  actor: Item_Roast_06
+  is_material: False
+  id_len: 18
+toastyironshroom:
+  actor: Item_Roast_38
+  is_material: False
+  id_len: 16
+toastyrazorshroom:
+  actor: Item_Roast_37
+  is_material: False
+  id_len: 17
+toastyrushroom:
+  actor: Item_Roast_36
+  is_material: False
+  id_len: 14
+toastysilentshroom:
+  actor: Item_Roast_39
+  is_material: False
+  id_len: 18
+toastystamellashroom:
+  actor: Item_Roast_04
+  is_material: False
+  id_len: 20
+toastysunshroom:
+  actor: Item_Roast_32
+  is_material: False
+  id_len: 15
+toastyzapshroom:
+  actor: Item_Roast_33
+  is_material: False
+  id_len: 15
+topaz:
+  actor: Item_Ore_D
+  is_material: True
+  id_len: 5
+topazearrings:
+  actor: Armor_027_Head
+  is_material: False
+  id_len: 13
+torch:
+  actor: Weapon_Sword_043
+  is_material: False
+  id_len: 5
+travelersbowtravellerbow:
+  actor: Weapon_Bow_001
+  is_material: False
+  id_len: 12
+travelersbridle:
+  actor: GameRomHorseReins_01
+  is_material: False
+  id_len: 15
+travelersclaymoretravelerclaymore:
+  actor: Weapon_Lsword_001
+  is_material: False
+  id_len: 17
+travelerssaddle:
+  actor: GameRomHorseSaddle_01
+  is_material: False
+  id_len: 15
+travelersshield:
+  actor: Weapon_Shield_035
+  is_material: False
+  id_len: 15
+travelersspear:
+  actor: Weapon_Spear_001
+  is_material: False
+  id_len: 14
+travelersswordtravelersword:
+  actor: Weapon_Sword_001
+  is_material: False
+  id_len: 14
+travelmedallion:
+  actor: Obj_WarpDLC
+  is_material: False
+  id_len: 15
+treebranch:
+  actor: Weapon_Sword_044
+  is_material: False
+  id_len: 10
+trousersofthehero:
+  actor: Armor_230_Lower
+  is_material: False
+  id_len: 17
+trousersofthesky:
+  actor: Armor_215_Lower
+  is_material: False
+  id_len: 16
+trousersofthewild:
+  actor: Armor_005_Lower
+  is_material: False
+  id_len: 17
+trousersofthewind:
+  actor: Armor_205_Lower
+  is_material: False
+  id_len: 17
+trousersoftime:
+  actor: Armor_200_Lower
+  is_material: False
+  id_len: 14
+trousersoftwilight:
+  actor: Armor_210_Lower
+  is_material: False
+  id_len: 18
+tunicofthehero:
+  actor: Armor_230_Upper
+  is_material: False
+  id_len: 14
+tunicofthesky:
+  actor: Armor_215_Upper
+  is_material: False
+  id_len: 13
+tunicofthewild:
+  actor: Armor_005_Upper
+  is_material: False
+  id_len: 14
+tunicofthewind:
+  actor: Armor_205_Upper
+  is_material: False
+  id_len: 14
+tunicoftime:
+  actor: Armor_200_Upper
+  is_material: False
+  id_len: 11
+tunicoftwilight:
+  actor: Armor_210_Upper
+  is_material: False
+  id_len: 15
+twilightbow:
+  actor: Weapon_Bow_072
+  is_material: False
+  id_len: 11
+urbosasfury:
+  actor: Obj_HeroSoul_Gerudo
+  is_material: False
+  id_len: 11
+urbosasfuryplus:
+  actor: Obj_DLC_HeroSoul_Gerudo
+  is_material: False
+  id_len: 15
+vahmedohdivinehelm:
+  actor: Armor_182_Head
+  is_material: False
+  id_len: 18
+vahnaborisdivinehelm:
+  actor: Armor_168_Head
+  is_material: False
+  id_len: 20
+vahrudaniadivinehelm:
+  actor: Armor_183_Head
+  is_material: False
+  id_len: 20
+vahrutadivinehelm:
+  actor: Armor_181_Head
+  is_material: False
+  id_len: 17
+vegetablecurry:
+  actor: Item_Cook_J_02
+  is_material: False
+  id_len: 14
+vegetableomelet:
+  actor: Item_Cook_N_03
+  is_material: False
+  id_len: 15
+vegetablerisotto:
+  actor: Item_Cook_G_13
+  is_material: False
+  id_len: 16
+veggiecreamsoup:
+  actor: Item_Cook_F_03
+  is_material: False
+  id_len: 15
+veggiericeballs:
+  actor: Item_Cook_G_03
+  is_material: False
+  id_len: 15
+vicioussickle:
+  actor: Weapon_Sword_053
+  is_material: False
+  id_len: 13
+voltfintrout:
+  actor: Item_FishGet_D
+  is_material: True
+  id_len: 12
+voltfruit:
+  actor: Item_Fruit_C
+  is_material: True
+  id_len: 9
+warmdarner:
+  actor: Animal_Insect_T
+  is_material: True
+  id_len: 10
+warmdoublet:
+  actor: Armor_044_Upper
+  is_material: False
+  id_len: 11
+warmmilk:
+  actor: Item_Cook_K_09
+  is_material: False
+  id_len: 8
+warmsafflina:
+  actor: Item_PlantGet_F
+  is_material: True
+  id_len: 12
+wellworntrousers:
+  actor: Armor_043_Lower
+  is_material: False
+  id_len: 16
+wheatbread:
+  actor: Item_Cook_M_01
+  is_material: False
+  id_len: 10
+whitechuchujelly:
+  actor: Item_Enemy_17
+  is_material: True
+  id_len: 16
+wildberry:
+  actor: Item_Fruit_B
+  is_material: True
+  id_len: 9
+wildberrycrepe:
+  actor: Item_Cook_I_11
+  is_material: False
+  id_len: 14
+windcleaver:
+  actor: Weapon_Lsword_074
+  is_material: False
+  id_len: 11
+winterwingbutterfly:
+  actor: Animal_Insect_N
+  is_material: True
+  id_len: 19
+wood:
+  actor: Obj_FireWoodBundle
+  is_material: True
+  id_len: 4
+woodcuttersaxe:
+  actor: Weapon_Lsword_032
+  is_material: False
+  id_len: 14
+woodenbow:
+  actor: Weapon_Bow_038
+  is_material: False
+  id_len: 9
+woodenmop:
+  actor: Weapon_Spear_036
+  is_material: False
+  id_len: 9
+woodenshield:
+  actor: Weapon_Shield_001
+  is_material: False
+  id_len: 12
+yellowchuchujelly:
+  actor: Item_Enemy_16
+  is_material: True
+  id_len: 17
+yellowlizalfostail:
+  actor: Item_Enemy_43
+  is_material: True
+  id_len: 18
+zantshelmet:
+  actor: Armor_178_Head
+  is_material: False
+  id_len: 11
+zapshroom:
+  actor: Item_Mushroom_H
+  is_material: True
+  id_len: 9
+zoraarmor:
+  actor: Armor_006_Upper
+  is_material: False
+  id_len: 9
+zoragreaves:
+  actor: Armor_006_Lower
+  is_material: False
+  id_len: 11
+zorahelm:
+  actor: Armor_006_Head
+  is_material: False
+  id_len: 8
+zoraspear:
+  actor: Weapon_Spear_027
+  is_material: False
+  id_len: 9
+zorasword:
+  actor: Weapon_Sword_027
+  is_material: False
+  id_len: 9

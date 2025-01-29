@@ -1,0 +1,8 @@
+[submodule "mono-dev"]
+	path = packages/mono-dev
+	url = https://github.com/Pistonight/mono-dev
+	branch = main
+[submodule "research-scripts"]
+	path = packages/research-scripts
+	url = https://github.com/Pistonight/botw-research-scripts
+	branch = main

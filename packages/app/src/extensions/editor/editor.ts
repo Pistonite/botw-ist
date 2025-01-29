@@ -1,26 +1,15 @@
 import { CodeEditorApi } from "@pistonite/intwc";
-import { setDark, setLocale } from "@pistonite/pure/pref";
-import { Extension } from "@pistonite/skybook-extension-api";
+import { FirstPartyExtensionAdapter } from "extensions/FirstPartyAdapter";
 import { WorkexPromise } from "workex";
 
 
-export class EditorExtension implements Extension {
+export class EditorExtension extends FirstPartyExtensionAdapter {
 
     constructor(
         private scriptFile: string,
-        private standalone: boolean, private editor: CodeEditorApi) {
-    }
-    public async onDarkModeChanged(dark: boolean): WorkexPromise<void> {
-        if (this.standalone) {
-            setDark(dark);
-        }
-        return {};
-    }
-    public async onLocaleChanged(locale: string): WorkexPromise<void> {
-        if (this.standalone) {
-            setLocale(locale);
-        }
-        return {};
+        standalone: boolean,
+        private editor: CodeEditorApi) {
+        super(standalone);
     }
     public async onScriptChanged(script: string): WorkexPromise<void> {
         if (!this.editor.getFiles().includes(this.scriptFile)) {

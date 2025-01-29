@@ -39,24 +39,34 @@ includes:
     aliases: [trv]
     dir: ./research/trace-view
 
+  research:
+    taskfile: ./packages/research-scripts
+    dir: ./packages/research-scripts
+    optional: true
+
+  localization:
+    taskfile: ./packages/localization
+    dir: ./packages/localization
+
 tasks:
-  npm-install:
-    aliases: [npmi]
-    desc: Wrapper for npm install to put everything in the right place
+  install-cargo-extra-tools:
+    aliases: [icets]
     cmds:
-      - task: monaco-editor:clean
-      - npm install
-      - task: fix-npm-installs
+      - cargo install magoo mdbook mdbook-admonish live-server cargo-watch wasm-pack
+      - cargo install --git https://github.com/Pistonite/workex
 
-  fix-npm-installs:
+  install:
+    desc: Install packages for local development
+    aliases: [i]
     cmds:
-      - mv node_modules/monaco-editor packages/monaco-editor-contrib/lib
-      - task: monaco-editor:patch
+      - magoo install
+      - task: install-workex
+      - task: research:build
+      - pnpm i
+      - task: localization:build
 
-
-
-  install-tools:
-    desc: Install tools
+  install-workex:
     cmds:
-      - cargo install mdbook live-server cargo-watch wasm-pack
+      - rm -rf packages/workex
+      - workex --lib-out-path packages/workex --lib-package --lib-only
 

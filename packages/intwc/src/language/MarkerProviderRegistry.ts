@@ -1,4 +1,4 @@
-import * as monaco from 'monaco-editor-contrib';
+import * as monaco from 'monaco-editor';
 import { serial } from '@pistonite/pure/sync';
 
 import type { MarkerResult, TextModel } from "./LanguageClient.ts";

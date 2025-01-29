@@ -32,7 +32,6 @@ impl SpriteSheet {
         self.canvases.push(canvas);
     }
 
-
     /// Add the metadata of the sprite sheet to the metadata object
     ///
     /// Returns how many sprites were added
@@ -54,19 +53,17 @@ impl SpriteSheet {
         Ok(())
     }
     /// Load an image file into sprite sheet canvas
-    fn load_image(
-        &mut self,
-        path: impl AsRef<Path>,
-        position: usize,
-    ) -> anyhow::Result<()> {
+    fn load_image(&mut self, path: impl AsRef<Path>, position: usize) -> anyhow::Result<()> {
         let path = path.as_ref();
-        let image = image::open(&path).context(format!("Could not open image: {}", path.display()))?;
+        let image =
+            image::open(path).context(format!("Could not open image: {}", path.display()))?;
         let (w, h) = image.dimensions();
         if w != h {
             Err(Error::NotSquare(path.display().to_string(), w, h))?;
         }
+        let use_padding = should_use_padding(path.to_string_lossy().as_ref());
         for canvas in &mut self.canvases {
-            canvas.load_image(position, &image)?;
+            canvas.load_image(position, &image, use_padding)?;
         }
 
         Ok(())
@@ -82,6 +79,28 @@ impl SpriteSheet {
         }
         Ok(sizes)
     }
+}
+
+fn should_use_padding(path: &str) -> bool {
+    // frames from animated images don't use the padding, to maintain
+    // the same size as the animated image
+    if path.contains("Obj_DungeonClearSeal") {
+        return false;
+    }
+    if path.contains("Obj_WarpDLC") {
+        return false;
+    }
+    if path.contains("Obj_DLC_HeroSeal") {
+        return false;
+    }
+    if path.contains("Obj_DLC_HeroSoul") {
+        return false;
+    }
+    if path.contains("Obj_HeroSoul") {
+        return false;
+    }
+
+    true
 }
 
 /// The data of a sprite sheet

@@ -38,6 +38,8 @@ pub enum Error {
     InvalidCookEffect(String),
     #[error("item has too many ingredients (max 5)")]
     TooManyIngredients,
+    #[error("armor star number must be between 0 and 4, got: {0}")]
+    InvalidArmorStarNum(i32),
 }
 
 impl Error {

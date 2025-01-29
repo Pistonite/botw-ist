@@ -1,7 +1,31 @@
 version: '3'
 
+includes:
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+
 tasks:
   push:
     desc: Push generated files. Requires gcloud access
     cmds:
       - gcloud storage cp src/generated/*.yaml gs://ist-private/i18n/generated
+
+  build:
+    desc: Generate the localization files
+    aliases: [b]
+    cmds:
+      - python scripts/generate.py
+      
+  check:
+    desc: Run Linter and Formatter
+    cmds:
+      - task: ecma:tsc-check
+      - task: ecma:eslint-check
+      - task: ecma:prettier-check
+
+  fix:
+    desc: Fix issues in code
+    cmds:
+      - task: ecma:eslint-fix
+      - task: ecma:prettier-fix

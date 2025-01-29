@@ -1,3 +1,6 @@
+# Generic messages
+generic.error.internal: "Internal error: {{error}}"
+
 
 button.close: Close
 button.popout: Pop-out to a new window
@@ -18,9 +21,20 @@ radio.extension_open_mode.popout: Pop-out to a new window
 field.extension.remember: Remember my choice
 field.extension.remember.desc: Only effective after clicking "Launch". You can always come back here and change your preference
 
+# Extension names
 extension.editor.name: Script Editor
-extension.editor.desc: Edit the script to modify the steps in the simulation
+extension.editor.desc: Modify the simulation steps
+extension.item-explorer.name: Item Explorer
+extension.item-explorer.desc: Test item search results
 extension.stub1.name: blaasldkfjasd asdgak sdgfa lskdhgal
+
+# Item Explorer Extension
+item_explorer.search_error.unknown_tag: Unknown language tag "{{tag}}"
+item_explorer.label.search_localized: Search in all languages
+item_explorer.label.search_placeholder: Search
+item_explorer.desc.search_tip_ident: Use `_` to connect multiple search terms, for example `royal_claymore`.
+item_explorer.desc.search_tip_localized: You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `"` around the search query to use this search mode.
+item_explorer.label.no_results: No results
 
 
 # Item Slot Tooltip

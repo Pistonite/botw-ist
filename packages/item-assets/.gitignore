@@ -1,4 +1,10 @@
+/src/generated/sprites
+/src/special
 /data
 /icons
+/target
+/dist
 *.webp
 *.png
+pnpm-lock.yaml
+package-lock.json
