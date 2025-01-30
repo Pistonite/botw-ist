@@ -1,9 +1,0 @@
-/target
-/venv
-/video
-*.webp
-*.mp4
-*.mkb
-*.exe
-*.lock
-*.png
