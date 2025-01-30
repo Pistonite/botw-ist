@@ -5,3 +5,4 @@ export * from "./data/ItemSlotInfo.ts";
 export * from "./data/ActorData.ts";
 export * from "./data/enums.ts";
 export * from "./data/ModifierInfo.ts";
+export * from "./images/index.ts";

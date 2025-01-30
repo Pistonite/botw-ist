@@ -2,7 +2,6 @@
 resolver = "2"
 members = [
     "packages/runtime",
-    "next/botw-ist-command", 
     "research/trace-view", 
     "packages/parser", 
     "packages/runtime-wasm", 

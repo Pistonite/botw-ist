@@ -1,7 +1,7 @@
 use teleparse::{tp, Span};
 
 use crate::error::{ErrorReport, Error};
-use crate::item_search::ItemResolver;
+use crate::search::QuotedItemResolver;
 use crate::syn;
 use crate::cir;
 
@@ -42,21 +42,19 @@ pub struct ItemMeta {
 }
 
 impl ItemMeta {
-    pub async fn parse<R: ItemResolver>(meta: &syn::ItemMeta, resolver: &R, errors: &mut Vec<ErrorReport>) -> ItemMeta {
+    pub async fn parse(meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) -> ItemMeta {
         let parser = Parser {
             meta: ItemMeta::default(),
-            resolver,
         };
         cir::parse_meta(meta, parser, errors).await
     }
 }
 
-struct Parser<'r, R: ItemResolver> {
+struct Parser {
     meta: ItemMeta,
-    resolver: &'r R,
 }
 
-impl<R: ItemResolver> MetaParser for Parser<'_, R> {
+impl MetaParser for Parser {
     type Output = ItemMeta;
 
     async fn visit_start(&mut self, _meta: &syn::ItemMeta, _errors: &mut Vec<ErrorReport>) {

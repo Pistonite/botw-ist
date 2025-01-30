@@ -1,5 +1,4 @@
-
-/** 
+/**
  * uking::ui::PouchItemType
  */
 export enum PouchItemType {
@@ -17,10 +16,14 @@ export enum PouchItemType {
 }
 
 export const isEquipment = (itemUse: PouchItemType): boolean => {
-    return itemUse === PouchItemType.Sword || itemUse === PouchItemType.Bow || itemUse === PouchItemType.Shield;
-}
+    return (
+        itemUse === PouchItemType.Sword ||
+        itemUse === PouchItemType.Bow ||
+        itemUse === PouchItemType.Shield
+    );
+};
 
-/** 
+/**
  * uking::ui::ItemUse
  */
 export enum ItemUse {
@@ -51,13 +54,13 @@ export enum CookEffect {
     Quietness = 12,
     // note the name we use internally for skybook is different
     // for decomp, it's MovingSpeed
-    AllSpeed = 13, 
+    AllSpeed = 13,
     GutsRecover = 14,
     ExGutsMaxUp = 15,
     Fireproof = 16,
 }
 
-/** 
+/**
  * Internal used special status enum
  *
  * These correspond to modifier icons
@@ -109,14 +112,18 @@ export const WeaponModifier = {
     RapidFire: 0x40,
     SurfMaster: 0x80,
     AddGuard: 0x100,
-    Yellow: 0x80000000
+    Yellow: 0x80000000,
 } as const;
 
-export type WeaponModifier = typeof WeaponModifier[keyof typeof WeaponModifier];
+export type WeaponModifier =
+    (typeof WeaponModifier)[keyof typeof WeaponModifier];
 
 /** Convert a WeaponModifier to a SpecialStatus */
-export const modifierToStatus = (modifier: WeaponModifier, yellow: boolean): SpecialStatus => {
-    switch(modifier) {
+export const modifierToStatus = (
+    modifier: WeaponModifier,
+    yellow: boolean,
+): SpecialStatus => {
+    switch (modifier) {
         case WeaponModifier.AddPower:
             return yellow ? SpecialStatus.AddPowerPlus : SpecialStatus.AddPower;
         case WeaponModifier.AddLife:
@@ -137,11 +144,11 @@ export const modifierToStatus = (modifier: WeaponModifier, yellow: boolean): Spe
             return SpecialStatus.SurfMaster;
     }
     return SpecialStatus.None;
-}
+};
 
 /** Convert a CookEffect to a SpecialStatus */
 export const effectToStatus = (effect: CookEffect): SpecialStatus => {
-    switch(effect) {
+    switch (effect) {
         case CookEffect.LifeMaxUp:
             return SpecialStatus.LifeMaxUp;
         case CookEffect.ResistHot:
@@ -166,4 +173,4 @@ export const effectToStatus = (effect: CookEffect): SpecialStatus => {
             return SpecialStatus.Fireproof;
     }
     return SpecialStatus.None;
-}
+};

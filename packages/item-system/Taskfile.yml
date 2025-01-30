@@ -1,0 +1,45 @@
+version: '3'
+
+includes:
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+
+tasks:
+  dev:
+    desc: Run test page dev server
+    cmds:
+      - task: ecma:vite-dev
+
+  build:
+    cmds:
+      - $(which mkdir) -p src/generated
+      - python scripts/generate.py
+      - task: ecma:prettier-fix
+
+  check:
+    cmds:
+      - task: ecma:tsc-check-build
+      - task: ecma:eslint-check
+      - task: ecma:prettier-check
+
+  fix:
+    cmds:
+      - task: ecma:eslint-fix
+      - task: ecma:prettier-fix
+
+  test:
+    cmds:
+      - task: ecma:vite-build
+
+  push-artifacts:
+    cmds:
+      - gcloud storage cp src/generated/*.ts gs://ist-private/artifacts/skybook-item-system/
+
+  pull-artifacts:
+    cmds:
+      - $(which mkdir) -p src/generated
+      - gcloud storage cp gs://ist-private/artifacts/skybook-item-system/*.ts src/generated
+      - gcloud storage cp gs://ist-private/images/SheikahBackground.png src/images
+
+

@@ -6,11 +6,6 @@ includes:
     internal: true
 
 tasks:
-  push:
-    desc: Push generated files. Requires gcloud access
-    cmds:
-      - gcloud storage cp src/generated/*.yaml gs://ist-private/i18n/generated
-
   build:
     desc: Generate the localization files
     aliases: [b]
@@ -29,3 +24,14 @@ tasks:
     cmds:
       - task: ecma:eslint-fix
       - task: ecma:prettier-fix
+
+  push-artifacts:
+    desc: Push generated files. Requires gcloud access
+    cmds:
+      - gcloud storage cp src/generated/* gs://ist-private/artifacts/skybook-localization/
+
+  pull-artifacts:
+    cmds:
+      - $(which mkdir) -p src/generated
+      - gcloud storage cp gs://ist-private/artifacts/skybook-localization/* src/generated
+

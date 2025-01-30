@@ -1,12 +1,15 @@
 packages:
   - packages/intwc
   - packages/item-assets
+  - packages/item-system
   - packages/localization
   - packages/mono-dev
   - packages/workex
 
 catalog:
   "@griffel/react": ^1.5.29
+  "@fluentui/react-components": ^9.58.2
+  "@fluentui/react-icons": ^2.0.271
   "@modyfi/vite-plugin-yaml": ^1.1.0
   "@pistonite/pure": ^0.0.18
   "@types/react": ^18.3.17
