@@ -1,7 +1,4 @@
 {
-    "extends": "../../config/tsconfig-tool.json",
-  "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-  },
-  "include": ["vite.config.ts"]
+    "extends": "../mono-dev/tsconfig/node.json",
+    "include": ["vite.config.ts"]
 }

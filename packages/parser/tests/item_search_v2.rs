@@ -1,5 +1,4 @@
-use skybook_runtime::item_search::search_item_by_ident;
-use skybook_parser::item_search::{ItemResolver, ResolvedItem};
+use skybook_parser::search::{ResolvedItem, search_item_by_ident};
 use skybook_parser::cir;
 
 /// Test items with hard coded names in V2

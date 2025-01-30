@@ -1,11 +1,14 @@
 import "./CalamitySans.css";
-import { makeStyles, mergeClasses } from "@griffel/react";
-import { Text } from "@fluentui/react-components";
+import { Text, makeStyles, mergeClasses } from "@fluentui/react-components";
 
-import { ActorSprite, ActorSpriteProps, ModifierSprite } from "skybook-item-assets";
+import {
+    ActorSprite,
+    type ActorSpriteProps,
+    ModifierSprite,
+} from "botw-item-assets";
 
 import { type ItemSlotInfo } from "./data/ItemSlotInfo.ts";
-import { Link24Regular, Link32Regular } from "@fluentui/react-icons";
+import { Link32Regular } from "@fluentui/react-icons";
 import { CookEffect, PouchItemType, SpecialStatus } from "./data/enums.ts";
 import { getModifierInfo } from "./data/ModifierInfo.ts";
 import { getActorParam } from "./data/ActorData.ts";
@@ -17,7 +20,7 @@ const useStyles = makeStyles({
         height: "72px",
         "& *": {
             pointerEvents: "none",
-        }
+        },
     },
     broken: {
         backgroundColor: "#660000",
@@ -53,7 +56,8 @@ const useStyles = makeStyles({
     },
     equipped: {
         backgroundColor: "#0088ff",
-        boxShadow: "inset -2px -2px 5px 0px #ffffffaa, inset 2px 2px 5px 0px #ffffffaa"
+        boxShadow:
+            "inset -2px -2px 5px 0px #ffffffaa, inset 2px 2px 5px 0px #ffffffaa",
     },
     layer: {
         // dimension of the slot, including spaces outside of the box
@@ -83,7 +87,7 @@ const useStyles = makeStyles({
     itemCountShadow: {
         // make it more readable over the image
         textShadow: "1px 1px #000000",
-        },
+    },
     overlayText: {
         color: "#eeeeee",
         backgroundColor: "#333b",
@@ -99,7 +103,7 @@ const useStyles = makeStyles({
             top: "1px",
             flex: "1",
             textAlign: "center",
-        }
+        },
     },
     durability: {
         padding: "0px 2px",
@@ -141,7 +145,7 @@ const useStyles = makeStyles({
             "50%": {
                 opacity: 0,
             },
-        }
+        },
     },
     modifierOverlay: {
         top: "2px",
@@ -159,15 +163,23 @@ const useStyles = makeStyles({
     },
     modifierTextBeginPad: {
         paddingLeft: "2px",
-    }
+    },
 });
 
 export type ItemSlotProps = {
     info: ItemSlotInfo;
-} & Pick<ActorSpriteProps, "cheap" | "blank" | "powered" | "deactive" | "disableAnimation">;
+} & Pick<
+    ActorSpriteProps,
+    "cheap" | "blank" | "powered" | "deactive" | "disableAnimation"
+>;
 
 /** The Item slot display */
-export const ItemSlot: React.FC<ItemSlotProps> = ({ info, cheap, deactive, disableAnimation }) => {
+export const ItemSlot: React.FC<ItemSlotProps> = ({
+    info,
+    cheap,
+    deactive,
+    disableAnimation,
+}) => {
     const styles = useStyles();
     const {
         actorName,
@@ -178,14 +190,17 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({ info, cheap, deactive, disab
         isInBrokenSlot,
         isInInventory,
         holdingCount,
-        promptEntangled
+        promptEntangled,
     } = info;
 
     disableAnimation = disableAnimation || cheap;
 
     const canStack = getActorParam(actorName, "canStack");
 
-    const isEquipment = itemType === PouchItemType.Sword || itemType === PouchItemType.Shield || itemType === PouchItemType.Bow;
+    const isEquipment =
+        itemType === PouchItemType.Sword ||
+        itemType === PouchItemType.Shield ||
+        itemType === PouchItemType.Bow;
     const badlyDamaged = isEquipment && value < 300;
 
     const modifier = getModifierInfo(info);
@@ -196,21 +211,34 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({ info, cheap, deactive, disab
                 className={mergeClasses(
                     styles.layer,
                     isInBrokenSlot && styles.broken,
-                    !isInInventory && styles.imageTranslucent
+                    !isInInventory && styles.imageTranslucent,
                 )}
                 // style={{ zIndex: 1 }}
             >
-                <div className={mergeClasses(styles.boxOutline, !isInBrokenSlot && styles.boxOutlineColor)} > </div>
-                <div className={mergeClasses(
-                    styles.boxInside, 
-                    !isInBrokenSlot && styles.boxInsideColor,
-                    holdingCount > 0 ? styles.boxInsideHighlightBorder : styles.boxInsideBorder,
-                    isEquipped && styles.equipped
-                )} > </div>
+                <div
+                    className={mergeClasses(
+                        styles.boxOutline,
+                        !isInBrokenSlot && styles.boxOutlineColor,
+                    )}
+                >
+                    {" "}
+                </div>
+                <div
+                    className={mergeClasses(
+                        styles.boxInside,
+                        !isInBrokenSlot && styles.boxInsideColor,
+                        holdingCount > 0
+                            ? styles.boxInsideHighlightBorder
+                            : styles.boxInsideBorder,
+                        isEquipped && styles.equipped,
+                    )}
+                >
+                    {" "}
+                </div>
             </div>
             <div className={mergeClasses(styles.layer, styles.image)}>
-                <ActorSprite 
-                    actor={actorName} 
+                <ActorSprite
+                    actor={actorName}
                     effect={CookEffect[modEffectId]}
                     cheap={cheap}
                     deactive={deactive}
@@ -218,79 +246,123 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({ info, cheap, deactive, disab
                     badlyDamaged={badlyDamaged}
                 />
             </div>
-            {holdingCount > 0 &&
+            {holdingCount > 0 && (
                 <div className={mergeClasses(styles.layer)}>
                     {/* Using DOM instead of Unicode, in case user is missing font */}
                     <div className={styles.holding}>
-                        {
-                            Array.from({ length: holdingCount }).map((_, i) => (
-                                <span key={i} className={styles.holdingElement}></span>
-                            ))
-                        }
+                        {Array.from({ length: holdingCount }).map((_, i) => (
+                            <span
+                                key={i}
+                                className={styles.holdingElement}
+                            ></span>
+                        ))}
                     </div>
                 </div>
-            }
-                {
-                    isEquipment && 
-            <div className={mergeClasses(styles.layer)}>
-                    <span className={mergeClasses(styles.overlayText, styles.durability)}>
+            )}
+            {isEquipment && (
+                <div className={mergeClasses(styles.layer)}>
+                    <span
+                        className={mergeClasses(
+                            styles.overlayText,
+                            styles.durability,
+                        )}
+                    >
                         <Text font="numeric">{formatDurability(value)}</Text>
-                            
                     </span>
-                    </div>
-                }
-                { 
+                </div>
+            )}
+            {
                 // > 1 for displaying corrupted stacks
-                !isEquipment && (canStack || value > 1) &&
-            <div className={mergeClasses(styles.layer)}>
-                            <span className={mergeClasses(styles.itemCount, !isEquipped && styles.itemCountShadow)}>x{value}</span>
-                    </div>
-                    
-                }
-            {
-                promptEntangled &&<> 
-            <div className={mergeClasses(styles.layer)}>
-                            <span className={mergeClasses(styles.entangle, !disableAnimation && styles.entangleAnimation)}>
-                            <Link32Regular />
-                        </span>
-                    </div>
-            <div className={mergeClasses(styles.layer)}>
-                            <span className={mergeClasses(styles.entangle, !disableAnimation && styles.entangleAnimation)}>
-                            <Link32Regular />
-                        </span>
-                    </div>
-            <div className={mergeClasses(styles.layer)}>
-                            <span className={mergeClasses(styles.entangle, !disableAnimation && styles.entangleAnimation)}>
-                            <Link32Regular />
-                        </span>
-                    </div>
-            <div className={mergeClasses(styles.layer)}>
-                            <span className={mergeClasses(styles.entangle, !disableAnimation && styles.entangleAnimation)}>
-                            <Link32Regular />
-                        </span>
-                    </div>
-                </>
-            }
-            {
-                (!!modifier.iconValue || modifier.status !== SpecialStatus.None) && (
-            <div className={mergeClasses(styles.layer)}>
-                            <span className={mergeClasses(styles.overlayText, styles.modifierOverlay )}>
-                            {
-                                modifier.status !== SpecialStatus.None && modifier.statusIcon && (
-                                    <div className={styles.modifier}>
-                                        <ModifierSprite status={modifier.statusIcon} />
-                                    </div>
-                                )
-                            }
-                            {
-                                modifier.iconValue && (
-                                <Text font="numeric" className={mergeClasses(styles.modifierText, (modifier.status === SpecialStatus.None || !modifier.statusIcon) && styles.modifierTextBeginPad)}>{modifier.iconValue}</Text>
-                                )
-                            }
+                !isEquipment && (canStack || value > 1) && (
+                    <div className={mergeClasses(styles.layer)}>
+                        <span
+                            className={mergeClasses(
+                                styles.itemCount,
+                                !isEquipped && styles.itemCountShadow,
+                            )}
+                        >
+                            x{value}
                         </span>
                     </div>
                 )
             }
+            {promptEntangled && (
+                <>
+                    <div className={mergeClasses(styles.layer)}>
+                        <span
+                            className={mergeClasses(
+                                styles.entangle,
+                                !disableAnimation && styles.entangleAnimation,
+                            )}
+                        >
+                            <Link32Regular />
+                        </span>
+                    </div>
+                    <div className={mergeClasses(styles.layer)}>
+                        <span
+                            className={mergeClasses(
+                                styles.entangle,
+                                !disableAnimation && styles.entangleAnimation,
+                            )}
+                        >
+                            <Link32Regular />
+                        </span>
+                    </div>
+                    <div className={mergeClasses(styles.layer)}>
+                        <span
+                            className={mergeClasses(
+                                styles.entangle,
+                                !disableAnimation && styles.entangleAnimation,
+                            )}
+                        >
+                            <Link32Regular />
+                        </span>
+                    </div>
+                    <div className={mergeClasses(styles.layer)}>
+                        <span
+                            className={mergeClasses(
+                                styles.entangle,
+                                !disableAnimation && styles.entangleAnimation,
+                            )}
+                        >
+                            <Link32Regular />
+                        </span>
+                    </div>
+                </>
+            )}
+            {(!!modifier.iconValue ||
+                modifier.status !== SpecialStatus.None) && (
+                <div className={mergeClasses(styles.layer)}>
+                    <span
+                        className={mergeClasses(
+                            styles.overlayText,
+                            styles.modifierOverlay,
+                        )}
+                    >
+                        {modifier.status !== SpecialStatus.None &&
+                            modifier.statusIcon && (
+                                <div className={styles.modifier}>
+                                    <ModifierSprite
+                                        status={modifier.statusIcon}
+                                    />
+                                </div>
+                            )}
+                        {modifier.iconValue && (
+                            <Text
+                                font="numeric"
+                                className={mergeClasses(
+                                    styles.modifierText,
+                                    (modifier.status === SpecialStatus.None ||
+                                        !modifier.statusIcon) &&
+                                        styles.modifierTextBeginPad,
+                                )}
+                            >
+                                {modifier.iconValue}
+                            </Text>
+                        )}
+                    </span>
+                </div>
+            )}
         </div>
     );
 };
@@ -301,4 +373,4 @@ const formatDurability = (value: number): string => {
         return durability.toString();
     }
     return durability.toFixed(2);
-}
+};

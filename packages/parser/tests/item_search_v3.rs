@@ -1,6 +1,4 @@
-
-use skybook_runtime::item_search::search_item_by_ident;
-use skybook_parser::item_search::{ItemResolver, ResolvedItem};
+use skybook_parser::search::{ResolvedItem, search_item_by_ident, COOK_EFFECT_NAMES};
 use skybook_parser::cir;
 
 /// Test items with priority in V3
@@ -65,7 +63,7 @@ fn test_item_search_v3_alias() {
 
 #[test]
 fn test_item_search_v3_effect() {
-    for (effect_name, effect_id) in skybook_runtime::cook_effect_name::COOK_EFFECT_NAMES {
+    for (effect_name, effect_id) in COOK_EFFECT_NAMES {
         assert_eq!(search_item_by_ident(&format!("{}_elixir", effect_name)), Some(ResolvedItem {
             actor: "Item_Cook_C_17".to_string(),
             meta: Some(cir::ItemMeta {

@@ -1350,6 +1350,7 @@ version = "0.0.0"
 dependencies = [
  "derive_more",
  "teleparse 0.0.5",
+ "textdistance",
  "thiserror 2.0.11",
 ]
 

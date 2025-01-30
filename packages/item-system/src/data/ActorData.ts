@@ -1,8 +1,8 @@
 import { SpecialStatus } from "./enums.ts";
-import { ActorDataMap } from "./ActorData.gen.ts";
+import { ActorDataMap } from "../generated/ActorDataMap.ts";
 
 export const DefaultActorData = {
-    /** 
+    /**
      * The profile user of the actor
      *
      * Note that if the actor doesn't have any of the other
@@ -10,7 +10,7 @@ export const DefaultActorData = {
      */
     profile: "Unknown" as string,
 
-    /** 
+    /**
      * Whether the item is stackable (has CanStack tag)
      */
     canStack: false as boolean,
@@ -71,7 +71,7 @@ export const DefaultActorData = {
      */
     bowArrowFirstSpeed: 4.5 as number,
 
-    /** 
+    /**
      * [GParam] (probably) terminal speed of the arrow (4 for ancient)
      * bowArrowAcceleration is -0.1 for all bows
      */
@@ -87,7 +87,7 @@ export const DefaultActorData = {
     /** [GParam] Misleading name. This is if the bow has default zoom */
     bowIsLongRange: false as boolean,
 
-    /** 
+    /**
      * [GParam] How fast the bow charges. Higher means
      * bow takes shorter from pressing ZR to ready to fire
      * - Higher for falcon, swallow, GEB, RGB
@@ -144,15 +144,21 @@ export const DefaultActorData = {
 export type ActorData = typeof DefaultActorData;
 
 /** Get the data property of the actor, or default if the actor doesn't have the property */
-export const getActorParam = <K extends keyof ActorData>(actor: string, key: K): ActorData[K] => {
+export const getActorParam = <K extends keyof ActorData>(
+    actor: string,
+    key: K,
+): ActorData[K] => {
     const data = ActorDataMap[actor];
     if (!data || !(key in data)) {
         return DefaultActorData[key];
     }
     return (data as ActorData)[key];
-}
+};
 
 /** Check if the actor has the property */
-export const hasActorParam = <K extends keyof ActorData>(actor: string, key: K): boolean => {
+export const hasActorParam = <K extends keyof ActorData>(
+    actor: string,
+    key: K,
+): boolean => {
     return key in ActorDataMap[actor];
-}
+};

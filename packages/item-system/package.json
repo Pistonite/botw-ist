@@ -1,23 +1,28 @@
 {
-  "name": "skybook-item-system",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-        "@fluentui/react-components": "*",
-    "@fluentui/react-icons": "*",
-    "react": "*",
-    "react-dom": "*",
-    "skybook-item-assets": "*",
-    "skybook-localization": "*"
-  },
-  "exports": {
-    ".": "./src/index.ts"
-  }
+    "name": "skybook-item-system",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "dependencies": {
+        "@fluentui/react-components": "catalog:",
+        "@fluentui/react-icons": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:",
+        "botw-item-assets": "workspace:*",
+        "skybook-localization": "workspace:*"
+    },
+    "devDependencies": {
+        "@modyfi/vite-plugin-yaml": "catalog:",
+        "@types/react": "catalog:",
+        "@types/react-dom": "catalog:",
+        "@vitejs/plugin-react": "catalog:",
+        "eslint": "catalog:",
+        "mono-dev": "workspace:*",
+        "react-dom": "catalog:",
+        "typescript": "catalog:",
+        "vite": "catalog:"
+    }
 }

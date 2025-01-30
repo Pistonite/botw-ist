@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
-import { FluentProvider, Switch, webDarkTheme, webLightTheme } from "@fluentui/react-components";
+import {
+    FluentProvider,
+    Switch,
+    webDarkTheme,
+    webLightTheme,
+} from "@fluentui/react-components";
 
 import { ItemTooltipProvider } from "../src/ItemTooltipProvider";
 import { ItemSlotInfo } from "../src/data/ItemSlotInfo.ts";
@@ -29,7 +34,7 @@ const DUMMY: ItemSlotInfo = {
     isInBrokenSlot: false,
     holdingCount: 0,
     promptEntangled: false,
-}
+};
 
 const TEST_ITEMS: ItemSlotInfo[] = [
     {
@@ -178,60 +183,90 @@ const App: React.FC = () => {
 
     const items = TEST_ITEMS.map((item, i) => {
         return {
-            ...item, isEquipped, isInBrokenSlot, listPosition: i,
+            ...item,
+            isEquipped,
+            isInBrokenSlot,
+            listPosition: i,
             promptEntangled: entangled,
-            ...(badlyDamaged ? { value: 200 } : {})
-        }
+            ...(badlyDamaged ? { value: 200 } : {}),
+        };
     });
 
-    return <>
-    <div>
-            <Switch checked={cheap} label="Cheap" onChange={(_, {checked}) => {
-                setCheap(!!checked);
-            }} />
-            <Switch checked={isEquipped} label="Equip" onChange={(_, {checked}) => {
-                setIsEquipped(!!checked);
-            }} />
-            <Switch checked={isInBrokenSlot} label="Broken" onChange={(_, {checked}) => {
-                setIsInBrokenSlot(!!checked);
-            }} />
-            <Switch checked={deactive} label="Deactive" onChange={(_, {checked}) => {
-                setDeactive(!!checked);
-            }} />
-            <Switch checked={badlyDamaged} label="Badly Damaged" onChange={(_, {checked}) => {
-                setBadlyDamaged(!!checked);
-            }} />
-            <Switch checked={animation} label="Animation" onChange={(_, {checked}) => {
-                setAnimation(!!checked);
-            }} />
-            <Switch checked={entangled} label="Entangled" onChange={(_, {checked}) => {
-                setEntangled(!!checked);
-            }} />
-    </div>
-        <div style={{display: "flex", flexWrap: "wrap"}}>
-            {
-                items.map((item, index) => {
+    return (
+        <>
+            <div>
+                <Switch
+                    checked={cheap}
+                    label="Cheap"
+                    onChange={(_, { checked }) => {
+                        setCheap(!!checked);
+                    }}
+                />
+                <Switch
+                    checked={isEquipped}
+                    label="Equip"
+                    onChange={(_, { checked }) => {
+                        setIsEquipped(!!checked);
+                    }}
+                />
+                <Switch
+                    checked={isInBrokenSlot}
+                    label="Broken"
+                    onChange={(_, { checked }) => {
+                        setIsInBrokenSlot(!!checked);
+                    }}
+                />
+                <Switch
+                    checked={deactive}
+                    label="Deactive"
+                    onChange={(_, { checked }) => {
+                        setDeactive(!!checked);
+                    }}
+                />
+                <Switch
+                    checked={badlyDamaged}
+                    label="Badly Damaged"
+                    onChange={(_, { checked }) => {
+                        setBadlyDamaged(!!checked);
+                    }}
+                />
+                <Switch
+                    checked={animation}
+                    label="Animation"
+                    onChange={(_, { checked }) => {
+                        setAnimation(!!checked);
+                    }}
+                />
+                <Switch
+                    checked={entangled}
+                    label="Entangled"
+                    onChange={(_, { checked }) => {
+                        setEntangled(!!checked);
+                    }}
+                />
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
+                {items.map((item, index) => {
                     return (
                         <ItemTooltip info={item} key={index}>
-                        <ItemSlot 
-                            info={item}
-                            cheap={cheap}
-                            deactive={deactive}
-                            disableAnimation={!animation}
-                        />
+                            <ItemSlot
+                                info={item}
+                                cheap={cheap}
+                                deactive={deactive}
+                                disableAnimation={!animation}
+                            />
                         </ItemTooltip>
                     );
-                })
-            }
-        </div>
-    </>;
+                })}
+            </div>
+        </>
+    );
 };
 
-void (async function main(){
+void (async function main() {
     await initI18n();
 
-
-    const root = document.getElementById('root');
+    const root = document.getElementById("root");
     if (root) {
         createRoot(root).render(
             <React.StrictMode>
@@ -240,9 +275,7 @@ void (async function main(){
                         <App />
                     </ItemTooltipProvider>
                 </FluentProvider>
-            </React.StrictMode>
+            </React.StrictMode>,
         );
     }
-
-})()
-
+})();

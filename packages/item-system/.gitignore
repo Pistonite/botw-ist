@@ -1,1 +1,5 @@
 /node_modules
+/src/generated
+/dist
+*.png
+*.webp

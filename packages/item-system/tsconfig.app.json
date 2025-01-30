@@ -1,7 +1,7 @@
 {
-  "extends": "../../config/tsconfig-vite-app.json",
-  "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-  },
-  "include": ["src", "testpage"]
+    "extends": "../mono-dev/tsconfig/vite.json",
+    "compilerOptions": {
+        "types": ["vite/client", "@modyfi/vite-plugin-yaml/modules"]
+    },
+    "include": ["src", "test"]
 }

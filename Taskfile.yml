@@ -11,10 +11,6 @@ includes:
     taskfile: ./packages/app
     dir: ./packages/app
 
-  monaco-editor:
-    taskfile: ./packages/monaco-editor-contrib
-    dir: ./packages/monaco-editor-contrib
-
   manual:
     aliases: [man]
     taskfile: ./manual
@@ -39,14 +35,31 @@ includes:
     aliases: [trv]
     dir: ./research/trace-view
 
+  # new ones below
+
   research:
     taskfile: ./packages/research-scripts
     dir: ./packages/research-scripts
-    optional: true
 
   localization:
     taskfile: ./packages/localization
     dir: ./packages/localization
+    internal: true
+
+  item-assets:
+    taskfile: ./packages/item-assets
+    dir: ./packages/item-assets
+    internal: true
+
+  item-system:
+    taskfile: ./packages/item-system
+    dir: ./packages/item-system
+    internal: true
+
+  parser:
+    taskfile: ./packages/parser
+    dir: ./packages/parser
+    internal: true
 
 tasks:
   install-cargo-extra-tools:
@@ -60,13 +73,32 @@ tasks:
     aliases: [i]
     cmds:
       - magoo install
-      - task: install-workex
-      - task: research:build
-      - pnpm i
-      - task: localization:build
+      - task: install-deps
+      - pnpm install
 
-  install-workex:
+  install-ci:
+    cmds:
+      - task: install-deps
+      - pnpm install --frozen-lockfile
+
+  install-deps:
+    deps:
+      - localization:pull-artifacts
+      - item-assets:pull-artifacts
+      - item-system:pull-artifacts
+      - parser:pull-artifacts
     cmds:
       - rm -rf packages/workex
       - workex --lib-out-path packages/workex --lib-package --lib-only
+
+  check:
+    cmds:
+      - task: localization:check
+      - task: item-assets:check
+      - task: item-system:check
+      - task: parser:check
+
+  test:
+    cmds:
+      - task: parser:test
 
