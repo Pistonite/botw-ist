@@ -21,6 +21,9 @@ catalogs:
     '@pistonite/pure':
       specifier: ^0.0.18
       version: 0.0.18
+    '@pistonite/workex':
+      specifier: ^0.0.5
+      version: 0.0.5
     '@types/react':
       specifier: ^18.3.17
       version: 18.3.18
@@ -54,6 +57,22 @@ patchedDependencies:
 importers:
 
   .: {}
+
+  packages/extension-api:
+    dependencies:
+      '@pistonite/pure':
+        specifier: 'catalog:'
+        version: 0.0.18
+      '@pistonite/workex':
+        specifier: 'catalog:'
+        version: 0.0.5
+    devDependencies:
+      mono-dev:
+        specifier: workspace:*
+        version: link:../mono-dev
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
 
   packages/intwc:
     dependencies:
@@ -220,8 +239,6 @@ importers:
       typescript-eslint:
         specifier: ^8.19.1
         version: 8.21.0(eslint@9.18.0)(typescript@5.7.3)
-
-  packages/workex: {}
 
 packages:
 
@@ -1075,6 +1092,9 @@ packages:
 
   '@pistonite/pure@0.0.18':
     resolution: {integrity: sha512-1oqnyD5TLWfjK0eh61uiKi+q6gTCr6fjbsEEY9Vp3OuUyo24GvJDAC+SkGS3Ul10z881QaGRY0UiDTUS6IeDTQ==}
+
+  '@pistonite/workex@0.0.5':
+    resolution: {integrity: sha512-eYeIPFaFaVJs/Vxx9bx7CcwFUHNwxSWd+P82vN6/18hhdIBCcO89LboV+4mfh6iOee0LhopuU9Bz+/a+R5MPVQ==}
 
   '@prettier/cli@0.6.0':
     resolution: {integrity: sha512-kPQDTB+FPjvj23SmBH4T9uGCxMVS1cyJSY9dbOHGOC29nL9gR5gwZ4b4uMj4QRB0uE5K9c7avbAo+gvUbcZb4Q==}
@@ -3892,6 +3912,10 @@ snapshots:
       '@types/file-saver': 2.0.7
       denque: 2.1.0
       file-saver: 2.0.5
+
+  '@pistonite/workex@0.0.5':
+    dependencies:
+      '@pistonite/pure': 0.0.18
 
   '@prettier/cli@0.6.0(prettier@3.4.2)':
     dependencies:

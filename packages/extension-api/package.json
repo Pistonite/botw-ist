@@ -2,10 +2,10 @@
     "name": "@pistonite/skybook-extension-api",
     "private": true,
     "version": "0.0.1",
-    "description": "TODO",
-    "homepage": "TODO",
+    "description": "Extension API for Skybook, the BOTW IST Simulator",
+    "homepage": "https://github.com/Pistonite/botw-ist",
     "bugs": {
-        "url": "TODO"
+        "url": "https://github.com/Pistonite/botw-ist/issues"
     },
     "license": "MIT",
     "author": "Pistonight <pistonknight@outlook.com>",
@@ -14,15 +14,20 @@
     ],
     "exports": {
         ".": "./src/index.ts",
-        "./workex": "./src/workex/index.ts",
         "./sides/*": "./src/sides/*.ts",
         "./interfaces/*": "./src/interfaces/*.ts"
     },
-    "todo.repository": {
+    "repository": {
         "type": "git",
-        "url": "https://github.com"
+        "url": "git+https://github.com/Pistonite/botw-ist.git",
+        "directory": "packages/extension-api"
     },
     "dependencies": {
-        "@pistonite/pure": "*"
+        "@pistonite/pure": "catalog:",
+        "@pistonite/workex": "catalog:"
+    },
+    "devDependencies": {
+        "mono-dev": "workspace:*",
+        "typescript": "catalog:"
     }
 }

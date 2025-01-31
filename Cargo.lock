@@ -167,7 +167,7 @@ dependencies = [
  "enumset",
  "rand_xoshiro",
  "sha2",
- "thiserror 2.0.11",
+ "thiserror",
 ]
 
 [[package]]
@@ -182,7 +182,7 @@ dependencies = [
  "deku",
  "derive_more",
  "flate2",
- "thiserror 2.0.11",
+ "thiserror",
 ]
 
 [[package]]
@@ -202,16 +202,6 @@ dependencies = [
  "deku",
  "enum-map",
  "serde",
-]
-
-[[package]]
-name = "botw-ist-command"
-version = "0.0.0"
-dependencies = [
- "logos 0.14.2",
- "phf",
- "teleparse 0.0.4",
- "thiserror 1.0.64",
 ]
 
 [[package]]
@@ -784,35 +774,11 @@ checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
 
 [[package]]
 name = "logos"
-version = "0.14.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1c6b6e02facda28ca5fb8dbe4b152496ba3b1bd5a4b40bb2b1b2d8ad74e0f39b"
-dependencies = [
- "logos-derive 0.14.2",
-]
-
-[[package]]
-name = "logos"
 version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ab6f536c1af4c7cc81edf73da1f8029896e7e1e16a219ef09b184e76a296f3db"
 dependencies = [
- "logos-derive 0.15.0",
-]
-
-[[package]]
-name = "logos-codegen"
-version = "0.14.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b32eb6b5f26efacd015b000bfc562186472cd9b34bdba3f6b264e2a052676d10"
-dependencies = [
- "beef",
- "fnv",
- "lazy_static",
- "proc-macro2",
- "quote",
- "regex-syntax",
- "syn 2.0.92",
+ "logos-derive",
 ]
 
 [[package]]
@@ -833,20 +799,11 @@ dependencies = [
 
 [[package]]
 name = "logos-derive"
-version = "0.14.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e5d0c5463c911ef55624739fc353238b4e310f0144be1f875dc42fec6bfd5ec"
-dependencies = [
- "logos-codegen 0.14.2",
-]
-
-[[package]]
-name = "logos-derive"
 version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ebfe8e1a19049ddbfccbd14ac834b215e11b85b90bab0c2dba7c7b92fb5d5cba"
 dependencies = [
- "logos-codegen 0.15.0",
+ "logos-codegen",
 ]
 
 [[package]]
@@ -1028,48 +985,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
-name = "phf"
-version = "0.11.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ade2d8b8f33c7333b51bcf0428d37e217e9f32192ae4772156f65063b8ce03dc"
-dependencies = [
- "phf_macros",
- "phf_shared",
-]
-
-[[package]]
-name = "phf_generator"
-version = "0.11.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48e4cc64c2ad9ebe670cb8fd69dd50ae301650392e81c05f9bfcb2d5bdbc24b0"
-dependencies = [
- "phf_shared",
- "rand",
-]
-
-[[package]]
-name = "phf_macros"
-version = "0.11.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3444646e286606587e49f3bcf1679b8cef1dc2c5ecc29ddacaffc305180d464b"
-dependencies = [
- "phf_generator",
- "phf_shared",
- "proc-macro2",
- "quote",
- "syn 2.0.92",
-]
-
-[[package]]
-name = "phf_shared"
-version = "0.11.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90fcb95eef784c2ac79119d1dd819e162b5da872ce6f3c3abe1e8ca1c082f72b"
-dependencies = [
- "siphasher",
-]
-
-[[package]]
 name = "pin-project-lite"
 version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1123,15 +1038,6 @@ name = "radium"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc33ff2d4973d518d823d61aa239014831e521c75da58e3df4840d3f47749d09"
-
-[[package]]
-name = "rand"
-version = "0.8.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34af8d1a0e25924bc5b7c43c079c942339d8f0a8b57c39049bef581b46327404"
-dependencies = [
- "rand_core",
-]
 
 [[package]]
 name = "rand_core"
@@ -1339,19 +1245,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "siphasher"
-version = "0.3.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38b58827f4464d87d377d175e90bf58eb00fd8716ff0a62f80356b5e61555d0d"
-
-[[package]]
 name = "skybook-parser"
 version = "0.0.0"
 dependencies = [
  "derive_more",
- "teleparse 0.0.5",
+ "teleparse",
  "textdistance",
- "thiserror 2.0.11",
+ "thiserror",
 ]
 
 [[package]]
@@ -1370,7 +1270,7 @@ version = "0.0.0"
 dependencies = [
  "skybook-parser",
  "skybook-runtime",
- "teleparse 0.0.5",
+ "teleparse",
  "wasm-bindgen",
 ]
 
@@ -1387,7 +1287,7 @@ dependencies = [
  "ratatui",
  "serde",
  "serde_json",
- "thiserror 2.0.11",
+ "thiserror",
 ]
 
 [[package]]
@@ -1460,21 +1360,6 @@ checksum = "55937e1799185b12863d447f42597ed69d9928686b8d88a1df17376a097d8369"
 
 [[package]]
 name = "teleparse"
-version = "0.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80436d09591939259a48971e0958fa1f448ccfc52cd866aa6e3a2ac22f453a7a"
-dependencies = [
- "deref-derive",
- "derivative",
- "itertools",
- "logos 0.14.2",
- "num",
- "teleparse-macros 0.0.4",
- "thiserror 1.0.64",
-]
-
-[[package]]
-name = "teleparse"
 version = "0.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e9f9b8e0b35f32a2a8764f1ec9ca73cf7e5f891b1fd202732d7aef44cd754046"
@@ -1482,23 +1367,10 @@ dependencies = [
  "deref-derive",
  "derivative",
  "itertools",
- "logos 0.15.0",
+ "logos",
  "num",
- "teleparse-macros 0.0.5",
- "thiserror 2.0.11",
-]
-
-[[package]]
-name = "teleparse-macros"
-version = "0.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "806cb698e390e3ab8f6748c38431cc72c6484e70e80480d78e2d564fc9e99a47"
-dependencies = [
- "proc-macro-crate",
- "proc-macro2",
- "quote",
- "regex",
- "syn 2.0.92",
+ "teleparse-macros",
+ "thiserror",
 ]
 
 [[package]]
@@ -1522,31 +1394,11 @@ checksum = "aa672c55ab69f787dbc9126cc387dbe57fdd595f585e4524cf89018fa44ab819"
 
 [[package]]
 name = "thiserror"
-version = "1.0.64"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d50af8abc119fb8bb6dbabcfa89656f46f84aa0ac7688088608076ad2b459a84"
-dependencies = [
- "thiserror-impl 1.0.64",
-]
-
-[[package]]
-name = "thiserror"
 version = "2.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d452f284b73e6d76dd36758a0c8684b1d5be31f92b89d07fd5822175732206fc"
 dependencies = [
- "thiserror-impl 2.0.11",
-]
-
-[[package]]
-name = "thiserror-impl"
-version = "1.0.64"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08904e7672f5eb876eaaf87e0ce17857500934f4981c4a0ab2b4aa98baac7fc3"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.92",
+ "thiserror-impl",
 ]
 
 [[package]]

@@ -1,7 +1,7 @@
-import { Result } from "@pistonite/pure/result";
-import { WorkexPromise } from "workex";
+import type { Result } from "@pistonite/pure/result";
+import type { WorkexPromise } from "@pistonite/workex";
 
-/** 
+/**
  * API implemented by the extension and called by the application.
  *
  * @workex:send app
@@ -25,11 +25,10 @@ export interface Extension {
      */
     onLocaleChanged(locale: string): WorkexPromise<void>;
 
-    /** 
+    /**
      * Notify the extension that the script has changed.
      */
-    onScriptChanged(script: string):  WorkexPromise<void>;
-
+    onScriptChanged(script: string): WorkexPromise<void>;
 }
 
 /**
@@ -39,20 +38,23 @@ export interface Extension {
  * @workex:recv app
  */
 export interface Application {
-
     /** Get the current simulator script. */
     getScript(): WorkexPromise<string>;
 
     /** Set the simulator script. */
     setScript(script: string): WorkexPromise<void>;
 
-    /** 
+    /**
      * Resolve an item from a query
      *
      * If localized is true, treat the query as a localized item search query (i.e. "[tag:]words"),
      * otherwise, treat it as an identifier search query.
      */
-    resolveItem(query: string, localized: boolean, limit: number): WorkexPromise<Result<{ actor: string, cookEffect: number}[], string>>;
+    resolveItem(
+        query: string,
+        localized: boolean,
+        limit: number,
+    ): WorkexPromise<Result<{ actor: string; cookEffect: number }[], string>>;
 
     // /** Get the semantic tokens for the current script */
     // provideSemanticTokens(start: number, end: number): WorkexPromise<Uint32Array>;
