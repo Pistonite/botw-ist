@@ -1,6 +1,23 @@
 version: '3'
 
+includes:
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+
 tasks:
   build:
+    vars:
+      VERSION:
+        sh: jq '.version' package.json | tr -d '"'
     cmds:
-      - workex -p skyb-0.0.1 src/protocol.ts --lib-path workex --no-lib
+      - workex -p skyb-{{.VERSION}} src/protocol.ts
+
+  check:
+    cmds:
+      - task: ecma:tsc-check
+      - task: ecma:prettier-check
+
+  fix:
+    cmds:
+      - task: ecma:prettier-fix

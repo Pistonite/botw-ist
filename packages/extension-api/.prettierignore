@@ -1,0 +1,4 @@
+*.yaml
+*.yml
+/src/interfaces
+/src/sides

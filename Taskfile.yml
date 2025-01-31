@@ -87,9 +87,6 @@ tasks:
       - item-assets:pull-artifacts
       - item-system:pull-artifacts
       - parser:pull-artifacts
-    cmds:
-      - rm -rf packages/workex
-      - workex --lib-out-path packages/workex --lib-package --lib-only
 
   check:
     cmds:
