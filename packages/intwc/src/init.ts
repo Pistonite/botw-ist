@@ -17,22 +17,22 @@ export function initCodeEditor({preferences, language, editor}: InitOption) {
     window.MonacoEnvironment = {
         getWorker: async (_, label: string) => {
             if (typescript && (label === "typescript" || label === "javascript" || label==="tsx" || label==="jsx")) {
-                const TypeScriptWorker = (await import('monaco-editor-contrib/esm/vs/language/typescript/ts.worker.js?worker')).default;
+                const TypeScriptWorker = (await import('monaco-editor/esm/vs/language/typescript/ts.worker.js?worker')).default;
                 return new TypeScriptWorker();
             }
             if (json && (label === "json"|| label === "jsonc")) {
-                    const JsonWorker = (await import('monaco-editor-contrib/esm/vs/language/json/json.worker.js?worker')).default;
+                    const JsonWorker = (await import('monaco-editor/esm/vs/language/json/json.worker.js?worker')).default;
                     return new JsonWorker();
             }
             if (css && (label === "css"|| label === "scss" || label === "sass" || label === "less")) {
-                const CssWorker = (await import('monaco-editor-contrib/esm/vs/language/css/css.worker.js?worker')).default;
+                const CssWorker = (await import('monaco-editor/esm/vs/language/css/css.worker.js?worker')).default;
                 return new CssWorker();
             }
             if (html && (label === "html"|| label === "htm")) {
-                const HtmlWorker = (await import('monaco-editor-contrib/esm/vs/language/html/html.worker.js?worker')).default;
+                const HtmlWorker = (await import('monaco-editor/esm/vs/language/html/html.worker.js?worker')).default;
                 return new HtmlWorker();
             }
-            const EditorWorker = (await import('monaco-editor-contrib/esm/vs/editor/editor.worker.js?worker')).default;
+            const EditorWorker = (await import('monaco-editor/esm/vs/editor/editor.worker.js?worker')).default;
             return new EditorWorker();
         }
     };

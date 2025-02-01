@@ -59,6 +59,8 @@ async function boot() {
     const queryClient = new QueryClient();
 
     const runtime = await initRuntime();
+    const res = await runtime.setScript("foo");
+    console.log(res);
 
     const app = new ApplicationApi();
 

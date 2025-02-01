@@ -1,38 +1,38 @@
 {
-  "name": "botw-ist",
+  "name": "skybook-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
   "dependencies": {
-    "@fluentui/react-components": "^9.56.8",
-    "@fluentui/react-icons": "^2.0.270",
-    "@pistonite/intwc": "0.0.1",
-    "@pistonite/pure": "^0.0.18",
-    "@pistonite/pure-react": "^0.0.5",
-    "@pistonite/skybook-extension-api": "*",
+    "@fluentui/react-components": "catalog:",
+    "@fluentui/react-icons": "catalog:",
+        "@griffel/react": "catalog:",
+    "@pistonite/intwc": "workspace:*",
+    "@pistonite/pure": "catalog:",
+    "@pistonite/pure-react": "catalog:",
+    "@pistonite/skybook-extension-api": "workspace:*",
+    "@pistonite/workex": "catalog:",
     "@tanstack/react-query": "^5.62.11",
     "mobile-device-detect": "^0.4.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "reselect": "^5.1.1",
-    "skybook-item-system": "*",
-    "skybook-localization": "*",
-    "skybook-runtime-wasm": "*",
-    "workex": "*",
+    "skybook-item-system": "workspace:*",
+    "skybook-localization": "workspace:*",
+    "skybook-runtime-api": "workspace:*",
+    "skybook-runtime-wasm": "workspace:*",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
-    "vite-plugin-top-level-await": "^1.4.4",
-    "vite-plugin-wasm": "^3.3.0"
-  },
-  "prettier": {
-    "tabWidth": 4,
-    "endOfLine": "auto"
+    "@modyfi/vite-plugin-yaml": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "eslint": "catalog:",
+    "mono-dev": "workspace:*",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-proxy-serve-static": "^1.0.1",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

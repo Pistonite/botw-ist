@@ -1,5 +1,5 @@
 {
-    "extends": "../../config/tsconfig-vite-app.json",
+    "extends": "../mono-dev/tsconfig/vite.json",
   "compilerOptions": {
         "baseUrl": "src",
   },

@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor-contrib";
+import * as monaco from "monaco-editor";
 import { language } from "./language.ts";
 import { DocumentRangeSemanticTokensProviderAdapter } from "./semantic.ts";
 

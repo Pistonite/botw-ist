@@ -1,4 +1,4 @@
-import { WorkexPromise } from "workex";
+import { WorkexPromise } from "@pistonite/workex";
 
 /**
  * API provided by the simulator runtime

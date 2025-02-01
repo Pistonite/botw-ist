@@ -7,7 +7,7 @@ import {
     MenuTrigger,
 } from "@fluentui/react-components";
 import { Globe20Regular } from "@fluentui/react-icons";
-import { getLocalizedLanguageName } from "@pistonite/pure/pref";
+import { getLocalizedLanguageName, getSupportedLocales } from "@pistonite/pure/pref";
 import i18next from "i18next";
 import { useLocale } from "@pistonite/pure-react";
 

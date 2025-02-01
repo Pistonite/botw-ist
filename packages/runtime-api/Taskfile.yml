@@ -1,0 +1,20 @@
+version: '3'
+
+includes:
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+
+tasks:
+  build:
+    cmds:
+      - workex -p runtime src/protocol.ts --no-gitignore
+
+  check:
+    cmds:
+      - task: ecma:tsc-check
+      - task: ecma:prettier-check
+
+  fix:
+    cmds:
+      - task: ecma:prettier-fix

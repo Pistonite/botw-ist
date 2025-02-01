@@ -10,7 +10,6 @@
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons": "catalog:",
         "react": "catalog:",
-        "react-dom": "catalog:",
         "botw-item-assets": "workspace:*",
         "skybook-localization": "workspace:*"
     },
