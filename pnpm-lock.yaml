@@ -21,6 +21,9 @@ catalogs:
     '@pistonite/pure':
       specifier: ^0.0.18
       version: 0.0.18
+    '@pistonite/pure-react':
+      specifier: ^0.0.5
+      version: 0.0.5
     '@pistonite/workex':
       specifier: ^0.0.5
       version: 0.0.5
@@ -57,6 +60,97 @@ patchedDependencies:
 importers:
 
   .: {}
+
+  packages/app:
+    dependencies:
+      '@fluentui/react-components':
+        specifier: 'catalog:'
+        version: 9.58.2(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(scheduler@0.23.2)
+      '@fluentui/react-icons':
+        specifier: 'catalog:'
+        version: 2.0.271(react@18.3.1)
+      '@griffel/react':
+        specifier: 'catalog:'
+        version: 1.5.29(react@18.3.1)
+      '@pistonite/intwc':
+        specifier: workspace:*
+        version: link:../intwc
+      '@pistonite/pure':
+        specifier: 'catalog:'
+        version: 0.0.18
+      '@pistonite/pure-react':
+        specifier: 'catalog:'
+        version: 0.0.5(react@18.3.1)
+      '@pistonite/skybook-extension-api':
+        specifier: workspace:*
+        version: link:../extension-api
+      '@pistonite/workex':
+        specifier: 'catalog:'
+        version: 0.0.5
+      '@tanstack/react-query':
+        specifier: ^5.62.11
+        version: 5.66.0(react@18.3.1)
+      botw-item-assets:
+        specifier: workspace:*
+        version: link:../item-assets
+      mobile-device-detect:
+        specifier: ^0.4.3
+        version: 0.4.3
+      react:
+        specifier: 'catalog:'
+        version: 18.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 18.3.1(react@18.3.1)
+      reselect:
+        specifier: ^5.1.1
+        version: 5.1.1
+      skybook-item-system:
+        specifier: workspace:*
+        version: link:../item-system
+      skybook-localization:
+        specifier: workspace:*
+        version: link:../localization
+      skybook-runtime-api:
+        specifier: workspace:*
+        version: link:../runtime-api
+      skybook-runtime-wasm:
+        specifier: workspace:*
+        version: link:../runtime-wasm
+      zustand:
+        specifier: ^5.0.2
+        version: 5.0.3(@types/react@18.3.18)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1))
+    devDependencies:
+      '@modyfi/vite-plugin-yaml':
+        specifier: 'catalog:'
+        version: 1.1.0(rollup@4.31.0)(vite@5.4.14)
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 18.3.5(@types/react@18.3.18)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 4.3.4(vite@5.4.14)
+      eslint:
+        specifier: 'catalog:'
+        version: 9.18.0
+      mono-dev:
+        specifier: workspace:*
+        version: link:../mono-dev
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+      vite:
+        specifier: 'catalog:'
+        version: 5.4.14
+      vite-proxy-serve-static:
+        specifier: ^1.0.1
+        version: 1.0.1
+      vite-tsconfig-paths:
+        specifier: ^5.1.4
+        version: 5.1.4(typescript@5.7.3)(vite@5.4.14)
 
   packages/extension-api:
     dependencies:
@@ -144,9 +238,6 @@ importers:
       react:
         specifier: 'catalog:'
         version: 18.3.1
-      react-dom:
-        specifier: 'catalog:'
-        version: 18.3.1(react@18.3.1)
       skybook-localization:
         specifier: workspace:*
         version: link:../localization
@@ -169,6 +260,9 @@ importers:
       mono-dev:
         specifier: workspace:*
         version: link:../mono-dev
+      react-dom:
+        specifier: 'catalog:'
+        version: 18.3.1(react@18.3.1)
       typescript:
         specifier: 'catalog:'
         version: 5.7.3
@@ -181,6 +275,9 @@ importers:
       '@pistonite/pure':
         specifier: 'catalog:'
         version: 0.0.18
+      '@pistonite/pure-i18next':
+        specifier: ^0.0.1
+        version: 0.0.1(react@18.3.1)(typescript@5.7.3)
       fuse.js:
         specifier: ^7.0.0
         version: 7.0.0
@@ -239,6 +336,84 @@ importers:
       typescript-eslint:
         specifier: ^8.19.1
         version: 8.21.0(eslint@9.18.0)(typescript@5.7.3)
+
+  packages/runtime-api:
+    dependencies:
+      '@pistonite/pure':
+        specifier: 'catalog:'
+        version: 0.0.18
+      '@pistonite/workex':
+        specifier: 'catalog:'
+        version: 0.0.5
+    devDependencies:
+      mono-dev:
+        specifier: workspace:*
+        version: link:../mono-dev
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
+  packages/runtime-wasm:
+    dependencies:
+      '@pistonite/workex':
+        specifier: 'catalog:'
+        version: 0.0.5
+      skybook-runtime-api:
+        specifier: workspace:*
+        version: link:../runtime-api
+    devDependencies:
+      eslint:
+        specifier: 'catalog:'
+        version: 9.18.0
+      mono-dev:
+        specifier: workspace:*
+        version: link:../mono-dev
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
+  packages/shared-controls:
+    dependencies:
+      '@fluentui/react-components':
+        specifier: 'catalog:'
+        version: 9.58.2(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(scheduler@0.23.2)
+      '@fluentui/react-icons':
+        specifier: 'catalog:'
+        version: 2.0.271(react@18.3.1)
+      '@pistonite/pure':
+        specifier: 'catalog:'
+        version: 0.0.18
+      '@pistonite/pure-react':
+        specifier: 'catalog:'
+        version: 0.0.5(react@18.3.1)
+      react:
+        specifier: 'catalog:'
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 18.3.5(@types/react@18.3.18)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 4.3.4(vite@5.4.14)
+      eslint:
+        specifier: 'catalog:'
+        version: 9.18.0
+      mono-dev:
+        specifier: workspace:*
+        version: link:../mono-dev
+      react-dom:
+        specifier: 'catalog:'
+        version: 18.3.1(react@18.3.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+      vite:
+        specifier: 'catalog:'
+        version: 5.4.14
 
 packages:
 
@@ -1090,8 +1265,24 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
+  '@pistonite/pure-i18next@0.0.1':
+    resolution: {integrity: sha512-+UdrP0HT1fZJcutOeW+Wg4NE5aIHkN2uYWULP9IWke3prWDlbQMT7REV8/mqPEdia5vYie/YvkC54a4/Ng8TKA==}
+    peerDependencies:
+      react: ^18
+
+  '@pistonite/pure-react@0.0.5':
+    resolution: {integrity: sha512-MzWsQzTczPY2BkOWFdCz49LSvljfwyCFbenQzOVHzvlCbmeTuwY2nzUMxMSJh1cvBv5aVQM9ih1erio//HM3Kg==}
+    peerDependencies:
+      react: ^18
+
+  '@pistonite/pure@0.0.14':
+    resolution: {integrity: sha512-p0GOg8wQ1ZUwsQGwNoS/rL1/nlzVsorBgPP4p+GFhMUHzC+wJbnzR76c+ucyATjTLBTsvBZCBdkXrdRqrdT3Ig==}
+
   '@pistonite/pure@0.0.18':
     resolution: {integrity: sha512-1oqnyD5TLWfjK0eh61uiKi+q6gTCr6fjbsEEY9Vp3OuUyo24GvJDAC+SkGS3Ul10z881QaGRY0UiDTUS6IeDTQ==}
+
+  '@pistonite/pure@0.0.19':
+    resolution: {integrity: sha512-1pj9SpuKgKaAx1VgmjOuZginBREOcoUBxDmPi7bwZTSKxEm5dRd4PtmEukB7qVRncoK3PPCRZXPvarAOrrLYIA==}
 
   '@pistonite/workex@0.0.5':
     resolution: {integrity: sha512-eYeIPFaFaVJs/Vxx9bx7CcwFUHNwxSWd+P82vN6/18hhdIBCcO89LboV+4mfh6iOee0LhopuU9Bz+/a+R5MPVQ==}
@@ -1208,6 +1399,14 @@ packages:
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
+
+  '@tanstack/query-core@5.66.0':
+    resolution: {integrity: sha512-J+JeBtthiKxrpzUu7rfIPDzhscXF2p5zE/hVdrqkACBP8Yu0M96mwJ5m/8cPPYQE9aRNvXztXHlNwIh4FEeMZw==}
+
+  '@tanstack/react-query@5.66.0':
+    resolution: {integrity: sha512-z3sYixFQJe8hndFnXgWu7C79ctL+pI0KAelYyW+khaNJ1m22lWrhJU2QrsTcRKMuVPtoZvfBYrTStIdKo+x0Xw==}
+    peerDependencies:
+      react: ^18 || ^19
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -1710,6 +1909,9 @@ packages:
     resolution: {integrity: sha512-DpLKbNU4WylpxJykQujfCcwYWiV/Jhm50Goo0wrVILAv5jOr9d+H+UR3PhSCD2rCCEIg0uc+G+muBTwD54JhDQ==}
     engines: {node: '>= 0.4'}
 
+  globrex@0.1.2:
+    resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
+
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
     engines: {node: '>= 0.4'}
@@ -1979,6 +2181,9 @@ packages:
     resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
     engines: {node: '>=16 || 14 >=14.17'}
 
+  mobile-device-detect@0.4.3:
+    resolution: {integrity: sha512-SN9EBE9SoJgkb83kuUVoIp3R9OGYE5dYEnLEz2oLooh0DzgtQ72BJmpNGqrgFvmfE4iLR2CaVJ3RjUcStheVZg==}
+
   monaco-editor@0.52.2:
     resolution: {integrity: sha512-GEQWEZmfkOGLdd3XK8ryrfWz3AIP8YymVXiPHEdewrUq7mh0qrKrfHLNCXcbB6sTnMLnOZ3ztSiKcciFUkIJwQ==}
 
@@ -2146,6 +2351,9 @@ packages:
   regexp.prototype.flags@1.5.4:
     resolution: {integrity: sha512-dYqgNSZbDwkaJ2ceRd9ojCGjBq+mOm9LmtXnAnEGyHhN/5R7iDW2TRw3h+o/jCFxus3P2LfWIIiwowAjANm7IA==}
     engines: {node: '>= 0.4'}
+
+  reselect@5.1.1:
+    resolution: {integrity: sha512-K/BG6eIky/SBpzfHZv/dd+9JBFiS4SWV7FIujVyJRux6e45+73RaUHXLmIR1f7WOMaQ0U1km6qwklRQxpJJY0w==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -2333,6 +2541,16 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
+  tsconfck@3.1.4:
+    resolution: {integrity: sha512-kdqWFGVJqe+KGYvlSO9NIaWn9jT1Ny4oKVzAJsKii5eoE9snzTJzL4+MMVOMn+fikWGFmKEylcXL710V/kIPJQ==}
+    engines: {node: ^18 || >=20}
+    hasBin: true
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
@@ -2393,6 +2611,17 @@ packages:
     resolution: {integrity: sha512-9WXSPC5fMv61vaupRkCKCxsPxBocVnwakBEkMIHHpkTTg6icbJtg6jzgtLDm4bl3cSHAca52rYWih0k4K3PfHw==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  vite-proxy-serve-static@1.0.1:
+    resolution: {integrity: sha512-nDjnbQg5rICitaNk/axElaqOtg9WALF2uZxGfpH79KnfLg4QBrardRj9mjuISbMREPOb0UqGo4KusQh/4mcXcA==}
+
+  vite-tsconfig-paths@5.1.4:
+    resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
+    peerDependencies:
+      vite: '*'
+    peerDependenciesMeta:
+      vite:
+        optional: true
 
   vite@5.4.14:
     resolution: {integrity: sha512-EK5cY7Q1D8JNhSaPKVK4pwBFvaTmZxEnoKXLG/U9gmdDcihQGNzFlgIvaxezFR4glP1LsuiedwMBqCXH3wZccA==}
@@ -2487,6 +2716,24 @@ packages:
 
   zeptomatch@2.0.0:
     resolution: {integrity: sha512-xjsIq0tpg7dNtJcbl0tNf4d4It4UK1ujSYJZXvGygse3GNgX44v/b2FRbM8sCGZS2qh4o983u8+1CBNNF+106g==}
+
+  zustand@5.0.3:
+    resolution: {integrity: sha512-14fwWQtU3pH4dE0dOpdMiWjddcH+QzKIgk1cl8epwSE7yag43k/AD/m4L6+K7DytAOr9gGBe3/EXj9g7cdostg==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
 
 snapshots:
 
@@ -3907,9 +4154,36 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.18.0
 
+  '@pistonite/pure-i18next@0.0.1(react@18.3.1)(typescript@5.7.3)':
+    dependencies:
+      '@pistonite/pure': 0.0.19
+      i18next: 24.2.2(typescript@5.7.3)
+      react: 18.3.1
+      react-i18next: 15.4.0(i18next@24.2.2(typescript@5.7.3))(react@18.3.1)
+    transitivePeerDependencies:
+      - react-dom
+      - react-native
+      - typescript
+
+  '@pistonite/pure-react@0.0.5(react@18.3.1)':
+    dependencies:
+      '@pistonite/pure': 0.0.14
+      react: 18.3.1
+
+  '@pistonite/pure@0.0.14':
+    dependencies:
+      '@types/file-saver': 2.0.7
+      denque: 2.1.0
+      file-saver: 2.0.5
+
   '@pistonite/pure@0.0.18':
     dependencies:
       '@types/file-saver': 2.0.7
+      denque: 2.1.0
+      file-saver: 2.0.5
+
+  '@pistonite/pure@0.0.19':
+    dependencies:
       denque: 2.1.0
       file-saver: 2.0.5
 
@@ -4012,6 +4286,13 @@ snapshots:
   '@swc/helpers@0.5.15':
     dependencies:
       tslib: 2.8.1
+
+  '@tanstack/query-core@5.66.0': {}
+
+  '@tanstack/react-query@5.66.0(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-core': 5.66.0
+      react: 18.3.1
 
   '@types/babel__core@7.20.5':
     dependencies:
@@ -4714,6 +4995,8 @@ snapshots:
       define-properties: 1.2.1
       gopd: 1.2.0
 
+  globrex@0.1.2: {}
+
   gopd@1.2.0: {}
 
   grammex@3.1.3: {}
@@ -4967,6 +5250,8 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
+  mobile-device-detect@0.4.3: {}
+
   monaco-editor@0.52.2(patch_hash=mz2vl2xu24im2z37rpphxwwkkq): {}
 
   ms@2.1.3: {}
@@ -5130,6 +5415,8 @@ snapshots:
       get-proto: 1.0.1
       gopd: 1.2.0
       set-function-name: 2.0.2
+
+  reselect@5.1.1: {}
 
   resolve-from@4.0.0: {}
 
@@ -5397,6 +5684,10 @@ snapshots:
     dependencies:
       typescript: 5.7.3
 
+  tsconfck@3.1.4(typescript@5.7.3):
+    optionalDependencies:
+      typescript: 5.7.3
+
   tslib@2.8.1: {}
 
   type-check@0.4.0:
@@ -5475,6 +5766,19 @@ snapshots:
   use-sync-external-store@1.4.0(react@18.3.1):
     dependencies:
       react: 18.3.1
+
+  vite-proxy-serve-static@1.0.1: {}
+
+  vite-tsconfig-paths@5.1.4(typescript@5.7.3)(vite@5.4.14):
+    dependencies:
+      debug: 4.4.0
+      globrex: 0.1.2
+      tsconfck: 3.1.4(typescript@5.7.3)
+    optionalDependencies:
+      vite: 5.4.14
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   vite@5.4.14:
     dependencies:
@@ -5560,3 +5864,9 @@ snapshots:
   zeptomatch@2.0.0:
     dependencies:
       grammex: 3.1.3
+
+  zustand@5.0.3(@types/react@18.3.18)(react@18.3.1)(use-sync-external-store@1.4.0(react@18.3.1)):
+    optionalDependencies:
+      '@types/react': 18.3.18
+      react: 18.3.1
+      use-sync-external-store: 1.4.0(react@18.3.1)

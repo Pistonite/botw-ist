@@ -1,4 +1,4 @@
 {
-    "extends": "../../config/tsconfig-tool.json",
+    "extends": "../mono-dev/tsconfig/node.json",
   "include": ["vite.config.ts"]
 }

@@ -15,7 +15,9 @@
     "exports": {
         ".": "./src/index.ts",
         "./sides/*": "./src/sides/*.ts",
-        "./interfaces/*": "./src/interfaces/*.ts"
+        "./sides/*.ts": "./src/sides/*.ts",
+        "./interfaces/*": "./src/interfaces/*.ts",
+        "./interfaces/*.ts": "./src/interfaces/*.ts"
     },
     "repository": {
         "type": "git",

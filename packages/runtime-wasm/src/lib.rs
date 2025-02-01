@@ -4,7 +4,7 @@ use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub fn parse_script(input: String) -> String {
-    todo!()
+    return format!("hello {}", input);
     // match CommandInit::parse(&input) {
     //     Ok(Some(cmd)) => format!("{:?}", cmd),
     //     Ok(None) => "no command found".to_string(),

@@ -1,0 +1,21 @@
+{
+    "name": "skybook-runtime-api",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts",
+        "./sides/*": "./src/sides/*.ts",
+        "./sides/*.ts": "./src/sides/*.ts",
+        "./interfaces/*": "./src/interfaces/*.ts",
+        "./interfaces/*.ts": "./src/interfaces/*.ts"
+    },
+    "dependencies": {
+        "@pistonite/pure": "catalog:",
+        "@pistonite/workex": "catalog:"
+    },
+    "devDependencies": {
+        "mono-dev": "workspace:*",
+        "typescript": "catalog:"
+    }
+}

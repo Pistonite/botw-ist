@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor-contrib";
+import * as monaco from "monaco-editor";
 
 const legend: monaco.languages.SemanticTokensLegend  = {
     tokenTypes: [

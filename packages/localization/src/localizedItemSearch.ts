@@ -3,7 +3,7 @@ import { once } from "@pistonite/pure/sync";
 import Fuse from "fuse.js";
 import { LRUCache } from "lru-cache";
 
-import { translateUI } from "./backend.ts";
+import { translateUI } from "./translate.ts";
 
 /** Localized item search result */
 export type SearchResult = {

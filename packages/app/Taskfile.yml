@@ -4,7 +4,7 @@ tasks:
   dev:
     desc: Run frontend app in watch mode
     cmds:
-      - npx vite --host
+      - pnpm exec vite --host
 
   runtime-workex:
     cmds:
