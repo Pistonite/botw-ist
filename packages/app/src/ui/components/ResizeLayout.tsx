@@ -1,16 +1,5 @@
-import {
-    Divider,
-    makeStyles,
-    mergeClasses,
-    tokens,
-} from "@fluentui/react-components";
-import {
-    Children,
-    useDeferredValue,
-    useRef,
-    useState,
-    type PropsWithChildren,
-} from "react";
+import { makeStyles, mergeClasses } from "@fluentui/react-components";
+import { Children, useRef, useState, type PropsWithChildren } from "react";
 
 export type ResizeLayoutProps = {
     /** If the resize layout should be horizontal or vertical */

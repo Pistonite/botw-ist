@@ -7,15 +7,20 @@ import { useSetItemTooltip } from "./ItemTooltipContext.ts";
 export const ItemTooltip: React.FC<
     PropsWithChildren<ItemTooltipContentProps>
 > = ({ info, children }) => {
-    const setTooltip = useSetItemTooltip();
+    const { setItemTooltip } = useSetItemTooltip();
 
     return (
         <span
             onMouseMove={(e) => {
-                setTooltip(e.clientX, e.clientY, info);
+                setItemTooltip(
+                    e.clientX,
+                    e.clientY,
+                    info,
+                    e.target as HTMLElement,
+                );
             }}
             onMouseLeave={() => {
-                setTooltip(-1, -1, undefined);
+                setItemTooltip(-1, -1, undefined, undefined);
             }}
         >
             {children}

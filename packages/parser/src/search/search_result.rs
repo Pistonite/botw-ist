@@ -13,7 +13,7 @@ impl std::fmt::Debug for SearchResult<'_, '_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("SearchResult")
             // .field("search_input", &self.search_input)
-            .field("result", &self.result.search_str)
+            .field("result", &self.result.extended_item_name)
             .finish()
     }
 }

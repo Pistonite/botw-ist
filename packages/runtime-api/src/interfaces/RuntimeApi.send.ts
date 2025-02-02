@@ -3,7 +3,7 @@
  */
 import type { RuntimeApi } from "../protocol.ts";
 
-import { WorkexPromise, WorkexClient, type WorkexClientOptions } from "@pistonite/workex";
+import { type WorkexPromise, WorkexClient, type WorkexClientOptions } from "@pistonite/workex";
 
 /**
  * API provided by the simulator runtime
@@ -19,11 +19,21 @@ export class RuntimeApiClient implements RuntimeApi {
     }
 
     /**
+     * Resolve an item identifier search query to a list of items, ordered by score (best first).
+     * Returns an empty list if no items are found.
+     * 
+     * cook effect is the game's representation, or 0 for no effect
+     */
+    public resolveItemIdent( query: string ): WorkexPromise<{ actor: string; cookEffect: number }[]> {
+        return this.client.post<{ actor: string; cookEffect: number }[]>(16 /* RuntimeApi.resolveItemIdent */, [ query ]);
+    }
+
+    /**
      * Set the script for the runtime, which starts executing
      * the script immediately
      */
     public setScript( script: string ): WorkexPromise<string> {
-        return this.client.post<string>(16 /* RuntimeApi.setScript */, [ script ]);
+        return this.client.post<string>(17 /* RuntimeApi.setScript */, [ script ]);
     }
 
     /**

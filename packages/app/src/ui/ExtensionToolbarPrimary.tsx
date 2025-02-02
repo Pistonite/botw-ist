@@ -3,7 +3,6 @@ import {
     useCurrentPrimaryExtensionId,
     useExtensionStore,
     usePrimaryExtensionIds,
-    useSecondaryExtensionIds,
 } from "application/extensionStore";
 import { ExtensionToolbar } from "./components/ExtensionToolbar.tsx";
 import { ExtensionOpenButton } from "./ExtensionOpenButton.tsx";

@@ -1,21 +1,13 @@
 import { makeStyles } from "@fluentui/react-components";
-import { SideToolbar } from "./SideToolbar";
+
 import { useIsShowingExtensionPanel } from "./application/extensionStore";
 import { ExtensionPanel } from "ui/ExtensionPanel";
 import { useNarrow } from "pure-contrib/narrow";
 import { ResizeLayout } from "ui/components/ResizeLayout";
 import { useUIStore } from "ui/store";
 import { isLessProductive } from "pure-contrib/platform";
-import { useEffect } from "react";
 
-// const testOnce = () => {
-// }
-
-// const doFoo = () => {
-//     console.log('foo3')
-// }
-//
-// setInterval(doFoo, 1000) 2
+import { Header } from "./Header.tsx";
 
 const useStyles = makeStyles({
     root: {
@@ -56,7 +48,7 @@ function App() {
             touch={isLessProductive}
         >
             <div className={styles.side}>
-                <SideToolbar />
+                <Header />
                 {showExtensionPanel && <ExtensionPanel />}
             </div>
             <main style={{ background: "green", height: "100%" }}>main</main>

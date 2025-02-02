@@ -1,6 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { openExtensionPopup } from "./extensionManager";
 import { createSelector } from "reselect";
 import { isLessProductive } from "pure-contrib/platform";
 import { useNarrow } from "pure-contrib/narrow";

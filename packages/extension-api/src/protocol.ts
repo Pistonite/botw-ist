@@ -49,6 +49,8 @@ export interface Application {
      *
      * If localized is true, treat the query as a localized item search query (i.e. "[tag:]words"),
      * otherwise, treat it as an identifier search query.
+     *
+     * Cook effect is the game's representation, or 0 for no effect
      */
     resolveItem(
         query: string,

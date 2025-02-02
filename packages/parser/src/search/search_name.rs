@@ -4,7 +4,7 @@ use super::SearchResult;
 #[derive(Debug, PartialEq, Eq)]
 pub struct SearchName {
     /// The string used to search for this item
-    pub search_str: &'static str,
+    pub extended_item_name: &'static str,
     /// The actor name for the item
     pub actor: &'static str,
     /// If the item is a material
@@ -16,7 +16,7 @@ pub struct SearchName {
 impl SearchName {
     pub const fn new(search_str: &'static str, actor: &'static str, is_material: bool, id_len: u8) -> Self {
         Self {
-            search_str,
+            extended_item_name: search_str,
             actor,
             is_material,
             id_len,
@@ -24,7 +24,7 @@ impl SearchName {
     }
 
     pub fn is_arrow(&self) -> bool {
-        self.search_str.contains("arrow")
+        self.extended_item_name.contains("arrow")
     }
 
     pub fn get_type_for_compare(&self) -> u8 {
@@ -38,7 +38,7 @@ impl SearchName {
     }
 
     pub fn get_priority(&self) -> u8 {
-        match self.search_str {
+        match self.extended_item_name {
             "treebranch" | "torch"
             | "soupladle" | "lizaltriboomerang"
             | "woodcuttersaxe" | "lightscaletrident"
@@ -50,7 +50,7 @@ impl SearchName {
     }
 
     pub fn id(&self) -> &str {
-        &self.search_str[..self.id_len as usize]
+        &self.extended_item_name[..self.id_len as usize]
     }
 
     pub fn to_result<'a, 'b>(&'b self, search_input: &'a str) -> SearchResult<'a, 'b> {

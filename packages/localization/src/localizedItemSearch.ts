@@ -173,68 +173,69 @@ const SearchFns = {
     de: once({
         fn: async () => {
             const s = (await import("./generated/de-DE.yaml")).default;
-            return createSearchFnFromTranslation("de", [s]);
+            return createSearchFnFromTranslation("de", 0.3, [s]);
         },
     }),
     en: once({
         fn: async () => {
             const s = (await import("./generated/en-US.yaml")).default;
-            return createSearchFnFromTranslation("en", [s]);
+            return createSearchFnFromTranslation("en", 0.3, [s]);
         },
     }),
     es: once({
         fn: async () => {
             const s = (await import("./generated/es-ES.yaml")).default;
-            return createSearchFnFromTranslation("es", [s]);
+            return createSearchFnFromTranslation("es", 0.3, [s]);
         },
     }),
     fr: once({
         fn: async () => {
             const s = (await import("./generated/fr-FR.yaml")).default;
-            return createSearchFnFromTranslation("fr", [s]);
+            return createSearchFnFromTranslation("fr", 0.3, [s]);
         },
     }),
     it: once({
         fn: async () => {
             const s = (await import("./generated/it-IT.yaml")).default;
-            return createSearchFnFromTranslation("it", [s]);
+            return createSearchFnFromTranslation("it", 0.3, [s]);
         },
     }),
     ja: once({
         fn: async () => {
             const s = (await import("./generated/ja-JP.yaml")).default;
-            return createSearchFnFromTranslation("ja", [s]);
+            return createSearchFnFromTranslation("ja", 0.3, [s]);
         },
     }),
     ko: once({
         fn: async () => {
             const s = (await import("./generated/ko-KR.yaml")).default;
-            return createSearchFnFromTranslation("ko", [s]);
+            return createSearchFnFromTranslation("ko", 0.3, [s]);
         },
     }),
     nl: once({
         fn: async () => {
             const s = (await import("./generated/nl-NL.yaml")).default;
-            return createSearchFnFromTranslation("nl", [s]);
+            return createSearchFnFromTranslation("nl", 0.3, [s]);
         },
     }),
     ru: once({
         fn: async () => {
             const s = (await import("./generated/ru-RU.yaml")).default;
-            return createSearchFnFromTranslation("ru", [s]);
+            return createSearchFnFromTranslation("ru", 0.3, [s]);
         },
     }),
     zh: once({
         fn: async () => {
             const s1 = (await import("./generated/zh-CN.yaml")).default;
             const s2 = (await import("./generated/zh-TW.yaml")).default;
-            return createSearchFnFromTranslation("zh", [s1, s2]);
+            return createSearchFnFromTranslation("zh", 0.35, [s1, s2]);
         },
     }),
 } as const;
 
 function createSearchFnFromTranslation(
     tag: string,
+    threshold: number,
     translation: Record<string, string>[],
 ) {
     console.log(`initializing localized searcher for "${tag}"`);
@@ -331,7 +332,7 @@ function createSearchFnFromTranslation(
     console.log(`initialized ${entries.length} search entries for "${tag}"`);
 
     const fuse = new Fuse(entries, {
-        threshold: 0.3,
+        threshold,
         keys: ["names"],
         shouldSort: false, // we sort manually
         isCaseSensitive: false,

@@ -6,10 +6,19 @@ export type SetItemTooltipFn = (
     x: number,
     y: number,
     info: ItemSlotInfo | undefined,
+    target: HTMLElement | undefined,
 ) => void;
 
-export const ItemTooltipContext = createContext<SetItemTooltipFn>(() => {
-    /* empty */
+export type ItemTooltipContextState = {
+    setItemTooltip: SetItemTooltipFn;
+    tooltipTarget: HTMLElement | undefined;
+};
+
+export const ItemTooltipContext = createContext<ItemTooltipContextState>({
+    setItemTooltip: () => {
+        /* empty */
+    },
+    tooltipTarget: undefined,
 });
 
 export const useSetItemTooltip = () => {
