@@ -1,46 +1,32 @@
 version: '3'
 
+includes:
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+
 tasks:
   dev:
     desc: Run frontend app in watch mode
     cmds:
-      - pnpm exec vite --host
+      - task: ecma:vite-dev
 
-  runtime-workex:
-    cmds:
-      - workex -p runtime src/runtime/protocol.ts --lib-path workex --no-lib
-
-  build:
-    desc: Build production bundle
-    cmds:
-      - npx tsc
-      - npx vite build
+  # build:
+  #   desc: Build production bundle
+  #   cmds:
+  #     - npx tsc
+  #     - npx vite build
 
   check:
     desc: Check for errors
     cmds:
-      - task: eslint
-        vars:
-          ESLINT_ARGS: ""
-      - task: prettier
-        vars:
-          PRETTIER_ARGS: --check
+      - task: ecma:tsc-check-build
+      - task: ecma:eslint-check
+      - task: ecma:prettier-check
 
   fix:
     desc: Fix errors
     cmds:
-      - task: prettier
-        vars:
-          PRETTIER_ARGS: --write
-      - task: eslint
-        vars: 
-          ESLINT_ARGS: --fix
+      - task: ecma:eslint-fix
+      - task: ecma:prettier-fix
 
-  eslint:
-    cmds:
-      - npx eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --cache {{.ESLINT_ARGS}}
-
-  prettier:
-    cmds:
-      - npx prettier "./**/*.{mts,ts,tsx,json,js,jsx,cjs,mjs,css,html}" {{.PRETTIER_ARGS}}
-  

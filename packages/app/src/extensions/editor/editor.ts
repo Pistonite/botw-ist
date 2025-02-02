@@ -1,14 +1,14 @@
-import { CodeEditorApi } from "@pistonite/intwc";
-import { FirstPartyExtensionAdapter } from "extensions/FirstPartyAdapter";
-import { WorkexPromise } from "workex";
+import type { CodeEditorApi } from "@pistonite/intwc";
+import type { WorkexPromise } from "@pistonite/workex";
 
+import { FirstPartyExtensionAdapter } from "extensions/FirstPartyAdapter";
 
 export class EditorExtension extends FirstPartyExtensionAdapter {
-
     constructor(
         private scriptFile: string,
         standalone: boolean,
-        private editor: CodeEditorApi) {
+        private editor: CodeEditorApi,
+    ) {
         super(standalone);
     }
     public async onScriptChanged(script: string): WorkexPromise<void> {

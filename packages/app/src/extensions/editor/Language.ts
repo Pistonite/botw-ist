@@ -1,4 +1,8 @@
-import { initCodeEditor, LanguageConfiguration, LanguageTokenizer } from "@pistonite/intwc";
+import type {
+    LanguageConfiguration,
+    LanguageTokenizer,
+} from "@pistonite/intwc";
+import { initCodeEditor } from "@pistonite/intwc";
 
 let initialized = false;
 
@@ -15,11 +19,11 @@ export const initLanguage = () => {
                     getExtensions: () => [".skyb"],
                     getTokenizer: () => language,
                     getConfiguration: () => configuration,
-                }
-            ]
-        }
+                },
+            ],
+        },
     });
-}
+};
 
 export const configuration: LanguageConfiguration = {
     comments: {
@@ -32,22 +36,20 @@ export const configuration: LanguageConfiguration = {
         ["(", ")"],
         ["<", ">"],
     ],
-    	autoClosingPairs: [
-		{ open: '{', close: '}' },
-		{ open: '[', close: ']' },
-		{ open: '(', close: ')' },
-		{ open: '<', close: '>' },
-		{ open: '"', close: '"', notIn: ['string'] },
-	],
-}
+    autoClosingPairs: [
+        { open: "{", close: "}" },
+        { open: "[", close: "]" },
+        { open: "(", close: ")" },
+        { open: "<", close: ">" },
+        { open: '"', close: '"', notIn: ["string"] },
+    ],
+};
 
 export const language: LanguageTokenizer = {
-    defaultToken: 'invalid',
-    tokenPostfix: '.skyb',
+    defaultToken: "invalid",
+    tokenPostfix: ".skyb",
 
-    commands: [
-        "init"
-    ],
+    commands: ["init"],
     supercommands: [],
     annotations: [],
     keywords: [],
@@ -67,13 +69,16 @@ export const language: LanguageTokenizer = {
             [/!@word/, "function.command.super"],
             [/:@word/, "keyword.annotation"],
             [/(true|false)/, "constant.language.boolean"],
-            [/@word/, {
-                cases: {
-                    "@keywords": "keyword",
-                    "@commands": "function.command",
-                    "@default": "string.item",
-                }
-            }]
-        ]
-    }
-}
+            [
+                /@word/,
+                {
+                    cases: {
+                        "@keywords": "keyword",
+                        "@commands": "function.command",
+                        "@default": "string.item",
+                    },
+                },
+            ],
+        ],
+    },
+};

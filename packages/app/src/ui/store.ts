@@ -11,14 +11,20 @@ export type UIStore = {
     setPrimaryExtensionWindowPercentage: (percentage: number) => void;
 };
 
-export const useUIStore = create<UIStore>()(persist((set) => ({
-    extensionPanelPercentage: 40,
-    setExtensionPanelPercentage: (percentage) => set({ extensionPanelPercentage: percentage }),
+export const useUIStore = create<UIStore>()(
+    persist(
+        (set) => ({
+            extensionPanelPercentage: 40,
+            setExtensionPanelPercentage: (percentage) =>
+                set({ extensionPanelPercentage: percentage }),
 
-    primaryExtensionWindowPercentage: 50,
-    setPrimaryExtensionWindowPercentage: (percentage) => set({ primaryExtensionWindowPercentage: percentage }),
-
-}),{
-        name: "Skybook.UI",
-        version: 1,
-    }));
+            primaryExtensionWindowPercentage: 50,
+            setPrimaryExtensionWindowPercentage: (percentage) =>
+                set({ primaryExtensionWindowPercentage: percentage }),
+        }),
+        {
+            name: "Skybook.UI",
+            version: 1,
+        },
+    ),
+);

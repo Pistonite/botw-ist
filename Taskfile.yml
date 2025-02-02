@@ -7,9 +7,6 @@ env:
 dotenv: [".env"]
 
 includes:
-  app:
-    taskfile: ./packages/app
-    dir: ./packages/app
 
   manual:
     aliases: [man]
@@ -37,6 +34,26 @@ includes:
 
   # new ones below
 
+  app:
+    taskfile: ./packages/app
+    dir: ./packages/app
+    internal: true
+
+  runtime-wasm:
+    taskfile: ./packages/runtime-wasm
+    dir: ./packages/runtime-wasm
+    internal: true
+
+  parser:
+    taskfile: ./packages/parser
+    dir: ./packages/parser
+    internal: true
+
+  item-system:
+    taskfile: ./packages/item-system
+    dir: ./packages/item-system
+    internal: true
+
   research:
     taskfile: ./packages/research-scripts
     dir: ./packages/research-scripts
@@ -51,15 +68,9 @@ includes:
     dir: ./packages/item-assets
     internal: true
 
-  item-system:
-    taskfile: ./packages/item-system
-    dir: ./packages/item-system
-    internal: true
 
-  parser:
-    taskfile: ./packages/parser
-    dir: ./packages/parser
-    internal: true
+
+
 
 tasks:
   install-cargo-extra-tools:
@@ -89,11 +100,13 @@ tasks:
       - parser:pull-artifacts
 
   check:
-    cmds:
-      - task: localization:check
-      - task: item-assets:check
-      - task: item-system:check
-      - task: parser:check
+    deps:
+      - localization:check
+      - item-assets:check
+      - item-system:check
+      - parser:check
+      - app:check
+      
 
   test:
     cmds:
