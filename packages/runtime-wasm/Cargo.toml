@@ -9,6 +9,8 @@ skybook-runtime = { path = "../runtime" }
 skybook-parser = { path = "../parser" }
 wasm-bindgen = { version = "0.2.99", features = ["serde", "serde-serialize"] }
 teleparse = "0.0.5"
+tsify-next = { version = "0.5.4", features = ["js"], default-features = false }
+serde = { version = "1.0.217", features = ["derive"] }
 
 [lib]
 crate-type = ["cdylib"]

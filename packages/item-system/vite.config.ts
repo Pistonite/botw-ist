@@ -4,4 +4,7 @@ import yaml from "@modyfi/vite-plugin-yaml";
 
 export default defineConfig({
     plugins: [react(), yaml()],
+    server: {
+        port: 33173,
+    },
 });

@@ -1,4 +1,10 @@
-import { type PropsWithChildren, useRef, useState, useCallback } from "react";
+import {
+    type PropsWithChildren,
+    useRef,
+    useState,
+    useCallback,
+    useEffect,
+} from "react";
 import { makeStyles, mergeClasses } from "@fluentui/react-components";
 
 import { useStaticAssetStyles } from "./images";
@@ -13,6 +19,9 @@ const useStyles = makeStyles({
     container: {
         position: "absolute",
     },
+    childrenContainer: {
+        display: "contents",
+    },
 });
 
 /** Provider for the ItemTooltipContext */
@@ -22,14 +31,18 @@ export const ItemTooltipProvider: React.FC<PropsWithChildren> = ({
     const staticAssets = useStaticAssetStyles();
     const styles = useStyles();
 
-    const toolTipDivRef = useRef<HTMLDivElement>(null);
+    const tooltipDivRef = useRef<HTMLDivElement>(null);
+    const childrenContainerRef = useRef<HTMLDivElement>(null);
     const [tooltipInfo, setTooltipInfo] = useState<ItemSlotInfo | undefined>();
-    const setTooltip: SetItemTooltipFn = useCallback((x, y, info) => {
-        if (!toolTipDivRef.current) {
+    const [tooltipTarget, setTooltipTarget] = useState<
+        HTMLElement | undefined
+    >();
+    const setTooltip: SetItemTooltipFn = useCallback((x, y, info, target) => {
+        if (!tooltipDivRef.current) {
             return;
         }
-        const tooltipDiv = toolTipDivRef.current;
-        if (info === undefined) {
+        const tooltipDiv = tooltipDivRef.current;
+        if (!info || !target) {
             tooltipDiv.style.display = "none";
             return;
         }
@@ -39,13 +52,47 @@ export const ItemTooltipProvider: React.FC<PropsWithChildren> = ({
         // called again with the correct x and y when the mouse moves.
         positionTooltipDiv(tooltipDiv, x, y);
         setTooltipInfo(info);
+        setTooltipTarget(target);
     }, []);
 
+    // hide the tooltip if the target is removed
+    useEffect(() => {
+        if (
+            !childrenContainerRef.current ||
+            !tooltipTarget ||
+            !tooltipTarget.isConnected
+        ) {
+            return;
+        }
+        const observer = new MutationObserver(() => {
+            if (!tooltipTarget) {
+                observer.disconnect();
+                return;
+            }
+            if (!tooltipTarget.isConnected) {
+                observer.disconnect();
+                setTooltipInfo(undefined);
+            }
+        });
+        observer.observe(childrenContainerRef.current, {
+            childList: true,
+            subtree: true,
+        });
+        return () => {
+            observer.disconnect();
+        };
+    }, [tooltipTarget]);
+
     return (
-        <ItemTooltipContext.Provider value={setTooltip}>
-            {children}
+        <ItemTooltipContext.Provider
+            value={{
+                setItemTooltip: setTooltip,
+                tooltipTarget,
+            }}
+        >
+            <div ref={childrenContainerRef}>{children}</div>
             <div
-                ref={toolTipDivRef}
+                ref={tooltipDivRef}
                 className={mergeClasses(
                     staticAssets.sheikahBg,
                     styles.container,

@@ -1,6 +1,4 @@
 import {
-    Text,
-    Caption1,
     Field,
     makeStyles,
     SearchBox,

@@ -12,6 +12,9 @@ async function boot() {
         setScript: async (script) => {
             return wasm_bindgen.parse_script(script);
         },
+        resolveItemIdent: async (query) => {
+            return wasm_bindgen.resolve_item_ident(query);
+        },
     } satisfies Delegate<RuntimeApi>;
 
     const handshake = bindRuntimeApiHost(hostFromDelegate(api), {

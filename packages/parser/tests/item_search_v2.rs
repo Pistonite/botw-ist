@@ -1,53 +1,68 @@
-use skybook_parser::search::{ResolvedItem, search_item_by_ident};
+use item_search_common::test_item_search;
+use skybook_parser::search::{ResolvedItem, search_item_by_ident, search_item_by_ident_all};
 use skybook_parser::cir;
+
+mod item_search_common;
+
+#[test]
+fn test_item_search_empty() {
+    assert_eq!(search_item_by_ident(""), None);
+    assert_eq!(search_item_by_ident(" "), None);
+    assert_eq!(search_item_by_ident("_"), None);
+    assert_eq!(search_item_by_ident("-"), None);
+    assert_eq!(search_item_by_ident_all(""), vec![]);
+    assert_eq!(search_item_by_ident_all(" "), vec![]);
+    assert_eq!(search_item_by_ident_all("_"), vec![]);
+    assert_eq!(search_item_by_ident_all("-"), vec![]);
+}
 
 /// Test items with hard coded names in V2
 ///
 /// For example core -> AncientCore
 #[test]
 fn test_item_search_v2() {
-    assert_eq!(search_item_by_ident("slate").unwrap().actor, "Obj_DRStone_Get");
+    test_item_search("slate", "Obj_DRStone_Get");
 
-    assert_eq!(search_item_by_ident("glider").unwrap().actor, "PlayerStole2");
-    assert_eq!(search_item_by_ident("spiritorb").unwrap().actor, "Obj_DungeonClearSeal");
-    assert_eq!(search_item_by_ident("lotus").unwrap().actor, "Item_Fruit_E");
-    assert_eq!(search_item_by_ident("silentprincess").unwrap().actor, "Item_PlantGet_J");
-    assert_eq!(search_item_by_ident("honey").unwrap().actor, "BeeHome");
-    assert_eq!(search_item_by_ident("acorn").unwrap().actor, "Item_Fruit_K");
-    assert_eq!(search_item_by_ident("faroshscale").unwrap().actor, "Item_Enemy_53");
-    assert_eq!(search_item_by_ident("faroshclaw").unwrap().actor, "Item_Enemy_54");
-    assert_eq!(search_item_by_ident("faroshhorn").unwrap().actor, "Item_Enemy_56");
-    assert_eq!(search_item_by_ident("heartybass").unwrap().actor, "Item_FishGet_B");
-    assert_eq!(search_item_by_ident("beetle").unwrap().actor, "Animal_Insect_AA");
-    assert_eq!(search_item_by_ident("opal").unwrap().actor, "Item_Ore_E");
-    assert_eq!(search_item_by_ident("diamond").unwrap().actor, "Item_Ore_A");
-    assert_eq!(search_item_by_ident("tail").unwrap().actor, "Item_Enemy_05");
-    assert_eq!(search_item_by_ident("spring").unwrap().actor, "Item_Enemy_28");
-    assert_eq!(search_item_by_ident("shaft").unwrap().actor, "Item_Enemy_29");
-    assert_eq!(search_item_by_ident("core").unwrap().actor, "Item_Enemy_30");
-    assert_eq!(search_item_by_ident("wood").unwrap().actor, "Obj_FireWoodBundle");
-    assert_eq!(search_item_by_ident("rushroom").unwrap().actor, "Item_MushroomGet_D");
-    assert_eq!(search_item_by_ident("screw").unwrap().actor, "Item_Enemy_27");
-    assert_eq!(search_item_by_ident("hyrulebass").unwrap().actor, "Item_FishGet_A");
-    assert_eq!(search_item_by_ident("lizalfoshorn").unwrap().actor, "Item_Enemy_03");
-    assert_eq!(search_item_by_ident("lizalfostalon").unwrap().actor, "Item_Enemy_04");
+    test_item_search("glider", "PlayerStole2");
+    test_item_search("spiritorb", "Obj_DungeonClearSeal");
+    test_item_search("lotus", "Item_Fruit_E");
+    test_item_search("silentprincess", "Item_PlantGet_J");
+    test_item_search("honey", "BeeHome");
+    test_item_search("acorn", "Item_Fruit_K");
+    test_item_search("faroshscale", "Item_Enemy_53");
+    test_item_search("faroshclaw", "Item_Enemy_54");
+    test_item_search("faroshhorn", "Item_Enemy_56");
+    test_item_search("heartybass", "Item_FishGet_B");
+    test_item_search("beetle", "Animal_Insect_AA");
+    test_item_search("opal", "Item_Ore_E");
+    test_item_search("diamond", "Item_Ore_A");
+    test_item_search("tail", "Item_Enemy_05");
+    test_item_search("spring", "Item_Enemy_28");
+    test_item_search("shaft", "Item_Enemy_29");
+    test_item_search("core", "Item_Enemy_30");
+    test_item_search("wood", "Obj_FireWoodBundle");
+    test_item_search("rushroom", "Item_MushroomGet_D");
+    test_item_search("screw", "Item_Enemy_27");
+    test_item_search("hyrulebass", "Item_FishGet_A");
+    test_item_search("lizalfoshorn", "Item_Enemy_03");
+    test_item_search("lizalfostalon", "Item_Enemy_04");
 
-    assert_eq!(search_item_by_ident("normalarrow").unwrap().actor, "NormalArrow");
-    assert_eq!(search_item_by_ident("firearrow").unwrap().actor, "FireArrow");
-    assert_eq!(search_item_by_ident("icearrow").unwrap().actor, "IceArrow");
-    assert_eq!(search_item_by_ident("shockarrow").unwrap().actor, "ElectricArrow");
-    assert_eq!(search_item_by_ident("bombarrow").unwrap().actor, "BombArrow_A");
-    assert_eq!(search_item_by_ident("ancientarrow").unwrap().actor, "AncientArrow");
+    test_item_search("normalarrow", "NormalArrow");
+    test_item_search("firearrow", "FireArrow");
+    test_item_search("icearrow", "IceArrow");
+    test_item_search("shockarrow", "ElectricArrow");
+    test_item_search("bombarrow", "BombArrow_A");
+    test_item_search("ancientarrow", "AncientArrow");
 
-    assert_eq!(search_item_by_ident("apple").unwrap().actor, "Item_Fruit_A");
-    assert_eq!(search_item_by_ident("hylianshroom").unwrap().actor, "Item_Mushroom_E");
-    assert_eq!(search_item_by_ident("spicypepper").unwrap().actor, "Item_Fruit_I");
-    assert_eq!(search_item_by_ident("endurashroom").unwrap().actor, "Item_Mushroom_O");
-    assert_eq!(search_item_by_ident("heartyradish").unwrap().actor, "Item_PlantGet_B");
-    assert_eq!(search_item_by_ident("bigheartyradish").unwrap().actor, "Item_PlantGet_C");
-    assert_eq!(search_item_by_ident("fairy").unwrap().actor, "Animal_Insect_F");
-    assert_eq!(search_item_by_ident("masterSword").unwrap().actor, "Weapon_Sword_070");
-    assert_eq!(search_item_by_ident("zoraarmor").unwrap().actor, "Armor_006_Upper");
+    test_item_search("apple", "Item_Fruit_A");
+    test_item_search("hylianshroom", "Item_Mushroom_E");
+    test_item_search("spicypepper", "Item_Fruit_I");
+    test_item_search("endurashroom", "Item_Mushroom_O");
+    test_item_search("heartyradish", "Item_PlantGet_B");
+    test_item_search("bigheartyradish", "Item_PlantGet_C");
+    test_item_search("fairy", "Animal_Insect_F");
+    test_item_search("masterSword", "Weapon_Sword_070");
+    test_item_search("zoraarmor", "Armor_006_Upper");
     
     // Legacy food. Need to add metadata
     assert_eq!(search_item_by_ident("speedfood"), Some(ResolvedItem {

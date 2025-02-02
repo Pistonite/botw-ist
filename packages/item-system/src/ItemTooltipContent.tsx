@@ -16,7 +16,7 @@ import {
     SpecialStatus,
 } from "./data/enums.ts";
 import { getActorParam } from "./data/ActorData.ts";
-import { Star16Filled, Star20Filled } from "@fluentui/react-icons";
+import { Star16Filled } from "@fluentui/react-icons";
 import { getModifierInfo } from "./data/ModifierInfo.ts";
 
 export type ItemTooltipContentProps = {

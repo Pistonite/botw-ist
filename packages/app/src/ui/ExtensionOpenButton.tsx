@@ -27,10 +27,8 @@ export const ExtensionOpenButton: React.FC = () => {
 
     const narrow = useNarrow();
 
-    const [selectedId, setSelectedId] = useState<string>("");
     const [selectedOpenMode, setSelectedOpenMode] =
         useState<ExtensionOpenMode>("secondary");
-    const [isPersistChecked, setIsPersistChecked] = useState(true);
 
     let displayedOpenMode = selectedOpenMode;
     const secondaryAvailable = !narrow && !isLessProductive;

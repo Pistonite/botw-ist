@@ -1,16 +1,6 @@
-import {
-    Button,
-    Card,
-    CardPreview,
-    makeStyles,
-    tokens,
-} from "@fluentui/react-components";
-import { useIsShowingExtensionPanel } from "application/extensionStore";
-import { ExtensionOpenButton } from "ui/ExtensionOpenButton";
-import icon from "./icon.svg";
+import { Button, makeStyles, tokens } from "@fluentui/react-components";
 import {
     BookQuestionMark20Regular,
-    Globe20Regular,
     Settings20Regular,
 } from "@fluentui/react-icons";
 import {
@@ -18,6 +8,11 @@ import {
     GitHubLink,
     LanguagePicker,
 } from "@pistonite/shared-controls";
+
+import { useIsShowingExtensionPanel } from "application/extensionStore";
+import { ExtensionOpenButton } from "ui/ExtensionOpenButton";
+
+import icon from "./icon.svg";
 
 const useStyles = makeStyles({
     container: {
@@ -27,7 +22,7 @@ const useStyles = makeStyles({
     },
 });
 
-export const SideToolbar: React.FC = () => {
+export const Header: React.FC = () => {
     const styles = useStyles();
     const showingExtensionPanel = useIsShowingExtensionPanel();
     return (

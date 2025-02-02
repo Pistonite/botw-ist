@@ -7,7 +7,7 @@ export type ApplicationStore = {
 
 export const useApplicationStore = create<ApplicationStore>()(
     persist(
-        (set) => ({
+        () => ({
             script: "",
         }),
         {

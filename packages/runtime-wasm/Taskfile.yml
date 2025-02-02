@@ -9,8 +9,9 @@ tasks:
   build:
     cmds:
       - wasm-pack build -t no-modules --no-pack
+      - task: build-dist
 
-  bundle:
+  build-dist:
     vars:
       BUILD_DIR: dist
     cmds:

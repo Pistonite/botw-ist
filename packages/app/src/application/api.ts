@@ -1,20 +1,15 @@
 import type { Application } from "@pistonite/skybook-extension-api";
-import { debounce } from "@pistonite/pure/sync";
 import type { Result } from "@pistonite/pure/result";
 import type { WorkexPromise } from "@pistonite/workex";
 import { searchItemLocalized } from "skybook-localization";
 import { getActorParam } from "skybook-item-system";
+import type { RuntimeApiClient } from "skybook-runtime-api/sides/app";
 
 import { useApplicationStore } from "./store";
 
-const setScript = debounce({
-    fn: (script: string) => {
-        useApplicationStore.setState({ script });
-    },
-    interval: 200,
-});
-
 export class ApplicationApi implements Application {
+    constructor(private runtime: RuntimeApiClient) {}
+
     public async getScript() {
         return { val: useApplicationStore.getState().script };
     }
@@ -43,11 +38,11 @@ export class ApplicationApi implements Application {
             });
             return { val: { val: filtered } };
         }
-        return {
-            err: {
-                type: "Internal",
-                message: "Not implemented yet",
-            },
-        };
+
+        const result = await this.runtime.resolveItemIdent(query);
+        if (result.err) {
+            return result;
+        }
+        return { val: { val: result.val } };
     }
 }

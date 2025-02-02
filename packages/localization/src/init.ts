@@ -22,7 +22,7 @@ export const initI18n = () => {
         loader: {
             ui: (language) => loadLanguage("ui", language),
             generated: (language) => loadLanguage("generated", language),
-        }
+        },
     });
 };
 
@@ -30,4 +30,3 @@ const loadLanguage = async (namespace: string, language: string) => {
     const strings = await import(`./${namespace}/${language}.yaml`);
     return strings.default;
 };
-
