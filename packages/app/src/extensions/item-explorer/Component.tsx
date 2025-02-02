@@ -1,35 +1,57 @@
-import { Text, Caption1, Field, makeStyles, SearchBox, Body1, Checkbox } from "@fluentui/react-components";
+import {
+    Text,
+    Caption1,
+    Field,
+    makeStyles,
+    SearchBox,
+    Body1,
+    Checkbox,
+} from "@fluentui/react-components";
 import { useApplication } from "application/useApplication.ts";
-import type { ExtensionComponentProps } from "../types.ts"
+import type { ExtensionComponentProps } from "../types.ts";
 import { useDeferredValue, useEffect, useState } from "react";
-import { SearchResult as ItemSearchResult, translateUI, useUITranslation } from "skybook-localization";
+import type { SearchResult as ItemSearchResult } from "skybook-localization";
+import { translateUI, useUITranslation } from "skybook-localization";
 import { FirstPartyExtensionAdapter } from "extensions/FirstPartyAdapter.ts";
 import { debounce } from "@pistonite/pure/sync";
 import type { Application } from "@pistonite/skybook-extension-api";
-import { errstr, Result } from "@pistonite/pure/result";
+import type { Result } from "@pistonite/pure/result";
+import { errstr } from "@pistonite/pure/result";
 import { useQuery } from "@tanstack/react-query";
-import { CookEffect, ItemSlot, ItemTooltip, makeItemSlotInfo } from "skybook-item-system";
+import {
+    CookEffect,
+    ItemSlot,
+    ItemTooltip,
+    makeItemSlotInfo,
+} from "skybook-item-system";
 
 type SearchResult = Omit<ItemSearchResult, "score">;
 
 const search = debounce({
-    fn: async (app: Application, localized: boolean, query: string): Promise<Result<SearchResult[], string>> => {
+    fn: async (
+        app: Application,
+        localized: boolean,
+        query: string,
+    ): Promise<Result<SearchResult[], string>> => {
         if (!query) {
             return { val: [] };
         }
         if (query.startsWith("<") && query.endsWith(">")) {
             return {
-            val:[{
-                actor: query.slice(1, -1),
-                cookEffect: 0
-            }]};
+                val: [
+                    {
+                        actor: query.slice(1, -1),
+                        cookEffect: 0,
+                    },
+                ],
+            };
         }
         const items = await app.resolveItem(query, localized, 0);
         if ("err" in items) {
-            return { 
+            return {
                 err: translateUI("generic.error.internal", {
-                    error: errstr(items.err)
-                }) 
+                    error: errstr(items.err),
+                }),
             };
         }
         return items.val;
@@ -65,7 +87,8 @@ const useStyles = makeStyles({
 });
 
 export const Component: React.FC<ExtensionComponentProps> = ({
-    standalone, connect
+    standalone,
+    connect,
 }) => {
     const app = useApplication();
     const [value, setValue] = useState("");
@@ -90,53 +113,55 @@ export const Component: React.FC<ExtensionComponentProps> = ({
     }, [standalone, connect]);
 
     return (
-    <div
-            className={styles.container}
-        >
+        <div className={styles.container}>
             <Field
                 validationState={error ? "error" : "none"}
                 validationMessage={error}
             >
-                <SearchBox 
+                <SearchBox
                     placeholder={t("item_explorer.label.search_placeholder")}
-                    value={value} 
-                    onChange={(_, {value}) => {
-                    setValue(value);
-                }} />
+                    value={value}
+                    onChange={(_, { value }) => {
+                        setValue(value);
+                    }}
+                />
             </Field>
             <Field>
-                <Checkbox label={t("item_explorer.label.search_localized")} checked={localized} onChange={(_, {checked}) => {
-                    setLocalized(!!checked);
-                }} />
+                <Checkbox
+                    label={t("item_explorer.label.search_localized")}
+                    checked={localized}
+                    onChange={(_, { checked }) => {
+                        setLocalized(!!checked);
+                    }}
+                />
             </Field>
             <Body1 block>
-                {localized ? t("item_explorer.desc.search_tip_localized") : t("item_explorer.desc.search_tip_ident")}
+                {localized
+                    ? t("item_explorer.desc.search_tip_localized")
+                    : t("item_explorer.desc.search_tip_ident")}
             </Body1>
-            {
-                hasResults && <div
-                    className={styles.resultsScroll}
-                >
+            {hasResults && (
+                <div className={styles.resultsScroll}>
                     <div className={styles.results}>
-                    {
-                    results.map((result, i) => {
-                const {actor, cookEffect} = result;
-                    const info = makeItemSlotInfo(actor, {
-                        modEffectId: cookEffect || CookEffect.None,
-                    });
-                return (<ItemTooltip info={info} key={i} >
-                        <ItemSlot info={info} />
-                    </ItemTooltip>)
-                
-                })
-                }
+                        {results.map((result, i) => {
+                            const { actor, cookEffect } = result;
+                            const info = makeItemSlotInfo(actor, {
+                                modEffectId: cookEffect || CookEffect.None,
+                            });
+                            return (
+                                <ItemTooltip info={info} key={i}>
+                                    <ItemSlot info={info} />
+                                </ItemTooltip>
+                            );
+                        })}
                     </div>
                 </div>
-            }
-            {
-                !hasResults && <div
-                    className={styles.noResults}
-                ><Body1>{t("item_explorer.label.no_results")}</Body1></div>
-            }
-    </div>
+            )}
+            {!hasResults && (
+                <div className={styles.noResults}>
+                    <Body1>{t("item_explorer.label.no_results")}</Body1>
+                </div>
+            )}
+        </div>
     );
-}
+};

@@ -1,7 +1,6 @@
 import { addDarkSubscriber, addLocaleSubscriber } from "@pistonite/pure/pref";
-import { Extension } from "@pistonite/skybook-extension-api";
+import type { Extension } from "@pistonite/skybook-extension-api";
 import { useApplicationStore } from "./store";
-
 
 /** Running instances of extensions */
 const instances: Extension[] = [];
@@ -15,14 +14,14 @@ export const initExtensionManager = () => {
             });
         }
     });
-}
+};
 
-/** 
+/**
  * Registers an extension as running and connect it to the app.
  *
  * Returns a function to disconnect the extension from the app.
  */
-export const connectExtensionToApp = (extension: Extension): () => void => {
+export const connectExtensionToApp = (extension: Extension): (() => void) => {
     const unsubscribeDark = addDarkSubscriber((x) => {
         void extension.onDarkModeChanged(x);
     }, true);
@@ -38,9 +37,9 @@ export const connectExtensionToApp = (extension: Extension): () => void => {
         }
         unsubscribeLocale();
         unsubscribeDark();
-    }
-}
+    };
+};
 
 export const openExtensionPopup = (id: string) => {
     console.error("Not implemented", id);
-}
+};

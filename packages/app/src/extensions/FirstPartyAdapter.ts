@@ -1,6 +1,6 @@
-import { Extension } from "@pistonite/skybook-extension-api";
+import type { Extension } from "@pistonite/skybook-extension-api";
 import { setDark, setLocale } from "@pistonite/pure/pref";
-import { WorkexPromise } from "workex";
+import type { WorkexPromise } from "@pistonite/workex";
 
 /**
  * Adapter for the first-party extensions with common
@@ -12,7 +12,7 @@ export class FirstPartyExtensionAdapter implements Extension {
         if (this.standalone) {
             setDark(dark);
         }
-        return {}
+        return {};
     }
     public async onLocaleChanged(locale: string): WorkexPromise<void> {
         if (this.standalone) {

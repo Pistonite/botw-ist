@@ -1,7 +1,8 @@
 {
     "extends": "../mono-dev/tsconfig/vite.json",
-  "compilerOptions": {
+    "compilerOptions": {
         "baseUrl": "src",
-  },
-  "include": ["src"]
+        "types": ["vite/client", "@modyfi/vite-plugin-yaml/modules"]
+    },
+    "include": ["src"]
 }
