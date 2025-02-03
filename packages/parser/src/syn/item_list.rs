@@ -17,16 +17,16 @@ pub enum ItemListFinite {
     List(tp::Nev<NumberedItem>),
 }
 
-/// Specifying an unconstrained list of items that allows 
-/// an infinite amount of items
-#[derive_syntax]
-#[derive(Debug)]
-pub enum ItemListInfinite {
-    /// Single item, e.g. `apple`
-    Single(Item),
-    /// multiple items with amounts, e.g. `5 apples infinite royal_claymore`
-    List(tp::Nev<NumberedOrInfiniteItem>),
-}
+// /// Specifying an unconstrained list of items that allows 
+// /// an infinite amount of items
+// #[derive_syntax]
+// #[derive(Debug)]
+// pub enum ItemListInfinite {
+//     /// Single item, e.g. `apple`
+//     Single(Item),
+//     /// multiple items with amounts, e.g. `5 apples infinite royal_claymore`
+//     List(tp::Nev<NumberedOrInfiniteItem>),
+// }
 
 /// Specifying items from a contrained list
 ///

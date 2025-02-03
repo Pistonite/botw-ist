@@ -1,9 +1,9 @@
 use teleparse::{tp, Span};
 
 use crate::error::{ErrorReport, Error};
-use crate::search::QuotedItemResolver;
 use crate::syn;
 use crate::cir;
+use crate::search;
 
 use super::MetaParser;
 
@@ -42,31 +42,29 @@ pub struct ItemMeta {
 }
 
 impl ItemMeta {
-    pub async fn parse(meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) -> ItemMeta {
-        let parser = Parser {
-            meta: ItemMeta::default(),
-        };
-        cir::parse_meta(meta, parser, errors).await
+    pub fn parse_syn(meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) -> Self {
+        let mut parser = ItemMeta::default();
+        parser.parse(meta, errors);
+        parser
+    }
+
+    pub fn parse(&mut self, meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) {
+        cir::parse_meta(meta, self, errors);
     }
 }
 
-struct Parser {
-    meta: ItemMeta,
-}
+impl MetaParser for &mut ItemMeta {
+    type Output = Self;
 
-impl MetaParser for Parser {
-    type Output = ItemMeta;
+    fn visit_start(&mut self, _meta: &syn::ItemMeta, _errors: &mut Vec<ErrorReport>) {}
 
-    async fn visit_start(&mut self, _meta: &syn::ItemMeta, _errors: &mut Vec<ErrorReport>) {
-    }
-
-    async fn visit_entry(&mut self, span: Span, key: &tp::String<syn::Word>, value: &tp::Option<syn::ItemMetaValue>, errors: &mut Vec<ErrorReport>) {
+    fn visit_entry(&mut self, span: Span, key: &tp::String<syn::Word>, value: &tp::Option<syn::ItemMetaValue>, errors: &mut Vec<ErrorReport>) {
         let key_str = key.to_ascii_lowercase();
         match key_str.trim() {
             "life" | "value" => {
                 match cir::MetaValue::parse_option(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => {
-                        self.meta.value = Some(x as i32);
+                        self.value = Some(x as i32);
                     }
                     Ok(mv) => {
                         errors.push(
@@ -82,7 +80,7 @@ impl MetaParser for Parser {
             "durability" | "dura" => {
                 match cir::MetaValue::parse_option(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => {
-                        self.meta.value = Some((x * 100) as i32);
+                        self.value = Some((x * 100) as i32);
                     }
                     Ok(mv) => {
                         errors.push(
@@ -98,7 +96,7 @@ impl MetaParser for Parser {
             "equip" | "equipped"=> {
                 match cir::MetaValue::parse_option(value.as_ref()) {
                     Ok(cir::MetaValue::Bool(x)) => {
-                        self.meta.equip = Some(x);
+                        self.equip = Some(x);
                     }
                     Ok(mv) => {
                         errors.push(
@@ -114,7 +112,7 @@ impl MetaParser for Parser {
             "life_recover" | "hp" | "modpower" => {
                 match cir::MetaValue::parse_option(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => {
-                        self.meta.life_recover = Some(x as i32);
+                        self.life_recover = Some(x as i32);
                     }
                     Ok(mv) => {
                         errors.push(
@@ -130,7 +128,7 @@ impl MetaParser for Parser {
             "time" => {
                 match cir::MetaValue::parse_option(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => {
-                        self.meta.effect_duration = Some(x as i32);
+                        self.effect_duration = Some(x as i32);
                     }
                     Ok(mv) => {
                         errors.push(
@@ -146,7 +144,7 @@ impl MetaParser for Parser {
             "price" => {
                 match cir::MetaValue::parse_option(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => {
-                        self.meta.sell_price = Some(x as i32);
+                        self.sell_price = Some(x as i32);
                     }
                     Ok(mv) => {
                         errors.push(
@@ -163,12 +161,12 @@ impl MetaParser for Parser {
                 match cir::MetaValue::parse_option(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => {
                         // integer => same as price
-                        self.meta.sell_price = Some(x as i32);
+                        self.sell_price = Some(x as i32);
                     }
                     Ok(cir::MetaValue::String(x)) => {
                         // string modifier, parse it and add it
                         match parse_weapon_modifier_bits(&x) {
-                            Some(m) => self.meta.sell_price = Some(self.meta.sell_price.unwrap_or_default() | m),
+                            Some(m) => self.sell_price = Some(self.sell_price.unwrap_or_default() | m),
                             None => {
                                 errors.push(
                                 Error::InvalidWeaponModifier(x)
@@ -192,12 +190,12 @@ impl MetaParser for Parser {
                 match cir::MetaValue::parse_option(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => {
                         // integer => set it without checking
-                        self.meta.effect_id = Some(x as i32);
+                        self.effect_id = Some(x as i32);
                     }
                     Ok(cir::MetaValue::String(x)) => {
                         // string modifier, parse it 
                         match parse_cook_effect(&x) {
-                            Some(m) => self.meta.effect_id = Some(m),
+                            Some(m) => self.effect_id = Some(m),
                             None => {
                                 errors.push(
                                 Error::InvalidCookEffect(x)
@@ -220,10 +218,10 @@ impl MetaParser for Parser {
             "level" => {
                 match cir::MetaValue::parse_option(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => {
-                        self.meta.effect_level = Some(x as f32);
+                        self.effect_level = Some(x as f32);
                     }
                     Ok(cir::MetaValue::Float(x)) => {
-                        self.meta.effect_level = Some(x as f32);
+                        self.effect_level = Some(x as f32);
                     }
                     Ok(mv) => {
                         errors.push(
@@ -237,7 +235,7 @@ impl MetaParser for Parser {
                 }
             },
             "ingr" => {
-                if self.meta.ingredients.len() >= 5 {
+                if self.ingredients.len() >= 5 {
                     errors.push(
                     Error::TooManyIngredients.spanned(value)
                     );
@@ -245,19 +243,17 @@ impl MetaParser for Parser {
                 }
                 match cir::MetaValue::parse_option(value.as_ref()) {
                     Ok(cir::MetaValue::String(x)) => {
-                        todo!()
-                        // // currently we only support looking up by english
-                        // match self.resolver.resolve(&x).await {
-                        //     Some(item) => {
-                        //         self.meta.ingredients.push(item);
-                        //     }
-                        //     None => {
-                        //         errors.push(
-                        //         Error::InvalidItem(x)
-                        //             .spanned(value)
-                        //         );
-                        //     }
-                        // }
+                        match search::search_item_by_ident(&x) {
+                            Some(item) => {
+                                self.ingredients.push(item.actor);
+                            }
+                            None => {
+                                errors.push(
+                                Error::InvalidItem(x)
+                                    .spanned(value)
+                                );
+                            }
+                        }
                     }
                     Ok(mv) => {
                         errors.push(
@@ -280,7 +276,7 @@ impl MetaParser for Parser {
                             );
                             return;
                         }
-                        self.meta.star = Some(x as i32);
+                        self.star = Some(x as i32);
                     }
                     Ok(mv) => {
                         errors.push(
@@ -301,12 +297,12 @@ impl MetaParser for Parser {
         }
     }
 
-    async fn visit_end(&mut self, _meta: &syn::ItemMeta, _errors: &mut Vec<ErrorReport>) {
+    fn visit_end(&mut self, _meta: &syn::ItemMeta, _errors: &mut Vec<ErrorReport>) {
         
     }
 
-    async fn finish(self) -> Self::Output {
-        self.meta
+    fn finish(self) -> Self::Output {
+        self
     }
 }
 

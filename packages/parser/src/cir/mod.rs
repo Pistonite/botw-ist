@@ -1,30 +1,35 @@
 use teleparse::{tp, Span, ToSpan};
 
-use crate::error::Error;
 use crate::syn;
-use crate::{error::ErrorReport};
+use crate::error::{Error, ErrorReport};
 
 mod item_meta;
 pub use item_meta::*;
 
+mod item_spec;
+pub use item_spec::*;
 
+
+/// Parser for the item meta syntax
+///
+/// This trait exists to allow the meta syntax to be reused for different purposes
 pub trait MetaParser {
     type Output;
 
-    async fn visit_start(&mut self, meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>);
-    async fn visit_entry(&mut self, span: Span, key: &tp::String<syn::Word>, value: &tp::Option<syn::ItemMetaValue>, errors: &mut Vec<ErrorReport>);
-    async fn visit_end(&mut self, meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>);
-    async fn finish(self) -> Self::Output;
+    fn visit_start(&mut self, meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>);
+    fn visit_entry(&mut self, span: Span, key: &tp::String<syn::Word>, value: &tp::Option<syn::ItemMetaValue>, errors: &mut Vec<ErrorReport>);
+    fn visit_end(&mut self, meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>);
+    fn finish(self) -> Self::Output;
 }
 
-pub async fn parse_meta<T: MetaParser>(meta: &syn::ItemMeta, mut parser: T, errors: &mut Vec<ErrorReport>) -> T::Output {
-    parser.visit_start(meta, errors).await;
+pub fn parse_meta<T: MetaParser>(meta: &syn::ItemMeta, mut parser: T, errors: &mut Vec<ErrorReport>) -> T::Output {
+    parser.visit_start(meta, errors);
     let span = meta.span();
     for entry in &meta.entries {
-        parser.visit_entry(span, &entry.key, &entry.value, errors).await;
+        parser.visit_entry(span, &entry.key, &entry.value, errors);
     }
-    parser.visit_end(meta, errors).await;
-    parser.finish().await
+    parser.visit_end(meta, errors);
+    parser.finish()
 }
 
 #[derive(Debug, Clone)]
@@ -47,12 +52,16 @@ impl std::fmt::Display for MetaValue {
 }
 
 impl MetaValue {
+    /// Parse an optional value. If the value is not present (i.e. only the key is specified),
+    /// the value is assumed to be the boolean value `true`.
     pub fn parse_option(value: Option<&syn::ItemMetaValue>) -> Result<Self, ErrorReport> {
         match value {
             Some(v) => Ok(Self::parse(&v.value)?),
             None => Ok(Self::Bool(true)),
         }
     }
+
+    /// Parse a value from a literal
     pub fn parse(value: &syn::MetaValueLiteral) -> Result<Self, ErrorReport> {
         match value {
             syn::MetaValueLiteral::Word(x) => {

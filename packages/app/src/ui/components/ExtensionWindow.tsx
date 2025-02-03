@@ -15,6 +15,7 @@ const useStyles = makeStyles({
         flex: 1,
         width: "100%",
         height: "100%",
+        minHeight: "0px",
     },
     window: {
         width: "100%",

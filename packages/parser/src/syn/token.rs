@@ -129,7 +129,7 @@ pub struct AngledWord {
     /// The opening angle bracket
     pub open: SymLAngle,
     /// The word inside the angle brackets
-    pub name: Word,
+    pub name: tp::String<Word>,
     /// The closing angle bracket
     pub close: SymRAngle,
 }

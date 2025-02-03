@@ -4,7 +4,7 @@ use teleparse::{derive_syntax, tp};
 
 use super::token::{
     AngledWord, ColonOrEqual, 
-    NumOrAll, NumOrInfinite, Number, 
+    NumOrInfinite, Number, 
     QuotedWord, SymComma, SymLBracket, 
     SymRBracket, Word, MetaValueLiteral, KwAll, SlotClause};
 
@@ -61,14 +61,6 @@ pub struct ItemOrCategoryWithSlot {
     pub slot: tp::Option<SlotClause>,
 }
 
-// /// Syntax for an item with a slot or a category
-// #[derive_syntax]
-// #[derive(Debug)]
-// pub enum ItemWithSlotOrCategory {
-//     Item(ItemWithSlot),
-//     Category(Category),
-// }
-
 /// Syntax for an item prefixed with an amount or "infinite"
 #[derive_syntax]
 #[derive(Debug)]
@@ -98,9 +90,9 @@ pub struct Item {
 #[derive(Debug)]
 pub enum ItemName {
     /// Using `-` or `_` separated word to search item by English name
-    Word(Word),
+    Word(tp::String<Word>),
     /// Use quoted value to search by name in any language
-    Quoted(QuotedWord),
+    Quoted(tp::String<QuotedWord>),
     /// Use angle brackets to use the literal as the actor name
     /// e.g. `<Weapon_Sword_070>`
     Angle(AngledWord),

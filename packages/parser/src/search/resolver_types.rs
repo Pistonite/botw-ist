@@ -21,3 +21,15 @@ pub struct ResolvedItem {
     /// The meta data of the item, if any
     pub meta: Option<cir::ItemMeta>,
 }
+
+impl ResolvedItem {
+    /// Create a new resolved item without meta
+    pub fn new(actor: String) -> Self {
+        Self { actor, meta: None }
+    }
+
+    /// Create a new resolved item with meta
+    pub fn with_meta(actor: String, meta: cir::ItemMeta) -> Self {
+        Self { actor, meta: Some(meta) }
+    }
+}
