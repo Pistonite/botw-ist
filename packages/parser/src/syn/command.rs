@@ -17,7 +17,7 @@ pub enum Command {
     /// `buy ITEMS`
     Buy(CmdBuy),
     /// `pick-up ITEMS`
-    PickUp(CmdPickup),
+    PickUp(CmdPickUp),
 
     // ==== holding items ====
 
@@ -48,7 +48,7 @@ pub enum Command {
     /// `equip ITEM`
     Equip(CmdEquip),
     /// `unequip ITEM` or `unequip CATEGORY`
-    UnEquip(CmdUnequip),
+    Unequip(CmdUnequip),
     /// `use CATEGORY X times`
     Use(CmdUse),
     /// `shoot X times`
@@ -123,7 +123,7 @@ pub struct CmdBuy {
 /// `pick-up ITEMS` - items come from ground
 #[derive_syntax]
 #[derive(Debug)]
-pub struct CmdPickup {
+pub struct CmdPickUp {
     pub lit: KwPickUp,
     pub items: ItemListConstrained,
 }
@@ -206,7 +206,7 @@ pub struct CmdSell {
 #[derive(Debug)]
 pub struct CmdEquip {
     pub lit: KwEquip,
-    pub items: ItemOrCategoryWithSlot,
+    pub item: ItemOrCategoryWithSlot,
 }
 
 /// `unequip ITEM` - unequip one thing, or (all items) in one category
@@ -214,7 +214,7 @@ pub struct CmdEquip {
 #[derive(Debug)]
 pub struct CmdUnequip {
     pub lit: KwUnequip,
-    pub items: ItemOrCategoryWithSlot,
+    pub item: ItemOrCategoryWithSlot,
 }
 
 /// `use CATEGORY X times` - use the item
@@ -223,7 +223,7 @@ pub struct CmdUnequip {
 pub struct CmdUse {
     pub lit: KwUse,
     pub category: Category,
-    pub times: TimesClause,
+    pub times: tp::Option<TimesClause>,
 }
 
 /// `shoot X times` is shorthand for `use bow X times`
@@ -231,7 +231,7 @@ pub struct CmdUse {
 #[derive(Debug)]
 pub struct CmdShoot {
     pub lit: KwShoot,
-    pub times: TimesClause,
+    pub times: tp::Option<TimesClause>,
 }
 
 /// `roast ITEMS` - roast items on the ground or in inventory
@@ -292,9 +292,10 @@ pub struct CmdDestroy {
 pub struct CmdSort {
     pub lit: KwSort,
     pub category: Category,
+    pub times: tp::Option<TimesClause>,
 }
 
-/// `entangle CATEGORY [tab=X, rol=R, col=C]` - activate prompt entanglement
+/// `entangle CATEGORY [tab=X, row=R, col=C]` - activate prompt entanglement
 #[derive_syntax]
 #[derive(Debug)]
 pub struct CmdEntangle {
@@ -308,7 +309,7 @@ pub struct CmdEntangle {
 #[derive(Debug)]
 pub struct CmdSaveAs {
     pub lit: KwSaveAs,
-    pub name: tp::Vec<Word>,
+    pub name: tp::String<Word>,
 }
 
 /// `reload` - reload the game from manual or named save slot
@@ -318,7 +319,7 @@ pub struct CmdSaveAs {
 #[derive(Debug)]
 pub struct CmdReload {
     pub lit: KwReload,
-    pub name: tp::Vec<Word>,
+    pub name: tp::Option<tp::String<Word>>,
 }
 
 /// `enter TRIAL` - enter a trial
@@ -338,5 +339,5 @@ pub struct CmdReload {
 #[derive(Debug)]
 pub struct CmdEnter {
     pub lit: KwEnter,
-    pub trial: tp::Vec<Word>,
+    pub trial: tp::String<Word>,
 }

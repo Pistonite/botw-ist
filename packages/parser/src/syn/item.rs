@@ -4,7 +4,7 @@ use teleparse::{derive_syntax, tp};
 
 use super::token::{
     AngledWord, ColonOrEqual, 
-    NumOrInfinite, Number, 
+    Number, 
     QuotedWord, SymComma, SymLBracket, 
     SymRBracket, Word, MetaValueLiteral, KwAll, SlotClause};
 
@@ -25,7 +25,7 @@ pub struct NumberedItem {
 pub struct NumberedItemOrCategory {
     #[teleparse(semantic(Amount))]
     pub num: Number,
-    pub items: ItemOrCategory,
+    pub item: ItemOrCategory,
 }
 
 /// Syntax for an item prefixed with an amount or "all"
@@ -42,7 +42,7 @@ pub enum NumberedOrAllItemOrCategory {
 pub struct AllItemOrCategory {
     #[teleparse(semantic(Amount))]
     pub all: KwAll,
-    pub items: ItemOrCategory,
+    pub item: ItemOrCategory,
 }
 
 /// Syntax for an item or a category
@@ -61,14 +61,14 @@ pub struct ItemOrCategoryWithSlot {
     pub slot: tp::Option<SlotClause>,
 }
 
-/// Syntax for an item prefixed with an amount or "infinite"
-#[derive_syntax]
-#[derive(Debug)]
-pub struct NumberedOrInfiniteItem {
-    #[teleparse(semantic(Amount))]
-    pub num: NumOrInfinite,
-    pub item: Item,
-}
+// /// Syntax for an item prefixed with an amount or "infinite"
+// #[derive_syntax]
+// #[derive(Debug)]
+// pub struct NumberedOrInfiniteItem {
+//     #[teleparse(semantic(Amount))]
+//     pub num: NumOrInfinite,
+//     pub item: Item,
+// }
 
 /// Syntax for an item
 ///

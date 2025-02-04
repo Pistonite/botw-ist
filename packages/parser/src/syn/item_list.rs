@@ -2,7 +2,7 @@
 
 use teleparse::{derive_syntax, tp};
 
-use super::item::{Item, ItemOrCategoryWithSlot, NumberedItem, NumberedOrInfiniteItem, NumberedOrAllItemOrCategory};
+use super::item::{Item, ItemOrCategoryWithSlot, NumberedItem, NumberedOrAllItemOrCategory};
 use super::token::SlotClause;
 
 /// Specifying an unconstrained, finite list of items 

@@ -166,13 +166,13 @@ pub enum NumOrAll {
     Number(Number),
 }
 
-/// A number or the string "infinite"
-#[derive_syntax]
-#[derive(Debug)]
-pub enum NumOrInfinite {
-    Infinite(KwInfinite),
-    Number(Number),
-}
+// /// A number or the string "infinite"
+// #[derive_syntax]
+// #[derive(Debug)]
+// pub enum NumOrInfinite {
+//     Infinite(KwInfinite),
+//     Number(Number),
+// }
 
 /// Colon or equal as separator
 #[derive_syntax]

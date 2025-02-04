@@ -9,7 +9,9 @@ use crate::cir;
 /// an implementation that is connected to the localization data.
 pub trait QuotedItemResolver {
     type Future: Future<Output = Option<ResolvedItem>>;
-    /// Resolve a quote item word "like this" to its actor name
+
+    /// Resolve a quote item word "like this" to its actor name.
+    /// The input does not contain the quotes.
     fn resolve_quoted(&self, word: &str) -> Self::Future;
 }
 

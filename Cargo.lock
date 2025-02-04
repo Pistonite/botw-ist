@@ -1271,6 +1271,8 @@ name = "skybook-parser"
 version = "0.0.0"
 dependencies = [
  "derive_more",
+ "enumset",
+ "serde",
  "teleparse",
  "textdistance",
  "thiserror",

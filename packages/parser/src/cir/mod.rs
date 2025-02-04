@@ -1,13 +1,31 @@
 use teleparse::{tp, Span, ToSpan};
+use serde::{Deserialize, Serialize};
 
 use crate::syn;
 use crate::error::{Error, ErrorReport};
+
+mod category;
+pub use category::*;
+
+mod command;
+pub use command::*;
 
 mod item_meta;
 pub use item_meta::*;
 
 mod item_spec;
 pub use item_spec::*;
+
+mod trial;
+pub use trial::*;
+
+pub struct Context {
+    /// Simulation steps to execute
+    ///
+    /// The span are used for linking the locations in the source code
+    /// to the simulation steps
+    pub steps: Vec<(Span, Command)>,
+}
 
 
 /// Parser for the item meta syntax
@@ -32,7 +50,9 @@ pub fn parse_meta<T: MetaParser>(meta: &syn::ItemMeta, mut parser: T, errors: &m
     parser.finish()
 }
 
-#[derive(Debug, Clone)]
+/// Value in the metadata
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(untagged)]
 pub enum MetaValue {
     Bool(bool),
     Int(i64),
@@ -43,10 +63,10 @@ pub enum MetaValue {
 impl std::fmt::Display for MetaValue {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            MetaValue::Bool(b) => write!(f, "{}", b),
-            MetaValue::Int(i) => write!(f, "{}", i),
-            MetaValue::Float(fl) => write!(f, "{}", fl),
-            MetaValue::String(s) => write!(f, "{}", s),
+            Self::Bool(b) => write!(f, "{}", b),
+            Self::Int(i) => write!(f, "{}", i),
+            Self::Float(fl) => write!(f, "{}", fl),
+            Self::String(s) => write!(f, "{}", s),
         }
     }
 }
@@ -73,18 +93,7 @@ impl MetaValue {
                 }
             }
             syn::MetaValueLiteral::Number(x) => {
-                let int_part: &str = &*x.int_part;
-                let int_part = match int_part.strip_prefix("0x") {
-                    Some(rest) => i64::from_str_radix(rest, 16)
-                        .map_err(|_| {
-                            Error::IntFormat(x.int_part.to_string()).spanned(x)
-                        })?,
-
-                    None => int_part.parse()
-                        .map_err(|_| {
-                            Error::IntFormat(x.int_part.to_string()).spanned(x)
-                        })?
-                };
+                let int_part = parse_syn_int_str(&x.int_part, &x.span())?;
                 let float_part = match &*x.float_part {
                     Some(fp) => fp,
                     None => return Ok(Self::Int(int_part)),
@@ -126,3 +135,16 @@ impl MetaValue {
     }
 }
 
+
+pub fn parse_syn_int_str(number: &str, span: &Span) -> Result<i64, ErrorReport> {
+    match number.strip_prefix("0x") {
+        Some(rest) => i64::from_str_radix(rest, 16)
+            .map_err(|_| {
+                Error::IntFormat(number.to_string()).spanned(span)
+            }),
+        None => number.parse()
+            .map_err(|_| {
+                Error::IntFormat(number.to_string()).spanned(span)
+            })
+    }
+}
