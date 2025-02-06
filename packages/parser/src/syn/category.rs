@@ -1,6 +1,9 @@
 use teleparse::derive_syntax;
 
-use super::token::{KwArmor, KwArmors, KwBow, KwBows, KwFood, KwFoods, KwKeyItem, KwKeyItems, KwMaterial, KwMaterials, KwShield, KwShields, KwWeapon, KwWeapons};
+use super::token::{
+    KwArmor, KwArmors, KwBow, KwBows, KwFood, KwFoods, KwKeyItem, KwKeyItems, KwMaterial,
+    KwMaterials, KwShield, KwShields, KwWeapon, KwWeapons,
+};
 
 /// Category specifier
 #[derive_syntax]
@@ -52,7 +55,7 @@ pub enum CatArmor {
 #[derive(Debug)]
 pub enum CatMaterial {
     Singular(KwMaterial),
-    Plural(KwMaterials)
+    Plural(KwMaterials),
 }
 
 /// The "food" tab/category
@@ -60,7 +63,7 @@ pub enum CatMaterial {
 #[derive(Debug)]
 pub enum CatFood {
     Singular(KwFood),
-    Plural(KwFoods)
+    Plural(KwFoods),
 }
 
 /// The "key item" tab/category

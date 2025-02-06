@@ -23,7 +23,11 @@ impl PartialOrd for SearchResult<'_, '_> {
         // less = higher priority
 
         // Arrow > Material > Other
-        match self.result.get_type_for_compare().partial_cmp(&other.result.get_type_for_compare()) {
+        match self
+            .result
+            .get_type_for_compare()
+            .partial_cmp(&other.result.get_type_for_compare())
+        {
             Some(std::cmp::Ordering::Less) => {
                 return Some(std::cmp::Ordering::Less);
             }
@@ -34,7 +38,11 @@ impl PartialOrd for SearchResult<'_, '_> {
         };
 
         // Priority: some common items have higher priority
-        match self.result.get_priority().partial_cmp(&other.result.get_priority()) {
+        match self
+            .result
+            .get_priority()
+            .partial_cmp(&other.result.get_priority())
+        {
             Some(std::cmp::Ordering::Less) => {
                 return Some(std::cmp::Ordering::Less);
             }
@@ -48,7 +56,7 @@ impl PartialOrd for SearchResult<'_, '_> {
         let self_id = self.result.id();
         let other_id = other.result.id();
 
-        let lcs = LCSStr{};
+        let lcs = LCSStr {};
         let self_input_dist = lcs.for_str(self_id, self.search_input).dist();
         let other_input_dist = lcs.for_str(other_id, other.search_input).dist();
         match self_input_dist.partial_cmp(&other_input_dist) {

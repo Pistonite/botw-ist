@@ -3,10 +3,9 @@
 use teleparse::{derive_syntax, tp};
 
 use super::token::{
-    AngledWord, ColonOrEqual, 
-    NumOrAll, NumOrInfinite, Number, 
-    QuotedWord, SymComma, SymLBracket, 
-    SymRBracket, Word, MetaValueLiteral, KwAll, SlotClause};
+    AngledWord, ColonOrEqual, KwAll, MetaValueLiteral, Number, QuotedWord, SlotClause, SymComma,
+    SymLBracket, SymRBracket, Word,
+};
 
 use super::category::Category;
 
@@ -25,7 +24,7 @@ pub struct NumberedItem {
 pub struct NumberedItemOrCategory {
     #[teleparse(semantic(Amount))]
     pub num: Number,
-    pub items: ItemOrCategory,
+    pub item: ItemOrCategory,
 }
 
 /// Syntax for an item prefixed with an amount or "all"
@@ -42,7 +41,7 @@ pub enum NumberedOrAllItemOrCategory {
 pub struct AllItemOrCategory {
     #[teleparse(semantic(Amount))]
     pub all: KwAll,
-    pub items: ItemOrCategory,
+    pub item: ItemOrCategory,
 }
 
 /// Syntax for an item or a category
@@ -61,22 +60,14 @@ pub struct ItemOrCategoryWithSlot {
     pub slot: tp::Option<SlotClause>,
 }
 
-// /// Syntax for an item with a slot or a category
+// /// Syntax for an item prefixed with an amount or "infinite"
 // #[derive_syntax]
 // #[derive(Debug)]
-// pub enum ItemWithSlotOrCategory {
-//     Item(ItemWithSlot),
-//     Category(Category),
+// pub struct NumberedOrInfiniteItem {
+//     #[teleparse(semantic(Amount))]
+//     pub num: NumOrInfinite,
+//     pub item: Item,
 // }
-
-/// Syntax for an item prefixed with an amount or "infinite"
-#[derive_syntax]
-#[derive(Debug)]
-pub struct NumberedOrInfiniteItem {
-    #[teleparse(semantic(Amount))]
-    pub num: NumOrInfinite,
-    pub item: Item,
-}
 
 /// Syntax for an item
 ///
@@ -98,9 +89,9 @@ pub struct Item {
 #[derive(Debug)]
 pub enum ItemName {
     /// Using `-` or `_` separated word to search item by English name
-    Word(Word),
+    Word(tp::String<Word>),
     /// Use quoted value to search by name in any language
-    Quoted(QuotedWord),
+    Quoted(tp::String<QuotedWord>),
     /// Use angle brackets to use the literal as the actor name
     /// e.g. `<Weapon_Sword_070>`
     Angle(AngledWord),
@@ -122,7 +113,7 @@ pub struct ItemMetaKeyValue {
     /// The key of the key-value pair
     #[teleparse(semantic(Variable))]
     pub key: tp::String<Word>,
-    pub value: tp::Option<ItemMetaValue>
+    pub value: tp::Option<ItemMetaValue>,
 }
 
 /// Value after the key in an item's metadata specifier

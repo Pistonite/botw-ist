@@ -14,7 +14,12 @@ pub struct SearchName {
 }
 
 impl SearchName {
-    pub const fn new(search_str: &'static str, actor: &'static str, is_material: bool, id_len: u8) -> Self {
+    pub const fn new(
+        search_str: &'static str,
+        actor: &'static str,
+        is_material: bool,
+        id_len: u8,
+    ) -> Self {
         Self {
             extended_item_name: search_str,
             actor,
@@ -39,13 +44,18 @@ impl SearchName {
 
     pub fn get_priority(&self) -> u8 {
         match self.extended_item_name {
-            "treebranch" | "torch"
-            | "soupladle" | "lizaltriboomerang"
-            | "woodcuttersaxe" | "lightscaletrident"
-            | "bokospear" | "normalarrow" |
-            "potlid" | "hylianshroom" | "energeticrhinobeetle"
-            => 1,
-            _ => 2
+            "treebranch"
+            | "torch"
+            | "soupladle"
+            | "lizaltriboomerang"
+            | "woodcuttersaxe"
+            | "lightscaletrident"
+            | "bokospear"
+            | "normalarrow"
+            | "potlid"
+            | "hylianshroom"
+            | "energeticrhinobeetle" => 1,
+            _ => 2,
         }
     }
 

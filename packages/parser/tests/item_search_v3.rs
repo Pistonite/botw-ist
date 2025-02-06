@@ -1,6 +1,8 @@
 use item_search_common::test_item_search;
-use skybook_parser::search::{search_item_by_ident, search_item_by_ident_all, ResolvedItem, COOK_EFFECT_NAMES};
 use skybook_parser::cir;
+use skybook_parser::search::{
+    search_item_by_ident, search_item_by_ident_all, ResolvedItem, COOK_EFFECT_NAMES,
+};
 
 mod item_search_common;
 
@@ -73,19 +75,25 @@ fn test_item_search_v3_alias() {
 #[test]
 fn test_item_search_v3_effect() {
     for (effect_name, effect_id) in COOK_EFFECT_NAMES {
-        assert_eq!(search_item_by_ident(&format!("{}_elixir", effect_name)), Some(ResolvedItem {
-            actor: "Item_Cook_C_17".to_string(),
-            meta: Some(cir::ItemMeta {
-                effect_id: Some(*effect_id),
-                ..Default::default()
+        assert_eq!(
+            search_item_by_ident(&format!("{}_elixir", effect_name)),
+            Some(ResolvedItem {
+                actor: "Item_Cook_C_17".to_string(),
+                meta: Some(cir::ItemMeta {
+                    effect_id: Some(*effect_id),
+                    ..Default::default()
+                })
             })
-        }));
-        assert_eq!(search_item_by_ident_all(&format!("{}_elixir", effect_name))[0], ResolvedItem {
-            actor: "Item_Cook_C_17".to_string(),
-            meta: Some(cir::ItemMeta {
-                effect_id: Some(*effect_id),
-                ..Default::default()
-            })
-        });
+        );
+        assert_eq!(
+            search_item_by_ident_all(&format!("{}_elixir", effect_name))[0],
+            ResolvedItem {
+                actor: "Item_Cook_C_17".to_string(),
+                meta: Some(cir::ItemMeta {
+                    effect_id: Some(*effect_id),
+                    ..Default::default()
+                })
+            }
+        );
     }
 }

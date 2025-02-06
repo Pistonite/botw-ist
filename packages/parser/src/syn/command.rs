@@ -2,25 +2,28 @@
 
 use teleparse::{derive_syntax, tp};
 
-use super::token::{KwGet, KwBuy, KwHoldAttach
+use super::item_list::{ItemListConstrained, ItemListFinite};
+use super::token::{KwBuy, KwGet, KwHoldAttach};
+use super::{
+    Category, ItemMeta, ItemOrCategoryWithSlot, KwBake, KwBoil, KwCloseGame, KwCloseInventory,
+    KwCook, KwDestroy, KwDnp, KwDrop, KwEat, KwEntangle, KwEnter, KwEquip, KwExit, KwFreeze,
+    KwHold, KwHoldSmuggle, KwLeave, KwNewGame, KwOpenInventory, KwPickUp, KwReload, KwRoast,
+    KwSave, KwSaveAs, KwSell, KwShoot, KwSort, KwTalkTo, KwUnequip, KwUnhold, KwUntalk, KwUse,
+    TimesClause, Word,
 };
-use super::item_list::{ItemListFinite, ItemListConstrained};
-use super::{Category, ItemMeta, ItemOrCategoryWithSlot, KwBake, KwBoil, KwCloseGame, KwCloseInventory, KwCook, KwDestroy, KwDnp, KwDrop, KwEat, KwEntangle, KwEnter, KwEquip, KwExit, KwFreeze, KwHold, KwHoldSmuggle, KwLeave, KwNewGame, KwOpenInventory, KwPickUp, KwReload, KwRoast, KwSave, KwSaveAs, KwSell, KwShoot, KwSort, KwTalkTo, KwUnequip, KwUnhold, KwUntalk, KwUse, TimesClause, Word};
 
 #[derive_syntax]
 #[derive(Debug)]
 pub enum Command {
     // ==== adding items ====
-
     /// `get ITEMS`
     Get(CmdGet),
     /// `buy ITEMS`
     Buy(CmdBuy),
     /// `pick-up ITEMS`
-    PickUp(CmdPickup),
+    PickUp(CmdPickUp),
 
     // ==== holding items ====
-
     /// `hold ITEMS`
     Hold(CmdHold),
     /// `hold-smuggle ITEMS`
@@ -37,25 +40,22 @@ pub enum Command {
     Cook(CmdCook),
 
     // ==== removing items ====
-
     /// `eat ITEMS`
     Eat(CmdEat),
     /// `sell ITEMS`
     Sell(CmdSell),
 
     // ==== equipments ====
-
     /// `equip ITEM`
     Equip(CmdEquip),
     /// `unequip ITEM` or `unequip CATEGORY`
-    UnEquip(CmdUnequip),
+    Unequip(CmdUnequip),
     /// `use CATEGORY X times`
     Use(CmdUse),
     /// `shoot X times`
     Shoot(CmdShoot),
 
     // ==== overworld ====
-
     /// `roast ITEMS`
     Roast(CmdRoast),
     /// `bake ITEMS` - same as roast
@@ -68,14 +68,12 @@ pub enum Command {
     Destroy(CmdDestroy),
 
     // ==== inventory ====
-
     /// `sort CATEGORY`
     Sort(CmdSort),
     /// `entangle CATEGORY [tab=X, rol=R, col=C]`
     Entangle(CmdEntangle),
 
     // ==== saves ====
-
     /// `save`
     Save(KwSave),
     /// `save-as NAME`
@@ -90,18 +88,16 @@ pub enum Command {
     // ==== scopes ====
     OpenInventory(KwOpenInventory),
     CloseInventory(KwCloseInventory),
-    TalkTo(KwTalkTo),
+    TalkTo(CmdTalkTo),
     Untalk(KwUntalk),
 
     // ==== trials ====
-
     /// `enter TRIAL`
     Enter(CmdEnter),
     /// `exit` - exit current trial
     Exit(KwExit),
     /// `leave` - leave current trial without clearing it
     Leave(KwLeave),
-
 }
 
 /// `get ITEMS` - items come from the area
@@ -123,7 +119,7 @@ pub struct CmdBuy {
 /// `pick-up ITEMS` - items come from ground
 #[derive_syntax]
 #[derive(Debug)]
-pub struct CmdPickup {
+pub struct CmdPickUp {
     pub lit: KwPickUp,
     pub items: ItemListConstrained,
 }
@@ -144,7 +140,7 @@ pub struct CmdHoldSmuggle {
     pub items: ItemListConstrained,
 }
 
-/// `hold-attach ITEMS` - items come from inventory, 
+/// `hold-attach ITEMS` - items come from inventory,
 /// dropping happens after returning to overworld scope
 #[derive_syntax]
 #[derive(Debug)]
@@ -206,7 +202,7 @@ pub struct CmdSell {
 #[derive(Debug)]
 pub struct CmdEquip {
     pub lit: KwEquip,
-    pub items: ItemOrCategoryWithSlot,
+    pub item: ItemOrCategoryWithSlot,
 }
 
 /// `unequip ITEM` - unequip one thing, or (all items) in one category
@@ -214,7 +210,7 @@ pub struct CmdEquip {
 #[derive(Debug)]
 pub struct CmdUnequip {
     pub lit: KwUnequip,
-    pub items: ItemOrCategoryWithSlot,
+    pub item: ItemOrCategoryWithSlot,
 }
 
 /// `use CATEGORY X times` - use the item
@@ -223,7 +219,7 @@ pub struct CmdUnequip {
 pub struct CmdUse {
     pub lit: KwUse,
     pub category: Category,
-    pub times: TimesClause,
+    pub times: tp::Option<TimesClause>,
 }
 
 /// `shoot X times` is shorthand for `use bow X times`
@@ -231,13 +227,13 @@ pub struct CmdUse {
 #[derive(Debug)]
 pub struct CmdShoot {
     pub lit: KwShoot,
-    pub times: TimesClause,
+    pub times: tp::Option<TimesClause>,
 }
 
 /// `roast ITEMS` - roast items on the ground or in inventory
 ///
 /// Items on the ground has priority, if there are not enough,
-/// but there are items in inventory, then `drop ITEMS` will be 
+/// but there are items in inventory, then `drop ITEMS` will be
 /// used to drop the items on the ground.
 #[derive_syntax]
 #[derive(Debug)]
@@ -292,15 +288,16 @@ pub struct CmdDestroy {
 pub struct CmdSort {
     pub lit: KwSort,
     pub category: Category,
+    pub times: tp::Option<TimesClause>,
 }
 
-/// `entangle CATEGORY [tab=X, rol=R, col=C]` - activate prompt entanglement
+/// `entangle CATEGORY [tab=X, row=R, col=C]` - activate prompt entanglement
 #[derive_syntax]
 #[derive(Debug)]
 pub struct CmdEntangle {
     pub lit: KwEntangle,
     pub category: Category,
-    pub meta: tp::Option<ItemMeta>
+    pub meta: tp::Option<ItemMeta>,
 }
 
 /// `save-as NAME` - save the game to a named slot
@@ -308,7 +305,7 @@ pub struct CmdEntangle {
 #[derive(Debug)]
 pub struct CmdSaveAs {
     pub lit: KwSaveAs,
-    pub name: tp::Vec<Word>,
+    pub name: tp::String<Word>,
 }
 
 /// `reload` - reload the game from manual or named save slot
@@ -318,7 +315,15 @@ pub struct CmdSaveAs {
 #[derive(Debug)]
 pub struct CmdReload {
     pub lit: KwReload,
-    pub name: tp::Vec<Word>,
+    pub name: tp::Option<tp::String<Word>>,
+}
+
+/// `talk-to NAME` - Enter a dialog scope
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdTalkTo {
+    pub lit: KwTalkTo,
+    pub name: tp::Option<tp::String<Word>>,
 }
 
 /// `enter TRIAL` - enter a trial
@@ -338,5 +343,5 @@ pub struct CmdReload {
 #[derive(Debug)]
 pub struct CmdEnter {
     pub lit: KwEnter,
-    pub trial: tp::Vec<Word>,
+    pub trial: tp::String<Word>,
 }

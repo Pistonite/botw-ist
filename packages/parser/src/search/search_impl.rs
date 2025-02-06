@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
-use crate::search::SearchResult;
 use crate::cir;
+use crate::search::SearchResult;
 
 use super::ResolvedItem;
 
@@ -11,17 +11,16 @@ pub fn search_item_by_ident_all(search_str: &str) -> Vec<ResolvedItem> {
     // empty input case - this has to be here
     // because supplement_search_strings will fabricate non-empty search strings
     // even if the input is empty
-    if search_str.trim_matches(|c| c == ' ' || c == '_' || c == '-').is_empty() {
+    if search_str
+        .trim_matches(|c| c == ' ' || c == '_' || c == '-')
+        .is_empty()
+    {
         return vec![];
     }
     let search_str = search_str.to_ascii_lowercase();
     let search_str = match search_str.as_str() {
-        "speedfood" => {
-            return vec![speed_food()]
-        },
-        "endurafood" => {
-            return vec![endura_food()]
-        },
+        "speedfood" => return vec![speed_food()],
+        "endurafood" => return vec![endura_food()],
         other => other,
     };
 
@@ -40,7 +39,6 @@ pub fn search_item_by_ident_all(search_str: &str) -> Vec<ResolvedItem> {
     }
 
     results
-
 }
 
 /// Search for an item by V4 identifier such as `royal_claymore`. Returns the best match
@@ -48,17 +46,16 @@ pub fn search_item_by_ident(search_str: &str) -> Option<ResolvedItem> {
     // empty input case - this has to be here
     // because supplement_search_strings will fabricate non-empty search strings
     // even if the input is empty
-    if search_str.trim_matches(|c| c == ' ' || c == '_' || c == '-').is_empty() {
-        return None
+    if search_str
+        .trim_matches(|c| c == ' ' || c == '_' || c == '-')
+        .is_empty()
+    {
+        return None;
     }
     let search_str = search_str.to_ascii_lowercase();
     let search_str = match search_str.as_str() {
-        "speedfood" => {
-            return Some(speed_food())
-        },
-        "endurafood" => {
-            return Some(endura_food())
-        },
+        "speedfood" => return Some(speed_food()),
+        "endurafood" => return Some(endura_food()),
         other => other,
     };
 
@@ -104,7 +101,7 @@ fn endura_food() -> ResolvedItem {
 /// Returns None if the first term matches multiple effects (i.e. ambiguous)
 fn split_and_search_effect(search_str: &str) -> Option<(i32, &str)> {
     let i = search_str.find(|c| c == '_' || c == '-')?;
-    let (maybe_effect, maybe_item) = (&search_str[..i], &search_str[i+1..]);
+    let (maybe_effect, maybe_item) = (&search_str[..i], &search_str[i + 1..]);
     let mut found = None;
     for (effect_name, effect_id) in COOK_EFFECT_NAMES {
         if effect_name.contains(maybe_effect) {
@@ -125,14 +122,20 @@ fn set_effect(result: &mut ResolvedItem, effect_id: i32) {
     });
 }
 
-fn do_search_item_by_ident(original_search_str: &str, filter: impl Fn(&str) -> bool) -> Option<ResolvedItem> {
+fn do_search_item_by_ident(
+    original_search_str: &str,
+    filter: impl Fn(&str) -> bool,
+) -> Option<ResolvedItem> {
     let mut all_results = BTreeSet::new();
     let all_search_strs = supplement_search_strings(original_search_str);
     for search_str in &all_search_strs {
         search_item_internal(original_search_str, search_str, &mut all_results);
     }
 
-    let first_result = all_results.into_iter().filter(|x| filter(&x.result.actor)).next()?;
+    let first_result = all_results
+        .into_iter()
+        .filter(|x| filter(&x.result.actor))
+        .next()?;
 
     Some(ResolvedItem {
         actor: first_result.result.actor.to_string(),
@@ -140,19 +143,24 @@ fn do_search_item_by_ident(original_search_str: &str, filter: impl Fn(&str) -> b
     })
 }
 
-fn do_search_item_by_ident_all(original_search_str: &str, filter: impl Fn(&str) -> bool) -> Vec<ResolvedItem> {
+fn do_search_item_by_ident_all(
+    original_search_str: &str,
+    filter: impl Fn(&str) -> bool,
+) -> Vec<ResolvedItem> {
     let mut all_results = BTreeSet::new();
     let all_search_strs = supplement_search_strings(original_search_str);
     for search_str in &all_search_strs {
         search_item_internal(original_search_str, search_str, &mut all_results);
     }
 
-    all_results.into_iter()
+    all_results
+        .into_iter()
         .filter(|x| filter(&x.result.actor))
         .map(|r| ResolvedItem {
-        actor: r.result.actor.to_string(),
-        meta: None,
-    }).collect()
+            actor: r.result.actor.to_string(),
+            meta: None,
+        })
+        .collect()
 }
 
 fn all_item(_: &str) -> bool {
@@ -167,11 +175,7 @@ fn is_cook_item(actor: &str) -> bool {
 fn supplement_search_strings(search_str: &str) -> Vec<String> {
     let mut all_search_strs = vec![search_str.to_string()];
     // convert plural forms for english words to singular form
-    let tries = [
-        ("ies", "y"),
-        ("es", ""),
-        ("s", ""),
-    ];
+    let tries = [("ies", "y"), ("es", ""), ("s", "")];
     for (find, replace) in tries {
         let Some(rest) = search_str.strip_suffix(find) else {
             continue;
@@ -182,25 +186,32 @@ fn supplement_search_strings(search_str: &str) -> Vec<String> {
     all_search_strs
 }
 
-pub fn search_item_internal<'a>(original_search_str: &'a str, search_str: &str, out_results: &mut BTreeSet<SearchResult<'a, 'static>>) {
+pub fn search_item_internal<'a>(
+    original_search_str: &'a str,
+    search_str: &str,
+    out_results: &mut BTreeSet<SearchResult<'a, 'static>>,
+) {
     // break name into _ or - separated search phrases
-    let mut parts = search_str.split(|c| c == '_' || c == '-').map(|s| s.trim()).filter(|s| !s.is_empty());
+    let mut parts = search_str
+        .split(|c| c == '_' || c == '-')
+        .map(|s| s.trim())
+        .filter(|s| !s.is_empty());
     let Some(first_part) = parts.next() else {
         return;
     };
-    let mut filtered = crate::generated::ITEM_NAMES.iter()
+    let mut filtered = crate::generated::ITEM_NAMES
+        .iter()
         .filter_map(|n| {
             if n.extended_item_name.contains(first_part) {
                 Some(n.to_result(original_search_str))
             } else {
                 None
             }
-        }).collect::<BTreeSet<_>>();
-    
+        })
+        .collect::<BTreeSet<_>>();
+
     for part in parts {
-        filtered.retain(|n| {
-            n.result.extended_item_name.contains(part)
-        });
+        filtered.retain(|n| n.result.extended_item_name.contains(part));
         match filtered.len() {
             0 => return,
             1 => {
@@ -212,7 +223,6 @@ pub fn search_item_internal<'a>(original_search_str: &'a str, search_str: &str, 
     }
 
     out_results.extend(filtered);
-
 }
 
 pub static COOK_EFFECT_NAMES: &[(&str, i32)] = &[

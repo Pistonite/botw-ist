@@ -1,9 +1,7 @@
-
-/// Command syntax
-pub mod syn;
 /// Command intermediate representation
 pub mod cir;
-
+/// Command syntax
+pub mod syn;
 
 mod error;
 
@@ -13,7 +11,6 @@ pub fn test_message(n: u64) -> String {
 
 /// Item searcher
 pub mod search;
-
 
 mod util;
 
