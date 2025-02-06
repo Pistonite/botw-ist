@@ -5,7 +5,7 @@ use teleparse::{derive_syntax, tp};
 use super::item::{Item, ItemOrCategoryWithSlot, NumberedItem, NumberedOrAllItemOrCategory};
 use super::token::SlotClause;
 
-/// Specifying an unconstrained, finite list of items 
+/// Specifying an unconstrained, finite list of items
 ///
 /// This is usually used for adding items
 #[derive_syntax]
@@ -17,7 +17,7 @@ pub enum ItemListFinite {
     List(tp::Nev<NumberedItem>),
 }
 
-// /// Specifying an unconstrained list of items that allows 
+// /// Specifying an unconstrained list of items that allows
 // /// an infinite amount of items
 // #[derive_syntax]
 // #[derive(Debug)]
@@ -40,7 +40,6 @@ pub enum ItemListConstrained {
     /// multiple items with amounts, e.g. `5 apples 3 royal_claymore :from slot 3`
     List(ItemListWithSlot),
 }
-
 
 /// Syntax for specifying a list of items with a slot
 #[derive_syntax]

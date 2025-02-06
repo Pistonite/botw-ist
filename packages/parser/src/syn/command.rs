@@ -2,16 +2,20 @@
 
 use teleparse::{derive_syntax, tp};
 
-use super::token::{KwGet, KwBuy, KwHoldAttach
+use super::item_list::{ItemListConstrained, ItemListFinite};
+use super::token::{KwBuy, KwGet, KwHoldAttach};
+use super::{
+    Category, ItemMeta, ItemOrCategoryWithSlot, KwBake, KwBoil, KwCloseGame, KwCloseInventory,
+    KwCook, KwDestroy, KwDnp, KwDrop, KwEat, KwEntangle, KwEnter, KwEquip, KwExit, KwFreeze,
+    KwHold, KwHoldSmuggle, KwLeave, KwNewGame, KwOpenInventory, KwPickUp, KwReload, KwRoast,
+    KwSave, KwSaveAs, KwSell, KwShoot, KwSort, KwTalkTo, KwUnequip, KwUnhold, KwUntalk, KwUse,
+    TimesClause, Word,
 };
-use super::item_list::{ItemListFinite, ItemListConstrained};
-use super::{Category, ItemMeta, ItemOrCategoryWithSlot, KwBake, KwBoil, KwCloseGame, KwCloseInventory, KwCook, KwDestroy, KwDnp, KwDrop, KwEat, KwEntangle, KwEnter, KwEquip, KwExit, KwFreeze, KwHold, KwHoldSmuggle, KwLeave, KwNewGame, KwOpenInventory, KwPickUp, KwReload, KwRoast, KwSave, KwSaveAs, KwSell, KwShoot, KwSort, KwTalkTo, KwUnequip, KwUnhold, KwUntalk, KwUse, TimesClause, Word};
 
 #[derive_syntax]
 #[derive(Debug)]
 pub enum Command {
     // ==== adding items ====
-
     /// `get ITEMS`
     Get(CmdGet),
     /// `buy ITEMS`
@@ -20,7 +24,6 @@ pub enum Command {
     PickUp(CmdPickUp),
 
     // ==== holding items ====
-
     /// `hold ITEMS`
     Hold(CmdHold),
     /// `hold-smuggle ITEMS`
@@ -37,14 +40,12 @@ pub enum Command {
     Cook(CmdCook),
 
     // ==== removing items ====
-
     /// `eat ITEMS`
     Eat(CmdEat),
     /// `sell ITEMS`
     Sell(CmdSell),
 
     // ==== equipments ====
-
     /// `equip ITEM`
     Equip(CmdEquip),
     /// `unequip ITEM` or `unequip CATEGORY`
@@ -55,7 +56,6 @@ pub enum Command {
     Shoot(CmdShoot),
 
     // ==== overworld ====
-
     /// `roast ITEMS`
     Roast(CmdRoast),
     /// `bake ITEMS` - same as roast
@@ -68,14 +68,12 @@ pub enum Command {
     Destroy(CmdDestroy),
 
     // ==== inventory ====
-
     /// `sort CATEGORY`
     Sort(CmdSort),
     /// `entangle CATEGORY [tab=X, rol=R, col=C]`
     Entangle(CmdEntangle),
 
     // ==== saves ====
-
     /// `save`
     Save(KwSave),
     /// `save-as NAME`
@@ -90,18 +88,16 @@ pub enum Command {
     // ==== scopes ====
     OpenInventory(KwOpenInventory),
     CloseInventory(KwCloseInventory),
-    TalkTo(KwTalkTo),
+    TalkTo(CmdTalkTo),
     Untalk(KwUntalk),
 
     // ==== trials ====
-
     /// `enter TRIAL`
     Enter(CmdEnter),
     /// `exit` - exit current trial
     Exit(KwExit),
     /// `leave` - leave current trial without clearing it
     Leave(KwLeave),
-
 }
 
 /// `get ITEMS` - items come from the area
@@ -144,7 +140,7 @@ pub struct CmdHoldSmuggle {
     pub items: ItemListConstrained,
 }
 
-/// `hold-attach ITEMS` - items come from inventory, 
+/// `hold-attach ITEMS` - items come from inventory,
 /// dropping happens after returning to overworld scope
 #[derive_syntax]
 #[derive(Debug)]
@@ -237,7 +233,7 @@ pub struct CmdShoot {
 /// `roast ITEMS` - roast items on the ground or in inventory
 ///
 /// Items on the ground has priority, if there are not enough,
-/// but there are items in inventory, then `drop ITEMS` will be 
+/// but there are items in inventory, then `drop ITEMS` will be
 /// used to drop the items on the ground.
 #[derive_syntax]
 #[derive(Debug)]
@@ -301,7 +297,7 @@ pub struct CmdSort {
 pub struct CmdEntangle {
     pub lit: KwEntangle,
     pub category: Category,
-    pub meta: tp::Option<ItemMeta>
+    pub meta: tp::Option<ItemMeta>,
 }
 
 /// `save-as NAME` - save the game to a named slot
@@ -319,6 +315,14 @@ pub struct CmdSaveAs {
 #[derive(Debug)]
 pub struct CmdReload {
     pub lit: KwReload,
+    pub name: tp::Option<tp::String<Word>>,
+}
+
+/// `talk-to NAME` - Enter a dialog scope
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdTalkTo {
+    pub lit: KwTalkTo,
     pub name: tp::Option<tp::String<Word>>,
 }
 

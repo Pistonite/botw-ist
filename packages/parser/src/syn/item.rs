@@ -3,10 +3,9 @@
 use teleparse::{derive_syntax, tp};
 
 use super::token::{
-    AngledWord, ColonOrEqual, 
-    Number, 
-    QuotedWord, SymComma, SymLBracket, 
-    SymRBracket, Word, MetaValueLiteral, KwAll, SlotClause};
+    AngledWord, ColonOrEqual, KwAll, MetaValueLiteral, Number, QuotedWord, SlotClause, SymComma,
+    SymLBracket, SymRBracket, Word,
+};
 
 use super::category::Category;
 
@@ -114,7 +113,7 @@ pub struct ItemMetaKeyValue {
     /// The key of the key-value pair
     #[teleparse(semantic(Variable))]
     pub key: tp::String<Word>,
-    pub value: tp::Option<ItemMetaValue>
+    pub value: tp::Option<ItemMetaValue>,
 }
 
 /// Value after the key in an item's metadata specifier

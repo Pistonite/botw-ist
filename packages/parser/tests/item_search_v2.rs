@@ -1,6 +1,6 @@
 use item_search_common::test_item_search;
-use skybook_parser::search::{ResolvedItem, search_item_by_ident, search_item_by_ident_all};
 use skybook_parser::cir;
+use skybook_parser::search::{search_item_by_ident, search_item_by_ident_all, ResolvedItem};
 
 mod item_search_common;
 
@@ -63,22 +63,27 @@ fn test_item_search_v2() {
     test_item_search("fairy", "Animal_Insect_F");
     test_item_search("masterSword", "Weapon_Sword_070");
     test_item_search("zoraarmor", "Armor_006_Upper");
-    
+
     // Legacy food. Need to add metadata
-    assert_eq!(search_item_by_ident("speedfood"), Some(ResolvedItem {
-        actor: "Item_Cook_A_03".to_string(),
-        meta: Some(cir::ItemMeta {
-            effect_id: Some(13),
-            ..Default::default()
+    assert_eq!(
+        search_item_by_ident("speedfood"),
+        Some(ResolvedItem {
+            actor: "Item_Cook_A_03".to_string(),
+            meta: Some(cir::ItemMeta {
+                effect_id: Some(13),
+                ..Default::default()
+            })
         })
-    }));
+    );
 
-    assert_eq!(search_item_by_ident("endurafood"), Some(ResolvedItem {
-        actor: "Item_Cook_A_01".to_string(),
-        meta: Some(cir::ItemMeta {
-            effect_id: Some(15),
-            ..Default::default()
+    assert_eq!(
+        search_item_by_ident("endurafood"),
+        Some(ResolvedItem {
+            actor: "Item_Cook_A_01".to_string(),
+            meta: Some(cir::ItemMeta {
+                effect_id: Some(15),
+                ..Default::default()
+            })
         })
-    }));
+    );
 }
-

@@ -26,6 +26,9 @@ pub fn parse_trial(trial_name: &str, span: &Span) -> Result<Trial, ErrorReport> 
         "waterblight-refight" => Ok(Trial::RefightWater),
         "fireblight-refight" => Ok(Trial::RefightFire),
         "windblight-refight" => Ok(Trial::RefightWind),
-        _ => Err(ErrorReport::spanned(span, Error::InvalidTrial(trial_name.to_string())))
+        _ => Err(ErrorReport::spanned(
+            span,
+            Error::InvalidTrial(trial_name.to_string()),
+        )),
     }
 }

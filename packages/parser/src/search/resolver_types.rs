@@ -32,6 +32,9 @@ impl ResolvedItem {
 
     /// Create a new resolved item with meta
     pub fn with_meta(actor: String, meta: cir::ItemMeta) -> Self {
-        Self { actor, meta: Some(meta) }
+        Self {
+            actor,
+            meta: Some(meta),
+        }
     }
 }

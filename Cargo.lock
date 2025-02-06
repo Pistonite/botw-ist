@@ -1273,6 +1273,7 @@ dependencies = [
  "derive_more",
  "enumset",
  "serde",
+ "static_assertions",
  "teleparse",
  "textdistance",
  "thiserror",

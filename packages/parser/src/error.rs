@@ -3,7 +3,6 @@ use teleparse::ToSpan;
 
 use crate::cir;
 
-
 pub struct ErrorReport {
     pub span: (usize, usize),
     pub is_warning: bool,
@@ -45,8 +44,16 @@ pub enum Error {
     InvalidArmorStarNum(i32),
     #[error("`{0}` is not a valid item slot specifier (must be at least 1)")]
     InvalidSlotClause(i64),
+    #[error("`{0}` is not a valid number for times (must be at least 1)")]
+    InvalidTimesClause(i64),
     #[error("`{0}` is not a valid trial name")]
     InvalidTrial(String),
+    #[error("category `{0:?}` is not allowed in this context")]
+    InvalidCategory(cir::Category),
+    #[error("`{0}` is not a valid row in the inventory, valid values are [1, 2, 3, 4]")]
+    InvalidInventoryRow(i64),
+    #[error("`{0}` is not a valid column in the inventory, valid values are [1, 2, 3, 4, 5]")]
+    InvalidInventoryCol(i64),
 }
 
 impl Error {

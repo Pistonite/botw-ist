@@ -1,3 +1,5 @@
+use teleparse::ToSpan;
+
 use crate::cir;
 use crate::error::ErrorReport;
 use crate::search::QuotedItemResolver;
@@ -34,9 +36,9 @@ pub enum Command {
     /// See [`syn::CmdSell`]
     Sell(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdEquip`]
-    Equip(cir::ItemSelectSpec),
+    Equip(Box<cir::ItemSelectSpec>),
     /// See [`syn::CmdUnequip`]
-    Unequip(cir::ItemSelectSpec),
+    Unequip(Box<cir::ItemSelectSpec>),
     /// See [`syn::CmdUse`] and [`crate::syn::CmdShoot`]
     Use(cir::CategorySpec),
     /// See [`syn::CmdRoast`] and [`crate::syn::CmdBake`]
@@ -67,7 +69,7 @@ pub enum Command {
     // ==== scopes ====
     OpenInv,
     CloseInv,
-    TalkTo,
+    Talk,
     Untalk,
 
     /// See [`syn::CmdEnter`]
@@ -77,6 +79,8 @@ pub enum Command {
     /// `leave` - Leave the current trial without clearing it
     Leave,
 }
+// make sure the command size does not update unexpectedly
+static_assertions::assert_eq_size!(Command, [u8; 0x20]);
 
 pub async fn parse_command<R: QuotedItemResolver>(
     command: &syn::Command,
@@ -124,33 +128,85 @@ pub async fn parse_command<R: QuotedItemResolver>(
         syn::Command::Sell(cmd) => Some(cir::Command::Sell(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
-        syn::Command::Equip(cmd) => Some(cir::Command::Equip(
+        syn::Command::Equip(cmd) => Some(cir::Command::Equip(Box::new(
             cir::parse_item_or_category_with_slot(&cmd.item, resolver, errors).await?,
-        )),
-        syn::Command::Unequip(cmd) => Some(cir::Command::Unequip(
+        ))),
+        syn::Command::Unequip(cmd) => Some(cir::Command::Unequip(Box::new(
             cir::parse_item_or_category_with_slot(&cmd.item, resolver, errors).await?,
-        )),
+        ))),
         syn::Command::Use(cmd) => {
+            match cir::parse_use_category_with_times(&cmd.category, cmd.times.as_ref()) {
+                Ok(spec) => Some(cir::Command::Use(spec)),
+                Err(e) => {
+                    errors.push(e);
+                    None
+                }
+            }
         }
-        syn::Command::Shoot(cmd_shoot) => todo!(),
-        syn::Command::Roast(cmd_roast) => todo!(),
-        syn::Command::Bake(cmd_bake) => todo!(),
-        syn::Command::Boil(cmd_boil) => todo!(),
-        syn::Command::Freeze(cmd_freeze) => todo!(),
-        syn::Command::Destroy(cmd_destroy) => todo!(),
-        syn::Command::Sort(cmd_sort) => todo!(),
-        syn::Command::Entangle(cmd_entangle) => todo!(),
-        syn::Command::Save(kw_save) => todo!(),
-        syn::Command::SaveAs(cmd_save_as) => todo!(),
-        syn::Command::Reload(cmd_reload) => todo!(),
-        syn::Command::CloseGame(kw_close_game) => todo!(),
-        syn::Command::NewGame(kw_new_game) => todo!(),
-        syn::Command::OpenInventory(kw_open_inventory) => todo!(),
-        syn::Command::CloseInventory(kw_close_inventory) => todo!(),
-        syn::Command::TalkTo(kw_talk_to) => todo!(),
-        syn::Command::Untalk(kw_untalk) => todo!(),
-        syn::Command::Enter(cmd_enter) => todo!(),
-        syn::Command::Exit(kw_exit) => todo!(),
-        syn::Command::Leave(kw_leave) => todo!(),
+        syn::Command::Shoot(cmd) => match cir::parse_times_clause(cmd.times.as_ref()) {
+            Ok(times) => Some(cir::Command::Use(cir::CategorySpec {
+                category: cir::Category::Bow,
+                amount: times,
+                row: 0,
+                col: 0,
+            })),
+            Err(e) => {
+                errors.push(e);
+                None
+            }
+        },
+        syn::Command::Roast(cmd) => Some(cir::Command::Roast(
+            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
+        )),
+        syn::Command::Bake(cmd) => {
+            // note: alias for Roast
+            Some(cir::Command::Roast(
+                cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
+            ))
+        }
+        syn::Command::Boil(cmd) => Some(cir::Command::Boil(
+            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
+        )),
+        syn::Command::Freeze(cmd) => Some(cir::Command::Freeze(
+            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
+        )),
+        syn::Command::Destroy(cmd) => Some(cir::Command::Destroy(
+            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
+        )),
+        syn::Command::Sort(cmd) => {
+            match cir::parse_category_with_times(&cmd.category, cmd.times.as_ref()) {
+                Ok(spec) => Some(cir::Command::Sort(spec)),
+                Err(e) => {
+                    errors.push(e);
+                    None
+                }
+            }
+        }
+        syn::Command::Entangle(cmd) => Some(cir::Command::Entangle(cir::parse_entangle_meta(
+            &cmd.category,
+            cmd.meta.as_ref(),
+            errors,
+        ))),
+        syn::Command::Save(_) => Some(cir::Command::Save),
+        syn::Command::SaveAs(cmd) => Some(cir::Command::SaveAs(cmd.name.to_string())),
+        syn::Command::Reload(cmd) => match cmd.name.as_ref() {
+            None => Some(cir::Command::Reload),
+            Some(name) => Some(cir::Command::ReloadFrom(name.to_string())),
+        },
+        syn::Command::CloseGame(_) => Some(cir::Command::CloseGame),
+        syn::Command::NewGame(_) => Some(cir::Command::NewGame),
+        syn::Command::OpenInventory(_) => Some(cir::Command::OpenInv),
+        syn::Command::CloseInventory(_) => Some(cir::Command::CloseInv),
+        syn::Command::TalkTo(_) => Some(cir::Command::Talk),
+        syn::Command::Untalk(_) => Some(cir::Command::Untalk),
+        syn::Command::Enter(cmd) => match cir::parse_trial(&cmd.trial, &cmd.trial.span()) {
+            Ok(trial) => Some(cir::Command::Enter(trial)),
+            Err(e) => {
+                errors.push(e);
+                None
+            }
+        },
+        syn::Command::Exit(_) => Some(cir::Command::Exit),
+        syn::Command::Leave(_) => Some(cir::Command::Leave),
     }
 }

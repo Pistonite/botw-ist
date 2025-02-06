@@ -1,10 +1,10 @@
 use teleparse::ToSpan;
 
+use crate::cir;
 use crate::error::{Error, ErrorReport};
 use crate::search::{self, QuotedItemResolver, ResolvedItem};
 use crate::syn;
-use crate::cir;
-
+use crate::util;
 
 /// Specification for an item
 pub struct ItemSpec {
@@ -35,7 +35,7 @@ pub struct ItemSelectSpec {
     pub item: ItemOrCategory,
 
     /// The slot number to select from, 0 means not specified
-    pub slot: i64
+    pub slot: i64,
 }
 
 pub enum ItemOrCategory {
@@ -48,19 +48,22 @@ pub struct Item {
     pub actor: String,
 
     /// Metadata of the item
+    ///
+    /// The "star" option should always be None, and the actor
+    /// is adjusted to be the actor with the given star num
     pub meta: Option<cir::ItemMeta>,
 }
 
-pub async fn parse_item_list_finite<R: QuotedItemResolver>(list: &syn::ItemListFinite
-    , resolver: &R, errors: &mut Vec<ErrorReport>) -> Vec<ItemSpec> {
+pub async fn parse_item_list_finite<R: QuotedItemResolver>(
+    list: &syn::ItemListFinite,
+    resolver: &R,
+    errors: &mut Vec<ErrorReport>,
+) -> Vec<ItemSpec> {
     let mut out_item_specs = Vec::new();
     match list {
         syn::ItemListFinite::Single(item) => {
             if let Some(item) = parse_item(item, resolver, errors).await {
-                out_item_specs.push(ItemSpec {
-                    amount: 1,
-                    item,
-                });
+                out_item_specs.push(ItemSpec { amount: 1, item });
             }
         }
         syn::ItemListFinite::List(items) => {
@@ -74,10 +77,7 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(list: &syn::ItemListF
                 };
 
                 if let Some(item) = parse_item(&item.item, resolver, errors).await {
-                    out_item_specs.push(ItemSpec {
-                        amount,
-                        item,
-                    });
+                    out_item_specs.push(ItemSpec { amount, item });
                 }
             }
         }
@@ -87,11 +87,10 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(list: &syn::ItemListF
 }
 
 pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
-    list: &syn::ItemListConstrained, 
-    resolver: &R, 
-    errors: &mut Vec<ErrorReport>
+    list: &syn::ItemListConstrained,
+    resolver: &R,
+    errors: &mut Vec<ErrorReport>,
 ) -> Vec<ItemSelectSpec> {
-
     let mut out_item_specs = Vec::new();
 
     match list {
@@ -120,10 +119,8 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
                             }
                         };
                         (amount, &item.item)
-                    },
-                    syn::NumberedOrAllItemOrCategory::All(item) => {
-                        (-1, &item.item)
                     }
+                    syn::NumberedOrAllItemOrCategory::All(item) => (-1, &item.item),
                 };
                 let Some(result) = parse_item_or_category(&item, resolver, errors).await else {
                     continue;
@@ -143,17 +140,15 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
 pub async fn parse_item_or_category_with_slot<R: QuotedItemResolver>(
     item: &syn::ItemOrCategoryWithSlot,
     resolver: &R,
-    errors: &mut Vec<ErrorReport>
+    errors: &mut Vec<ErrorReport>,
 ) -> Option<ItemSelectSpec> {
     let result = parse_item_or_category(&item.item, resolver, errors).await?;
     match parse_slot_clause(item.slot.as_ref()) {
-        Ok(slot) => {
-            Some(ItemSelectSpec {
-                amount: 1,
-                item: result,
-                slot,
-            })
-        }
+        Ok(slot) => Some(ItemSelectSpec {
+            amount: 1,
+            item: result,
+            slot,
+        }),
         Err(e) => {
             errors.push(e);
             None
@@ -164,7 +159,7 @@ pub async fn parse_item_or_category_with_slot<R: QuotedItemResolver>(
 async fn parse_item_or_category<R: QuotedItemResolver>(
     item: &syn::ItemOrCategory,
     resolver: &R,
-    errors: &mut Vec<ErrorReport>
+    errors: &mut Vec<ErrorReport>,
 ) -> Option<ItemOrCategory> {
     match item {
         syn::ItemOrCategory::Item(item) => {
@@ -179,18 +174,18 @@ async fn parse_item_or_category<R: QuotedItemResolver>(
 }
 
 /// Parse an item syntax node. Use the provided resolver to resolve quoted items.
-async fn parse_item<R: QuotedItemResolver>(item: &syn::Item, 
+async fn parse_item<R: QuotedItemResolver>(
+    item: &syn::Item,
     resolver: &R,
-    errors: &mut Vec<ErrorReport>) -> Option<Item> {
+    errors: &mut Vec<ErrorReport>,
+) -> Option<Item> {
     let resolved_item = parse_item_name(&item.name, resolver, errors).await?;
     let actor = resolved_item.actor;
     // merge the resolved meta and input meta
     let input_meta = item.meta.as_ref();
-    let meta = match (resolved_item.meta, input_meta) {
+    let mut meta = match (resolved_item.meta, input_meta) {
         (None, None) => None,
-        (None, Some(x)) => {
-            Some(cir::ItemMeta::parse_syn(x, errors))
-        }
+        (None, Some(x)) => Some(cir::ItemMeta::parse_syn(x, errors)),
         (Some(x), None) => Some(x),
         (Some(mut resolved), Some(input)) => {
             // the input meta overrides from resolved
@@ -199,15 +194,21 @@ async fn parse_item<R: QuotedItemResolver>(item: &syn::Item,
         }
     };
 
-    Some(Item {
-        actor,
-        meta,
-    })
+    let actor = if let Some(star_num) = meta.as_mut().and_then(|m| m.star.take()) {
+        util::get_armor_with_star(&actor, star_num).to_string()
+    } else {
+        actor
+    };
+
+    Some(Item { actor, meta })
 }
 
 /// Parse an item name syntax node. Use the provided resolver to resolve quoted items.
-async fn parse_item_name<R: QuotedItemResolver>(item_name: &syn::ItemName, resolver: &R, 
-    errors: &mut Vec<ErrorReport>) -> Option<ResolvedItem> {
+async fn parse_item_name<R: QuotedItemResolver>(
+    item_name: &syn::ItemName,
+    resolver: &R,
+    errors: &mut Vec<ErrorReport>,
+) -> Option<ResolvedItem> {
     match item_name {
         syn::ItemName::Word(word) => {
             let result = search::search_item_by_ident(&word);
@@ -215,7 +216,7 @@ async fn parse_item_name<R: QuotedItemResolver>(item_name: &syn::ItemName, resol
                 errors.push(Error::InvalidItem(word.to_string()).spanned(word));
             }
             result
-        },
+        }
         syn::ItemName::Quoted(quoted_word) => {
             let name = quoted_word.as_str().trim_matches('"');
             if name.is_empty() {
@@ -227,7 +228,7 @@ async fn parse_item_name<R: QuotedItemResolver>(item_name: &syn::ItemName, resol
                 errors.push(Error::InvalidItem(name.to_string()).spanned(quoted_word));
             }
             result
-        },
+        }
         syn::ItemName::Angle(angled_word) => {
             let name = &angled_word.name;
             if name.is_empty() {

@@ -1,4 +1,3 @@
-
 use derive_more::derive::{Deref, DerefMut};
 use teleparse::{derive_lexicon, derive_syntax, tp};
 
@@ -24,7 +23,10 @@ pub enum TT {
     ))]
     Symbol,
 
-    #[teleparse(regex(r"((-)?\d(_?\d)*)|(0x[\da-fA-F](_?[\da-fA-F])*)"), terminal(SymNumber))]
+    #[teleparse(
+        regex(r"((-)?\d(_?\d)*)|(0x[\da-fA-F](_?[\da-fA-F])*)"),
+        terminal(SymNumber)
+    )]
     Number,
 
     #[teleparse(terminal(
@@ -50,7 +52,7 @@ pub enum TT {
         KwUnequip = "unequip",
         KwShoot = "shoot",
         KwUse = "use",
-    
+
         KwRoast = "roast",
         KwBake = "bake",
         KwBoil = "boil",
@@ -76,7 +78,7 @@ pub enum TT {
         KwLeave = "leave",
 
         // reserved
-        
+
         KwGoto = "go-to",
     ))]
     Command,
@@ -182,16 +184,12 @@ pub enum ColonOrEqual {
     Equal(SymEqual),
 }
 
-
 /// Syntax for specifying a slot (:from slot X, :in slot X, :at slot X)
 #[derive_syntax]
 #[derive(Debug)]
 pub struct SlotClause {
     pub colon: SymColon,
-    #[teleparse(literal("from"),
-        literial("in"),
-        literial("at"),
-        semantic(Keyword))]
+    #[teleparse(literal("from"), literial("in"), literial("at"), semantic(Keyword))]
     pub kw: Word,
     #[teleparse(literal("slot"), semantic(Keyword))]
     pub kw_slot: Word,

@@ -28,4 +28,3 @@ pub struct Statement {
     pub cmd: Command,
     pub semi: tp::Option<SymSemi>,
 }
-
