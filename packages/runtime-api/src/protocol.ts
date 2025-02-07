@@ -21,5 +21,15 @@ export interface RuntimeApi {
      * Set the script for the runtime, which starts executing
      * the script immediately
      */
-    setScript(script: string): WorkexPromise<string>;
+    onScriptChange(script: string): WorkexPromise<void>;
+
+    getSemanticTokens(script: string, startPos: number, endPos: number): WorkexPromise<Uint32Array>;
+
+    getParserDiagnostics(script: string): WorkexPromise<{ range: [number, number]; message: string }[]>;
+
+    getRuntimeDiagnostics(script: string): WorkexPromise<{ range: [number, number]; message: string }[]>;
+
+    getStepFromPos(script: string, pos: number): WorkexPromise<number>;
+
+    getInventory(scriptHash: string, step: number): WorkexPromise<unknown>;
 }

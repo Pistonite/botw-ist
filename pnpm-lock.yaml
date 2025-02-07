@@ -355,6 +355,9 @@ importers:
 
   packages/runtime-wasm:
     dependencies:
+      '@pistonite/pure':
+        specifier: 'catalog:'
+        version: 0.0.19
       '@pistonite/workex':
         specifier: 'catalog:'
         version: 0.0.5
