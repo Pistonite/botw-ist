@@ -1,5 +1,7 @@
 import type { WorkexPromise } from "@pistonite/workex";
 
+import { ParserError } from "./parserTypes.ts";
+
 /**
  * API provided by the simulator runtime
  *
@@ -23,11 +25,17 @@ export interface RuntimeApi {
      */
     onScriptChange(script: string): WorkexPromise<void>;
 
-    getSemanticTokens(script: string, startPos: number, endPos: number): WorkexPromise<Uint32Array>;
+    getSemanticTokens(
+        script: string,
+        startPos: number,
+        endPos: number,
+    ): WorkexPromise<Uint32Array>;
 
-    getParserDiagnostics(script: string): WorkexPromise<{ range: [number, number]; message: string }[]>;
+    getParserDiagnostics(script: string): WorkexPromise<ParserError[]>;
 
-    getRuntimeDiagnostics(script: string): WorkexPromise<{ range: [number, number]; message: string }[]>;
+    getRuntimeDiagnostics(
+        script: string,
+    ): WorkexPromise<{ range: [number, number]; message: string }[]>;
 
     getStepFromPos(script: string, pos: number): WorkexPromise<number>;
 
