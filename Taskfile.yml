@@ -112,8 +112,3 @@ tasks:
     cmds:
       - task: parser:test
 
-  check-git-status:
-    cmds:
-      - cmd: if ! [ -z "$(git status --porcelain=v1)" ] ; then echo 'There are modifications!'; exit 2; fi
-        slient: true
-

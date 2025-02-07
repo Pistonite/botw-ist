@@ -6,6 +6,7 @@ packages:
   - packages/item-system
   - packages/localization
   - packages/mono-dev
+  - packages/parser
   - packages/runtime-api
   - packages/runtime-wasm
   - packages/shared-controls

@@ -11,6 +11,7 @@ wasm-bindgen = { version = "0.2.99", features = ["serde", "serde-serialize"] }
 teleparse = "0.0.5"
 tsify-next = { version = "0.5.4", features = ["js"], default-features = false }
 serde = { version = "1.0.217", features = ["derive"] }
+ts-rs = "10.1.0"
 
 [lib]
 crate-type = ["cdylib"]

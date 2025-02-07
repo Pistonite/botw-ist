@@ -4,6 +4,9 @@ includes:
   ecma:
     taskfile: ../mono-dev/task/ecma.yaml
     internal: true
+  git:
+    taskfile: ../mono-dev/task/git.yaml
+    internal: true
 
 tasks:
   build:
@@ -14,6 +17,11 @@ tasks:
     cmds:
       - task: ecma:tsc-check
       - task: ecma:prettier-check
+      - task: build
+      - task: git:check-modification
+        vars:
+          CHECK_PATH: packages/runtime-api/src
+          CHECK_MESSAGE: Please regenerate runtime-api source with `task build`
 
   fix:
     cmds:

@@ -68,7 +68,7 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
         }
         syn::ItemListFinite::List(items) => {
             for item in items.iter() {
-                let amount = match cir::parse_syn_int_str(&*item.num, &item.num.span()) {
+                let amount = match cir::parse_syn_int_str(&item.num, &item.num.span()) {
                     Ok(amount) => amount,
                     Err(e) => {
                         errors.push(e);
@@ -111,7 +111,7 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
             for item in items.items.iter() {
                 let (amount, item) = match item {
                     syn::NumberedOrAllItemOrCategory::Numbered(item) => {
-                        let amount = match cir::parse_syn_int_str(&*item.num, &item.num.span()) {
+                        let amount = match cir::parse_syn_int_str(&item.num, &item.num.span()) {
                             Ok(amount) => amount,
                             Err(e) => {
                                 errors.push(e);
@@ -122,7 +122,7 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
                     }
                     syn::NumberedOrAllItemOrCategory::All(item) => (-1, &item.item),
                 };
-                let Some(result) = parse_item_or_category(&item, resolver, errors).await else {
+                let Some(result) = parse_item_or_category(item, resolver, errors).await else {
                     continue;
                 };
                 out_item_specs.push(ItemSelectSpec {
@@ -211,7 +211,7 @@ async fn parse_item_name<R: QuotedItemResolver>(
 ) -> Option<ResolvedItem> {
     match item_name {
         syn::ItemName::Word(word) => {
-            let result = search::search_item_by_ident(&word);
+            let result = search::search_item_by_ident(word);
             if result.is_none() {
                 errors.push(Error::InvalidItem(word.to_string()).spanned(word));
             }
@@ -246,7 +246,7 @@ fn parse_slot_clause(slot: Option<&syn::SlotClause>) -> Result<i64, ErrorReport>
     match slot {
         None => Ok(0),
         Some(slot) => {
-            let slot_num = cir::parse_syn_int_str(&*slot.idx, &slot.idx.span())?;
+            let slot_num = cir::parse_syn_int_str(&slot.idx, &slot.idx.span())?;
             if slot_num < 1 {
                 return Err(Error::InvalidSlotClause(slot_num).spanned(slot));
             }

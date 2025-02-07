@@ -12,7 +12,8 @@
     },
     "dependencies": {
         "@pistonite/pure": "catalog:",
-        "@pistonite/workex": "catalog:"
+        "@pistonite/workex": "catalog:",
+        "skybook-parser": "workspace:*"
     },
     "devDependencies": {
         "mono-dev": "workspace:*",

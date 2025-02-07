@@ -9,7 +9,7 @@ pub fn get_armor_with_star(mut actor: &str, star: i32) -> Cow<str> {
     if actor == "Armor_140_Lower" {
         actor = "Armor_141_Lower";
     }
-    let star = star.min(4).max(0);
+    let star = star.clamp(0, 4);
     // if input is not armor, return as is
     let Some(to_search) = actor.strip_prefix("Armor_") else {
         return Cow::Borrowed(actor);

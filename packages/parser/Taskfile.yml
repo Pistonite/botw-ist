@@ -4,12 +4,25 @@ includes:
   cargo:
     taskfile: ../mono-dev/task/cargo.yaml
     internal: true
+  git:
+    taskfile: ../mono-dev/task/git.yaml
+    internal: true
 
 tasks:
+  build:
+    cmds:
+      - task: build-src
+      - task: build-binding
+   
   build-src:
     cmds:
       - $(which mkdir) -p src/generated
       - python scripts/generate.py
+      - task: cargo:fmt-fix
+
+  build-binding:
+    cmds:
+      - cargo test --lib --features __ts-binding
 
   test:
     cmds:
@@ -19,6 +32,11 @@ tasks:
     cmds:
       - task: cargo:clippy-all
       - task: cargo:fmt-check
+      - task: build-binding
+      - task: git:check-modification
+        vars:
+          CHECK_PATH: packages/parser/bindings
+          CHECK_MESSAGE: Please regenerate parser bindings with `task build`
 
   fix:
     cmds:
