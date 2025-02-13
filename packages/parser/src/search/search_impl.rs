@@ -100,7 +100,7 @@ fn endura_food() -> ResolvedItem {
 ///
 /// Returns None if the first term matches multiple effects (i.e. ambiguous)
 fn split_and_search_effect(search_str: &str) -> Option<(i32, &str)> {
-    let i = search_str.find(|c| c == '_' || c == '-')?;
+    let i = search_str.find(['_', '-'])?;
     let (maybe_effect, maybe_item) = (&search_str[..i], &search_str[i + 1..]);
     let mut found = None;
     for (effect_name, effect_id) in COOK_EFFECT_NAMES {
@@ -132,10 +132,7 @@ fn do_search_item_by_ident(
         search_item_internal(original_search_str, search_str, &mut all_results);
     }
 
-    let first_result = all_results
-        .into_iter()
-        .filter(|x| filter(&x.result.actor))
-        .next()?;
+    let first_result = all_results.into_iter().find(|x| filter(x.result.actor))?;
 
     Some(ResolvedItem {
         actor: first_result.result.actor.to_string(),
@@ -155,7 +152,7 @@ fn do_search_item_by_ident_all(
 
     all_results
         .into_iter()
-        .filter(|x| filter(&x.result.actor))
+        .filter(|x| filter(x.result.actor))
         .map(|r| ResolvedItem {
             actor: r.result.actor.to_string(),
             meta: None,
@@ -193,7 +190,7 @@ pub fn search_item_internal<'a>(
 ) {
     // break name into _ or - separated search phrases
     let mut parts = search_str
-        .split(|c| c == '_' || c == '-')
+        .split(['_', '-'])
         .map(|s| s.trim())
         .filter(|s| !s.is_empty());
     let Some(first_part) = parts.next() else {

@@ -22,14 +22,6 @@ pub use item_spec::*;
 mod trial;
 pub use trial::*;
 
-pub struct Context {
-    /// Simulation steps to execute
-    ///
-    /// The span are used for linking the locations in the source code
-    /// to the simulation steps
-    pub steps: Vec<(Span, Command)>,
-}
-
 /// Parser for the item meta syntax
 ///
 /// This trait exists to allow the meta syntax to be reused for different purposes
@@ -64,6 +56,10 @@ pub fn parse_meta<T: MetaParser>(
 
 /// Value in the metadata
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+#[cfg_attr(feature = "__ts-binding", ts(export))]
+#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
 #[serde(untagged)]
 pub enum MetaValue {
     Bool(bool),
@@ -115,7 +111,7 @@ impl MetaValue {
                     // Integer followed by dot, like 3.
                     None => return Ok(Self::Float(int_part as f64)),
                 };
-                let decimal_str: &str = &*decimal_part;
+                let decimal_str: &str = decimal_part;
                 let decimal_num = match decimal_part.strip_prefix("0x") {
                     Some(_) => {
                         // float part can't be hex
@@ -138,7 +134,8 @@ impl MetaValue {
                 let value = full_str.parse::<f64>().map_err(|_| {
                     Error::FloatFormat(format!("{}.{}", int_part, decimal_str)).spanned(x)
                 })?;
-                return Ok(Self::Float(value));
+
+                Ok(Self::Float(value))
             }
         }
     }

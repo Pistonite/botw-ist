@@ -1,15 +1,91 @@
-use std::collections::{HashMap, VecDeque};
+use std::{collections::{HashMap, VecDeque}, future::Future, sync::{atomic::{AtomicBool, AtomicU64}, Arc}};
 
+use skybook_parser::{search::QuotedItemResolver, ParseOutput};
 use blueflame::{error::Error, memory::{Memory, Proxies}};
 
 mod scheduler;
 use scheduler::Scheduler;
 
 
-pub struct Runtime<S: scheduler::Scheduler> {
-    scheduler: S,
+pub struct Runtime<R: QuotedItemResolver, S: scheduler::Scheduler> {
 
-    states: Vec<State>
+    // === parsing stage ===
+    resolver: R,
+    is_parsing: bool,
+    parse_script: Arc<str>,
+    parse_serial: Arc<AtomicU64>,
+    parse_output: Arc<ParseOutput>,
+
+    // === running stage ===
+    scheduler: S,
+    is_running: bool,
+    execute_script: Arc<str>,
+    execute_serial: Arc<AtomicU64>,
+    execute_states: Vec<State>,
+
+    subscribers: Vec<Box<dyn Fn() + Send + Sync>>,
+}
+
+impl<R: QuotedItemResolver, S: scheduler::Scheduler> Runtime<R, S> {
+    pub async fn parse_script(&mut self, script: &Arc<str>) -> Arc<ParseOutput> {
+        // if the cache result is up-to-date, return it
+        if !self.is_parsing && script.as_ref() == self.parse_script.as_ref() {
+            return Arc::clone(&self.parse_output)
+        }
+        // start a new parsing job
+        let serial_before = self.parse_serial.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        self.is_parsing = true;
+        self.parse_script = Arc::clone(script);
+        let parse_output = Arc::new(skybook_parser::parse(&self.resolver, script).await);
+
+        // if no newer parsing job has started, update the cache
+        let serial_after = self.parse_serial.load(std::sync::atomic::Ordering::SeqCst);
+        if serial_before == serial_after {
+            self.parse_output = Arc::clone(&parse_output);
+            self.is_parsing = false;
+        }
+
+        parse_output
+    }
+    pub async fn execute_script(&mut self, script: &Arc<str>) -> bool {
+        if !self.is_running && script.as_ref() == self.execute_script.as_ref() {
+            // cached states are valid, do nothing
+            return true;
+        }
+        let serial_before = self.execute_serial.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        self.is_running = true;
+        self.execute_script = Arc::clone(script);
+
+        let parse_output = self.parse_script(script).await;
+        let serial_after = self.parse_serial.load(std::sync::atomic::Ordering::SeqCst);
+        if serial_before != serial_after {
+            return false;
+        }
+
+        let new_states = run_stuff(serial_before, &parse_output).await;
+        if serial_before != serial_after {
+            return false;
+        }
+        self.execute_states = new_states;
+        self.is_running = false;
+
+        for subscriber in &self.subscribers {
+            subscriber();
+        }
+
+        true
+    }
+}
+
+pub async fn run_stuff(serial: u64, parse_output: &ParseOutput) -> Vec<State> {
+    todo!()
+}
+
+#[derive(PartialEq)]
+pub enum Stage {
+    Parsing,
+    Running,
+    Idle
 }
 
 #[derive(Clone)]

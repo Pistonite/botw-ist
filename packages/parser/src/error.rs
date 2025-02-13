@@ -21,6 +21,10 @@ impl ErrorReport {
 }
 
 #[derive(Debug, Clone, thiserror::Error, Serialize)]
+#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+#[cfg_attr(feature = "__ts-binding", ts(export))]
+#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
 pub enum Error {
     #[error("failed to resolve item: {0}")]
     InvalidItem(String),

@@ -18,8 +18,8 @@ impl std::fmt::Debug for SearchResult<'_, '_> {
     }
 }
 
-impl PartialOrd for SearchResult<'_, '_> {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+impl Ord for SearchResult<'_, '_> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         // less = higher priority
 
         // Arrow > Material > Other
@@ -29,10 +29,10 @@ impl PartialOrd for SearchResult<'_, '_> {
             .partial_cmp(&other.result.get_type_for_compare())
         {
             Some(std::cmp::Ordering::Less) => {
-                return Some(std::cmp::Ordering::Less);
+                return std::cmp::Ordering::Less;
             }
             Some(std::cmp::Ordering::Greater) => {
-                return Some(std::cmp::Ordering::Greater);
+                return std::cmp::Ordering::Greater;
             }
             _ => {}
         };
@@ -44,10 +44,10 @@ impl PartialOrd for SearchResult<'_, '_> {
             .partial_cmp(&other.result.get_priority())
         {
             Some(std::cmp::Ordering::Less) => {
-                return Some(std::cmp::Ordering::Less);
+                return std::cmp::Ordering::Less;
             }
             Some(std::cmp::Ordering::Greater) => {
-                return Some(std::cmp::Ordering::Greater);
+                return std::cmp::Ordering::Greater;
             }
             _ => {}
         };
@@ -61,30 +61,30 @@ impl PartialOrd for SearchResult<'_, '_> {
         let other_input_dist = lcs.for_str(other_id, other.search_input).dist();
         match self_input_dist.partial_cmp(&other_input_dist) {
             Some(std::cmp::Ordering::Less) => {
-                return Some(std::cmp::Ordering::Less);
+                return std::cmp::Ordering::Less;
             }
             Some(std::cmp::Ordering::Greater) => {
-                return Some(std::cmp::Ordering::Greater);
+                return std::cmp::Ordering::Greater;
             }
             _ => {}
         };
 
         match self_id.len().partial_cmp(&other_id.len()) {
             Some(std::cmp::Ordering::Less) => {
-                return Some(std::cmp::Ordering::Less);
+                return std::cmp::Ordering::Less;
             }
             Some(std::cmp::Ordering::Greater) => {
-                return Some(std::cmp::Ordering::Greater);
+                return std::cmp::Ordering::Greater;
             }
             _ => {}
         };
 
-        self_id.partial_cmp(&other_id)
+        self_id.cmp(other_id)
     }
 }
 
-impl Ord for SearchResult<'_, '_> {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.partial_cmp(other).unwrap_or(std::cmp::Ordering::Equal)
+impl PartialOrd for SearchResult<'_, '_> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }

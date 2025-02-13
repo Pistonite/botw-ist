@@ -19,8 +19,8 @@ catalogs:
       specifier: ^1.1.0
       version: 1.1.0
     '@pistonite/pure':
-      specifier: ^0.0.19
-      version: 0.0.19
+      specifier: ^0.0.20
+      version: 0.0.20
     '@pistonite/pure-react':
       specifier: ^0.0.6
       version: 0.0.6
@@ -54,7 +54,7 @@ catalogs:
 
 patchedDependencies:
   monaco-editor@0.52.2:
-    hash: mz2vl2xu24im2z37rpphxwwkkq
+    hash: b1bf3c3b204aebba5cbb7ac37c5ea5b3492d2323dd5ab33f691a6df19e60295c
     path: packages/intwc/patches/monaco-editor@0.52.2.patch
 
 importers:
@@ -77,7 +77,7 @@ importers:
         version: link:../intwc
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.0.19
+        version: 0.0.20
       '@pistonite/pure-react':
         specifier: 'catalog:'
         version: 0.0.6(react@18.3.1)
@@ -156,7 +156,7 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.0.19
+        version: 0.0.20
       '@pistonite/workex':
         specifier: 'catalog:'
         version: 0.0.5
@@ -172,10 +172,10 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.0.19
+        version: 0.0.20
       monaco-editor:
         specifier: 0.52.2
-        version: 0.52.2(patch_hash=mz2vl2xu24im2z37rpphxwwkkq)
+        version: 0.52.2(patch_hash=b1bf3c3b204aebba5cbb7ac37c5ea5b3492d2323dd5ab33f691a6df19e60295c)
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -274,7 +274,7 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.0.19
+        version: 0.0.20
       '@pistonite/pure-i18next':
         specifier: ^0.0.2
         version: 0.0.2(react@18.3.1)(typescript@5.7.3)
@@ -337,14 +337,19 @@ importers:
         specifier: ^8.19.1
         version: 8.21.0(eslint@9.18.0)(typescript@5.7.3)
 
+  packages/parser: {}
+
   packages/runtime-api:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.0.19
+        version: 0.0.20
       '@pistonite/workex':
         specifier: 'catalog:'
         version: 0.0.5
+      skybook-parser:
+        specifier: workspace:*
+        version: link:../parser
     devDependencies:
       mono-dev:
         specifier: workspace:*
@@ -355,6 +360,9 @@ importers:
 
   packages/runtime-wasm:
     dependencies:
+      '@pistonite/pure':
+        specifier: 'catalog:'
+        version: 0.0.20
       '@pistonite/workex':
         specifier: 'catalog:'
         version: 0.0.5
@@ -382,7 +390,7 @@ importers:
         version: 2.0.271(react@18.3.1)
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.0.19
+        version: 0.0.20
       '@pistonite/pure-react':
         specifier: 'catalog:'
         version: 0.0.6(react@18.3.1)
@@ -1280,6 +1288,9 @@ packages:
 
   '@pistonite/pure@0.0.19':
     resolution: {integrity: sha512-1pj9SpuKgKaAx1VgmjOuZginBREOcoUBxDmPi7bwZTSKxEm5dRd4PtmEukB7qVRncoK3PPCRZXPvarAOrrLYIA==}
+
+  '@pistonite/pure@0.0.20':
+    resolution: {integrity: sha512-BOPg1hx3Mq+y9LHu0w8Vg//pwVxI0k51JU3u/RDPpzSYfpCb+bUUEVyBfk+FVhIkGSoqheX4Aj6Qsp3oWgSXsA==}
 
   '@pistonite/workex@0.0.5':
     resolution: {integrity: sha512-eYeIPFaFaVJs/Vxx9bx7CcwFUHNwxSWd+P82vN6/18hhdIBCcO89LboV+4mfh6iOee0LhopuU9Bz+/a+R5MPVQ==}
@@ -4178,6 +4189,11 @@ snapshots:
       denque: 2.1.0
       file-saver: 2.0.5
 
+  '@pistonite/pure@0.0.20':
+    dependencies:
+      denque: 2.1.0
+      file-saver: 2.0.5
+
   '@pistonite/workex@0.0.5':
     dependencies:
       '@pistonite/pure': 0.0.18
@@ -5243,7 +5259,7 @@ snapshots:
 
   mobile-device-detect@0.4.3: {}
 
-  monaco-editor@0.52.2(patch_hash=mz2vl2xu24im2z37rpphxwwkkq): {}
+  monaco-editor@0.52.2(patch_hash=b1bf3c3b204aebba5cbb7ac37c5ea5b3492d2323dd5ab33f691a6df19e60295c): {}
 
   ms@2.1.3: {}
 
