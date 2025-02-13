@@ -203,7 +203,6 @@ struct hook_trampoline_(getItemCount) {
 
 
 
-
 }
 
 /////// what
@@ -250,6 +249,45 @@ struct hook_trampoline_(sub_0073A6D0) {
 
 }
 
+namespace gdt {
+
+struct ResourceBgdata {
+    char _0[0x20];
+
+    int numBools;
+    void* bools;
+    int numS32s;
+    void* s32s;
+    int numF32s;
+    void* f32s;
+    int numStrings;
+    void* strings;
+    int numString64s;
+    void* string64s;
+    int numString256s;
+    void* string256s;
+    int numVec2fs;
+    void* vec2fs;
+    int numVec3fs;
+    void* vec3fs;
+    int numVec4fs;
+    void* vec4fs;
+
+};
+
+struct hook_inline_(read_num_bools_s32s) {
+    target_offset_(0x00DCFF14)
+    static void call(megaton::hook::InlineCtx* ctx) {
+        int num_bools = ctx->w<1>();
+        int num_s32s = ctx->w<22>();
+        auto& reporter = current_reporter();
+        reporter.sendf("gdt init: num_bools: %d", num_bools);
+        reporter.sendf("gdt init: num_s32s: %d", num_s32s);
+    }
+};
+
+}
+
 void install_hooks() {
     pmdm::createInstance::install();
     /* seadcs::lock::install(); */
@@ -270,6 +308,8 @@ void install_hooks() {
     unk::sub_00984CA0::install();
     unk::sub_00A915D4::install();
     unk::sub_0073A6D0::install();
+
+    gdt::read_num_bools_s32s::install();
 }
 
 }

@@ -22,14 +22,6 @@ pub use item_spec::*;
 mod trial;
 pub use trial::*;
 
-pub struct Context {
-    /// Simulation steps to execute
-    ///
-    /// The span are used for linking the locations in the source code
-    /// to the simulation steps
-    pub steps: Vec<(Span, Command)>,
-}
-
 /// Parser for the item meta syntax
 ///
 /// This trait exists to allow the meta syntax to be reused for different purposes
