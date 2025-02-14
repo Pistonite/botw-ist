@@ -1,7 +1,9 @@
 use derive_more::derive::{Deref, DerefMut};
+use serde::Serialize;
 use teleparse::{derive_lexicon, derive_syntax, tp};
 
 /// Token type
+#[derive(Serialize)]
 #[derive_lexicon]
 #[teleparse(ignore(r"\s+", r"//.*\n", r"#.*\n"))]
 pub enum TT {
@@ -111,13 +113,17 @@ pub enum TT {
     #[teleparse(regex(r#""[^"]*""#), terminal(QuotedWord))]
     QuotedWord,
 
+    /// A variable name (for example, a meta key)
     Variable,
+    /// item name
     Name,
+    /// item type/category
     Type,
-
+    /// item amount
     Amount,
-
+    /// a super command
     SuperCommand,
+    /// an annotation command or step
     Annotation,
 }
 #[derive_syntax]

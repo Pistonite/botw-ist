@@ -2,4 +2,24 @@
 import type { Category } from "./Category";
 import type { MetaValue } from "./MetaValue";
 
-export type Error = { "InvalidItem": string } | "InvalidEmptyItem" | { "IntFormat": string } | { "FloatFormat": string } | { "UnusedMetaKey": string } | { "InvalidMetaValue": [string, MetaValue] } | { "InvalidWeaponModifier": string } | { "InvalidCookEffect": string } | "TooManyIngredients" | { "InvalidArmorStarNum": number } | { "InvalidSlotClause": bigint } | { "InvalidTimesClause": bigint } | { "InvalidTrial": string } | { "InvalidCategory": Category } | { "InvalidInventoryRow": bigint } | { "InvalidInventoryCol": bigint };
+export type Error =
+    | { type: "Unexpected"; data: string }
+    | { type: "SyntaxUnexpected" }
+    | { type: "SyntaxUnexpectedExpecting"; data: string }
+    | { type: "SyntaxUnexpectedEof" }
+    | { type: "InvalidItem"; data: string }
+    | { type: "InvalidEmptyItem" }
+    | { type: "IntFormat"; data: string }
+    | { type: "FloatFormat"; data: string }
+    | { type: "UnusedMetaKey"; data: string }
+    | { type: "InvalidMetaValue"; data: [string, MetaValue] }
+    | { type: "InvalidWeaponModifier"; data: string }
+    | { type: "InvalidCookEffect"; data: string }
+    | { type: "TooManyIngredients" }
+    | { type: "InvalidArmorStarNum"; data: number }
+    | { type: "InvalidSlotClause"; data: bigint }
+    | { type: "InvalidTimesClause"; data: bigint }
+    | { type: "InvalidTrial"; data: string }
+    | { type: "InvalidCategory"; data: Category }
+    | { type: "InvalidInventoryRow"; data: bigint }
+    | { type: "InvalidInventoryCol"; data: bigint };

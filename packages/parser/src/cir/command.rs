@@ -6,6 +6,7 @@ use crate::search::QuotedItemResolver;
 use crate::syn;
 
 /// The command to be executed in the simulator
+#[derive(Debug, Clone)]
 pub enum Command {
     /// See [`syn::CmdGet`]
     Get(Vec<cir::ItemSpec>),

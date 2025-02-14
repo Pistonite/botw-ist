@@ -1,4 +1,3 @@
-
 {
     "name": "skybook-parser",
     "version": "0.0.0",
@@ -8,5 +7,8 @@
     "exports": {
         "./*": "./bindings/*.ts",
         "./*.ts": "./bindings/*.ts"
+    },
+    "devDependencies": {
+        "mono-dev": "workspace:*"
     }
 }

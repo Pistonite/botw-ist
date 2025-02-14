@@ -7,6 +7,7 @@ use crate::syn;
 use crate::util;
 
 /// Specification for an item
+#[derive(Debug, Clone)]
 pub struct ItemSpec {
     /// Amount of the item
     ///
@@ -25,6 +26,7 @@ pub struct ItemSpec {
 /// selecting by category and selecting by slot number
 ///
 /// The meaning of the spec depends on the context
+#[derive(Debug, Clone)]
 pub struct ItemSelectSpec {
     /// Amount of the item
     ///
@@ -38,11 +40,14 @@ pub struct ItemSelectSpec {
     pub slot: i64,
 }
 
+#[derive(Debug, Clone)]
 pub enum ItemOrCategory {
     Item(Item),
     Category(cir::Category),
 }
 
+/// An item
+#[derive(Debug, Clone)]
 pub struct Item {
     /// The item actor name
     pub actor: String,
@@ -248,7 +253,7 @@ fn parse_slot_clause(slot: Option<&syn::SlotClause>) -> Result<i64, ErrorReport>
         Some(slot) => {
             let slot_num = cir::parse_syn_int_str(&slot.idx, &slot.idx.span())?;
             if slot_num < 1 {
-                return Err(Error::InvalidSlotClause(slot_num).spanned(slot));
+                return Err(Error::InvalidSlotClause(slot_num as i32).spanned(slot));
             }
             Ok(slot_num)
         }

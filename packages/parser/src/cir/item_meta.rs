@@ -8,7 +8,7 @@ use crate::syn;
 use super::MetaParser;
 
 /// Item metadata used to select or specify item
-#[derive(Debug, Default, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct ItemMeta {
     /// The value of the item
     ///

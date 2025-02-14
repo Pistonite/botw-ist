@@ -11,7 +11,7 @@ includes:
 tasks:
   build:
     cmds:
-      - workex -p runtime src/protocol.ts --no-gitignore
+      - workex -p runtime src/RuntimeApi.ts src/RuntimeAppHost.ts --no-gitignore
 
   check:
     cmds:

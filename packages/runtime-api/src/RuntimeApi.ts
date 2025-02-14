@@ -1,6 +1,6 @@
 import type { WorkexPromise } from "@pistonite/workex";
 
-import { ParserError } from "./parserTypes.ts";
+import { ParserErrorReport } from "./parserTypes.ts";
 
 /**
  * API provided by the simulator runtime
@@ -31,7 +31,7 @@ export interface RuntimeApi {
         endPos: number,
     ): WorkexPromise<Uint32Array>;
 
-    getParserDiagnostics(script: string): WorkexPromise<ParserError[]>;
+    getParserDiagnostics(script: string): WorkexPromise<ParserErrorReport[]>;
 
     getRuntimeDiagnostics(
         script: string,

@@ -57,7 +57,7 @@ impl MetaParser for EntangleMeta {
             "row" => match cir::MetaValue::parse_option(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     if x < 1 || x > 4 {
-                        errors.push(Error::InvalidInventoryRow(x).spanned(value));
+                        errors.push(Error::InvalidInventoryRow(x as i32).spanned(value));
                         return;
                     }
                     self.inner.row = x as i8;
@@ -72,7 +72,7 @@ impl MetaParser for EntangleMeta {
             "col" => match cir::MetaValue::parse_option(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     if x < 1 || x > 5 {
-                        errors.push(Error::InvalidInventoryCol(x).spanned(value));
+                        errors.push(Error::InvalidInventoryCol(x as i32).spanned(value));
                         return;
                     }
                     self.inner.row = x as i8;
