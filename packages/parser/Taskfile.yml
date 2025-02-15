@@ -15,7 +15,6 @@ tasks:
   build:
     cmds:
       - task: build-src
-      - task: build-binding
    
   build-src:
     cmds:
@@ -23,12 +22,14 @@ tasks:
       - python scripts/generate.py
       - task: cargo:fmt-fix
 
-  build-binding:
+  build-api-ts-binding:
     cmds:
-      - rm bindings/*.ts
+      - task: build-src
+      - rm -f bindings/*.ts ../skybook-api/src/parser/*
       - cargo test --lib --features __ts-binding
       - find bindings -type f | sed 's/^bindings/export * from "./' | sed 's/$/";/' > bindings/index.ts
-      - task: ecma:prettier-fix
+      - $(which mkdir) -p ../skybook-api/src/parser
+      - mv bindings/*.ts ../skybook-api/src/parser
 
   test:
     cmds:
