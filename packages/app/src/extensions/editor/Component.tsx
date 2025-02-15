@@ -13,7 +13,7 @@ export const Component: React.FC<ExtensionComponentProps> = ({
     connect,
 }) => {
     const app = useApplication();
-    initLanguage();
+    initLanguage(app);
     // useEffect(() => {
     // }, []);
     return (
