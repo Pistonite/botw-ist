@@ -1,0 +1,43 @@
+version: '3'
+
+includes:
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+  parser:
+    taskfile: ../parser
+    dir: ../parser
+    internal: true
+  git:
+    taskfile: ../mono-dev/task/git.yaml
+    internal: true
+    
+
+tasks:
+  build:
+    vars:
+      VERSION:
+        sh: jq '.version' package.json | tr -d '"'
+    cmds:
+      - task: parser:build-api-ts-binding
+      - > 
+          workex -p skyb-api-{{.VERSION}} --no-gitignore
+          src/Extension.ts 
+          src/ExtensionApp.ts 
+          src/Runtime.ts
+          src/RuntimeApp.ts
+      - task: ecma:prettier-fix
+
+  check:
+    cmds:
+      - task: ecma:tsc-check
+      - task: ecma:prettier-check
+      - task: build
+      - task: git:check-modification
+        vars:
+          CHECK_PATH: packages/skybook-api/src
+          CHECK_MESSAGE: Please regenerate and commit skybook-api bindings
+
+  fix:
+    cmds:
+      - task: ecma:prettier-fix
