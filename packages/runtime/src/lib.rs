@@ -7,7 +7,7 @@ mod scheduler;
 use scheduler::Scheduler;
 
 
-pub struct Runtime<R: QuotedItemResolver, S: scheduler::Scheduler> {
+pub struct Runtime<R: QuotedItemResolver> {//{, S: scheduler::Scheduler> {
 
     // === parsing stage ===
     resolver: R,
@@ -17,16 +17,34 @@ pub struct Runtime<R: QuotedItemResolver, S: scheduler::Scheduler> {
     parse_output: Arc<ParseOutput>,
 
     // === running stage ===
-    scheduler: S,
+    // scheduler: S,
     is_running: bool,
     execute_script: Arc<str>,
     execute_serial: Arc<AtomicU64>,
     execute_states: Vec<State>,
 
-    subscribers: Vec<Box<dyn Fn() + Send + Sync>>,
+    // notify when simulation finishes
+    subscribers: Vec<Box<dyn Fn()>>,
 }
 
-impl<R: QuotedItemResolver, S: scheduler::Scheduler> Runtime<R, S> {
+impl<R: QuotedItemResolver> Runtime<R> {
+    pub fn new(resolver: R) -> Self {
+        Self {
+            resolver,
+            is_parsing: false,
+            parse_script: Arc::from(""),
+            parse_serial: Arc::new(AtomicU64::new(0)),
+            parse_output: Arc::new(ParseOutput::default()),
+            // scheduler,
+            is_running: false,
+            execute_script: Arc::from(""),
+            execute_serial: Arc::new(AtomicU64::new(0)),
+            execute_states: Vec::new(),
+            subscribers: Vec::new(),
+        }
+    }
+
+
     pub async fn parse_script(&mut self, script: &Arc<str>) -> Arc<ParseOutput> {
         // if the cache result is up-to-date, return it
         if !self.is_parsing && script.as_ref() == self.parse_script.as_ref() {
@@ -78,14 +96,7 @@ impl<R: QuotedItemResolver, S: scheduler::Scheduler> Runtime<R, S> {
 }
 
 pub async fn run_stuff(serial: u64, parse_output: &ParseOutput) -> Vec<State> {
-    todo!()
-}
-
-#[derive(PartialEq)]
-pub enum Stage {
-    Parsing,
-    Running,
-    Idle
+    vec![]
 }
 
 #[derive(Clone)]

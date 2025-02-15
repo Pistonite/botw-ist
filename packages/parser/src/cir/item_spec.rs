@@ -199,11 +199,9 @@ async fn parse_item<R: QuotedItemResolver>(
         }
     };
 
-    let actor = if let Some(star_num) = meta.as_mut().and_then(|m| m.star.take()) {
-        util::get_armor_with_star(&actor, star_num).to_string()
-    } else {
-        actor
-    };
+    // fix the armor star actor based on meta
+    let star_num = meta.as_mut().and_then(|m| m.star.take()).unwrap_or(0);
+    let actor = util::get_armor_with_star(&actor, star_num).to_string();
 
     Some(Item { actor, meta })
 }

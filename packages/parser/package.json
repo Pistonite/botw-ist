@@ -5,8 +5,7 @@
     "private": true,
     "type": "module",
     "exports": {
-        "./*": "./bindings/*.ts",
-        "./*.ts": "./bindings/*.ts"
+        ".": "./bindings/index.ts"
     },
     "devDependencies": {
         "mono-dev": "workspace:*"

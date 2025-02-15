@@ -81,6 +81,8 @@ pub enum Command {
     Leave,
 }
 // make sure the command size does not update unexpectedly
+// size only valid for 64-bit platforms
+#[cfg(not(feature = "wasm"))]
 static_assertions::assert_eq_size!(Command, [u8; 0x20]);
 
 pub async fn parse_command<R: QuotedItemResolver>(

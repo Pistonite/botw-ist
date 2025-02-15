@@ -8,8 +8,12 @@ includes:
 tasks:
   build:
     cmds:
-      - wasm-pack build -t no-modules --no-pack
+      - task: build-wasm
       - task: build-dist
+
+  build-wasm:
+    cmds:
+      - wasm-pack build -t no-modules --no-pack
 
   build-dist:
     vars:

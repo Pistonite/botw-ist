@@ -9,6 +9,8 @@
     "dependencies": {
         "@pistonite/pure": "catalog:",
         "@pistonite/workex": "catalog:",
+        "lru-cache": "^11.0.2",
+        "skybook-parser": "workspace:*",
         "skybook-runtime-api": "workspace:*"
     },
     "devDependencies": {

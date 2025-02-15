@@ -1,18 +1,64 @@
+use std::ptr::NonNull;
+
+use js_sys::Function;
 use serde::{Deserialize, Serialize};
-use teleparse::Root;
 use tsify_next::Tsify;
 use wasm_bindgen::prelude::*;
-use skybook_parser::search;
+use skybook_parser::{search, ParseOutput};
 
+mod js_item_resolve;
+use js_item_resolve::JsQuotedItemResolver;
+//
+//
+// #[wasm_bindgen]
+// pub fn init_runtime(
+//     resolve_quoted_item: Function
+// ) {
+//     // create the runtime
+//     let runtime = RuntimeWasm::new(JsQuotedItemResolver::new(resolve_quoted_item));
+//     // set the runtime
+//     let runtime_ref = unsafe { &mut *RUNTIME.get() };
+//     runtime_ref.write(runtime);
+// }
+//
+
+/// Parse the script
+///
+/// The returned pointer must be freed with `free_parse_output` when no longer needed.
 #[wasm_bindgen]
-pub fn parse_script(input: String) -> String {
-    return format!("hello {}", input);
-    // match CommandInit::parse(&input) {
-    //     Ok(Some(cmd)) => format!("{:?}", cmd),
-    //     Ok(None) => "no command found".to_string(),
-    //     Err(e) => format!("error: {:?}", e),
-    // }
+pub async fn parse_script(
+    script: String, 
+    resolve_quoted_item: Function
+) -> NonNull<ParseOutput> {
+    let resolver = JsQuotedItemResolver::new(resolve_quoted_item);
+    let parse_output = skybook_parser::parse(&resolver, &script).await;
+    Box::leak(Box::new(parse_output)).into()
 }
+
+/// Get the errors from the parse output. Does not take ownership of the parse output. (i.e.
+/// does not free the parse output)
+#[wasm_bindgen]
+pub fn get_parser_errors(
+    ptr: NonNull<ParseOutput>
+) -> Vec<skybook_parser::ErrorReport> {
+    let parse_output = unsafe { &*ptr.as_ptr() };
+    parse_output.errors.clone()
+}
+
+/// Free the parse output
+#[wasm_bindgen]
+pub fn free_parse_output(
+    ptr: NonNull<ParseOutput>
+) {
+    let _ = unsafe { Box::from_raw(ptr.as_ptr()) };
+}
+
+// #[wasm_bindgen]
+// pub async fn on_script_change(script: String) {
+//     let runtime = get_runtime_mut();
+//     let script: Arc<str> = Arc::from(script);
+//     runtime.execute_script(&script).await;
+// }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Tsify)]
 #[serde(rename_all = "camelCase")]

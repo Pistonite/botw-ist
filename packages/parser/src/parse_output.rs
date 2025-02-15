@@ -17,9 +17,6 @@ pub struct ParseOutput {
 
     /// Errors encountered during parsing
     pub errors: Vec<ErrorReport>,
-
-    /// Semantic tokens from the script
-    pub semantic_tokens: Vec<(Span, SemanticToken)>,
 }
 
 pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> ParseOutput {
@@ -49,14 +46,6 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
         output.errors.push(error.into());
     }
 
-    // extract semantic info
-    let mut semantic_tokens = Vec::new();
-    for token in parser.info().tokens.iter() {
-        if let Some(semantic) = SemanticToken::from_set(token.semantics()) {
-            semantic_tokens.push((token.span, semantic));
-        }
-    }
-
     let Some(parsed_script) = parsed_script else {
         return output;
     };
@@ -71,6 +60,25 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
     }
 
     output
+}
+
+/// Parse the script and extract the semantic tokens in the given range
+pub async fn parse_semantic(script: &str, start: usize, end: usize) -> Vec<(Span, SemanticToken)> {
+    let Ok(mut parser) = Parser::new(script) else {
+        return vec![];
+    };
+    let _ = parser.parse::<syn::Script>();
+
+    // extract semantic info
+    let mut semantic_tokens = Vec::new();
+    let tokens = &parser.info().tokens;
+    for token in tokens.overlap(Span::new(start, end)) {
+        if let Some(semantic) = SemanticToken::from_set(token.semantics()) {
+            semantic_tokens.push((token.span, semantic));
+        }
+    }
+
+    semantic_tokens
 }
 
 #[derive(Debug, Clone)]

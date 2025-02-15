@@ -4,7 +4,7 @@
 import type { RuntimeApi } from "../RuntimeApi.ts";
 
 import { type WorkexPromise, WorkexClient, type WorkexClientOptions } from "@pistonite/workex";
-import { ParserError } from ".././parserTypes.ts";
+import { ParserErrorReport } from "skybook-parser";
 
 /**
  * API provided by the simulator runtime
@@ -20,41 +20,22 @@ export class RuntimeApiClient implements RuntimeApi {
     }
 
     /**
-     */
-    public getInventory( scriptHash: string, step: number ): WorkexPromise<unknown> {
-        return this.client.post<unknown>(16 /* RuntimeApi.getInventory */, [ scriptHash, step ]);
-    }
-
-    /**
-     */
-    public getParserDiagnostics( script: string ): WorkexPromise<ParserError[]> {
-        return this.client.post<ParserError[]>(17 /* RuntimeApi.getParserDiagnostics */, [ script ]);
-    }
-
-    /**
-     */
-    public getRuntimeDiagnostics( script: string ): WorkexPromise<{ range: [number, number]; message: string }[]> {
-        return this.client.post<{ range: [number, number]; message: string }[]>(18 /* RuntimeApi.getRuntimeDiagnostics */, [ script ]);
-    }
-
-    /**
-     */
-    public getSemanticTokens( script: string, startPos: number, endPos: number ): WorkexPromise<Uint32Array> {
-        return this.client.post<Uint32Array>(19 /* RuntimeApi.getSemanticTokens */, [ script, startPos, endPos ]);
-    }
-
-    /**
-     */
-    public getStepFromPos( script: string, pos: number ): WorkexPromise<number> {
-        return this.client.post<number>(20 /* RuntimeApi.getStepFromPos */, [ script, pos ]);
-    }
-
-    /**
      * Set the script for the runtime, which starts executing
      * the script immediately
+     * 
+     * onScriptChange(script: string): WorkexPromise<void>;
+     * getSemanticTokens(
+     * script: string,
+     * startPos: number,
+     * endPos: number,
+     * ): WorkexPromise<Uint32Array>;
+     * 
+     * Parse the script and get diagnostics from the parser.
+     * 
+     * This does not runtime diagnostics
      */
-    public onScriptChange( script: string ): WorkexPromise<void> {
-        return this.client.postVoid(21 /* RuntimeApi.onScriptChange */, [ script ]);
+    public getParserDiagnostics( script: string ): WorkexPromise<ParserErrorReport[]> {
+        return this.client.post<ParserErrorReport[]>(16 /* RuntimeApi.getParserDiagnostics */, [ script ]);
     }
 
     /**
@@ -64,7 +45,7 @@ export class RuntimeApiClient implements RuntimeApi {
      * cook effect is the game's representation, or 0 for no effect
      */
     public resolveItemIdent( query: string ): WorkexPromise<{ actor: string; cookEffect: number }[]> {
-        return this.client.post<{ actor: string; cookEffect: number }[]>(22 /* RuntimeApi.resolveItemIdent */, [ query ]);
+        return this.client.post<{ actor: string; cookEffect: number }[]>(17 /* RuntimeApi.resolveItemIdent */, [ query ]);
     }
 
     /**

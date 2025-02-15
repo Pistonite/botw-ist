@@ -7,7 +7,10 @@ import type { RuntimeAppHost } from "../RuntimeAppHost.ts";
 export function bindRuntimeAppHostHost(delegate: RuntimeAppHost, options: WorkexBindOptions) {
     return bindHost("runtime", options, (fId: number, _payload: any[]) => {
         switch (fId) {
-            case 23 /* RuntimeAppHost.resolveQuotedItem */: {
+            case 18 /* RuntimeAppHost.onRunCompleted */: {
+                return delegate.onRunCompleted();
+            }
+            case 19 /* RuntimeAppHost.resolveQuotedItem */: {
                 const [ a0 ] = _payload;
                 return delegate.resolveQuotedItem( a0 );
             }

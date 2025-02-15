@@ -20,13 +20,22 @@ export class RuntimeAppHostClient implements RuntimeAppHost {
     }
 
     /**
+     * The app will be notified whenever a simulation run completes.
+     * Note if multiple runs are queued, this will only be called for the
+     * last one.
+     */
+    public onRunCompleted( ): WorkexPromise<void> {
+        return this.client.postVoid(18 /* RuntimeAppHost.onRunCompleted */, [ ]);
+    }
+
+    /**
      * Resolve a quoted item search query to a single item, or else
      * return a localized error message
      * 
      * cook effect is the game's representation, or 0 for no effect
      */
     public resolveQuotedItem( query: string ): WorkexPromise<Result<{ actor: string; cookEffect: number }, string>> {
-        return this.client.post<Result<{ actor: string; cookEffect: number }, string>>(23 /* RuntimeAppHost.resolveQuotedItem */, [ query ]);
+        return this.client.post<Result<{ actor: string; cookEffect: number }, string>>(19 /* RuntimeAppHost.resolveQuotedItem */, [ query ]);
     }
 
     /**

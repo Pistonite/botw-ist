@@ -18,4 +18,11 @@ export interface RuntimeAppHost {
         query: string,
     ): WorkexPromise<Result<{ actor: string; cookEffect: number }, string>>;
 
+    /**
+     * The app will be notified whenever a simulation run completes.
+     * Note if multiple runs are queued, this will only be called for the
+     * last one.
+     */
+    onRunCompleted(): WorkexPromise<void>;
+
 }

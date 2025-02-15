@@ -7,31 +7,11 @@ import type { RuntimeApi } from "../RuntimeApi.ts";
 export function bindRuntimeApiHost(delegate: RuntimeApi, options: WorkexBindOptions) {
     return bindHost("runtime", options, (fId: number, _payload: any[]) => {
         switch (fId) {
-            case 16 /* RuntimeApi.getInventory */: {
-                const [ a0, a1 ] = _payload;
-                return delegate.getInventory( a0, a1 );
-            }
-            case 17 /* RuntimeApi.getParserDiagnostics */: {
+            case 16 /* RuntimeApi.getParserDiagnostics */: {
                 const [ a0 ] = _payload;
                 return delegate.getParserDiagnostics( a0 );
             }
-            case 18 /* RuntimeApi.getRuntimeDiagnostics */: {
-                const [ a0 ] = _payload;
-                return delegate.getRuntimeDiagnostics( a0 );
-            }
-            case 19 /* RuntimeApi.getSemanticTokens */: {
-                const [ a0, a1, a2 ] = _payload;
-                return delegate.getSemanticTokens( a0, a1, a2 );
-            }
-            case 20 /* RuntimeApi.getStepFromPos */: {
-                const [ a0, a1 ] = _payload;
-                return delegate.getStepFromPos( a0, a1 );
-            }
-            case 21 /* RuntimeApi.onScriptChange */: {
-                const [ a0 ] = _payload;
-                return delegate.onScriptChange( a0 );
-            }
-            case 22 /* RuntimeApi.resolveItemIdent */: {
+            case 17 /* RuntimeApi.resolveItemIdent */: {
                 const [ a0 ] = _payload;
                 return delegate.resolveItemIdent( a0 );
             }

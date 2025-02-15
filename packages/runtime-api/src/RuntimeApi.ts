@@ -1,6 +1,6 @@
 import type { WorkexPromise } from "@pistonite/workex";
 
-import { ParserErrorReport } from "./parserTypes.ts";
+import { ParserErrorReport } from "skybook-parser";
 
 /**
  * API provided by the simulator runtime
@@ -19,25 +19,30 @@ export interface RuntimeApi {
         query: string,
     ): WorkexPromise<{ actor: string; cookEffect: number }[]>;
 
+    // /**
+    //  * Set the script for the runtime, which starts executing
+    //  * the script immediately
+    //  */
+    // onScriptChange(script: string): WorkexPromise<void>;
+    //
+    // getSemanticTokens(
+    //     script: string,
+    //     startPos: number,
+    //     endPos: number,
+    // ): WorkexPromise<Uint32Array>;
+
     /**
-     * Set the script for the runtime, which starts executing
-     * the script immediately
+     * Parse the script and get diagnostics from the parser.
+     *
+     * This does not runtime diagnostics 
      */
-    onScriptChange(script: string): WorkexPromise<void>;
-
-    getSemanticTokens(
-        script: string,
-        startPos: number,
-        endPos: number,
-    ): WorkexPromise<Uint32Array>;
-
     getParserDiagnostics(script: string): WorkexPromise<ParserErrorReport[]>;
 
-    getRuntimeDiagnostics(
-        script: string,
-    ): WorkexPromise<{ range: [number, number]; message: string }[]>;
-
-    getStepFromPos(script: string, pos: number): WorkexPromise<number>;
-
-    getInventory(scriptHash: string, step: number): WorkexPromise<unknown>;
+    // getRuntimeDiagnostics(
+    //     script: string,
+    // ): WorkexPromise<{ range: [number, number]; message: string }[]>;
+    //
+    // getStepFromPos(script: string, pos: number): WorkexPromise<number>;
+    //
+    // getInventory(scriptHash: string, step: number): WorkexPromise<unknown>;
 }

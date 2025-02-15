@@ -8,9 +8,11 @@ pub mod search;
 
 mod parse_output;
 pub use parse_output::parse_script as parse;
+pub use parse_output::parse_semantic;
 pub use parse_output::ParseOutput;
 
 mod error;
+pub use error::{Error, ErrorReport};
 mod util;
 
 /// Generated data
