@@ -1364,7 +1364,6 @@ dependencies = [
  "serde",
  "skybook-parser",
  "skybook-runtime",
- "teleparse",
  "ts-rs",
  "tsify-next",
  "wasm-bindgen",

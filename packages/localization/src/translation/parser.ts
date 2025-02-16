@@ -1,5 +1,7 @@
 import type { ParserError } from "@pistonite/skybook-api";
+
 import { translateUI } from "../translate.ts";
+
 import { translateCategory } from "./category.ts";
 
 export const translateParserError = (error: ParserError): string => {

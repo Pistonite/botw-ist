@@ -8,7 +8,6 @@ publish = false
 skybook-runtime = { path = "../runtime" }
 skybook-parser = { path = "../parser", features = ["wasm", "cached"] }
 wasm-bindgen = { version = "0.2.99", features = ["serde", "serde-serialize"] }
-teleparse = "0.0.7"
 tsify-next = { version = "0.5.4", features = ["js"], default-features = false }
 serde = { version = "1.0.217", features = ["derive"] }
 ts-rs = "10.1.0"
