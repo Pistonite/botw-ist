@@ -27,8 +27,8 @@ export type Diagnostic = {
     start: number;
     /** End position of the diagnostic (exclusive) */
     end: number;
-    /** 
+    /**
      * Whether this diagnostic is only a warning. If false, it should be treated as an error
      */
     isWarning: boolean;
-}
+};

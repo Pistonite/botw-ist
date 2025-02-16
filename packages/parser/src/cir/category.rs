@@ -12,6 +12,10 @@ use crate::syn;
 #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
 #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
 pub enum Category {
+    //////////////////////////////////
+    // DO NOT update the enum names
+    // The translation files needs to be updated accordingly!!!
+    //////////////////////////////////
     Weapon,
     Bow,
     Shield,

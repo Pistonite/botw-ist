@@ -1353,7 +1353,6 @@ version = "0.0.0"
 dependencies = [
  "blueflame",
  "skybook-parser",
- "textdistance",
  "tokio",
 ]
 

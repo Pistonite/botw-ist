@@ -13,7 +13,7 @@ export interface ExtensionApp {
     /** Get the current simulator script. */
     getScript(): WorkexPromise<string>;
 
-    /** 
+    /**
      * Set the simulator script.
      *
      * This will trigger a rerun of the simulation using the new script

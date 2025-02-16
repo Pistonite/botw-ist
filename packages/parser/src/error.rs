@@ -9,6 +9,7 @@ mod parser_error_report {
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
     #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+    #[serde(rename_all = "camelCase")]
     pub struct ParserErrorReport {
         pub span: (usize, usize),
         pub is_warning: bool,
@@ -61,7 +62,12 @@ mod parser_error {
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
     #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+    #[serde(tag = "type", content = "data")]
     pub enum ParserError {
+        //////////////////////////////////
+        // DO NOT update the enum names
+        // The translation files needs to be updated accordingly!!!
+        //////////////////////////////////
         #[error("unexpected internal error: {0}")]
         Unexpected(String),
         #[error("unexpected syntax")]

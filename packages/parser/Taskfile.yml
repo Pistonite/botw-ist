@@ -4,12 +4,6 @@ includes:
   cargo:
     taskfile: ../mono-dev/task/cargo.yaml
     internal: true
-  ecma:
-    taskfile: ../mono-dev/task/ecma.yaml
-    internal: true
-  git:
-    taskfile: ../mono-dev/task/git.yaml
-    internal: true
 
 tasks:
   build:
@@ -37,7 +31,6 @@ tasks:
 
   check:
     cmds:
-      - task: ecma:prettier-check
       - task: cargo:clippy-all
       - task: cargo:fmt-check
       - task: build-binding

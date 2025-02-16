@@ -1,4 +1,0 @@
-{
-    "extends": "../mono-dev/tsconfig/browser.json",
-    "include": ["src"]
-}

@@ -1,18 +1,21 @@
 import { LRUCache } from "lru-cache";
 import { type Delegate, hostFromDelegate } from "@pistonite/workex";
 
-import { bindRuntimeApiHost, RuntimeAppHostClient } from "skybook-runtime-api/sides/runtime";
-import type { RuntimeApi } from "skybook-runtime-api";
+import {
+    bindRuntimeHost,
+    RuntimeAppClient,
+} from "@pistonite/skybook-api/sides/runtime";
+import type { ItemSearchResult, Runtime } from "@pistonite/skybook-api";
 
 import { getParserDiagnostics, type QuotedItemResolverFn } from "./parser.ts";
 
-const app = new RuntimeAppHostClient({ worker: self });
+const app = new RuntimeAppClient({ worker: self });
 
 // cache the item so we don't need to resolve it with the main thread
 // every time.
 // using `false` to represent "not found"
-const quotedItemCache = new LRUCache<string, wasm_bindgen.ItemSearchResult | false>({
-    max: 5120
+const quotedItemCache = new LRUCache<string, ItemSearchResult | false>({
+    max: 5120,
 });
 const resolveQuotedItem: QuotedItemResolverFn = async (query) => {
     const cachedResult = quotedItemCache.get(query);
@@ -24,15 +27,10 @@ const resolveQuotedItem: QuotedItemResolverFn = async (query) => {
     if (result.err) {
         return undefined;
     }
-    // resolve error - ignore the error and assume not found
-    if (result.val.err) {
-        quotedItemCache.set(query, false);
-        return undefined;
-    }
-    const item = result.val.val;
+    const item: ItemSearchResult | undefined = result.val;
     quotedItemCache.set(query, item);
     return item;
-}
+};
 
 async function boot() {
     await wasm_bindgen({ module_or_path: "/runtime/skybook.wasm" });
@@ -46,10 +44,9 @@ async function boot() {
         getParserDiagnostics: (script) => {
             return getParserDiagnostics(script, resolveQuotedItem);
         },
+    } satisfies Delegate<Runtime>;
 
-    } satisfies Delegate<RuntimeApi>;
-
-    const handshake = bindRuntimeApiHost(hostFromDelegate(api), {
+    const handshake = bindRuntimeHost(hostFromDelegate(api), {
         worker: self,
     });
     await handshake.initiate();

@@ -9,6 +9,7 @@
     "dependencies": {
         "@pistonite/pure": "catalog:",
         "@pistonite/pure-i18next": "catalog:",
+        "@pistonite/skybook-api": "workspace:*",
         "fuse.js": "^7.0.0",
         "i18next": "^24.2.0",
         "lru-cache": "^11.0.2",

@@ -5,14 +5,11 @@ import {
     Body1,
     Checkbox,
 } from "@fluentui/react-components";
-import { useApplication } from "application/useApplication.ts";
-import type { ExtensionComponentProps } from "../types.ts";
 import { useDeferredValue, useEffect, useState } from "react";
 import type { SearchResult as ItemSearchResult } from "skybook-localization";
 import { translateUI, useUITranslation } from "skybook-localization";
-import { FirstPartyExtensionAdapter } from "extensions/FirstPartyAdapter.ts";
 import { debounce } from "@pistonite/pure/sync";
-import type { Application } from "@pistonite/skybook-extension-api";
+import type { ExtensionApp } from "@pistonite/skybook-api";
 import type { Result } from "@pistonite/pure/result";
 import { errstr } from "@pistonite/pure/result";
 import { useQuery } from "@tanstack/react-query";
@@ -23,11 +20,16 @@ import {
     makeItemSlotInfo,
 } from "skybook-item-system";
 
+import { useExtensionApp } from "application/useExtensionApp.ts";
+import { FirstPartyExtensionAdapter } from "extensions/FirstPartyAdapter.ts";
+
+import type { ExtensionComponentProps } from "../types.ts";
+
 type SearchResult = Omit<ItemSearchResult, "score">;
 
 const search = debounce({
     fn: async (
-        app: Application,
+        app: ExtensionApp,
         localized: boolean,
         query: string,
     ): Promise<Result<SearchResult[], string>> => {
@@ -88,7 +90,7 @@ export const Component: React.FC<ExtensionComponentProps> = ({
     standalone,
     connect,
 }) => {
-    const app = useApplication();
+    const app = useExtensionApp();
     const [value, setValue] = useState("");
     const [localized, setLocalized] = useState(false);
 

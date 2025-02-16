@@ -1,55 +1,11 @@
+
+/**
+ * Lanaguage definition for the Skybook script
+ */
 import type {
     LanguageConfiguration,
     LanguageTokenizer,
 } from "@pistonite/intwc";
-import { initCodeEditor } from "@pistonite/intwc";
-import type { ExtensionApp } from "@pistonite/skybook-api";
-
-let initialized = false;
-
-export const initLanguage = (app: ExtensionApp) => {
-    if (initialized) {
-        return;
-    }
-    initialized = true;
-    initCodeEditor({
-        language: {
-            custom: [
-                {
-                    getId: () => "skyb",
-                    getExtensions: () => [".skyb"],
-                    getTokenizer: () => language,
-                    getConfiguration: () => configuration,
-                    // the parser and runtime can both produce diagnostics
-                    getMarkerOwners: () => [
-                        "parser",
-                        "runtime"
-                    ],
-                    provideMarkers: async (model, owner) => {
-                        const script = model.getValue();
-                        return [];
-                    }
-                },
-            ],
-        },
-        theme: {
-            customTokenColors: [
-                {
-                    token: "string.item.quoted",
-                    value: "string.regexp"
-                },
-                {
-                    token: "string.item.literal",
-                    value: "string.regexp"
-                },
-                {
-                    token: "function.command.super",
-                    value: "constant"
-                },
-            ]
-        }
-    });
-};
 
 export const configuration: LanguageConfiguration = {
     comments: {
@@ -131,6 +87,9 @@ export const language: LanguageTokenizer = {
         "time",
         "times",
     ],
+    annotaions:  [
+        ":test" // TODO
+    ],
 
     word: /[_a-zA-Z][-0-9a-zA-Z_]*/,
 
@@ -141,7 +100,12 @@ export const language: LanguageTokenizer = {
             [/#.*$/, "comment"],
             [/[{}()[\]]/, "@brackets"],
             // this is before delimiter so the ":" is matched
-            [/:@word/, "keyword.annotation"],
+            [/(:)(@word)/, {
+                cases: {
+                    "@annotaions": "keyword.annotation",
+                    "@default": ["delimiter", "string.item"],
+                },
+            }],
             [/[=:,;]/, "delimiter"],
             [/(\d(_?\d)*)|(0x[\da-fA-F](_?[\da-fA-F])*)/, "number"],
             [/<@word>/, "string.item.literal"],

@@ -1,4 +1,4 @@
-import { cell } from "@pistonite/pure/sync";
+import { cell } from "@pistonite/pure/memory";
 import { useSyncExternalStore } from "react";
 
 const narrow = cell({ initial: false });

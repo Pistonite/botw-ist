@@ -21,22 +21,12 @@ export class RuntimeClient implements Runtime {
     }
 
     /**
-     * Set the script for the runtime, which starts executing
-     * the script immediately
-     * 
-     * onScriptChange(script: string): WorkexPromise<void>;
-     * getSemanticTokens(
-     * script: string,
-     * startPos: number,
-     * endPos: number,
-     * ): WorkexPromise<Uint32Array>;
-     * 
      * Parse the script and get diagnostics from the parser.
      * 
      * This does not runtime diagnostics
      */
     public getParserDiagnostics( script: string ): WorkexPromise<ParserErrorReport[]> {
-        return this.client.post<ParserErrorReport[]>(22 /* Runtime.getParserDiagnostics */, [ script ]);
+        return this.client.post<ParserErrorReport[]>(23 /* Runtime.getParserDiagnostics */, [ script ]);
     }
 
     /**
@@ -44,7 +34,7 @@ export class RuntimeClient implements Runtime {
      * Returns an empty list if no items are found.
      */
     public resolveItemIdent( query: string ): WorkexPromise<ItemSearchResult[]> {
-        return this.client.post<ItemSearchResult[]>(23 /* Runtime.resolveItemIdent */, [ query ]);
+        return this.client.post<ItemSearchResult[]>(24 /* Runtime.resolveItemIdent */, [ query ]);
     }
 
     /**

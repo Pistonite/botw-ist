@@ -16,6 +16,13 @@ export interface Runtime {
      */
     resolveItemIdent(query: string): WorkexPromise<ItemSearchResult[]>;
 
+    /**
+     * Parse the script and get diagnostics from the parser.
+     *
+     * This does not runtime diagnostics
+     */
+    getParserDiagnostics(script: string): WorkexPromise<ParserErrorReport[]>;
+
     // /**
     //  * Set the script for the runtime, which starts executing
     //  * the script immediately
@@ -27,13 +34,6 @@ export interface Runtime {
     //     startPos: number,
     //     endPos: number,
     // ): WorkexPromise<Uint32Array>;
-
-    /**
-     * Parse the script and get diagnostics from the parser.
-     *
-     * This does not runtime diagnostics
-     */
-    getParserDiagnostics(script: string): WorkexPromise<ParserErrorReport[]>;
 
     // getRuntimeDiagnostics(
     //     script: string,

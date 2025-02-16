@@ -25,7 +25,7 @@ export class RuntimeAppClient implements RuntimeApp {
      * last one.
      */
     public onRunCompleted( ): WorkexPromise<void> {
-        return this.client.postVoid(24 /* RuntimeApp.onRunCompleted */, [ ]);
+        return this.client.postVoid(25 /* RuntimeApp.onRunCompleted */, [ ]);
     }
 
     /**
@@ -34,7 +34,7 @@ export class RuntimeAppClient implements RuntimeApp {
      * or no match.
      */
     public resolveQuotedItem( query: string ): WorkexPromise<ItemSearchResult | undefined> {
-        return this.client.post<ItemSearchResult | undefined>(25 /* RuntimeApp.resolveQuotedItem */, [ query ]);
+        return this.client.post<ItemSearchResult | undefined>(26 /* RuntimeApp.resolveQuotedItem */, [ query ]);
     }
 
     /**

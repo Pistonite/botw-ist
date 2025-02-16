@@ -7,11 +7,11 @@ import type { Runtime } from "../Runtime.ts";
 export function bindRuntimeHost(delegate: Runtime, options: WorkexBindOptions) {
     return bindHost("skyb-api-0.0.1", options, (fId: number, _payload: any[]) => {
         switch (fId) {
-            case 22 /* Runtime.getParserDiagnostics */: {
+            case 23 /* Runtime.getParserDiagnostics */: {
                 const [ a0 ] = _payload;
                 return delegate.getParserDiagnostics( a0 );
             }
-            case 23 /* Runtime.resolveItemIdent */: {
+            case 24 /* Runtime.resolveItemIdent */: {
                 const [ a0 ] = _payload;
                 return delegate.resolveItemIdent( a0 );
             }

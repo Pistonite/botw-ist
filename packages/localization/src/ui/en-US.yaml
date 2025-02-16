@@ -1,6 +1,36 @@
 # Generic messages
 generic.error.internal: "Internal error: {{error}}"
 
+# Parser error messages
+parser.SyntaxUnexpected: Unexpected syntax
+parser.SyntaxUnexpectedExpecting: "Unexpected syntax. Expecting: {{arg}}"
+parser.SyntaxUnexpectedEof: Unexpected end of file
+parser.InvalidItem: "Invalid item: `{{arg}}`"
+parser.InvalidEmptyItem: "Item name cannot be empty in this context"
+parser.IntFormat: "`{{arg}}` is not a valid integer"
+parser.FloatFormat: "`{{arg}}` is not a valid floating-point number"
+parser.UnusedMetaKey: "Property `{{arg}}` is unused"
+parser.InvalidMetaValue: "`{{value}}` is not a valid value for property `{{key}}`"
+parser.InvalidWeaponModifier: "`{{arg}}` is not a valid weapon modifier"
+parser.InvalidCookEffect: "`{{arg}}` is not a valid cook effect"
+parser.TooManyIngredients: An item can have at most 5 ingredients
+parser.InvalidArmorStarNum: "Armor star number must be between 0 and 4 (inclusive), got: {{arg}}"
+parser.InvalidSlotClause: "`{{arg}}` is not a valid slot number"
+parser.InvalidTimesClause: "`{{arg}}` is not a valid number for times"
+parser.InvalidTrial: "`{{arg}}` is not a valid trial name"
+parser.InvalidCategory: "Cannot use category `{{arg}}` in this context"
+parser.InvalidInventoryRow: "Inventory row number must be between 1 and 4 (inclusive), got: {{arg}}"
+parser.InvalidInventoryCol: "Inventory column number must be between 1 and 5 (inclusive), got: {{arg}}"
+
+category.Weapon: Weapon
+category.Bow: Bow
+category.Shield: Shield
+category.Armor: Armor
+category.Material: Material
+category.Food: Food
+category.KeyItem: Key Items
+
+
 
 button.close: Close
 button.popout: Pop-out to a new window

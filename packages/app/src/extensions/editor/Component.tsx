@@ -1,10 +1,13 @@
 // import { useEffect } from "react";
 
-import type { ExtensionComponentProps } from "../types.ts";
-import { initLanguage } from "./Language.ts";
 import { CodeEditor } from "@pistonite/intwc";
+
+import { useExtensionApp } from "application/useExtensionApp.ts";
+
+import type { ExtensionComponentProps } from "../types.ts";
+
+import { init } from "./init.ts";
 import { EditorExtension } from "./editor.ts";
-import { useApplication } from "application/useApplication.ts";
 
 const FILE = "script.skyb";
 
@@ -12,8 +15,8 @@ export const Component: React.FC<ExtensionComponentProps> = ({
     standalone,
     connect,
 }) => {
-    const app = useApplication();
-    initLanguage(app);
+    const app = useExtensionApp();
+    init(app);
     // useEffect(() => {
     // }, []);
     return (

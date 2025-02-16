@@ -1,9 +1,20 @@
 version: '3'
 
+includes:
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+
 tasks:
   build:
     cmds:
       - bun scripts/build-themes.ts > src/theme/colors.ts
+
+  check:
+    cmds:
+      - task: ecma:tsc-check
+      - task: ecma:eslint-check
+      - task: ecma:prettier-check
 
   patch-monaco-editor:
     cmds:

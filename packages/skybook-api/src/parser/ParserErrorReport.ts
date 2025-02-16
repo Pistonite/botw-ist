@@ -3,6 +3,6 @@ import type { ParserError } from "./ParserError";
 
 export type ParserErrorReport = {
     span: [number, number];
-    is_warning: boolean;
+    isWarning: boolean;
     error: ParserError;
 };

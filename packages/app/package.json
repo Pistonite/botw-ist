@@ -10,7 +10,7 @@
         "@pistonite/intwc": "workspace:*",
         "@pistonite/pure": "catalog:",
         "@pistonite/pure-react": "catalog:",
-        "@pistonite/skybook-extension-api": "workspace:*",
+        "@pistonite/skybook-api": "workspace:*",
         "@pistonite/shared-controls": "workspace:*",
         "@pistonite/workex": "catalog:",
         "@tanstack/react-query": "^5.62.11",
@@ -20,7 +20,6 @@
         "reselect": "^5.1.1",
         "skybook-item-system": "workspace:*",
         "skybook-localization": "workspace:*",
-        "skybook-runtime-api": "workspace:*",
         "skybook-runtime-wasm": "workspace:*",
         "zustand": "^5.0.2"
     },

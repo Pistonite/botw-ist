@@ -2,6 +2,7 @@
     "name": "@pistonite/intwc",
     "private": true,
     "version": "0.0.1",
+    "type": "module",
     "description": "TODO",
     "homepage": "TODO",
     "bugs": {
@@ -27,6 +28,9 @@
     "devDependencies": {
         "@catppuccin/palette": "^1.7.1",
         "@types/react": "catalog:",
+        "eslint": "catalog:",
+        "mono-dev": "workspace:*",
+        "typescript": "catalog:",
         "vite": "catalog:"
     }
 }

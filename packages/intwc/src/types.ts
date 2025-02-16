@@ -1,5 +1,6 @@
 import * as monaco from "monaco-editor";
 import type { LanguageClient } from "./language/LanguageClient.ts";
+import { ThemeOptions } from "./theme/options.ts";
 
 /** Option to pass in to init */
 export type InitOption = {
@@ -17,6 +18,11 @@ export type InitOption = {
      * Option for the editor
      */
     editor?: EditorOption;
+
+    /**
+     * Theme options
+     */
+    theme?: ThemeOptions;
 }
 
 export type PreferenceOption = {

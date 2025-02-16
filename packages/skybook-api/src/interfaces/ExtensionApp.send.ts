@@ -5,7 +5,7 @@ import type { ExtensionApp } from "../ExtensionApp.ts";
 
 import type { Result } from "@pistonite/pure/result";
 import { type WorkexPromise, WorkexClient, type WorkexClientOptions } from "@pistonite/workex";
-import { ItemSearchResult } from ".././types.ts";
+import { Diagnostic, ItemSearchResult } from ".././types.ts";
 
 /**
  * API implemented by the application and called by the extension.
@@ -28,6 +28,13 @@ export class ExtensionAppClient implements ExtensionApp {
     }
 
     /**
+     * Invoke the parser for the script and get the diagnostics.
+     */
+    public provideParserDiagnostics( script: string ): WorkexPromise<Diagnostic[]> {
+        return this.client.post<Diagnostic[]>(20 /* ExtensionApp.provideParserDiagnostics */, [ script ]);
+    }
+
+    /**
      * Resolve an item from a query
      * 
      * If localized is true, treat the query as a localized item search query (i.e. "[tag:]words"),
@@ -37,14 +44,16 @@ export class ExtensionAppClient implements ExtensionApp {
      * even when there is no error, the search result could be empty.
      */
     public resolveItem( query: string, localized: boolean, limit: number ): WorkexPromise<Result<ItemSearchResult[], string>> {
-        return this.client.post<Result<ItemSearchResult[], string>>(20 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
+        return this.client.post<Result<ItemSearchResult[], string>>(21 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
     }
 
     /**
      * Set the simulator script.
+     * 
+     * This will trigger a rerun of the simulation using the new script
      */
     public setScript( script: string ): WorkexPromise<void> {
-        return this.client.postVoid(21 /* ExtensionApp.setScript */, [ script ]);
+        return this.client.postVoid(22 /* ExtensionApp.setScript */, [ script ]);
     }
 
     /**

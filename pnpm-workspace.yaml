@@ -1,22 +1,20 @@
 packages:
   - packages/app
-  - packages/extension-api
   - packages/intwc
   - packages/item-assets
   - packages/item-system
   - packages/localization
   - packages/mono-dev
-  - packages/parser
-  - packages/runtime-api
   - packages/runtime-wasm
   - packages/shared-controls
+  - packages/skybook-api
 
 catalog:
   "@griffel/react": ^1.5.29
-  "@fluentui/react-components": ^9.58.2
-  "@fluentui/react-icons": ^2.0.271
+  "@fluentui/react-components": ^9.58.3
+  "@fluentui/react-icons": ^2.0.274
   "@modyfi/vite-plugin-yaml": ^1.1.0
-  "@pistonite/pure": ^0.22.1
+  "@pistonite/pure": ^0.22.2
   "@pistonite/pure-react": ^0.7.0
   "@pistonite/pure-i18next": ^0.3.0
   "@pistonite/workex": ^0.0.5

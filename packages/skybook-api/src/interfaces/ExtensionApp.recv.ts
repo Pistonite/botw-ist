@@ -10,11 +10,15 @@ export function bindExtensionAppHost(delegate: ExtensionApp, options: WorkexBind
             case 19 /* ExtensionApp.getScript */: {
                 return delegate.getScript();
             }
-            case 20 /* ExtensionApp.resolveItem */: {
+            case 20 /* ExtensionApp.provideParserDiagnostics */: {
+                const [ a0 ] = _payload;
+                return delegate.provideParserDiagnostics( a0 );
+            }
+            case 21 /* ExtensionApp.resolveItem */: {
                 const [ a0, a1, a2 ] = _payload;
                 return delegate.resolveItem( a0, a1, a2 );
             }
-            case 21 /* ExtensionApp.setScript */: {
+            case 22 /* ExtensionApp.setScript */: {
                 const [ a0 ] = _payload;
                 return delegate.setScript( a0 );
             }

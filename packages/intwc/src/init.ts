@@ -8,7 +8,7 @@ import { patchMonacoTypeScript } from "./typescript";
 import { registerMarkerProvider } from './language/MarkerProviderRegistry.ts';
 import { setEditorOptions } from './EditorState.ts';
 
-export function initCodeEditor({preferences, language, editor}: InitOption) {
+export function initCodeEditor({preferences, language, editor, theme}: InitOption) {
     initPreference(preferences || {});
 
     const {typescript, json, css, html, custom} = language || {};
@@ -37,7 +37,7 @@ export function initCodeEditor({preferences, language, editor}: InitOption) {
         }
     };
 
-    initThemes();
+    initThemes(theme || {});
 
     // initialize TypeScript options
     if (typescript) {
@@ -96,11 +96,16 @@ export function initCodeEditor({preferences, language, editor}: InitOption) {
             }
 
             const provideMarkers = client.provideMarkers?.bind(client);
-            if (provideMarkers) {
-                registerMarkerProvider(id, {
-                    owner: client.getMarkerOwner?.() || id,
-                    provide: provideMarkers
+            const markerOwners = client.getMarkerOwners?.();
+            if (provideMarkers && markerOwners) {
+                markerOwners.forEach((owner) => {
+                    registerMarkerProvider(id, {
+                        owner,
+                        provide: (model) => provideMarkers(model, owner)
+                    });
                 });
+                // note: the provider invocation is registered
+                // in EditorState using the onDidChangeContent event
             }
 
             const provideCompletionItems = client.provideCompletionItems?.bind(client);

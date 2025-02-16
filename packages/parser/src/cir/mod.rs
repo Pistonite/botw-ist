@@ -32,7 +32,7 @@ pub trait MetaParser {
     fn visit_entry(
         &mut self,
         span: Span,
-        key: &tp::String<syn::Word>,
+        key: &tp::String<syn::ItemMetaKey>,
         value: &tp::Option<syn::ItemMetaValue>,
         errors: &mut Vec<ErrorReport>,
     );

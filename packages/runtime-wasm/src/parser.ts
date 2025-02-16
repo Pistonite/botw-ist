@@ -1,4 +1,8 @@
-import type { ParserErrorReport } from "skybook-parser";
+/**
+ * Handles invoking the parser in WASM and caching the results, as well
+ * as managing the memory in WASM
+ */
+import type { ParserErrorReport } from "@pistonite/skybook-api";
 import { makeExternalWeakRefType } from "@pistonite/pure/memory";
 
 const makeParseOutputRef = makeExternalWeakRefType({
@@ -7,50 +11,84 @@ const makeParseOutputRef = makeExternalWeakRefType({
 });
 type WeakParseOutputRef = ReturnType<typeof makeParseOutputRef>;
 
-// Runtime states
-
-// === Parsing states ===
-let isParsing = false;
-let parseScript = "";
-let parseSerial = 0;
+/** Promise of the on-going parse run */
+let parsePromise: Promise<WeakParseOutputRef> | undefined = undefined;
+/** Script of the on-going parse run or last finished run */
+let lastScript = "";
+let serial = 0;
 let parseOutputRef = makeParseOutputRef(undefined); // Pointer into WASM memory
 
-export const getParserDiagnostics = async (script: string, resolver: QuotedItemResolverFn): Promise<ParserErrorReport[]> => {
-    const parseOutputPtr = await parseScriptInternal(script, resolver);
+export const getParserDiagnostics = async (
+    script: string,
+    resolver: QuotedItemResolverFn,
+): Promise<ParserErrorReport[]> => {
+    const parseOutputPtr = await parseScript(script, resolver);
     if (parseOutputPtr.ref === undefined) {
         // shouldn't happen, just for safety
         return [];
     }
-    return wasm_bindgen.get_parser_errors(parseOutputPtr.ref);
-}
+    const errors = wasm_bindgen.get_parser_errors(parseOutputPtr.ref);
+    freeParseOutput(parseOutputPtr);
+    return errors;
+};
 
 /**
  * Parse the script and return the pointer to the output
  *
- * If the current cached result is up-to-date, return it,
- * otherwise, the result will be freed and a new result
- * will be parsed and returned
+ * This will return the cached result if possible. When the result is done
+ * being used, it must be freed using `freeParseOutput`.
  */
-const parseScriptInternal = async (script: string, resolver: QuotedItemResolverFn): Promise<WeakParseOutputRef> => {
+const parseScript = (
+    script: string,
+    resolver: QuotedItemResolverFn,
+): Promise<WeakParseOutputRef> => {
+    const isScriptUpToDate = lastScript === script;
     // if the cache result is up-to-date, return it
-    if (parseOutputRef.ref !== undefined && !isParsing && parseScript === script) {
-        return parseOutputRef;
+    if (parseOutputRef.ref !== undefined && !parsePromise && isScriptUpToDate) {
+        return Promise.resolve(parseOutputRef);
+    }
+    // if the result is not up-to-date, but the on-going run is the same script,
+    // use the on-going run's result
+    if (parsePromise && isScriptUpToDate) {
+        return parsePromise;
     }
 
-    const serialBefore = parseSerial;
-    parseSerial++;
-    isParsing = true;
-    parseScript = script;
+    parsePromise = parseScriptInternal(script, resolver);
+    return parsePromise;
+};
+
+const parseScriptInternal = async (
+    script: string,
+    resolver: QuotedItemResolverFn,
+): Promise<WeakParseOutputRef> => {
+    const serialBefore = serial;
+    serial++;
+    lastScript = script;
     const output = await wasm_bindgen.parse_script(script, resolver);
-    if (serialBefore === parseSerial) {
-        isParsing = false;
+    const newRef = makeParseOutputRef(output);
+    // update cached result
+    if (serialBefore === serial) {
+        parsePromise = undefined;
         if (parseOutputRef.ref !== output) {
             parseOutputRef.free();
         }
-        parseOutputRef = makeParseOutputRef(output);
+        parseOutputRef = newRef;
     }
 
-    return parseOutputRef;
-}
+    return newRef;
+};
 
-export type QuotedItemResolverFn = (query: string) => Promise<{ actor: string; cookEffect: number } | undefined | null>;
+/**
+ * Free the parse output. If the output reference is the same as the cached result,
+ * do nothing (since the cached result is managed by the cache itself). Otherwise,
+ * the result is not used and will be freed
+ */
+const freeParseOutput = (parseOutput: WeakParseOutputRef) => {
+    if (parseOutput.ref !== parseOutputRef.ref) {
+        parseOutput.free();
+    }
+};
+
+export type QuotedItemResolverFn = (
+    query: string,
+) => Promise<{ actor: string; cookEffect: number } | undefined | null>;

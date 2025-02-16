@@ -1,6 +1,6 @@
 import * as monaco from 'monaco-editor';
 import { getProvideMarkersCallback } from './language/MarkerProviderRegistry';
-import { EditorOption } from './types.ts';
+import type { EditorOption } from './types.ts';
 
 
 export type CodeEditorApi = {
@@ -107,7 +107,6 @@ export class EditorState implements CodeEditorApi {
     public getFileContent(filename: string): string {
         const model = this.models.get(filename);
         if (model) {
-            console.log("get", model.getValue());
             return model.getValue();
         }
         return "";
@@ -116,7 +115,6 @@ export class EditorState implements CodeEditorApi {
     public setFileContent(filename: string, content: string) {
         const model = this.models.get(filename);
         if (model && model.getValue() !== content) {
-            console.log(model.getValue(), content);
             // model.setValue(content);
         }
     }
@@ -139,7 +137,6 @@ export class EditorState implements CodeEditorApi {
             const provideMarkersCallback = getProvideMarkersCallback();
             // there can be only one change event listener, so this is not exposed
             model.onDidChangeContent(() => {
-                console.log("changed", model.getValue());
                 provideMarkersCallback(model);
                 this.subscribers.forEach(subscriber => subscriber(filename));
             });
@@ -154,6 +151,8 @@ export class EditorState implements CodeEditorApi {
                 }
             });
             this.models.set(filename, model);
+            // invoke the callback once to provide markers initially
+            provideMarkersCallback(model);
         }
         this.switchToFile(filename);
     }

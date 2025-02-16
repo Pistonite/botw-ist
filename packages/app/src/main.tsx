@@ -9,11 +9,12 @@ import { initI18n } from "skybook-localization";
 import { ItemTooltipProvider } from "skybook-item-system";
 
 import { initExtensionManager } from "./application/extensionManager.ts";
-import { initRuntime } from "runtime/init.ts";
-import { ApplicationApi } from "application/api.ts";
-import { ApplicationProvider } from "application/ApplicationProvider.tsx";
+import { createExtensionAppHost } from "application/ExtensionAppHost.ts";
 import { initNarrow } from "pure-contrib/narrow.ts";
 import { isLessProductive } from "pure-contrib/platform.ts";
+
+import { initRuntime } from "./runtime.ts";
+import { ExtensionAppContext } from "application/useExtensionApp.ts";
 
 async function boot() {
     const root = document.getElementById("-root-") as HTMLDivElement;
@@ -58,11 +59,11 @@ async function boot() {
     const queryClient = new QueryClient();
 
     const runtime = await initRuntime();
-    const app = new ApplicationApi(runtime);
+    const app = createExtensionAppHost(runtime);
 
     createRoot(root).render(
         <StrictMode>
-            <ApplicationProvider app={app}>
+            <ExtensionAppContext.Provider value={app}>
                 <QueryClientProvider client={queryClient}>
                     <ThemeProvider>
                         <ItemTooltipProvider>
@@ -70,7 +71,7 @@ async function boot() {
                         </ItemTooltipProvider>
                     </ThemeProvider>
                 </QueryClientProvider>
-            </ApplicationProvider>
+            </ExtensionAppContext.Provider>
         </StrictMode>,
     );
 }
