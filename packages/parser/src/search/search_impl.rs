@@ -7,6 +7,14 @@ use super::ResolvedItem;
 
 /// Search for an item by V4 identifier such as `royal_claymore`. Returns all matches ordered by
 /// score (best match first)
+#[cfg_attr(
+    feature = "cached",
+    cached::proc_macro::cached(
+        size = 5120,
+        key = "String",
+        convert = "{ search_str.to_string() }"
+    )
+)]
 pub fn search_item_by_ident_all(search_str: &str) -> Vec<ResolvedItem> {
     // empty input case - this has to be here
     // because supplement_search_strings will fabricate non-empty search strings
@@ -42,6 +50,14 @@ pub fn search_item_by_ident_all(search_str: &str) -> Vec<ResolvedItem> {
 }
 
 /// Search for an item by V4 identifier such as `royal_claymore`. Returns the best match
+#[cfg_attr(
+    feature = "cached",
+    cached::proc_macro::cached(
+        size = 5120,
+        key = "String",
+        convert = "{ search_str.to_string() }"
+    )
+)]
 pub fn search_item_by_ident(search_str: &str) -> Option<ResolvedItem> {
     // empty input case - this has to be here
     // because supplement_search_strings will fabricate non-empty search strings

@@ -1,4 +1,4 @@
-import type { Extension } from "@pistonite/skybook-extension-api";
+import type { Extension } from "@pistonite/skybook-api";
 
 export type ExtensionComponentProps = {
     /**

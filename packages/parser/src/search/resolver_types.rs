@@ -15,8 +15,16 @@ pub trait QuotedItemResolver {
     fn resolve_quoted(&self, word: &str) -> Self::Future;
 }
 
+impl<T: Fn(&str) -> F, F: Future<Output = Option<ResolvedItem>>> QuotedItemResolver for T {
+    type Future = F;
+
+    fn resolve_quoted(&self, word: &str) -> Self::Future {
+        self(word)
+    }
+}
+
 /// The result returned by item searcher
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ResolvedItem {
     /// The actor found
     pub actor: String,
@@ -35,6 +43,20 @@ impl ResolvedItem {
         Self {
             actor,
             meta: Some(meta),
+        }
+    }
+
+    pub fn with_effect_id(actor: String, effect_id: i32) -> Self {
+        let effect_id = match effect_id {
+            0 => None,
+            _ => Some(effect_id),
+        };
+        Self {
+            actor,
+            meta: Some(cir::ItemMeta {
+                effect_id,
+                ..Default::default()
+            }),
         }
     }
 }

@@ -1,0 +1,35 @@
+{
+    "name": "@pistonite/skybook-api",
+    "private": true,
+    "version": "0.0.1",
+    "description": "Bindings, Extension and Runtime API for Skybook, the BOTW IST Simulator",
+    "homepage": "https://github.com/Pistonite/botw-ist",
+    "bugs": {
+        "url": "https://github.com/Pistonite/botw-ist/issues"
+    },
+    "license": "MIT",
+    "author": "Pistonight <pistonknight@outlook.com>",
+    "files": [
+        "src/**/*"
+    ],
+    "exports": {
+        ".": "./src/index.ts",
+        "./sides/*": "./src/sides/*.ts",
+        "./sides/*.ts": "./src/sides/*.ts",
+        "./interfaces/*": "./src/interfaces/*.ts",
+        "./interfaces/*.ts": "./src/interfaces/*.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Pistonite/botw-ist.git",
+        "directory": "packages/skybook-api"
+    },
+    "dependencies": {
+        "@pistonite/pure": "catalog:",
+        "@pistonite/workex": "catalog:"
+    },
+    "devDependencies": {
+        "mono-dev": "workspace:*",
+        "typescript": "catalog:"
+    }
+}

@@ -1,66 +1,52 @@
+import { LRUCache } from "lru-cache";
 import { type Delegate, hostFromDelegate } from "@pistonite/workex";
 
-import { bindRuntimeApiHost } from "skybook-runtime-api/sides/runtime";
-import type { RuntimeApi } from "skybook-runtime-api";
-import { latest } from "@pistonite/pure/sync";
+import {
+    bindRuntimeHost,
+    RuntimeAppClient,
+} from "@pistonite/skybook-api/sides/runtime";
+import type { ItemSearchResult, Runtime } from "@pistonite/skybook-api";
 
+import { getParserDiagnostics, type QuotedItemResolverFn } from "./parser.ts";
 
-type ParseResult = {
-    stepPositions: number[];
-    errors: unknown[];
-    semanticTokens: Uint32Array;
-}
+const app = new RuntimeAppClient({ worker: self });
+
+// cache the item so we don't need to resolve it with the main thread
+// every time.
+// using `false` to represent "not found"
+const quotedItemCache = new LRUCache<string, ItemSearchResult | false>({
+    max: 5120,
+});
+const resolveQuotedItem: QuotedItemResolverFn = async (query) => {
+    const cachedResult = quotedItemCache.get(query);
+    if (cachedResult !== undefined) {
+        return cachedResult ? cachedResult : undefined;
+    }
+    const result = await app.resolveQuotedItem(query);
+    // communication error
+    if (result.err) {
+        return undefined;
+    }
+    const item: ItemSearchResult | undefined = result.val;
+    quotedItemCache.set(query, item);
+    return item;
+};
 
 async function boot() {
     await wasm_bindgen({ module_or_path: "/runtime/skybook.wasm" });
 
-    const doParseScript = latest({
-        fn: async (script: string): Promise<ParseResult> => {
-            return wasm_bindgen.parse_script(script);
-        }
-    });
-    let script: string = "";
-    let parseResult: Promise<ParseResult> = Promise.resolve({ stepPositions: [], errors: [] });
-    const parseScript = (newScript: string): Promise<ParseResult> => {
-        if (script === newScript) {
-            return parseResult;
-        }
-        script = newScript;
-        parseResult = doParseScript(newScript);
-        return parseResult;
-    }
-
-    let runResult: Promise<void> = Promise.resolve();
-    const doRunScript = latest({
-        fn: async (script: string): Promise<void> => {
-            return wasm_bindgen.run_script(script);
-        }
-    });
-
     // TODO: any init here
 
     const api = {
-        // non-script-life-cycle methods
         resolveItemIdent: async (query) => {
             return wasm_bindgen.resolve_item_ident(query);
         },
-
-        // script-life-cycle methods
-        onScriptChange: async (newScript) => {
-            await parseScript(newScript);
-            if (newScript === script) {
-                void doRunScript(newScript);
-            }
+        getParserDiagnostics: (script) => {
+            return getParserDiagnostics(script, resolveQuotedItem);
         },
+    } satisfies Delegate<Runtime>;
 
-        getSemanticTokens: async (newScript, startPos, endPos) => {
-            const result = await parseScript(newScript);
-            // TODO: fix this
-            return result.semanticTokens.slice(startPos, endPos);
-        },
-    } satisfies Delegate<RuntimeApi>;
-
-    const handshake = bindRuntimeApiHost(hostFromDelegate(api), {
+    const handshake = bindRuntimeHost(hostFromDelegate(api), {
         worker: self,
     });
     await handshake.initiate();

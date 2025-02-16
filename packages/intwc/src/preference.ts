@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { persist } from "@pistonite/pure/sync";
+import { persist } from "@pistonite/pure/memory";
 
 import { InputMode, Preference, PreferenceOption } from "./types.ts";
 

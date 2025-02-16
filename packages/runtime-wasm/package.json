@@ -9,7 +9,8 @@
     "dependencies": {
         "@pistonite/pure": "catalog:",
         "@pistonite/workex": "catalog:",
-        "skybook-runtime-api": "workspace:*"
+        "@pistonite/skybook-api": "workspace:*",
+        "lru-cache": "^11.0.2"
     },
     "devDependencies": {
         "eslint": "catalog:",

@@ -2,6 +2,7 @@ use teleparse::Span;
 
 use crate::error::{Error, ErrorReport};
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Trial {
     Eventide,
     SwordNext,

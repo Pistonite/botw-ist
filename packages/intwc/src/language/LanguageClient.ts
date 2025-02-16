@@ -2,6 +2,8 @@ import * as monaco from 'monaco-editor';
 
 export type TextModel = monaco.editor.ITextModel;
 export type MarkerData = monaco.editor.IMarkerData;
+export const MarkerSeverity = monaco.MarkerSeverity;
+export type MarkerSeverity = monaco.MarkerSeverity;
 export type Range = monaco.Range;
 export type Position = monaco.Position;
 export type CancellationToken = monaco.CancellationToken;
@@ -26,14 +28,15 @@ export type LanguageClient = {
     getTokenizer?: () => LanguageTokenizer;
     /** Get the configuration to register on initialization */
     getConfiguration?: () => LanguageConfiguration;
+    /** Get the marker owners that `provideMarkers` will be called with */
+    getMarkerOwners?: () => string[];
+    /** Provide markers for the given model and owner */
+    provideMarkers?: (model: TextModel, owner: string) => MarkerResult;
 
     getSemanticTokensLegend?: () => SemanticTokensLegend;
 
     provideDocumentRangeSemanticTokens?: (model: TextModel, range: Range, token: CancellationToken) => SemanticTokensResult;
 
-    getMarkerOwner?: () => string;
-
-    provideMarkers?: (model: TextModel) => MarkerResult;
 
     getCompletionTriggerCharacters?: () => string[];
 

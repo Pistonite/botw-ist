@@ -4,15 +4,11 @@ includes:
   cargo:
     taskfile: ../mono-dev/task/cargo.yaml
     internal: true
-  git:
-    taskfile: ../mono-dev/task/git.yaml
-    internal: true
 
 tasks:
   build:
     cmds:
       - task: build-src
-      - task: build-binding
    
   build-src:
     cmds:
@@ -20,9 +16,14 @@ tasks:
       - python scripts/generate.py
       - task: cargo:fmt-fix
 
-  build-binding:
+  build-api-ts-binding:
     cmds:
+      - task: build-src
+      - rm -f bindings/*.ts ../skybook-api/src/parser/*
       - cargo test --lib --features __ts-binding
+      - find bindings -type f | sed 's/^bindings/export * from "./' | sed 's/$/";/' > bindings/index.ts
+      - $(which mkdir) -p ../skybook-api/src/parser
+      - mv bindings/*.ts ../skybook-api/src/parser
 
   test:
     cmds:

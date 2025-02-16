@@ -12,6 +12,10 @@ use crate::syn;
 #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
 #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
 pub enum Category {
+    //////////////////////////////////
+    // DO NOT update the enum names
+    // The translation files needs to be updated accordingly!!!
+    //////////////////////////////////
     Weapon,
     Bow,
     Shield,
@@ -45,6 +49,7 @@ pub fn parse_category(category: &syn::Category) -> Category {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CategorySpec {
     /// Which category to select
     pub category: Category,
@@ -98,7 +103,7 @@ pub fn parse_times_clause(times: Option<&syn::TimesClause>) -> Result<i64, Error
         Some(times) => {
             let t = cir::parse_syn_int_str(&times.times, &times.span())?;
             if t < 1 {
-                return Err(Error::InvalidTimesClause(t).spanned(times));
+                return Err(Error::InvalidTimesClause(t as i32).spanned(times));
             }
             Ok(t)
         }

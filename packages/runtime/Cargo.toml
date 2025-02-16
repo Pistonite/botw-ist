@@ -7,7 +7,6 @@ publish = false
 [dependencies]
 blueflame = { path = "../blueflame" }
 skybook-parser = { path = "../parser" }
-textdistance = "1.1.1"
 
 [dev-dependencies]
 tokio = { version = "1.42.0", features = ["macros", "rt-multi-thread"] }

@@ -8,6 +8,7 @@ use super::token::{
 };
 
 use super::category::Category;
+use super::{KwEquip, KwTime};
 
 /// Syntax for an item prefixed with a numeric amount
 #[derive_syntax]
@@ -112,8 +113,19 @@ pub struct ItemMeta {
 pub struct ItemMetaKeyValue {
     /// The key of the key-value pair
     #[teleparse(semantic(Variable))]
-    pub key: tp::String<Word>,
+    pub key: tp::String<ItemMetaKey>,
     pub value: tp::Option<ItemMetaValue>,
+}
+
+/// Valid strings for the key in an item's metadata specifier
+///
+/// This is needed because some keywords can be used as keys
+#[derive_syntax]
+#[derive(Debug)]
+pub enum ItemMetaKey {
+    Time(KwTime),
+    Equip(KwEquip),
+    Other(Word),
 }
 
 /// Value after the key in an item's metadata specifier
