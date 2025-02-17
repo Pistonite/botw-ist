@@ -64,7 +64,12 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
 }
 
 /// Parse the script and extract the semantic tokens in the given range
-pub async fn parse_semantic(script: &str, start: usize, end: usize) -> Vec<(Span, SemanticToken)> {
+///
+/// The semantic tokens only compliment the syntax tokens. In cases where
+/// the syntax tokens are enough, semantic tokens are not returned for those.
+/// If all tokens are needed, (for example, for a custom syntax highlighter),
+/// use `parse_tokens` instead.
+pub fn parse_semantic(script: &str, start: usize, end: usize) -> Vec<(Span, SemanticToken)> {
     let Ok(mut parser) = Parser::new(script) else {
         return vec![];
     };
@@ -82,15 +87,79 @@ pub async fn parse_semantic(script: &str, start: usize, end: usize) -> Vec<(Span
     semantic_tokens
 }
 
+/// Parse the script and extract all tokens, including semantic and extracted tokens
+/// (such as comments).
+///
+/// The output tokens are sorted by their position in the script and do not overlap.
+/// However, they might not cover the entire script and there might be gaps between
+/// them.
+pub fn parse_tokens(script: &str) -> Vec<(Span, syn::TT)> {
+    let Ok(mut parser) = Parser::new(script) else {
+        return vec![];
+    };
+    let _ = parser.parse::<syn::Script>();
+
+    let mut output_tokens = Vec::new();
+    for token in parser.info().tokens.iter() {
+        // special cases
+        if token.ty == syn::TT::Word {
+            match script[token.span.lo..token.span.hi].to_lowercase().as_str() {
+                "true" | "false" => {
+                    output_tokens.push((token.span, syn::TT::Number));
+                    continue;
+                }
+                _ => {}
+            }
+        }
+        if token.ty == syn::TT::Keyword {
+            match script[token.span.lo..token.span.hi].to_lowercase().as_str() {
+                "weapon" | "weapons" | "bow" | "bows" | "shield" | "shields" | "armor"
+                | "armors" | "material" | "materials" | "food" | "foods" | "key-item"
+                | "key-items" => {
+                    output_tokens.push((token.span, syn::TT::Type));
+                    continue;
+                }
+                _ => {}
+            }
+        }
+        // if the token has semantic info, use that. Otherwise, use the token type
+        match SemanticToken::from_set_full(token.semantics()) {
+            Some(semantic) => {
+                output_tokens.push((token.span, semantic.to_token_type()));
+            }
+            None => {
+                output_tokens.push((token.span, token.ty));
+            }
+        }
+    }
+
+    // add extracted tokens (such as comments)
+    for token in parser.info().extracted_tokens.iter() {
+        output_tokens.push((token.span, token.ty));
+    }
+
+    // sort by position
+    output_tokens.sort_by(|a, b| a.0.lo.cmp(&b.0.lo));
+
+    output_tokens
+}
+
 #[derive(Debug, Clone)]
 pub enum SemanticToken {
     Keyword = 1,
     Variable = 2,
     Type = 3,
     Amount = 4,
+    ItemLiteral = 5,
 }
 
 impl SemanticToken {
+    /// Convert a set of semantic token types to a single semantic token type,
+    /// honoring the priority of the types.
+    ///
+    /// This only covers the cases where the monarch grammar doesn't
+    /// capture the semantic (i.e. in the web editor). For other tools,
+    /// use `from_set_full` to cover all cases
     pub fn from_set(value: LexSet<syn::TT>) -> Option<Self> {
         // order matters here
         if value.contains(syn::TT::Variable) {
@@ -106,5 +175,26 @@ impl SemanticToken {
             return Some(SemanticToken::Keyword);
         }
         None
+    }
+
+    /// Like `from_set` but covers more cases
+    pub fn from_set_full(value: LexSet<syn::TT>) -> Option<Self> {
+        if let Some(token) = Self::from_set(value) {
+            return Some(token);
+        }
+        if value.contains(syn::TT::ItemLiteral) {
+            return Some(SemanticToken::ItemLiteral);
+        }
+        None
+    }
+
+    pub fn to_token_type(&self) -> syn::TT {
+        match self {
+            SemanticToken::Keyword => syn::TT::Keyword,
+            SemanticToken::Variable => syn::TT::Variable,
+            SemanticToken::Type => syn::TT::Type,
+            SemanticToken::Amount => syn::TT::Number,
+            SemanticToken::ItemLiteral => syn::TT::ItemLiteral,
+        }
     }
 }

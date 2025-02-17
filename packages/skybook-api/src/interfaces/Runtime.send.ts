@@ -23,7 +23,7 @@ export class RuntimeClient implements Runtime {
     /**
      * Parse the script and get diagnostics from the parser.
      * 
-     * This does not runtime diagnostics
+     * Note that the span in the errors are byte offsets, not character offsets.
      */
     public getParserDiagnostics( script: string ): WorkexPromise<ParserErrorReport[]> {
         return this.client.post<ParserErrorReport[]>(24 /* Runtime.getParserDiagnostics */, [ script ]);
@@ -33,6 +33,8 @@ export class RuntimeClient implements Runtime {
      * Parse the script and get semantic tokens in the range from the parser.
      * 
      * The output is triples of [start, length, tokenType]
+     * 
+     * The offsets in both inputs and outputs should be byte offsets, not character offsets.
      */
     public getSemanticTokens( script: string, start: number, end: number ): WorkexPromise<Uint32Array> {
         return this.client.post<Uint32Array>(25 /* Runtime.getSemanticTokens */, [ script, start, end ]);

@@ -37,7 +37,10 @@ export class ExtensionAppClient implements ExtensionApp {
     /**
      * Get the semantic tokens for the script in the range.
      * 
-     * The output is triples of [start, length, tokenType]
+     * The output is triples of [start, length, tokenType].
+     * 
+     * The offsets in both inputs and outputs should be character offsets, not byte offsets.
+     * (Note this is different from Runtime.getSemanticTokens)
      */
     public provideSemanticTokens( script: string, start: number, end: number ): WorkexPromise<Uint32Array> {
         return this.client.post<Uint32Array>(21 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
