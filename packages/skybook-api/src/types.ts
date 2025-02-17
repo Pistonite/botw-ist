@@ -23,9 +23,9 @@ export type ItemSearchResult = {
 export type Diagnostic = {
     /** (Localized) message to display */
     message: string;
-    /** Start position of the diagnostic (inclusive) */
+    /** Start character position of the diagnostic (inclusive) */
     start: number;
-    /** End position of the diagnostic (exclusive) */
+    /** End character position of the diagnostic (exclusive) */
     end: number;
     /**
      * Whether this diagnostic is only a warning. If false, it should be treated as an error

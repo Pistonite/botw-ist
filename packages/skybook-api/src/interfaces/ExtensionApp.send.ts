@@ -35,6 +35,15 @@ export class ExtensionAppClient implements ExtensionApp {
     }
 
     /**
+     * Get the semantic tokens for the script in the range.
+     * 
+     * The output is triples of [start, length, tokenType]
+     */
+    public provideSemanticTokens( script: string, start: number, end: number ): WorkexPromise<Uint32Array> {
+        return this.client.post<Uint32Array>(21 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
+    }
+
+    /**
      * Resolve an item from a query
      * 
      * If localized is true, treat the query as a localized item search query (i.e. "[tag:]words"),
@@ -44,7 +53,7 @@ export class ExtensionAppClient implements ExtensionApp {
      * even when there is no error, the search result could be empty.
      */
     public resolveItem( query: string, localized: boolean, limit: number ): WorkexPromise<Result<ItemSearchResult[], string>> {
-        return this.client.post<Result<ItemSearchResult[], string>>(21 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
+        return this.client.post<Result<ItemSearchResult[], string>>(22 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
     }
 
     /**
@@ -53,7 +62,7 @@ export class ExtensionAppClient implements ExtensionApp {
      * This will trigger a rerun of the simulation using the new script
      */
     public setScript( script: string ): WorkexPromise<void> {
-        return this.client.postVoid(22 /* ExtensionApp.setScript */, [ script ]);
+        return this.client.postVoid(23 /* ExtensionApp.setScript */, [ script ]);
     }
 
     /**

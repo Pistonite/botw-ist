@@ -35,6 +35,21 @@ pub async fn parse_script(
     Box::leak(Box::new(parse_output)).into()
 }
 
+/// Parse the semantics of the script in the given range
+///
+/// The returned vector is triplets of (start, length, semantic token)
+#[wasm_bindgen]
+pub async fn parse_script_semantic(script: String, start: usize, end: usize) -> Vec<u32> {
+    let semantic_tokens = skybook_parser::parse_semantic(&script, start, end).await;
+    let mut output = Vec::with_capacity(semantic_tokens.len() * 3);
+    for (span, semantic) in semantic_tokens {
+        output.push(span.lo as u32);
+        output.push((span.hi - span.lo) as u32);
+        output.push(semantic as u32);
+    }
+    output
+}
+
 /// Get the errors from the parse output. Does not take ownership of the parse output. (i.e.
 /// does not free the parse output)
 #[wasm_bindgen]

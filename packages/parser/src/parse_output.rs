@@ -19,6 +19,7 @@ pub struct ParseOutput {
     pub errors: Vec<ErrorReport>,
 }
 
+/// Parse the script and get the simulation steps and errors
 pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> ParseOutput {
     let full_span = Span::new(0, script.len());
     let mut output = ParseOutput::default();
@@ -85,36 +86,24 @@ pub async fn parse_semantic(script: &str, start: usize, end: usize) -> Vec<(Span
 pub enum SemanticToken {
     Keyword = 1,
     Variable = 2,
-    Name = 3,
-    Type = 4,
-    Amount = 5,
-    SuperCommand = 6,
-    Annotation = 7,
+    Type = 3,
+    Amount = 4,
 }
 
 impl SemanticToken {
     pub fn from_set(value: LexSet<syn::TT>) -> Option<Self> {
         // order matters here
-        if value.contains(syn::TT::Keyword) {
-            return Some(SemanticToken::Keyword);
-        }
         if value.contains(syn::TT::Variable) {
             return Some(SemanticToken::Variable);
-        }
-        if value.contains(syn::TT::Name) {
-            return Some(SemanticToken::Name);
         }
         if value.contains(syn::TT::Type) {
             return Some(SemanticToken::Type);
         }
-        if value.contains(syn::TT::Amount) {
+        if value.contains(syn::TT::Amount) || value.contains(syn::TT::Number) {
             return Some(SemanticToken::Amount);
         }
-        if value.contains(syn::TT::SuperCommand) {
-            return Some(SemanticToken::SuperCommand);
-        }
-        if value.contains(syn::TT::Annotation) {
-            return Some(SemanticToken::Annotation);
+        if value.contains(syn::TT::Keyword) {
+            return Some(SemanticToken::Keyword);
         }
         None
     }

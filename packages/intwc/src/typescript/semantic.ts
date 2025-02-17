@@ -1,4 +1,5 @@
 import * as monaco from "monaco-editor";
+import { convertSemanticTokens } from "../language/SemanticConverter";
 
 const legend: monaco.languages.SemanticTokensLegend  = {
     tokenTypes: [
@@ -193,95 +194,44 @@ export class DocumentRangeSemanticTokensProviderAdapter
     }
 
     private convertTokens(model: monaco.editor.ITextModel, inputs: number[]): number[] {
-        // inputs are triples: [start, length, type]
-        // outputs are 5-tuples: [deltaLine, deltaStart, length, tokenType, tokenModifiers]
-        const outputs = [];
-        let prevLine = 1;
-		let prevStart = 1;
+        return convertSemanticTokens(inputs, model, {
+            convertType: (raw) => {
+                let modifier = raw;
+                let type = raw >> 8;
+                // type should be 1-indexed
+                if (!type || type > legend.tokenTypes.length) {
+                    return [undefined, 0];
+                }
 
-        // since we only run this for the latest range that's requested,
-        // we should never have to worry about having too many tokens
-        // returned from the worker
-		for (let i = 0; i + 3 <= inputs.length; i += 3) {
-			const start = inputs[i];
-			const length = inputs[i + 1];
-			let modifier = inputs[i + 2];
-			let type = modifier >> 8;
-            // type should be 1-indexed
-			if (!type || type > legend.tokenTypes.length) {
-				continue;
-			}
+                // fix the type and modifiers to have better highlighting
 
-            // fix the type and modifiers to have better highlighting
-
-            // readonly + lower bits (declaration, static, async)
-            if ((modifier & 0b1000) && (modifier & 0b111)) {
-                // only keep readonly, so less important
-                // modifiers don't take priority
-                modifier = 0b1000;
+                // readonly + lower bits (declaration, static, async)
+                if ((modifier & 0b1000) && (modifier & 0b111)) {
+                    // only keep readonly, so less important
+                    // modifiers don't take priority
+                    modifier = 0b1000;
+                }
+                // special handling for property and member
+                if (type === 10 || type === 12) {
+                    // ignore non-readonly modifiers
+                    // for things like foo.bar(), we want to hightlight
+                    // bar as a function instead of variable
+                    if (!(modifier & 0b1000)) {
+                        return [undefined, 0];
+                    }
+                    // only keep defaultLibrary on non-property/member
+                    // this is for things like [].length, where length
+                    // would be highlighted as a normal property,
+                    // instead of the same as this, self, super, etc..
+                    modifier &= ~0b10000;
+                } 
+                // offset by 1
+                type--;
+                // only keep the bits of modifier that matters
+                modifier &= 0xff;
+                return [type, modifier];
             }
-            // special handling for property and member
-            if (type === 10 || type === 12) {
-                // ignore non-readonly modifiers
-                // for things like foo.bar(), we want to hightlight
-                // bar as a function instead of variable
-                if (!(modifier & 0b1000)) {
-                    continue;
-                }
-                // only keep defaultLibrary on non-property/member
-                // this is for things like [].length, where length
-                // would be highlighted as a normal property,
-                // instead of the same as this, self, super, etc..
-                modifier &= ~0b10000;
-            } 
-            // offset by 1
-            type--;
-            // only keep the bits of modifier that matters
-			modifier &= 0xff;
-
-			const { startLineNumber, startColumn, endLineNumber, endColumn } = this._textSpanToRange(
-				model,
-				{ start, length }
-			);
-			if (startLineNumber === endLineNumber) {
-				const deltaLine = startLineNumber - prevLine;
-				const deltaStart = deltaLine === 0 ? startColumn - prevStart : startColumn - 1;
-
-                // handy debug code since we can't inspect semantic tokens yet
-                // console.log({
-                //     value: model.getValueInRange({startLineNumber, startColumn, endLineNumber, endColumn}),
-                //     type: legend.tokenTypes[type],
-                //     modifier: modifier.toString(2)
-                // })
-
-				outputs.push(deltaLine, deltaStart, length, type, modifier);
-				prevStart = startColumn;
-			} else {
-				// token spanning multiple lines, convert it to separate entries
-                const firstStart = startColumn - 1;
-                const firstLength = model.getLineLength(startLineNumber) - firstStart;
-                const firstDeltaLine = startLineNumber - prevLine;
-                const firstDeltaStart = firstDeltaLine === 0 ? firstStart - prevStart : firstStart - 1;
-                outputs.push(firstDeltaLine, firstDeltaStart, firstLength, type, modifier);
-
-                // middle full lines
-                for (let i = startLineNumber + 1; i < endLineNumber; i++) {
-                    // delta line is always 1, start is always 0
-                    const length = model.getLineLength(i);
-                    outputs.push(1, 0, length, type, modifier);
-                }
-
-                // last line, if we are not ending at the start of the line
-                if (endColumn !== 1) {
-                    const lastLength = endColumn - 1;
-                    outputs.push(1, 0, lastLength, type, modifier);
-                }
-                prevStart = 1;
-			}
-            prevLine = endLineNumber;
-		}
-
-        return outputs;
+        });
     }
 
     // --- debug/utils --- can be removed when upstreaming the work
@@ -304,12 +254,4 @@ export class DocumentRangeSemanticTokensProviderAdapter
         }
         return await this.worker(resource);
     }
-
-    private _textSpanToRange(model: monaco.editor.ITextModel, span: {start: number, length: number}): monaco.IRange {
-		let p1 = model.getPositionAt(span.start);
-		let p2 = model.getPositionAt(span.start + span.length);
-		let { lineNumber: startLineNumber, column: startColumn } = p1;
-		let { lineNumber: endLineNumber, column: endColumn } = p2;
-		return { startLineNumber, startColumn, endLineNumber, endColumn };
-	}
 }

@@ -9,6 +9,7 @@ export type Position = monaco.Position;
 export type CancellationToken = monaco.CancellationToken;
 export type SemanticTokensProvider = monaco.languages.DocumentRangeSemanticTokensProvider;
 export type SemanticTokensLegend = monaco.languages.SemanticTokensLegend;
+export type SemanticTokens = monaco.languages.SemanticTokens;
 export type SemanticTokensResult = monaco.languages.ProviderResult<monaco.languages.SemanticTokens>;
 export type CompletionItemProvider = monaco.languages.CompletionItemProvider;
 export type CompletionItem = monaco.languages.CompletionItem;
@@ -44,5 +45,3 @@ export type LanguageClient = {
 
     resolveCompletionItem?: (item: CompletionItem, token: CancellationToken) => CompletionItem,
 };
-
-monaco.languages.registerCompletionItemProvider

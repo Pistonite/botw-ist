@@ -3,6 +3,7 @@ import type { ExtensionApp } from "@pistonite/skybook-api";
 
 import { language, configuration } from "./language.ts";
 import { provideParserDiagnostics } from "./marker.ts";
+import { legend, provideSemanticTokens } from "./semantic.ts";
 
 let initialized = false;
 
@@ -24,9 +25,12 @@ export const init = (app: ExtensionApp) => {
                         "parser",
                     ],
                     provideMarkers: (model) => {
-                        console.log("providing markers");
                         return provideParserDiagnostics(app, model);
-                    }
+                    },
+                    getSemanticTokensLegend: () => legend,
+                    provideDocumentRangeSemanticTokens: (model, range, token) => {
+                        return provideSemanticTokens(app, model, range, token);
+                    },
                 },
             ],
         },

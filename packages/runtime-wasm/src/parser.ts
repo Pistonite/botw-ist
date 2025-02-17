@@ -18,6 +18,7 @@ let lastScript = "";
 let serial = 0;
 let parseOutputRef = makeParseOutputRef(undefined); // Pointer into WASM memory
 
+/** Parse the script and get diagnostics from the parser */
 export const getParserDiagnostics = async (
     script: string,
     resolver: QuotedItemResolverFn,

@@ -44,6 +44,9 @@ async function boot() {
         getParserDiagnostics: (script) => {
             return getParserDiagnostics(script, resolveQuotedItem);
         },
+        getSemanticTokens: async (script, start, end) => {
+            return wasm_bindgen.parse_script_semantic(script, start, end);
+        }
     } satisfies Delegate<Runtime>;
 
     const handshake = bindRuntimeHost(hostFromDelegate(api), {

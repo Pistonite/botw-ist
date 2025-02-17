@@ -1,9 +1,8 @@
 import * as monaco from 'monaco-editor';
 
 import { initPreference } from "./preference.ts";
-import { InitOption } from "./types.ts";
+import type { InitOption } from "./types.ts";
 import { initThemes } from './theme';
-
 import { patchMonacoTypeScript } from "./typescript";
 import { registerMarkerProvider } from './language/MarkerProviderRegistry.ts';
 import { setEditorOptions } from './EditorState.ts';
@@ -93,6 +92,8 @@ export function initCodeEditor({preferences, language, editor, theme}: InitOptio
                     getLegend,
                     provideDocumentRangeSemanticTokens
                 });
+            } else if (getLegend || provideDocumentRangeSemanticTokens) {
+                console.warn(`[intwc] semantic token provider for "${id}" is not registered. You need both getSemanticTokensLegend and provideDocumentRangeSemanticTokens`);
             }
 
             const provideMarkers = client.provideMarkers?.bind(client);

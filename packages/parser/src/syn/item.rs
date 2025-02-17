@@ -14,7 +14,6 @@ use super::{KwEquip, KwTime};
 #[derive_syntax]
 #[derive(Debug)]
 pub struct NumberedItem {
-    #[teleparse(semantic(Amount))]
     pub num: Number,
     pub item: Item,
 }
@@ -23,7 +22,6 @@ pub struct NumberedItem {
 #[derive_syntax]
 #[derive(Debug)]
 pub struct NumberedItemOrCategory {
-    #[teleparse(semantic(Amount))]
     pub num: Number,
     pub item: ItemOrCategory,
 }
@@ -80,7 +78,6 @@ pub struct ItemOrCategoryWithSlot {
 #[derive_syntax]
 #[derive(Debug)]
 pub struct Item {
-    #[teleparse(semantic(Name))]
     pub name: ItemName,
     pub meta: tp::Option<ItemMeta>,
 }
