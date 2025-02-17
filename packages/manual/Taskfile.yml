@@ -1,0 +1,22 @@
+version: '3'
+
+tasks:
+  install:
+    cmds:
+      - mkdir -p theme
+      - rm -f theme/*
+      - cp ../mono-dev/book/theme/* theme
+  dev:
+    desc: Start mdbook in watch mode
+    cmds:
+      - task: build
+      - mdbook watch &
+      - live-server book -p 8081 {{.CLI_ARGS}}
+
+  build:
+    desc: (Re-)build the book
+    cmds:
+      - cargo run --bin skybook-manual-preprocessor -- style > theme/skybook.css
+      - rm -rf book
+      - mdbook build
+

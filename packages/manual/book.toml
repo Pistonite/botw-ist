@@ -1,0 +1,26 @@
+[book]
+authors = ["Pistonight"]
+language = "en"
+multilingual = false
+src = "src"
+title = "The IST Simulator Manual"
+
+[output.html]
+site-url = "/manual/"
+default-theme = "frappe"
+preferred-dark-theme = "frappe"
+smart-punctuation = true
+git-repository-url = "https://github.com/Pistonite/botw-ist"
+additional-css = [
+    "./theme/skybook.css",
+    "./theme/mdbook-admonish.css",
+    "./theme/catppuccin.css", 
+    "./theme/catppuccin-admonish.css"
+]
+
+[preprocessor.admonish]
+command = "mdbook-admonish"
+assets_version = "3.0.2" # do not edit: managed by `mdbook-admonish install`
+
+[preprocessor.skybook]
+command = "cargo run --bin skybook-manual-preprocessor --quiet"

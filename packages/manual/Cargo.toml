@@ -1,0 +1,17 @@
+[package]
+name = "skybook-manual-preprocessor"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+path = "preprocess/main.rs"
+name = "skybook-manual-preprocessor"
+
+[dependencies]
+anyhow = "1.0.95"
+catppuccin = "2.4.0"
+clap = { version = "4.5.29", features = ["derive"] }
+mdbook = "0.4.44"
+serde_json = "1.0.138"
+skybook-parser = { path = "../parser" }
