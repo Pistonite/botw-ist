@@ -115,16 +115,10 @@ pub enum TT {
 
     /// A variable name (for example, a meta key)
     Variable,
-    /// item name
-    Name,
     /// item type/category
     Type,
     /// item amount
     Amount,
-    /// a super command
-    SuperCommand,
-    /// an annotation command or step
-    Annotation,
 }
 #[derive_syntax]
 #[derive(Debug, Deref, DerefMut)]

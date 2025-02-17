@@ -40,6 +40,17 @@ export interface ExtensionApp {
      */
     provideParserDiagnostics(script: string): WorkexPromise<Diagnostic[]>;
 
-    // /** Get the semantic tokens for the current script */
-    // provideSemanticTokens(start: number, end: number): WorkexPromise<Uint32Array>;
+    /**
+     * Get the semantic tokens for the script in the range.
+     *
+     * The output is triples of [start, length, tokenType].
+     *
+     * The offsets in both inputs and outputs should be character offsets, not byte offsets.
+     * (Note this is different from Runtime.getSemanticTokens)
+     */
+    provideSemanticTokens(
+        script: string,
+        start: number,
+        end: number,
+    ): WorkexPromise<Uint32Array>;
 }

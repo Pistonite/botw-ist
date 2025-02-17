@@ -19,21 +19,28 @@ export interface Runtime {
     /**
      * Parse the script and get diagnostics from the parser.
      *
-     * This does not runtime diagnostics
+     * Note that the span in the errors are byte offsets, not character offsets.
      */
     getParserDiagnostics(script: string): WorkexPromise<ParserErrorReport[]>;
+
+    /**
+     * Parse the script and get semantic tokens in the range from the parser.
+     *
+     * The output is triples of [start, length, tokenType]
+     *
+     * The offsets in both inputs and outputs should be byte offsets, not character offsets.
+     */
+    getSemanticTokens(
+        script: string,
+        start: number,
+        end: number,
+    ): WorkexPromise<Uint32Array>;
 
     // /**
     //  * Set the script for the runtime, which starts executing
     //  * the script immediately
     //  */
     // onScriptChange(script: string): WorkexPromise<void>;
-    //
-    // getSemanticTokens(
-    //     script: string,
-    //     startPos: number,
-    //     endPos: number,
-    // ): WorkexPromise<Uint32Array>;
 
     // getRuntimeDiagnostics(
     //     script: string,

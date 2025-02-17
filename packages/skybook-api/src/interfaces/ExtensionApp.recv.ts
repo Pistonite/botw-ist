@@ -14,11 +14,15 @@ export function bindExtensionAppHost(delegate: ExtensionApp, options: WorkexBind
                 const [ a0 ] = _payload;
                 return delegate.provideParserDiagnostics( a0 );
             }
-            case 21 /* ExtensionApp.resolveItem */: {
+            case 21 /* ExtensionApp.provideSemanticTokens */: {
+                const [ a0, a1, a2 ] = _payload;
+                return delegate.provideSemanticTokens( a0, a1, a2 );
+            }
+            case 22 /* ExtensionApp.resolveItem */: {
                 const [ a0, a1, a2 ] = _payload;
                 return delegate.resolveItem( a0, a1, a2 );
             }
-            case 22 /* ExtensionApp.setScript */: {
+            case 23 /* ExtensionApp.setScript */: {
                 const [ a0 ] = _payload;
                 return delegate.setScript( a0 );
             }
