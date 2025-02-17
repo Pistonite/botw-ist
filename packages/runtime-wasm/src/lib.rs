@@ -39,8 +39,8 @@ pub async fn parse_script(
 ///
 /// The returned vector is triplets of (start, length, semantic token)
 #[wasm_bindgen]
-pub async fn parse_script_semantic(script: String, start: usize, end: usize) -> Vec<u32> {
-    let semantic_tokens = skybook_parser::parse_semantic(&script, start, end).await;
+pub fn parse_script_semantic(script: String, start: usize, end: usize) -> Vec<u32> {
+    let semantic_tokens = skybook_parser::parse_semantic(&script, start, end);
     let mut output = Vec::with_capacity(semantic_tokens.len() * 3);
     for (span, semantic) in semantic_tokens {
         output.push(span.lo as u32);

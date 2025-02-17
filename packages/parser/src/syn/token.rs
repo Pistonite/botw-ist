@@ -5,8 +5,11 @@ use teleparse::{derive_lexicon, derive_syntax, tp};
 /// Token type
 #[derive(Serialize)]
 #[derive_lexicon]
-#[teleparse(ignore(r"\s+", r"//.*\n", r"#.*\n"))]
+#[teleparse(ignore(r"\s+"))]
 pub enum TT {
+    #[teleparse(regex(r"(//|#).*\n"))]
+    Comment,
+
     #[teleparse(terminal(
         SymLAngle = "<",
         SymRAngle = ">",
@@ -119,6 +122,9 @@ pub enum TT {
     Type,
     /// item amount
     Amount,
+
+    /// item literal (for example <Weapon_Sword_502>)
+    ItemLiteral,
 }
 #[derive_syntax]
 #[derive(Debug, Deref, DerefMut)]
@@ -129,10 +135,13 @@ pub struct Number(pub tp::String<SymNumber>);
 #[derive(Debug)]
 pub struct AngledWord {
     /// The opening angle bracket
+    #[teleparse(semantic(ItemLiteral))]
     pub open: SymLAngle,
     /// The word inside the angle brackets
+    #[teleparse(semantic(ItemLiteral))]
     pub name: tp::String<Word>,
     /// The closing angle bracket
+    #[teleparse(semantic(ItemLiteral))]
     pub close: SymRAngle,
 }
 

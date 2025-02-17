@@ -8,10 +8,6 @@ dotenv: [".env"]
 
 includes:
 
-  manual:
-    aliases: [man]
-    taskfile: ./manual
-    dir: ./manual
 
   legacy:
     aliases: [leg]
@@ -68,6 +64,11 @@ includes:
     dir: ./packages/item-assets
     internal: true
 
+  manual:
+    taskfile: ./packages/manual
+    dir: ./packages/manual
+    internal: true
+
 
 
 
@@ -86,11 +87,13 @@ tasks:
       - magoo install
       - task: install-deps
       - pnpm install
+      - task: manual:install
 
   install-ci:
     cmds:
       - task: install-deps
       - pnpm install --frozen-lockfile
+      - task: manual:install
 
   install-deps:
     deps:

@@ -20,22 +20,22 @@ based on the command, so you don't have to worry about them.
 For example,
 consider the following script
 
-```
+```skybook
 get 1 apple
 eat 1 apple
-get 1 wood
+get 1 apple
 ```
 
 At first, the simulation state is not in any scope.
-To get an item, you must have control of Link, so the `get` action requires `game, !paused` scope, so the simulator automatically
+To get an item, you must have control of Link, so the <skyb>get</skyb> action requires `game, !paused` scope, so the simulator automatically
 activate the `game` scope by starting a new game.
 
-The next `eat` action requires `game, inventory` scope because you need
+The next <skyb>eat</skyb> action requires `game, inventory` scope because you need
 to be in the inventory to eat an item. The simulator infers
 that you want to pause the game to eat the item, so it automatically
 activates the `inventory` scope.
 
-Finally, the last `get` action requires the game to be not paused,
+Finally, the last <skyb>get</skyb> action requires the game to be not paused,
 so the simulator automatically deactivates the `inventory` scope to allow
 the action to be performed.
 
