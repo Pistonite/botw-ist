@@ -1,26 +1,29 @@
 import {
     CookEffect,
     iterateCookEffect,
-    MetaModifyOption,
+    type MetaModifyOption,
     WeaponModifier,
-} from "data/item";
+} from "./item.ts";
+
 import {
-    ASTKeyValuePair,
-    ASTKeyValuePairPrime,
-    ASTMaybeMetadata,
-    ASTMetadata,
+    type ASTKeyValuePair,
+    type ASTKeyValuePairPrime,
+    type ASTMaybeMetadata,
+    type ASTMetadata,
     isEpsilon,
     isInteger,
     isKeyValuePairPrimeC1,
 } from "./ast";
-import { parseASTIdentifier, parseASTInteger } from "./parse.basis";
+
+import { parseASTIdentifier, parseASTInteger } from "./parse.basis.ts";
+
 import {
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     flattenCodeBlocks,
-    Parser,
-    ParserSafe,
-} from "./type";
+    type Parser,
+    type ParserSafe,
+} from "./type.ts";
 
 const MetaTypes = {
     life: "number",

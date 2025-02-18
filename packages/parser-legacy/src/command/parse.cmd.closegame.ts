@@ -1,14 +1,10 @@
-import { SimulationState } from "core/SimulationState";
-import { ASTCommandCloseGame } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
-import { codeBlockFromRange, ParserSafe } from "./type";
+import type { ASTCommandCloseGame } from "./ast";
+import { AbstractProperCommand } from "./command";
+import { codeBlockFromRange, type ParserSafe } from "./type";
 
 export class CommandCloseGame extends AbstractProperCommand {
-    public execute(state: SimulationState): void {
-        state.closeGame();
-    }
-    public equals(other: Command): boolean {
-        return other instanceof CommandCloseGame;
+    public convert(): string {
+        return "close-game;";
     }
 }
 

@@ -1,4 +1,4 @@
-import { ItemStack } from "data/item";
+import { ItemStack } from "./item.ts";
 
 export const Colors = {
     unknown: "CommandColorUnknown",

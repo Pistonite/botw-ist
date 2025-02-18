@@ -1,31 +1,29 @@
-import { SimulationState } from "core/SimulationState";
-import { arrayEqual } from "data/util";
-import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
-import { ASTCommandAdd, ASTCommandPickUp } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
+import type { ItemStackArg } from "./ItemStackArg";
+import type { ASTCommandAdd, ASTCommandPickUp } from "./ast";
+import { AbstractProperCommand } from "./command";
 import { parseASTItems } from "./parse.item";
 import {
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     delegateParseItem,
-    ParserItem,
+    type ParserItem,
 } from "./type";
 
 export class CommandAdd extends AbstractProperCommand {
+    private verb: string = "get";
     private stacks: ItemStackArg[];
     constructor(stacks: ItemStackArg[], codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.stacks = stacks;
     }
 
-    public execute(state: SimulationState): void {
-        getSlotsToAdd(this.stacks).forEach((stack) => state.obtain(stack));
+    public setVerb(verb: string): CommandAdd {
+        this.verb = verb;
+        return this;
     }
 
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandAdd && arrayEqual(this.stacks, other.stacks)
-        );
+    public convert(): string {
+        return `${this.verb} ${this.stacks.map((s) => s.convert()).join(" ")};`;
     }
 }
 
@@ -39,7 +37,7 @@ export const parseASTCommandAdd: ParserItem<ASTCommandAdd, CommandAdd> = (
         ast.mOneOrMoreItems1,
         search,
         parseASTItems,
-        (i, c) => new CommandAdd(i, c),
+        (i, c) => new CommandAdd(i, c).setVerb("add"),
         codeBlocks,
     );
 };
@@ -54,7 +52,7 @@ export const parseASTCommandPickup: ParserItem<ASTCommandPickUp, CommandAdd> = (
         ast.mOneOrMoreItems1,
         search,
         parseASTItems,
-        (i, c) => new CommandAdd(i, c),
+        (i, c) => new CommandAdd(i, c).setVerb("pick-up"),
         codeBlocks,
     );
 };

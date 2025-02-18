@@ -1,4 +1,4 @@
-import { ItemStack } from "data/item";
+import { ItemStack } from "./item.ts";
 import {
     ASTTarget,
     createASTFromString,

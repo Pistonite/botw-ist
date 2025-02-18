@@ -1,4 +1,4 @@
-import { ItemStack, joinItemSearchStrings, MetaModifyOption } from "data/item";
+import { ItemStack, joinItemSearchStrings, MetaModifyOption } from "./item.ts";
 import { ItemStackArg } from "./ItemStackArg";
 import {
     ASTAmountOrAll,
@@ -195,5 +195,7 @@ export const parsedItemSearch: ParserItem<
     if (!item) {
         return [undefined, blocks, `Cannot find item: ${ids.join(" ")}`];
     }
-    return [item.modifyMeta(meta), blocks, ""];
+    // V3->V4: just append the meta to the item
+    item.meta = meta;
+    return [item, blocks, ""];
 };

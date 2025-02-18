@@ -1,6 +1,6 @@
-import { MetaModifyOption } from "data/item";
+import type { MetaModifyOption } from "./item.ts";
 import { ItemStackArg } from "./ItemStackArg";
-import {
+import type {
     ASTArgumentItemStacksAllowAllMaybeFromSlot,
     ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifier,
     ASTArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1,
@@ -20,6 +20,8 @@ import {
     ASTArgumentSingleItemMaybeFromSlotAIdentifier,
     ASTArgumentSingleItemMaybeFromSlotAIdentifierC1,
     ASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot,
+} from "./ast";
+import {
     isArgumentItemStacksAllowAllMaybeFromSlot,
     isArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC1,
     isArgumentItemStacksAllowAllMaybeFromSlotAIdentifierC2,
@@ -37,14 +39,14 @@ import { parseASTClauseSlot } from "./parse.clause.slot";
 import { parseASTAmountOrAll, parsedItemSearch } from "./parse.item";
 import { parseASTMetadata } from "./parse.metadata";
 import {
-    AmountAllType,
+    type AmountAllType,
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     delegateParse,
     delegateParseItem,
     flattenCodeBlocks,
-    Parser,
-    ParserItem,
+    type Parser,
+    type ParserItem,
 } from "./type";
 
 export const parseASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot: ParserItem<

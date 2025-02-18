@@ -1,11 +1,10 @@
 // Main Command interface.
-import { SimulationState } from "core/SimulationState";
 import {
     CodeBlock,
     codeBlockFromRange,
     CodeBlockTree,
     flattenCodeBlocks,
-} from "./type";
+} from "./type.ts";
 
 // Command error enum
 export enum CmdErr {
@@ -24,10 +23,8 @@ export enum CmdErr {
 export interface Command {
     // Blocks of the command. Used for colorization
     readonly codeBlocks: CodeBlock[];
-    // Execute the command
-    execute(state: SimulationState): void;
-    // Equals another command. Used in testing
-    equals(other: Command): boolean;
+    // V4: Convert to Skybook
+    convert(): string;
     // Get the error type
     readonly cmdErr: CmdErr;
     // Get the error string, empty string if no error
@@ -59,15 +56,8 @@ export class AbstractProperCommand implements Command {
     get codeBlocks() {
         return this.base.codeBlocks;
     }
-    execute(_state: SimulationState): void {
-        throw new Error(
-            "Subtype of AbstractProperCommand must implement execute()",
-        );
-    }
-    equals(_other: Command): boolean {
-        throw new Error(
-            "Subtype of AbstractProperCommand must implement equals()",
-        );
+    convert(): string {
+        throw new Error("Subtype of AbstractProperCommand must implement convert()");
     }
     get cmdErr(): CmdErr {
         return CmdErr.None;
@@ -88,15 +78,6 @@ export class CommandNop extends AbstractProperCommand {
     get codeBlocks() {
         return this.base.codeBlocks;
     }
-    execute(_state: SimulationState): void {
-        // Do nothing
-    }
-    equals(other: Command): boolean {
-        return (
-            other instanceof CommandNop &&
-            this.shouldSkipWithKeyboard === other.shouldSkipWithKeyboard
-        );
-    }
 }
 
 // Error command: does nothing, because of error
@@ -111,13 +92,6 @@ export class ErrorCommand implements Command {
     }
     get codeBlocks() {
         return this.base.codeBlocks;
-    }
-    execute(_state: SimulationState): void {
-        // Do nothing
-    }
-    equals(other: Command): boolean {
-        // error message doesn't have to match
-        return other instanceof ErrorCommand && this.cmdErr === other.cmdErr;
     }
     shouldSkipWithKeyboard = false;
 }
@@ -136,13 +110,6 @@ export class ExecErrorDecorator implements Command {
     }
     execute(_state: SimulationState): void {
         throw new Error("Attempt to execute error decorator");
-    }
-    equals(other: Command): boolean {
-        // error message doesn't have to match
-        return (
-            other instanceof ExecErrorDecorator &&
-            this.delegate.equals(other.delegate)
-        );
     }
     shouldSkipWithKeyboard = false;
 }
@@ -165,13 +132,6 @@ export class CommandHint implements Command {
     }
     execute(_state: SimulationState): void {
         // Do nothing;
-    }
-    equals(other: Command): boolean {
-        return (
-            other instanceof CommandHint &&
-            this.descriptor === other.descriptor &&
-            this.delegate.equals(other.delegate)
-        );
     }
     get cmdErr(): CmdErr {
         return this.delegate.cmdErr;
