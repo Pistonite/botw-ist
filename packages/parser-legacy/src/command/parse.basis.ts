@@ -1,4 +1,4 @@
-import { ItemType } from "data/item";
+import { ItemType } from "./item.ts";
 import {
     ASTOneOrMoreIdentifiers,
     ASTIdentifier,
@@ -20,7 +20,7 @@ import {
     flattenCodeBlocks,
     Parser,
     ParserSafe,
-} from "./type";
+} from "./type.ts";
 
 export const parseASTInteger: ParserSafe<ASTInteger, number> = (ast) => {
     return [

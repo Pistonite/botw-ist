@@ -333,6 +333,21 @@ importers:
         specifier: ^8.19.1
         version: 8.21.0(eslint@9.18.0)(typescript@5.7.3)
 
+  packages/parser-legacy:
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      eslint:
+        specifier: 'catalog:'
+        version: 9.18.0
+      mono-dev:
+        specifier: workspace:*
+        version: link:../mono-dev
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
   packages/runtime-wasm:
     dependencies:
       '@pistonite/pure':

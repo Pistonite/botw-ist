@@ -48,12 +48,24 @@ pub enum Command {
     Boil(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdFreeze`]
     Freeze(Vec<cir::ItemSelectSpec>),
+
     /// See [`syn::CmdDestroy`]
     Destroy(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdUnequip`]
     Sort(cir::CategorySpec),
     /// See [`syn::CmdEntangle`]
     Entangle(cir::CategorySpec),
+    /// `sync` - sync gamedata
+    Sync,
+    /// See [`syn::CmdBreakSlots`]
+    Break(i32),
+    /// See [`syn::CmdSetInventory`]
+    SetInventory(Vec<cir::ItemSpec>),
+    /// See [`syn::CmdSetGamedata`]
+    SetGamedata(Vec<cir::ItemSpec>),
+    /// See [`syn::CmdWrite`]
+    Write(Box<cir::ItemMeta>, Box<cir::ItemSelectSpec>),
+
     /// `save` - make a manual save
     Save,
     /// `save-as`. See [`syn::CmdSaveAs`]
@@ -79,6 +91,9 @@ pub enum Command {
     Exit,
     /// `leave` - Leave the current trial without clearing it
     Leave,
+
+    /// `!set-gdt-flag` and `!set-gdt-flag-str`. See [`syn::CmdSetGdtFlag`] and [`syn::CmdSetGdtFlagStr`]
+    SetGdt(String, Box<cir::GdtMeta>),
 }
 // make sure the command size does not update unexpectedly
 // size only valid for 64-bit platforms
@@ -173,6 +188,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
         syn::Command::Freeze(cmd) => Some(cir::Command::Freeze(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
+
         syn::Command::Destroy(cmd) => Some(cir::Command::Destroy(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
@@ -190,6 +206,26 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cmd.meta.as_ref(),
             errors,
         ))),
+        syn::Command::Sync(_) => Some(cir::Command::Sync),
+        syn::Command::Break(cmd) => match cir::parse_syn_int_str(&cmd.amount, &cmd.amount.span()) {
+            Ok(x) => Some(cir::Command::Break(x as i32)),
+            Err(e) => {
+                errors.push(e);
+                None
+            }
+        },
+        syn::Command::SetInventory(cmd) => Some(cir::Command::SetInventory(
+            cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
+        )),
+        syn::Command::SetGamedata(cmd) => Some(cir::Command::SetGamedata(
+            cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
+        )),
+        syn::Command::Write(cmd) => {
+            let meta = cir::ItemMeta::parse_syn(&cmd.props, errors);
+            let item = cir::parse_item_or_category_with_slot(&cmd.item, resolver, errors).await?;
+            Some(cir::Command::Write(Box::new(meta), Box::new(item)))
+        }
+
         syn::Command::Save(_) => Some(cir::Command::Save),
         syn::Command::SaveAs(cmd) => Some(cir::Command::SaveAs(cmd.name.to_string())),
         syn::Command::Reload(cmd) => match cmd.name.as_ref() {
@@ -211,5 +247,21 @@ pub async fn parse_command<R: QuotedItemResolver>(
         },
         syn::Command::Exit(_) => Some(cir::Command::Exit),
         syn::Command::Leave(_) => Some(cir::Command::Leave),
+
+        syn::Command::SetGdtFlag(cmd) => {
+            let gdt_value = cir::parse_gdt_meta(&cmd.props, errors)?;
+            let flag_name = cmd.flag_name.to_string();
+            Some(cir::Command::SetGdt(flag_name, Box::new(gdt_value)))
+        }
+
+        syn::Command::SetGdtFlagStr(cmd) => {
+            let gdt_value = cir::parse_gdt_meta_str(&cmd.props, errors, &cmd.value)?;
+            let flag_name = cmd.flag_name.to_string();
+            Some(cir::Command::SetGdt(flag_name, Box::new(gdt_value)))
+        }
+
+        syn::Command::Annotation(_) => {
+            todo!()
+        }
     }
 }

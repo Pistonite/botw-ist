@@ -54,6 +54,8 @@ export const language: LanguageTokenizer = {
         "destroy",
         "sort",
         "entangle",
+        "sync",
+        "break",
         "save",
         "save-as",
         "reload",
@@ -86,6 +88,12 @@ export const language: LanguageTokenizer = {
     keywords: [
         "time",
         "times",
+        "from",
+        "in",
+        "at",
+        "to",
+        "slot",
+        "slots"
     ],
     annotaions:  [
         ":test" // TODO

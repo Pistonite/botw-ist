@@ -1,0 +1,17 @@
+{
+    "name": "skybook-parser-legacy",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "dependencies": {
+    },
+    "devDependencies": {
+        "@types/react": "catalog:",
+        "eslint": "catalog:",
+        "mono-dev": "workspace:*",
+        "typescript": "catalog:"
+    }
+}

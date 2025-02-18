@@ -150,7 +150,9 @@ pub enum SemanticToken {
     Variable = 2,
     Type = 3,
     Amount = 4,
-    ItemLiteral = 5,
+    Item = 5,
+    ItemLiteral,
+    Annotation,
 }
 
 impl SemanticToken {
@@ -162,6 +164,9 @@ impl SemanticToken {
     /// use `from_set_full` to cover all cases
     pub fn from_set(value: LexSet<syn::TT>) -> Option<Self> {
         // order matters here
+        if value.contains(syn::TT::Word) {
+            return Some(SemanticToken::Item);
+        }
         if value.contains(syn::TT::Variable) {
             return Some(SemanticToken::Variable);
         }
@@ -185,16 +190,21 @@ impl SemanticToken {
         if value.contains(syn::TT::ItemLiteral) {
             return Some(SemanticToken::ItemLiteral);
         }
+        if value.contains(syn::TT::Annotation) {
+            return Some(SemanticToken::Annotation);
+        }
         None
     }
 
     pub fn to_token_type(&self) -> syn::TT {
         match self {
+            SemanticToken::Item => syn::TT::Word,
             SemanticToken::Keyword => syn::TT::Keyword,
             SemanticToken::Variable => syn::TT::Variable,
             SemanticToken::Type => syn::TT::Type,
             SemanticToken::Amount => syn::TT::Number,
             SemanticToken::ItemLiteral => syn::TT::ItemLiteral,
+            SemanticToken::Annotation => syn::TT::Annotation,
         }
     }
 }

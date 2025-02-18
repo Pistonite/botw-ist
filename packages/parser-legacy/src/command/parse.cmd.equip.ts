@@ -1,5 +1,4 @@
-import { SimulationState } from "core/SimulationState";
-import { Item, ItemType } from "data/item";
+import { ItemStack, ItemType } from "./item.ts";
 import { arrayShallowEqual } from "data/util";
 import {
     ASTCommandEquip,
@@ -20,12 +19,17 @@ import {
 } from "./type";
 
 export class CommandEquip extends AbstractProperCommand {
-    private item: Item;
+    private item: ItemStack;
     private slot: number;
-    constructor(item: Item, slot: number, codeBlocks: CodeBlockTree) {
+    constructor(item: ItemStack, slot: number, codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.item = item;
         this.slot = slot - 1; // change to 0-based
+    }
+
+    public convert(): string {
+        let s = `equip ${this.item.convert()}`;
+        return `equip ${this.item.convert()} in slot ${this.slot + 1};`;
     }
 
     public execute(state: SimulationState): void {
@@ -41,9 +45,9 @@ export class CommandEquip extends AbstractProperCommand {
 }
 
 export class CommandUnequip extends AbstractProperCommand {
-    private item: Item;
+    private item: ItemStack;
     private slot: number;
-    constructor(item: Item, slot: number, codeBlocks: CodeBlockTree) {
+    constructor(item: ItemStack, slot: number, codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.item = item;
         this.slot = slot - 1; // change to 0-based
@@ -88,7 +92,7 @@ export const parseASTCommandEquip: ParserItem<ASTCommandEquip, CommandEquip> = (
         ast.mArgumentSingleItemMaybeInSlot1,
         search,
         parseASTArgumentSingleItemMaybeInSlot,
-        ([stack, slot], c) => new CommandEquip(stack.item, slot, c),
+        ([stack, slot], c) => new CommandEquip(stack, slot, c),
         codeBlocks,
     );
 };
@@ -103,7 +107,7 @@ export const parseASTCommandUnequip: ParserItem<
         ast.mArgumentSingleItemMaybeInSlot1,
         search,
         parseASTArgumentSingleItemMaybeInSlot,
-        ([stack, slot], c) => new CommandUnequip(stack.item, slot, c),
+        ([stack, slot], c) => new CommandUnequip(stack, slot, c),
         codeBlocks,
     );
 };

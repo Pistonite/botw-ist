@@ -1,17 +1,15 @@
-import { SimulationState } from "core/SimulationState";
-import { arrayEqual } from "data/util";
-import { ItemStackArg } from "./ItemStackArg";
-import { ASTCommandBreakSlots } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
+import type { ItemStackArg } from "./ItemStackArg";
+import type { ASTCommandBreakSlots } from "./ast";
+import { AbstractProperCommand } from "./command";
 import { parseASTInteger } from "./parse.basis";
 import { parseASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot } from "./parse.clause.with.fromslot";
 import {
-    CodeBlock,
+    type CodeBlock,
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     delegateParseItem,
     flattenCodeBlocks,
-    ParserItem,
+    type ParserItem,
 } from "./type";
 
 export class CommandBreakSlots extends AbstractProperCommand {
@@ -30,21 +28,17 @@ export class CommandBreakSlots extends AbstractProperCommand {
         this.stacks = stacks;
     }
 
-    public execute(state: SimulationState): void {
-        this.stacks.forEach((stackArg) =>
-            state.remove(stackArg.stack, stackArg.number, this.slot),
-        );
-
-        state.breakSlots(this.numToBreak);
-    }
-
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandBreakSlots &&
-            this.numToBreak === other.numToBreak &&
-            arrayEqual(this.stacks, other.stacks) &&
-            this.slot === other.slot
-        );
+    public convert(): string {
+        let s = "";
+        if (this.stacks.length > 0) {
+            s += `destroy ${this.stacks.map((s) => s.convert()).join(" ")} `;
+            if (this.slot) {
+                s += `from slot ${this.slot + 1}`;
+            }
+            s += "; ";
+        }
+        s += `break ${this.numToBreak} slots;`;
+        return s;
     }
 }
 

@@ -9,7 +9,8 @@ export const legend: SemanticTokensLegend = {
         "keyword",
         "variable",
         "type",
-        "number"
+        "number",
+        "string.item"
     ],
     tokenModifiers: []
 };
