@@ -10,6 +10,13 @@ pub enum TT {
     #[teleparse(regex(r"(//|#).*\n"))]
     Comment,
 
+    /// A tagged block literal
+    #[teleparse(regex(
+        r"'''[-0-9a-zA-Z_]*\n((([^'].*)|('[^'].*)|(''[^'].*))?)*\n'''")
+    , terminal(BlockLiteral)
+    )]
+    BlockLiteral,
+
     #[teleparse(terminal(
         SymLAngle = "<",
         SymRAngle = ">",

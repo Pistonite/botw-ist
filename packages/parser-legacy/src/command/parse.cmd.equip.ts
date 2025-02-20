@@ -1,21 +1,20 @@
-import { ItemStack, ItemType } from "./item.ts";
-import { arrayShallowEqual } from "data/util";
+import { type ItemStack, type ItemType, convertItem } from "./item.ts";
 import {
-    ASTCommandEquip,
-    ASTCommandUnequip,
-    ASTCommandUnequipAll,
+    type ASTCommandEquip,
+    type ASTCommandUnequip,
+    type ASTCommandUnequipAll,
     isLiteralAll,
 } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
+import { AbstractProperCommand, type Command } from "./command";
 import { parseASTItemType } from "./parse.basis";
 import { parseASTArgumentSingleItemMaybeInSlot } from "./parse.clause.inslot";
 import {
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     delegateParseItem,
     delegateParseSafe,
-    ParserItem,
-    ParserSafe,
+    type ParserItem,
+    type ParserSafe,
 } from "./type";
 
 export class CommandEquip extends AbstractProperCommand {
@@ -28,19 +27,12 @@ export class CommandEquip extends AbstractProperCommand {
     }
 
     public convert(): string {
-        let s = `equip ${this.item.convert()}`;
-        return `equip ${this.item.convert()} in slot ${this.slot + 1};`;
-    }
-
-    public execute(state: SimulationState): void {
-        state.equip(this.item, this.slot);
-    }
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandEquip &&
-            other.item === this.item &&
-            this.slot === other.slot
-        );
+        let s = `equip ${convertItem(this.item)}`;
+        if (this.slot !== 0) {
+            s += ` in slot ${this.slot + 1}`;
+        }
+        s += ";";
+        return s;
     }
 }
 
@@ -53,15 +45,13 @@ export class CommandUnequip extends AbstractProperCommand {
         this.slot = slot - 1; // change to 0-based
     }
 
-    public execute(state: SimulationState): void {
-        state.unequip(this.item, this.slot);
-    }
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandUnequip &&
-            other.item === this.item &&
-            this.slot === other.slot
-        );
+    public convert(): string {
+        let s = `unequip ${convertItem(this.item)}`;
+        if (this.slot !== 0) {
+            s += ` in slot ${this.slot + 1}`;
+        }
+        s += ";";
+        return s;
     }
 }
 
@@ -70,6 +60,8 @@ export class CommandUnequipAll extends AbstractProperCommand {
     constructor(types: ItemType[], codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.types = types;
+    }
+    public convert(): string {
     }
     public execute(state: SimulationState): void {
         state.unequipAll(this.types);
