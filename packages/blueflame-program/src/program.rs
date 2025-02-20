@@ -54,6 +54,11 @@ impl ProgramData {
             bytes,
         }
     }
+
+    /// Get the raw bytes for this data
+    pub fn bytes(&self) -> &[u8] {
+        &self.bytes
+    }
 }
 
 /// Builder for a program
