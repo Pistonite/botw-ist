@@ -1,0 +1,232 @@
+ParseOutput {
+    steps: [
+        Step {
+            pos: 0,
+            command: Eat(
+                [
+                    ItemSelectSpec {
+                        amount: 1,
+                        item: Item(
+                            Item {
+                                actor: "Weapon_Lsword_032",
+                                meta: None,
+                            },
+                        ),
+                        slot: 3,
+                    },
+                ],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 19,
+            command: Get(
+                [
+                    ItemSpec {
+                        amount: 3,
+                        item: Item {
+                            actor: "Item_Fruit_A",
+                            meta: Some(
+                                ItemMeta {
+                                    value: None,
+                                    equip: None,
+                                    life_recover: None,
+                                    effect_duration: None,
+                                    sell_price: None,
+                                    effect_id: None,
+                                    effect_level: None,
+                                    ingredients: [],
+                                    star: None,
+                                },
+                            ),
+                        },
+                    },
+                ],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 58,
+            command: Get(
+                [
+                    ItemSpec {
+                        amount: 4,
+                        item: Item {
+                            actor: "NormalArrow",
+                            meta: None,
+                        },
+                    },
+                ],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 71,
+            command: Unequip(
+                ItemSelectSpec {
+                    amount: 1,
+                    item: Item(
+                        Item {
+                            actor: "NormalArrow",
+                            meta: None,
+                        },
+                    ),
+                    slot: 0,
+                },
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 86,
+            command: Get(
+                [
+                    ItemSpec {
+                        amount: 1,
+                        item: Item {
+                            actor: "古代箭",
+                            meta: None,
+                        },
+                    },
+                ],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 102,
+            command: Eat(
+                [
+                    ItemSelectSpec {
+                        amount: 1,
+                        item: Item(
+                            Item {
+                                actor: "Weapon_Lsword_032",
+                                meta: None,
+                            },
+                        ),
+                        slot: 3,
+                    },
+                ],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 121,
+            command: Eat(
+                [
+                    ItemSelectSpec {
+                        amount: 1,
+                        item: Item(
+                            Item {
+                                actor: "Item_Enemy_07",
+                                meta: None,
+                            },
+                        ),
+                        slot: 5,
+                    },
+                ],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 139,
+            command: PickUp(
+                [
+                    ItemSelectSpec {
+                        amount: 1,
+                        item: Category(
+                            Weapon,
+                        ),
+                        slot: 0,
+                    },
+                ],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 158,
+            command: Equip(
+                ItemSelectSpec {
+                    amount: 1,
+                    item: Item(
+                        Item {
+                            actor: "IceArrow",
+                            meta: None,
+                        },
+                    ),
+                    slot: 0,
+                },
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 174,
+            command: Use(
+                CategorySpec {
+                    category: Bow,
+                    amount: 1,
+                    row: 0,
+                    col: 0,
+                },
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 183,
+            command: Freeze(
+                [
+                    ItemSelectSpec {
+                        amount: 1,
+                        item: Item(
+                            Item {
+                                actor: "Item_Meat_01",
+                                meta: None,
+                            },
+                        ),
+                        slot: 0,
+                    },
+                ],
+            ),
+            notes: "",
+        },
+    ],
+    pages: [],
+    display: [],
+    errors: [
+        ParserErrorReport {
+            span: (
+                36,
+                42,
+            ),
+            is_warning: false,
+            error: InvalidMetaValue(
+                "life",
+                Bool(
+                    true,
+                ),
+            ),
+        },
+        ParserErrorReport {
+            span: (
+                49,
+                56,
+            ),
+            is_warning: false,
+            error: InvalidMetaValue(
+                "time",
+                Bool(
+                    false,
+                ),
+            ),
+        },
+        ParserErrorReport {
+            span: (
+                200,
+                204,
+            ),
+            is_warning: false,
+            error: InvalidCategory(
+                Food,
+            ),
+        },
+    ],
+}

@@ -1,10 +1,12 @@
-use teleparse::lex::Set as LexSet;
+use std::sync::Arc;
+
 use teleparse::{Parser, Span, ToSpan};
 
 use crate::cir;
 use crate::error::{Error, ErrorReport};
 use crate::search::QuotedItemResolver;
 use crate::syn;
+use crate::SemanticToken;
 
 /// Output of parsing the script
 #[derive(Debug, Clone, Default)]
@@ -13,10 +15,32 @@ pub struct ParseOutput {
     ///
     /// The first element in the pair is the position in the source script
     /// where the command start.
-    pub steps: Vec<(usize, cir::Command)>,
+    pub steps: Vec<cir::Step>,
+
+    /// [WIP] Indices of the first command in each page
+    ///
+    /// If steps is empty, this is also empty. Otherwise, the first element
+    /// is 0, and the number of elements equals the number of pages
+    pub pages: Vec<usize>,
+
+    /// [WIP] List of steps to display in the step list, with the index
+    /// of the actual step in the `steps` vec
+    ///
+    /// The indices may not be continuous because one display step
+    /// can include multiple actual steps
+    pub display: Vec<(StepDisplay, usize)>,
 
     /// Errors encountered during parsing
     pub errors: Vec<ErrorReport>,
+}
+
+/// Type of step to display in the step list
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum StepDisplay {
+    /// Display raw text
+    Text(String),
+    /// Display a command (maps to one actual step)
+    Command,
 }
 
 /// Parse the script and get the simulation steps and errors
@@ -51,13 +75,68 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
         return output;
     };
 
+    // parse all the block literals and get their positions
+    let mut notes = Vec::new();
+    for token in &parser.info().extracted_tokens {
+        if token.ty != syn::TT::BlockLiteral {
+            continue;
+        }
+        match syn::parse_block_literal_with_tag(token.src(script), "note") {
+            Some(note) => {
+                notes.push((token.span, Some(Arc::<str>::from(note))));
+            }
+            None => {
+                notes.push((token.span, None));
+            }
+        };
+    }
+
     // parse each command
     for stmt in parsed_script.stmts.iter() {
+        let pos = stmt.span().lo;
         let Some(command) = cir::parse_command(&stmt.cmd, resolver, &mut output.errors).await
         else {
             continue;
         };
-        output.steps.push((stmt.span().lo, command));
+        // find the notes associated with this command,
+        // which is the closest note block before the command,
+        // but not across an empty line or a non-note block literal
+        let note = match notes.binary_search_by_key(&pos, |x| x.0.lo) {
+            Ok(i) => Some(&notes[i]),
+            Err(i) => {
+                if i == 0 {
+                    None
+                } else {
+                    Some(&notes[i - 1])
+                }
+            }
+        };
+        let note = match note {
+            None => Arc::from(""),
+            Some((note_span, note)) => {
+                match note {
+                    Some(note) => {
+                        // check if an empty line exists between the notes and the command
+                        if note_span.hi < pos {
+                            // trim_start since space between the note and the command is allowed
+                            let text_between = script[note_span.hi..pos].trim_start();
+                            if text_between.find("\n\n").is_some()
+                                || text_between.find("\n\r\n").is_some()
+                            {
+                                Arc::from("")
+                            } else {
+                                Arc::clone(note)
+                            }
+                        } else {
+                            Arc::clone(note)
+                        }
+                    }
+                    None => Arc::from(""),
+                }
+            }
+        };
+        let step = cir::Step::new(pos, command, note);
+        output.steps.push(step);
     }
 
     output
@@ -142,69 +221,4 @@ pub fn parse_tokens(script: &str) -> Vec<(Span, syn::TT)> {
     output_tokens.sort_by(|a, b| a.0.lo.cmp(&b.0.lo));
 
     output_tokens
-}
-
-#[derive(Debug, Clone)]
-pub enum SemanticToken {
-    Keyword = 1,
-    Variable = 2,
-    Type = 3,
-    Amount = 4,
-    Item = 5,
-    ItemLiteral,
-    Annotation,
-}
-
-impl SemanticToken {
-    /// Convert a set of semantic token types to a single semantic token type,
-    /// honoring the priority of the types.
-    ///
-    /// This only covers the cases where the monarch grammar doesn't
-    /// capture the semantic (i.e. in the web editor). For other tools,
-    /// use `from_set_full` to cover all cases
-    pub fn from_set(value: LexSet<syn::TT>) -> Option<Self> {
-        // order matters here
-        if value.contains(syn::TT::Word) {
-            return Some(SemanticToken::Item);
-        }
-        if value.contains(syn::TT::Variable) {
-            return Some(SemanticToken::Variable);
-        }
-        if value.contains(syn::TT::Type) {
-            return Some(SemanticToken::Type);
-        }
-        if value.contains(syn::TT::Amount) || value.contains(syn::TT::Number) {
-            return Some(SemanticToken::Amount);
-        }
-        if value.contains(syn::TT::Keyword) {
-            return Some(SemanticToken::Keyword);
-        }
-        None
-    }
-
-    /// Like `from_set` but covers more cases
-    pub fn from_set_full(value: LexSet<syn::TT>) -> Option<Self> {
-        if let Some(token) = Self::from_set(value) {
-            return Some(token);
-        }
-        if value.contains(syn::TT::ItemLiteral) {
-            return Some(SemanticToken::ItemLiteral);
-        }
-        if value.contains(syn::TT::Annotation) {
-            return Some(SemanticToken::Annotation);
-        }
-        None
-    }
-
-    pub fn to_token_type(&self) -> syn::TT {
-        match self {
-            SemanticToken::Item => syn::TT::Word,
-            SemanticToken::Keyword => syn::TT::Keyword,
-            SemanticToken::Variable => syn::TT::Variable,
-            SemanticToken::Type => syn::TT::Type,
-            SemanticToken::Amount => syn::TT::Number,
-            SemanticToken::ItemLiteral => syn::TT::ItemLiteral,
-            SemanticToken::Annotation => syn::TT::Annotation,
-        }
-    }
 }

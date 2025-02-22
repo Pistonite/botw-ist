@@ -19,7 +19,16 @@ ts-rs = { version = "10.1.0", optional = true }
 tsify-next = { version = "0.5.4", default-features = false, features = ["js"], optional = true }
 wasm-bindgen = { version = "0.2.100", optional = true, features = ["serde-serialize"] }
 
+[dev-dependencies]
+anyhow = "1.0.96"
+indoc = "2.0.5"
+tokio = { version = "1.43.0", features = ["full"] }
+
+[target.'cfg(unix)'.dev-dependencies]
+backtrace-on-stack-overflow = "0.3.0"
+
 [features]
 __ts-binding = ["dep:ts-rs"]
 wasm = ["dep:tsify-next", "dep:wasm-bindgen"]
 cached = ["dep:cached"]
+

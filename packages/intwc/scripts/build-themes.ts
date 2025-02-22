@@ -115,6 +115,12 @@ function createEscapeTokenStyle(style: Record<string, unknown>) {
     ], style);
 }
 
+function createTagTokenStyle(style: Record<string, unknown>) {
+    return createTokenStyle([
+        "tag",
+    ], style);
+}
+
 
 
 function createDarkTheme() {
@@ -192,6 +198,9 @@ function createDarkTheme() {
                 foreground: mocha.text.hex
             }),
             ...createEscapeTokenStyle({
+                foreground: mocha.pink.hex
+            }),
+            ...createTagTokenStyle({
                 foreground: mocha.pink.hex
             }),
         ]

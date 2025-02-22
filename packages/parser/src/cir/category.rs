@@ -23,9 +23,6 @@ pub enum Category {
     Material,
     Food,
     KeyItem,
-    // special value - this is not a syntax category. syntax category
-    // can only be tabs. this is allowed if the syntax is ItemOrCategory
-    Arrow,
 }
 
 pub fn parse_category_in(

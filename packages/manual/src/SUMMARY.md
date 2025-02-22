@@ -1,7 +1,8 @@
 # Summary
 
 - [Welcome](./welcome.md)
-- [User]()
+- [User](./user/index.md)
+  - [IST Primer](./user/ist_primer.md)
   - [Scopes](./scope.md)
     - [Game Scope]()
     - [Inventory Scope]()

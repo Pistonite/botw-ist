@@ -10,14 +10,30 @@ use super::{
     KwExit, KwFreeze, KwHold, KwHoldSmuggle, KwLeave, KwNewGame, KwOpenInventory, KwPickUp,
     KwReload, KwRoast, KwSave, KwSaveAs, KwSell, KwSetGamedata, KwSetGdtFlag, KwSetGdtFlagStr,
     KwSetInventory, KwShieldSlots, KwShoot, KwSort, KwSync, KwTalkTo, KwTo, KwUnequip, KwUnhold,
-    KwUntalk, KwUse, KwWeaponSlots, KwWrite, Number, QuotedWord, Slot, SymColon, TimesClause, Word,
+    KwUntalk, KwUse, KwWeaponSlots, KwWrite, Number, QuotedWord, Slot, SymColon, SymSemi,
+    TimesClause, Word,
 };
+
+#[derive_syntax]
+#[teleparse(root)]
+#[derive(Debug)]
+pub struct Script {
+    pub stmts: tp::Loop<Statement>,
+}
+
+#[derive_syntax]
+#[derive(Debug)]
+pub struct Statement {
+    pub cmd: Command,
+    pub semi: tp::Option<SymSemi>,
+}
 
 #[derive_syntax]
 #[derive(Debug)]
 pub enum Command {
     /// :annotations
     Annotation(AnnotationCommand),
+
     // ==== adding items ====
     /// `get ITEMS`
     Get(CmdGet),

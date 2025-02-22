@@ -29,6 +29,16 @@ tasks:
     cmds:
       - cargo test
 
+  test-parse:
+    cmds:
+      - cargo test --test parse
+
+  test-parse-update:
+    env:
+      UPDATE_PARSER_SNAPSHOTS: 1
+    cmds:
+      - cargo test --test parse
+
   check:
     cmds:
       - task: cargo:clippy-all

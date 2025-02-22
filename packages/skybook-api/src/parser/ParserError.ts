@@ -25,4 +25,8 @@ export type ParserError =
     | { type: "InvalidTrial"; data: string }
     | { type: "InvalidCategory"; data: Category }
     | { type: "InvalidInventoryRow"; data: number }
-    | { type: "InvalidInventoryCol"; data: number };
+    | { type: "InvalidInventoryCol"; data: number }
+    | { type: "UnexpectedMetaKeyWithValue"; data: string }
+    | { type: "InvalidStringLength"; data: number }
+    | { type: "GdtTypeNotSet" }
+    | { type: "GdtStrTypeNotSet" };

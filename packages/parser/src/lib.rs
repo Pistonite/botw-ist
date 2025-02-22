@@ -11,6 +11,9 @@ pub use parse_output::parse_script as parse;
 pub use parse_output::ParseOutput;
 pub use parse_output::{parse_semantic, parse_tokens};
 
+mod semantic_token;
+pub use semantic_token::SemanticToken;
+
 mod error;
 pub use error::{Error, ErrorReport};
 mod util;

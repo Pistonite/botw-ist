@@ -3,12 +3,11 @@
 use teleparse::{derive_syntax, tp};
 
 use super::token::{
-    AngledWord, ColonOrEqual, KwAll, MetaValueLiteral, Number, QuotedWord, SlotClause, SymComma,
-    SymLBracket, SymRBracket, Word,
+    AngledWord, ColonOrEqual, KwAll, KwEquip, KwTime, MetaValueLiteral, Number, QuotedWord,
+    SlotClause, SymComma, SymLBracket, SymRBracket, Word,
 };
 
 use super::category::Category;
-use super::{KwArrow, KwArrows, KwEquip, KwTime};
 
 /// Syntax for an item prefixed with a numeric amount
 #[derive_syntax]
@@ -93,17 +92,6 @@ pub enum ItemName {
     /// Use angle brackets to use the literal as the actor name
     /// e.g. `<Weapon_Sword_070>`
     Angle(AngledWord),
-
-    #[teleparse(semantic(Word))]
-    Keyword(ItemKeyword),
-}
-
-/// Keyword used as items
-#[derive_syntax]
-#[derive(Debug)]
-pub enum ItemKeyword {
-    Arrow(KwArrow),
-    Arrows(KwArrows),
 }
 
 /// Syntax for the metadata specifier for an item, e.g. `[key1:value1, key2=value2, key3]`

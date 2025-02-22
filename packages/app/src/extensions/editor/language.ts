@@ -131,6 +131,13 @@ export const language: LanguageTokenizer = {
                     },
                 },
             ],
+            // this has to be a separate state
+            // because monarch doesn't support multiline tokens
+            [/'''[-0-9a-zA-Z_]*/, "string.blockliteral", "@blockliteral"],
         ],
+        blockliteral: [
+            [/'''/, "string.blockliteral", "@pop"],
+            [/./, "string.blockliteral"],
+        ]
     },
 };

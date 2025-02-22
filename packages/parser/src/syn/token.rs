@@ -7,14 +7,12 @@ use teleparse::{derive_lexicon, derive_syntax, tp};
 #[derive_lexicon]
 #[teleparse(ignore(r"\s+"))]
 pub enum TT {
+    /// Line comments (starting with // or #)
     #[teleparse(regex(r"(//|#).*\n"))]
     Comment,
 
-    /// A tagged block literal
-    #[teleparse(regex(
-        r"'''[-0-9a-zA-Z_]*\n((([^'].*)|('[^'].*)|(''[^'].*))?)*\n'''")
-    , terminal(BlockLiteral)
-    )]
+    /// A tagged block literal starting wit '''tag\n and ending with '''
+    #[teleparse(regex(r"'''[^\n]*\n(([^'])|('[^'])|(''[^']))*'''"))]
     BlockLiteral,
 
     #[teleparse(terminal(
@@ -121,8 +119,6 @@ pub enum TT {
         KwWeapons = "weapons",
         KwBow = "bow",
         KwBows = "bows",
-        KwArrow = "arrow",
-        KwArrows = "arrows",
         KwShield = "shield",
         KwShields = "shields",
         KwArmor = "armor",

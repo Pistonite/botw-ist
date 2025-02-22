@@ -1,9 +1,35 @@
+use std::sync::Arc;
+
 use teleparse::ToSpan;
 
 use crate::cir;
 use crate::error::ErrorReport;
 use crate::search::QuotedItemResolver;
 use crate::syn;
+
+/// A simulation step
+#[derive(Debug, Clone)]
+pub struct Step {
+    /// The position of the command in the source script
+    pub pos: usize,
+
+    /// The command to be executed
+    pub command: cir::Command,
+
+    /// The notes associated with this step
+    /// Note many steps can share the same note
+    pub notes: Arc<str>,
+}
+
+impl Step {
+    pub fn new(pos: usize, command: cir::Command, notes: Arc<str>) -> Self {
+        Self {
+            pos,
+            command,
+            notes,
+        }
+    }
+}
 
 /// The command to be executed in the simulator
 #[derive(Debug, Clone)]

@@ -168,17 +168,6 @@ async fn parse_item_or_category<R: QuotedItemResolver>(
 ) -> Option<ItemOrCategory> {
     match item {
         syn::ItemOrCategory::Item(item) => {
-            // in context where category is allowed, "arrow" in interpreted as category
-            match &item.name {
-                syn::ItemName::Keyword(kw) => {
-                    match kw {
-                        syn::ItemKeyword::Arrow(_) | syn::ItemKeyword::Arrows(_) => {
-                            return Some(ItemOrCategory::Category(cir::Category::Arrow));
-                        }
-                    };
-                }
-                _ => {}
-            }
             let item = parse_item(item, resolver, errors).await?;
             Some(ItemOrCategory::Item(item))
         }
@@ -228,16 +217,6 @@ async fn parse_item_name<R: QuotedItemResolver>(
             let result = search::search_item_by_ident(word);
             if result.is_none() {
                 errors.push(Error::InvalidItem(word.to_string()).spanned(word));
-            }
-            result
-        }
-        syn::ItemName::Keyword(kw) => {
-            let word = match kw {
-                syn::ItemKeyword::Arrow(_) | syn::ItemKeyword::Arrows(_) => "arrow",
-            };
-            let result = search::search_item_by_ident(word);
-            if result.is_none() {
-                errors.push(Error::InvalidItem(word.to_string()).spanned(kw));
             }
             result
         }
