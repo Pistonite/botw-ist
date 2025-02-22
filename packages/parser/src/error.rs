@@ -108,6 +108,18 @@ mod parser_error {
         InvalidInventoryRow(i32),
         #[error("`{0}` is not a valid column in the inventory, valid values are [1, 2, 3, 4, 5]")]
         InvalidInventoryCol(i32),
+        #[error("The `{0}` key should not have a value when used in this context")]
+        UnexpectedMetaKeyWithValue(String),
+        #[error("The maximum length allowed for the string is {0} in this context")]
+        InvalidStringLength(u32),
+        #[error(
+            "GDT meta must include one of the following properties: bool, s32, f32, vec2f or vec3f"
+        )]
+        GdtTypeNotSet,
+        #[error(
+            "GDT string meta must include one of the following properties: str32, str64, or str256"
+        )]
+        GdtStrTypeNotSet,
     }
 }
 

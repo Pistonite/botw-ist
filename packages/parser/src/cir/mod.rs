@@ -22,6 +22,9 @@ pub use item_spec::*;
 mod trial;
 pub use trial::*;
 
+mod gdt;
+pub use gdt::*;
+
 /// Parser for the item meta syntax
 ///
 /// This trait exists to allow the meta syntax to be reused for different purposes

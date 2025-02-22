@@ -128,6 +128,10 @@ export const DarkTheme = {
         {
             "token": "string.escape",
             "foreground": "#f5c2e7"
+        },
+        {
+            "token": "tag",
+            "foreground": "#f5c2e7"
         }
     ]
 };

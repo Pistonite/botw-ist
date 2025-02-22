@@ -24,6 +24,7 @@ parser.InvalidInventoryCol: "Inventory column number must be between 1 and 5 (in
 
 category.Weapon: Weapon
 category.Bow: Bow
+category.Arrow: Arrow
 category.Shield: Shield
 category.Armor: Armor
 category.Material: Material

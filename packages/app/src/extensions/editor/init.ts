@@ -45,6 +45,10 @@ export const init = (app: ExtensionApp) => {
                     value: "string.regexp"
                 },
                 {
+                    token: "string.blockliteral",
+                    value: "tag"
+                },
+                {
                     token: "function.command.super",
                     value: "constant"
                 },

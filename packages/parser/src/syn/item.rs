@@ -3,12 +3,11 @@
 use teleparse::{derive_syntax, tp};
 
 use super::token::{
-    AngledWord, ColonOrEqual, KwAll, MetaValueLiteral, Number, QuotedWord, SlotClause, SymComma,
-    SymLBracket, SymRBracket, Word,
+    AngledWord, ColonOrEqual, KwAll, KwEquip, KwTime, MetaValueLiteral, Number, QuotedWord,
+    SlotClause, SymComma, SymLBracket, SymRBracket, Word,
 };
 
 use super::category::Category;
-use super::{KwEquip, KwTime};
 
 /// Syntax for an item prefixed with a numeric amount
 #[derive_syntax]

@@ -7,8 +7,13 @@ use teleparse::{derive_lexicon, derive_syntax, tp};
 #[derive_lexicon]
 #[teleparse(ignore(r"\s+"))]
 pub enum TT {
+    /// Line comments (starting with // or #)
     #[teleparse(regex(r"(//|#).*\n"))]
     Comment,
+
+    /// A tagged block literal starting wit '''tag\n and ending with '''
+    #[teleparse(regex(r"'''[^\n]*\n(([^'])|('[^'])|(''[^']))*'''"))]
+    BlockLiteral,
 
     #[teleparse(terminal(
         SymLAngle = "<",
@@ -66,6 +71,8 @@ pub enum TT {
 
         KwSort = "sort",
         KwEntangle = "entangle",
+        KwSync = "sync",
+        KwBreak = "break",
 
         KwSave = "save",
         KwSaveAs = "save-as",
@@ -82,11 +89,28 @@ pub enum TT {
         KwExit = "exit",
         KwLeave = "leave",
 
+
         // reserved
 
         KwGoto = "go-to",
     ))]
     Command,
+
+    #[teleparse(terminal(
+        KwWeaponSlots = "weapon-slots",
+        KwShieldSlots = "shield-slots",
+        KwBowSlots = "bow-slots",
+    ))]
+    Annotation,
+
+    #[teleparse(terminal(
+        KwSetGdtFlag = "!set-gdt-flag",
+        KwSetGdtFlagStr = "!set-gdt-flag-str",
+        KwSetInventory = "!set-inventory",
+        KwSetGamedata = "!set-gamedata",
+        KwWrite = "!write",
+    ))]
+    SuperCommand,
 
     #[teleparse(terminal(
         KwAll = "all",
@@ -107,6 +131,12 @@ pub enum TT {
         KwKeyItems = "key-items",
         KwTime = "time",
         KwTimes = "times",
+        KwFrom = "from",
+        KwIn = "in",
+        KwSlot = "slot",
+        KwSlots = "slots",
+        KwAt = "at",
+        KwTo = "to",
     ))]
     Keyword,
 
@@ -197,20 +227,24 @@ pub enum ColonOrEqual {
 #[derive_syntax]
 #[derive(Debug)]
 pub struct SlotClause {
-    pub colon: SymColon,
-    #[teleparse(literal("from"), literial("in"), literial("at"), semantic(Keyword))]
-    pub kw: Word,
-    #[teleparse(literal("slot"), semantic(Keyword))]
-    pub kw_slot: Word,
-
+    pub kw: KwSlotClause,
+    pub kw_slot: KwSlot,
     pub idx: Number,
+}
+
+#[derive_syntax]
+#[derive(Debug)]
+pub enum KwSlotClause {
+    From(KwFrom),
+    In(KwIn),
+    At(KwAt),
 }
 
 #[derive_syntax]
 #[derive(Debug)]
 pub struct TimesClause {
     pub times: Number,
-    pub kw: KwTimes,
+    pub kw: Time,
 }
 
 #[derive_syntax]
@@ -218,4 +252,11 @@ pub struct TimesClause {
 pub enum Time {
     Singular(KwTime),
     Plural(KwTimes),
+}
+
+#[derive_syntax]
+#[derive(Debug)]
+pub enum Slot {
+    Singular(KwSlot),
+    Plural(KwSlots),
 }

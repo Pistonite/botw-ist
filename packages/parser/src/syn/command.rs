@@ -5,16 +5,35 @@ use teleparse::{derive_syntax, tp};
 use super::item_list::{ItemListConstrained, ItemListFinite};
 use super::token::{KwBuy, KwGet, KwHoldAttach};
 use super::{
-    Category, ItemMeta, ItemOrCategoryWithSlot, KwBake, KwBoil, KwCloseGame, KwCloseInventory,
-    KwCook, KwDestroy, KwDnp, KwDrop, KwEat, KwEntangle, KwEnter, KwEquip, KwExit, KwFreeze,
-    KwHold, KwHoldSmuggle, KwLeave, KwNewGame, KwOpenInventory, KwPickUp, KwReload, KwRoast,
-    KwSave, KwSaveAs, KwSell, KwShoot, KwSort, KwTalkTo, KwUnequip, KwUnhold, KwUntalk, KwUse,
+    Category, ItemMeta, ItemOrCategoryWithSlot, KwBake, KwBoil, KwBowSlots, KwBreak, KwCloseGame,
+    KwCloseInventory, KwCook, KwDestroy, KwDnp, KwDrop, KwEat, KwEntangle, KwEnter, KwEquip,
+    KwExit, KwFreeze, KwHold, KwHoldSmuggle, KwLeave, KwNewGame, KwOpenInventory, KwPickUp,
+    KwReload, KwRoast, KwSave, KwSaveAs, KwSell, KwSetGamedata, KwSetGdtFlag, KwSetGdtFlagStr,
+    KwSetInventory, KwShieldSlots, KwShoot, KwSort, KwSync, KwTalkTo, KwTo, KwUnequip, KwUnhold,
+    KwUntalk, KwUse, KwWeaponSlots, KwWrite, Number, QuotedWord, Slot, SymColon, SymSemi,
     TimesClause, Word,
 };
 
 #[derive_syntax]
+#[teleparse(root)]
+#[derive(Debug)]
+pub struct Script {
+    pub stmts: tp::Loop<Statement>,
+}
+
+#[derive_syntax]
+#[derive(Debug)]
+pub struct Statement {
+    pub cmd: Command,
+    pub semi: tp::Option<SymSemi>,
+}
+
+#[derive_syntax]
 #[derive(Debug)]
 pub enum Command {
+    /// :annotations
+    Annotation(AnnotationCommand),
+
     // ==== adding items ====
     /// `get ITEMS`
     Get(CmdGet),
@@ -72,6 +91,16 @@ pub enum Command {
     Sort(CmdSort),
     /// `entangle CATEGORY [tab=X, rol=R, col=C]`
     Entangle(CmdEntangle),
+    /// `sync` - sync gamedata
+    Sync(KwSync),
+    /// `break X slots`
+    Break(CmdBreakSlots),
+    /// `!set-inventory ITEMS`
+    SetInventory(CmdSetInventory),
+    /// `!set-gamedata ITEMS`
+    SetGamedata(CmdSetGamedata),
+    /// `!write [META] to ITEM`
+    Write(CmdWrite),
 
     // ==== saves ====
     /// `save`
@@ -98,6 +127,26 @@ pub enum Command {
     Exit(KwExit),
     /// `leave` - leave current trial without clearing it
     Leave(KwLeave),
+
+    // === gamedata ===
+    SetGdtFlag(CmdSetGdtFlag),
+    SetGdtFlagStr(CmdSetGdtFlagStr),
+}
+
+#[derive_syntax]
+#[derive(Debug)]
+pub struct AnnotationCommand {
+    #[teleparse(semantic(Annotation))]
+    pub colon: SymColon,
+    pub annotation: Annotation,
+}
+
+#[derive_syntax]
+#[derive(Debug)]
+pub enum Annotation {
+    WeaponSlots(CmdWeaponSlots),
+    ShieldSlots(CmdShieldSlots),
+    BowSlots(CmdBowSlots),
 }
 
 /// `get ITEMS` - items come from the area
@@ -300,6 +349,41 @@ pub struct CmdEntangle {
     pub meta: tp::Option<ItemMeta>,
 }
 
+/// `break X slots` - break X slots magically
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdBreakSlots {
+    pub kw_break: KwBreak,
+    pub amount: tp::String<Number>,
+    pub kw_slots: Slot,
+}
+
+/// `!set-inventory ITEMS` - set the inventory to the given items (same as `init` in old format)
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSetInventory {
+    pub lit: KwSetInventory,
+    pub items: ItemListFinite,
+}
+
+/// `!set-gamedata ITEMS` - set the gamedata to the given items (same as `init gamedata` in old format)
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSetGamedata {
+    pub lit: KwSetGamedata,
+    pub items: ItemListFinite,
+}
+
+/// `!write [META] to ITEM`
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdWrite {
+    pub lit: KwWrite,
+    pub props: ItemMeta,
+    pub kw_to: KwTo,
+    pub item: ItemOrCategoryWithSlot,
+}
+
 /// `save-as NAME` - save the game to a named slot
 #[derive_syntax]
 #[derive(Debug)]
@@ -344,4 +428,47 @@ pub struct CmdTalkTo {
 pub struct CmdEnter {
     pub lit: KwEnter,
     pub trial: tp::String<Word>,
+}
+
+/// `!set-gdt-flag FLAG [properties]` - set a gamedata flag (bool, s32, f32, vec2f, vec3f)
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSetGdtFlag {
+    pub lit: KwSetGdtFlag,
+    pub flag_name: tp::String<Word>,
+    pub props: ItemMeta,
+}
+
+/// `!set-gdt-flag-str FLAG [properties] VALUE` - set a gamedata string flag
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSetGdtFlagStr {
+    pub lit: KwSetGdtFlagStr,
+    pub flag_name: tp::String<Word>,
+    pub props: ItemMeta,
+    pub value: tp::String<QuotedWord>,
+}
+
+/// `:weapon-slots X` - set the number of weapon slots
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdWeaponSlots {
+    pub lit: KwWeaponSlots,
+    pub amount: tp::String<Number>,
+}
+
+/// `:shield-slots X` - set the number of shield slots
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdShieldSlots {
+    pub lit: KwShieldSlots,
+    pub amount: tp::String<Number>,
+}
+
+/// `:bow-slots X` - set the number of bow slots
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdBowSlots {
+    pub lit: KwBowSlots,
+    pub amount: tp::String<Number>,
 }

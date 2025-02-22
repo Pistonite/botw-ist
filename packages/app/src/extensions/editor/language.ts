@@ -54,6 +54,8 @@ export const language: LanguageTokenizer = {
         "destroy",
         "sort",
         "entangle",
+        "sync",
+        "break",
         "save",
         "save-as",
         "reload",
@@ -86,6 +88,12 @@ export const language: LanguageTokenizer = {
     keywords: [
         "time",
         "times",
+        "from",
+        "in",
+        "at",
+        "to",
+        "slot",
+        "slots"
     ],
     annotaions:  [
         ":test" // TODO
@@ -123,6 +131,13 @@ export const language: LanguageTokenizer = {
                     },
                 },
             ],
+            // this has to be a separate state
+            // because monarch doesn't support multiline tokens
+            [/'''[-0-9a-zA-Z_]*/, "string.blockliteral", "@blockliteral"],
         ],
+        blockliteral: [
+            [/'''/, "string.blockliteral", "@pop"],
+            [/./, "string.blockliteral"],
+        ]
     },
 };
