@@ -1,17 +1,18 @@
 name: "Workflow Setup"
 description: "Workflow Setup"
 
+inputs:
+  token:
+    description: "GitHub Token"
+    required: true
+
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v4
-      with:
-        persist-credentials: false
-        submodules: true
     - uses: arduino/setup-task@v2
       with:
         version: 3.x
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        repo-token: ${{ inputs.token }}
     - uses: pnpm/action-setup@v4
       with:
         version: 10
