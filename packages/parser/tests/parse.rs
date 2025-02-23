@@ -82,10 +82,15 @@ async fn test_parser_snapshot(path: &str, script: &str) -> anyhow::Result<()> {
 
     let script = normalize_newlines(script);
 
-    let lex_path = format!("tests/parse/{}.lex", path);
-    let syn_path = format!("tests/parse/{}.syn", path);
-    let cir_path = format!("tests/parse/{}.cir", path);
-    let sem_path = format!("tests/parse/{}.sem", path);
+    let mock_suffix = if cfg!(feature = "mock-data") {
+        "_mock"
+    } else {
+        ""
+    };
+    let lex_path = format!("tests/parse/{}{}.lex", path, mock_suffix);
+    let syn_path = format!("tests/parse/{}{}.syn", path, mock_suffix);
+    let cir_path = format!("tests/parse/{}{}.cir", path, mock_suffix);
+    let sem_path = format!("tests/parse/{}{}.sem", path, mock_suffix);
 
     let lex_out = format!("{:#?}", skybook_parser::parse_tokens(&script));
     let syn_out = format!(

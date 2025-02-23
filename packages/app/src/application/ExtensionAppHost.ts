@@ -2,15 +2,23 @@ import type { Diagnostic, ExtensionApp } from "@pistonite/skybook-api";
 import type { RuntimeClient } from "@pistonite/skybook-api/sides/app";
 import type { Result } from "@pistonite/pure/result";
 import type { WorkexPromise } from "@pistonite/workex";
-import { searchItemLocalized, translateParserError } from "skybook-localization";
+import {
+    searchItemLocalized,
+    translateParserError,
+} from "skybook-localization";
 import { getActorParam } from "skybook-item-system";
 
 import { useApplicationStore } from "./store";
-import { charPosToBytePos, createBytePosToCharPosArray } from "@pistonite/intwc";
+import {
+    charPosToBytePos,
+    createBytePosToCharPosArray,
+} from "@pistonite/intwc";
 
-export const createExtensionAppHost = (runtime: RuntimeClient): ExtensionApp => {
+export const createExtensionAppHost = (
+    runtime: RuntimeClient,
+): ExtensionApp => {
     return new ExtensionAppHost(runtime);
-}
+};
 
 class ExtensionAppHost implements ExtensionApp {
     constructor(private runtime: RuntimeClient) {}
@@ -51,32 +59,42 @@ class ExtensionAppHost implements ExtensionApp {
         return { val: { val: result.val } };
     }
 
-    public async provideParserDiagnostics(script: string): WorkexPromise<Diagnostic[]> {
+    public async provideParserDiagnostics(
+        script: string,
+    ): WorkexPromise<Diagnostic[]> {
         const result = await this.runtime.getParserDiagnostics(script);
         if (result.err) {
             return result;
         }
         const bytePosToCharPos = createBytePosToCharPosArray(script);
-        const diagnostics = result.val.map(({span, error, isWarning}) => {
+        const diagnostics = result.val.map(({ span, error, isWarning }) => {
             const [start, end] = span;
             return {
                 message: translateParserError(error),
                 isWarning,
                 start: bytePosToCharPos[start],
                 end: bytePosToCharPos[end],
-            }
+            };
         });
         return { val: diagnostics };
     }
 
-    public async provideSemanticTokens(script: string, start: number, end: number): WorkexPromise<Uint32Array> {
-        const tokens = await this.runtime.getSemanticTokens(script, charPosToBytePos(script, start), charPosToBytePos(script, end));
+    public async provideSemanticTokens(
+        script: string,
+        start: number,
+        end: number,
+    ): WorkexPromise<Uint32Array> {
+        const tokens = await this.runtime.getSemanticTokens(
+            script,
+            charPosToBytePos(script, start),
+            charPosToBytePos(script, end),
+        );
         if (tokens.err) {
             return tokens;
         }
         // convert byte positions to character positions
         const bytePosToCharPos = createBytePosToCharPosArray(script);
-        for (let i = 0; i < tokens.val.length; i+=3) {
+        for (let i = 0; i < tokens.val.length; i += 3) {
             const byteStart = tokens.val[i];
             const byteLength = tokens.val[i + 1];
             const byteEnd = byteStart + byteLength;

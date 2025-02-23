@@ -17,3 +17,5 @@ wasm-bindgen-futures = "0.4.50"
 [lib]
 crate-type = ["cdylib"]
 
+[features]
+mock-data = ["skybook-parser/mock-data", "skybook-runtime/mock-data"]

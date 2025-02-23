@@ -31,4 +31,5 @@ backtrace-on-stack-overflow = "0.3.0"
 __ts-binding = ["dep:ts-rs"]
 wasm = ["dep:tsify-next", "dep:wasm-bindgen"]
 cached = ["dep:cached"]
+mock-data = []
 

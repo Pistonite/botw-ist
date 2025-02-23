@@ -1,5 +1,6 @@
 import { Text, makeStyles, mergeClasses } from "@fluentui/react-components";
 
+import type { ItemSlotInfo } from "@pistonite/skybook-api";
 import { ModifierSprite } from "botw-item-assets";
 import {
     useGeneratedTranslation,
@@ -7,7 +8,6 @@ import {
 } from "skybook-localization";
 
 import { useStaticAssetStyles } from "./images";
-import type { ItemSlotInfo } from "./data/ItemSlotInfo.ts";
 import {
     CookEffect,
     effectToStatus,

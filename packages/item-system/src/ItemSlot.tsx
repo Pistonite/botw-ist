@@ -1,14 +1,14 @@
 import "./CalamitySans.css";
 import { Text, makeStyles, mergeClasses } from "@fluentui/react-components";
+import { Link32Regular } from "@fluentui/react-icons";
 
 import {
     ActorSprite,
     type ActorSpriteProps,
     ModifierSprite,
 } from "botw-item-assets";
+import type { ItemSlotInfo } from "@pistonite/skybook-api";
 
-import { type ItemSlotInfo } from "./data/ItemSlotInfo.ts";
-import { Link32Regular } from "@fluentui/react-icons";
 import { CookEffect, PouchItemType, SpecialStatus } from "./data/enums.ts";
 import { getModifierInfo } from "./data/ModifierInfo.ts";
 import { getActorParam } from "./data/ActorData.ts";

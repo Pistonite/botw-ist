@@ -1,3 +1,5 @@
+import type { ItemSlotInfo } from "@pistonite/skybook-api";
+
 import { getActorParam } from "./ActorData.ts";
 import {
     CookEffect,
@@ -7,7 +9,6 @@ import {
     SpecialStatus,
     WeaponModifier,
 } from "./enums.ts";
-import type { ItemSlotInfo } from "./ItemSlotInfo.ts";
 
 /** Modifier display info derived from ItemSlotInfo and ActorData */
 export type ModifierInfo = {

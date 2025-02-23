@@ -225,6 +225,9 @@ importers:
       '@fluentui/react-icons':
         specifier: 'catalog:'
         version: 2.0.274(react@18.3.1)
+      '@pistonite/skybook-api':
+        specifier: workspace:*
+        version: link:../skybook-api
       botw-item-assets:
         specifier: workspace:*
         version: link:../item-assets

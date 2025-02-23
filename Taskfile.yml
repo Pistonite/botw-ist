@@ -8,12 +8,6 @@ dotenv: [".env"]
 
 includes:
 
-
-  legacy:
-    aliases: [leg]
-    taskfile: ./legacy
-    dir: ./legacy
-
   server:
     taskfile: ./server
     dir: ./server
@@ -48,6 +42,11 @@ includes:
   item-system:
     taskfile: ./packages/item-system
     dir: ./packages/item-system
+    internal: true
+
+  skybook-api:
+    taskfile: ./packages/skybook-api
+    dir: ./packages/skybook-api
     internal: true
 
   research:
@@ -89,9 +88,13 @@ tasks:
       - pnpm install
       - task: manual:install
 
-  install-ci:
+  install-ci-privileged:
     cmds:
       - task: install-deps
+      - task: install-ci
+
+  install-ci:
+    cmds:
       - pnpm install --frozen-lockfile
       - task: manual:install
 
@@ -105,13 +108,49 @@ tasks:
   check:
     deps:
       - localization:check
-      - item-assets:check
       - item-system:check
-      - parser:check
+      - skybook-api:check
       - app:check
+    cmds:
+      - task: parser:check
+      # - task: runtime:check
+      # - task: runtime-wasm:check
+
+  check-mocked:
+    deps:
+      - localization:check
+      - item-system:check-mocked
+      - skybook-api:check
+      - app:check
+    cmds:
+      - task: parser:check-mocked
+      # - task: runtime:check-mocked
+      # - task: runtime-wasm:check-mocked
       
 
   test:
+    deps:
+      - item-system:test
     cmds:
       - task: parser:test
+
+  test-mocked:
+    deps:
+      - item-system:test-mocked
+    cmds:
+      - task: parser:test-mocked
+
+  build:
+    deps:
+      - manual:build
+      # - app:build
+    cmds:
+      - task: runtime-wasm:build
+  
+  build-mocked:
+    deps:
+      - manual:build
+      # - app:build
+    cmds:
+      - task: runtime-wasm:build-mocked
 
