@@ -98,7 +98,7 @@ tasks:
     cmds:
       - pnpm install --frozen-lockfile
       - task: manual:install
-      - task: item-assets:put-mocks
+      - task: put-mocks
 
   install-deps:
     deps:
@@ -107,48 +107,51 @@ tasks:
       - item-system:pull-artifacts
       - parser:pull-artifacts
 
+  put-mocks:
+    deps:
+      - localization:put-mocks
+      - item-assets:put-mocks
+      - item-system:put-mocks
+
   check:
+    deps: [check-typescript]
+    cmds:
+      - task: parser:check
+      # - task: runtime:check
+      # - task: runtime-wasm:check
+  #
+
+
+  check-mocked:
+    deps: [check-typescript]
+    cmds:
+      - task: parser:check-mocked
+      # - task: runtime:check-mocked
+      # - task: runtime-wasm:check-mocked
+
+  check-typescript:
     deps:
       - localization:check
       - item-system:check
       - skybook-api:check
       - app:check
-    cmds:
-      - task: parser:check
-      # - task: runtime:check
-      # - task: runtime-wasm:check
-
-  check-mocked:
-    deps:
-      - localization:check
-      - item-system:check-mocked
-      - skybook-api:check
-      - app:check
-    cmds:
-      - task: parser:check-mocked
-      # - task: runtime:check-mocked
-      # - task: runtime-wasm:check-mocked
+    
       
 
   test:
-    deps:
-      - item-system:test
+    deps: [test-typescript]
     cmds:
       - task: parser:test
 
   test-mocked:
-    deps:
-      - item-system:test-mocked
+    deps: [test-typescript]
     cmds:
       - task: parser:test-mocked
 
-  build:
+  test-typescript:
     deps:
-      - manual:build
-      # - app:build
-    cmds:
-      - task: runtime-wasm:build
-  
+      - item-system:test
+
   build-mocked:
     deps:
       - manual:build
