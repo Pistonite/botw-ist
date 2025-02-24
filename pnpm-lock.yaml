@@ -57,7 +57,7 @@ catalogs:
 
 patchedDependencies:
   monaco-editor@0.52.2:
-    hash: b1bf3c3b204aebba5cbb7ac37c5ea5b3492d2323dd5ab33f691a6df19e60295c
+    hash: 789e917d911899942d0d30033e21cd0f6720af75845df5b971a6594d398e368e
     path: packages/intwc/patches/monaco-editor@0.52.2.patch
 
 importers:
@@ -159,7 +159,7 @@ importers:
         version: 0.22.2
       monaco-editor:
         specifier: 0.52.2
-        version: 0.52.2(patch_hash=b1bf3c3b204aebba5cbb7ac37c5ea5b3492d2323dd5ab33f691a6df19e60295c)
+        version: 0.52.2(patch_hash=789e917d911899942d0d30033e21cd0f6720af75845df5b971a6594d398e368e)
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -5271,7 +5271,7 @@ snapshots:
 
   mobile-device-detect@0.4.3: {}
 
-  monaco-editor@0.52.2(patch_hash=b1bf3c3b204aebba5cbb7ac37c5ea5b3492d2323dd5ab33f691a6df19e60295c): {}
+  monaco-editor@0.52.2(patch_hash=789e917d911899942d0d30033e21cd0f6720af75845df5b971a6594d398e368e): {}
 
   ms@2.1.3: {}
 

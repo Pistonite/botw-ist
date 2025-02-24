@@ -24,15 +24,9 @@ runs:
       with:
         targets: wasm32-unknown-unknown,x86_64-unknown-linux-gnu
     - uses: Swatinem/rust-cache@v2
-    - uses: baptiste0928/cargo-install@v3
+    - uses: taiki-e/install-action@v2
       with:
-        crate: wasm-pack
-    - uses: baptiste0928/cargo-install@v3
-      with:
-        crate: mdbook
-    - uses: baptiste0928/cargo-install@v3
-      with:
-        crate: mdbook-admonish
+        tool: wasm-pack,mdbook,mdbook-admonish
     - uses: baptiste0928/cargo-install@v3
       with:
         crate: workex
