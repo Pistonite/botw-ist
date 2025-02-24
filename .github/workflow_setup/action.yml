@@ -5,6 +5,9 @@ inputs:
   token:
     description: "GitHub Token"
     required: true
+  rust_targets:
+    description: "Targets for rust-toolchain"
+    default: ""
 
 runs:
   using: composite
@@ -20,9 +23,10 @@ runs:
       with:
         node-version: 20
         cache: 'pnpm'
+    - uses: oven-sh/setup-bun@v2
     - uses: dtolnay/rust-toolchain@stable
       with:
-        targets: wasm32-unknown-unknown,x86_64-unknown-linux-gnu
+        targets: ${{ inputs.rust_targets }}
     - uses: useblacksmith/rust-cache@v3
     - uses: taiki-e/install-action@v2
       with:

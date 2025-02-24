@@ -136,7 +136,7 @@ tasks:
       - skybook-api:check
       - app:check
     cmds:
-      - manual:check
+      - task: manual:check
     
       
 
