@@ -16,7 +16,7 @@ jobs:
         with:
           persist-credentials: false
           submodules: true
-      - uses: ./.github/workflow_setup
+      - uses: ./.github/steps/setup-blacksmith
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: task install-ci-privileged

@@ -8,9 +8,6 @@ inputs:
   rust_targets:
     description: "Targets for rust-toolchain"
     default: ""
-  blacksmith:
-    description: "If blacksmith machines are used"
-    default: true
 
 runs:
   using: composite
@@ -22,13 +19,7 @@ runs:
     - uses: pnpm/action-setup@v4
       with:
         version: 10
-    - uses: useblacksmith/setup-node@v5
-      if: ${{ inputs.blacksmith }}
-      with:
-        node-version: 20
-        cache: 'pnpm'
     - uses: actions/setup-node@v4
-      if: ${{ inputs.blacksmith == false }}
       with:
         node-version: 20
         cache: 'pnpm'
@@ -36,10 +27,7 @@ runs:
     - uses: dtolnay/rust-toolchain@stable
       with:
         targets: ${{ inputs.rust_targets }}
-    - uses: useblacksmith/rust-cache@v3
-      if: ${{ inputs.blacksmith }}
-    - uses: Swatinem/rust-cache@v3
-      if: ${{ inputs.blacksmith == false }}
+    - uses: Swatinem/rust-cache@v2
     - uses: taiki-e/install-action@v2
       with:
         tool: wasm-pack,mdbook,mdbook-admonish,ripgrep
