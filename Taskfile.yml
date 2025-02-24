@@ -52,6 +52,7 @@ includes:
   research:
     taskfile: ./packages/research-scripts
     dir: ./packages/research-scripts
+    internal: true
 
   localization:
     taskfile: ./packages/localization
@@ -160,4 +161,18 @@ tasks:
     cmds:
       - task: manual:build-mocked
       - task: runtime-wasm:build-mocked
+
+  exec:
+    aliases: [x]
+    desc: Execute a task in a package (exec -- PACKAGE:TASK)
+    cmds:
+      - task: "{{.CLI_ARGS}}"
+
+  list:
+    aliases: [ls]
+    desc: List tasks in a package (list -- PACKAGE)
+    dir: "packages/{{.CLI_ARGS}}"
+    silent: true
+    cmds:
+      - cmd: "{{.TASK_EXE}} --list"
 
