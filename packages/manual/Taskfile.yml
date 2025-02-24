@@ -1,5 +1,10 @@
 version: '3'
 
+includes:
+  cargo:
+    taskfile: ../mono-dev/task/cargo.yaml
+    internal: true
+
 tasks:
   install:
     cmds:
@@ -19,4 +24,25 @@ tasks:
       - cargo run --bin skybook-manual-preprocessor -- style > theme/skybook.css
       - rm -rf book
       - mdbook build
+
+  build-mocked:
+    env:
+      MDBOOK_PREPROCESSOR__SKYBOOK__COMMAND: '"cargo run --bin skybook-manual-preprocessor --quiet --features mock-data"'
+    cmds:
+      - cargo run --bin skybook-manual-preprocessor --features mock-data -- style > theme/skybook.css
+      - rm -rf book
+      - mdbook build
+
+  check:
+    cmds:
+      - task: cargo:clippy-package-feature
+        vars:
+          PACKAGE: skybook-manual-preprocessor
+          FEATURES: mock-data
+      - task: cargo:fmt-check
+
+  fix:
+    cmds:
+      - task: cargo:fmt-fix
+    
 

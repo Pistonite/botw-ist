@@ -1,40 +1,13 @@
-use clap::{Parser, Subcommand};
 use mdbook::{preprocess::CmdPreprocessor, BookItem};
 
-mod style;
-
-#[derive(Parser)]
-struct Cli {
-    #[clap(subcommand)]
-    subcommand: Option<Sub>,
-}
-#[derive(Subcommand)]
-enum Sub {
-    Supports {
-        renderer: String,
-    },
-    Style,
-}
-
-fn main() -> anyhow::Result<()> {
-    let args = Cli::parse();
-    match args.subcommand {
-        Some(Sub::Supports { renderer }) => {
-            if renderer == "html" {
-                return Ok(());
-            } else {
-                std::process::exit(1);
-            }
-        }
-        Some(Sub::Style) => {
-            println!("{}", style::create_style_sheet());
-            return Ok(());
-        }
-        None => {}
+/// Read a mdbook CmdPreprocessor input from stdin
+/// and write the output to stdout
+pub fn run_highlight() -> anyhow::Result<()> {
+    if cfg!(feature = "mock-data") {
+        eprintln!("Running skybook highlighter (mocked parser)");
+    } else {
+        eprintln!("Running skybook highlighter");
     }
-
-    eprintln!("Running skybook preprocessor");
-
     let (_ctx, mut book) = CmdPreprocessor::parse_input(std::io::stdin())?;
 
     let mut errors = Vec::new();
@@ -58,11 +31,8 @@ fn main() -> anyhow::Result<()> {
 }
 
 fn process_book_item(item: &mut BookItem) -> anyhow::Result<()> {
-    match item {
-        BookItem::Chapter(chapter) => {
-            process_chapter_content(&mut chapter.content)?;
-        }
-        _ => {}
+    if let BookItem::Chapter(chapter) = item {
+        process_chapter_content(&mut chapter.content)?;
     }
 
     Ok(())
@@ -104,12 +74,14 @@ fn handle_skybook_script_highlighting(content: &mut String) -> anyhow::Result<()
             }
             let mut rest_idx = 0;
             while let Some(start_idx) = line[rest_idx..].find("<skyb>") {
-                let script_start_idx = rest_idx+start_idx + 6;
-                let length = line[script_start_idx..].find("</skyb>").unwrap_or(line.len());
-                let script = &line[script_start_idx..script_start_idx+length];
+                let script_start_idx = rest_idx + start_idx + 6;
+                let length = line[script_start_idx..]
+                    .find("</skyb>")
+                    .unwrap_or(line.len());
+                let script = &line[script_start_idx..script_start_idx + length];
                 let script_block = parse_skybook_script(script, false)?;
                 if start_idx != 0 {
-                    content.push_str(&line[rest_idx..rest_idx+start_idx]);
+                    content.push_str(&line[rest_idx..rest_idx + start_idx]);
                 }
                 content.push_str(&script_block);
                 rest_idx = script_start_idx + length + 7;
@@ -121,7 +93,6 @@ fn handle_skybook_script_highlighting(content: &mut String) -> anyhow::Result<()
             continue;
         }
         is_in_skybook_block = true;
-
     }
 
     Ok(())
@@ -129,8 +100,8 @@ fn handle_skybook_script_highlighting(content: &mut String) -> anyhow::Result<()
 
 fn parse_skybook_script(script: &str, pre: bool) -> anyhow::Result<String> {
     let mut output = if pre {
-    String::from("<pre><code>") }
-    else {
+        String::from("<pre><code>")
+    } else {
         String::from("<code>")
     };
     let tokens = skybook_parser::parse_tokens(script);
@@ -142,8 +113,11 @@ fn parse_skybook_script(script: &str, pre: bool) -> anyhow::Result<String> {
         }
         let token_class = get_skybook_token_css_class(token);
         // the token
-        output.push_str(&format!("<span class=\"{}\">{}</span>", 
-            token_class, escape_html(&script[span.lo..span.hi])));
+        output.push_str(&format!(
+            "<span class=\"{}\">{}</span>",
+            token_class,
+            escape_html(&script[span.lo..span.hi])
+        ));
         idx = span.hi;
     }
     // text after the last token
@@ -168,7 +142,8 @@ fn escape_html(s: &str) -> String {
 }
 
 fn get_skybook_token_css_class(ty: skybook_parser::syn::TT) -> String {
-    let token_name = serde_json::to_string(&ty).unwrap_or_default()
+    let token_name = serde_json::to_string(&ty)
+        .unwrap_or_default()
         .replace("\"", "");
 
     format!("skybook-tt-{}", token_name)

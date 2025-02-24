@@ -16,7 +16,7 @@ tasks:
 
   build-mocked:
     cmds:
-      - wasm-pack build -t no-modules --no-pack
+      - wasm-pack build -t no-modules --no-pack --dev -- --features mock-data
       - task: build-dist
 
   build-wasm:

@@ -114,7 +114,7 @@ tasks:
       - item-system:put-mocks
 
   check:
-    deps: [check-typescript]
+    deps: [check-common]
     cmds:
       - task: parser:check
       # - task: runtime:check
@@ -123,39 +123,41 @@ tasks:
 
 
   check-mocked:
-    deps: [check-typescript]
+    deps: [check-common]
     cmds:
       - task: parser:check-mocked
       # - task: runtime:check-mocked
       # - task: runtime-wasm:check-mocked
 
-  check-typescript:
+  check-common:
     deps:
       - localization:check
       - item-system:check
       - skybook-api:check
       - app:check
+    cmds:
+      - manual:check
     
       
 
   test:
-    deps: [test-typescript]
+    deps: [test-common]
     cmds:
       - task: parser:test
 
   test-mocked:
-    deps: [test-typescript]
+    deps: [test-common]
     cmds:
       - task: parser:test-mocked
 
-  test-typescript:
+  test-common:
     deps:
       - item-system:test
 
   build-mocked:
-    deps:
-      - manual:build
+    deps: []
       # - app:build
     cmds:
+      - task: manual:build-mocked
       - task: runtime-wasm:build-mocked
 
