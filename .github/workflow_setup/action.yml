@@ -16,14 +16,14 @@ runs:
     - uses: pnpm/action-setup@v4
       with:
         version: 10
-    - uses: actions/setup-node@v4
+    - uses: useblacksmith/setup-node@v5
       with:
         node-version: 20
         cache: 'pnpm'
     - uses: dtolnay/rust-toolchain@stable
       with:
         targets: wasm32-unknown-unknown,x86_64-unknown-linux-gnu
-    - uses: Swatinem/rust-cache@v2
+    - uses: useblacksmith/rust-cache@v3
     - uses: taiki-e/install-action@v2
       with:
         tool: wasm-pack,mdbook,mdbook-admonish,ripgrep
