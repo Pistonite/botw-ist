@@ -91,12 +91,14 @@ tasks:
   install-ci-privileged:
     cmds:
       - task: install-deps
-      - task: install-ci
+      - pnpm install --frozen-lockfile
+      - task: manual:install
 
   install-ci:
     cmds:
       - pnpm install --frozen-lockfile
       - task: manual:install
+      - task: item-assets:put-mocks
 
   install-deps:
     deps:
