@@ -15,6 +15,7 @@ tasks:
   check:
     desc: Run Linter and Formatter
     cmds:
+      - bun scripts/check-lang-entries.ts
       - task: ecma:tsc-check
       - task: ecma:eslint-check
       - task: ecma:prettier-check
@@ -24,6 +25,24 @@ tasks:
     cmds:
       - task: ecma:eslint-fix
       - task: ecma:prettier-fix
+
+  put-mocks:
+    cmds:
+      - $(which mkdir) -p src/generated
+      - cmd: "echo 'mock: mock' > src/generated/{{.ITEM}}.yaml"
+        for:
+          - en-US
+          - ja-JP
+          - de-DE
+          - es-ES
+          - it-IT
+          - fr-FR
+          - ru-RU
+          - zh-CN
+          - zh-TW
+          - ko-KR
+          - nl-NL
+
 
   push-artifacts:
     desc: Push generated files. Requires gcloud access

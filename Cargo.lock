@@ -325,13 +325,17 @@ dependencies = [
 
 [[package]]
 name = "catppuccin"
-version = "2.4.0"
+version = "2.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa1798ea21d5f88f057b9a4d075bbf3e9cc4bba98da0d6197a2019f61f633bf4"
+checksum = "d52356592c50dd7c1bb3a91e152c57719572bd94c9a31363c8cd36f81640ac7d"
 dependencies = [
- "itertools 0.13.0",
+ "itertools 0.14.0",
+ "prettyplease",
+ "proc-macro2",
+ "quote",
  "serde",
  "serde_json",
+ "syn 2.0.98",
 ]
 
 [[package]]
@@ -394,9 +398,9 @@ dependencies = [
 
 [[package]]
 name = "clap_complete"
-version = "4.5.44"
+version = "4.5.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "375f9d8255adeeedd51053574fd8d4ba875ea5fa558e86617b07f09f1680c8b6"
+checksum = "1e3040c8291884ddf39445dc033c70abc2bc44a42f0a3a00571a0f483a83f0cd"
 dependencies = [
  "clap",
 ]
@@ -1606,9 +1610,9 @@ dependencies = [
 
 [[package]]
 name = "mdbook"
-version = "0.4.44"
+version = "0.4.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9da1e54401fe5d45a664c57e112e70f18e8c5a73e268c179305b932ee864574"
+checksum = "b07d36d96ffe1b5b16ddf2bc80b3b26bb7a498b2a6591061250bf0af8e8095ad"
 dependencies = [
  "ammonia",
  "anyhow",
@@ -2066,6 +2070,16 @@ checksum = "3ae130e2f271fbc2ac3a40fb1d07180839cdbbe443c7a27e1e3c13c5cac0116d"
 dependencies = [
  "diff",
  "yansi",
+]
+
+[[package]]
+name = "prettyplease"
+version = "0.2.29"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6924ced06e1f7dfe3fa48d57b9f74f55d8915f5036121bef647ef4b204895fac"
+dependencies = [
+ "proc-macro2",
+ "syn 2.0.98",
 ]
 
 [[package]]
@@ -2541,9 +2555,9 @@ dependencies = [
 
 [[package]]
 name = "string_cache_codegen"
-version = "0.5.3"
+version = "0.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "244292f3441c89febe5b5bdfbb6863aeaf4f64da810ea3050fd927b27b8d92ce"
+checksum = "c711928715f1fe0fe509c53b43e993a9a557babc2d0a3567d0a3006f1ac931a0"
 dependencies = [
  "phf_generator",
  "phf_shared",
@@ -2649,9 +2663,9 @@ dependencies = [
 
 [[package]]
 name = "tempfile"
-version = "3.17.0"
+version = "3.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a40f762a77d2afa88c2d919489e390a12bdd261ed568e60cfa7e48d4e20f0d33"
+checksum = "22e5a0acb1f3f55f65cc4a866c361b2fb2a0ff6366785ae6fbb5f85df07ba230"
 dependencies = [
  "cfg-if",
  "fastrand",

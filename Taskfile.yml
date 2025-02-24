@@ -52,6 +52,7 @@ includes:
   research:
     taskfile: ./packages/research-scripts
     dir: ./packages/research-scripts
+    internal: true
 
   localization:
     taskfile: ./packages/localization
@@ -98,7 +99,7 @@ tasks:
     cmds:
       - pnpm install --frozen-lockfile
       - task: manual:install
-      - task: item-assets:put-mocks
+      - task: put-mocks
 
   install-deps:
     deps:
@@ -107,52 +108,71 @@ tasks:
       - item-system:pull-artifacts
       - parser:pull-artifacts
 
+  put-mocks:
+    deps:
+      - localization:put-mocks
+      - item-assets:put-mocks
+      - item-system:put-mocks
+
   check:
+    deps: [check-common]
+    cmds:
+      - task: parser:check
+      # - task: runtime:check
+      # - task: runtime-wasm:check
+  #
+
+
+  check-mocked:
+    deps: [check-common]
+    cmds:
+      - task: parser:check-mocked
+      # - task: runtime:check-mocked
+      # - task: runtime-wasm:check-mocked
+
+  check-common:
     deps:
       - localization:check
       - item-system:check
       - skybook-api:check
       - app:check
     cmds:
-      - task: parser:check
-      # - task: runtime:check
-      # - task: runtime-wasm:check
-
-  check-mocked:
-    deps:
-      - localization:check
-      - item-system:check-mocked
-      - skybook-api:check
-      - app:check
-    cmds:
-      - task: parser:check-mocked
-      # - task: runtime:check-mocked
-      # - task: runtime-wasm:check-mocked
+      - task: manual:check
+    
       
 
   test:
-    deps:
-      - item-system:test
+    deps: [test-common]
     cmds:
       - task: parser:test
 
   test-mocked:
-    deps:
-      - item-system:test-mocked
+    deps: [test-common]
     cmds:
       - task: parser:test-mocked
 
-  build:
+  test-common:
     deps:
-      - manual:build
-      # - app:build
-    cmds:
-      - task: runtime-wasm:build
-  
+      - item-system:test
+
   build-mocked:
-    deps:
-      - manual:build
+    deps: []
       # - app:build
     cmds:
+      - task: manual:build-mocked
       - task: runtime-wasm:build-mocked
+
+  exec:
+    aliases: [x]
+    desc: Execute a task in a package (exec -- PACKAGE:TASK)
+    cmds:
+      - task: "{{.CLI_ARGS}}"
+
+  list:
+    aliases: [ls]
+    desc: List tasks in a package (list -- PACKAGE)
+    dir: "packages/{{.CLI_ARGS}}"
+    silent: true
+    cmds:
+      - cmd: "{{.TASK_EXE}} --list"
 
