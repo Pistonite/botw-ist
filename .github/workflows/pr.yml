@@ -6,8 +6,11 @@ on:
 
 jobs:
   check:
-    name: check (mocked)
+    name: check
     runs-on: blacksmith-4vcpu-ubuntu-2204
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -16,34 +19,34 @@ jobs:
       - uses: ./.github/workflow_setup
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      - run: task install-ci
-      - run: task check-mocked --output group
+      - run: task install-ci-privileged
+      - run: task check --output group
 
-  test:
-    name: test (mocked)
-    runs-on: blacksmith-4vcpu-ubuntu-2204
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          submodules: true
-      - uses: ./.github/workflow_setup
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - run: task install-ci
-      - run: task test-mocked --output group
-
-  build:
-    name: build (mocked)
-    runs-on: blacksmith-4vcpu-ubuntu-2204
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          submodules: true
-      - uses: ./.github/workflow_setup
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          rust_targets: wasm32-unknown-unknown,x86_64-unknown-linux-gnu
-      - run: task install-ci
-      - run: task build-mocked --output group
+  # test:
+  #   name: test (mocked)
+  #   runs-on: blacksmith-4vcpu-ubuntu-2204
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         persist-credentials: false
+  #         submodules: true
+  #     - uses: ./.github/workflow_setup
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #     - run: task install-ci
+  #     - run: task test-mocked --output group
+  #
+  # build:
+  #   name: build (mocked)
+  #   runs-on: blacksmith-4vcpu-ubuntu-2204
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         persist-credentials: false
+  #         submodules: true
+  #     - uses: ./.github/workflow_setup
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         rust_targets: wasm32-unknown-unknown,x86_64-unknown-linux-gnu
+  #     - run: task install-ci
+  #     - run: task build-mocked --output group

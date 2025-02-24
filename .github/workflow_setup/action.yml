@@ -8,6 +8,9 @@ inputs:
   rust_targets:
     description: "Targets for rust-toolchain"
     default: ""
+  blacksmith:
+    description: "If blacksmith machines are used"
+    default: true
 
 runs:
   using: composite
@@ -20,6 +23,12 @@ runs:
       with:
         version: 10
     - uses: useblacksmith/setup-node@v5
+      if: ${{ inputs.blacksmith }}
+      with:
+        node-version: 20
+        cache: 'pnpm'
+    - uses: actions/setup-node@v4
+      if: ${{ inputs.blacksmith == false }}
       with:
         node-version: 20
         cache: 'pnpm'
@@ -28,6 +37,9 @@ runs:
       with:
         targets: ${{ inputs.rust_targets }}
     - uses: useblacksmith/rust-cache@v3
+      if: ${{ inputs.blacksmith }}
+    - uses: Swatinem/rust-cache@v3
+      if: ${{ inputs.blacksmith == false }}
     - uses: taiki-e/install-action@v2
       with:
         tool: wasm-pack,mdbook,mdbook-admonish,ripgrep
@@ -35,3 +47,8 @@ runs:
       with:
         crate: workex
         git: https://github.com/Pistonite/workex
+    - id: auth
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: projects/262116032713/locations/global/workloadIdentityPools/github-actions/providers/github-provider
+    - uses: google-github-actions/setup-gcloud@v2
