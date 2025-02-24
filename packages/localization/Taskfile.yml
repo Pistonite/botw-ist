@@ -33,6 +33,7 @@ tasks:
           - en-US
           - ja-JP
           - de-DE
+          - es-ES
           - it-IT
           - fr-FR
           - ru-RU
