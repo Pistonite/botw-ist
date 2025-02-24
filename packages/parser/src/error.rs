@@ -82,6 +82,8 @@ mod parser_error {
         InvalidEmptyItem,
         #[error("invalid integer format: {0}")]
         IntFormat(String),
+        #[error("integer `{0}` is out of range")]
+        IntRange(String),
         #[error("invalid number format: {0}")]
         FloatFormat(String),
         #[error("unused meta key: {0}")]
@@ -120,6 +122,8 @@ mod parser_error {
             "GDT string meta must include one of the following properties: str32, str64, or str256"
         )]
         GdtStrTypeNotSet,
+        #[error("`{1}` is not a valid number of slots for category `{0:?}`")]
+        InvalidEquipmentSlotNum(cir::Category, i32),
     }
 }
 

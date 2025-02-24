@@ -30,6 +30,15 @@ pub struct GdtMeta {
     pub array_idx: Option<usize>,
 }
 
+impl GdtMeta {
+    pub fn new(value: GdtValue, idx: Option<usize>) -> Self {
+        Self {
+            value,
+            array_idx: idx,
+        }
+    }
+}
+
 /// Parse the metadata for !set-gdt-flag command
 pub fn parse_gdt_meta(meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) -> Option<GdtMeta> {
     let parser = GdtMetaParser::default();
@@ -61,7 +70,7 @@ struct GdtMetaParser<'s> {
     z: f32,
 }
 
-impl<'s> MetaParser for GdtMetaParser<'s> {
+impl MetaParser for GdtMetaParser<'_> {
     type Output = Option<GdtMeta>;
 
     fn visit_start(&mut self, _meta: &syn::ItemMeta, _errors: &mut Vec<ErrorReport>) {}

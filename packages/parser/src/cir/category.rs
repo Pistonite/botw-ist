@@ -101,11 +101,11 @@ pub fn parse_times_clause(times: Option<&syn::TimesClause>) -> Result<i64, Error
     match times {
         None => Ok(1),
         Some(times) => {
-            let t = cir::parse_syn_int_str(&times.times, &times.span())?;
+            let t = cir::parse_syn_int_str_i32(&times.times, &times.span())?;
             if t < 1 {
-                return Err(Error::InvalidTimesClause(t as i32).spanned(times));
+                return Err(Error::InvalidTimesClause(t).spanned(times));
             }
-            Ok(t)
+            Ok(t as i64)
         }
     }
 }

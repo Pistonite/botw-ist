@@ -136,7 +136,7 @@ fn process_snapshot_file(path: &str, content: &str, mut update: bool) -> anyhow:
         std::fs::write(path, content)?;
         return Ok(());
     }
-    let current_content = normalize_newlines(std::fs::read_to_string(&path)?);
+    let current_content = normalize_newlines(std::fs::read_to_string(path)?);
     let expected_content = normalize_newlines(content);
     if current_content != expected_content {
         let wip_path = path.replace("tests/parse/", "tests/parse/wip/");

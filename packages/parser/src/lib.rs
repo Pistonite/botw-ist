@@ -24,9 +24,8 @@ mod generated {
     mod armor_upgrade;
     #[cfg(feature = "mock-data")]
     mod armor_upgrade {
-        pub static ARMOR_UPGRADE: &[[&str; 5]] = &[
-            ["001_Mock", "002_Mock", "003_Mock", "004_Mock", "005_Mock"],
-        ];
+        pub static ARMOR_UPGRADE: &[[&str; 5]] =
+            &[["001_Mock", "002_Mock", "003_Mock", "004_Mock", "005_Mock"]];
     }
     pub use armor_upgrade::ARMOR_UPGRADE;
 
@@ -35,9 +34,7 @@ mod generated {
     #[cfg(feature = "mock-data")]
     mod item_name {
         use crate::search::SearchName;
-        pub static ITEM_NAMES: &[SearchName] = &[
-            SearchName::new("mock", "Item_Mock", true, 4),
-        ];
+        pub static ITEM_NAMES: &[SearchName] = &[SearchName::new("mock", "Item_Mock", true, 4)];
     }
     pub use item_name::ITEM_NAMES;
 }

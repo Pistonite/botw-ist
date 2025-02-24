@@ -153,3 +153,11 @@ pub fn parse_syn_int_str(number: &str, span: &Span) -> Result<i64, ErrorReport> 
             .map_err(|_| Error::IntFormat(number.to_string()).spanned(span)),
     }
 }
+
+pub fn parse_syn_int_str_i32(number: &str, span: &Span) -> Result<i32, ErrorReport> {
+    let number = parse_syn_int_str(number, span)?;
+    if number > i32::MAX as i64 || number < i32::MIN as i64 {
+        return Err(Error::IntRange(number.to_string()).spanned(span));
+    }
+    Ok(number as i32)
+}

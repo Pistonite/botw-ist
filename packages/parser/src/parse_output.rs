@@ -113,25 +113,19 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
         };
         let note = match note {
             None => Arc::from(""),
-            Some((note_span, note)) => {
-                match note {
-                    Some(note) => {
-                        // check if an empty line exists between the notes and the command
-                        if note_span.hi < pos {
-                            // trim_start since space between the note and the command is allowed
-                            let text_between = script[note_span.hi..pos].trim_start();
-                            if text_between.find("\n\n").is_some()
-                                || text_between.find("\n\r\n").is_some()
-                            {
-                                Arc::from("")
-                            } else {
-                                Arc::clone(note)
-                            }
-                        } else {
-                            Arc::clone(note)
-                        }
+            Some((_, None)) => Arc::from(""),
+            Some((note_span, Some(note))) => {
+                // check if an empty line exists between the notes and the command
+                if note_span.hi < pos {
+                    // trim_start since space between the note and the command is allowed
+                    let text_between = script[note_span.hi..pos].trim_start();
+                    if text_between.contains("\n\n") || text_between.contains("\n\r\n") {
+                        Arc::from("")
+                    } else {
+                        Arc::clone(note)
                     }
-                    None => Arc::from(""),
+                } else {
+                    Arc::clone(note)
                 }
             }
         };

@@ -37,7 +37,7 @@ pub struct ItemSelectSpec {
     pub item: ItemOrCategory,
 
     /// The slot number to select from, 0 means not specified
-    pub slot: i64,
+    pub slot: i32,
 }
 
 #[derive(Debug, Clone)]
@@ -245,13 +245,13 @@ async fn parse_item_name<R: QuotedItemResolver>(
 }
 
 /// Parse a SlotClause syntax node
-fn parse_slot_clause(slot: Option<&syn::SlotClause>) -> Result<i64, ErrorReport> {
+fn parse_slot_clause(slot: Option<&syn::SlotClause>) -> Result<i32, ErrorReport> {
     match slot {
         None => Ok(0),
         Some(slot) => {
-            let slot_num = cir::parse_syn_int_str(&slot.idx, &slot.idx.span())?;
+            let slot_num = cir::parse_syn_int_str_i32(&slot.idx, &slot.idx.span())?;
             if slot_num < 1 {
-                return Err(Error::InvalidSlotClause(slot_num as i32).spanned(slot));
+                return Err(Error::InvalidSlotClause(slot_num).spanned(slot));
             }
             Ok(slot_num)
         }
