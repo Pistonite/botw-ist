@@ -1,0 +1,42 @@
+ParseOutput {
+    steps: [
+        Step {
+            pos: 26,
+            command: Sync,
+            notes: "a",
+        },
+        Step {
+            pos: 47,
+            command: Sync,
+            notes: "",
+        },
+        Step {
+            pos: 100,
+            command: Sync,
+            notes: "text\n\nget  1 apple",
+        },
+        Step {
+            pos: 105,
+            command: Sync,
+            notes: "text\n\nget  1 apple",
+        },
+        Step {
+            pos: 144,
+            command: Sync,
+            notes: "empty line in between",
+        },
+        Step {
+            pos: 150,
+            command: Sync,
+            notes: "",
+        },
+        Step {
+            pos: 155,
+            command: Sync,
+            notes: "",
+        },
+    ],
+    pages: [],
+    display: [],
+    errors: [],
+}

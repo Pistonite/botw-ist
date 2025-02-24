@@ -24,11 +24,9 @@ anyhow = "1.0.96"
 indoc = "2.0.5"
 tokio = { version = "1.43.0", features = ["full"] }
 
-[target.'cfg(unix)'.dev-dependencies]
-backtrace-on-stack-overflow = "0.3.0"
-
 [features]
-__ts-binding = ["dep:ts-rs"]
+__ts-binding = ["dep:ts-rs", "mock-data"]
 wasm = ["dep:tsify-next", "dep:wasm-bindgen"]
 cached = ["dep:cached"]
+mock-data = []
 

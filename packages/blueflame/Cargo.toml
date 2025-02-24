@@ -12,9 +12,12 @@ path = "../blueflame-singleton"
 [dependencies.blueflame-program]
 path = "../blueflame-program"
 
+[dependencies.blueflame-macros]
+path = "../blueflame-macros"
+
 [dependencies]
 derive_more = { version = "1.0.0", features = ["constructor", "deref", "deref_mut"] }
 enumset = "1.1.5"
 rand_xoshiro = "0.6.0"
 sha2 = "0.10.8"
-thiserror = "2.0.9"
+thiserror = "2.0.11"

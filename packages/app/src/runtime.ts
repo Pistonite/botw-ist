@@ -1,4 +1,7 @@
-import { bindRuntimeAppHost, RuntimeClient } from "@pistonite/skybook-api/sides/app";
+import {
+    bindRuntimeAppHost,
+    RuntimeClient,
+} from "@pistonite/skybook-api/sides/app";
 
 import { createRuntimeAppHost } from "application/RuntimeAppHost.ts";
 

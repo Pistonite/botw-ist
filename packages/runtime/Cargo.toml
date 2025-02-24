@@ -6,8 +6,18 @@ publish = false
 
 [dependencies]
 blueflame = { path = "../blueflame" }
+serde = { version = "1.0.218", features = ["derive"] }
 skybook-parser = { path = "../parser" }
+
+# TS/WASM dependencies
+ts-rs = { version = "10.1.0", optional = true }
+tsify-next = { version = "0.5.4", default-features = false, features = ["js"], optional = true }
+wasm-bindgen = { version = "0.2.100", optional = true, features = ["serde-serialize"] }
 
 [dev-dependencies]
 tokio = { version = "1.42.0", features = ["macros", "rt-multi-thread"] }
 
+[features]
+__ts-binding = ["dep:ts-rs", "mock-data"]
+wasm = ["dep:tsify-next", "dep:wasm-bindgen"]
+mock-data = ["skybook-parser/mock-data"]

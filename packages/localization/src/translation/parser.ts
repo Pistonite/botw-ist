@@ -7,7 +7,7 @@ import { translateCategory } from "./category.ts";
 export const translateParserError = (error: ParserError): string => {
     const key = `parser.${error.type}`;
     switch (error.type) {
-        case "Unexpected": 
+        case "Unexpected":
             return translateUI("generic.error.internal", { error: error.data });
         case "InvalidMetaValue": {
             const [metaKey, value] = error.data;

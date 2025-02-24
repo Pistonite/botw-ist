@@ -82,10 +82,15 @@ async fn test_parser_snapshot(path: &str, script: &str) -> anyhow::Result<()> {
 
     let script = normalize_newlines(script);
 
-    let lex_path = format!("tests/parse/{}.lex", path);
-    let syn_path = format!("tests/parse/{}.syn", path);
-    let cir_path = format!("tests/parse/{}.cir", path);
-    let sem_path = format!("tests/parse/{}.sem", path);
+    let mock_suffix = if cfg!(feature = "mock-data") {
+        "_mock"
+    } else {
+        ""
+    };
+    let lex_path = format!("tests/parse/{}{}.lex", path, mock_suffix);
+    let syn_path = format!("tests/parse/{}{}.syn", path, mock_suffix);
+    let cir_path = format!("tests/parse/{}{}.cir", path, mock_suffix);
+    let sem_path = format!("tests/parse/{}{}.sem", path, mock_suffix);
 
     let lex_out = format!("{:#?}", skybook_parser::parse_tokens(&script));
     let syn_out = format!(
@@ -131,7 +136,7 @@ fn process_snapshot_file(path: &str, content: &str, mut update: bool) -> anyhow:
         std::fs::write(path, content)?;
         return Ok(());
     }
-    let current_content = normalize_newlines(std::fs::read_to_string(&path)?);
+    let current_content = normalize_newlines(std::fs::read_to_string(path)?);
     let expected_content = normalize_newlines(content);
     if current_content != expected_content {
         let wip_path = path.replace("tests/parse/", "tests/parse/wip/");

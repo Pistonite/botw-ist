@@ -3,12 +3,11 @@ import { createRoot } from "react-dom/client";
 import {
     FluentProvider,
     Switch,
-    webDarkTheme,
     webLightTheme,
 } from "@fluentui/react-components";
+import type { ItemSlotInfo } from "@pistonite/skybook-api";
 
 import { ItemTooltipProvider } from "../src/ItemTooltipProvider";
-import { ItemSlotInfo } from "../src/data/ItemSlotInfo.ts";
 import { CookEffect, ItemUse, PouchItemType } from "../src/data/enums.ts";
 
 import { ItemSlot } from "../src/ItemSlot";
@@ -27,10 +26,10 @@ const DUMMY: ItemSlotInfo = {
     modSellPrice: 0,
     modEffectId: CookEffect.None,
     modEffectLevel: 0,
-    ingredientActorNames: [],
-    listPosition: 0,
+    ingredientActorNames: ["", "", "", "", ""],
+    listPos: 0,
     unallocated: false,
-    poolPosition: 0,
+    poolPos: 0,
     isInBrokenSlot: false,
     holdingCount: 0,
     promptEntangled: false,
@@ -172,6 +171,7 @@ const TEST_ITEMS: ItemSlotInfo[] = [
     },
 ];
 
+// eslint-disable-next-line react-refresh/only-export-components
 const App: React.FC = () => {
     const [cheap, setCheap] = useState(false);
     const [isEquipped, setIsEquipped] = useState(false);

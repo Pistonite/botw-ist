@@ -23,6 +23,11 @@ tasks:
       - task: ecma:eslint-check
       - task: ecma:prettier-check
 
+  check-mocked:
+    deps: [put-mocks]
+    cmds:
+      - task: check
+
   fix:
     cmds:
       - task: ecma:eslint-fix
@@ -31,6 +36,17 @@ tasks:
   test:
     cmds:
       - task: ecma:vite-build
+
+  test-mocked:
+    deps: [put-mocks]
+    cmds:
+      - task: test
+
+  put-mocks:
+    cmds:
+      - $(which mkdir) -p src/generated
+      - cp src/data/ActorDataMap_mock.ts src/generated/ActorDataMap.ts
+
 
   push-artifacts:
     cmds:

@@ -3,7 +3,7 @@ use std::sync::Arc;
 use teleparse::ToSpan;
 
 use crate::cir;
-use crate::error::ErrorReport;
+use crate::error::{Error, ErrorReport};
 use crate::search::QuotedItemResolver;
 use crate::syn;
 
@@ -126,6 +126,17 @@ pub enum Command {
 #[cfg(not(feature = "wasm"))]
 static_assertions::assert_eq_size!(Command, [u8; 0x20]);
 
+impl Command {
+    /// Convience wrapper to create a command for setting a S32 gamedata flag
+    #[inline]
+    pub fn set_gdt_s32(flag_name: &str, value: i32) -> Self {
+        Self::SetGdt(
+            flag_name.to_string(),
+            Box::new(cir::GdtMeta::new(cir::GdtValue::S32(value), None)),
+        )
+    }
+}
+
 pub async fn parse_command<R: QuotedItemResolver>(
     command: &syn::Command,
     resolver: &R,
@@ -233,13 +244,15 @@ pub async fn parse_command<R: QuotedItemResolver>(
             errors,
         ))),
         syn::Command::Sync(_) => Some(cir::Command::Sync),
-        syn::Command::Break(cmd) => match cir::parse_syn_int_str(&cmd.amount, &cmd.amount.span()) {
-            Ok(x) => Some(cir::Command::Break(x as i32)),
-            Err(e) => {
-                errors.push(e);
-                None
+        syn::Command::Break(cmd) => {
+            match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
+                Ok(x) => Some(cir::Command::Break(x)),
+                Err(e) => {
+                    errors.push(e);
+                    None
+                }
             }
-        },
+        }
         syn::Command::SetInventory(cmd) => Some(cir::Command::SetInventory(
             cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
         )),
@@ -286,8 +299,62 @@ pub async fn parse_command<R: QuotedItemResolver>(
             Some(cir::Command::SetGdt(flag_name, Box::new(gdt_value)))
         }
 
-        syn::Command::Annotation(_) => {
-            todo!()
+        syn::Command::Annotation(cmd) => parse_annotation(&cmd.annotation, errors),
+    }
+}
+
+pub fn parse_annotation(
+    annotation: &syn::Annotation,
+    errors: &mut Vec<ErrorReport>,
+) -> Option<cir::Command> {
+    match annotation {
+        syn::Annotation::WeaponSlots(cmd) => {
+            match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
+                Err(e) => {
+                    errors.push(e);
+                    None
+                }
+                Ok(x) if x < 8 || x > 20 => {
+                    errors.push(
+                        Error::InvalidEquipmentSlotNum(cir::Category::Weapon, x)
+                            .spanned(&cmd.amount.span()),
+                    );
+                    None
+                }
+                Ok(x) => Some(cir::Command::set_gdt_s32("WeaponPorchStockNum", x)),
+            }
+        }
+        syn::Annotation::BowSlots(cmd) => {
+            match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
+                Err(e) => {
+                    errors.push(e);
+                    None
+                }
+                Ok(x) if x < 5 || x > 14 => {
+                    errors.push(
+                        Error::InvalidEquipmentSlotNum(cir::Category::Bow, x)
+                            .spanned(&cmd.amount.span()),
+                    );
+                    None
+                }
+                Ok(x) => Some(cir::Command::set_gdt_s32("BowPorchStockNum", x)),
+            }
+        }
+        syn::Annotation::ShieldSlots(cmd) => {
+            match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
+                Err(e) => {
+                    errors.push(e);
+                    None
+                }
+                Ok(x) if x < 4 || x > 20 => {
+                    errors.push(
+                        Error::InvalidEquipmentSlotNum(cir::Category::Shield, x)
+                            .spanned(&cmd.amount.span()),
+                    );
+                    None
+                }
+                Ok(x) => Some(cir::Command::set_gdt_s32("ShieldPorchStockNum", x)),
+            }
         }
     }
 }

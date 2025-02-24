@@ -21,14 +21,16 @@ export const init = (app: ExtensionApp) => {
                     getTokenizer: () => language,
                     getConfiguration: () => configuration,
                     // the parser and runtime can both produce diagnostics
-                    getMarkerOwners: () => [
-                        "parser",
-                    ],
+                    getMarkerOwners: () => ["parser"],
                     provideMarkers: (model) => {
                         return provideParserDiagnostics(app, model);
                     },
                     getSemanticTokensLegend: () => legend,
-                    provideDocumentRangeSemanticTokens: (model, range, token) => {
+                    provideDocumentRangeSemanticTokens: (
+                        model,
+                        range,
+                        token,
+                    ) => {
                         return provideSemanticTokens(app, model, range, token);
                     },
                 },
@@ -38,22 +40,21 @@ export const init = (app: ExtensionApp) => {
             customTokenColors: [
                 {
                     token: "string.item.quoted",
-                    value: "string.regexp"
+                    value: "string.regexp",
                 },
                 {
                     token: "string.item.literal",
-                    value: "string.regexp"
+                    value: "string.regexp",
                 },
                 {
                     token: "string.blockliteral",
-                    value: "tag"
+                    value: "tag",
                 },
                 {
                     token: "function.command.super",
-                    value: "constant"
+                    value: "constant",
                 },
-            ]
-        }
+            ],
+        },
     });
 };
-

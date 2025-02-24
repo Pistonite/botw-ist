@@ -9,6 +9,7 @@
     "dependencies": {
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons": "catalog:",
+        "@pistonite/skybook-api": "workspace:*",
         "react": "catalog:",
         "botw-item-assets": "workspace:*",
         "skybook-localization": "workspace:*"

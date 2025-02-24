@@ -1,9 +1,13 @@
+#[cfg(not(feature = "mock-data"))]
+mod item_search_common;
+#[cfg(not(feature = "mock-data"))]
 use item_search_common::test_item_search;
+#[cfg(not(feature = "mock-data"))]
 use skybook_parser::cir;
+#[cfg(not(feature = "mock-data"))]
 use skybook_parser::search::{search_item_by_ident, search_item_by_ident_all, ResolvedItem};
 
-mod item_search_common;
-
+#[cfg(not(feature = "mock-data"))]
 #[test]
 fn test_item_search_empty() {
     assert_eq!(search_item_by_ident(""), None);
@@ -19,6 +23,7 @@ fn test_item_search_empty() {
 /// Test items with hard coded names in V2
 ///
 /// For example core -> AncientCore
+#[cfg(not(feature = "mock-data"))]
 #[test]
 fn test_item_search_v2() {
     test_item_search("slate", "Obj_DRStone_Get");

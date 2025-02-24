@@ -1,0 +1,182 @@
+ParseOutput {
+    steps: [
+        Step {
+            pos: 0,
+            command: Eat(
+                [],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 19,
+            command: Get(
+                [],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 58,
+            command: Get(
+                [],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 86,
+            command: Get(
+                [
+                    ItemSpec {
+                        amount: 1,
+                        item: Item {
+                            actor: "古代箭",
+                            meta: None,
+                        },
+                    },
+                ],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 102,
+            command: Eat(
+                [],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 121,
+            command: Eat(
+                [],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 139,
+            command: PickUp(
+                [
+                    ItemSelectSpec {
+                        amount: 1,
+                        item: Category(
+                            Weapon,
+                        ),
+                        slot: 0,
+                    },
+                ],
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 174,
+            command: Use(
+                CategorySpec {
+                    category: Bow,
+                    amount: 1,
+                    row: 0,
+                    col: 0,
+                },
+            ),
+            notes: "",
+        },
+        Step {
+            pos: 183,
+            command: Freeze(
+                [],
+            ),
+            notes: "",
+        },
+    ],
+    pages: [],
+    display: [],
+    errors: [
+        ParserErrorReport {
+            span: (
+                4,
+                7,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "axe",
+            ),
+        },
+        ParserErrorReport {
+            span: (
+                25,
+                30,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "apple",
+            ),
+        },
+        ParserErrorReport {
+            span: (
+                64,
+                69,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "arrow",
+            ),
+        },
+        ParserErrorReport {
+            span: (
+                79,
+                84,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "arrow",
+            ),
+        },
+        ParserErrorReport {
+            span: (
+                106,
+                109,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "axe",
+            ),
+        },
+        ParserErrorReport {
+            span: (
+                125,
+                128,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "inf",
+            ),
+        },
+        ParserErrorReport {
+            span: (
+                164,
+                173,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "ice_arrow",
+            ),
+        },
+        ParserErrorReport {
+            span: (
+                190,
+                194,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "meat",
+            ),
+        },
+        ParserErrorReport {
+            span: (
+                200,
+                204,
+            ),
+            is_warning: false,
+            error: InvalidCategory(
+                Food,
+            ),
+        },
+    ],
+}

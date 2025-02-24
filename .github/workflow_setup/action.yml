@@ -1,0 +1,33 @@
+name: "Workflow Setup"
+description: "Workflow Setup"
+
+inputs:
+  token:
+    description: "GitHub Token"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: arduino/setup-task@v2
+      with:
+        version: 3.x
+        repo-token: ${{ inputs.token }}
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 10
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'pnpm'
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: wasm32-unknown-unknown,x86_64-unknown-linux-gnu
+    - uses: Swatinem/rust-cache@v2
+    - uses: taiki-e/install-action@v2
+      with:
+        tool: wasm-pack,mdbook,mdbook-admonish,ripgrep
+    - uses: baptiste0928/cargo-install@v3
+      with:
+        crate: workex
+        git: https://github.com/Pistonite/workex

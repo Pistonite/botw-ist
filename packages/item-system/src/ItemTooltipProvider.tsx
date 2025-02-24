@@ -7,8 +7,9 @@ import {
 } from "react";
 import { makeStyles, mergeClasses } from "@fluentui/react-components";
 
+import type { ItemSlotInfo } from "@pistonite/skybook-api";
+
 import { useStaticAssetStyles } from "./images";
-import type { ItemSlotInfo } from "./data/ItemSlotInfo.ts";
 import { ItemTooltipContent } from "./ItemTooltipContent.tsx";
 import {
     ItemTooltipContext,

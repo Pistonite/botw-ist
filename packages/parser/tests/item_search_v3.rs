@@ -1,14 +1,18 @@
+#[cfg(not(feature = "mock-data"))]
+mod item_search_common;
+#[cfg(not(feature = "mock-data"))]
 use item_search_common::test_item_search;
+#[cfg(not(feature = "mock-data"))]
 use skybook_parser::cir;
+#[cfg(not(feature = "mock-data"))]
 use skybook_parser::search::{
     search_item_by_ident, search_item_by_ident_all, ResolvedItem, COOK_EFFECT_NAMES,
 };
 
-mod item_search_common;
-
 /// Test items with priority in V3
 ///
 /// For example Axe -> WoodcuttersAxe
+#[cfg(not(feature = "mock-data"))]
 #[test]
 fn test_item_search_v3_priority() {
     test_item_search("branch", "Weapon_Sword_044");
@@ -25,6 +29,7 @@ fn test_item_search_v3_priority() {
 }
 
 /// Test items with plural forms
+#[cfg(not(feature = "mock-data"))]
 #[test]
 fn test_item_search_v3_plural() {
     test_item_search("apples", "Item_Fruit_A");
@@ -33,6 +38,7 @@ fn test_item_search_v3_plural() {
 /// Test items with alias in V3
 ///
 /// For example GEB -> GreatEagleBow
+#[cfg(not(feature = "mock-data"))]
 #[test]
 fn test_item_search_v3_alias() {
     test_item_search("trav_sword", "Weapon_Sword_001");
@@ -72,6 +78,7 @@ fn test_item_search_v3_alias() {
     test_item_search("thunderhelmkey", "Obj_Armor_115_Head");
 }
 
+#[cfg(not(feature = "mock-data"))]
 #[test]
 fn test_item_search_v3_effect() {
     for (effect_name, effect_id) in COOK_EFFECT_NAMES {

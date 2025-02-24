@@ -1,0 +1,20 @@
+name: PR
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    name: check (mocked)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: ./.github/workflow_setup
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: task install-ci
+      - run: task check-mocked --output group

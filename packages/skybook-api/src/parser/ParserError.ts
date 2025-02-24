@@ -13,6 +13,7 @@ export type ParserError =
     | { type: "InvalidItem"; data: string }
     | { type: "InvalidEmptyItem" }
     | { type: "IntFormat"; data: string }
+    | { type: "IntRange"; data: string }
     | { type: "FloatFormat"; data: string }
     | { type: "UnusedMetaKey"; data: string }
     | { type: "InvalidMetaValue"; data: [string, MetaValue] }
@@ -29,4 +30,5 @@ export type ParserError =
     | { type: "UnexpectedMetaKeyWithValue"; data: string }
     | { type: "InvalidStringLength"; data: number }
     | { type: "GdtTypeNotSet" }
-    | { type: "GdtStrTypeNotSet" };
+    | { type: "GdtStrTypeNotSet" }
+    | { type: "InvalidEquipmentSlotNum"; data: [Category, number] };

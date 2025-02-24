@@ -14,3 +14,7 @@
 	path = packages/shared-controls
 	url = https://github.com/Pistonight/shared-controls
 	branch = main
+[submodule "intwc"]
+	path = packages/intwc
+	url = https://github.com/Pistonight/intwc
+	branch = main

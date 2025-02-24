@@ -8,6 +8,10 @@ includes:
     taskfile: ../parser
     dir: ../parser
     internal: true
+  runtime:
+    taskfile: ../runtime
+    dir: ../runtime
+    internal: true
   git:
     taskfile: ../mono-dev/task/git.yaml
     internal: true
@@ -20,6 +24,7 @@ tasks:
         sh: jq '.version' package.json | tr -d '"'
     cmds:
       - task: parser:build-api-ts-binding
+      - task: runtime:build-api-ts-binding
       - > 
           workex -p skyb-api-{{.VERSION}} --no-gitignore
           src/Extension.ts 

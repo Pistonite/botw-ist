@@ -11,11 +11,10 @@ tasks:
     cmds:
       - task: ecma:vite-dev
 
-  # build:
-  #   desc: Build production bundle
-  #   cmds:
-  #     - npx tsc
-  #     - npx vite build
+  build:
+    desc: Build production bundle
+    cmds:
+      - task: ecma:vite-build
 
   check:
     desc: Check for errors
