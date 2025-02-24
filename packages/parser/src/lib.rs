@@ -21,6 +21,7 @@ mod util;
 /// Generated data
 mod generated {
     #[cfg(not(feature = "mock-data"))]
+    #[rustfmt::skip]
     mod armor_upgrade;
     #[cfg(feature = "mock-data")]
     mod armor_upgrade {
@@ -30,6 +31,7 @@ mod generated {
     pub use armor_upgrade::ARMOR_UPGRADE;
 
     #[cfg(not(feature = "mock-data"))]
+    #[rustfmt::skip]
     mod item_name;
     #[cfg(feature = "mock-data")]
     mod item_name {
