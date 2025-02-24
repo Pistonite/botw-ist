@@ -17,4 +17,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: task install-ci
-      - run: task check-mocked
+      - run: task check-mocked --output group

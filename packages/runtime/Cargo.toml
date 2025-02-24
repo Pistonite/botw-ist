@@ -18,6 +18,6 @@ wasm-bindgen = { version = "0.2.100", optional = true, features = ["serde-serial
 tokio = { version = "1.42.0", features = ["macros", "rt-multi-thread"] }
 
 [features]
-__ts-binding = ["dep:ts-rs"]
+__ts-binding = ["dep:ts-rs", "mock-data"]
 wasm = ["dep:tsify-next", "dep:wasm-bindgen"]
 mock-data = ["skybook-parser/mock-data"]
