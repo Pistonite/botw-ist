@@ -76,7 +76,7 @@ tasks:
   install-cargo-extra-tools:
     aliases: [icets]
     cmds:
-      - cargo install magoo mdbook mdbook-admonish live-server cargo-watch wasm-pack
+      - cargo install magoo mdbook mdbook-admonish live-server cargo-watch wasm-pack ripgrep
       - cargo install --git https://github.com/Pistonite/workex
 
   install:

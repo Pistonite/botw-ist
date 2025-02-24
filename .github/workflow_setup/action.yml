@@ -26,7 +26,7 @@ runs:
     - uses: Swatinem/rust-cache@v2
     - uses: taiki-e/install-action@v2
       with:
-        tool: wasm-pack,mdbook,mdbook-admonish
+        tool: wasm-pack,mdbook,mdbook-admonish,ripgrep
     - uses: baptiste0928/cargo-install@v3
       with:
         crate: workex
