@@ -20,6 +20,7 @@
         "@modyfi/vite-plugin-yaml": "catalog:",
         "@types/react": "catalog:",
         "eslint": "catalog:",
+        "js-yaml": "^4.1.0",
         "mono-dev": "workspace:*",
         "typescript": "catalog:",
         "vite": "catalog:"

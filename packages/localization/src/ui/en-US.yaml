@@ -7,6 +7,7 @@ parser.SyntaxUnexpectedExpecting: "Unexpected syntax. Expecting: {{arg}}"
 parser.SyntaxUnexpectedEof: Unexpected end of file
 parser.InvalidItem: "Invalid item: `{{arg}}`"
 parser.InvalidEmptyItem: "Item name cannot be empty in this context"
+parser.IntRange: "Integer `{{arg}}` is out of range"
 parser.IntFormat: "`{{arg}}` is not a valid integer"
 parser.FloatFormat: "`{{arg}}` is not a valid floating-point number"
 parser.UnusedMetaKey: "Property `{{arg}}` is unused"
@@ -21,6 +22,11 @@ parser.InvalidTrial: "`{{arg}}` is not a valid trial name"
 parser.InvalidCategory: "Cannot use category `{{arg}}` in this context"
 parser.InvalidInventoryRow: "Inventory row number must be between 1 and 4 (inclusive), got: {{arg}}"
 parser.InvalidInventoryCol: "Inventory column number must be between 1 and 5 (inclusive), got: {{arg}}"
+parser.UnexpectedMetaKeyWithValue: "The `{{arg}}` property should not have a value in this context"
+parser.InvalidStringLength: "The maximum length allowed for the string is {0} in this context"
+parser.GdtTypeNotSet: "Must include one of these properties to set the type of the GDT: bool, s32, f32, vec2f, vec3f"
+parser.GdtStrTypeNotSet: "Must include one of these properties to set the type of the GDT string: str32, str64, str256"
+parser.InvalidEquipmentSlotNum: "`{{num}}` is not a valid number of slots for category `{{category}}`"
 
 category.Weapon: Weapon
 category.Bow: Bow

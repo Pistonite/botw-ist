@@ -124,6 +124,10 @@ mod parser_error {
         GdtStrTypeNotSet,
         #[error("`{1}` is not a valid number of slots for category `{0:?}`")]
         InvalidEquipmentSlotNum(cir::Category, i32),
+        //////////////////////////////////
+        // Add new errors below
+        // The translation files needs to be updated accordingly!!!
+        //////////////////////////////////
     }
 }
 

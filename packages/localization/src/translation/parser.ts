@@ -17,6 +17,11 @@ export const translateParserError = (error: ParserError): string => {
             const category = translateCategory(error.data);
             return translateUI(key, { arg: category });
         }
+        case "InvalidEquipmentSlotNum": {
+            const [categoryStr, num] = error.data;
+            const category = translateCategory(categoryStr);
+            return translateUI(key, { category, num });
+        }
         default: {
             if ("data" in error) {
                 return translateUI(key, { arg: error.data });
