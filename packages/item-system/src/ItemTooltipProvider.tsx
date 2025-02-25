@@ -5,7 +5,7 @@ import {
     useCallback,
     useEffect,
 } from "react";
-import { makeStyles, mergeClasses } from "@fluentui/react-components";
+import { makeStyles } from "@fluentui/react-components";
 
 import type { ItemSlotInfo } from "@pistonite/skybook-api";
 
