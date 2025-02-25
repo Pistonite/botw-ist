@@ -109,6 +109,7 @@ tasks:
       - cmd: "{{.TASK_EXE}} --list"
 
   build-artifacts:
+    desc: Generate artifacts for development locally and from hosted app
     cmds:
       - task: parser:pull-deps-public
       - task: item-assets:pull-artifacts-public
@@ -120,6 +121,7 @@ tasks:
       - task: runtime-wasm:pull-dist
 
   pull-artifacts:
+    desc: Pull artifacts from storage (requires gcloud access)
     deps:
       - localization:pull-artifacts
       - item-assets:pull-artifacts
@@ -167,5 +169,4 @@ tasks:
     cmds:
       - task: manual:build
       - task: runtime-wasm:build
-      - task: skybook-api:build
 

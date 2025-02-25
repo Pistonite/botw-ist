@@ -1,0 +1,42 @@
+name: Deploy Dev Site
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: ./.github/steps/setup
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          rust_targets: wasm32-unknown-unknown,x86_64-unknown-linux-gnu
+      - run: task install-ci
+      - run: task build
+        working_directory: packages/manual
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: packages/manual/book
+          retention-days: 3
+  deploy:
+    name: deploy
+    needs:
+      - build
+    if: github.event_name != 'pull_request'
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
