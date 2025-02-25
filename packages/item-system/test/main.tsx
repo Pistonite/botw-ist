@@ -5,14 +5,14 @@ import {
     Switch,
     webLightTheme,
 } from "@fluentui/react-components";
+
 import type { ItemSlotInfo } from "@pistonite/skybook-api";
+import { initI18n } from "skybook-localization";
 
 import { ItemTooltipProvider } from "../src/ItemTooltipProvider";
 import { CookEffect, ItemUse, PouchItemType } from "../src/data/enums.ts";
-
 import { ItemSlot } from "../src/ItemSlot";
 import { ItemTooltip } from "../src/ItemTooltip.tsx";
-import { initI18n } from "skybook-localization";
 
 const DUMMY: ItemSlotInfo = {
     actorName: "Dummy",
@@ -271,7 +271,7 @@ void (async function main() {
         createRoot(root).render(
             <React.StrictMode>
                 <FluentProvider theme={webLightTheme}>
-                    <ItemTooltipProvider>
+                    <ItemTooltipProvider backgroundUrl="/SheikahBackground.png">
                         <App />
                     </ItemTooltipProvider>
                 </FluentProvider>

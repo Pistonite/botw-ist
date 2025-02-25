@@ -12,5 +12,5 @@
   - [Commands]()
 - [Developer](./developer/index.md)
   - [Architecture](./developer/architecture.md)
-  - [Contributing]()
+  - [Contributing](./developer/contributing.md)
   - [External Integration](./developer/integration/index.md)

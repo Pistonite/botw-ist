@@ -31,10 +31,6 @@ tasks:
     cmds:
       - cargo test
 
-  test-mocked:
-    cmds:
-      - cargo test --features mock-data
-
   test-parse:
     cmds:
       - cargo test --test parse
@@ -44,22 +40,10 @@ tasks:
       UPDATE_PARSER_SNAPSHOTS: 1
     cmds:
       - cargo test --test parse
-      - cargo test --test parse --features mock-data
 
   check:
     cmds:
-      - task: cargo:clippy-package-feature
-        vars:
-          PACKAGE: skybook-parser
-          FEATURES: wasm,cached
-      - task: cargo:fmt-check
-
-  check-mocked:
-    cmds:
-      - task: cargo:clippy-package-feature
-        vars:
-          PACKAGE: skybook-parser
-          FEATURES: mock-data
+      - task: cargo:clippy-all
       - task: cargo:fmt-check
 
   fix:
@@ -74,6 +58,16 @@ tasks:
     cmds:
       - $(which mkdir) -p data
       - gcloud storage cp gs://ist-private/artifacts/skybook-parser/*.yaml data/
+
+  pull-artifacts-public:
+    cmds:
+      - $(which mkdir) -p src/generated
+      - wget -O src/generated/item_name.rs https://ist.pistonite.dev/botw-ist/packages/parser/item_name.rs
+
+  package-artifacts-public:
+    cmds:
+      - $(which mkdir) -p ../manual/book/botw-ist/packages/parser
+      - cp src/generated/item_name.rs ../manual/book/botw-ist/packages/parser/
 
   push-artifacts:
     cmds:

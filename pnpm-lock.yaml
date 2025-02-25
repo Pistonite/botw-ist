@@ -96,6 +96,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.62.11
         version: 5.66.0(react@18.3.1)
+      botw-item-assets:
+        specifier: workspace:*
+        version: link:../item-assets
       mobile-device-detect:
         specifier: ^0.4.3
         version: 0.4.3
@@ -123,7 +126,10 @@ importers:
     devDependencies:
       '@modyfi/vite-plugin-yaml':
         specifier: 'catalog:'
-        version: 1.1.0(rollup@4.31.0)(vite@5.4.14)
+        version: 1.1.0(rollup@4.31.0)(vite@5.4.14(@types/node@22.13.5))
+      '@types/node':
+        specifier: ^22.13.5
+        version: 22.13.5
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.18
@@ -132,7 +138,7 @@ importers:
         version: 18.3.5(@types/react@18.3.18)
       '@vitejs/plugin-react':
         specifier: 'catalog:'
-        version: 4.3.4(vite@5.4.14)
+        version: 4.3.4(vite@5.4.14(@types/node@22.13.5))
       eslint:
         specifier: 'catalog:'
         version: 9.18.0
@@ -144,13 +150,13 @@ importers:
         version: 5.7.3
       vite:
         specifier: 'catalog:'
-        version: 5.4.14
+        version: 5.4.14(@types/node@22.13.5)
       vite-proxy-serve-static:
         specifier: ^1.0.1
         version: 1.0.1
       vite-tsconfig-paths:
         specifier: ^5.1.4
-        version: 5.1.4(typescript@5.7.3)(vite@5.4.14)
+        version: 5.1.4(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.5))
 
   packages/intwc:
     dependencies:
@@ -181,13 +187,16 @@ importers:
         version: 5.7.3
       vite:
         specifier: 'catalog:'
-        version: 5.4.14
+        version: 5.4.14(@types/node@22.13.5)
 
   packages/item-assets:
     dependencies:
       '@griffel/react':
         specifier: 'catalog:'
         version: 1.5.29(react@18.3.1)
+      '@pistonite/pure':
+        specifier: 'catalog:'
+        version: 0.22.2
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -200,7 +209,7 @@ importers:
         version: 18.3.5(@types/react@18.3.18)
       '@vitejs/plugin-react':
         specifier: 'catalog:'
-        version: 4.3.4(vite@5.4.14)
+        version: 4.3.4(vite@5.4.14(@types/node@22.13.5))
       eslint:
         specifier: 'catalog:'
         version: 9.18.0
@@ -215,7 +224,7 @@ importers:
         version: 5.7.3
       vite:
         specifier: 'catalog:'
-        version: 5.4.14
+        version: 5.4.14(@types/node@22.13.5)
 
   packages/item-system:
     dependencies:
@@ -240,7 +249,7 @@ importers:
     devDependencies:
       '@modyfi/vite-plugin-yaml':
         specifier: 'catalog:'
-        version: 1.1.0(rollup@4.31.0)(vite@5.4.14)
+        version: 1.1.0(rollup@4.31.0)(vite@5.4.14(@types/node@22.13.5))
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.18
@@ -249,7 +258,7 @@ importers:
         version: 18.3.5(@types/react@18.3.18)
       '@vitejs/plugin-react':
         specifier: 'catalog:'
-        version: 4.3.4(vite@5.4.14)
+        version: 4.3.4(vite@5.4.14(@types/node@22.13.5))
       eslint:
         specifier: 'catalog:'
         version: 9.18.0
@@ -264,7 +273,7 @@ importers:
         version: 5.7.3
       vite:
         specifier: 'catalog:'
-        version: 5.4.14
+        version: 5.4.14(@types/node@22.13.5)
 
   packages/localization:
     dependencies:
@@ -295,7 +304,7 @@ importers:
     devDependencies:
       '@modyfi/vite-plugin-yaml':
         specifier: 'catalog:'
-        version: 1.1.0(rollup@4.31.0)(vite@5.4.14)
+        version: 1.1.0(rollup@4.31.0)(vite@5.4.14(@types/node@22.13.5))
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.18
@@ -313,7 +322,7 @@ importers:
         version: 5.7.3
       vite:
         specifier: 'catalog:'
-        version: 5.4.14
+        version: 5.4.14(@types/node@22.13.5)
 
   packages/mono-dev:
     dependencies:
@@ -405,7 +414,7 @@ importers:
         version: 18.3.5(@types/react@18.3.18)
       '@vitejs/plugin-react':
         specifier: 'catalog:'
-        version: 4.3.4(vite@5.4.14)
+        version: 4.3.4(vite@5.4.14(@types/node@22.13.5))
       eslint:
         specifier: 'catalog:'
         version: 9.18.0
@@ -420,7 +429,7 @@ importers:
         version: 5.7.3
       vite:
         specifier: 'catalog:'
-        version: 5.4.14
+        version: 5.4.14(@types/node@22.13.5)
 
   packages/skybook-api:
     dependencies:
@@ -1451,6 +1460,9 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+
+  '@types/node@22.13.5':
+    resolution: {integrity: sha512-+lTU0PxZXn0Dr1NBtC7Y8cR21AJr87dLLU953CWA6pMxxv/UDc7jYAY90upcrie1nRcD6XNG5HOYEDtgW5TxAg==}
 
   '@types/prop-types@15.7.14':
     resolution: {integrity: sha512-gNMvNH49DJ7OJYv+KAKn0Xp45p8PLl6zo2YnvDIbTd4J6MER2BmWN49TG7n9LvkyihINxeKW8+3bfS2yDC9dzQ==}
@@ -2612,6 +2624,9 @@ packages:
   unbox-primitive@1.1.0:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==}
     engines: {node: '>= 0.4'}
+
+  undici-types@6.20.0:
+    resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
   update-browserslist-db@1.1.2:
     resolution: {integrity: sha512-PPypAm5qvlD7XMZC3BujecnaOxwhrtoFR+Dqkk5Aa/6DssiH0ibKoketaj9w8LP7Bont1rYeoV5plxD7RTEPRg==}
@@ -4156,12 +4171,12 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@modyfi/vite-plugin-yaml@1.1.0(rollup@4.31.0)(vite@5.4.14)':
+  '@modyfi/vite-plugin-yaml@1.1.0(rollup@4.31.0)(vite@5.4.14(@types/node@22.13.5))':
     dependencies:
       '@rollup/pluginutils': 5.1.0(rollup@4.31.0)
       js-yaml: 4.1.0
       tosource: 2.0.0-alpha.3
-      vite: 5.4.14
+      vite: 5.4.14(@types/node@22.13.5)
     transitivePeerDependencies:
       - rollup
 
@@ -4343,6 +4358,10 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
+  '@types/node@22.13.5':
+    dependencies:
+      undici-types: 6.20.0
+
   '@types/prop-types@15.7.14': {}
 
   '@types/react-dom@18.3.5(@types/react@18.3.18)':
@@ -4431,14 +4450,14 @@ snapshots:
       '@typescript-eslint/types': 8.21.0
       eslint-visitor-keys: 4.2.0
 
-  '@vitejs/plugin-react@4.3.4(vite@5.4.14)':
+  '@vitejs/plugin-react@4.3.4(vite@5.4.14(@types/node@22.13.5))':
     dependencies:
       '@babel/core': 7.26.7
       '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.7)
       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.7)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.4.14
+      vite: 5.4.14(@types/node@22.13.5)
     transitivePeerDependencies:
       - supports-color
 
@@ -5768,6 +5787,8 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
+  undici-types@6.20.0: {}
+
   update-browserslist-db@1.1.2(browserslist@4.24.4):
     dependencies:
       browserslist: 4.24.4
@@ -5791,23 +5812,24 @@ snapshots:
 
   vite-proxy-serve-static@1.0.1: {}
 
-  vite-tsconfig-paths@5.1.4(typescript@5.7.3)(vite@5.4.14):
+  vite-tsconfig-paths@5.1.4(typescript@5.7.3)(vite@5.4.14(@types/node@22.13.5)):
     dependencies:
       debug: 4.4.0
       globrex: 0.1.2
       tsconfck: 3.1.4(typescript@5.7.3)
     optionalDependencies:
-      vite: 5.4.14
+      vite: 5.4.14(@types/node@22.13.5)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@5.4.14:
+  vite@5.4.14(@types/node@22.13.5):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.5.1
       rollup: 4.31.0
     optionalDependencies:
+      '@types/node': 22.13.5
       fsevents: 2.3.3
 
   void-elements@3.1.0: {}

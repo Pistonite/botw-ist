@@ -25,8 +25,7 @@ indoc = "2.0.5"
 tokio = { version = "1.43.0", features = ["full"] }
 
 [features]
-__ts-binding = ["dep:ts-rs", "mock-data"]
+__ts-binding = ["dep:ts-rs"]
 wasm = ["dep:tsify-next", "dep:wasm-bindgen"]
 cached = ["dep:cached"]
-mock-data = []
 

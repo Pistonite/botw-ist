@@ -9,7 +9,6 @@ import { makeStyles, mergeClasses } from "@fluentui/react-components";
 
 import type { ItemSlotInfo } from "@pistonite/skybook-api";
 
-import { useStaticAssetStyles } from "./images";
 import { ItemTooltipContent } from "./ItemTooltipContent.tsx";
 import {
     ItemTooltipContext,
@@ -25,11 +24,15 @@ const useStyles = makeStyles({
     },
 });
 
+export type ItemTooltipProviderProps = {
+    /** Url for the image for the background of the tooltip */
+    backgroundUrl: string;
+};
+
 /** Provider for the ItemTooltipContext */
-export const ItemTooltipProvider: React.FC<PropsWithChildren> = ({
-    children,
-}) => {
-    const staticAssets = useStaticAssetStyles();
+export const ItemTooltipProvider: React.FC<
+    PropsWithChildren<ItemTooltipProviderProps>
+> = ({ backgroundUrl, children }) => {
     const styles = useStyles();
 
     const tooltipDivRef = useRef<HTMLDivElement>(null);
@@ -94,10 +97,10 @@ export const ItemTooltipProvider: React.FC<PropsWithChildren> = ({
             <div ref={childrenContainerRef}>{children}</div>
             <div
                 ref={tooltipDivRef}
-                className={mergeClasses(
-                    staticAssets.sheikahBg,
-                    styles.container,
-                )}
+                className={mergeClasses(styles.container)}
+                style={{
+                    backgroundImage: `url(${backgroundUrl})`,
+                }}
             >
                 {tooltipInfo && <ItemTooltipContent info={tooltipInfo} />}
             </div>

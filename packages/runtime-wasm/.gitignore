@@ -1,3 +1,5 @@
 /pkg
 /dist
+/target
 .eslintcache
+*.stderr

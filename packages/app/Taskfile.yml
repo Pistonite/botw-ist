@@ -28,4 +28,3 @@ tasks:
     cmds:
       - task: ecma:eslint-fix
       - task: ecma:prettier-fix
-
