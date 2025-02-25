@@ -19,7 +19,7 @@ jobs:
           rust_targets: wasm32-unknown-unknown,x86_64-unknown-linux-gnu
       - run: task install-ci
       - run: task build
-        working_directory: packages/manual
+        working-directory: packages/manual
       - uses: actions/upload-pages-artifact@v3
         with:
           path: packages/manual/book
