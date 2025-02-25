@@ -25,6 +25,9 @@ jobs:
   test:
     name: test
     runs-on: blacksmith-4vcpu-ubuntu-2204
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,6 +42,9 @@ jobs:
   build:
     name: build
     runs-on: blacksmith-4vcpu-ubuntu-2204
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:

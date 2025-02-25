@@ -97,7 +97,7 @@ export const ItemTooltipProvider: React.FC<
             <div ref={childrenContainerRef}>{children}</div>
             <div
                 ref={tooltipDivRef}
-                className={mergeClasses(styles.container)}
+                className={styles.container}
                 style={{
                     backgroundImage: `url(${backgroundUrl})`,
                 }}
