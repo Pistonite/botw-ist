@@ -85,82 +85,14 @@ tasks:
     aliases: [i]
     cmds:
       - magoo install
-      - task: install-deps
       - pnpm install
-      - task: manual:install
-
-  install-ci-privileged:
-    cmds:
-      - task: install-deps
-      - pnpm install --frozen-lockfile
       - task: manual:install
 
   install-ci:
     cmds:
+      - task: pull-artifacts
       - pnpm install --frozen-lockfile
       - task: manual:install
-      - task: put-mocks
-
-  install-deps:
-    deps:
-      - localization:pull-artifacts
-      - item-assets:pull-artifacts
-      - item-system:pull-artifacts
-      - parser:pull-artifacts
-
-  put-mocks:
-    deps:
-      - localization:put-mocks
-      - item-assets:put-mocks
-      - item-system:put-mocks
-
-  check:
-    deps: [check-common]
-    cmds:
-      - task: parser:check
-      # - task: runtime:check
-      # - task: runtime-wasm:check
-  #
-
-
-  check-mocked:
-    deps: [check-common]
-    cmds:
-      - task: parser:check-mocked
-      # - task: runtime:check-mocked
-      # - task: runtime-wasm:check-mocked
-
-  check-common:
-    deps:
-      - localization:check
-      - item-system:check
-      - skybook-api:check
-      - app:check
-    cmds:
-      - task: manual:check
-    
-      
-
-  test:
-    deps: [test-common]
-    cmds:
-      - task: parser:test
-
-  test-mocked:
-    deps: [test-common]
-    cmds:
-      - task: parser:test-mocked
-
-  test-common:
-    deps:
-      - item-system:test
-
-  build-mocked:
-    deps: []
-      # - app:build
-    cmds:
-      - task: manual:build-mocked
-      - task: runtime-wasm:build-mocked
 
   exec:
     aliases: [x]
@@ -175,4 +107,66 @@ tasks:
     silent: true
     cmds:
       - cmd: "{{.TASK_EXE}} --list"
+
+  build-artifacts:
+    desc: Generate artifacts for development locally and from hosted app
+    cmds:
+      - task: parser:pull-deps-public
+      - task: item-assets:pull-artifacts-public
+      - task: research:build
+      - task: localization:build
+      - task: item-assets:build-src
+      - task: item-system:build
+      - task: parser:build
+      - task: runtime-wasm:pull-dist
+
+  pull-artifacts:
+    desc: Pull artifacts from storage (requires gcloud access)
+    deps:
+      - localization:pull-artifacts
+      - item-assets:pull-artifacts
+      - item-system:pull-artifacts
+      - parser:pull-artifacts
+
+  check:
+    desc: Run ALL of the checks
+    cmds:
+      - task: check-layer-1
+      - task: check-layer-2
+      - task: check-layer-3
+      - cmd: echo 'All checks passed!'
+        silent: true
+
+  check-layer-1:
+    deps:
+      - skybook-api:check
+
+  check-layer-2:
+    deps:
+      - manual:check
+      - localization:check
+      - item-system:check
+      - app:check
+
+  check-layer-3:
+    deps:
+      - parser:check
+      # - task: runtime:check
+      # - task: runtime-wasm:check
+      
+
+  test:
+    desc: Run ALL of the tests
+    deps:
+      - item-system:test
+    cmds:
+      - task: parser:test
+
+  build:
+    desc: Check that components can build without failure
+    deps: []
+      # - app:build
+    cmds:
+      - task: manual:build
+      - task: runtime-wasm:build
 

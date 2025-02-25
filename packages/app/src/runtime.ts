@@ -11,7 +11,8 @@ import { createRuntimeAppHost } from "application/RuntimeAppHost.ts";
 export async function initRuntime() {
     const appHost = createRuntimeAppHost();
     // create the runtime worker
-    const worker = new Worker("/runtime/worker.js");
+    const commitShort = import.meta.env.COMMIT.substring(0, 8);
+    const worker = new Worker(`/runtime/worker-${commitShort}.js`);
     // bind the host handler
     bindRuntimeAppHost(appHost, { worker });
     // create the client for calling the runtime

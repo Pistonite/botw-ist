@@ -33,3 +33,7 @@ get  1 apple
 '''
 ```
 
+## Discord
+Join my [Discord](https://discord.gg/xe2wHYrSgB)
+and get the `BOTW Tools` role to get access to the `botw-ist` channel to ask
+questions about or discuss features of the IST Simulator App.

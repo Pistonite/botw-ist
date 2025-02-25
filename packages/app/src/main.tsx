@@ -16,8 +16,14 @@ import { isLessProductive } from "pure-contrib/platform.ts";
 import { initRuntime } from "./runtime.ts";
 import { ExtensionAppContext } from "application/useExtensionApp.ts";
 
+import {
+    getSheikaBackgroundUrl,
+    probeAndRegisterAssetLocation,
+} from "ui/asset.ts";
+
 async function boot() {
     const root = document.getElementById("-root-") as HTMLDivElement;
+    const bootPromises = [probeAndRegisterAssetLocation(), initI18n()];
     if (isLessProductive) {
         // window.setStatus
         // await new Promise<void>((resolve) => {
@@ -54,19 +60,22 @@ async function boot() {
     initDark({
         persist: false,
     });
-    await initI18n();
     initExtensionManager();
     const queryClient = new QueryClient();
 
     const runtime = await initRuntime();
     const app = createExtensionAppHost(runtime);
 
+    await Promise.all(bootPromises);
+
     createRoot(root).render(
         <StrictMode>
             <ExtensionAppContext.Provider value={app}>
                 <QueryClientProvider client={queryClient}>
                     <ThemeProvider>
-                        <ItemTooltipProvider>
+                        <ItemTooltipProvider
+                            backgroundUrl={getSheikaBackgroundUrl()}
+                        >
                             <App />
                         </ItemTooltipProvider>
                     </ThemeProvider>
@@ -75,4 +84,5 @@ async function boot() {
         </StrictMode>,
     );
 }
+
 void boot();

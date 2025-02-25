@@ -1,5 +1,5 @@
-name: "Workflow Setup"
-description: "Workflow Setup"
+name: "Workflow Setup (Blacksmith)"
+description: "Workflow Setup (Blacksmith)"
 
 inputs:
   token:
@@ -35,3 +35,9 @@ runs:
       with:
         crate: workex
         git: https://github.com/Pistonite/workex
+    - id: auth
+      uses: google-github-actions/auth@v2
+      with:
+        project_id: pistonstor
+        workload_identity_provider: projects/262116032713/locations/global/workloadIdentityPools/github-actions/providers/github-provider
+    - uses: google-github-actions/setup-gcloud@v2

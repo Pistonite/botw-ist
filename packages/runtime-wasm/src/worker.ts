@@ -33,7 +33,11 @@ const resolveQuotedItem: QuotedItemResolverFn = async (query) => {
 };
 
 async function boot() {
-    await wasm_bindgen({ module_or_path: "/runtime/skybook.wasm" });
+    // This is injected by the build process
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const wasmModuleBase = (self as any)["__skybook_path_base"] as string;
+
+    await wasm_bindgen({ module_or_path: wasmModuleBase + ".wasm" });
 
     // TODO: any init here
 

@@ -3,11 +3,7 @@ use mdbook::{preprocess::CmdPreprocessor, BookItem};
 /// Read a mdbook CmdPreprocessor input from stdin
 /// and write the output to stdout
 pub fn run_highlight() -> anyhow::Result<()> {
-    if cfg!(feature = "mock-data") {
-        eprintln!("Running skybook highlighter (mocked parser)");
-    } else {
-        eprintln!("Running skybook highlighter");
-    }
+    eprintln!("Running skybook highlighter");
     let (_ctx, mut book) = CmdPreprocessor::parse_input(std::io::stdin())?;
 
     let mut errors = Vec::new();

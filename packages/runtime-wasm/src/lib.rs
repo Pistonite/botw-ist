@@ -16,6 +16,7 @@ use js_item_resolve::JsQuotedItemResolver;
 // ) {
 //     // create the runtime
 //     let runtime = RuntimeWasm::new(JsQuotedItemResolver::new(resolve_quoted_item));
+//
 //     // set the runtime
 //     let runtime_ref = unsafe { &mut *RUNTIME.get() };
 //     runtime_ref.write(runtime);

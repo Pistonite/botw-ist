@@ -15,6 +15,3 @@ clap = { version = "4.5.29", features = ["derive"] }
 mdbook = "0.4.44"
 serde_json = "1.0.138"
 skybook-parser = { path = "../parser" }
-
-[features]
-mock-data = ["skybook-parser/mock-data"]

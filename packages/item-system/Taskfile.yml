@@ -32,14 +32,6 @@ tasks:
     cmds:
       - task: ecma:vite-build
 
-  put-mocks:
-    cmds:
-      - $(which mkdir) -p src/generated
-      - $(which mkdir) -p src/images
-      - cp src/data/ActorDataMap_mock.ts src/generated/ActorDataMap.ts
-      - echo "mock" > src/images/SheikahBackground.png
-
-
   push-artifacts:
     cmds:
       - gcloud storage cp src/generated/*.ts gs://ist-private/artifacts/skybook-item-system/
@@ -47,7 +39,8 @@ tasks:
   pull-artifacts:
     cmds:
       - $(which mkdir) -p src/generated
+      - $(which mkdir) -p public
       - gcloud storage cp gs://ist-private/artifacts/skybook-item-system/*.ts src/generated
-      - gcloud storage cp gs://ist-private/images/SheikahBackground.png src/images
+      - gcloud storage cp gs://ist-private/images/SheikahBackground.png public
 
 
