@@ -69,9 +69,10 @@ includes:
     dir: ./packages/manual
     internal: true
 
-
-
-
+  intwc:
+    taskfile: ./packages/intwc
+    dir: ./packages/intwc
+    internal: true
 
 tasks:
   install-cargo-extra-tools:
@@ -86,13 +87,18 @@ tasks:
     cmds:
       - magoo install
       - pnpm install
-      - task: manual:install
+      - task: post-install
 
   install-ci:
     cmds:
       - task: pull-artifacts
       - pnpm install --frozen-lockfile
+      - task: post-install
+
+  post-install:
+    cmds:
       - task: manual:install
+      - task: intwc:install
 
   exec:
     aliases: [x]

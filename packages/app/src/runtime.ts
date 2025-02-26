@@ -11,8 +11,15 @@ import { createRuntimeAppHost } from "application/RuntimeAppHost.ts";
 export async function initRuntime() {
     const appHost = createRuntimeAppHost();
     // create the runtime worker
-    const commitShort = import.meta.env.COMMIT.substring(0, 8);
-    const worker = new Worker(`/runtime/worker-${commitShort}.js`);
+    let url: string;
+    if (import.meta.env.DEV) {
+        console.log("[dev] using local runtime worker");
+        url = "/runtime/worker.js";
+    } else {
+        const commitShort = import.meta.env.COMMIT.substring(0, 8);
+        url = `/runtime/worker-${commitShort}.min.js`;
+    }
+    const worker = new Worker(url);
     // bind the host handler
     bindRuntimeAppHost(appHost, { worker });
     // create the client for calling the runtime

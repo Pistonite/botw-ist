@@ -24,20 +24,20 @@ tasks:
   package:
     vars:
       BUILD_DIR: dist
-      COMMIT: 
-        sh: git rev-parse HEAD
       COMMIT_SHORT:
         sh: git rev-parse HEAD | cut -c1-8
-      SKYBOOK_JS: "{{.BUILD_DIR}}/skybook-{{.COMMIT_SHORT}}.js"
+      SKYBOOK_JS: "{{.BUILD_DIR}}/skybook.js"
       SKYBOOK_MIN_JS: "{{.BUILD_DIR}}/skybook-{{.COMMIT_SHORT}}.min.js"
-      WORKER_JS: "{{.BUILD_DIR}}/worker-{{.COMMIT_SHORT}}.js"
+      WORKER_JS: "{{.BUILD_DIR}}/worker.js"
       WORKER_MIN_JS: "{{.BUILD_DIR}}/worker-{{.COMMIT_SHORT}}.min.js"
       SKYBOOK_WASM: "{{.BUILD_DIR}}/skybook-{{.COMMIT_SHORT}}.wasm"
+      SKYBOOK_DEV_WASM: "{{.BUILD_DIR}}/skybook.wasm"
         
     cmds:
       - $(which mkdir) -p {{.BUILD_DIR}}
       - rm -f {{.BUILD_DIR}}/*
       - cp pkg/skybook_runtime_wasm_bg.wasm {{.SKYBOOK_WASM}}
+      - cp pkg/skybook_runtime_wasm_bg.wasm {{.SKYBOOK_DEV_WASM}}
       - cp pkg/skybook_runtime_wasm.js {{.SKYBOOK_JS}}
       - cmd: >
           echo 'minifying wasm_bindgen module';
@@ -50,7 +50,7 @@ tasks:
       - cmd: >
           echo 'bundling worker';
           cp pkg/skybook_runtime_wasm.js {{.WORKER_JS}};
-          echo 'self["__skybook_path_base"]="/runtime/skybook-{{.COMMIT_SHORT}}";' >> {{.WORKER_JS}};
+          echo 'self["__skybook_path_base"]="/runtime/skybook";' >> {{.WORKER_JS}};
           echo 'self["__min"]=false;' >> {{.WORKER_JS}};
           bun build src/worker.ts >> {{.WORKER_JS}};
         silent: true
@@ -61,6 +61,7 @@ tasks:
           echo 'self["__min"]=true;' >> {{.WORKER_MIN_JS}};
           bun build --minify src/worker.ts >> {{.WORKER_MIN_JS}};
         silent: true
+    
 
   check:
     desc: Run Linter and Formatter
@@ -94,11 +95,9 @@ tasks:
     vars:
       ORIGIN: https://ist.pistonite.app
       COMMIT:
-        sh: git rev-parse HEAD | cut -c1-8
-      APP_COMMIT:
         sh: curl {{.ORIGIN}}/commit | cut -c1-8
     cmds:
       - $(which mkdir) -p dist
-      - wget -O dist/worker-{{.COMMIT}}.js {{.ORIGIN}}/runtime/worker-{{.APP_COMMIT}}.min.js
-      - wget -O dist/skybook-{{.COMMIT}}.js {{.ORIGIN}}/runtime/skybook-{{.APP_COMMIT}}.min.js
-      - wget -O dist/skybook-{{.COMMIT}}.wasm {{.ORIGIN}}/runtime/skybook-{{.APP_COMMIT}}.wasm
+      - wget -O dist/worker.js {{.ORIGIN}}/runtime/worker-{{.COMMIT}}.min.js
+      - wget -O dist/skybook.js {{.ORIGIN}}/runtime/skybook-{{.COMMIT}}.min.js
+      - wget -O dist/skybook.wasm {{.ORIGIN}}/runtime/skybook-{{.COMMIT}}.wasm

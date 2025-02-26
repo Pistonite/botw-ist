@@ -86,7 +86,7 @@ const useStyles = makeStyles({
     },
 });
 
-export const Component: React.FC<ExtensionComponentProps> = ({
+export const ItemExplorer: React.FC<ExtensionComponentProps> = ({
     standalone,
     connect,
 }) => {

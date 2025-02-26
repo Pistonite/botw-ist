@@ -11,7 +11,7 @@ import { EditorExtension } from "./editor.ts";
 
 const FILE = "script.skyb";
 
-export const Component: React.FC<ExtensionComponentProps> = ({
+export const Editor: React.FC<ExtensionComponentProps> = ({
     standalone,
     connect,
 }) => {
