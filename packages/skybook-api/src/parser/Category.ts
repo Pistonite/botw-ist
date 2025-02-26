@@ -5,6 +5,9 @@ export type Category =
     | "Bow"
     | "Shield"
     | "Armor"
+    | "ArmorHead"
+    | "ArmorUpper"
+    | "ArmorLower"
     | "Material"
     | "Food"
     | "KeyItem";
