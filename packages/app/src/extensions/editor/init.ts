@@ -14,9 +14,10 @@ export const init = (app: ExtensionApp) => {
     initialized = true;
     initCodeEditor({
         language: {
+            typescript: {},
             custom: [
                 {
-                    getId: () => "skyb",
+                    getId: () => "skybook",
                     getExtensions: () => [".skyb"],
                     getTokenizer: () => language,
                     getConfiguration: () => configuration,
@@ -52,7 +53,7 @@ export const init = (app: ExtensionApp) => {
                 },
                 {
                     token: "function.command.super",
-                    value: "constant",
+                    value: "meta.macro",
                 },
             ],
         },

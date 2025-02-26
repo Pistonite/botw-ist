@@ -4,7 +4,7 @@ Simulator for Inventory Slot Transfer in BOTW
 **Simulator v4 is under active development!**
 
 ## License
-Most of this repo are under MIT License:
+All code in this repo are under MIT License:
 - BlueFlame (packages/blueflame*): See [LICENSE](./packages/blueflame/LICENSE)
 - All other non-git-submodules: See [LICENSE](./LICENSE)
 - For git submodules, see the `LICENSE` file of the corresponding submodule
