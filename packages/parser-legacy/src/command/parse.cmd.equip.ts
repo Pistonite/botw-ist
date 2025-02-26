@@ -1,11 +1,11 @@
-import { type ItemStack, type ItemType, convertItem } from "./item.ts";
+import { type ItemStack, ItemType, convertItem } from "./item.ts";
 import {
     type ASTCommandEquip,
     type ASTCommandUnequip,
     type ASTCommandUnequipAll,
     isLiteralAll,
 } from "./ast";
-import { AbstractProperCommand, type Command } from "./command";
+import { AbstractProperCommand } from "./command";
 import { parseASTItemType } from "./parse.basis";
 import { parseASTArgumentSingleItemMaybeInSlot } from "./parse.clause.inslot";
 import {
@@ -62,15 +62,43 @@ export class CommandUnequipAll extends AbstractProperCommand {
         this.types = types;
     }
     public convert(): string {
-    }
-    public execute(state: SimulationState): void {
-        state.unequipAll(this.types);
-    }
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandUnequipAll &&
-            arrayShallowEqual(this.types, other.types)
-        );
+        let s = "";
+        if (this.types.includes(ItemType.Weapon)) {
+            s += "unequip all weapons;";
+        }
+        if (this.types.includes(ItemType.Bow)) {
+            s += "unequip all bows;";
+        }
+        if (this.types.includes(ItemType.Shield)) {
+            s += "unequip all shields;";
+        }
+        // V3->V4: the types in V3 are named wrong
+        const hasArmorHead = this.types.includes(ItemType.ArmorUpper);
+        const hasArmorUpper = this.types.includes(ItemType.ArmorMiddle);
+        const hasArmorLower = this.types.includes(ItemType.ArmorLower);
+        if (hasArmorHead && hasArmorUpper && hasArmorLower) {
+            s += "unequip all armors;";
+        } else {
+            if (hasArmorHead) {
+                s += "unequip all head-armors;";
+            }
+            if (hasArmorUpper) {
+                s += "unequip all upper-armors;";
+            }
+            if (hasArmorLower) {
+                s += "unequip all lower-armors;";
+            }
+        }
+        if (this.types.includes(ItemType.Material)) {
+            s += "unequip all materials;";
+        }
+        if (this.types.includes(ItemType.Food)) {
+            s += "unequip all foods;";
+        }
+        if (this.types.includes(ItemType.Key)) {
+            s += "unequip all key-items;";
+        }
+        return s;
     }
 }
 

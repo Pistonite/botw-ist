@@ -37,7 +37,7 @@ export const parseASTCommandAdd: ParserItem<ASTCommandAdd, CommandAdd> = (
         ast.mOneOrMoreItems1,
         search,
         parseASTItems,
-        (i, c) => new CommandAdd(i, c).setVerb("add"),
+        (i, c) => new CommandAdd(i, c),
         codeBlocks,
     );
 };

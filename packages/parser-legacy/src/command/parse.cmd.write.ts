@@ -1,17 +1,20 @@
-import { SimulationState } from "core/SimulationState";
-import { Item, MetaModifyOption } from "data/item";
-import { ASTCommandWriteMetadata } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
+import { convertItemMeta, type MetaModifyOption } from "./item.ts";
+import type { ASTCommandWriteMetadata } from "./ast";
+import { AbstractProperCommand } from "./command";
 import { parseASTArgumentSingleItemMaybeInSlot } from "./parse.clause.inslot";
 import { parseASTMetadata } from "./parse.metadata";
-import { codeBlockFromRange, CodeBlockTree, ParserItem } from "./type";
+import {
+    codeBlockFromRange,
+    type CodeBlockTree,
+    type ParserItem,
+} from "./type";
 
 export class CommandWrite extends AbstractProperCommand {
-    private itemTarget: Item;
+    private itemTarget: string;
     private slot: number;
     private meta: MetaModifyOption;
     constructor(
-        item: Item,
+        item: string,
         slot: number,
         meta: MetaModifyOption,
         codeBlocks: CodeBlockTree,
@@ -22,17 +25,13 @@ export class CommandWrite extends AbstractProperCommand {
         this.meta = meta;
     }
 
-    public execute(state: SimulationState): void {
-        return state.setMetadata(this.itemTarget, this.slot, this.meta);
-    }
-
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandWrite &&
-            this.itemTarget === other.itemTarget &&
-            this.slot === other.slot &&
-            JSON.stringify(this.meta) === JSON.stringify(other.meta)
-        );
+    public convert() {
+        const meta = convertItemMeta(this.meta);
+        let slotClause = "";
+        if (this.slot) {
+            slotClause = ` in slot ${this.slot + 1}`;
+        }
+        return `write ${meta} to ${this.itemTarget}${slotClause};`;
     }
 }
 
@@ -59,7 +58,7 @@ export const parseASTCommandWriteMetadata: ParserItem<
     }
     const [stack, slot] = result;
     return [
-        new CommandWrite(stack.item, slot, meta, codeBlocks),
+        new CommandWrite(stack.ident, slot, meta, codeBlocks),
         codeBlocks,
         "",
     ];

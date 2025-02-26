@@ -1,6 +1,6 @@
-import { ASTIdentifier } from "./ast.basis";
-import { ASTTarget, parse } from "./ast.generated";
-import { Token, tokenizeV2 } from "./tokenize";
+import type { ASTIdentifier } from "./ast.basis";
+import { type ASTTarget, parse } from "./ast.generated";
+import { type Token, tokenizeV2 } from "./tokenize";
 import { SpecialSymbols } from "./types";
 
 export type AbstractSyntaxTree = {

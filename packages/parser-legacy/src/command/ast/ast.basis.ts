@@ -1,5 +1,5 @@
-import { Token } from "./tokenize";
-import { ParseFunction, ParseResultFail, SpecialSymbols } from "./types";
+import type { Token } from "./tokenize";
+import { type ParseFunction, ParseResultFail, SpecialSymbols } from "./types";
 
 export type ASTInteger = {
     type: "ASTInteger";

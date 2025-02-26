@@ -1,7 +1,5 @@
-import { SimulationState } from "core/SimulationState";
-import { GameFlags } from "core/inventory";
-import { ASTCommandHas, isEpsilon, isInteger } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
+import { type ASTCommandHas, isEpsilon, isInteger } from "./ast";
+import { AbstractProperCommand } from "./command";
 import {
     parseASTIdentifier,
     parseASTInteger,
@@ -9,10 +7,16 @@ import {
 } from "./parse.basis";
 import {
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     flattenCodeBlocks,
-    Parser,
+    type Parser,
 } from "./type";
+
+export type GameFlags = {
+    weaponSlots: number;
+    bowSlots: number;
+    shieldSlots: number;
+};
 
 export class CommandHas extends AbstractProperCommand {
     private value: string | number | boolean;
@@ -26,15 +30,15 @@ export class CommandHas extends AbstractProperCommand {
         this.key = key;
         this.value = value;
     }
-    public execute(state: SimulationState): void {
-        state.setGameFlag(this.key, this.value);
-    }
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandHas &&
-            this.key === other.key &&
-            this.value === other.value
-        );
+    public convert(): string {
+        switch (this.key) {
+            case "weaponSlots":
+                return `:weapon-slots ${this.value};`;
+            case "bowSlots":
+                return `:bow-slots ${this.value};`;
+            case "shieldSlots":
+                return `:shield-slots ${this.value};`;
+        }
     }
 }
 
@@ -69,7 +73,8 @@ export const parseASTCommandHas: Parser<ASTCommandHas, CommandHas> = (ast) => {
     const keyMap = [
         ["weaponslots", "weaponSlots", Number, 1],
         ["bowslots", "bowSlots", Number, 1],
-        ["shieldSlots", "shieldSlots", Number, 1],
+        // V3->V4: typo fixed
+        ["shieldslots", "shieldSlots", Number, 1],
     ] as const;
     for (let i = 0; i < keyMap.length; i++) {
         const [searchKey, actualKey, make, defaultValue] = keyMap[i];

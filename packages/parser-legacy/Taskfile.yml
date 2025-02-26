@@ -1,0 +1,29 @@
+version: '3'
+
+includes:
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+
+tasks:
+  install:
+    desc: Generate AST parser (needs `python`)
+    cmds:
+      - python scripts/generate_parser.py src/command/ast/grammar.txt src/command/ast/ast.generated.ts
+    # sources:
+    # - generate_parser.py
+    # - src/core/command/ast/grammar.txt
+    # generates:
+    # - src/core/command/ast/ast.generated.ts
+
+  check:
+    cmds:
+      - task: ecma:tsc-check
+      - task: ecma:eslint-check
+      - task: ecma:prettier-check
+
+  fix:
+    desc: Fix issues in code
+    cmds:
+      - task: ecma:eslint-fix
+      - task: ecma:prettier-fix

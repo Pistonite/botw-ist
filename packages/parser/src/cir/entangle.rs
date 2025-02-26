@@ -11,9 +11,13 @@ pub fn parse_entangle_meta(
     meta: Option<&syn::ItemMeta>,
     errors: &mut Vec<ErrorReport>,
 ) -> cir::CategorySpec {
-    let category = cir::parse_category(category);
+    let parsed_category = cir::parse_category(category);
+    if parsed_category.coerce_armor() != parsed_category {
+        errors.push(Error::InvalidCategory(parsed_category).spanned_warning(category));
+    }
+
     let spec = cir::CategorySpec {
-        category,
+        category: parsed_category,
         amount: 1,
         row: 0,
         col: 0,

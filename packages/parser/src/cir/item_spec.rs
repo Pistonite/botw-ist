@@ -1,4 +1,4 @@
-use teleparse::ToSpan;
+use teleparse::{tp, ToSpan};
 
 use crate::cir;
 use crate::error::{Error, ErrorReport};
@@ -57,6 +57,16 @@ pub struct Item {
     /// The "star" option should always be None, and the actor
     /// is adjusted to be the actor with the given star num
     pub meta: Option<cir::ItemMeta>,
+}
+pub async fn parse_item_list_finite_optional<R: QuotedItemResolver>(
+    list: &tp::Option<syn::ItemListFinite>,
+    resolver: &R,
+    errors: &mut Vec<ErrorReport>,
+) -> Vec<ItemSpec> {
+    match list.as_ref() {
+        Some(list) => parse_item_list_finite(list, resolver, errors).await,
+        None => Vec::new(),
+    }
 }
 
 pub async fn parse_item_list_finite<R: QuotedItemResolver>(

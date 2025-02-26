@@ -1,21 +1,19 @@
-import { SimulationState } from "core/SimulationState";
-import { arrayEqual } from "data/util";
-import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
-import {
+import type { ItemStackArg } from "./ItemStackArg";
+import type {
     ASTSuperCommandAddSlot,
     ASTSuperCommandSortMaterial,
     ASTSuperCommandSwap,
 } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
+import { AbstractProperCommand } from "./command";
 import { parseASTInteger } from "./parse.basis";
 import { parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot } from "./parse.clause.with.fromslot";
 import {
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     delegateParseItem,
     flattenCodeBlocks,
-    ParserItem,
-    ParserSafe,
+    type ParserItem,
+    type ParserSafe,
 } from "./type";
 
 export class SuperCommandSwap extends AbstractProperCommand {
@@ -27,16 +25,8 @@ export class SuperCommandSwap extends AbstractProperCommand {
         this.j = j;
     }
 
-    public execute(state: SimulationState): void {
-        state.swap(this.i, this.j);
-    }
-
-    public equals(other: Command): boolean {
-        return (
-            other instanceof SuperCommandSwap &&
-            this.i === other.i &&
-            this.j === other.j
-        );
+    public convert(): string {
+        return `!swap ${this.i} ${this.j};`;
     }
 }
 
@@ -58,7 +48,7 @@ export const parseASTSuperCommandSwap: ParserSafe<
 
 export class SuperCommandAddSlot extends AbstractProperCommand {
     private stacks: ItemStackArg[];
-    private slot: number;
+    private _slot: number;
     constructor(
         stacks: ItemStackArg[],
         slot: number,
@@ -66,17 +56,10 @@ export class SuperCommandAddSlot extends AbstractProperCommand {
     ) {
         super(codeBlocks);
         this.stacks = stacks;
-        this.slot = slot - 1; //change to 0 based
+        this._slot = slot - 1; //change to 0 based
     }
-    public execute(state: SimulationState): void {
-        state.addSlotsDirectly(getSlotsToAdd(this.stacks), this.slot);
-    }
-    public equals(other: Command): boolean {
-        return (
-            other instanceof SuperCommandAddSlot &&
-            arrayEqual(this.stacks, other.stacks) &&
-            this.slot === other.slot
-        );
+    public convert() {
+        return `### "!add-slot" is no longer supported!!!\n### !add-slot ${this.stacks.map((s) => s.convert()).join(" ")};`;
     }
 }
 
@@ -101,14 +84,8 @@ export const parseASTSuperCommandAddSlot: ParserItem<
 };
 
 export class SuperCommandSortMaterial extends AbstractProperCommand {
-    constructor(codeBlocks: CodeBlockTree) {
-        super(codeBlocks);
-    }
-    public execute(state: SimulationState): void {
-        state.inaccuratelySortMaterials();
-    }
-    public equals(other: Command): boolean {
-        return other instanceof SuperCommandSortMaterial;
+    public convert(): string {
+        return `sort materials;`;
     }
 }
 

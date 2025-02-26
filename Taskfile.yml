@@ -97,6 +97,7 @@ tasks:
 
   post-install:
     cmds:
+      - task: parser-legacy:install
       - task: manual:install
       - task: intwc:install
 

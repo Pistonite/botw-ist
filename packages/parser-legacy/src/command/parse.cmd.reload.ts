@@ -1,12 +1,11 @@
-import { SimulationState } from "core/SimulationState";
-import { ASTCommandReload } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
+import type { ASTCommandReload } from "./ast";
+import { AbstractProperCommand } from "./command";
 import { parseASTIdentifierPrime } from "./parse.basis";
 import {
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     flattenCodeBlocks,
-    Parser,
+    type Parser,
 } from "./type";
 
 export class CommandReload extends AbstractProperCommand {
@@ -15,11 +14,12 @@ export class CommandReload extends AbstractProperCommand {
         super(codeBlocks);
         this.name = name;
     }
-    public execute(state: SimulationState): void {
-        state.reload(this.name);
-    }
-    public equals(other: Command): boolean {
-        return other instanceof CommandReload && this.name === other.name;
+    public convert(): string {
+        if (this.name) {
+            return `reload ${this.name};`;
+        } else {
+            return "reload;";
+        }
     }
 }
 

@@ -1,15 +1,10 @@
-import { SimulationState } from "core/SimulationState";
-import { ASTCommandSyncGameData } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
-import { codeBlockFromRange, Parser } from "./type";
+import type { ASTCommandSyncGameData } from "./ast";
+import { AbstractProperCommand } from "./command";
+import { codeBlockFromRange, type Parser } from "./type";
 
 export class CommandSync extends AbstractProperCommand {
-    public execute(state: SimulationState): void {
-        state.syncGameDataWithPouch();
-    }
-
-    public equals(other: Command): boolean {
-        return other instanceof CommandSync;
+    public convert(): string {
+        return "sync;";
     }
 }
 

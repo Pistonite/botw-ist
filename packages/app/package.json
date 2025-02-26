@@ -21,6 +21,7 @@
         "reselect": "^5.1.1",
         "skybook-item-system": "workspace:*",
         "skybook-localization": "workspace:*",
+        "skybook-parser-legacy": "workspace:*",
         "zustand": "^5.0.2"
     },
     "devDependencies": {

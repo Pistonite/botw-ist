@@ -1,13 +1,16 @@
-import { SimulationState } from "core/SimulationState";
-import { ASTCommandSave, ASTMaybeClauseSaveTarget, isEpsilon } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
+import {
+    type ASTCommandSave,
+    type ASTMaybeClauseSaveTarget,
+    isEpsilon,
+} from "./ast";
+import { AbstractProperCommand } from "./command";
 import { parseASTOneOrMoreIdentifiers } from "./parse.basis";
 import {
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     delegateParse,
     flattenCodeBlocks,
-    Parser,
+    type Parser,
 } from "./type";
 
 export class CommandSave extends AbstractProperCommand {
@@ -20,11 +23,12 @@ export class CommandSave extends AbstractProperCommand {
             this.name = name;
         }
     }
-    public execute(state: SimulationState): void {
-        state.save(this.name);
-    }
-    public equals(other: Command): boolean {
-        return other instanceof CommandSave && this.name === other.name;
+    public convert(): string {
+        if (this.name) {
+            const saveName = this.name.replace(/ /g, "_").toLowerCase();
+            return `save-as ${saveName};`;
+        }
+        return "save;";
     }
 }
 

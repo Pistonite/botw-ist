@@ -1,30 +1,29 @@
-import { SimulationState } from "core/SimulationState";
-import { ItemType } from "data/item";
-import { arrayEqual, arrayShallowEqual } from "data/util";
-import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
+import { ItemType } from "./item.ts";
+import type { ItemStackArg } from "./ItemStackArg";
 import {
-    ASTCommandDnp,
-    ASTCommandDrop,
-    ASTCommandEat,
-    ASTCommandRemove,
-    ASTCommandRemoveAll,
+    type ASTCommandDnp,
+    type ASTCommandDrop,
+    type ASTCommandEat,
+    type ASTCommandRemove,
+    type ASTCommandRemoveAll,
     isLiteralDrop,
 } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
+import { AbstractProperCommand } from "./command";
 import { parseASTItemType } from "./parse.basis";
 import { parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot } from "./parse.clause.with.fromslot";
 import {
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     delegateParseItem,
     delegateParseSafe,
-    ParserItem,
-    ParserSafe,
+    type ParserItem,
+    type ParserSafe,
 } from "./type";
 
 // Remove, Sell, With, Drop
 export class CommandRemove extends AbstractProperCommand {
     private stacks: ItemStackArg[];
+    private verb: string = "destroy";
     private slot: number;
     constructor(
         stacks: ItemStackArg[],
@@ -35,17 +34,17 @@ export class CommandRemove extends AbstractProperCommand {
         this.stacks = stacks;
         this.slot = slot - 1; //change to 0 based
     }
-    public execute(state: SimulationState): void {
-        this.stacks.forEach((stackArg) =>
-            state.remove(stackArg.stack, stackArg.number, this.slot),
-        );
+    public setVerb(verb: string): CommandRemove {
+        this.verb = verb;
+        return this;
     }
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandRemove &&
-            arrayEqual(this.stacks, other.stacks) &&
-            this.slot === other.slot
-        );
+    public convert(): string {
+        let s = `${this.verb} ${this.stacks.map((s) => s.convert()).join(" ")}`;
+        if (this.slot) {
+            s += ` from slot ${this.slot + 1}`;
+        }
+        s += ";";
+        return s;
     }
 }
 
@@ -62,17 +61,13 @@ export class CommandEat extends AbstractProperCommand {
         this.stacks = stacks;
         this.slot = slot - 1; //change to 0 based
     }
-    public execute(state: SimulationState): void {
-        this.stacks.forEach((stackArg) =>
-            state.eat(stackArg.stack, stackArg.number, this.slot),
-        );
-    }
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandEat &&
-            arrayEqual(this.stacks, other.stacks) &&
-            this.slot === other.slot
-        );
+    public convert(): string {
+        let s = `eat ${this.stacks.map((s) => s.convert()).join(" ")}`;
+        if (this.slot) {
+            s += ` from slot ${this.slot + 1}`;
+        }
+        s += ";";
+        return s;
     }
 }
 
@@ -83,14 +78,44 @@ export class CommandRemoveAll extends AbstractProperCommand {
         super(codeBlocks);
         this.types = types;
     }
-    public execute(state: SimulationState): void {
-        state.removeAll(this.types);
-    }
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandRemoveAll &&
-            arrayShallowEqual(this.types, other.types)
-        );
+    public convert(): string {
+        let s = "";
+        if (this.types.includes(ItemType.Weapon)) {
+            s += "destroy all weapons;";
+        }
+        if (this.types.includes(ItemType.Bow)) {
+            s += "destroy all bows;";
+        }
+        if (this.types.includes(ItemType.Shield)) {
+            s += "destroy all shields;";
+        }
+        // V3->V4: the types in V3 are named wrong
+        const hasArmorHead = this.types.includes(ItemType.ArmorUpper);
+        const hasArmorUpper = this.types.includes(ItemType.ArmorMiddle);
+        const hasArmorLower = this.types.includes(ItemType.ArmorLower);
+        if (hasArmorHead && hasArmorUpper && hasArmorLower) {
+            s += "destroy all armors;";
+        } else {
+            if (hasArmorHead) {
+                s += "destroy all head-armors;";
+            }
+            if (hasArmorUpper) {
+                s += "destroy all upper-armors;";
+            }
+            if (hasArmorLower) {
+                s += "destroy all lower-armors;";
+            }
+        }
+        if (this.types.includes(ItemType.Material)) {
+            s += "destroy all materials;";
+        }
+        if (this.types.includes(ItemType.Food)) {
+            s += "destroy all foods;";
+        }
+        if (this.types.includes(ItemType.Key)) {
+            s += "destroy all key-items;";
+        }
+        return s;
     }
 }
 
@@ -106,28 +131,13 @@ export class CommandDnp extends AbstractProperCommand {
         this.stacks = stacks;
         this.slot = slot - 1; //change to 0 based
     }
-    public execute(state: SimulationState): void {
-        this.stacks.forEach((stackArg) => {
-            const removedCount = state.remove(
-                stackArg.stack,
-                stackArg.number,
-                this.slot,
-            );
-            if (removedCount > 0) {
-                getSlotsToAdd([
-                    new ItemStackArg(stackArg.stack, removedCount),
-                ]).forEach((stack) => {
-                    state.obtain(stack);
-                });
-            }
-        });
-    }
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandDnp &&
-            arrayEqual(this.stacks, other.stacks) &&
-            this.slot === other.slot
-        );
+    public convert(): string {
+        let s = `dnp ${this.stacks.map((s) => s.convert()).join(" ")}`;
+        if (this.slot) {
+            s += ` from slot ${this.slot + 1}`;
+        }
+        s += ";";
+        return s;
     }
 }
 
@@ -145,7 +155,7 @@ export const parseASTCommandRemove: ParserItem<
         codeBlocks,
     );
 };
-// TODO: drop to ground
+
 export const parseASTCommandDrop: ParserItem<ASTCommandDrop, CommandRemove> = (
     ast,
     search,
@@ -156,7 +166,7 @@ export const parseASTCommandDrop: ParserItem<ASTCommandDrop, CommandRemove> = (
         ast.mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1,
         search,
         parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot,
-        (i, c) => new CommandRemove(...i, c),
+        (i, c) => new CommandRemove(...i, c).setVerb("drop"),
         codeBlocks,
     );
 };

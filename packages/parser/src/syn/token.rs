@@ -109,6 +109,8 @@ pub enum TT {
         KwSetInventory = "!set-inventory",
         KwSetGamedata = "!set-gamedata",
         KwWrite = "!write",
+        KwSwap = "!swap",
+        KwSwapData = "!swap-data",
     ))]
     SuperCommand,
 
@@ -123,6 +125,28 @@ pub enum TT {
         KwShields = "shields",
         KwArmor = "armor",
         KwArmors = "armors",
+
+        // armor types
+        KwArmorHead = "armor-head",
+        KwHeadArmor = "head-armor",
+        KwHeadArmors = "head-armors",
+        KwArmorBody = "armor-body",
+        KwBodyArmor = "body-armor",
+        KwBodyArmors = "body-armors",
+        KwArmorChest = "armor-chest",
+        KwChestArmor = "chest-armor",
+        KwChestArmors = "chest-armors",
+        KwArmorUpper = "armor-upper",
+        KwUpperArmor = "upper-armor",
+        KwUpperArmors = "upper-armors",
+        KwArmorLeg = "armor-leg",
+        KwArmorLegs = "armor-legs",
+        KwLegArmor = "leg-armor",
+        KwLegArmors = "leg-armors",
+        KwArmorLower = "armor-lower",
+        KwLowerArmor = "lower-armor",
+        KwLowerArmors = "lower-armors",
+
         KwMaterial = "material",
         KwMaterials = "materials",
         KwFood = "food",

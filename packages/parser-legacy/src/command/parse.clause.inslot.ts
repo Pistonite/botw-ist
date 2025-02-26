@@ -1,8 +1,8 @@
-import { ItemStack } from "data/item";
+import type { ItemStack } from "./item.ts";
 import {
-    ASTArgumentSingleItemMaybeInSlot,
-    ASTArgumentSingleItemMaybeInSlotAIdentifier,
-    ASTArgumentSingleItemMaybeInSlotAIdentifierC2,
+    type ASTArgumentSingleItemMaybeInSlot,
+    type ASTArgumentSingleItemMaybeInSlotAIdentifier,
+    type ASTArgumentSingleItemMaybeInSlotAIdentifierC2,
     isClauseInSlot,
     isEpsilon,
 } from "./ast";
@@ -10,12 +10,12 @@ import { parseASTIdentifier } from "./parse.basis";
 import { parseASTClauseSlot } from "./parse.clause.slot";
 import { parsedItemSearch } from "./parse.item";
 import {
-    CodeBlockTree,
+    type CodeBlockTree,
     delegateParse,
     delegateParseItem,
     flattenCodeBlocks,
-    Parser,
-    ParserItem,
+    type Parser,
+    type ParserItem,
 } from "./type";
 
 export const parseASTArgumentSingleItemMaybeInSlot: ParserItem<

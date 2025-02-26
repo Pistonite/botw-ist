@@ -131,6 +131,9 @@ Some(
                 cmd: Unequip(
                     CmdUnequip {
                         lit: token Command(71..78),
+                        all: None(
+                            79,
+                        ),
                         item: ItemOrCategoryWithSlot {
                             item: Item(
                                 Item {

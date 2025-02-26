@@ -1,7 +1,10 @@
-import { SimulationState } from "core/SimulationState";
-import { ASTCommandEnterTrial, ASTCommandExitTrial } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
-import { codeBlockFromRange, CodeBlockTree, ParserSafe } from "./type";
+import type { ASTCommandEnterTrial, ASTCommandExitTrial } from "./ast";
+import { AbstractProperCommand } from "./command";
+import {
+    codeBlockFromRange,
+    type CodeBlockTree,
+    type ParserSafe,
+} from "./type";
 
 export class CommandTrial extends AbstractProperCommand {
     private enter: boolean;
@@ -10,11 +13,11 @@ export class CommandTrial extends AbstractProperCommand {
         this.enter = enter;
     }
 
-    public execute(state: SimulationState): void {
-        state.setEventide(this.enter);
-    }
-    public equals(other: Command): boolean {
-        return other instanceof CommandTrial && this.enter === other.enter;
+    public convert(): string {
+        if (this.enter) {
+            return "leave eventide;";
+        }
+        return "enter eventide;";
     }
 }
 

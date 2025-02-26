@@ -1,12 +1,11 @@
-import { SimulationState } from "core/SimulationState";
-import { ASTCommandShoot } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
+import type { ASTCommandShoot } from "./ast";
+import { AbstractProperCommand } from "./command";
 import { parseASTAmountOrAll } from "./parse.item";
 import {
     codeBlockFromRange,
-    CodeBlockTree,
-    Parser,
-    AmountAllType,
+    type CodeBlockTree,
+    type Parser,
+    type AmountAllType,
 } from "./type";
 
 export class CommandShootArrow extends AbstractProperCommand {
@@ -16,11 +15,12 @@ export class CommandShootArrow extends AbstractProperCommand {
         this.count = count;
     }
 
-    public execute(state: SimulationState): void {
-        state.shootArrow(this.count);
-    }
-    public equals(other: Command): boolean {
-        return other instanceof CommandShootArrow && this.count === other.count;
+    public convert(): string {
+        if (this.count === "All") {
+            return "### `Shoot All` is no longer supported. Please specify number of times!\n### shoot X times;";
+        }
+        const timeWord = this.count === 1 ? "time" : "times";
+        return `shoot ${this.count} ${timeWord};`;
     }
 }
 
