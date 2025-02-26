@@ -39,6 +39,11 @@ includes:
     dir: ./packages/parser
     internal: true
 
+  parser-legacy:
+    taskfile: ./packages/parser-legacy
+    dir: ./packages/parser-legacy
+    internal: true
+
   item-system:
     taskfile: ./packages/item-system
     dir: ./packages/item-system
