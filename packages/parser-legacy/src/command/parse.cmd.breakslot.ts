@@ -31,13 +31,14 @@ export class CommandBreakSlots extends AbstractProperCommand {
     public convert(): string {
         let s = "";
         if (this.stacks.length > 0) {
-            s += `destroy ${this.stacks.map((s) => s.convert()).join(" ")} `;
+            s += `destroy ${this.stacks.map((s) => s.convert()).join(" ")}`;
             if (this.slot) {
-                s += `from slot ${this.slot + 1}`;
+                s += ` from slot ${this.slot + 1}`;
             }
             s += "; ";
         }
-        s += `break ${this.numToBreak} slots;`;
+        const slotWord = this.numToBreak === 1 ? "slot" : "slots";
+        s += `break ${this.numToBreak} ${slotWord};`;
         return s;
     }
 }

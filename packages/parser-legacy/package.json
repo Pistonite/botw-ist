@@ -1,13 +1,13 @@
 {
     "name": "skybook-parser-legacy",
     "private": true,
-    "version": "0.0.0",
+    "version": "3.1.99",
+    "description": "Parse and convert legacy IST script to Skybook format",
     "type": "module",
     "exports": {
         ".": "./src/index.ts"
     },
-    "dependencies": {
-    },
+    "dependencies": {},
     "devDependencies": {
         "@types/react": "catalog:",
         "eslint": "catalog:",

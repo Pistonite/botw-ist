@@ -1,14 +1,12 @@
-import { SimulationState } from "core/SimulationState";
-import { arrayEqual } from "data/util";
-import { getSlotsToAdd, ItemStackArg } from "./ItemStackArg";
-import { ASTCommandInitGameData } from "./ast";
-import { AbstractProperCommand, Command } from "./command";
+import type { ItemStackArg } from "./ItemStackArg";
+import type { ASTCommandInitGameData } from "./ast";
+import { AbstractProperCommand } from "./command";
 import { parseASTItems } from "./parse.item";
 import {
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     delegateParseItem,
-    ParserItem,
+    type ParserItem,
 } from "./type";
 
 export class CommandInitGameData extends AbstractProperCommand {
@@ -18,15 +16,8 @@ export class CommandInitGameData extends AbstractProperCommand {
         this.stacks = stacks;
     }
 
-    public execute(state: SimulationState): void {
-        state.setGameData(getSlotsToAdd(this.stacks));
-    }
-
-    public equals(other: Command): boolean {
-        return (
-            other instanceof CommandInitGameData &&
-            arrayEqual(this.stacks, other.stacks)
-        );
+    public convert(): string {
+        return `!set-gamedata ${this.stacks.map((s) => s.convert()).join(" ")};`;
     }
 }
 

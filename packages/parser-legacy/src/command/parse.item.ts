@@ -1,12 +1,16 @@
-import { ItemStack, joinItemSearchStrings, MetaModifyOption } from "./item.ts";
+import {
+    type ItemStack,
+    joinItemSearchStrings,
+    type MetaModifyOption,
+} from "./item.ts";
 import { ItemStackArg } from "./ItemStackArg";
 import {
-    ASTAmountOrAll,
-    ASTItemStack,
-    ASTOneOrMoreItems,
-    ASTOneOrMoreItemStacks,
-    ASTSingleItem,
-    ASTZeroOrMoreItems,
+    type ASTAmountOrAll,
+    type ASTItemStack,
+    type ASTOneOrMoreItems,
+    type ASTOneOrMoreItemStacks,
+    type ASTSingleItem,
+    type ASTZeroOrMoreItems,
     isEpsilon,
     isInteger,
     isOneOrMoreItemStacks,
@@ -16,13 +20,13 @@ import { parseASTInteger, parseASTOneOrMoreIdentifiers } from "./parse.basis";
 import { parseASTMetadata } from "./parse.metadata";
 import {
     AmountAll,
-    AmountAllType,
+    type AmountAllType,
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     delegateParseItem,
     flattenCodeBlocks,
-    ParserItem,
-    ParserSafe,
+    type ParserItem,
+    type ParserSafe,
 } from "./type";
 
 export const parseASTItems: ParserItem<

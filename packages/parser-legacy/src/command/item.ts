@@ -1,4 +1,3 @@
-
 // Type of the item
 export enum ItemType {
     Weapon = 0,
@@ -82,11 +81,13 @@ export const WeaponModifier = {
 // for example `get 1 royal claymore` is `get 1 royal_claymore`
 export const joinItemSearchStrings = (ids: string[]) => {
     return ids.join("_");
-}
+};
 
 export const convertItem = (item: ItemStack): string => {
-    let s = item.ident;
-    const meta = item.meta;
+    return item.ident + convertItemMeta(item.meta);
+};
+
+export const convertItemMeta = (meta: MetaModifyOption | undefined): string => {
     if (meta && Object.keys(meta).length > 0) {
         const props = [];
         if ("life" in meta) {
@@ -104,13 +105,7 @@ export const convertItem = (item: ItemStack): string => {
         if ("cookEffect" in meta) {
             props.push(`effect=${meta.cookEffect}`);
         }
-        s+= `[${props.join(", ")}]`;
+        return `[${props.join(", ")}]`;
     }
-    return s;
-}
-
-export const convertItemTypes = (types: ItemType[]): string[] => {
-    let hasWeapon = false;
-    let hasBow = false;
-    let hasArrow = false;
-}
+    return "";
+};

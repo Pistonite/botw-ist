@@ -35,13 +35,13 @@ tasks:
 
   check:
     cmds:
-      - task: ecma:tsc-check
-      - task: ecma:prettier-check
       - task: build
       - task: git:check-modification
         vars:
           CHECK_PATH: packages/skybook-api/src
           CHECK_MESSAGE: Please regenerate and commit skybook-api bindings
+      - task: ecma:tsc-check
+      - task: ecma:prettier-check
 
   fix:
     cmds:

@@ -1,4 +1,4 @@
-import { TokenStream } from "./tokenize";
+import type { TokenStream } from "./tokenize";
 // This must be kept in sync with grammar
 // Terminal special characters: [ ] , = : " ! #
 // \s matches whitespace and is used to separate other words

@@ -4,8 +4,8 @@ import sys
 
 
 HEADER = """
-// @ts-nocheck
 /* eslint-disable */
+// @ts-nocheck
 /*
  * This file is the generated parser to convert grammar to Abstract Syntax Tree (AST)
  *

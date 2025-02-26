@@ -1,5 +1,5 @@
-import { ASTClauseFromSlot, ASTClauseInSlot } from "./ast";
-import { codeBlockFromRange, Parser } from "./type";
+import type { ASTClauseFromSlot, ASTClauseInSlot } from "./ast";
+import { codeBlockFromRange, type Parser } from "./type";
 
 export const parseASTClauseSlot: Parser<
     ASTClauseFromSlot | ASTClauseInSlot,

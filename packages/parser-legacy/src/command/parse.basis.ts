@@ -1,11 +1,11 @@
 import { ItemType } from "./item.ts";
 import {
-    ASTOneOrMoreIdentifiers,
-    ASTIdentifier,
-    ASTInteger,
+    type ASTOneOrMoreIdentifiers,
+    type ASTIdentifier,
+    type ASTInteger,
     isOneOrMoreIdentifiers,
-    ASTIdentifierPrime,
-    ASTLiteralItemType,
+    type ASTIdentifierPrime,
+    type ASTLiteralItemType,
     isLiteralKeyItem,
     isLiteralFood,
     isLiteralMaterial,
@@ -16,10 +16,10 @@ import {
 } from "./ast";
 import {
     codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlockTree,
     flattenCodeBlocks,
-    Parser,
-    ParserSafe,
+    type Parser,
+    type ParserSafe,
 } from "./type.ts";
 
 export const parseASTInteger: ParserSafe<ASTInteger, number> = (ast) => {

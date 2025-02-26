@@ -65,7 +65,7 @@ pub enum Command {
     /// See [`syn::CmdEquip`]
     Equip(Box<cir::ItemSelectSpec>),
     /// See [`syn::CmdUnequip`]
-    Unequip(Box<cir::ItemSelectSpec>),
+    Unequip(Box<cir::ItemSelectSpec>, bool),
     /// See [`syn::CmdUse`] and [`crate::syn::CmdShoot`]
     Use(cir::CategorySpec),
     /// See [`syn::CmdRoast`] and [`crate::syn::CmdBake`]
@@ -91,6 +91,10 @@ pub enum Command {
     SetGamedata(Vec<cir::ItemSpec>),
     /// See [`syn::CmdWrite`]
     Write(Box<cir::ItemMeta>, Box<cir::ItemSelectSpec>),
+    /// See [`syn::CmdSwap`] and [`syn::CmdSwapData`]
+    ///
+    /// If the bool is true, the command is `swap-data`
+    Swap(u32, u32, bool),
 
     /// `save` - make a manual save
     Save,
@@ -186,9 +190,10 @@ pub async fn parse_command<R: QuotedItemResolver>(
         syn::Command::Equip(cmd) => Some(cir::Command::Equip(Box::new(
             cir::parse_item_or_category_with_slot(&cmd.item, resolver, errors).await?,
         ))),
-        syn::Command::Unequip(cmd) => Some(cir::Command::Unequip(Box::new(
-            cir::parse_item_or_category_with_slot(&cmd.item, resolver, errors).await?,
-        ))),
+        syn::Command::Unequip(cmd) => Some(cir::Command::Unequip(
+            Box::new(cir::parse_item_or_category_with_slot(&cmd.item, resolver, errors).await?),
+            cmd.all.is_some(),
+        )),
         syn::Command::Use(cmd) => {
             match cir::parse_use_category_with_times(&cmd.category, cmd.times.as_ref()) {
                 Ok(spec) => Some(cir::Command::Use(spec)),
@@ -254,15 +259,65 @@ pub async fn parse_command<R: QuotedItemResolver>(
             }
         }
         syn::Command::SetInventory(cmd) => Some(cir::Command::SetInventory(
-            cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
+            cir::parse_item_list_finite_optional(&cmd.items, resolver, errors).await,
         )),
         syn::Command::SetGamedata(cmd) => Some(cir::Command::SetGamedata(
-            cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
+            cir::parse_item_list_finite_optional(&cmd.items, resolver, errors).await,
         )),
         syn::Command::Write(cmd) => {
             let meta = cir::ItemMeta::parse_syn(&cmd.props, errors);
             let item = cir::parse_item_or_category_with_slot(&cmd.item, resolver, errors).await?;
             Some(cir::Command::Write(Box::new(meta), Box::new(item)))
+        }
+        syn::Command::Swap(cmd) => {
+            let i = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
+                Ok(i) if i >= 0 => i,
+                Ok(i) => {
+                    errors.push(Error::IntRange(i.to_string()).spanned(&cmd.items.0));
+                    return None;
+                }
+                Err(e) => {
+                    errors.push(e);
+                    return None;
+                }
+            };
+            let j = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
+                Ok(i) if i >= 0 => i,
+                Ok(i) => {
+                    errors.push(Error::IntRange(i.to_string()).spanned(&cmd.items.0));
+                    return None;
+                }
+                Err(e) => {
+                    errors.push(e);
+                    return None;
+                }
+            };
+            Some(cir::Command::Swap(i as u32, j as u32, false))
+        }
+        syn::Command::SwapData(cmd) => {
+            let i = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
+                Ok(i) if i >= 0 => i,
+                Ok(i) => {
+                    errors.push(Error::IntRange(i.to_string()).spanned(&cmd.items.0));
+                    return None;
+                }
+                Err(e) => {
+                    errors.push(e);
+                    return None;
+                }
+            };
+            let j = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
+                Ok(i) if i >= 0 => i,
+                Ok(i) => {
+                    errors.push(Error::IntRange(i.to_string()).spanned(&cmd.items.0));
+                    return None;
+                }
+                Err(e) => {
+                    errors.push(e);
+                    return None;
+                }
+            };
+            Some(cir::Command::Swap(i as u32, j as u32, true))
         }
 
         syn::Command::Save(_) => Some(cir::Command::Save),

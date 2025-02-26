@@ -33,6 +33,9 @@ category.Bow: Bow
 category.Arrow: Arrow
 category.Shield: Shield
 category.Armor: Armor
+category.ArmorHead: Armor (Head)
+category.ArmorUpper: Armor (Upper)
+category.ArmorLower: Armor (Lower)
 category.Material: Material
 category.Food: Food
 category.KeyItem: Key Items

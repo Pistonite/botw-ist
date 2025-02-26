@@ -1,8 +1,7 @@
 // Main Command interface.
 import {
-    CodeBlock,
-    codeBlockFromRange,
-    CodeBlockTree,
+    type CodeBlock,
+    type CodeBlockTree,
     flattenCodeBlocks,
 } from "./type.ts";
 
@@ -21,17 +20,22 @@ export enum CmdErr {
 }
 // Each command is parsed from a string
 export interface Command {
-    // Blocks of the command. Used for colorization
-    readonly codeBlocks: CodeBlock[];
     // V4: Convert to Skybook
     convert(): string;
-    // Get the error type
-    readonly cmdErr: CmdErr;
-    // Get the error string, empty string if no error
-    readonly err: string[];
-    // if the command should be skipped with keyboard (like comments)
-    readonly shouldSkipWithKeyboard: boolean;
+
+    // // Blocks of the command. Used for colorization
+    // readonly codeBlocks: CodeBlock[];
+    // // Get the error type
+    // readonly cmdErr: CmdErr;
+    // // Get the error string, empty string if no error
+    // readonly err: string[];
+    // // if the command should be skipped with keyboard (like comments)
+    // readonly shouldSkipWithKeyboard: boolean;
 }
+
+export const staticCommand = (cmd: string) => {
+    return { convert: () => cmd };
+};
 
 // Shared command functions
 class CommandBase {
@@ -57,7 +61,9 @@ export class AbstractProperCommand implements Command {
         return this.base.codeBlocks;
     }
     convert(): string {
-        throw new Error("Subtype of AbstractProperCommand must implement convert()");
+        throw new Error(
+            "Subtype of AbstractProperCommand must implement convert()",
+        );
     }
     get cmdErr(): CmdErr {
         return CmdErr.None;
@@ -78,69 +84,4 @@ export class CommandNop extends AbstractProperCommand {
     get codeBlocks() {
         return this.base.codeBlocks;
     }
-}
-
-// Error command: does nothing, because of error
-export class ErrorCommand implements Command {
-    base: CommandBase;
-    cmdErr: CmdErr;
-    err: string[];
-    constructor(errType: CmdErr, err: string[], codeBlocks: CodeBlockTree) {
-        this.base = new CommandBase(codeBlocks);
-        this.cmdErr = errType;
-        this.err = err;
-    }
-    get codeBlocks() {
-        return this.base.codeBlocks;
-    }
-    shouldSkipWithKeyboard = false;
-}
-
-// Error command: does nothing, because of error
-export class ExecErrorDecorator implements Command {
-    cmdErr = CmdErr.Execute;
-    err: string[];
-    delegate: Command;
-    constructor(command: Command, err: string[]) {
-        this.err = err;
-        this.delegate = command;
-    }
-    get codeBlocks() {
-        return this.delegate.codeBlocks;
-    }
-    execute(_state: SimulationState): void {
-        throw new Error("Attempt to execute error decorator");
-    }
-    shouldSkipWithKeyboard = false;
-}
-
-export class CommandHint implements Command {
-    delegate: ErrorCommand;
-    descriptor: string;
-    constructor(
-        original: string,
-        parts: string[],
-        index: number,
-        usage: string[],
-    ) {
-        this.descriptor = parts.filter((_, i) => i < index).join(" ");
-        const start = this.descriptor.length;
-        this.delegate = new ErrorCommand(CmdErr.Guess, usage, [
-            codeBlockFromRange([0, start], "keyword.command"),
-            codeBlockFromRange([start, original.length], "unknown"),
-        ]);
-    }
-    execute(_state: SimulationState): void {
-        // Do nothing;
-    }
-    get cmdErr(): CmdErr {
-        return this.delegate.cmdErr;
-    }
-    get err(): string[] {
-        return this.delegate.err;
-    }
-    get codeBlocks(): CodeBlock[] {
-        return this.delegate.codeBlocks;
-    }
-    shouldSkipWithKeyboard = false;
 }
