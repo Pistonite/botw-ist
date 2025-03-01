@@ -176,8 +176,8 @@ tasks:
 
   build:
     desc: Check that components can build without failure
-    deps: []
-      # - app:build
+    deps:
+      - app:build
     cmds:
       - task: manual:build
       - task: runtime-wasm:build

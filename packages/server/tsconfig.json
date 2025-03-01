@@ -1,0 +1,7 @@
+{
+    "extends": "../mono-dev/tsconfig/node.json",
+    "compilerOptions": {
+        "baseUrl": "src"
+    },
+    "include": ["src", "scripts"]
+}

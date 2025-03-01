@@ -1,0 +1,49 @@
+version: '3'
+
+tasks:
+  pull-local:
+    vars:
+      COMMIT_SHORT:
+        sh: git rev-parse HEAD | cut -c1-8
+    desc: Copy build artifacts locally to dist (requires built app and runtime-wasm)
+    cmds:
+      - rm -rf dist
+      - $(which mkdir) -p dist/app/runtime
+      - cp -r ../app/dist/* dist/app
+      - cp ../runtime-wasm/dist/skybook-{{.COMMIT_SHORT}}.wasm dist/app/runtime
+      - cp ../runtime-wasm/dist/skybook-{{.COMMIT_SHORT}}.min.js dist/app/runtime
+      - cp ../runtime-wasm/dist/worker-{{.COMMIT_SHORT}}.min.js dist/app/runtime
+      - git rev-parse HEAD > dist/app/commit
+      - bun scripts/gzip-assets.ts
+
+  dev:
+    desc: Run server in watch mode
+    cmds:
+      - $(which mkdir) -p dist
+      - task: bun-watch
+
+  bun-watch:
+    dir: dist
+    cmds:
+      - cmd: bun --watch run ../src/index.ts
+        ignore_error: true
+
+
+  build:
+    cmds:
+      - $(which mkdir) -p dist
+      - bun build --compile --minify --sourcemap --bytecode src/index.ts --outfile dist/server
+
+  build-prod:
+    cmds:
+      - $(which mkdir) -p dist
+      - cmd: >
+          bun build 
+          --compile 
+          --minify 
+          --sourcemap
+          --bytecode
+          --target=bun-linux-x64-musl 
+          --outfile dist/server
+          src/index.ts 
+  
