@@ -29,7 +29,9 @@
         "@pistonite/workex": "catalog:"
     },
     "devDependencies": {
+        "eslint": "catalog:",
         "mono-dev": "workspace:*",
-        "typescript": "catalog:"
+        "typescript": "catalog:",
+        "vitest": "catalog:"
     }
 }

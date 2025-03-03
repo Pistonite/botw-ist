@@ -41,8 +41,18 @@ tasks:
           CHECK_PATH: packages/skybook-api/src
           CHECK_MESSAGE: Please regenerate and commit skybook-api bindings
       - task: ecma:tsc-check
+      - task: ecma:eslint-check
       - task: ecma:prettier-check
 
   fix:
     cmds:
+      - task: ecma:eslint-fix
       - task: ecma:prettier-fix
+
+  test:
+    cmds:
+      - task: ecma:vitest
+
+  dev:
+    cmds:
+      - task: ecma:vitest-watch
