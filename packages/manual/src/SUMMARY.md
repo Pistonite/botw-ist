@@ -1,7 +1,15 @@
 # Summary
 
 - [Welcome](./welcome.md)
-- [User](./user/index.md)
+- [History](./history.md)
+- [FAQ](./faq.md)
+- [Inventory Slot Transfer](./ist/index.md)
+  - [Basics](./ist/basics.md)
+  - [Direct Inventory Corruption (DIC)](./ist/dic.md)
+  - [Weapon Modifier Corruption (WMC)](./ist/wmc.md)
+  - [Prompt Entanglement (PE)](./ist/pe.md)
+  - [Item Stack Underflow (ISU)](./ist/isu.md)
+- [Using the Simulator](./user/index.md)
   - [IST Primer](./user/ist_primer.md)
   - [Scopes](./scope.md)
     - [Game Scope]()

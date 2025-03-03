@@ -6,7 +6,6 @@ src = "src"
 title = "The IST Simulator Manual"
 
 [output.html]
-site-url = "/manual/"
 default-theme = "frappe"
 preferred-dark-theme = "frappe"
 smart-punctuation = true
