@@ -1,0 +1,73 @@
+version: '3'
+
+includes:
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+  app:
+    taskfile: ../app
+    dir: ../app
+    internal: true
+  runtime-wasm:
+    taskfile: ../runtime-wasm
+    dir: ../runtime-wasm
+    internal: true
+
+tasks:
+  install:
+    cmds:
+      - bun scripts/get-version.ts > src/version.ts
+
+  pull-local:
+    vars:
+      COMMIT_SHORT:
+        sh: git rev-parse HEAD | cut -c1-8
+    desc: Copy build artifacts locally to dist
+    cmds:
+      - task: runtime-wasm:build
+      - task: app:build
+      - rm -rf dist
+      - $(which mkdir) -p dist/app/runtime
+      - cp -r ../app/dist/* dist/app
+      - cp ../runtime-wasm/dist/skybook-{{.COMMIT_SHORT}}.wasm dist/app/runtime
+      - cp ../runtime-wasm/dist/skybook-{{.COMMIT_SHORT}}.min.js dist/app/runtime
+      - cp ../runtime-wasm/dist/worker-{{.COMMIT_SHORT}}.min.js dist/app/runtime
+      - git rev-parse HEAD > dist/app/commit
+      - bun scripts/gzip-assets.ts
+
+  dev:
+    desc: Run server in watch mode
+    cmds:
+      - $(which mkdir) -p dist
+      - task: bun-watch
+
+  bun-watch:
+    dir: dist
+    cmds:
+      - cmd: bun --watch run ../src/index.ts
+        ignore_error: true
+
+  build:
+    cmds:
+      - $(which mkdir) -p dist
+      - cmd: >
+          bun build 
+          --compile 
+          --minify 
+          --sourcemap
+          --bytecode
+          --target=bun-linux-x64-musl 
+          --outfile dist/server
+          src/index.ts 
+  
+
+  check:
+    cmds:
+      - task: ecma:tsc-check
+      - task: ecma:eslint-check
+      - task: ecma:prettier-check
+
+  fix:
+    cmds:
+      - task: ecma:eslint-fix
+      - task: ecma:prettier-fix

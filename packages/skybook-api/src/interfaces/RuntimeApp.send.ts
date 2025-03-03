@@ -4,7 +4,7 @@
 import type { RuntimeApp } from "../RuntimeApp.ts";
 
 import { type WorkexPromise, WorkexClient, type WorkexClientOptions } from "@pistonite/workex";
-import { ItemSearchResult } from ".././types.ts";
+import type { ItemSearchResult } from ".././types.ts";
 
 /**
  * API provided by the simulator app that the runtime needs to call

@@ -1,0 +1,22 @@
+version: '3'
+
+tasks:
+  build:
+    desc: Create the icons in the other packages
+    cmds:
+      - prism > prism.d.ts
+      - prism normal.ts > normal.svg
+      - prism normal.ts --png normal.png
+      - prism normal-no-ring.ts > normal-no-ring.svg
+      - prism normal-no-ring.ts --png normal-no-ring.png
+      - prism purple.ts > purple.svg
+      - prism purple.ts --png purple.png
+      - prism purple-no-ring.ts > purple-no-ring.svg
+      - prism purple-no-ring.ts --png purple-no-ring.png
+      - cp normal.svg ../app/public/static/icon.svg
+      - cp normal.png ../app/public/static/icon.png
+      - cp purple.svg ../app/public/static/icon-purple.svg
+      - cp purple.png ../app/public/static/icon-purple.png
+      - cp normal-no-ring.svg ../app/src/icon.svg
+      - cp normal.svg ../manual/src/icon.svg
+      - cp normal.png ../manual/src/icon.png

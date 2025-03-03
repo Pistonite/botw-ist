@@ -16,9 +16,13 @@ includes:
 tasks:
   install:
     cmds:
-      - mkdir -p theme
+      - $(which mkdir) -p theme
       - rm -f theme/*
       - cp ../mono-dev/book/theme/* theme
+      - cargo run --bin skybook-manual-preprocessor -- style > theme/skybook.css
+      - cp src/icon.svg theme/favicon.svg
+      - cp src/icon.png theme/favicon.png
+      - bun preprocess/inject-meta.ts pre
   dev:
     desc: Start mdbook in watch mode
     cmds:
@@ -29,11 +33,11 @@ tasks:
   build:
     desc: (Re-)build the book
     cmds:
-      - cargo run --bin skybook-manual-preprocessor -- style > theme/skybook.css
       - rm -rf book
       - mdbook build
       - task: parser:package-artifacts-public
       - task: item-assets:package-artifacts-public
+      - bun preprocess/inject-meta.ts post
 
   check:
     cmds:

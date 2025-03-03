@@ -42,9 +42,6 @@ fn process_chapter_content(content: &mut String) -> anyhow::Result<()> {
 
 /// Handle code blocks with the `skybook` language, using the skybook parser
 fn handle_skybook_script_highlighting(content: &mut String) -> anyhow::Result<()> {
-    if !content.contains("```skybook") {
-        return Ok(());
-    }
     let old_content = std::mem::take(content);
     let mut is_in_skybook_block = false;
     let mut skybook_block_content = String::new();

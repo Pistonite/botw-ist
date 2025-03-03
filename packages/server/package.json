@@ -1,0 +1,17 @@
+{
+    "name": "skybook-server",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "dependencies": {
+        "@pistonite/pure": "catalog:",
+        "@pistonite/skybook-api": "workspace:*",
+        "skybook-parser-legacy": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/bun": "^1.2.4",
+        "eslint": "catalog:",
+        "mono-dev": "workspace:*",
+        "typescript": "catalog:"
+    }
+}

@@ -1,39 +1,29 @@
-# Welcome
+<div style="display:flex;justify-content:center">
+    <img src="/icon.svg"/>
+</div>
+<h1 id="welcome" style="text-align:center">
+    <a class="header">Skybook - The IST Simulator</a>
+</h1>
 
-```skybook
-eat axe in slot 3;
-get 3 apple[life = true, time = false]
-get 4 arrow;
-unequip arrow;
-get "古代箭"
-eat axe in slot 3;
-eat inf in slot 5
-pick-up 1 weapon;
+```admonish danger
+You somehow discovered this page :P
 
-equip ice_arrow
-use bow; freeze meat
-
-use food 3 times
-'''note
-'''
-'''note
-a
-'''
-sync
-'''some-tag
-'''
-sync
-'''note
-text
-'''
-'''note
-text
-
-get  1 apple
-'''
+This manual is still a work-in-progress. Until it's officially released,
+note that everything here is unstable, for example links can break
 ```
+
+## Getting Started
+- See the [history of the project](./history.md) and [frequently asked questions](./faq.md) for background of this project.
+- See [Inventory Slot Transfer](./ist/index.md) for A brief overview of IST.
+- See [Using the Simulator](./user/index.md) for how to use the app
+- See [Developer](./developer/index.md) for how to extend or integrate with the app.
+  
 
 ## Discord
 Join my [Discord](https://discord.gg/xe2wHYrSgB)
-and get the `BOTW Tools` role to get access to the `botw-ist` channel to ask
+and get the `BOTW Tools` role to get access to the `#botw-ist` channel to ask
 questions about or discuss features of the IST Simulator App.
+
+Join the [BOTW Speedrunning Discord](https://discord.gg/vjH24SpMhD) and use the `#glitch-hunting` channel
+to discuss IST in general, or get help with the glitch in `#general-help`, or
+the category channel that you are running.

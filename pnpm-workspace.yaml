@@ -8,6 +8,7 @@ packages:
   - packages/mono-dev
   - packages/parser-legacy
   - packages/runtime-wasm
+  - packages/server
   - packages/shared-controls
   - packages/skybook-api
 
@@ -16,7 +17,7 @@ catalog:
   "@fluentui/react-components": ^9.58.3
   "@fluentui/react-icons": ^2.0.274
   "@modyfi/vite-plugin-yaml": ^1.1.0
-  "@pistonite/pure": ^0.22.2
+  "@pistonite/pure": ^0.22.3
   "@pistonite/pure-react": ^0.7.0
   "@pistonite/pure-i18next": ^0.3.0
   "@pistonite/workex": ^0.0.5
@@ -29,4 +30,5 @@ catalog:
   react-dom: ^18.3.1
   typescript: ^5.7.2
   vite: ^5.4.14
+  vitest: ^3.0.7
 

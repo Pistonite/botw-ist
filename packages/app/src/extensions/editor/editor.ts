@@ -1,5 +1,4 @@
 import type { CodeEditorApi } from "@pistonite/intwc";
-import { setDarkTheme } from "@pistonite/intwc";
 import type { WorkexPromise } from "@pistonite/workex";
 
 import { FirstPartyExtensionAdapter } from "extensions/FirstPartyAdapter";
@@ -11,10 +10,6 @@ export class EditorExtension extends FirstPartyExtensionAdapter {
         private editor: CodeEditorApi,
     ) {
         super(standalone);
-    }
-    public async onDarkModeChanged(dark: boolean): WorkexPromise<void> {
-        setDarkTheme(dark);
-        return super.onDarkModeChanged(dark);
     }
     public async onScriptChanged(script: string): WorkexPromise<void> {
         if (!this.editor.getFiles().includes(this.scriptFile)) {

@@ -5,6 +5,7 @@ let assetPrefix = "/";
 export const probeAndRegisterAssetLocation = async () => {
     if (!import.meta.env.DEV) {
         registerAssetLocation("/static/item-assets/");
+        return;
     }
     try {
         const response = await fetch(

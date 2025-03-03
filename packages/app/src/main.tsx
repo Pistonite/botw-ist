@@ -1,11 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
-import { ThemeProvider } from "./theme/ThemeProvider.tsx";
-import { initDark } from "@pistonite/pure/pref";
+import { addLocaleSubscriber, initDark } from "@pistonite/pure/pref";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { initI18n } from "skybook-localization";
+import { initI18n, translateUI } from "skybook-localization";
 import { ItemTooltipProvider } from "skybook-item-system";
 
 import { initExtensionManager } from "./application/extensionManager.ts";
@@ -13,8 +11,10 @@ import { createExtensionAppHost } from "application/ExtensionAppHost.ts";
 import { initNarrow } from "pure-contrib/narrow.ts";
 import { isLessProductive } from "pure-contrib/platform.ts";
 
+import { App } from "./App.tsx";
 import { initRuntime } from "./runtime.ts";
 import { ExtensionAppContext } from "application/useExtensionApp.ts";
+import { ThemeProvider } from "./theme/ThemeProvider.tsx";
 
 import {
     getSheikaBackgroundUrl,
@@ -67,6 +67,16 @@ async function boot() {
     const app = createExtensionAppHost(runtime);
 
     await Promise.all(bootPromises);
+
+    addLocaleSubscriber(() => {
+        const title = translateUI("title");
+        // fallback in case translation failed to load
+        if (title === "title") {
+            document.title = "IST Simulator";
+        } else {
+            document.title = title;
+        }
+    }, true);
 
     createRoot(root).render(
         <StrictMode>

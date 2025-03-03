@@ -48,15 +48,15 @@ export const parseASTSuperCommandSwap: ParserSafe<
 
 export class SuperCommandAddSlot extends AbstractProperCommand {
     private stacks: ItemStackArg[];
-    private _slot: number;
+    // private _slot: number;
     constructor(
         stacks: ItemStackArg[],
-        slot: number,
+        _slot: number,
         codeBlocks: CodeBlockTree,
     ) {
         super(codeBlocks);
         this.stacks = stacks;
-        this._slot = slot - 1; //change to 0 based
+        // this._slot = slot - 1; //change to 0 based
     }
     public convert() {
         return `### "!add-slot" is no longer supported!!!\n### !add-slot ${this.stacks.map((s) => s.convert()).join(" ")};`;

@@ -1,3 +1,5 @@
+title: IST 模拟器
+
 # Generic messages
 generic.error.internal: "内部错误: {{error}}"
 

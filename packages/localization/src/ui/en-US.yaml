@@ -1,3 +1,6 @@
+title: IST Simulator
+
+
 # Generic messages
 generic.error.internal: "Internal error: {{error}}"
 
