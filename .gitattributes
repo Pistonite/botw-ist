@@ -3,3 +3,13 @@
 *.cjs linguist-language=TypeScript
 *.mjs linguist-language=TypeScript
 *.jsx linguist-language=TypeScript
+
+*.cir linguist-generated
+*.lex linguist-generated
+*.sem linguist-generated
+*.syn linguist-generated
+
+packages/skybook-api/src/interfaces linguist-generated
+packages/skybook-api/src/sides      linguist-generated
+packages/skybook-api/src/parser     linguist-generated
+packages/skybook-api/src/runtime    linguist-generated
