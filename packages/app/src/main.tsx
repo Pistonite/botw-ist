@@ -2,10 +2,10 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import { ThemeProvider } from "./theme/ThemeProvider.tsx";
-import { initDark } from "@pistonite/pure/pref";
+import { addLocaleSubscriber, initDark } from "@pistonite/pure/pref";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { initI18n } from "skybook-localization";
+import { initI18n, translateUI } from "skybook-localization";
 import { ItemTooltipProvider } from "skybook-item-system";
 
 import { initExtensionManager } from "./application/extensionManager.ts";
@@ -67,6 +67,16 @@ async function boot() {
     const app = createExtensionAppHost(runtime);
 
     await Promise.all(bootPromises);
+
+    addLocaleSubscriber(() => {
+        const title = translateUI("title");
+        // fallback in case translation failed to load
+        if (title === "title") {
+            document.title = "IST Simulator";
+        } else {
+            document.title = title;
+        }
+    }, true);
 
     createRoot(root).render(
         <StrictMode>
