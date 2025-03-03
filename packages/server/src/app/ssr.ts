@@ -1,6 +1,6 @@
 import { parseEnvFromScript, type DirectLoad } from "@pistonite/skybook-api";
 
-import { type ResponsePayload, useAcceptLanguage } from "server/framework";
+import { type ResponsePayload, useAcceptLanguage } from "util/framework";
 import { VERSION } from "version.ts";
 
 import Strings from "./strings.json" with { type: "json" };

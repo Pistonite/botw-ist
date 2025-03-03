@@ -1,10 +1,10 @@
-import { routeBuilder, useLogging } from "server/framework";
-import { createApiRoutes } from "server/api";
-import { createAppRoutes } from "server/app";
-
-import { createCrypto, randomKey } from "server/crypto.ts";
+import { routeBuilder, useLogging } from "util/framework";
+import { createCrypto, randomKey } from "util/crypto.ts";
 
 import { VERSION } from "./version.ts";
+import { createApiRoutes } from "./api/router.ts";
+import { createAppRoutes } from "./app/router.ts";
+
 console.log("version: " + VERSION);
 
 /** === Environment Initialization === */

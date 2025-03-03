@@ -5,7 +5,7 @@ import {
     makeFile,
     type ResponsePayload,
     useAcceptsGzip,
-} from "server/framework";
+} from "util/framework";
 
 console.log("loading gzipped assets paths");
 const gzipPaths = new Set<string>();

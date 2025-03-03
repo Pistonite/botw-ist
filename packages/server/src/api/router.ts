@@ -5,9 +5,8 @@ import {
     makePlainText,
     type RouteBuilder,
     useStringBody,
-} from "server/framework";
-
-import type { Crypto } from "server/crypto.ts";
+} from "util/framework";
+import type { Crypto } from "util/crypto.ts";
 
 export const createApiRoutes = (_crypto: Crypto, builder: RouteBuilder) => {
     return {

@@ -1,4 +1,4 @@
-import { make404, type RouteBuilder } from "server/framework";
+import { make404, type RouteBuilder } from "util/framework";
 
 import { makeSSR } from "./ssr.ts";
 import { makeAsset } from "./assets.ts";
