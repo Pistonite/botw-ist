@@ -17,6 +17,7 @@ export type DirectLoad = {
 
 /** Extract the DirectLoad payload from the page, if exists */
 export const extractDirectLoad = (): DirectLoad | undefined => {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     if (typeof (globalThis as any).window === "undefined") {
         return undefined;
     }
@@ -39,4 +40,5 @@ export const extractDirectLoad = (): DirectLoad | undefined => {
         }
     }
     return undefined;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 };
