@@ -1,8 +1,11 @@
-import { routeBuilder, useLogging } from "framework";
-import { createApiRoutes } from "api";
-import { createAppRoutes } from "app";
+import { routeBuilder, useLogging } from "server/framework";
+import { createApiRoutes } from "server/api";
+import { createAppRoutes } from "server/app";
 
-import { createCrypto, randomKey } from "./crypt.ts";
+import { createCrypto, randomKey } from "server/crypto.ts";
+
+import { VERSION } from "./version.ts";
+console.log("version: " + VERSION);
 
 /** === Environment Initialization === */
 
@@ -33,16 +36,16 @@ Bun.serve({
     hostname,
     routes: {
         ...(await createAppRoutes(builder)),
-        ...(createApiRoutes(crypto, builder)),
+        ...createApiRoutes(crypto, builder),
     },
     // Global error handler
-  error(error) {
-    console.error(error);
-    return new Response(`Internal Error: ${error.message}`, {
-      status: 500,
-      headers: {
-        "Content-Type": "text/plain",
-      },
-    });
-  },
+    error(error) {
+        console.error(error);
+        return new Response(`Internal Error: ${error.message}`, {
+            status: 500,
+            headers: {
+                "Content-Type": "text/plain",
+            },
+        });
+    },
 });

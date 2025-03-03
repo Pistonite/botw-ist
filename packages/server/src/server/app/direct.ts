@@ -1,20 +1,20 @@
-import { errstr, Result } from "@pistonite/pure/result";
+import { errstr, type Result } from "@pistonite/pure/result";
 
+import type { DirectLoad } from "@pistonite/skybook-api";
 import { convertLegacyScript } from "skybook-parser-legacy";
 
-import { DirectLoad } from "client";
-import { URL } from "framework";
+import type { URL } from "server/framework";
 
 const decodeCompressedParam = (param: string): Result<string, string> => {
     try {
-    const compressedBytes = Buffer.from(param, "base64");
-    const uncompressedBytes = Bun.gunzipSync(compressedBytes);
+        const compressedBytes = Buffer.from(param, "base64");
+        const uncompressedBytes = Bun.gunzipSync(compressedBytes);
         return { val: new TextDecoder().decode(uncompressedBytes) };
     } catch (e) {
         console.error("error decoding compressed param: ", e);
         return { val: errstr(e) };
     }
-}
+};
 
 /** Handle DirectLoad from the home page (/) */
 export const useDirectLoadFromHome = (url: URL): DirectLoad | undefined => {
@@ -54,15 +54,17 @@ export const useDirectLoadFromHome = (url: URL): DirectLoad | undefined => {
     }
 
     return undefined;
-}
+};
 
 /** Handle DirectLoad from any URL (/-/) */
-export const useDirectLoadFromUrl = async (url: URL): Promise<DirectLoad | undefined> => {
+export const useDirectLoadFromUrl = async (
+    url: URL,
+): Promise<DirectLoad | undefined> => {
     const pathname = url.pathname.trim();
     if (!pathname.startsWith("/-/")) {
         return undefined;
     }
-    const directURL = pathname.replace(/^\/-\//, "https://");
+    const directURL = pathname.replace(/^\/-\//, "https://") + url.search;
     console.log("--- direct load from: " + directURL);
     const content = await fetchContent(directURL, true);
     if ("err" in content) {
@@ -73,13 +75,13 @@ export const useDirectLoadFromUrl = async (url: URL): Promise<DirectLoad | undef
         type: "v4",
         content: content.val,
     };
-}
+};
 
 export const useDirectLoadFromGitHubRepo = async (
     user: string,
     repo: string,
     branch: string,
-    url: URL
+    url: URL,
 ): Promise<DirectLoad | undefined> => {
     const pathname = url.pathname.trim();
     const prefix = `/github/${user}/${repo}/${branch}/`;
@@ -97,9 +99,12 @@ export const useDirectLoadFromGitHubRepo = async (
         type: "v4",
         content: content.val,
     };
-}
+};
 
-const fetchContent = async (url: string, enforceContentType?: boolean): Promise<Result<string, unknown>> => {
+const fetchContent = async (
+    url: string,
+    enforceContentType?: boolean,
+): Promise<Result<string, unknown>> => {
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -114,11 +119,11 @@ const fetchContent = async (url: string, enforceContentType?: boolean): Promise<
     } catch (e) {
         return { err: e };
     }
-}
+};
 
 const isTextPlain = (contentType: string | null): boolean => {
     if (!contentType) {
         return false;
     }
     return contentType.startsWith("text/plain");
-}
+};

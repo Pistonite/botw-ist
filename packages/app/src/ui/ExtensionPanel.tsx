@@ -1,16 +1,18 @@
 import { memo } from "react";
 import { makeStyles } from "@fluentui/react-components";
+import { ResizeLayout } from "@pistonite/shared-controls";
+
 import {
     useCurrentPrimaryExtensionId,
     useCurrentSecondaryExtensionId,
     usePrimaryExtensionIds,
     useSecondaryExtensionIds,
 } from "application/extensionStore";
-import { useUIStore } from "./store";
-import { ResizeLayout } from "./components/ResizeLayout";
-import { ExtensionToolbarPrimary } from "./ExtensionToolbarPrimary";
-import { ExtensionToolbarSecondary } from "./ExtensionToolbarSecondary";
-import { ExtensionWindow } from "./components/ExtensionWindow";
+
+import { useUIStore } from "./store.ts";
+import { ExtensionToolbarPrimary } from "./ExtensionToolbarPrimary.tsx";
+import { ExtensionToolbarSecondary } from "./ExtensionToolbarSecondary.tsx";
+import { ExtensionWindow } from "./components/ExtensionWindow.tsx";
 
 const useStyles = makeStyles({
     container: {

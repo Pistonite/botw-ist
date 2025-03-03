@@ -7,22 +7,29 @@ env:
 dotenv: [".env"]
 
 includes:
+  common: 
+    taskfile: ./packages/mono-dev/task/common.yaml
+    flatten: true
+    optional: true
 
-  server:
-    taskfile: ./server
-    dir: ./server
 
+
+  ## To be removed
   trace:
     taskfile: ./research/trace
     aliases: [tr]
     dir: ./research/trace
 
+  ## To be removed
   trace-view:
     taskfile: ./research/trace-view
     aliases: [trv]
     dir: ./research/trace-view
 
-  # new ones below
+  server:
+    taskfile: ./packages/server
+    dir: ./packages/server
+    internal: true
 
   app:
     taskfile: ./packages/app
@@ -105,20 +112,7 @@ tasks:
       - task: parser-legacy:install
       - task: manual:install
       - task: intwc:install
-
-  exec:
-    aliases: [x]
-    desc: Execute a task in a package (exec -- PACKAGE:TASK)
-    cmds:
-      - task: "{{.CLI_ARGS}}"
-
-  list:
-    aliases: [ls]
-    desc: List tasks in a package (list -- PACKAGE)
-    dir: "packages/{{.CLI_ARGS}}"
-    silent: true
-    cmds:
-      - cmd: "{{.TASK_EXE}} --list"
+      - task: server:install
 
   build-artifacts:
     desc: Generate artifacts for development locally and from hosted app
@@ -159,6 +153,7 @@ tasks:
       - localization:check
       - item-system:check
       - app:check
+      - server:check
 
   check-layer-3:
     deps:
@@ -171,6 +166,7 @@ tasks:
     desc: Run ALL of the tests
     deps:
       - item-system:test
+      - skybook-api:test
     cmds:
       - task: parser:test
 
@@ -178,6 +174,7 @@ tasks:
     desc: Check that components can build without failure
     deps:
       - app:build
+      - server:build
     cmds:
       - task: manual:build
       - task: runtime-wasm:build

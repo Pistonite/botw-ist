@@ -1,7 +1,5 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
-import { ThemeProvider } from "./theme/ThemeProvider.tsx";
 import { addLocaleSubscriber, initDark } from "@pistonite/pure/pref";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -13,8 +11,10 @@ import { createExtensionAppHost } from "application/ExtensionAppHost.ts";
 import { initNarrow } from "pure-contrib/narrow.ts";
 import { isLessProductive } from "pure-contrib/platform.ts";
 
+import { App } from "./App.tsx";
 import { initRuntime } from "./runtime.ts";
 import { ExtensionAppContext } from "application/useExtensionApp.ts";
+import { ThemeProvider } from "./theme/ThemeProvider.tsx";
 
 import {
     getSheikaBackgroundUrl,

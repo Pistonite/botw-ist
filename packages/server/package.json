@@ -8,14 +8,11 @@
     },
     "dependencies": {
         "@pistonite/pure": "catalog:",
-        "aes-js": "^3.1.2",
-        "crypto-js": "^4.2.0",
+        "@pistonite/skybook-api": "workspace:*",
         "skybook-parser-legacy": "workspace:*"
     },
     "devDependencies": {
-        "@types/aes-js": "^3.1.4",
         "@types/bun": "^1.2.4",
-        "@types/crypto-js": "^4.2.2",
         "eslint": "catalog:",
         "mono-dev": "workspace:*",
         "typescript": "catalog:"

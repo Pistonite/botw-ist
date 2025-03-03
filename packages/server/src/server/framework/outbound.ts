@@ -1,6 +1,8 @@
-import { OutboundHook, ResponsePayload } from "./types.ts";
+import type { OutboundHook, ResponsePayload } from "./types.ts";
 
-export const withHeadersOnSuccess = (headers: Record<string, string>): OutboundHook => {
+export const withHeadersOnSuccess = (
+    headers: Record<string, string>,
+): OutboundHook => {
     return (_req, _url, ok: boolean, response: ResponsePayload) => {
         if (!ok) {
             return response;
@@ -12,11 +14,11 @@ export const withHeadersOnSuccess = (headers: Record<string, string>): OutboundH
                     ...(response.options || {}),
                     headers: {
                         ...(response.options?.headers || {}),
-                        ...headers
-                    }
-                }
-            }
+                        ...headers,
+                    },
+                },
+            };
         }
         return response;
-    }
+    };
 };

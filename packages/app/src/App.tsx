@@ -1,9 +1,9 @@
 import { makeStyles } from "@fluentui/react-components";
+import { ResizeLayout } from "@pistonite/shared-controls";
 
 import { useIsShowingExtensionPanel } from "./application/extensionStore";
 import { ExtensionPanel } from "ui/ExtensionPanel";
 import { useNarrow } from "pure-contrib/narrow";
-import { ResizeLayout } from "ui/components/ResizeLayout";
 import { useUIStore } from "ui/store";
 import { isLessProductive } from "pure-contrib/platform";
 
@@ -22,7 +22,7 @@ const useStyles = makeStyles({
     },
 });
 
-function App() {
+export const App: React.FC = () => {
     const narrow = useNarrow();
     const styles = useStyles();
 
@@ -54,6 +54,4 @@ function App() {
             <main style={{ background: "green", height: "100%" }}>main</main>
         </ResizeLayout>
     );
-}
-
-export default App;
+};

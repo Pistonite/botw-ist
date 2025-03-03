@@ -1,6 +1,15 @@
 version: '3'
 
+includes:
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+
 tasks:
+  install:
+    cmds:
+      - bun scripts/get-version.ts > src/version.ts
+
   pull-local:
     vars:
       COMMIT_SHORT:
@@ -28,13 +37,7 @@ tasks:
       - cmd: bun --watch run ../src/index.ts
         ignore_error: true
 
-
   build:
-    cmds:
-      - $(which mkdir) -p dist
-      - bun build --compile --minify --sourcemap --bytecode src/index.ts --outfile dist/server
-
-  build-prod:
     cmds:
       - $(which mkdir) -p dist
       - cmd: >
@@ -47,3 +50,14 @@ tasks:
           --outfile dist/server
           src/index.ts 
   
+
+  check:
+    cmds:
+      - task: ecma:tsc-check
+      - task: ecma:eslint-check
+      - task: ecma:prettier-check
+
+  fix:
+    cmds:
+      - task: ecma:eslint-fix
+      - task: ecma:prettier-fix

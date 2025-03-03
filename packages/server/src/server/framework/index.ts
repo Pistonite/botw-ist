@@ -1,4 +1,4 @@
-/** 
+/**
  * Request Framework
  *
  * This is a very simple framework built on top of Bun server.
@@ -15,7 +15,7 @@
  *
  * Inbound hooks can technically modify the request, but that is not recommended
  * as it makes the behavior not obvious in the handler.
- * 
+ *
  * If the request is short-circuited by an inbound hook (through success or error response),
  * the request will then go directly to the outbound hooks.
  * Otherwise, the request is passed through the handler,
@@ -53,4 +53,3 @@ export * from "./extractors.ts";
 export * from "./handlers.ts";
 export * from "./inbound.ts";
 export * from "./outbound.ts";
-

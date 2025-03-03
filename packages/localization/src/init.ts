@@ -38,7 +38,9 @@ const loadLanguage = async (namespace: string, language: string) => {
             }
         }
         if (countMissing > 0) {
-            console.warn(`Missing ${countMissing} strings in ${language} UI, falling back to en-US`);
+            console.warn(
+                `Missing ${countMissing} strings in ${language} UI, falling back to en-US`,
+            );
         }
     }
     return strings;
