@@ -5,12 +5,7 @@ import { VERSION } from "./version.ts";
 import { createApiRoutes } from "./api/router.ts";
 import { createAppRoutes } from "./app/router.ts";
 
-console.log("version: " + VERSION);
-
-/** === Environment Initialization === */
-
-// Initialize the crypto object
-const crypto = (() => {
+const initCrypto = () => {
     let masterKey = process.env.SKYBOOK_CRYPTO_KEY;
     process.env.SKYBOOK_CRYPTO_KEY = "";
     if (!masterKey) {
@@ -22,30 +17,38 @@ const crypto = (() => {
         throw new Error(crypto.err);
     }
     return crypto.val;
-})();
+};
 
-const hostname = "0.0.0.0";
-const port = 8000;
-console.log("starting server on http://" + hostname + ":" + port);
+async function main() {
+    console.log("version: " + VERSION);
 
-const builder = routeBuilder().inbound(useLogging);
+    const crypto = initCrypto();
 
-Bun.serve({
-    port,
-    reusePort: true,
-    hostname,
-    routes: {
-        ...(await createAppRoutes(builder)),
-        ...createApiRoutes(crypto, builder),
-    },
-    // Global error handler
-    error(error) {
-        console.error(error);
-        return new Response(`Internal Error: ${error.message}`, {
-            status: 500,
-            headers: {
-                "Content-Type": "text/plain",
-            },
-        });
-    },
-});
+    const hostname = "0.0.0.0";
+    const port = 8000;
+    console.log("starting server on http://" + hostname + ":" + port);
+
+    const builder = routeBuilder().inbound(useLogging);
+
+    Bun.serve({
+        port,
+        reusePort: true,
+        hostname,
+        routes: {
+            ...(await createAppRoutes(builder)),
+            ...createApiRoutes(crypto, builder),
+        },
+        // Global error handler
+        error(error) {
+            console.error(error);
+            return new Response(`Internal Error: ${error.message}`, {
+                status: 500,
+                headers: {
+                    "Content-Type": "text/plain",
+                },
+            });
+        },
+    });
+}
+
+void main();

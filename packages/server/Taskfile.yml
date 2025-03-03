@@ -4,6 +4,14 @@ includes:
   ecma:
     taskfile: ../mono-dev/task/ecma.yaml
     internal: true
+  app:
+    taskfile: ../app
+    dir: ../app
+    internal: true
+  runtime-wasm:
+    taskfile: ../runtime-wasm
+    dir: ../runtime-wasm
+    internal: true
 
 tasks:
   install:
@@ -14,8 +22,10 @@ tasks:
     vars:
       COMMIT_SHORT:
         sh: git rev-parse HEAD | cut -c1-8
-    desc: Copy build artifacts locally to dist (requires built app and runtime-wasm)
+    desc: Copy build artifacts locally to dist
     cmds:
+      - task: runtime-wasm:build
+      - task: app:build
       - rm -rf dist
       - $(which mkdir) -p dist/app/runtime
       - cp -r ../app/dist/* dist/app

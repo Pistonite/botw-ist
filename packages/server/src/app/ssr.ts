@@ -8,9 +8,8 @@ import Strings from "./strings.json" with { type: "json" };
 type Language = keyof typeof Strings.title;
 const languages = Object.keys(Strings.title) as Language[];
 
-/** Server side rendering utilities */
-console.log("loading entry point for server-side rendering");
 const loadEntryPointHtml = async (): Promise<[string, string]> => {
+    console.log("loading entry point for server-side rendering");
     const indexHtml = await Bun.file("app/index.html").text();
     const headStartIndex = indexHtml.indexOf("<head>");
     if (headStartIndex == -1) {
@@ -19,7 +18,7 @@ const loadEntryPointHtml = async (): Promise<[string, string]> => {
     const i = headStartIndex + "<head>".length;
     return [indexHtml.substring(0, i), indexHtml.substring(i)];
 };
-const [htmlHead, htmlTail] = await loadEntryPointHtml();
+const entryPointHtml = loadEntryPointHtml();
 
 export type SSROptions = {
     /** URL to put in meta */
@@ -40,7 +39,10 @@ export type SSROptions = {
  *
  * This handles injecting the direct load script and meta tags into the HTML
  */
-export const makeSSR = (req: Request, options: SSROptions): ResponsePayload => {
+export const makeSSR = async (
+    req: Request,
+    options: SSROptions,
+): Promise<ResponsePayload> => {
     const language = useAcceptLanguage(req, languages, "en-US");
 
     let origin: string;
@@ -117,6 +119,8 @@ export const makeSSR = (req: Request, options: SSROptions): ResponsePayload => {
         titleMetaTag +
         descriptionTag +
         imageTag;
+
+    const [htmlHead, htmlTail] = await entryPointHtml;
 
     return {
         body: htmlHead + content + htmlTail,
