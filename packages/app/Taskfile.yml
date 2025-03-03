@@ -34,8 +34,3 @@ tasks:
       - task: ecma:eslint-fix
       - task: ecma:prettier-fix
 
-  icon:
-    desc: Render app icons (requires prism)
-    cmds:
-      - prism > icon/prism.d.ts
-
