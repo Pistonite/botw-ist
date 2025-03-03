@@ -1,0 +1,54 @@
+{
+    "title": {
+        "de-DE": "IST Simulator",
+        "en-US": "IST Simulator",
+        "es-ES": "Simulador IST",
+        "fr-FR": "Simulateur IST",
+        "it-IT": "Simulatore IST",
+        "ja-JP": "ISTシミュレーター",
+        "ko-KR": "IST 시뮬레이터",
+        "nl-NL": "IST Simulator",
+        "ru-RU": "IST Симулятор",
+        "zh-CN": "IST 模拟器",
+        "zh-TW": "IST 模擬器"
+    },
+    "description": {
+        "de-DE": "Klicken Sie, um das eingebettete IST-Skript im Simulator anzuzeigen.",
+        "en-US": "Click to view the embedded IST script in the simulator.",
+        "es-ES": "Haga clic para ver el script IST incrustado en el simulador.",
+        "fr-FR": "Cliquez pour voir le script IST intégré dans le simulateur.",
+        "it-IT": "Fare clic per visualizzare lo script IST incorporato nel simulatore.",
+        "ja-JP": "シミュレーターで埋め込まれたISTスクリプトを表示するにはクリックしてください。",
+        "ko-KR": "시뮬레이터에서 내장된 IST 스크립트를 보려면 클릭하십시오.",
+        "nl-NL": "Klik om het ingesloten IST-script in de simulator te bekijken.",
+        "ru-RU": "Нажмите, чтобы просмотреть встроенный скрипт IST в симуляторе.",
+        "zh-CN": "点击以打开模拟器查看内嵌IST步骤",
+        "zh-TW": "點擊以打開模擬器查看內嵌IST步驟"
+    },
+    "description-file": {
+        "de-DE": "Sehen Sie sich {{file}} im Simulator an.",
+        "en-US": "View {{file}} in the simulator.",
+        "es-ES": "Ver {{file}} en el simulador.",
+        "fr-FR": "Voir {{file}} dans le simulateur.",
+        "it-IT": "Visualizza {{file}} nel simulatore.",
+        "ja-JP": "シミュレーターで{{file}}を表示します。",
+        "ko-KR": "시뮬레이터에서 {{file}}을(를) 봅니다.",
+        "nl-NL": "Bekijk {{file}} in de simulator.",
+        "ru-RU": "Просмотреть {{file}} в симуляторе.",
+        "zh-CN": "打开模拟器查看 {{file}}",
+        "zh-TW": "打開模擬器查看 {{file}}"
+    },
+    "description-legacy": {
+        "de-DE": "Dieses Skript wurde aus einem alten Format konvertiert.",
+        "en-US": "This script is converted from a legacy format.",
+        "es-ES": "Este script se ha convertido de un formato heredado.",
+        "fr-FR": "Ce script est converti à partir d'un format hérité.",
+        "it-IT": "Questo script è stato convertito da un formato legacy.",
+        "ja-JP": "このスクリプトはレガシーフォーマットから変換されています。",
+        "ko-KR": "이 스크립트는 레거시 형식에서 변환되었습니다.",
+        "nl-NL": "Dit script is geconverteerd van een legacy-formaat.",
+        "ru-RU": "Этот скрипт был преобразован из устаревшего формата.",
+        "zh-CN": "此脚本为旧格式转换",
+        "zh-TW": "此腳本為舊格式轉換"
+    }
+}

@@ -10,6 +10,9 @@ export type DirectLoad = {
 
     /** The plaintext content of the script */
     content: string,
+
+    /** If editing should be enabled by default */
+    edit?: boolean,
 }
 
 // /** Extract the DirectLoad payload from the page, if exists */

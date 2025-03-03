@@ -1,8 +1,25 @@
-// const f = Bun.file("app/index.html");
-// console.log(await f.text());
-
-import { createAppRoutes } from "app";
 import { routeBuilder, useLogging } from "framework";
+import { createApiRoutes } from "api";
+import { createAppRoutes } from "app";
+
+import { createCrypto, randomKey } from "./crypt.ts";
+
+/** === Environment Initialization === */
+
+// Initialize the crypto object
+const crypto = (() => {
+    let masterKey = process.env.SKYBOOK_CRYPTO_KEY;
+    process.env.SKYBOOK_CRYPTO_KEY = "";
+    if (!masterKey) {
+        console.warn("crypto key is not provided, generating a random key");
+        masterKey = randomKey();
+    }
+    const crypto = createCrypto(masterKey);
+    if ("err" in crypto) {
+        throw new Error(crypto.err);
+    }
+    return crypto.val;
+})();
 
 const hostname = "0.0.0.0";
 const port = 8000;
@@ -10,23 +27,13 @@ console.log("starting server on http://" + hostname + ":" + port);
 
 const builder = routeBuilder().inbound(useLogging);
 
-
 Bun.serve({
     port,
     reusePort: true,
     hostname,
     routes: {
         ...(await createAppRoutes(builder)),
-        // "/-/*": (req) => {
-        //     const pathname = new URL(req.url).pathname;
-        //     if (!pathname.startsWith("/-/")) {
-        //         return new Response("Not Found", { status: 404 });
-        //     }
-        //     const directURL = pathname.replace(/^\/-\//, "https://");
-        //
-        //     console.log(directURL);
-        //     return new Response(Bun.file("app/index.html"))
-        // },
+        ...(createApiRoutes(crypto, builder)),
     },
     // Global error handler
   error(error) {

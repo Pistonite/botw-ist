@@ -1,5 +1,9 @@
 import { DirectLoad } from "client";
-import { ResponsePayload } from "framework";
+import { ResponsePayload, useAcceptLanguage } from "framework";
+
+import Strings from "strings.json" with { type: "json" };
+
+const languages = Object.keys(Strings.title);
 
 /** Server side rendering utilities */
 console.log("loading entry point for server-side rendering");
@@ -17,11 +21,26 @@ const [htmlHead, htmlTail] = await loadEntryPointHtml();
 export type SSROptions = {
     /** Direct load payload to inject into the page */
     directLoad?: DirectLoad,
+    /** File reference to appear in the meta tags */
+    file?: {
+        /** File name */
+        name: string,
+        /** Short version of the file name */
+        short?: string,
+    },
 };
 
-export const makeSSR = (options: SSROptions): ResponsePayload => {
+export const makeSSR = (req: Request, options: SSROptions): ResponsePayload => {
 
-    let content = "";
+    const language = useAcceptLanguage(req, languages, "en-US");
+    const title = `<title>${Strings.title[language]}</title>`;
+    let longTitle = Strings.title[language];
+    if (options.file) {
+        longTitle += ` - ${options.file.name}`;
+    }
+    const ogtitle = `<meta name="og:title" content="${longTitle}">`;
+
+    let content 
     if (options.directLoad) {
         const json = JSON.stringify(options.directLoad);
         const jsonString = JSON.stringify(json);
