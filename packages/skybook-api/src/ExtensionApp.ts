@@ -1,7 +1,7 @@
 import type { Result } from "@pistonite/pure/result";
 import type { WorkexPromise } from "@pistonite/workex";
 
-import { Diagnostic, ItemSearchResult } from "./types.ts";
+import type { Diagnostic, ItemSearchResult } from "./types.ts";
 
 /**
  * API implemented by the application and called by the extension.
