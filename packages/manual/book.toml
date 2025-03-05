@@ -13,8 +13,9 @@ git-repository-url = "https://github.com/Pistonite/botw-ist"
 additional-css = [
     "./theme/skybook.css",
     "./theme/mdbook-admonish.css",
-    "./theme/catppuccin.css", 
-    "./theme/catppuccin-admonish.css"
+    "./theme/extra-css/catppuccin.css", 
+    "./theme/catppuccin-admonish.css",
+    "./theme/extra-css/patch.css", 
 ]
 
 [preprocessor.admonish]

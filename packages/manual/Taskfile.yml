@@ -4,6 +4,9 @@ includes:
   cargo:
     taskfile: ../mono-dev/task/cargo.yaml
     internal: true
+  mdbook:
+    taskfile: ../mono-dev/task/mdbook.yaml
+    internal: true
   parser:
     taskfile: ../parser
     dir: ../parser
@@ -16,9 +19,7 @@ includes:
 tasks:
   install:
     cmds:
-      - $(which mkdir) -p theme
-      - rm -f theme/*
-      - cp ../mono-dev/book/theme/* theme
+      - task: mdbook:install-theme-monorepo
       - cargo run --bin skybook-manual-preprocessor -- style > theme/skybook.css
       - cp src/icon.svg theme/favicon.svg
       - cp src/icon.png theme/favicon.png
