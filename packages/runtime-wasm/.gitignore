@@ -3,3 +3,6 @@
 /target
 .eslintcache
 *.stderr
+/tsconfig*.json
+/eslint.config.js
+.prettierignore
