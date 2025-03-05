@@ -15,6 +15,7 @@
     ],
     "exports": {
         ".": "./src/index.ts",
+        "./client": "./src/client/index.ts",
         "./sides/*": "./src/sides/*.ts",
         "./sides/*.ts": "./src/sides/*.ts",
         "./interfaces/*": "./src/interfaces/*.ts",
@@ -30,9 +31,11 @@
         "@pistonite/workex": "catalog:"
     },
     "devDependencies": {
-        "eslint": "catalog:",
         "mono-dev": "workspace:*",
-        "typescript": "catalog:",
         "vitest": "catalog:"
-    }
+    },
+    "nocheck": [
+        "/src/sides/*.ts",
+        "/src/interfaces/*.ts"
+    ]
 }
