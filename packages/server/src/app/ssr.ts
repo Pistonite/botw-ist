@@ -18,7 +18,7 @@ const loadEntryPointHtml = async (): Promise<[string, string]> => {
     const i = headStartIndex + "<head>".length;
     return [indexHtml.substring(0, i), indexHtml.substring(i)];
 };
-const entryPointHtml = loadEntryPointHtml();
+const entryPointHtml = await loadEntryPointHtml();
 
 export type SSROptions = {
     /** URL to put in meta */
@@ -120,7 +120,7 @@ export const makeSSR = async (
         descriptionTag +
         imageTag;
 
-    const [htmlHead, htmlTail] = await entryPointHtml;
+    const [htmlHead, htmlTail] = entryPointHtml;
 
     return {
         body: htmlHead + content + htmlTail,

@@ -3,8 +3,6 @@ import { errstr, type Result } from "@pistonite/pure/result";
 import type { DirectLoad } from "@pistonite/skybook-api";
 import { convertLegacyScript } from "skybook-parser-legacy";
 
-import type { URL } from "util/framework";
-
 const decodeCompressedParam = (param: string): Result<string, string> => {
     try {
         const compressedBytes = Buffer.from(param, "base64");
