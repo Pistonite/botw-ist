@@ -1,6 +1,4 @@
-// @ts-ignore
 import fs from "node:fs";
-// @ts-ignore
 import subprocess from "node:child_process";
 import YAML from "js-yaml";
 
@@ -8,7 +6,10 @@ const LANG_TO_CHECK = ["en-US"];
 
 // Check completeness of some lang entries using TypeScript
 const TSCONFIG = {
-    extends: "../../../../mono-dev/tsconfig/browser.json",
+    extends: "../../../../mono-dev/tsconfig/defaults.json",
+    compilerOptions: {
+        lib: ["esnext", "dom"],
+    },
     include: ["src"],
 };
 const DIR = "node_modules/.cache/check-lang-entries";
@@ -22,7 +23,8 @@ LANG_TO_CHECK.forEach((lang) => {
     const langFile = `src/ui/${lang}.yaml`;
     const langData = YAML.load(fs.readFileSync(langFile, "utf8"));
     const parserErrorKeyInLang: string[] = [];
-    for (const key in langData) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    for (const key in langData as any) {
         if (key.startsWith("parser.")) {
             const parserError = key.split(".")[1];
             parserErrorKeyInLang.push(parserError);
@@ -51,6 +53,5 @@ if (result.status !== 0) {
     console.error("Lang entry check failed!!!");
     console.error("Please ensure these keys are defined in lang files:");
     console.error("  - One `parser.<ParserError>` for each ParserError type");
-    // @ts-ignore
     process.exit(2);
 }

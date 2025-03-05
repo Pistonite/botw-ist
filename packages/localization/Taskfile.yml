@@ -13,18 +13,13 @@ tasks:
       - python scripts/generate.py
       
   check:
-    desc: Run Linter and Formatter
     cmds:
+      - task: ecma:mono-check
       - bun scripts/check-lang-entries.ts
-      - task: ecma:tsc-check
-      - task: ecma:eslint-check
-      - task: ecma:prettier-check
 
   fix:
-    desc: Fix issues in code
     cmds:
-      - task: ecma:eslint-fix
-      - task: ecma:prettier-fix
+      - task: ecma:mono-fix
 
   put-mocks:
     cmds:
