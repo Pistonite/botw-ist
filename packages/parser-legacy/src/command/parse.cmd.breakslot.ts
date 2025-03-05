@@ -28,7 +28,7 @@ export class CommandBreakSlots extends AbstractProperCommand {
         this.stacks = stacks;
     }
 
-    public convert(): string {
+    public override convert(): string {
         let s = "";
         if (this.stacks.length > 0) {
             s += `destroy ${this.stacks.map((s) => s.convert()).join(" ")}`;

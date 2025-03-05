@@ -15,7 +15,7 @@ export class CommandShootArrow extends AbstractProperCommand {
         this.count = count;
     }
 
-    public convert(): string {
+    public override convert(): string {
         if (this.count === "All") {
             return "### `Shoot All` is no longer supported. Please specify number of times!\n### shoot X times;";
         }

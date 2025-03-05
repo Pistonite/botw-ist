@@ -25,7 +25,7 @@ export class CommandWrite extends AbstractProperCommand {
         this.meta = meta;
     }
 
-    public convert() {
+    public override convert() {
         const meta = convertItemMeta(this.meta);
         let slotClause = "";
         if (this.slot) {

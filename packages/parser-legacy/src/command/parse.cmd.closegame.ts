@@ -3,7 +3,7 @@ import { AbstractProperCommand } from "./command";
 import { codeBlockFromRange, type ParserSafe } from "./type";
 
 export class CommandCloseGame extends AbstractProperCommand {
-    public convert(): string {
+    public override convert(): string {
         return "close-game;";
     }
 }

@@ -3,7 +3,7 @@ import { AbstractProperCommand } from "./command";
 import { codeBlockFromRange, type Parser } from "./type";
 
 export class CommandSync extends AbstractProperCommand {
-    public convert(): string {
+    public override convert(): string {
         return "sync;";
     }
 }

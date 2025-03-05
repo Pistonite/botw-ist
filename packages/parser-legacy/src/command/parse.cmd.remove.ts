@@ -38,7 +38,7 @@ export class CommandRemove extends AbstractProperCommand {
         this.verb = verb;
         return this;
     }
-    public convert(): string {
+    public override convert(): string {
         let s = `${this.verb} ${this.stacks.map((s) => s.convert()).join(" ")}`;
         if (this.slot) {
             s += ` from slot ${this.slot + 1}`;
@@ -61,7 +61,7 @@ export class CommandEat extends AbstractProperCommand {
         this.stacks = stacks;
         this.slot = slot - 1; //change to 0 based
     }
-    public convert(): string {
+    public override convert(): string {
         let s = `eat ${this.stacks.map((s) => s.convert()).join(" ")}`;
         if (this.slot) {
             s += ` from slot ${this.slot + 1}`;
@@ -78,7 +78,7 @@ export class CommandRemoveAll extends AbstractProperCommand {
         super(codeBlocks);
         this.types = types;
     }
-    public convert(): string {
+    public override convert(): string {
         let s = "";
         if (this.types.includes(ItemType.Weapon)) {
             s += "destroy all weapons;";
@@ -131,7 +131,7 @@ export class CommandDnp extends AbstractProperCommand {
         this.stacks = stacks;
         this.slot = slot - 1; //change to 0 based
     }
-    public convert(): string {
+    public override convert(): string {
         let s = `dnp ${this.stacks.map((s) => s.convert()).join(" ")}`;
         if (this.slot) {
             s += ` from slot ${this.slot + 1}`;

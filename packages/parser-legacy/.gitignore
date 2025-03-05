@@ -1,1 +1,4 @@
 *.generated.ts
+/tsconfig*.json
+/eslint.config.js
+.prettierignore
