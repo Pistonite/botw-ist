@@ -1,10 +1,12 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import yaml from "@modyfi/vite-plugin-yaml";
+import monodev from "mono-dev/vite";
 
-export default defineConfig({
-    plugins: [react(), yaml()],
-    server: {
-        port: 33173,
-    },
-});
+const monodevConfig = monodev({});
+
+export default defineConfig(
+    monodevConfig({
+        server: {
+            port: 33173,
+        },
+    }),
+);

@@ -26,7 +26,7 @@ export class CommandEquip extends AbstractProperCommand {
         this.slot = slot - 1; // change to 0-based
     }
 
-    public convert(): string {
+    public override convert(): string {
         let s = `equip ${convertItem(this.item)}`;
         if (this.slot !== 0) {
             s += ` in slot ${this.slot + 1}`;
@@ -45,7 +45,7 @@ export class CommandUnequip extends AbstractProperCommand {
         this.slot = slot - 1; // change to 0-based
     }
 
-    public convert(): string {
+    public override convert(): string {
         let s = `unequip ${convertItem(this.item)}`;
         if (this.slot !== 0) {
             s += ` in slot ${this.slot + 1}`;
@@ -61,7 +61,7 @@ export class CommandUnequipAll extends AbstractProperCommand {
         super(codeBlocks);
         this.types = types;
     }
-    public convert(): string {
+    public override convert(): string {
         let s = "";
         if (this.types.includes(ItemType.Weapon)) {
             s += "unequip all weapons;";

@@ -9,9 +9,6 @@
     },
     "dependencies": {},
     "devDependencies": {
-        "@types/react": "catalog:",
-        "eslint": "catalog:",
-        "mono-dev": "workspace:*",
-        "typescript": "catalog:"
+        "mono-dev": "workspace:*"
     }
 }

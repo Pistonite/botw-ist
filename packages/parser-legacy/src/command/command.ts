@@ -76,12 +76,12 @@ export class AbstractProperCommand implements Command {
 
 // Nop command: does nothing (like a comment)
 export class CommandNop extends AbstractProperCommand {
-    shouldSkipWithKeyboard: boolean;
+    override shouldSkipWithKeyboard: boolean;
     constructor(shouldSkipWithKeyboard: boolean, codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.shouldSkipWithKeyboard = shouldSkipWithKeyboard;
     }
-    get codeBlocks() {
+    override get codeBlocks() {
         return this.base.codeBlocks;
     }
 }

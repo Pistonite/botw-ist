@@ -14,7 +14,7 @@ export class CommandReload extends AbstractProperCommand {
         super(codeBlocks);
         this.name = name;
     }
-    public convert(): string {
+    public override convert(): string {
         if (this.name) {
             return `reload ${this.name};`;
         } else {

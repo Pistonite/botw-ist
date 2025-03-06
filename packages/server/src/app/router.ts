@@ -1,4 +1,8 @@
-import { make404, type RouteBuilder } from "util/framework";
+import {
+    type BunRequestHandler,
+    make404,
+    type RouteBuilder,
+} from "util/framework";
 
 import { makeSSR } from "./ssr.ts";
 import { makeAsset } from "./assets.ts";
@@ -8,11 +12,13 @@ import {
     useDirectLoadFromUrl,
 } from "./direct.ts";
 
-export const createAppRoutes = async (builder: RouteBuilder) => {
-    const commitFile = Bun.file("app/commit");
-    const commit = (await commitFile.text()).trim();
-    console.log("commit: " + commit);
+const commitFile = Bun.file("app/commit");
+const COMMIT = (await commitFile.text()).trim();
+console.log("commit: " + COMMIT);
 
+export const createAppRoutes = (
+    builder: RouteBuilder,
+): Record<string, BunRequestHandler | Response> => {
     const assetRoute = builder.route({
         handler: makeAsset,
     });
@@ -64,7 +70,7 @@ export const createAppRoutes = async (builder: RouteBuilder) => {
                 return make404();
             },
         }),
-        "/commit": new Response(commit),
+        "/commit": new Response(COMMIT),
         "/manifest.json": assetRoute,
         "/assets/*": assetRoute,
         "/static/*": assetRoute,

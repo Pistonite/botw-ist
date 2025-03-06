@@ -9,10 +9,10 @@ import {
 import type { ItemSlotInfo } from "@pistonite/skybook-api";
 import { initI18n } from "skybook-localization";
 
-import { ItemTooltipProvider } from "../src/ItemTooltipProvider";
-import { CookEffect, ItemUse, PouchItemType } from "../src/data/enums.ts";
-import { ItemSlot } from "../src/ItemSlot";
-import { ItemTooltip } from "../src/ItemTooltip.tsx";
+import { ItemTooltipProvider } from "../ItemTooltipProvider";
+import { CookEffect, ItemUse, PouchItemType } from "../data/enums.ts";
+import { ItemSlot } from "../ItemSlot";
+import { ItemTooltip } from "../ItemTooltip.tsx";
 
 const DUMMY: ItemSlotInfo = {
     actorName: "Dummy",

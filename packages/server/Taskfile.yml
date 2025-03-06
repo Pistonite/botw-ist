@@ -38,6 +38,7 @@ tasks:
   dev:
     desc: Run server in watch mode
     cmds:
+      - bun scripts/patch-tsconfig.ts
       - $(which mkdir) -p dist
       - task: bun-watch
 
@@ -49,13 +50,13 @@ tasks:
 
   build:
     cmds:
+      - bun scripts/patch-tsconfig.ts
       - $(which mkdir) -p dist
       - cmd: >
           bun build 
           --compile 
           --minify 
           --sourcemap
-          --bytecode
           --target=bun-linux-x64-musl 
           --outfile dist/server
           src/index.ts 
@@ -63,11 +64,8 @@ tasks:
 
   check:
     cmds:
-      - task: ecma:tsc-check
-      - task: ecma:eslint-check
-      - task: ecma:prettier-check
+      - task: ecma:mono-check
 
   fix:
     cmds:
-      - task: ecma:eslint-fix
-      - task: ecma:prettier-fix
+      - task: ecma:mono-fix

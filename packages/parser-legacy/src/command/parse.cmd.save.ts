@@ -23,7 +23,7 @@ export class CommandSave extends AbstractProperCommand {
             this.name = name;
         }
     }
-    public convert(): string {
+    public override convert(): string {
         if (this.name) {
             const saveName = this.name.replace(/ /g, "_").toLowerCase();
             return `save-as ${saveName};`;

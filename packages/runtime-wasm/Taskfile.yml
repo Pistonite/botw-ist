@@ -64,31 +64,15 @@ tasks:
     
 
   check:
-    desc: Run Linter and Formatter
     cmds:
       - task: cargo:clippy-all
       - task: cargo:fmt-check
-      - task: ecma:tsc-check
-      - task: ecma:eslint-check
-      - task: ecma:prettier-check
-
-  check-mocked:
-    cmds:
-      - task: cargo:clippy-package-feature
-        vars:
-          PACKAGE: skybook-runtime-wasm
-          FEATURES: mock-data
-      - task: cargo:fmt-check
-      - task: ecma:tsc-check
-      - task: ecma:eslint-check
-      - task: ecma:prettier-check
+      - task: ecma:mono-check
 
   fix:
-    desc: Fix issues in code
     cmds:
       - task: cargo:fmt-fix
-      - task: ecma:eslint-fix
-      - task: ecma:prettier-fix
+      - task: ecma:mono-fix
 
   pull-dist:
     desc: Download Runtime WASM for local development

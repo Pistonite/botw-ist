@@ -25,17 +25,12 @@
         "zustand": "^5.0.2"
     },
     "devDependencies": {
-        "@modyfi/vite-plugin-yaml": "catalog:",
         "@pistonite/vite-plugin-intwc": "workspace:*",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
-        "@vitejs/plugin-react": "catalog:",
-        "eslint": "catalog:",
         "monaco-editor": "*",
         "mono-dev": "workspace:*",
-        "typescript": "catalog:",
         "vite": "catalog:",
-        "vite-plugin-serve-static": "^1.1.0",
-        "vite-tsconfig-paths": "^5.1.4"
+        "vite-plugin-serve-static": "^1.1.0"
     }
 }

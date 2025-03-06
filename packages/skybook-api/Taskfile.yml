@@ -31,7 +31,7 @@ tasks:
           src/ExtensionApp.ts 
           src/Runtime.ts
           src/RuntimeApp.ts
-      - task: ecma:prettier-fix
+      - task: ecma:mono-fix
 
   check:
     cmds:
@@ -40,14 +40,11 @@ tasks:
         vars:
           CHECK_PATH: packages/skybook-api/src
           CHECK_MESSAGE: Please regenerate and commit skybook-api bindings
-      - task: ecma:tsc-check
-      - task: ecma:eslint-check
-      - task: ecma:prettier-check
+      - task: ecma:mono-check
 
   fix:
     cmds:
-      - task: ecma:eslint-fix
-      - task: ecma:prettier-fix
+      - task: ecma:mono-fix
 
   test:
     cmds:

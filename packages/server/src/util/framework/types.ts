@@ -1,7 +1,5 @@
 import type { Result } from "@pistonite/pure/result";
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-export type URL = import("url").URL;
+import type { BunRequest } from "bun";
 
 export type ResponsePayload = {
     body?: Bun.BodyInit;
@@ -18,14 +16,14 @@ type Awaitable<T> = T | Promise<T>;
  * - Ok<ResponsePayload> or Err<ResponsePayload> to short-circuit the request
  */
 export type InboundHook = (
-    req: Request,
+    req: BunRequest,
     url: URL,
 ) => Awaitable<Result<ResponsePayload | undefined, ResponsePayload>>;
 
-export type Handler = (req: Request, url: URL) => Awaitable<ResponsePayload>;
+export type Handler = (req: BunRequest, url: URL) => Awaitable<ResponsePayload>;
 
 export type OutboundHook = (
-    req: Request,
+    req: BunRequest,
     url: URL,
     ok: boolean,
     response: ResponsePayload,
@@ -37,4 +35,4 @@ export type RouteArgs = {
     outbound?: OutboundHook[];
 };
 
-export type BunRequestHandler = (req: Request) => Awaitable<Response>;
+export type BunRequestHandler = (req: BunRequest) => Awaitable<Response>;

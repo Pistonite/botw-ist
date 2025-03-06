@@ -1,2 +1,6 @@
 src/generated/*.yaml
 /node_modules/
+.eslintcache
+/tsconfig*.json
+/eslint.config.js
+.prettierignore

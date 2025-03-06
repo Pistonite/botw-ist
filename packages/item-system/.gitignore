@@ -4,3 +4,6 @@
 /public
 *.png
 *.webp
+/tsconfig*.json
+/eslint.config.js
+.prettierignore

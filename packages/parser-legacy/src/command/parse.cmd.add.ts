@@ -22,7 +22,7 @@ export class CommandAdd extends AbstractProperCommand {
         return this;
     }
 
-    public convert(): string {
+    public override convert(): string {
         return `${this.verb} ${this.stacks.map((s) => s.convert()).join(" ")};`;
     }
 }

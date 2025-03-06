@@ -16,7 +16,7 @@ export class CommandInitGameData extends AbstractProperCommand {
         this.stacks = stacks;
     }
 
-    public convert(): string {
+    public override convert(): string {
         return `!set-gamedata ${this.stacks.map((s) => s.convert()).join(" ")};`;
     }
 }

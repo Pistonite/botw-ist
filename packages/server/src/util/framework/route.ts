@@ -1,7 +1,7 @@
 import { type Result, errstr } from "@pistonite/pure/result";
+import type { BunRequest } from "bun";
 
 import type {
-    URL,
     BunRequestHandler,
     Handler,
     InboundHook,
@@ -66,8 +66,8 @@ export const route = (args: RouteArgs | Handler): BunRequestHandler => {
     const inbound = args.inbound;
     const outbound = args.outbound;
     if (inbound?.length && outbound?.length) {
-        return async (req: Request) => {
-            const url = new URL(req.url);
+        return async (req: BunRequest) => {
+            const url = new URL(req.url) as URL;
             const inboundResult = await executeInboundHooks(req, url, inbound);
             if (inboundResult.err) {
                 return handleOutboundHooks(
@@ -101,8 +101,8 @@ export const route = (args: RouteArgs | Handler): BunRequestHandler => {
         };
     }
     if (inbound?.length) {
-        return async (req: Request) => {
-            const url = new URL(req.url);
+        return async (req: BunRequest) => {
+            const url = new URL(req.url) as URL;
             const inboundResult = await executeInboundHooks(req, url, inbound);
             if (inboundResult.err) {
                 return handleResponsePayload(false, inboundResult.err);
@@ -118,8 +118,8 @@ export const route = (args: RouteArgs | Handler): BunRequestHandler => {
         };
     }
     if (outbound?.length) {
-        return async (req: Request) => {
-            const url = new URL(req.url);
+        return async (req: BunRequest) => {
+            const url = new URL(req.url) as URL;
             const result = await executeHandler(req, url, handler);
             if (result.val) {
                 return handleOutboundHooks(
@@ -133,8 +133,8 @@ export const route = (args: RouteArgs | Handler): BunRequestHandler => {
             return handleOutboundHooks(req, url, false, result.err, outbound);
         };
     }
-    return async (req: Request) => {
-        const url = new URL(req.url);
+    return async (req: BunRequest) => {
+        const url = new URL(req.url) as URL;
         const result = await executeHandler(req, url, handler);
         if (result.val) {
             return handleResponsePayload(true, result.val);
@@ -144,7 +144,7 @@ export const route = (args: RouteArgs | Handler): BunRequestHandler => {
 };
 
 const executeInboundHooks = async (
-    req: Request,
+    req: BunRequest,
     url: URL,
     hooks: InboundHook[],
 ): Promise<Result<ResponsePayload | undefined, ResponsePayload>> => {
@@ -161,7 +161,7 @@ const executeInboundHooks = async (
 };
 
 const executeHandler = async (
-    req: Request,
+    req: BunRequest,
     url: URL,
     handler: Handler,
 ): Promise<Result<ResponsePayload, ResponsePayload>> => {
@@ -186,7 +186,7 @@ const executeHandler = async (
 };
 
 const handleOutboundHooks = async (
-    req: Request,
+    req: BunRequest,
     url: URL,
     ok: boolean,
     response: ResponsePayload,

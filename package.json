@@ -1,5 +1,8 @@
 {
     "version": "0.4.0",
+    "devDependencies": {
+        "eslint": "catalog:"
+    },
     "pnpm": {
         "patchedDependencies": {
             "monaco-editor@0.52.2": "packages/intwc/patches/monaco-editor@0.52.2.patch"

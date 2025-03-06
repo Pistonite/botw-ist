@@ -35,7 +35,7 @@ async function main() {
         reusePort: true,
         hostname,
         routes: {
-            ...(await createAppRoutes(builder)),
+            ...createAppRoutes(builder),
             ...createApiRoutes(crypto, builder),
         },
         // Global error handler
