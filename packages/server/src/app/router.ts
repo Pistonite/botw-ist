@@ -2,6 +2,7 @@ import {
     type BunRequestHandler,
     make404,
     type RouteBuilder,
+    withHeadersOnSuccess,
 } from "util/framework";
 
 import { makeSSR } from "./ssr.ts";
@@ -16,13 +17,22 @@ const commitFile = Bun.file("app/commit");
 const COMMIT = (await commitFile.text()).trim();
 console.log("commit: " + COMMIT);
 
+const withCorpHeaders = withHeadersOnSuccess({
+    "Cross-Origin-Embedder-Policy": "require-corp",
+    "Cross-Origin-Opener-Policy": "same-origin",
+});
+
+const withNoCacheHeaders = withHeadersOnSuccess({
+    "Cache-Control": "no-cache",
+});
+
+const withCacheForeverHeaders = withHeadersOnSuccess({
+    "Cache-Control": "public, max-age=31535000, immutable",
+});
+
 export const createAppRoutes = (
     builder: RouteBuilder,
 ): Record<string, BunRequestHandler | Response> => {
-    const assetRoute = builder.route({
-        handler: makeAsset,
-    });
-
     return {
         "/": builder.route({
             handler: (req, url) => {
@@ -38,6 +48,15 @@ export const createAppRoutes = (
                     url: url.origin + url.pathname,
                 });
             },
+            outbound: [
+                withCorpHeaders,
+                // Home page can be cached because the script is embedded in the url
+                // but we also don't want to cache it for too long
+                // when an update is deployed
+                withHeadersOnSuccess({
+                    "Cache-Control": "public, max-age=600",
+                }),
+            ],
         }),
         "/-/*": builder.route({
             handler: async (req, url) => {
@@ -50,6 +69,12 @@ export const createAppRoutes = (
                 }
                 return make404();
             },
+            outbound: [
+                withCorpHeaders,
+                // direct load urls should not be cached
+                // to always load the latest version
+                withNoCacheHeaders,
+            ],
         }),
         "/github/:user/:repo/:branch/*": builder.route({
             handler: async (req, url) => {
@@ -69,11 +94,50 @@ export const createAppRoutes = (
                 }
                 return make404();
             },
+            outbound: [
+                withCorpHeaders,
+                // github contents are cached for 5 minutes
+                // so we also cache that long
+                withHeadersOnSuccess({
+                    "Cache-Control": "public, max-age=301",
+                }),
+            ],
         }),
-        "/commit": new Response(COMMIT),
-        "/manifest.json": assetRoute,
-        "/assets/*": assetRoute,
-        "/static/*": assetRoute,
-        "/runtime/*": assetRoute,
+        "/commit": new Response(COMMIT, {
+            headers: {
+                "Content-Type": "text/plain",
+                "Cache-Control": "no-cache",
+            },
+        }),
+        // bundled assets are hashed and can be cached forever
+        "/assets/*": builder.route({
+            handler: makeAsset,
+            outbound: [withCacheForeverHeaders],
+        }),
+        // runtime is versioned by commit hash
+        // and the worker is a frame, so needs CORP
+        "/runtime/*": builder.route({
+            handler: makeAsset,
+            outbound: [withCorpHeaders, withCacheForeverHeaders],
+        }),
+        // these static assets are unlikely to change (images)
+        // cache for 7 days
+        "/static/*": builder.route({
+            handler: makeAsset,
+            outbound: [
+                withHeadersOnSuccess({
+                    "Cache-Control": "public, max-age=604800",
+                }),
+            ],
+        }),
+        // other assets, cache for a standard 1 day
+        "/manifest.json": builder.route({
+            handler: makeAsset,
+            outbound: [
+                withHeadersOnSuccess({
+                    "Cache-Control": "public, max-age=86400",
+                }),
+            ],
+        }),
     };
 };

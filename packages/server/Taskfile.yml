@@ -4,6 +4,7 @@ includes:
   ecma:
     taskfile: ../mono-dev/task/ecma.yaml
     internal: true
+    optiona: true
   app:
     taskfile: ../app
     dir: ../app
@@ -12,11 +13,18 @@ includes:
     taskfile: ../runtime-wasm
     dir: ../runtime-wasm
     internal: true
+  docker:
+    taskfile: ../mono-dev/task/docker.yaml
+    internal: true
+    optiona: true
+
+vars:
+  DOCKER_IMAGE: pistonite/skybook-server
 
 tasks:
   install:
     cmds:
-      - bun scripts/get-version.ts > src/version.ts
+      - echo "export const VERSION = "'"'$(bun scripts/get-version.ts)'";' > src/version.ts
 
   pull-local:
     vars:
@@ -24,33 +32,50 @@ tasks:
         sh: git rev-parse HEAD | cut -c1-8
     desc: Copy build artifacts locally to dist
     cmds:
-      - task: runtime-wasm:build
+      - task: runtime-wasm:build-wasm
+      - task: runtime-wasm:build-dist-min
       - task: app:build
       - rm -rf dist
-      - $(which mkdir) -p dist/app/runtime
+      - $(which mkdir) -p dist/app
       - cp -r ../app/dist/* dist/app
-      - cp ../runtime-wasm/dist/skybook-{{.COMMIT_SHORT}}.wasm dist/app/runtime
-      - cp ../runtime-wasm/dist/skybook-{{.COMMIT_SHORT}}.min.js dist/app/runtime
-      - cp ../runtime-wasm/dist/worker-{{.COMMIT_SHORT}}.min.js dist/app/runtime
+      - $(which mkdir) -p dist/runtime
+      - cp ../runtime-wasm/dist/* dist/runtime
+      - task: package-assets
+
+  pull:
+    desc: Pull build artifacts from CI (needs GITHUB_TOKEN environment variable)
+    cmds:
+      - rm -rf dist
+      - magnesis
+      - mv dist/server/server-bin dist
+      - rm -r dist/server
+      - task: package-assets
+
+  package-assets:
+    cmds:
+      - mv dist/runtime dist/app
       - git rev-parse HEAD > dist/app/commit
       - bun scripts/gzip-assets.ts
 
   dev:
     desc: Run server in watch mode
     cmds:
-      - bun scripts/patch-tsconfig.ts
+      - task: ecma:mono-config
       - $(which mkdir) -p dist
       - task: bun-watch
 
   bun-watch:
     dir: dist
+    env:
+      SKYBOOK_TLS_PATH: ../../../.cert
+      SKYBOOK_PORT: 8000
     cmds:
       - cmd: bun --watch run ../src/index.ts
         ignore_error: true
 
   build:
     cmds:
-      - bun scripts/patch-tsconfig.ts
+      - task: ecma:mono-config
       - $(which mkdir) -p dist
       - cmd: >
           bun build 
@@ -58,10 +83,9 @@ tasks:
           --minify 
           --sourcemap
           --target=bun-linux-x64-musl 
-          --outfile dist/server
+          --outfile dist/server-bin
           src/index.ts 
   
-
   check:
     cmds:
       - task: ecma:mono-check
@@ -69,3 +93,25 @@ tasks:
   fix:
     cmds:
       - task: ecma:mono-fix
+
+  docker-build:
+    cmds:
+      - task: docker:build
+
+  docker-run:
+    cmds:
+      - task: docker:run
+        vars: 
+          DOCKER_RUN_FLAGS:  -p 8000:80
+  
+  docker-connect:
+    cmds:
+      - task: docker:connect
+
+  docker-stop:
+    cmds:
+      - task: docker:stop
+  
+  docker-clean:
+    cmds:
+      - task: docker:clean

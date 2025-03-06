@@ -179,3 +179,44 @@ tasks:
       - task: manual:build
       - task: runtime-wasm:build
 
+  build-manual-ci:
+    cmds:
+      - task: parser:pull-artifacts
+      - task: item-assets:pull-artifacts-ts
+      - task: manual:install
+      - task: manual:build
+
+  build-app-ci:
+    cmds:
+      - task: localization:pull-artifacts
+      - task: item-assets:pull-artifacts
+      - task: item-system:pull-artifacts
+      - pnpm install --frozen-lockfile
+      - task: parser-legacy:install
+      - task: intwc:install
+      - task: app:build
+
+  build-runtime-ci:
+    cmds:
+      - task: parser:pull-artifacts
+      - pnpm install --frozen-lockfile
+      - task: runtime-wasm:build
+      - task: runtime-wasm:build-dist-min
+
+  build-runtime-fast-ci:
+    cmds:
+      - task: parser:pull-artifacts
+      - pnpm install --frozen-lockfile
+      - task: runtime-wasm:build-wasm
+      - task: runtime-wasm:build-dist-min
+
+  build-server-ci:
+    cmds:
+      - pnpm install --frozen-lockfile
+      - task: parser-legacy:install
+      - task: server:install
+      - task: server:build
+
+    
+
+

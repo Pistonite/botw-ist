@@ -1,0 +1,98 @@
+name: Build
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build-manual:
+    name: manual
+    runs-on: blacksmith-4vcpu-ubuntu-2204
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: ./.github/steps/setup-blacksmith
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: task build-manual-ci
+
+  build-app:
+    name: app
+    runs-on: blacksmith-4vcpu-ubuntu-2204
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: ./.github/steps/setup-blacksmith
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: task build-app-ci
+
+      # upload artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          path: packages/app/dist
+          name: app
+          retention-days: 3
+      
+  build-runtime:
+    name: runtime
+    runs-on: blacksmith-4vcpu-ubuntu-2204
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: ./.github/steps/setup-blacksmith
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          rust_targets: wasm32-unknown-unknown,x86_64-unknown-linux-gnu
+      - run: task build-runtime-fast-ci
+        if: github.event_name != 'pull_request'
+      - run: task build-runtime-ci
+        if: github.event_name == 'pull_request'
+
+      # upload artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          path: packages/runtime-wasm/dist
+          name: runtime
+          retention-days: 3
+
+  build-server:
+    name: server
+    runs-on: blacksmith-4vcpu-ubuntu-2204
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: ./.github/steps/setup-blacksmith
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: task build-server-ci
+
+      # upload artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          path: packages/server/dist
+          name: server
+          retention-days: 3
