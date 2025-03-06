@@ -10,9 +10,10 @@ includes:
 
 tasks:
   build:
+    desc: Run wasm-bindgen and build the dev dist package
     cmds:
       - task: build-wasm
-      - task: package
+      - task: build-dist
 
   build-wasm:
     cmds:
@@ -21,38 +22,45 @@ tasks:
           PACKAGE: skybook_runtime_wasm
           WASM_PACK_ARGS: -t no-modules --no-pack
 
-  package:
+  build-dist:
     vars:
       BUILD_DIR: dist
-      COMMIT_SHORT:
-        sh: git rev-parse HEAD | cut -c1-8
       SKYBOOK_JS: "{{.BUILD_DIR}}/skybook.js"
-      SKYBOOK_MIN_JS: "{{.BUILD_DIR}}/skybook-{{.COMMIT_SHORT}}.min.js"
       WORKER_JS: "{{.BUILD_DIR}}/worker.js"
-      WORKER_MIN_JS: "{{.BUILD_DIR}}/worker-{{.COMMIT_SHORT}}.min.js"
-      SKYBOOK_WASM: "{{.BUILD_DIR}}/skybook-{{.COMMIT_SHORT}}.wasm"
-      SKYBOOK_DEV_WASM: "{{.BUILD_DIR}}/skybook.wasm"
+      SKYBOOK_WASM: "{{.BUILD_DIR}}/skybook.wasm"
         
     cmds:
       - $(which mkdir) -p {{.BUILD_DIR}}
-      - rm -f {{.BUILD_DIR}}/*
       - cp pkg/skybook_runtime_wasm_bg.wasm {{.SKYBOOK_WASM}}
-      - cp pkg/skybook_runtime_wasm_bg.wasm {{.SKYBOOK_DEV_WASM}}
       - cp pkg/skybook_runtime_wasm.js {{.SKYBOOK_JS}}
-      - cmd: >
-          echo 'minifying wasm_bindgen module';
-          echo 'let wasm_bindgen;(function(){function __export(x){wasm_bindgen=x;};' > {{.SKYBOOK_MIN_JS}};
-          cp pkg/skybook_runtime_wasm.js {{.WORKER_JS}};
-          echo '__export(wasm_bindgen)' >> {{.WORKER_JS}};
-          bun build --minify {{.WORKER_JS}} >> {{.SKYBOOK_MIN_JS}};
-          echo '})();' >> {{.SKYBOOK_MIN_JS}};
-        silent: true
       - cmd: >
           echo 'bundling worker';
           cp pkg/skybook_runtime_wasm.js {{.WORKER_JS}};
           echo 'self["__skybook_path_base"]="/runtime/skybook";' >> {{.WORKER_JS}};
           echo 'self["__min"]=false;' >> {{.WORKER_JS}};
           bun build src/worker.ts >> {{.WORKER_JS}};
+        silent: true
+
+  build-dist-min:
+    desc: Clean and build the minified production package
+    vars:
+      BUILD_DIR: dist
+      COMMIT_SHORT:
+        sh: git rev-parse HEAD | cut -c1-8
+      SKYBOOK_MIN_JS: "{{.BUILD_DIR}}/skybook-{{.COMMIT_SHORT}}.min.js"
+      WORKER_MIN_JS: "{{.BUILD_DIR}}/worker-{{.COMMIT_SHORT}}.min.js"
+      SKYBOOK_WASM: "{{.BUILD_DIR}}/skybook-{{.COMMIT_SHORT}}.wasm"
+    cmds:
+      - rm -rf {{.BUILD_DIR}}
+      - $(which mkdir) -p {{.BUILD_DIR}}
+      - cp pkg/skybook_runtime_wasm_bg.wasm {{.SKYBOOK_WASM}}
+      - cmd: >
+          echo 'minifying wasm_bindgen module';
+          echo 'let wasm_bindgen;(function(){function __export(x){wasm_bindgen=x;};' > {{.SKYBOOK_MIN_JS}};
+          cp pkg/skybook_runtime_wasm.js {{.WORKER_MIN_JS}};
+          echo '__export(wasm_bindgen)' >> {{.WORKER_MIN_JS}};
+          bun build --minify {{.WORKER_MIN_JS}} >> {{.SKYBOOK_MIN_JS}};
+          echo '})();' >> {{.SKYBOOK_MIN_JS}};
         silent: true
       - cmd: >
           echo 'bundling minified worker';

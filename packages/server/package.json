@@ -13,5 +13,10 @@
         "eslint": "catalog:",
         "mono-dev": "workspace:*",
         "typescript": "catalog:"
+    },
+    "tsconfig": {
+        "compilerOptions": {
+            "baseUrl": "src"
+        }
     }
 }

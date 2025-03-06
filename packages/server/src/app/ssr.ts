@@ -127,8 +127,6 @@ export const makeSSR = async (
         options: {
             headers: {
                 "Content-Type": "text/html",
-                "Cross-Origin-Embedder-Policy": "require-corp",
-                "Cross-Origin-Opener-Policy": "same-origin",
             },
         },
     };

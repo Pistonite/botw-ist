@@ -38,19 +38,21 @@ tasks:
   dev:
     desc: Run server in watch mode
     cmds:
-      - bun scripts/patch-tsconfig.ts
+      - task: ecma:mono-config
       - $(which mkdir) -p dist
       - task: bun-watch
 
   bun-watch:
     dir: dist
+    env:
+      SKYBOOK_TLS_PATH: ../../../.cert
     cmds:
       - cmd: bun --watch run ../src/index.ts
         ignore_error: true
 
   build:
     cmds:
-      - bun scripts/patch-tsconfig.ts
+      - task: ecma:mono-config
       - $(which mkdir) -p dist
       - cmd: >
           bun build 
