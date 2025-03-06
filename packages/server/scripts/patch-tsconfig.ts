@@ -9,10 +9,9 @@ try {
     tsconfig.compilerOptions.baseUrl = "src";
 } catch {
     tsconfig = {
-        "compilerOptions": {
-            "baseUrl": "src",
+        compilerOptions: {
+            baseUrl: "src",
         },
-    }
+    };
 }
 f.write(JSON.stringify(tsconfig, null, 4));
-
