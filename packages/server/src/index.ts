@@ -63,7 +63,7 @@ async function main() {
     const crypto = initCrypto();
     const tls = await initTls();
 
-    const port = 8000;
+    const port = parseInt(process.env.SKYBOOK_PORT || "80");
     console.log(
         `starting server on http${tls ? "s" : ""}://${tls?.hostname || "localhost"}:${port}`,
     );
