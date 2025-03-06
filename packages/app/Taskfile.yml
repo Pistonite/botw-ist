@@ -22,15 +22,10 @@ tasks:
   # note the runtime is packaged separately so it can be built in parallel
 
   check:
-    desc: Check for errors
     cmds:
-      - task: ecma:tsc-check-build
-      - task: ecma:eslint-check
-      - task: ecma:prettier-check
+      - task: ecma:mono-check
 
   fix:
-    desc: Fix errors
     cmds:
-      - task: ecma:eslint-fix
-      - task: ecma:prettier-fix
+      - task: ecma:mono-fix
 

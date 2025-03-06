@@ -77,7 +77,7 @@ pub trait VirtualMachine {
                     self.enter(target)?
                 },
                 Bytecode::SetRegHi(reg, value) => {
-                    self.set_reg(reg, (value as u64) << 32 | prev_lo_value as u64)?;
+                    self.set_reg(reg, ((value as u64) << 32) | prev_lo_value as u64)?;
                     prev_lo_value = 0;
                 }
                 Bytecode::SetRegLo(reg, value) => {

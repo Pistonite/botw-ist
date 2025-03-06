@@ -11,7 +11,7 @@ export class EditorExtension extends FirstPartyExtensionAdapter {
     ) {
         super(standalone);
     }
-    public async onScriptChanged(script: string): WorkexPromise<void> {
+    public override async onScriptChanged(script: string): WorkexPromise<void> {
         if (!this.editor.getFiles().includes(this.scriptFile)) {
             this.editor.openFile(this.scriptFile, script, "skybook");
         } else {
