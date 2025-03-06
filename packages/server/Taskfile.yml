@@ -9,10 +9,12 @@ includes:
     taskfile: ../app
     dir: ../app
     internal: true
+    optional: true
   runtime-wasm:
     taskfile: ../runtime-wasm
     dir: ../runtime-wasm
     internal: true
+    optional: true
   docker:
     taskfile: ../mono-dev/task/docker.yaml
     internal: true

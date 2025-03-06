@@ -9,6 +9,7 @@ on:
 
 jobs:
   build-manual:
+    if: github.event_name == 'pull_request'
     name: manual
     runs-on: blacksmith-4vcpu-ubuntu-2204
     permissions:
