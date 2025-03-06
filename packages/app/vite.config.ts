@@ -16,7 +16,6 @@ const commit = spawnSync("git", ["rev-parse", "HEAD"], {
 }).stdout.trim();
 console.log(commit);
 
-
 const staticAssetHeader = (): Plugin => {
     return {
         name: "static-asset-header",
@@ -24,17 +23,20 @@ const staticAssetHeader = (): Plugin => {
         configureServer(server) {
             server.middlewares.use((req, res, next) => {
                 if (req.url?.startsWith("/runtime/")) {
-                    res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+                    res.setHeader(
+                        "Cross-Origin-Embedder-Policy",
+                        "require-corp",
+                    );
                     res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
                 }
                 next();
             });
-        }
-    }
+        },
+    };
 };
 
 // https://vitejs.dev/config/
-export default defineConfig( ({command}) => {
+export default defineConfig(({ command }) => {
     const monodevConfig = monodev({
         https: command === "serve",
     });

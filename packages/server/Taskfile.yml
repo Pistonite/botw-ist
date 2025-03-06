@@ -38,6 +38,7 @@ tasks:
   dev:
     desc: Run server in watch mode
     cmds:
+      - bun scripts/patch-tsconfig.ts
       - $(which mkdir) -p dist
       - task: bun-watch
 
@@ -49,6 +50,7 @@ tasks:
 
   build:
     cmds:
+      - bun scripts/patch-tsconfig.ts
       - $(which mkdir) -p dist
       - cmd: >
           bun build 
