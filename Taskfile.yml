@@ -213,6 +213,7 @@ tasks:
   build-server-ci:
     cmds:
       - pnpm install --frozen-lockfile
+      - task: parser-legacy:install
       - task: server:install
       - task: server:build
 
