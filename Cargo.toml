@@ -3,7 +3,6 @@ resolver = "2"
 members = [
     "packages/runtime",
     "packages/manual",
-    "research/trace-view", 
     "packages/parser", 
     "packages/runtime-wasm", 
     "packages/blueflame", 
