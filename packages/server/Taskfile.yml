@@ -4,21 +4,17 @@ includes:
   ecma:
     taskfile: ../mono-dev/task/ecma.yaml
     internal: true
-    optional: true
   app:
     taskfile: ../app
     dir: ../app
     internal: true
-    optional: true
   runtime-wasm:
     taskfile: ../runtime-wasm
     dir: ../runtime-wasm
     internal: true
-    optional: true
   docker:
     taskfile: ../mono-dev/task/docker.yaml
     internal: true
-    optional: true
 
 vars:
   DOCKER_IMAGE: pistonite/skybook-server
