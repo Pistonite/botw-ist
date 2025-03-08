@@ -29,7 +29,7 @@ class ExtensionAppHost implements ExtensionApp {
     public async setScript(script: string) {
         // await setScript(script);
         // return {};
-        useApplicationStore.setState({ script });
+        useApplicationStore.getState().setScript(script);
         return {};
     }
     public async resolveItem(
