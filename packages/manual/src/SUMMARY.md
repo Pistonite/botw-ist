@@ -18,6 +18,7 @@
   - [Actions](./action.md)
     - [get](./action/get.md)
   - [Commands]()
+  - [Custom Image](./user/custom_image.md)
 - [Developer](./developer/index.md)
   - [Architecture](./developer/architecture.md)
     - [Runtime]()

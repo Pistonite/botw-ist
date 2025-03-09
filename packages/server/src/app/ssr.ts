@@ -68,8 +68,26 @@ export const makeSSR = async (
         const jsonString = JSON.stringify(json);
         directLoadScript = `<script data-skybook-direct-load="1">var __skybook_direct_load=JSON.parse(${jsonString})</script>`;
         const scriptEnv = parseEnvFromScript(options.directLoad.content);
-        if (scriptEnv.image && scriptEnv.image !== "default") {
-            customImage = ` (${scriptEnv.image})`;
+        if (scriptEnv.image) {
+            customImage = ` (custom-ver${scriptEnv.image}`;
+            switch (scriptEnv.dlc) {
+                case 0: {
+                    customImage += "-nodlc)";
+                    break;
+                }
+                case 1: {
+                    customImage += "-dlc-1)";
+                    break;
+                }
+                case 2: {
+                    customImage += "-dlc-2)";
+                    break;
+                }
+                default: {
+                    customImage += ")";
+                    break;
+                }
+            }
         }
     } else {
         directLoadScript = "";

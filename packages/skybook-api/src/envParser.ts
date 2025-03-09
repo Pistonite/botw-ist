@@ -1,10 +1,14 @@
 /** Parser for the env tag in the script */
 
 import type { Result } from "@pistonite/pure/result";
-import { RuntimeInitParams } from "./types";
+
+import { RuntimeInitParams } from "./types.ts";
 
 /** Parse the leading env tag from the script */
 export const parseEnvFromScript = (script: string): ScriptEnv => {
+    const env: ScriptEnv = {
+        dlc: 3,
+    };
     const lines = script.split("\n");
     let i = 0;
     for (; i < lines.length; i++) {
@@ -18,15 +22,14 @@ export const parseEnvFromScript = (script: string): ScriptEnv => {
         break;
     }
     if (i >= lines.length) {
-        return {};
+        return env;
     }
     const envStart = lines[i].trim();
     if (envStart !== "'''env") {
-        return {};
+        return env;
     }
-    i++;
-    const lineStart = i;
-    const env: ScriptEnv = {};
+    i++; // skip the '''env line
+    const lineStart = i; // 1-indexed
     const errors: ScriptEnvError[] = [];
     for (; i < lines.length; i++) {
         const l = lines[i].trim();
@@ -41,15 +44,24 @@ export const parseEnvFromScript = (script: string): ScriptEnv => {
             continue;
         }
         const [key, val] = parts;
+        const lineNumber = i + 1;
+        const valueIndex = l.length - val.length;
         switch (key.trim().toLowerCase()) {
             case "image": {
                 env.image = parseEnvImage(val.trim());
                 break;
             }
+            case "dlc": {
+                env.dlc = parseEnvDlcVersion(val.trim());
+                break;
+            }
             case "program-start": {
                 const res = parseRegionStart(val.trim());
                 if (res.err) {
-                    errors.push({ type: "AbsAddrError", err: res.err });
+                    errors.push({ 
+                        type: "AbsAddrError", err: res.err,
+                        line: lineNumber, valueIndex,
+                    });
                 } else {
                     env.programStart = res.val;
                 }
@@ -58,7 +70,10 @@ export const parseEnvFromScript = (script: string): ScriptEnv => {
             case "stack-start": {
                 const res = parseRegionStart(val.trim());
                 if (res.err) {
-                    errors.push({ type: "AbsAddrError", err: res.err });
+                    errors.push({ 
+                        type: "AbsAddrError", err: res.err,
+                        line: lineNumber, valueIndex,
+                    });
                 } else {
                     env.stackStart = res.val;
                 }
@@ -67,7 +82,10 @@ export const parseEnvFromScript = (script: string): ScriptEnv => {
             case "stack-size": {
                 const res = parseRegionSize(val.trim());
                 if (res.err) {
-                    errors.push({ type: "RegionSizeError", err: res.err });
+                    errors.push({ 
+                        type: "RegionSizeError", err: res.err,
+                        line: lineNumber, valueIndex,
+                    });
                 } else {
                     env.stackSize = res.val;
                 }
@@ -76,7 +94,10 @@ export const parseEnvFromScript = (script: string): ScriptEnv => {
             case "heap-free-size": {
                 const res = parseRegionSize(val.trim());
                 if (res.err) {
-                    errors.push({ type: "RegionSizeError", err: res.err });
+                    errors.push({ 
+                        type: "RegionSizeError", err: res.err,
+                        line: lineNumber, valueIndex,
+                    });
                 } else {
                     env.heapFreeSize = res.val;
                 }
@@ -85,14 +106,20 @@ export const parseEnvFromScript = (script: string): ScriptEnv => {
             case "pmdm-addr": {
                 const res = parseAbsAddrStringInternal(val.trim(), false);
                 if (res.err) {
-                    errors.push({ type: "AbsAddrError", err: res.err });
+                    errors.push({ 
+                        type: "AbsAddrError", err: res.err,
+                        line: lineNumber, valueIndex,
+                    });
                 } else {
                     env.pmdmAddr = res.val;
                 }
                 break;
             }
             default: {
-                errors.push({ type: "UnknownKey", key: key.trim() });
+                errors.push({ 
+                    type: "UnknownKey", key: key.trim(),
+                    line: lineNumber, valueIndex: 0,
+                });
                 break;
             }
         }
@@ -106,6 +133,8 @@ export const parseEnvFromScript = (script: string): ScriptEnv => {
 
 /**
  * Data to specify what environment the script should run in
+ *
+ * See https://ist.pistonite.dev/user/custom_image
  */
 export type ScriptEnv = {
     /**
@@ -119,12 +148,21 @@ export type ScriptEnv = {
      * Errors encountered while parsing the env block
      */
     errors?: ScriptEnvError[];
+
     /**
      * Specify the specs for the BlueFlame image required to run the script
      *
      * Unspecified is the same as "default"
      */
     image?: ScriptEnvImage;
+
+    /** 
+     * The DLC version
+     *
+     * 0 means no DLC, 1-3 means DLC version 1.0, 2.0, or 3.0
+     */
+    dlc: number;
+
     /**
      * Specify the physical address of the program start
      *
@@ -167,67 +205,38 @@ export type ScriptEnv = {
     pmdmAddr?: string;
 };
 
-export type ScriptEnvImage =
-    | "default"
-    | `custom-${ScriptEnvImageVersionSpec}${ScriptEnvImageDlcSpec}`;
+export type ScriptEnvImage = "1.5" | "1.6";
 
-export type ScriptEnvImageVersionSpec = "anyver" | "ver1.5" | "ver1.6";
-
-export type ScriptEnvImageDlcSpec =
-    | ""
-    | "-nodlc"
-    | "-dlc-1"
-    | "-dlc-2"
-    | "-dlc-3"
-    | "-dlc-1-or-2"
-    | "-dlc-1-or-3"
-    | "-dlc-2-or-3"
-    | "-dlc";
-
-export const parseEnvImage = (image: string): ScriptEnvImage => {
-    if (!image.includes("custom")) {
-        return "default";
-    }
-    image = image.replace(/custom-/g, "");
-    let version: ScriptEnvImageVersionSpec = "anyver";
+export const parseEnvImage = (image: string): ScriptEnvImage | undefined => {
     if (image.includes("1.5")) {
-        version = "ver1.5";
-        image = image.replace(/1\.5/g, "");
-    } else if (image.includes("1.6")) {
-        version = "ver1.6";
-        image = image.replace(/1\.6/g, "");
+        return "1.5";
     }
-    if (!image.includes("dlc")) {
-        return `custom-${version}`;
+    if (image.includes("1.6")) {
+        return "1.6";
     }
-    if (image.includes("nodlc") || image.includes("no-dlc")) {
-        return `custom-${version}-nodlc`;
+    return undefined;
+};
+
+export const parseEnvDlcVersion = (dlc: string): number => {
+    switch (dlc.trim()) {
+        case "nodlc":
+        case "none":
+        case "0":
+            return 0;
+        case "dlc-1":
+        case "ver1.0":
+        case "day-1":
+        case "1":
+            return 1;
+        case "dlc-2":
+        case "ver2.0":
+        case "master-trials":
+        case "mt":
+        case "2":
+            return 2;
+        default:
+            return 3;
     }
-    const allowOne = image.includes("1");
-    const allowTwo = image.includes("2");
-    const allowThree = image.includes("3");
-    if (allowOne) {
-        if (allowTwo) {
-            if (allowThree) {
-                return `custom-${version}-dlc`;
-            }
-            return `custom-${version}-dlc-1-or-2`;
-        }
-        if (allowThree) {
-            return `custom-${version}-dlc-1-or-3`;
-        }
-        return `custom-${version}-dlc-1`;
-    }
-    if (allowTwo) {
-        if (allowThree) {
-            return `custom-${version}-dlc-2-or-3`;
-        }
-        return `custom-${version}-dlc-2`;
-    }
-    if (allowThree) {
-        return `custom-${version}-dlc-3`;
-    }
-    return `custom-${version}-dlc`;
 };
 /** Input is hex string with optional 0x prefix */
 export const parseRegionStart = (
@@ -307,6 +316,12 @@ export const parseRegionSize = (
 export type AbsAddrError = "suffix" | "prefix" | "hex";
 export type RegionSizeError = "hex" | "align" | "overflow";
 export type ScriptEnvError =
+{
+    /** The line of the error, 1-indexed */
+    line: number;
+    /** The index (char pos) of the value, 0-indexed */
+    valueIndex: number;
+} & (
     | {
           type: "AbsAddrError";
           err: AbsAddrError;
@@ -318,7 +333,7 @@ export type ScriptEnvError =
     | {
           type: "UnknownKey";
           key: string;
-      };
+      });
 
 /** Create the runtime init params from the env parsed from script */
 export const getInitParamsFromEnv = (env: ScriptEnv): RuntimeInitParams => {
