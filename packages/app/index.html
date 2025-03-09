@@ -7,8 +7,24 @@
         <meta name="og:type" content="website" />
         <!-- <meta name="apple-mobile-web-app-capable" content="yes"> -->
         <!-- <link ref="manifest" href="/manifest.json" /> -->
-        <link rel="icon" type="image/svg+xml" href="/static/icon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script id="-preload-dark-mode-">
+            (function () {
+                let dark = null;
+                try {
+                    const item = localStorage.getItem("Pure.Dark");
+                    if (item !== null) {
+                        dark = !!item;
+                    }
+                } catch {}
+                if (dark === null) {
+                    dark = matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
+                }
+                document.write(`<style data-inject="pure-pref-dark">:root { color-scheme: ${dark ? "dark" : "light"}; }</style>`);
+                const x = document.getElementById("-preload-dark-mode-");
+                if (x) x.remove();
+            })()
+        </script>
         <style>
             :root {
                 font-synthesis: none;
@@ -24,10 +40,48 @@
             #-root- {
                 width: 100vw;
             }
+
+            .-boot-logo- {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                translate: 0 -10px;
+            }
+
+            .-boot-logo- img{
+                animation: boot-logo-pulse 1s infinite ease-in-out alternate;
+            }
+
+            .-boot-logo- img.start {
+                animation: boot-logo-fadein 1s ease-in-out;
+            }
+
+    @keyframes boot-logo-pulse {
+            from { translate: 0 0px; }
+      to { translate: 0 20px; }
+    }
+    @keyframes boot-logo-fadein {
+            from { opacity: 0; translate: 0 20px;}
+      to { opacity: 1; translate: 0 0px; }
+    }
+
         </style>
     </head>
     <body style="height: 100vh; overflow: hidden">
-        <div id="-root-" style="height: 100vh"></div>
+        <div id="-root-" style="height: 100vh">
+            <div id="-boot-root-"></div>
+            <div class="-boot-logo-">
+                <img class="start" src="/static/icon.svg" />
+            </div>
+            <script>
+                setTimeout(() => {
+                    const x = document.querySelector(".-boot-logo- img");
+                    if (!x) return;
+                    x.classList.remove("start");
+                }, 1500);
+            </script>
+        </div>
         <script type="module" src="/src/main.tsx"></script>
     </body>
 </html>

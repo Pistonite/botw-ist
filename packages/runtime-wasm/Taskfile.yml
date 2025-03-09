@@ -9,6 +9,11 @@ includes:
     internal: true
 
 tasks:
+  # temporary for local dev, until runtime can be checked
+  install:
+    cmds:
+      - task: ecma:mono-config
+
   build:
     desc: Run wasm-bindgen and build the dev dist package
     cmds:

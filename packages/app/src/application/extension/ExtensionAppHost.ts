@@ -1,18 +1,20 @@
-import type { Diagnostic, ExtensionApp } from "@pistonite/skybook-api";
-import type { RuntimeClient } from "@pistonite/skybook-api/sides/app";
+import { createContext, useContext } from "react";
+import {
+    charPosToBytePos,
+    createBytePosToCharPosArray,
+} from "@pistonite/intwc";
 import type { Result } from "@pistonite/pure/result";
 import type { WorkexPromise } from "@pistonite/workex";
+
+import type { Diagnostic, ExtensionApp } from "@pistonite/skybook-api";
+import type { RuntimeClient } from "@pistonite/skybook-api/sides/app";
 import {
     searchItemLocalized,
     translateParserError,
 } from "skybook-localization";
 import { getActorParam } from "skybook-item-system";
 
-import { useApplicationStore } from "./store";
-import {
-    charPosToBytePos,
-    createBytePosToCharPosArray,
-} from "@pistonite/intwc";
+import { useSessionStore } from "application/store";
 
 export const createExtensionAppHost = (
     runtime: RuntimeClient,
@@ -20,16 +22,23 @@ export const createExtensionAppHost = (
     return new ExtensionAppHost(runtime);
 };
 
+export const ExtensionAppContext = createContext<ExtensionApp>(
+    // must be provided
+    {} as unknown as ExtensionApp,
+);
+
+export const useExtensionApp = () => {
+    return useContext(ExtensionAppContext);
+};
+
 class ExtensionAppHost implements ExtensionApp {
     constructor(private runtime: RuntimeClient) {}
 
     public async getScript() {
-        return { val: useApplicationStore.getState().script };
+        return { val: useSessionStore.getState().activeScript };
     }
     public async setScript(script: string) {
-        // await setScript(script);
-        // return {};
-        useApplicationStore.getState().setScript(script);
+        useSessionStore.getState().setActiveScript(script);
         return {};
     }
     public async resolveItem(

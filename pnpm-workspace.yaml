@@ -17,9 +17,9 @@ catalog:
   "@fluentui/react-components": ^9.58.3
   "@fluentui/react-icons": ^2.0.274
   "@modyfi/vite-plugin-yaml": ^1.1.0
-  "@pistonite/pure": ^0.22.3
-  "@pistonite/pure-react": ^0.7.0
-  "@pistonite/pure-i18next": ^0.3.0
+  "@pistonite/pure": ^0.23
+  "@pistonite/pure-react": ^0.7.1
+  "@pistonite/pure-i18next": ^0.3.2
   "@pistonite/workex": ^0.0.5
   "@types/react": ^18.3.17
   "@types/react-dom": ^18.3.5

@@ -1,6 +1,7 @@
 /** Parser for the env tag in the script */
 
 import type { Result } from "@pistonite/pure/result";
+import { RuntimeInitParams } from "./types";
 
 /** Parse the leading env tag from the script */
 export const parseEnvFromScript = (script: string): ScriptEnv => {
@@ -150,7 +151,7 @@ export type ScriptEnv = {
     stackSize?: number;
 
     /**
-     * Size of the free region of the heap in bytes
+     * Size of the free region of the heap in bytes, where the runtime can allocate memory
      *
      * Unspecified, or 0, means the script can run with any heap size
      */
@@ -318,3 +319,34 @@ export type ScriptEnvError =
           type: "UnknownKey";
           key: string;
       };
+
+/** Create the runtime init params from the env parsed from script */
+export const getInitParamsFromEnv = (env: ScriptEnv): RuntimeInitParams => {
+    let dlc = 3;
+    if (env.image) {
+        if (env.image.endsWith("-2")) {
+            dlc = 2;
+        } else if (env.image.endsWith("-1")) {
+            dlc = 1;
+        } else if (env.image.endsWith("-nodlc")) {
+            dlc = 0;
+        }
+    }
+    const programStart = env.programStart || "";
+    const stackStart = env.stackStart || "";
+    const stackSize = env.stackSize || 0;
+    const heapFreeSize = env.heapFreeSize || 0;
+    const pmdmAddr = env.pmdmAddr || "";
+
+    return {
+        dlc,
+        programStart,
+        stackStart,
+        stackSize,
+        heapFreeSize,
+        pmdmAddr,
+    };
+}
+
+export const isParamValidForEnv = (env: ScriptEnv, param: RuntimeInitParams): boolean => {
+}

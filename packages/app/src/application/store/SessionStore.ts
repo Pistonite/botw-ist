@@ -103,6 +103,7 @@ export const useSessionStore = create<SessionStore>()((set) => {
             set(({ activeScript }) => {
                 const { setSavedScript } = useApplicationStore.getState();
                 setSavedScript(activeScript);
+                window.history.pushState({}, "", "/");
                 return { 
                     mode: "local",
                     hasUnsavedChanges: false,

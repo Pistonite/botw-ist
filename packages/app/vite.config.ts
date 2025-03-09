@@ -6,15 +6,14 @@ import { spawnSync } from "child_process";
 // @ts-ignore
 import path from "path";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import fs from "fs";
+
 import { type Plugin, defineConfig, type UserConfig } from "vite";
 import serveStatic from "vite-plugin-serve-static";
 import intwc from "@pistonite/vite-plugin-intwc";
 import monodev from "mono-dev/vite";
-
-const commit = spawnSync("git", ["rev-parse", "HEAD"], {
-    encoding: "utf-8",
-}).stdout.trim();
-console.log(commit);
 
 const staticAssetHeader = (): Plugin => {
     return {
@@ -37,12 +36,22 @@ const staticAssetHeader = (): Plugin => {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
+    const commit = spawnSync("git", ["rev-parse", "HEAD"], {
+        encoding: "utf-8",
+    }).stdout.trim();
+    console.log(`commit: ${commit}`);
+
+    const packageJson = JSON.parse(fs.readFileSync("../../package.json", "utf-8"));
+    const version = packageJson.version;
+    console.log(`version: ${version}`);
+
     const monodevConfig = monodev({
         https: command === "serve",
     });
     return monodevConfig<UserConfig>({
         define: {
             "import.meta.env.COMMIT": JSON.stringify(commit),
+            "import.meta.env.VERSION": JSON.stringify(version),
         },
         plugins: [
             intwc({ basicLanguages: [] }),

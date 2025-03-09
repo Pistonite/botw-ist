@@ -25,10 +25,11 @@ const useStyles = makeStyles({
 export const Header: React.FC = () => {
     const styles = useStyles();
     const showingExtensionPanel = useIsShowingExtensionPanel();
+    const version = import.meta.env.VERSION.replace("0.", "v");
     return (
         <div className={styles.container}>
             <img src={icon} height="32px" />
-            <span>v4.0.0</span>
+            <span>{version}</span>
 
             <LanguagePicker />
             <DarkToggle />

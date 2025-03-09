@@ -20,12 +20,27 @@ export class RuntimeAppClient implements RuntimeApp {
     }
 
     /**
+     * Get the custom BlueFlame image provided by the user.
+     * 
+     * The runtime may request this if it's instructed to initialize
+     * with a custom image. For the best user experience, the app should
+     * prompt file selection and have the image ready before initializing,
+     * and return the file in this callback.
+     * 
+     * If the user did not provide a custom image, the app should return undefined,
+     * in which case the runtime initialization will fail.
+     */
+    public getCustomBlueFlameImage( ): WorkexPromise<Uint8Array | undefined> {
+        return this.client.post<Uint8Array | undefined>(28 /* RuntimeApp.getCustomBlueFlameImage */, [ ]);
+    }
+
+    /**
      * The app will be notified whenever a simulation run completes.
      * Note if multiple runs are queued, this will only be called for the
      * last one.
      */
     public onRunCompleted( ): WorkexPromise<void> {
-        return this.client.postVoid(27 /* RuntimeApp.onRunCompleted */, [ ]);
+        return this.client.postVoid(29 /* RuntimeApp.onRunCompleted */, [ ]);
     }
 
     /**
@@ -34,7 +49,7 @@ export class RuntimeAppClient implements RuntimeApp {
      * or no match.
      */
     public resolveQuotedItem( query: string ): WorkexPromise<ItemSearchResult | undefined> {
-        return this.client.post<ItemSearchResult | undefined>(28 /* RuntimeApp.resolveQuotedItem */, [ query ]);
+        return this.client.post<ItemSearchResult | undefined>(30 /* RuntimeApp.resolveQuotedItem */, [ query ]);
     }
 
     /**

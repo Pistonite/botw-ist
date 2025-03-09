@@ -15,7 +15,11 @@ export function bindRuntimeHost(delegate: Runtime, options: WorkexBindOptions) {
                 const [ a0, a1, a2 ] = _payload;
                 return delegate.getSemanticTokens( a0, a1, a2 );
             }
-            case 26 /* Runtime.resolveItemIdent */: {
+            case 26 /* Runtime.initialize */: {
+                const [ a0 ] = _payload;
+                return delegate.initialize( a0 );
+            }
+            case 27 /* Runtime.resolveItemIdent */: {
                 const [ a0 ] = _payload;
                 return delegate.resolveItemIdent( a0 );
             }

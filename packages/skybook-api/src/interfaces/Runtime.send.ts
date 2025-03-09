@@ -4,8 +4,9 @@
 import type { Runtime } from "../Runtime.ts";
 
 import { type WorkexPromise, WorkexClient, type WorkexClientOptions } from "@pistonite/workex";
+import type { Void } from "@pistonite/pure/result";
 import type { ParserErrorReport } from ".././parser";
-import type { ItemSearchResult } from ".././types.ts";
+import type { ItemSearchResult, RuntimeInitArgs, RuntimeInitError } from ".././types.ts";
 
 /**
  * API provided by the simulator runtime, called by the application.
@@ -41,11 +42,18 @@ export class RuntimeClient implements Runtime {
     }
 
     /**
+     * Initialize the runtime with the given arguments.
+     */
+    public initialize( args: RuntimeInitArgs ): WorkexPromise<Void<RuntimeInitError>> {
+        return this.client.post<Void<RuntimeInitError>>(26 /* Runtime.initialize */, [ args ]);
+    }
+
+    /**
      * Resolve an item identifier search query to a list of items, ordered by score (best first).
      * Returns an empty list if no items are found.
      */
     public resolveItemIdent( query: string ): WorkexPromise<ItemSearchResult[]> {
-        return this.client.post<ItemSearchResult[]>(26 /* Runtime.resolveItemIdent */, [ query ]);
+        return this.client.post<ItemSearchResult[]>(27 /* Runtime.resolveItemIdent */, [ query ]);
     }
 
     /**

@@ -20,6 +20,10 @@ const loadEntryPointHtml = async (): Promise<[string, string]> => {
 };
 const entryPointHtml = await loadEntryPointHtml();
 
+const getVersion = () => {
+    return VERSION.replace("0.", "v");
+}
+
 export type SSROptions = {
     /** URL to put in meta */
     url: string;
@@ -74,14 +78,14 @@ export const makeSSR = async (
     const urlTag = `<meta name="og:url" content="${options.url}">`;
 
     // In discord, this is the small grey text on top of the card
-    const siteNameTag = `<meta name="og:site_name" content="Skybook ${VERSION}${customImage}">`;
+    const siteNameTag = `<meta name="og:site_name" content="Skybook ${getVersion()}${customImage}">`;
     // In discord, this is the vertical color bar of the card
     const themeColor = customImage ? "#EE15F4" : "#73FBFD";
     const themeColorTag = `<meta name="theme-color" content="${themeColor}">`;
 
     // In discord, this is the title (big text) of the card
     let longTitle = Strings.title[language];
-    if (options.file) {
+    if (options.file?.short) {
         longTitle += ` - ${options.file.short}`;
     }
     const titleMetaTag = `<meta name="og:title" content="${longTitle}">`;
@@ -107,7 +111,7 @@ export const makeSSR = async (
     const imageTag = `<meta name="og:image" content="${origin}/static/${icon}.png">`;
 
     // also set the favicon
-    const faviconTag = `<link rel="icon" type="image/svg+xml" href="${origin}/static/${icon}.svg" />`;
+    const faviconTag = `<link rel="icon" type="image/svg+xml" href="/static/${icon}.svg" />`;
 
     const content =
         faviconTag +
@@ -120,7 +124,15 @@ export const makeSSR = async (
         descriptionTag +
         imageTag;
 
-    const [htmlHead, htmlTail] = entryPointHtml;
+    const [htmlHead, originalhtmlTail] = entryPointHtml;
+    let htmlTail = originalhtmlTail;
+    // replace boot logo
+    if (customImage) {
+        htmlTail = htmlTail.replace(
+            /<img class="start" src="[^"]+" \/>/,
+            `<img class="start" src="/static/${icon}.svg" />`,
+        );
+    }
 
     return {
         body: htmlHead + content + htmlTail,
