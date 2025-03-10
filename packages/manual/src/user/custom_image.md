@@ -58,13 +58,17 @@ The rest of the keys are optional. If not specified, the simulator will use the 
 |`heap-free-size` | Size | Size of the free region of the heap for the simulator to allocate memory |
 |`pmdm-addr` | Physical Address | The address of the `PauseMenuDataMgr` (in other words, the value of `PauseMenuDataMgr*`). |
 
-DLC specifier must be one of the following. If not specified or is invalid, it defaults to DLC `ver3.0`
+DLC specifier can be any string that contains `0`, `1`, `2`, or `3`, which correspond
+to no DLC installed, `DLC ver1.0 (Day 1)`, `DLC ver2.0 (Master Trials)` and `DLC ver3.0 (Champions' Ballad)`.
+One of the following shorthand is recommended:
 | DLC Version | Possible Specifiers |
 |-|-|
-| No DLC | `nodlc`, `none`, `0` |
-| ver 1.0| `dlc-1`, `ver1.0`, `day-1`, `1` |
-| ver 2.0| `dlc-2`, `ver2.0`, `master-trials`, `mt`, `2` |
-| ver 3.0| `dlc-3`, `ver3.0`, `champions-ballad`, `cb`, `3` |
+| No DLC | `nodlc`, `none`, `uninstalled` |
+| ver 1.0| `dlc-1`, `ver1.0`, `day-1`  |
+| ver 2.0| `dlc-2`, `ver2.0`, `master-trials`  |
+| ver 3.0| `dlc-3`, `ver3.0`, `champions-ballad` |
+
+Invalid DLC version specifier defaults to `ver3.0`
 
 A Region Address must be a hexadecimal string aligned to `0x100000`,
 the most significant 6 hex-digits must be all `0`.

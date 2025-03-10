@@ -3,7 +3,7 @@ authors = ["Pistonight"]
 language = "en"
 multilingual = false
 src = "src"
-title = "The IST Simulator Manual"
+title = "IST Simulator Manual"
 
 [output.html]
 default-theme = "frappe"

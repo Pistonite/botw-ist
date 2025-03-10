@@ -1,6 +1,7 @@
 # Summary
 
-- [Welcome](./welcome.md)
+[Home Page](./index.md)
+---
 - [History](./history.md)
 - [FAQ](./faq.md)
 - [Inventory Slot Transfer](./ist/index.md)
@@ -20,13 +21,14 @@
   - [Commands]()
   - [Custom Image](./user/custom_image.md)
 - [Developer](./developer/index.md)
+  - [Contributing](./developer/contributing/index.md)
+    - [Setup](./developer/contributing/setup.md)
+    - [Build and Run](./developer/contributing/run.md)
+    - [End-to-end Tests]()
+    - [Translations](./developer/contributing/translation.md)
   - [Architecture](./developer/architecture.md)
     - [Runtime]()
     - [Application]()
     - [Extensions]()
     - [Server]()
-  - [Contributing](./developer/contributing.md)
-    - [Setup](./developer/contributing/setup.md)
-    - [Build and Run](./developer/contributing/run.md)
-    - [PR Guidelines](./developer/contributing/pr.md)
   - [External Integration](./developer/integration/index.md)

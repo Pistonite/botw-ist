@@ -1,9 +1,12 @@
 <div style="display:flex;justify-content:center">
-    <img src="/icon.svg"/>
+    <img src="/icon.svg" />
 </div>
-<h1 id="welcome" style="text-align:center">
-    <a class="header">Skybook - The IST Simulator</a>
+<h1 style="text-align:center;margin:0.3em">
+    <span class="header">Skybook</span>
 </h1>
+<h4 style="text-align:center;margin:0.2em;color:var(--warning-border)">
+    <span class="header">The Inventory Slot Transfer Simulator Project</span>
+</h4>
 
 ```admonish danger
 You somehow discovered this page :P
@@ -12,12 +15,12 @@ This manual is still a work-in-progress. Until it's officially released,
 note that everything here is unstable, for example links can break
 ```
 
-## Getting Started
-- See the [history of the project](./history.md) and [frequently asked questions](./faq.md) for background of this project.
-- See [Inventory Slot Transfer](./ist/index.md) for A brief overview of IST.
-- See [Using the Simulator](./user/index.md) for how to use the app
-- See [Developer](./developer/index.md) for how to extend or integrate with the app.
-  
+## Getting started
+- [How to use the simulator](./user/index.md)
+- [Brief Overview of Inventory Slot Transfer](./ist/index.md)
+- [Contributing: Add your script as test case]()
+- [Contributing: Update translations](./developer/contributing/translation.md)
+- [Technical details for developers](./developer/index.md)
 
 ## Discord
 Join my [Discord](https://discord.gg/xe2wHYrSgB)
