@@ -4,9 +4,14 @@
 import type { Runtime } from "../Runtime.ts";
 
 import { type WorkexPromise, WorkexClient, type WorkexClientOptions } from "@pistonite/workex";
-import type { Void } from "@pistonite/pure/result";
+import type { Result } from "@pistonite/pure/result";
 import type { ParserErrorReport } from ".././parser";
-import type { ItemSearchResult, RuntimeInitArgs, RuntimeInitError } from ".././types.ts";
+import type {
+    ItemSearchResult,
+    RuntimeInitArgs,
+    RuntimeInitError,
+    RuntimeInitOutput,
+} from ".././types.ts";
 
 /**
  * API provided by the simulator runtime, called by the application.
@@ -44,8 +49,8 @@ export class RuntimeClient implements Runtime {
     /**
      * Initialize the runtime with the given arguments.
      */
-    public initialize( args: RuntimeInitArgs ): WorkexPromise<Void<RuntimeInitError>> {
-        return this.client.post<Void<RuntimeInitError>>(26 /* Runtime.initialize */, [ args ]);
+    public initialize( args: RuntimeInitArgs ): WorkexPromise<Result<RuntimeInitOutput, RuntimeInitError>> {
+        return this.client.post<Result<RuntimeInitOutput, RuntimeInitError>>(26 /* Runtime.initialize */, [ args ]);
     }
 
     /**

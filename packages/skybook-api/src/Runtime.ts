@@ -1,11 +1,12 @@
 import type { WorkexPromise } from "@pistonite/workex";
-import type { Void } from "@pistonite/pure/result";
+import type { Result } from "@pistonite/pure/result";
 
 import type { ParserErrorReport } from "./parser";
 import type {
     ItemSearchResult,
     RuntimeInitArgs,
     RuntimeInitError,
+    RuntimeInitOutput,
 } from "./types.ts";
 
 /**
@@ -18,7 +19,9 @@ export interface Runtime {
     /**
      * Initialize the runtime with the given arguments.
      */
-    initialize(args: RuntimeInitArgs): WorkexPromise<Void<RuntimeInitError>>;
+    initialize(
+        args: RuntimeInitArgs,
+    ): WorkexPromise<Result<RuntimeInitOutput, RuntimeInitError>>;
 
     /**
      * Resolve an item identifier search query to a list of items, ordered by score (best first).
