@@ -72,8 +72,28 @@ async function boot() {
                 console.log("Custom image size: " + customImage.length);
                 // TODO: actually use the image
                 console.log(args);
+                return {
+                    val: {
+                        version: "1.5", // TODO: read from image
+                        storedVersion: "1.5", // TODO: read from image
+                    }
+                };
             }
-            return {};
+            if (args.deleteCustomImage) {
+                await putImage(undefined);
+                return {
+                    val: {
+                        version: "",
+                        storedVersion: ""
+                    }
+                };
+            }
+            return {
+                val: {
+                    version: "",
+                    storedVersion: "not-changed"
+                }
+            };
         },
         resolveItemIdent: async (query) => {
             return wasm_bindgen.resolve_item_ident(query);

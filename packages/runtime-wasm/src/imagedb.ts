@@ -39,8 +39,12 @@ const openImageDB = (): Promise<IDBDatabase | undefined> => {
     });
 };
 
-/** Put the image into the IndexedDB, returns false if fails */
-export const putImage = async (image: Uint8Array): Promise<boolean> => {
+/** 
+ * Put the image into the IndexedDB, returns false if fails
+ *
+ * Undefined means to delete the stored image
+ */
+export const putImage = async (image: Uint8Array | undefined): Promise<boolean> => {
     const db = await openImageDB();
     if (!db) {
         return false;
@@ -56,7 +60,11 @@ export const putImage = async (image: Uint8Array): Promise<boolean> => {
                 resolve(true);
             };
             const store = tx.objectStore(DbStore);
-            store.put(image, DbKey);
+            if (image) {
+                store.put(image, DbKey);
+            } else {
+                store.delete(DbKey);
+            }
         });
     } catch (e) {
         console.error("Failed to put image", e);
