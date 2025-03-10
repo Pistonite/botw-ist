@@ -25,16 +25,19 @@ tasks:
         vars:
           CHECK_PATH: packages/localization/src/ui
           CHECK_MESSAGE: Please run localization:fix task to update the translation
-
-  edit:
-    cmds:
-      - bun scripts/edit-language.ts -
-
   fix:
     cmds:
       - task: ecma:mono-fix
+      - task: fix-language
+
+  fix-language:
+    cmds:
       - bun scripts/edit-language.ts
 
+  edit:
+    desc: Make edits to the translation files
+    cmds:
+      - bun scripts/edit-language.ts -
 
   push-artifacts:
     desc: Push generated files. Requires gcloud access
