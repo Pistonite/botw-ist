@@ -30,20 +30,23 @@ export const makeAsset = async (req: Request): Promise<ResponsePayload> => {
         filePath += ".gz";
     }
     // Workers are frames, so they need CORP headers
-    return makeFile(filePath, isWorker(path) && {
-        headers: {
-            "Cross-Origin-Embedder-Policy": "require-corp",
-            "Cross-Origin-Opener-Policy": "same-origin",
-        }
-    });
+    return makeFile(
+        filePath,
+        isWorker(path) && {
+            headers: {
+                "Cross-Origin-Embedder-Policy": "require-corp",
+                "Cross-Origin-Opener-Policy": "same-origin",
+            },
+        },
+    );
 };
 
 const isWorker = (path: string): boolean => {
-    if (path.startsWith("/editor.worker")) {
+    if (path.startsWith("/assets/editor.worker")) {
         return true;
     }
     if (path.startsWith("/runtime/") && path.endsWith(".js")) {
         return true;
     }
     return false;
-}
+};

@@ -22,7 +22,7 @@ const entryPointHtml = await loadEntryPointHtml();
 
 const getVersion = () => {
     return VERSION.replace("0.", "v");
-}
+};
 
 export type SSROptions = {
     /** URL to put in meta */
@@ -69,8 +69,8 @@ export const makeSSR = async (
         directLoadScript = `<script data-skybook-direct-load="1">var __skybook_direct_load=JSON.parse(${jsonString})</script>`;
         const scriptEnv = parseEnvFromScript(options.directLoad.content);
         if (scriptEnv.image) {
-            customImage = ` (custom-ver${scriptEnv.image}`;
-            switch (scriptEnv.dlc) {
+            customImage = ` (custom-image:ver${scriptEnv.image}`;
+            switch (scriptEnv.params.dlc) {
                 case 0: {
                     customImage += "-nodlc)";
                     break;
@@ -144,12 +144,23 @@ export const makeSSR = async (
 
     const [htmlHead, originalhtmlTail] = entryPointHtml;
     let htmlTail = originalhtmlTail;
+
     // replace boot logo
-    if (customImage) {
-        htmlTail = htmlTail.replace(
-            /<img class="start" src="[^"]+" \/>/,
-            `<img class="start" src="/static/${icon}.svg" />`,
-        );
+    if (options.directLoad) {
+        if (customImage) {
+            htmlTail = htmlTail.replace(
+                /<img data-ssr-boot-logo [^>]*>/,
+                `<img class="start" src="/static/${icon}.svg" />`,
+            );
+        }
+    } else {
+        // use a script to render the logo early
+        const script = ` <script> (function (){
+let i = "icon";
+try { if (localStorage.getItem("Skybook.EarlyCI")) { i += "-purple"; } } catch {}
+document.write('<img class="start" src="/static/'+i+'.svg" />');
+})() </script>`;
+        htmlTail = htmlTail.replace(/<img data-ssr-boot-logo [^>]*>/, script);
     }
 
     return {
