@@ -1,7 +1,50 @@
 title: "IST 시뮬레이터"
 
+# Generic Titles
+title.custom_image: "사용자 정의 이미지"
+title.error: "오류"
+title.info: "정보"
+
+# Generic Buttons
+button.allow: "허용"
+button.cancel: "Cancel"
+button.close: "닫기"
+button.launch: "실행"
+button.ok: "확인"
+button.popout: "Pop-out to a new window"
+button.refresh: "새로 고침"
+button.setup: "설정"
+
+# Closing Prompts
 prompt.closing.edit: "저장되지 않은 변경 사항이 있습니다. 지금 닫으면 변경 사항이 손실됩니다. 계속하시겠습니까?"
 prompt.closing.local: "저장 중입니다. 지금 닫으면 마지막 편집 내용이 손실됩니다. 계속하시겠습니까?"
+
+# Help improve translation!
+prompt.translation_contact: "한국어 번역을 개선하는 데 도움을 주세요! 자세히 알아보기:"
+# Boot Prompts
+prompt.boot.button.learn_more: "사용자 지정 디스크 이미지에 대해 자세히 알아보기"
+prompt.boot.custom_or_default: "스크립트가 사용자 지정 디스크 이미지로 로드되도록 허용하시겠습니까?"
+prompt.boot.error: "다음 오류로 인해 시뮬레이터를 시작할 수 없습니다:"
+prompt.boot.setup_or_default.button.setup_again: "다시 설정"
+prompt.boot.setup_or_default.button.use_default: "기본 디스크 이미지 사용"
+prompt.boot.setup_or_default.button.use_default_anyway: "기본 디스크 이미지 계속 사용"
+prompt.boot.setup_or_default.DirectLoadNoImage: "로드 중인 스크립트에서 사용자 지정 디스크 이미지를 지정했지만 찾을 수 없습니다. 지금 설정하시겠습니까?"
+prompt.boot.setup_or_default.DirectLoadVersionMismatch: "로드 중인 스크립트에서 버전 \"{{old_version}}\"의 사용자 지정 디스크 이미지를 지정했지만 현재 디스크 이미지의 버전은 \"{{new_version}}\"입니다. 다른 디스크 이미지를 설정하시겠습니까?"
+prompt.boot.setup_or_default.InitializeError: "다음 오류로 인해 사용자 지정 디스크 이미지로 시뮬레이터를 시작할 수 없습니다:"
+prompt.boot.setup_or_default.LocalNoImage: "로컬 스크립트에서 사용자 지정 디스크 이미지를 지정했지만 찾을 수 없습니다. 지금 설정하시겠습니까?"
+prompt.boot.setup_or_default.LocalVersionMismatch: "로컬 스크립트에서 버전 \"{{old_version}}\"의 사용자 지정 디스크 이미지를 지정했지만 현재 디스크 이미지의 버전은 \"{{new_version}}\"입니다. 다른 디스크 이미지를 설정하시겠습니까?"
+# Boot Custom Image Setup Dialog
+dialog.custom_image.button.select_file: "디스크 이미지 파일 선택"
+dialog.custom_image.button.select_file.error: "파일 선택을 처리하는 중 오류가 발생했습니다"
+dialog.custom_image.button.select_file.type_desc: "BlueFlame 디스크 이미지"
+dialog.custom_image.field.select_type: "디스크 이미지 유형 선택"
+dialog.custom_image.field.select_type.custom: "사용자 지정 디스크 이미지"
+dialog.custom_image.field.select_type.default: "기본 디스크 이미지"
+dialog.custom_image.option.custom_by_default: "내 스크립트에 기본적으로 사용자 지정 디스크 이미지를 사용"
+dialog.custom_image.option.delete_previous: "이전에 업로드한 사용자 지정 디스크 이미지 삭제"
+dialog.custom_image.option.select_current: "이전에 업로드한 파일 사용"
+dialog.custom_image.title: "사용자 지정 디스크 이미지 설정"
+
 
 # Generic error messages
 error.internal: "내부 오류: {{error}}"
@@ -48,11 +91,6 @@ category.Weapon: "Weapon"
 
 
 
-button.close: "Close"
-button.popout: "Pop-out to a new window"
-
-button.cancel: "Cancel"
-button.launch: "Launch"
 button.open_extension: "Extensions"
 
 status.not_available_platform: "Not available for current platform"

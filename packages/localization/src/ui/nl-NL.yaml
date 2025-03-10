@@ -1,7 +1,50 @@
 title: "IST Simulator"
 
+# Generic Titles
+title.custom_image: "Aangepaste afbeelding"
+title.error: "Fout"
+title.info: "Informatie"
+
+# Generic Buttons
+button.allow: "Toestaan"
+button.cancel: "Cancel"
+button.close: "Sluiten"
+button.launch: "Starten"
+button.ok: "OK"
+button.popout: "Pop-out to a new window"
+button.refresh: "Vernieuwen"
+button.setup: "Instellen"
+
+# Closing Prompts
 prompt.closing.edit: "Er zijn niet-opgeslagen wijzigingen die verloren gaan als u nu sluit, doorgaan?"
 prompt.closing.local: "Opslaan is bezig. De laatste bewerking gaat verloren als u nu sluit, doorgaan?"
+
+# Help improve translation!
+prompt.translation_contact: "Help ons alstublieft de Nederlandse vertalingen te verbeteren! Lees meer:"
+# Boot Prompts
+prompt.boot.button.learn_more: "Meer informatie over aangepaste schijfkopieën"
+prompt.boot.custom_or_default: "Script toestaan om te laden met een aangepaste schijfkopie?"
+prompt.boot.error: "Kan de simulator niet starten vanwege de volgende fout:"
+prompt.boot.setup_or_default.button.setup_again: "Opnieuw instellen"
+prompt.boot.setup_or_default.button.use_default: "Standaardschijfkopie gebruiken"
+prompt.boot.setup_or_default.button.use_default_anyway: "Toch standaardschijfkopie gebruiken"
+prompt.boot.setup_or_default.DirectLoadNoImage: "Het script dat u laadt, vereist een aangepaste schijfkopie, maar er is geen schijfkopie gevonden. Wilt u er nu een instellen?"
+prompt.boot.setup_or_default.DirectLoadVersionMismatch: "Het script dat u laadt, vereist een schijfkopie met versie \"{{old_version}}\", maar de huidige versie is \"{{new_version}}\". Wilt u een andere schijfkopie instellen?"
+prompt.boot.setup_or_default.InitializeError: "Kan de simulator niet starten met een aangepaste schijfkopie vanwege de volgende fout:"
+prompt.boot.setup_or_default.LocalNoImage: "Uw lokale script vereist een aangepaste schijfkopie, maar er is geen schijfkopie gevonden. Wilt u er nu een instellen?"
+prompt.boot.setup_or_default.LocalVersionMismatch: "Uw lokale script vereist een schijfkopie met versie \"{{old_version}}\", maar de huidige versie is \"{{new_version}}\". Wilt u een andere schijfkopie instellen?"
+# Boot Custom Image Setup Dialog
+dialog.custom_image.button.select_file: "Selecteer schijfkopiebestand"
+dialog.custom_image.button.select_file.error: "Er is een fout opgetreden bij het verwerken van de bestandsselectie"
+dialog.custom_image.button.select_file.type_desc: "BlueFlame-schijfkopie"
+dialog.custom_image.field.select_type: "Selecteer type schijfkopie"
+dialog.custom_image.field.select_type.custom: "Aangepaste schijfkopie"
+dialog.custom_image.field.select_type.default: "Standaard schijfkopie"
+dialog.custom_image.option.custom_by_default: "Standaard een aangepaste schijfkopie gebruiken voor mijn scripts"
+dialog.custom_image.option.delete_previous: "Eerder geüploade aangepaste schijfkopieën verwijderen"
+dialog.custom_image.option.select_current: "Eerder geüpload bestand gebruiken"
+dialog.custom_image.title: "Instellingen voor aangepaste schijfkopie"
+
 
 # Generic error messages
 error.internal: "Interne fout: {{error}}"
@@ -48,11 +91,6 @@ category.Weapon: "Weapon"
 
 
 
-button.close: "Close"
-button.popout: "Pop-out to a new window"
-
-button.cancel: "Cancel"
-button.launch: "Launch"
 button.open_extension: "Extensions"
 
 status.not_available_platform: "Not available for current platform"

@@ -11,10 +11,10 @@
         "@pistonite/pure-i18next": "catalog:",
         "@pistonite/skybook-api": "workspace:*",
         "fuse.js": "^7.0.0",
-        "i18next": "^24.2.0",
+        "i18next": "*",
         "lru-cache": "^11.0.2",
         "react": "catalog:",
-        "react-i18next": "^15.2.0"
+        "react-i18next": "*"
     },
     "devDependencies": {
         "@types/bun": "^1.2.4",

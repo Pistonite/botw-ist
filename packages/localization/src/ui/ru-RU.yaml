@@ -1,7 +1,50 @@
 title: "IST Симулятор"
 
+# Generic Titles
+title.custom_image: "Пользовательское изображение"
+title.error: "Ошибка"
+title.info: "Информация"
+
+# Generic Buttons
+button.allow: "Разрешить"
+button.cancel: "Cancel"
+button.close: "Закрыть"
+button.launch: "Запуск"
+button.ok: "ОК"
+button.popout: "Pop-out to a new window"
+button.refresh: "Обновить"
+button.setup: "Настроить"
+
+# Closing Prompts
 prompt.closing.edit: "Есть несохраненные изменения, которые будут потеряны, если вы закроете сейчас. Продолжить?"
 prompt.closing.local: "Идет сохранение. Последнее изменение будет потеряно, если вы закроете сейчас. Продолжить?"
+
+# Help improve translation!
+prompt.translation_contact: "Пожалуйста, помогите нам улучшить русские переводы! Подробнее:"
+# Boot Prompts
+prompt.boot.button.learn_more: "Узнать больше о пользовательских изображениях"
+prompt.boot.custom_or_default: "Разрешить загрузку скрипта с пользовательским изображением?"
+prompt.boot.error: "Не удается запустить симулятор из-за следующей ошибки:"
+prompt.boot.setup_or_default.button.setup_again: "Настроить снова"
+prompt.boot.setup_or_default.button.use_default: "Использовать изображение по умолчанию"
+prompt.boot.setup_or_default.button.use_default_anyway: "Все равно использовать изображение по умолчанию"
+prompt.boot.setup_or_default.DirectLoadNoImage: "Сценарий, который вы загружаете, указывает на пользовательское изображение, но пользовательские изображения не найдены. Хотите настроить его сейчас?"
+prompt.boot.setup_or_default.DirectLoadVersionMismatch: "Сценарий, который вы загружаете, указывает на пользовательское изображение версии \"{{old_version}}\", но текущее изображение имеет версию \"{{new_version}}\". Хотите настроить другое изображение?"
+prompt.boot.setup_or_default.InitializeError: "Не удается запустить симулятор с пользовательским изображением из-за следующей ошибки:"
+prompt.boot.setup_or_default.LocalNoImage: "Ваш локальный скрипт указывает на пользовательское изображение, но пользовательские изображения не найдены. Хотите настроить его сейчас?"
+prompt.boot.setup_or_default.LocalVersionMismatch: "Ваш локальный скрипт указывает на пользовательское изображение версии \"{{old_version}}\", но текущее изображение имеет версию \"{{new_version}}\". Хотите настроить другое изображение?"
+# Boot Custom Image Setup Dialog
+dialog.custom_image.button.select_file: "Выбрать файл образа диска"
+dialog.custom_image.button.select_file.error: "Произошла ошибка при обработке выбора файла"
+dialog.custom_image.button.select_file.type_desc: "Образ BlueFlame"
+dialog.custom_image.field.select_type: "Выбрать тип образа диска"
+dialog.custom_image.field.select_type.custom: "Пользовательский образ диска"
+dialog.custom_image.field.select_type.default: "Образ диска по умолчанию"
+dialog.custom_image.option.custom_by_default: "Использовать пользовательский образ диска по умолчанию для моих скриптов"
+dialog.custom_image.option.delete_previous: "Удалить ранее загруженные пользовательские образы диска"
+dialog.custom_image.option.select_current: "Использовать ранее загруженный файл"
+dialog.custom_image.title: "Настройка пользовательского образа диска"
+
 
 # Generic error messages
 error.internal: "Внутренняя ошибка: {{error}}"
@@ -48,11 +91,6 @@ category.Weapon: "Weapon"
 
 
 
-button.close: "Close"
-button.popout: "Pop-out to a new window"
-
-button.cancel: "Cancel"
-button.launch: "Launch"
 button.open_extension: "Extensions"
 
 status.not_available_platform: "Not available for current platform"

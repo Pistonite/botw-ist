@@ -1,7 +1,50 @@
 title: "Simulatore IST"
 
+# Generic Titles
+title.custom_image: "Immagine personalizzata"
+title.error: "Errore"
+title.info: "Informazioni"
+
+# Generic Buttons
+button.allow: "Permettere"
+button.cancel: "Cancel"
+button.close: "Chiudi"
+button.launch: "Avvia"
+button.ok: "OK"
+button.popout: "Pop-out to a new window"
+button.refresh: "Aggiorna"
+button.setup: "Configurare"
+
+# Closing Prompts
 prompt.closing.edit: "Ci sono modifiche non salvate che andranno perse se chiudi ora, continuare?"
 prompt.closing.local: "Salvataggio in corso. L'ultima modifica andrà persa se chiudi ora, continuare?"
+
+# Help improve translation!
+prompt.translation_contact: "Per favore, aiutaci a migliorare le traduzioni italiane! Leggi di più:"
+# Boot Prompts
+prompt.boot.button.learn_more: "Ulteriori informazioni sulle immagini disco personalizzate"
+prompt.boot.custom_or_default: "Consentire allo script di caricarsi con un'immagine disco personalizzata?"
+prompt.boot.error: "Impossibile avviare il simulatore a causa del seguente errore:"
+prompt.boot.setup_or_default.button.setup_again: "Configura di nuovo"
+prompt.boot.setup_or_default.button.use_default: "Usa immagine disco predefinita"
+prompt.boot.setup_or_default.button.use_default_anyway: "Usa comunque l'immagine disco predefinita"
+prompt.boot.setup_or_default.DirectLoadNoImage: "Lo script che stai caricando specifica un'immagine disco personalizzata, ma non è stata trovata alcuna immagine disco personalizzata. Vuoi configurarne una ora?"
+prompt.boot.setup_or_default.DirectLoadVersionMismatch: "Lo script che stai caricando specifica un'immagine disco personalizzata con la versione \"{{old_version}}\", ma l'immagine disco corrente ha la versione \"{{new_version}}\". Vuoi configurare un'immagine disco diversa?"
+prompt.boot.setup_or_default.InitializeError: "Impossibile avviare il simulatore con un'immagine disco personalizzata a causa del seguente errore:"
+prompt.boot.setup_or_default.LocalNoImage: "Il tuo script locale specifica un'immagine disco personalizzata, ma non è stata trovata alcuna immagine disco personalizzata. Vuoi configurarne una ora?"
+prompt.boot.setup_or_default.LocalVersionMismatch: "Il tuo script locale specifica un'immagine disco personalizzata con la versione \"{{old_version}}\", ma l'immagine disco corrente ha la versione \"{{new_version}}\". Vuoi configurare un'immagine disco diversa?"
+# Boot Custom Image Setup Dialog
+dialog.custom_image.button.select_file: "Seleziona file immagine disco"
+dialog.custom_image.button.select_file.error: "Si è verificato un errore durante l'elaborazione della selezione del file"
+dialog.custom_image.button.select_file.type_desc: "Immagine BlueFlame"
+dialog.custom_image.field.select_type: "Seleziona tipo di immagine disco"
+dialog.custom_image.field.select_type.custom: "Immagine disco personalizzata"
+dialog.custom_image.field.select_type.default: "Immagine disco predefinita"
+dialog.custom_image.option.custom_by_default: "Usa l'immagine disco personalizzata per impostazione predefinita nei miei script"
+dialog.custom_image.option.delete_previous: "Elimina le immagini disco personalizzate precedentemente caricate"
+dialog.custom_image.option.select_current: "Usa il file caricato in precedenza"
+dialog.custom_image.title: "Configurazione immagine disco personalizzata"
+
 
 # Generic error messages
 error.internal: "Errore interno: {{error}}"
@@ -48,11 +91,6 @@ category.Weapon: "Weapon"
 
 
 
-button.close: "Close"
-button.popout: "Pop-out to a new window"
-
-button.cancel: "Cancel"
-button.launch: "Launch"
 button.open_extension: "Extensions"
 
 status.not_available_platform: "Not available for current platform"

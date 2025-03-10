@@ -1,7 +1,50 @@
 title: "IST Simulator"
 
+# Generic Titles
+title.custom_image: "Custom Image"
+title.error: "Error"
+title.info: "Info"
+
+# Generic Buttons
+button.allow: "Allow"
+button.cancel: "Cancel"
+button.close: "Close"
+button.launch: "Launch"
+button.ok: "OK"
+button.popout: "Popout"
+button.refresh: "Refresh"
+button.setup: "Setup"
+
+# Closing Prompts
 prompt.closing.edit: "There are unsaved changes which will be lost if you close now, continue?"
 prompt.closing.local: "Save is in-progress. The last edit will be lost if you close now, continue?"
+
+# Help improve translation!
+prompt.translation_contact: ""
+# Boot Prompts
+prompt.boot.button.learn_more: "Learn more about Custom Images"
+prompt.boot.custom_or_default: "Allow the script to load with a custom image?"
+prompt.boot.error: "Cannot start the simulator because of the following error:"
+prompt.boot.setup_or_default.button.setup_again: "Setup Again"
+prompt.boot.setup_or_default.button.use_default: "Use Default Image"
+prompt.boot.setup_or_default.button.use_default_anyway: "Use Default Image Anyway"
+prompt.boot.setup_or_default.DirectLoadNoImage: "The script you are loading specifies a custom image, but no custom images are found. Do you want to set up one now?"
+prompt.boot.setup_or_default.DirectLoadVersionMismatch: "The script you are loading specifies a custom image with version \"{{old_version}}\", but the current image has version \"{{new_version}}\". Do you want to set up a different image?"
+prompt.boot.setup_or_default.InitializeError: "Cannot start the simulator with custom image because of the following error:"
+prompt.boot.setup_or_default.LocalNoImage: "Your local script specifies a custom image, but no custom images are found. Do you want to set up one now?"
+prompt.boot.setup_or_default.LocalVersionMismatch: "Your local script specifies a custom image with version \"{{old_version}}\", but the current image has version \"{{new_version}}\". Do you want to set up a different image?"
+# Boot Custom Image Setup Dialog
+dialog.custom_image.button.select_file: "Select Image File"
+dialog.custom_image.button.select_file.error: "There was an error processing the file selection"
+dialog.custom_image.button.select_file.type_desc: "BlueFlame Image"
+dialog.custom_image.field.select_type: "Select Image Type"
+dialog.custom_image.field.select_type.custom: "Custom Image"
+dialog.custom_image.field.select_type.default: "Default Image"
+dialog.custom_image.option.custom_by_default: "Use Custom Image by default for my scripts"
+dialog.custom_image.option.delete_previous: "Delete previously uploaded Custom Images"
+dialog.custom_image.option.select_current: "Use previously uploaded file"
+dialog.custom_image.title: "Custom Image Setup"
+
 
 # Generic error messages
 error.internal: "Internal error: {{error}}"
@@ -48,11 +91,6 @@ category.Weapon: "Weapon"
 
 
 
-button.close: "Close"
-button.popout: "Pop-out to a new window"
-
-button.cancel: "Cancel"
-button.launch: "Launch"
 button.open_extension: "Extensions"
 
 status.not_available_platform: "Not available for current platform"

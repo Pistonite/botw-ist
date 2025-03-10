@@ -1,7 +1,50 @@
 title: "ISTシミュレーター"
 
+# Generic Titles
+title.custom_image: "カスタム画像"
+title.error: "エラー"
+title.info: "情報"
+
+# Generic Buttons
+button.allow: "許可する"
+button.cancel: "Cancel"
+button.close: "閉じる"
+button.launch: "起動"
+button.ok: "OK"
+button.popout: "Pop-out to a new window"
+button.refresh: "更新"
+button.setup: "セットアップ"
+
+# Closing Prompts
 prompt.closing.edit: "保存されていない変更があります。今閉じると失われますが、続行しますか？"
 prompt.closing.local: "保存中です。今閉じると最後の編集が失われますが、続行しますか？"
+
+# Help improve translation!
+prompt.translation_contact: "日本語の翻訳を改善するためにご協力ください！詳細はこちら："
+# Boot Prompts
+prompt.boot.button.learn_more: "カスタムディスクイメージの詳細"
+prompt.boot.custom_or_default: "スクリプトをカスタムディスクイメージでロードすることを許可しますか？"
+prompt.boot.error: "次のエラーが原因でシミュレーターを起動できません:"
+prompt.boot.setup_or_default.button.setup_again: "再セットアップ"
+prompt.boot.setup_or_default.button.use_default: "デフォルトのディスクイメージを使用"
+prompt.boot.setup_or_default.button.use_default_anyway: "デフォルトのディスクイメージを使用する"
+prompt.boot.setup_or_default.DirectLoadNoImage: "読み込んでいるスクリプトはカスタムディスクイメージを指定していますが、見つかりません。今すぐ設定しますか？"
+prompt.boot.setup_or_default.DirectLoadVersionMismatch: "読み込んでいるスクリプトはバージョン \"{{old_version}}\" のカスタムディスクイメージを指定していますが、現在のディスクイメージはバージョン \"{{new_version}}\" です。別のディスクイメージを設定しますか？"
+prompt.boot.setup_or_default.InitializeError: "次のエラーが原因でカスタムディスクイメージでシミュレーターを起動できません:"
+prompt.boot.setup_or_default.LocalNoImage: "ローカルスクリプトでカスタムディスクイメージが指定されていますが、見つかりません。今すぐ設定しますか？"
+prompt.boot.setup_or_default.LocalVersionMismatch: "ローカルスクリプトでバージョン \"{{old_version}}\" のカスタムディスクイメージが指定されていますが、現在のディスクイメージはバージョン \"{{new_version}}\" です。別のディスクイメージを設定しますか？"
+# Boot Custom Image Setup Dialog
+dialog.custom_image.button.select_file: "ディスクイメージファイルを選択"
+dialog.custom_image.button.select_file.error: "ファイルの選択処理中にエラーが発生しました"
+dialog.custom_image.button.select_file.type_desc: "BlueFlameディスクイメージ"
+dialog.custom_image.field.select_type: "ディスクイメージの種類を選択"
+dialog.custom_image.field.select_type.custom: "カスタムディスクイメージ"
+dialog.custom_image.field.select_type.default: "デフォルトのディスクイメージ"
+dialog.custom_image.option.custom_by_default: "スクリプトをデフォルトでカスタムディスクイメージで使用する"
+dialog.custom_image.option.delete_previous: "以前にアップロードしたカスタムディスクイメージを削除"
+dialog.custom_image.option.select_current: "以前にアップロードしたファイルを使用"
+dialog.custom_image.title: "カスタムディスクイメージ設定"
+
 
 # Generic error messages
 error.internal: "内部エラー: {{error}}"
@@ -48,11 +91,6 @@ category.Weapon: "Weapon"
 
 
 
-button.close: "Close"
-button.popout: "Pop-out to a new window"
-
-button.cancel: "Cancel"
-button.launch: "Launch"
 button.open_extension: "Extensions"
 
 status.not_available_platform: "Not available for current platform"

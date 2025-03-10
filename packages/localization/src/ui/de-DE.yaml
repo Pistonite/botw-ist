@@ -1,7 +1,50 @@
 title: "IST Simulator"
 
+# Generic Titles
+title.custom_image: "Benutzerdefiniertes Bild"
+title.error: "Fehler"
+title.info: "Info"
+
+# Generic Buttons
+button.allow: "Erlauben"
+button.cancel: "Cancel"
+button.close: "Schließen"
+button.launch: "Starten"
+button.ok: "OK"
+button.popout: "Pop-out to a new window"
+button.refresh: "Aktualisieren"
+button.setup: "Einrichten"
+
+# Closing Prompts
 prompt.closing.edit: "Es gibt ungespeicherte Änderungen, die verloren gehen, wenn Sie jetzt schließen. Fortfahren?"
 prompt.closing.local: "Speichern läuft. Die letzte Bearbeitung geht verloren, wenn Sie jetzt schließen. Fortfahren?"
+
+# Help improve translation!
+prompt.translation_contact: "Bitte helfen Sie uns, die deutschen Übersetzungen zu verbessern! Lesen Sie mehr:"
+# Boot Prompts
+prompt.boot.button.learn_more: "Erfahren Sie mehr über benutzerdefinierte Abbilder"
+prompt.boot.custom_or_default: "Erlauben Sie dem Skript, mit einem benutzerdefinierten Abbild zu laden?"
+prompt.boot.error: "Der Simulator kann aufgrund des folgenden Fehlers nicht gestartet werden:"
+prompt.boot.setup_or_default.button.setup_again: "Erneut einrichten"
+prompt.boot.setup_or_default.button.use_default: "Standardabbild verwenden"
+prompt.boot.setup_or_default.button.use_default_anyway: "Standardabbild trotzdem verwenden"
+prompt.boot.setup_or_default.DirectLoadNoImage: "Das Skript, das Sie laden, gibt ein benutzerdefiniertes Abbild an, aber es wurde kein benutzerdefiniertes Abbild gefunden. Möchten Sie jetzt eines einrichten?"
+prompt.boot.setup_or_default.DirectLoadVersionMismatch: "Das Skript, das Sie laden, gibt ein benutzerdefiniertes Abbild mit der Version \"{{old_version}}\" an, aber das aktuelle Abbild hat die Version \"{{new_version}}\". Möchten Sie ein anderes Abbild einrichten?"
+prompt.boot.setup_or_default.InitializeError: "Der Simulator kann aufgrund des folgenden Fehlers nicht mit einem benutzerdefinierten Abbild gestartet werden:"
+prompt.boot.setup_or_default.LocalNoImage: "Ihr lokales Skript gibt ein benutzerdefiniertes Abbild an, aber es wurde kein benutzerdefiniertes Abbild gefunden. Möchten Sie jetzt eines einrichten?"
+prompt.boot.setup_or_default.LocalVersionMismatch: "Ihr lokales Skript gibt ein benutzerdefiniertes Abbild mit der Version \"{{old_version}}\" an, aber das aktuelle Abbild hat die Version \"{{new_version}}\". Möchten Sie ein anderes Abbild einrichten?"
+# Boot Custom Image Setup Dialog
+dialog.custom_image.button.select_file: "Abbilddatei auswählen"
+dialog.custom_image.button.select_file.error: "Beim Verarbeiten der Dateiauswahl ist ein Fehler aufgetreten"
+dialog.custom_image.button.select_file.type_desc: "BlueFlame-Abbild"
+dialog.custom_image.field.select_type: "Abbildtyp auswählen"
+dialog.custom_image.field.select_type.custom: "Benutzerdefiniertes Abbild"
+dialog.custom_image.field.select_type.default: "Standardabbild"
+dialog.custom_image.option.custom_by_default: "Standardmäßig benutzerdefiniertes Abbild für meine Skripte verwenden"
+dialog.custom_image.option.delete_previous: "Zuvor hochgeladene benutzerdefinierte Abbilder löschen"
+dialog.custom_image.option.select_current: "Zuvor hochgeladene Datei verwenden"
+dialog.custom_image.title: "Benutzerdefinierte Abbild-Einrichtung"
+
 
 # Generic error messages
 error.internal: "Interner Fehler: {{error}}"
@@ -48,11 +91,6 @@ category.Weapon: "Weapon"
 
 
 
-button.close: "Close"
-button.popout: "Pop-out to a new window"
-
-button.cancel: "Cancel"
-button.launch: "Launch"
 button.open_extension: "Extensions"
 
 status.not_available_platform: "Not available for current platform"

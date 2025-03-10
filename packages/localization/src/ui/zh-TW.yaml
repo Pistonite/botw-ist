@@ -1,7 +1,50 @@
 title: "IST 模擬器"
 
+# Generic Titles
+title.custom_image: "自訂影像"
+title.error: "錯誤"
+title.info: "資訊"
+
+# Generic Buttons
+button.allow: "允許"
+button.cancel: "Cancel"
+button.close: "關閉"
+button.launch: "啟動"
+button.ok: "確定"
+button.popout: "Pop-out to a new window"
+button.refresh: "刷新"
+button.setup: "进入設定"
+
+# Closing Prompts
 prompt.closing.edit: "當前窗口有未保存的內容！關閉窗口會導致未保存的內容丟失，是否繼續？"
 prompt.closing.local: "正在保存中，如果現在關閉，最後的編輯將會丟失，是否繼續？"
+
+# Help improve translation!
+prompt.translation_contact: "請幫助改進中文翻譯！了解更多："
+# Boot Prompts
+prompt.boot.button.learn_more: "了解更多關於自訂磁碟映像"
+prompt.boot.custom_or_default: "是否允許此腳本使用自訂磁碟映像運行？"
+prompt.boot.error: "模擬器載入失敗："
+prompt.boot.setup_or_default.button.setup_again: "重新設定"
+prompt.boot.setup_or_default.button.use_default: "使用預設磁碟映像"
+prompt.boot.setup_or_default.button.use_default_anyway: "仍使用預設磁碟映像"
+prompt.boot.setup_or_default.DirectLoadNoImage: "此腳本指定了自訂磁碟映像，但目前沒有設定任何映像。您想現在設定嗎？"
+prompt.boot.setup_or_default.DirectLoadVersionMismatch: "此腳本指定的磁碟映像版本為 \"{{old_version}}\"，但目前版本為 \"{{new_version}}\"。您要重新設定嗎？"
+prompt.boot.setup_or_default.InitializeError: "模擬器自訂磁碟映像載入失敗："
+prompt.boot.setup_or_default.LocalNoImage: "本地保存的腳本指定了自訂磁碟映像，但目前沒有設定任何映像。您想現在設定嗎？"
+prompt.boot.setup_or_default.LocalVersionMismatch: "本地保存的腳本指定的磁碟映像版本為 \"{{old_version}}\"，但目前版本為 \"{{new_version}}\"。您要重新設定嗎？"
+# Boot Custom Image Setup Dialog
+dialog.custom_image.button.select_file: "選擇磁碟映像檔"
+dialog.custom_image.button.select_file.error: "發生錯誤，無法讀取檔案"
+dialog.custom_image.button.select_file.type_desc: "BlueFlame鏡像"
+dialog.custom_image.field.select_type: "選擇磁碟映像類型"
+dialog.custom_image.field.select_type.custom: "自訂磁碟映像"
+dialog.custom_image.field.select_type.default: "預設磁碟映像"
+dialog.custom_image.option.custom_by_default: "預設使用自訂磁碟映像啟動我的腳本"
+dialog.custom_image.option.delete_previous: "刪除先前上傳的自訂磁碟映像"
+dialog.custom_image.option.select_current: "使用先前上傳的檔案"
+dialog.custom_image.title: "自訂磁碟映像設定"
+
 
 # Generic error messages
 error.internal: "內部錯誤: {{error}}"
@@ -48,11 +91,6 @@ category.Weapon: "Weapon"
 
 
 
-button.close: "Close"
-button.popout: "Pop-out to a new window"
-
-button.cancel: "Cancel"
-button.launch: "Launch"
 button.open_extension: "Extensions"
 
 status.not_available_platform: "Not available for current platform"

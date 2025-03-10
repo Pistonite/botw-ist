@@ -1,7 +1,50 @@
 title: "IST 模拟器"
 
+# Generic Titles
+title.custom_image: "自定义镜像"
+title.error: "错误"
+title.info: "信息"
+
+# Generic Buttons
+button.allow: "允许"
+button.cancel: "Cancel"
+button.close: "关闭"
+button.launch: "启动"
+button.ok: "好的"
+button.popout: "Pop-out to a new window"
+button.refresh: "刷新"
+button.setup: "进入配置"
+
+# Closing Prompts
 prompt.closing.edit: "当前窗口有未保存的内容！关闭窗口会导致未保存的内容丢失，是否继续？"
 prompt.closing.local: "正在保存中，如果现在关闭，最后的编辑将会丢失，是否继续？"
+
+# Help improve translation!
+prompt.translation_contact: ""
+# Boot Prompts
+prompt.boot.button.learn_more: "查看自定义镜像帮助文档"
+prompt.boot.custom_or_default: "是否允许此脚本使用自定义镜像运行？"
+prompt.boot.error: "模拟器加载失败："
+prompt.boot.setup_or_default.button.setup_again: "重新配置"
+prompt.boot.setup_or_default.button.use_default: "使用默认镜像"
+prompt.boot.setup_or_default.button.use_default_anyway: "仍使用默认镜像"
+prompt.boot.setup_or_default.DirectLoadNoImage: "此脚本指定了自定义镜像，但当前没有设置任何镜像。您想现在设置镜像吗？"
+prompt.boot.setup_or_default.DirectLoadVersionMismatch: "此脚本指定了镜像版本为 \"{{old_version}}\"，但当前镜像版本为 \"{{new_version}}\"。您想重新设置镜像吗？"
+prompt.boot.setup_or_default.InitializeError: "模拟器自定义镜像加载失败："
+prompt.boot.setup_or_default.LocalNoImage: "本地保存的脚本指定了自定义镜像，但当前没有设置任何镜像。您想现在设置镜像吗？"
+prompt.boot.setup_or_default.LocalVersionMismatch: "本地保存的脚本指定了镜像版本为 \"{{old_version}}\"，但当前镜像版本为 \"{{new_version}}\"。您想重新设置镜像吗？"
+# Boot Custom Image Setup Dialog
+dialog.custom_image.button.select_file: "选择镜像文件"
+dialog.custom_image.button.select_file.error: "发生错误，无法读取文件"
+dialog.custom_image.button.select_file.type_desc: "BlueFlame Image"
+dialog.custom_image.field.select_type: "镜像类型"
+dialog.custom_image.field.select_type.custom: "自定义镜像"
+dialog.custom_image.field.select_type.default: "默认镜像"
+dialog.custom_image.option.custom_by_default: "打开我自己的脚本时直接使用自定义镜像"
+dialog.custom_image.option.delete_previous: "删除之前上传的镜像设置"
+dialog.custom_image.option.select_current: "使用之前上传的镜像文件"
+dialog.custom_image.title: "自定义镜像设置"
+
 
 # Generic error messages
 error.internal: "内部错误: {{error}}"
@@ -48,11 +91,6 @@ category.Weapon: "Weapon"
 
 
 
-button.close: "Close"
-button.popout: "Pop-out to a new window"
-
-button.cancel: "Cancel"
-button.launch: "Launch"
 button.open_extension: "Extensions"
 
 status.not_available_platform: "Not available for current platform"
