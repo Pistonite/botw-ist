@@ -24,11 +24,7 @@ tasks:
       - task: git:check-modification
         vars:
           CHECK_PATH: packages/localization/src/ui
-          CHECK_MESSAGE: Please run localization:fix-language task to update the translation
-
-  fix-language:
-    cmds:
-      - bun scripts/edit-language.ts
+          CHECK_MESSAGE: Please run localization:fix task to update the translation
 
   edit:
     cmds:
@@ -37,6 +33,7 @@ tasks:
   fix:
     cmds:
       - task: ecma:mono-fix
+      - bun scripts/edit-language.ts
 
 
   push-artifacts:
