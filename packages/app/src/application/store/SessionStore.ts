@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { debounce } from "@pistonite/pure/sync";
 import { useDebounce } from "@uidotdev/usehooks";
 
+import type { ScriptEnvImage } from "@pistonite/skybook-api";
 import { translateUI } from "skybook-localization";
 
 import { useApplicationStore } from "./ApplicationStore.ts";
@@ -11,13 +12,13 @@ export type SessionStore = {
     /** Mode of the current session */
     mode: SessionMode;
 
-    /** 
+    /**
      * The initial script when the mode is edit-only, used for comparring
      * if the script has changed
      */
     initialScript: string;
 
-    /** 
+    /**
      * Set the session mode to local
      *
      * activeScript will be saved to local storage immediately,
@@ -25,7 +26,7 @@ export type SessionStore = {
      */
     setModeToLocal: () => void;
 
-    /** 
+    /**
      * Set the session mode to edit-only
      *
      * Both activeScript and initialScript will be set to the given script,
@@ -41,7 +42,7 @@ export type SessionStore = {
      */
     setModeToReadOnly: (script: string | undefined) => void;
 
-    /** 
+    /**
      * If activeScript is different from the script in localStorage
      *
      * When rendering UI that depends on this value, use the debounced
@@ -53,9 +54,13 @@ export type SessionStore = {
     /** The script that is currently being edited */
     activeScript: string;
     setActiveScript: (script: string) => void;
-}
 
-/** 
+    /** The version of the custom image that is currently running */
+    runningCustomImageVersion: ScriptEnvImage | "";
+    setRunningCustomImageVersion: (value: ScriptEnvImage | "") => void;
+};
+
+/**
  * Mode of the current session
  *
  * - local: edits are saved to local storage immediately
@@ -93,7 +98,7 @@ export const useSessionStore = create<SessionStore>()((set) => {
             const { setSavedScript } = useApplicationStore.getState();
             setSavedScript(script);
             set({ hasUnsavedChanges: false });
-        }
+        },
     });
 
     return {
@@ -104,7 +109,7 @@ export const useSessionStore = create<SessionStore>()((set) => {
                 const { setSavedScript } = useApplicationStore.getState();
                 setSavedScript(activeScript);
                 window.history.pushState({}, "", "/");
-                return { 
+                return {
                     mode: "local",
                     hasUnsavedChanges: false,
                 };
@@ -143,17 +148,19 @@ export const useSessionStore = create<SessionStore>()((set) => {
                 hasUnsavedChanges: false,
             });
         },
+
         hasUnsavedChanges: false,
         setHasUnsavedChanges: (value) => set({ hasUnsavedChanges: value }),
+
         activeScript: savedScript,
         setActiveScript: (script) => {
-            set(({mode, initialScript}) => {
+            set(({ mode, initialScript }) => {
                 if (mode === "read-only") {
                     return {};
                 }
                 if (mode === "edit-only") {
                     const hasUnsavedChanges = initialScript !== script;
-                    return { 
+                    return {
                         activeScript: script,
                         hasUnsavedChanges,
                     };
@@ -161,20 +168,25 @@ export const useSessionStore = create<SessionStore>()((set) => {
                 const { savedScript } = useApplicationStore.getState();
                 const hasUnsavedChanges = savedScript !== script;
                 setTimeout(() => persistScript(script), 0);
-                return { 
+                return {
                     activeScript: script,
                     hasUnsavedChanges,
                 };
             });
-            
         },
+
+        runningCustomImageVersion: "",
+        setRunningCustomImageVersion: (value) =>
+            set({ runningCustomImageVersion: value }),
     };
 });
 
-/** 
+/**
  * Get the debounced value of hasUnsavedChanges of the session
  */
 export const useDebouncedHasUnsavedChanges = (delay: number) => {
-    const hasUnsavedChanges = useSessionStore((state) => state.hasUnsavedChanges);
+    const hasUnsavedChanges = useSessionStore(
+        (state) => state.hasUnsavedChanges,
+    );
     return useDebounce(hasUnsavedChanges, delay);
-}
+};

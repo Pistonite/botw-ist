@@ -1,9 +1,14 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import {
+    parseEnvFromScript,
+    type ScriptEnvImage,
+} from "@pistonite/skybook-api";
+
 /** Persistent state for the application */
 export type ApplicationStore = {
-    /** 
+    /**
      * The SAVED simulator script
      *
      * Saving script into the application store is unchecked. The app
@@ -13,11 +18,11 @@ export type ApplicationStore = {
     savedScript: string;
     setSavedScript: (script: string) => void;
 
-    /** 
-     * The previously stored custom image version. Empty if no custom image 
+    /**
+     * The previously stored custom image version ("1.5" or "1.6"). Empty if no custom image
      */
-    customImageVersion: string;
-    setCustomImageVersion: (version: string) => void;
+    customImageVersion: ScriptEnvImage | "";
+    setCustomImageVersion: (version: ScriptEnvImage | "") => void;
     /**
      * If custom image should be used by default on sessions with editing
      * enabled (from local script or direct load with the edit flag set)
@@ -31,12 +36,31 @@ export const useApplicationStore = create<ApplicationStore>()(
         (set) => {
             return {
                 savedScript: "",
-                setSavedScript: (savedScript) => set({ savedScript}),
+                setSavedScript: (savedScript) => {
+                    set({ savedScript });
+                    const env = parseEnvFromScript(savedScript);
+                    // Set a separate local storage key for the boot flow
+                    // to quickly display the logo
+                    localStorage.setItem(
+                        "Skybook.EarlyCI",
+                        env.image ? "1" : "",
+                    );
+                },
                 customImageVersion: "",
-                setCustomImageVersion: (version) => set({ customImageVersion: version }),
+                setCustomImageVersion: (version) => {
+                    if (version) {
+                        set({ customImageVersion: version });
+                    } else {
+                        set({
+                            customImageVersion: "",
+                            isUseCustomImageByDefault: false,
+                        });
+                    }
+                },
                 isUseCustomImageByDefault: false as boolean,
-                setUseCustomImageByDefault: (value) => set({ isUseCustomImageByDefault: value }),
-            }
+                setUseCustomImageByDefault: (value) =>
+                    set({ isUseCustomImageByDefault: value }),
+            };
         },
         {
             name: "Skybook.Application",
@@ -44,4 +68,3 @@ export const useApplicationStore = create<ApplicationStore>()(
         },
     ),
 );
-

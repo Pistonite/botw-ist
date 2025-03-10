@@ -4,9 +4,10 @@ import {
     useCurrentSecondaryExtensionId,
     useExtensionStore,
     useSecondaryExtensionIds,
-} from "application/extensionStore";
+} from "application/store";
+import { openExtensionPopup } from "application/extension";
+
 import { ExtensionToolbar } from "./components/ExtensionToolbar.tsx";
-import { openExtensionPopup } from "application/extensionManager.ts";
 
 const ExtensionToolbarSecondaryConnected: React.FC = () => {
     const currentSecondaryId = useCurrentSecondaryExtensionId();

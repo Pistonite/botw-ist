@@ -2,7 +2,7 @@
 
 import { CodeEditor } from "@pistonite/intwc";
 
-import { useExtensionApp } from "application/useExtensionApp.ts";
+import { useExtensionApp } from "application/extension";
 
 import type { ExtensionComponentProps } from "../types.ts";
 

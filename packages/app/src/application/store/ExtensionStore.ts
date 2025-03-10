@@ -3,13 +3,18 @@ import { createSelector } from "reselect";
 import { isLessProductive } from "pure-contrib/platform";
 import { useNarrow } from "pure-contrib/narrow";
 
-/** 
+/**
  * List of builtin extension IDs
  *
  * The builtin extensions will be displayed in this order
  * in dropdowns. Custom extensions will be sorted by id
  */
-const BuiltinExtensionIds = ["editor", "item-explorer", "stub1", "stub2"] as const;
+const BuiltinExtensionIds = [
+    "editor",
+    "item-explorer",
+    "stub1",
+    "stub2",
+] as const;
 
 export type ExtensionStore = {
     /**
@@ -151,7 +156,11 @@ export const useExtensionStore = create<ExtensionStore>()((set) => ({
     custom: [],
     setCustomExtension: (extension) => {
         set(({ custom }) => {
-            return { custom: custom.map((c) => c.id === extension.id ? extension : c) };
+            return {
+                custom: custom.map((c) =>
+                    c.id === extension.id ? extension : c,
+                ),
+            };
         });
     },
     removeCustomExtension: (id) => {
@@ -204,7 +213,9 @@ export const useSecondaryExtensionIds = () => {
 };
 
 const toSortedExtensionIds = (ids: string[]): string[] => {
-    const customs = ids.filter((id) => !(BuiltinExtensionIds as readonly string[]).includes(id));
+    const customs = ids.filter(
+        (id) => !(BuiltinExtensionIds as readonly string[]).includes(id),
+    );
     customs.sort();
     const builtins = BuiltinExtensionIds.filter((id) => ids.includes(id));
     return [...builtins, ...customs];
@@ -228,14 +239,15 @@ export const useIsShowingExtensionPanel = () => {
     return !!(primary || secondary);
 };
 
-const getCustomExtensions = createSelector([
-    (state: ExtensionStore) => state.custom,
-], (custom) => {
+const getCustomExtensions = createSelector(
+    [(state: ExtensionStore) => state.custom],
+    (custom) => {
         const map = new Map<string, CustomExtension>();
         custom.forEach((c) => map.set(c.id, c));
         return map;
-    });
+    },
+);
 
 export const useCustomExtensions = () => {
     return useExtensionStore(getCustomExtensions);
-}
+};

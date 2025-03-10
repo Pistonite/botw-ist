@@ -1,7 +1,8 @@
 import { makeStyles } from "@fluentui/react-components";
 import { ResizeLayout } from "@pistonite/shared-controls";
 
-import { useIsShowingExtensionPanel } from "./application/extensionStore";
+import { useIsShowingExtensionPanel } from "application/store";
+
 import { ExtensionPanel } from "ui/ExtensionPanel";
 import { useNarrow } from "pure-contrib/narrow";
 import { useUIStore } from "ui/store";

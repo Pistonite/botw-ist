@@ -9,10 +9,11 @@ import {
     LanguagePicker,
 } from "@pistonite/shared-controls";
 
-import { useIsShowingExtensionPanel } from "application/extensionStore";
+import { useIsShowingExtensionPanel, useSessionStore } from "application/store";
 import { ExtensionOpenButton } from "ui/ExtensionOpenButton";
 
 import icon from "./icon.svg";
+import iconPurple from "./icon-purple.svg";
 
 const useStyles = makeStyles({
     container: {
@@ -26,9 +27,13 @@ export const Header: React.FC = () => {
     const styles = useStyles();
     const showingExtensionPanel = useIsShowingExtensionPanel();
     const version = import.meta.env.VERSION.replace("0.", "v");
+
+    const isRunningCustomImage = useSessionStore(
+        (state) => state.runningCustomImageVersion,
+    );
     return (
         <div className={styles.container}>
-            <img src={icon} height="32px" />
+            <img src={isRunningCustomImage ? iconPurple : icon} height="32px" />
             <span>{version}</span>
 
             <LanguagePicker />

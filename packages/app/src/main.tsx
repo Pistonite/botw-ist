@@ -2,23 +2,26 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { addLocaleSubscriber, initDark } from "@pistonite/pure/pref";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Void } from "@pistonite/pure/result";
+import type { Void } from "@pistonite/pure/result";
 
 import { initI18n, translateUI } from "skybook-localization";
 import { ItemTooltipProvider } from "skybook-item-system";
 import { extractDirectLoad } from "@pistonite/skybook-api/client";
-import { 
-    DirectLoad, 
-    parseEnvFromScript, 
-    getInitParamsFromEnv,
-    RuntimeInitParams, ScriptEnvImage } from "@pistonite/skybook-api";
+import {
+    type DirectLoad,
+    parseEnvFromScript,
+    type ScriptEnvImage,
+    type RuntimeInitArgs,
+    type ScriptEnv,
+} from "@pistonite/skybook-api";
+import type { RuntimeClient } from "@pistonite/skybook-api/sides/app";
 
-import { 
-    initExtensionManager, 
+import {
+    initExtensionManager,
     createExtensionAppHost,
     ExtensionAppContext,
 } from "application/extension";
-import { initRuntime } from "application/runtime";
+import { createRuntime, initRuntime } from "application/runtime";
 import { useApplicationStore, useSessionStore } from "application/store";
 
 import { initNarrow } from "pure-contrib/narrow.ts";
@@ -31,26 +34,22 @@ import {
     getSheikaBackgroundUrl,
     probeAndRegisterAssetLocation,
 } from "ui/asset.ts";
-import { BootScreen, BootScreenProps } from "ui/BootScreen.tsx";
-import { RuntimeClient } from "@pistonite/skybook-api/interfaces/Runtime.send";
-import { translateGenericError } from "../../localization/src/translation/error.ts";
-
-void boot();
+import { BootScreen, type BootScreenProps } from "ui/BootScreen.tsx";
 
 /**
  * Application boot flow
  *
  * 1. We start by kicking off loading assets (images, strings)
- * 2. Load the script from store or DirectLoad, and initialize the runtime 
+ * 2. Load the script from store or DirectLoad, and initialize the runtime
  *    with default or custom image. This will mount a temporary React root
  *    for showing dialogs
  * 3. Mount the main React root with the app
  */
-async function boot() {
-    initDark({ persist: true, });
+const boot = async () => {
+    initDark({ persist: true });
 
     // start initializing the runtime early
-    const runtime = initRuntime();
+    const runtime = createRuntime();
 
     if (isLessProductive) {
         initNarrow({
@@ -72,84 +71,61 @@ async function boot() {
     }
 
     const beforeMainUI = async () => {
-        const promises = [
-            probeAndRegisterAssetLocation(), 
-        ];
+        const promises = [probeAndRegisterAssetLocation()];
         await Promise.all(promises);
     };
 
     const beforeBootUI = async () => {
         await initI18n();
-        addLocaleSubscriber(() => {
-            const title = translateUI("title");
-            // fallback in case translation failed to load
-            if (title === "title") {
-                document.title = "IST Simulator";
-            } else {
-                document.title = title;
-            }
-        }, true);
     };
 
-    const params = new URLSearchParams(window.location.search);
-
-    // Begin boot flow
-    const payload = extractDirectLoad();
     const context: BootContext = {
         beforeBootUI,
         beforeMainUI,
         runtime,
         unmountBootUI: undefined,
-        setup: !!params.get("setup")
     };
 
+    const payload = extractDirectLoad();
+
     if (payload) {
-        await bootWithDirectLoad(payload, context);
+        await bootWithDirectLoad(context, payload);
         return;
     }
 
     await bootWithLocalScript(context);
-}
+};
 
 type BootContext = {
-    beforeBootUI: () => Promise<void>,
-    beforeMainUI: () => Promise<void>,
-    unmountBootUI: (() => void) | undefined,
-    runtime: Promise<RuntimeClient>,
-    /** If the runtime setup dialog should always be displayed */
-    setup: boolean,
-}
+    beforeBootUI: () => Promise<void>;
+    beforeMainUI: () => Promise<void>;
+    unmountBootUI: (() => void) | undefined;
+    runtime: Promise<RuntimeClient>;
+};
 
-async function bootWithDirectLoad(payload: DirectLoad, context: BootContext) {
+const bootWithDirectLoad = async (
+    context: BootContext,
+    payload: DirectLoad,
+) => {
     console.log("[boot] found direct load payload");
-    const { setMode } = useSessionStore.getState();
+    const { setModeToEditOnly, setModeToReadOnly } = useSessionStore.getState();
     if (payload.edit) {
-        setMode("edit-only");
+        setModeToEditOnly(payload.content);
     } else {
-        setMode("read-only");
+        setModeToReadOnly(payload.content);
     }
     // for boot purpose, we ignore errors during parsing the env
     const env = parseEnvFromScript(payload.content);
 
-    if (context.setup) {
-        console.log("[boot] setup mode requested");
-        await continueBootWithDialog({
-            initialState: "SetupDialog",
-        }, context);
-        return
-    }
-    
     // Does the script require CI?
-    if (!env.image || env.image === "default") {
+    if (!env.image) {
         console.log("[boot] custom image not required, using default image");
-        await continueBootWithDefaultImage();
+        await continueBootWithDefaultImage(context, env);
         return;
     }
 
-    const { 
-        customImageVersion, 
-        isUseCustomImageByDefault,
-    } = useApplicationStore.getState();
+    const { customImageVersion, isUseCustomImageByDefault } =
+        useApplicationStore.getState();
 
     console.log(`[boot] direct load requests custom image: ${env.image}`);
 
@@ -160,67 +136,103 @@ async function bootWithDirectLoad(payload: DirectLoad, context: BootContext) {
             // for edit sessions, allow custom image to be loaded by default
             // without prompts
             if (isUseCustomImageByDefault) {
-                await continueBootWithCustomImageWithNoDialog(context, getInitParamsFromEnv(env));
+                await continueBootWithCustomImageWithNoDialog(context, env);
                 return;
             }
         }
-        await continueBootWithDialog({
+        await continueBootWithDialog(context, env, {
             initialState: "UseCustomOrUseDefaultImage",
-        }, context);
+        });
         return;
     }
     if (versionMatch === "no-image") {
         console.log("[boot] no custom image found");
-        await continueBootWithDialog({
+        await continueBootWithDialog(context, env, {
             initialState: "OpenSetupOrUseDefaultImage",
             openSetupOrDefaultPromptType: "DirectLoadNoImage",
-        }, context);
+        });
         return;
     }
     console.log("[boot] custom image version mismatch");
-    await continueBootWithDialog({
+    await continueBootWithDialog(context, env, {
         initialState: "OpenSetupOrUseDefaultImage",
         openSetupOrDefaultPromptType: "DirectLoadVersionMismatch",
-    }, context);
+    });
     return;
-}
+};
 
-async function bootWithLocalScript(context: BootContext) {
+const bootWithLocalScript = async (context: BootContext) => {
     console.log("[boot] loading local script");
-    const { 
-        script, 
-        customImageVersion, 
+    const {
+        savedScript,
+        customImageVersion,
         isUseCustomImageByDefault,
-        setUseCustomImageByDefault
+        setUseCustomImageByDefault,
     } = useApplicationStore.getState();
     // for boot purpose, we ignore errors during parsing the env
-    const env = parseEnvFromScript(script);
-
-    if (context.setup) {
-        console.log("[boot] setup mode requested");
-        await continueBootWithDialog({
-            initialState: "SetupDialog",
-        }, context);
-        return
-    }
+    const env = parseEnvFromScript(savedScript);
 
     // Does the script require CI?
-    if (env.image && env.image !== "default") {
+    if (env.image) {
+        await new Promise((resolve) => setTimeout(resolve, 1));
+
+        const context = ((): BootContext => {
+            // start initializing the runtime early
+            const runtime = createRuntime();
+
+            if (isLessProductive) {
+                initNarrow({
+                    threshold: 800,
+                    override: (narrow) => {
+                        if (window.innerWidth < window.innerHeight) {
+                            return true;
+                        }
+                        if (narrow && window.innerHeight < window.innerWidth) {
+                            return false;
+                        }
+                        return narrow;
+                    },
+                });
+            } else {
+                initNarrow({
+                    threshold: 800,
+                });
+            }
+
+            const beforeMainUI = async () => {
+                const promises = [probeAndRegisterAssetLocation()];
+                await Promise.all(promises);
+            };
+
+            const beforeBootUI = async () => {
+                await initI18n();
+            };
+
+            const context: BootContext = {
+                beforeBootUI,
+                beforeMainUI,
+                runtime,
+                unmountBootUI: undefined,
+            };
+
+            return context;
+        })();
+
         console.log(`[boot] local script requests custom image: ${env.image}`);
         // Check the version required by the script
         const versionMatch = checkImageVersion(customImageVersion, env.image);
         if (versionMatch === "ok") {
             console.log("[boot] found matching custom image version");
-            await continueBootWithCustomImage();
+            await continueBootWithCustomImageWithNoDialog(context, env);
         } else if (versionMatch === "no-image") {
             console.log("[boot] no custom image found");
-            await continueBootWithDialog({
+            await continueBootWithDialog(context, env, {
                 initialState: "OpenSetupOrUseDefaultImage",
                 openSetupOrDefaultPromptType: "LocalNoImage",
             });
         } else {
             console.log("[boot] custom image version mismatch");
-            await continueBootWithDialog({
+            await continueBootWithDialog(context, env, {
                 initialState: "OpenSetupOrUseDefaultImage",
                 openSetupOrDefaultPromptType: "LocalVersionMismatch",
             });
@@ -231,119 +243,136 @@ async function bootWithLocalScript(context: BootContext) {
     // Script doesn't require CI, check if we have should use CI by default
     if (isUseCustomImageByDefault) {
         // check we have a valid stored image version
-        if (customImageVersion === "ver1.5" || customImageVersion === "ver1.6") {
+        if (customImageVersion === "1.5" || customImageVersion === "1.6") {
             console.log("[boot] loading custom image by default");
-            await continueBootWithCustomImageNoDialog();
+            await continueBootWithCustomImageWithNoDialog(context, env);
             return;
         }
         // if the CI version is invalid, clear use custom image by default
         setUseCustomImageByDefault(false);
     }
 
-    console.log("[boot] loading default image");
-    await continueBootWithDefaultImage();
-}
+    await continueBootWithDefaultImage(context, env);
+};
 
 type CheckImageVersionResult = "no-image" | "mismatch" | "ok";
-const checkImageVersion = (storedVersion: string, spec: ScriptEnvImage): CheckImageVersionResult => {
-    if (storedVersion !== "ver1.5" && storedVersion !== "ver1.6") {
+const checkImageVersion = (
+    storedVersion: string,
+    spec: ScriptEnvImage,
+): CheckImageVersionResult => {
+    if (storedVersion !== "1.5" && storedVersion !== "1.6") {
         return "no-image";
     }
-    if (spec.startsWith("custom-anyver")) {
+    if (spec.includes("5") && storedVersion === "1.5") {
         return "ok";
     }
-    if (spec.startsWith("custom-ver1.5") && storedVersion === "ver1.5") {
-        return "ok";
-    }
-    if (spec.startsWith("custom-ver1.6") && storedVersion === "ver1.6") {
+    if (spec.includes("6") && storedVersion === "1.6") {
         return "ok";
     }
     return "mismatch";
-}
+};
 
-async function continueBootWithDialog(bootScreenProps: BootScreenProps, context: BootContext) {
+const continueBootWithDialog = async (
+    context: BootContext,
+    env: ScriptEnv,
+    props: Omit<
+        BootScreenProps,
+        "runtime" | "onSuccess" | "scriptImageVersion" | "params"
+    >,
+) => {
     // if not mounted already, mount temporary root for showing dialog
     if (!context.unmountBootUI) {
         await context.beforeBootUI();
+
+        // Block dialog from showing too early, which startles the user
+        // i.e. let them see the loading fade-in first
+        const msToWait = Math.ceil(1000 - performance.now());
+        if (msToWait > 0) {
+            console.log(
+                `[boot] waiting for ${msToWait}ms before showing boot dialog`,
+            );
+            await new Promise((resolve) => setTimeout(resolve, msToWait));
+        }
+
         context.beforeBootUI = async () => {};
-        const rootElement = document.getElementById("-boot-root-") as HTMLDivElement;
+        const rootElement = document.getElementById(
+            "-boot-root-",
+        ) as HTMLDivElement;
         const root = createRoot(rootElement);
         context.unmountBootUI = () => {
             root.unmount();
-        }
-        root.render(<StrictMode>
-            <BootScreen {...bootScreenProps} />
-        </StrictMode>);
+        };
+        root.render(
+            <StrictMode>
+                <ThemeProvider>
+                    <BootScreen
+                        runtime={context.runtime}
+                        scriptImageVersion={env.image}
+                        params={env.params}
+                        {...props}
+                        onSuccess={() => {
+                            bootMainUI(context);
+                        }}
+                    />
+                </ThemeProvider>
+            </StrictMode>,
+        );
     }
-}
+};
 
-async function continueBootWithCustomImageWithNoDialog(
-    context: BootContext, 
-    params: RuntimeInitParams
-) {
-    const result = await continueBootWithCustomImage(context, params);
-    if (result.err) {
-            await continueBootWithDialog({
-                initialState: "OpenSetupOrUseDefaultImage",
-                openSetupOrDefaultPromptType: "InitializeError",
-            }, context);
-    }
-}
-
-async function continueBootWithCustomImage(
-    context: BootContext, 
-    params: RuntimeInitParams
-): Promise<Void<string>> {
-    updateLogo(true);
-    const runtime = await context.runtime;
-    console.log("[boot] initializing runtime with custom image");
-    const initWorkerResult = await runtime.initialize({
+const continueBootWithCustomImageWithNoDialog = async (
+    context: BootContext,
+    env: ScriptEnv,
+) => {
+    console.log("[boot] booting with custom image without dialog");
+    const result = await initRuntimeWithArgs(context, {
         isCustomImage: true,
-        params
+        params: env.params,
     });
-
-    if (initWorkerResult.err) {
-        console.warn("[boot] custom image initialization failed (worker)");
-        return {err: translateGenericError(initWorkerResult.err.message)};
-    }
-    const initResult = initWorkerResult.val;
-    if (initResult.err) {
-        console.warn("[boot] custom image initialization failed");
-        // TODO: worker error structure, tracked by #69
-        return {err: "initResult.err"};
-    }
-
-    console.log("[boot] custom image initialized successfully");
-    await bootMainUI(context);
-    return {};
-}
-
-async function continueBootWithDefaultImage() {
-    updateLogo(false);
-}
-
-/** Update the logo in the boot screen and the favicon */
-function updateLogo(customImage: boolean) {
-    const image = customImage ? "/static/icon.svg" : "/static/icon-purple.svg";
-    const linkIconTag = document.head.querySelector("link[rel='icon']");
-    if (!linkIconTag) {
-        const link = document.createElement("link");
-        link.rel = "icon";
-        link.type = "image/svg+xml";
-        link.href = image;
-        document.head.appendChild(link);
-    } else {
-        (linkIconTag as HTMLLinkElement).href = image;
-    }
-
-    const bootLogo = document.querySelector(".-boot-logo- img");
-    if (!bootLogo) {
+    if (result.err) {
+        console.log(
+            "[boot] failed to initialize runtime with custom image, showing dialog now",
+        );
+        await continueBootWithDialog(context, env, {
+            initialState: "OpenSetupOrUseDefaultImage",
+            openSetupOrDefaultPromptType: "InitializeError",
+            initialErrorString: result.err,
+        });
         return;
     }
-    (bootLogo as HTMLImageElement).src = image;
-}
+    await bootMainUI(context);
+};
 
-async function bootMainUI(context: BootContext) {
+const continueBootWithDefaultImage = async (
+    context: BootContext,
+    env: ScriptEnv,
+) => {
+    console.log("[boot] booting with default image without dialog");
+    const result = await initRuntimeWithArgs(context, {
+        isCustomImage: false,
+        deleteCustomImage: false,
+    });
+    if (result.err) {
+        console.log(
+            "[boot] failed to initialize runtime with default image, showing dialog now",
+        );
+        await continueBootWithDialog(context, env, {
+            initialState: "Error",
+            initialErrorString: result.err,
+        });
+        return;
+    }
+    await bootMainUI(context);
+};
+
+const initRuntimeWithArgs = async (
+    context: BootContext,
+    args: RuntimeInitArgs,
+): Promise<Void<string>> => {
+    return await initRuntime(await context.runtime, args);
+};
+
+const bootMainUI = async (context: BootContext) => {
     console.log("[boot] booting main UI");
     await context.beforeBootUI(); // needed if boot UI is never shown
     await context.beforeMainUI();
@@ -369,4 +398,34 @@ async function bootMainUI(context: BootContext) {
             </ExtensionAppContext.Provider>
         </StrictMode>,
     );
-}
+
+    // Let UI settle before removing boot UI
+    await new Promise((resolve) => setTimeout(resolve, 1));
+    // play fade out animation
+    const curtain = document.getElementById("-root-curtain-") as HTMLDivElement;
+    curtain.classList.add("end");
+
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    curtain.remove();
+    document.querySelectorAll(".-boot-only-").forEach((el) => {
+        el.remove();
+    });
+    // It's OK to set the title at the end,
+    // because the title is also server-rendered.
+    // This is just for switching between different languages
+    addLocaleSubscriber(() => {
+        // sometimes the language switching is not ready yet
+        // so we need to wait for it
+        const doSetTitle = () => {
+            const title = translateUI("title");
+            if (!title || title === "title") {
+                setTimeout(doSetTitle, 100);
+                return;
+            }
+            document.title = title;
+        };
+        setTimeout(doSetTitle, 100);
+    }, true);
+};
+
+void boot();

@@ -41,7 +41,9 @@ export default defineConfig(({ command }) => {
     }).stdout.trim();
     console.log(`commit: ${commit}`);
 
-    const packageJson = JSON.parse(fs.readFileSync("../../package.json", "utf-8"));
+    const packageJson = JSON.parse(
+        fs.readFileSync("../../package.json", "utf-8"),
+    );
     const version = packageJson.version;
     console.log(`version: ${version}`);
 

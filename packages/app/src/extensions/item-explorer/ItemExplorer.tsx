@@ -20,7 +20,7 @@ import {
     makeItemSlotInfo,
 } from "skybook-item-system";
 
-import { useExtensionApp } from "application/useExtensionApp.ts";
+import { useExtensionApp } from "application/extension";
 import { FirstPartyExtensionAdapter } from "extensions/FirstPartyAdapter.ts";
 
 import type { ExtensionComponentProps } from "../types.ts";
