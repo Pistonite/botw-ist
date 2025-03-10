@@ -20,6 +20,10 @@ const loadEntryPointHtml = async (): Promise<[string, string]> => {
 };
 const entryPointHtml = await loadEntryPointHtml();
 
+const getVersion = () => {
+    return VERSION.replace("0.", "v");
+};
+
 export type SSROptions = {
     /** URL to put in meta */
     url: string;
@@ -64,8 +68,26 @@ export const makeSSR = async (
         const jsonString = JSON.stringify(json);
         directLoadScript = `<script data-skybook-direct-load="1">var __skybook_direct_load=JSON.parse(${jsonString})</script>`;
         const scriptEnv = parseEnvFromScript(options.directLoad.content);
-        if (scriptEnv.image && scriptEnv.image !== "default") {
-            customImage = ` (${scriptEnv.image})`;
+        if (scriptEnv.image) {
+            customImage = ` (custom-image:ver${scriptEnv.image}`;
+            switch (scriptEnv.params.dlc) {
+                case 0: {
+                    customImage += "-nodlc)";
+                    break;
+                }
+                case 1: {
+                    customImage += "-dlc-1)";
+                    break;
+                }
+                case 2: {
+                    customImage += "-dlc-2)";
+                    break;
+                }
+                default: {
+                    customImage += ")";
+                    break;
+                }
+            }
         }
     } else {
         directLoadScript = "";
@@ -74,14 +96,14 @@ export const makeSSR = async (
     const urlTag = `<meta name="og:url" content="${options.url}">`;
 
     // In discord, this is the small grey text on top of the card
-    const siteNameTag = `<meta name="og:site_name" content="Skybook ${VERSION}${customImage}">`;
+    const siteNameTag = `<meta name="og:site_name" content="Skybook ${getVersion()}${customImage}">`;
     // In discord, this is the vertical color bar of the card
     const themeColor = customImage ? "#EE15F4" : "#73FBFD";
     const themeColorTag = `<meta name="theme-color" content="${themeColor}">`;
 
     // In discord, this is the title (big text) of the card
     let longTitle = Strings.title[language];
-    if (options.file) {
+    if (options.file?.short) {
         longTitle += ` - ${options.file.short}`;
     }
     const titleMetaTag = `<meta name="og:title" content="${longTitle}">`;
@@ -107,7 +129,7 @@ export const makeSSR = async (
     const imageTag = `<meta name="og:image" content="${origin}/static/${icon}.png">`;
 
     // also set the favicon
-    const faviconTag = `<link rel="icon" type="image/svg+xml" href="${origin}/static/${icon}.svg" />`;
+    const faviconTag = `<link rel="icon" type="image/svg+xml" href="/static/${icon}.svg" />`;
 
     const content =
         faviconTag +
@@ -120,7 +142,26 @@ export const makeSSR = async (
         descriptionTag +
         imageTag;
 
-    const [htmlHead, htmlTail] = entryPointHtml;
+    const [htmlHead, originalhtmlTail] = entryPointHtml;
+    let htmlTail = originalhtmlTail;
+
+    // replace boot logo
+    if (options.directLoad) {
+        if (customImage) {
+            htmlTail = htmlTail.replace(
+                /<img data-ssr-boot-logo [^>]*>/,
+                `<img class="start" src="/static/${icon}.svg" />`,
+            );
+        }
+    } else {
+        // use a script to render the logo early
+        const script = ` <script> (function (){
+let i = "icon";
+try { if (localStorage.getItem("Skybook.EarlyCI")) { i += "-purple"; } } catch {}
+document.write('<img class="start" src="/static/'+i+'.svg" />');
+})() </script>`;
+        htmlTail = htmlTail.replace(/<img data-ssr-boot-logo [^>]*>/, script);
+    }
 
     return {
         body: htmlHead + content + htmlTail,

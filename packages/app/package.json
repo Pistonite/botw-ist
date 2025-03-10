@@ -1,5 +1,4 @@
 {
-    "name": "skybook-app",
     "private": true,
     "version": "0.0.0",
     "type": "module",
@@ -14,6 +13,7 @@
         "@pistonite/skybook-api": "workspace:*",
         "@pistonite/workex": "catalog:",
         "@tanstack/react-query": "^5.62.11",
+        "@uidotdev/usehooks": "^2.4.1",
         "botw-item-assets": "workspace:*",
         "mobile-device-detect": "^0.4.3",
         "react": "catalog:",

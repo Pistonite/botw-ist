@@ -25,9 +25,28 @@ export const makeAsset = async (req: Request): Promise<ResponsePayload> => {
         return make404();
     }
     const localPath = "app" + path;
+    let filePath = localPath;
     if ((await gzipPaths).has(path) && useAcceptsGzip(req)) {
-        const gzipPath = localPath + ".gz";
-        return makeFile(gzipPath);
+        filePath += ".gz";
     }
-    return makeFile(localPath);
+    // Workers are frames, so they need CORP headers
+    return makeFile(
+        filePath,
+        isWorker(path) && {
+            headers: {
+                "Cross-Origin-Embedder-Policy": "require-corp",
+                "Cross-Origin-Opener-Policy": "same-origin",
+            },
+        },
+    );
+};
+
+const isWorker = (path: string): boolean => {
+    if (path.startsWith("/assets/editor.worker")) {
+        return true;
+    }
+    if (path.startsWith("/runtime/") && path.endsWith(".js")) {
+        return true;
+    }
+    return false;
 };

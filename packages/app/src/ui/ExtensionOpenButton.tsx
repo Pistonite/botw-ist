@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     Text,
     Button,
@@ -16,10 +17,12 @@ import {
     Checkbox,
 } from "@fluentui/react-components";
 import { WindowDevTools20Regular } from "@fluentui/react-icons";
-import type { ExtensionOpenMode } from "application/extensionStore";
-import { useNarrow } from "pure-contrib/narrow";
-import { useState } from "react";
+
 import { useUITranslation } from "skybook-localization";
+
+import type { ExtensionOpenMode } from "application/store";
+
+import { useNarrow } from "pure-contrib/narrow";
 import { isLessProductive } from "pure-contrib/platform";
 
 export const ExtensionOpenButton: React.FC = () => {

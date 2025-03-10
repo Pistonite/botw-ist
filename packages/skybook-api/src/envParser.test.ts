@@ -5,16 +5,27 @@ import {
     parseEnvFromScript,
     parseEnvImage,
     parseRegionSize,
+    parseEnvDlcVersion,
 } from "./envParser.ts";
 
 describe("parseEnvFromScript", () => {
-    it("parses empty", () => {
-        expect(parseEnvFromScript("")).toEqual({});
-        expect(parseEnvFromScript("\n")).toEqual({});
-        expect(parseEnvFromScript("// comment\n")).toEqual({});
-        expect(
-            parseEnvFromScript("// comment\nline\n'''env\nafter ignored"),
-        ).toEqual({});
+    it.each([
+        "",
+        "\n",
+        "// comment\n",
+        "// comment\nline\n'''env\nafter ignored",
+    ])("parses empty", (input) => {
+        expect(parseEnvFromScript(input)).toEqual({
+            params: {
+                dlc: 3,
+                programStart: "",
+                stackStart: "",
+                stackSize: 0,
+                heapFreeSize: 0,
+                pmdmAddr: "",
+            },
+            errors: [],
+        });
     });
     it("parses valid input", () => {
         expect(
@@ -30,100 +41,61 @@ pmdm-addr = 0x34500000
 `),
         ).toEqual({
             lines: [2, 9],
-            image: "custom-ver1.5",
-            programStart: "0x0000000034500000",
-            stackStart: "0x0000000034500000",
-            stackSize: 0x345000,
-            heapFreeSize: 0x345000,
-            pmdmAddr: "0x0000000034500000",
+            image: "1.5",
+            params: {
+                dlc: 3,
+                programStart: "0x0000000034500000",
+                stackStart: "0x0000000034500000",
+                stackSize: 0x345000,
+                heapFreeSize: 0x345000,
+                pmdmAddr: "0x0000000034500000",
+            },
+            errors: [],
         });
     });
 });
 
 describe("parseEnvImage", () => {
     it("parses default", () => {
-        expect(parseEnvImage("")).toBe("default");
-        expect(parseEnvImage("def")).toBe("default");
-        expect(parseEnvImage("default")).toBe("default");
+        expect(parseEnvImage("")).toBe(undefined);
+        expect(parseEnvImage("def")).toBe(undefined);
+        expect(parseEnvImage("default")).toBe(undefined);
     });
-    it("parses custom, unspecified dlc", () => {
-        expect(parseEnvImage("custom")).toBe("custom-anyver");
-        expect(parseEnvImage("custom-anyver")).toBe("custom-anyver");
-        expect(parseEnvImage("custom-any")).toBe("custom-anyver");
-        expect(parseEnvImage("custom-ver")).toBe("custom-anyver");
-        expect(parseEnvImage("custom-ver1.5")).toBe("custom-ver1.5");
-        expect(parseEnvImage("custom-1.5")).toBe("custom-ver1.5");
-        expect(parseEnvImage("custom1.5")).toBe("custom-ver1.5");
-        expect(parseEnvImage("custom-ver1.6")).toBe("custom-ver1.6");
-        expect(parseEnvImage("custom-1.6")).toBe("custom-ver1.6");
-        expect(parseEnvImage("custom1.6")).toBe("custom-ver1.6");
+    it.each(["1.5", "1.6"])("parses specific version", (version) => {
+        expect(parseEnvImage(version)).toBe(version);
+        expect(parseEnvImage("ver" + version)).toBe(version);
+        expect(parseEnvImage("v" + version)).toBe(version);
+        expect(parseEnvImage("custom-v" + version)).toBe(version);
+        expect(parseEnvImage("custom-ver" + version)).toBe(version);
     });
-    it("parses custom, no dlc", () => {
-        expect(parseEnvImage("custom-ver1.5-nodlc")).toBe(
-            "custom-ver1.5-nodlc",
-        );
-        expect(parseEnvImage("custom-ver1.6-no-dlc")).toBe(
-            "custom-ver1.6-nodlc",
-        );
-        expect(parseEnvImage("custom-no-dlc-1.5")).toBe("custom-ver1.5-nodlc");
-        expect(parseEnvImage("custom-no-dlc- ver1.6")).toBe(
-            "custom-ver1.6-nodlc",
-        );
+});
+
+describe("parseEnvDlcVersion", () => {
+    it("parses default", () => {
+        expect(parseEnvDlcVersion("")).toBe(3);
+        expect(parseEnvDlcVersion("def")).toBe(3);
+        expect(parseEnvDlcVersion("default")).toBe(3);
     });
-    it("parses custom, single dlc version", () => {
-        expect(parseEnvImage("custom-ver1.5-dlc-1")).toBe(
-            "custom-ver1.5-dlc-1",
+    it.each([0, 1, 2, 3])("parses from number", (version) => {
+        expect(parseEnvDlcVersion(version.toString())).toBe(version);
+        expect(parseEnvDlcVersion("dlc-" + version.toString())).toBe(version);
+        expect(parseEnvDlcVersion("dlc-" + version.toString() + ".0")).toBe(
+            version,
         );
-        expect(parseEnvImage("custom-ver1.6-1-dlc")).toBe(
-            "custom-ver1.6-dlc-1",
+        expect(parseEnvDlcVersion("ver-" + version.toString() + ".0")).toBe(
+            version,
         );
-        expect(parseEnvImage("custom-ver1.5-dlc-2")).toBe(
-            "custom-ver1.5-dlc-2",
-        );
-        expect(parseEnvImage("custom-ver1.6-2-dlc")).toBe(
-            "custom-ver1.6-dlc-2",
-        );
-        expect(parseEnvImage("custom-ver1.5-dlc-3")).toBe(
-            "custom-ver1.5-dlc-3",
-        );
-        expect(parseEnvImage("custom-ver1.6-3-dlc")).toBe(
-            "custom-ver1.6-dlc-3",
-        );
-        // don't do this pls
-        expect(parseEnvImage("custom3-ver1.5-dlc")).toBe("custom-ver1.5-dlc-3");
+        expect(parseEnvDlcVersion("ver-" + version.toString())).toBe(version);
     });
-    it("parses custom, 2 dlc versions", () => {
-        expect(parseEnvImage("custom-dlc-12")).toBe("custom-anyver-dlc-1-or-2");
-        expect(parseEnvImage("custom-dlc-2-or-1")).toBe(
-            "custom-anyver-dlc-1-or-2",
-        );
-        expect(parseEnvImage("custom-dlc-1-or-2")).toBe(
-            "custom-anyver-dlc-1-or-2",
-        );
-        expect(parseEnvImage("custom-1dlc-2")).toBe("custom-anyver-dlc-1-or-2");
-        expect(parseEnvImage("custom-dlc-32")).toBe("custom-anyver-dlc-2-or-3");
-        expect(parseEnvImage("custom-dlc-23")).toBe("custom-anyver-dlc-2-or-3");
-        expect(parseEnvImage("custom-dlc-2-or-3")).toBe(
-            "custom-anyver-dlc-2-or-3",
-        );
-        expect(parseEnvImage("custom-3dlc2")).toBe("custom-anyver-dlc-2-or-3");
-        expect(parseEnvImage("custom-1dlc-3")).toBe("custom-anyver-dlc-1-or-3");
-        expect(parseEnvImage("custom-dlc-31")).toBe("custom-anyver-dlc-1-or-3");
-        expect(parseEnvImage("custom-dlc-13")).toBe("custom-anyver-dlc-1-or-3");
-        expect(parseEnvImage("custom-dlc-1-or-3")).toBe(
-            "custom-anyver-dlc-1-or-3",
-        );
-        expect(parseEnvImage("custom-3dlc1")).toBe("custom-anyver-dlc-1-or-3");
-    });
-    it("parses custom, 3 dlc versions", () => {
-        expect(parseEnvImage("custom-ver1.5-dlc")).toBe("custom-ver1.5-dlc");
-        expect(parseEnvImage("custom-ver1.5-dlc-123")).toBe(
-            "custom-ver1.5-dlc",
-        );
-        expect(parseEnvImage("custom-ver1.5-dlc-1-or-2-or-3")).toBe(
-            "custom-ver1.5-dlc",
-        );
-        expect(parseEnvImage("custom-ver1.5-1dlc23")).toBe("custom-ver1.5-dlc");
+    it("parses shorthands", () => {
+        expect(parseEnvDlcVersion("nodlc")).toBe(0);
+        expect(parseEnvDlcVersion("none")).toBe(0);
+        expect(parseEnvDlcVersion("uninstalled")).toBe(0);
+
+        expect(parseEnvDlcVersion("day-1")).toBe(1);
+        expect(parseEnvDlcVersion("master-trials")).toBe(2);
+        expect(parseEnvDlcVersion("mt")).toBe(2);
+        expect(parseEnvDlcVersion("cb")).toBe(3);
     });
 });
 

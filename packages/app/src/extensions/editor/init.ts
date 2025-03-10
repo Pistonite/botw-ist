@@ -14,7 +14,6 @@ export const init = (app: ExtensionApp) => {
     initialized = true;
     initCodeEditor({
         language: {
-            typescript: {},
             custom: [
                 {
                     getId: () => "skybook",

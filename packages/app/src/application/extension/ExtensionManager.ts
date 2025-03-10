@@ -1,17 +1,16 @@
 import { addDarkSubscriber, addLocaleSubscriber } from "@pistonite/pure/pref";
 import type { Extension } from "@pistonite/skybook-api";
 
-import { useApplicationStore } from "./store";
+import { useSessionStore } from "application/store";
 
 /** Running instances of extensions */
 const instances: Extension[] = [];
 
 export const initExtensionManager = () => {
-    const store = useApplicationStore;
-    store.subscribe((curr, prev) => {
-        if (prev.script !== curr.script) {
+    useSessionStore.subscribe((curr, prev) => {
+        if (prev.activeScript !== curr.activeScript) {
             instances.forEach((x) => {
-                void x.onScriptChanged(curr.script);
+                void x.onScriptChanged(curr.activeScript);
             });
         }
     });
@@ -29,7 +28,7 @@ export const connectExtensionToApp = (extension: Extension): (() => void) => {
     const unsubscribeLocale = addLocaleSubscriber((x) => {
         void extension.onLocaleChanged(x);
     }, true);
-    void extension.onScriptChanged(useApplicationStore.getState().script);
+    void extension.onScriptChanged(useSessionStore.getState().activeScript);
     instances.push(extension);
     return () => {
         const index = instances.indexOf(extension);

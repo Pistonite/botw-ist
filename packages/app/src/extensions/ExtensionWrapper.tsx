@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getExtensionComponent } from "./registry";
-import { connectExtensionToApp } from "application/extensionManager";
+import { connectExtensionToApp } from "application/extension";
+
+import { getExtensionComponent } from "./registry.ts";
 
 export type ExtensionWrapperProps = {
     id: string;

@@ -1,1 +1,141 @@
-title: IST 模擬器
+title: "IST 模擬器"
+
+# Generic Titles
+title.custom_image: "自訂磁碟映像"
+title.error: "錯誤"
+title.info: "資訊"
+
+# Generic Buttons
+button.allow: "允許"
+button.cancel: "Cancel"
+button.close: "關閉"
+button.launch: "啟動"
+button.ok: "確定"
+button.popout: "Pop-out to a new window"
+button.refresh: "刷新"
+button.setup: "进入設定"
+
+# Closing Prompts
+prompt.closing.edit: "當前窗口有未保存的內容！關閉窗口會導致未保存的內容丟失，是否繼續？"
+prompt.closing.local: "正在保存中，如果現在關閉，最後的編輯將會丟失，是否繼續？"
+
+# Help improve translation!
+prompt.translation_contact: "請幫助改進中文翻譯！了解更多："
+# Boot Prompts
+prompt.boot.button.learn_more: "了解更多關於自訂磁碟映像"
+prompt.boot.custom_or_default: "是否允許此腳本使用自訂磁碟映像運行？"
+prompt.boot.error: "模擬器載入失敗："
+prompt.boot.setup_or_default.button.setup_again: "重新設定"
+prompt.boot.setup_or_default.button.use_default: "使用預設磁碟映像"
+prompt.boot.setup_or_default.button.use_default_anyway: "仍使用預設磁碟映像"
+prompt.boot.setup_or_default.DirectLoadNoImage: "此腳本指定了自訂磁碟映像，但目前沒有設定任何映像。您想現在設定嗎？"
+prompt.boot.setup_or_default.DirectLoadVersionMismatch: "此腳本指定的磁碟映像版本為 \"{{old_version}}\"，但目前版本為 \"{{new_version}}\"。您要重新設定嗎？"
+prompt.boot.setup_or_default.InitializeError: "模擬器自訂磁碟映像載入失敗："
+prompt.boot.setup_or_default.LocalNoImage: "本地保存的腳本指定了自訂磁碟映像，但目前沒有設定任何映像。您想現在設定嗎？"
+prompt.boot.setup_or_default.LocalVersionMismatch: "本地保存的腳本指定的磁碟映像版本為 \"{{old_version}}\"，但目前版本為 \"{{new_version}}\"。您要重新設定嗎？"
+# Boot Custom Image Setup Dialog
+dialog.custom_image.button.select_file: "選擇磁碟映像檔"
+dialog.custom_image.button.select_file.error: "發生錯誤，無法讀取檔案"
+dialog.custom_image.button.select_file.type_desc: "BlueFlame鏡像"
+dialog.custom_image.field.select_type: "選擇磁碟映像類型"
+dialog.custom_image.field.select_type.custom: "自訂磁碟映像"
+dialog.custom_image.field.select_type.default: "預設磁碟映像"
+dialog.custom_image.option.custom_by_default: "預設使用自訂磁碟映像啟動我的腳本"
+dialog.custom_image.option.delete_previous: "刪除先前上傳的自訂磁碟映像"
+dialog.custom_image.option.select_current: "使用先前上傳的檔案"
+dialog.custom_image.title: "自訂磁碟映像設定"
+
+
+# Generic error messages
+error.internal: "內部錯誤: {{error}}"
+error.unknown: "未知內部錯誤"
+
+# Parser error messages
+parser.FloatFormat: "`{{arg}}` is not a valid floating-point number"
+parser.GdtStrTypeNotSet: "Must include one of these properties to set the type of the GDT string: str32, str64, str256"
+parser.GdtTypeNotSet: "Must include one of these properties to set the type of the GDT: bool, s32, f32, vec2f, vec3f"
+parser.IntFormat: "`{{arg}}` is not a valid integer"
+parser.IntRange: "Integer `{{arg}}` is out of range"
+parser.InvalidArmorStarNum: "Armor star number must be between 0 and 4 (inclusive), got: {{arg}}"
+parser.InvalidCategory: "Cannot use category `{{arg}}` in this context"
+parser.InvalidCookEffect: "`{{arg}}` is not a valid cook effect"
+parser.InvalidEmptyItem: "Item name cannot be empty in this context"
+parser.InvalidEquipmentSlotNum: "`{{num}}` is not a valid number of slots for category `{{category}}`"
+parser.InvalidInventoryCol: "Inventory column number must be between 1 and 5 (inclusive), got: {{arg}}"
+parser.InvalidInventoryRow: "Inventory row number must be between 1 and 4 (inclusive), got: {{arg}}"
+parser.InvalidItem: "Invalid item: `{{arg}}`"
+parser.InvalidMetaValue: "`{{value}}` is not a valid value for property `{{key}}`"
+parser.InvalidSlotClause: "`{{arg}}` is not a valid slot number"
+parser.InvalidStringLength: "The maximum length allowed for the string is {0} in this context"
+parser.InvalidTimesClause: "`{{arg}}` is not a valid number for times"
+parser.InvalidTrial: "`{{arg}}` is not a valid trial name"
+parser.InvalidWeaponModifier: "`{{arg}}` is not a valid weapon modifier"
+parser.SyntaxUnexpected: "Unexpected syntax"
+parser.SyntaxUnexpectedEof: "Unexpected end of file"
+parser.SyntaxUnexpectedExpecting: "Unexpected syntax. Expecting: {{arg}}"
+parser.TooManyIngredients: "An item can have at most 5 ingredients"
+parser.UnexpectedMetaKeyWithValue: "The `{{arg}}` property should not have a value in this context"
+parser.UnusedMetaKey: "Property `{{arg}}` is unused"
+
+category.Armor: "Armor"
+category.ArmorHead: "Armor (Head)"
+category.ArmorLower: "Armor (Lower)"
+category.ArmorUpper: "Armor (Upper)"
+category.Arrow: "Arrow"
+category.Bow: "Bow"
+category.Food: "Food"
+category.KeyItem: "Key Items"
+category.Material: "Material"
+category.Shield: "Shield"
+category.Weapon: "Weapon"
+
+
+
+button.open_extension: "Extensions"
+
+status.not_available_platform: "Not available for current platform"
+status.not_available_window_size: "Not available because the window is too small"
+
+dialog.extensions.desc: "Launch an extension tool or change its configuration"
+dialog.extensions.title: "Extensions"
+field.extension.remember: "Remember my choice"
+field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
+field.select_extension: "Select an extension"
+radio.extension_open_mode.popout: "Pop-out to a new window"
+radio.extension_open_mode.primary: "Open in primary view"
+radio.extension_open_mode.secondary: "Open in secondary view"
+
+# Extension names
+extension.editor.desc: "Modify the simulation steps"
+extension.editor.name: "Script Editor"
+extension.item-explorer.desc: "Test item search results"
+extension.item-explorer.name: "Item Explorer"
+extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
+
+# Item Explorer Extension
+item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
+item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
+item_explorer.label.no_results: "No results"
+item_explorer.label.search_localized: "Search in all languages"
+item_explorer.label.search_placeholder: "Search"
+item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
+
+
+# Item Slot Tooltip
+tooltip.equipped: "Equipped"
+tooltip.holding: "Holding {{holding}}"
+tooltip.translucent: "Translucent"
+tooltip.value: "Value: {{value}}"
+
+tooltip.cook.price: "Sells for ${{price}}"
+
+tooltip.category: "Category: {pouch_category}"
+tooltip.slot: "Slot #{slot_number}, Pos #{position}"
+tooltip.transfer_slot: "Will be transferred"
+
+tooltip.buy_price: "Buying Price: {gparam_item_buying_price}"
+tooltip.life: "Life: {gparam_general_life}"
+tooltip.life_infinite: "Life: Infinite [{gparam_general_life}]"
+tooltip.power: "Power: {gparam_attack_power}"
+tooltip.profile: "Profile: {profile}"
+tooltip.sell_price: "Selling Price: {gparam_item_selling_price}"

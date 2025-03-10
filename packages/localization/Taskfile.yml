@@ -5,6 +5,10 @@ includes:
     taskfile: ../mono-dev/task/ecma.yaml
     internal: true
 
+  git:
+    taskfile: ../mono-dev/task/git.yaml
+    internal: true
+
 tasks:
   build:
     desc: Generate the localization files
@@ -16,28 +20,24 @@ tasks:
     cmds:
       - task: ecma:mono-check
       - bun scripts/check-lang-entries.ts
-
+      - task: fix-language
+      - task: git:check-modification
+        vars:
+          CHECK_PATH: packages/localization/src/ui
+          CHECK_MESSAGE: Please run localization:fix task to update the translation
   fix:
     cmds:
       - task: ecma:mono-fix
+      - task: fix-language
 
-  put-mocks:
+  fix-language:
     cmds:
-      - $(which mkdir) -p src/generated
-      - cmd: "echo 'mock: mock' > src/generated/{{.ITEM}}.yaml"
-        for:
-          - en-US
-          - ja-JP
-          - de-DE
-          - es-ES
-          - it-IT
-          - fr-FR
-          - ru-RU
-          - zh-CN
-          - zh-TW
-          - ko-KR
-          - nl-NL
+      - bun scripts/edit-language.ts
 
+  edit:
+    desc: Make edits to the translation files
+    cmds:
+      - bun scripts/edit-language.ts -
 
   push-artifacts:
     desc: Push generated files. Requires gcloud access

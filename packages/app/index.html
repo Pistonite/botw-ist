@@ -7,8 +7,22 @@
         <meta name="og:type" content="website" />
         <!-- <meta name="apple-mobile-web-app-capable" content="yes"> -->
         <!-- <link ref="manifest" href="/manifest.json" /> -->
-        <link rel="icon" type="image/svg+xml" href="/static/icon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script class="-boot-only-">
+            (function () {
+                let dark = null;
+                try {
+                    const item = localStorage.getItem("Pure.Dark");
+                    if (item !== null) {
+                        dark = !!item;
+                    }
+                } catch {}
+                if (dark === null) {
+                    dark = matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
+                }
+                document.write(`<style data-inject="pure-pref-dark">:root { color-scheme: ${dark ? "dark" : "light"}; }</style class="-boot-only-"><style>#-root-curtain- { background-color: ${dark? "#1e1e2e" : "#eff1f5"} }</style>`);
+            })()
+        </script>
         <style>
             :root {
                 font-synthesis: none;
@@ -25,9 +39,60 @@
                 width: 100vw;
             }
         </style>
+<style class="-boot-only-">
+
+            .-boot-logo- {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                translate: 0 -10px;
+            }
+
+            .-boot-logo- img{
+                animation: boot-logo-pulse 1s infinite ease-in-out alternate;
+            }
+
+            .-boot-logo- img.start {
+                animation: boot-logo-fadein 1s ease-in-out;
+            }
+
+            #-root-curtain-.end {
+                opacity: 0;
+                animation: boot-fadeout 0.2s ease-in-out reverse;
+            }
+
+    @keyframes boot-logo-pulse {
+            from { translate: 0 0px; }
+      to { translate: 0 20px; }
+    }
+    @keyframes boot-logo-fadein {
+            from { opacity: 0; translate: 0 20px;}
+      to { opacity: 1; translate: 0 0px; }
+    }
+    @keyframes boot-fadeout {
+            from { opacity: 0; }
+            to { opacity: 1; }
+    }
+
+</style>
     </head>
     <body style="height: 100vh; overflow: hidden">
-        <div id="-root-" style="height: 100vh"></div>
+        <div id="-root-" style="height: 100vh">
+            <div id="-boot-root-"></div>
+        </div>
+        <div id="-root-curtain-" style="position:fixed;top:0;left:0;width:100vw;height:100vh;">
+            <div class="-boot-logo-">
+                <img data-ssr-boot-logo class="start" src="/static/icon.svg" />
+            </div>
+            <script>
+                setTimeout(() => {
+                    const x = document.querySelector(".-boot-logo- img");
+                    if (!x) return;
+                    x.classList.remove("start");
+                }, 1500);
+            </script>
+        </div>
         <script type="module" src="/src/main.tsx"></script>
     </body>
 </html>

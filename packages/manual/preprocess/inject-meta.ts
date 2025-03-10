@@ -6,6 +6,7 @@ import fs from "node:fs/promises";
 
 
 async function preProcess() {
+    const version = JSON.parse(await fs.readFile("../../package.json", "utf8")).version.replace("0.", "v");
     let hbs = await fs.readFile("theme/index.hbs", "utf8");
     hbs = hbs.replace(
         `<meta name="theme-color" content="#ffffff">`,
@@ -15,9 +16,9 @@ async function preProcess() {
     const beforeHead = hbs.substring(0, headIdx);
     const afterHead = hbs.substring(headIdx + 6);
     const meta = `
-<meta name="og:site_name" content="Skybook">
+<meta name="og:site_name" content="Skybook ${version}">
 <meta name="og:type" content="website">
-<meta name="og:description" content="The IST Simulator Manual">
+<meta name="og:description" content="IST Simulator Manual">
 <meta name="og:image" content="https://ist.pistonite.dev/favicon.png">
 <meta name="og:title" content="{{ chatper_title }}">
 `;
@@ -43,9 +44,9 @@ async function postProcess() {
 
         if (file === "welcome.html" || file === "index.html") {
             // replace the tlte and description of the home page
-            afterHead = afterHead.replace(/<title>[^<]*<\/title>/, "<title>The IST Simulator Manual</title>");
+            afterHead = afterHead.replace(/<title>[^<]*<\/title>/, "<title>IST Simulator Manual</title>");
             afterHead = afterHead.replace(/<meta name="og:description".*>/, "");
-            afterHead = afterHead.replace(/<meta name="og:title" content="[^"]*">/, `<meta name="og:title" content="The IST Simulator Manual">`);
+            afterHead = afterHead.replace(/<meta name="og:title" content="[^"]*">/, `<meta name="og:title" content="IST Simulator Manual">`);
         } else {
             // add parent title to the meta tags
             const title = pathToTitle.get(file.replace(/\\/g, "/"));
@@ -64,7 +65,7 @@ async function parseToc(): Promise<Map<string, string>> {
     const lines = (await fs.readFile("src/SUMMARY.md", "utf8"))
         .split("\n")
         .map((line: string) => line.trimEnd())
-        .filter((x: string) => x.trim().startsWith("-"));
+        .filter((x: string) => x.trim().startsWith("-") && x.includes("]("));
     const pathToTitle = new Map<string, string>();
     const stack = [["",0]];
 

@@ -1,7 +1,13 @@
 import type { WorkexPromise } from "@pistonite/workex";
+import type { Result } from "@pistonite/pure/result";
 
 import type { ParserErrorReport } from "./parser";
-import type { ItemSearchResult } from "./types.ts";
+import type {
+    ItemSearchResult,
+    RuntimeInitArgs,
+    RuntimeInitError,
+    RuntimeInitOutput,
+} from "./types.ts";
 
 /**
  * API provided by the simulator runtime, called by the application.
@@ -10,6 +16,13 @@ import type { ItemSearchResult } from "./types.ts";
  * @workex:recv runtime
  */
 export interface Runtime {
+    /**
+     * Initialize the runtime with the given arguments.
+     */
+    initialize(
+        args: RuntimeInitArgs,
+    ): WorkexPromise<Result<RuntimeInitOutput, RuntimeInitError>>;
+
     /**
      * Resolve an item identifier search query to a list of items, ordered by score (best first).
      * Returns an empty list if no items are found.

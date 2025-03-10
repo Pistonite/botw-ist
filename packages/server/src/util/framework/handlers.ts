@@ -19,9 +19,13 @@ export const makeError = (
 };
 
 /** Make a response sending a file */
-export const makeFile = (path: string): ResponsePayload => {
+export const makeFile = (
+    path: string,
+    options?: ResponsePayload["options"] | false | undefined | null,
+): ResponsePayload => {
     return {
         body: Bun.file(path),
+        options: options || undefined,
     };
 };
 

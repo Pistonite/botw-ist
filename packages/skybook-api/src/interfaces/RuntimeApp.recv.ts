@@ -7,10 +7,13 @@ import type { RuntimeApp } from "../RuntimeApp.ts";
 export function bindRuntimeAppHost(delegate: RuntimeApp, options: WorkexBindOptions) {
     return bindHost("skyb-api-0.0.1", options, (fId: number, _payload: any[]) => {
         switch (fId) {
-            case 27 /* RuntimeApp.onRunCompleted */: {
+            case 28 /* RuntimeApp.getCustomBlueFlameImage */: {
+                return delegate.getCustomBlueFlameImage();
+            }
+            case 29 /* RuntimeApp.onRunCompleted */: {
                 return delegate.onRunCompleted();
             }
-            case 28 /* RuntimeApp.resolveQuotedItem */: {
+            case 30 /* RuntimeApp.resolveQuotedItem */: {
                 const [ a0 ] = _payload;
                 return delegate.resolveQuotedItem( a0 );
             }

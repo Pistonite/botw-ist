@@ -115,10 +115,9 @@ export const createAppRoutes = (
             outbound: [withCacheForeverHeaders],
         }),
         // runtime is versioned by commit hash
-        // and the worker is a frame, so needs CORP
         "/runtime/*": builder.route({
             handler: makeAsset,
-            outbound: [withCorpHeaders, withCacheForeverHeaders],
+            outbound: [withCacheForeverHeaders],
         }),
         // these static assets are unlikely to change (images)
         // cache for 7 days

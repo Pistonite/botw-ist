@@ -14,6 +14,8 @@ export const SupportedLocales = [
     "zh-TW",
 ] as const;
 
+export const NativelyMaintainedLocales = ["en-US", "zh-CN"];
+
 export const initI18n = () => {
     return initLocaleWithI18next({
         supported: SupportedLocales,
