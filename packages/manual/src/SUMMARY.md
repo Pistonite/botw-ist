@@ -31,4 +31,4 @@
     - [Application]()
     - [Extensions]()
     - [Server]()
-  - [External Integration](./developer/integration/index.md)
+  - [Extensions](./developer/extensions/temp.md)

@@ -25,8 +25,15 @@ task exec -- research:install
 task install-cargo-extra-tools
 task build-artifacts
 task install
+task check
 ```
-You also just need to run `task install` after merging others' work from the `main`
+
+```admonish warning
+`task check` generates config files for IDE and build tools and 
+is not optional!
+```
+
+You also just need to run `task install` and sometimes `task check` after merging others' work from the `main`
 branches.
 
 The setup above will let you build and run the web app without building
