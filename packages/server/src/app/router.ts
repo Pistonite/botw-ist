@@ -1,9 +1,9 @@
 import {
-    type BunRequestHandler,
+    type Routes,
     make404,
     type RouteBuilder,
     withHeadersOnSuccess,
-} from "util/framework";
+} from "self::framework";
 
 import { makeSSR } from "./ssr.ts";
 import { makeAsset } from "./assets.ts";
@@ -30,9 +30,7 @@ const withCacheForeverHeaders = withHeadersOnSuccess({
     "Cache-Control": "public, max-age=31535000, immutable",
 });
 
-export const createAppRoutes = (
-    builder: RouteBuilder,
-): Record<string, BunRequestHandler | Response> => {
+export const createAppRoutes = (builder: RouteBuilder): Routes => {
     return {
         "/": builder.route({
             handler: (req, url) => {

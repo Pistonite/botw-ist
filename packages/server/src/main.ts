@@ -1,7 +1,6 @@
-import { routeBuilder, useLogging } from "util/framework";
-import { createCrypto, randomKey } from "util/crypto.ts";
+import { routeBuilder, useLogging } from "self::framework";
+import { createCrypto, randomKey, VERSION } from "self::util";
 
-import { VERSION } from "./version.ts";
 import { createApiRoutes } from "./api/router.ts";
 import { createAppRoutes } from "./app/router.ts";
 

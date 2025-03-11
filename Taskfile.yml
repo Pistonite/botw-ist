@@ -163,6 +163,10 @@ tasks:
     cmds:
       - task: parser:pull-artifacts
       - task: item-assets:pull-artifacts-ts
+        # this technically isn't needed, but not installing pnpm
+        # causes CI to be unreliable due to cache issues
+        # (and I couldn't figure out how to optinally enable the setup)
+      - pnpm install --frozen-lockfile 
       - task: manual:install
       - task: manual:build
 
@@ -181,6 +185,7 @@ tasks:
       - task: parser:pull-artifacts
       - pnpm install --frozen-lockfile
       - task: runtime-wasm:build
+      - task: runtime-wasm:clean-dist # so we don't upload non-min bundles
       - task: runtime-wasm:build-dist-min
 
   build-runtime-fast-ci:

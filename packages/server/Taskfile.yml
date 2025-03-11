@@ -22,7 +22,7 @@ vars:
 tasks:
   install:
     cmds:
-      - echo "export const VERSION = "'"'$(bun scripts/get-version.ts)'";' > src/version.ts
+      - echo "export const VERSION = "'"'$(bun scripts/get-version.ts)'";' > src/util/version.ts
 
   pull-local:
     vars:
@@ -68,7 +68,7 @@ tasks:
       SKYBOOK_TLS_PATH: ../../../.cert
       SKYBOOK_PORT: 8000
     cmds:
-      - cmd: bun --watch run ../src/index.ts
+      - cmd: bun --watch run ../src/main.ts
         ignore_error: true
 
   build:
@@ -82,7 +82,7 @@ tasks:
           --sourcemap
           --target=bun-linux-x64-musl 
           --outfile dist/server-bin
-          src/index.ts 
+          src/main.ts 
   
   check:
     cmds:

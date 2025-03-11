@@ -25,8 +25,11 @@ import type {
 import type { RuntimeClient } from "@pistonite/skybook-api/interfaces/Runtime.send";
 import { translateUI, useUITranslation } from "skybook-localization";
 
-import { useApplicationStore } from "application/store";
-import { initRuntime, setCustomImageToProvide } from "application/runtime";
+import { useApplicationStore } from "self::application/store";
+import {
+    initRuntime,
+    setCustomImageToProvide,
+} from "self::application/runtime";
 
 export type BootScreenState =
     | "OpenSetupOrUseDefaultImage"

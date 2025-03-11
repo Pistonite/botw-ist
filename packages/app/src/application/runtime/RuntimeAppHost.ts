@@ -11,7 +11,7 @@ import {
     translateGenericError,
 } from "skybook-localization";
 
-import { useApplicationStore, useSessionStore } from "application/store";
+import { useApplicationStore, useSessionStore } from "self::application/store";
 
 let customImage: Uint8Array | undefined;
 

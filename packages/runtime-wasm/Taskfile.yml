@@ -27,6 +27,10 @@ tasks:
           PACKAGE: skybook_runtime_wasm
           WASM_PACK_ARGS: -t no-modules --no-pack
 
+  clean-dist:
+    cmds:
+      - rm -rf dist
+
   build-dist:
     vars:
       BUILD_DIR: dist
@@ -56,7 +60,6 @@ tasks:
       WORKER_MIN_JS: "{{.BUILD_DIR}}/worker-{{.COMMIT_SHORT}}.min.js"
       SKYBOOK_WASM: "{{.BUILD_DIR}}/skybook-{{.COMMIT_SHORT}}.wasm"
     cmds:
-      - rm -rf {{.BUILD_DIR}}
       - $(which mkdir) -p {{.BUILD_DIR}}
       - cp pkg/skybook_runtime_wasm_bg.wasm {{.SKYBOOK_WASM}}
       - cmd: >

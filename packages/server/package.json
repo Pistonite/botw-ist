@@ -1,5 +1,4 @@
 {
-    "name": "skybook-server",
     "private": true,
     "version": "0.0.0",
     "type": "module",
@@ -10,13 +9,6 @@
     },
     "devDependencies": {
         "@types/bun": "^1.2.4",
-        "eslint": "catalog:",
-        "mono-dev": "workspace:*",
-        "typescript": "catalog:"
-    },
-    "tsconfig": {
-        "compilerOptions": {
-            "baseUrl": "src"
-        }
+        "mono-dev": "workspace:*"
     }
 }

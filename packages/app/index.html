@@ -30,13 +30,10 @@
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
             }
-            body {
-                margin: 0;
-                width: 100vw;
-            }
 
             #-root- {
                 width: 100vw;
+                height: 100vh;
             }
         </style>
 <style class="-boot-only-">
@@ -77,8 +74,8 @@
 
 </style>
     </head>
-    <body style="height: 100vh; overflow: hidden">
-        <div id="-root-" style="height: 100vh">
+    <body style="margin:0;width:100vw;height:100vh;overflow:hidden">
+        <div id="-root-">
             <div id="-boot-root-"></div>
         </div>
         <div id="-root-curtain-" style="position:fixed;top:0;left:0;width:100vw;height:100vh;">

@@ -9,9 +9,12 @@ import {
     LanguagePicker,
 } from "@pistonite/shared-controls";
 
-import { useIsShowingExtensionPanel, useSessionStore } from "application/store";
-import { ExtensionOpenButton } from "ui/ExtensionOpenButton";
+import {
+    useIsShowingExtensionPanel,
+    useSessionStore,
+} from "self::application/store";
 
+import { ExtensionOpenButton } from "./ExtensionOpenButton.tsx";
 import icon from "./icon.svg";
 import iconPurple from "./icon-purple.svg";
 

@@ -5,12 +5,12 @@ import {
     useCurrentPrimaryExtensionId,
     useExtensionStore,
     usePrimaryExtensionIds,
-} from "application/store";
-import { openExtensionPopup } from "application/extension";
+} from "self::application/store";
+import { openExtensionPopup } from "self::application/extension";
+import { isLessProductive } from "self::pure-contrib";
 
 import { ExtensionToolbar } from "./components/ExtensionToolbar.tsx";
 import { ExtensionOpenButton } from "./ExtensionOpenButton.tsx";
-import { isLessProductive } from "pure-contrib/platform.ts";
 
 const ExtensionToolbarPrimaryConnected: React.FC = () => {
     const currentPrimaryId = useCurrentPrimaryExtensionId();

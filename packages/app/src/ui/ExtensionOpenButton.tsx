@@ -20,10 +20,8 @@ import { WindowDevTools20Regular } from "@fluentui/react-icons";
 
 import { useUITranslation } from "skybook-localization";
 
-import type { ExtensionOpenMode } from "application/store";
-
-import { useNarrow } from "pure-contrib/narrow";
-import { isLessProductive } from "pure-contrib/platform";
+import type { ExtensionOpenMode } from "self::application/store";
+import { useNarrow, isLessProductive } from "self::pure-contrib";
 
 export const ExtensionOpenButton: React.FC = () => {
     const t = useUITranslation();

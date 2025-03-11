@@ -1,7 +1,7 @@
 import { addDarkSubscriber, addLocaleSubscriber } from "@pistonite/pure/pref";
 import type { Extension } from "@pistonite/skybook-api";
 
-import { useSessionStore } from "application/store";
+import { useSessionStore } from "self::application/store";
 
 /** Running instances of extensions */
 const instances: Extension[] = [];

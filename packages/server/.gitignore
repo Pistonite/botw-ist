@@ -1,6 +1,6 @@
 node_modules
 /dist
-/src/version.ts
+/src/util/version.ts
 /tsconfig*.json
 /eslint.config.js
 .prettierignore
