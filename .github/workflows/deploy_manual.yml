@@ -16,6 +16,7 @@ jobs:
         with:
           persist-credentials: false
           submodules: true
+          pnpm: false
       - uses: ./.github/steps/setup-blacksmith
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
