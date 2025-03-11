@@ -4,11 +4,15 @@ import {
     makeError,
     makePlainText,
     type RouteBuilder,
+    type Routes,
     useStringBody,
-} from "util/framework";
-import type { Crypto } from "util/crypto.ts";
+} from "self::framework";
+import type { Crypto } from "self::util";
 
-export const createApiRoutes = (_crypto: Crypto, builder: RouteBuilder) => {
+export const createApiRoutes = (
+    _crypto: Crypto,
+    builder: RouteBuilder,
+): Routes => {
     return {
         // Convert from V3 script to V4 script
         "/api/convert": {

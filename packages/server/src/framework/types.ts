@@ -36,3 +36,8 @@ export type RouteArgs = {
 };
 
 export type BunRequestHandler = (req: BunRequest) => Awaitable<Response>;
+
+export type Routes = Record<
+    string,
+    BunRequestHandler | Response | Record<string, BunRequestHandler>
+>;

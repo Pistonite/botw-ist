@@ -5,7 +5,7 @@ import {
     makeFile,
     type ResponsePayload,
     useAcceptsGzip,
-} from "util/framework";
+} from "self::framework";
 
 const gzipPaths = (async () => {
     console.log("loading gzipped assets paths");
