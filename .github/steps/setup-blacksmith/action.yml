@@ -20,11 +20,11 @@ runs:
         version: 3.x
         repo-token: ${{ inputs.token }}
     - uses: pnpm/action-setup@v4
-      if: ${{ inputs.pnpm }} != false
+      if: inputs.pnpm != false
       with:
         version: "10.6.2"
     - uses: useblacksmith/setup-node@v5
-      if: ${{ inputs.pnpm }} != false
+      if: inputs.pnpm != false
       with:
         node-version: 22
         cache: 'pnpm'
