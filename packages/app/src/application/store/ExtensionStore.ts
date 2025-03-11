@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { createSelector } from "reselect";
-import { isLessProductive } from "pure-contrib/platform";
-import { useNarrow } from "pure-contrib/narrow";
+
+import { isLessProductive, useNarrow } from "self::pure-contrib";
 
 /**
  * List of builtin extension IDs

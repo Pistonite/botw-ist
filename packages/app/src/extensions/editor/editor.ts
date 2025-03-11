@@ -1,7 +1,7 @@
 import type { CodeEditorApi } from "@pistonite/intwc";
 import type { WorkexPromise } from "@pistonite/workex";
 
-import { FirstPartyExtensionAdapter } from "extensions/FirstPartyAdapter";
+import { FirstPartyExtensionAdapter } from "../FirstPartyAdapter.ts";
 
 export class EditorExtension extends FirstPartyExtensionAdapter {
     constructor(

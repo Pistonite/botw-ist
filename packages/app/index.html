@@ -30,13 +30,10 @@
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
             }
-            body {
-                margin: 0;
-                width: 100vw;
-            }
 
             #-root- {
                 width: 100vw;
+                height: 100vh;
             }
         </style>
 <style class="-boot-only-">
@@ -77,22 +74,25 @@
 
 </style>
     </head>
-    <body style="height: 100vh; overflow: hidden">
-        <div id="-root-" style="height: 100vh">
-            <div id="-boot-root-"></div>
-        </div>
-        <div id="-root-curtain-" style="position:fixed;top:0;left:0;width:100vw;height:100vh;">
-            <div class="-boot-logo-">
-                <img data-ssr-boot-logo class="start" src="/static/icon.svg" />
-            </div>
-            <script>
-                setTimeout(() => {
-                    const x = document.querySelector(".-boot-logo- img");
-                    if (!x) return;
-                    x.classList.remove("start");
-                }, 1500);
-            </script>
-        </div>
-        <script type="module" src="/src/main.tsx"></script>
+    <body style="margin:0;width:100vw;height:100vh;overflow:hidden">
+        <!-- <script> -->
+        <!-- window.open("https://objmap.zeldamods.org", "popup", "popup,noreferrer") -->
+        <!-- </script> -->
+        <!-- <div id="-root-"> -->
+        <!--     <div id="-boot-root-"></div> -->
+        <!-- </div> -->
+        <!-- <div id="-root-curtain-" style="position:fixed;top:0;left:0;width:100vw;height:100vh;"> -->
+        <!--     <div class="-boot-logo-"> -->
+        <!--         <img data-ssr-boot-logo class="start" src="/static/icon.svg" /> -->
+        <!--     </div> -->
+        <!--     <script> -->
+        <!--         setTimeout(() => { -->
+        <!--             const x = document.querySelector(".-boot-logo- img"); -->
+        <!--             if (!x) return; -->
+        <!--             x.classList.remove("start"); -->
+        <!--         }, 1500); -->
+        <!--     </script> -->
+        <!-- </div> -->
+        <!-- <script type="module" src="/src/main.tsx"></script> -->
     </body>
 </html>

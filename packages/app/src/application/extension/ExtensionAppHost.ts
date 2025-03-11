@@ -1,4 +1,3 @@
-import { createContext, useContext } from "react";
 import {
     charPosToBytePos,
     createBytePosToCharPosArray,
@@ -14,21 +13,12 @@ import {
 } from "skybook-localization";
 import { getActorParam } from "skybook-item-system";
 
-import { useSessionStore } from "application/store";
+import { useSessionStore } from "self::application/store";
 
 export const createExtensionAppHost = (
     runtime: RuntimeClient,
 ): ExtensionApp => {
     return new ExtensionAppHost(runtime);
-};
-
-export const ExtensionAppContext = createContext<ExtensionApp>(
-    // must be provided
-    {} as unknown as ExtensionApp,
-);
-
-export const useExtensionApp = () => {
-    return useContext(ExtensionAppContext);
 };
 
 class ExtensionAppHost implements ExtensionApp {

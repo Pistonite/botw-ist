@@ -7,7 +7,7 @@ import {
     useCurrentSecondaryExtensionId,
     usePrimaryExtensionIds,
     useSecondaryExtensionIds,
-} from "application/store";
+} from "self::application/store";
 
 import { useUIStore } from "./store.ts";
 import { ExtensionToolbarPrimary } from "./ExtensionToolbarPrimary.tsx";

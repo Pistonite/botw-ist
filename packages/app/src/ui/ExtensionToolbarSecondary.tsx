@@ -4,8 +4,8 @@ import {
     useCurrentSecondaryExtensionId,
     useExtensionStore,
     useSecondaryExtensionIds,
-} from "application/store";
-import { openExtensionPopup } from "application/extension";
+} from "self::application/store";
+import { openExtensionPopup } from "self::application/extension";
 
 import { ExtensionToolbar } from "./components/ExtensionToolbar.tsx";
 

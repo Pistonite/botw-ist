@@ -1,13 +1,11 @@
 import { makeStyles } from "@fluentui/react-components";
 import { ResizeLayout } from "@pistonite/shared-controls";
 
-import { useIsShowingExtensionPanel } from "application/store";
+import { useIsShowingExtensionPanel } from "self::application/store";
+import { useNarrow, isLessProductive } from "self::pure-contrib";
 
-import { ExtensionPanel } from "ui/ExtensionPanel";
-import { useNarrow } from "pure-contrib/narrow";
-import { useUIStore } from "ui/store";
-import { isLessProductive } from "pure-contrib/platform";
-
+import { ExtensionPanel } from "./ExtensionPanel.tsx";
+import { useUIStore } from "./store.ts";
 import { Header } from "./Header.tsx";
 
 const useStyles = makeStyles({

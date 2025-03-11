@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { addLocaleSubscriber, initDark } from "@pistonite/pure/pref";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Void } from "@pistonite/pure/result";
+import { ThemeProvider } from "@pistonite/shared-controls";
 
 import { initI18n, translateUI } from "skybook-localization";
 import { ItemTooltipProvider } from "skybook-item-system";
@@ -19,22 +20,18 @@ import type { RuntimeClient } from "@pistonite/skybook-api/sides/app";
 import {
     initExtensionManager,
     createExtensionAppHost,
-    ExtensionAppContext,
-} from "application/extension";
-import { createRuntime, initRuntime } from "application/runtime";
-import { useApplicationStore, useSessionStore } from "application/store";
+} from "self::application/extension";
+import { createRuntime, initRuntime } from "self::application/runtime";
+import { useApplicationStore, useSessionStore } from "self::application/store";
+import { initNarrow, isLessProductive } from "self::pure-contrib";
 
-import { initNarrow } from "pure-contrib/narrow.ts";
-import { isLessProductive } from "pure-contrib/platform.ts";
-
-import { App } from "./App.tsx";
-import { ThemeProvider } from "./theme/ThemeProvider.tsx";
-
+import { ExtensionAppContext } from "./extensions/ExtensionAppContext.ts";
+import { App } from "./ui/App.tsx";
 import {
     getSheikaBackgroundUrl,
     probeAndRegisterAssetLocation,
-} from "ui/asset.ts";
-import { BootScreen, type BootScreenProps } from "ui/BootScreen.tsx";
+} from "./ui/asset.ts";
+import { BootScreen, type BootScreenProps } from "./ui/BootScreen.tsx";
 
 /**
  * Application boot flow
