@@ -23,7 +23,6 @@ jobs:
       - uses: ./.github/steps/setup-blacksmith
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pnpm: false
       - run: task build-manual-ci
 
   build-app:
