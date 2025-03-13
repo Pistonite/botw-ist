@@ -15,10 +15,17 @@ import { getActorParam } from "skybook-item-system";
 
 import { useSessionStore } from "self::application/store";
 
-export const createExtensionAppHost = (
-    runtime: RuntimeClient,
-): ExtensionApp => {
-    return new ExtensionAppHost(runtime);
+let theAppHost: ExtensionApp | undefined = undefined;
+
+export const initExtensionAppHost = (runtime: RuntimeClient) => {
+    theAppHost = new ExtensionAppHost(runtime);
+};
+
+export const getExtensionAppHost = () => {
+    if (!theAppHost) {
+        throw new Error("Extension app host not initialized");
+    }
+    return theAppHost;
 };
 
 class ExtensionAppHost implements ExtensionApp {

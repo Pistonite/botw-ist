@@ -1,7 +1,14 @@
-import { addDarkSubscriber, addLocaleSubscriber } from "@pistonite/pure/pref";
+import {
+    addDarkSubscriber,
+    addLocaleSubscriber,
+    getLocale,
+    isDark,
+} from "@pistonite/pure/pref";
 import type { Extension } from "@pistonite/skybook-api";
+import type { ExtensionModule } from "@pistonite/skybook-api/client";
 
 import { useSessionStore } from "self::application/store";
+import { getExtensionAppHost } from "./ExtensionAppHost.ts";
 
 /** Running instances of extensions */
 const instances: Extension[] = [];
@@ -14,6 +21,16 @@ export const initExtensionManager = () => {
             });
         }
     });
+    addDarkSubscriber((dark) => {
+        instances.forEach((x) => {
+            void x.onDarkModeChanged(dark);
+        });
+    }, false);
+    addLocaleSubscriber((locale) => {
+        instances.forEach((x) => {
+            void x.onLocaleChanged(locale);
+        });
+    }, false);
 };
 
 /**
@@ -21,22 +38,21 @@ export const initExtensionManager = () => {
  *
  * Returns a function to disconnect the extension from the app.
  */
-export const connectExtensionToApp = (extension: Extension): (() => void) => {
-    const unsubscribeDark = addDarkSubscriber((x) => {
-        void extension.onDarkModeChanged(x);
-    }, true);
-    const unsubscribeLocale = addLocaleSubscriber((x) => {
-        void extension.onLocaleChanged(x);
-    }, true);
+export const connectExtensionToApp = (
+    extension: ExtensionModule,
+): (() => void) => {
+    extension.onAppConnectionEstablished(getExtensionAppHost());
+
+    void extension.onDarkModeChanged(isDark());
+    void extension.onLocaleChanged(getLocale());
     void extension.onScriptChanged(useSessionStore.getState().activeScript);
     instances.push(extension);
+
     return () => {
         const index = instances.indexOf(extension);
         if (index >= 0) {
             instances.splice(index, 1);
         }
-        unsubscribeLocale();
-        unsubscribeDark();
     };
 };
 

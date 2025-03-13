@@ -19,7 +19,7 @@ async function preProcess() {
 <meta name="og:site_name" content="Skybook ${version}">
 <meta name="og:type" content="website">
 <meta name="og:description" content="IST Simulator Manual">
-<meta name="og:image" content="https://ist.pistonite.dev/favicon.png">
+<meta name="og:image" content="https://skybook.pistonite.dev/favicon.png">
 <meta name="og:title" content="{{ chatper_title }}">
 `;
     hbs = beforeHead + "<head>" + meta + afterHead;
@@ -40,7 +40,7 @@ async function postProcess() {
         const headIdx = html.indexOf("<head>");
         const beforeHead = html.substring(0, headIdx);
         let afterHead = html.substring(headIdx + 6);
-        const meta = `<meta name="og:url" content="https://ist.pistonite.dev/${file}">`;
+        const meta = `<meta name="og:url" content="https://skybook.pistonite.dev/${file}">`;
 
         if (file === "welcome.html" || file === "index.html") {
             // replace the tlte and description of the home page

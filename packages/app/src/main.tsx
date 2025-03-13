@@ -19,13 +19,12 @@ import type { RuntimeClient } from "@pistonite/skybook-api/sides/app";
 
 import {
     initExtensionManager,
-    createExtensionAppHost,
+    initExtensionAppHost,
 } from "self::application/extension";
 import { createRuntime, initRuntime } from "self::application/runtime";
 import { useApplicationStore, useSessionStore } from "self::application/store";
 import { initNarrow, isLessProductive } from "self::pure-contrib";
 
-import { ExtensionAppContext } from "./extensions/ExtensionAppContext.ts";
 import { App } from "./ui/App.tsx";
 import {
     getSheikaBackgroundUrl,
@@ -376,23 +375,21 @@ const bootMainUI = async (context: BootContext) => {
     context.unmountBootUI?.();
 
     const queryClient = new QueryClient();
-    const app = createExtensionAppHost(await context.runtime);
+    initExtensionAppHost(await context.runtime);
     initExtensionManager();
 
     const root = document.getElementById("-root-") as HTMLDivElement;
     createRoot(root).render(
         <StrictMode>
-            <ExtensionAppContext.Provider value={app}>
-                <QueryClientProvider client={queryClient}>
-                    <ThemeProvider>
-                        <ItemTooltipProvider
-                            backgroundUrl={getSheikaBackgroundUrl()}
-                        >
-                            <App />
-                        </ItemTooltipProvider>
-                    </ThemeProvider>
-                </QueryClientProvider>
-            </ExtensionAppContext.Provider>
+            <QueryClientProvider client={queryClient}>
+                <ThemeProvider>
+                    <ItemTooltipProvider
+                        backgroundUrl={getSheikaBackgroundUrl()}
+                    >
+                        <App />
+                    </ItemTooltipProvider>
+                </ThemeProvider>
+            </QueryClientProvider>
         </StrictMode>,
     );
 

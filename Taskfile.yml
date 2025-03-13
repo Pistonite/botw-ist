@@ -97,13 +97,12 @@ tasks:
   build-artifacts:
     desc: Generate artifacts for development locally and from hosted app
     cmds:
-      - task: parser:pull-deps-public
+      - task: parser:pull-artifacts-public
       - task: item-assets:pull-artifacts-public
       - task: research:build
       - task: localization:build
       - task: item-assets:build-src
       - task: item-system:build
-      - task: parser:build
       - task: runtime-wasm:pull-dist
 
   pull-artifacts:

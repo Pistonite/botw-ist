@@ -29,7 +29,8 @@ export const makeAsset = async (req: Request): Promise<ResponsePayload> => {
     if ((await gzipPaths).has(path) && useAcceptsGzip(req)) {
         filePath += ".gz";
     }
-    // Workers are frames, so they need CORP headers
+    // Workers are frames, so COEP=require-corp is needed
+    // to be embedded in the main frame.
     return makeFile(
         filePath,
         isWorker(path) && {

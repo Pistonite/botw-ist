@@ -22,7 +22,7 @@ export type SearchResult = {
     score: number;
 };
 
-type SearchResultNoScore = Omit<SearchResult, "score">;
+export type SearchResultNoScore = Omit<SearchResult, "score">;
 
 const cache = new LRUCache<string, SearchResultNoScore[]>({
     max: 512, // probably good enough

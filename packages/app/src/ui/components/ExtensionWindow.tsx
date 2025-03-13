@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { makeStyles } from "@fluentui/react-components";
 
 import { connectExtensionToApp } from "self::application/extension";
-import { getExtensionComponent } from "self::extensions";
+import { getExtension } from "self::extensions";
 
 export type ExtensionWindowProps = {
     /** Ids of the extensions loaded in this window */
@@ -59,12 +59,17 @@ export type ExtensionWrapperProps = {
 export const ExtensionWrapper: React.FC<ExtensionWrapperProps> = ({ id }) => {
     const { isPending, data: ExtComp } = useQuery({
         queryKey: ["extension", id],
-        queryFn: () => {
-            return getExtensionComponent(id);
+        queryFn: async () => {
+            const extension = await getExtension(
+                id,
+                false,
+                connectExtensionToApp,
+            );
+            return extension?.Component;
         },
     });
     if (isPending || !ExtComp) {
         return <div>Loading...</div>;
     }
-    return <ExtComp standalone={false} connect={connectExtensionToApp} />;
+    return <ExtComp />;
 };

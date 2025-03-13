@@ -5,14 +5,10 @@ import {
     Body1,
     Checkbox,
 } from "@fluentui/react-components";
-import { useDeferredValue, useEffect, useState } from "react";
-import type { SearchResult as ItemSearchResult } from "skybook-localization";
-import { translateUI, useUITranslation } from "skybook-localization";
-import { debounce } from "@pistonite/pure/sync";
-import type { ExtensionApp } from "@pistonite/skybook-api";
-import type { Result } from "@pistonite/pure/result";
-import { errstr } from "@pistonite/pure/result";
+import { useDeferredValue, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+
+import { useUITranslation } from "skybook-localization";
 import {
     CookEffect,
     ItemSlot,
@@ -20,44 +16,7 @@ import {
     makeItemSlotInfo,
 } from "skybook-item-system";
 
-import { useExtensionApp } from "../ExtensionAppContext.ts";
-import { FirstPartyExtensionAdapter } from "../FirstPartyAdapter.ts";
-
-import type { ExtensionComponentProps } from "../types.ts";
-
-type SearchResult = Omit<ItemSearchResult, "score">;
-
-const search = debounce({
-    fn: async (
-        app: ExtensionApp,
-        localized: boolean,
-        query: string,
-    ): Promise<Result<SearchResult[], string>> => {
-        if (!query) {
-            return { val: [] };
-        }
-        if (query.startsWith("<") && query.endsWith(">")) {
-            return {
-                val: [
-                    {
-                        actor: query.slice(1, -1),
-                        cookEffect: 0,
-                    },
-                ],
-            };
-        }
-        const items = await app.resolveItem(query, localized, 0);
-        if ("err" in items) {
-            return {
-                err: translateUI("generic.error.internal", {
-                    error: errstr(items.err),
-                }),
-            };
-        }
-        return items.val;
-    },
-    interval: 100,
-});
+import type { ItemExplorerExtension } from "./index.tsx";
 
 const useStyles = makeStyles({
     container: {
@@ -86,11 +45,9 @@ const useStyles = makeStyles({
     },
 });
 
-export const ItemExplorer: React.FC<ExtensionComponentProps> = ({
-    standalone,
-    connect,
+export const ItemExplorer: React.FC<{ extension: ItemExplorerExtension }> = ({
+    extension,
 }) => {
-    const app = useExtensionApp();
     const [value, setValue] = useState("");
     const [localized, setLocalized] = useState(false);
 
@@ -98,7 +55,7 @@ export const ItemExplorer: React.FC<ExtensionComponentProps> = ({
 
     const { data } = useQuery({
         queryKey: ["item-explorer-search", localized, deferredValue],
-        queryFn: () => search(app, localized, deferredValue),
+        queryFn: () => extension.search(localized, deferredValue),
     });
 
     const error = data?.err;
@@ -107,10 +64,6 @@ export const ItemExplorer: React.FC<ExtensionComponentProps> = ({
 
     const styles = useStyles();
     const t = useUITranslation();
-
-    useEffect(() => {
-        return connect(new FirstPartyExtensionAdapter(standalone));
-    }, [standalone, connect]);
 
     return (
         <div className={styles.container}>
