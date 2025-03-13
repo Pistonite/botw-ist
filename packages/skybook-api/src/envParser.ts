@@ -155,7 +155,7 @@ export const parseEnvFromScript = (script: string): ScriptEnv => {
 /**
  * Data to specify what environment the script should run in
  *
- * See https://ist.pistonite.dev/user/custom_image
+ * See https://skybook.pistonite.dev/user/custom_image
  */
 export type ScriptEnv = {
     /**
