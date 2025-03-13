@@ -227,7 +227,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                                 )}
                             </p>
                             <Link
-                                href="https://ist.pistonite.dev/user/custom_image"
+                                href="https://skybook.pistonite.dev/user/custom_image"
                                 target="_blank"
                             >
                                 {t("prompt.boot.button.learn_more")}

@@ -62,7 +62,7 @@ tasks:
   pull-artifacts-public:
     cmds:
       - $(which mkdir) -p src/generated
-      - wget -O src/generated/item_name.rs https://ist.pistonite.dev/botw-ist/packages/parser/item_name.rs
+      - wget -O src/generated/item_name.rs https://skybook.pistonite.dev/botw-ist/packages/parser/item_name.rs
 
   package-artifacts-public:
     cmds:

@@ -34,17 +34,14 @@ import {
     bindExtensionHost, 
     type ExtensionApp,
 } from "@pistonite/skybook-api/sides/extension";
-import { createExtensionAppClient } from "@pistonite/skybook-api/extension";
+import { connectPopoutExtensionModule } from "@pistonite/skybook-api/extension";
 import { type Delegate, hostFromDelegate } from "@pistonite/workex";
 
 // client to call the app
+let app: ExtensionApp | undefined = undefined;
 
-const app = createExtensionAppClient();
-
-<!-- const properties = getAppProperties(); -->
-<!--     new ExtensionAppClient({ -->
-<!--     worker: withTargetOrigin(self, properties.targetOrigin), -->
-<!-- }); -->
+const properties = readExtensionProperties();
+properties.params.foo // you can pass in parameters from search param
 
 // your extension. these are functions that the app will call you
 const delegate = {
@@ -67,9 +64,17 @@ const delegate = {
 
 } satisfies Delegate<ExtensionApp>;
 
+const extension: ExtensionModule = {
+    ...hostFromDelegate(delegate),
+    onAppConnectionEstablished: (theApp) => {
+        // Code here will be called before events in delegate
+        // save the app reference here to use later
+        app = theApp;
+    }
+}
+
 // initiate communication
-const handshake = bindExtensionHost(hostFromDelegate(delegate), { worker: self });
-await handshake.initiate();
+await connectPopoutExtensionModule(extension, properties);
 
 // on handshake complete, your extension will be connected to the app!
 // you will receive a seriers of "change" events

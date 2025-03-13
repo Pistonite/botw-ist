@@ -34,7 +34,7 @@ is not optional!
 ```
 
 You also just need to run `task install` and sometimes `task check` after merging others' work from the `main`
-branches.
+branch.
 
 The setup above will let you build and run the web app without building
 the Runtime locally. To build the Runtime, you need to set up a [BlueFlame image](../../user/custom_image.md)

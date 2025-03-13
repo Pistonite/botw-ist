@@ -1,60 +1,82 @@
 import { initCodeEditor } from "@pistonite/intwc";
 import type { ExtensionApp } from "@pistonite/skybook-api";
+import { once } from "@pistonite/pure/sync";
 
 import { language, configuration } from "./language.ts";
 import { provideParserDiagnostics } from "./marker.ts";
 import { legend, provideSemanticTokens } from "./semantic.ts";
 
-let initialized = false;
+let theApp: ExtensionApp | undefined;
+/** Set the app the extension is connected to */
+export const setApp = (app: ExtensionApp) => {
+    theApp = app;
+};
 
-export const init = (app: ExtensionApp) => {
-    if (initialized) {
+export const updateScriptInApp = (script: string) => {
+    if (!theApp) {
         return;
     }
-    initialized = true;
-    initCodeEditor({
-        language: {
-            custom: [
-                {
-                    getId: () => "skybook",
-                    getExtensions: () => [".skyb"],
-                    getTokenizer: () => language,
-                    getConfiguration: () => configuration,
-                    // the parser and runtime can both produce diagnostics
-                    getMarkerOwners: () => ["parser"],
-                    provideMarkers: (model) => {
-                        return provideParserDiagnostics(app, model);
-                    },
-                    getSemanticTokensLegend: () => legend,
-                    provideDocumentRangeSemanticTokens: (
-                        model,
-                        range,
-                        token,
-                    ) => {
-                        return provideSemanticTokens(app, model, range, token);
-                    },
-                },
-            ],
-        },
-        theme: {
-            customTokenColors: [
-                {
-                    token: "string.item.quoted",
-                    value: "string.regexp",
-                },
-                {
-                    token: "string.item.literal",
-                    value: "string.regexp",
-                },
-                {
-                    token: "string.blockliteral",
-                    value: "tag",
-                },
-                {
-                    token: "function.command.super",
-                    value: "meta.macro",
-                },
-            ],
-        },
-    });
+    theApp.setScript(script);
 };
+
+/** Initialize the code editor framework for this window */
+export const init = once({
+    fn: () => {
+        initCodeEditor({
+            language: {
+                custom: [
+                    {
+                        getId: () => "skybook",
+                        getExtensions: () => [".skyb"],
+                        getTokenizer: () => language,
+                        getConfiguration: () => configuration,
+                        // the parser and runtime can both produce diagnostics
+                        getMarkerOwners: () => ["parser"],
+                        provideMarkers: (model) => {
+                            if (!theApp) {
+                                return undefined;
+                            }
+                            return provideParserDiagnostics(theApp, model);
+                        },
+                        getSemanticTokensLegend: () => legend,
+                        provideDocumentRangeSemanticTokens: (
+                            model,
+                            range,
+                            token,
+                        ) => {
+                            if (!theApp) {
+                                return undefined;
+                            }
+                            return provideSemanticTokens(
+                                theApp,
+                                model,
+                                range,
+                                token,
+                            );
+                        },
+                    },
+                ],
+            },
+            theme: {
+                customTokenColors: [
+                    {
+                        token: "string.item.quoted",
+                        value: "string.regexp",
+                    },
+                    {
+                        token: "string.item.literal",
+                        value: "string.regexp",
+                    },
+                    {
+                        token: "string.blockliteral",
+                        value: "tag",
+                    },
+                    {
+                        token: "function.command.super",
+                        value: "meta.macro",
+                    },
+                ],
+            },
+        });
+    },
+});
