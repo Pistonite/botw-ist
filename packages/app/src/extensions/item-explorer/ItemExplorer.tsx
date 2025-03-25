@@ -5,10 +5,11 @@ import {
     Body1,
     Checkbox,
 } from "@fluentui/react-components";
-import { useDeferredValue, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import type { Result } from "@pistonite/pure/result";
+import { useDeferredValue, useState } from "react";
 
-import { useUITranslation } from "skybook-localization";
+import { type SearchResultNoScore, useUITranslation } from "skybook-localization";
 import {
     CookEffect,
     ItemSlot,
@@ -16,7 +17,9 @@ import {
     makeItemSlotInfo,
 } from "skybook-item-system";
 
-import type { ItemExplorerExtension } from "./index.tsx";
+export type Searcher = {
+    search(localized: boolean, query: string): Promise<Result<SearchResultNoScore[], string>>;
+};
 
 const useStyles = makeStyles({
     container: {
@@ -45,8 +48,8 @@ const useStyles = makeStyles({
     },
 });
 
-export const ItemExplorer: React.FC<{ extension: ItemExplorerExtension }> = ({
-    extension,
+export const ItemExplorer: React.FC<{ searcher: Searcher }> = ({
+    searcher,
 }) => {
     const [value, setValue] = useState("");
     const [localized, setLocalized] = useState(false);
@@ -55,7 +58,7 @@ export const ItemExplorer: React.FC<{ extension: ItemExplorerExtension }> = ({
 
     const { data } = useQuery({
         queryKey: ["item-explorer-search", localized, deferredValue],
-        queryFn: () => extension.search(localized, deferredValue),
+        queryFn: () => searcher.search(localized, deferredValue),
     });
 
     const error = data?.err;

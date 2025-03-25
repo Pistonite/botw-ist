@@ -88,6 +88,10 @@ export default defineConfig(({ command }) => {
         },
         build: {
             rollupOptions: {
+                input: {
+                    index: "index.html",
+                    popout: "popout.html",
+                },
                 output: {
                     chunkFileNames: (info) => {
                         for (let i = 0; i < info.moduleIds.length; i++) {
@@ -104,13 +108,6 @@ export default defineConfig(({ command }) => {
                                 )
                             ) {
                                 return `assets/strings/gen-${info.name}-[hash].js`;
-                            }
-                            if (
-                                info.moduleIds[i].match(
-                                    /app[/\\]src[/\\]extensions/,
-                                )
-                            ) {
-                                return `assets/exts/${info.name}-[hash].js`;
                             }
                         }
                         return `assets/${info.name}-[hash].js`;

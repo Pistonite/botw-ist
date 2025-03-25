@@ -3,6 +3,7 @@ import {
     make404,
     type RouteBuilder,
     withHeadersOnSuccess,
+    makeFile,
 } from "self::framework";
 
 import { makeSSR } from "./ssr.ts";
@@ -31,6 +32,7 @@ const withCacheForeverHeaders = withHeadersOnSuccess({
 });
 
 export const createAppRoutes = (builder: RouteBuilder): Routes => {
+    const popoutUrl = `/popout-${COMMIT.substring(0, 8)}`;
     return {
         "/": builder.route({
             handler: (req, url) => {
@@ -106,6 +108,13 @@ export const createAppRoutes = (builder: RouteBuilder): Routes => {
                 "Content-Type": "text/plain",
                 "Cache-Control": "no-cache",
             },
+        }),
+        [popoutUrl]: builder.route({
+            handler: () => makeFile(`app${popoutUrl}.html`, {
+                headers: {
+                    "Cache-Control": "public, max-age=600",
+                },
+            })
         }),
         // bundled assets are hashed and can be cached forever
         "/assets/*": builder.route({

@@ -12,9 +12,13 @@ tasks:
       - task: ecma:vite-dev
 
   build:
+    vars:
+      COMMIT_SHORT:
+        sh: git rev-parse HEAD | cut -c1-8
     desc: Build production bundle
     cmds:
       - task: ecma:vite-build
+      - mv dist/popout.html dist/popout-{{.COMMIT_SHORT}}.html
       - $(which mkdir) -p dist/static/item-assets
       - cp -r ../item-assets/public/* dist/static/item-assets
       - $(which mkdir) -p dist/static/item-system

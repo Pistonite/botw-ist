@@ -20,6 +20,7 @@ import type { RuntimeClient } from "@pistonite/skybook-api/sides/app";
 import {
     initExtensionManager,
     initExtensionAppHost,
+    openExtensionPopup,
 } from "self::application/extension";
 import { createRuntime, initRuntime } from "self::application/runtime";
 import { useApplicationStore, useSessionStore } from "self::application/store";
@@ -72,7 +73,7 @@ const boot = async () => {
     };
 
     const beforeBootUI = async () => {
-        await initI18n();
+        await initI18n(true);
     };
 
     const context: BootContext = {
@@ -170,50 +171,6 @@ const bootWithLocalScript = async (context: BootContext) => {
 
     // Does the script require CI?
     if (env.image) {
-        await new Promise((resolve) => setTimeout(resolve, 1));
-
-        const context = ((): BootContext => {
-            // start initializing the runtime early
-            const runtime = createRuntime();
-
-            if (isLessProductive) {
-                initNarrow({
-                    threshold: 800,
-                    override: (narrow) => {
-                        if (window.innerWidth < window.innerHeight) {
-                            return true;
-                        }
-                        if (narrow && window.innerHeight < window.innerWidth) {
-                            return false;
-                        }
-                        return narrow;
-                    },
-                });
-            } else {
-                initNarrow({
-                    threshold: 800,
-                });
-            }
-
-            const beforeMainUI = async () => {
-                const promises = [probeAndRegisterAssetLocation()];
-                await Promise.all(promises);
-            };
-
-            const beforeBootUI = async () => {
-                await initI18n();
-            };
-
-            const context: BootContext = {
-                beforeBootUI,
-                beforeMainUI,
-                runtime,
-                unmountBootUI: undefined,
-            };
-
-            return context;
-        })();
-
         console.log(`[boot] local script requests custom image: ${env.image}`);
         // Check the version required by the script
         const versionMatch = checkImageVersion(customImageVersion, env.image);

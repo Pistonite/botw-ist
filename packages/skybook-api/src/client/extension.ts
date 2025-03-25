@@ -2,7 +2,7 @@
  * Utilities for extension popout windows
  */
 
-import { withTargetOrigin } from "@pistonite/workex";
+import { WorkerLike, withTargetOrigin } from "@pistonite/workex";
 
 import { ExtensionAppClient } from "../interfaces/ExtensionApp.send.ts";
 import type { ExtensionModule } from "./ExtensionTypes.ts";
@@ -82,15 +82,14 @@ export const connectPopoutExtensionWindow = async (
     properties: ExtensionProperties,
 ) => {
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    const app = new ExtensionAppClient({
-        worker: withTargetOrigin(
-            properties.hostOrigin,
-            (globalThis as any).window,
-        ),
-    });
-    const handshake = bindExtensionHost(extension, {
-        worker: (globalThis as any).window,
-    });
+    let worker: WorkerLike;
+    if ("skybookChannel" in (globalThis as any).window) {
+        worker = (globalThis as any).window.skybookChannel;
+    } else {
+        worker = withTargetOrigin(properties.hostOrigin, (globalThis as any).window);
+    }
+    const app = new ExtensionAppClient({ worker });
+    const handshake = bindExtensionHost(extension, { worker });
     await handshake.initiate();
 
     extension.onAppConnectionEstablished(app);
