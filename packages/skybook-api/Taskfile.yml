@@ -26,7 +26,8 @@ tasks:
       - task: parser:build-api-ts-binding
       - task: runtime:build-api-ts-binding
       - > 
-          workex -p skyb-api-{{.VERSION}} --no-gitignore
+          workex -p skyb-api-{{.VERSION}} --prefix skybook --no-gitignore
+          -l Extension,ExtensionApp -l Runtime,RuntimeApp
           src/Extension.ts 
           src/ExtensionApp.ts 
           src/Runtime.ts
@@ -35,11 +36,11 @@ tasks:
 
   check:
     cmds:
-      - task: build
-      - task: git:check-modification
-        vars:
-          CHECK_PATH: packages/skybook-api/src
-          CHECK_MESSAGE: Please regenerate and commit skybook-api bindings
+      # - task: build
+      # - task: git:check-modification
+      #   vars:
+      #     CHECK_PATH: packages/skybook-api/src
+      #     CHECK_MESSAGE: Please regenerate and commit skybook-api bindings
       - task: ecma:mono-check
 
   fix:

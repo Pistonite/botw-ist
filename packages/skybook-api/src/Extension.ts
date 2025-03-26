@@ -1,10 +1,7 @@
-import type { WorkexPromise } from "@pistonite/workex";
+import type { WxPromise } from "@pistonite/workex";
 
 /**
  * API implemented by the extension and called by the application.
- *
- * @workex:send app
- * @workex:recv extension
  */
 export interface Extension {
     /**
@@ -12,7 +9,7 @@ export interface Extension {
      *
      * The extension can update the theme based on this event
      */
-    onDarkModeChanged(dark: boolean): WorkexPromise<void>;
+    onDarkModeChanged(dark: boolean): WxPromise<void>;
 
     /**
      * Notify the extension that the locale perference has changed.
@@ -22,10 +19,10 @@ export interface Extension {
      *
      * The extension can update the UI strings based on this event.
      */
-    onLocaleChanged(locale: string): WorkexPromise<void>;
+    onLocaleChanged(locale: string): WxPromise<void>;
 
     /**
      * Notify the extension that the script has changed.
      */
-    onScriptChanged(script: string): WorkexPromise<void>;
+    onScriptChanged(script: string): WxPromise<void>;
 }

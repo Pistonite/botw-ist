@@ -13,8 +13,6 @@
         "lru-cache": "^11.0.2"
     },
     "devDependencies": {
-        "eslint": "catalog:",
-        "mono-dev": "workspace:*",
-        "typescript": "catalog:"
+        "mono-dev": "workspace:*"
     }
 }

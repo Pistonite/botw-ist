@@ -1,24 +1,21 @@
 import type { Result } from "@pistonite/pure/result";
-import type { WorkexPromise } from "@pistonite/workex";
+import type { WxPromise } from "@pistonite/workex";
 
 import type { Diagnostic, ItemSearchResult } from "./types.ts";
 
 /**
  * API implemented by the application and called by the extension.
- *
- * @workex:send extension
- * @workex:recv app
  */
 export interface ExtensionApp {
     /** Get the current simulator script. */
-    getScript(): WorkexPromise<string>;
+    getScript(): WxPromise<string>;
 
     /**
      * Set the simulator script.
      *
      * This will trigger a rerun of the simulation using the new script
      */
-    setScript(script: string): WorkexPromise<void>;
+    setScript(script: string): WxPromise<void>;
 
     /**
      * Resolve an item from a query
@@ -33,12 +30,12 @@ export interface ExtensionApp {
         query: string,
         localized: boolean,
         limit: number,
-    ): WorkexPromise<Result<ItemSearchResult[], string>>;
+    ): WxPromise<Result<ItemSearchResult[], string>>;
 
     /**
      * Invoke the parser for the script and get the diagnostics.
      */
-    provideParserDiagnostics(script: string): WorkexPromise<Diagnostic[]>;
+    provideParserDiagnostics(script: string): WxPromise<Diagnostic[]>;
 
     /**
      * Get the semantic tokens for the script in the range.
@@ -52,5 +49,5 @@ export interface ExtensionApp {
         script: string,
         start: number,
         end: number,
-    ): WorkexPromise<Uint32Array>;
+    ): WxPromise<Uint32Array>;
 }

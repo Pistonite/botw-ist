@@ -1,12 +1,9 @@
-import type { WorkexPromise } from "@pistonite/workex";
+import type { WxPromise } from "@pistonite/workex";
 
 import type { ItemSearchResult } from "./types.ts";
 
 /**
  * API provided by the simulator app that the runtime needs to call
- *
- * @workex:send runtime
- * @workex:recv app
  */
 export interface RuntimeApp {
     /**
@@ -14,9 +11,7 @@ export interface RuntimeApp {
      * return undefined if the item cannot be resolved due to error
      * or no match.
      */
-    resolveQuotedItem(
-        query: string,
-    ): WorkexPromise<ItemSearchResult | undefined>;
+    resolveQuotedItem(query: string): WxPromise<ItemSearchResult | undefined>;
 
     /**
      * Get the custom BlueFlame image provided by the user.
@@ -29,12 +24,12 @@ export interface RuntimeApp {
      * If the user did not provide a custom image, the app should return undefined,
      * in which case the runtime initialization will fail.
      */
-    getCustomBlueFlameImage(): WorkexPromise<Uint8Array | undefined>;
+    getCustomBlueFlameImage(): WxPromise<Uint8Array | undefined>;
 
     /**
      * The app will be notified whenever a simulation run completes.
      * Note if multiple runs are queued, this will only be called for the
      * last one.
      */
-    onRunCompleted(): WorkexPromise<void>;
+    onRunCompleted(): WxPromise<void>;
 }
