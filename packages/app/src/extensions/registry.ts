@@ -10,7 +10,7 @@ const extensionInstances = new Map<
 
 export type ConnectExtensionFn = (
     extension: FirstPartyExtension,
-) => Promise<() => void> | (() => void);
+) => Promise<void> | void;
 
 export const getExtension = async (
     id: string,

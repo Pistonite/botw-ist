@@ -9,18 +9,17 @@ import { initI18n, translateUI } from "skybook-localization";
 import { ItemTooltipProvider } from "skybook-item-system";
 import { extractDirectLoad } from "@pistonite/skybook-api/client";
 import {
+    type Runtime,
     type DirectLoad,
     parseEnvFromScript,
     type ScriptEnvImage,
     type RuntimeInitArgs,
     type ScriptEnv,
 } from "@pistonite/skybook-api";
-import type { RuntimeClient } from "@pistonite/skybook-api/sides/app";
 
 import {
     initExtensionManager,
     initExtensionAppHost,
-    openExtensionPopup,
 } from "self::application/extension";
 import { createRuntime, initRuntime } from "self::application/runtime";
 import { useApplicationStore, useSessionStore } from "self::application/store";
@@ -97,7 +96,7 @@ type BootContext = {
     beforeBootUI: () => Promise<void>;
     beforeMainUI: () => Promise<void>;
     unmountBootUI: (() => void) | undefined;
-    runtime: Promise<RuntimeClient>;
+    runtime: Promise<Runtime>;
 };
 
 const bootWithDirectLoad = async (

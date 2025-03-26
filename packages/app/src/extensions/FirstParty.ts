@@ -1,5 +1,5 @@
 import { setDark, setLocale } from "@pistonite/pure/pref";
-import type { WorkexPromise } from "@pistonite/workex";
+import type { WxPromise } from "@pistonite/workex";
 
 import type { ExtensionApp } from "@pistonite/skybook-api";
 import type { ExtensionModule } from "@pistonite/skybook-api/client";
@@ -11,19 +11,19 @@ import type { ExtensionModule } from "@pistonite/skybook-api/client";
 export class FirstPartyExtensionAdapter implements ExtensionModule {
     protected app: ExtensionApp | undefined = undefined;
     constructor(private standalone: boolean) {}
-    public async onDarkModeChanged(dark: boolean): WorkexPromise<void> {
+    public async onDarkModeChanged(dark: boolean): WxPromise<void> {
         if (this.standalone) {
             setDark(dark);
         }
         return {};
     }
-    public async onLocaleChanged(locale: string): WorkexPromise<void> {
+    public async onLocaleChanged(locale: string): WxPromise<void> {
         if (this.standalone) {
             setLocale(locale);
         }
         return {};
     }
-    public async onScriptChanged(_script: string): WorkexPromise<void> {
+    public async onScriptChanged(_script: string): WxPromise<void> {
         return {};
     }
     public onAppConnectionEstablished(app: ExtensionApp): void {

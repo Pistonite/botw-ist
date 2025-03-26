@@ -3,10 +3,9 @@ import {
     createBytePosToCharPosArray,
 } from "@pistonite/intwc";
 import type { Result } from "@pistonite/pure/result";
-import type { WorkexPromise } from "@pistonite/workex";
+import type { WxPromise } from "@pistonite/workex";
 
-import type { Diagnostic, ExtensionApp } from "@pistonite/skybook-api";
-import type { RuntimeClient } from "@pistonite/skybook-api/sides/app";
+import type { Diagnostic, Runtime, ExtensionApp } from "@pistonite/skybook-api";
 import {
     searchItemLocalized,
     translateParserError,
@@ -17,7 +16,7 @@ import { useSessionStore } from "self::application/store";
 
 let theAppHost: ExtensionApp | undefined = undefined;
 
-export const initExtensionAppHost = (runtime: RuntimeClient) => {
+export const initExtensionAppHost = (runtime: Runtime) => {
     theAppHost = new ExtensionAppHost(runtime);
 };
 
@@ -29,7 +28,7 @@ export const getExtensionAppHost = () => {
 };
 
 class ExtensionAppHost implements ExtensionApp {
-    constructor(private runtime: RuntimeClient) {}
+    constructor(private runtime: Runtime) {}
 
     public async getScript() {
         return { val: useSessionStore.getState().activeScript };
@@ -42,7 +41,7 @@ class ExtensionAppHost implements ExtensionApp {
         query: string,
         localized: boolean,
         limit: number,
-    ): WorkexPromise<Result<{ actor: string; cookEffect: number }[], string>> {
+    ): WxPromise<Result<{ actor: string; cookEffect: number }[], string>> {
         if (localized) {
             const result = await searchItemLocalized(query, limit);
             if ("err" in result) {
@@ -67,7 +66,7 @@ class ExtensionAppHost implements ExtensionApp {
 
     public async provideParserDiagnostics(
         script: string,
-    ): WorkexPromise<Diagnostic[]> {
+    ): WxPromise<Diagnostic[]> {
         const result = await this.runtime.getParserDiagnostics(script);
         if (result.err) {
             return result;
@@ -89,7 +88,7 @@ class ExtensionAppHost implements ExtensionApp {
         script: string,
         start: number,
         end: number,
-    ): WorkexPromise<Uint32Array> {
+    ): WxPromise<Uint32Array> {
         const tokens = await this.runtime.getSemanticTokens(
             script,
             charPosToBytePos(script, start),

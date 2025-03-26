@@ -43,7 +43,6 @@ async function boot() {
         console.log("[popout] connecting to host window");
         await connectPopoutExtensionWindow(extension, properties);
         console.log("[popout] connected");
-        return () => {};
     };
 
     const extension = await getExtension(properties.extensionId, true, connect);
@@ -67,11 +66,13 @@ async function boot() {
                     <ItemTooltipProvider
                         backgroundUrl={getSheikaBackgroundUrl()}
                     >
-                        <div style={{
-                            width: "100vw",
-                            height: "100vh",
-                        }}>
-                        <extension.Component />
+                        <div
+                            style={{
+                                width: "100vw",
+                                height: "100vh",
+                            }}
+                        >
+                            <extension.Component />
                         </div>
                     </ItemTooltipProvider>
                 </ThemeProvider>

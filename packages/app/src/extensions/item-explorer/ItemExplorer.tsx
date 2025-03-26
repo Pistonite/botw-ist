@@ -9,7 +9,10 @@ import { useQuery } from "@tanstack/react-query";
 import type { Result } from "@pistonite/pure/result";
 import { useDeferredValue, useState } from "react";
 
-import { type SearchResultNoScore, useUITranslation } from "skybook-localization";
+import {
+    type SearchResultNoScore,
+    useUITranslation,
+} from "skybook-localization";
 import {
     CookEffect,
     ItemSlot,
@@ -18,7 +21,10 @@ import {
 } from "skybook-item-system";
 
 export type Searcher = {
-    search(localized: boolean, query: string): Promise<Result<SearchResultNoScore[], string>>;
+    search(
+        localized: boolean,
+        query: string,
+    ): Promise<Result<SearchResultNoScore[], string>>;
 };
 
 const useStyles = makeStyles({

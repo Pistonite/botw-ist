@@ -21,7 +21,7 @@ export interface RuntimeApp {
      * prompt file selection and have the image ready before initializing,
      * and return the file in this callback.
      *
-     * If the user did not provide a custom image, the app should return undefined,
+     * If the user did not provide a custom image, the app should return undefined
      * in which case the runtime initialization will fail.
      */
     getCustomBlueFlameImage(): WxPromise<Uint8Array | undefined>;

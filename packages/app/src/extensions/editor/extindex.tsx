@@ -1,5 +1,5 @@
 import { CodeEditor, type CodeEditorApi } from "@pistonite/intwc";
-import type { WorkexPromise } from "@pistonite/workex";
+import type { WxPromise } from "@pistonite/workex";
 
 import type { ExtensionApp } from "@pistonite/skybook-api";
 
@@ -86,7 +86,7 @@ export class EditorExtension
         return this.detachEditor || (() => {});
     }
 
-    public override async onScriptChanged(script: string): WorkexPromise<void> {
+    public override async onScriptChanged(script: string): WxPromise<void> {
         if (!this.editor) {
             this.scriptChangedBeforeEditorReady = script;
             return {};
