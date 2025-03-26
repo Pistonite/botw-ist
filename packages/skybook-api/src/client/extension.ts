@@ -2,11 +2,10 @@
  * Utilities for extension popout windows
  */
 
-import { withTargetOrigin } from "@pistonite/workex";
+import { wxWindowOwner } from "@pistonite/workex";
 
-import { ExtensionAppClient } from "../interfaces/ExtensionApp.send.ts";
 import type { ExtensionModule } from "./ExtensionTypes.ts";
-import { bindExtensionHost } from "../interfaces/Extension.recv.ts";
+import { skybookExtensionApp } from "../interfaces/ExtensionApp.bus.ts";
 
 /**
  * Initialize an extension popout window
@@ -80,19 +79,21 @@ export type ExtensionProperties = {
 export const connectPopoutExtensionWindow = async (
     extension: ExtensionModule,
     properties: ExtensionProperties,
-) => {
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    const app = new ExtensionAppClient({
-        worker: withTargetOrigin(
-            properties.hostOrigin,
-            (globalThis as any).window,
-        ),
+): Promise<boolean> => {
+    const result = await wxWindowOwner(properties.hostOrigin)({
+        app: skybookExtensionApp(extension),
     });
-    const handshake = bindExtensionHost(extension, {
-        worker: (globalThis as any).window,
-    });
-    await handshake.initiate();
-
+    if (result.err) {
+        console.error(
+            "Failed to establish connection with host window",
+            result.err,
+        );
+        return false;
+    }
+    const {
+        protocols: { app },
+    } = result.val;
     extension.onAppConnectionEstablished(app);
-    /* eslint-enable @typescript-eslint/no-explicit-any */
+
+    return true;
 };

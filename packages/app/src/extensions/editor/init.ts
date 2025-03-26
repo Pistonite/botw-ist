@@ -16,7 +16,15 @@ export const updateScriptInApp = (script: string) => {
     if (!theApp) {
         return;
     }
-    theApp.setScript(script);
+    void theApp.setScript(script);
+};
+
+export const getScriptFromApp = async () => {
+    if (!theApp) {
+        return "";
+    }
+    const script = await theApp.getScript();
+    return script.val || "";
 };
 
 /** Initialize the code editor framework for this window */

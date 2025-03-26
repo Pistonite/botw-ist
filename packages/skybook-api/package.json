@@ -16,8 +16,6 @@
     "exports": {
         ".": "./src/index.ts",
         "./client": "./src/client/index.ts",
-        "./sides/*": "./src/sides/*.ts",
-        "./sides/*.ts": "./src/sides/*.ts",
         "./interfaces/*": "./src/interfaces/*.ts",
         "./interfaces/*.ts": "./src/interfaces/*.ts"
     },

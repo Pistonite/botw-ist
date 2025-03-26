@@ -1,7 +1,7 @@
 import { translateUI } from "../translate.ts";
 
 /** Localize a generic error message */
-export const translateGenericError = (error: string): string => {
+export const translateGenericError = (error?: string): string => {
     if (error) {
         return translateUI("error.internal", { error });
     }

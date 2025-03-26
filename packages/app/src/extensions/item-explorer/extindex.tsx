@@ -1,4 +1,3 @@
-import type { ExtensionApp } from "@pistonite/skybook-api";
 import { type Result, errstr } from "@pistonite/pure/result";
 import { debounce } from "@pistonite/pure/sync";
 
@@ -9,14 +8,13 @@ import {
     type FirstPartyExtension,
 } from "../FirstParty.ts";
 
-import { ItemExplorer } from "./ItemExplorer.tsx";
+import { ItemExplorer, type Searcher } from "./ItemExplorer.tsx";
 
 export class ItemExplorerExtension
     extends FirstPartyExtensionAdapter
-    implements FirstPartyExtension
+    implements FirstPartyExtension, Searcher
 {
-    private doSearch: (
-        app: ExtensionApp,
+    public search: (
         localized: boolean,
         query: string,
     ) => Promise<Result<SearchResultNoScore[], string>>;
@@ -24,9 +22,8 @@ export class ItemExplorerExtension
 
     constructor(standalone: boolean) {
         super(standalone);
-        this.doSearch = debounce({
+        this.search = debounce({
             fn: async (
-                app: ExtensionApp,
                 localized: boolean,
                 query: string,
             ): Promise<Result<SearchResultNoScore[], string>> => {
@@ -43,6 +40,10 @@ export class ItemExplorerExtension
                         ],
                     };
                 }
+                const app = this.app;
+                if (!app) {
+                    return { val: [] };
+                }
                 const items = await app.resolveItem(query, localized, 0);
                 if ("err" in items) {
                     return {
@@ -57,21 +58,11 @@ export class ItemExplorerExtension
         });
 
         this.component = () => {
-            return <ItemExplorer extension={this} />;
+            return <ItemExplorer searcher={this} />;
         };
     }
 
     public get Component() {
         return this.component;
-    }
-
-    public async search(
-        localized: boolean,
-        query: string,
-    ): Promise<Result<SearchResultNoScore[], string>> {
-        if (!this.app) {
-            return { val: [] };
-        }
-        return await this.doSearch(this.app, localized, query);
     }
 }

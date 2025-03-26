@@ -9,13 +9,13 @@ import { initI18n, translateUI } from "skybook-localization";
 import { ItemTooltipProvider } from "skybook-item-system";
 import { extractDirectLoad } from "@pistonite/skybook-api/client";
 import {
+    type Runtime,
     type DirectLoad,
     parseEnvFromScript,
     type ScriptEnvImage,
     type RuntimeInitArgs,
     type ScriptEnv,
 } from "@pistonite/skybook-api";
-import type { RuntimeClient } from "@pistonite/skybook-api/sides/app";
 
 import {
     initExtensionManager,
@@ -72,7 +72,7 @@ const boot = async () => {
     };
 
     const beforeBootUI = async () => {
-        await initI18n();
+        await initI18n(true);
     };
 
     const context: BootContext = {
@@ -96,7 +96,7 @@ type BootContext = {
     beforeBootUI: () => Promise<void>;
     beforeMainUI: () => Promise<void>;
     unmountBootUI: (() => void) | undefined;
-    runtime: Promise<RuntimeClient>;
+    runtime: Promise<Runtime>;
 };
 
 const bootWithDirectLoad = async (
@@ -170,50 +170,6 @@ const bootWithLocalScript = async (context: BootContext) => {
 
     // Does the script require CI?
     if (env.image) {
-        await new Promise((resolve) => setTimeout(resolve, 1));
-
-        const context = ((): BootContext => {
-            // start initializing the runtime early
-            const runtime = createRuntime();
-
-            if (isLessProductive) {
-                initNarrow({
-                    threshold: 800,
-                    override: (narrow) => {
-                        if (window.innerWidth < window.innerHeight) {
-                            return true;
-                        }
-                        if (narrow && window.innerHeight < window.innerWidth) {
-                            return false;
-                        }
-                        return narrow;
-                    },
-                });
-            } else {
-                initNarrow({
-                    threshold: 800,
-                });
-            }
-
-            const beforeMainUI = async () => {
-                const promises = [probeAndRegisterAssetLocation()];
-                await Promise.all(promises);
-            };
-
-            const beforeBootUI = async () => {
-                await initI18n();
-            };
-
-            const context: BootContext = {
-                beforeBootUI,
-                beforeMainUI,
-                runtime,
-                unmountBootUI: undefined,
-            };
-
-            return context;
-        })();
-
         console.log(`[boot] local script requests custom image: ${env.image}`);
         // Check the version required by the script
         const versionMatch = checkImageVersion(customImageVersion, env.image);

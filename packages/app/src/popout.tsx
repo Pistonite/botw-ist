@@ -27,27 +27,28 @@ async function boot() {
     // popout also does not connect to the store at all
 
     initDark({ persist: false });
-    await initI18n();
+    await initI18n(false);
     await probeAndRegisterAssetLocation();
 
     const properties = readExtensionProperties();
     if (!properties.extensionId) {
         // should not happen, just error and bail
-        console.error("[popout] No extension ID provided!");
+        console.error("[popout] no extension ID!");
         return;
     }
 
     const connect: ConnectExtensionFn = async (
         extension: FirstPartyExtension,
     ) => {
+        console.log("[popout] connecting to host window");
         await connectPopoutExtensionWindow(extension, properties);
-        return () => {};
+        console.log("[popout] connected");
     };
 
     const extension = await getExtension(properties.extensionId, true, connect);
     if (!extension) {
         console.error(
-            `[popout] Extension with ID ${properties.extensionId} not found!`,
+            `[popout] extension with ID '${properties.extensionId}' not found!`,
         );
         return;
     }
@@ -65,7 +66,14 @@ async function boot() {
                     <ItemTooltipProvider
                         backgroundUrl={getSheikaBackgroundUrl()}
                     >
-                        <extension.Component />
+                        <div
+                            style={{
+                                width: "100vw",
+                                height: "100vh",
+                            }}
+                        >
+                            <extension.Component />
+                        </div>
                     </ItemTooltipProvider>
                 </ThemeProvider>
             </QueryClientProvider>

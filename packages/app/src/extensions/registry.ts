@@ -1,7 +1,7 @@
 import { once } from "@pistonite/pure/sync";
 
 import type { FirstPartyExtension } from "./FirstParty.ts";
-import { ItemExplorerExtension } from "./item-explorer";
+import { ItemExplorerExtension } from "./item-explorer/extindex.tsx";
 
 const extensionInstances = new Map<
     string,
@@ -10,7 +10,7 @@ const extensionInstances = new Map<
 
 export type ConnectExtensionFn = (
     extension: FirstPartyExtension,
-) => Promise<() => void> | (() => void);
+) => Promise<void> | void;
 
 export const getExtension = async (
     id: string,
@@ -42,7 +42,7 @@ export const createExtensionInstance = async (
     console.log(`creating extension instance: ${id}`);
     switch (id) {
         case "editor": {
-            const { EditorExtension } = await import("./editor");
+            const { EditorExtension } = await import("./editor/extindex.tsx");
             return new EditorExtension(standalone);
         }
         case "item-explorer": {

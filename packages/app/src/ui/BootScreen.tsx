@@ -19,10 +19,10 @@ import {
 } from "@fluentui/react-components";
 
 import type {
+    Runtime,
     RuntimeInitArgs,
     RuntimeInitParams,
 } from "@pistonite/skybook-api";
-import type { RuntimeClient } from "@pistonite/skybook-api/interfaces/Runtime.send";
 import { translateUI, useUITranslation } from "skybook-localization";
 
 import { useApplicationStore } from "self::application/store";
@@ -47,7 +47,7 @@ export type OpenSetupOrDefaultPromptType =
 
 export type BootScreenProps = {
     /** The runtime client */
-    runtime: Promise<RuntimeClient>;
+    runtime: Promise<Runtime>;
     /** The version of the script image, read from env block */
     scriptImageVersion?: string;
     /** Params from the script */

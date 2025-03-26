@@ -1,16 +1,14 @@
+import { wxMakePromise, wxWorkerGlobal, wxWrapHandler } from "@pistonite/workex";
+import type { Result } from "@pistonite/pure/result";
 import { LRUCache } from "lru-cache";
-import { type Delegate, hostFromDelegate } from "@pistonite/workex";
 
-import {
-    bindRuntimeHost,
-    RuntimeAppClient,
-} from "@pistonite/skybook-api/sides/runtime";
-import type { ItemSearchResult, Runtime, RuntimeInitArgs } from "@pistonite/skybook-api";
+import type { ItemSearchResult, Runtime, RuntimeApp, RuntimeInitArgs, RuntimeInitError, RuntimeInitOutput } from "@pistonite/skybook-api";
+import { skybookRuntimeApp } from "@pistonite/skybook-api/interfaces/RuntimeApp.bus";
 
 import { getParserDiagnostics, type QuotedItemResolverFn } from "./parser.ts";
 import { getImage, putImage } from "./imagedb.ts";
 
-const app = new RuntimeAppClient({ worker: self });
+const { promise: appPromise, resolve: resolveApp } = wxMakePromise<RuntimeApp>();
 
 // cache the item so we don't need to resolve it with the main thread
 // every time.
@@ -23,12 +21,18 @@ const resolveQuotedItem: QuotedItemResolverFn = async (query) => {
     if (cachedResult !== undefined) {
         return cachedResult ? cachedResult : undefined;
     }
-    const result = await app.resolveQuotedItem(query);
+    const result = await (await appPromise).resolveQuotedItem(query);
     // communication error
     if (result.err) {
         return undefined;
     }
+
     const item: ItemSearchResult | undefined = result.val;
+    if (!item) {
+        quotedItemCache.set(query, false);
+        return undefined;
+    }
+
     quotedItemCache.set(query, item);
     return item;
 };
@@ -42,9 +46,9 @@ async function boot() {
 
     // TODO: any init here
 
-    const api = {
+    const api: Runtime = {
         // TODO: the error needs to be structured
-        initialize: async (args) => {
+        initialize: wxWrapHandler(async (args: RuntimeInitArgs): Promise<Result<RuntimeInitOutput, RuntimeInitError>> => {
             // TODO: errors from the worker are currently logged to console
             // and returned as blanket errors. Tracked by #69
             if (args.isCustomImage) {
@@ -52,7 +56,7 @@ async function boot() {
                 let customImage = await getImage();
                 if (!customImage) {
                     // try requesting the image from the app
-                    const newImage = await app.getCustomBlueFlameImage();
+                    const newImage = await (await appPromise).getCustomBlueFlameImage();
                     if (newImage.err || !newImage.val) {
                         console.error("Failed to get custom image from app");
                         return { err: { type: "DatabaseError" } };
@@ -94,22 +98,21 @@ async function boot() {
                     storedVersion: "not-changed"
                 }
             };
-        },
-        resolveItemIdent: async (query) => {
+        }),
+        resolveItemIdent: wxWrapHandler((query) => {
             return wasm_bindgen.resolve_item_ident(query);
-        },
-        getParserDiagnostics: (script) => {
+        }),
+        getParserDiagnostics: wxWrapHandler((script) => {
             return getParserDiagnostics(script, resolveQuotedItem);
-        },
-        getSemanticTokens: async (script, start, end) => {
+        }),
+        getSemanticTokens: wxWrapHandler((script, start, end) => {
             return wasm_bindgen.parse_script_semantic(script, start, end);
-        },
-    } satisfies Delegate<Runtime>;
+        }),
+    };
 
-    const handshake = bindRuntimeHost(hostFromDelegate(api), {
-        worker: self,
+    await wxWorkerGlobal()({
+        app: skybookRuntimeApp(api, resolveApp),
     });
-    await handshake.initiate();
 }
 
 void boot();

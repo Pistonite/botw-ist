@@ -1,11 +1,13 @@
-import { type Delegate, hostFromDelegate } from "@pistonite/workex";
 import type { Void } from "@pistonite/pure/result";
+import { wxWorker, wxWrapHandler } from "@pistonite/workex";
 
-import type { RuntimeApp, RuntimeInitArgs } from "@pistonite/skybook-api";
-import {
-    bindRuntimeAppHost,
-    RuntimeClient,
-} from "@pistonite/skybook-api/sides/app";
+import type {
+    ItemSearchResult,
+    Runtime,
+    RuntimeApp,
+    RuntimeInitArgs,
+} from "@pistonite/skybook-api";
+import { skybookRuntime } from "@pistonite/skybook-api/interfaces/Runtime.bus";
 import {
     searchItemLocalized,
     translateGenericError,
@@ -30,19 +32,22 @@ export async function createRuntime() {
         url = `/runtime/worker-${commitShort}.min.js`;
     }
     const worker = new Worker(url);
-    // bind the host handler
-    bindRuntimeAppHost(appHost, { worker });
-    // create the client for calling the runtime
-    const runtime = new RuntimeClient({ worker });
-    // wait for the handshake to complete
-    await runtime.handshake().established();
+    const result = await wxWorker(worker)({
+        runtime: skybookRuntime(appHost),
+    });
+    if (result.err) {
+        console.error("[boot] failed to connect to runtime worker", result.err);
+        throw new Error(
+            "fatal boot failure: failed to connect to runtime worker",
+        );
+    }
 
-    return runtime;
+    return result.val.protocols.runtime;
 }
 
 /** Initialize the runtime with the given arguments */
 export async function initRuntime(
-    runtime: RuntimeClient,
+    runtime: Runtime,
     args: RuntimeInitArgs,
 ): Promise<Void<string>> {
     const isCustomImage = args.isCustomImage;
@@ -103,26 +108,26 @@ export const updateLogo = (customImage: boolean) => {
 
 /** Create the API for runtime to call the app */
 const createRuntimeAppHost = (): RuntimeApp => {
-    const appHostDelegate = {
-        resolveQuotedItem: async (query) => {
-            const result = await searchItemLocalized(query, 1);
-            if ("err" in result || !result.val.length) {
-                return undefined;
-            }
-            const item = result.val[0];
-            return item;
-        },
+    return {
+        resolveQuotedItem: wxWrapHandler(
+            async (query: string): Promise<ItemSearchResult | undefined> => {
+                const result = await searchItemLocalized(query, 1);
+                if ("err" in result || !result.val.length) {
+                    return undefined;
+                }
+                const item = result.val[0];
+                return item;
+            },
+        ),
 
-        getCustomBlueFlameImage: async () => {
+        getCustomBlueFlameImage: wxWrapHandler(() => {
             return customImage;
-        },
+        }),
 
-        onRunCompleted: async () => {
-            return;
-        },
-    } satisfies Delegate<RuntimeApp>;
-
-    return hostFromDelegate(appHostDelegate);
+        onRunCompleted: wxWrapHandler(() => {
+            //TODO
+        }),
+    };
 };
 
 /**

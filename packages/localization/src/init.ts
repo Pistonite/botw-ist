@@ -16,11 +16,11 @@ export const SupportedLocales = [
 
 export const NativelyMaintainedLocales = ["en-US", "zh-CN"];
 
-export const initI18n = () => {
+export const initI18n = (persist: boolean) => {
     return initLocaleWithI18next({
         supported: SupportedLocales,
         default: "en-US",
-        persist: true,
+        persist,
         loader: {
             ui: (language) => loadLanguage("ui", language),
             generated: (language) => loadLanguage("generated", language),

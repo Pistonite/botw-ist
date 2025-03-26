@@ -1,4 +1,4 @@
-import type { WorkexPromise } from "@pistonite/workex";
+import type { WxPromise } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
 
 import type { ParserErrorReport } from "./parser";
@@ -11,9 +11,6 @@ import type {
 
 /**
  * API provided by the simulator runtime, called by the application.
- *
- * @workex:send app
- * @workex:recv runtime
  */
 export interface Runtime {
     /**
@@ -21,20 +18,20 @@ export interface Runtime {
      */
     initialize(
         args: RuntimeInitArgs,
-    ): WorkexPromise<Result<RuntimeInitOutput, RuntimeInitError>>;
+    ): WxPromise<Result<RuntimeInitOutput, RuntimeInitError>>;
 
     /**
      * Resolve an item identifier search query to a list of items, ordered by score (best first).
      * Returns an empty list if no items are found.
      */
-    resolveItemIdent(query: string): WorkexPromise<ItemSearchResult[]>;
+    resolveItemIdent(query: string): WxPromise<ItemSearchResult[]>;
 
     /**
      * Parse the script and get diagnostics from the parser.
      *
      * Note that the span in the errors are byte offsets, not character offsets.
      */
-    getParserDiagnostics(script: string): WorkexPromise<ParserErrorReport[]>;
+    getParserDiagnostics(script: string): WxPromise<ParserErrorReport[]>;
 
     /**
      * Parse the script and get semantic tokens in the range from the parser.
@@ -47,7 +44,7 @@ export interface Runtime {
         script: string,
         start: number,
         end: number,
-    ): WorkexPromise<Uint32Array>;
+    ): WxPromise<Uint32Array>;
 
     // /**
     //  * Set the script for the runtime, which starts executing

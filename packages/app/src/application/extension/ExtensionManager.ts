@@ -12,6 +12,7 @@ import { getExtensionAppHost } from "./ExtensionAppHost.ts";
 
 /** Running instances of extensions */
 const instances: Extension[] = [];
+const popoutWindows: Window[] = [];
 
 export const initExtensionManager = () => {
     useSessionStore.subscribe((curr, prev) => {
@@ -31,6 +32,17 @@ export const initExtensionManager = () => {
             void x.onLocaleChanged(locale);
         });
     }, false);
+    // close all popout windows when app is closed
+    window.addEventListener("pagehide", () => {
+        const len = popoutWindows.length;
+        for (let i = 0; i < len; i++) {
+            try {
+                popoutWindows[i].close();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    });
 };
 
 /**
@@ -38,24 +50,82 @@ export const initExtensionManager = () => {
  *
  * Returns a function to disconnect the extension from the app.
  */
-export const connectExtensionToApp = (
-    extension: ExtensionModule,
-): (() => void) => {
+export const connectExtensionToApp = (extension: ExtensionModule) => {
     extension.onAppConnectionEstablished(getExtensionAppHost());
+    notifyAndPushInstance(extension);
+};
 
+// const connectExtensionPopoutToApp = (
+//     serial: number,
+//     extension: Extension,
+//     extensionWindow: Window,
+// ) => {
+//     const disconnect = () => {
+//         console.log(`[popout (${serial})] disconnecting extension`);
+//         try {
+//             if (!extensionWindow.closed) {
+//                 extensionWindow.close();
+//             }
+//         } catch (e) {
+//             console.error(e);
+//         }
+//         const index = instances.indexOf(extension);
+//         if (index >= 0) {
+//             instances.splice(index, 1);
+//         }
+//         console.log(`[popout (${serial})] extension disconnected`);
+//     };
+//     // when user closes the popout window, disconnects the extension
+//     extensionWindow.addEventListener("pagehide", () => {
+//         disconnect();
+//     });
+//     notifyAndPushInstance(extension);
+//     console.log(`[popout (${serial})] extension connected to host app`);
+// };
+
+const notifyAndPushInstance = (extension: Extension) => {
     void extension.onDarkModeChanged(isDark());
     void extension.onLocaleChanged(getLocale());
     void extension.onScriptChanged(useSessionStore.getState().activeScript);
     instances.push(extension);
-
-    return () => {
-        const index = instances.indexOf(extension);
-        if (index >= 0) {
-            instances.splice(index, 1);
-        }
-    };
 };
 
-export const openExtensionPopup = (id: string) => {
-    console.error("Not implemented", id);
+let popoutSerial = 0;
+
+export const openExtensionPopup = async (id: string) => {
+    const serial = popoutSerial++;
+    console.log(`opening extension popout: ${id} (serial: ${serial})`);
+    const origin = window.location.origin;
+    let url: string;
+    if (import.meta.env.DEV) {
+        console.log("[dev] using dev extension popout url");
+        url = `${origin}/popout`;
+    } else {
+        const commitShort = import.meta.env.COMMIT.substring(0, 8);
+        url = `${origin}/popout-${commitShort}`;
+    }
+    const urlobj = new URL(url);
+    urlobj.searchParams.set("skybookHostOrigin", origin);
+    urlobj.searchParams.set("skybookExtensionId", id);
+
+    const extensionWindow = window.open(
+        urlobj.href,
+        "_blank",
+        "popup,width=800,height=600",
+    );
+    if (!extensionWindow) {
+        console.error("failed to open extension popout window");
+        return;
+    }
+    // TODO: implement this
+    // // const {a, b} = createChannel();
+    // // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // (extensionWindow as any).skybookChannel = b;
+    // console.log(`[popout ${id} (${serial})] establishing connection with popout window`);
+    // bindExtensionAppHost(getExtensionAppHost(), {worker: a});
+    // const extension = new ExtensionClient({worker: a});
+    // await extension.handshake().established();
+    // console.log(`[popout ${id} (${serial})] window connection established`);
+    //
+    // connectExtensionPopoutToApp(serial, extension, extensionWindow);
 };

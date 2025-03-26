@@ -1,5 +1,5 @@
 import { CodeEditor, type CodeEditorApi } from "@pistonite/intwc";
-import type { WorkexPromise } from "@pistonite/workex";
+import type { WxPromise } from "@pistonite/workex";
 
 import type { ExtensionApp } from "@pistonite/skybook-api";
 
@@ -44,6 +44,7 @@ export class EditorExtension
     }
 
     public override onAppConnectionEstablished(app: ExtensionApp): void {
+        super.onAppConnectionEstablished(app);
         setApp(app);
     }
 
@@ -60,6 +61,7 @@ export class EditorExtension
         detachEditor?.();
 
         this.editor = editor;
+
         const unsubscribeEditor = editor.subscribe((filename) => {
             if (filename !== FILE) {
                 return;
@@ -71,15 +73,20 @@ export class EditorExtension
             unsubscribeEditor();
             this.editor = undefined;
         };
-        if (this.scriptChangedBeforeEditorReady) {
+        if (this.scriptChangedBeforeEditorReady !== undefined) {
             const script = this.scriptChangedBeforeEditorReady;
             this.scriptChangedBeforeEditorReady = undefined;
             await this.onScriptChanged(script);
+        } else if (this.app) {
+            const script = await this.app.getScript();
+            if (script.val && this.editor) {
+                await this.onScriptChanged(script.val);
+            }
         }
         return this.detachEditor || (() => {});
     }
 
-    public override async onScriptChanged(script: string): WorkexPromise<void> {
+    public override async onScriptChanged(script: string): WxPromise<void> {
         if (!this.editor) {
             this.scriptChangedBeforeEditorReady = script;
             return {};
