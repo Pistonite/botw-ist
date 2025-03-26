@@ -78,7 +78,7 @@ export class _wxSenderImpl implements ExtensionApp {
  * API implemented by the application and called by the extension.
  */
 export const _wxRecverImpl = (handler: ExtensionApp): WxBusRecvHandler => {
-    return (fId, args: any[]) => { switch (fId) {
+    return ((fId, args: any[]) => { switch (fId) {
         case 19 /* ExtensionApp.getScript */: {
             return handler.getScript();
         }
@@ -98,5 +98,5 @@ export const _wxRecverImpl = (handler: ExtensionApp): WxBusRecvHandler => {
             const [ a0 ] = args;
             return handler.setScript( a0 );
         }
-    } return Promise.resolve({ err: { code: "UnknownFunction" } }); }
+    } return Promise.resolve({ err: { code: "UnknownFunction" } }); }) as WxBusRecvHandler;
 };

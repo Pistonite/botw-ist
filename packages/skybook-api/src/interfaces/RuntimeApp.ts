@@ -32,7 +32,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * prompt file selection and have the image ready before initializing,
      * and return the file in this callback.
      * 
-     * If the user did not provide a custom image, the app should return undefined,
+     * If the user did not provide a custom image, the app should return undefined
      * in which case the runtime initialization will fail.
      */
     public getCustomBlueFlameImage( ): WxPromise<Uint8Array | undefined> {
@@ -62,7 +62,7 @@ export class _wxSenderImpl implements RuntimeApp {
  * API provided by the simulator app that the runtime needs to call
  */
 export const _wxRecverImpl = (handler: RuntimeApp): WxBusRecvHandler => {
-    return <WxBusRecvHandler>((fId, args: any[]) => { switch (fId) {
+    return ((fId, args: any[]) => { switch (fId) {
         case 28 /* RuntimeApp.getCustomBlueFlameImage */: {
             return handler.getCustomBlueFlameImage();
         }
@@ -73,5 +73,5 @@ export const _wxRecverImpl = (handler: RuntimeApp): WxBusRecvHandler => {
             const [ a0 ] = args;
             return handler.resolveQuotedItem( a0 );
         }
-    } return Promise.resolve({ err: { code: "UnknownFunction" } }); })
+    } return Promise.resolve({ err: { code: "UnknownFunction" } }); }) as WxBusRecvHandler;
 };

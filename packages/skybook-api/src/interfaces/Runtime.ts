@@ -66,7 +66,7 @@ export class _wxSenderImpl implements Runtime {
  * API provided by the simulator runtime, called by the application.
  */
 export const _wxRecverImpl = (handler: Runtime): WxBusRecvHandler => {
-    return (fId, args: any[]) => { switch (fId) {
+    return ((fId, args: any[]) => { switch (fId) {
         case 24 /* Runtime.getParserDiagnostics */: {
             const [ a0 ] = args;
             return handler.getParserDiagnostics( a0 );
@@ -83,5 +83,5 @@ export const _wxRecverImpl = (handler: Runtime): WxBusRecvHandler => {
             const [ a0 ] = args;
             return handler.resolveItemIdent( a0 );
         }
-    } return Promise.resolve({ err: { code: "UnknownFunction" } }); }
+    } return Promise.resolve({ err: { code: "UnknownFunction" } }); }) as WxBusRecvHandler;
 };

@@ -36,11 +36,11 @@ tasks:
 
   check:
     cmds:
-      # - task: build
-      # - task: git:check-modification
-      #   vars:
-      #     CHECK_PATH: packages/skybook-api/src
-      #     CHECK_MESSAGE: Please regenerate and commit skybook-api bindings
+      - task: build
+      - task: git:check-modification
+        vars:
+          CHECK_PATH: packages/skybook-api/src
+          CHECK_MESSAGE: Please regenerate and commit skybook-api bindings
       - task: ecma:mono-check
 
   fix:
