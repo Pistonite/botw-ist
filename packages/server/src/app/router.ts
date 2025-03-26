@@ -110,11 +110,12 @@ export const createAppRoutes = (builder: RouteBuilder): Routes => {
             },
         }),
         [popoutUrl]: builder.route({
-            handler: () => makeFile(`app${popoutUrl}.html`, {
-                headers: {
-                    "Cache-Control": "public, max-age=600",
-                },
-            })
+            handler: () =>
+                makeFile(`app${popoutUrl}.html`, {
+                    headers: {
+                        "Cache-Control": "public, max-age=600",
+                    },
+                }),
         }),
         // bundled assets are hashed and can be cached forever
         "/assets/*": builder.route({

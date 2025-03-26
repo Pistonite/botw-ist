@@ -264,7 +264,7 @@ const App: React.FC = () => {
 };
 
 void (async function main() {
-    await initI18n();
+    await initI18n(false);
 
     const root = document.getElementById("root");
     if (root) {
