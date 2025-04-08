@@ -22,7 +22,7 @@ wasm-bindgen = { version = "0.2.100", optional = true, features = ["serde-serial
 [dev-dependencies]
 anyhow = "1.0.96"
 indoc = "2.0.5"
-tokio = { version = "1.43.0", features = ["full"] }
+tokio = { version = "1.43.1", features = ["full"] }
 
 [features]
 __ts-binding = ["dep:ts-rs"]
