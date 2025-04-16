@@ -11,13 +11,13 @@
         "@pistonite/pure-i18next": "catalog:",
         "@pistonite/skybook-api": "workspace:*",
         "fuse.js": "^7.0.0",
-        "i18next": "*",
+        "i18next": "catalog:",
         "lru-cache": "^11.0.2",
         "react": "catalog:",
-        "react-i18next": "*"
+        "react-i18next": "catalog:"
     },
     "devDependencies": {
-        "@types/bun": "^1.2.4",
+        "@types/bun": "catalog:",
         "@types/js-yaml": "^4.0.9",
         "@types/react": "catalog:",
         "js-yaml": "^4.1.0",

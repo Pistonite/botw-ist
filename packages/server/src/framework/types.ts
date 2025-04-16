@@ -3,7 +3,7 @@ import type { BunRequest } from "bun";
 
 export type ResponsePayload = {
     body?: Bun.BodyInit;
-    options?: Bun.ResponseInit;
+    options?: ResponseInit;
 };
 
 type Awaitable<T> = T | Promise<T>;
