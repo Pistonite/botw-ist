@@ -20,6 +20,7 @@ catalog:
   "@pistonite/pure": ^0.24.2
   "@pistonite/pure-react": ^0.7.4
   "@pistonite/pure-i18next": ^0.3.5
+  "@types/bun": ^1.2.9
   "@pistonite/workex": ^0.0.7
   "@types/react": ^18.3.17
   "@types/react-dom": ^18.3.5

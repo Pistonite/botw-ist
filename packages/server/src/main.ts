@@ -77,7 +77,6 @@ async function main() {
             ...createAppRoutes(builder),
             ...createApiRoutes(crypto, builder),
         },
-        // @ts-expect-error https://github.com/oven-sh/bun/issues/13167
         tls: tls
             ? {
                   key: tls.key,

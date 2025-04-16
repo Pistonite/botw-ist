@@ -215,7 +215,7 @@ const handleResponsePayload = async (
     if (!response.options) {
         response.options = { status: 500 };
     } else if (!response.options.status) {
-        response.options.status = 500;
+        response.options = { ...response.options, status: 500 };
     }
     // cast - IDE issue with node/bun confusion
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
