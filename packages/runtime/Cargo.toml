@@ -15,7 +15,7 @@ tsify-next = { version = "0.5.4", default-features = false, features = ["js"], o
 wasm-bindgen = { version = "0.2.100", optional = true, features = ["serde-serialize"] }
 
 [dev-dependencies]
-tokio = { version = "1.42.0", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.43.1", features = ["macros", "rt-multi-thread"] }
 
 [features]
 __ts-binding = ["dep:ts-rs"]
