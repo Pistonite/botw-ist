@@ -364,17 +364,8 @@ const bootMainUI = async (context: BootContext) => {
     // because the title is also server-rendered.
     // This is just for switching between different languages
     addLocaleSubscriber(() => {
-        // sometimes the language switching is not ready yet
-        // so we need to wait for it
-        const doSetTitle = () => {
-            const title = translateUI("title");
-            if (!title || title === "title") {
-                setTimeout(doSetTitle, 100);
-                return;
-            }
-            document.title = title;
-        };
-        setTimeout(doSetTitle, 100);
+        const title = translateUI("title");
+        document.title = title;
     }, true);
 };
 

@@ -65,8 +65,8 @@ const ExtensionPanelConnected: React.FC = () => {
     const hasTwoWindows = currentPrimaryId && currentSecondaryId;
     return (
         <div className={styles.main}>
-            {!hasTwoWindows && primaryWindow}
-            {!hasTwoWindows && secondaryWindow}
+            {!hasTwoWindows && currentPrimaryId && primaryWindow}
+            {!hasTwoWindows && currentSecondaryId && secondaryWindow}
             {hasTwoWindows && (
                 <ResizeLayout
                     className={styles.extensionWindow}

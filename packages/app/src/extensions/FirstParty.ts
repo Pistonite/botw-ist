@@ -19,6 +19,7 @@ export class FirstPartyExtensionAdapter implements ExtensionModule {
     }
     public async onLocaleChanged(locale: string): WxPromise<void> {
         if (this.standalone) {
+            console.log("onLocaleChanged", locale);
             setLocale(locale);
         }
         return {};

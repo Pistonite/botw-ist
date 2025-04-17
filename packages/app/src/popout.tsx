@@ -1,10 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { initDark } from "@pistonite/pure/pref";
+import { addLocaleSubscriber, initDark } from "@pistonite/pure/pref";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@pistonite/shared-controls";
 
-import { initI18n } from "skybook-localization";
+import { initI18n, translateUI } from "skybook-localization";
 import { ItemTooltipProvider } from "skybook-item-system";
 import {
     readExtensionProperties,
@@ -79,6 +79,12 @@ async function boot() {
             </QueryClientProvider>
         </StrictMode>,
     );
+    addLocaleSubscriber(() => {
+        const appTitle = translateUI("title");
+        const extensionTitleKey = `extension.${properties.extensionId}.name`;
+        const extensionTitle = translateUI(extensionTitleKey);
+        document.title = `${extensionTitle} - ${appTitle}`;
+    }, true);
 }
 
 void boot();

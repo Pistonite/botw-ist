@@ -17,11 +17,11 @@ catalog:
   "@fluentui/react-components": ^9.61.6
   "@fluentui/react-icons": ^2.0.297
   "@modyfi/vite-plugin-yaml": ^1.1.1
-  "@pistonite/pure": ^0.24.2
-  "@pistonite/pure-react": ^0.7.4
-  "@pistonite/pure-i18next": ^0.3.5
+  "@pistonite/pure": ^0.25.0
+  "@pistonite/pure-react": ^0.7.5
+  "@pistonite/pure-i18next": ^0.4.0
   "@types/bun": ^1.2.9
-  "@pistonite/workex": ^0.0.7
+  "@pistonite/workex": ^0.0.8
   "@types/react": ^18.3.17
   "@types/react-dom": ^18.3.5
   "@vitejs/plugin-react": ^4.4.0
