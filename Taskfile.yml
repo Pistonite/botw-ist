@@ -172,7 +172,8 @@ tasks:
   build-app-ci:
     cmds:
       - task: localization:pull-artifacts
-      - task: item-assets:pull-artifacts
+      # this is cached in action to speed up CI builds
+      # - task: item-assets:pull-artifacts
       - task: item-system:pull-artifacts
       - pnpm install --frozen-lockfile
       - task: parser-legacy:install

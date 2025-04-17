@@ -39,6 +39,13 @@ jobs:
       - uses: ./.github/steps/setup-blacksmith
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: useblacksmith/cache@v5
+        id: cache-item-assets
+        with:
+          path: packages/item-assets/public
+          key: item-assets
+      - run: task exec -- item-assets:pull-artifacts
+        if: steps.cache-item-assets.outputs.cache-hit != 'true'
       - run: task build-app-ci
 
       # upload artifacts
