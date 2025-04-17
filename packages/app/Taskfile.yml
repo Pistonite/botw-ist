@@ -11,6 +11,11 @@ tasks:
     cmds:
       - task: ecma:vite-dev
 
+  clean-deps:
+    desc: Delete optimized deps for local changes to take effect
+    cmds:
+      - rm -rf node_modules/.vite
+
   build:
     vars:
       COMMIT_SHORT:

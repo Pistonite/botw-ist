@@ -10,7 +10,6 @@ import { openExtensionPopup } from "self::application/extension";
 import { isLessProductive } from "self::pure-contrib";
 
 import { ExtensionToolbar } from "./components/ExtensionToolbar.tsx";
-import { ExtensionOpenButton } from "./ExtensionOpenButton.tsx";
 
 const ExtensionToolbarPrimaryConnected: React.FC = () => {
     const currentPrimaryId = useCurrentPrimaryExtensionId();
@@ -29,9 +28,8 @@ const ExtensionToolbarPrimaryConnected: React.FC = () => {
             onSelect={(id) => {
                 openExtension(id, "primary");
             }}
-        >
-            <ExtensionOpenButton />
-        </ExtensionToolbar>
+            onClickClose={closePrimary}
+        ></ExtensionToolbar>
     );
 };
 

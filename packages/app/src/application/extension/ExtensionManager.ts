@@ -4,15 +4,18 @@ import {
     getLocale,
     isDark,
 } from "@pistonite/pure/pref";
+import { wxPopup } from "@pistonite/workex";
+
 import type { Extension } from "@pistonite/skybook-api";
 import type { ExtensionModule } from "@pistonite/skybook-api/client";
+import { skybookExtension } from "@pistonite/skybook-api/interfaces/Extension.bus.ts";
 
 import { useSessionStore } from "self::application/store";
+
 import { getExtensionAppHost } from "./ExtensionAppHost.ts";
 
 /** Running instances of extensions */
 const instances: Extension[] = [];
-const popoutWindows: Window[] = [];
 
 export const initExtensionManager = () => {
     useSessionStore.subscribe((curr, prev) => {
@@ -32,17 +35,6 @@ export const initExtensionManager = () => {
             void x.onLocaleChanged(locale);
         });
     }, false);
-    // close all popout windows when app is closed
-    window.addEventListener("pagehide", () => {
-        const len = popoutWindows.length;
-        for (let i = 0; i < len; i++) {
-            try {
-                popoutWindows[i].close();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-    });
 };
 
 /**
@@ -54,34 +46,6 @@ export const connectExtensionToApp = (extension: ExtensionModule) => {
     extension.onAppConnectionEstablished(getExtensionAppHost());
     notifyAndPushInstance(extension);
 };
-
-// const connectExtensionPopoutToApp = (
-//     serial: number,
-//     extension: Extension,
-//     extensionWindow: Window,
-// ) => {
-//     const disconnect = () => {
-//         console.log(`[popout (${serial})] disconnecting extension`);
-//         try {
-//             if (!extensionWindow.closed) {
-//                 extensionWindow.close();
-//             }
-//         } catch (e) {
-//             console.error(e);
-//         }
-//         const index = instances.indexOf(extension);
-//         if (index >= 0) {
-//             instances.splice(index, 1);
-//         }
-//         console.log(`[popout (${serial})] extension disconnected`);
-//     };
-//     // when user closes the popout window, disconnects the extension
-//     extensionWindow.addEventListener("pagehide", () => {
-//         disconnect();
-//     });
-//     notifyAndPushInstance(extension);
-//     console.log(`[popout (${serial})] extension connected to host app`);
-// };
 
 const notifyAndPushInstance = (extension: Extension) => {
     void extension.onDarkModeChanged(isDark());
@@ -108,24 +72,32 @@ export const openExtensionPopup = async (id: string) => {
     urlobj.searchParams.set("skybookHostOrigin", origin);
     urlobj.searchParams.set("skybookExtensionId", id);
 
-    const extensionWindow = window.open(
-        urlobj.href,
-        "_blank",
-        "popup,width=800,height=600",
-    );
-    if (!extensionWindow) {
+    const appHost = getExtensionAppHost();
+
+    const result = await wxPopup(urlobj.href, {
+        width: 800,
+        height: 600,
+    })({
+        extension: skybookExtension(appHost),
+    });
+    if (result.err) {
         console.error("failed to open extension popout window");
         return;
     }
-    // TODO: implement this
-    // // const {a, b} = createChannel();
-    // // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // (extensionWindow as any).skybookChannel = b;
-    // console.log(`[popout ${id} (${serial})] establishing connection with popout window`);
-    // bindExtensionAppHost(getExtensionAppHost(), {worker: a});
-    // const extension = new ExtensionClient({worker: a});
-    // await extension.handshake().established();
-    // console.log(`[popout ${id} (${serial})] window connection established`);
-    //
-    // connectExtensionPopoutToApp(serial, extension, extensionWindow);
+
+    const {
+        connection,
+        protocols: { extension },
+    } = result.val;
+    console.log(`[popout ${id} (${serial})] window connection established`);
+    // disconnect the extension when popout window is closed
+    connection.onClose(() => {
+        const index = instances.indexOf(extension);
+        if (index >= 0) {
+            instances.splice(index, 1);
+        }
+        console.log(`[popout (${serial})] extension disconnected`);
+    });
+
+    notifyAndPushInstance(extension);
 };

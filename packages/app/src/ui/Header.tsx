@@ -1,7 +1,17 @@
-import { Button, makeStyles, tokens } from "@fluentui/react-components";
+import {
+    Menu,
+    Button,
+    makeStyles,
+    tokens,
+    MenuTrigger,
+    MenuPopover,
+    MenuList,
+    MenuDivider,
+    Caption2,
+} from "@fluentui/react-components";
 import {
     BookQuestionMark20Regular,
-    Settings20Regular,
+    MoreHorizontal20Regular,
 } from "@fluentui/react-icons";
 import {
     DarkToggle,
@@ -9,10 +19,7 @@ import {
     LanguagePicker,
 } from "@pistonite/shared-controls";
 
-import {
-    useIsShowingExtensionPanel,
-    useSessionStore,
-} from "self::application/store";
+import { useSessionStore } from "self::application/store";
 
 import { ExtensionOpenButton } from "./ExtensionOpenButton.tsx";
 import icon from "./icon.svg";
@@ -23,28 +30,44 @@ const useStyles = makeStyles({
         backgroundColor: tokens.colorNeutralBackground2,
         display: "flex",
         flexDirection: "row",
+        alignItems: "center",
     },
 });
 
 export const Header: React.FC = () => {
     const styles = useStyles();
-    const showingExtensionPanel = useIsShowingExtensionPanel();
     const version = import.meta.env.VERSION.replace("0.", "v");
+    const commitShort = import.meta.env.COMMIT.substring(0, 8);
 
     const isRunningCustomImage = useSessionStore(
         (state) => state.runningCustomImageVersion,
     );
     return (
         <div className={styles.container}>
-            <img src={isRunningCustomImage ? iconPurple : icon} height="32px" />
-            <span>{version}</span>
+            <img src={isRunningCustomImage ? iconPurple : icon} height="24px" />
+            <Menu>
+                <MenuTrigger disableButtonEnhancement>
+                    <Button
+                        appearance="subtle"
+                        icon={<MoreHorizontal20Regular />}
+                    />
+                </MenuTrigger>
+                <MenuPopover>
+                    <MenuList>
+                        <MenuDivider />
+
+                        <Caption2>
+                            {version} ({commitShort})
+                        </Caption2>
+                    </MenuList>
+                </MenuPopover>
+            </Menu>
 
             <LanguagePicker />
             <DarkToggle />
             <GitHubLink href="https://github.com/Pistonite/botw-ist" />
-            <Button appearance="subtle" icon={<Settings20Regular />} />
             <Button appearance="subtle" icon={<BookQuestionMark20Regular />} />
-            {!showingExtensionPanel && <ExtensionOpenButton />}
+            <ExtensionOpenButton />
             <span>5 errors</span>
         </div>
     );
