@@ -4,13 +4,15 @@ import {
     getLocale,
     isDark,
 } from "@pistonite/pure/pref";
+import { wxPopup } from "@pistonite/workex";
+
 import type { Extension } from "@pistonite/skybook-api";
 import type { ExtensionModule } from "@pistonite/skybook-api/client";
 import { skybookExtension } from "@pistonite/skybook-api/interfaces/Extension.bus.ts";
 
 import { useSessionStore } from "self::application/store";
+
 import { getExtensionAppHost } from "./ExtensionAppHost.ts";
-import { wxPopup } from "@pistonite/workex";
 
 /** Running instances of extensions */
 const instances: Extension[] = [];
