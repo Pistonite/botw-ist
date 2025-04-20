@@ -1,7 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import type { GameDataInventory, InventoryListView } from "@pistonite/skybook-api";
+import type {
+    GameDataInventory,
+    InventoryListView,
+} from "@pistonite/skybook-api";
 
 type InventoryViewType = "list" | "tab" | "graph";
 
@@ -35,21 +38,19 @@ export const useUIStore = create<UIStore>()(
                 set({ primaryExtensionWindowPercentage: percentage }),
 
             gdtInventory: {
-                items: []
+                items: [],
             },
             inventoryViewType: "list",
             inventoryListView: {
                 info: {
                     numTabs: 0,
-                    tabs: []
+                    tabs: [],
                 },
                 items: [],
             },
             setInventoryListView: (inventoryListView) => {
-                set({ inventoryListView })
-            }
-
-
+                set({ inventoryListView });
+            },
         }),
         {
             name: "Skybook.UI",

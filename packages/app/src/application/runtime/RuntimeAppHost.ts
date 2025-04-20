@@ -1,13 +1,8 @@
 import { wxWorker, wxWrapHandler } from "@pistonite/workex";
 
-import type {
-    ItemSearchResult,
-    RuntimeApp,
-} from "@pistonite/skybook-api";
+import type { ItemSearchResult, RuntimeApp } from "@pistonite/skybook-api";
 import { skybookRuntime } from "@pistonite/skybook-api/interfaces/Runtime.bus";
-import {
-    searchItemLocalized,
-} from "skybook-localization";
+import { searchItemLocalized } from "skybook-localization";
 
 let customImage: Uint8Array | undefined;
 

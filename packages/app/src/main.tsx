@@ -21,7 +21,11 @@ import {
     initExtensionManager,
     initExtensionAppHost,
 } from "self::application/extension";
-import { createRuntime, initRuntime, RuntimeContext } from "self::application/runtime";
+import {
+    createRuntime,
+    initRuntime,
+    RuntimeContext,
+} from "self::application/runtime";
 import { useApplicationStore, useSessionStore } from "self::application/store";
 import { initNarrow, isLessProductive } from "self::pure-contrib";
 

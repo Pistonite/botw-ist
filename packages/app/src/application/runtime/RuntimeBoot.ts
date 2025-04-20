@@ -1,10 +1,7 @@
 import type { Void } from "@pistonite/pure/result";
 
-import type {
-    Runtime,
-    RuntimeInitArgs,
-} from "@pistonite/skybook-api";
-import { translateGenericError, } from "skybook-localization";
+import type { Runtime, RuntimeInitArgs } from "@pistonite/skybook-api";
+import { translateGenericError } from "skybook-localization";
 
 import { useApplicationStore, useSessionStore } from "self::application/store";
 

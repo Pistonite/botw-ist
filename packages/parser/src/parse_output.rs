@@ -39,9 +39,7 @@ impl ParseOutput {
     pub fn step_idx_from_pos(&self, pos: usize) -> usize {
         match self.steps.binary_search_by_key(&pos, |x| x.pos) {
             Ok(i) => i,
-            Err(i) => {
-                i.saturating_sub(1)
-            }
+            Err(i) => i.saturating_sub(1),
         }
     }
 }

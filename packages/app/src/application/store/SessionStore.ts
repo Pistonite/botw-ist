@@ -59,7 +59,7 @@ export type SessionStore = {
     /** The version of the custom image that is currently running */
     runningCustomImageVersion: ScriptEnvImage | "";
     setRunningCustomImageVersion: (value: ScriptEnvImage | "") => void;
-    
+
     /** Current byte position of the active selection (caret) in the script */
     bytePos: number;
     setBytePos: (bytePos: number) => void;
@@ -183,7 +183,8 @@ export const useSessionStore = create<SessionStore>()((set) => {
 
         runningCustomImageVersion: "",
         setRunningCustomImageVersion: (value) => {
-            set({ runningCustomImageVersion: value })},
+            set({ runningCustomImageVersion: value });
+        },
 
         bytePos: 0,
         setBytePos: (bytePos) => {
@@ -191,9 +192,9 @@ export const useSessionStore = create<SessionStore>()((set) => {
         },
         setCharPos: (charPos) => {
             set(({ activeScript }) => {
-                return { bytePos: charPosToBytePos(activeScript, charPos) }
+                return { bytePos: charPosToBytePos(activeScript, charPos) };
             });
-        }
+        },
     };
 });
 

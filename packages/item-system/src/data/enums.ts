@@ -32,7 +32,7 @@ export const PouchCategory = {
     KeyItem: 6,
     Invalid: -1,
 } as const;
-export type PouchCategory = typeof PouchCategory[keyof typeof PouchCategory];
+export type PouchCategory = (typeof PouchCategory)[keyof typeof PouchCategory];
 export type PouchCategoryName = keyof typeof PouchCategory;
 export const PouchCategoryNames: PouchCategoryName[] = [
     "Sword",
