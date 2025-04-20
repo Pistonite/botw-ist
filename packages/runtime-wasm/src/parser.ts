@@ -3,50 +3,51 @@
  * as managing the memory in WASM
  */
 import type { ParserErrorReport } from "@pistonite/skybook-api";
-import { makeExternalWeakRefType } from "@pistonite/pure/memory";
+import { type Erc, makeErcType } from "@pistonite/pure/memory";
 
-const makeParseOutputRef = makeExternalWeakRefType({
-    marker: "ParseOutput" as const,
+const ParseOutput = Symbol("ParseOutput");
+export type ParseOutput = typeof ParseOutput;
+
+const makeParseOutputErc = makeErcType<ParseOutput, number>({
+    marker: ParseOutput,
     free: (ptr: number) => wasm_bindgen.free_parse_output(ptr),
+    addRef: (ptr: number) => wasm_bindgen.add_ref_parse_output(ptr),
 });
-type WeakParseOutputRef = ReturnType<typeof makeParseOutputRef>;
 
 /** Promise of the on-going parse run */
-let parsePromise: Promise<WeakParseOutputRef> | undefined = undefined;
+let parsePromise: Promise<Erc<ParseOutput>> | undefined = undefined;
 /** Script of the on-going parse run or last finished run */
 let lastScript = "";
 let serial = 0;
-let parseOutputRef = makeParseOutputRef(undefined); // Pointer into WASM memory
+const cachedParseOutputErc = makeParseOutputErc(undefined);
 
 /** Parse the script and get diagnostics from the parser */
 export const getParserDiagnostics = async (
     script: string,
     resolver: QuotedItemResolverFn,
 ): Promise<ParserErrorReport[]> => {
-    const parseOutputPtr = await parseScript(script, resolver);
-    if (parseOutputPtr.ref === undefined) {
+    const parseOutputErc = await parseScript(script, resolver);
+    if (parseOutputErc.value === undefined) {
         // shouldn't happen, just for safety
         return [];
     }
-    const errors = wasm_bindgen.get_parser_errors(parseOutputPtr.ref);
-    freeParseOutput(parseOutputPtr);
+    const errors = wasm_bindgen.get_parser_errors(parseOutputErc.value);
+    parseOutputErc.free();
     return errors;
 };
 
 /**
- * Parse the script and return the pointer to the output
- *
- * This will return the cached result if possible. When the result is done
- * being used, it must be freed using `freeParseOutput`.
+ * Parse the script and returns a strong pointer to the output.
+ * The pointer needs to be freed to avoid memory leak (i.e. Returns ownership)
  */
-const parseScript = (
+export const parseScript = (
     script: string,
     resolver: QuotedItemResolverFn,
-): Promise<WeakParseOutputRef> => {
+): Promise<Erc<ParseOutput>> => {
     const isScriptUpToDate = lastScript === script;
     // if the cache result is up-to-date, return it
-    if (parseOutputRef.ref !== undefined && !parsePromise && isScriptUpToDate) {
-        return Promise.resolve(parseOutputRef);
+    if (cachedParseOutputErc.value !== undefined && !parsePromise && isScriptUpToDate) {
+        return Promise.resolve(cachedParseOutputErc.getStrong());
     }
     // if the result is not up-to-date, but the on-going run is the same script,
     // use the on-going run's result
@@ -61,33 +62,19 @@ const parseScript = (
 const parseScriptInternal = async (
     script: string,
     resolver: QuotedItemResolverFn,
-): Promise<WeakParseOutputRef> => {
+): Promise<Erc<ParseOutput>> => {
     const serialBefore = serial;
     serial++;
     lastScript = script;
-    const output = await wasm_bindgen.parse_script(script, resolver);
-    const newRef = makeParseOutputRef(output);
+    const outputRaw = await wasm_bindgen.parse_script(script, resolver);
     // update cached result
     if (serialBefore === serial) {
         parsePromise = undefined;
-        if (parseOutputRef.ref !== output) {
-            parseOutputRef.free();
-        }
-        parseOutputRef = newRef;
+        cachedParseOutputErc.assign(outputRaw);
+        return cachedParseOutputErc.getStrong();
     }
 
-    return newRef;
-};
-
-/**
- * Free the parse output. If the output reference is the same as the cached result,
- * do nothing (since the cached result is managed by the cache itself). Otherwise,
- * the result is not used and will be freed
- */
-const freeParseOutput = (parseOutput: WeakParseOutputRef) => {
-    if (parseOutput.ref !== parseOutputRef.ref) {
-        parseOutput.free();
-    }
+    return makeParseOutputErc(outputRaw);
 };
 
 export type QuotedItemResolverFn = (

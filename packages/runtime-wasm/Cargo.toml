@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-skybook-runtime = { path = "../runtime" }
+skybook-runtime = { path = "../runtime", features = ["wasm"] }
 skybook-parser = { path = "../parser", features = ["wasm", "cached"] }
 wasm-bindgen = { version = "0.2.99", features = ["serde", "serde-serialize"] }
 tsify-next = { version = "0.5.4", features = ["js"], default-features = false }

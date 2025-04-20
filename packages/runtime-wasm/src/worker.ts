@@ -7,6 +7,7 @@ import { skybookRuntimeApp } from "@pistonite/skybook-api/interfaces/RuntimeApp.
 
 import { getParserDiagnostics, type QuotedItemResolverFn } from "./parser.ts";
 import { getImage, putImage } from "./imagedb.ts";
+import { executeScript, getInventoryListView } from "./runtime.ts";
 
 const { promise: appPromise, resolve: resolveApp } = wxMakePromise<RuntimeApp>();
 
@@ -108,6 +109,12 @@ async function boot() {
         getSemanticTokens: wxWrapHandler((script, start, end) => {
             return wasm_bindgen.parse_script_semantic(script, start, end);
         }),
+        executeScript: wxWrapHandler(async (script) => {
+            (await executeScript(script, resolveQuotedItem)).free();
+        }),
+        getInventoryListView: wxWrapHandler(async (script, pos) => {
+            return await getInventoryListView(script, resolveQuotedItem, pos);
+        })
     };
 
     await wxWorkerGlobal()({

@@ -7,6 +7,7 @@ import { useNarrow, isLessProductive } from "self::pure-contrib";
 import { ExtensionPanel } from "./ExtensionPanel.tsx";
 import { useUIStore } from "./store.ts";
 import { Header } from "./Header.tsx";
+import { memo } from "react";
 
 const useStyles = makeStyles({
     root: {
@@ -21,9 +22,33 @@ const useStyles = makeStyles({
     },
 });
 
-export const App: React.FC = () => {
+const AppImpl: React.FC = () => {
     const narrow = useNarrow();
     const styles = useStyles();
+
+    // // Boot setups tied to component lifetime
+    // // so these work with HMR
+    // const runtime = useRuntime();
+    // useEffect(() => {
+    //     console.log("setting up main app component");
+    //
+    //     const updateInventoryView = serial({
+    //         fn: (checkCancel) => async () => {
+    //         }
+    //     });
+    //
+    //
+    //     const unsubscribe = useSessionStore.subscribe((curr, prev) => {
+    //         if (curr.activeScript !== prev.activeScript) {
+    //
+    //         }
+    //     });
+    //
+    //     return () => {
+    //         console.log("cleaning up main app component");
+    //         unsubscribe();
+    //     }
+    // }, [runtime]);
 
     const showExtensionPanel = useIsShowingExtensionPanel();
 
@@ -54,3 +79,5 @@ export const App: React.FC = () => {
         </ResizeLayout>
     );
 };
+
+export const App = memo(AppImpl);

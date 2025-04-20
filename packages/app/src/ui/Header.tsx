@@ -7,7 +7,7 @@ import {
     MenuPopover,
     MenuList,
     MenuDivider,
-    Caption2,
+    Caption1,
 } from "@fluentui/react-components";
 import {
     BookQuestionMark20Regular,
@@ -56,9 +56,9 @@ export const Header: React.FC = () => {
                     <MenuList>
                         <MenuDivider />
 
-                        <Caption2>
+                        <Caption1>
                             {version} ({commitShort})
-                        </Caption2>
+                        </Caption1>
                     </MenuList>
                 </MenuPopover>
             </Menu>

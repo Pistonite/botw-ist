@@ -8,14 +8,104 @@ use scheduler::Scheduler;
 
 pub mod inventory;
 
-pub async fn run_stuff(serial: u64, parse_output: &ParseOutput) -> Vec<State> {
-    vec![]
+pub struct RunOutput {
+    /// State at each simulation step
+    pub states: Vec<Arc<State>>
+}
+
+impl RunOutput {
+    // TODO: error
+    pub fn get_inventory_list_view(&self, step: usize) -> inventory::InventoryListView {
+        // mock data
+
+        let items = vec![
+            inventory::ItemSlotInfo {
+                actor_name: "Weapon_Sword_070".to_string(),
+                item_type: 0,
+                item_use: 0,
+                value: 4000,
+                is_equipped: true,
+                is_in_inventory: true,
+                mod_effect_value: 0,
+                mod_effect_duration: 0,
+                mod_sell_price: 0,
+                mod_effect_id: 0f32,
+                mod_effect_level: 0f32,
+                ingredient_actor_names: ["".to_string(), "".to_string(), "".to_string(), "".to_string(), "".to_string()],
+                unaligned: false,
+                prev_node_ptr: 0.into(),
+                next_node_ptr: 0.into(),
+                list_pos: 0,
+                unallocated: false,
+                pool_pos: 419,
+                is_in_broken_slot: false,
+                holding_count: 0,
+                prompt_entangled: false
+            },
+            inventory::ItemSlotInfo {
+                actor_name: "Item_Fruit_A".to_string(),
+                item_type: 7,
+                item_use: 8,
+                value: 5,
+                is_equipped: false,
+                is_in_inventory: true,
+                mod_effect_value: 0,
+                mod_effect_duration: 0,
+                mod_sell_price: 0,
+                mod_effect_id: 0f32,
+                mod_effect_level: 0f32,
+                ingredient_actor_names: ["".to_string(), "".to_string(), "".to_string(), "".to_string(), "".to_string()],
+                unaligned: false,
+                prev_node_ptr: 0.into(),
+                next_node_ptr: 0.into(),
+                list_pos: 1,
+                unallocated: false,
+                pool_pos: 418,
+                is_in_broken_slot: false,
+                holding_count: 0,
+                prompt_entangled: false
+            }
+        ];
+
+        inventory::InventoryListView {
+            info: inventory::InventoryInfo {
+                num_tabs: 2,
+                tabs: vec![
+                    inventory::TabInfo {
+                        item_idx: Some(0),
+                        item_ptr: 0.into(),
+                        tab_type: 0
+                    },
+                    inventory::TabInfo {
+                        item_idx: Some(1),
+                        item_ptr: 0.into(),
+                        tab_type: 5
+                    },
+                ]
+            },
+            items,
+        }
+
+
+        // let Some(state) = self.get_state_by_step(step) else {
+        //     return Ok(vec![]);
+        // };
+    }
+
+    fn get_state_by_step(&self, step: usize) -> Option<Arc<State>> {
+        match self.states.get(step) {
+            Some(state) => Some(Arc::clone(state)),
+            None => Some(Arc::clone(self.states.last()?)),
+        }
+    }
+}
+
+pub async fn run_parsed(parsed: &ParseOutput) -> RunOutput {
+    RunOutput { states: vec![] }
 }
 
 #[derive(Clone)]
 pub struct State {
-
-
     // named gamedata in saves
     saves: HashMap<String, u64>,
 

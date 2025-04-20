@@ -7,6 +7,9 @@ tasks:
     cmds:
       - rm -f bindings/*.ts ../skybook-api/src/runtime/*
       - cargo test --lib --features __ts-binding
+      # patch the imports for special types
+      - echo 'import type { ItemSlotInfo } from "./ItemSlotInfo";' >> bindings/InventoryGraphView.ts
+      - echo 'import type { Pointer } from "./Pointer";' >> bindings/InventoryGraphView.ts
       - find bindings -type f | sort | sed 's/^bindings/export * from "./' | sed 's/$/";/' > index.ts
       - mv index.ts bindings
       - $(which mkdir) -p ../skybook-api/src/runtime
