@@ -21,7 +21,7 @@ import {
     initExtensionManager,
     initExtensionAppHost,
 } from "self::application/extension";
-import { createRuntime, initRuntime } from "self::application/runtime";
+import { createRuntime, initRuntime, RuntimeContext } from "self::application/runtime";
 import { useApplicationStore, useSessionStore } from "self::application/store";
 import { initNarrow, isLessProductive } from "self::pure-contrib";
 
@@ -337,15 +337,17 @@ const bootMainUI = async (context: BootContext) => {
     const root = document.getElementById("-root-") as HTMLDivElement;
     createRoot(root).render(
         <StrictMode>
-            <QueryClientProvider client={queryClient}>
-                <ThemeProvider>
-                    <ItemTooltipProvider
-                        backgroundUrl={getSheikaBackgroundUrl()}
-                    >
-                        <App />
-                    </ItemTooltipProvider>
-                </ThemeProvider>
-            </QueryClientProvider>
+            <RuntimeContext.Provider value={await context.runtime}>
+                <QueryClientProvider client={queryClient}>
+                    <ThemeProvider>
+                        <ItemTooltipProvider
+                            backgroundUrl={getSheikaBackgroundUrl()}
+                        >
+                            <App />
+                        </ItemTooltipProvider>
+                    </ThemeProvider>
+                </QueryClientProvider>
+            </RuntimeContext.Provider>
         </StrictMode>,
     );
 

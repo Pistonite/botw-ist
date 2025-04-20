@@ -34,6 +34,18 @@ pub struct ParseOutput {
     pub errors: Vec<ErrorReport>,
 }
 
+impl ParseOutput {
+    /// Get the step index by the byte pos in the script
+    pub fn step_idx_from_pos(&self, pos: usize) -> usize {
+        match self.steps.binary_search_by_key(&pos, |x| x.pos) {
+            Ok(i) => i,
+            Err(i) => {
+                i.saturating_sub(1)
+            }
+        }
+    }
+}
+
 /// Type of step to display in the step list
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum StepDisplay {

@@ -15,6 +15,35 @@ export enum PouchItemType {
     Invalid = -1,
 }
 
+/**
+ * Enum for inventory category type (tab types)
+ *
+ * See uking::ui::PouchCategory
+ *
+ * Used as index for mListHeads
+ */
+export const PouchCategory = {
+    Sword: 0,
+    Bow: 1,
+    Shield: 2,
+    Armor: 3,
+    Material: 4,
+    Food: 5,
+    KeyItem: 6,
+    Invalid: -1,
+} as const;
+export type PouchCategory = typeof PouchCategory[keyof typeof PouchCategory];
+export type PouchCategoryName = keyof typeof PouchCategory;
+export const PouchCategoryNames: PouchCategoryName[] = [
+    "Sword",
+    "Bow",
+    "Shield",
+    "Armor",
+    "Material",
+    "Food",
+    "KeyItem",
+];
+
 export const isEquipment = (itemUse: PouchItemType): boolean => {
     return (
         itemUse === PouchItemType.Sword ||

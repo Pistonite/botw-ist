@@ -2,6 +2,7 @@ import type { WxPromise } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
 
 import type { ParserErrorReport } from "./parser";
+import type { InventoryListView } from "./runtime";
 import type {
     ItemSearchResult,
     RuntimeInitArgs,
@@ -46,11 +47,19 @@ export interface Runtime {
         end: number,
     ): WxPromise<Uint32Array>;
 
-    // /**
-    //  * Set the script for the runtime, which starts executing
-    //  * the script immediately
-    //  */
-    // onScriptChange(script: string): WorkexPromise<void>;
+    /**
+     * Start executing the script in the background
+     */
+    executeScript(script: string): WxPromise<void>;
+
+    /**
+     * Execute the script if not up-to-date, and return the inventory list view
+     * at the byte offset `pos` in the script.
+     */
+    getInventoryListView(
+        script: string,
+        pos: number,
+    ): WxPromise<InventoryListView>;
 
     // getRuntimeDiagnostics(
     //     script: string,

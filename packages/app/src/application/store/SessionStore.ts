@@ -6,6 +6,7 @@ import type { ScriptEnvImage } from "@pistonite/skybook-api";
 import { translateUI } from "skybook-localization";
 
 import { useApplicationStore } from "./ApplicationStore.ts";
+import { charPosToBytePos } from "@pistonite/intwc";
 
 /** State of the current session. This is not persisted */
 export type SessionStore = {
@@ -58,6 +59,11 @@ export type SessionStore = {
     /** The version of the custom image that is currently running */
     runningCustomImageVersion: ScriptEnvImage | "";
     setRunningCustomImageVersion: (value: ScriptEnvImage | "") => void;
+    
+    /** Current byte position of the active selection (caret) in the script */
+    bytePos: number;
+    setBytePos: (bytePos: number) => void;
+    setCharPos: (charPos: number) => void;
 };
 
 /**
@@ -176,8 +182,18 @@ export const useSessionStore = create<SessionStore>()((set) => {
         },
 
         runningCustomImageVersion: "",
-        setRunningCustomImageVersion: (value) =>
-            set({ runningCustomImageVersion: value }),
+        setRunningCustomImageVersion: (value) => {
+            set({ runningCustomImageVersion: value })},
+
+        bytePos: 0,
+        setBytePos: (bytePos) => {
+            set({ bytePos });
+        },
+        setCharPos: (charPos) => {
+            set(({ activeScript }) => {
+                return { bytePos: charPosToBytePos(activeScript, charPos) }
+            });
+        }
     };
 });
 
