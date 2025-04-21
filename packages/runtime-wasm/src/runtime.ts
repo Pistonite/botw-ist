@@ -1,16 +1,16 @@
 
 import { type Erc, makeErcType } from "@pistonite/pure/memory";
 
-import { QuotedItemResolverFn, parseScript } from "./parser.ts";
-import { InventoryListView } from "@pistonite/skybook-api";
+import { type QuotedItemResolverFn, parseScript } from "./parser.ts";
+import type { InventoryListView } from "@pistonite/skybook-api";
 
 const RunOutput = Symbol("RunOutput");
 export type RunOutput = typeof RunOutput;
 
 const makeRunOutputErc = makeErcType<RunOutput, number>({
     marker: RunOutput,
-    free: (ptr: number) => wasm_bindgen.free_parse_output(ptr),
-    addRef: (ptr: number) => wasm_bindgen.add_ref_parse_output(ptr),
+    free: (ptr: number) => wasm_bindgen.free_run_output(ptr),
+    addRef: (ptr: number) => wasm_bindgen.add_ref_run_output(ptr),
 });
 
 let runPromise: Promise<Erc<RunOutput>> | undefined = undefined;
@@ -39,8 +39,8 @@ const executeScriptInternal = async (
 ): Promise<Erc<RunOutput>> => {
     const start = performance.now();
     console.log("[worker] start executing script");
-    const serialBefore = serial;
     serial++;
+    const serialBefore = serial;
     lastScript = script;
     const parseOutputErc = await parseScript(script, resolver);
     const parseOutputRaw = parseOutputErc.take();
@@ -65,8 +65,13 @@ script: string,
 bytePos: number): Promise<InventoryListView> => {
     const parseOutputErc = await parseScript(script, resolver);
     const runOutputErc = await executeScript(script, resolver);
-    const output = wasm_bindgen.get_inventory_list_view(runOutputErc.value || 0, 
-        parseOutputErc.value || 0, bytePos);
+    if (parseOutputErc.value === undefined || runOutputErc.value === undefined) {
+        parseOutputErc.free();
+        runOutputErc.free();
+        throw new Error(`parseOutputErc or runOutputErc is null: ${parseOutputErc.value}, ${runOutputErc.value}`);
+    }
+    const output = wasm_bindgen.get_inventory_list_view(runOutputErc.value, 
+        parseOutputErc.value, bytePos);
     parseOutputErc.free();
     runOutputErc.free();
     return output;

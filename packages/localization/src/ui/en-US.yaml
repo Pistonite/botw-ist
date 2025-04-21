@@ -89,7 +89,9 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-
+main.mcount_desc: "Number of item slots tracked by the list of item objects in-use"
+main.visible_inventory.desc: "Items you see when the inventory is opened"
+main.visible_inventory.title: "Visible Inventory"
 
 button.open_extension: "Extensions"
 

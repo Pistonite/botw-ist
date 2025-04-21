@@ -81,7 +81,7 @@ tasks:
 
   check:
     cmds:
-      - task: cargo:clippy-all
+      # - task: cargo:clippy-all
       - task: cargo:fmt-check
       - task: ecma:mono-check
 

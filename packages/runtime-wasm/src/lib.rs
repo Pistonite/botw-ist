@@ -1,4 +1,4 @@
-use std::{ptr::NonNull, sync::Arc};
+use std::sync::Arc;
 
 use js_sys::Function;
 use serde::{Deserialize, Serialize};
@@ -9,21 +9,12 @@ use skybook_parser::{search, ParseOutput};
 
 mod js_item_resolve;
 use js_item_resolve::JsQuotedItemResolver;
-//
-//
-// #[wasm_bindgen]
-// pub fn init_runtime(
-//     resolve_quoted_item: Function
-// ) {
-//     // create the runtime
-//     let runtime = RuntimeWasm::new(JsQuotedItemResolver::new(resolve_quoted_item));
-//
-//     // set the runtime
-//     let runtime_ref = unsafe { &mut *RUNTIME.get() };
-//     runtime_ref.write(runtime);
-// }
-//
-//
+
+/// Initialize the WASM module
+#[wasm_bindgen]
+pub fn module_init() {
+    std::panic::set_hook(Box::new(console_error_panic_hook::hook));
+}
 
 //////////// Item Resolver //////////
 
@@ -119,6 +110,21 @@ pub fn add_ref_parse_output(
     Arc::into_raw(x2)
 }
 
+/// Get index of the step from byte position in script
+///
+/// 0 is returned if steps are empty
+///
+/// ## Pointer Ownership
+/// Borrows the ParseOutput pointer.
+#[wasm_bindgen]
+pub fn get_step_from_pos(parse_output_ref: *const ParseOutput, pos: usize) -> usize {
+    if parse_output_ref.is_null() {
+        return 0;
+    }
+    let parse_output = unsafe { &*parse_output_ref };
+    parse_output.step_idx_from_pos(pos).unwrap_or_default()
+}
+
 ////////// Runtime //////////
 
 /// Run simulation using the ParseOutput
@@ -172,7 +178,7 @@ pub fn get_inventory_list_view(
         return Default::default();
     }
     let parse_output = unsafe { &*parse_output_ref };
-    let step = parse_output.step_idx_from_pos(byte_pos);
+    let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
     let run_output = unsafe { &*run_output_ref };
     run_output.get_inventory_list_view(step)
 }

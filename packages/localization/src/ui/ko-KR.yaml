@@ -89,7 +89,9 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-
+main.mcount_desc: "사용 중인 아이템 목록에 의해 추적되는 아이템 슬롯 수"
+main.visible_inventory.desc: "인벤토리를 열었을 때 보이는 아이템"
+main.visible_inventory.title: "표시 인벤토리"
 
 button.open_extension: "Extensions"
 

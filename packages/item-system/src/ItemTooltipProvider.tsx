@@ -18,6 +18,7 @@ import {
 const useStyles = makeStyles({
     container: {
         position: "absolute",
+        zIndex: 1000,
     },
     childrenContainer: {
         display: "contents",

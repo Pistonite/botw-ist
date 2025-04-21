@@ -36,6 +36,18 @@ export const getParserDiagnostics = async (
     return errors;
 };
 
+export const getStepFromPos = async (script: string, resolver: QuotedItemResolverFn, bytePos: number)
+    : Promise<number> => {
+    const parseOutputErc = await parseScript(script, resolver);
+    if (parseOutputErc.value === undefined) {
+        // shouldn't happen, just for safety
+        return 0;
+    }
+    const step = wasm_bindgen.get_step_from_pos(parseOutputErc.value, bytePos);
+    parseOutputErc.free();
+    return step;
+}
+
 /**
  * Parse the script and returns a strong pointer to the output.
  * The pointer needs to be freed to avoid memory leak (i.e. Returns ownership)
@@ -63,8 +75,8 @@ const parseScriptInternal = async (
     script: string,
     resolver: QuotedItemResolverFn,
 ): Promise<Erc<ParseOutput>> => {
-    const serialBefore = serial;
     serial++;
+    const serialBefore = serial;
     lastScript = script;
     const outputRaw = await wasm_bindgen.parse_script(script, resolver);
     // update cached result

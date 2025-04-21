@@ -13,6 +13,7 @@ serde = { version = "1.0.217", features = ["derive"] }
 ts-rs = "10.1.0"
 js-sys = "0.3.77"
 wasm-bindgen-futures = "0.4.50"
+console_error_panic_hook = "0.1.7"
 
 [lib]
 crate-type = ["cdylib"]

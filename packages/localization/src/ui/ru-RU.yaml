@@ -89,7 +89,9 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-
+main.mcount_desc: "Количество ячеек, отслеживаемых списком используемых предметов"
+main.visible_inventory.desc: "Предметы, которые вы видите при открытии инвентаря"
+main.visible_inventory.title: "Видимый инвентарь"
 
 button.open_extension: "Extensions"
 

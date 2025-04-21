@@ -5,7 +5,7 @@ import { LRUCache } from "lru-cache";
 import type { ItemSearchResult, Runtime, RuntimeApp, RuntimeInitArgs, RuntimeInitError, RuntimeInitOutput } from "@pistonite/skybook-api";
 import { skybookRuntimeApp } from "@pistonite/skybook-api/interfaces/RuntimeApp.bus";
 
-import { getParserDiagnostics, type QuotedItemResolverFn } from "./parser.ts";
+import { getParserDiagnostics, getStepFromPos, type QuotedItemResolverFn } from "./parser.ts";
 import { getImage, putImage } from "./imagedb.ts";
 import { executeScript, getInventoryListView } from "./runtime.ts";
 
@@ -45,7 +45,9 @@ async function boot() {
 
     await wasm_bindgen({ module_or_path: wasmModuleBase + ".wasm" });
 
-    // TODO: any init here
+    const {promise: initializePromise, resolve: markInitialized } = wxMakePromise();
+
+    wasm_bindgen.module_init();
 
     const api: Runtime = {
         // TODO: the error needs to be structured
@@ -77,6 +79,7 @@ async function boot() {
                 console.log("Custom image size: " + customImage.length);
                 // TODO: actually use the image
                 console.log(args);
+                markInitialized(undefined);
                 return {
                     val: {
                         version: "1.5", // TODO: read from image
@@ -84,6 +87,7 @@ async function boot() {
                     }
                 };
             }
+            markInitialized(undefined);
             if (args.deleteCustomImage) {
                 await putImage(undefined);
                 return {
@@ -103,16 +107,24 @@ async function boot() {
         resolveItemIdent: wxWrapHandler((query) => {
             return wasm_bindgen.resolve_item_ident(query);
         }),
-        getParserDiagnostics: wxWrapHandler((script) => {
+        getParserDiagnostics: wxWrapHandler(async (script) => {
+            await initializePromise;
             return getParserDiagnostics(script, resolveQuotedItem);
         }),
-        getSemanticTokens: wxWrapHandler((script, start, end) => {
+        getSemanticTokens: wxWrapHandler(async (script, start, end) => {
+            await initializePromise;
             return wasm_bindgen.parse_script_semantic(script, start, end);
         }),
+        getStepFromPos: wxWrapHandler(async (script, pos) => {
+            await initializePromise;
+            return getStepFromPos(script, resolveQuotedItem, pos);
+        }),
         executeScript: wxWrapHandler(async (script) => {
+            await initializePromise;
             (await executeScript(script, resolveQuotedItem)).free();
         }),
         getInventoryListView: wxWrapHandler(async (script, pos) => {
+            await initializePromise;
             return await getInventoryListView(script, resolveQuotedItem, pos);
         })
     };

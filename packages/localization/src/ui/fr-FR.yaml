@@ -89,7 +89,9 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-
+main.mcount_desc: "Nombre d'emplacements d'objets suivis par la liste des objets utilisés"
+main.visible_inventory.desc: "Objets visibles lors de l'ouverture de l'inventaire"
+main.visible_inventory.title: "Inventaire Visible"
 
 button.open_extension: "Extensions"
 

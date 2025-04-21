@@ -89,7 +89,9 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-
+main.mcount_desc: "使用中物品清單所追蹤的物品格數量"
+main.visible_inventory.desc: "當你打開背包時所看到的物品"
+main.visible_inventory.title: "可見背包"
 
 button.open_extension: "Extensions"
 

@@ -63,10 +63,17 @@ export class _wxSenderImpl implements Runtime {
     }
 
     /**
+     * Get index of the step from byte position in the script
+     */
+    public getStepFromPos( script: string, pos: number ): WxPromise<number> {
+        return this.sender.send<number>(28 /* Runtime.getStepFromPos */, [ script, pos ]);
+    }
+
+    /**
      * Initialize the runtime with the given arguments.
      */
     public initialize( args: RuntimeInitArgs ): WxPromise<Result<RuntimeInitOutput, RuntimeInitError>> {
-        return this.sender.send<Result<RuntimeInitOutput, RuntimeInitError>>(28 /* Runtime.initialize */, [ args ]);
+        return this.sender.send<Result<RuntimeInitOutput, RuntimeInitError>>(29 /* Runtime.initialize */, [ args ]);
     }
 
     /**
@@ -74,7 +81,7 @@ export class _wxSenderImpl implements Runtime {
      * Returns an empty list if no items are found.
      */
     public resolveItemIdent( query: string ): WxPromise<ItemSearchResult[]> {
-        return this.sender.send<ItemSearchResult[]>(29 /* Runtime.resolveItemIdent */, [ query ]);
+        return this.sender.send<ItemSearchResult[]>(30 /* Runtime.resolveItemIdent */, [ query ]);
     }
 }
 
@@ -99,11 +106,15 @@ export const _wxRecverImpl = (handler: Runtime): WxBusRecvHandler => {
             const [ a0, a1, a2 ] = args;
             return handler.getSemanticTokens( a0, a1, a2 );
         }
-        case 28 /* Runtime.initialize */: {
+        case 28 /* Runtime.getStepFromPos */: {
+            const [ a0, a1 ] = args;
+            return handler.getStepFromPos( a0, a1 );
+        }
+        case 29 /* Runtime.initialize */: {
             const [ a0 ] = args;
             return handler.initialize( a0 );
         }
-        case 29 /* Runtime.resolveItemIdent */: {
+        case 30 /* Runtime.resolveItemIdent */: {
             const [ a0 ] = args;
             return handler.resolveItemIdent( a0 );
         }
