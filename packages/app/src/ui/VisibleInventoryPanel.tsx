@@ -1,15 +1,15 @@
 import { memo } from "react";
 import { useDark } from "@pistonite/pure-react";
-import { Button, Text, makeStyles, Tooltip, mergeClasses } from "@fluentui/react-components";
+import { Text, makeStyles, Tooltip, mergeClasses } from "@fluentui/react-components";
 
 import { ItemSlot, ItemTooltip } from "skybook-item-system";
+import { useUITranslation } from "skybook-localization";
 
 import { useInventoryListView } from "self::application/store";
 
 import { InventoryTitle } from "./components/InventoryTitle.tsx";
 import { Code } from "./components/Code.tsx";
 import { getOverworldBackgroundUrl } from "./asset.ts";
-import { useUITranslation } from "skybook-localization";
 
 const useStyles = makeStyles({
     container: {

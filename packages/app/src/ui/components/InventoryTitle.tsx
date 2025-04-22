@@ -1,9 +1,9 @@
 import type { PropsWithChildren } from "react";
-import { Button, Spinner, Tooltip, makeStyles, mergeClasses } from "@fluentui/react-components";
-import { Info20Regular, Info16Regular } from "@fluentui/react-icons";
-
-import { GlowyText } from "./GlowyText";
+import { Spinner, Tooltip, makeStyles, mergeClasses } from "@fluentui/react-components";
+import { Info16Regular } from "@fluentui/react-icons";
 import { useDark } from "@pistonite/pure-react";
+
+import { GlowyText } from "./GlowyText.tsx";
 
 const useStyles = makeStyles({
     title: {
@@ -48,11 +48,10 @@ export type InventoryTitleProps = {
     description?: string;
     /** Super text after the title and description tooltip icon */
     supertitle?: JSX.Element;
-
-
     /** Whether to display a loading spinner. */
     loading?: boolean;
 };
+
 /** Header of the inventory display section. */
 export const InventoryTitle: React.FC<PropsWithChildren<InventoryTitleProps>> = ({title, description, supertitle, loading, children}) => {
     const styles = useStyles();

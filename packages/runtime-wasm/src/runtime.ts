@@ -65,11 +65,14 @@ script: string,
 bytePos: number): Promise<InventoryListView> => {
     const parseOutputErc = await parseScript(script, resolver);
     const runOutputErc = await executeScript(script, resolver);
+
+    // TODO: report error through return error type
     if (parseOutputErc.value === undefined || runOutputErc.value === undefined) {
         parseOutputErc.free();
         runOutputErc.free();
         throw new Error(`parseOutputErc or runOutputErc is null: ${parseOutputErc.value}, ${runOutputErc.value}`);
     }
+
     const output = wasm_bindgen.get_inventory_list_view(runOutputErc.value, 
         parseOutputErc.value, bytePos);
     parseOutputErc.free();
