@@ -26,6 +26,9 @@ tasks:
         vars:
           PACKAGE: skybook_runtime_wasm
           WASM_PACK_ARGS: -t no-modules --no-pack
+      - rm -rf node_modules/.wasm-out
+      - $(which mkdir) -p node_modules/.wasm-out
+      - cp pkg/skybook_runtime_wasm.d.ts node_modules/.wasm-out
 
   build-wasm-dts:
     cmds:
