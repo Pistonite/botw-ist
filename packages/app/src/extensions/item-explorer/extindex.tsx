@@ -49,7 +49,6 @@ export class ItemExplorerExtension
                 }
                 const items = await app.resolveItem(query, localized, 0);
                 if ("err" in items) {
-                    console.log(items.err);
                     return {
                         err: translateGenericError(errstr(items.err)),
                     };

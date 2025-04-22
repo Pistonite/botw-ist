@@ -27,6 +27,12 @@ tasks:
           PACKAGE: skybook_runtime_wasm
           WASM_PACK_ARGS: -t no-modules --no-pack
 
+  build-wasm-dts:
+    cmds:
+      - rm -rf node_modules/.wasm-out
+      - $(which mkdir) -p node_modules/.wasm-out
+      - wasm-pack build -t no-modules --dev --no-pack --no-opt --out-dir node_modules/.wasm-out
+
   clean-dist:
     cmds:
       - rm -rf dist
@@ -81,6 +87,7 @@ tasks:
 
   check:
     cmds:
+      - task: build-wasm-dts
       # - task: cargo:clippy-all
       - task: cargo:fmt-check
       - task: ecma:mono-check
