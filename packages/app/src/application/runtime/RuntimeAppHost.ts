@@ -1,8 +1,11 @@
 import { wxWorker, wxWrapHandler } from "@pistonite/workex";
+import { serial } from "@pistonite/pure/sync";
 
 import type { ItemSearchResult, RuntimeApp } from "@pistonite/skybook-api";
 import { skybookRuntime } from "@pistonite/skybook-api/interfaces/Runtime.bus";
 import { searchItemLocalized } from "skybook-localization";
+
+import { useSessionStore } from "self::application/store";
 
 let customImage: Uint8Array | undefined;
 
@@ -24,6 +27,7 @@ export async function createRuntime() {
     const result = await wxWorker(worker)({
         runtime: skybookRuntime(appHost),
     });
+
     if (result.err) {
         console.error("[boot] failed to connect to runtime worker", result.err);
         throw new Error(
@@ -31,7 +35,48 @@ export async function createRuntime() {
         );
     }
 
-    return result.val.protocols.runtime;
+    const runtime = result.val.protocols.runtime;
+
+    // create a serial event for triggering simulation when state change
+    const triggerSimulation = serial({
+        fn: (checkCancel) => async (scriptChanged: boolean) => {
+            const {
+                invalidateInventoryCache,
+                setExecutionInProgress,
+                activeScript,
+                bytePos,
+                setStepIndex,
+            } = useSessionStore.getState();
+            setExecutionInProgress(true);
+            if (scriptChanged) {
+                invalidateInventoryCache();
+            }
+            const stepIndex = await runtime.getStepFromPos(
+                activeScript,
+                bytePos,
+            );
+            checkCancel();
+            setExecutionInProgress(false);
+            if (stepIndex.err) {
+                console.error("failed to get step index:", stepIndex.err);
+                return;
+            }
+            setStepIndex(stepIndex.val);
+        },
+    });
+
+    useSessionStore.subscribe((curr, prev) => {
+        const scriptChanged = curr.activeScript !== prev.activeScript;
+        if (
+            !curr.initiallyExecuted ||
+            scriptChanged ||
+            curr.bytePos !== prev.bytePos
+        ) {
+            triggerSimulation(scriptChanged);
+        }
+    });
+
+    return runtime;
 }
 
 /** Create the API for runtime to call the app */

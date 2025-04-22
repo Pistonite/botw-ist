@@ -33,6 +33,10 @@ const withCacheForeverHeaders = withHeadersOnSuccess({
 
 export const createAppRoutes = (builder: RouteBuilder): Routes => {
     const popoutUrl = `/popout-${COMMIT.substring(0, 8)}`;
+    const robotsTxt = `User-agent: *
+Disallow: /-/
+Disallow: /github/
+`;
     return {
         "/": builder.route({
             handler: (req, url) => {
@@ -145,6 +149,12 @@ export const createAppRoutes = (builder: RouteBuilder): Routes => {
                     "Cache-Control": "public, max-age=86400",
                 }),
             ],
+        }),
+        "/robots.txt": new Response(robotsTxt, {
+            headers: {
+                "Content-Type": "text/plain",
+                "Cache-Control": "no-cache",
+            },
         }),
     };
 };

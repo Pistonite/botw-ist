@@ -84,6 +84,7 @@ impl RunOutput {
                 ]
             },
             items,
+            count: 2,
         }
 
 

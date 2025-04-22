@@ -1,3 +1,4 @@
+import { memo } from "react";
 import {
     Menu,
     Button,
@@ -34,7 +35,7 @@ const useStyles = makeStyles({
     },
 });
 
-export const Header: React.FC = () => {
+const HeaderImpl: React.FC = () => {
     const styles = useStyles();
     const version = import.meta.env.VERSION.replace("0.", "v");
     const commitShort = import.meta.env.COMMIT.substring(0, 8);
@@ -72,3 +73,5 @@ export const Header: React.FC = () => {
         </div>
     );
 };
+
+export const Header = memo(HeaderImpl);

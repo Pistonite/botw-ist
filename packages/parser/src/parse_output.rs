@@ -36,10 +36,15 @@ pub struct ParseOutput {
 
 impl ParseOutput {
     /// Get the step index by the byte pos in the script
-    pub fn step_idx_from_pos(&self, pos: usize) -> usize {
-        match self.steps.binary_search_by_key(&pos, |x| x.pos) {
+    pub fn step_idx_from_pos(&self, pos: usize) -> Option<usize> {
+        let i = match self.steps.binary_search_by_key(&pos, |x| x.pos) {
             Ok(i) => i,
             Err(i) => i.saturating_sub(1),
+        };
+        if i < self.steps.len() {
+            Some(i)
+        } else {
+            None
         }
     }
 }

@@ -89,7 +89,9 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-
+main.mcount_desc: "使用中のアイテムリストによって追跡されるアイテムスロット数"
+main.visible_inventory.desc: "インベントリを開いたときに表示されるアイテム"
+main.visible_inventory.title: "表示インベントリ"
 
 button.open_extension: "Extensions"
 

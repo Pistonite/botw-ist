@@ -15,4 +15,5 @@ import type { ItemSlotInfo } from "./ItemSlotInfo";
 export type InventoryListView = {
     info: InventoryInfo;
     items: Array<ItemSlotInfo>;
+    count: number;
 };

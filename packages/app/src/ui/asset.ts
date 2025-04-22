@@ -26,3 +26,7 @@ export const probeAndRegisterAssetLocation = async () => {
 export const getSheikaBackgroundUrl = () => {
     return `${assetPrefix}static/item-system/SheikahBackground.png`;
 };
+
+export const getOverworldBackgroundUrl = () => {
+    return `${assetPrefix}static/item-system/bg-hateno.jpg`;
+};

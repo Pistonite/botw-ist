@@ -89,7 +89,9 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-
+main.mcount_desc: "Aantal itemslots gevolgd door de lijst van gebruikte objecten"
+main.visible_inventory.desc: "Items die je ziet wanneer je de inventaris opent"
+main.visible_inventory.title: "Zichtbare Inventaris"
 
 button.open_extension: "Extensions"
 

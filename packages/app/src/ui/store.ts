@@ -1,13 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import type {
-    GameDataInventory,
-    InventoryListView,
-} from "@pistonite/skybook-api";
-
-type InventoryViewType = "list" | "tab" | "graph";
-
 export type UIStore = {
     /** Percentage size of the extension panel */
     extensionPanelPercentage: number;
@@ -17,13 +10,9 @@ export type UIStore = {
     primaryExtensionWindowPercentage: number;
     setPrimaryExtensionWindowPercentage: (percentage: number) => void;
 
-    /** Inventory in the GameData */
-    gdtInventory: GameDataInventory;
-    /** Current visible inventory (PMDM) view type */
-    inventoryViewType: InventoryViewType;
-    /** List view of visible inventory (PMDM) */
-    inventoryListView: InventoryListView;
-    setInventoryListView: (inventoryListView: InventoryListView) => void;
+    /** Percentage size of the gamedata inventory panel */
+    gamedataInventoryPercentage: number;
+    setGamedataInventoryPercentage: (percentage: number) => void;
 };
 
 export const useUIStore = create<UIStore>()(
@@ -37,20 +26,9 @@ export const useUIStore = create<UIStore>()(
             setPrimaryExtensionWindowPercentage: (percentage) =>
                 set({ primaryExtensionWindowPercentage: percentage }),
 
-            gdtInventory: {
-                items: [],
-            },
-            inventoryViewType: "list",
-            inventoryListView: {
-                info: {
-                    numTabs: 0,
-                    tabs: [],
-                },
-                items: [],
-            },
-            setInventoryListView: (inventoryListView) => {
-                set({ inventoryListView });
-            },
+            gamedataInventoryPercentage: 40,
+            setGamedataInventoryPercentage: (percentage) =>
+                set({ gamedataInventoryPercentage: percentage }),
         }),
         {
             name: "Skybook.UI",

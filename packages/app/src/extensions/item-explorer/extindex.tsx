@@ -1,7 +1,10 @@
 import { type Result, errstr } from "@pistonite/pure/result";
 import { debounce } from "@pistonite/pure/sync";
 
-import { type SearchResultNoScore, translateUI } from "skybook-localization";
+import {
+    type SearchResultNoScore,
+    translateGenericError,
+} from "skybook-localization";
 
 import {
     FirstPartyExtensionAdapter,
@@ -47,9 +50,7 @@ export class ItemExplorerExtension
                 const items = await app.resolveItem(query, localized, 0);
                 if ("err" in items) {
                     return {
-                        err: translateUI("generic.error.internal", {
-                            error: errstr(items.err),
-                        }),
+                        err: translateGenericError(errstr(items.err)),
                     };
                 }
                 return items.val;

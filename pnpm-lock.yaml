@@ -25,8 +25,8 @@ catalogs:
       specifier: ^0.7.6
       version: 0.7.6
     '@pistonite/workex':
-      specifier: ^0.0.8
-      version: 0.0.8
+      specifier: ^0.1.0
+      version: 0.1.0
     '@types/bun':
       specifier: ^1.2.9
       version: 1.2.9
@@ -99,7 +99,7 @@ importers:
         version: link:../skybook-api
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.0.8
+        version: 0.1.0
       '@tanstack/react-query':
         specifier: ^5.62.11
         version: 5.66.0(react@18.3.1)
@@ -372,7 +372,7 @@ importers:
         version: link:../skybook-api
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.0.8
+        version: 0.1.0
       lru-cache:
         specifier: ^11.0.2
         version: 11.0.2
@@ -441,7 +441,7 @@ importers:
         version: 0.26.0
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.0.8
+        version: 0.1.0
     devDependencies:
       mono-dev:
         specifier: workspace:*
@@ -1335,14 +1335,11 @@ packages:
     peerDependencies:
       react: ^18
 
-  '@pistonite/pure@0.24.2':
-    resolution: {integrity: sha512-aZ+cEjZwo8FBBJwQlpJEUSZ2YI+3rZMVFybsNS50evcpN+xnPEd5ZG1srhWG3078SP+TNk49Zn0MTIiRaWJAbg==}
-
   '@pistonite/pure@0.26.0':
     resolution: {integrity: sha512-VXvKmw1w23JndOBlrot7WSJE0RV2hDZhdwp4bgyLmmJOKm8l2RSqij70I/kYlIU5mokG54SWfFy84xZdkW7cTw==}
 
-  '@pistonite/workex@0.0.8':
-    resolution: {integrity: sha512-bTUShEVOplsKnqCZsHwmFUcXSmtLJvkmvbfA9bxjQkUf+xdJIoYu9CJlywau05/+wbl/e61byd43g0ue8VmtBQ==}
+  '@pistonite/workex@0.1.0':
+    resolution: {integrity: sha512-kY+L0naJZXW8Rm5wZVyX18TrrN2/k+6dPLs5NGOVF+Db3DY5kJu9I5PJBnAAYcdAqqA62GzNmjp25NsnhhJbOw==}
 
   '@prettier/cli@0.7.1':
     resolution: {integrity: sha512-YoXPLOLmEEHP4MKgzcEilzaUtlo80Qm5Pb+59QbgDeOsIExGBkRqZmC2+iwzSwEhlhTEpGqDwqb3+nP/dPay9A==}
@@ -4481,17 +4478,13 @@ snapshots:
       '@pistonite/pure': 0.26.0
       react: 18.3.1
 
-  '@pistonite/pure@0.24.2':
-    dependencies:
-      denque: 2.1.0
-
   '@pistonite/pure@0.26.0':
     dependencies:
       denque: 2.1.0
 
-  '@pistonite/workex@0.0.8':
+  '@pistonite/workex@0.1.0':
     dependencies:
-      '@pistonite/pure': 0.24.2
+      '@pistonite/pure': 0.26.0
 
   '@prettier/cli@0.7.1(prettier@3.4.2)':
     dependencies:

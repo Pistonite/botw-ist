@@ -36,7 +36,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * in which case the runtime initialization will fail.
      */
     public getCustomBlueFlameImage( ): WxPromise<Uint8Array | undefined> {
-        return this.sender.send<Uint8Array | undefined>(30 /* RuntimeApp.getCustomBlueFlameImage */, [ ]);
+        return this.sender.send<Uint8Array | undefined>(31 /* RuntimeApp.getCustomBlueFlameImage */, [ ]);
     }
 
     /**
@@ -45,7 +45,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * last one.
      */
     public onRunCompleted( ): WxPromise<void> {
-        return this.sender.sendVoid(31 /* RuntimeApp.onRunCompleted */, [ ]);
+        return this.sender.sendVoid(32 /* RuntimeApp.onRunCompleted */, [ ]);
     }
 
     /**
@@ -54,7 +54,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * or no match.
      */
     public resolveQuotedItem( query: string ): WxPromise<ItemSearchResult | undefined> {
-        return this.sender.send<ItemSearchResult | undefined>(32 /* RuntimeApp.resolveQuotedItem */, [ query ]);
+        return this.sender.send<ItemSearchResult | undefined>(33 /* RuntimeApp.resolveQuotedItem */, [ query ]);
     }
 }
 
@@ -63,13 +63,13 @@ export class _wxSenderImpl implements RuntimeApp {
  */
 export const _wxRecverImpl = (handler: RuntimeApp): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 30 /* RuntimeApp.getCustomBlueFlameImage */: {
+        case 31 /* RuntimeApp.getCustomBlueFlameImage */: {
             return handler.getCustomBlueFlameImage();
         }
-        case 31 /* RuntimeApp.onRunCompleted */: {
+        case 32 /* RuntimeApp.onRunCompleted */: {
             return handler.onRunCompleted();
         }
-        case 32 /* RuntimeApp.resolveQuotedItem */: {
+        case 33 /* RuntimeApp.resolveQuotedItem */: {
             const [ a0 ] = args;
             return handler.resolveQuotedItem( a0 );
         }

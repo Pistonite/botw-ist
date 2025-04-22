@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { makeStyles } from "@fluentui/react-components";
 import { ResizeLayout } from "@pistonite/shared-controls";
 
@@ -7,7 +8,8 @@ import { useNarrow, isLessProductive } from "self::pure-contrib";
 import { ExtensionPanel } from "./ExtensionPanel.tsx";
 import { useUIStore } from "./store.ts";
 import { Header } from "./Header.tsx";
-import { memo } from "react";
+import { VisibleInventoryPanel } from "./VisibleInventoryPanel.tsx";
+import { InventoryTitle } from "./components/InventoryTitle.tsx";
 
 const useStyles = makeStyles({
     root: {
@@ -20,35 +22,15 @@ const useStyles = makeStyles({
         display: "flex",
         flexDirection: "column",
     },
+    fullwh: {
+        width: "100%",
+        height: "100%",
+    },
 });
 
 const AppImpl: React.FC = () => {
     const narrow = useNarrow();
     const styles = useStyles();
-
-    // // Boot setups tied to component lifetime
-    // // so these work with HMR
-    // const runtime = useRuntime();
-    // useEffect(() => {
-    //     console.log("setting up main app component");
-    //
-    //     const updateInventoryView = serial({
-    //         fn: (checkCancel) => async () => {
-    //         }
-    //     });
-    //
-    //
-    //     const unsubscribe = useSessionStore.subscribe((curr, prev) => {
-    //         if (curr.activeScript !== prev.activeScript) {
-    //
-    //         }
-    //     });
-    //
-    //     return () => {
-    //         console.log("cleaning up main app component");
-    //         unsubscribe();
-    //     }
-    // }, [runtime]);
 
     const showExtensionPanel = useIsShowingExtensionPanel();
 
@@ -57,6 +39,13 @@ const AppImpl: React.FC = () => {
     );
     const setExtensionPanelPercentage = useUIStore(
         (state) => state.setExtensionPanelPercentage,
+    );
+
+    const gamedataInventoryPercentage = useUIStore(
+        (state) => state.gamedataInventoryPercentage,
+    );
+    const setGamedataInventoryPercentage = useUIStore(
+        (state) => state.setGamedataInventoryPercentage,
     );
 
     return (
@@ -75,7 +64,23 @@ const AppImpl: React.FC = () => {
                 <Header />
                 {showExtensionPanel && <ExtensionPanel />}
             </div>
-            <main style={{ background: "green", height: "100%" }}>main</main>
+            <main className={styles.fullwh}>
+                <ResizeLayout
+                    className={styles.fullwh}
+                    vertical
+                    valuePercent={gamedataInventoryPercentage}
+                    setValuePercent={setGamedataInventoryPercentage}
+                    minHeight={60}
+                >
+                    <div
+                        className={styles.fullwh}
+                        style={{ background: "green" }}
+                    >
+                        <InventoryTitle title="GameData" />
+                    </div>
+                    <VisibleInventoryPanel />
+                </ResizeLayout>
+            </main>
         </ResizeLayout>
     );
 };

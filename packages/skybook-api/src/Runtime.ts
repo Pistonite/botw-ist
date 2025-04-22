@@ -47,6 +47,9 @@ export interface Runtime {
         end: number,
     ): WxPromise<Uint32Array>;
 
+    /** Get index of the step from byte position in the script */
+    getStepFromPos(script: string, pos: number): WxPromise<number>;
+
     /**
      * Start executing the script in the background
      */
@@ -64,8 +67,6 @@ export interface Runtime {
     // getRuntimeDiagnostics(
     //     script: string,
     // ): WorkexPromise<{ range: [number, number]; message: string }[]>;
-    //
-    // getStepFromPos(script: string, pos: number): WorkexPromise<number>;
     //
     // getInventory(scriptHash: string, step: number): WorkexPromise<unknown>;
 }

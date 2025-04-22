@@ -1,8 +1,7 @@
 import { create } from "zustand";
 import { debounce } from "@pistonite/pure/sync";
-import { useDebounce } from "@uidotdev/usehooks";
 
-import type { ScriptEnvImage } from "@pistonite/skybook-api";
+import type { InventoryListView, ScriptEnvImage } from "@pistonite/skybook-api";
 import { translateUI } from "skybook-localization";
 
 import { useApplicationStore } from "./ApplicationStore.ts";
@@ -54,7 +53,7 @@ export type SessionStore = {
 
     /** The script that is currently being edited */
     activeScript: string;
-    setActiveScript: (script: string) => void;
+    setActiveScript: (script: string, charPos?: number) => void;
 
     /** The version of the custom image that is currently running */
     runningCustomImageVersion: ScriptEnvImage | "";
@@ -64,6 +63,23 @@ export type SessionStore = {
     bytePos: number;
     setBytePos: (bytePos: number) => void;
     setCharPos: (charPos: number) => void;
+
+    /** Current step index of the active selection */
+    stepIndex: number;
+    setStepIndex: (stepIndex: number) => void;
+    initiallyExecuted: boolean;
+    executionInProgress: boolean;
+    setExecutionInProgress: (inProgress: boolean) => void;
+
+    /** Cached inventory list views. Key is the step index */
+    inventoryListViews: Record<number, InventoryListView>;
+    upToDateSteps: number[];
+    setInventoryListViewInCache: (
+        step: number,
+        view: InventoryListView,
+    ) => void;
+    /** Invalidate all cached inventory views */
+    invalidateInventoryCache: () => void;
 };
 
 /**
@@ -159,25 +175,27 @@ export const useSessionStore = create<SessionStore>()((set) => {
         setHasUnsavedChanges: (value) => set({ hasUnsavedChanges: value }),
 
         activeScript: savedScript,
-        setActiveScript: (script) => {
+        setActiveScript: (script, charPos) => {
             set(({ mode, initialScript }) => {
                 if (mode === "read-only") {
                     return {};
                 }
                 if (mode === "edit-only") {
                     const hasUnsavedChanges = initialScript !== script;
-                    return {
-                        activeScript: script,
+                    return getSetActiveScriptPayload(
+                        script,
                         hasUnsavedChanges,
-                    };
+                        charPos,
+                    );
                 }
                 const { savedScript } = useApplicationStore.getState();
                 const hasUnsavedChanges = savedScript !== script;
                 setTimeout(() => persistScript(script), 0);
-                return {
-                    activeScript: script,
+                return getSetActiveScriptPayload(
+                    script,
                     hasUnsavedChanges,
-                };
+                    charPos,
+                );
             });
         },
 
@@ -195,15 +213,55 @@ export const useSessionStore = create<SessionStore>()((set) => {
                 return { bytePos: charPosToBytePos(activeScript, charPos) };
             });
         },
+
+        stepIndex: 0,
+        setStepIndex: (stepIndex) => {
+            set({ stepIndex });
+        },
+
+        initiallyExecuted: false,
+        executionInProgress: false,
+        setExecutionInProgress: (inProgress) => {
+            if (inProgress) {
+                set({ executionInProgress: true, initiallyExecuted: true });
+            } else {
+                set({ executionInProgress: false });
+            }
+        },
+
+        inventoryListViews: {},
+        upToDateSteps: [],
+        setInventoryListViewInCache: (step, view) => {
+            set(({ inventoryListViews, upToDateSteps }) => {
+                return {
+                    inventoryListViews: {
+                        ...inventoryListViews,
+                        [step]: view,
+                    },
+                    upToDateSteps: [...upToDateSteps, step],
+                };
+            });
+        },
+        invalidateInventoryCache: () => {
+            set({ upToDateSteps: [] });
+        },
     };
 });
 
-/**
- * Get the debounced value of hasUnsavedChanges of the session
- */
-export const useDebouncedHasUnsavedChanges = (delay: number) => {
-    const hasUnsavedChanges = useSessionStore(
-        (state) => state.hasUnsavedChanges,
-    );
-    return useDebounce(hasUnsavedChanges, delay);
+const getSetActiveScriptPayload = (
+    script: string,
+    hasUnsavedChanges: boolean,
+    charPos: number | undefined,
+) => {
+    if (charPos !== undefined) {
+        return {
+            activeScript: script,
+            hasUnsavedChanges,
+            bytePos: charPosToBytePos(script, charPos),
+        };
+    }
+    return {
+        activeScript: script,
+        hasUnsavedChanges,
+    };
 };

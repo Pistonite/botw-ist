@@ -15,9 +15,7 @@ pub struct JsQuotedItemResolver {
 impl JsQuotedItemResolver {
     /// Create a new resolver that throws an error when called
     pub fn new(delegate: Function) -> Self {
-        Self {
-            delegate
-        }
+        Self { delegate }
     }
 
     pub async fn call(self, word: String) -> Option<ResolvedItem> {
@@ -27,7 +25,9 @@ impl JsQuotedItemResolver {
         }
     }
     pub async fn call_internal(&self, word: &str) -> Result<Option<ResolvedItem>, JsValue> {
-        let search_result = self.delegate.call1(&JsValue::NULL, &JsValue::from_str(word))?;
+        let search_result = self
+            .delegate
+            .call1(&JsValue::NULL, &JsValue::from_str(word))?;
         // delegate must return a promise
         let promise = search_result.dyn_into::<Promise>()?;
         let result = JsFuture::from(promise).await?;
@@ -37,9 +37,11 @@ impl JsQuotedItemResolver {
         // actor must be a string
         let actor = match Reflect::get(&result, &JsValue::from_str("actor"))?.as_string() {
             Some(actor) => actor,
-            None => return Ok(None)
+            None => return Ok(None),
         };
-        let effect_id = Reflect::get(&result, &JsValue::from_str("cookEffect"))?.as_f64().unwrap_or_default();
+        let effect_id = Reflect::get(&result, &JsValue::from_str("cookEffect"))?
+            .as_f64()
+            .unwrap_or_default();
         Ok(Some(ResolvedItem::with_effect_id(actor, effect_id as i32)))
     }
 }
@@ -51,4 +53,3 @@ impl QuotedItemResolver for JsQuotedItemResolver {
         Box::pin(self.clone().call(word.to_string()))
     }
 }
-

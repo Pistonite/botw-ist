@@ -19,7 +19,9 @@ const openImageDB = (): Promise<IDBDatabase | undefined> => {
         request.onupgradeneeded = () => {
             const db: IDBDatabase = request.result;
             if (!db) {
-                console.error("Failed to open database: (null in onupgradeneeded)");
+                console.error(
+                    "Failed to open database: (null in onupgradeneeded)",
+                );
                 return resolve(undefined);
             }
             db.onerror = (event) => {
@@ -39,12 +41,14 @@ const openImageDB = (): Promise<IDBDatabase | undefined> => {
     });
 };
 
-/** 
+/**
  * Put the image into the IndexedDB, returns false if fails
  *
  * Undefined means to delete the stored image
  */
-export const putImage = async (image: Uint8Array | undefined): Promise<boolean> => {
+export const putImage = async (
+    image: Uint8Array | undefined,
+): Promise<boolean> => {
     const db = await openImageDB();
     if (!db) {
         return false;
@@ -89,7 +93,7 @@ export const getImage = async (): Promise<Uint8Array | undefined> => {
             const request = store.get(DbKey);
             request.onsuccess = () => {
                 const image = request.result;
-                if (!image || (!(image instanceof Uint8Array))) {
+                if (!image || !(image instanceof Uint8Array)) {
                     return resolve(undefined);
                 }
                 resolve(image);

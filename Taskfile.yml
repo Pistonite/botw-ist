@@ -138,7 +138,7 @@ tasks:
     deps:
       - parser:check
       # - task: runtime:check
-      # - task: runtime-wasm:check
+      - task: runtime-wasm:check
       
 
   test:

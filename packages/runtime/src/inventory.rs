@@ -63,6 +63,7 @@ impl From<Pointer> for u64 {
 pub struct InventoryListView {
     pub info: InventoryInfo,
     pub items: Vec<ItemSlotInfo>,
+    pub count: i32,
 }
 
 /// Inventory data stored in GameData (GDT)
