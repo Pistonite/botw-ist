@@ -74,7 +74,10 @@ export type SessionStore = {
     /** Cached inventory list views. Key is the step index */
     inventoryListViews: Record<number, InventoryListView>;
     upToDateSteps: number[];
-    setInventoryListViewInCache: (step: number, view: InventoryListView) => void;
+    setInventoryListViewInCache: (
+        step: number,
+        view: InventoryListView,
+    ) => void;
     /** Invalidate all cached inventory views */
     invalidateInventoryCache: () => void;
 };
@@ -179,12 +182,20 @@ export const useSessionStore = create<SessionStore>()((set) => {
                 }
                 if (mode === "edit-only") {
                     const hasUnsavedChanges = initialScript !== script;
-                    return getSetActiveScriptPayload(script, hasUnsavedChanges, charPos);
+                    return getSetActiveScriptPayload(
+                        script,
+                        hasUnsavedChanges,
+                        charPos,
+                    );
                 }
                 const { savedScript } = useApplicationStore.getState();
                 const hasUnsavedChanges = savedScript !== script;
                 setTimeout(() => persistScript(script), 0);
-                return getSetActiveScriptPayload(script, hasUnsavedChanges, charPos);
+                return getSetActiveScriptPayload(
+                    script,
+                    hasUnsavedChanges,
+                    charPos,
+                );
             });
         },
 
@@ -221,7 +232,7 @@ export const useSessionStore = create<SessionStore>()((set) => {
         inventoryListViews: {},
         upToDateSteps: [],
         setInventoryListViewInCache: (step, view) => {
-            set(({inventoryListViews, upToDateSteps}) => {
+            set(({ inventoryListViews, upToDateSteps }) => {
                 return {
                     inventoryListViews: {
                         ...inventoryListViews,
@@ -237,8 +248,11 @@ export const useSessionStore = create<SessionStore>()((set) => {
     };
 });
 
-
-const getSetActiveScriptPayload = (script: string, hasUnsavedChanges: boolean, charPos: number | undefined) => {
+const getSetActiveScriptPayload = (
+    script: string,
+    hasUnsavedChanges: boolean,
+    charPos: number | undefined,
+) => {
     if (charPos !== undefined) {
         return {
             activeScript: script,
@@ -250,4 +264,4 @@ const getSetActiveScriptPayload = (script: string, hasUnsavedChanges: boolean, c
         activeScript: script,
         hasUnsavedChanges,
     };
-}
+};

@@ -44,7 +44,9 @@ const AppImpl: React.FC = () => {
     const gamedataInventoryPercentage = useUIStore(
         (state) => state.gamedataInventoryPercentage,
     );
-    const setGamedataInventoryPercentage = useUIStore(state => state.setGamedataInventoryPercentage);
+    const setGamedataInventoryPercentage = useUIStore(
+        (state) => state.setGamedataInventoryPercentage,
+    );
 
     return (
         <ResizeLayout
@@ -63,14 +65,17 @@ const AppImpl: React.FC = () => {
                 {showExtensionPanel && <ExtensionPanel />}
             </div>
             <main className={styles.fullwh}>
-                <ResizeLayout 
+                <ResizeLayout
                     className={styles.fullwh}
                     vertical
                     valuePercent={gamedataInventoryPercentage}
                     setValuePercent={setGamedataInventoryPercentage}
                     minHeight={60}
                 >
-                    <div className={styles.fullwh} style={{background: "green"}}>
+                    <div
+                        className={styles.fullwh}
+                        style={{ background: "green" }}
+                    >
                         <InventoryTitle title="GameData" />
                     </div>
                     <VisibleInventoryPanel />

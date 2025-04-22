@@ -2,10 +2,10 @@ use std::sync::Arc;
 
 use js_sys::Function;
 use serde::{Deserialize, Serialize};
+use skybook_parser::{search, ParseOutput};
 use skybook_runtime::RunOutput;
 use tsify_next::Tsify;
 use wasm_bindgen::prelude::*;
-use skybook_parser::{search, ParseOutput};
 
 mod js_item_resolve;
 use js_item_resolve::JsQuotedItemResolver;
@@ -45,10 +45,7 @@ pub fn resolve_item_ident(query: String) -> Vec<ItemSearchResult> {
 /// ## Pointer Ownership
 /// Returns ownership of the ParseOutput pointer.
 #[wasm_bindgen]
-pub async fn parse_script(
-    script: String, 
-    resolve_quoted_item: Function
-) -> *const ParseOutput {
+pub async fn parse_script(script: String, resolve_quoted_item: Function) -> *const ParseOutput {
     let resolver = JsQuotedItemResolver::new(resolve_quoted_item);
     let parse_output = skybook_parser::parse(&resolver, &script).await;
     Arc::into_raw(Arc::new(parse_output))
@@ -76,7 +73,7 @@ pub fn parse_script_semantic(script: String, start: usize, end: usize) -> Vec<u3
 /// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
 pub fn get_parser_errors(
-    parse_output_ref: *const ParseOutput // borrowed
+    parse_output_ref: *const ParseOutput, // borrowed
 ) -> Vec<skybook_parser::ErrorReport> {
     if parse_output_ref.is_null() {
         return Vec::new();
@@ -87,8 +84,7 @@ pub fn get_parser_errors(
 
 /// Free the parse output
 #[wasm_bindgen]
-pub fn free_parse_output(
-    parse_output: *const ParseOutput // takes ownership
+pub fn free_parse_output(parse_output: *const ParseOutput, // takes ownership
 ) {
     if parse_output.is_null() {
         return;
@@ -98,9 +94,7 @@ pub fn free_parse_output(
 
 /// Add ref for the parse output
 #[wasm_bindgen]
-pub fn add_ref_parse_output(
-    parse_output_ref: *const ParseOutput
-) -> *const ParseOutput {
+pub fn add_ref_parse_output(parse_output_ref: *const ParseOutput) -> *const ParseOutput {
     if parse_output_ref.is_null() {
         return std::ptr::null();
     }
@@ -141,8 +135,7 @@ pub async fn run_parsed(parse_output: *const ParseOutput) -> *const RunOutput {
 
 /// Free the run output
 #[wasm_bindgen]
-pub fn free_run_output(
-    run_output: *const RunOutput // takes ownership
+pub fn free_run_output(run_output: *const RunOutput, // takes ownership
 ) {
     if run_output.is_null() {
         return;
@@ -152,9 +145,7 @@ pub fn free_run_output(
 
 /// Add ref for the run output
 #[wasm_bindgen]
-pub fn add_ref_run_output(
-    run_output_ref: *const RunOutput
-) -> *const RunOutput {
+pub fn add_ref_run_output(run_output_ref: *const RunOutput) -> *const RunOutput {
     if run_output_ref.is_null() {
         return std::ptr::null();
     }

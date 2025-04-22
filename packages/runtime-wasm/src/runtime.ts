@@ -1,4 +1,3 @@
-
 import { type Erc, makeErcType } from "@pistonite/pure/memory";
 
 import { type QuotedItemResolverFn, parseScript } from "./parser.ts";
@@ -18,11 +17,16 @@ let lastScript = "";
 let serial = 0;
 const cachedRunOutputErc = makeRunOutputErc(undefined);
 
-export const executeScript = (script: string, resolver: QuotedItemResolverFn)
-    : Promise<Erc<RunOutput>> => {
-
+export const executeScript = (
+    script: string,
+    resolver: QuotedItemResolverFn,
+): Promise<Erc<RunOutput>> => {
     const isScriptUpToDate = lastScript === script;
-    if (cachedRunOutputErc.value !== undefined && !runPromise && isScriptUpToDate) {
+    if (
+        cachedRunOutputErc.value !== undefined &&
+        !runPromise &&
+        isScriptUpToDate
+    ) {
         return Promise.resolve(cachedRunOutputErc.getStrong());
     }
     if (runPromise && isScriptUpToDate) {
@@ -31,7 +35,7 @@ export const executeScript = (script: string, resolver: QuotedItemResolverFn)
 
     runPromise = executeScriptInternal(script, resolver);
     return runPromise;
-}
+};
 
 const executeScriptInternal = async (
     script: string,
@@ -45,10 +49,13 @@ const executeScriptInternal = async (
     const parseOutputErc = await parseScript(script, resolver);
     const parseOutputRaw = parseOutputErc.take();
     let outputRaw = undefined;
-    if (parseOutputRaw) { // shouldn't be possible to be null, but just checking
+    if (parseOutputRaw) {
+        // shouldn't be possible to be null, but just checking
         outputRaw = await wasm_bindgen.run_parsed(parseOutputRaw);
     }
-    console.log(`[worker] executing script finished in ${Math.round(performance.now() - start)}ms`);
+    console.log(
+        `[worker] executing script finished in ${Math.round(performance.now() - start)}ms`,
+    );
     // update cached result
     if (serialBefore === serial) {
         runPromise = undefined;
@@ -60,22 +67,31 @@ const executeScriptInternal = async (
 };
 
 export const getInventoryListView = async (
-script: string,
+    script: string,
     resolver: QuotedItemResolverFn,
-bytePos: number): Promise<InventoryListView> => {
+    bytePos: number,
+): Promise<InventoryListView> => {
     const parseOutputErc = await parseScript(script, resolver);
     const runOutputErc = await executeScript(script, resolver);
 
     // TODO: report error through return error type
-    if (parseOutputErc.value === undefined || runOutputErc.value === undefined) {
+    if (
+        parseOutputErc.value === undefined ||
+        runOutputErc.value === undefined
+    ) {
         parseOutputErc.free();
         runOutputErc.free();
-        throw new Error(`parseOutputErc or runOutputErc is null: ${parseOutputErc.value}, ${runOutputErc.value}`);
+        throw new Error(
+            `parseOutputErc or runOutputErc is null: ${parseOutputErc.value}, ${runOutputErc.value}`,
+        );
     }
 
-    const output = wasm_bindgen.get_inventory_list_view(runOutputErc.value, 
-        parseOutputErc.value, bytePos);
+    const output = wasm_bindgen.get_inventory_list_view(
+        runOutputErc.value,
+        parseOutputErc.value,
+        bytePos,
+    );
     parseOutputErc.free();
     runOutputErc.free();
     return output;
-}
+};

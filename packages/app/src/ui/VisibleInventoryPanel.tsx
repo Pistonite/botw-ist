@@ -1,6 +1,11 @@
 import { memo } from "react";
 import { useDark } from "@pistonite/pure-react";
-import { Text, makeStyles, Tooltip, mergeClasses } from "@fluentui/react-components";
+import {
+    Text,
+    makeStyles,
+    Tooltip,
+    mergeClasses,
+} from "@fluentui/react-components";
 
 import { ItemSlot, ItemTooltip } from "skybook-item-system";
 import { useUITranslation } from "skybook-localization";
@@ -61,8 +66,8 @@ const useStyles = makeStyles({
         display: "flex",
         flexWrap: "wrap",
         maxHeight: 0,
-        overflow: "visible"
-    }
+        overflow: "visible",
+    },
 });
 
 export const VisibleInventoryPanelImpl: React.FC = () => {
@@ -72,40 +77,52 @@ export const VisibleInventoryPanelImpl: React.FC = () => {
     const showSpinner = loading || stale || !inventory;
     const t = useUITranslation();
     return (
-    <div className={styles.container} 
-        >
-            <div className={styles.background} 
-            style={{
-            backgroundImage: `url(${getOverworldBackgroundUrl()})`,
-        }}
+        <div className={styles.container}>
+            <div
+                className={styles.background}
+                style={{
+                    backgroundImage: `url(${getOverworldBackgroundUrl()})`,
+                }}
             />
-            <div className={mergeClasses(styles.main, dark?styles.mainBgDark:styles.mainBgLight)}>
-                <InventoryTitle title={t("main.visible_inventory.title")}
+            <div
+                className={mergeClasses(
+                    styles.main,
+                    dark ? styles.mainBgDark : styles.mainBgLight,
+                )}
+            >
+                <InventoryTitle
+                    title={t("main.visible_inventory.title")}
                     description={t("main.visible_inventory.desc")}
                     supertitle={
-                    <Tooltip relationship="label" content={<>{t("main.mcount_desc")} (<Code>mCount</Code>)</>}>
-                        <Text font="numeric">[ {inventory?.count ?? "???"} ]</Text>
-                    </Tooltip>
+                        <Tooltip
+                            relationship="label"
+                            content={
+                                <>
+                                    {t("main.mcount_desc")} (<Code>mCount</Code>
+                                    )
+                                </>
+                            }
+                        >
+                            <Text font="numeric">
+                                [ {inventory?.count ?? "???"} ]
+                            </Text>
+                        </Tooltip>
                     }
-                    loading={showSpinner}>
-                </InventoryTitle>
-                {
-                    inventory !== undefined && (
-                        <div className={styles.inventoryScroll}>
-                            <div className={styles.inventoryList}>
-                                {
-                                    inventory.items.map((info, i) => (
-                                        <ItemTooltip info={info} key={i}>
-                                            <ItemSlot info={info} />
-                                        </ItemTooltip>
-                                    ))
-                                }
-                            </div>
+                    loading={showSpinner}
+                ></InventoryTitle>
+                {inventory !== undefined && (
+                    <div className={styles.inventoryScroll}>
+                        <div className={styles.inventoryList}>
+                            {inventory.items.map((info, i) => (
+                                <ItemTooltip info={info} key={i}>
+                                    <ItemSlot info={info} />
+                                </ItemTooltip>
+                            ))}
                         </div>
-                    )
-                }
+                    </div>
+                )}
             </div>
-    </div>
+        </div>
     );
 };
 

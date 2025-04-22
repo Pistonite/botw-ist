@@ -8,24 +8,27 @@ const useStyles = makeStyles({
     },
     dark: {
         backgroundColor: "#292c3c",
-        color: "#ef9f76"
+        color: "#ef9f76",
     },
     light: {
         backgroundColor: "#e6e9ef",
-        color: "#e64553"
-    }
+        color: "#e64553",
+    },
 });
 
 /** Inline code text */
-export const Code: React.FC<PropsWithChildren> = ({children}) => {
+export const Code: React.FC<PropsWithChildren> = ({ children }) => {
     const styles = useStyles();
     const dark = useDark();
     return (
-        <Text 
-            className={mergeClasses(styles.base, dark?styles.dark:styles.light)}
+        <Text
+            className={mergeClasses(
+                styles.base,
+                dark ? styles.dark : styles.light,
+            )}
             font="monospace"
         >
-        {children}
-    </Text>
+            {children}
+        </Text>
     );
-}
+};

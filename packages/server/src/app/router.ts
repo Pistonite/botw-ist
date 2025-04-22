@@ -155,6 +155,6 @@ Disallow: /github/
                 "Content-Type": "text/plain",
                 "Cache-Control": "no-cache",
             },
-        })
+        }),
     };
 };

@@ -1,5 +1,10 @@
 import type { PropsWithChildren } from "react";
-import { Spinner, Tooltip, makeStyles, mergeClasses } from "@fluentui/react-components";
+import {
+    Spinner,
+    Tooltip,
+    makeStyles,
+    mergeClasses,
+} from "@fluentui/react-components";
 import { Info16Regular } from "@fluentui/react-icons";
 import { useDark } from "@pistonite/pure-react";
 
@@ -37,9 +42,8 @@ const useStyles = makeStyles({
     },
     loadingSpinner: {
         justifyContent: "flex-end",
-    }
+    },
 });
-
 
 export type InventoryTitleProps = {
     /** Title of the section of the inventory. */
@@ -53,27 +57,41 @@ export type InventoryTitleProps = {
 };
 
 /** Header of the inventory display section. */
-export const InventoryTitle: React.FC<PropsWithChildren<InventoryTitleProps>> = ({title, description, supertitle, loading, children}) => {
+export const InventoryTitle: React.FC<
+    PropsWithChildren<InventoryTitleProps>
+> = ({ title, description, supertitle, loading, children }) => {
     const styles = useStyles();
     const dark = useDark();
     return (
         <div className={styles.container}>
-            <span className={mergeClasses(styles.title, dark?styles.titleColorDark:styles.titleColorLight)}>
-            <GlowyText size={500} weight="bold">
-                {title}
-            </GlowyText>
-                <span className={styles.supertitle}>
-                {description && (
-                    <Tooltip relationship="label" content={description}>
-                        <Info16Regular className={styles.infoIcon} />
-                    </Tooltip>
+            <span
+                className={mergeClasses(
+                    styles.title,
+                    dark ? styles.titleColorDark : styles.titleColorLight,
                 )}
-                {supertitle}
+            >
+                <GlowyText size={500} weight="bold">
+                    {title}
+                </GlowyText>
+                <span className={styles.supertitle}>
+                    {description && (
+                        <Tooltip relationship="label" content={description}>
+                            <Info16Regular className={styles.infoIcon} />
+                        </Tooltip>
+                    )}
+                    {supertitle}
                 </span>
             </span>
             {children}
             <span className={styles.end}>
-                {loading && <Spinner className={styles.loadingSpinner} as="span" size="tiny" delay={300} />}
+                {loading && (
+                    <Spinner
+                        className={styles.loadingSpinner}
+                        as="span"
+                        size="tiny"
+                        delay={300}
+                    />
+                )}
             </span>
         </div>
     );

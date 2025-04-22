@@ -38,14 +38,23 @@ export async function createRuntime() {
     const runtime = result.val.protocols.runtime;
 
     // create a serial event for triggering simulation when state change
-    const triggerSimulation = serial( {
+    const triggerSimulation = serial({
         fn: (checkCancel) => async (scriptChanged: boolean) => {
-            const { invalidateInventoryCache, setExecutionInProgress, activeScript, bytePos, setStepIndex } = useSessionStore.getState();
+            const {
+                invalidateInventoryCache,
+                setExecutionInProgress,
+                activeScript,
+                bytePos,
+                setStepIndex,
+            } = useSessionStore.getState();
             setExecutionInProgress(true);
             if (scriptChanged) {
                 invalidateInventoryCache();
             }
-            const stepIndex = await runtime.getStepFromPos(activeScript, bytePos);
+            const stepIndex = await runtime.getStepFromPos(
+                activeScript,
+                bytePos,
+            );
             checkCancel();
             setExecutionInProgress(false);
             if (stepIndex.err) {
@@ -53,12 +62,16 @@ export async function createRuntime() {
                 return;
             }
             setStepIndex(stepIndex.val);
-        }
+        },
     });
 
     useSessionStore.subscribe((curr, prev) => {
         const scriptChanged = curr.activeScript !== prev.activeScript;
-        if (!curr.initiallyExecuted || scriptChanged || curr.bytePos !== prev.bytePos) {
+        if (
+            !curr.initiallyExecuted ||
+            scriptChanged ||
+            curr.bytePos !== prev.bytePos
+        ) {
             triggerSimulation(scriptChanged);
         }
     });

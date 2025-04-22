@@ -1,7 +1,10 @@
 import { type Result, errstr } from "@pistonite/pure/result";
 import { debounce } from "@pistonite/pure/sync";
 
-import { type SearchResultNoScore, translateGenericError } from "skybook-localization";
+import {
+    type SearchResultNoScore,
+    translateGenericError,
+} from "skybook-localization";
 
 import {
     FirstPartyExtensionAdapter,

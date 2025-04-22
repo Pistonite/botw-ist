@@ -24,7 +24,9 @@ export const useInventoryListView = () => {
     const stepIndex = useSessionStore((state) => state.stepIndex);
     const cachedViews = useSessionStore((state) => state.inventoryListViews);
     const cacheValidity = useSessionStore((state) => state.upToDateSteps);
-    const setInventoryListViewInCache = useSessionStore((state) => state.setInventoryListViewInCache);
+    const setInventoryListViewInCache = useSessionStore(
+        (state) => state.setInventoryListViewInCache,
+    );
 
     const inventory: InventoryListView | undefined = cachedViews[stepIndex];
     const cacheIsValid = !!(cacheValidity.includes(stepIndex) && inventory);
@@ -37,7 +39,10 @@ export const useInventoryListView = () => {
         }
         let current = true;
         const updateInventory = async () => {
-            const view = await runtime.getInventoryListView(activeScript, stepIndex)
+            const view = await runtime.getInventoryListView(
+                activeScript,
+                stepIndex,
+            );
             const activeScriptNow = useSessionStore.getState().activeScript;
             if (!current || activeScriptNow !== activeScript) {
                 return;
@@ -53,15 +58,19 @@ export const useInventoryListView = () => {
 
         return () => {
             current = false;
-        }
+        };
     }, [
-            inProgress,
-            cacheIsValid, 
-            runtime, 
-            activeScript, 
-            stepIndex, 
-            setInventoryListViewInCache, 
-        ]);
+        inProgress,
+        cacheIsValid,
+        runtime,
+        activeScript,
+        stepIndex,
+        setInventoryListViewInCache,
+    ]);
 
-    return { inventory: inventory as InventoryListView | undefined, stale: !cacheIsValid, loading: inProgress };
-}
+    return {
+        inventory: inventory as InventoryListView | undefined,
+        stale: !cacheIsValid,
+        loading: inProgress,
+    };
+};
