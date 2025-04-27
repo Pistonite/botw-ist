@@ -1,4 +1,3 @@
-import "./CalamitySans.css";
 import { Text, makeStyles, mergeClasses } from "@fluentui/react-components";
 import { Link32Regular } from "@fluentui/react-icons";
 
@@ -7,11 +6,10 @@ import {
     type ActorSpriteProps,
     ModifierSprite,
 } from "botw-item-assets";
-import type { ItemSlotInfo } from "@pistonite/skybook-api";
 
-import { CookEffect, PouchItemType, SpecialStatus } from "./data/enums.ts";
-import { getModifierInfo } from "./data/ModifierInfo.ts";
-import { getActorParam } from "./data/ActorData.ts";
+import { SpecialStatus } from "../data";
+
+import type { ItemSlotProps } from "./ItemSlotProps.ts";
 
 const useStyles = makeStyles({
     container: {
@@ -166,44 +164,33 @@ const useStyles = makeStyles({
     },
 });
 
-export type ItemSlotProps = {
-    info: ItemSlotInfo;
-} & Pick<
-    ActorSpriteProps,
-    "cheap" | "blank" | "powered" | "deactive" | "disableAnimation"
->;
+export type ItemSlotContextProps = Pick<ActorSpriteProps, "cheap" | "disableAnimation"> ;
+export type ItemSlotFullProps = ItemSlotContextProps & ItemSlotProps;
 
 /** The Item slot display */
-export const ItemSlot: React.FC<ItemSlotProps> = ({
-    info,
+export const ItemSlot: React.FC<ItemSlotFullProps> = ({
     cheap,
-    deactive,
     disableAnimation,
+    actor,
+    elixirEffect,
+    isEquipped,
+    isTranslucent,
+    count,
+    durability,
+    isInBrokenSlot,
+    isEntangled,
+    holdingCount,
+    status,
+    statusIcon,
+    iconValue: statusIconValue,
+    isAlternativeColor: statusIsAlternativeColor,
+    blank,
+    deactive,
+    badlyDamaged,
 }) => {
     const styles = useStyles();
-    const {
-        actorName,
-        modEffectId,
-        itemType,
-        value,
-        isEquipped,
-        isInBrokenSlot,
-        isInInventory,
-        holdingCount,
-        promptEntangled,
-    } = info;
 
     disableAnimation = disableAnimation || cheap;
-
-    const canStack = getActorParam(actorName, "canStack");
-
-    const isEquipment =
-        itemType === PouchItemType.Sword ||
-        itemType === PouchItemType.Shield ||
-        itemType === PouchItemType.Bow;
-    const badlyDamaged = isEquipment && value < 300;
-
-    const modifier = getModifierInfo(info);
     return (
         <div className={styles.container}>
             {/* Background & box*/}
@@ -211,9 +198,8 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({
                 className={mergeClasses(
                     styles.layer,
                     isInBrokenSlot && styles.broken,
-                    !isInInventory && styles.imageTranslucent,
+                    isTranslucent && styles.imageTranslucent,
                 )}
-                // style={{ zIndex: 1 }}
             >
                 <div
                     className={mergeClasses(
@@ -238,17 +224,18 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({
             </div>
             <div className={mergeClasses(styles.layer, styles.image)}>
                 <ActorSprite
-                    actor={actorName}
-                    effect={CookEffect[modEffectId]}
+                    actor={actor}
+                    effect={elixirEffect}
                     cheap={cheap}
                     deactive={deactive}
                     disableAnimation={disableAnimation}
                     badlyDamaged={badlyDamaged}
+                    blank={blank}
                 />
             </div>
             {holdingCount > 0 && (
                 <div className={mergeClasses(styles.layer)}>
-                    {/* Using DOM instead of Unicode, in case user is missing font */}
+                    {/* Using DOM instead of Unicode for the circle, in case user is missing font */}
                     <div className={styles.holding}>
                         {Array.from({ length: holdingCount }).map((_, i) => (
                             <span
@@ -259,7 +246,7 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({
                     </div>
                 </div>
             )}
-            {isEquipment && (
+            {durability !== undefined && (
                 <div className={mergeClasses(styles.layer)}>
                     <span
                         className={mergeClasses(
@@ -267,13 +254,12 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({
                             styles.durability,
                         )}
                     >
-                        <Text font="numeric">{formatDurability(value)}</Text>
+                        <Text font="numeric">{Number.isInteger(durability) ? durability : durability.toFixed(2)}</Text>
                     </span>
                 </div>
             )}
             {
-                // > 1 for displaying corrupted stacks
-                !isEquipment && (canStack || value > 1) && (
+                count!== undefined && (
                     <div className={mergeClasses(styles.layer)}>
                         <span
                             className={mergeClasses(
@@ -281,12 +267,12 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({
                                 !isEquipped && styles.itemCountShadow,
                             )}
                         >
-                            x{value}
+                            x{count}
                         </span>
                     </div>
                 )
             }
-            {promptEntangled && (
+            {isEntangled && (
                 <>
                     <div className={mergeClasses(styles.layer)}>
                         <span
@@ -330,8 +316,8 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({
                     </div>
                 </>
             )}
-            {(!!modifier.iconValue ||
-                modifier.status !== SpecialStatus.None) && (
+            {(!!statusIconValue ||
+                status !== SpecialStatus.None) && (
                 <div className={mergeClasses(styles.layer)}>
                     <span
                         className={mergeClasses(
@@ -339,25 +325,25 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({
                             styles.modifierOverlay,
                         )}
                     >
-                        {modifier.status !== SpecialStatus.None &&
-                            modifier.statusIcon && (
+                        {status !== SpecialStatus.None &&
+                            statusIcon && (
                                 <div className={styles.modifier}>
                                     <ModifierSprite
-                                        status={modifier.statusIcon}
+                                        status={statusIcon}
                                     />
                                 </div>
                             )}
-                        {modifier.iconValue && (
+                        {!!statusIconValue && (
                             <Text
                                 font="numeric"
                                 className={mergeClasses(
                                     styles.modifierText,
-                                    (modifier.status === SpecialStatus.None ||
-                                        !modifier.statusIcon) &&
+                                    (status === SpecialStatus.None ||
+                                        !statusIcon) &&
                                         styles.modifierTextBeginPad,
                                 )}
                             >
-                                {modifier.iconValue}
+                                {statusIconValue}
                             </Text>
                         )}
                     </span>
@@ -365,12 +351,4 @@ export const ItemSlot: React.FC<ItemSlotProps> = ({
             )}
         </div>
     );
-};
-
-const formatDurability = (value: number): string => {
-    const durability = value / 100;
-    if (Number.isInteger(durability)) {
-        return durability.toString();
-    }
-    return durability.toFixed(2);
 };

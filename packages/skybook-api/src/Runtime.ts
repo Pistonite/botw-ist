@@ -2,7 +2,7 @@ import type { WxPromise } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
 
 import type { ParserErrorReport } from "./parser";
-import type { InventoryListView } from "./runtime";
+import type { InvView_PouchList } from "./runtime";
 import type {
     ItemSearchResult,
     RuntimeInitArgs,
@@ -56,17 +56,12 @@ export interface Runtime {
     executeScript(script: string): WxPromise<void>;
 
     /**
-     * Execute the script if not up-to-date, and return the inventory list view
+     * Execute the script if not up-to-date, and return the pouch inventory list view
      * at the byte offset `pos` in the script.
      */
-    getInventoryListView(
-        script: string,
-        pos: number,
-    ): WxPromise<InventoryListView>;
+    getPouchList(script: string, pos: number): WxPromise<InvView_PouchList>;
 
     // getRuntimeDiagnostics(
     //     script: string,
     // ): WorkexPromise<{ range: [number, number]; message: string }[]>;
-    //
-    // getInventory(scriptHash: string, step: number): WorkexPromise<unknown>;
 }

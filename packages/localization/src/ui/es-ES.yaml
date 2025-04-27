@@ -124,12 +124,13 @@ item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
 
 
 # Item Slot Tooltip
+tooltip.durability: "Durabilidad: {{current}}/{{max}}"
 tooltip.equipped: "Equipped"
 tooltip.holding: "Holding {{holding}}"
+tooltip.stamina_recover: "+{{wheels}} círculo(s)"
+tooltip.stamina_recover_ex: "{{wheels}} círculo(s)"
 tooltip.translucent: "Translucent"
-tooltip.value: "Value: {{value}}"
-
-tooltip.cook.price: "Sells for ${{price}}"
+tooltip.value: "Valor: {{value}}"
 
 tooltip.category: "Category: {pouch_category}"
 tooltip.slot: "Slot #{slot_number}, Pos #{position}"

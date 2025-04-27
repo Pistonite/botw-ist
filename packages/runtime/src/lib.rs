@@ -6,7 +6,9 @@ use blueflame::{error::Error, memory::{Memory, Proxies}};
 mod scheduler;
 use scheduler::Scheduler;
 
-pub mod inventory;
+/// Inventory View
+pub mod iv;
+pub mod pointer;
 
 pub struct RunOutput {
     /// State at each simulation step
@@ -15,68 +17,79 @@ pub struct RunOutput {
 
 impl RunOutput {
     // TODO: error
-    pub fn get_inventory_list_view(&self, step: usize) -> inventory::InventoryListView {
+    pub fn get_pouch_list(&self, step: usize) -> iv::PouchList {
         // mock data
 
         let items = vec![
-            inventory::ItemSlotInfo {
-                actor_name: "Weapon_Sword_070".to_string(),
+            iv::PouchItem {
+                common: iv::CommonItem{
+                    actor_name: "Weapon_Sword_070".to_string(),
+                    value: 4000,
+                    is_equipped: true,
+                },
                 item_type: 0,
                 item_use: 0,
-                value: 4000,
-                is_equipped: true,
                 is_in_inventory: true,
-                mod_effect_value: 0,
-                mod_effect_duration: 0,
-                mod_sell_price: 0,
-                mod_effect_id: 0f32,
-                mod_effect_level: 0f32,
-                ingredient_actor_names: ["".to_string(), "".to_string(), "".to_string(), "".to_string(), "".to_string()],
-                unaligned: false,
-                prev_node_ptr: 0.into(),
-                next_node_ptr: 0.into(),
-                list_pos: 0,
-                unallocated: false,
-                pool_pos: 419,
-                is_in_broken_slot: false,
+                is_no_icon: false,
+                data: iv::ItemData {
+                    effect_value: 0,
+                    effect_duration: 0,
+                    sell_price: 0,
+                    effect_id: 0f32,
+                    effect_level: 0f32,
+                },
+                ingredients: ["".to_string(), "".to_string(), "".to_string(), "".to_string(), "".to_string()],
                 holding_count: 0,
-                prompt_entangled: false
+                prompt_entangled: false,
+                node_addr: 0.into(),
+                node_valid: true,
+                node_pos: 419,
+                node_prev: 0.into(),
+                node_next: 0.into(),
+                allocated_idx: 0,
+                unallocated_idx: -1,
             },
-            inventory::ItemSlotInfo {
-                actor_name: "Item_Fruit_A".to_string(),
+            iv::PouchItem {
+                common: iv::CommonItem{
+                    actor_name: "Item_Fruit_A".to_string(),
+                    value: 999,
+                    is_equipped: false,
+                },
                 item_type: 7,
                 item_use: 8,
-                value: 5,
-                is_equipped: false,
                 is_in_inventory: true,
-                mod_effect_value: 0,
-                mod_effect_duration: 0,
-                mod_sell_price: 0,
-                mod_effect_id: 0f32,
-                mod_effect_level: 0f32,
-                ingredient_actor_names: ["".to_string(), "".to_string(), "".to_string(), "".to_string(), "".to_string()],
-                unaligned: false,
-                prev_node_ptr: 0.into(),
-                next_node_ptr: 0.into(),
-                list_pos: 1,
-                unallocated: false,
-                pool_pos: 418,
-                is_in_broken_slot: false,
+                is_no_icon: false,
+                data: iv::ItemData {
+                    effect_value: 0,
+                    effect_duration: 0,
+                    sell_price: 0,
+                    effect_id: 0f32,
+                    effect_level: 0f32,
+                },
+                ingredients: ["".to_string(), "".to_string(), "".to_string(), "".to_string(), "".to_string()],
                 holding_count: 0,
-                prompt_entangled: false
+                prompt_entangled: false,
+                node_addr: 0.into(),
+                node_valid: true,
+                node_pos: 418,
+                node_prev: 0.into(),
+                node_next: 0.into(),
+                allocated_idx: 0,
+                unallocated_idx: -1,
+
             }
         ];
 
-        inventory::InventoryListView {
-            info: inventory::InventoryInfo {
+        iv::PouchList {
+            info: iv::PouchData {
                 num_tabs: 2,
                 tabs: vec![
-                    inventory::TabInfo {
+                    iv::PouchTab {
                         item_idx: Some(0),
                         item_ptr: 0.into(),
                         tab_type: 0
                     },
-                    inventory::TabInfo {
+                    iv::PouchTab {
                         item_idx: Some(1),
                         item_ptr: 0.into(),
                         tab_type: 5
@@ -84,7 +97,7 @@ impl RunOutput {
                 ]
             },
             items,
-            count: 2,
+            count: 1,
         }
 
 

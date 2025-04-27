@@ -124,12 +124,13 @@ item_explorer.search_error.unknown_tag: "未知语言标签 \"{{tag}}\""
 
 
 # Item Slot Tooltip
+tooltip.durability: "耐久: {{current}}/{{max}}"
 tooltip.equipped: "Equipped"
 tooltip.holding: "Holding {{holding}}"
+tooltip.stamina_recover: "+{{wheels}} 圈"
+tooltip.stamina_recover_ex: "{{wheels}} 圈"
 tooltip.translucent: "Translucent"
-tooltip.value: "Value: {{value}}"
-
-tooltip.cook.price: "Sells for ${{price}}"
+tooltip.value: "数值: {{value}}"
 
 tooltip.category: "Category: {pouch_category}"
 tooltip.slot: "Slot #{slot_number}, Pos #{position}"

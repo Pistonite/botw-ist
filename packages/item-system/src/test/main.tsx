@@ -1,3 +1,5 @@
+import "../CalamitySans.css";
+
 import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -6,172 +8,99 @@ import {
     webLightTheme,
 } from "@fluentui/react-components";
 
-import type { ItemSlotInfo } from "@pistonite/skybook-api";
+import type { InvView_GdtItem, InvView_PouchItem } from "@pistonite/skybook-api";
 import { initI18n } from "skybook-localization";
+import { registerAssetLocation } from "botw-item-assets";
 
-import { ItemTooltipProvider } from "../ItemTooltipProvider";
-import { CookEffect, ItemUse, PouchItemType } from "../data/enums.ts";
-import { ItemSlot } from "../ItemSlot";
-import { ItemTooltip } from "../ItemTooltip.tsx";
+import { ItemTooltipProvider } from "../tooltip";
+import { CookEffect, PouchItemType } from "../data";
+import { GdtItemSlotWithTooltip, PouchItemSlotWithTooltip, StandaloneItemSlotWithTooltip } from "../Wrapper.tsx";
 
-const DUMMY: ItemSlotInfo = {
-    actorName: "Dummy",
-    itemType: PouchItemType.Sword,
-    itemUse: ItemUse.WeaponSmallSword,
-    value: 0,
-    isEquipped: false,
-    isInInventory: true,
-    modEffectValue: 0,
-    modEffectDuration: 0,
-    modSellPrice: 0,
-    modEffectId: CookEffect.None,
-    modEffectLevel: 0,
-    ingredientActorNames: ["", "", "", "", ""],
-    unaligned: false,
-    prevNodePtr: 0n,
-    nextNodePtr: 0n,
-    listPos: 0,
-    unallocated: false,
-    poolPos: 0,
-    isInBrokenSlot: false,
-    holdingCount: 0,
-    promptEntangled: false,
-};
+const STANDALONE = [
+    { actor: "Weapon_Sword_070" },
+    { actor: "Armor_015_Head" },
+    { actor: "Item_Cook_C_17", effect: CookEffect.AllSpeed },
+];
 
-const TEST_ITEMS: ItemSlotInfo[] = [
+const GDT: InvView_GdtItem[] = [
     {
-        ...DUMMY,
-        actorName: "Weapon_Sword_070",
-        itemType: PouchItemType.Sword,
-        itemUse: ItemUse.WeaponSmallSword,
-        value: 4000,
+        common: {
+            actorName: "Weapon_Sword_070",
+            value: 100,
+            isEquipped: true
+        },
+        idx: 0,
+        data: {
+            type: "sword",
+            data: {
+                idx: 0,
+                info: {
+                    flag: 0,
+                    value: 0
+                }
+            }
+        }
     },
     {
-        ...DUMMY,
-        actorName: "Obj_HeroSoul_Zora",
-        itemType: PouchItemType.KeyItem,
+        common: {
+            actorName: "Item_Cook_C_17",
+            value: 100,
+            isEquipped: false
+        },
+        idx: 1,
+        data: {
+            type: "food",
+            data: {
+                idx: 0,
+                info: {
+                    effectId: CookEffect.LifeMaxUp,
+                    effectLevel: 3,
+                    effectDuration: 180,
+                    sellPrice: 50,
+                    effectValue: 3
+                },
+                unused_effect_1y: 0,
+                ingredients: [
+                    "Animal_Insect_A",
+                    "Animal_Insect_A",
+                    "Animal_Insect_A",
+                    "Animal_Insect_A",
+                    "Animal_Insect_A",
+                ]
+            }
+        }
     },
+];
+
+const POUCH: InvView_PouchItem[] = [
     {
-        ...DUMMY,
-        actorName: "Item_Ore_A",
+        common: {
+            actorName: "Item_Ore_A",
+            value: 10,
+            isEquipped: false
+        },
         itemType: PouchItemType.Material,
-        value: 99999,
-    },
-    {
-        ...DUMMY,
-        actorName: "Weapon_Lsword_010",
-        itemType: PouchItemType.Sword,
-        itemUse: ItemUse.WeaponLargeSword,
-        value: 3850,
-    },
-    {
-        ...DUMMY,
-        actorName: "Item_PlantGet_Q",
-        itemType: PouchItemType.Material,
-        value: 5,
-        holdingCount: 4,
-    },
-    {
-        ...DUMMY,
-        actorName: "Obj_DLC_HeroSoul_Goron",
-        itemType: PouchItemType.KeyItem,
-    },
-    {
-        ...DUMMY,
-        actorName: "Weapon_Sword_502",
-        itemType: PouchItemType.Sword,
-        itemUse: ItemUse.WeaponSmallSword,
-        value: 100,
-    },
-    {
-        ...DUMMY,
-        actorName: "Armor_011_Lower",
-        itemType: PouchItemType.ArmorLower,
-        itemUse: ItemUse.ArmorLower,
-        value: 1,
-    },
-    {
-        ...DUMMY,
-        actorName: "Weapon_Bow_028",
-        itemType: PouchItemType.Bow,
-        itemUse: ItemUse.WeaponBow,
-        value: 6000,
-    },
-    {
-        ...DUMMY,
-        actorName: "Weapon_Bow_028",
-        itemType: PouchItemType.Bow,
-        itemUse: ItemUse.WeaponBow,
-        value: 6000,
-        modEffectValue: 120,
-        modSellPrice: 147,
-    },
-    {
-        ...DUMMY,
-        actorName: "Weapon_Shield_001",
-        itemType: PouchItemType.Shield,
-        itemUse: ItemUse.WeaponShield,
-        value: 1000,
-        modEffectValue: 120,
-        modSellPrice: 0xffffffff,
-    },
-    {
-        ...DUMMY,
-        actorName: "Item_Cook_A_01",
-        itemType: PouchItemType.Food,
-        itemUse: ItemUse.CureItem,
-        value: 1,
-        modEffectValue: 120,
-        isInInventory: false,
-        modSellPrice: 115,
-    },
-    {
-        ...DUMMY,
-        actorName: "Item_Cook_C_17",
-        itemType: PouchItemType.Food,
-        itemUse: ItemUse.CureItem,
-        value: 1,
-        modEffectValue: 120,
-        modEffectId: CookEffect.ExGutsMaxUp,
-        modSellPrice: 115,
-    },
-    {
-        ...DUMMY,
-        actorName: "Armor_075_Head",
-        itemType: PouchItemType.ArmorUpper,
-        itemUse: ItemUse.ArmorUpper,
-        value: 1,
-    },
-    {
-        ...DUMMY,
-        actorName: "Item_Cook_C_17",
-        itemType: PouchItemType.Food,
-        itemUse: ItemUse.CureItem,
-        value: 1,
-        modEffectValue: 25,
-        modEffectId: CookEffect.LifeMaxUp,
-    },
-    {
-        ...DUMMY,
-        actorName: "Item_Cook_C_17",
-        itemType: PouchItemType.Food,
-        itemUse: ItemUse.CureItem,
-        value: 1,
-        modEffectValue: 25,
-        modEffectId: CookEffect.GutsRecover,
-        modEffectLevel: 1000,
-    },
-    {
-        ...DUMMY,
-        actorName: "Item_Cook_C_17",
-        itemType: 78,
-        itemUse: 87,
-        value: 1,
-        modEffectValue: 40,
-        modEffectId: CookEffect.AllSpeed,
-        modEffectLevel: 3,
-        modEffectDuration: 3600,
-    },
+        itemUse: PouchItemType.Material,
+        isInInventory: true,
+        isNoIcon: false,
+        data: {
+            effectValue: 0,
+            effectDuration: 0,
+            effectId: -1,
+            effectLevel: 0,
+            sellPrice: 0,
+        },
+        ingredients: ["", "", "", "", ""],
+        holdingCount: 2,
+        promptEntangled: false,
+        nodeAddr: 0n,
+        nodeValid: true,
+        nodePos: 419n,
+        nodePrev: 0n,
+        nodeNext: 0n,
+        allocatedIdx: 0,
+        unallocatedIdx: -1
+    }
 ];
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -183,17 +112,6 @@ const App: React.FC = () => {
     const [badlyDamaged, setBadlyDamaged] = useState(false);
     const [animation, setAnimation] = useState(true);
     const [entangled, setEntangled] = useState(false);
-
-    const items = TEST_ITEMS.map((item, i) => {
-        return {
-            ...item,
-            isEquipped,
-            isInBrokenSlot,
-            listPosition: i,
-            promptEntangled: entangled,
-            ...(badlyDamaged ? { value: 200 } : {}),
-        };
-    });
 
     return (
         <>
@@ -248,17 +166,27 @@ const App: React.FC = () => {
                     }}
                 />
             </div>
+            <p>Standalone</p>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
-                {items.map((item, index) => {
+                {STANDALONE.map((item, index) => {
                     return (
-                        <ItemTooltip info={item} key={index}>
-                            <ItemSlot
-                                info={item}
-                                cheap={cheap}
-                                deactive={deactive}
-                                disableAnimation={!animation}
-                            />
-                        </ItemTooltip>
+                        <StandaloneItemSlotWithTooltip key={index} {...item} />
+                    );
+                })}
+            </div>
+            <p>GDT</p>
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
+                {GDT.map((item, index) => {
+                    return (
+                        <GdtItemSlotWithTooltip key={index} item={item} />
+                    );
+                })}
+            </div>
+            <p>POUCH</p>
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
+                {POUCH.map((item, index) => {
+                    return (
+                        <PouchItemSlotWithTooltip key={index} item={item} list1Count={1}/>
                     );
                 })}
             </div>
@@ -266,8 +194,10 @@ const App: React.FC = () => {
     );
 };
 
+registerAssetLocation("https://ist.pistonite.app/static/item-assets/");
+
 void (async function main() {
-    await initI18n(false);
+    await initI18n(true);
 
     const root = document.getElementById("root");
     if (root) {

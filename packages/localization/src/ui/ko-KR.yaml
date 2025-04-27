@@ -124,12 +124,13 @@ item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
 
 
 # Item Slot Tooltip
+tooltip.durability: "내구도: {{current}}/{{max}}"
 tooltip.equipped: "Equipped"
 tooltip.holding: "Holding {{holding}}"
+tooltip.stamina_recover: "+{{wheels}} 바퀴"
+tooltip.stamina_recover_ex: "{{wheels}} 바퀴"
 tooltip.translucent: "Translucent"
-tooltip.value: "Value: {{value}}"
-
-tooltip.cook.price: "Sells for ${{price}}"
+tooltip.value: "값: {{value}}"
 
 tooltip.category: "Category: {pouch_category}"
 tooltip.slot: "Slot #{slot_number}, Pos #{position}"

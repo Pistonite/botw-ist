@@ -9,7 +9,7 @@ import type { Runtime } from "../Runtime.ts";
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
 import type { ParserErrorReport } from "../parser";
-import type { InventoryListView } from "../runtime";
+import type { InvView_PouchList } from "../runtime";
 import type { ItemSearchResult, RuntimeInitArgs, RuntimeInitError, RuntimeInitOutput } from "../types.ts";
 
 /*
@@ -35,20 +35,20 @@ export class _wxSenderImpl implements Runtime {
     }
 
     /**
-     * Execute the script if not up-to-date, and return the inventory list view
-     * at the byte offset `pos` in the script.
-     */
-    public getInventoryListView( script: string, pos: number ): WxPromise<InventoryListView> {
-        return this.sender.send<InventoryListView>(25 /* Runtime.getInventoryListView */, [ script, pos ]);
-    }
-
-    /**
      * Parse the script and get diagnostics from the parser.
      * 
      * Note that the span in the errors are byte offsets, not character offsets.
      */
     public getParserDiagnostics( script: string ): WxPromise<ParserErrorReport[]> {
-        return this.sender.send<ParserErrorReport[]>(26 /* Runtime.getParserDiagnostics */, [ script ]);
+        return this.sender.send<ParserErrorReport[]>(25 /* Runtime.getParserDiagnostics */, [ script ]);
+    }
+
+    /**
+     * Execute the script if not up-to-date, and return the pouch inventory list view
+     * at the byte offset `pos` in the script.
+     */
+    public getPouchList( script: string, pos: number ): WxPromise<InvView_PouchList> {
+        return this.sender.send<InvView_PouchList>(26 /* Runtime.getPouchList */, [ script, pos ]);
     }
 
     /**
@@ -94,13 +94,13 @@ export const _wxRecverImpl = (handler: Runtime): WxBusRecvHandler => {
             const [ a0 ] = args;
             return handler.executeScript( a0 );
         }
-        case 25 /* Runtime.getInventoryListView */: {
-            const [ a0, a1 ] = args;
-            return handler.getInventoryListView( a0, a1 );
-        }
-        case 26 /* Runtime.getParserDiagnostics */: {
+        case 25 /* Runtime.getParserDiagnostics */: {
             const [ a0 ] = args;
             return handler.getParserDiagnostics( a0 );
+        }
+        case 26 /* Runtime.getPouchList */: {
+            const [ a0, a1 ] = args;
+            return handler.getPouchList( a0, a1 );
         }
         case 27 /* Runtime.getSemanticTokens */: {
             const [ a0, a1, a2 ] = args;

@@ -1,4 +1,4 @@
-import { SpecialStatus } from "./enums.ts";
+import { SpecialStatus } from "./EnumTypes.ts";
 import { ActorDataMap } from "../generated/ActorDataMap.ts";
 
 export const DefaultActorData = {
