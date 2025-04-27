@@ -16,14 +16,14 @@ catalogs:
       specifier: ^1.5.29
       version: 1.5.29
     '@pistonite/pure':
-      specifier: ^0.26.0
-      version: 0.26.0
+      specifier: ^0.26.1
+      version: 0.26.1
     '@pistonite/pure-i18next':
-      specifier: ^0.4.1
-      version: 0.4.1
+      specifier: ^0.4.2
+      version: 0.4.2
     '@pistonite/pure-react':
-      specifier: ^0.7.6
-      version: 0.7.6
+      specifier: ^0.7.7
+      version: 0.7.7
     '@pistonite/workex':
       specifier: ^0.1.0
       version: 0.1.0
@@ -87,10 +87,10 @@ importers:
         version: link:../intwc
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.0
+        version: 0.26.1
       '@pistonite/pure-react':
         specifier: 'catalog:'
-        version: 0.7.6(react@18.3.1)
+        version: 0.7.7(react@18.3.1)
       '@pistonite/shared-controls':
         specifier: workspace:*
         version: link:../shared-controls
@@ -166,7 +166,7 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.0
+        version: 0.26.1
       monaco-editor:
         specifier: 0.52.2
         version: 0.52.2(patch_hash=789e917d911899942d0d30033e21cd0f6720af75845df5b971a6594d398e368e)
@@ -206,7 +206,7 @@ importers:
         version: 1.5.29(react@18.3.1)
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.0
+        version: 0.26.1
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -268,10 +268,10 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.0
+        version: 0.26.1
       '@pistonite/pure-i18next':
         specifier: 'catalog:'
-        version: 0.4.1(react@18.3.1)(typescript@5.8.3)
+        version: 0.4.2(react@18.3.1)(typescript@5.8.3)
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
@@ -366,7 +366,7 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.0
+        version: 0.26.1
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
@@ -385,7 +385,7 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.0
+        version: 0.26.1
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
@@ -410,10 +410,10 @@ importers:
         version: 2.0.297(react@18.3.1)
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.0
+        version: 0.26.1
       '@pistonite/pure-react':
         specifier: 'catalog:'
-        version: 0.7.6(react@18.3.1)
+        version: 0.7.7(react@18.3.1)
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -438,7 +438,7 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.0
+        version: 0.26.1
       '@pistonite/workex':
         specifier: 'catalog:'
         version: 0.1.0
@@ -1325,18 +1325,18 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@pistonite/pure-i18next@0.4.1':
-    resolution: {integrity: sha512-4daWaZYhfyM58TBube3YhZgZw1RLEAVxK50E+4oH99nKM4FP0ssp7pk1nks/fMmbgjqnSWnCU2SmA3d2qVxIug==}
+  '@pistonite/pure-i18next@0.4.2':
+    resolution: {integrity: sha512-5vWQY48hCoZjLV2KhmjhNZnllLGGRzCTVWq+2dAKr2oaTh7LcTDYy+AvQmX5L9l/crbplpGcXLv0El93bZ+jXA==}
     peerDependencies:
       react: ^18
 
-  '@pistonite/pure-react@0.7.6':
-    resolution: {integrity: sha512-f8I9Jj339pDT/KPfvJh65zlgqBB3uIFwD4pkHLrpiSe0kjDiNhbwtBF+xMJZiqMa5w+m+u6WBRCGHLGXL+z7bA==}
+  '@pistonite/pure-react@0.7.7':
+    resolution: {integrity: sha512-GtaU7aInXDeKmWmm7ri+eeb++an67PMI0Vt2Gbm0WfLT7k/L4+cNccHAHK+HkkSgWCFrj8kcvzhQ4GSZLAuOHA==}
     peerDependencies:
       react: ^18
 
-  '@pistonite/pure@0.26.0':
-    resolution: {integrity: sha512-VXvKmw1w23JndOBlrot7WSJE0RV2hDZhdwp4bgyLmmJOKm8l2RSqij70I/kYlIU5mokG54SWfFy84xZdkW7cTw==}
+  '@pistonite/pure@0.26.1':
+    resolution: {integrity: sha512-QicJt5NPc/w2XyQmNq/3ExrxVAJxgdzmzHz1ropH6HL8AdhX4+5sjWfeRc2/kR7SlBKMTvG40sg4dgGP9pwVtg==}
 
   '@pistonite/workex@0.1.0':
     resolution: {integrity: sha512-kY+L0naJZXW8Rm5wZVyX18TrrN2/k+6dPLs5NGOVF+Db3DY5kJu9I5PJBnAAYcdAqqA62GzNmjp25NsnhhJbOw==}
@@ -4462,9 +4462,9 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.18.0
 
-  '@pistonite/pure-i18next@0.4.1(react@18.3.1)(typescript@5.8.3)':
+  '@pistonite/pure-i18next@0.4.2(react@18.3.1)(typescript@5.8.3)':
     dependencies:
-      '@pistonite/pure': 0.26.0
+      '@pistonite/pure': 0.26.1
       i18next: 25.0.0(typescript@5.8.3)
       react: 18.3.1
       react-i18next: 15.4.1(i18next@25.0.0(typescript@5.8.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4473,18 +4473,18 @@ snapshots:
       - react-native
       - typescript
 
-  '@pistonite/pure-react@0.7.6(react@18.3.1)':
+  '@pistonite/pure-react@0.7.7(react@18.3.1)':
     dependencies:
-      '@pistonite/pure': 0.26.0
+      '@pistonite/pure': 0.26.1
       react: 18.3.1
 
-  '@pistonite/pure@0.26.0':
+  '@pistonite/pure@0.26.1':
     dependencies:
       denque: 2.1.0
 
   '@pistonite/workex@0.1.0':
     dependencies:
-      '@pistonite/pure': 0.26.0
+      '@pistonite/pure': 0.26.1
 
   '@prettier/cli@0.7.1(prettier@3.4.2)':
     dependencies:

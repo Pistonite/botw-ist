@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { debounce } from "@pistonite/pure/sync";
 
-import type { InventoryListView, ScriptEnvImage } from "@pistonite/skybook-api";
+import type { InvView_PouchList, ScriptEnvImage } from "@pistonite/skybook-api";
 import { translateUI } from "skybook-localization";
 
 import { useApplicationStore } from "./ApplicationStore.ts";
@@ -72,11 +72,11 @@ export type SessionStore = {
     setExecutionInProgress: (inProgress: boolean) => void;
 
     /** Cached inventory list views. Key is the step index */
-    inventoryListViews: Record<number, InventoryListView>;
+    inventoryListViews: Record<number, InvView_PouchList>;
     upToDateSteps: number[];
     setInventoryListViewInCache: (
         step: number,
-        view: InventoryListView,
+        view: InvView_PouchList,
     ) => void;
     /** Invalidate all cached inventory views */
     invalidateInventoryCache: () => void;

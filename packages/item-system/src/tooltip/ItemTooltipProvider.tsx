@@ -7,13 +7,12 @@ import {
 } from "react";
 import { makeStyles } from "@fluentui/react-components";
 
-import type { ItemSlotInfo } from "@pistonite/skybook-api";
-
 import { ItemTooltipContent } from "./ItemTooltipContent.tsx";
 import {
     ItemTooltipContext,
     type SetItemTooltipFn,
 } from "./ItemTooltipContext.ts";
+import type { ItemTooltipWithContextProps } from "./ItemTooltip.tsx";
 
 const useStyles = makeStyles({
     container: {
@@ -36,29 +35,62 @@ export const ItemTooltipProvider: React.FC<
 > = ({ backgroundUrl, children }) => {
     const styles = useStyles();
 
+    const [verbose, setVerbose] = useState(false);
+
+    // toggle verbose based on Shift key
+    useEffect(() => {
+        const controller = new AbortController();
+        window.addEventListener(
+            "keydown",
+            (event: KeyboardEvent) => {
+                if (event.key === "Shift") {
+                    setVerbose(true);
+                }
+            },
+            { signal: controller.signal },
+        );
+        window.addEventListener(
+            "keyup",
+            (event: KeyboardEvent) => {
+                if (event.key === "Shift") {
+                    setVerbose(false);
+                }
+            },
+            { signal: controller.signal },
+        );
+        return () => {
+            controller.abort();
+        };
+    }, []);
     const tooltipDivRef = useRef<HTMLDivElement>(null);
     const childrenContainerRef = useRef<HTMLDivElement>(null);
-    const [tooltipInfo, setTooltipInfo] = useState<ItemSlotInfo | undefined>();
+    const [tooltipProps, setTooltipProps] = useState<
+        ItemTooltipWithContextProps | undefined
+    >();
     const [tooltipTarget, setTooltipTarget] = useState<
         HTMLElement | undefined
     >();
-    const setTooltip: SetItemTooltipFn = useCallback((x, y, info, target) => {
-        if (!tooltipDivRef.current) {
-            return;
-        }
-        const tooltipDiv = tooltipDivRef.current;
-        if (!info || !target) {
-            tooltipDiv.style.display = "none";
-            return;
-        }
-        tooltipDiv.style.display = "unset";
-        // This might initially be wrong the first time
-        // the info is changed. However, most of the time, it will be
-        // called again with the correct x and y when the mouse moves.
-        positionTooltipDiv(tooltipDiv, x, y);
-        setTooltipInfo(info);
-        setTooltipTarget(target);
-    }, []);
+    const setTooltip: SetItemTooltipFn = useCallback(
+        (x, y, props, target, verbose) => {
+            if (!tooltipDivRef.current) {
+                return;
+            }
+            const tooltipDiv = tooltipDivRef.current;
+            if (!props || !target) {
+                tooltipDiv.style.display = "none";
+                return;
+            }
+            tooltipDiv.style.display = "unset";
+            // This might initially be wrong the first time
+            // the info is changed. However, most of the time, it will be
+            // called again with the correct x and y when the mouse moves.
+            positionTooltipDiv(tooltipDiv, x, y);
+            setTooltipProps(props);
+            setTooltipTarget(target);
+            setVerbose(verbose);
+        },
+        [],
+    );
 
     // hide the tooltip if the target is removed
     useEffect(() => {
@@ -76,7 +108,7 @@ export const ItemTooltipProvider: React.FC<
             }
             if (!tooltipTarget.isConnected) {
                 observer.disconnect();
-                setTooltipInfo(undefined);
+                setTooltipProps(undefined);
             }
         });
         observer.observe(childrenContainerRef.current, {
@@ -103,7 +135,9 @@ export const ItemTooltipProvider: React.FC<
                     backgroundImage: `url(${backgroundUrl})`,
                 }}
             >
-                {tooltipInfo && <ItemTooltipContent info={tooltipInfo} />}
+                {tooltipProps && (
+                    <ItemTooltipContent {...tooltipProps} verbose={verbose} />
+                )}
             </div>
         </ItemTooltipContext.Provider>
     );

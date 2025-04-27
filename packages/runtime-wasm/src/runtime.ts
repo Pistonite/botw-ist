@@ -1,7 +1,7 @@
 import { type Erc, makeErcType } from "@pistonite/pure/memory";
 
 import { type QuotedItemResolverFn, parseScript } from "./parser.ts";
-import type { InventoryListView } from "@pistonite/skybook-api";
+import type { InvView_PouchList } from "@pistonite/skybook-api";
 
 const RunOutput = Symbol("RunOutput");
 export type RunOutput = typeof RunOutput;
@@ -66,11 +66,11 @@ const executeScriptInternal = async (
     return makeRunOutputErc(outputRaw);
 };
 
-export const getInventoryListView = async (
+export const getPouchList = async (
     script: string,
     resolver: QuotedItemResolverFn,
     bytePos: number,
-): Promise<InventoryListView> => {
+): Promise<InvView_PouchList> => {
     const parseOutputErc = await parseScript(script, resolver);
     const runOutputErc = await executeScript(script, resolver);
 
@@ -86,7 +86,7 @@ export const getInventoryListView = async (
         );
     }
 
-    const output = wasm_bindgen.get_inventory_list_view(
+    const output = wasm_bindgen.get_pouch_list(
         runOutputErc.value,
         parseOutputErc.value,
         bytePos,

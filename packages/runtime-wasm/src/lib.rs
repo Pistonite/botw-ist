@@ -3,7 +3,7 @@ use std::sync::Arc;
 use js_sys::Function;
 use serde::{Deserialize, Serialize};
 use skybook_parser::{search, ParseOutput};
-use skybook_runtime::RunOutput;
+use skybook_runtime::{iv, RunOutput};
 use tsify_next::Tsify;
 use wasm_bindgen::prelude::*;
 
@@ -160,16 +160,16 @@ pub fn add_ref_run_output(run_output_ref: *const RunOutput) -> *const RunOutput 
 /// ## Pointer Ownership
 /// Borrows both the RunOutput and ParseOutput pointers.
 #[wasm_bindgen]
-pub fn get_inventory_list_view(
+pub fn get_pouch_list(
     run_output_ref: *const RunOutput,
     parse_output_ref: *const ParseOutput,
     byte_pos: usize,
-) -> skybook_runtime::inventory::InventoryListView {
+) -> iv::PouchList {
     if parse_output_ref.is_null() || run_output_ref.is_null() {
         return Default::default();
     }
     let parse_output = unsafe { &*parse_output_ref };
     let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
     let run_output = unsafe { &*run_output_ref };
-    run_output.get_inventory_list_view(step)
+    run_output.get_pouch_list(step)
 }

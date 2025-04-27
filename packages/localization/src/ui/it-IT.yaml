@@ -124,20 +124,15 @@ item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
 
 
 # Item Slot Tooltip
-tooltip.equipped: "Equipped"
-tooltip.holding: "Holding {{holding}}"
-tooltip.translucent: "Translucent"
-tooltip.value: "Value: {{value}}"
-
-tooltip.cook.price: "Sells for ${{price}}"
-
-tooltip.category: "Category: {pouch_category}"
-tooltip.slot: "Slot #{slot_number}, Pos #{position}"
-tooltip.transfer_slot: "Will be transferred"
-
-tooltip.buy_price: "Buying Price: {gparam_item_buying_price}"
-tooltip.life: "Life: {gparam_general_life}"
-tooltip.life_infinite: "Life: Infinite [{gparam_general_life}]"
-tooltip.power: "Power: {gparam_attack_power}"
-tooltip.profile: "Profile: {profile}"
-tooltip.sell_price: "Selling Price: {gparam_item_selling_price}"
+tooltip.bad_cook_data: "I dati di cottura non hanno effetto"
+tooltip.broken_slot: "Sarà trasferito"
+tooltip.durability: "Durabilità: {{current}}/{{max}}"
+tooltip.entangled: "Intrecciato"
+tooltip.equipped: "Equipaggiato"
+tooltip.holding: "In possesso di {{holding}}"
+tooltip.price: "Prezzo di vendita: {{price}}"
+tooltip.recipe: "Lista ingredienti"
+tooltip.stamina_recover: "+{{wheels}} cerchio(i)"
+tooltip.stamina_recover_ex: "{{wheels}} cerchio(i)"
+tooltip.translucent: "Spazio Fantasma"
+tooltip.value: "Valore: {{value}}"

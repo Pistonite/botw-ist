@@ -124,20 +124,15 @@ item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
 
 
 # Item Slot Tooltip
+tooltip.bad_cook_data: "Cook data has no effect"
+tooltip.broken_slot: "Will be transferred"
+tooltip.durability: "Durability: {{current}}/{{max}}"
+tooltip.entangled: "Entangled"
 tooltip.equipped: "Equipped"
 tooltip.holding: "Holding {{holding}}"
+tooltip.price: "Sell Price: {{price}}"
+tooltip.recipe: "Recipe"
+tooltip.stamina_recover: "+{{wheels}} Wheel(s)"
+tooltip.stamina_recover_ex: "{{wheels}} Wheel(s)"
 tooltip.translucent: "Translucent"
 tooltip.value: "Value: {{value}}"
-
-tooltip.cook.price: "Sells for ${{price}}"
-
-tooltip.category: "Category: {pouch_category}"
-tooltip.slot: "Slot #{slot_number}, Pos #{position}"
-tooltip.transfer_slot: "Will be transferred"
-
-tooltip.buy_price: "Buying Price: {gparam_item_buying_price}"
-tooltip.life: "Life: {gparam_general_life}"
-tooltip.life_infinite: "Life: Infinite [{gparam_general_life}]"
-tooltip.power: "Power: {gparam_attack_power}"
-tooltip.profile: "Profile: {profile}"
-tooltip.sell_price: "Selling Price: {gparam_item_selling_price}"

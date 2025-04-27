@@ -7,10 +7,10 @@ import {
     mergeClasses,
 } from "@fluentui/react-components";
 
-import { ItemSlot, ItemTooltip } from "skybook-item-system";
+import { PouchItemSlotWithTooltip } from "skybook-item-system";
 import { useUITranslation } from "skybook-localization";
 
-import { useInventoryListView } from "self::application/store";
+import { usePouchListView } from "self::application/store";
 
 import { InventoryTitle } from "./components/InventoryTitle.tsx";
 import { Code } from "./components/Code.tsx";
@@ -70,10 +70,10 @@ const useStyles = makeStyles({
     },
 });
 
-export const VisibleInventoryPanelImpl: React.FC = () => {
+export const PouchInventoryPanelImpl: React.FC = () => {
     const styles = useStyles();
     const dark = useDark();
-    const { inventory, stale, loading } = useInventoryListView();
+    const { inventory, stale, loading } = usePouchListView();
     const showSpinner = loading || stale || !inventory;
     const t = useUITranslation();
     return (
@@ -113,10 +113,12 @@ export const VisibleInventoryPanelImpl: React.FC = () => {
                 {inventory !== undefined && (
                     <div className={styles.inventoryScroll}>
                         <div className={styles.inventoryList}>
-                            {inventory.items.map((info, i) => (
-                                <ItemTooltip info={info} key={i}>
-                                    <ItemSlot info={info} />
-                                </ItemTooltip>
+                            {inventory.items.map((item, i) => (
+                                <PouchItemSlotWithTooltip
+                                    item={item}
+                                    key={i}
+                                    list1Count={inventory.count}
+                                />
                             ))}
                         </div>
                     </div>
@@ -126,4 +128,4 @@ export const VisibleInventoryPanelImpl: React.FC = () => {
     );
 };
 
-export const VisibleInventoryPanel = memo(VisibleInventoryPanelImpl);
+export const PouchInventoryPanel = memo(PouchInventoryPanelImpl);

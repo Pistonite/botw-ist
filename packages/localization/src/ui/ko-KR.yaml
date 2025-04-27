@@ -124,20 +124,15 @@ item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
 
 
 # Item Slot Tooltip
-tooltip.equipped: "Equipped"
-tooltip.holding: "Holding {{holding}}"
-tooltip.translucent: "Translucent"
-tooltip.value: "Value: {{value}}"
-
-tooltip.cook.price: "Sells for ${{price}}"
-
-tooltip.category: "Category: {pouch_category}"
-tooltip.slot: "Slot #{slot_number}, Pos #{position}"
-tooltip.transfer_slot: "Will be transferred"
-
-tooltip.buy_price: "Buying Price: {gparam_item_buying_price}"
-tooltip.life: "Life: {gparam_general_life}"
-tooltip.life_infinite: "Life: Infinite [{gparam_general_life}]"
-tooltip.power: "Power: {gparam_attack_power}"
-tooltip.profile: "Profile: {profile}"
-tooltip.sell_price: "Selling Price: {gparam_item_selling_price}"
+tooltip.bad_cook_data: "요리 데이터에 효과가 없습니다"
+tooltip.broken_slot: "전송 예정"
+tooltip.durability: "내구도: {{current}}/{{max}}"
+tooltip.entangled: "얽힘"
+tooltip.equipped: "장착됨"
+tooltip.holding: "{{holding}}개 보유"
+tooltip.price: "판매 가격: {{price}}"
+tooltip.recipe: "재료 목록"
+tooltip.stamina_recover: "+{{wheels}} 바퀴"
+tooltip.stamina_recover_ex: "{{wheels}} 바퀴"
+tooltip.translucent: "환영 슬롯"
+tooltip.value: "값: {{value}}"

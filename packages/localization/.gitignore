@@ -4,3 +4,4 @@ src/generated/*.yaml
 /tsconfig*.json
 /eslint.config.js
 .prettierignore
+temp.yaml

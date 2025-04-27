@@ -1,12 +1,13 @@
 import { createContext, useContext } from "react";
 
-import type { ItemSlotInfo } from "@pistonite/skybook-api";
+import type { ItemTooltipWithContextProps } from "./ItemTooltip.tsx";
 
 export type SetItemTooltipFn = (
     x: number,
     y: number,
-    info: ItemSlotInfo | undefined,
+    props: ItemTooltipWithContextProps | undefined,
     target: HTMLElement | undefined,
+    verbose: boolean,
 ) => void;
 
 export type ItemTooltipContextState = {
