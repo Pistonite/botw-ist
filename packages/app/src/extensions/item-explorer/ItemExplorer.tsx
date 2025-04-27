@@ -106,7 +106,11 @@ export const ItemExplorer: React.FC<{ searcher: Searcher }> = ({
                         {results.map((result, i) => {
                             const { actor, cookEffect } = result;
                             return (
-                                <StandaloneItemSlotWithTooltip key={i} actor={actor} effect={cookEffect as CookEffect}/>
+                                <StandaloneItemSlotWithTooltip
+                                    key={i}
+                                    actor={actor}
+                                    effect={cookEffect as CookEffect}
+                                />
                             );
                         })}
                     </div>

@@ -1,15 +1,22 @@
-import type { InvView_GdtItem, InvView_ItemData, InvView_PouchItem } from "@pistonite/skybook-api";
+import type {
+    InvView_GdtItem,
+    InvView_ItemData,
+    InvView_PouchItem,
+} from "@pistonite/skybook-api";
 
-import { 
-    getItemTypeAndUse, 
+import {
+    getItemTypeAndUse,
     getActorParam,
-    getWeaponModifierStatusPropList, 
-    isEquipmentType, 
-    PouchItemType, 
-    type WeaponModifierStatusProps, 
-    gdtTypeToPouchItemType, 
-    isGdtDataEquipmentType, isGdtDataFoodType, normalizeIngredients, 
-    type CookEffect } from "../data";
+    getWeaponModifierStatusPropList,
+    isEquipmentType,
+    PouchItemType,
+    type WeaponModifierStatusProps,
+    gdtTypeToPouchItemType,
+    isGdtDataEquipmentType,
+    isGdtDataFoodType,
+    normalizeIngredients,
+    type CookEffect,
+} from "../data";
 
 export type ItemTooltipProps = {
     /** The actor name of this item and used to look up item properties */
@@ -66,7 +73,7 @@ export type ItemTooltipPouchMetadata = {
     nodeNext: bigint;
     allocatedIndex: number;
     unallocatedIndex: number;
-}
+};
 
 /** See InvView_GdtItem */
 export type ItemTooltipGdtMetadata = {
@@ -80,9 +87,12 @@ export type ItemTooltipGdtMetadata = {
     indexShield?: number | undefined;
     /** If the item is food, the index of the food */
     indexFood?: number | undefined;
-}
+};
 
-export const getTooltipPropsFromActor = (actor: string, effect?: CookEffect): ItemTooltipProps => {
+export const getTooltipPropsFromActor = (
+    actor: string,
+    effect?: CookEffect,
+): ItemTooltipProps => {
     return {
         actor,
         isEquipment: false,
@@ -90,33 +100,40 @@ export const getTooltipPropsFromActor = (actor: string, effect?: CookEffect): It
         isTranslucent: false,
         holdingCount: 0,
         weaponModifiers: [],
-        cookData: effect ? {
-            effectValue: 0,
-            effectId: effect,
-            sellPrice: 0,
-            effectDuration: 0,
-            effectLevel: 0,
-        }:undefined,
+        cookData: effect
+            ? {
+                  effectValue: 0,
+                  effectId: effect,
+                  sellPrice: 0,
+                  effectDuration: 0,
+                  effectLevel: 0,
+              }
+            : undefined,
         ingredients: [],
         isInBrokenSlot: false,
         isEntangled: false,
         profile: getActorParam(actor, "profile"),
-    }
-}
+    };
+};
 
 export const getTooltipPropsFromPouchItem = (
-    item: InvView_PouchItem, 
-    list1Count: number
+    item: InvView_PouchItem,
+    list1Count: number,
 ): ItemTooltipProps => {
-    const {actorName, value, isEquipped} = item.common;
+    const { actorName, value, isEquipped } = item.common;
 
     // display modifier list and cook data based on the item type of the actor,
     // not the raw value in the memory, in case of corruption
     const [realItemType] = getItemTypeAndUse(actorName);
     const isEquipment = isEquipmentType(realItemType as PouchItemType);
-    const weaponModifiers = isEquipment ? getWeaponModifierStatusPropList(
-        actorName, realItemType, item.data.effectValue, item.data.sellPrice
-    ): [];
+    const weaponModifiers = isEquipment
+        ? getWeaponModifierStatusPropList(
+              actorName,
+              realItemType,
+              item.data.effectValue,
+              item.data.sellPrice,
+          )
+        : [];
     // show the raw cook data only on food
     const isFood = realItemType === PouchItemType.Food;
     const cookData = isFood ? { ...item.data } : undefined;
@@ -143,25 +160,37 @@ export const getTooltipPropsFromPouchItem = (
             allocatedIndex: item.allocatedIdx,
             unallocatedIndex: item.unallocatedIdx,
         },
-        isInBrokenSlot:  item.allocatedIdx >= list1Count,
-        isEntangled:  item.promptEntangled,
-        profile: getActorParam(actorName, "profile")
+        isInBrokenSlot: item.allocatedIdx >= list1Count,
+        isEntangled: item.promptEntangled,
+        profile: getActorParam(actorName, "profile"),
     };
-}
+};
 
-export const getTooltipPropsFromGdtItem = (item: InvView_GdtItem): ItemTooltipProps => {
-    const {actorName, value, isEquipped} = item.common;
+export const getTooltipPropsFromGdtItem = (
+    item: InvView_GdtItem,
+): ItemTooltipProps => {
+    const { actorName, value, isEquipped } = item.common;
 
     const gdtType = item.data.type;
     const data = item.data;
     const isEquipment = isGdtDataEquipmentType(data);
-    const weaponModifiers = isEquipment ? getWeaponModifierStatusPropList(
-        actorName, gdtTypeToPouchItemType(gdtType), data.data.info.value, data.data.info.flag) : [];
+    const weaponModifiers = isEquipment
+        ? getWeaponModifierStatusPropList(
+              actorName,
+              gdtTypeToPouchItemType(gdtType),
+              data.data.info.value,
+              data.data.info.flag,
+          )
+        : [];
     const isFood = isGdtDataFoodType(data);
-    const cookData = isFood ? {
-        ...data.data.info
-    } : undefined;
-    const ingredients = isFood ? normalizeIngredients(data.data.ingredients) : [];
+    const cookData = isFood
+        ? {
+              ...data.data.info,
+          }
+        : undefined;
+    const ingredients = isFood
+        ? normalizeIngredients(data.data.ingredients)
+        : [];
 
     return {
         actor: actorName,
@@ -175,13 +204,16 @@ export const getTooltipPropsFromGdtItem = (item: InvView_GdtItem): ItemTooltipPr
         ingredients,
         gdtMeta: {
             index: item.idx,
-            indexSword: item.data.type === "sword" ? item.data.data.idx : undefined,
+            indexSword:
+                item.data.type === "sword" ? item.data.data.idx : undefined,
             indexBow: item.data.type === "bow" ? item.data.data.idx : undefined,
-            indexShield: item.data.type === "shield" ? item.data.data.idx : undefined,
-            indexFood: item.data.type === "food" ? item.data.data.idx : undefined,
+            indexShield:
+                item.data.type === "shield" ? item.data.data.idx : undefined,
+            indexFood:
+                item.data.type === "food" ? item.data.data.idx : undefined,
         },
         isInBrokenSlot: false,
         isEntangled: false,
-        profile: getActorParam(actorName, "profile")
+        profile: getActorParam(actorName, "profile"),
     };
-}
+};

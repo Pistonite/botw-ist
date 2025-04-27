@@ -1,6 +1,16 @@
 import { getActorParam } from "./ActorData.ts";
-import { CookEffect, PouchItemType, SpecialStatus, SpecialStatusNames, WeaponModifier } from "./EnumTypes.ts";
-import { convertCookEffectToSpecialStatus, getWeaponSpecialStatusToDisplay, isEquipmentType } from "./EnumUtils.ts";
+import {
+    CookEffect,
+    PouchItemType,
+    SpecialStatus,
+    SpecialStatusNames,
+    WeaponModifier,
+} from "./EnumTypes.ts";
+import {
+    convertCookEffectToSpecialStatus,
+    getWeaponSpecialStatusToDisplay,
+    isEquipmentType,
+} from "./EnumUtils.ts";
 
 /** Display props for special status (i.e. the box shown on the top-right of the item) */
 export type StatusProps = {
@@ -18,17 +28,28 @@ export type StatusProps = {
     /** Value text to display next to the modifier icon in the item slot */
     iconValue: string;
 
-    /** 
+    /**
      * Use alternative color to display the iconValue. This is to
      * make special status values more visible in the UI (such as WMC meal)
      */
     isAlternativeColor: boolean;
 };
 /** Get the status props for an item slot */
-export const getStatusProps = (actor: string, itemType: PouchItemType, effectId: number, effectValue: number, sellPrice: number): StatusProps => {
+export const getStatusProps = (
+    actor: string,
+    itemType: PouchItemType,
+    effectId: number,
+    effectValue: number,
+    sellPrice: number,
+): StatusProps => {
     // only display WeaponModifier for equipments
-    if ( isEquipmentType(itemType)) {
-        return getStatusPropsForEquipment(actor, itemType, effectValue, sellPrice);
+    if (isEquipmentType(itemType)) {
+        return getStatusPropsForEquipment(
+            actor,
+            itemType,
+            effectValue,
+            sellPrice,
+        );
     }
     // get from cook data
     let status: SpecialStatus = SpecialStatus.None;
@@ -45,13 +66,18 @@ export const getStatusProps = (actor: string, itemType: PouchItemType, effectId:
     // display price if it's odd, because it's probably used for WMC
     data.isAlternativeColor = sellPrice > 1 && sellPrice % 2 === 1;
     // display the price only if non-0 (normally it will be at least 2)
-    data.iconValue = sellPrice > 1 ? `$${sellPrice}`: "";
+    data.iconValue = sellPrice > 1 ? `$${sellPrice}` : "";
 
     return data;
-}
+};
 
 /** Get the status props for equipments (sword/bow/shield), i.e. props for displaying weapon modifier */
-export const getStatusPropsForEquipment = (actor: string, itemType: PouchItemType, effectValue: number, modifierSet: number): StatusProps => {
+export const getStatusPropsForEquipment = (
+    actor: string,
+    itemType: PouchItemType,
+    effectValue: number,
+    modifierSet: number,
+): StatusProps => {
     const status = getWeaponSpecialStatusToDisplay(modifierSet);
     let displayValue = 0;
 
@@ -91,7 +117,7 @@ export const getStatusPropsForEquipment = (actor: string, itemType: PouchItemTyp
         iconValue: displayValue ? `+${displayValue}` : "",
         isAlternativeColor: false,
     };
-}
+};
 
 /** Display props for one specific WeaponModifier.*/
 export type WeaponModifierStatusProps = {
@@ -101,8 +127,8 @@ export type WeaponModifierStatusProps = {
     /** The special status icon corresponding to the modifier */
     statusIcon: string;
 
-    /** 
-     * If the modifier is active on the item type 
+    /**
+     * If the modifier is active on the item type
      *
      * (for example, AddGuard is only active on Shields
      */
@@ -115,9 +141,14 @@ export type WeaponModifierStatusProps = {
      * for LongThrow, RapidFire, SurfMaster
      */
     modifierValue: string;
-}
+};
 
-export const getWeaponModifierStatusPropList = (actor: string, itemType: PouchItemType, effectValue: number, modifierSet: number): WeaponModifierStatusProps[] => {
+export const getWeaponModifierStatusPropList = (
+    actor: string,
+    itemType: PouchItemType,
+    effectValue: number,
+    modifierSet: number,
+): WeaponModifierStatusProps[] => {
     const output: WeaponModifierStatusProps[] = [];
     const yellow = (modifierSet & WeaponModifier.Yellow) !== 0;
     if (modifierSet & WeaponModifier.AddPower) {
@@ -211,7 +242,7 @@ export const getWeaponModifierStatusPropList = (actor: string, itemType: PouchIt
     }
 
     return output;
-}
+};
 
 /** Get the default props for actor based on its params (e.g. armor effect or bow default multishot) */
 export const getDefaultStatusPropsForActor = (

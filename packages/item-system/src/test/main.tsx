@@ -8,13 +8,20 @@ import {
     webLightTheme,
 } from "@fluentui/react-components";
 
-import type { InvView_GdtItem, InvView_PouchItem } from "@pistonite/skybook-api";
+import type {
+    InvView_GdtItem,
+    InvView_PouchItem,
+} from "@pistonite/skybook-api";
 import { initI18n } from "skybook-localization";
 import { registerAssetLocation } from "botw-item-assets";
 
 import { ItemTooltipProvider } from "../tooltip";
 import { CookEffect, PouchItemType, PouchItemUse } from "../data";
-import { GdtItemSlotWithTooltip, PouchItemSlotWithTooltip, StandaloneItemSlotWithTooltip } from "../Wrapper.tsx";
+import {
+    GdtItemSlotWithTooltip,
+    PouchItemSlotWithTooltip,
+    StandaloneItemSlotWithTooltip,
+} from "../Wrapper.tsx";
 
 const STANDALONE = [
     { actor: "Weapon_Sword_070" },
@@ -27,7 +34,7 @@ const GDT: InvView_GdtItem[] = [
         common: {
             actorName: "Weapon_Sword_070",
             value: 100,
-            isEquipped: true
+            isEquipped: true,
         },
         idx: 0,
         data: {
@@ -36,16 +43,16 @@ const GDT: InvView_GdtItem[] = [
                 idx: 0,
                 info: {
                     flag: 0,
-                    value: 0
-                }
-            }
-        }
+                    value: 0,
+                },
+            },
+        },
     },
     {
         common: {
             actorName: "Weapon_Sword_030",
             value: 1000,
-            isEquipped: false
+            isEquipped: false,
         },
         idx: 1,
         data: {
@@ -54,16 +61,16 @@ const GDT: InvView_GdtItem[] = [
                 idx: 2,
                 info: {
                     flag: 0x7fffffff,
-                    value: 120
-                }
-            }
-        }
+                    value: 120,
+                },
+            },
+        },
     },
     {
         common: {
             actorName: "Weapon_Bow_028",
             value: 6000,
-            isEquipped: true
+            isEquipped: true,
         },
         idx: 1,
         data: {
@@ -72,16 +79,16 @@ const GDT: InvView_GdtItem[] = [
                 idx: 1,
                 info: {
                     flag: 0x7fffffff,
-                    value: 120
-                }
-            }
-        }
+                    value: 120,
+                },
+            },
+        },
     },
     {
         common: {
             actorName: "Item_Cook_C_17",
             value: 100,
-            isEquipped: false
+            isEquipped: false,
         },
         idx: 2,
         data: {
@@ -93,7 +100,7 @@ const GDT: InvView_GdtItem[] = [
                     effectLevel: 3,
                     effectDuration: 180,
                     sellPrice: 50,
-                    effectValue: 3
+                    effectValue: 3,
                 },
                 unused_effect_1y: 0,
                 ingredients: [
@@ -102,15 +109,15 @@ const GDT: InvView_GdtItem[] = [
                     "Animal_Insect_A",
                     "Animal_Insect_A",
                     "Animal_Insect_A",
-                ]
-            }
-        }
+                ],
+            },
+        },
     },
     {
         common: {
             actorName: "Item_Roast_50",
             value: 100,
-            isEquipped: false
+            isEquipped: false,
         },
         idx: 3,
         data: {
@@ -122,12 +129,12 @@ const GDT: InvView_GdtItem[] = [
                     effectLevel: 3,
                     effectDuration: 180,
                     sellPrice: 51,
-                    effectValue: 3
+                    effectValue: 3,
                 },
                 unused_effect_1y: 0,
-                ingredients: ["","","","", ""]
-            }
-        }
+                ingredients: ["", "", "", "", ""],
+            },
+        },
     },
 ];
 
@@ -136,7 +143,7 @@ const POUCH: InvView_PouchItem[] = [
         common: {
             actorName: "Item_Ore_A",
             value: 10,
-            isEquipped: false
+            isEquipped: false,
         },
         itemType: PouchItemType.Material,
         itemUse: PouchItemUse.Item,
@@ -158,13 +165,13 @@ const POUCH: InvView_PouchItem[] = [
         nodePrev: 0n,
         nodeNext: 0n,
         allocatedIdx: 0,
-        unallocatedIdx: -1
+        unallocatedIdx: -1,
     },
     {
         common: {
             actorName: "Weapon_Bow_028",
             value: 6000,
-            isEquipped: false
+            isEquipped: false,
         },
         itemType: PouchItemType.Bow,
         itemUse: PouchItemUse.WeaponBow,
@@ -186,7 +193,7 @@ const POUCH: InvView_PouchItem[] = [
         nodePrev: 0n,
         nodeNext: 0n,
         allocatedIdx: 1,
-        unallocatedIdx: -1
+        unallocatedIdx: -1,
     },
 ];
 
@@ -264,16 +271,18 @@ const App: React.FC = () => {
             <p>GDT</p>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
                 {GDT.map((item, index) => {
-                    return (
-                        <GdtItemSlotWithTooltip key={index} item={item} />
-                    );
+                    return <GdtItemSlotWithTooltip key={index} item={item} />;
                 })}
             </div>
             <p>POUCH</p>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
                 {POUCH.map((item, index) => {
                     return (
-                        <PouchItemSlotWithTooltip key={index} item={item} list1Count={1}/>
+                        <PouchItemSlotWithTooltip
+                            key={index}
+                            item={item}
+                            list1Count={1}
+                        />
                     );
                 })}
             </div>

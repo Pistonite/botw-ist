@@ -1,5 +1,11 @@
 import { getActorParam } from "./ActorData.ts";
-import { CookEffect, PouchItemType, PouchItemUse, SpecialStatus, WeaponModifier } from "./EnumTypes.ts";
+import {
+    CookEffect,
+    PouchItemType,
+    PouchItemUse,
+    SpecialStatus,
+    WeaponModifier,
+} from "./EnumTypes.ts";
 
 export const isEquipmentType = (itemType: PouchItemType): boolean => {
     return (
@@ -9,7 +15,7 @@ export const isEquipmentType = (itemType: PouchItemType): boolean => {
     );
 };
 
-/** 
+/**
  * Convert a single weapon modifier to a special status. Only works
  * if the input corresponds to a single modifier, not a combination (bitflag)
  */
@@ -41,7 +47,9 @@ export const convertWeaponModifierToSpecialStatus = (
 };
 
 /** Convert a CookEffect to a SpecialStatus */
-export const convertCookEffectToSpecialStatus = (effect: CookEffect): SpecialStatus => {
+export const convertCookEffectToSpecialStatus = (
+    effect: CookEffect,
+): SpecialStatus => {
     switch (effect) {
         case CookEffect.LifeMaxUp:
             return SpecialStatus.LifeMaxUp;
@@ -95,17 +103,20 @@ export const getItemTypeAndUse = (
 
     // port for hasTag(CookResult) and hasTag(RoastItem) since we don't extract
     // that to ActorData
-    const isFood = actorName.startsWith("Item_Cook_") || actorName.startsWith("Item_RoastFish_")
-    || actorName.startsWith("Item_Roast_") || actorName.startsWith("Item_Chilled_") ||
-    actorName.startsWith("Item_ChilledFish_") || actorName=== "Item_Boiled_01";
-    ;
+    const isFood =
+        actorName.startsWith("Item_Cook_") ||
+        actorName.startsWith("Item_RoastFish_") ||
+        actorName.startsWith("Item_Roast_") ||
+        actorName.startsWith("Item_Chilled_") ||
+        actorName.startsWith("Item_ChilledFish_") ||
+        actorName === "Item_Boiled_01";
     const foodType = isFood ? PouchItemType.Food : PouchItemType.Material;
     if (profile !== "Item" && profile !== "PlayerItem") {
-        return [ foodType, PouchItemUse.Item, ];
+        return [foodType, PouchItemUse.Item];
     }
 
     if (getActorParam(actorName, "isCureItem")) {
-        return [ foodType, PouchItemUse.CureItem, ];
+        return [foodType, PouchItemUse.CureItem];
     }
 
     if (getActorParam(actorName, "isImportant")) {
@@ -115,7 +126,7 @@ export const getItemTypeAndUse = (
     return [foodType, PouchItemUse.Item];
 };
 
-/** 
+/**
  * Port of 0x7100aa7290 in 1.5.0
  *
  * See https://discord.com/channels/269611402854006785/269616041435332608/1041497732474482698
@@ -150,4 +161,3 @@ export const getWeaponSpecialStatusToDisplay = (
         (modifierSet & WeaponModifier.Yellow) !== 0,
     );
 };
-

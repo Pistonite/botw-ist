@@ -169,7 +169,10 @@ const useStyles = makeStyles({
     },
 });
 
-export type ItemSlotContextProps = Pick<ActorSpriteProps, "cheap" | "disableAnimation"> ;
+export type ItemSlotContextProps = Pick<
+    ActorSpriteProps,
+    "cheap" | "disableAnimation"
+>;
 export type ItemSlotFullProps = ItemSlotContextProps & ItemSlotProps;
 
 /** The Item slot display */
@@ -209,7 +212,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
                     className={mergeClasses(
                         styles.boxOutline,
                         !isInBrokenSlot && styles.boxOutlineColor,
-                    isTranslucent && styles.imageTranslucent,
+                        isTranslucent && styles.imageTranslucent,
                     )}
                 >
                     {" "}
@@ -222,16 +225,20 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
                             ? styles.boxInsideHighlightBorder
                             : styles.boxInsideBorder,
                         isEquipped && styles.equipped,
-                    isTranslucent && styles.imageTranslucent,
+                        isTranslucent && styles.imageTranslucent,
                     )}
                 >
                     {" "}
                 </div>
             </div>
-            <div className={mergeClasses(styles.layer, styles.image, 
-                
+            <div
+                className={mergeClasses(
+                    styles.layer,
+                    styles.image,
+
                     isTranslucent && styles.imageTranslucent,
-            )}>
+                )}
+            >
                 <ActorSprite
                     actor={actor}
                     effect={elixirEffect}
@@ -263,24 +270,26 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
                             styles.durability,
                         )}
                     >
-                        <Text font="numeric">{Number.isInteger(durability) ? durability : durability.toFixed(2)}</Text>
+                        <Text font="numeric">
+                            {Number.isInteger(durability)
+                                ? durability
+                                : durability.toFixed(2)}
+                        </Text>
                     </span>
                 </div>
             )}
-            {
-                count!== undefined && (
-                    <div className={mergeClasses(styles.layer)}>
-                        <span
-                            className={mergeClasses(
-                                styles.itemCount,
-                                !isEquipped && styles.itemCountShadow,
-                            )}
-                        >
-                            x{count}
-                        </span>
-                    </div>
-                )
-            }
+            {count !== undefined && (
+                <div className={mergeClasses(styles.layer)}>
+                    <span
+                        className={mergeClasses(
+                            styles.itemCount,
+                            !isEquipped && styles.itemCountShadow,
+                        )}
+                    >
+                        x{count}
+                    </span>
+                </div>
+            )}
             {isEntangled && (
                 <>
                     <div className={mergeClasses(styles.layer)}>
@@ -325,8 +334,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
                     </div>
                 </>
             )}
-            {(!!statusIconValue ||
-                status !== SpecialStatus.None) && (
+            {(!!statusIconValue || status !== SpecialStatus.None) && (
                 <div className={mergeClasses(styles.layer)}>
                     <span
                         className={mergeClasses(
@@ -334,20 +342,19 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
                             styles.modifierOverlay,
                         )}
                     >
-                        {status !== SpecialStatus.None &&
-                            statusIcon && (
-                                <div className={styles.modifier}>
-                                    <ModifierSprite
-                                        status={statusIcon}
-                                    />
-                                </div>
-                            )}
+                        {status !== SpecialStatus.None && statusIcon && (
+                            <div className={styles.modifier}>
+                                <ModifierSprite status={statusIcon} />
+                            </div>
+                        )}
                         {!!statusIconValue && (
                             <Text
                                 font="numeric"
                                 className={mergeClasses(
                                     styles.modifierText,
-                                        statusIsAlternativeColor ? styles.modifierTextColor2 : styles.modifierTextColor1,
+                                    statusIsAlternativeColor
+                                        ? styles.modifierTextColor2
+                                        : styles.modifierTextColor1,
                                     (status === SpecialStatus.None ||
                                         !statusIcon) &&
                                         styles.modifierTextBeginPad,

@@ -5,7 +5,7 @@ import type { ItemTooltipWithContextProps } from "./ItemTooltip.tsx";
 export type SetItemTooltipFn = (
     x: number,
     y: number,
-    props: ItemTooltipWithContextProps| undefined,
+    props: ItemTooltipWithContextProps | undefined,
     target: HTMLElement | undefined,
     verbose: boolean,
 ) => void;

@@ -7,7 +7,7 @@ import {
     mergeClasses,
 } from "@fluentui/react-components";
 
-import { ItemSlot, ItemTooltip, PouchItemSlotWithTooltip } from "skybook-item-system";
+import { PouchItemSlotWithTooltip } from "skybook-item-system";
 import { useUITranslation } from "skybook-localization";
 
 import { usePouchListView } from "self::application/store";
@@ -114,7 +114,11 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                     <div className={styles.inventoryScroll}>
                         <div className={styles.inventoryList}>
                             {inventory.items.map((item, i) => (
-                                <PouchItemSlotWithTooltip item={item} key={i} list1Count={inventory.count} />
+                                <PouchItemSlotWithTooltip
+                                    item={item}
+                                    key={i}
+                                    list1Count={inventory.count}
+                                />
                             ))}
                         </div>
                     </div>

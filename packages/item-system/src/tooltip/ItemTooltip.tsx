@@ -5,7 +5,8 @@ import type { ItemSlotContextProps } from "../slot";
 import { useSetItemTooltip } from "./ItemTooltipContext.ts";
 import type { ItemTooltipProps } from "./ItemTooltipProps.ts";
 
-export type ItemTooltipWithContextProps = ItemTooltipProps & ItemSlotContextProps;
+export type ItemTooltipWithContextProps = ItemTooltipProps &
+    ItemSlotContextProps;
 
 /** Wrapper to show tooltip for an ItemSlot */
 export const ItemTooltip: React.FC<

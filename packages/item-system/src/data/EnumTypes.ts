@@ -1,13 +1,12 @@
-
 /** uking::ui::PouchItemType */
 export const PouchItemType = {
-    Sword:  0,
+    Sword: 0,
     Bow: 1,
-    Arrow:  2,
-    Shield:  3,
-    ArmorHead:  4,
-    ArmorUpper:  5,
-    ArmorLower:  6,
+    Arrow: 2,
+    Shield: 3,
+    ArmorHead: 4,
+    ArmorUpper: 5,
+    ArmorLower: 6,
     Material: 7,
     Food: 8,
     KeyItem: 9,
@@ -55,8 +54,8 @@ export const PouchCategoryNames = [
 
 /** uking::ui::ItemUse */
 export const PouchItemUse = {
-    WeaponSmallSword:  0,
-    WeaponLargeSword:  1,
+    WeaponSmallSword: 0,
+    WeaponLargeSword: 1,
     WeaponSpear: 2,
     WeaponBow: 3,
     WeaponShield: 4,
@@ -133,7 +132,7 @@ export const CookEffectNames = [
  */
 export const SpecialStatus = {
     None: 0,
-    AddGuard:  1,
+    AddGuard: 1,
     AddGuardPlus: 2,
     AddLife: 3,
     AddLifePlus: 4,
@@ -167,37 +166,37 @@ export const SpecialStatus = {
 export type SpecialStatus = (typeof SpecialStatus)[keyof typeof SpecialStatus];
 export type SpecialStatusName = keyof typeof SpecialStatus;
 export const SpecialStatusNames = [
-"",
-"AddGuard",
-"AddGuardPlus",
-"AddLife",
-"AddLifePlus",
-"AddPower",
-"AddPowerPlus",
-"AllSpeed",
-"AttackUp",
-"ClimbSpeedUp",
-"Critical",
-"DefenseUp",
-"ExGutsMaxUp",
-"Fireproof", // "ResistBurn", not the fire-immunity effect
-"GutsRecover",
-"LifeMaxUp",
-"LongThrow",
-"Quietness",
-"RapidFire",
-"ReduceAncientEnemyDamge", // not a typo
-"ResistCold",
-"ResistElectric",
-"ResistFreeze",
-"ResistHot",
-"ResistLightning",
-"SandMoveSpeedUp",
-"SnowMovingSpeed",
-"SpreadFire",
-"SurfMaster",
-"SwimSpeedUp",
-"Zoom",
+    "",
+    "AddGuard",
+    "AddGuardPlus",
+    "AddLife",
+    "AddLifePlus",
+    "AddPower",
+    "AddPowerPlus",
+    "AllSpeed",
+    "AttackUp",
+    "ClimbSpeedUp",
+    "Critical",
+    "DefenseUp",
+    "ExGutsMaxUp",
+    "Fireproof", // "ResistBurn", not the fire-immunity effect
+    "GutsRecover",
+    "LifeMaxUp",
+    "LongThrow",
+    "Quietness",
+    "RapidFire",
+    "ReduceAncientEnemyDamge", // not a typo
+    "ResistCold",
+    "ResistElectric",
+    "ResistFreeze",
+    "ResistHot",
+    "ResistLightning",
+    "SandMoveSpeedUp",
+    "SnowMovingSpeed",
+    "SpreadFire",
+    "SurfMaster",
+    "SwimSpeedUp",
+    "Zoom",
 ] as const satisfies (SpecialStatusName | "")[];
 
 /** uking::act::WeaponModifier */
@@ -214,6 +213,7 @@ export const WeaponModifier = {
     AddGuard: 0x100,
     Yellow: 0x80000000,
 } as const;
-export type WeaponModifier = (typeof WeaponModifier)[keyof typeof WeaponModifier];
+export type WeaponModifier =
+    (typeof WeaponModifier)[keyof typeof WeaponModifier];
 // intentionally does not have a value to name mapping, since we only
 // need the name for the special status to display the modifier

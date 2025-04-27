@@ -40,44 +40,57 @@ export const ItemTooltipProvider: React.FC<
     // toggle verbose based on Shift key
     useEffect(() => {
         const controller = new AbortController();
-        window.addEventListener("keydown", ((event: KeyboardEvent) => {
-            if (event.key === "Shift") {
-                setVerbose(true);
-            }
-        }), { signal: controller.signal });
-        window.addEventListener("keyup", ((event: KeyboardEvent) => {
-            if (event.key === "Shift") {
-                setVerbose(false);
-            }
-        }), { signal: controller.signal });
+        window.addEventListener(
+            "keydown",
+            (event: KeyboardEvent) => {
+                if (event.key === "Shift") {
+                    setVerbose(true);
+                }
+            },
+            { signal: controller.signal },
+        );
+        window.addEventListener(
+            "keyup",
+            (event: KeyboardEvent) => {
+                if (event.key === "Shift") {
+                    setVerbose(false);
+                }
+            },
+            { signal: controller.signal },
+        );
         return () => {
             controller.abort();
         };
     }, []);
     const tooltipDivRef = useRef<HTMLDivElement>(null);
     const childrenContainerRef = useRef<HTMLDivElement>(null);
-    const [tooltipProps, setTooltipProps] = useState<ItemTooltipWithContextProps| undefined>();
+    const [tooltipProps, setTooltipProps] = useState<
+        ItemTooltipWithContextProps | undefined
+    >();
     const [tooltipTarget, setTooltipTarget] = useState<
         HTMLElement | undefined
     >();
-    const setTooltip: SetItemTooltipFn = useCallback((x, y, props, target, verbose) => {
-        if (!tooltipDivRef.current) {
-            return;
-        }
-        const tooltipDiv = tooltipDivRef.current;
-        if (!props || !target) {
-            tooltipDiv.style.display = "none";
-            return;
-        }
-        tooltipDiv.style.display = "unset";
-        // This might initially be wrong the first time
-        // the info is changed. However, most of the time, it will be
-        // called again with the correct x and y when the mouse moves.
-        positionTooltipDiv(tooltipDiv, x, y);
-        setTooltipProps(props);
-        setTooltipTarget(target);
-        setVerbose(verbose);
-    }, []);
+    const setTooltip: SetItemTooltipFn = useCallback(
+        (x, y, props, target, verbose) => {
+            if (!tooltipDivRef.current) {
+                return;
+            }
+            const tooltipDiv = tooltipDivRef.current;
+            if (!props || !target) {
+                tooltipDiv.style.display = "none";
+                return;
+            }
+            tooltipDiv.style.display = "unset";
+            // This might initially be wrong the first time
+            // the info is changed. However, most of the time, it will be
+            // called again with the correct x and y when the mouse moves.
+            positionTooltipDiv(tooltipDiv, x, y);
+            setTooltipProps(props);
+            setTooltipTarget(target);
+            setVerbose(verbose);
+        },
+        [],
+    );
 
     // hide the tooltip if the target is removed
     useEffect(() => {
@@ -122,7 +135,9 @@ export const ItemTooltipProvider: React.FC<
                     backgroundImage: `url(${backgroundUrl})`,
                 }}
             >
-                {tooltipProps && <ItemTooltipContent {...tooltipProps} verbose={verbose}/>}
+                {tooltipProps && (
+                    <ItemTooltipContent {...tooltipProps} verbose={verbose} />
+                )}
             </div>
         </ItemTooltipContext.Provider>
     );

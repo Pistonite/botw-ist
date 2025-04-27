@@ -39,10 +39,7 @@ export const usePouchListView = () => {
         }
         let current = true;
         const updateInventory = async () => {
-            const view = await runtime.getPouchList(
-                activeScript,
-                stepIndex,
-            );
+            const view = await runtime.getPouchList(activeScript, stepIndex);
             const activeScriptNow = useSessionStore.getState().activeScript;
             if (!current || activeScriptNow !== activeScript) {
                 return;
