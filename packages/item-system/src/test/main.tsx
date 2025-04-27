@@ -13,7 +13,7 @@ import { initI18n } from "skybook-localization";
 import { registerAssetLocation } from "botw-item-assets";
 
 import { ItemTooltipProvider } from "../tooltip";
-import { CookEffect, PouchItemType } from "../data";
+import { CookEffect, PouchItemType, PouchItemUse } from "../data";
 import { GdtItemSlotWithTooltip, PouchItemSlotWithTooltip, StandaloneItemSlotWithTooltip } from "../Wrapper.tsx";
 
 const STANDALONE = [
@@ -43,17 +43,53 @@ const GDT: InvView_GdtItem[] = [
     },
     {
         common: {
+            actorName: "Weapon_Sword_030",
+            value: 1000,
+            isEquipped: false
+        },
+        idx: 1,
+        data: {
+            type: "sword",
+            data: {
+                idx: 2,
+                info: {
+                    flag: 0x7fffffff,
+                    value: 120
+                }
+            }
+        }
+    },
+    {
+        common: {
+            actorName: "Weapon_Bow_028",
+            value: 6000,
+            isEquipped: true
+        },
+        idx: 1,
+        data: {
+            type: "bow",
+            data: {
+                idx: 1,
+                info: {
+                    flag: 0x7fffffff,
+                    value: 120
+                }
+            }
+        }
+    },
+    {
+        common: {
             actorName: "Item_Cook_C_17",
             value: 100,
             isEquipped: false
         },
-        idx: 1,
+        idx: 2,
         data: {
             type: "food",
             data: {
                 idx: 0,
                 info: {
-                    effectId: CookEffect.LifeMaxUp,
+                    effectId: CookEffect.ExGutsMaxUp,
                     effectLevel: 3,
                     effectDuration: 180,
                     sellPrice: 50,
@@ -70,6 +106,29 @@ const GDT: InvView_GdtItem[] = [
             }
         }
     },
+    {
+        common: {
+            actorName: "Item_Roast_50",
+            value: 100,
+            isEquipped: false
+        },
+        idx: 3,
+        data: {
+            type: "food",
+            data: {
+                idx: 1,
+                info: {
+                    effectId: CookEffect.LifeMaxUp,
+                    effectLevel: 3,
+                    effectDuration: 180,
+                    sellPrice: 51,
+                    effectValue: 3
+                },
+                unused_effect_1y: 0,
+                ingredients: ["","","","", ""]
+            }
+        }
+    },
 ];
 
 const POUCH: InvView_PouchItem[] = [
@@ -80,8 +139,8 @@ const POUCH: InvView_PouchItem[] = [
             isEquipped: false
         },
         itemType: PouchItemType.Material,
-        itemUse: PouchItemType.Material,
-        isInInventory: true,
+        itemUse: PouchItemUse.Item,
+        isInInventory: false,
         isNoIcon: false,
         data: {
             effectValue: 0,
@@ -100,7 +159,35 @@ const POUCH: InvView_PouchItem[] = [
         nodeNext: 0n,
         allocatedIdx: 0,
         unallocatedIdx: -1
-    }
+    },
+    {
+        common: {
+            actorName: "Weapon_Bow_028",
+            value: 6000,
+            isEquipped: false
+        },
+        itemType: PouchItemType.Bow,
+        itemUse: PouchItemUse.WeaponBow,
+        isInInventory: false,
+        isNoIcon: false,
+        data: {
+            effectValue: 1200,
+            effectDuration: 0,
+            effectId: -1,
+            effectLevel: 0,
+            sellPrice: 0x7fffffff,
+        },
+        ingredients: ["", "", "", "", ""],
+        holdingCount: 0,
+        promptEntangled: true,
+        nodeAddr: 0n,
+        nodeValid: true,
+        nodePos: 418n,
+        nodePrev: 0n,
+        nodeNext: 0n,
+        allocatedIdx: 1,
+        unallocatedIdx: -1
+    },
 ];
 
 // eslint-disable-next-line react-refresh/only-export-components

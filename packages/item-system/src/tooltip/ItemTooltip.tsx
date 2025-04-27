@@ -25,7 +25,7 @@ export const ItemTooltip: React.FC<
                 );
             }}
             onMouseLeave={() => {
-                // setItemTooltip(-1, -1, undefined, undefined, false);
+                setItemTooltip(-1, -1, undefined, undefined, false);
             }}
         >
             {children}

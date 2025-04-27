@@ -8,7 +8,7 @@ import { useNarrow, isLessProductive } from "self::pure-contrib";
 import { ExtensionPanel } from "./ExtensionPanel.tsx";
 import { useUIStore } from "./store.ts";
 import { Header } from "./Header.tsx";
-import { VisibleInventoryPanel } from "./VisibleInventoryPanel.tsx";
+import { PouchInventoryPanel } from "./PouchInventoryPanel.tsx";
 import { InventoryTitle } from "./components/InventoryTitle.tsx";
 
 const useStyles = makeStyles({
@@ -78,7 +78,7 @@ const AppImpl: React.FC = () => {
                     >
                         <InventoryTitle title="GameData" />
                     </div>
-                    <VisibleInventoryPanel />
+                    <PouchInventoryPanel />
                 </ResizeLayout>
             </main>
         </ResizeLayout>

@@ -66,7 +66,7 @@ const executeScriptInternal = async (
     return makeRunOutputErc(outputRaw);
 };
 
-export const getInventoryListView = async (
+export const getPouchList = async (
     script: string,
     resolver: QuotedItemResolverFn,
     bytePos: number,

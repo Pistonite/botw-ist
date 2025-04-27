@@ -71,7 +71,7 @@ const useStyles = makeStyles({
         padding: "4px",
     },
     imageTranslucent: {
-        opacity: 0.6,
+        opacity: 0.4,
     },
     // The "xCOUNT" text
     itemCount: {
@@ -157,7 +157,12 @@ const useStyles = makeStyles({
     },
     modifierText: {
         paddingRight: "2px",
+    },
+    modifierTextColor1: {
         color: "#64E793",
+    },
+    modifierTextColor2: {
+        color: "#ff8800",
     },
     modifierTextBeginPad: {
         paddingLeft: "2px",
@@ -198,13 +203,13 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
                 className={mergeClasses(
                     styles.layer,
                     isInBrokenSlot && styles.broken,
-                    isTranslucent && styles.imageTranslucent,
                 )}
             >
                 <div
                     className={mergeClasses(
                         styles.boxOutline,
                         !isInBrokenSlot && styles.boxOutlineColor,
+                    isTranslucent && styles.imageTranslucent,
                     )}
                 >
                     {" "}
@@ -217,12 +222,16 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
                             ? styles.boxInsideHighlightBorder
                             : styles.boxInsideBorder,
                         isEquipped && styles.equipped,
+                    isTranslucent && styles.imageTranslucent,
                     )}
                 >
                     {" "}
                 </div>
             </div>
-            <div className={mergeClasses(styles.layer, styles.image)}>
+            <div className={mergeClasses(styles.layer, styles.image, 
+                
+                    isTranslucent && styles.imageTranslucent,
+            )}>
                 <ActorSprite
                     actor={actor}
                     effect={elixirEffect}
@@ -338,6 +347,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
                                 font="numeric"
                                 className={mergeClasses(
                                     styles.modifierText,
+                                        statusIsAlternativeColor ? styles.modifierTextColor2 : styles.modifierTextColor1,
                                     (status === SpecialStatus.None ||
                                         !statusIcon) &&
                                         styles.modifierTextBeginPad,

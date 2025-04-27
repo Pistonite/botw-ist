@@ -13,8 +13,6 @@ import {
     convertCookEffectToSpecialStatus,
     CookEffect,
     CookEffectNames,
-    PouchItemType,
-    SpecialStatus,
     SpecialStatusNames,
 } from "../data";
 import type { ItemSlotContextProps } from "../slot";
@@ -50,11 +48,32 @@ const useStyles = makeStyles({
     numericFontAlignFix: {
         translate: "0 1px",
     },
+    numericCompact: {
+        lineHeight: "1.2",
+    },
+    glitchyColor: {
+        color: "#cc88ff",
+    },
+    equipped: {
+        color: "#33bbff",
+    },
     price: {
         color: "#64E793",
     },
     time: {
         color: "#64E793",
+    },
+    weaponModifierLine: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: "4px",
+    },
+    weaponModifierActive: {
+        color: "#9cdcfe",
+    },
+    weaponModifierInactive: {
+        color: "#5c7cae",
     },
     foodSecondLineContainer: {
         display: "flex",
@@ -76,13 +95,16 @@ const useStyles = makeStyles({
         boxSizing: "border-box",
         border: "1px solid #ccc",
         backgroundColor: "black",
+    },
+    profile: {
+        color: "#00aaff"
     }
 });
 
 const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
     actor, isEquipment, value, isEquipped, isTranslucent,
     holdingCount, weaponModifiers, cookData,
-    ingredients, pouchMeta, gdtMeta, isInBrokenSlot, isEntangled, profile,
+    ingredients, isInBrokenSlot, isEntangled, profile,
     cheap, disableAnimation,
 }) => {
     const styles = useStyles();
@@ -128,14 +150,14 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
         };
     }
     const description = t(`actor.${actor}.desc`, descTranslationArgs);
-    console.log(description);
 
     const starNum = getActorParam(actor, "armorStarNum");
     const durability = (value ||0) / 100;
 
+    // maybe refactor this mess when doing the meta, no ROI right now
+
     return (
         <div className={styles.container}>
-            <div>
                 <Subtitle2 className={styles.nameContainer} wrap={false} block>
                     {t(`actor.${actor}.name`, nameTranslationArgs)}
                     {starNum > 1 &&
@@ -159,7 +181,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                         </div>
                 }
                 { isEquipment &&  (
-                    <Text wrap={false} block font="numeric">
+                    <Text wrap={false} block font="numeric" className={styles.numericCompact}>
                         {ui("tooltip.durability", { 
                             current: Number.isInteger(durability) ? durability : durability.toFixed(2), 
                             max: getActorParam(actor, "generalLife")
@@ -168,37 +190,37 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                 }
                 {
                     value !== undefined && (
-                        <Text wrap={false} block font="numeric">
+                        <Text wrap={false} block font="numeric" className={styles.numericCompact}>
                             {ui("tooltip.value", { value })}
                         </Text>
                     )
                 }
                 {isEquipped && (
-                    <Text wrap={false} block>
+                    <Text wrap={false} block font="numeric" className={mergeClasses(styles.equipped, styles.numericCompact)}>
                         {ui("tooltip.equipped")}
                     </Text>
                 )}
                 {isTranslucent && (
-                    <Text wrap={false} block>
+                    <Text wrap={false} block font="numeric" className={mergeClasses(styles.numericCompact, styles.glitchyColor)}>
                         {ui("tooltip.translucent")}
                     </Text>
                 )}
                 {holdingCount > 0 && (
-                    <Text wrap={false} block>
+                    <Text wrap={false} block font="numeric" className={styles.numericCompact}>
                         {ui("tooltip.holding", { holding: holdingCount })}
                     </Text>
                 )}
                 {
                     weaponModifiers.map(
-                        ({ status, statusIcon, modifierValue }, i) => (
-                            <Text wrap={false} block key={i}>
-                                <span style={{ display: "flex" }}>
-                                    <ModifierSprite status={statusIcon} />
+                        ({ status, statusIcon, modifierValue, active }, i) => (
+                            <span key={i} className={styles.weaponModifierLine}>
+                                <ModifierSprite status={statusIcon} />
+                            <Text wrap={false} block font="numeric" className={mergeClasses(styles.numericFontAlignFix, styles.numericCompact, active?styles.weaponModifierActive : styles.weaponModifierInactive)}>
                                     {t(`status.${SpecialStatusNames[status]}`, {
                                         modifier_value: modifierValue,
                                     })}
-                                </span>
                             </Text>
+                            </span>
                         ),
                     )}
                 {/* Cook Data */}
@@ -224,29 +246,29 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                                 )}
                             {
                                 (cookData.effectId === CookEffect.GutsRecover) &&
-                                        <Text wrap={false} block>
-                                            <span style={{ display: "flex" }}>
-                                                <ModifierSprite status={foodStatusName} />
-                                            {
-                                                ui("tooltip.stamina_recover", {
-                                                    wheels: (cookData.effectLevel/1000.0).toFixed(3)
-                                                })
-                                            }
-                                            </span>
+                                    <>
+                                        <ModifierSprite status={foodStatusName} />
+                                        <Text wrap={false} block font="numeric" className={styles.numericFontAlignFix}>
+                            {
+                                ui("tooltip.stamina_recover", {
+                                    wheels: (cookData.effectLevel/1000.0).toFixed(3)
+                                })
+                            }
                                         </Text>
+                                    </>
                             }
                             {
                                     cookData.effectId === CookEffect.ExGutsMaxUp && 
-                                        <Text wrap={false} block>
-                                            <span style={{ display: "flex" }}>
-                                                <ModifierSprite status={foodStatusName} />
+                                    <>
+                                        <ModifierSprite status={foodStatusName} />
+                                        <Text wrap={false} block font="numeric" className={styles.numericFontAlignFix}>
                                             {
                                                 ui("tooltip.stamina_recover_ex", {
                                                     wheels: (cookData.effectLevel/15.0).toFixed(2)
                                                 })
                                             }
-                                            </span>
                                         </Text>
+                                    </>
                             }
                         </span>
                     </Text>
@@ -273,13 +295,13 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                                                         <ModifierSprite
                                                             status={foodStatusName}
                                                         />
-                                    <Text wrap={false} font="numeric" className={styles.numericFontAlignFix}>
+                                    <Text wrap={false} font="numeric" className={mergeClasses(styles.numericFontAlignFix)}>
                                                         Lv. {cookData.effectLevel}
                                                         </Text>
                                                     </>
                                                 )}
                                         </span>
-                                    <Text wrap={false} font="numeric" className={styles.numericFontAlignFix}>
+                                    <Text wrap={false} font="numeric" className={mergeClasses(styles.numericFontAlignFix)}>
                                     {t(`status.${foodStatusName}`)}
                                     </Text>
                                     <Text wrap={false} font="numeric" className={mergeClasses(styles.time, styles.numericFontAlignFix)}>
@@ -305,16 +327,27 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                                         </>
                                 )
                         }
-                        <Text wrap={false} font="numeric" className={mergeClasses(styles.price, styles.numericFontAlignFix)}>
-                            ${cookData.sellPrice}
-                        </Text>
                     </div>
                 </>
                 }
                 {
+                    cookData !== undefined && !!cookData.sellPrice && (
+                        <Text wrap={false} font="numeric" block className={mergeClasses(styles.price, styles.numericFontAlignFix, styles.numericCompact)}>
+                            {ui("tooltip.price", {price: `$${cookData.sellPrice}`})}
+                        </Text>
+                    )
+                }
+                {
+                    cookData !== undefined && !actor.startsWith("Item_Cook_") && (
+                        <Text wrap={false} font="numeric" block className={mergeClasses(styles.glitchyColor, styles.numericCompact)}>
+                            {ui("tooltip.bad_cook_data")}
+                        </Text>
+                    )
+                }
+                {
                     ingredients.length >0 && <>
                         <Text wrap={false} block font="numeric">
-                            Recipe
+                            {ui("tooltip.recipe")}
                             </Text>
                     <div className={styles.recipeContainer}>
                         {
@@ -335,17 +368,22 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                     </div>
                     </>
                 }
-                <Text wrap={false} block>
-                    TODO: meta
-                </Text>
-                <Text wrap={false} block>
+                {/*TODO: meta*/ }
+                {
+                    isInBrokenSlot &&
+                    <Text wrap={false} block font="numeric" className={mergeClasses(styles.numericCompact, styles.glitchyColor)}>
+                        {ui("tooltip.broken_slot")}
+                    </Text>
+                }
+                {
+                    isEntangled &&
+                    <Text wrap={false} block font="numeric" className={mergeClasses(styles.numericCompact, styles.glitchyColor)}>
+                        {ui("tooltip.entangled")}
+                    </Text>
+                }
+                <Text wrap={false} block italic className={styles.profile}>
                     {profile}
                 </Text>
-            </div>
-            <div>
-                <div></div>
-                <div></div>
-            </div>
         </div>
     );
 };

@@ -14,10 +14,8 @@ import {
     useUITranslation,
 } from "skybook-localization";
 import {
-    CookEffect,
-    ItemSlot,
-    ItemTooltip,
-    makeItemSlotInfo,
+    type CookEffect,
+    StandaloneItemSlotWithTooltip,
 } from "skybook-item-system";
 
 export type Searcher = {
@@ -107,13 +105,8 @@ export const ItemExplorer: React.FC<{ searcher: Searcher }> = ({
                     <div className={styles.results}>
                         {results.map((result, i) => {
                             const { actor, cookEffect } = result;
-                            const info = makeItemSlotInfo(actor, {
-                                modEffectId: cookEffect || CookEffect.None,
-                            });
                             return (
-                                <ItemTooltip info={info} key={i}>
-                                    <ItemSlot info={info} />
-                                </ItemTooltip>
+                                <StandaloneItemSlotWithTooltip key={i} actor={actor} effect={cookEffect as CookEffect}/>
                             );
                         })}
                     </div>

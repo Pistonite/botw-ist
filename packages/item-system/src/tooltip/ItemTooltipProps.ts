@@ -8,7 +8,8 @@ import {
     PouchItemType, 
     type WeaponModifierStatusProps, 
     gdtTypeToPouchItemType, 
-    isGdtDataEquipmentType, isGdtDataFoodType, normalizeIngredients, CookEffect } from "../data";
+    isGdtDataEquipmentType, isGdtDataFoodType, normalizeIngredients, 
+    type CookEffect } from "../data";
 
 export type ItemTooltipProps = {
     /** The actor name of this item and used to look up item properties */

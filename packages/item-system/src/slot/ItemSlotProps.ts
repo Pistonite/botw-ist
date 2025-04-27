@@ -123,6 +123,7 @@ export const getSlotPropsFromGdtItem = (item: InvView_GdtItem): ItemSlotProps =>
         holdingCount: 0,
         ...status,
         deactive: getDeactive(isAbility, isEquipped, actorName, value),
+        // don't show badlyDamaged for GDT items
     }
 };
 

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 
-import type { InventoryListView } from "@pistonite/skybook-api";
+import type { InvView_PouchList } from "@pistonite/skybook-api";
 
 import { useRuntime } from "self::application/runtime";
 
@@ -18,7 +18,7 @@ export const useDebouncedHasUnsavedChanges = (delay: number) => {
 };
 
 /** Get the list view of the visible inventory of the current script and step */
-export const useInventoryListView = () => {
+export const usePouchListView = () => {
     const activeScript = useSessionStore((state) => state.activeScript);
     const inProgress = useSessionStore((state) => state.executionInProgress);
     const stepIndex = useSessionStore((state) => state.stepIndex);
@@ -28,7 +28,7 @@ export const useInventoryListView = () => {
         (state) => state.setInventoryListViewInCache,
     );
 
-    const inventory: InventoryListView | undefined = cachedViews[stepIndex];
+    const inventory: InvView_PouchList | undefined = cachedViews[stepIndex];
     const cacheIsValid = !!(cacheValidity.includes(stepIndex) && inventory);
 
     const runtime = useRuntime();
@@ -39,7 +39,7 @@ export const useInventoryListView = () => {
         }
         let current = true;
         const updateInventory = async () => {
-            const view = await runtime.getInventoryListView(
+            const view = await runtime.getPouchList(
                 activeScript,
                 stepIndex,
             );
@@ -69,7 +69,7 @@ export const useInventoryListView = () => {
     ]);
 
     return {
-        inventory: inventory as InventoryListView | undefined,
+        inventory: inventory as InvView_PouchList | undefined,
         stale: !cacheIsValid,
         loading: inProgress,
     };
