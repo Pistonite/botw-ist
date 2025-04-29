@@ -26,6 +26,9 @@ export class FirstPartyExtensionAdapter implements ExtensionModule {
     public async onScriptChanged(_script: string): WxPromise<void> {
         return {};
     }
+    public async onIconSettingsChanged(_highRes: boolean, _animation: boolean): WxPromise<void> {
+        return {};
+    }
     public onAppConnectionEstablished(app: ExtensionApp): void {
         this.app = app;
     }

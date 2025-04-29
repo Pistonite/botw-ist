@@ -22,7 +22,7 @@ import {
     type QuotedItemResolverFn,
 } from "./parser.ts";
 import { getImage, putImage } from "./imagedb.ts";
-import { executeScript, getPouchList } from "./runtime.ts";
+import { executeScript, getGdtInventory, getPouchList } from "./runtime.ts";
 
 const { promise: appPromise, resolve: resolveApp } =
     wxMakePromise<RuntimeApp>();
@@ -151,6 +151,10 @@ async function boot() {
         getPouchList: wxWrapHandler(async (script, pos) => {
             await initializePromise;
             return await getPouchList(script, resolveQuotedItem, pos);
+        }),
+        getGdtInventory: wxWrapHandler(async (script, pos) => {
+            await initializePromise;
+            return await getGdtInventory(script, resolveQuotedItem, pos);
         }),
     };
 

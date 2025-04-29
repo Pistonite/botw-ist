@@ -45,6 +45,21 @@ dialog.custom_image.option.delete_previous: "刪除先前上傳的自訂磁碟�
 dialog.custom_image.option.select_current: "使用先前上傳的檔案"
 dialog.custom_image.title: "自訂磁碟映像設定"
 
+# Header Menus
+menu.enable_animations: "啟用動畫"
+menu.enable_animations.desc: "啟用圖示與物品欄格的動畫，例如英傑技能或裝備損壞效果。"
+menu.header.preference: "設定"
+menu.high_res_icons: "高品質圖示"
+menu.high_res_icons.desc: "啟用高解析度圖示和物品動畫效果。如果連線不穩定或無法載入圖示，可以考慮關閉此選項以節省頻寬。"
+
+# Main inventory display
+main.gdt_inventory.desc: "儲存在遊戲旗標系統（GDT）中的背包資料。物品以讀取進背包的形式顯示，並依據各背包格將儲存至GDT格的位置對齊排列。"
+main.gdt_inventory.title: "GDT內部資料"
+main.mcount_desc: "使用中物品清單所追蹤的物品格數量"
+main.visible_inventory.desc: "當你打開背包時所看到的物品"
+main.visible_inventory.title: "可見背包"
+
+
 
 # Generic error messages
 error.internal: "內部錯誤: {{error}}"
@@ -88,10 +103,6 @@ category.KeyItem: "Key Items"
 category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
-
-main.mcount_desc: "使用中物品清單所追蹤的物品格數量"
-main.visible_inventory.desc: "當你打開背包時所看到的物品"
-main.visible_inventory.title: "可見背包"
 
 button.open_extension: "Extensions"
 

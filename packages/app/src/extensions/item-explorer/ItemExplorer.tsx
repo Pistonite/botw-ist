@@ -52,8 +52,14 @@ const useStyles = makeStyles({
     },
 });
 
-export const ItemExplorer: React.FC<{ searcher: Searcher }> = ({
-    searcher,
+type ItemExplorerProps = {
+    searcher: Searcher;
+    cheap?: boolean;
+    disableAnimation?: boolean;
+};
+
+export const ItemExplorer: React.FC<ItemExplorerProps> = ({
+    searcher, cheap, disableAnimation,
 }) => {
     const [value, setValue] = useState("");
     const [localized, setLocalized] = useState(false);
@@ -110,6 +116,8 @@ export const ItemExplorer: React.FC<{ searcher: Searcher }> = ({
                                     key={i}
                                     actor={actor}
                                     effect={cookEffect as CookEffect}
+                                    cheap={cheap}
+                                    disableAnimation={disableAnimation}
                                 />
                             );
                         })}

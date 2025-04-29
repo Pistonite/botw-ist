@@ -37,7 +37,7 @@ tasks:
       - $(which mkdir) -p src/generated
       - $(which mkdir) -p public
       - gcloud storage cp gs://ist-private/artifacts/skybook-item-system/*.ts src/generated
-      - gcloud storage cp gs://ist-private/images/SheikahBackground.png public
+      - gcloud storage cp gs://ist-private/images/SheikahBackground*.png public
       - gcloud storage cp gs://ist-private/images/bg-*.jpg public
 
 

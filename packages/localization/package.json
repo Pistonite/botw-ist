@@ -9,6 +9,7 @@
     "dependencies": {
         "@pistonite/pure": "catalog:",
         "@pistonite/pure-i18next": "catalog:",
+        "@pistonite/shared-controls": "workspace:*",
         "@pistonite/skybook-api": "workspace:*",
         "fuse.js": "^7.0.0",
         "i18next": "catalog:",

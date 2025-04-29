@@ -1,3 +1,4 @@
+import { useDark } from "@pistonite/pure-react";
 import { registerAssetLocation } from "botw-item-assets";
 
 let assetPrefix = "/";
@@ -25,6 +26,15 @@ export const probeAndRegisterAssetLocation = async () => {
 
 export const getSheikaBackgroundUrl = () => {
     return `${assetPrefix}static/item-system/SheikahBackground.png`;
+};
+
+export const getSheikaBackgroundLightUrl = () => {
+    return `${assetPrefix}static/item-system/SheikahBackgroundLight.png`;
+};
+
+export const useThemedSheikaBackgroundUrl = () => {
+    const dark = useDark();
+    return dark ? getSheikaBackgroundUrl() : getSheikaBackgroundLightUrl();
 };
 
 export const getOverworldBackgroundUrl = () => {

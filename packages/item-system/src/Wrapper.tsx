@@ -72,14 +72,17 @@ export type PouchItemSlotProps = {
     item: InvView_PouchItem;
     /** Count of list1 (allocated list), used to show items in "broken slots" */
     list1Count: number;
+    /** If true, show the master sword as full power */
+    isMasterSwordFullPower: boolean;
 } & ItemSlotContextProps;
 
 const PouchItemSlotImpl: React.FC<PouchItemSlotProps> = ({
     item,
     list1Count,
+    isMasterSwordFullPower,
     ...props
 }) => {
-    const slotProps = getSlotPropsFromPouchItem(item, list1Count);
+    const slotProps = getSlotPropsFromPouchItem(item, list1Count, isMasterSwordFullPower);
     return <ItemSlot {...slotProps} {...props} />;
 };
 export const PouchItemSlot = memo(PouchItemSlotImpl);
@@ -87,9 +90,10 @@ export const PouchItemSlot = memo(PouchItemSlotImpl);
 const PouchItemSlotWithTooltipImpl: React.FC<PouchItemSlotProps> = ({
     item,
     list1Count,
+    isMasterSwordFullPower,
     ...props
 }) => {
-    const slotProps = getSlotPropsFromPouchItem(item, list1Count);
+    const slotProps = getSlotPropsFromPouchItem(item, list1Count, isMasterSwordFullPower);
     const tooltipProps = getTooltipPropsFromPouchItem(item, list1Count);
     return (
         <ItemTooltip {...tooltipProps} {...props}>
@@ -102,19 +106,21 @@ export const PouchItemSlotWithTooltip = memo(PouchItemSlotWithTooltipImpl);
 /** Item slot for items in the GDT */
 export type GdtItemSlotProps = {
     item: InvView_GdtItem;
+    isMasterSwordFullPower: boolean;
 } & ItemSlotContextProps;
 
-const GdtItemSlotImpl: React.FC<GdtItemSlotProps> = ({ item, ...props }) => {
-    const slotProps = getSlotPropsFromGdtItem(item);
+const GdtItemSlotImpl: React.FC<GdtItemSlotProps> = ({ item, isMasterSwordFullPower, ...props }) => {
+    const slotProps = getSlotPropsFromGdtItem(item, isMasterSwordFullPower);
     return <ItemSlot {...slotProps} {...props} />;
 };
 export const GdtItemSlot = memo(GdtItemSlotImpl);
 
 const GdtItemSlotWithTooltipImpl: React.FC<GdtItemSlotProps> = ({
     item,
+    isMasterSwordFullPower,
     ...props
 }) => {
-    const slotProps = getSlotPropsFromGdtItem(item);
+    const slotProps = getSlotPropsFromGdtItem(item, isMasterSwordFullPower);
     const tooltipProps = getTooltipPropsFromGdtItem(item);
     return (
         <ItemTooltip {...tooltipProps} {...props}>

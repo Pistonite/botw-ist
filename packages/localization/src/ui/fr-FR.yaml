@@ -45,6 +45,21 @@ dialog.custom_image.option.delete_previous: "Supprimer les images disque personn
 dialog.custom_image.option.select_current: "Utiliser le fichier précédemment téléchargé"
 dialog.custom_image.title: "Configuration de l’image disque personnalisée"
 
+# Header Menus
+menu.enable_animations: "Animations"
+menu.enable_animations.desc: "Activez les animations des icônes et des emplacements d'objets, telles que les compétences des champions et les effets d'équipement endommagé."
+menu.header.preference: "Préférences"
+menu.high_res_icons: "Icônes HD"
+menu.high_res_icons.desc: "Activez les icônes haute résolution et les animations des objets. Désactiver cette option peut économiser de la bande passante si votre connexion est lente ou si les icônes ne se chargent pas correctement."
+
+# Main inventory display
+main.gdt_inventory.desc: "Données d'inventaire stockées dans le système de drapeaux (GDT) du jeu. Les objets sont affichés comme s'ils étaient chargés dans l'inventaire, et les emplacements sont alignés en fonction de la case d'inventaire qui sera effectivement enregistrée dans le slot GDT."
+main.gdt_inventory.title: "GameData"
+main.mcount_desc: "Nombre d'emplacements d'objets suivis par la liste des objets utilisés"
+main.visible_inventory.desc: "Objets visibles lors de l'ouverture de l'inventaire"
+main.visible_inventory.title: "Inventaire Visible"
+
+
 
 # Generic error messages
 error.internal: "Erreur interne: {{error}}"
@@ -88,10 +103,6 @@ category.KeyItem: "Key Items"
 category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
-
-main.mcount_desc: "Nombre d'emplacements d'objets suivis par la liste des objets utilisés"
-main.visible_inventory.desc: "Objets visibles lors de l'ouverture de l'inventaire"
-main.visible_inventory.title: "Inventaire Visible"
 
 button.open_extension: "Extensions"
 

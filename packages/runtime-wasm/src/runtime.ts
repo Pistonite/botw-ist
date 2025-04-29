@@ -1,7 +1,8 @@
 import { type Erc, makeErcType } from "@pistonite/pure/memory";
 
+import type { InvView_Gdt, InvView_PouchList } from "@pistonite/skybook-api";
+
 import { type QuotedItemResolverFn, parseScript } from "./parser.ts";
-import type { InvView_PouchList } from "@pistonite/skybook-api";
 
 const RunOutput = Symbol("RunOutput");
 export type RunOutput = typeof RunOutput;
@@ -87,6 +88,36 @@ export const getPouchList = async (
     }
 
     const output = wasm_bindgen.get_pouch_list(
+        runOutputErc.value,
+        parseOutputErc.value,
+        bytePos,
+    );
+    parseOutputErc.free();
+    runOutputErc.free();
+    return output;
+};
+
+export const getGdtInventory = async (
+    script: string,
+    resolver: QuotedItemResolverFn,
+    bytePos: number,
+): Promise<InvView_Gdt> => {
+    const parseOutputErc = await parseScript(script, resolver);
+    const runOutputErc = await executeScript(script, resolver);
+
+    // TODO: report error through return error type
+    if (
+        parseOutputErc.value === undefined ||
+        runOutputErc.value === undefined
+    ) {
+        parseOutputErc.free();
+        runOutputErc.free();
+        throw new Error(
+            `parseOutputErc or runOutputErc is null: ${parseOutputErc.value}, ${runOutputErc.value}`,
+        );
+    }
+
+    const output = wasm_bindgen.get_gdt_inventory(
         runOutputErc.value,
         parseOutputErc.value,
         bytePos,

@@ -32,12 +32,12 @@ tasks:
 
   fix-language:
     cmds:
-      - bun scripts/edit-language.ts
+      - pnpm exec mono-langtool src/ui --no-confirm
 
   edit:
     desc: Make edits to the translation files
     cmds:
-      - bun scripts/edit-language.ts -
+      - pnpm exec mono-langtool src/ui {{.CLI_ARGS}}
 
   push-artifacts:
     desc: Push generated files. Requires gcloud access

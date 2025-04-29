@@ -29,14 +29,14 @@ export class _wxSenderImpl implements ExtensionApp {
      * Get the current simulator script.
      */
     public getScript( ): WxPromise<string> {
-        return this.sender.send<string>(19 /* ExtensionApp.getScript */, [ ]);
+        return this.sender.send<string>(20 /* ExtensionApp.getScript */, [ ]);
     }
 
     /**
      * Invoke the parser for the script and get the diagnostics.
      */
     public provideParserDiagnostics( script: string ): WxPromise<Diagnostic[]> {
-        return this.sender.send<Diagnostic[]>(20 /* ExtensionApp.provideParserDiagnostics */, [ script ]);
+        return this.sender.send<Diagnostic[]>(21 /* ExtensionApp.provideParserDiagnostics */, [ script ]);
     }
 
     /**
@@ -48,7 +48,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * (Note this is different from Runtime.getSemanticTokens)
      */
     public provideSemanticTokens( script: string, start: number, end: number ): WxPromise<Uint32Array> {
-        return this.sender.send<Uint32Array>(21 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
+        return this.sender.send<Uint32Array>(22 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
     }
 
     /**
@@ -61,7 +61,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * even when there is no error, the search result could be empty.
      */
     public resolveItem( query: string, localized: boolean, limit: number ): WxPromise<Result<ItemSearchResult[], string>> {
-        return this.sender.send<Result<ItemSearchResult[], string>>(22 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
+        return this.sender.send<Result<ItemSearchResult[], string>>(23 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
     }
 
     /**
@@ -70,7 +70,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * This will trigger a rerun of the simulation using the new script
      */
     public setScript( script: string ): WxPromise<void> {
-        return this.sender.sendVoid(23 /* ExtensionApp.setScript */, [ script ]);
+        return this.sender.sendVoid(24 /* ExtensionApp.setScript */, [ script ]);
     }
 }
 
@@ -79,22 +79,22 @@ export class _wxSenderImpl implements ExtensionApp {
  */
 export const _wxRecverImpl = (handler: ExtensionApp): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 19 /* ExtensionApp.getScript */: {
+        case 20 /* ExtensionApp.getScript */: {
             return handler.getScript();
         }
-        case 20 /* ExtensionApp.provideParserDiagnostics */: {
+        case 21 /* ExtensionApp.provideParserDiagnostics */: {
             const [ a0 ] = args;
             return handler.provideParserDiagnostics( a0 );
         }
-        case 21 /* ExtensionApp.provideSemanticTokens */: {
+        case 22 /* ExtensionApp.provideSemanticTokens */: {
             const [ a0, a1, a2 ] = args;
             return handler.provideSemanticTokens( a0, a1, a2 );
         }
-        case 22 /* ExtensionApp.resolveItem */: {
+        case 23 /* ExtensionApp.resolveItem */: {
             const [ a0, a1, a2 ] = args;
             return handler.resolveItem( a0, a1, a2 );
         }
-        case 23 /* ExtensionApp.setScript */: {
+        case 24 /* ExtensionApp.setScript */: {
             const [ a0 ] = args;
             return handler.setScript( a0 );
         }

@@ -155,7 +155,7 @@ pub fn add_ref_run_output(run_output_ref: *const RunOutput) -> *const RunOutput 
     Arc::into_raw(x2)
 }
 
-/// Get the inventory list view for the given byte position in the script
+/// Get the Pouch inventory view for the given byte position in the script
 ///
 /// ## Pointer Ownership
 /// Borrows both the RunOutput and ParseOutput pointers.
@@ -172,4 +172,23 @@ pub fn get_pouch_list(
     let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
     let run_output = unsafe { &*run_output_ref };
     run_output.get_pouch_list(step)
+}
+
+/// Get the GDT inventory view for the given byte position in the script
+///
+/// ## Pointer Ownership
+/// Borrows both the RunOutput and ParseOutput pointers.
+#[wasm_bindgen]
+pub fn get_gdt_inventory(
+    run_output_ref: *const RunOutput,
+    parse_output_ref: *const ParseOutput,
+    byte_pos: usize,
+) -> iv::Gdt {
+    if parse_output_ref.is_null() || run_output_ref.is_null() {
+        return Default::default();
+    }
+    let parse_output = unsafe { &*parse_output_ref };
+    let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
+    let run_output = unsafe { &*run_output_ref };
+    run_output.get_gdt_inventory(step)
 }

@@ -1,5 +1,7 @@
 import { initLocaleWithI18next } from "@pistonite/pure-i18next";
 
+import { loadSharedControlLanguage, namespace as sharedControlsNamespace } from "@pistonite/shared-controls";
+
 export const SupportedLocales = [
     "de-DE",
     "en-US",
@@ -24,26 +26,11 @@ export const initI18n = (persist: boolean) => {
         loader: {
             ui: (language) => loadLanguage("ui", language),
             generated: (language) => loadLanguage("generated", language),
+            [sharedControlsNamespace]: loadSharedControlLanguage
         },
     });
 };
 
 const loadLanguage = async (namespace: string, language: string) => {
-    const strings = (await import(`./${namespace}/${language}.yaml`)).default;
-    if (namespace === "ui" && language !== "en-US") {
-        const enStrings = (await import(`./${namespace}/en-US.yaml`)).default;
-        let countMissing = 0;
-        for (const key in enStrings) {
-            if (!(key in strings)) {
-                strings[key] = enStrings[key];
-                countMissing++;
-            }
-        }
-        if (countMissing > 0) {
-            console.warn(
-                `Missing ${countMissing} strings in ${language} UI, falling back to en-US`,
-            );
-        }
-    }
-    return strings;
+    return (await import(`./${namespace}/${language}.yaml`)).default;
 };

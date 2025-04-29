@@ -51,6 +51,9 @@ export type ItemSlotProps = {
 
     /** If greater than 0, display the holding indicator */
     holdingCount: number;
+
+    /** If true, show the master sword as full power */
+    isMasterSwordFullPower: boolean;
 } & StatusProps &
     Pick<ActorSpriteProps, "blank" | "deactive" | "badlyDamaged">;
 
@@ -78,12 +81,14 @@ export const getSlotPropsFromActor = (
         isEntangled: false,
         holdingCount: 0,
         ...status,
+        isMasterSwordFullPower: false,
     };
 };
 
 export const getSlotPropsFromPouchItem = (
     item: InvView_PouchItem,
     list1Count: number,
+    isMasterSwordFullPower: boolean,
 ): ItemSlotProps => {
     const { actorName, value, isEquipped } = item.common;
     const isAbility = isChampionAbilityActor(actorName);
@@ -113,11 +118,13 @@ export const getSlotPropsFromPouchItem = (
         blank: item.isNoIcon,
         deactive: getDeactive(isAbility, isEquipped, actorName, value),
         badlyDamaged: isEquipment && value <= 300,
+        isMasterSwordFullPower,
     };
 };
 
 export const getSlotPropsFromGdtItem = (
     item: InvView_GdtItem,
+        isMasterSwordFullPower: boolean,
 ): ItemSlotProps => {
     const { actorName, value, isEquipped } = item.common;
     const isAbility = isChampionAbilityActor(actorName);
@@ -164,6 +171,8 @@ export const getSlotPropsFromGdtItem = (
         ...status,
         deactive: getDeactive(isAbility, isEquipped, actorName, value),
         // don't show badlyDamaged for GDT items
+
+        isMasterSwordFullPower,
     };
 };
 

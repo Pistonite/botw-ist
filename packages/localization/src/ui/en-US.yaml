@@ -45,6 +45,21 @@ dialog.custom_image.option.delete_previous: "Delete previously uploaded Custom I
 dialog.custom_image.option.select_current: "Use previously uploaded file"
 dialog.custom_image.title: "Custom Image Setup"
 
+# Header Menus
+menu.enable_animations: "Enable Animations"
+menu.enable_animations.desc: "Enable icon and item slot animations such as Champion abilities and badly damaged equipment effect."
+menu.header.preference: "Preference"
+menu.high_res_icons: "High Quality Icons"
+menu.high_res_icons.desc: "Enable high-resolution icons and item animations. Disabling this could save bandwidth if connection is poor and icons are not loading for you."
+
+# Main inventory display
+main.gdt_inventory.desc: "Inventory data stored in the game's flag system (GDT). Items are displayed as if they are loaded to inventory, and slots are aligned to inventory based on which inventory slot will effectively save to the GDT slot."
+main.gdt_inventory.title: "Game Data"
+main.mcount_desc: "Number of item slots tracked by the list of item objects in-use"
+main.visible_inventory.desc: "Items you see when the inventory is opened"
+main.visible_inventory.title: "Visible Inventory"
+
+
 
 # Generic error messages
 error.internal: "Internal error: {{error}}"
@@ -88,10 +103,6 @@ category.KeyItem: "Key Items"
 category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
-
-main.mcount_desc: "Number of item slots tracked by the list of item objects in-use"
-main.visible_inventory.desc: "Items you see when the inventory is opened"
-main.visible_inventory.title: "Visible Inventory"
 
 button.open_extension: "Extensions"
 

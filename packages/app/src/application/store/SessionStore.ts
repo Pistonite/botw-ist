@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { debounce } from "@pistonite/pure/sync";
 
-import type { InvView_PouchList, ScriptEnvImage } from "@pistonite/skybook-api";
+import type { InvView_Gdt, InvView_PouchList, ScriptEnvImage } from "@pistonite/skybook-api";
 import { translateUI } from "skybook-localization";
 
 import { useApplicationStore } from "./ApplicationStore.ts";
@@ -71,12 +71,19 @@ export type SessionStore = {
     executionInProgress: boolean;
     setExecutionInProgress: (inProgress: boolean) => void;
 
-    /** Cached inventory list views. Key is the step index */
-    inventoryListViews: Record<number, InvView_PouchList>;
+    /** If a cached step is valid */
     upToDateSteps: number[];
-    setInventoryListViewInCache: (
+    /** Cached Pouch list views. Key is the step index */
+    pouchViews: Record<number, InvView_PouchList>;
+    setPouchViewInCache: (
         step: number,
         view: InvView_PouchList,
+    ) => void;
+    /** Cached GDT inventory views. Key is the step index */
+    gdtViews: Record<number, InvView_Gdt>;
+    setGdtViewInCache: (
+        step: number,
+        view: InvView_Gdt,
     ) => void;
     /** Invalidate all cached inventory views */
     invalidateInventoryCache: () => void;
@@ -229,13 +236,25 @@ export const useSessionStore = create<SessionStore>()((set) => {
             }
         },
 
-        inventoryListViews: {},
         upToDateSteps: [],
-        setInventoryListViewInCache: (step, view) => {
-            set(({ inventoryListViews, upToDateSteps }) => {
+        pouchViews: {},
+        setPouchViewInCache: (step, view) => {
+            set(({ pouchViews, upToDateSteps }) => {
                 return {
-                    inventoryListViews: {
-                        ...inventoryListViews,
+                    pouchViews: {
+                        ...pouchViews,
+                        [step]: view,
+                    },
+                    upToDateSteps: [...upToDateSteps, step],
+                };
+            });
+        },
+        gdtViews: {},
+        setGdtViewInCache: (step, view) => {
+            set(({ gdtViews, upToDateSteps }) => {
+                return {
+                    gdtViews: {
+                        ...gdtViews,
                         [step]: view,
                     },
                     upToDateSteps: [...upToDateSteps, step],

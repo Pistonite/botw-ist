@@ -18,6 +18,9 @@ export class Stub1Extension implements FirstPartyExtension {
     async onScriptChanged(): WxPromise<void> {
         return {};
     }
+    async onIconSettingsChanged(): WxPromise<void> {
+        return {};
+    }
     public get Component() {
         return this.component;
     }

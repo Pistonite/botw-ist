@@ -195,6 +195,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
     blank,
     deactive,
     badlyDamaged,
+    isMasterSwordFullPower
 }) => {
     const styles = useStyles();
 
@@ -247,6 +248,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
                     disableAnimation={disableAnimation}
                     badlyDamaged={badlyDamaged}
                     blank={blank}
+                    powered={isMasterSwordFullPower}
                 />
             </div>
             {holdingCount > 0 && (

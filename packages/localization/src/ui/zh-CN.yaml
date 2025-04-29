@@ -45,6 +45,21 @@ dialog.custom_image.option.delete_previous: "删除之前上传的镜像设置"
 dialog.custom_image.option.select_current: "使用之前上传的镜像文件"
 dialog.custom_image.title: "自定义镜像设置"
 
+# Header Menus
+menu.enable_animations: "物品动画效果"
+menu.enable_animations.desc: "启用贴图和背包格动画，例如英杰技能和损坏装备效果。"
+menu.header.preference: "设置"
+menu.high_res_icons: "高质量贴图"
+menu.high_res_icons.desc: "启用高清贴图和物品动画效果。如果网络不好或者物品图片加载不出来，可以尝试关闭此选项"
+
+# Main inventory display
+main.gdt_inventory.desc: "储存与游戏Flag系统（GDT）内的物品数据。物品状态以数据读取入背包后的形式显示。同步时背包格存入的目标数据格与该背包格对齐显示。"
+main.gdt_inventory.title: "GDT内部数据"
+main.mcount_desc: "使用中物品的列表所记录的物品格子数量"
+main.visible_inventory.desc: "当你打开背包时所看见的物品"
+main.visible_inventory.title: "可视背包"
+
+
 
 # Generic error messages
 error.internal: "内部错误: {{error}}"
@@ -88,10 +103,6 @@ category.KeyItem: "Key Items"
 category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
-
-main.mcount_desc: "使用中物品的列表所记录的物品格子数量"
-main.visible_inventory.desc: "当你打开背包时所看见的物品"
-main.visible_inventory.title: "可视背包"
 
 button.open_extension: "Extensions"
 
