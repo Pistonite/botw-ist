@@ -45,6 +45,21 @@ dialog.custom_image.option.delete_previous: "Eerder geüploade aangepaste schijf
 dialog.custom_image.option.select_current: "Eerder geüpload bestand gebruiken"
 dialog.custom_image.title: "Instellingen voor aangepaste schijfkopie"
 
+# Header Menus
+menu.enable_animations: "Animaties"
+menu.enable_animations.desc: "Schakel animaties in voor iconen en itemslots, zoals kampioenvaardigheden en effecten van beschadigde uitrusting."
+menu.header.preference: "Voorkeuren"
+menu.high_res_icons: "HD-iconen"
+menu.high_res_icons.desc: "Schakel hoge-resolutie iconen en item-animaties in. Uitschakelen kan bandbreedte besparen als de verbinding slecht is en iconen niet goed laden."
+
+# Main inventory display
+main.gdt_inventory.desc: "Inventarisgegevens die zijn opgeslagen in het vlaggensysteem (GDT) van het spel. Items worden weergegeven alsof ze in de inventaris zijn geladen, en de vakjes zijn uitgelijnd met de inventarisslot die daadwerkelijk naar de GDT-slot wordt opgeslagen."
+main.gdt_inventory.title: "GameData"
+main.mcount_desc: "Aantal itemslots gevolgd door de lijst van gebruikte objecten"
+main.visible_inventory.desc: "Items die je ziet wanneer je de inventaris opent"
+main.visible_inventory.title: "Zichtbare Inventaris"
+
+
 
 # Generic error messages
 error.internal: "Interne fout: {{error}}"
@@ -88,10 +103,6 @@ category.KeyItem: "Key Items"
 category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
-
-main.mcount_desc: "Aantal itemslots gevolgd door de lijst van gebruikte objecten"
-main.visible_inventory.desc: "Items die je ziet wanneer je de inventaris opent"
-main.visible_inventory.title: "Zichtbare Inventaris"
 
 button.open_extension: "Extensions"
 

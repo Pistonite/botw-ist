@@ -45,6 +45,21 @@ dialog.custom_image.option.delete_previous: "Zuvor hochgeladene benutzerdefinier
 dialog.custom_image.option.select_current: "Zuvor hochgeladene Datei verwenden"
 dialog.custom_image.title: "Benutzerdefinierte Abbild-Einrichtung"
 
+# Header Menus
+menu.enable_animations: "Animationen"
+menu.enable_animations.desc: "Aktivieren Sie Animationen für Symbole und Inventarplätze, wie zum Beispiel Champion-Fähigkeiten und Effekte beschädigter Ausrüstung."
+menu.header.preference: "Einstellungen"
+menu.high_res_icons: "HD-Symbole"
+menu.high_res_icons.desc: "Aktivieren Sie hochauflösende Symbole und Animationen von Gegenständen. Das Deaktivieren kann Bandbreite sparen, wenn die Verbindung schlecht ist und Symbole nicht richtig geladen werden."
+
+# Main inventory display
+main.gdt_inventory.desc: "Inventardaten, die im Flaggensystem (GDT) des Spiels gespeichert sind. Gegenstände werden so angezeigt, als wären sie im Inventar geladen, und die Slots sind entsprechend dem tatsächlichen Speicherplatz im GDT ausgerichtet."
+main.gdt_inventory.title: "GameData"
+main.mcount_desc: "Anzahl der Inventarplätze, die durch die Liste der verwendeten Gegenstände verfolgt werden"
+main.visible_inventory.desc: "Gegenstände, die beim Öffnen des Inventars sichtbar sind"
+main.visible_inventory.title: "Sichtbares Inventar"
+
+
 
 # Generic error messages
 error.internal: "Interner Fehler: {{error}}"
@@ -88,10 +103,6 @@ category.KeyItem: "Key Items"
 category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
-
-main.mcount_desc: "Anzahl der Inventarplätze, die durch die Liste der verwendeten Gegenstände verfolgt werden"
-main.visible_inventory.desc: "Gegenstände, die beim Öffnen des Inventars sichtbar sind"
-main.visible_inventory.title: "Sichtbares Inventar"
 
 button.open_extension: "Extensions"
 

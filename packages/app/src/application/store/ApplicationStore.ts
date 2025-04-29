@@ -29,6 +29,14 @@ export type ApplicationStore = {
      */
     isUseCustomImageByDefault: boolean;
     setUseCustomImageByDefault: (value: boolean) => void;
+
+    /** Enable high-res icons. Disabling this will also disable animation */
+    enableHighQualityIcons: boolean;
+    setEnableHighQualityIcons: (value: boolean) => void;
+
+    /** Enable animations. */
+    enableAnimations: boolean;
+    setEnableAnimations: (value: boolean) => void;
 };
 
 export const useApplicationStore = create<ApplicationStore>()(
@@ -58,8 +66,19 @@ export const useApplicationStore = create<ApplicationStore>()(
                     }
                 },
                 isUseCustomImageByDefault: false as boolean,
-                setUseCustomImageByDefault: (value) =>
-                    set({ isUseCustomImageByDefault: value }),
+                setUseCustomImageByDefault: (value) => {
+                    set({ isUseCustomImageByDefault: value });
+                },
+
+                enableHighQualityIcons: true,
+                setEnableHighQualityIcons: (value) => {
+                    set({ enableHighQualityIcons: value });
+                },
+
+                enableAnimations: true,
+                setEnableAnimations: (value) => {
+                    set({ enableAnimations: value });
+                },
             };
         },
         {

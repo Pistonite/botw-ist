@@ -33,6 +33,13 @@ export class _wxSenderImpl implements Extension {
     }
 
     /**
+     * Notify the extension that the icon rendering preference has changed
+     */
+    public onIconSettingsChanged( enableHighQualityIcons: boolean, enableAnimations: boolean ): WxPromise<void> {
+        return this.sender.sendVoid(17 /* Extension.onIconSettingsChanged */, [ enableHighQualityIcons, enableAnimations ]);
+    }
+
+    /**
      * Notify the extension that the locale perference has changed.
      * 
      * The locale string is one of the supported locales by the application,
@@ -41,14 +48,14 @@ export class _wxSenderImpl implements Extension {
      * The extension can update the UI strings based on this event.
      */
     public onLocaleChanged( locale: string ): WxPromise<void> {
-        return this.sender.sendVoid(17 /* Extension.onLocaleChanged */, [ locale ]);
+        return this.sender.sendVoid(18 /* Extension.onLocaleChanged */, [ locale ]);
     }
 
     /**
      * Notify the extension that the script has changed.
      */
     public onScriptChanged( script: string ): WxPromise<void> {
-        return this.sender.sendVoid(18 /* Extension.onScriptChanged */, [ script ]);
+        return this.sender.sendVoid(19 /* Extension.onScriptChanged */, [ script ]);
     }
 }
 
@@ -61,11 +68,15 @@ export const _wxRecverImpl = (handler: Extension): WxBusRecvHandler => {
             const [ a0 ] = args;
             return handler.onDarkModeChanged( a0 );
         }
-        case 17 /* Extension.onLocaleChanged */: {
+        case 17 /* Extension.onIconSettingsChanged */: {
+            const [ a0, a1 ] = args;
+            return handler.onIconSettingsChanged( a0, a1 );
+        }
+        case 18 /* Extension.onLocaleChanged */: {
             const [ a0 ] = args;
             return handler.onLocaleChanged( a0 );
         }
-        case 18 /* Extension.onScriptChanged */: {
+        case 19 /* Extension.onScriptChanged */: {
             const [ a0 ] = args;
             return handler.onScriptChanged( a0 );
         }

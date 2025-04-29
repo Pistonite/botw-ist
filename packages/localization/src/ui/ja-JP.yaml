@@ -45,6 +45,21 @@ dialog.custom_image.option.delete_previous: "以前にアップロードした�
 dialog.custom_image.option.select_current: "以前にアップロードしたファイルを使用"
 dialog.custom_image.title: "カスタムディスクイメージ設定"
 
+# Header Menus
+menu.enable_animations: "アニメーション"
+menu.enable_animations.desc: "チャンピオンの能力や破損した装備の効果など、アイコンやアイテムスロットのアニメーションを有効にします。"
+menu.header.preference: "設定"
+menu.high_res_icons: "高解像度"
+menu.high_res_icons.desc: "高解像度アイコンとアイテムアニメーションを有効にします。接続が不安定でアイコンが正常に読み込めない場合は、無効にすると帯域幅を節約できます。"
+
+# Main inventory display
+main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されたインベントリデータです。アイテムはインベントリにロードされた状態で表示され、各スロットはGDTスロットに保存される対応スロットに合わせて配置されています。"
+main.gdt_inventory.title: "ゲームデータ"
+main.mcount_desc: "使用中のアイテムリストによって追跡されるアイテムスロット数"
+main.visible_inventory.desc: "インベントリを開いたときに表示されるアイテム"
+main.visible_inventory.title: "表示インベントリ"
+
+
 
 # Generic error messages
 error.internal: "内部エラー: {{error}}"
@@ -88,10 +103,6 @@ category.KeyItem: "Key Items"
 category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
-
-main.mcount_desc: "使用中のアイテムリストによって追跡されるアイテムスロット数"
-main.visible_inventory.desc: "インベントリを開いたときに表示されるアイテム"
-main.visible_inventory.title: "表示インベントリ"
 
 button.open_extension: "Extensions"
 

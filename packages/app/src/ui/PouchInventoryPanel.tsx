@@ -10,7 +10,11 @@ import {
 import { PouchItemSlotWithTooltip } from "skybook-item-system";
 import { useUITranslation } from "skybook-localization";
 
-import { usePouchListView } from "self::application/store";
+import {
+    useGdtInventoryView,
+    useItemSlotPropsFromSettings,
+    usePouchListView,
+} from "self::application/store";
 
 import { InventoryTitle } from "./components/InventoryTitle.tsx";
 import { Code } from "./components/Code.tsx";
@@ -51,11 +55,6 @@ const useStyles = makeStyles({
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
     },
-    divider: {
-        color: "#b7f1ff",
-        width: "100%",
-        maxHeight: "2px",
-    },
 
     inventoryScroll: {
         flex: 1,
@@ -73,9 +72,14 @@ const useStyles = makeStyles({
 export const PouchInventoryPanelImpl: React.FC = () => {
     const styles = useStyles();
     const dark = useDark();
-    const { inventory, stale, loading } = usePouchListView();
-    const showSpinner = loading || stale || !inventory;
+    const { inventory: pouch, stale, loading } = usePouchListView();
+    const { inventory: gdt } = useGdtInventoryView();
+
+    const showSpinner = loading || stale || !pouch;
     const t = useUITranslation();
+
+    const itemSlotProps = useItemSlotPropsFromSettings();
+
     return (
         <div className={styles.container}>
             <div
@@ -104,20 +108,24 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                             }
                         >
                             <Text font="numeric">
-                                [ {inventory?.count ?? "???"} ]
+                                [ {pouch?.count ?? "???"} ]
                             </Text>
                         </Tooltip>
                     }
                     loading={showSpinner}
                 ></InventoryTitle>
-                {inventory !== undefined && (
+                {pouch !== undefined && (
                     <div className={styles.inventoryScroll}>
                         <div className={styles.inventoryList}>
-                            {inventory.items.map((item, i) => (
+                            {pouch.items.map((item, i) => (
                                 <PouchItemSlotWithTooltip
                                     item={item}
                                     key={i}
-                                    list1Count={inventory.count}
+                                    list1Count={pouch.count}
+                                    isMasterSwordFullPower={
+                                        !!gdt?.masterSword?.isTrueForm
+                                    }
+                                    {...itemSlotProps}
                                 />
                             ))}
                         </div>

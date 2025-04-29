@@ -10,7 +10,7 @@ import type { Extension } from "@pistonite/skybook-api";
 import type { ExtensionModule } from "@pistonite/skybook-api/client";
 import { skybookExtension } from "@pistonite/skybook-api/interfaces/Extension.bus.ts";
 
-import { useSessionStore } from "self::application/store";
+import { useApplicationStore, useSessionStore } from "self::application/store";
 
 import { getExtensionAppHost } from "./ExtensionAppHost.ts";
 
@@ -18,6 +18,19 @@ import { getExtensionAppHost } from "./ExtensionAppHost.ts";
 const instances: Extension[] = [];
 
 export const initExtensionManager = () => {
+    useApplicationStore.subscribe((curr, prev) => {
+        if (
+            curr.enableHighQualityIcons !== prev.enableHighQualityIcons ||
+            curr.enableAnimations !== prev.enableAnimations
+        ) {
+            instances.forEach((x) => {
+                void x.onIconSettingsChanged(
+                    curr.enableHighQualityIcons,
+                    curr.enableAnimations,
+                );
+            });
+        }
+    });
     useSessionStore.subscribe((curr, prev) => {
         if (prev.activeScript !== curr.activeScript) {
             instances.forEach((x) => {
@@ -50,6 +63,12 @@ export const connectExtensionToApp = (extension: ExtensionModule) => {
 const notifyAndPushInstance = (extension: Extension) => {
     void extension.onDarkModeChanged(isDark());
     void extension.onLocaleChanged(getLocale());
+    const { enableHighQualityIcons, enableAnimations } =
+        useApplicationStore.getState();
+    void extension.onIconSettingsChanged(
+        enableHighQualityIcons,
+        enableAnimations,
+    );
     void extension.onScriptChanged(useSessionStore.getState().activeScript);
     instances.push(extension);
 };

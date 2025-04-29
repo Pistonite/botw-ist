@@ -329,6 +329,7 @@ pub use __impl::InvView_PouchTab as PouchTab;
 pub use __impl::InvView_Gdt as Gdt;
 pub use __impl::InvView_GdtItem as GdtItem;
 pub use __impl::InvView_GdtItemData as GdtItemData;
+pub use __impl::InvView_GdtMasterSword as GdtMasterSword;
 pub use __impl::InvView_CommonItem as CommonItem;
 pub use __impl::InvView_ItemData as ItemData;
 pub use __impl::InvView_WeaponModifier as WeaponModifier;

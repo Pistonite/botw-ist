@@ -74,7 +74,7 @@ impl RunOutput {
                 node_pos: 418,
                 node_prev: 0.into(),
                 node_next: 0.into(),
-                allocated_idx: 0,
+                allocated_idx: 1,
                 unallocated_idx: -1,
 
             }
@@ -104,6 +104,48 @@ impl RunOutput {
         // let Some(state) = self.get_state_by_step(step) else {
         //     return Ok(vec![]);
         // };
+    }
+
+    /// Get the GDT inventory view for the given step in the script
+    ///
+    /// Trailing items with empty names are not included
+    pub fn get_gdt_inventory(&self, step: usize) -> iv::Gdt {
+        // mock data
+        //
+        return iv::Gdt {
+            items: vec![
+                iv::GdtItem {
+                    common: iv::CommonItem{
+                        actor_name: "Weapon_Sword_070".to_string(),
+                        value: 4000,
+                        is_equipped: true,
+                    },
+                    idx: 0,
+                    data: iv::GdtItemData::Sword {
+                        idx: 0,
+                        info: iv::WeaponModifier {
+                            flag: 0,value: 0
+                        }
+                    }
+                },
+                iv::GdtItem {
+                    common: iv::CommonItem{
+                        actor_name: "Item_Fruit_A".to_string(),
+                        value: 999,
+                        is_equipped: false,
+                    },
+                    idx: 1,
+                    data: iv::GdtItemData::None
+                }
+            ],
+            master_sword: iv::GdtMasterSword {
+                is_true_form: true,
+                add_power: 30,
+                add_beam_power: 10,
+                recover_time: 0f32
+            }
+        }
+
     }
 
     fn get_state_by_step(&self, step: usize) -> Option<Arc<State>> {

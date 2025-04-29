@@ -45,6 +45,21 @@ dialog.custom_image.option.delete_previous: "Eliminar las imágenes de disco per
 dialog.custom_image.option.select_current: "Usar el archivo cargado anteriormente"
 dialog.custom_image.title: "Configuración de imagen de disco personalizada"
 
+# Header Menus
+menu.enable_animations: "Animaciones"
+menu.enable_animations.desc: "Activa animaciones de iconos y ranuras de objetos, como habilidades de campeones y efectos de equipamiento dañado."
+menu.header.preference: "Preferencias"
+menu.high_res_icons: "Iconos HD"
+menu.high_res_icons.desc: "Activa iconos en alta resolución y animaciones de objetos. Desactivar esta opción puede ahorrar ancho de banda si tienes una conexión lenta o si los iconos no se cargan correctamente."
+
+# Main inventory display
+main.gdt_inventory.desc: "Datos de inventario almacenados en el sistema de banderas (GDT) del juego. Los objetos se muestran como si estuvieran cargados en el inventario, y las ranuras están alineadas según la ranura de inventario que se guardará efectivamente en el GDT."
+main.gdt_inventory.title: "GameData"
+main.mcount_desc: "Número de espacios de objetos rastreados por la lista de objetos en uso"
+main.visible_inventory.desc: "Objetos que ves al abrir el inventario"
+main.visible_inventory.title: "Inventario Visible"
+
+
 
 # Generic error messages
 error.internal: "Error interno: {{error}}"
@@ -88,10 +103,6 @@ category.KeyItem: "Key Items"
 category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
-
-main.mcount_desc: "Número de espacios de objetos rastreados por la lista de objetos en uso"
-main.visible_inventory.desc: "Objetos que ves al abrir el inventario"
-main.visible_inventory.title: "Inventario Visible"
 
 button.open_extension: "Extensions"
 

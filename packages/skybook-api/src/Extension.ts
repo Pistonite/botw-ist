@@ -22,6 +22,14 @@ export interface Extension {
     onLocaleChanged(locale: string): WxPromise<void>;
 
     /**
+     * Notify the extension that the icon rendering preference has changed
+     */
+    onIconSettingsChanged(
+        enableHighQualityIcons: boolean,
+        enableAnimations: boolean,
+    ): WxPromise<void>;
+
+    /**
      * Notify the extension that the script has changed.
      */
     onScriptChanged(script: string): WxPromise<void>;

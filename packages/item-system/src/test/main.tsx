@@ -271,7 +271,13 @@ const App: React.FC = () => {
             <p>GDT</p>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
                 {GDT.map((item, index) => {
-                    return <GdtItemSlotWithTooltip key={index} item={item} />;
+                    return (
+                        <GdtItemSlotWithTooltip
+                            key={index}
+                            item={item}
+                            isMasterSwordFullPower={false}
+                        />
+                    );
                 })}
             </div>
             <p>POUCH</p>
@@ -282,6 +288,7 @@ const App: React.FC = () => {
                             key={index}
                             item={item}
                             list1Count={1}
+                            isMasterSwordFullPower={false}
                         />
                     );
                 })}

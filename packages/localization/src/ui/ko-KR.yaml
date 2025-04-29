@@ -45,6 +45,21 @@ dialog.custom_image.option.delete_previous: "이전에 업로드한 사용자 �
 dialog.custom_image.option.select_current: "이전에 업로드한 파일 사용"
 dialog.custom_image.title: "사용자 지정 디스크 이미지 설정"
 
+# Header Menus
+menu.enable_animations: "애니메이션"
+menu.enable_animations.desc: "챔피언 스킬 및 손상된 장비 효과와 같은 아이콘 및 인벤토리 슬롯 애니메이션을 활성화합니다."
+menu.header.preference: "설정"
+menu.high_res_icons: "고화질"
+menu.high_res_icons.desc: "고해상도 아이콘과 아이템 애니메이션을 활성화합니다. 연결 상태가 불안정하여 아이콘이 제대로 로드되지 않는 경우, 비활성화하면 대역폭을 절약할 수 있습니다."
+
+# Main inventory display
+main.gdt_inventory.desc: "게임의 플래그 시스템(GDT)에 저장된 인벤토리 데이터입니다. 아이템은 인벤토리에 로드된 것처럼 표시되며, 슬롯은 실제로 GDT 슬롯에 저장될 인벤토리 슬롯에 맞추어 정렬됩니다."
+main.gdt_inventory.title: "GameData"
+main.mcount_desc: "사용 중인 아이템 목록에 의해 추적되는 아이템 슬롯 수"
+main.visible_inventory.desc: "인벤토리를 열었을 때 보이는 아이템"
+main.visible_inventory.title: "표시 인벤토리"
+
+
 
 # Generic error messages
 error.internal: "내부 오류: {{error}}"
@@ -88,10 +103,6 @@ category.KeyItem: "Key Items"
 category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
-
-main.mcount_desc: "사용 중인 아이템 목록에 의해 추적되는 아이템 슬롯 수"
-main.visible_inventory.desc: "인벤토리를 열었을 때 보이는 아이템"
-main.visible_inventory.title: "표시 인벤토리"
 
 button.open_extension: "Extensions"
 

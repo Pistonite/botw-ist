@@ -45,6 +45,21 @@ dialog.custom_image.option.delete_previous: "Elimina le immagini disco personali
 dialog.custom_image.option.select_current: "Usa il file caricato in precedenza"
 dialog.custom_image.title: "Configurazione immagine disco personalizzata"
 
+# Header Menus
+menu.enable_animations: "Animazioni"
+menu.enable_animations.desc: "Abilita le animazioni di icone e slot degli oggetti, come le abilità dei campioni e gli effetti degli equipaggiamenti danneggiati."
+menu.header.preference: "Preferenze"
+menu.high_res_icons: "Icone HD"
+menu.high_res_icons.desc: "Abilita icone ad alta risoluzione e animazioni degli oggetti. Disattivando questa opzione puoi risparmiare larghezza di banda se la connessione è lenta o se le icone non si caricano correttamente."
+
+# Main inventory display
+main.gdt_inventory.desc: "Dati dell'inventario memorizzati nel sistema di flag (GDT) del gioco. Gli oggetti vengono visualizzati come se fossero caricati nell'inventario, e gli slot sono allineati in base a quale slot dell'inventario verrà effettivamente salvato nello slot GDT."
+main.gdt_inventory.title: "GameData"
+main.mcount_desc: "Numero di slot oggetti tracciati dall'elenco degli oggetti in uso"
+main.visible_inventory.desc: "Oggetti che vedi quando apri l'inventario"
+main.visible_inventory.title: "Inventario Visibile"
+
+
 
 # Generic error messages
 error.internal: "Errore interno: {{error}}"
@@ -88,10 +103,6 @@ category.KeyItem: "Key Items"
 category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
-
-main.mcount_desc: "Numero di slot oggetti tracciati dall'elenco degli oggetti in uso"
-main.visible_inventory.desc: "Oggetti che vedi quando apri l'inventario"
-main.visible_inventory.title: "Inventario Visibile"
 
 button.open_extension: "Extensions"
 

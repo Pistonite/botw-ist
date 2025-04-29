@@ -9,22 +9,21 @@ import {
     MenuList,
     MenuDivider,
     Caption1,
+    MenuItem,
 } from "@fluentui/react-components";
 import {
     BookQuestionMark20Regular,
     MoreHorizontal20Regular,
+    PuzzlePiece20Regular,
 } from "@fluentui/react-icons";
-import {
-    DarkToggle,
-    GitHubLink,
-    LanguagePicker,
-} from "@pistonite/shared-controls";
+import { GitHubLink } from "@pistonite/shared-controls";
 
 import { useSessionStore } from "self::application/store";
 
 import { ExtensionOpenButton } from "./ExtensionOpenButton.tsx";
 import icon from "./icon.svg";
 import iconPurple from "./icon-purple.svg";
+import { SettingsMenu } from "./SettingsMenu.tsx";
 
 const useStyles = makeStyles({
     container: {
@@ -32,6 +31,14 @@ const useStyles = makeStyles({
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
+        gap: "4px",
+        height: "40px",
+    },
+    logo: {
+        width: "40px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
     },
 });
 
@@ -45,7 +52,27 @@ const HeaderImpl: React.FC = () => {
     );
     return (
         <div className={styles.container}>
-            <img src={isRunningCustomImage ? iconPurple : icon} height="24px" />
+            <div className={styles.logo}>
+                <img
+                    src={isRunningCustomImage ? iconPurple : icon}
+                    height="32px"
+                />
+            </div>
+            <Menu>
+                <MenuTrigger disableButtonEnhancement>
+                    <Button
+                        appearance="subtle"
+                        icon={<PuzzlePiece20Regular />}
+                    />
+                </MenuTrigger>
+                <MenuPopover>
+                    <MenuList>
+                        <ExtensionOpenButton />
+                    </MenuList>
+                </MenuPopover>
+            </Menu>
+            <SettingsMenu />
+
             <Menu>
                 <MenuTrigger disableButtonEnhancement>
                     <Button
@@ -55,6 +82,10 @@ const HeaderImpl: React.FC = () => {
                 </MenuTrigger>
                 <MenuPopover>
                     <MenuList>
+                        <MenuItem icon={<BookQuestionMark20Regular />}>
+                            Skybook Manual
+                        </MenuItem>
+                        <GitHubLink href="https://github.com/Pistonite/botw-ist" />
                         <MenuDivider />
 
                         <Caption1>
@@ -63,13 +94,6 @@ const HeaderImpl: React.FC = () => {
                     </MenuList>
                 </MenuPopover>
             </Menu>
-
-            <LanguagePicker />
-            <DarkToggle />
-            <GitHubLink href="https://github.com/Pistonite/botw-ist" />
-            <Button appearance="subtle" icon={<BookQuestionMark20Regular />} />
-            <ExtensionOpenButton />
-            <span>5 errors</span>
         </div>
     );
 };

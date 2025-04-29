@@ -9,6 +9,7 @@
     "dependencies": {
         "@pistonite/pure": "catalog:",
         "@pistonite/pure-i18next": "catalog:",
+        "@pistonite/shared-controls": "workspace:*",
         "@pistonite/skybook-api": "workspace:*",
         "fuse.js": "^7.0.0",
         "i18next": "catalog:",
@@ -22,6 +23,7 @@
         "@types/react": "catalog:",
         "js-yaml": "^4.1.0",
         "mono-dev": "workspace:*",
-        "typescript": "catalog:"
+        "typescript": "catalog:",
+        "vite": "catalog:"
     }
 }

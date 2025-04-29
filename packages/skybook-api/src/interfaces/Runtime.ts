@@ -9,7 +9,7 @@ import type { Runtime } from "../Runtime.ts";
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
 import type { ParserErrorReport } from "../parser";
-import type { InvView_PouchList } from "../runtime";
+import type { InvView_Gdt, InvView_PouchList } from "../runtime";
 import type { ItemSearchResult, RuntimeInitArgs, RuntimeInitError, RuntimeInitOutput } from "../types.ts";
 
 /*
@@ -31,7 +31,15 @@ export class _wxSenderImpl implements Runtime {
      * Start executing the script in the background
      */
     public executeScript( script: string ): WxPromise<void> {
-        return this.sender.sendVoid(24 /* Runtime.executeScript */, [ script ]);
+        return this.sender.sendVoid(25 /* Runtime.executeScript */, [ script ]);
+    }
+
+    /**
+     * Execute the script if not up-to-date, and return the GDT inventory view
+     * at the byte offset `pos` in the script.
+     */
+    public getGdtInventory( script: string, pos: number ): WxPromise<InvView_Gdt> {
+        return this.sender.send<InvView_Gdt>(26 /* Runtime.getGdtInventory */, [ script, pos ]);
     }
 
     /**
@@ -40,7 +48,7 @@ export class _wxSenderImpl implements Runtime {
      * Note that the span in the errors are byte offsets, not character offsets.
      */
     public getParserDiagnostics( script: string ): WxPromise<ParserErrorReport[]> {
-        return this.sender.send<ParserErrorReport[]>(25 /* Runtime.getParserDiagnostics */, [ script ]);
+        return this.sender.send<ParserErrorReport[]>(27 /* Runtime.getParserDiagnostics */, [ script ]);
     }
 
     /**
@@ -48,7 +56,7 @@ export class _wxSenderImpl implements Runtime {
      * at the byte offset `pos` in the script.
      */
     public getPouchList( script: string, pos: number ): WxPromise<InvView_PouchList> {
-        return this.sender.send<InvView_PouchList>(26 /* Runtime.getPouchList */, [ script, pos ]);
+        return this.sender.send<InvView_PouchList>(28 /* Runtime.getPouchList */, [ script, pos ]);
     }
 
     /**
@@ -59,21 +67,21 @@ export class _wxSenderImpl implements Runtime {
      * The offsets in both inputs and outputs should be byte offsets, not character offsets.
      */
     public getSemanticTokens( script: string, start: number, end: number ): WxPromise<Uint32Array> {
-        return this.sender.send<Uint32Array>(27 /* Runtime.getSemanticTokens */, [ script, start, end ]);
+        return this.sender.send<Uint32Array>(29 /* Runtime.getSemanticTokens */, [ script, start, end ]);
     }
 
     /**
      * Get index of the step from byte position in the script
      */
     public getStepFromPos( script: string, pos: number ): WxPromise<number> {
-        return this.sender.send<number>(28 /* Runtime.getStepFromPos */, [ script, pos ]);
+        return this.sender.send<number>(30 /* Runtime.getStepFromPos */, [ script, pos ]);
     }
 
     /**
      * Initialize the runtime with the given arguments.
      */
     public initialize( args: RuntimeInitArgs ): WxPromise<Result<RuntimeInitOutput, RuntimeInitError>> {
-        return this.sender.send<Result<RuntimeInitOutput, RuntimeInitError>>(29 /* Runtime.initialize */, [ args ]);
+        return this.sender.send<Result<RuntimeInitOutput, RuntimeInitError>>(31 /* Runtime.initialize */, [ args ]);
     }
 
     /**
@@ -81,7 +89,7 @@ export class _wxSenderImpl implements Runtime {
      * Returns an empty list if no items are found.
      */
     public resolveItemIdent( query: string ): WxPromise<ItemSearchResult[]> {
-        return this.sender.send<ItemSearchResult[]>(30 /* Runtime.resolveItemIdent */, [ query ]);
+        return this.sender.send<ItemSearchResult[]>(32 /* Runtime.resolveItemIdent */, [ query ]);
     }
 }
 
@@ -90,31 +98,35 @@ export class _wxSenderImpl implements Runtime {
  */
 export const _wxRecverImpl = (handler: Runtime): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 24 /* Runtime.executeScript */: {
+        case 25 /* Runtime.executeScript */: {
             const [ a0 ] = args;
             return handler.executeScript( a0 );
         }
-        case 25 /* Runtime.getParserDiagnostics */: {
+        case 26 /* Runtime.getGdtInventory */: {
+            const [ a0, a1 ] = args;
+            return handler.getGdtInventory( a0, a1 );
+        }
+        case 27 /* Runtime.getParserDiagnostics */: {
             const [ a0 ] = args;
             return handler.getParserDiagnostics( a0 );
         }
-        case 26 /* Runtime.getPouchList */: {
+        case 28 /* Runtime.getPouchList */: {
             const [ a0, a1 ] = args;
             return handler.getPouchList( a0, a1 );
         }
-        case 27 /* Runtime.getSemanticTokens */: {
+        case 29 /* Runtime.getSemanticTokens */: {
             const [ a0, a1, a2 ] = args;
             return handler.getSemanticTokens( a0, a1, a2 );
         }
-        case 28 /* Runtime.getStepFromPos */: {
+        case 30 /* Runtime.getStepFromPos */: {
             const [ a0, a1 ] = args;
             return handler.getStepFromPos( a0, a1 );
         }
-        case 29 /* Runtime.initialize */: {
+        case 31 /* Runtime.initialize */: {
             const [ a0 ] = args;
             return handler.initialize( a0 );
         }
-        case 30 /* Runtime.resolveItemIdent */: {
+        case 32 /* Runtime.resolveItemIdent */: {
             const [ a0 ] = args;
             return handler.resolveItemIdent( a0 );
         }

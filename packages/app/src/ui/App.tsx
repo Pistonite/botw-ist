@@ -9,7 +9,7 @@ import { ExtensionPanel } from "./ExtensionPanel.tsx";
 import { useUIStore } from "./store.ts";
 import { Header } from "./Header.tsx";
 import { PouchInventoryPanel } from "./PouchInventoryPanel.tsx";
-import { InventoryTitle } from "./components/InventoryTitle.tsx";
+import { GdtInventoryPanel } from "./GdtInventoryPanel.tsx";
 
 const useStyles = makeStyles({
     root: {
@@ -72,12 +72,7 @@ const AppImpl: React.FC = () => {
                     setValuePercent={setGamedataInventoryPercentage}
                     minHeight={60}
                 >
-                    <div
-                        className={styles.fullwh}
-                        style={{ background: "green" }}
-                    >
-                        <InventoryTitle title="GameData" />
-                    </div>
+                    <GdtInventoryPanel />
                     <PouchInventoryPanel />
                 </ResizeLayout>
             </main>
