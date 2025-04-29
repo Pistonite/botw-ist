@@ -1,6 +1,9 @@
 import { initLocaleWithI18next } from "@pistonite/pure-i18next";
 
-import { loadSharedControlLanguage, namespace as sharedControlsNamespace } from "@pistonite/shared-controls";
+import {
+    loadSharedControlLanguage,
+    namespace as sharedControlsNamespace,
+} from "@pistonite/shared-controls";
 
 export const SupportedLocales = [
     "de-DE",
@@ -26,7 +29,7 @@ export const initI18n = (persist: boolean) => {
         loader: {
             ui: (language) => loadLanguage("ui", language),
             generated: (language) => loadLanguage("generated", language),
-            [sharedControlsNamespace]: loadSharedControlLanguage
+            [sharedControlsNamespace]: loadSharedControlLanguage,
         },
     });
 };

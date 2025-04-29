@@ -59,7 +59,9 @@ type ItemExplorerProps = {
 };
 
 export const ItemExplorer: React.FC<ItemExplorerProps> = ({
-    searcher, cheap, disableAnimation,
+    searcher,
+    cheap,
+    disableAnimation,
 }) => {
     const [value, setValue] = useState("");
     const [localized, setLocalized] = useState(false);

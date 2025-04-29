@@ -82,7 +82,11 @@ const PouchItemSlotImpl: React.FC<PouchItemSlotProps> = ({
     isMasterSwordFullPower,
     ...props
 }) => {
-    const slotProps = getSlotPropsFromPouchItem(item, list1Count, isMasterSwordFullPower);
+    const slotProps = getSlotPropsFromPouchItem(
+        item,
+        list1Count,
+        isMasterSwordFullPower,
+    );
     return <ItemSlot {...slotProps} {...props} />;
 };
 export const PouchItemSlot = memo(PouchItemSlotImpl);
@@ -93,7 +97,11 @@ const PouchItemSlotWithTooltipImpl: React.FC<PouchItemSlotProps> = ({
     isMasterSwordFullPower,
     ...props
 }) => {
-    const slotProps = getSlotPropsFromPouchItem(item, list1Count, isMasterSwordFullPower);
+    const slotProps = getSlotPropsFromPouchItem(
+        item,
+        list1Count,
+        isMasterSwordFullPower,
+    );
     const tooltipProps = getTooltipPropsFromPouchItem(item, list1Count);
     return (
         <ItemTooltip {...tooltipProps} {...props}>
@@ -109,7 +117,11 @@ export type GdtItemSlotProps = {
     isMasterSwordFullPower: boolean;
 } & ItemSlotContextProps;
 
-const GdtItemSlotImpl: React.FC<GdtItemSlotProps> = ({ item, isMasterSwordFullPower, ...props }) => {
+const GdtItemSlotImpl: React.FC<GdtItemSlotProps> = ({
+    item,
+    isMasterSwordFullPower,
+    ...props
+}) => {
     const slotProps = getSlotPropsFromGdtItem(item, isMasterSwordFullPower);
     return <ItemSlot {...slotProps} {...props} />;
 };

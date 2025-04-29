@@ -79,7 +79,6 @@ export const useApplicationStore = create<ApplicationStore>()(
                 setEnableAnimations: (value) => {
                     set({ enableAnimations: value });
                 },
-
             };
         },
         {

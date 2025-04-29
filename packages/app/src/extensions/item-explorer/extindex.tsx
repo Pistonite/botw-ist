@@ -27,7 +27,9 @@ export class ItemExplorerExtension
     ) => Promise<Result<SearchResultNoScore[], string>>;
     private component: React.FC;
 
-    private iconSettings: Cell<Pick<ActorSpriteProps, "cheap" | "disableAnimation">>;
+    private iconSettings: Cell<
+        Pick<ActorSpriteProps, "cheap" | "disableAnimation">
+    >;
 
     constructor(standalone: boolean) {
         super(standalone);
@@ -68,19 +70,32 @@ export class ItemExplorerExtension
             initial: {
                 cheap: false,
                 disableAnimation: false,
-            }
+            },
         });
 
-        const subscribe = (cb: (x: Pick<ActorSpriteProps, "cheap" | "disableAnimation">) => void) => {
+        const subscribe = (
+            cb: (
+                x: Pick<ActorSpriteProps, "cheap" | "disableAnimation">,
+            ) => void,
+        ) => {
             return this.iconSettings.subscribe(cb);
         };
 
         this.component = () => {
             // eslint-disable-next-line react-hooks/rules-of-hooks
-            const { cheap, disableAnimation } = useSyncExternalStore(subscribe, () => {
-                return this.iconSettings.get();
-            })
-            return <ItemExplorer searcher={this} cheap={cheap} disableAnimation={disableAnimation}/>;
+            const { cheap, disableAnimation } = useSyncExternalStore(
+                subscribe,
+                () => {
+                    return this.iconSettings.get();
+                },
+            );
+            return (
+                <ItemExplorer
+                    searcher={this}
+                    cheap={cheap}
+                    disableAnimation={disableAnimation}
+                />
+            );
         };
     }
 
@@ -88,12 +103,14 @@ export class ItemExplorerExtension
         return this.component;
     }
 
-  public override async onIconSettingsChanged(enableHighRes: boolean, enableAnimations: boolean): WxPromise<void> {
+    public override async onIconSettingsChanged(
+        enableHighRes: boolean,
+        enableAnimations: boolean,
+    ): WxPromise<void> {
         this.iconSettings.set({
             cheap: !enableHighRes,
             disableAnimation: !enableAnimations,
         });
         return {};
-      
-  }
+    }
 }

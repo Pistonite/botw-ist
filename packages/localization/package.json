@@ -23,6 +23,7 @@
         "@types/react": "catalog:",
         "js-yaml": "^4.1.0",
         "mono-dev": "workspace:*",
-        "typescript": "catalog:"
+        "typescript": "catalog:",
+        "vite": "catalog:"
     }
 }

@@ -19,9 +19,15 @@ const instances: Extension[] = [];
 
 export const initExtensionManager = () => {
     useApplicationStore.subscribe((curr, prev) => {
-        if (curr.enableHighQualityIcons !== prev.enableHighQualityIcons || curr.enableAnimations !== prev.enableAnimations) {
+        if (
+            curr.enableHighQualityIcons !== prev.enableHighQualityIcons ||
+            curr.enableAnimations !== prev.enableAnimations
+        ) {
             instances.forEach((x) => {
-                void x.onIconSettingsChanged(curr.enableHighQualityIcons, curr.enableAnimations);
+                void x.onIconSettingsChanged(
+                    curr.enableHighQualityIcons,
+                    curr.enableAnimations,
+                );
             });
         }
     });
@@ -57,8 +63,12 @@ export const connectExtensionToApp = (extension: ExtensionModule) => {
 const notifyAndPushInstance = (extension: Extension) => {
     void extension.onDarkModeChanged(isDark());
     void extension.onLocaleChanged(getLocale());
-    const { enableHighQualityIcons, enableAnimations } = useApplicationStore.getState();
-    void extension.onIconSettingsChanged(enableHighQualityIcons, enableAnimations);
+    const { enableHighQualityIcons, enableAnimations } =
+        useApplicationStore.getState();
+    void extension.onIconSettingsChanged(
+        enableHighQualityIcons,
+        enableAnimations,
+    );
     void extension.onScriptChanged(useSessionStore.getState().activeScript);
     instances.push(extension);
 };

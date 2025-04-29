@@ -195,7 +195,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
     blank,
     deactive,
     badlyDamaged,
-    isMasterSwordFullPower
+    isMasterSwordFullPower,
 }) => {
     const styles = useStyles();
 

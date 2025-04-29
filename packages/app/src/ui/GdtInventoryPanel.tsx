@@ -4,7 +4,10 @@ import { makeStyles } from "@fluentui/react-components";
 import { useUITranslation } from "skybook-localization";
 import { GdtItemSlotWithTooltip } from "skybook-item-system";
 
-import { useGdtInventoryView, useItemSlotPropsFromSettings } from "self::application/store";
+import {
+    useGdtInventoryView,
+    useItemSlotPropsFromSettings,
+} from "self::application/store";
 
 import { useThemedSheikaBackgroundUrl } from "./asset.ts";
 import { InventoryTitle } from "./components/InventoryTitle.tsx";
@@ -54,7 +57,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
                 style={{
                     backgroundImage: `url(${useThemedSheikaBackgroundUrl()})`,
                 }}
-                className={ styles.main }
+                className={styles.main}
             >
                 <InventoryTitle
                     title={t("main.gdt_inventory.title")}
@@ -68,7 +71,9 @@ const GdtInventoryPanelImpl: React.FC = () => {
                                 <GdtItemSlotWithTooltip
                                     item={item}
                                     key={i}
-                                    isMasterSwordFullPower={!!(gdt.masterSword.isTrueForm)}
+                                    isMasterSwordFullPower={
+                                        !!gdt.masterSword.isTrueForm
+                                    }
                                     {...itemSlotProps}
                                 />
                             ))}
@@ -78,6 +83,6 @@ const GdtInventoryPanelImpl: React.FC = () => {
             </div>
         </div>
     );
-}
+};
 
 export const GdtInventoryPanel = memo(GdtInventoryPanelImpl);

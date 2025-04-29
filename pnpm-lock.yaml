@@ -312,6 +312,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.8.3
+      vite:
+        specifier: 'catalog:'
+        version: 6.3.0(@types/node@22.13.5)
 
   packages/mono-dev:
     dependencies:

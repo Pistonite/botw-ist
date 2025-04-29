@@ -1,7 +1,11 @@
 import { create } from "zustand";
 import { debounce } from "@pistonite/pure/sync";
 
-import type { InvView_Gdt, InvView_PouchList, ScriptEnvImage } from "@pistonite/skybook-api";
+import type {
+    InvView_Gdt,
+    InvView_PouchList,
+    ScriptEnvImage,
+} from "@pistonite/skybook-api";
 import { translateUI } from "skybook-localization";
 
 import { useApplicationStore } from "./ApplicationStore.ts";
@@ -75,16 +79,10 @@ export type SessionStore = {
     upToDateSteps: number[];
     /** Cached Pouch list views. Key is the step index */
     pouchViews: Record<number, InvView_PouchList>;
-    setPouchViewInCache: (
-        step: number,
-        view: InvView_PouchList,
-    ) => void;
+    setPouchViewInCache: (step: number, view: InvView_PouchList) => void;
     /** Cached GDT inventory views. Key is the step index */
     gdtViews: Record<number, InvView_Gdt>;
-    setGdtViewInCache: (
-        step: number,
-        view: InvView_Gdt,
-    ) => void;
+    setGdtViewInCache: (step: number, view: InvView_Gdt) => void;
     /** Invalidate all cached inventory views */
     invalidateInventoryCache: () => void;
 };

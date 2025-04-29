@@ -10,20 +10,13 @@ import {
     MenuDivider,
     Caption1,
     MenuItem,
-    Switch,
 } from "@fluentui/react-components";
 import {
     BookQuestionMark20Regular,
-    ChevronDown20Regular,
     MoreHorizontal20Regular,
-    PuzzleCube20Regular,
     PuzzlePiece20Regular,
 } from "@fluentui/react-icons";
-import {
-    DarkToggle,
-    GitHubLink,
-    LanguagePicker,
-} from "@pistonite/shared-controls";
+import { GitHubLink } from "@pistonite/shared-controls";
 
 import { useSessionStore } from "self::application/store";
 
@@ -46,7 +39,7 @@ const useStyles = makeStyles({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-    }
+    },
 });
 
 const HeaderImpl: React.FC = () => {
@@ -60,7 +53,10 @@ const HeaderImpl: React.FC = () => {
     return (
         <div className={styles.container}>
             <div className={styles.logo}>
-                <img src={isRunningCustomImage ? iconPurple : icon} height="32px" />
+                <img
+                    src={isRunningCustomImage ? iconPurple : icon}
+                    height="32px"
+                />
             </div>
             <Menu>
                 <MenuTrigger disableButtonEnhancement>
@@ -86,9 +82,7 @@ const HeaderImpl: React.FC = () => {
                 </MenuTrigger>
                 <MenuPopover>
                     <MenuList>
-                        <MenuItem icon={
-                <BookQuestionMark20Regular />
-                        }>
+                        <MenuItem icon={<BookQuestionMark20Regular />}>
                             Skybook Manual
                         </MenuItem>
                         <GitHubLink href="https://github.com/Pistonite/botw-ist" />

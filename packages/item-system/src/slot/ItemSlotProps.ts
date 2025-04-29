@@ -124,7 +124,7 @@ export const getSlotPropsFromPouchItem = (
 
 export const getSlotPropsFromGdtItem = (
     item: InvView_GdtItem,
-        isMasterSwordFullPower: boolean,
+    isMasterSwordFullPower: boolean,
 ): ItemSlotProps => {
     const { actorName, value, isEquipped } = item.common;
     const isAbility = isChampionAbilityActor(actorName);

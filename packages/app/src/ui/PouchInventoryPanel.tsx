@@ -10,7 +10,11 @@ import {
 import { PouchItemSlotWithTooltip } from "skybook-item-system";
 import { useUITranslation } from "skybook-localization";
 
-import { useGdtInventoryView, useItemSlotPropsFromSettings, usePouchListView } from "self::application/store";
+import {
+    useGdtInventoryView,
+    useItemSlotPropsFromSettings,
+    usePouchListView,
+} from "self::application/store";
 
 import { InventoryTitle } from "./components/InventoryTitle.tsx";
 import { Code } from "./components/Code.tsx";
@@ -69,7 +73,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     const styles = useStyles();
     const dark = useDark();
     const { inventory: pouch, stale, loading } = usePouchListView();
-    const { inventory: gdt, } = useGdtInventoryView();
+    const { inventory: gdt } = useGdtInventoryView();
 
     const showSpinner = loading || stale || !pouch;
     const t = useUITranslation();
@@ -118,7 +122,9 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                                     item={item}
                                     key={i}
                                     list1Count={pouch.count}
-                                    isMasterSwordFullPower={!!(gdt?.masterSword?.isTrueForm)}
+                                    isMasterSwordFullPower={
+                                        !!gdt?.masterSword?.isTrueForm
+                                    }
                                     {...itemSlotProps}
                                 />
                             ))}
