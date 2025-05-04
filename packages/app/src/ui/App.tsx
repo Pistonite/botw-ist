@@ -50,38 +50,40 @@ const AppImpl: React.FC = () => {
         (state) => state.setGamedataInventoryPercentage,
     );
 
-    return <>
-        <ResizeLayout
-            className={styles.root}
-            vertical={narrow || !showExtensionPanel}
-            disabled={!showExtensionPanel}
-            naturalSize={!showExtensionPanel}
-            valuePercent={extensionPanelPercentage}
-            setValuePercent={setExtensionPanelPercentage}
-            minWidth={330}
-            minHeight={45}
-            touch={isLessProductive}
-        >
-            <div className={styles.side}>
-                <Header />
-                {showExtensionPanel && <ExtensionPanel />}
-            </div>
-            <main className={styles.fullwh}>
-                <ResizeLayout
-                    className={styles.fullwh}
-                    vertical
-                    valuePercent={gamedataInventoryPercentage}
-                    setValuePercent={setGamedataInventoryPercentage}
-                    minHeight={60}
-                >
-                    <GdtInventoryPanel />
-                    <PouchInventoryPanel />
-                </ResizeLayout>
-            </main>
-        </ResizeLayout>
-        <ExtensionLaunchDialog />
-        <CustomExtensionDialog />
-    </>;
+    return (
+        <>
+            <ResizeLayout
+                className={styles.root}
+                vertical={narrow || !showExtensionPanel}
+                disabled={!showExtensionPanel}
+                naturalSize={!showExtensionPanel}
+                valuePercent={extensionPanelPercentage}
+                setValuePercent={setExtensionPanelPercentage}
+                minWidth={330}
+                minHeight={45}
+                touch={isLessProductive}
+            >
+                <div className={styles.side}>
+                    <Header />
+                    {showExtensionPanel && <ExtensionPanel />}
+                </div>
+                <main className={styles.fullwh}>
+                    <ResizeLayout
+                        className={styles.fullwh}
+                        vertical
+                        valuePercent={gamedataInventoryPercentage}
+                        setValuePercent={setGamedataInventoryPercentage}
+                        minHeight={60}
+                    >
+                        <GdtInventoryPanel />
+                        <PouchInventoryPanel />
+                    </ResizeLayout>
+                </main>
+            </ResizeLayout>
+            <ExtensionLaunchDialog />
+            <CustomExtensionDialog />
+        </>
+    );
 };
 
 export const App = memo(AppImpl);

@@ -22,7 +22,14 @@ import {
 import { useUITranslation } from "skybook-localization";
 
 import { isLessProductive, useNarrow } from "self::pure-contrib";
-import { BuiltinExtensionIds, useExtensionStore, type ExtensionOpenMode, getCustomExtensionId, getOpenModeForExtension, useExtensionName } from "self::application/store";
+import {
+    BuiltinExtensionIds,
+    useExtensionStore,
+    type ExtensionOpenMode,
+    getCustomExtensionId,
+    getOpenModeForExtension,
+    useExtensionName,
+} from "self::application/store";
 import { openExtensionPopup } from "self::application/extension";
 import { useUIStore } from "./store";
 
@@ -35,7 +42,7 @@ const useStyles = makeStyles({
     otherOptions: {
         display: "flex",
         flexDirection: "column",
-    }
+    },
 });
 
 const ExtensionLaunchDialogImpl: React.FC = () => {
@@ -43,29 +50,34 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
     const narrow = useNarrow();
     const styles = useStyles();
 
-    const open = useUIStore(state => state.openedDialogId) === "extension-launch";
-    const setOpen = useUIStore(state => state.setOpenedDialog);
+    const open =
+        useUIStore((state) => state.openedDialogId) === "extension-launch";
+    const setOpen = useUIStore((state) => state.setOpenedDialog);
 
-    const customExtensions = useExtensionStore(state => state.custom);
-    const pinnedExtensions = useExtensionStore(state => state.pinnedIds);
-    const setPinnedIds = useExtensionStore(state => state.setPinnedIds);
-    const updateOpenMode = useExtensionStore(state => state.updateOpenMode);
-    const updateRecency = useExtensionStore(state => state.updateRecency);
-    const openExtension = useExtensionStore(state => state.open);
+    const customExtensions = useExtensionStore((state) => state.custom);
+    const pinnedExtensions = useExtensionStore((state) => state.pinnedIds);
+    const setPinnedIds = useExtensionStore((state) => state.setPinnedIds);
+    const updateOpenMode = useExtensionStore((state) => state.updateOpenMode);
+    const updateRecency = useExtensionStore((state) => state.updateRecency);
+    const openExtension = useExtensionStore((state) => state.open);
 
-    const [selectedExtensionId, setSelectedExtensionId] = useState<string>(() => {
-        const { currentPrimary, currentSecondary } = useExtensionStore.getState();
-        return currentPrimary || currentSecondary || "editor";
-    });
+    const [selectedExtensionId, setSelectedExtensionId] = useState<string>(
+        () => {
+            const { currentPrimary, currentSecondary } =
+                useExtensionStore.getState();
+            return currentPrimary || currentSecondary || "editor";
+        },
+    );
     const isSelectedExtensionScriptEditor = selectedExtensionId === "editor";
     const isSelectedExtensionCustom = selectedExtensionId.startsWith("custom-");
     const selectedExtensionText = useExtensionName(selectedExtensionId);
 
     const [remember, setRemember] = useState(false);
 
-    const [selectedOpenMode, setSelectedOpenModeInState] = useState<ExtensionOpenMode>(() => {
-        return getOpenModeForExtension(selectedExtensionId);
-    });
+    const [selectedOpenMode, setSelectedOpenModeInState] =
+        useState<ExtensionOpenMode>(() => {
+            return getOpenModeForExtension(selectedExtensionId);
+        });
     const setSelectedOpenMode = (value: ExtensionOpenMode) => {
         setSelectedOpenModeInState(value);
     };
@@ -79,37 +91,39 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
                 setSelectedOpenMode(getOpenModeForExtension(selectedId));
             }}
         >
-            {
-                BuiltinExtensionIds.map((id) => (
-                    <Option key={id} value={id}>
-                        {t(`extension.${id}.name`)}
-                    </Option>
-                ))
-            }
-            {
-                customExtensions.length > 0 && (
-                    <OptionGroup label={t("menu.custom_extensions")}>
-                        {
-                            customExtensions.map((extension) => (
-                                <Option key={extension.url} value={getCustomExtensionId(extension.url)}>
-                                    {extension.name}
-                                </Option>
-                            ))}
-                    </OptionGroup>
-                )
-            }
+            {BuiltinExtensionIds.map((id) => (
+                <Option key={id} value={id}>
+                    {t(`extension.${id}.name`)}
+                </Option>
+            ))}
+            {customExtensions.length > 0 && (
+                <OptionGroup label={t("menu.custom_extensions")}>
+                    {customExtensions.map((extension) => (
+                        <Option
+                            key={extension.url}
+                            value={getCustomExtensionId(extension.url)}
+                        >
+                            {extension.name}
+                        </Option>
+                    ))}
+                </OptionGroup>
+            )}
         </Dropdown>
     );
 
     const $PinnedSwitch = (
-        <Switch 
+        <Switch
             label={t("dialog.extension_launch.pinned")}
             checked={pinnedExtensions.includes(selectedExtensionId)}
-            onChange={(_, {checked}) => {
+            onChange={(_, { checked }) => {
                 if (checked) {
                     setPinnedIds([...pinnedExtensions, selectedExtensionId]);
                 } else {
-                    setPinnedIds(pinnedExtensions.filter(id => id !== selectedExtensionId));
+                    setPinnedIds(
+                        pinnedExtensions.filter(
+                            (id) => id !== selectedExtensionId,
+                        ),
+                    );
                 }
             }}
         />
@@ -128,50 +142,60 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
                 label={t("dialog.extension_launch.option.primary")}
             />
             <Field
-                validationState={isSelectedExtensionScriptEditor ? "warning" : undefined}
-                validationMessage={isSelectedExtensionScriptEditor ? 
-                    t("dialog.extension_launch.error.script_editor_no_secondary").replace("{{script_editor}}", t("extension.editor.name")) : undefined
+                validationState={
+                    isSelectedExtensionScriptEditor ? "warning" : undefined
+                }
+                validationMessage={
+                    isSelectedExtensionScriptEditor
+                        ? t(
+                              "dialog.extension_launch.error.script_editor_no_secondary",
+                          ).replace(
+                              "{{script_editor}}",
+                              t("extension.editor.name"),
+                          )
+                        : undefined
                 }
             >
                 <Radio
-                    disabled={isSelectedExtensionCustom || isSelectedExtensionScriptEditor}
+                    disabled={
+                        isSelectedExtensionCustom ||
+                        isSelectedExtensionScriptEditor
+                    }
                     value="secondary"
-                    label={t(
-                        "dialog.extension_launch.option.secondary",
-                    )}
+                    label={t("dialog.extension_launch.option.secondary")}
                 />
             </Field>
             <Radio
                 value="popout"
-                label={t(
-                    "dialog.extension_launch.option.popout",
-                )}
+                label={t("dialog.extension_launch.option.popout")}
             />
         </RadioGroup>
     );
 
     const $OpenModePopoutCheckbox = narrow && (
-        <Checkbox 
+        <Checkbox
             label={t("dialog.extension_launch.option.popout")}
             disabled={isSelectedExtensionCustom}
             checked={isSelectedExtensionCustom || selectedOpenMode === "popout"}
-            onChange={(_, {checked}) =>{
+            onChange={(_, { checked }) => {
                 setSelectedOpenMode(checked ? "popout" : "primary");
             }}
         />
     );
 
     const $RememberCheckbox = (
-        <Checkbox 
+        <Checkbox
             label={
-                narrow ? 
-                    t("dialog.extension_launch.remember_popout")
-                    :
-                    t("dialog.extension_launch.remember")
+                narrow
+                    ? t("dialog.extension_launch.remember_popout")
+                    : t("dialog.extension_launch.remember")
             }
-            disabled={isSelectedExtensionCustom || (narrow && selectedOpenMode !== "popout")}
+            disabled={
+                isSelectedExtensionCustom ||
+                (narrow && selectedOpenMode !== "popout")
+            }
             checked={remember && (!narrow || selectedOpenMode === "popout")}
-            onChange={(_, {checked}) =>{
+            onChange={(_, { checked }) => {
                 setRemember(!!checked);
             }}
         />
@@ -184,10 +208,11 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
         }
         updateRecency(selectedExtensionId);
         // make sure open mode is valid for the current behavior
-        const openMode = narrow ?
-            selectedOpenMode === "popout" ? "popout" : "primary"
-            :
-            selectedOpenMode;
+        const openMode = narrow
+            ? selectedOpenMode === "popout"
+                ? "popout"
+                : "primary"
+            : selectedOpenMode;
 
         if (openMode === "popout") {
             if (remember) {
@@ -201,21 +226,45 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
     };
 
     return (
-        <Dialog open={open} onOpenChange={(_, { open }) => setOpen(open ? "extension-launch" : undefined)}>
+        <Dialog
+            open={open}
+            onOpenChange={(_, { open }) =>
+                setOpen(open ? "extension-launch" : undefined)
+            }
+        >
             <DialogSurface>
                 <DialogBody>
-                    <DialogTitle>{t("dialog.extension_launch.title")}</DialogTitle>
+                    <DialogTitle>
+                        {t("dialog.extension_launch.title")}
+                    </DialogTitle>
                     <DialogContent>
                         <div className={styles.dialogBody}>
                             <div>
-                                <Field label={t("dialog.extension_launch.select_title")}>
+                                <Field
+                                    label={t(
+                                        "dialog.extension_launch.select_title",
+                                    )}
+                                >
                                     {$SelectExtensionDropDown}
                                 </Field>
                                 {$PinnedSwitch}
                             </div>
-                            <Field label={t("dialog.extension_launch.options_title")}
-                                validationState={isSelectedExtensionCustom ? "warning" : undefined}
-                                validationMessage={isSelectedExtensionCustom ? t("dialog.extension_launch.error.custom_popout_only") : undefined}
+                            <Field
+                                label={t(
+                                    "dialog.extension_launch.options_title",
+                                )}
+                                validationState={
+                                    isSelectedExtensionCustom
+                                        ? "warning"
+                                        : undefined
+                                }
+                                validationMessage={
+                                    isSelectedExtensionCustom
+                                        ? t(
+                                              "dialog.extension_launch.error.custom_popout_only",
+                                          )
+                                        : undefined
+                                }
                             >
                                 {$OpenModeRadioGroup}
                                 {$OpenModePopoutCheckbox}
@@ -227,10 +276,14 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
                     </DialogContent>
                     <DialogActions>
                         <DialogTrigger disableButtonEnhancement>
-                            <Button appearance="secondary">{t("button.cancel")}</Button>
+                            <Button appearance="secondary">
+                                {t("button.cancel")}
+                            </Button>
                         </DialogTrigger>
                         <DialogTrigger disableButtonEnhancement>
-                            <Button appearance="primary" onClick={handleLaunch} >{t("button.launch")}</Button>
+                            <Button appearance="primary" onClick={handleLaunch}>
+                                {t("button.launch")}
+                            </Button>
                         </DialogTrigger>
                     </DialogActions>
                 </DialogBody>

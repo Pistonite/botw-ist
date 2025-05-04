@@ -267,7 +267,7 @@ export const useSessionStore = create<SessionStore>()((set) => {
             });
         },
         invalidateInventoryCache: () => {
-            set({ 
+            set({
                 upToDatePouchSteps: [],
                 upToDateGdtSteps: [],
             });

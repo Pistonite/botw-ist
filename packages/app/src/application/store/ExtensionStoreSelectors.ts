@@ -2,9 +2,15 @@ import { createSelector } from "reselect";
 
 import { useUITranslation } from "skybook-localization";
 
-import { BuiltinExtensionIds, useExtensionStore, type ExtensionStore, ExtensionOpenMode, getCustomExtensionId } from "./ExtensionStore.ts";
 import { isLessProductive, useNarrow } from "self::pure-contrib";
 
+import {
+    BuiltinExtensionIds,
+    useExtensionStore,
+    type ExtensionStore,
+    type ExtensionOpenMode,
+    getCustomExtensionId,
+} from "./ExtensionStore.ts";
 
 /** Selector to get primary extension ids to display in the toolbar dropdown */
 export const getPrimaryExtensionIdsForDropdown = createSelector(
@@ -14,7 +20,7 @@ export const getPrimaryExtensionIdsForDropdown = createSelector(
     ],
     (ids, current) => {
         return toSortedDedupedBuiltinExtensionIds([...ids, current]);
-    }
+    },
 );
 
 /** Selector to get secondary extension ids to display in the toolbar dropdown */
@@ -25,7 +31,7 @@ export const getSecondaryExtensionIdsForDropdown = createSelector(
     ],
     (ids, current) => {
         return toSortedDedupedBuiltinExtensionIds([...ids, current]);
-    }
+    },
 );
 
 /** Dedupe and sort the built-in extension ids based on predefined order */
@@ -49,17 +55,17 @@ export const getOpenModeForExtension = (id: string): ExtensionOpenMode => {
         return "secondary";
     }
     return "popout";
-}
+};
 
 export const useExtensionName = (id: string): string => {
     const custom = useExtensionStore((state) => state.custom);
     const t = useUITranslation();
     if (id.startsWith("custom-")) {
         const config = custom.find((c) => getCustomExtensionId(c.url) === id);
-            return config?.name || "";
+        return config?.name || "";
     }
     return t(`extension.${id}.name`);
-}
+};
 
 /** Get the effective current secondary extension id */
 export const useCurrentSecondaryExtensionId = () => {
@@ -79,5 +85,5 @@ export const useIsShowingExtensionPanel = () => {
 
 export const getCustomExtensionConfigText = () => {
     const custom = useExtensionStore.getState().custom;
-    return custom.map(({name, url}) => `${name}=${url}`).join("\n");
+    return custom.map(({ name, url }) => `${name}=${url}`).join("\n");
 };

@@ -93,8 +93,8 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
         <Interpolate
             under_score={<Code>{"_"}</Code>}
             example={<Code>{"royal_claymore"}</Code>}
-            >
-                {t("item_explorer.desc.search_tip_ident")}
+        >
+            {t("item_explorer.desc.search_tip_ident")}
         </Interpolate>
     );
 
@@ -121,9 +121,7 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
                     }}
                 />
             </Field>
-            <Body1 block>
-                {$SearchTip}
-            </Body1>
+            <Body1 block>{$SearchTip}</Body1>
             {hasResults && (
                 <div className={styles.resultsScroll}>
                     <div className={styles.results}>

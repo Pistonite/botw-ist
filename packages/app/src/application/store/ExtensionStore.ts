@@ -17,15 +17,20 @@ export const BuiltinExtensionIds = [
     "stub1",
 ] as const;
 
-const DefaultPrimaryIds: string[] = ["editor", "stub1"] satisfies (typeof BuiltinExtensionIds)[number][];
-const DefaultSecondaryIds: string[] = ["item-explorer"] satisfies (typeof BuiltinExtensionIds)[number][];
+const DefaultPrimaryIds: string[] = [
+    "editor",
+    "stub1",
+] satisfies (typeof BuiltinExtensionIds)[number][];
+const DefaultSecondaryIds: string[] = [
+    "item-explorer",
+] satisfies (typeof BuiltinExtensionIds)[number][];
 
 export type ExtensionStore = {
     /** Built-in Ids stored locally to track store version */
     builtinIds: string[];
     /** Update the store when built-in extensions are added or removed */
     updateBuiltinExtensions: (newIds: string[]) => void;
-    /** 
+    /**
      * Configured custom extensions
      * (note that custom extensions can only be popups)
      */
@@ -78,156 +83,201 @@ export type CustomExtension = {
 
 export const getCustomExtensionId = (url: string) => {
     return `custom-${url}`;
-}
+};
 
 export const useExtensionStore = create<ExtensionStore>()(
     persist(
         (set) => ({
-    builtinIds: [...BuiltinExtensionIds],
+            builtinIds: [...BuiltinExtensionIds],
             updateBuiltinExtensions: (newIds: string[]) => {
                 console.log("updating built-in extensions");
-                const newPrimary = newIds.filter((id) => DefaultPrimaryIds.includes(id));
-                const newSecondary = newIds.filter((id) => DefaultSecondaryIds.includes(id));
+                const newPrimary = newIds.filter((id) =>
+                    DefaultPrimaryIds.includes(id),
+                );
+                const newSecondary = newIds.filter((id) =>
+                    DefaultSecondaryIds.includes(id),
+                );
                 const toFiltered = (ids: string[]) => {
-                    return ids.filter((id) => (BuiltinExtensionIds as readonly string[]).includes(id));
-                }
-                set(({primaryIds, secondaryIds, recentIds, pinnedIds, currentPrimary, currentSecondary}) => ({ 
-                    // typescript issue
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    builtinIds: [...BuiltinExtensionIds] as any,
-                    primaryIds: toFiltered([...new Set(primaryIds.concat(newPrimary))]),
-                    secondaryIds: toFiltered([...new Set(secondaryIds.concat(newSecondary))]),
-                    recentIds: toFiltered(recentIds),
-                    pinnedIds: toFiltered(pinnedIds),
-                    currentPrimary: (BuiltinExtensionIds as readonly string[]).includes(currentPrimary) ? currentPrimary : "",
-                    currentSecondary: (BuiltinExtensionIds as readonly string[]).includes(currentSecondary) ? currentSecondary : "",
-                }));
+                    return ids.filter((id) =>
+                        (BuiltinExtensionIds as readonly string[]).includes(id),
+                    );
+                };
+                set(
+                    ({
+                        primaryIds,
+                        secondaryIds,
+                        recentIds,
+                        pinnedIds,
+                        currentPrimary,
+                        currentSecondary,
+                    }) => ({
+                        // typescript issue
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        builtinIds: [...BuiltinExtensionIds] as any,
+                        primaryIds: toFiltered([
+                            ...new Set(primaryIds.concat(newPrimary)),
+                        ]),
+                        secondaryIds: toFiltered([
+                            ...new Set(secondaryIds.concat(newSecondary)),
+                        ]),
+                        recentIds: toFiltered(recentIds),
+                        pinnedIds: toFiltered(pinnedIds),
+                        currentPrimary: (
+                            BuiltinExtensionIds as readonly string[]
+                        ).includes(currentPrimary)
+                            ? currentPrimary
+                            : "",
+                        currentSecondary: (
+                            BuiltinExtensionIds as readonly string[]
+                        ).includes(currentSecondary)
+                            ? currentSecondary
+                            : "",
+                    }),
+                );
             },
-    custom: [],
-    pinnedIds: [],
-    setPinnedIds: (ids) => {
-        set(({ custom }) => {
-            const customIds = custom.map((e) => getCustomExtensionId(e.url));
-            return {
-                pinnedIds: filterInvalidCustomIds(ids, customIds),
-            }
-        });
-    },
-    recentIds: [],
-    updateRecency: (id: string) => {
-        set(({ recentIds, custom }) => {
-            const customIds = custom.map((e) => getCustomExtensionId(e.url));
-            return {
-                recentIds: filterInvalidCustomIds([id, ...recentIds.filter((i) => i !== id)], customIds),
-            }
-        });
-    },
-
-
-    primaryIds: [...DefaultPrimaryIds],
-    secondaryIds: [...DefaultSecondaryIds],
-    currentPrimary: "editor",
-    currentSecondary: "item-explorer",
-
-    open: (
-        id: string,
-        slot: "primary" | "secondary",
-        updateOpenMode = false,
-    ) => {
-        // make editor only openable in the primary slot
-        // because issue with the monaco instance
-        if (id === "editor") {
-            slot = "primary";
-        }
-        set(({ primaryIds, secondaryIds }) => {
-            const newState: Partial<ExtensionStore> = {};
-            if (slot === "primary") {
-                newState.currentPrimary = id;
-                if (updateOpenMode) {
-                    if (secondaryIds.includes(id)) {
-                        newState.secondaryIds = secondaryIds.filter(
-                            (i) => i !== id,
-                        );
-                    }
-                    if (!primaryIds.includes(id)) {
-                        newState.primaryIds = [...primaryIds, id];
-                    }
-                }
-            } else {
-                newState.currentSecondary = id;
-                if (updateOpenMode) {
-                    if (primaryIds.includes(id)) {
-                        newState.primaryIds = primaryIds.filter(
-                            (i) => i !== id,
-                        );
-                    }
-                    if (!secondaryIds.includes(id)) {
-                        newState.secondaryIds = [...secondaryIds, id];
-                    }
-                }
-            }
-            return newState;
-        });
-    },
-
-    updateOpenMode: (id: string, openMode: ExtensionOpenMode) => {
-        if (id === "editor") {
-            openMode = "primary";
-        }
-        set(({ primaryIds, secondaryIds }) => {
-            const newState: Partial<ExtensionStore> = {};
-            if (openMode === "primary") {
-                if (secondaryIds.includes(id)) {
-                    newState.secondaryIds = secondaryIds.filter(
-                        (i) => i !== id,
+            custom: [],
+            pinnedIds: [],
+            setPinnedIds: (ids) => {
+                set(({ custom }) => {
+                    const customIds = custom.map((e) =>
+                        getCustomExtensionId(e.url),
                     );
-                }
-                if (!primaryIds.includes(id)) {
-                    newState.primaryIds = [...primaryIds, id];
-                }
-            } else if (openMode === "secondary") {
-                newState.currentSecondary = id;
-                if (primaryIds.includes(id)) {
-                    newState.primaryIds = primaryIds.filter((i) => i !== id);
-                }
-                if (!secondaryIds.includes(id)) {
-                    newState.secondaryIds = [...secondaryIds, id];
-                }
-            } else {
-                if (primaryIds.includes(id)) {
-                    newState.primaryIds = primaryIds.filter((i) => i !== id);
-                }
-                if (secondaryIds.includes(id)) {
-                    newState.secondaryIds = secondaryIds.filter(
-                        (i) => i !== id,
+                    return {
+                        pinnedIds: filterInvalidCustomIds(ids, customIds),
+                    };
+                });
+            },
+            recentIds: [],
+            updateRecency: (id: string) => {
+                set(({ recentIds, custom }) => {
+                    const customIds = custom.map((e) =>
+                        getCustomExtensionId(e.url),
                     );
+                    return {
+                        recentIds: filterInvalidCustomIds(
+                            [id, ...recentIds.filter((i) => i !== id)],
+                            customIds,
+                        ),
+                    };
+                });
+            },
+
+            primaryIds: [...DefaultPrimaryIds],
+            secondaryIds: [...DefaultSecondaryIds],
+            currentPrimary: "editor",
+            currentSecondary: "item-explorer",
+
+            open: (
+                id: string,
+                slot: "primary" | "secondary",
+                updateOpenMode = false,
+            ) => {
+                // make editor only openable in the primary slot
+                // because issue with the monaco instance
+                if (id === "editor") {
+                    slot = "primary";
                 }
-            }
-            return newState;
-        });
-    },
+                set(({ primaryIds, secondaryIds }) => {
+                    const newState: Partial<ExtensionStore> = {};
+                    if (slot === "primary") {
+                        newState.currentPrimary = id;
+                        if (updateOpenMode) {
+                            if (secondaryIds.includes(id)) {
+                                newState.secondaryIds = secondaryIds.filter(
+                                    (i) => i !== id,
+                                );
+                            }
+                            if (!primaryIds.includes(id)) {
+                                newState.primaryIds = [...primaryIds, id];
+                            }
+                        }
+                    } else {
+                        newState.currentSecondary = id;
+                        if (updateOpenMode) {
+                            if (primaryIds.includes(id)) {
+                                newState.primaryIds = primaryIds.filter(
+                                    (i) => i !== id,
+                                );
+                            }
+                            if (!secondaryIds.includes(id)) {
+                                newState.secondaryIds = [...secondaryIds, id];
+                            }
+                        }
+                    }
+                    return newState;
+                });
+            },
 
-    closePrimary: () => {
-        set({ currentPrimary: "" });
-    },
+            updateOpenMode: (id: string, openMode: ExtensionOpenMode) => {
+                if (id === "editor") {
+                    openMode = "primary";
+                }
+                set(({ primaryIds, secondaryIds }) => {
+                    const newState: Partial<ExtensionStore> = {};
+                    if (openMode === "primary") {
+                        if (secondaryIds.includes(id)) {
+                            newState.secondaryIds = secondaryIds.filter(
+                                (i) => i !== id,
+                            );
+                        }
+                        if (!primaryIds.includes(id)) {
+                            newState.primaryIds = [...primaryIds, id];
+                        }
+                    } else if (openMode === "secondary") {
+                        newState.currentSecondary = id;
+                        if (primaryIds.includes(id)) {
+                            newState.primaryIds = primaryIds.filter(
+                                (i) => i !== id,
+                            );
+                        }
+                        if (!secondaryIds.includes(id)) {
+                            newState.secondaryIds = [...secondaryIds, id];
+                        }
+                    } else {
+                        if (primaryIds.includes(id)) {
+                            newState.primaryIds = primaryIds.filter(
+                                (i) => i !== id,
+                            );
+                        }
+                        if (secondaryIds.includes(id)) {
+                            newState.secondaryIds = secondaryIds.filter(
+                                (i) => i !== id,
+                            );
+                        }
+                    }
+                    return newState;
+                });
+            },
 
-    closeSecondary: () => {
-        set({ currentSecondary: "" });
-    },
+            closePrimary: () => {
+                set({ currentPrimary: "" });
+            },
 
-    setCustomExtensions: (extensions) => {
-        // here we need clean the state and delete old ids that aren't 
-        // in the new list
-        set(({ pinnedIds, recentIds }) => {
-            const newCustomIds = extensions.map((e) => getCustomExtensionId(e.url));
-            return {
-                custom: extensions,
-                pinnedIds: filterInvalidCustomIds(pinnedIds, newCustomIds),
-                recentIds: filterInvalidCustomIds(recentIds, newCustomIds)
-            }
-        });
-    },
-}),
+            closeSecondary: () => {
+                set({ currentSecondary: "" });
+            },
+
+            setCustomExtensions: (extensions) => {
+                // here we need clean the state and delete old ids that aren't
+                // in the new list
+                set(({ pinnedIds, recentIds }) => {
+                    const newCustomIds = extensions.map((e) =>
+                        getCustomExtensionId(e.url),
+                    );
+                    return {
+                        custom: extensions,
+                        pinnedIds: filterInvalidCustomIds(
+                            pinnedIds,
+                            newCustomIds,
+                        ),
+                        recentIds: filterInvalidCustomIds(
+                            recentIds,
+                            newCustomIds,
+                        ),
+                    };
+                });
+            },
+        }),
         {
             name: "Skybook.Extensions",
             version: 1,
@@ -257,15 +307,20 @@ export const useExtensionStore = create<ExtensionStore>()(
                         }
                     }
                 };
-            }
-        }));
+            },
+        },
+    ),
+);
 //
 //
-const filterInvalidCustomIds = (ids: string[], customIds: string[]): string[] => {
+const filterInvalidCustomIds = (
+    ids: string[],
+    customIds: string[],
+): string[] => {
     return ids.filter((id) => {
         return !id.startsWith("custom-") || customIds.includes(id);
     });
-}
+};
 
 const getAllNonPopoutExtensionIds = createSelector(
     [
@@ -312,6 +367,3 @@ const toSortedExtensionIds = (ids: string[]): string[] => {
 export const useCurrentPrimaryExtensionId = () => {
     return useExtensionStore((state) => state.currentPrimary);
 };
-
-
-

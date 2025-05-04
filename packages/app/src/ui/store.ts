@@ -21,7 +21,7 @@ export type UIStore = {
     setOpenedDialog: (id: DialogId | undefined) => void;
 };
 
-/** 
+/**
  * Properties that are not persisted
  *
  * Technically, these should be in SessionStore as they are not persisted.
@@ -35,23 +35,23 @@ export const useUIStore = create<UIStore>()(
         (set) => ({
             extensionPanelPercentage: 40,
             setExtensionPanelPercentage: (percentage) => {
-                set({ extensionPanelPercentage: percentage })
+                set({ extensionPanelPercentage: percentage });
             },
 
             primaryExtensionWindowPercentage: 50,
             setPrimaryExtensionWindowPercentage: (percentage) => {
-                set({ primaryExtensionWindowPercentage: percentage })
+                set({ primaryExtensionWindowPercentage: percentage });
             },
 
             gamedataInventoryPercentage: 40,
             setGamedataInventoryPercentage: (percentage) => {
-                set({ gamedataInventoryPercentage: percentage })
+                set({ gamedataInventoryPercentage: percentage });
             },
 
             openedDialogId: undefined,
             setOpenedDialog: (id) => {
-                set({ openedDialogId: id })
-            }
+                set({ openedDialogId: id });
+            },
         }),
         {
             name: "Skybook.UI",
@@ -60,9 +60,9 @@ export const useUIStore = create<UIStore>()(
                 return Object.fromEntries(
                     Object.entries(state).filter(([key]) => {
                         return !ExcludedKeys.includes(key as keyof UIStore);
-                    })
+                    }),
                 );
-            }
+            },
         },
     ),
 );

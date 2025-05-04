@@ -46,7 +46,7 @@ const useStyles = makeStyles({
         display: "flex",
         flexDirection: "row",
         justifyContent: "flex-end",
-    }
+    },
 });
 
 const HeaderImpl: React.FC = () => {
@@ -69,7 +69,7 @@ const HeaderImpl: React.FC = () => {
             {
                 // Custom extensions are limited to PC platform only
                 // On other platforms, you can already select all built-in extensions
-                // through the extension window toolbar, so there's no need 
+                // through the extension window toolbar, so there's no need
                 // for this menu
                 !isLessProductive && <ExtensionsMenu />
             }
