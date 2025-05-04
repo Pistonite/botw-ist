@@ -18,12 +18,12 @@ import {
 import { GitHubLink } from "@pistonite/shared-controls";
 
 import { useSessionStore } from "self::application/store";
+import { isLessProductive } from "self::pure-contrib";
 
 import icon from "./icon.svg";
 import iconPurple from "./icon-purple.svg";
 import { SettingsMenu } from "./SettingsMenu.tsx";
 import { ExtensionsMenu } from "./ExtensionsMenu.tsx";
-import { isLessProductive } from "../pure-contrib/platform.ts";
 import { PerfMonitor } from "./PerfMonitor.tsx";
 
 const useStyles = makeStyles({

@@ -4,7 +4,8 @@
  */
 import type { ParserErrorReport } from "@pistonite/skybook-api";
 import { type Erc, makeErcType } from "@pistonite/pure/memory";
-import { resolveQuotedItem } from "./app";
+
+import { resolveQuotedItem } from "./app.ts";
 
 const ParseOutput = Symbol("ParseOutput");
 export type ParseOutput = typeof ParseOutput;

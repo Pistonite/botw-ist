@@ -311,8 +311,7 @@ export const useExtensionStore = create<ExtensionStore>()(
         },
     ),
 );
-//
-//
+
 const filterInvalidCustomIds = (
     ids: string[],
     customIds: string[],
@@ -322,48 +321,3 @@ const filterInvalidCustomIds = (
     });
 };
 
-const getAllNonPopoutExtensionIds = createSelector(
-    [
-        (state: ExtensionStore) => state.primaryIds,
-        (state: ExtensionStore) => state.secondaryIds,
-    ],
-    (p, s) => {
-        return toSortedExtensionIds([...p, ...s]);
-    },
-);
-export const useAllNonPopoutExtensionIds = () => {
-    return useExtensionStore(getAllNonPopoutExtensionIds);
-};
-
-// const getPrimaryExtensionIds = createSelector(
-//     [(state: ExtensionStore) => state.primaryIds],
-//     (p) => {
-//         return toSortedExtensionIds(p);
-//     },
-// );
-// export const usePrimaryExtensionIds = () => {
-//     return useExtensionStore(getPrimaryExtensionIds);
-// };
-//
-// const getSecondaryExtensionIds = createSelector(
-//     [(state: ExtensionStore) => state.secondaryIds],
-//     (s) => {
-//         return toSortedExtensionIds(s);
-//     },
-// );
-// export const useSecondaryExtensionIds = () => {
-//     return useExtensionStore(getSecondaryExtensionIds);
-// };
-
-const toSortedExtensionIds = (ids: string[]): string[] => {
-    const customs = ids.filter(
-        (id) => !(BuiltinExtensionIds as readonly string[]).includes(id),
-    );
-    customs.sort();
-    const builtins = BuiltinExtensionIds.filter((id) => ids.includes(id));
-    return [...builtins, ...customs];
-};
-
-export const useCurrentPrimaryExtensionId = () => {
-    return useExtensionStore((state) => state.currentPrimary);
-};
