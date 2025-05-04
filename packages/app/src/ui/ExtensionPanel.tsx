@@ -3,10 +3,10 @@ import { makeStyles } from "@fluentui/react-components";
 import { ResizeLayout } from "@pistonite/shared-controls";
 
 import {
-    useCurrentPrimaryExtensionId,
+    getPrimaryExtensionIdsForDropdown,
+    getSecondaryExtensionIdsForDropdown,
     useCurrentSecondaryExtensionId,
-    usePrimaryExtensionIds,
-    useSecondaryExtensionIds,
+    useExtensionStore,
 } from "self::application/store";
 
 import { useUIStore } from "./store.ts";
@@ -35,9 +35,9 @@ const useStyles = makeStyles({
 
 const ExtensionPanelConnected: React.FC = () => {
     const styles = useStyles();
-    const primaryIds = usePrimaryExtensionIds();
-    const secondaryIds = useSecondaryExtensionIds();
-    const currentPrimaryId = useCurrentPrimaryExtensionId();
+    const primaryIds = useExtensionStore(getPrimaryExtensionIdsForDropdown);
+    const secondaryIds = useExtensionStore(getSecondaryExtensionIdsForDropdown);
+    const currentPrimaryId = useExtensionStore((state) => state.currentPrimary);
     const currentSecondaryId = useCurrentSecondaryExtensionId();
 
     const primaryExtensionWindowPercentage = useUIStore(

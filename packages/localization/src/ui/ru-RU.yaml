@@ -7,11 +7,12 @@ title.info: "Информация"
 
 # Generic Buttons
 button.allow: "Разрешить"
-button.cancel: "Cancel"
+button.cancel: "Отмена"
 button.close: "Закрыть"
 button.launch: "Запуск"
+button.learn_more: "Узнать больше"
 button.ok: "ОК"
-button.popout: "Pop-out to a new window"
+button.popout: "Открепить"
 button.refresh: "Обновить"
 button.setup: "Настроить"
 
@@ -45,12 +46,21 @@ dialog.custom_image.option.delete_previous: "Удалить ранее загр�
 dialog.custom_image.option.select_current: "Использовать ранее загруженный файл"
 dialog.custom_image.title: "Настройка пользовательского образа диска"
 
-# Header Menus
+# Menu Headers
+menu.header.extensions: "Расширения"
+menu.header.pinned: "Закреплённые"
+menu.header.preference: "Настройки"
+menu.header.recent: "Недавние"
+
+# Menu Items
+menu.custom_extensions: "Пользовательские расширения"
+menu.custom_extensions.desc: "Добавить, удалить или изменить пользовательские расширения"
 menu.enable_animations: "Анимации"
 menu.enable_animations.desc: "Включить анимации иконок и ячеек предметов, например способностей чемпионов и эффектов повреждённого снаряжения."
-menu.header.preference: "Настройки"
 menu.high_res_icons: "HD-иконки"
 menu.high_res_icons.desc: "Включить иконки высокого разрешения и анимацию предметов. Отключение может сэкономить трафик при медленном соединении или проблемах с загрузкой иконок."
+menu.open_configure_extension: "Открыть/настроить расширения"
+menu.open_configure_extension.desc: "Выберите расширение, чтобы открыть его или изменить способ его открытия"
 
 # Main inventory display
 main.gdt_inventory.desc: "Данные инвентаря, сохранённые в системе флагов (GDT) игры. Предметы отображаются так, как если бы они были загружены в инвентарь, а ячейки выровнены в соответствии с теми, которые будут сохранены в слотах GDT."
@@ -104,35 +114,36 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-button.open_extension: "Extensions"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "Пользовательские расширения можно открывать только в новом окне"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} нельзя открыть во вторичной области"
+dialog.extension_launch.option.popout: "Открыть в новом окне"
+dialog.extension_launch.option.primary: "Открыть в основной области"
+dialog.extension_launch.option.secondary: "Открыть во вторичной области"
+dialog.extension_launch.options_title: "Параметры запуска"
+dialog.extension_launch.pinned: "Закрепить это расширение"
+dialog.extension_launch.remember: "Запомнить режим открытия для этого расширения"
+dialog.extension_launch.remember_popout: "По умолчанию открывать в новом окне"
+dialog.extension_launch.select_title: "Выберите расширение"
+dialog.extension_launch.title: "Запустить расширение"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Custom Extensions Dialog
+dialog.custom_extensions.desc: "Пользовательские расширения — это сторонние виджеты, интегрируемые в Skybook."
+dialog.custom_extensions.format_desc: "Настройте расширения по одному на строку в формате {{format}}."
+dialog.custom_extensions.help: "После сохранения конфигурации вы сможете открыть пользовательские расширения в виде всплывающих окон через «{{open_button}}». Уже открытые расширения не будут закрыты."
 
 # Extension names
-extension.editor.desc: "Modify the simulation steps"
-extension.editor.name: "Script Editor"
-extension.item-explorer.desc: "Test item search results"
-extension.item-explorer.name: "Item Explorer"
+extension.editor.name: "Редактор скриптов"
+extension.item-explorer.name: "Обозреватель предметов"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
-item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
-item_explorer.label.no_results: "No results"
-item_explorer.label.search_localized: "Search in all languages"
-item_explorer.label.search_placeholder: "Search"
-item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
-
+item_explorer.desc.search_tip_ident: "Используйте {{under_score}} для объединения нескольких поисковых слов, например {{example}}."
+item_explorer.desc.search_tip_localized: "Вы можете указать язык с помощью его кода, например {{code_example}} для французского. В скрипте заключите поисковый запрос в кавычки {{quote}}, чтобы использовать этот режим."
+item_explorer.label.no_results: "Нет результатов"
+item_explorer.label.search_localized: "Поиск по всем языкам"
+item_explorer.label.search_placeholder: "Поиск"
+item_explorer.search_error.unknown_tag: "Неизвестная языковая метка \"{{tag}}\""
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "Данные приготовления не дают эффекта"

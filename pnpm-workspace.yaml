@@ -13,9 +13,9 @@ packages:
   - packages/skybook-api
 
 catalog:
-  "@griffel/react": ^1.5.29
-  "@fluentui/react-components": ^9.61.6
-  "@fluentui/react-icons": ^2.0.297
+  "@griffel/react": ^1.5.30
+  "@fluentui/react-components": ^9.63.0
+  "@fluentui/react-icons": ^2.0.298
   "@modyfi/vite-plugin-yaml": ^1.1.1
   "@pistonite/pure": ^0.26.2
   "@pistonite/pure-react": ^0.7.8
@@ -30,6 +30,6 @@ catalog:
   react: ^18.3.1
   react-dom: ^18.3.1
   typescript: ^5.8.3
-  vite: ^6.3.0
+  vite: ^6.3.4
   vitest: ^3.1.1
 

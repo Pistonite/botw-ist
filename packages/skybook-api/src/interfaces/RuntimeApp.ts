@@ -7,7 +7,7 @@
 import type { RuntimeApp } from "../RuntimeApp.ts";
 
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
-import type { ItemSearchResult } from "../types.ts";
+import type { ItemSearchResult, PerformanceData } from "../types.ts";
 
 /*
  * These generated implementations are used internally by other generated code.
@@ -40,21 +40,19 @@ export class _wxSenderImpl implements RuntimeApp {
     }
 
     /**
-     * The app will be notified whenever a simulation run completes.
-     * Note if multiple runs are queued, this will only be called for the
-     * last one.
-     */
-    public onRunCompleted( ): WxPromise<void> {
-        return this.sender.sendVoid(34 /* RuntimeApp.onRunCompleted */, [ ]);
-    }
-
-    /**
      * Resolve a quoted item search query to a single item, or
      * return undefined if the item cannot be resolved due to error
      * or no match.
      */
     public resolveQuotedItem( query: string ): WxPromise<ItemSearchResult | undefined> {
-        return this.sender.send<ItemSearchResult | undefined>(35 /* RuntimeApp.resolveQuotedItem */, [ query ]);
+        return this.sender.send<ItemSearchResult | undefined>(34 /* RuntimeApp.resolveQuotedItem */, [ query ]);
+    }
+
+    /**
+     * Send latest performance data to the app
+     */
+    public updatePerfData( data: PerformanceData ): WxPromise<void> {
+        return this.sender.sendVoid(35 /* RuntimeApp.updatePerfData */, [ data ]);
     }
 }
 
@@ -66,12 +64,13 @@ export const _wxRecverImpl = (handler: RuntimeApp): WxBusRecvHandler => {
         case 33 /* RuntimeApp.getCustomBlueFlameImage */: {
             return handler.getCustomBlueFlameImage();
         }
-        case 34 /* RuntimeApp.onRunCompleted */: {
-            return handler.onRunCompleted();
-        }
-        case 35 /* RuntimeApp.resolveQuotedItem */: {
+        case 34 /* RuntimeApp.resolveQuotedItem */: {
             const [ a0 ] = args;
             return handler.resolveQuotedItem( a0 );
+        }
+        case 35 /* RuntimeApp.updatePerfData */: {
+            const [ a0 ] = args;
+            return handler.updatePerfData( a0 );
         }
     } return Promise.resolve({ err: { code: "UnknownFunction" } }); }) as WxBusRecvHandler;
 };

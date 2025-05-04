@@ -10,6 +10,7 @@ button.allow: "Allow"
 button.cancel: "Cancel"
 button.close: "Close"
 button.launch: "Launch"
+button.learn_more: "Learn more"
 button.ok: "OK"
 button.popout: "Popout"
 button.refresh: "Refresh"
@@ -45,12 +46,21 @@ dialog.custom_image.option.delete_previous: "Delete previously uploaded Custom I
 dialog.custom_image.option.select_current: "Use previously uploaded file"
 dialog.custom_image.title: "Custom Image Setup"
 
-# Header Menus
+# Menu Headers
+menu.header.extensions: "Extensions"
+menu.header.pinned: "Pinned"
+menu.header.preference: "Preference"
+menu.header.recent: "Recent"
+
+# Menu Items
+menu.custom_extensions: "Custom Extensions"
+menu.custom_extensions.desc: "Add, remove or change custom extensions"
 menu.enable_animations: "Enable Animations"
 menu.enable_animations.desc: "Enable icon and item slot animations such as Champion abilities and badly damaged equipment effect."
-menu.header.preference: "Preference"
 menu.high_res_icons: "High Quality Icons"
 menu.high_res_icons.desc: "Enable high-resolution icons and item animations. Disabling this could save bandwidth if connection is poor and icons are not loading for you."
+menu.open_configure_extension: "Open/Configure Extensions"
+menu.open_configure_extension.desc: "Select an extension to open or change how it should be opened"
 
 # Main inventory display
 main.gdt_inventory.desc: "Inventory data stored in the game's flag system (GDT). Items are displayed as if they are loaded to inventory, and slots are aligned to inventory based on which inventory slot will effectively save to the GDT slot."
@@ -104,35 +114,36 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-button.open_extension: "Extensions"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "Custom Extensions can only be opened as pop-out"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} cannot be opened in secondary view"
+dialog.extension_launch.option.popout: "Pop-out to a new window"
+dialog.extension_launch.option.primary: "Open in primary view"
+dialog.extension_launch.option.secondary: "Open in secondary view"
+dialog.extension_launch.options_title: "Launch Options"
+dialog.extension_launch.pinned: "Pin this Extension"
+dialog.extension_launch.remember: "Remember the open mode for this Extension"
+dialog.extension_launch.remember_popout: "Open as pop-out by default"
+dialog.extension_launch.select_title: "Select an Extension"
+dialog.extension_launch.title: "Launch Extension"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Custom Extensions Dialog
+dialog.custom_extensions.desc: "Custom Extensions are 3rd-party widgets that integrate with Skybook."
+dialog.custom_extensions.format_desc: "Configure the extensions one per line below in the format of {{format}}"
+dialog.custom_extensions.help: "After saving the configuration, you can open Custom Extensions as popout windows through \"{{open_button}}\". Custom Extensions that are currently opened will not be closed."
 
 # Extension names
-extension.editor.desc: "Modify the simulation steps"
 extension.editor.name: "Script Editor"
-extension.item-explorer.desc: "Test item search results"
 extension.item-explorer.name: "Item Explorer"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
-item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
+item_explorer.desc.search_tip_ident: "Use {{under_score}} to connect multiple search terms, for example {{example}}."
+item_explorer.desc.search_tip_localized: "You can specify a language by its code, like {{code_example}} for French. In the script, put quotes {{quote}} around the search query to use this search mode."
 item_explorer.label.no_results: "No results"
 item_explorer.label.search_localized: "Search in all languages"
 item_explorer.label.search_placeholder: "Search"
 item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
-
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "Cook data has no effect"

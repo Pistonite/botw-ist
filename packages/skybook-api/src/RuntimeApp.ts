@@ -1,6 +1,6 @@
 import type { WxPromise } from "@pistonite/workex";
 
-import type { ItemSearchResult } from "./types.ts";
+import type { ItemSearchResult, PerformanceData } from "./types.ts";
 
 /**
  * API provided by the simulator app that the runtime needs to call
@@ -26,10 +26,6 @@ export interface RuntimeApp {
      */
     getCustomBlueFlameImage(): WxPromise<Uint8Array | undefined>;
 
-    /**
-     * The app will be notified whenever a simulation run completes.
-     * Note if multiple runs are queued, this will only be called for the
-     * last one.
-     */
-    onRunCompleted(): WxPromise<void>;
+    /** Send latest performance data to the app */
+    updatePerfData(data: PerformanceData): WxPromise<void>;
 }

@@ -1,7 +1,11 @@
 import { wxWorker, wxWrapHandler } from "@pistonite/workex";
 import { serial } from "@pistonite/pure/sync";
 
-import type { ItemSearchResult, RuntimeApp } from "@pistonite/skybook-api";
+import type {
+    ItemSearchResult,
+    PerformanceData,
+    RuntimeApp,
+} from "@pistonite/skybook-api";
 import { skybookRuntime } from "@pistonite/skybook-api/interfaces/Runtime.bus";
 import { searchItemLocalized } from "skybook-localization";
 
@@ -97,8 +101,9 @@ const createRuntimeAppHost = (): RuntimeApp => {
             return customImage;
         }),
 
-        onRunCompleted: wxWrapHandler(() => {
-            //TODO
+        updatePerfData: wxWrapHandler((data: PerformanceData) => {
+            const { setPerfData } = useSessionStore.getState();
+            setPerfData(data.ips, data.sps);
         }),
     };
 };

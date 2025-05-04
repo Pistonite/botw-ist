@@ -7,11 +7,12 @@ title.info: "정보"
 
 # Generic Buttons
 button.allow: "허용"
-button.cancel: "Cancel"
+button.cancel: "취소"
 button.close: "닫기"
 button.launch: "실행"
+button.learn_more: "자세히 알아보기"
 button.ok: "확인"
-button.popout: "Pop-out to a new window"
+button.popout: "팝아웃"
 button.refresh: "새로 고침"
 button.setup: "설정"
 
@@ -45,12 +46,21 @@ dialog.custom_image.option.delete_previous: "이전에 업로드한 사용자 �
 dialog.custom_image.option.select_current: "이전에 업로드한 파일 사용"
 dialog.custom_image.title: "사용자 지정 디스크 이미지 설정"
 
-# Header Menus
+# Menu Headers
+menu.header.extensions: "확장 기능"
+menu.header.pinned: "고정됨"
+menu.header.preference: "설정"
+menu.header.recent: "최근 항목"
+
+# Menu Items
+menu.custom_extensions: "사용자 정의 확장 기능"
+menu.custom_extensions.desc: "사용자 정의 확장 기능을 추가, 제거 또는 변경"
 menu.enable_animations: "애니메이션"
 menu.enable_animations.desc: "챔피언 스킬 및 손상된 장비 효과와 같은 아이콘 및 인벤토리 슬롯 애니메이션을 활성화합니다."
-menu.header.preference: "설정"
 menu.high_res_icons: "고화질"
 menu.high_res_icons.desc: "고해상도 아이콘과 아이템 애니메이션을 활성화합니다. 연결 상태가 불안정하여 아이콘이 제대로 로드되지 않는 경우, 비활성화하면 대역폭을 절약할 수 있습니다."
+menu.open_configure_extension: "확장 기능 열기/설정"
+menu.open_configure_extension.desc: "확장 기능을 선택하여 열거나 열리는 방식을 변경하세요"
 
 # Main inventory display
 main.gdt_inventory.desc: "게임의 플래그 시스템(GDT)에 저장된 인벤토리 데이터입니다. 아이템은 인벤토리에 로드된 것처럼 표시되며, 슬롯은 실제로 GDT 슬롯에 저장될 인벤토리 슬롯에 맞추어 정렬됩니다."
@@ -104,35 +114,36 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-button.open_extension: "Extensions"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "사용자 정의 확장 프로그램은 새 창에서만 열 수 있습니다"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}}는 보조 보기로 열 수 없습니다"
+dialog.extension_launch.option.popout: "새 창으로 열기"
+dialog.extension_launch.option.primary: "기본 보기로 열기"
+dialog.extension_launch.option.secondary: "보조 보기로 열기"
+dialog.extension_launch.options_title: "실행 옵션"
+dialog.extension_launch.pinned: "이 확장 프로그램 고정"
+dialog.extension_launch.remember: "이 확장 프로그램의 열기 방식 기억"
+dialog.extension_launch.remember_popout: "기본적으로 새 창으로 열기"
+dialog.extension_launch.select_title: "확장 프로그램 선택"
+dialog.extension_launch.title: "확장 프로그램 실행"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Custom Extensions Dialog
+dialog.custom_extensions.desc: "사용자 정의 확장 기능은 Skybook과 통합되는 서드파티 위젯입니다."
+dialog.custom_extensions.format_desc: "{{format}} 형식으로 확장 기능을 한 줄에 하나씩 설정하세요."
+dialog.custom_extensions.help: "구성을 저장한 후에는 \"{{open_button}}\"을 통해 사용자 정의 확장 기능을 팝업 창으로 열 수 있습니다. 이미 열려 있는 확장 기능은 닫히지 않습니다."
 
 # Extension names
-extension.editor.desc: "Modify the simulation steps"
-extension.editor.name: "Script Editor"
-extension.item-explorer.desc: "Test item search results"
-extension.item-explorer.name: "Item Explorer"
+extension.editor.name: "스크립트 편집기"
+extension.item-explorer.name: "아이템 탐색기"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
-item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
-item_explorer.label.no_results: "No results"
-item_explorer.label.search_localized: "Search in all languages"
-item_explorer.label.search_placeholder: "Search"
-item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
-
+item_explorer.desc.search_tip_ident: "여러 검색어를 연결하려면 {{under_score}}를 사용하세요. 예: {{example}}"
+item_explorer.desc.search_tip_localized: "언어 코드를 사용해 언어를 지정할 수 있습니다. 예: 프랑스어는 {{code_example}}. 스크립트에서는 검색어를 {{quote}}로 감싸 이 검색 모드를 사용할 수 있습니다."
+item_explorer.label.no_results: "결과 없음"
+item_explorer.label.search_localized: "모든 언어에서 검색"
+item_explorer.label.search_placeholder: "검색"
+item_explorer.search_error.unknown_tag: "알 수 없는 언어 태그 \"{{tag}}\""
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "요리 데이터에 효과가 없습니다"

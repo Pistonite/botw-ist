@@ -18,6 +18,8 @@ import {
     StandaloneItemSlotWithTooltip,
 } from "skybook-item-system";
 
+import { Code, Interpolate } from "self::ui/components";
+
 export type Searcher = {
     search(
         localized: boolean,
@@ -80,6 +82,22 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
     const styles = useStyles();
     const t = useUITranslation();
 
+    const $SearchTip = localized ? (
+        <Interpolate
+            quote={<Code>{`"`}</Code>}
+            code_example={<Code>{"fr:espadon royal"}</Code>}
+        >
+            {t("item_explorer.desc.search_tip_localized")}
+        </Interpolate>
+    ) : (
+        <Interpolate
+            under_score={<Code>{"_"}</Code>}
+            example={<Code>{"royal_claymore"}</Code>}
+        >
+            {t("item_explorer.desc.search_tip_ident")}
+        </Interpolate>
+    );
+
     return (
         <div className={styles.container}>
             <Field
@@ -103,11 +121,7 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
                     }}
                 />
             </Field>
-            <Body1 block>
-                {localized
-                    ? t("item_explorer.desc.search_tip_localized")
-                    : t("item_explorer.desc.search_tip_ident")}
-            </Body1>
+            <Body1 block>{$SearchTip}</Body1>
             {hasResults && (
                 <div className={styles.resultsScroll}>
                     <div className={styles.results}>

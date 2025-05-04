@@ -7,11 +7,12 @@ title.info: "Informazioni"
 
 # Generic Buttons
 button.allow: "Permettere"
-button.cancel: "Cancel"
+button.cancel: "Annulla"
 button.close: "Chiudi"
 button.launch: "Avvia"
+button.learn_more: "Scopri di più"
 button.ok: "OK"
-button.popout: "Pop-out to a new window"
+button.popout: "Stacca"
 button.refresh: "Aggiorna"
 button.setup: "Configurare"
 
@@ -45,12 +46,21 @@ dialog.custom_image.option.delete_previous: "Elimina le immagini disco personali
 dialog.custom_image.option.select_current: "Usa il file caricato in precedenza"
 dialog.custom_image.title: "Configurazione immagine disco personalizzata"
 
-# Header Menus
+# Menu Headers
+menu.header.extensions: "Estensioni"
+menu.header.pinned: "Fissati"
+menu.header.preference: "Preferenze"
+menu.header.recent: "Recenti"
+
+# Menu Items
+menu.custom_extensions: "Estensioni personalizzate"
+menu.custom_extensions.desc: "Aggiungi, rimuovi o modifica estensioni personalizzate"
 menu.enable_animations: "Animazioni"
 menu.enable_animations.desc: "Abilita le animazioni di icone e slot degli oggetti, come le abilità dei campioni e gli effetti degli equipaggiamenti danneggiati."
-menu.header.preference: "Preferenze"
 menu.high_res_icons: "Icone HD"
 menu.high_res_icons.desc: "Abilita icone ad alta risoluzione e animazioni degli oggetti. Disattivando questa opzione puoi risparmiare larghezza di banda se la connessione è lenta o se le icone non si caricano correttamente."
+menu.open_configure_extension: "Apri/configura estensioni"
+menu.open_configure_extension.desc: "Seleziona un'estensione da aprire o modifica come deve essere aperta"
 
 # Main inventory display
 main.gdt_inventory.desc: "Dati dell'inventario memorizzati nel sistema di flag (GDT) del gioco. Gli oggetti vengono visualizzati come se fossero caricati nell'inventario, e gli slot sono allineati in base a quale slot dell'inventario verrà effettivamente salvato nello slot GDT."
@@ -104,35 +114,36 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-button.open_extension: "Extensions"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "Le estensioni personalizzate possono essere aperte solo in una nuova finestra"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} non può essere aperto nella vista secondaria"
+dialog.extension_launch.option.popout: "Apri in una nuova finestra"
+dialog.extension_launch.option.primary: "Apri nella vista principale"
+dialog.extension_launch.option.secondary: "Apri nella vista secondaria"
+dialog.extension_launch.options_title: "Opzioni di avvio"
+dialog.extension_launch.pinned: "Fissa questa estensione"
+dialog.extension_launch.remember: "Ricorda la modalità di apertura per questa estensione"
+dialog.extension_launch.remember_popout: "Apri in una nuova finestra per impostazione predefinita"
+dialog.extension_launch.select_title: "Seleziona un’estensione"
+dialog.extension_launch.title: "Avvia estensione"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Custom Extensions Dialog
+dialog.custom_extensions.desc: "Le estensioni personalizzate sono widget di terze parti che si integrano con Skybook."
+dialog.custom_extensions.format_desc: "Configura le estensioni una per riga, nel formato {{format}}."
+dialog.custom_extensions.help: "Dopo aver salvato la configurazione, puoi aprire le estensioni personalizzate come finestre pop-up tramite \"{{open_button}}\". Le estensioni già aperte non verranno chiuse."
 
 # Extension names
-extension.editor.desc: "Modify the simulation steps"
-extension.editor.name: "Script Editor"
-extension.item-explorer.desc: "Test item search results"
-extension.item-explorer.name: "Item Explorer"
+extension.editor.name: "Editor di script"
+extension.item-explorer.name: "Esplora oggetti"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
-item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
-item_explorer.label.no_results: "No results"
-item_explorer.label.search_localized: "Search in all languages"
-item_explorer.label.search_placeholder: "Search"
-item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
-
+item_explorer.desc.search_tip_ident: "Usa {{under_score}} per unire più termini di ricerca, ad esempio {{example}}."
+item_explorer.desc.search_tip_localized: "Puoi specificare una lingua con il suo codice, come {{code_example}} per il francese. Nello script, usa le virgolette {{quote}} attorno alla query per attivare questa modalità di ricerca."
+item_explorer.label.no_results: "Nessun risultato"
+item_explorer.label.search_localized: "Cerca in tutte le lingue"
+item_explorer.label.search_placeholder: "Cerca"
+item_explorer.search_error.unknown_tag: "Tag lingua sconosciuto \"{{tag}}\""
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "I dati di cottura non hanno effetto"

@@ -7,11 +7,12 @@ title.info: "資訊"
 
 # Generic Buttons
 button.allow: "允許"
-button.cancel: "Cancel"
+button.cancel: "取消"
 button.close: "關閉"
 button.launch: "啟動"
+button.learn_more: "了解更多"
 button.ok: "確定"
-button.popout: "Pop-out to a new window"
+button.popout: "彈出"
 button.refresh: "刷新"
 button.setup: "进入設定"
 
@@ -45,12 +46,21 @@ dialog.custom_image.option.delete_previous: "刪除先前上傳的自訂磁碟�
 dialog.custom_image.option.select_current: "使用先前上傳的檔案"
 dialog.custom_image.title: "自訂磁碟映像設定"
 
-# Header Menus
+# Menu Headers
+menu.header.extensions: "擴充功能"
+menu.header.pinned: "釘選"
+menu.header.preference: "設定"
+menu.header.recent: "最近開啟"
+
+# Menu Items
+menu.custom_extensions: "自訂擴充功能"
+menu.custom_extensions.desc: "新增、刪除或更改自訂擴充功能"
 menu.enable_animations: "啟用動畫"
 menu.enable_animations.desc: "啟用圖示與物品欄格的動畫，例如英傑技能或裝備損壞效果。"
-menu.header.preference: "設定"
 menu.high_res_icons: "高品質圖示"
 menu.high_res_icons.desc: "啟用高解析度圖示和物品動畫效果。如果連線不穩定或無法載入圖示，可以考慮關閉此選項以節省頻寬。"
+menu.open_configure_extension: "開啟或設定擴充功能"
+menu.open_configure_extension.desc: "選擇擴充功能以開啟或調整開啟方式"
 
 # Main inventory display
 main.gdt_inventory.desc: "儲存在遊戲旗標系統（GDT）中的背包資料。物品以讀取進背包的形式顯示，並依據各背包格將儲存至GDT格的位置對齊排列。"
@@ -104,35 +114,36 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-button.open_extension: "Extensions"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "自訂擴充功能只能彈出到新視窗"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} 無法在次要視圖中開啟"
+dialog.extension_launch.option.popout: "彈出到新視窗"
+dialog.extension_launch.option.primary: "在主視圖中開啟"
+dialog.extension_launch.option.secondary: "在次要視圖中開啟"
+dialog.extension_launch.options_title: "選項"
+dialog.extension_launch.pinned: "釘選此擴充功能"
+dialog.extension_launch.remember: "記住此擴充功能的開啟方式"
+dialog.extension_launch.remember_popout: "預設彈出到新視窗"
+dialog.extension_launch.select_title: "請選擇擴充功能"
+dialog.extension_launch.title: "啟動擴充功能"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Custom Extensions Dialog
+dialog.custom_extensions.desc: "自訂擴充功能是可與 Skybook 整合的第三方 UI 元件。"
+dialog.custom_extensions.format_desc: "請以下列格式 {{format}} 每行輸入一個擴充功能設定。"
+dialog.custom_extensions.help: "儲存設定後，您可以透過「{{open_button}}」以彈出視窗方式開啟自訂擴充功能。已開啟的擴充功能不會自動關閉。"
 
 # Extension names
-extension.editor.desc: "Modify the simulation steps"
-extension.editor.name: "Script Editor"
-extension.item-explorer.desc: "Test item search results"
-extension.item-explorer.name: "Item Explorer"
+extension.editor.name: "腳本編輯器"
+extension.item-explorer.name: "物品搜尋器"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
-item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
-item_explorer.label.no_results: "No results"
-item_explorer.label.search_localized: "Search in all languages"
-item_explorer.label.search_placeholder: "Search"
-item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
-
+item_explorer.desc.search_tip_ident: "使用底線 {{under_score}} 連接多個詞，例如 {{example}}。"
+item_explorer.desc.search_tip_localized: "可使用語言代碼指定語言，例如 {{code_example}} 表示法文。在腳本中，請用引號 {{quote}} 包住查詢以使用此搜尋模式。"
+item_explorer.label.no_results: "無結果"
+item_explorer.label.search_localized: "在所有語言中搜尋"
+item_explorer.label.search_placeholder: "搜尋"
+item_explorer.search_error.unknown_tag: "未知語言標籤 \"{{tag}}\""
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "料理資料無實際效果"

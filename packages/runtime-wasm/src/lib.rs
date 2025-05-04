@@ -82,6 +82,21 @@ pub fn get_parser_errors(
     parse_output.errors.clone()
 }
 
+/// Get the number of steps in the parse output (The actual number of steps/commands,
+/// not number of steps displayed)
+///
+/// ## Pointer Ownership
+/// Borrows the ParseOutput pointer.
+#[wasm_bindgen]
+pub fn get_step_count(parse_output_ref: *const ParseOutput, // borrowed
+) -> usize {
+    if parse_output_ref.is_null() {
+        return 0;
+    }
+    let parse_output = unsafe { &*parse_output_ref };
+    parse_output.steps.len()
+}
+
 /// Free the parse output
 #[wasm_bindgen]
 pub fn free_parse_output(parse_output: *const ParseOutput, // takes ownership
