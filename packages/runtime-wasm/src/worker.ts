@@ -13,10 +13,7 @@ import type {
 } from "@pistonite/skybook-api";
 import { skybookRuntimeApp } from "@pistonite/skybook-api/interfaces/RuntimeApp.bus";
 
-import {
-    getParserDiagnostics,
-    getStepFromPos,
-} from "./parser.ts";
+import { getParserDiagnostics, getStepFromPos } from "./parser.ts";
 import { getImage, putImage } from "./imagedb.ts";
 import { executeScript, getGdtInventory, getPouchList } from "./runtime.ts";
 import { resolveAppPromise, getCustomBlueFlameImage } from "./app.ts";

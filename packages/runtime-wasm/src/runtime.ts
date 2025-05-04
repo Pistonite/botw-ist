@@ -21,9 +21,7 @@ let lastScript = "";
 let serial = 0;
 const cachedRunOutputErc = makeRunOutputErc(undefined);
 
-export const executeScript = (
-    script: string,
-): Promise<Erc<RunOutput>> => {
+export const executeScript = (script: string): Promise<Erc<RunOutput>> => {
     const isScriptUpToDate = lastScript === script;
     if (
         cachedRunOutputErc.value !== undefined &&
@@ -33,7 +31,7 @@ export const executeScript = (
         return Promise.resolve(cachedRunOutputErc.getStrong());
     }
     if (isRunning && isScriptUpToDate) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             runAwaiters.push(resolve);
         });
     }
@@ -41,7 +39,9 @@ export const executeScript = (
     return executeScriptInternal(script);
 };
 
-const executeScriptInternal = async (script: string): Promise<Erc<RunOutput>> => {
+const executeScriptInternal = async (
+    script: string,
+): Promise<Erc<RunOutput>> => {
     isRunning = true;
     runAwaiters = [];
     const awaitersForThisRun = runAwaiters;
@@ -58,15 +58,17 @@ const executeScriptInternal = async (script: string): Promise<Erc<RunOutput>> =>
     if (parseOutputRaw) {
         const stepCount = wasm_bindgen.get_step_count(parseOutputRaw);
         // simulate some delay - until we have the real runtime
-        await new Promise((resolve) => { setTimeout(resolve, 5000); });
+        await new Promise((resolve) => {
+            setTimeout(resolve, 5000);
+        });
         // shouldn't be possible to be null, but just checking
         outputRaw = await wasm_bindgen.run_parsed(parseOutputRaw);
 
         // TODO: have runtime report the actual instructions count in output
         const instructionsCount = 100000;
         const msElapsed = performance.now() - start;
-        const ips = instructionsCount / msElapsed * 1000;
-        const sps = stepCount / msElapsed * 1000;
+        const ips = (instructionsCount / msElapsed) * 1000;
+        const sps = (stepCount / msElapsed) * 1000;
         void sendPerfData({ ips, sps });
     }
     console.log(
@@ -92,7 +94,10 @@ const executeScriptInternal = async (script: string): Promise<Erc<RunOutput>> =>
     return returnStrongErc;
 };
 
-export const getPouchList = async ( script: string, bytePos: number): Promise<InvView_PouchList> => {
+export const getPouchList = async (
+    script: string,
+    bytePos: number,
+): Promise<InvView_PouchList> => {
     const parseOutputErc = await parseScript(script);
     const runOutputErc = await executeScript(script);
 

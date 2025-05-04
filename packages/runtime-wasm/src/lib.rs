@@ -88,8 +88,7 @@ pub fn get_parser_errors(
 /// ## Pointer Ownership
 /// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
-pub fn get_step_count(
-    parse_output_ref: *const ParseOutput, // borrowed
+pub fn get_step_count(parse_output_ref: *const ParseOutput, // borrowed
 ) -> usize {
     if parse_output_ref.is_null() {
         return 0;

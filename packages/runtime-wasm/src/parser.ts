@@ -25,7 +25,9 @@ let serial = 0;
 const cachedParseOutputErc = makeParseOutputErc(undefined);
 
 /** Parse the script and get diagnostics from the parser */
-export const getParserDiagnostics = async (script: string): Promise<ParserErrorReport[]> => {
+export const getParserDiagnostics = async (
+    script: string,
+): Promise<ParserErrorReport[]> => {
     const parseOutputErc = await parseScript(script);
     if (parseOutputErc.value === undefined) {
         // shouldn't happen, just for safety
@@ -36,7 +38,10 @@ export const getParserDiagnostics = async (script: string): Promise<ParserErrorR
     return errors;
 };
 
-export const getStepFromPos = async (script: string, bytePos: number): Promise<number> => {
+export const getStepFromPos = async (
+    script: string,
+    bytePos: number,
+): Promise<number> => {
     const parseOutputErc = await parseScript(script);
     if (parseOutputErc.value === undefined) {
         // shouldn't happen, just for safety
@@ -64,7 +69,7 @@ export const parseScript = (script: string): Promise<Erc<ParseOutput>> => {
     // if the result is not up-to-date, but the on-going run is the same script,
     // use the on-going run's result
     if (isRunning && isScriptUpToDate) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             runAwaiters.push(resolve);
         });
     }
@@ -72,7 +77,9 @@ export const parseScript = (script: string): Promise<Erc<ParseOutput>> => {
     return parseScriptInternal(script);
 };
 
-const parseScriptInternal = async (script: string): Promise<Erc<ParseOutput>> => {
+const parseScriptInternal = async (
+    script: string,
+): Promise<Erc<ParseOutput>> => {
     isRunning = true;
     runAwaiters = [];
     const awaitersForThisRun = runAwaiters;
@@ -80,7 +87,10 @@ const parseScriptInternal = async (script: string): Promise<Erc<ParseOutput>> =>
     serial++;
     const serialBefore = serial;
     lastScript = script;
-    const outputRaw = await wasm_bindgen.parse_script(script, resolveQuotedItem);
+    const outputRaw = await wasm_bindgen.parse_script(
+        script,
+        resolveQuotedItem,
+    );
 
     let returnStrongErc: Erc<ParseOutput>;
     // update cached result
