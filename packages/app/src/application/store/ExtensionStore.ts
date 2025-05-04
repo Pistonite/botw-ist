@@ -7,28 +7,40 @@ import { isLessProductive, useNarrow } from "self::pure-contrib";
  * List of builtin extension IDs
  *
  * The builtin extensions will be displayed in this order
- * in dropdowns. Custom extensions will be sorted by id
+ * in dropdowns. Custom extensions will be displayed in the order
+ * they are configured in.
+ *
+ * Custom extension IDs will be in the format of `custom-<url>`.
  */
-const BuiltinExtensionIds = [
+export const BuiltinExtensionIds = [
     "editor",
     "item-explorer",
     "stub1",
-    "stub2",
 ] as const;
 
 export type ExtensionStore = {
-    /**
-     * Ids of the extensions in the primary slot
+    /** 
+     * Configured custom extensions
+     * (note that custom extensions can only be popups)
      */
+    custom: CustomExtension[];
+
+    /** Pinned extensions (could include custom) */
+    pinnedIds: string[];
+    setPinnedIds: (ids: string[]) => void;
+
+    /** Recently opened extensions (could include custom) */
+    recentIds: string[];
+    /** Update id to be the most recently used extension */
+    updateRecency: (id: string) => void;
+
+    /** Ids of the (built-in) extensions configured to open in the primary slot */
     primaryIds: string[];
-
-    /**
-     * Ids of the extensions in the secondary slot
-     */
+    /** Same as primaryIds, but for the secondary slot */
     secondaryIds: string[];
-
+    /** Current (built-in) extension id in the primary slot */
     currentPrimary: string;
-
+    /** Current (built-in) extension id in the secondary slot */
     currentSecondary: string;
 
     /**
@@ -41,35 +53,52 @@ export type ExtensionStore = {
         updateOpenMode?: boolean,
     ) => void;
 
-    /**
-     * Update the open mode for the extension with the id
-     */
+    /** Update the open mode for the extension with the id */
     updateOpenMode: (id: string, openMode: ExtensionOpenMode) => void;
-
-    /**
-     * Close the primary extension window
-     */
+    /** Close the primary extension window */
     closePrimary: () => void;
-
-    /**
-     * Close the secondary extension window
-     */
+    /** Close the secondary extension window */
     closeSecondary: () => void;
-
-    custom: CustomExtension[];
-    setCustomExtension: (extension: CustomExtension) => void;
-    removeCustomExtension: (id: string) => void;
+    /** Set custom extension configuration */
+    setCustomExtensions: (extensions: CustomExtension[]) => void;
 };
 
 export type ExtensionOpenMode = "primary" | "secondary" | "popout";
 
 export type CustomExtension = {
-    id: string;
     name: string;
     url: string;
 };
 
+export const getCustomExtensionId = (url: string) => {
+    return `custom-${url}`;
+}
+
 export const useExtensionStore = create<ExtensionStore>()((set) => ({
+    custom: [{
+        name: "Test",
+        url: "https://skybook.pistonite.dev",
+    }],
+    pinnedIds: [],
+    setPinnedIds: (ids) => {
+        set(({ custom }) => {
+            const customIds = custom.map((e) => getCustomExtensionId(e.url));
+            return {
+                pinnedIds: filterInvalidCustomIds(ids, customIds),
+            }
+        });
+    },
+    recentIds: [],
+    updateRecency: (id: string) => {
+        set(({ recentIds, custom }) => {
+            const customIds = custom.map((e) => getCustomExtensionId(e.url));
+            return {
+                recentIds: filterInvalidCustomIds([id, ...recentIds.filter((i) => i !== id)], customIds),
+            }
+        });
+    },
+
+
     primaryIds: ["editor", "stub1"],
     secondaryIds: ["item-explorer"],
     currentPrimary: "editor",
@@ -80,6 +109,11 @@ export const useExtensionStore = create<ExtensionStore>()((set) => ({
         slot: "primary" | "secondary",
         updateOpenMode = false,
     ) => {
+        // make editor only openable in the primary slot
+        // because issue with the monaco instance
+        if (id === "editor") {
+            slot = "primary";
+        }
         set(({ primaryIds, secondaryIds }) => {
             const newState: Partial<ExtensionStore> = {};
             if (slot === "primary") {
@@ -112,6 +146,9 @@ export const useExtensionStore = create<ExtensionStore>()((set) => ({
     },
 
     updateOpenMode: (id: string, openMode: ExtensionOpenMode) => {
+        if (id === "editor") {
+            openMode = "primary";
+        }
         set(({ primaryIds, secondaryIds }) => {
             const newState: Partial<ExtensionStore> = {};
             if (openMode === "primary") {
@@ -153,19 +190,16 @@ export const useExtensionStore = create<ExtensionStore>()((set) => ({
         set({ currentSecondary: "" });
     },
 
-    custom: [],
-    setCustomExtension: (extension) => {
-        set(({ custom }) => {
+    setCustomExtensions: (extensions) => {
+        // here we need clean the state and delete old ids that aren't 
+        // in the new list
+        set(({ pinnedIds, recentIds }) => {
+            const newCustomIds = extensions.map((e) => getCustomExtensionId(e.url));
             return {
-                custom: custom.map((c) =>
-                    c.id === extension.id ? extension : c,
-                ),
-            };
-        });
-    },
-    removeCustomExtension: (id) => {
-        set(({ custom }) => {
-            return { custom: custom.filter((c) => c.id !== id) };
+                custom: extensions,
+                pinnedIds: filterInvalidCustomIds(pinnedIds, newCustomIds),
+                recentIds: filterInvalidCustomIds(recentIds, newCustomIds)
+            }
         });
     },
 }));
@@ -174,10 +208,12 @@ export const useExtensionStore = create<ExtensionStore>()((set) => ({
 //         version: 1,
 //     }));
 //
-
-export const useAllExtensionIds = () => {
-    return BuiltinExtensionIds;
-};
+//
+const filterInvalidCustomIds = (ids: string[], customIds: string[]): string[] => {
+    return ids.filter((id) => {
+        return !id.startsWith("custom-") || customIds.includes(id);
+    });
+}
 
 const getAllNonPopoutExtensionIds = createSelector(
     [
@@ -192,25 +228,25 @@ export const useAllNonPopoutExtensionIds = () => {
     return useExtensionStore(getAllNonPopoutExtensionIds);
 };
 
-const getPrimaryExtensionIds = createSelector(
-    [(state: ExtensionStore) => state.primaryIds],
-    (p) => {
-        return toSortedExtensionIds(p);
-    },
-);
-export const usePrimaryExtensionIds = () => {
-    return useExtensionStore(getPrimaryExtensionIds);
-};
-
-const getSecondaryExtensionIds = createSelector(
-    [(state: ExtensionStore) => state.secondaryIds],
-    (s) => {
-        return toSortedExtensionIds(s);
-    },
-);
-export const useSecondaryExtensionIds = () => {
-    return useExtensionStore(getSecondaryExtensionIds);
-};
+// const getPrimaryExtensionIds = createSelector(
+//     [(state: ExtensionStore) => state.primaryIds],
+//     (p) => {
+//         return toSortedExtensionIds(p);
+//     },
+// );
+// export const usePrimaryExtensionIds = () => {
+//     return useExtensionStore(getPrimaryExtensionIds);
+// };
+//
+// const getSecondaryExtensionIds = createSelector(
+//     [(state: ExtensionStore) => state.secondaryIds],
+//     (s) => {
+//         return toSortedExtensionIds(s);
+//     },
+// );
+// export const useSecondaryExtensionIds = () => {
+//     return useExtensionStore(getSecondaryExtensionIds);
+// };
 
 const toSortedExtensionIds = (ids: string[]): string[] => {
     const customs = ids.filter(
@@ -225,29 +261,5 @@ export const useCurrentPrimaryExtensionId = () => {
     return useExtensionStore((state) => state.currentPrimary);
 };
 
-export const useCurrentSecondaryExtensionId = () => {
-    const narrow = useNarrow();
-    const secondary = useExtensionStore((state) => state.currentSecondary);
-    // hide secondary extension window when the screen is narrow
-    // or on less productive platforms
-    return narrow || isLessProductive ? "" : secondary;
-};
 
-export const useIsShowingExtensionPanel = () => {
-    const primary = useExtensionStore((state) => state.currentPrimary);
-    const secondary = useCurrentSecondaryExtensionId();
-    return !!(primary || secondary);
-};
 
-const getCustomExtensions = createSelector(
-    [(state: ExtensionStore) => state.custom],
-    (custom) => {
-        const map = new Map<string, CustomExtension>();
-        custom.forEach((c) => map.set(c.id, c));
-        return map;
-    },
-);
-
-export const useCustomExtensions = () => {
-    return useExtensionStore(getCustomExtensions);
-};

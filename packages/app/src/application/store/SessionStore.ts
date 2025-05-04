@@ -75,16 +75,22 @@ export type SessionStore = {
     executionInProgress: boolean;
     setExecutionInProgress: (inProgress: boolean) => void;
 
-    /** If a cached step is valid */
-    upToDateSteps: number[];
     /** Cached Pouch list views. Key is the step index */
+    upToDatePouchSteps: number[];
     pouchViews: Record<number, InvView_PouchList>;
     setPouchViewInCache: (step: number, view: InvView_PouchList) => void;
     /** Cached GDT inventory views. Key is the step index */
+    upToDateGdtSteps: number[];
     gdtViews: Record<number, InvView_Gdt>;
     setGdtViewInCache: (step: number, view: InvView_Gdt) => void;
     /** Invalidate all cached inventory views */
     invalidateInventoryCache: () => void;
+
+    /** Performance: Instructions Per Second */
+    perfIps: number;
+    /** Performance: Steps Per Second */
+    perfSps: number;
+    setPerfData: (ips: number, sps: number) => void;
 };
 
 /**
@@ -234,33 +240,43 @@ export const useSessionStore = create<SessionStore>()((set) => {
             }
         },
 
-        upToDateSteps: [],
+        upToDatePouchSteps: [],
         pouchViews: {},
         setPouchViewInCache: (step, view) => {
-            set(({ pouchViews, upToDateSteps }) => {
+            set(({ pouchViews, upToDatePouchSteps }) => {
                 return {
                     pouchViews: {
                         ...pouchViews,
                         [step]: view,
                     },
-                    upToDateSteps: [...upToDateSteps, step],
+                    upToDatePouchSteps: [...upToDatePouchSteps, step],
                 };
             });
         },
+        upToDateGdtSteps: [],
         gdtViews: {},
         setGdtViewInCache: (step, view) => {
-            set(({ gdtViews, upToDateSteps }) => {
+            set(({ gdtViews, upToDateGdtSteps }) => {
                 return {
                     gdtViews: {
                         ...gdtViews,
                         [step]: view,
                     },
-                    upToDateSteps: [...upToDateSteps, step],
+                    upToDateGdtSteps: [...upToDateGdtSteps, step],
                 };
             });
         },
         invalidateInventoryCache: () => {
-            set({ upToDateSteps: [] });
+            set({ 
+                upToDatePouchSteps: [],
+                upToDateGdtSteps: [],
+            });
+        },
+
+        perfIps: -1,
+        perfSps: -1,
+        setPerfData: (ips, sps) => {
+            set({ perfIps: ips, perfSps: sps });
         },
     };
 });

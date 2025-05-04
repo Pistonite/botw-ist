@@ -10,6 +10,8 @@ import { useUIStore } from "./store.ts";
 import { Header } from "./Header.tsx";
 import { PouchInventoryPanel } from "./PouchInventoryPanel.tsx";
 import { GdtInventoryPanel } from "./GdtInventoryPanel.tsx";
+import { ExtensionLaunchDialog } from "./ExtensionLaunchDialog.tsx";
+import { CustomExtensionDialog } from "./CustomExtensionDialog.tsx";
 
 const useStyles = makeStyles({
     root: {
@@ -48,7 +50,7 @@ const AppImpl: React.FC = () => {
         (state) => state.setGamedataInventoryPercentage,
     );
 
-    return (
+    return <>
         <ResizeLayout
             className={styles.root}
             vertical={narrow || !showExtensionPanel}
@@ -77,7 +79,9 @@ const AppImpl: React.FC = () => {
                 </ResizeLayout>
             </main>
         </ResizeLayout>
-    );
+        <ExtensionLaunchDialog />
+        <CustomExtensionDialog />
+    </>;
 };
 
 export const App = memo(AppImpl);

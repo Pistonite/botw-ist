@@ -16,6 +16,7 @@
         "@uidotdev/usehooks": "^2.4.1",
         "botw-item-assets": "workspace:*",
         "mobile-device-detect": "^0.4.3",
+        "numeral": "^2.0.6",
         "react": "catalog:",
         "react-dom": "catalog:",
         "reselect": "^5.1.1",
@@ -26,12 +27,13 @@
     },
     "devDependencies": {
         "@pistonite/vite-plugin-intwc": "workspace:*",
+        "@types/numeral": "^2.0.5",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
-        "monaco-editor": "*",
         "i18next": "catalog:",
-        "react-i18next": "catalog:",
+        "monaco-editor": "*",
         "mono-dev": "workspace:*",
+        "react-i18next": "catalog:",
         "vite": "catalog:",
         "vite-plugin-serve-static": "^1.1.0"
     }

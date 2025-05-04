@@ -19,11 +19,11 @@ export const useDebouncedHasUnsavedChanges = (delay: number) => {
 
 /** Get the list view of the visible inventory of the current script and step */
 export const usePouchListView = () => {
-    const activeScript = useSessionStore((state) => state.activeScript);
+    const activeScript = useDebounce(useSessionStore((state) => state.activeScript), 500);
     const inProgress = useSessionStore((state) => state.executionInProgress);
     const stepIndex = useSessionStore((state) => state.stepIndex);
     const cachedViews = useSessionStore((state) => state.pouchViews);
-    const cacheValidity = useSessionStore((state) => state.upToDateSteps);
+    const cacheValidity = useSessionStore((state) => state.upToDatePouchSteps);
     const setPouchViewInCache = useSessionStore(
         (state) => state.setPouchViewInCache,
     );
@@ -75,11 +75,11 @@ export const usePouchListView = () => {
 
 /** Get the list view of the GDT inventory of the current script and step */
 export const useGdtInventoryView = () => {
-    const activeScript = useSessionStore((state) => state.activeScript);
+    const activeScript = useDebounce(useSessionStore((state) => state.activeScript), 500);
     const inProgress = useSessionStore((state) => state.executionInProgress);
     const stepIndex = useSessionStore((state) => state.stepIndex);
     const cachedViews = useSessionStore((state) => state.gdtViews);
-    const cacheValidity = useSessionStore((state) => state.upToDateSteps);
+    const cacheValidity = useSessionStore((state) => state.upToDateGdtSteps);
     const setGdtViewInCache = useSessionStore(
         (state) => state.setGdtViewInCache,
     );

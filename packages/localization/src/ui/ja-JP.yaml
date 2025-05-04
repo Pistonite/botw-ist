@@ -7,9 +7,10 @@ title.info: "情報"
 
 # Generic Buttons
 button.allow: "許可する"
-button.cancel: "Cancel"
+button.cancel: "キャンセル"
 button.close: "閉じる"
 button.launch: "起動"
+button.learn_more: "詳細を見る"
 button.ok: "OK"
 button.popout: "Pop-out to a new window"
 button.refresh: "更新"
@@ -45,12 +46,21 @@ dialog.custom_image.option.delete_previous: "以前にアップロードした�
 dialog.custom_image.option.select_current: "以前にアップロードしたファイルを使用"
 dialog.custom_image.title: "カスタムディスクイメージ設定"
 
-# Header Menus
+# Menu Headers
+menu.header.extensions: "拡張機能"
+menu.header.pinned: "ピン留め"
+menu.header.preference: "設定"
+menu.header.recent: "最近開いたもの"
+
+# Menu Items
+menu.custom_extensions: "カスタム拡張機能"
+menu.custom_extensions.desc: "カスタム拡張機能を追加・削除・変更する"
 menu.enable_animations: "アニメーション"
 menu.enable_animations.desc: "チャンピオンの能力や破損した装備の効果など、アイコンやアイテムスロットのアニメーションを有効にします。"
-menu.header.preference: "設定"
 menu.high_res_icons: "高解像度"
 menu.high_res_icons.desc: "高解像度アイコンとアイテムアニメーションを有効にします。接続が不安定でアイコンが正常に読み込めない場合は、無効にすると帯域幅を節約できます。"
+menu.open_configure_extension: "拡張機能を開く／設定する"
+menu.open_configure_extension.desc: "開きたい拡張機能を選ぶか、開き方を変更します"
 
 # Main inventory display
 main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されたインベントリデータです。アイテムはインベントリにロードされた状態で表示され、各スロットはGDTスロットに保存される対応スロットに合わせて配置されています。"
@@ -104,8 +114,6 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-button.open_extension: "Extensions"
-
 status.not_available_platform: "Not available for current platform"
 status.not_available_window_size: "Not available because the window is too small"
 
@@ -118,11 +126,14 @@ radio.extension_open_mode.popout: "Pop-out to a new window"
 radio.extension_open_mode.primary: "Open in primary view"
 radio.extension_open_mode.secondary: "Open in secondary view"
 
+# Custom Extensions Dialog
+dialog.custom_extensions.desc: "カスタム拡張機能は、Skybook に統合できるサードパーティ製ウィジェットです。"
+dialog.custom_extensions.format_desc: "{{format}} の形式で、拡張機能を1行につき1つずつ設定してください。"
+dialog.custom_extensions.help: "設定を保存した後、「{{open_button}}」からカスタム拡張機能をポップアウトウィンドウとして開けます。すでに開いている拡張機能は閉じられません。"
+
 # Extension names
-extension.editor.desc: "Modify the simulation steps"
-extension.editor.name: "Script Editor"
-extension.item-explorer.desc: "Test item search results"
-extension.item-explorer.name: "Item Explorer"
+extension.editor.name: "スクリプトエディター"
+extension.item-explorer.name: "アイテム探索"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension

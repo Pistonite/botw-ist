@@ -4,12 +4,9 @@ import {
     wxWrapHandler,
 } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
-import { LRUCache } from "lru-cache";
 
 import type {
-    ItemSearchResult,
     Runtime,
-    RuntimeApp,
     RuntimeInitArgs,
     RuntimeInitError,
     RuntimeInitOutput,
@@ -19,40 +16,10 @@ import { skybookRuntimeApp } from "@pistonite/skybook-api/interfaces/RuntimeApp.
 import {
     getParserDiagnostics,
     getStepFromPos,
-    type QuotedItemResolverFn,
 } from "./parser.ts";
 import { getImage, putImage } from "./imagedb.ts";
 import { executeScript, getGdtInventory, getPouchList } from "./runtime.ts";
-
-const { promise: appPromise, resolve: resolveApp } =
-    wxMakePromise<RuntimeApp>();
-
-// cache the item so we don't need to resolve it with the main thread
-// every time.
-// using `false` to represent "not found"
-const quotedItemCache = new LRUCache<string, ItemSearchResult | false>({
-    max: 5120,
-});
-const resolveQuotedItem: QuotedItemResolverFn = async (query) => {
-    const cachedResult = quotedItemCache.get(query);
-    if (cachedResult !== undefined) {
-        return cachedResult ? cachedResult : undefined;
-    }
-    const result = await (await appPromise).resolveQuotedItem(query);
-    // communication error
-    if (result.err) {
-        return undefined;
-    }
-
-    const item: ItemSearchResult | undefined = result.val;
-    if (!item) {
-        quotedItemCache.set(query, false);
-        return undefined;
-    }
-
-    quotedItemCache.set(query, item);
-    return item;
-};
+import { resolveAppPromise, getCustomBlueFlameImage } from "./app.ts";
 
 async function boot() {
     // This is injected by the build process
@@ -79,9 +46,7 @@ async function boot() {
                     let customImage = await getImage();
                     if (!customImage) {
                         // try requesting the image from the app
-                        const newImage = await (
-                            await appPromise
-                        ).getCustomBlueFlameImage();
+                        const newImage = await getCustomBlueFlameImage();
                         if (newImage.err || !newImage.val) {
                             console.error(
                                 "Failed to get custom image from app",
@@ -134,7 +99,7 @@ async function boot() {
         }),
         getParserDiagnostics: wxWrapHandler(async (script) => {
             await initializePromise;
-            return getParserDiagnostics(script, resolveQuotedItem);
+            return getParserDiagnostics(script);
         }),
         getSemanticTokens: wxWrapHandler(async (script, start, end) => {
             await initializePromise;
@@ -142,24 +107,24 @@ async function boot() {
         }),
         getStepFromPos: wxWrapHandler(async (script, pos) => {
             await initializePromise;
-            return getStepFromPos(script, resolveQuotedItem, pos);
+            return getStepFromPos(script, pos);
         }),
         executeScript: wxWrapHandler(async (script) => {
             await initializePromise;
-            (await executeScript(script, resolveQuotedItem)).free();
+            (await executeScript(script)).free();
         }),
         getPouchList: wxWrapHandler(async (script, pos) => {
             await initializePromise;
-            return await getPouchList(script, resolveQuotedItem, pos);
+            return await getPouchList(script, pos);
         }),
         getGdtInventory: wxWrapHandler(async (script, pos) => {
             await initializePromise;
-            return await getGdtInventory(script, resolveQuotedItem, pos);
+            return await getGdtInventory(script, pos);
         }),
     };
 
     await wxWorkerGlobal()({
-        app: skybookRuntimeApp(api, resolveApp),
+        app: skybookRuntimeApp(api, resolveAppPromise),
     });
 }
 

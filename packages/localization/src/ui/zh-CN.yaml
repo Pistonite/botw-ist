@@ -7,9 +7,10 @@ title.info: "信息"
 
 # Generic Buttons
 button.allow: "允许"
-button.cancel: "Cancel"
+button.cancel: "取消"
 button.close: "关闭"
 button.launch: "启动"
+button.learn_more: "了解更多"
 button.ok: "好的"
 button.popout: "Pop-out to a new window"
 button.refresh: "刷新"
@@ -45,12 +46,21 @@ dialog.custom_image.option.delete_previous: "删除之前上传的镜像设置"
 dialog.custom_image.option.select_current: "使用之前上传的镜像文件"
 dialog.custom_image.title: "自定义镜像设置"
 
-# Header Menus
+# Menu Headers
+menu.header.extensions: "扩展"
+menu.header.pinned: "置顶"
+menu.header.preference: "设置"
+menu.header.recent: "最近打开"
+
+# Menu Items
+menu.custom_extensions: "第三方扩展"
+menu.custom_extensions.desc: "添加，删除或更改第三方扩展"
 menu.enable_animations: "物品动画效果"
 menu.enable_animations.desc: "启用贴图和背包格动画，例如英杰技能和损坏装备效果。"
-menu.header.preference: "设置"
 menu.high_res_icons: "高质量贴图"
 menu.high_res_icons.desc: "启用高清贴图和物品动画效果。如果网络不好或者物品图片加载不出来，可以尝试关闭此选项"
+menu.open_configure_extension: "打开或设置扩展"
+menu.open_configure_extension.desc: "打开扩展或者调整扩展打开的方式"
 
 # Main inventory display
 main.gdt_inventory.desc: "储存与游戏Flag系统（GDT）内的物品数据。物品状态以数据读取入背包后的形式显示。同步时背包格存入的目标数据格与该背包格对齐显示。"
@@ -104,8 +114,6 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-button.open_extension: "Extensions"
-
 status.not_available_platform: "Not available for current platform"
 status.not_available_window_size: "Not available because the window is too small"
 
@@ -118,10 +126,13 @@ radio.extension_open_mode.popout: "Pop-out to a new window"
 radio.extension_open_mode.primary: "Open in primary view"
 radio.extension_open_mode.secondary: "Open in secondary view"
 
+# Custom Extensions Dialog
+dialog.custom_extensions.desc: "自定义扩展是用于增加Skybook功能的第三方UI组件."
+dialog.custom_extensions.format_desc: "请输入扩展配置文本，格式为 {{format}}，每行一个"
+dialog.custom_extensions.help: "保存配置后，第三方扩展可以通过\"{{open_button}}\"启动. 已经开启的扩展不会自动关闭."
+
 # Extension names
-extension.editor.desc: "编辑模拟器步骤"
 extension.editor.name: "脚本编辑器"
-extension.item-explorer.desc: "测试物品搜索结果"
 extension.item-explorer.name: "搜索物品"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 

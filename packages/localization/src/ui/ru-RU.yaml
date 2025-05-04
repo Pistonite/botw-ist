@@ -7,9 +7,10 @@ title.info: "Информация"
 
 # Generic Buttons
 button.allow: "Разрешить"
-button.cancel: "Cancel"
+button.cancel: "Отмена"
 button.close: "Закрыть"
 button.launch: "Запуск"
+button.learn_more: "Узнать больше"
 button.ok: "ОК"
 button.popout: "Pop-out to a new window"
 button.refresh: "Обновить"
@@ -45,12 +46,21 @@ dialog.custom_image.option.delete_previous: "Удалить ранее загр�
 dialog.custom_image.option.select_current: "Использовать ранее загруженный файл"
 dialog.custom_image.title: "Настройка пользовательского образа диска"
 
-# Header Menus
+# Menu Headers
+menu.header.extensions: "Расширения"
+menu.header.pinned: "Закреплённые"
+menu.header.preference: "Настройки"
+menu.header.recent: "Недавние"
+
+# Menu Items
+menu.custom_extensions: "Пользовательские расширения"
+menu.custom_extensions.desc: "Добавить, удалить или изменить пользовательские расширения"
 menu.enable_animations: "Анимации"
 menu.enable_animations.desc: "Включить анимации иконок и ячеек предметов, например способностей чемпионов и эффектов повреждённого снаряжения."
-menu.header.preference: "Настройки"
 menu.high_res_icons: "HD-иконки"
 menu.high_res_icons.desc: "Включить иконки высокого разрешения и анимацию предметов. Отключение может сэкономить трафик при медленном соединении или проблемах с загрузкой иконок."
+menu.open_configure_extension: "Открыть/настроить расширения"
+menu.open_configure_extension.desc: "Выберите расширение, чтобы открыть его или изменить способ его открытия"
 
 # Main inventory display
 main.gdt_inventory.desc: "Данные инвентаря, сохранённые в системе флагов (GDT) игры. Предметы отображаются так, как если бы они были загружены в инвентарь, а ячейки выровнены в соответствии с теми, которые будут сохранены в слотах GDT."
@@ -104,8 +114,6 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-button.open_extension: "Extensions"
-
 status.not_available_platform: "Not available for current platform"
 status.not_available_window_size: "Not available because the window is too small"
 
@@ -118,11 +126,14 @@ radio.extension_open_mode.popout: "Pop-out to a new window"
 radio.extension_open_mode.primary: "Open in primary view"
 radio.extension_open_mode.secondary: "Open in secondary view"
 
+# Custom Extensions Dialog
+dialog.custom_extensions.desc: "Пользовательские расширения — это сторонние виджеты, интегрируемые в Skybook."
+dialog.custom_extensions.format_desc: "Настройте расширения по одному на строку в формате {{format}}."
+dialog.custom_extensions.help: "После сохранения конфигурации вы сможете открыть пользовательские расширения в виде всплывающих окон через «{{open_button}}». Уже открытые расширения не будут закрыты."
+
 # Extension names
-extension.editor.desc: "Modify the simulation steps"
-extension.editor.name: "Script Editor"
-extension.item-explorer.desc: "Test item search results"
-extension.item-explorer.name: "Item Explorer"
+extension.editor.name: "Редактор скриптов"
+extension.item-explorer.name: "Обозреватель предметов"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension

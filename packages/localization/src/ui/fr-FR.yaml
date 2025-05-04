@@ -7,9 +7,10 @@ title.info: "Info"
 
 # Generic Buttons
 button.allow: "Autoriser"
-button.cancel: "Cancel"
+button.cancel: "Annuler"
 button.close: "Fermer"
 button.launch: "Lancer"
+button.learn_more: "En savoir plus"
 button.ok: "OK"
 button.popout: "Pop-out to a new window"
 button.refresh: "Rafraîchir"
@@ -45,12 +46,21 @@ dialog.custom_image.option.delete_previous: "Supprimer les images disque personn
 dialog.custom_image.option.select_current: "Utiliser le fichier précédemment téléchargé"
 dialog.custom_image.title: "Configuration de l’image disque personnalisée"
 
-# Header Menus
+# Menu Headers
+menu.header.extensions: "Extensions"
+menu.header.pinned: "Épinglés"
+menu.header.preference: "Préférences"
+menu.header.recent: "Récents"
+
+# Menu Items
+menu.custom_extensions: "Extensions personnalisées"
+menu.custom_extensions.desc: "Ajouter, supprimer ou modifier des extensions personnalisées"
 menu.enable_animations: "Animations"
 menu.enable_animations.desc: "Activez les animations des icônes et des emplacements d'objets, telles que les compétences des champions et les effets d'équipement endommagé."
-menu.header.preference: "Préférences"
 menu.high_res_icons: "Icônes HD"
 menu.high_res_icons.desc: "Activez les icônes haute résolution et les animations des objets. Désactiver cette option peut économiser de la bande passante si votre connexion est lente ou si les icônes ne se chargent pas correctement."
+menu.open_configure_extension: "Ouvrir/configurer les extensions"
+menu.open_configure_extension.desc: "Sélectionnez une extension à ouvrir ou à configurer son mode d’ouverture"
 
 # Main inventory display
 main.gdt_inventory.desc: "Données d'inventaire stockées dans le système de drapeaux (GDT) du jeu. Les objets sont affichés comme s'ils étaient chargés dans l'inventaire, et les emplacements sont alignés en fonction de la case d'inventaire qui sera effectivement enregistrée dans le slot GDT."
@@ -104,8 +114,6 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-button.open_extension: "Extensions"
-
 status.not_available_platform: "Not available for current platform"
 status.not_available_window_size: "Not available because the window is too small"
 
@@ -118,11 +126,14 @@ radio.extension_open_mode.popout: "Pop-out to a new window"
 radio.extension_open_mode.primary: "Open in primary view"
 radio.extension_open_mode.secondary: "Open in secondary view"
 
+# Custom Extensions Dialog
+dialog.custom_extensions.desc: "Les extensions personnalisées sont des widgets tiers qui s’intègrent à Skybook."
+dialog.custom_extensions.format_desc: "Configurez les extensions, une par ligne, au format {{format}}."
+dialog.custom_extensions.help: "Après avoir enregistré la configuration, vous pouvez ouvrir les extensions personnalisées dans des fenêtres pop-up via « {{open_button}} ». Les extensions déjà ouvertes ne seront pas fermées."
+
 # Extension names
-extension.editor.desc: "Modify the simulation steps"
-extension.editor.name: "Script Editor"
-extension.item-explorer.desc: "Test item search results"
-extension.item-explorer.name: "Item Explorer"
+extension.editor.name: "Éditeur de scripts"
+extension.item-explorer.name: "Explorateur d’objets"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension

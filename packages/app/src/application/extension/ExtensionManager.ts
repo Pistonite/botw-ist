@@ -78,18 +78,27 @@ let popoutSerial = 0;
 export const openExtensionPopup = async (id: string) => {
     const serial = popoutSerial++;
     console.log(`opening extension popout: ${id} (serial: ${serial})`);
+    const isCustom = id.startsWith("custom-");
     const origin = window.location.origin;
+
     let url: string;
-    if (import.meta.env.DEV) {
-        console.log("[dev] using dev extension popout url");
-        url = `${origin}/popout`;
+    if (isCustom) {
+        url = id.substring(7);
     } else {
-        const commitShort = import.meta.env.COMMIT.substring(0, 8);
-        url = `${origin}/popout-${commitShort}`;
+        if (import.meta.env.DEV) {
+            console.log("[dev] using dev extension popout url");
+            url = `${origin}/popout`;
+        } else {
+            const commitShort = import.meta.env.COMMIT.substring(0, 8);
+            url = `${origin}/popout-${commitShort}`;
+        }
     }
+
     const urlobj = new URL(url);
     urlobj.searchParams.set("skybookHostOrigin", origin);
-    urlobj.searchParams.set("skybookExtensionId", id);
+    if (!isCustom) {
+        urlobj.searchParams.set("skybookExtensionId", id);
+    }
 
     const appHost = getExtensionAppHost();
 
@@ -100,7 +109,7 @@ export const openExtensionPopup = async (id: string) => {
         extension: skybookExtension(appHost),
     });
     if (result.err) {
-        console.error("failed to open extension popout window");
+        console.error("failed to open extension popout window", result.err);
         return;
     }
 

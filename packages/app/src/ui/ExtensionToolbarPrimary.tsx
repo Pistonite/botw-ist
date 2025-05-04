@@ -1,10 +1,10 @@
 import { memo } from "react";
 
 import {
+    getPrimaryExtensionIdsForDropdown,
     useAllNonPopoutExtensionIds,
     useCurrentPrimaryExtensionId,
     useExtensionStore,
-    usePrimaryExtensionIds,
 } from "self::application/store";
 import { openExtensionPopup } from "self::application/extension";
 import { isLessProductive } from "self::pure-contrib";
@@ -13,8 +13,9 @@ import { ExtensionToolbar } from "./components/ExtensionToolbar.tsx";
 
 const ExtensionToolbarPrimaryConnected: React.FC = () => {
     const currentPrimaryId = useCurrentPrimaryExtensionId();
-    const primaryIds = usePrimaryExtensionIds();
+    const primaryIds = useExtensionStore(getPrimaryExtensionIdsForDropdown);
     const openExtension = useExtensionStore((state) => state.open);
+    const updateRecency = useExtensionStore((state) => state.updateRecency);
     const closePrimary = useExtensionStore((state) => state.closePrimary);
 
     return (
@@ -22,10 +23,12 @@ const ExtensionToolbarPrimaryConnected: React.FC = () => {
             id={currentPrimaryId}
             allIds={primaryIds}
             onClickPopout={() => {
+                updateRecency(currentPrimaryId);
                 openExtensionPopup(currentPrimaryId);
                 closePrimary();
             }}
             onSelect={(id) => {
+                updateRecency(id);
                 openExtension(id, "primary");
             }}
             onClickClose={closePrimary}
@@ -39,6 +42,7 @@ const ExtensionToolbarPrimaryMemo = memo(ExtensionToolbarPrimaryConnected);
 const ExtensionToolbarPrimaryMobileConnected: React.FC = () => {
     const allIds = useAllNonPopoutExtensionIds();
     const currentId = useCurrentPrimaryExtensionId();
+    const updateRecency = useExtensionStore((state) => state.updateRecency);
     const openExtension = useExtensionStore((state) => state.open);
 
     return (
@@ -46,6 +50,7 @@ const ExtensionToolbarPrimaryMobileConnected: React.FC = () => {
             id={currentId}
             allIds={allIds}
             onSelect={(id) => {
+                updateRecency(id);
                 openExtension(id, "primary");
             }}
         />

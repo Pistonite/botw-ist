@@ -14,16 +14,17 @@ import {
 import {
     BookQuestionMark20Regular,
     MoreHorizontal20Regular,
-    PuzzlePiece20Regular,
 } from "@fluentui/react-icons";
 import { GitHubLink } from "@pistonite/shared-controls";
 
 import { useSessionStore } from "self::application/store";
 
-import { ExtensionOpenButton } from "./ExtensionOpenButton.tsx";
 import icon from "./icon.svg";
 import iconPurple from "./icon-purple.svg";
 import { SettingsMenu } from "./SettingsMenu.tsx";
+import { ExtensionsMenu } from "./ExtensionsMenu.tsx";
+import { isLessProductive } from "../pure-contrib/platform.ts";
+import { PerfMonitor } from "./PerfMonitor.tsx";
 
 const useStyles = makeStyles({
     container: {
@@ -40,6 +41,12 @@ const useStyles = makeStyles({
         alignItems: "center",
         justifyContent: "center",
     },
+    end: {
+        flexGrow: 1,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-end",
+    }
 });
 
 const HeaderImpl: React.FC = () => {
@@ -58,20 +65,14 @@ const HeaderImpl: React.FC = () => {
                     height="32px"
                 />
             </div>
-            <Menu>
-                <MenuTrigger disableButtonEnhancement>
-                    <Button
-                        appearance="subtle"
-                        icon={<PuzzlePiece20Regular />}
-                    />
-                </MenuTrigger>
-                <MenuPopover>
-                    <MenuList>
-                        <ExtensionOpenButton />
-                    </MenuList>
-                </MenuPopover>
-            </Menu>
             <SettingsMenu />
+            {
+                // Custom extensions are limited to PC platform only
+                // On other platforms, you can already select all built-in extensions
+                // through the extension window toolbar, so there's no need 
+                // for this menu
+                !isLessProductive && <ExtensionsMenu />
+            }
 
             <Menu>
                 <MenuTrigger disableButtonEnhancement>
@@ -94,6 +95,9 @@ const HeaderImpl: React.FC = () => {
                     </MenuList>
                 </MenuPopover>
             </Menu>
+            <div className={styles.end}>
+                <PerfMonitor />
+            </div>
         </div>
     );
 };
