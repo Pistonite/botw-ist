@@ -114,17 +114,18 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "Custom Extensions can only be opened as pop-out"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} cannot be opened in secondary view"
+dialog.extension_launch.option.popout: "Pop-out to a new window"
+dialog.extension_launch.option.primary: "Open in primary view"
+dialog.extension_launch.option.secondary: "Open in secondary view"
+dialog.extension_launch.options_title: "Launch Options"
+dialog.extension_launch.pinned: "Pin this Extension"
+dialog.extension_launch.remember: "Remember the open mode for this Extension"
+dialog.extension_launch.remember_popout: "Open as pop-out by default"
+dialog.extension_launch.select_title: "Select an Extension"
+dialog.extension_launch.title: "Launch Extension"
 
 # Custom Extensions Dialog
 dialog.custom_extensions.desc: "Custom Extensions are 3rd-party widgets that integrate with Skybook."
@@ -137,13 +138,12 @@ extension.item-explorer.name: "Item Explorer"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
-item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
+item_explorer.desc.search_tip_ident: "Use {{under_score}} to connect multiple search terms, for example {{example}}."
+item_explorer.desc.search_tip_localized: "You can specify a language by its code, like {{code_example}} for French. In the script, put quotes {{quote}} around the search query to use this search mode."
 item_explorer.label.no_results: "No results"
 item_explorer.label.search_localized: "Search in all languages"
 item_explorer.label.search_placeholder: "Search"
 item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
-
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "Cook data has no effect"

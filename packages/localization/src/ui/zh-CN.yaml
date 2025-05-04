@@ -12,7 +12,7 @@ button.close: "关闭"
 button.launch: "启动"
 button.learn_more: "了解更多"
 button.ok: "好的"
-button.popout: "Pop-out to a new window"
+button.popout: "弹出"
 button.refresh: "刷新"
 button.setup: "进入配置"
 
@@ -114,17 +114,18 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "第三方扩展只能弹出到新窗口"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} 不能打开到第二视图"
+dialog.extension_launch.option.popout: "弹出到新窗口"
+dialog.extension_launch.option.primary: "在主视图打开"
+dialog.extension_launch.option.secondary: "在第二视图打开"
+dialog.extension_launch.options_title: "选项"
+dialog.extension_launch.pinned: "置顶此扩展"
+dialog.extension_launch.remember: "设为默认打开方式"
+dialog.extension_launch.remember_popout: "默认弹出到新窗口"
+dialog.extension_launch.select_title: "请选择扩展"
+dialog.extension_launch.title: "启动扩展"
 
 # Custom Extensions Dialog
 dialog.custom_extensions.desc: "自定义扩展是用于增加Skybook功能的第三方UI组件."
@@ -137,13 +138,12 @@ extension.item-explorer.name: "搜索物品"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "使用下划线 `_` 连接多个词，比如 `royal_claymore`."
-item_explorer.desc.search_tip_localized: "必要时可使用语言代码锁定语言，比如 `fr:espadon royal`。在脚本中，可使用带引号文本进行全语言搜索。"
+item_explorer.desc.search_tip_ident: "使用下划线 {{under_score}} 连接多个词，比如 {{example}}."
+item_explorer.desc.search_tip_localized: "必要时可使用语言代码锁定语言，比如 {{code_example}}。在脚本中，可使用带引号({{quote}})文本进行全语言搜索。"
 item_explorer.label.no_results: "无结果"
 item_explorer.label.search_localized: "全语言搜索"
 item_explorer.label.search_placeholder: "搜索"
 item_explorer.search_error.unknown_tag: "未知语言标签 \"{{tag}}\""
-
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "料理数据无实际效果"

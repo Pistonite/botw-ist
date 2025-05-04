@@ -12,7 +12,7 @@ button.close: "Chiudi"
 button.launch: "Avvia"
 button.learn_more: "Scopri di più"
 button.ok: "OK"
-button.popout: "Pop-out to a new window"
+button.popout: "Stacca"
 button.refresh: "Aggiorna"
 button.setup: "Configurare"
 
@@ -114,17 +114,18 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "Le estensioni personalizzate possono essere aperte solo in una nuova finestra"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} non può essere aperto nella vista secondaria"
+dialog.extension_launch.option.popout: "Apri in una nuova finestra"
+dialog.extension_launch.option.primary: "Apri nella vista principale"
+dialog.extension_launch.option.secondary: "Apri nella vista secondaria"
+dialog.extension_launch.options_title: "Opzioni di avvio"
+dialog.extension_launch.pinned: "Fissa questa estensione"
+dialog.extension_launch.remember: "Ricorda la modalità di apertura per questa estensione"
+dialog.extension_launch.remember_popout: "Apri in una nuova finestra per impostazione predefinita"
+dialog.extension_launch.select_title: "Seleziona un’estensione"
+dialog.extension_launch.title: "Avvia estensione"
 
 # Custom Extensions Dialog
 dialog.custom_extensions.desc: "Le estensioni personalizzate sono widget di terze parti che si integrano con Skybook."
@@ -137,13 +138,12 @@ extension.item-explorer.name: "Esplora oggetti"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
-item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
-item_explorer.label.no_results: "No results"
-item_explorer.label.search_localized: "Search in all languages"
-item_explorer.label.search_placeholder: "Search"
-item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
-
+item_explorer.desc.search_tip_ident: "Usa {{under_score}} per unire più termini di ricerca, ad esempio {{example}}."
+item_explorer.desc.search_tip_localized: "Puoi specificare una lingua con il suo codice, come {{code_example}} per il francese. Nello script, usa le virgolette {{quote}} attorno alla query per attivare questa modalità di ricerca."
+item_explorer.label.no_results: "Nessun risultato"
+item_explorer.label.search_localized: "Cerca in tutte le lingue"
+item_explorer.label.search_placeholder: "Cerca"
+item_explorer.search_error.unknown_tag: "Tag lingua sconosciuto \"{{tag}}\""
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "I dati di cottura non hanno effetto"

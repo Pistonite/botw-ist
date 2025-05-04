@@ -12,7 +12,7 @@ button.close: "닫기"
 button.launch: "실행"
 button.learn_more: "자세히 알아보기"
 button.ok: "확인"
-button.popout: "Pop-out to a new window"
+button.popout: "팝아웃"
 button.refresh: "새로 고침"
 button.setup: "설정"
 
@@ -114,17 +114,18 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "사용자 정의 확장 프로그램은 새 창에서만 열 수 있습니다"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}}는 보조 보기로 열 수 없습니다"
+dialog.extension_launch.option.popout: "새 창으로 열기"
+dialog.extension_launch.option.primary: "기본 보기로 열기"
+dialog.extension_launch.option.secondary: "보조 보기로 열기"
+dialog.extension_launch.options_title: "실행 옵션"
+dialog.extension_launch.pinned: "이 확장 프로그램 고정"
+dialog.extension_launch.remember: "이 확장 프로그램의 열기 방식 기억"
+dialog.extension_launch.remember_popout: "기본적으로 새 창으로 열기"
+dialog.extension_launch.select_title: "확장 프로그램 선택"
+dialog.extension_launch.title: "확장 프로그램 실행"
 
 # Custom Extensions Dialog
 dialog.custom_extensions.desc: "사용자 정의 확장 기능은 Skybook과 통합되는 서드파티 위젯입니다."
@@ -137,13 +138,12 @@ extension.item-explorer.name: "아이템 탐색기"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
-item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
-item_explorer.label.no_results: "No results"
-item_explorer.label.search_localized: "Search in all languages"
-item_explorer.label.search_placeholder: "Search"
-item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
-
+item_explorer.desc.search_tip_ident: "여러 검색어를 연결하려면 {{under_score}}를 사용하세요. 예: {{example}}"
+item_explorer.desc.search_tip_localized: "언어 코드를 사용해 언어를 지정할 수 있습니다. 예: 프랑스어는 {{code_example}}. 스크립트에서는 검색어를 {{quote}}로 감싸 이 검색 모드를 사용할 수 있습니다."
+item_explorer.label.no_results: "결과 없음"
+item_explorer.label.search_localized: "모든 언어에서 검색"
+item_explorer.label.search_placeholder: "검색"
+item_explorer.search_error.unknown_tag: "알 수 없는 언어 태그 \"{{tag}}\""
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "요리 데이터에 효과가 없습니다"

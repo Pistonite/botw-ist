@@ -12,7 +12,7 @@ button.close: "Закрыть"
 button.launch: "Запуск"
 button.learn_more: "Узнать больше"
 button.ok: "ОК"
-button.popout: "Pop-out to a new window"
+button.popout: "Открепить"
 button.refresh: "Обновить"
 button.setup: "Настроить"
 
@@ -114,17 +114,18 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "Пользовательские расширения можно открывать только в новом окне"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} нельзя открыть во вторичной области"
+dialog.extension_launch.option.popout: "Открыть в новом окне"
+dialog.extension_launch.option.primary: "Открыть в основной области"
+dialog.extension_launch.option.secondary: "Открыть во вторичной области"
+dialog.extension_launch.options_title: "Параметры запуска"
+dialog.extension_launch.pinned: "Закрепить это расширение"
+dialog.extension_launch.remember: "Запомнить режим открытия для этого расширения"
+dialog.extension_launch.remember_popout: "По умолчанию открывать в новом окне"
+dialog.extension_launch.select_title: "Выберите расширение"
+dialog.extension_launch.title: "Запустить расширение"
 
 # Custom Extensions Dialog
 dialog.custom_extensions.desc: "Пользовательские расширения — это сторонние виджеты, интегрируемые в Skybook."
@@ -137,13 +138,12 @@ extension.item-explorer.name: "Обозреватель предметов"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
-item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
-item_explorer.label.no_results: "No results"
-item_explorer.label.search_localized: "Search in all languages"
-item_explorer.label.search_placeholder: "Search"
-item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
-
+item_explorer.desc.search_tip_ident: "Используйте {{under_score}} для объединения нескольких поисковых слов, например {{example}}."
+item_explorer.desc.search_tip_localized: "Вы можете указать язык с помощью его кода, например {{code_example}} для французского. В скрипте заключите поисковый запрос в кавычки {{quote}}, чтобы использовать этот режим."
+item_explorer.label.no_results: "Нет результатов"
+item_explorer.label.search_localized: "Поиск по всем языкам"
+item_explorer.label.search_placeholder: "Поиск"
+item_explorer.search_error.unknown_tag: "Неизвестная языковая метка \"{{tag}}\""
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "Данные приготовления не дают эффекта"

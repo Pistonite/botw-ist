@@ -12,7 +12,7 @@ button.close: "閉じる"
 button.launch: "起動"
 button.learn_more: "詳細を見る"
 button.ok: "OK"
-button.popout: "Pop-out to a new window"
+button.popout: "ポップアウト"
 button.refresh: "更新"
 button.setup: "セットアップ"
 
@@ -114,17 +114,18 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "カスタム拡張機能は新しいウィンドウでのみ開けます"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} はセカンダリビューで開けません"
+dialog.extension_launch.option.popout: "新しいウィンドウで開く"
+dialog.extension_launch.option.primary: "メインビューで開く"
+dialog.extension_launch.option.secondary: "セカンダリビューで開く"
+dialog.extension_launch.options_title: "起動オプション"
+dialog.extension_launch.pinned: "この拡張機能をピン留め"
+dialog.extension_launch.remember: "この拡張機能の表示方法を記憶"
+dialog.extension_launch.remember_popout: "デフォルトでポップアウト表示"
+dialog.extension_launch.select_title: "拡張機能を選択"
+dialog.extension_launch.title: "拡張機能を起動"
 
 # Custom Extensions Dialog
 dialog.custom_extensions.desc: "カスタム拡張機能は、Skybook に統合できるサードパーティ製ウィジェットです。"
@@ -137,13 +138,12 @@ extension.item-explorer.name: "アイテム探索"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
-item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
-item_explorer.label.no_results: "No results"
-item_explorer.label.search_localized: "Search in all languages"
-item_explorer.label.search_placeholder: "Search"
-item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
-
+item_explorer.desc.search_tip_ident: "複数の検索語をつなげるには {{under_score}} を使います。例：{{example}}"
+item_explorer.desc.search_tip_localized: "言語コードで指定できます。たとえばフランス語は {{code_example}}。スクリプトでは、検索語を引用符 {{quote}} で囲んでこの検索モードを使います。"
+item_explorer.label.no_results: "結果がありません"
+item_explorer.label.search_localized: "すべての言語で検索"
+item_explorer.label.search_placeholder: "検索"
+item_explorer.search_error.unknown_tag: "不明な言語タグ \"{{tag}}\""
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "料理データに効果がありません"

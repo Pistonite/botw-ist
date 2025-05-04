@@ -12,7 +12,7 @@ button.close: "Sluiten"
 button.launch: "Starten"
 button.learn_more: "Meer informatie"
 button.ok: "OK"
-button.popout: "Pop-out to a new window"
+button.popout: "Losmaken"
 button.refresh: "Vernieuwen"
 button.setup: "Instellen"
 
@@ -114,17 +114,18 @@ category.Material: "Material"
 category.Shield: "Shield"
 category.Weapon: "Weapon"
 
-status.not_available_platform: "Not available for current platform"
-status.not_available_window_size: "Not available because the window is too small"
-
-dialog.extensions.desc: "Launch an extension tool or change its configuration"
-dialog.extensions.title: "Extensions"
-field.extension.remember: "Remember my choice"
-field.extension.remember.desc: "Only effective after clicking \"Launch\". You can always come back here and change your preference"
-field.select_extension: "Select an extension"
-radio.extension_open_mode.popout: "Pop-out to a new window"
-radio.extension_open_mode.primary: "Open in primary view"
-radio.extension_open_mode.secondary: "Open in secondary view"
+# Extension Launch Dialog
+dialog.extension_launch.error.custom_popout_only: "Aangepaste extensies kunnen alleen in een nieuw venster worden geopend"
+dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} kan niet worden geopend in de secundaire weergave"
+dialog.extension_launch.option.popout: "Openen in nieuw venster"
+dialog.extension_launch.option.primary: "Openen in hoofdweergave"
+dialog.extension_launch.option.secondary: "Openen in secundaire weergave"
+dialog.extension_launch.options_title: "Opstartopties"
+dialog.extension_launch.pinned: "Deze extensie vastzetten"
+dialog.extension_launch.remember: "Onthoud opstartmodus voor deze extensie"
+dialog.extension_launch.remember_popout: "Standaard openen in nieuw venster"
+dialog.extension_launch.select_title: "Selecteer een extensie"
+dialog.extension_launch.title: "Extensie starten"
 
 # Custom Extensions Dialog
 dialog.custom_extensions.desc: "Aangepaste extensies zijn widgets van derden die met Skybook integreren."
@@ -137,13 +138,12 @@ extension.item-explorer.name: "Itemverkenner"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use `_` to connect multiple search terms, for example `royal_claymore`."
-item_explorer.desc.search_tip_localized: "You can specify a language by its code, like `fr:espadon royal` for French. In the script, put quotes `\"` around the search query to use this search mode."
-item_explorer.label.no_results: "No results"
-item_explorer.label.search_localized: "Search in all languages"
-item_explorer.label.search_placeholder: "Search"
-item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
-
+item_explorer.desc.search_tip_ident: "Gebruik {{under_score}} om meerdere zoektermen te combineren, bijvoorbeeld {{example}}."
+item_explorer.desc.search_tip_localized: "Je kunt een taal opgeven via de taalcode, zoals {{code_example}} voor Frans. In het script zet je aanhalingstekens {{quote}} om de zoekopdracht om deze modus te gebruiken."
+item_explorer.label.no_results: "Geen resultaten"
+item_explorer.label.search_localized: "Zoek in alle talen"
+item_explorer.label.search_placeholder: "Zoeken"
+item_explorer.search_error.unknown_tag: "Onbekend taallabel \"{{tag}}\""
 
 # Item Slot Tooltip
 tooltip.bad_cook_data: "Kookgegevens hebben geen effect"
