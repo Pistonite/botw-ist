@@ -5,7 +5,6 @@ import { ResizeLayout } from "@pistonite/shared-controls";
 import {
     getPrimaryExtensionIdsForDropdown,
     getSecondaryExtensionIdsForDropdown,
-    useCurrentPrimaryExtensionId,
     useCurrentSecondaryExtensionId,
     useExtensionStore,
 } from "self::application/store";
@@ -38,7 +37,7 @@ const ExtensionPanelConnected: React.FC = () => {
     const styles = useStyles();
     const primaryIds = useExtensionStore(getPrimaryExtensionIdsForDropdown);
     const secondaryIds = useExtensionStore(getSecondaryExtensionIdsForDropdown);
-    const currentPrimaryId = useCurrentPrimaryExtensionId();
+    const currentPrimaryId = useExtensionStore((state) => state.currentPrimary);
     const currentSecondaryId = useCurrentSecondaryExtensionId();
 
     const primaryExtensionWindowPercentage = useUIStore(
