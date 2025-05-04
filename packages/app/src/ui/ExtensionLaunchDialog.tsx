@@ -57,6 +57,7 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
         const { currentPrimary, currentSecondary } = useExtensionStore.getState();
         return currentPrimary || currentSecondary || "editor";
     });
+    const isSelectedExtensionScriptEditor = selectedExtensionId === "editor";
     const isSelectedExtensionCustom = selectedExtensionId.startsWith("custom-");
     const selectedExtensionText = useExtensionName(selectedExtensionId);
 
@@ -87,7 +88,7 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
             }
             {
                 customExtensions.length > 0 && (
-                    <OptionGroup label="Custom Extensions">
+                    <OptionGroup label={t("menu.custom_extensions")}>
                         {
                             customExtensions.map((extension) => (
                                 <Option key={extension.url} value={getCustomExtensionId(extension.url)}>
@@ -102,7 +103,7 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
 
     const $PinnedSwitch = (
         <Switch 
-            label={"Pinned"}
+            label={t("dialog.extension_launch.pinned")}
             checked={pinnedExtensions.includes(selectedExtensionId)}
             onChange={(_, {checked}) => {
                 if (checked) {
@@ -124,24 +125,26 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
         >
             <Radio
                 value="primary"
-                label={t("radio.extension_open_mode.primary")}
+                label={t("dialog.extension_launch.option.primary")}
             />
             <Field
-                validationState={selectedExtensionId === "editor" ? "warning" : undefined}
-                validationMessage={selectedExtensionId === "editor" ? "Script Editor cannot be opened in secondary view" : undefined}
+                validationState={isSelectedExtensionScriptEditor ? "warning" : undefined}
+                validationMessage={isSelectedExtensionScriptEditor ? 
+                    t("dialog.extension_launch.error.script_editor_no_secondary").replace("{{script_editor}}", t("extension.editor.name")) : undefined
+                }
             >
                 <Radio
-                    disabled={isSelectedExtensionCustom || selectedExtensionId === "editor"}
+                    disabled={isSelectedExtensionCustom || isSelectedExtensionScriptEditor}
                     value="secondary"
                     label={t(
-                        "radio.extension_open_mode.secondary",
+                        "dialog.extension_launch.option.secondary",
                     )}
                 />
             </Field>
             <Radio
                 value="popout"
                 label={t(
-                    "radio.extension_open_mode.popout",
+                    "dialog.extension_launch.option.popout",
                 )}
             />
         </RadioGroup>
@@ -149,8 +152,9 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
 
     const $OpenModePopoutCheckbox = narrow && (
         <Checkbox 
-            label={"Open as popout"}
-            checked={selectedOpenMode === "popout"}
+            label={t("dialog.extension_launch.option.popout")}
+            disabled={isSelectedExtensionCustom}
+            checked={isSelectedExtensionCustom || selectedOpenMode === "popout"}
             onChange={(_, {checked}) =>{
                 setSelectedOpenMode(checked ? "popout" : "primary");
             }}
@@ -161,9 +165,9 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
         <Checkbox 
             label={
                 narrow ? 
-                    "Open as popout by default"
+                    t("dialog.extension_launch.remember_popout")
                     :
-                    "Remember the open mode for this extension"
+                    t("dialog.extension_launch.remember")
             }
             disabled={isSelectedExtensionCustom || (narrow && selectedOpenMode !== "popout")}
             checked={remember && (!narrow || selectedOpenMode === "popout")}
@@ -175,7 +179,7 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
 
     const handleLaunch = () => {
         // block custom extensions on non-PC platforms
-        if (isLessProductive && selectedExtensionId.startsWith("custom-")) {
+        if (isLessProductive && isSelectedExtensionCustom) {
             return;
         }
         updateRecency(selectedExtensionId);
@@ -200,18 +204,18 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
         <Dialog open={open} onOpenChange={(_, { open }) => setOpen(open ? "extension-launch" : undefined)}>
             <DialogSurface>
                 <DialogBody>
-                    <DialogTitle>{"Launch Extension"}</DialogTitle>
+                    <DialogTitle>{t("dialog.extension_launch.title")}</DialogTitle>
                     <DialogContent>
                         <div className={styles.dialogBody}>
                             <div>
-                                <Field label={t("field.select_extension")}>
+                                <Field label={t("dialog.extension_launch.select_title")}>
                                     {$SelectExtensionDropDown}
                                 </Field>
                                 {$PinnedSwitch}
                             </div>
-                            <Field label={"Launch options"}
+                            <Field label={t("dialog.extension_launch.options_title")}
                                 validationState={isSelectedExtensionCustom ? "warning" : undefined}
-                                validationMessage={isSelectedExtensionCustom ? "Custom extensions can only be opened as popout" : undefined}
+                                validationMessage={isSelectedExtensionCustom ? t("dialog.extension_launch.error.custom_popout_only") : undefined}
                             >
                                 {$OpenModeRadioGroup}
                                 {$OpenModePopoutCheckbox}

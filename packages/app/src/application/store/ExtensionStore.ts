@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { createSelector } from "reselect";
-
-import { isLessProductive, useNarrow } from "self::pure-contrib";
+import { persist } from "zustand/middleware";
 
 /**
  * List of builtin extension IDs
@@ -18,7 +17,14 @@ export const BuiltinExtensionIds = [
     "stub1",
 ] as const;
 
+const DefaultPrimaryIds: string[] = ["editor", "stub1"] satisfies (typeof BuiltinExtensionIds)[number][];
+const DefaultSecondaryIds: string[] = ["item-explorer"] satisfies (typeof BuiltinExtensionIds)[number][];
+
 export type ExtensionStore = {
+    /** Built-in Ids stored locally to track store version */
+    builtinIds: string[];
+    /** Update the store when built-in extensions are added or removed */
+    updateBuiltinExtensions: (newIds: string[]) => void;
     /** 
      * Configured custom extensions
      * (note that custom extensions can only be popups)
@@ -74,11 +80,30 @@ export const getCustomExtensionId = (url: string) => {
     return `custom-${url}`;
 }
 
-export const useExtensionStore = create<ExtensionStore>()((set) => ({
-    custom: [{
-        name: "Test",
-        url: "https://skybook.pistonite.dev",
-    }],
+export const useExtensionStore = create<ExtensionStore>()(
+    persist(
+        (set) => ({
+    builtinIds: [...BuiltinExtensionIds],
+            updateBuiltinExtensions: (newIds: string[]) => {
+                console.log("updating built-in extensions");
+                const newPrimary = newIds.filter((id) => DefaultPrimaryIds.includes(id));
+                const newSecondary = newIds.filter((id) => DefaultSecondaryIds.includes(id));
+                const toFiltered = (ids: string[]) => {
+                    return ids.filter((id) => (BuiltinExtensionIds as readonly string[]).includes(id));
+                }
+                set(({primaryIds, secondaryIds, recentIds, pinnedIds, currentPrimary, currentSecondary}) => ({ 
+                    // typescript issue
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    builtinIds: [...BuiltinExtensionIds] as any,
+                    primaryIds: toFiltered([...new Set(primaryIds.concat(newPrimary))]),
+                    secondaryIds: toFiltered([...new Set(secondaryIds.concat(newSecondary))]),
+                    recentIds: toFiltered(recentIds),
+                    pinnedIds: toFiltered(pinnedIds),
+                    currentPrimary: (BuiltinExtensionIds as readonly string[]).includes(currentPrimary) ? currentPrimary : "",
+                    currentSecondary: (BuiltinExtensionIds as readonly string[]).includes(currentSecondary) ? currentSecondary : "",
+                }));
+            },
+    custom: [],
     pinnedIds: [],
     setPinnedIds: (ids) => {
         set(({ custom }) => {
@@ -99,8 +124,8 @@ export const useExtensionStore = create<ExtensionStore>()((set) => ({
     },
 
 
-    primaryIds: ["editor", "stub1"],
-    secondaryIds: ["item-explorer"],
+    primaryIds: [...DefaultPrimaryIds],
+    secondaryIds: [...DefaultSecondaryIds],
     currentPrimary: "editor",
     currentSecondary: "item-explorer",
 
@@ -202,11 +227,38 @@ export const useExtensionStore = create<ExtensionStore>()((set) => ({
             }
         });
     },
-}));
-// ,{
-//         name: "Skybook.Extensions",
-//         version: 1,
-//     }));
+}),
+        {
+            name: "Skybook.Extensions",
+            version: 1,
+            onRehydrateStorage: () => {
+                return (state) => {
+                    if (!state) {
+                        return;
+                    }
+                    const oldSet = new Set(state.builtinIds);
+                    const newIds: string[] = [];
+                    for (const id of BuiltinExtensionIds) {
+                        // new built-in extension added
+                        if (!oldSet.has(id)) {
+                            newIds.push(id);
+                        }
+                    }
+                    if (newIds.length > 0) {
+                        state.updateBuiltinExtensions(newIds);
+                        return;
+                    }
+                    const newSet = new Set<string>(BuiltinExtensionIds);
+                    for (const id of state.builtinIds) {
+                        // old built-in extension removed
+                        if (!newSet.has(id)) {
+                            state.updateBuiltinExtensions([]);
+                            return;
+                        }
+                    }
+                };
+            }
+        }));
 //
 //
 const filterInvalidCustomIds = (ids: string[], customIds: string[]): string[] => {

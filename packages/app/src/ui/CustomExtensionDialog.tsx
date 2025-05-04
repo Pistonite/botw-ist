@@ -8,6 +8,7 @@ import { type CustomExtension, getCustomExtensionConfigText, useExtensionStore }
 
 import { useUIStore } from "./store.ts";
 import { Code } from "./components/Code.tsx";
+import { Interpolate } from "./components/Interpolate.tsx";
 
 const FORMAT = "NAME=URL";
 
@@ -47,16 +48,9 @@ const CustomExtensionDialogImpl: React.FC = () => {
         setCustomExtensions(customExtensions);
     };
 
-    const textAreaTitleParts = 
-    t("dialog.custom_extensions.format_desc", {
-        format: FORMAT,
-    })
-    .split(FORMAT, 2);
-    const $TextAreaTitle = (<Text block>
-        {textAreaTitleParts[0]}
-        <Code>{FORMAT}</Code>
-        {textAreaTitleParts[1]}
-    </Text>);
+    const $TextAreaTitle = (<Interpolate format={<Code>{FORMAT}</Code>}>
+        {t("dialog.custom_extensions.format_desc")}
+    </Interpolate>);
 
     return (
     <Dialog open={open} onOpenChange={(_, { open }) => setOpen(open ? "custom-extension" : undefined)}>
