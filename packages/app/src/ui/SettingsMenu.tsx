@@ -23,6 +23,7 @@ import {
 import { useUITranslation } from "skybook-localization";
 
 import { useApplicationStore } from "self::application/store";
+import { isLessProductive } from "../pure-contrib/platform";
 
 /** Settings menu in the header */
 const SettingsMenuImpl: React.FC = () => {
@@ -39,6 +40,10 @@ const SettingsMenuImpl: React.FC = () => {
         (state) => state.setEnableAnimations,
     );
     const t = useUITranslation();
+
+    const tooltipPosition = isLessProductive ?
+        "below" :
+        "after";
     return (
         <Menu>
             <MenuTrigger disableButtonEnhancement>
@@ -64,7 +69,7 @@ const SettingsMenuImpl: React.FC = () => {
                         <Tooltip
                             relationship="description"
                             content={t("menu.high_res_icons.desc")}
-                            positioning="after"
+                            positioning={tooltipPosition}
                         >
                             <MenuSwitch
                                 icon={<ImageSparkle20Regular />}
@@ -79,7 +84,7 @@ const SettingsMenuImpl: React.FC = () => {
                         <Tooltip
                             relationship="description"
                             content={t("menu.enable_animations.desc")}
-                            positioning="after"
+                            positioning={tooltipPosition}
                         >
                             <MenuSwitch
                                 icon={<FilmstripPlay20Regular />}

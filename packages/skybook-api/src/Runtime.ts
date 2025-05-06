@@ -2,7 +2,11 @@ import type { WxPromise } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
 
 import type { ParserErrorReport } from "./parser";
-import type { InvView_Gdt, InvView_PouchList } from "./runtime";
+import type {
+    InvView_Gdt,
+    InvView_Overworld,
+    InvView_PouchList,
+} from "./runtime";
 import type {
     ItemSearchResult,
     RuntimeInitArgs,
@@ -66,6 +70,15 @@ export interface Runtime {
      * at the byte offset `pos` in the script.
      */
     getGdtInventory(script: string, pos: number): WxPromise<InvView_Gdt>;
+
+    /**
+     * Execute the script if not up-to-date, and return the overworld item view
+     * at the byte offset `pos` in the script.
+     */
+    getOverworldItems(
+        script: string,
+        pos: number,
+    ): WxPromise<InvView_Overworld>;
 
     // getRuntimeDiagnostics(
     //     script: string,

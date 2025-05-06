@@ -1,6 +1,7 @@
 import type {
     InvView_GdtItem,
     InvView_ItemData,
+    InvView_OverworldItem,
     InvView_PouchItem,
 } from "@pistonite/skybook-api";
 
@@ -57,6 +58,9 @@ export type ItemTooltipProps = {
 
     /** If true, show the "Entangled" line */
     isEntangled: boolean;
+
+    /** Status of the item, if it's in the overworld */
+    overworldStatus?: "equipped" | "held" | "ground",
 
     /** string to show as the profile */
     profile: string;
@@ -217,3 +221,43 @@ export const getTooltipPropsFromGdtItem = (
         profile: getActorParam(actorName, "profile"),
     };
 };
+
+export const getTooltipPropsFromOverworldItem = (
+    item: InvView_OverworldItem,
+): ItemTooltipProps => {
+    const actorName = item.data.actor;
+    const [itemType] = getItemTypeAndUse(actorName);
+    const isEquipment = item.type === "equipped" || item.type === "groundEquipment";
+
+    const weaponModifiers = isEquipment
+        ? getWeaponModifierStatusPropList(
+              actorName,
+              itemType,
+              item.data.modifier.value,
+              item.data.modifier.flag,
+          )
+        : [];
+
+    let overworldStatus: ItemTooltipProps["overworldStatus"] = "ground";
+    if (item.type === "equipped") {
+        overworldStatus = "equipped";
+    } else if (item.type === "held") {
+        overworldStatus = "held";
+    }
+
+    return {
+        actor: actorName,
+        isEquipment,
+        value: isEquipment ? item.data.value : undefined,
+        isEquipped: false, // we use the overworld status, not inventory equipped status
+        isTranslucent: false,
+        holdingCount: 0, // we use the overworld status
+        weaponModifiers,
+        ingredients: [],
+        isInBrokenSlot: false,
+        isEntangled: false,
+        overworldStatus,
+        profile: getActorParam(actorName, "profile"),
+    };
+
+}

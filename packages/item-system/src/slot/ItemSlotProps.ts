@@ -1,6 +1,7 @@
 import type { ActorSpriteProps } from "botw-item-assets";
 import type {
     InvView_GdtItem,
+    InvView_OverworldItem,
     InvView_PouchItem,
 } from "@pistonite/skybook-api";
 
@@ -72,10 +73,7 @@ export const getSlotPropsFromActor = (
         isEquipped: false,
         isTranslucent: false,
         durability: isEquipment
-            ? getDurability(
-                  isEquipment,
-                  getActorParam(actor, "generalLife") * 100,
-              )
+            ? getActorParam(actor, "generalLife")
             : undefined,
         isInBrokenSlot: false,
         isEntangled: false,
@@ -175,6 +173,40 @@ export const getSlotPropsFromGdtItem = (
         isMasterSwordFullPower,
     };
 };
+
+export const getSlotPropsFromOverworldItem = (
+    item: InvView_OverworldItem,
+    isMasterSwordFullPower: boolean,
+): ItemSlotProps => {
+    const actorName = item.data.actor;
+    const [itemType] = getItemTypeAndUse(actorName);
+    const isEquipment = item.type === "equipped" || item.type === "groundEquipment";
+
+    let status: StatusProps;
+    if (isEquipment) {
+        const { value, flag } = item.data.modifier;
+        status = getStatusPropsForEquipment(
+            actorName,
+            itemType,
+            value,
+            flag
+        );
+    } else {
+        status = getDefaultStatusPropsForActor(actorName);
+    }
+
+    return {
+        actor: actorName,
+        isEquipped: item.type === "equipped",
+        isTranslucent: false,
+        durability: isEquipment ? item.data.value / 100 : undefined,
+        isInBrokenSlot: false,
+        isEntangled: false,
+        holdingCount: item.type === "held" ? 1 : 0,
+        ...status,
+        isMasterSwordFullPower,
+    }
+}
 
 const isChampionAbilityActor = (actor: string) => {
     return /^Obj_(DLC_)?HeroSoul_(Gerudo|Goron|Rito|Zora)$/.test(actor);

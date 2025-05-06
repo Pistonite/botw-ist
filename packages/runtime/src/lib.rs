@@ -148,6 +148,33 @@ impl RunOutput {
 
     }
 
+    pub fn get_overworld_items(&self, step: usize) -> iv::Overworld {
+        // mock data
+        iv::Overworld {
+            items: vec![
+                iv::OverworldItem::Equipped{
+                    actor:"Weapon_Sword_070".to_string(), 
+                    value:3000,
+                    modifier: Default::default(),
+                },
+                iv::OverworldItem::Held{
+                    actor:"Item_Fruit_A".to_string(), 
+                },
+                iv::OverworldItem::GroundEquipment{
+                    actor:"Weapon_Sword_018".to_string(), 
+                    value: 2600,
+                    modifier: iv::WeaponModifier {
+                        flag: 0x1,
+                        value: 100,
+                    }
+                },
+                iv::OverworldItem::GroundItem{
+                    actor:"Item_Fruit_A".to_string(), 
+                },
+            ]
+        }
+    }
+
     fn get_state_by_step(&self, step: usize) -> Option<Arc<State>> {
         match self.states.get(step) {
             Some(state) => Some(Arc::clone(state)),

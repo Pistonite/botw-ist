@@ -44,7 +44,7 @@ const useStyles = makeStyles({
 
 const GdtInventoryPanelImpl: React.FC = () => {
     const styles = useStyles();
-    const { inventory: gdt, stale, loading } = useGdtInventoryView();
+    const { data: gdt, stale, loading } = useGdtInventoryView();
 
     const showSpinner = loading || stale || !gdt;
     const t = useUITranslation();

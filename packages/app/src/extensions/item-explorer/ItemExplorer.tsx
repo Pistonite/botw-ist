@@ -19,6 +19,7 @@ import {
 } from "skybook-item-system";
 
 import { Code, Interpolate } from "self::ui/components";
+import { useDebounce } from "@uidotdev/usehooks";
 
 export type Searcher = {
     search(
@@ -68,7 +69,7 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
     const [value, setValue] = useState("");
     const [localized, setLocalized] = useState(false);
 
-    const deferredValue = useDeferredValue(value);
+    const deferredValue = useDebounce(value, 200);
 
     const { data } = useQuery({
         queryKey: ["item-explorer-search", localized, deferredValue],
