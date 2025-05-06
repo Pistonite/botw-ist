@@ -2,6 +2,7 @@ import { memo, useMemo } from "react";
 
 import type {
     InvView_GdtItem,
+    InvView_OverworldItem,
     InvView_PouchItem,
 } from "@pistonite/skybook-api";
 
@@ -12,11 +13,13 @@ import {
     getSlotPropsFromPouchItem,
     type ItemSlotFullProps,
     type ItemSlotContextProps,
+    getSlotPropsFromOverworldItem,
 } from "./slot";
 import {
     ItemTooltip,
     getTooltipPropsFromActor,
     getTooltipPropsFromGdtItem,
+    getTooltipPropsFromOverworldItem,
     getTooltipPropsFromPouchItem,
 } from "./tooltip";
 import type { CookEffect } from "./data";
@@ -141,3 +144,42 @@ const GdtItemSlotWithTooltipImpl: React.FC<GdtItemSlotProps> = ({
     );
 };
 export const GdtItemSlotWithTooltip = memo(GdtItemSlotWithTooltipImpl);
+
+/** Item slot for items in the Overworld */
+export type OverworldItemSlotProps = {
+    item: InvView_OverworldItem;
+    isMasterSwordFullPower: boolean;
+} & ItemSlotContextProps;
+
+const OverworldItemSlotImpl: React.FC<OverworldItemSlotProps> = ({
+    item,
+    isMasterSwordFullPower,
+    ...props
+}) => {
+    const slotProps = getSlotPropsFromOverworldItem(
+        item,
+        isMasterSwordFullPower,
+    );
+    return <ItemSlot {...slotProps} {...props} />;
+};
+export const OverworldItemSlot = memo(OverworldItemSlotImpl);
+
+const OverworldItemSlotWithTooltipImpl: React.FC<OverworldItemSlotProps> = ({
+    item,
+    isMasterSwordFullPower,
+    ...props
+}) => {
+    const slotProps = getSlotPropsFromOverworldItem(
+        item,
+        isMasterSwordFullPower,
+    );
+    const tooltipProps = getTooltipPropsFromOverworldItem(item);
+    return (
+        <ItemTooltip {...tooltipProps} {...props}>
+            <ItemSlot {...slotProps} {...props} />
+        </ItemTooltip>
+    );
+};
+export const OverworldItemSlotWithTooltip = memo(
+    OverworldItemSlotWithTooltipImpl,
+);

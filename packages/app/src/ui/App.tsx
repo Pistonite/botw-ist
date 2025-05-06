@@ -74,6 +74,8 @@ const AppImpl: React.FC = () => {
                         valuePercent={gamedataInventoryPercentage}
                         setValuePercent={setGamedataInventoryPercentage}
                         minHeight={60}
+                        minWidth={400}
+                        touch={isLessProductive}
                     >
                         <GdtInventoryPanel />
                         <PouchInventoryPanel />

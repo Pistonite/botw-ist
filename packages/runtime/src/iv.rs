@@ -96,6 +96,19 @@ mod __impl {
         pub recover_time: f32,
     }
 
+    /// View of the items in the overworld (technically not inventory, but convienient to think of
+    /// it this way)
+    #[derive(Debug, Default, Clone, serde::Serialize)]
+    #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "__ts-binding", ts(export))]
+    #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+    #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+    #[serde(rename_all = "camelCase")]
+    #[allow(non_camel_case_types)]
+    pub struct InvView_Overworld {
+        pub items: Vec<InvView_OverworldItem>,
+    }
+
     /// Info for an item in the PMDM. This struct can represent both
     /// valid item and invalid items (resulting from ISU corruption)
     #[derive(Debug, Default, Clone, serde::Serialize)]
@@ -240,6 +253,30 @@ pub enum InvView_GdtItemData {
     },
 }
 
+    /// Item info for something in the overworld
+#[derive(Debug, Clone, serde::Serialize)]
+#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+#[cfg_attr(feature = "__ts-binding", ts(export))]
+#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+#[serde(rename_all = "camelCase", tag = "type", content = "data")]
+#[allow(non_camel_case_types)]
+    pub enum InvView_OverworldItem {
+        /// Equipment on the player (weapons and armors - actor name and value)
+        ///
+        /// Modifier is 0,0 if no modifier
+        Equipped { 
+           actor: String, value: i32, modifier: InvView_WeaponModifier },
+        /// Holding in your hand (holding one)
+        Held { actor: String},
+        /// Equipment on the ground (actor name and value)
+        ///
+        /// Modifier is 0,0 if no modifier
+        GroundEquipment{actor:String, value:i32, modifier: InvView_WeaponModifier},
+        /// Other items dropped on the ground
+        GroundItem{actor:String},
+    }
+
 
     /// Common (display) info for an item
     #[derive(Debug, Default, Clone, serde::Serialize)]
@@ -330,6 +367,8 @@ pub use __impl::InvView_Gdt as Gdt;
 pub use __impl::InvView_GdtItem as GdtItem;
 pub use __impl::InvView_GdtItemData as GdtItemData;
 pub use __impl::InvView_GdtMasterSword as GdtMasterSword;
+pub use __impl::InvView_Overworld as Overworld;
+pub use __impl::InvView_OverworldItem as OverworldItem;
 pub use __impl::InvView_CommonItem as CommonItem;
 pub use __impl::InvView_ItemData as ItemData;
 pub use __impl::InvView_WeaponModifier as WeaponModifier;

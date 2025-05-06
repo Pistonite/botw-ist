@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     Field,
     makeStyles,
@@ -7,7 +8,7 @@ import {
 } from "@fluentui/react-components";
 import { useQuery } from "@tanstack/react-query";
 import type { Result } from "@pistonite/pure/result";
-import { useDeferredValue, useState } from "react";
+import { useDebounce } from "@uidotdev/usehooks";
 
 import {
     type SearchResultNoScore,
@@ -68,7 +69,7 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
     const [value, setValue] = useState("");
     const [localized, setLocalized] = useState(false);
 
-    const deferredValue = useDeferredValue(value);
+    const deferredValue = useDebounce(value, 200);
 
     const { data } = useQuery({
         queryKey: ["item-explorer-search", localized, deferredValue],

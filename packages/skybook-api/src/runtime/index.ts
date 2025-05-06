@@ -4,6 +4,8 @@ export * from "./InvView_GdtItem.ts";
 export * from "./InvView_GdtItemData.ts";
 export * from "./InvView_GdtMasterSword.ts";
 export * from "./InvView_ItemData.ts";
+export * from "./InvView_Overworld.ts";
+export * from "./InvView_OverworldItem.ts";
 export * from "./InvView_PouchData.ts";
 export * from "./InvView_PouchItem.ts";
 export * from "./InvView_PouchList.ts";

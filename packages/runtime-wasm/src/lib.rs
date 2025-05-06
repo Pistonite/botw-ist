@@ -207,3 +207,22 @@ pub fn get_gdt_inventory(
     let run_output = unsafe { &*run_output_ref };
     run_output.get_gdt_inventory(step)
 }
+
+/// Get the overworld items for the given byte position in the script
+///
+/// ## Pointer Ownership
+/// Borrows both the RunOutput and ParseOutput pointers.
+#[wasm_bindgen]
+pub fn get_overworld_items(
+    run_output_ref: *const RunOutput,
+    parse_output_ref: *const ParseOutput,
+    byte_pos: usize,
+) -> iv::Overworld {
+    if parse_output_ref.is_null() || run_output_ref.is_null() {
+        return Default::default();
+    }
+    let parse_output = unsafe { &*parse_output_ref };
+    let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
+    let run_output = unsafe { &*run_output_ref };
+    run_output.get_overworld_items(step)
+}

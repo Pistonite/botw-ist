@@ -3,6 +3,7 @@ import { debounce } from "@pistonite/pure/sync";
 
 import type {
     InvView_Gdt,
+    InvView_Overworld,
     InvView_PouchList,
     ScriptEnvImage,
 } from "@pistonite/skybook-api";
@@ -76,13 +77,18 @@ export type SessionStore = {
     setExecutionInProgress: (inProgress: boolean) => void;
 
     /** Cached Pouch list views. Key is the step index */
-    upToDatePouchSteps: number[];
+    pouchCached: number[];
     pouchViews: Record<number, InvView_PouchList>;
     setPouchViewInCache: (step: number, view: InvView_PouchList) => void;
     /** Cached GDT inventory views. Key is the step index */
-    upToDateGdtSteps: number[];
+    gdtCached: number[];
     gdtViews: Record<number, InvView_Gdt>;
     setGdtViewInCache: (step: number, view: InvView_Gdt) => void;
+    /** Cached Overworld item views. Key is the step index */
+    overworldCached: number[];
+    overworldViews: Record<number, InvView_Overworld>;
+    setOverworldViewInCache: (step: number, view: InvView_Overworld) => void;
+
     /** Invalidate all cached inventory views */
     invalidateInventoryCache: () => void;
 
@@ -240,36 +246,50 @@ export const useSessionStore = create<SessionStore>()((set) => {
             }
         },
 
-        upToDatePouchSteps: [],
+        pouchCached: [],
         pouchViews: {},
         setPouchViewInCache: (step, view) => {
-            set(({ pouchViews, upToDatePouchSteps }) => {
+            set(({ pouchViews, pouchCached }) => {
                 return {
                     pouchViews: {
                         ...pouchViews,
                         [step]: view,
                     },
-                    upToDatePouchSteps: [...upToDatePouchSteps, step],
+                    pouchCached: [...pouchCached, step],
                 };
             });
         },
-        upToDateGdtSteps: [],
+        gdtCached: [],
         gdtViews: {},
         setGdtViewInCache: (step, view) => {
-            set(({ gdtViews, upToDateGdtSteps }) => {
+            set(({ gdtViews, gdtCached }) => {
                 return {
                     gdtViews: {
                         ...gdtViews,
                         [step]: view,
                     },
-                    upToDateGdtSteps: [...upToDateGdtSteps, step],
+                    gdtCached: [...gdtCached, step],
+                };
+            });
+        },
+        overworldCached: [],
+        overworldViews: {},
+        setOverworldViewInCache: (step, view) => {
+            set(({ overworldViews, overworldCached }) => {
+                return {
+                    overworldViews: {
+                        ...overworldViews,
+                        [step]: view,
+                    },
+                    overworldCached: [...overworldCached, step],
                 };
             });
         },
         invalidateInventoryCache: () => {
             set({
-                upToDatePouchSteps: [],
-                upToDateGdtSteps: [],
+                gdtCached: [],
+                pouchCached: [],
+                overworldCached: [],
             });
         },
 

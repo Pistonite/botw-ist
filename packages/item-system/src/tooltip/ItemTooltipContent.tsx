@@ -61,6 +61,9 @@ const useStyles = makeStyles({
     glitchyColor: {
         color: "#cc88ff",
     },
+    overworldColor: {
+        color: "#ffee00",
+    },
     equipped: {
         color: "#33bbff",
     },
@@ -120,6 +123,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
     ingredients,
     isInBrokenSlot,
     isEntangled,
+    overworldStatus,
     profile,
     cheap,
     disableAnimation,
@@ -510,10 +514,26 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                     {ui("tooltip.entangled")}
                 </Text>
             )}
+            {!!overworldStatus && (
+                <Text
+                    wrap={false}
+                    block
+                    font="numeric"
+                    className={mergeClasses(
+                        styles.numericCompact,
+                        styles.overworldColor,
+                    )}
+                >
+                    {overworldStatus === "equipped" &&
+                        ui("tooltip.equipped_overworld")}
+                    {overworldStatus === "held" && ui("tooltip.held_overworld")}
+                    {overworldStatus === "ground" && ui("tooltip.ground")}
+                </Text>
+            )}
             <Text wrap={false} block italic className={styles.profile}>
                 {profile}
             </Text>
         </div>
     );
 };
-export const ItemTooltipContent = memo(ItemTooltipContentImpl); //, (prevProps, nextProps) => {
+export const ItemTooltipContent = memo(ItemTooltipContentImpl);
