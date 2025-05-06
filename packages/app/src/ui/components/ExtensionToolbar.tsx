@@ -89,7 +89,9 @@ export const ExtensionToolbar: React.FC<
                 }}
             >
                 {allIds.map((id, i) => (
-                    <Option key={`${id}-${i}`} value={id}>{t(`extension.${id}.name`)}</Option>
+                    <Option key={`${id}-${i}`} value={id}>
+                        {t(`extension.${id}.name`)}
+                    </Option>
                 ))}
             </Dropdown>
             {onClickPopout && (

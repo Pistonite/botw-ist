@@ -156,7 +156,10 @@ const OverworldItemSlotImpl: React.FC<OverworldItemSlotProps> = ({
     isMasterSwordFullPower,
     ...props
 }) => {
-    const slotProps = getSlotPropsFromOverworldItem(item, isMasterSwordFullPower);
+    const slotProps = getSlotPropsFromOverworldItem(
+        item,
+        isMasterSwordFullPower,
+    );
     return <ItemSlot {...slotProps} {...props} />;
 };
 export const OverworldItemSlot = memo(OverworldItemSlotImpl);
@@ -166,7 +169,10 @@ const OverworldItemSlotWithTooltipImpl: React.FC<OverworldItemSlotProps> = ({
     isMasterSwordFullPower,
     ...props
 }) => {
-    const slotProps = getSlotPropsFromOverworldItem(item, isMasterSwordFullPower);
+    const slotProps = getSlotPropsFromOverworldItem(
+        item,
+        isMasterSwordFullPower,
+    );
     const tooltipProps = getTooltipPropsFromOverworldItem(item);
     return (
         <ItemTooltip {...tooltipProps} {...props}>
@@ -174,4 +180,6 @@ const OverworldItemSlotWithTooltipImpl: React.FC<OverworldItemSlotProps> = ({
         </ItemTooltip>
     );
 };
-export const OverworldItemSlotWithTooltip = memo(OverworldItemSlotWithTooltipImpl);
+export const OverworldItemSlotWithTooltip = memo(
+    OverworldItemSlotWithTooltipImpl,
+);

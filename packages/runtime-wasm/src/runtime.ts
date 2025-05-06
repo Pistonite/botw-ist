@@ -1,6 +1,10 @@
 import { type Erc, makeErcType } from "@pistonite/pure/memory";
 
-import type { InvView_Gdt, InvView_Overworld, InvView_PouchList } from "@pistonite/skybook-api";
+import type {
+    InvView_Gdt,
+    InvView_Overworld,
+    InvView_PouchList,
+} from "@pistonite/skybook-api";
 
 import { parseScript } from "./parser.ts";
 import { sendPerfData } from "./app.ts";
@@ -100,11 +104,7 @@ export const getPouchList = async (
     bytePos: number,
 ): Promise<InvView_PouchList> => {
     return safeRun(script, (runRef, parseRef) => {
-        return wasm_bindgen.get_pouch_list(
-            runRef,
-            parseRef,
-            bytePos,
-        );
+        return wasm_bindgen.get_pouch_list(runRef, parseRef, bytePos);
     });
 };
 
@@ -113,11 +113,7 @@ export const getGdtInventory = (
     bytePos: number,
 ): Promise<InvView_Gdt> => {
     return safeRun(script, (runRef, parseRef) => {
-        return wasm_bindgen.get_gdt_inventory(
-            runRef,
-            parseRef,
-            bytePos,
-        );
+        return wasm_bindgen.get_gdt_inventory(runRef, parseRef, bytePos);
     });
 };
 
@@ -126,22 +122,21 @@ export const getOverworldItems = (
     bytePos: number,
 ): Promise<InvView_Overworld> => {
     return safeRun(script, (runRef, parseRef) => {
-        return wasm_bindgen.get_overworld_items(
-            runRef,
-            parseRef,
-            bytePos,
-        );
+        return wasm_bindgen.get_overworld_items(runRef, parseRef, bytePos);
     });
 };
 
-/** 
+/**
  * Helper to parse and execute the script and use the result (by
  * borrowing the strong pointer of run and parse output),
  * then free the results.
  *
  * The inner fn should NEVER throw
  */
-const safeRun = async <T>(script: string, fn: (runOutputRef: number, parseOutputRef: number) => T | Promise<T>): Promise<Awaited<T>> => {
+const safeRun = async <T>(
+    script: string,
+    fn: (runOutputRef: number, parseOutputRef: number) => T | Promise<T>,
+): Promise<Awaited<T>> => {
     const parseOutputErc = await parseScript(script);
     const runOutputErc = await executeScript(script);
 
@@ -175,4 +170,4 @@ const safeRun = async <T>(script: string, fn: (runOutputRef: number, parseOutput
     parseOutputErc.free();
     runOutputErc.free();
     return output.val;
-}
+};

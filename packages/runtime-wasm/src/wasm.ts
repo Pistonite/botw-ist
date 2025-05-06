@@ -2,7 +2,7 @@
 
 import type { Result } from "@pistonite/pure/result";
 
-/** 
+/**
  * Safe wrappers around panics from WASM
  *
  * Because WASM exceptions are not implemented yet, rust currently
@@ -19,11 +19,12 @@ let wasmPanicHandler: () => void = () => {
 };
 export const setWasmPanicHandler = (handler: () => void) => {
     wasmPanicHandler = handler;
-}
+};
 
 /** Execute the closure if WASM did not previously panic */
 export const safeExecWasm = async <T>(
-fn: () => T |Promise<T>): Promise<Result<Awaited<T>, "panic">> => {
+    fn: () => T | Promise<T>,
+): Promise<Result<Awaited<T>, "panic">> => {
     if (wasmPanicked) {
         return { err: "panic" };
     }
@@ -36,4 +37,4 @@ fn: () => T |Promise<T>): Promise<Result<Awaited<T>, "panic">> => {
         wasmPanicHandler();
     }
     return { err: "panic" };
-}
+};

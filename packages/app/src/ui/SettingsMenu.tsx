@@ -41,9 +41,7 @@ const SettingsMenuImpl: React.FC = () => {
     );
     const t = useUITranslation();
 
-    const tooltipPosition = isLessProductive ?
-        "below" :
-        "after";
+    const tooltipPosition = isLessProductive ? "below" : "after";
     return (
         <Menu>
             <MenuTrigger disableButtonEnhancement>

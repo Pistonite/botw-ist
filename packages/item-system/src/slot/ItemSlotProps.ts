@@ -180,17 +180,13 @@ export const getSlotPropsFromOverworldItem = (
 ): ItemSlotProps => {
     const actorName = item.data.actor;
     const [itemType] = getItemTypeAndUse(actorName);
-    const isEquipment = item.type === "equipped" || item.type === "groundEquipment";
+    const isEquipment =
+        item.type === "equipped" || item.type === "groundEquipment";
 
     let status: StatusProps;
     if (isEquipment) {
         const { value, flag } = item.data.modifier;
-        status = getStatusPropsForEquipment(
-            actorName,
-            itemType,
-            value,
-            flag
-        );
+        status = getStatusPropsForEquipment(actorName, itemType, value, flag);
     } else {
         status = getDefaultStatusPropsForActor(actorName);
     }
@@ -205,8 +201,8 @@ export const getSlotPropsFromOverworldItem = (
         holdingCount: item.type === "held" ? 1 : 0,
         ...status,
         isMasterSwordFullPower,
-    }
-}
+    };
+};
 
 const isChampionAbilityActor = (actor: string) => {
     return /^Obj_(DLC_)?HeroSoul_(Gerudo|Goron|Rito|Zora)$/.test(actor);

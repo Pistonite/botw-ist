@@ -60,7 +60,7 @@ export type ItemTooltipProps = {
     isEntangled: boolean;
 
     /** Status of the item, if it's in the overworld */
-    overworldStatus?: "equipped" | "held" | "ground",
+    overworldStatus?: "equipped" | "held" | "ground";
 
     /** string to show as the profile */
     profile: string;
@@ -227,7 +227,8 @@ export const getTooltipPropsFromOverworldItem = (
 ): ItemTooltipProps => {
     const actorName = item.data.actor;
     const [itemType] = getItemTypeAndUse(actorName);
-    const isEquipment = item.type === "equipped" || item.type === "groundEquipment";
+    const isEquipment =
+        item.type === "equipped" || item.type === "groundEquipment";
 
     const weaponModifiers = isEquipment
         ? getWeaponModifierStatusPropList(
@@ -259,5 +260,4 @@ export const getTooltipPropsFromOverworldItem = (
         overworldStatus,
         profile: getActorParam(actorName, "profile"),
     };
-
-}
+};

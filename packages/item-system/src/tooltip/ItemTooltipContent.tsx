@@ -524,7 +524,8 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                         styles.overworldColor,
                     )}
                 >
-                    {overworldStatus === "equipped" && ui("tooltip.equipped_overworld")}
+                    {overworldStatus === "equipped" &&
+                        ui("tooltip.equipped_overworld")}
                     {overworldStatus === "held" && ui("tooltip.held_overworld")}
                     {overworldStatus === "ground" && ui("tooltip.ground")}
                 </Text>

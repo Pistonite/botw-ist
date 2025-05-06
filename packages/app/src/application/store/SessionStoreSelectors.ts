@@ -1,12 +1,17 @@
 import { useEffect } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
+import type { WxPromise } from "@pistonite/workex";
 
-import type { InvView_Gdt, InvView_Overworld, InvView_PouchList, Runtime } from "@pistonite/skybook-api";
+import type {
+    InvView_Gdt,
+    InvView_Overworld,
+    InvView_PouchList,
+    Runtime,
+} from "@pistonite/skybook-api";
 
 import { useRuntime } from "self::application/runtime";
 
 import { useSessionStore } from "./SessionStore.ts";
-import { WxPromise } from "@pistonite/workex";
 
 /**
  * Get the debounced value of hasUnsavedChanges of the session
@@ -19,12 +24,12 @@ export const useDebouncedHasUnsavedChanges = (delay: number) => {
 };
 
 export type CachedRuntimeData<T> = {
-    data: T | undefined,
+    data: T | undefined;
     /** If the data is from cache, but not up to date */
-    stale: boolean,
+    stale: boolean;
     /** If new data is currently being processed in the runtime */
-    loading: boolean,
-}
+    loading: boolean;
+};
 
 /** Get the list view of the visible inventory of the current script and step */
 export const usePouchListView = (): CachedRuntimeData<InvView_PouchList> => {
@@ -41,9 +46,13 @@ export const usePouchListView = (): CachedRuntimeData<InvView_PouchList> => {
         setPouchViewInCache,
     );
 };
-const getPouchListShim = (runtime: Runtime, activeScript: string, stepIndex: number) => {
+const getPouchListShim = (
+    runtime: Runtime,
+    activeScript: string,
+    stepIndex: number,
+) => {
     return runtime.getPouchList(activeScript, stepIndex);
-}
+};
 
 /** Get the list view of the GDT inventory of the current script and step */
 export const useGdtInventoryView = (): CachedRuntimeData<InvView_Gdt> => {
@@ -60,31 +69,40 @@ export const useGdtInventoryView = (): CachedRuntimeData<InvView_Gdt> => {
         setGdtViewInCache,
     );
 };
-const getGdtInventoryShim = (runtime: Runtime, activeScript: string, stepIndex: number) => {
+const getGdtInventoryShim = (
+    runtime: Runtime,
+    activeScript: string,
+    stepIndex: number,
+) => {
     return runtime.getGdtInventory(activeScript, stepIndex);
-}
+};
 
 /** Get the view of the overworld items of the current script and step */
-export const useOverworldItemsView = (): CachedRuntimeData<InvView_Overworld> => {
-    const cachedViews = useSessionStore((state) => state.overworldViews);
-    const cacheValidity = useSessionStore((state) => state.overworldCached);
-    const setOverworldViewInCache = useSessionStore(
-        (state) => state.setOverworldViewInCache
-    );
-    return useStoreCachedRuntimeData(
-        "OverworldItems",
-        cachedViews,
-        cacheValidity,
-        getOverworldItemsShim,
-        setOverworldViewInCache,
-    );
-};
-const getOverworldItemsShim = (runtime: Runtime, activeScript: string, stepIndex: number) => {
+export const useOverworldItemsView =
+    (): CachedRuntimeData<InvView_Overworld> => {
+        const cachedViews = useSessionStore((state) => state.overworldViews);
+        const cacheValidity = useSessionStore((state) => state.overworldCached);
+        const setOverworldViewInCache = useSessionStore(
+            (state) => state.setOverworldViewInCache,
+        );
+        return useStoreCachedRuntimeData(
+            "OverworldItems",
+            cachedViews,
+            cacheValidity,
+            getOverworldItemsShim,
+            setOverworldViewInCache,
+        );
+    };
+const getOverworldItemsShim = (
+    runtime: Runtime,
+    activeScript: string,
+    stepIndex: number,
+) => {
     return runtime.getOverworldItems(activeScript, stepIndex);
-}
+};
 
-/** 
- * Use cached view from the session if possible, otherwise, call the 
+/**
+ * Use cached view from the session if possible, otherwise, call the
  * runtime to get the view and store it in the session.
  */
 const useStoreCachedRuntimeData = <T>(
@@ -92,7 +110,11 @@ const useStoreCachedRuntimeData = <T>(
     cachedViews: Record<number, T>,
     cacheValidity: number[],
     // must be stable
-    runFn: (runtime: Runtime, activeScript: string, stepIndex: number) => WxPromise<T>,
+    runFn: (
+        runtime: Runtime,
+        activeScript: string,
+        stepIndex: number,
+    ) => WxPromise<T>,
     setFn: (stepIndex: number, view: T) => void,
 ): CachedRuntimeData<T> => {
     const activeScript = useDebounce(
@@ -119,10 +141,15 @@ const useStoreCachedRuntimeData = <T>(
                 return;
             }
             if (view.err) {
-                console.error(`useStoreCachedRuntimeData failed for ${name}`, view.err);
+                console.error(
+                    `useStoreCachedRuntimeData failed for ${name}`,
+                    view.err,
+                );
                 return;
             }
-            console.log(`useStoreCachedRuntimeData: ${name} updated for step ${stepIndex}`);
+            console.log(
+                `useStoreCachedRuntimeData: ${name} updated for step ${stepIndex}`,
+            );
             setFn(stepIndex, view.val);
         };
 
@@ -131,19 +158,12 @@ const useStoreCachedRuntimeData = <T>(
         return () => {
             current = false;
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        inProgress,
-        cacheIsValid,
-        runtime,
-        activeScript,
-        stepIndex,
-        setFn,
-    ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [inProgress, cacheIsValid, runtime, activeScript, stepIndex, setFn]);
 
     return {
         data: inventory as T | undefined,
         stale: !cacheIsValid,
         loading: inProgress,
     };
-}
+};

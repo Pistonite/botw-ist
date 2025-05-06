@@ -15,7 +15,12 @@ import { skybookRuntimeApp } from "@pistonite/skybook-api/interfaces/RuntimeApp.
 
 import { getParserDiagnostics, getStepFromPos } from "./parser.ts";
 import { getImage, putImage } from "./imagedb.ts";
-import { executeScript, getGdtInventory, getOverworldItems, getPouchList } from "./runtime.ts";
+import {
+    executeScript,
+    getGdtInventory,
+    getOverworldItems,
+    getPouchList,
+} from "./runtime.ts";
 import { resolveAppPromise, getCustomBlueFlameImage } from "./app.ts";
 
 async function boot() {
@@ -121,7 +126,7 @@ async function boot() {
         getOverworldItems: wxWrapHandler(async (script, pos) => {
             await initializePromise;
             return await getOverworldItems(script, pos);
-        })
+        }),
     };
 
     await wxWorkerGlobal()({

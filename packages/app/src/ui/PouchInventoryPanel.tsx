@@ -7,7 +7,10 @@ import {
     mergeClasses,
 } from "@fluentui/react-components";
 
-import { OverworldItemSlotWithTooltip, PouchItemSlotWithTooltip, StandaloneItemSlotWithTooltip } from "skybook-item-system";
+import {
+    OverworldItemSlotWithTooltip,
+    PouchItemSlotWithTooltip,
+} from "skybook-item-system";
 import { useUITranslation } from "skybook-localization";
 
 import {
@@ -20,7 +23,6 @@ import {
 import { InventoryTitle } from "./components/InventoryTitle.tsx";
 import { Code } from "./components/Code.tsx";
 import { getOverworldBackgroundUrl } from "./asset.ts";
-import { ChevronLeft24Regular } from "@fluentui/react-icons/fonts";
 
 const useStyles = makeStyles({
     container: {
@@ -93,10 +95,15 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     const styles = useStyles();
     const dark = useDark();
     const { data: pouch, stale, loading } = usePouchListView();
-    const { data: overworld, stale: overworldStale, loading: overworldLoading } = useOverworldItemsView();
+    const {
+        data: overworld,
+        stale: overworldStale,
+        loading: overworldLoading,
+    } = useOverworldItemsView();
     const { data: gdt } = useGdtInventoryView();
 
-    const showSpinner = loading || stale || !pouch || overworldLoading || overworldStale;
+    const showSpinner =
+        loading || stale || !pouch || overworldLoading || overworldStale;
     const t = useUITranslation();
 
     const itemSlotProps = useItemSlotPropsFromSettings();
@@ -120,14 +127,11 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                     relationship="label"
                     content={
                         <>
-                            {t("main.mcount_desc")} (<Code>mCount</Code>
-                            )
+                            {t("main.mcount_desc")} (<Code>mCount</Code>)
                         </>
                     }
                 >
-                    <Text font="numeric">
-                        [ {pouch?.count ?? "???"} ]
-                    </Text>
+                    <Text font="numeric">[ {pouch?.count ?? "???"} ]</Text>
                 </Tooltip>
             }
             loading={showSpinner}
@@ -142,9 +146,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                         item={item}
                         key={i}
                         list1Count={pouch.count}
-                        isMasterSwordFullPower={
-                            isMasterSwordFullPower
-                        }
+                        isMasterSwordFullPower={isMasterSwordFullPower}
                         {...itemSlotProps}
                     />
                 ))}
@@ -153,22 +155,24 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     );
 
     const overworldScrollHandler = useHorizontalScrollWheelHandler();
-    const $OverworldItems = overworld !== undefined && overworld.items.length > 0 && (
-        <div className={styles.overworldScroll} onWheel={overworldScrollHandler} >
-            <div className={styles.overworldList}>
-                {overworld.items.map((item, i) => (
-                    <OverworldItemSlotWithTooltip
-                        item={item}
-                        key={i}
-                        isMasterSwordFullPower={
-                            isMasterSwordFullPower
-                        }
-                        {...itemSlotProps}
-                    />
-                ))}
+    const $OverworldItems = overworld !== undefined &&
+        overworld.items.length > 0 && (
+            <div
+                className={styles.overworldScroll}
+                onWheel={overworldScrollHandler}
+            >
+                <div className={styles.overworldList}>
+                    {overworld.items.map((item, i) => (
+                        <OverworldItemSlotWithTooltip
+                            item={item}
+                            key={i}
+                            isMasterSwordFullPower={isMasterSwordFullPower}
+                            {...itemSlotProps}
+                        />
+                    ))}
+                </div>
             </div>
-        </div>
-    );
+        );
 
     return (
         <div className={styles.container}>
@@ -177,7 +181,9 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                 <div
                     className={mergeClasses(
                         styles.inventoryContainer,
-                        dark ? styles.inventoryContainerBgDark : styles.inventoryContainerBgLight,
+                        dark
+                            ? styles.inventoryContainerBgDark
+                            : styles.inventoryContainerBgLight,
                     )}
                 >
                     {$Title}
@@ -191,8 +197,8 @@ export const PouchInventoryPanelImpl: React.FC = () => {
 
 export const PouchInventoryPanel = memo(PouchInventoryPanelImpl);
 
-/** 
- * A trick to scroll horizontally on mouch wheel events. 
+/**
+ * A trick to scroll horizontally on mouch wheel events.
  * Requires scroll-behavior: smooth on target
  */
 const useHorizontalScrollWheelHandler = () => {
@@ -205,7 +211,10 @@ const useHorizontalScrollWheelHandler = () => {
         if (max <= 0) {
             return;
         }
-        const target = Math.max(Math.min(scrollLeftTarget.current + e.deltaY, max), 0);
+        const target = Math.max(
+            Math.min(scrollLeftTarget.current + e.deltaY, max),
+            0,
+        );
         scrollLeftTarget.current = target;
         e.currentTarget.scrollLeft = target;
     };

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     Field,
     makeStyles,
@@ -7,7 +8,7 @@ import {
 } from "@fluentui/react-components";
 import { useQuery } from "@tanstack/react-query";
 import type { Result } from "@pistonite/pure/result";
-import { useDeferredValue, useState } from "react";
+import { useDebounce } from "@uidotdev/usehooks";
 
 import {
     type SearchResultNoScore,
@@ -19,7 +20,6 @@ import {
 } from "skybook-item-system";
 
 import { Code, Interpolate } from "self::ui/components";
-import { useDebounce } from "@uidotdev/usehooks";
 
 export type Searcher = {
     search(
