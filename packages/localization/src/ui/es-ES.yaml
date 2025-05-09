@@ -146,6 +146,9 @@ item_explorer.label.search_placeholder: "Buscar"
 item_explorer.search_error.unknown_tag: "Etiqueta de idioma desconocida \"{{tag}}\""
 
 # Item Slot Tooltip
+tooltip.accessible_dpad_none: "No está en el menú de la cruceta"
+tooltip.accessible_dpad_only: "Solo en el menú de la cruceta"
+tooltip.accessible_none: "No interactuable"
 tooltip.bad_cook_data: "Los datos de cocina no tienen efecto"
 tooltip.broken_slot: "Se transferirá"
 tooltip.durability: "Durabilidad: {{current}}/{{max}}"

@@ -146,6 +146,9 @@ item_explorer.label.search_placeholder: "Search"
 item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
 
 # Item Slot Tooltip
+tooltip.accessible_dpad_none: "Not in D-Pad Menu"
+tooltip.accessible_dpad_only: "Only in D-Pad Menu"
+tooltip.accessible_none: "Non-interactable"
 tooltip.bad_cook_data: "Cook data has no effect"
 tooltip.broken_slot: "Will be transferred"
 tooltip.durability: "Durability: {{current}}/{{max}}"

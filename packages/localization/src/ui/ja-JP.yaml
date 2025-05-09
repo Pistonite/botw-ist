@@ -146,6 +146,9 @@ item_explorer.label.search_placeholder: "検索"
 item_explorer.search_error.unknown_tag: "不明な言語タグ \"{{tag}}\""
 
 # Item Slot Tooltip
+tooltip.accessible_dpad_none: "方向パッドメニューでは利用不可"
+tooltip.accessible_dpad_only: "方向パッドメニューのみで利用可能"
+tooltip.accessible_none: "操作不可"
 tooltip.bad_cook_data: "料理データに効果がありません"
 tooltip.broken_slot: "転送予定"
 tooltip.durability: "耐久度: {{current}}/{{max}}"

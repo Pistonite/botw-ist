@@ -146,6 +146,9 @@ item_explorer.label.search_placeholder: "Suchen"
 item_explorer.search_error.unknown_tag: "Unbekannter Sprachcode \"{{tag}}\""
 
 # Item Slot Tooltip
+tooltip.accessible_dpad_none: "Nicht im Steuerkreuz-Menü verfügbar"
+tooltip.accessible_dpad_only: "Nur im Steuerkreuz-Menü verfügbar"
+tooltip.accessible_none: "Nicht interaktiv"
 tooltip.bad_cook_data: "Kochdaten haben keine Wirkung"
 tooltip.broken_slot: "Wird übertragen"
 tooltip.durability: "Haltbarkeit: {{current}}/{{max}}"

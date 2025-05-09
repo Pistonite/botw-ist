@@ -146,6 +146,9 @@ item_explorer.label.search_placeholder: "搜索"
 item_explorer.search_error.unknown_tag: "未知语言标签 \"{{tag}}\""
 
 # Item Slot Tooltip
+tooltip.accessible_dpad_none: "不在十字键界面显示"
+tooltip.accessible_dpad_only: "仅在十字键界面显示"
+tooltip.accessible_none: "无法交互"
 tooltip.bad_cook_data: "料理数据无实际效果"
 tooltip.broken_slot: "转存格"
 tooltip.durability: "耐久: {{current}}/{{max}}"
