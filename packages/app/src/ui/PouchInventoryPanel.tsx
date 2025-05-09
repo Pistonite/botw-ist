@@ -1,5 +1,4 @@
 import { memo, useRef } from "react";
-import { useDark } from "@pistonite/pure-react";
 import {
     Text,
     makeStyles,
@@ -48,12 +47,7 @@ const useStyles = makeStyles({
         display: "flex",
         flexDirection: "column",
         flex: 1,
-    },
-    inventoryContainerBgDark: {
         backgroundColor: "#00000066",
-    },
-    inventoryContainerBgLight: {
-        backgroundColor: "#ffffff44",
     },
     background: {
         // This is to hide the UI elements like health bar, etc
@@ -93,7 +87,6 @@ const useStyles = makeStyles({
 
 export const PouchInventoryPanelImpl: React.FC = () => {
     const styles = useStyles();
-    const dark = useDark();
     const { data: pouch, stale, loading } = usePouchListView();
     const {
         data: overworld,
@@ -135,6 +128,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                 </Tooltip>
             }
             loading={showSpinner}
+            dark
         />
     );
 
@@ -178,14 +172,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         <div className={styles.container}>
             {$Background}
             <div className={mergeClasses(styles.absPos, styles.splitContainer)}>
-                <div
-                    className={mergeClasses(
-                        styles.inventoryContainer,
-                        dark
-                            ? styles.inventoryContainerBgDark
-                            : styles.inventoryContainerBgLight,
-                    )}
-                >
+                <div className={styles.inventoryContainer}>
                     {$Title}
                     {$PouchItems}
                 </div>

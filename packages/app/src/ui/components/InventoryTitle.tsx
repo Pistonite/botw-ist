@@ -6,7 +6,6 @@ import {
     mergeClasses,
 } from "@fluentui/react-components";
 import { Info16Regular } from "@fluentui/react-icons";
-import { useDark } from "@pistonite/pure-react";
 
 import { GlowyText } from "./GlowyText.tsx";
 
@@ -54,14 +53,15 @@ export type InventoryTitleProps = {
     supertitle?: JSX.Element;
     /** Whether to display a loading spinner. */
     loading?: boolean;
+    /** Whether to display the title in dark mode theme (which means the title is light-colored) */
+    dark?: boolean;
 };
 
 /** Header of the inventory display section. */
 export const InventoryTitle: React.FC<
     PropsWithChildren<InventoryTitleProps>
-> = ({ title, description, supertitle, loading, children }) => {
+> = ({ title, description, supertitle, loading, dark, children }) => {
     const styles = useStyles();
-    const dark = useDark();
     return (
         <div className={styles.container}>
             <span
@@ -70,7 +70,7 @@ export const InventoryTitle: React.FC<
                     dark ? styles.titleColorDark : styles.titleColorLight,
                 )}
             >
-                <GlowyText size={500} weight="bold">
+                <GlowyText size={500} weight="bold" dark={dark}>
                     {title}
                 </GlowyText>
                 <span className={styles.supertitle}>

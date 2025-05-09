@@ -9,61 +9,53 @@ export type InvView_GdtItemData =
     | { type: "none" }
     | {
           type: "sword";
-          data: {
-              /**
-               * Index of the data in the PorchSword_* array
-               */
-              idx: number;
-              /**
-               * modifier data loaded from GDT
-               */
-              info: InvView_WeaponModifier;
-          };
+          /**
+           * Index of the data in the PorchSword_* array
+           */
+          idx: number;
+          /**
+           * modifier data loaded from GDT
+           */
+          info: InvView_WeaponModifier;
       }
     | {
           type: "bow";
-          data: {
-              /**
-               * Index of the data in the PorchBow_* array
-               */
-              idx: number;
-              /**
-               * modifier data loaded from GDT
-               */
-              info: InvView_WeaponModifier;
-          };
+          /**
+           * Index of the data in the PorchBow_* array
+           */
+          idx: number;
+          /**
+           * modifier data loaded from GDT
+           */
+          info: InvView_WeaponModifier;
       }
     | {
           type: "shield";
-          data: {
-              /**
-               * Index of the data in the PorchShield_* array
-               */
-              idx: number;
-              /**
-               * modifier data loaded from GDT
-               */
-              info: InvView_WeaponModifier;
-          };
+          /**
+           * Index of the data in the PorchShield_* array
+           */
+          idx: number;
+          /**
+           * modifier data loaded from GDT
+           */
+          info: InvView_WeaponModifier;
       }
     | {
           type: "food";
-          data: {
-              /**
-               * Index of the data in the various GDT array that stores food info
-               */
-              idx: number;
-              /**
-               * Food info loaded from GDT
-               */
-              info: InvView_ItemData;
-              /**
-               * The y value of CookEffect1
-               */
-              unused_effect_1y: number;
-              /**
-               * The ingredient names, loaded from CookMaterialX flags, where X is 0-4
-               */
-              ingredients: [string, string, string, string, string];
-          };
+          /**
+           * Index of the data in the various GDT array that stores food info
+           */
+          idx: number;
+          /**
+           * Food info loaded from GDT
+           */
+          info: InvView_ItemData;
+          /**
+           * The y value of CookEffect1
+           */
+          unused_effect_1y: number;
+          /**
+           * The ingredient names, loaded from CookMaterialX flags, where X is 0-4
+           */
+          ingredients: [string, string, string, string, string];
       };

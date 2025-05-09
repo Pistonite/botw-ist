@@ -146,6 +146,9 @@ item_explorer.label.search_placeholder: "검색"
 item_explorer.search_error.unknown_tag: "알 수 없는 언어 태그 \"{{tag}}\""
 
 # Item Slot Tooltip
+tooltip.accessible_dpad_none: "방향 패드 메뉴에서 사용 불가"
+tooltip.accessible_dpad_only: "방향 패드 메뉴에서만 사용 가능"
+tooltip.accessible_none: "상호작용 불가"
 tooltip.bad_cook_data: "요리 데이터에 효과가 없습니다"
 tooltip.broken_slot: "전송 예정"
 tooltip.durability: "내구도: {{current}}/{{max}}"

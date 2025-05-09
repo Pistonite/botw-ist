@@ -127,6 +127,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
     profile,
     cheap,
     disableAnimation,
+    accessibleStatus,
 }) => {
     const styles = useStyles();
 
@@ -528,6 +529,21 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                         ui("tooltip.equipped_overworld")}
                     {overworldStatus === "held" && ui("tooltip.held_overworld")}
                     {overworldStatus === "ground" && ui("tooltip.ground")}
+                </Text>
+            )}
+            {!!accessibleStatus && (
+                <Text
+                    wrap={false}
+                    block
+                    font="numeric"
+                    className={mergeClasses(
+                        styles.numericCompact,
+                        styles.glitchyColor,
+                    )}
+                >
+                    {ui(
+                        `tooltip.accessible_${accessibleStatus.replace("-", "_")}`,
+                    )}
                 </Text>
             )}
             <Text wrap={false} block italic className={styles.profile}>

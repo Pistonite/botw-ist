@@ -146,6 +146,9 @@ item_explorer.label.search_placeholder: "Поиск"
 item_explorer.search_error.unknown_tag: "Неизвестная языковая метка \"{{tag}}\""
 
 # Item Slot Tooltip
+tooltip.accessible_dpad_none: "Недоступно в меню крестовины"
+tooltip.accessible_dpad_only: "Доступно только в меню крестовины"
+tooltip.accessible_none: "Недоступно для взаимодействия"
 tooltip.bad_cook_data: "Данные приготовления не дают эффекта"
 tooltip.broken_slot: "Будет перенесено"
 tooltip.durability: "Прочность: {{current}}/{{max}}"

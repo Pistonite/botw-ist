@@ -146,6 +146,9 @@ item_explorer.label.search_placeholder: "Zoeken"
 item_explorer.search_error.unknown_tag: "Onbekend taallabel \"{{tag}}\""
 
 # Item Slot Tooltip
+tooltip.accessible_dpad_none: "Niet beschikbaar in het D-pad-menu"
+tooltip.accessible_dpad_only: "Alleen beschikbaar in het D-pad-menu"
+tooltip.accessible_none: "Niet interactief"
 tooltip.bad_cook_data: "Kookgegevens hebben geen effect"
 tooltip.broken_slot: "Wordt overgedragen"
 tooltip.durability: "Duurzaamheid: {{current}}/{{max}}"

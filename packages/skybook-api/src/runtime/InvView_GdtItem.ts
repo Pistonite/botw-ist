@@ -2,6 +2,9 @@
 import type { InvView_CommonItem } from "./InvView_CommonItem";
 import type { InvView_GdtItemData } from "./InvView_GdtItemData";
 
+/**
+ * One item in GDT
+ */
 export type InvView_GdtItem = {
     /**
      * Common item info
