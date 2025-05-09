@@ -1,5 +1,10 @@
+import type { PropsWithChildren } from "react";
 import { Text, makeStyles, mergeClasses } from "@fluentui/react-components";
-import { Link32Regular } from "@fluentui/react-icons";
+import {
+    Games32Regular,
+    Link32Regular,
+    PresenceBlocked24Regular,
+} from "@fluentui/react-icons";
 
 import {
     ActorSprite,
@@ -123,13 +128,39 @@ const useStyles = makeStyles({
         borderRadius: "4px",
         border: "1px solid #333333",
     },
-    entangle: {
-        color: "#b7f1ff",
+    bigStatusIcon: {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        filter: "drop-shadow(0 0 5px #3aa0ff)",
         position: "absolute",
+    },
+    accessibleStatusDpadIcon: {
+        bottom: "0px",
+        top: "0px",
+        right: "0px",
+        left: "0px",
+    },
+    accessibleStatusDpadOnly: {
+        color: "#b7f1ff",
+        filter: "drop-shadow(0 0 5px #3aa0ff)",
+    },
+    accessibleStatusBlockIcon: {
+        bottom: "0px",
+        top: "0px",
+        right: "0px",
+        left: "0px",
+        scale: 2,
+    },
+    accessibleStatusNone: {
+        color: "#ff0000",
+    },
+    accessibleStatusDpadNone: {
+        color: "#ffffb5",
+        filter: "drop-shadow(0 0 5px #f0673a)",
+    },
+    entangle: {
+        color: "#b7f1ff",
+        filter: "drop-shadow(0 0 5px #3aa0ff)",
         bottom: "0px",
         right: "4px",
     },
@@ -196,178 +227,211 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
     deactive,
     badlyDamaged,
     isMasterSwordFullPower,
+    accessibleStatus,
 }) => {
     const styles = useStyles();
 
     disableAnimation = disableAnimation || cheap;
+
+    const $Outline = (
+        <div
+            className={mergeClasses(
+                styles.boxOutline,
+                !isInBrokenSlot && styles.boxOutlineColor,
+                isTranslucent && styles.imageTranslucent,
+            )}
+        >
+            {" "}
+        </div>
+    );
+    const $BoxInside = (
+        <div
+            className={mergeClasses(
+                styles.boxInside,
+                !isInBrokenSlot && styles.boxInsideColor,
+                holdingCount > 0
+                    ? styles.boxInsideHighlightBorder
+                    : styles.boxInsideBorder,
+                isEquipped && styles.equipped,
+                isTranslucent && styles.imageTranslucent,
+            )}
+        >
+            {" "}
+        </div>
+    );
+
+    const $SpriteLayer = (
+        <div
+            className={mergeClasses(
+                styles.layer,
+                styles.image,
+
+                isTranslucent && styles.imageTranslucent,
+            )}
+        >
+            <ActorSprite
+                actor={actor}
+                effect={elixirEffect}
+                cheap={cheap}
+                deactive={deactive}
+                disableAnimation={disableAnimation}
+                badlyDamaged={badlyDamaged}
+                blank={blank}
+                powered={isMasterSwordFullPower}
+            />
+        </div>
+    );
+
+    // Using DOM instead of Unicode for the circle, in case user is missing font
+    const $HoldingLayer = holdingCount > 0 && (
+        <div className={mergeClasses(styles.layer)}>
+            <div className={styles.holding}>
+                {Array.from({ length: holdingCount }).map((_, i) => (
+                    <span key={i} className={styles.holdingElement} />
+                ))}
+            </div>
+        </div>
+    );
+
+    const $DurabilityLayer = durability !== undefined && (
+        <div className={mergeClasses(styles.layer)}>
+            <span
+                className={mergeClasses(styles.overlayText, styles.durability)}
+            >
+                <Text font="numeric">
+                    {Number.isInteger(durability)
+                        ? durability
+                        : durability.toFixed(2)}
+                </Text>
+            </span>
+        </div>
+    );
+
+    const $CountLayer = count !== undefined && (
+        <div className={mergeClasses(styles.layer)}>
+            <span
+                className={mergeClasses(
+                    styles.itemCount,
+                    !isEquipped && styles.itemCountShadow,
+                )}
+            >
+                x{count}
+            </span>
+        </div>
+    );
+
+    const $StatusText = !!statusIconValue && (
+        <Text
+            font="numeric"
+            className={mergeClasses(
+                styles.modifierText,
+                statusIsAlternativeColor
+                    ? styles.modifierTextColor2
+                    : styles.modifierTextColor1,
+                (status === SpecialStatus.None || !statusIcon) &&
+                    styles.modifierTextBeginPad,
+            )}
+        >
+            {statusIconValue}
+        </Text>
+    );
+
+    const $StatusLayer = (!!statusIconValue ||
+        status !== SpecialStatus.None) && (
+        <div className={mergeClasses(styles.layer)}>
+            <span
+                className={mergeClasses(
+                    styles.overlayText,
+                    styles.modifierOverlay,
+                )}
+            >
+                {status !== SpecialStatus.None && statusIcon && (
+                    <div className={styles.modifier}>
+                        <ModifierSprite status={statusIcon} />
+                    </div>
+                )}
+                {$StatusText}
+            </span>
+        </div>
+    );
+
+    const $EntangleLayer = isEntangled && (
+        <Layer4x>
+            <span
+                className={mergeClasses(
+                    styles.entangle,
+                    styles.bigStatusIcon,
+                    !disableAnimation && styles.entangleAnimation,
+                )}
+            >
+                <Link32Regular />
+            </span>
+        </Layer4x>
+    );
+
+    const $DpadIconLayer = accessibleStatus?.startsWith("dpad") && (
+        <Layer4x>
+            <span
+                className={mergeClasses(
+                    styles.bigStatusIcon,
+                    styles.accessibleStatusDpadIcon,
+                    accessibleStatus === "dpad-none"
+                        ? styles.accessibleStatusDpadNone
+                        : styles.accessibleStatusDpadOnly,
+                )}
+            >
+                <Games32Regular />
+            </span>
+        </Layer4x>
+    );
+
+    const $BlockedIconLayer = accessibleStatus === "none" && (
+        <div className={mergeClasses(styles.layer)}>
+            <span
+                className={mergeClasses(
+                    styles.bigStatusIcon,
+                    styles.accessibleStatusBlockIcon,
+                    styles.accessibleStatusNone,
+                )}
+            >
+                <PresenceBlocked24Regular />
+            </span>
+        </div>
+    );
+
     return (
         <div className={styles.container}>
-            {/* Background & box*/}
             <div
                 className={mergeClasses(
                     styles.layer,
                     isInBrokenSlot && styles.broken,
                 )}
             >
-                <div
-                    className={mergeClasses(
-                        styles.boxOutline,
-                        !isInBrokenSlot && styles.boxOutlineColor,
-                        isTranslucent && styles.imageTranslucent,
-                    )}
-                >
-                    {" "}
-                </div>
-                <div
-                    className={mergeClasses(
-                        styles.boxInside,
-                        !isInBrokenSlot && styles.boxInsideColor,
-                        holdingCount > 0
-                            ? styles.boxInsideHighlightBorder
-                            : styles.boxInsideBorder,
-                        isEquipped && styles.equipped,
-                        isTranslucent && styles.imageTranslucent,
-                    )}
-                >
-                    {" "}
-                </div>
+                {$Outline}
+                {$BoxInside}
             </div>
-            <div
-                className={mergeClasses(
-                    styles.layer,
-                    styles.image,
-
-                    isTranslucent && styles.imageTranslucent,
-                )}
-            >
-                <ActorSprite
-                    actor={actor}
-                    effect={elixirEffect}
-                    cheap={cheap}
-                    deactive={deactive}
-                    disableAnimation={disableAnimation}
-                    badlyDamaged={badlyDamaged}
-                    blank={blank}
-                    powered={isMasterSwordFullPower}
-                />
-            </div>
-            {holdingCount > 0 && (
-                <div className={mergeClasses(styles.layer)}>
-                    {/* Using DOM instead of Unicode for the circle, in case user is missing font */}
-                    <div className={styles.holding}>
-                        {Array.from({ length: holdingCount }).map((_, i) => (
-                            <span
-                                key={i}
-                                className={styles.holdingElement}
-                            ></span>
-                        ))}
-                    </div>
-                </div>
-            )}
-            {durability !== undefined && (
-                <div className={mergeClasses(styles.layer)}>
-                    <span
-                        className={mergeClasses(
-                            styles.overlayText,
-                            styles.durability,
-                        )}
-                    >
-                        <Text font="numeric">
-                            {Number.isInteger(durability)
-                                ? durability
-                                : durability.toFixed(2)}
-                        </Text>
-                    </span>
-                </div>
-            )}
-            {count !== undefined && (
-                <div className={mergeClasses(styles.layer)}>
-                    <span
-                        className={mergeClasses(
-                            styles.itemCount,
-                            !isEquipped && styles.itemCountShadow,
-                        )}
-                    >
-                        x{count}
-                    </span>
-                </div>
-            )}
-            {isEntangled && (
-                <>
-                    <div className={mergeClasses(styles.layer)}>
-                        <span
-                            className={mergeClasses(
-                                styles.entangle,
-                                !disableAnimation && styles.entangleAnimation,
-                            )}
-                        >
-                            <Link32Regular />
-                        </span>
-                    </div>
-                    <div className={mergeClasses(styles.layer)}>
-                        <span
-                            className={mergeClasses(
-                                styles.entangle,
-                                !disableAnimation && styles.entangleAnimation,
-                            )}
-                        >
-                            <Link32Regular />
-                        </span>
-                    </div>
-                    <div className={mergeClasses(styles.layer)}>
-                        <span
-                            className={mergeClasses(
-                                styles.entangle,
-                                !disableAnimation && styles.entangleAnimation,
-                            )}
-                        >
-                            <Link32Regular />
-                        </span>
-                    </div>
-                    <div className={mergeClasses(styles.layer)}>
-                        <span
-                            className={mergeClasses(
-                                styles.entangle,
-                                !disableAnimation && styles.entangleAnimation,
-                            )}
-                        >
-                            <Link32Regular />
-                        </span>
-                    </div>
-                </>
-            )}
-            {(!!statusIconValue || status !== SpecialStatus.None) && (
-                <div className={mergeClasses(styles.layer)}>
-                    <span
-                        className={mergeClasses(
-                            styles.overlayText,
-                            styles.modifierOverlay,
-                        )}
-                    >
-                        {status !== SpecialStatus.None && statusIcon && (
-                            <div className={styles.modifier}>
-                                <ModifierSprite status={statusIcon} />
-                            </div>
-                        )}
-                        {!!statusIconValue && (
-                            <Text
-                                font="numeric"
-                                className={mergeClasses(
-                                    styles.modifierText,
-                                    statusIsAlternativeColor
-                                        ? styles.modifierTextColor2
-                                        : styles.modifierTextColor1,
-                                    (status === SpecialStatus.None ||
-                                        !statusIcon) &&
-                                        styles.modifierTextBeginPad,
-                                )}
-                            >
-                                {statusIconValue}
-                            </Text>
-                        )}
-                    </span>
-                </div>
-            )}
+            {$SpriteLayer}
+            {$HoldingLayer}
+            {$DurabilityLayer}
+            {$CountLayer}
+            {$StatusLayer}
+            {$DpadIconLayer}
+            {$BlockedIconLayer}
+            {$EntangleLayer}
         </div>
+    );
+};
+
+/** Display a layer 4 times to enhance the effect */
+const Layer4x: React.FC<PropsWithChildren> = ({ children }) => {
+    const styles = useStyles();
+    return (
+        <>
+            {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className={mergeClasses(styles.layer)}>
+                    {children}
+                </div>
+            ))}
+        </>
     );
 };

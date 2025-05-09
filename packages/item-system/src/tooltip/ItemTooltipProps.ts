@@ -62,6 +62,15 @@ export type ItemTooltipProps = {
     /** Status of the item, if it's in the overworld */
     overworldStatus?: "equipped" | "held" | "ground";
 
+    /**
+     * Accessibility status of the item
+     *
+     * - dpad-only: item can only be accessed via dpad
+     * - dpad-none: item can't be accessed via dpad
+     * - none: item can't be accessed whatsoever
+     */
+    accessibleStatus?: "dpad-only" | "dpad-none" | "none";
+
     /** string to show as the profile */
     profile: string;
 };
@@ -142,6 +151,14 @@ export const getTooltipPropsFromPouchItem = (
     const isFood = realItemType === PouchItemType.Food;
     const cookData = isFood ? { ...item.data } : undefined;
 
+    const accessibleStatus = item.accessible
+        ? item.dpadAccessible
+            ? undefined
+            : "dpad-none"
+        : item.dpadAccessible
+          ? "dpad-only"
+          : "none";
+
     return {
         actor: actorName,
         isEquipment,
@@ -166,6 +183,7 @@ export const getTooltipPropsFromPouchItem = (
         },
         isInBrokenSlot: item.allocatedIdx >= list1Count,
         isEntangled: item.promptEntangled,
+        accessibleStatus,
         profile: getActorParam(actorName, "profile"),
     };
 };
@@ -182,19 +200,17 @@ export const getTooltipPropsFromGdtItem = (
         ? getWeaponModifierStatusPropList(
               actorName,
               gdtTypeToPouchItemType(gdtType),
-              data.data.info.value,
-              data.data.info.flag,
+              data.info.value,
+              data.info.flag,
           )
         : [];
     const isFood = isGdtDataFoodType(data);
     const cookData = isFood
         ? {
-              ...data.data.info,
+              ...data.info,
           }
         : undefined;
-    const ingredients = isFood
-        ? normalizeIngredients(data.data.ingredients)
-        : [];
+    const ingredients = isFood ? normalizeIngredients(data.ingredients) : [];
 
     return {
         actor: actorName,
@@ -208,13 +224,11 @@ export const getTooltipPropsFromGdtItem = (
         ingredients,
         gdtMeta: {
             index: item.idx,
-            indexSword:
-                item.data.type === "sword" ? item.data.data.idx : undefined,
-            indexBow: item.data.type === "bow" ? item.data.data.idx : undefined,
+            indexSword: item.data.type === "sword" ? item.data.idx : undefined,
+            indexBow: item.data.type === "bow" ? item.data.idx : undefined,
             indexShield:
-                item.data.type === "shield" ? item.data.data.idx : undefined,
-            indexFood:
-                item.data.type === "food" ? item.data.data.idx : undefined,
+                item.data.type === "shield" ? item.data.idx : undefined,
+            indexFood: item.data.type === "food" ? item.data.idx : undefined,
         },
         isInBrokenSlot: false,
         isEntangled: false,
@@ -225,17 +239,17 @@ export const getTooltipPropsFromGdtItem = (
 export const getTooltipPropsFromOverworldItem = (
     item: InvView_OverworldItem,
 ): ItemTooltipProps => {
-    const actorName = item.data.actor;
+    const actorName = item.actor;
     const [itemType] = getItemTypeAndUse(actorName);
     const isEquipment =
-        item.type === "equipped" || item.type === "groundEquipment";
+        item.type === "equipped" || item.type === "ground-equipment";
 
     const weaponModifiers = isEquipment
         ? getWeaponModifierStatusPropList(
               actorName,
               itemType,
-              item.data.modifier.value,
-              item.data.modifier.flag,
+              item.modifier.value,
+              item.modifier.flag,
           )
         : [];
 
@@ -249,7 +263,7 @@ export const getTooltipPropsFromOverworldItem = (
     return {
         actor: actorName,
         isEquipment,
-        value: isEquipment ? item.data.value : undefined,
+        value: isEquipment ? item.value : undefined,
         isEquipped: false, // we use the overworld status, not inventory equipped status
         isTranslucent: false,
         holdingCount: 0, // we use the overworld status

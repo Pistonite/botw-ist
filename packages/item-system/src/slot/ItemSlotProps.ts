@@ -55,6 +55,15 @@ export type ItemSlotProps = {
 
     /** If true, show the master sword as full power */
     isMasterSwordFullPower: boolean;
+
+    /**
+     * Accessibility status of the item
+     *
+     * - dpad-only: item can only be accessed via dpad
+     * - dpad-none: item can't be accessed via dpad
+     * - none: item can't be accessed whatsoever
+     */
+    accessibleStatus?: "dpad-only" | "dpad-none" | "none";
 } & StatusProps &
     Pick<ActorSpriteProps, "blank" | "deactive" | "badlyDamaged">;
 
@@ -102,6 +111,14 @@ export const getSlotPropsFromPouchItem = (
         item.data.sellPrice,
     );
 
+    const accessibleStatus = item.accessible
+        ? item.dpadAccessible
+            ? undefined
+            : "dpad-none"
+        : item.dpadAccessible
+          ? "dpad-only"
+          : "none";
+
     return {
         actor: actorName,
         elixirEffect: CookEffectNames[item.data.effectId] || undefined,
@@ -117,6 +134,7 @@ export const getSlotPropsFromPouchItem = (
         deactive: getDeactive(isAbility, isEquipped, actorName, value),
         badlyDamaged: isEquipment && value <= 300,
         isMasterSwordFullPower,
+        accessibleStatus,
     };
 };
 
@@ -134,7 +152,7 @@ export const getSlotPropsFromGdtItem = (
     const isFood = isGdtDataFoodType(data);
     let status: StatusProps;
     if (isEquipment) {
-        const { value, flag } = data.data.info;
+        const { value, flag } = data.info;
         status = getStatusPropsForEquipment(
             actorName,
             gdtTypeToPouchItemType(gdtType),
@@ -142,7 +160,7 @@ export const getSlotPropsFromGdtItem = (
             flag,
         );
     } else if (isFood) {
-        const { effectId, effectValue, sellPrice } = data.data.info;
+        const { effectId, effectValue, sellPrice } = data.info;
         status = getStatusProps(
             actorName,
             PouchItemType.Food,
@@ -157,7 +175,7 @@ export const getSlotPropsFromGdtItem = (
     return {
         actor: actorName,
         elixirEffect: isFood
-            ? CookEffectNames[data.data.info.effectId] || undefined
+            ? CookEffectNames[data.info.effectId] || undefined
             : undefined,
         isEquipped: !isAbility && isEquipped,
         isTranslucent: false,
@@ -178,14 +196,14 @@ export const getSlotPropsFromOverworldItem = (
     item: InvView_OverworldItem,
     isMasterSwordFullPower: boolean,
 ): ItemSlotProps => {
-    const actorName = item.data.actor;
+    const actorName = item.actor;
     const [itemType] = getItemTypeAndUse(actorName);
     const isEquipment =
-        item.type === "equipped" || item.type === "groundEquipment";
+        item.type === "equipped" || item.type === "ground-equipment";
 
     let status: StatusProps;
     if (isEquipment) {
-        const { value, flag } = item.data.modifier;
+        const { value, flag } = item.modifier;
         status = getStatusPropsForEquipment(actorName, itemType, value, flag);
     } else {
         status = getDefaultStatusPropsForActor(actorName);
@@ -195,7 +213,7 @@ export const getSlotPropsFromOverworldItem = (
         actor: actorName,
         isEquipped: item.type === "equipped",
         isTranslucent: false,
-        durability: isEquipment ? item.data.value / 100 : undefined,
+        durability: isEquipment ? item.value / 100 : undefined,
         isInBrokenSlot: false,
         isEntangled: false,
         holdingCount: item.type === "held" ? 1 : 0,

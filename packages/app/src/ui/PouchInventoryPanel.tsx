@@ -1,5 +1,4 @@
 import { memo, useRef } from "react";
-import { useDark } from "@pistonite/pure-react";
 import {
     Text,
     makeStyles,
@@ -93,7 +92,7 @@ const useStyles = makeStyles({
 
 export const PouchInventoryPanelImpl: React.FC = () => {
     const styles = useStyles();
-    const dark = useDark();
+    // const dark = useDark();
     const { data: pouch, stale, loading } = usePouchListView();
     const {
         data: overworld,
@@ -135,6 +134,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                 </Tooltip>
             }
             loading={showSpinner}
+            dark
         />
     );
 
@@ -181,9 +181,9 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                 <div
                     className={mergeClasses(
                         styles.inventoryContainer,
-                        dark
-                            ? styles.inventoryContainerBgDark
-                            : styles.inventoryContainerBgLight,
+                        // dark
+                        styles.inventoryContainerBgDark,
+                        // : styles.inventoryContainerBgDark,
                     )}
                 >
                     {$Title}

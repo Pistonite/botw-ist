@@ -11,6 +11,7 @@ import {
 
 import { useThemedSheikaBackgroundUrl } from "./asset.ts";
 import { InventoryTitle } from "./components/InventoryTitle.tsx";
+import { useDark } from "@pistonite/pure-react";
 
 const useStyles = makeStyles({
     container: {
@@ -44,6 +45,7 @@ const useStyles = makeStyles({
 
 const GdtInventoryPanelImpl: React.FC = () => {
     const styles = useStyles();
+    const dark = useDark();
     const { data: gdt, stale, loading } = useGdtInventoryView();
 
     const showSpinner = loading || stale || !gdt;
@@ -63,6 +65,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
                     title={t("main.gdt_inventory.title")}
                     description={t("main.gdt_inventory.desc")}
                     loading={showSpinner}
+                    dark={dark}
                 ></InventoryTitle>
                 {gdt !== undefined && (
                     <div className={styles.inventoryScroll}>

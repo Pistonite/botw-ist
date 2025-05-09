@@ -48,6 +48,40 @@ impl RunOutput {
                 node_next: 0.into(),
                 allocated_idx: 0,
                 unallocated_idx: -1,
+                tab_idx: 0,tab_slot: 0,
+                accessible: true,
+                dpad_accessible: true,
+            },
+            iv::PouchItem {
+                common: iv::CommonItem{
+                    actor_name: "NormalArrow".to_string(),
+                    value: 25,
+                    is_equipped: false,
+                },
+                item_type: 2,
+                item_use: 8,
+                is_in_inventory: true,
+                is_no_icon: false,
+                data: iv::ItemData {
+                    effect_value: 0,
+                    effect_duration: 0,
+                    sell_price: 0,
+                    effect_id: 0f32,
+                    effect_level: 0f32,
+                },
+                ingredients: ["".to_string(), "".to_string(), "".to_string(), "".to_string(), "".to_string()],
+                holding_count: 0,
+                prompt_entangled: false,
+                node_addr: 0.into(),
+                node_valid: true,
+                node_pos: 418,
+                node_prev: 0.into(),
+                node_next: 0.into(),
+                allocated_idx: 1,
+                unallocated_idx: -1,
+                tab_idx: 1,tab_slot: 0,
+                accessible: true,
+                dpad_accessible: true,
             },
             iv::PouchItem {
                 common: iv::CommonItem{
@@ -76,28 +110,35 @@ impl RunOutput {
                 node_next: 0.into(),
                 allocated_idx: 1,
                 unallocated_idx: -1,
-
+                tab_idx: 1,tab_slot: 0,
+                accessible: true,
+                dpad_accessible: true,
             }
         ];
 
         iv::PouchList {
-            info: iv::PouchData {
-                num_tabs: 2,
-                tabs: vec![
-                    iv::PouchTab {
-                        item_idx: Some(0),
-                        item_ptr: 0.into(),
-                        tab_type: 0
-                    },
-                    iv::PouchTab {
-                        item_idx: Some(1),
-                        item_ptr: 0.into(),
-                        tab_type: 5
-                    },
-                ]
-            },
+            count: 2,
             items,
-            count: 1,
+            are_tabs_valid: true,
+            num_tabs: 4,
+            tabs: vec![
+                iv::PouchTab {
+                    item_idx: 0,
+                    tab_type: 0 // sword
+                },
+                iv::PouchTab {
+                    item_idx: 1,
+                    tab_type: 1, //bow
+                },
+                iv::PouchTab {
+                    item_idx: -1,
+                    tab_type: 3, //shield
+                },
+                iv::PouchTab {
+                    item_idx: 2,
+                    tab_type: 7, //material
+                },
+            ]
         }
 
 
@@ -143,6 +184,19 @@ impl RunOutput {
                 add_power: 30,
                 add_beam_power: 10,
                 recover_time: 0f32
+            },
+            info: iv::GdtInvInfo {
+                num_weapon_slots: 8,
+                num_bow_slots: 5,
+                num_shield_slots: 4,
+
+                sword_tab_discovered: true,
+                bow_tab_discovered: true,
+                shield_tab_discovered: true,
+                armor_tab_discovered: false,
+                material_tab_discovered: true,
+                food_tab_discovered: false,
+                key_item_tab_discovered: false,
             }
         }
 

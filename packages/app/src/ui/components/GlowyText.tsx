@@ -4,7 +4,6 @@ import {
     type TextProps,
     mergeClasses,
 } from "@fluentui/react-components";
-import { useDark } from "@pistonite/pure-react";
 
 const useStyles = makeStyles({
     text: {
@@ -20,9 +19,16 @@ const useStyles = makeStyles({
     },
 });
 
-export const GlowyText: React.FC<TextProps> = ({ children, ...props }) => {
+export type GlowyTextProps = TextProps & {
+    dark?: boolean;
+};
+
+export const GlowyText: React.FC<GlowyTextProps> = ({
+    children,
+    dark,
+    ...props
+}) => {
     const styles = useStyles();
-    const dark = useDark();
     return (
         <Text
             className={mergeClasses(

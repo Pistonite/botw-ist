@@ -1,12 +1,8 @@
 import "../CalamitySans.css";
 
-import React, { useState } from "react";
+import React from "react";
 import { createRoot } from "react-dom/client";
-import {
-    FluentProvider,
-    Switch,
-    webLightTheme,
-} from "@fluentui/react-components";
+import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 
 import type {
     InvView_GdtItem,
@@ -39,12 +35,10 @@ const GDT: InvView_GdtItem[] = [
         idx: 0,
         data: {
             type: "sword",
-            data: {
-                idx: 0,
-                info: {
-                    flag: 0,
-                    value: 0,
-                },
+            idx: 0,
+            info: {
+                flag: 0,
+                value: 0,
             },
         },
     },
@@ -57,12 +51,10 @@ const GDT: InvView_GdtItem[] = [
         idx: 1,
         data: {
             type: "sword",
-            data: {
-                idx: 2,
-                info: {
-                    flag: 0x7fffffff,
-                    value: 120,
-                },
+            idx: 2,
+            info: {
+                flag: 0x7fffffff,
+                value: 120,
             },
         },
     },
@@ -75,12 +67,10 @@ const GDT: InvView_GdtItem[] = [
         idx: 1,
         data: {
             type: "bow",
-            data: {
-                idx: 1,
-                info: {
-                    flag: 0x7fffffff,
-                    value: 120,
-                },
+            idx: 1,
+            info: {
+                flag: 0x7fffffff,
+                value: 120,
             },
         },
     },
@@ -93,24 +83,22 @@ const GDT: InvView_GdtItem[] = [
         idx: 2,
         data: {
             type: "food",
-            data: {
-                idx: 0,
-                info: {
-                    effectId: CookEffect.ExGutsMaxUp,
-                    effectLevel: 3,
-                    effectDuration: 180,
-                    sellPrice: 50,
-                    effectValue: 3,
-                },
-                unused_effect_1y: 0,
-                ingredients: [
-                    "Animal_Insect_A",
-                    "Animal_Insect_A",
-                    "Animal_Insect_A",
-                    "Animal_Insect_A",
-                    "Animal_Insect_A",
-                ],
+            idx: 0,
+            info: {
+                effectId: CookEffect.ExGutsMaxUp,
+                effectLevel: 3,
+                effectDuration: 180,
+                sellPrice: 50,
+                effectValue: 3,
             },
+            unused_effect_1y: 0,
+            ingredients: [
+                "Animal_Insect_A",
+                "Animal_Insect_A",
+                "Animal_Insect_A",
+                "Animal_Insect_A",
+                "Animal_Insect_A",
+            ],
         },
     },
     {
@@ -122,18 +110,16 @@ const GDT: InvView_GdtItem[] = [
         idx: 3,
         data: {
             type: "food",
-            data: {
-                idx: 1,
-                info: {
-                    effectId: CookEffect.LifeMaxUp,
-                    effectLevel: 3,
-                    effectDuration: 180,
-                    sellPrice: 51,
-                    effectValue: 3,
-                },
-                unused_effect_1y: 0,
-                ingredients: ["", "", "", "", ""],
+            idx: 1,
+            info: {
+                effectId: CookEffect.LifeMaxUp,
+                effectLevel: 3,
+                effectDuration: 180,
+                sellPrice: 51,
+                effectValue: 3,
             },
+            unused_effect_1y: 0,
+            ingredients: ["", "", "", "", ""],
         },
     },
 ];
@@ -141,13 +127,13 @@ const GDT: InvView_GdtItem[] = [
 const POUCH: InvView_PouchItem[] = [
     {
         common: {
-            actorName: "Item_Ore_A",
-            value: 10,
+            actorName: "Weapon_Sword_070",
+            value: 1000,
             isEquipped: false,
         },
         itemType: PouchItemType.Material,
         itemUse: PouchItemUse.Item,
-        isInInventory: false,
+        isInInventory: true,
         isNoIcon: false,
         data: {
             effectValue: 0,
@@ -166,6 +152,42 @@ const POUCH: InvView_PouchItem[] = [
         nodeNext: 0n,
         allocatedIdx: 0,
         unallocatedIdx: -1,
+        tabIdx: 0,
+        tabSlot: 0,
+        accessible: true,
+        dpadAccessible: false,
+    },
+    {
+        common: {
+            actorName: "AncientArrow",
+            value: 100,
+            isEquipped: true,
+        },
+        itemType: PouchItemType.Material,
+        itemUse: PouchItemUse.Item,
+        isInInventory: true,
+        isNoIcon: false,
+        data: {
+            effectValue: 0,
+            effectDuration: 0,
+            effectId: -1,
+            effectLevel: 0,
+            sellPrice: 0,
+        },
+        ingredients: ["", "", "", "", ""],
+        holdingCount: 0,
+        promptEntangled: false,
+        nodeAddr: 0n,
+        nodeValid: true,
+        nodePos: 419n,
+        nodePrev: 0n,
+        nodeNext: 0n,
+        allocatedIdx: 0,
+        unallocatedIdx: -1,
+        tabIdx: 0,
+        tabSlot: 0,
+        accessible: false,
+        dpadAccessible: true,
     },
     {
         common: {
@@ -194,72 +216,17 @@ const POUCH: InvView_PouchItem[] = [
         nodeNext: 0n,
         allocatedIdx: 1,
         unallocatedIdx: -1,
+        tabIdx: 0,
+        tabSlot: 0,
+        accessible: false,
+        dpadAccessible: false,
     },
 ];
 
 // eslint-disable-next-line react-refresh/only-export-components
 const App: React.FC = () => {
-    const [cheap, setCheap] = useState(false);
-    const [isEquipped, setIsEquipped] = useState(false);
-    const [isInBrokenSlot, setIsInBrokenSlot] = useState(false);
-    const [deactive, setDeactive] = useState(false);
-    const [badlyDamaged, setBadlyDamaged] = useState(false);
-    const [animation, setAnimation] = useState(true);
-    const [entangled, setEntangled] = useState(false);
-
     return (
         <>
-            <div>
-                <Switch
-                    checked={cheap}
-                    label="Cheap"
-                    onChange={(_, { checked }) => {
-                        setCheap(!!checked);
-                    }}
-                />
-                <Switch
-                    checked={isEquipped}
-                    label="Equip"
-                    onChange={(_, { checked }) => {
-                        setIsEquipped(!!checked);
-                    }}
-                />
-                <Switch
-                    checked={isInBrokenSlot}
-                    label="Broken"
-                    onChange={(_, { checked }) => {
-                        setIsInBrokenSlot(!!checked);
-                    }}
-                />
-                <Switch
-                    checked={deactive}
-                    label="Deactive"
-                    onChange={(_, { checked }) => {
-                        setDeactive(!!checked);
-                    }}
-                />
-                <Switch
-                    checked={badlyDamaged}
-                    label="Badly Damaged"
-                    onChange={(_, { checked }) => {
-                        setBadlyDamaged(!!checked);
-                    }}
-                />
-                <Switch
-                    checked={animation}
-                    label="Animation"
-                    onChange={(_, { checked }) => {
-                        setAnimation(!!checked);
-                    }}
-                />
-                <Switch
-                    checked={entangled}
-                    label="Entangled"
-                    onChange={(_, { checked }) => {
-                        setEntangled(!!checked);
-                    }}
-                />
-            </div>
             <p>Standalone</p>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
                 {STANDALONE.map((item, index) => {

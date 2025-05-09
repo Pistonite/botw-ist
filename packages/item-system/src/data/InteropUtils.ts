@@ -2,21 +2,9 @@ import type { InvView_GdtItemData } from "@pistonite/skybook-api";
 
 import { PouchItemType } from "./EnumTypes.ts";
 
-// thanks typescript
-type NarrowedGdtItemData<T extends "sword" | "shield" | "bow" | "food"> =
-    T extends "food"
-        ? {
-              type: "food";
-              data: (InvView_GdtItemData & { type: "food" })["data"];
-          }
-        : {
-              type: T;
-              data: (InvView_GdtItemData & { type: "sword" })["data"];
-          };
-
 export const isGdtDataEquipmentType = (
     data: InvView_GdtItemData,
-): data is NarrowedGdtItemData<"sword" | "shield" | "bow"> => {
+): data is InvView_GdtItemData & { type: "sword" | "shield" | "bow" } => {
     return (
         data.type === "sword" || data.type === "bow" || data.type === "shield"
     );
@@ -24,7 +12,7 @@ export const isGdtDataEquipmentType = (
 
 export const isGdtDataFoodType = (
     data: InvView_GdtItemData,
-): data is NarrowedGdtItemData<"food"> => {
+): data is InvView_GdtItemData & { type: "food" } => {
     return data.type === "food";
 };
 
