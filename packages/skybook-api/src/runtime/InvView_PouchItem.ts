@@ -90,4 +90,29 @@ export type InvView_PouchItem = {
      * If this node is not reachable from the head of the list by following `.next` , this is -1
      */
     unallocatedIdx: number;
+    /**
+     * If the tab data is valid, the index of the tab this item is in.
+     * Note that this may not be consecutive for consecutive items,
+     * as there could be empty tabs
+     */
+    tabIdx: number;
+    /**
+     * If the tab data is valid, the slot of the item in the tab.
+     *
+     * This is usually 0-20. For arrows, this is the actual position to be displayed
+     * (i.e. first arrow would be 5 if there are 5 bow slots, including empty)
+     */
+    tabSlot: number;
+    /**
+     * If the item is accessible (visible) in the inventory
+     *
+     * Not accessible cases include:
+     * - mCount is 0, whole inventory is not accessible
+     * - Weapon/Bow/Shield is outside of the slot range
+     */
+    accessible: boolean;
+    /**
+     * If the item is accessible via the dpad menu
+     */
+    dpadAccessible: boolean;
 };

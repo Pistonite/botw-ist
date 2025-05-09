@@ -3,4 +3,13 @@
 /**
  * Weapon modifier info, which is a bitflag for modifier type and a modifier value
  */
-export type InvView_WeaponModifier = { flag: number; value: number };
+export type InvView_WeaponModifier = {
+    /**
+     * The weapon modifier type bit flag
+     */
+    flag: number;
+    /**
+     * The value of the modifier
+     */
+    value: number;
+};
