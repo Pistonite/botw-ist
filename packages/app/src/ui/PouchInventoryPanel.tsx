@@ -172,7 +172,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         <div className={styles.container}>
             {$Background}
             <div className={mergeClasses(styles.absPos, styles.splitContainer)}>
-                <div className={styles.inventoryContainer} >
+                <div className={styles.inventoryContainer}>
                     {$Title}
                     {$PouchItems}
                 </div>
