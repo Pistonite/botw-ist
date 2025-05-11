@@ -21,9 +21,17 @@ import {
     getOverworldItems,
     getPouchList,
 } from "./runtime.ts";
-import { resolveAppPromise, getCustomBlueFlameImage } from "./app.ts";
+import {
+    resolveAppPromise,
+    getCustomBlueFlameImage,
+    crashApplication,
+} from "./app.ts";
+import { setWasmPanicHandler } from "./wasm.ts";
 
 async function boot() {
+    setWasmPanicHandler(() => {
+        crashApplication();
+    });
     // This is injected by the build process
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const wasmModuleBase = (self as any)["__skybook_path_base"] as string;

@@ -9,7 +9,7 @@ import type {
 import { skybookRuntime } from "@pistonite/skybook-api/interfaces/Runtime.bus";
 import { searchItemLocalized } from "skybook-localization";
 
-import { useSessionStore } from "self::application/store";
+import { crashApp, useSessionStore } from "self::application/store";
 
 let customImage: Uint8Array | undefined;
 
@@ -104,6 +104,10 @@ const createRuntimeAppHost = (): RuntimeApp => {
         updatePerfData: wxWrapHandler((data: PerformanceData) => {
             const { setPerfData } = useSessionStore.getState();
             setPerfData(data.ips, data.sps);
+        }),
+
+        crashApplication: wxWrapHandler(() => {
+            crashApp();
         }),
     };
 };

@@ -51,3 +51,11 @@ export const getCustomBlueFlameImage = async () => {
 export const sendPerfData = async (data: PerformanceData) => {
     return (await appPromise).updatePerfData(data);
 };
+
+export const crashApplication = async () => {
+    try {
+        return (await appPromise).crashApplication();
+    } catch (e) {
+        console.error("Failed to signal the application to crash", e);
+    }
+};

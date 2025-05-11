@@ -26,13 +26,31 @@ import {
     initRuntime,
     RuntimeContext,
 } from "self::application/runtime";
-import { useApplicationStore, useSessionStore } from "self::application/store";
+import {
+    loadRecoveryScriptIfNeeded,
+    registerCrashHandler,
+    useApplicationStore,
+    useSessionStore,
+} from "self::application/store";
 import { initNarrow, isLessProductive } from "self::pure-contrib";
 import {
     getSheikaBackgroundUrl,
     probeAndRegisterAssetLocation,
 } from "self::ui/functions";
-import { App, BootScreen, type BootScreenProps } from "self::ui/surfaces/root";
+import {
+    App,
+    BootScreen,
+    CrashScreen,
+    type BootScreenProps,
+    CatchCrash,
+} from "self::ui/surfaces/root";
+
+const createReactRoot = () => {
+    const root = document.getElementById("-root-") as HTMLDivElement;
+    return createRoot(root);
+};
+let ReactRoot: ReturnType<typeof createReactRoot> | undefined = undefined;
+let crashed = false;
 
 /**
  * Application boot flow
@@ -44,6 +62,15 @@ import { App, BootScreen, type BootScreenProps } from "self::ui/surfaces/root";
  * 3. Mount the main React root with the app
  */
 const boot = async () => {
+    registerCrashHandler(() => {
+        if (crashed) {
+            console.warn("crash handler invoked multiple times");
+            return;
+        }
+        crashed = true;
+        (ReactRoot || createReactRoot()).render(<CrashScreen />);
+        void removeBootCurtain(false);
+    });
     initDark({ persist: true });
 
     // start initializing the runtime early
@@ -69,11 +96,17 @@ const boot = async () => {
     }
 
     const beforeMainUI = async () => {
+        if (crashed) {
+            return;
+        }
         const promises = [probeAndRegisterAssetLocation()];
         await Promise.all(promises);
     };
 
     const beforeBootUI = async () => {
+        if (crashed) {
+            return;
+        }
         await initI18n(true);
     };
 
@@ -161,6 +194,8 @@ const bootWithDirectLoad = async (
 
 const bootWithLocalScript = async (context: BootContext) => {
     console.log("[boot] loading local script");
+    // if a crash previously happened and the user set a recovery script, load it
+    loadRecoveryScriptIfNeeded();
     const {
         savedScript,
         customImageVersion,
@@ -247,6 +282,9 @@ const continueBootWithDialog = async (
             );
             await new Promise((resolve) => setTimeout(resolve, msToWait));
         }
+        if (crashed) {
+            return;
+        }
 
         context.beforeBootUI = async () => {};
         const rootElement = document.getElementById(
@@ -258,17 +296,19 @@ const continueBootWithDialog = async (
         };
         root.render(
             <StrictMode>
-                <ThemeProvider>
-                    <BootScreen
-                        runtime={context.runtime}
-                        scriptImageVersion={env.image}
-                        params={env.params}
-                        {...props}
-                        onSuccess={() => {
-                            bootMainUI(context);
-                        }}
-                    />
-                </ThemeProvider>
+                <CatchCrash>
+                    <ThemeProvider>
+                        <BootScreen
+                            runtime={context.runtime}
+                            scriptImageVersion={env.image}
+                            params={env.params}
+                            {...props}
+                            onSuccess={() => {
+                                bootMainUI(context);
+                            }}
+                        />
+                    </ThemeProvider>
+                </CatchCrash>
             </StrictMode>,
         );
     }
@@ -336,41 +376,57 @@ const bootMainUI = async (context: BootContext) => {
     initExtensionAppHost(await context.runtime);
     initExtensionManager();
 
-    const root = document.getElementById("-root-") as HTMLDivElement;
-    createRoot(root).render(
+    const runtime = await context.runtime;
+    if (crashed) {
+        console.warn("[boot] crash detected before main UI, not booting");
+        return;
+    }
+    ReactRoot = createReactRoot();
+    ReactRoot.render(
         <StrictMode>
-            <RuntimeContext.Provider value={await context.runtime}>
-                <QueryClientProvider client={queryClient}>
-                    <ThemeProvider>
-                        <ItemTooltipProvider
-                            backgroundUrl={getSheikaBackgroundUrl()}
-                        >
-                            <App />
-                        </ItemTooltipProvider>
-                    </ThemeProvider>
-                </QueryClientProvider>
-            </RuntimeContext.Provider>
+            <CatchCrash>
+                <RuntimeContext.Provider value={runtime}>
+                    <QueryClientProvider client={queryClient}>
+                        <ThemeProvider>
+                            <ItemTooltipProvider
+                                backgroundUrl={getSheikaBackgroundUrl()}
+                            >
+                                <App />
+                            </ItemTooltipProvider>
+                        </ThemeProvider>
+                    </QueryClientProvider>
+                </RuntimeContext.Provider>
+            </CatchCrash>
         </StrictMode>,
     );
 
-    // Let UI settle before removing boot UI
-    await new Promise((resolve) => setTimeout(resolve, 1));
-    // play fade out animation
-    const curtain = document.getElementById("-root-curtain-") as HTMLDivElement;
-    curtain.classList.add("end");
+    void removeBootCurtain(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    curtain.remove();
-    document.querySelectorAll(".-boot-only-").forEach((el) => {
-        el.remove();
-    });
     // It's OK to set the title at the end,
     // because the title is also server-rendered.
     // This is just for switching between different languages
     addLocaleSubscriber(() => {
-        const title = translateUI("title");
-        document.title = title;
+        document.title = translateUI("title");
     }, true);
+};
+
+const removeBootCurtain = async (animation: boolean) => {
+    // Let UI settle before removing boot UI
+    if (animation) {
+        await new Promise((resolve) => setTimeout(resolve, 1));
+    }
+    // play fade out animation
+    const curtain = document.getElementById("-root-curtain-");
+    if (curtain) {
+        if (animation) {
+            curtain.classList.add("end");
+            await new Promise((resolve) => setTimeout(resolve, 200));
+        }
+        curtain.remove();
+    }
+    document.querySelectorAll(".-boot-only-").forEach((el) => {
+        el.remove();
+    });
 };
 
 void boot();

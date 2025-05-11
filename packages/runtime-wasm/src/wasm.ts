@@ -17,6 +17,15 @@ let wasmPanicked = false;
 let wasmPanicHandler: () => void = () => {
     console.warn("Forgot to set WASM panic handler?");
 };
+
+// This is a hack to make WASM able to invoke crash directly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(globalThis as any)["__global_crash_handler"] = () => {
+    console.error("Panic invoked from WASM. Recovery is NOT possible!");
+    wasmPanicked = true;
+    wasmPanicHandler();
+};
+
 export const setWasmPanicHandler = (handler: () => void) => {
     wasmPanicHandler = handler;
 };

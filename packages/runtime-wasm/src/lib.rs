@@ -10,10 +10,19 @@ use wasm_bindgen::prelude::*;
 mod js_item_resolve;
 use js_item_resolve::JsQuotedItemResolver;
 
+#[wasm_bindgen]
+extern "C" {
+    /// Crash function on the global scope on the JS side
+    pub fn __global_crash_handler();
+}
+
 /// Initialize the WASM module
 #[wasm_bindgen]
 pub fn module_init() {
-    std::panic::set_hook(Box::new(console_error_panic_hook::hook));
+    std::panic::set_hook(Box::new(move |info| {
+        console_error_panic_hook::hook(info);
+        __global_crash_handler();
+    }));
 }
 
 //////////// Item Resolver //////////
