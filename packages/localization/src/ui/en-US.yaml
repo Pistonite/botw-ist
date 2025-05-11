@@ -166,3 +166,9 @@ tooltip.stamina_recover: "+{{wheels}} Wheel(s)"
 tooltip.stamina_recover_ex: "{{wheels}} Wheel(s)"
 tooltip.translucent: "Translucent"
 tooltip.value: "Value: {{value}}"
+
+# Crash Screen
+crash_screen.button.reload: "Reload without changing script"
+crash_screen.button.save_reload: "Save script and reload"
+crash_screen.desc: "If you were using the local script, you can edit it below to try to prevent a crash loop"
+crash_screen.title: "A fatal error occured in Skybook."

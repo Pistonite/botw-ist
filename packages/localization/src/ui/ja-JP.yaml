@@ -166,3 +166,9 @@ tooltip.stamina_recover: "+{{wheels}} 周"
 tooltip.stamina_recover_ex: "{{wheels}} 周"
 tooltip.translucent: "幻影スロット"
 tooltip.value: "数値: {{value}}"
+
+# Crash Screen
+crash_screen.button.reload: "スクリプトを変更せずに再読み込み"
+crash_screen.button.save_reload: "スクリプトを保存して再読み込み"
+crash_screen.desc: "ローカルスクリプトを使用している場合は、下で編集してクラッシュループを防ぐことができます。"
+crash_screen.title: "Skybookで致命的なエラーが発生しました。"

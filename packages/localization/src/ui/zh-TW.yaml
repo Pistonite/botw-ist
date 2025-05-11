@@ -166,3 +166,9 @@ tooltip.stamina_recover: "+{{wheels}} 圈"
 tooltip.stamina_recover_ex: "{{wheels}} 圈"
 tooltip.translucent: "虛像格"
 tooltip.value: "數值: {{value}}"
+
+# Crash Screen
+crash_screen.button.reload: "不更改腳本直接重新載入"
+crash_screen.button.save_reload: "儲存腳本並重新載入"
+crash_screen.desc: "如果您正在使用本機腳本，您可以在下方進行編輯，以嘗試防止崩潰循環。"
+crash_screen.title: "Skybook 發生致命錯誤。"

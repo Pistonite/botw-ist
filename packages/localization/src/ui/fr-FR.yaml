@@ -166,3 +166,9 @@ tooltip.stamina_recover: "+{{wheels}} cercle(s)"
 tooltip.stamina_recover_ex: "{{wheels}} cercle(s)"
 tooltip.translucent: "Emplacement Fantôme"
 tooltip.value: "Valeur: {{value}}"
+
+# Crash Screen
+crash_screen.button.reload: "Recharger sans modifier le script"
+crash_screen.button.save_reload: "Enregistrer le script et recharger"
+crash_screen.desc: "Si vous utilisiez un script local, vous pouvez le modifier ci-dessous pour essayer d'éviter une boucle de plantages."
+crash_screen.title: "Une erreur fatale est survenue dans Skybook."

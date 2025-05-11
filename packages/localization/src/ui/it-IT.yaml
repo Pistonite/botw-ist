@@ -166,3 +166,9 @@ tooltip.stamina_recover: "+{{wheels}} cerchio(i)"
 tooltip.stamina_recover_ex: "{{wheels}} cerchio(i)"
 tooltip.translucent: "Spazio Fantasma"
 tooltip.value: "Valore: {{value}}"
+
+# Crash Screen
+crash_screen.button.reload: "Ricarica senza modificare lo script"
+crash_screen.button.save_reload: "Salva script e ricarica"
+crash_screen.desc: "Se stavi utilizzando uno script locale, puoi modificarlo qui sotto per cercare di evitare un ciclo di crash."
+crash_screen.title: "Si è verificato un errore fatale in Skybook."

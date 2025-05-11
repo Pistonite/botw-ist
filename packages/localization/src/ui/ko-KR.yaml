@@ -166,3 +166,9 @@ tooltip.stamina_recover: "+{{wheels}} 바퀴"
 tooltip.stamina_recover_ex: "{{wheels}} 바퀴"
 tooltip.translucent: "환영 슬롯"
 tooltip.value: "값: {{value}}"
+
+# Crash Screen
+crash_screen.button.reload: "스크립트 변경 없이 다시 로드"
+crash_screen.button.save_reload: "스크립트 저장 및 다시 로드"
+crash_screen.desc: "로컬 스크립트를 사용 중이었다면, 아래에서 수정하여 충돌 반복을 방지할 수 있습니다."
+crash_screen.title: "Skybook에서 치명적인 오류가 발생했습니다."

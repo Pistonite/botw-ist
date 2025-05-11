@@ -166,3 +166,9 @@ tooltip.stamina_recover: "+{{wheels}} Kreis(e)"
 tooltip.stamina_recover_ex: "{{wheels}} Kreis(e)"
 tooltip.translucent: "Phantomfach"
 tooltip.value: "Wert: {{value}}"
+
+# Crash Screen
+crash_screen.button.reload: "Ohne Skriptänderung neu laden"
+crash_screen.button.save_reload: "Skript speichern und neu laden"
+crash_screen.desc: "Wenn Sie ein lokales Skript verwendet haben, können Sie es unten bearbeiten, um einen Absturzzyklus zu vermeiden."
+crash_screen.title: "Ein schwerwiegender Fehler ist in Skybook aufgetreten."
