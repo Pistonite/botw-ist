@@ -20,6 +20,7 @@ import {
 } from "skybook-item-system";
 
 import { Code, Interpolate } from "self::ui/components";
+import { useStyleEngine } from "self::ui/functions";
 
 export type Searcher = {
     search(
@@ -31,27 +32,9 @@ export type Searcher = {
 const useStyles = makeStyles({
     container: {
         padding: "8px",
-        boxSizing: "border-box",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-    },
-    results: {
-        display: "flex",
-        flexWrap: "wrap",
-        maxHeight: 0,
-        overflow: "visible",
     },
     resultsScroll: {
         marginTop: "8px",
-        overflowY: "auto",
-        flex: 1,
-    },
-    noResults: {
-        display: "flex",
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
     },
 });
 
@@ -80,8 +63,35 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
     const results = data?.val;
     const hasResults = results !== undefined && results.length > 0;
 
-    const styles = useStyles();
+    const m = useStyleEngine();
+    const c = useStyles();
     const t = useUITranslation();
+
+    const $SearchBox = (
+        <Field
+            validationState={error ? "error" : "none"}
+            validationMessage={error}
+        >
+            <SearchBox
+                placeholder={t("item_explorer.label.search_placeholder")}
+                value={value}
+                onChange={(_, { value }) => {
+                    setValue(value);
+                }}
+            />
+        </Field>
+    );
+    const $LocalizedCheckbox = (
+        <Field>
+            <Checkbox
+                label={t("item_explorer.label.search_localized")}
+                checked={localized}
+                onChange={(_, { checked }) => {
+                    setLocalized(!!checked);
+                }}
+            />
+        </Field>
+    );
 
     const $SearchTip = localized ? (
         <Interpolate
@@ -99,50 +109,30 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
         </Interpolate>
     );
 
+    const $Results = hasResults && (
+        <div className={m("overflow-y-auto flex-1", c.resultsScroll)}>
+            <div className={m("flex flex-wrap max-h-0 overflow-visible")}>
+                {results.map(({ actor, cookEffect }, i) => (
+                    <StandaloneItemSlotWithTooltip
+                        key={i}
+                        actor={actor}
+                        effect={cookEffect as CookEffect}
+                        cheap={cheap}
+                        disableAnimation={disableAnimation}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+
     return (
-        <div className={styles.container}>
-            <Field
-                validationState={error ? "error" : "none"}
-                validationMessage={error}
-            >
-                <SearchBox
-                    placeholder={t("item_explorer.label.search_placeholder")}
-                    value={value}
-                    onChange={(_, { value }) => {
-                        setValue(value);
-                    }}
-                />
-            </Field>
-            <Field>
-                <Checkbox
-                    label={t("item_explorer.label.search_localized")}
-                    checked={localized}
-                    onChange={(_, { checked }) => {
-                        setLocalized(!!checked);
-                    }}
-                />
-            </Field>
+        <div className={m("flex-col h-100 border-box", c.container)}>
+            {$SearchBox}
+            {$LocalizedCheckbox}
             <Body1 block>{$SearchTip}</Body1>
-            {hasResults && (
-                <div className={styles.resultsScroll}>
-                    <div className={styles.results}>
-                        {results.map((result, i) => {
-                            const { actor, cookEffect } = result;
-                            return (
-                                <StandaloneItemSlotWithTooltip
-                                    key={i}
-                                    actor={actor}
-                                    effect={cookEffect as CookEffect}
-                                    cheap={cheap}
-                                    disableAnimation={disableAnimation}
-                                />
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
+            {$Results}
             {!hasResults && (
-                <div className={styles.noResults}>
+                <div className={m("flex flex-1 flex-center")}>
                     <Body1>{t("item_explorer.label.no_results")}</Body1>
                 </div>
             )}

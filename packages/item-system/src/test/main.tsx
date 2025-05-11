@@ -12,12 +12,18 @@ import { initI18n } from "skybook-localization";
 import { registerAssetLocation } from "botw-item-assets";
 
 import { ItemTooltipProvider } from "../tooltip";
-import { CookEffect, PouchItemType, PouchItemUse } from "../data";
+import {
+    CookEffect,
+    PouchCategory,
+    PouchItemType,
+    PouchItemUse,
+} from "../data";
 import {
     GdtItemSlotWithTooltip,
     PouchItemSlotWithTooltip,
     StandaloneItemSlotWithTooltip,
 } from "../Wrapper.tsx";
+import { ItemTab } from "../ItemTab.tsx";
 
 const STANDALONE = [
     { actor: "Weapon_Sword_070" },
@@ -260,11 +266,49 @@ const App: React.FC = () => {
                     );
                 })}
             </div>
+            <p>TAB</p>
+            <div style={{ backgroundColor: "#333" }}>
+                <ItemTab
+                    category={PouchCategory.Sword}
+                    nodes={[
+                        {
+                            slot: 0,
+                            element: (
+                                <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />
+                            ),
+                        },
+                        {
+                            slot: 5,
+                            element: (
+                                <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />
+                            ),
+                        },
+                        {
+                            slot: 6,
+                            element: (
+                                <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />
+                            ),
+                        },
+                        {
+                            slot: 19,
+                            element: (
+                                <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />
+                            ),
+                        },
+                        {
+                            slot: 22,
+                            element: (
+                                <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />
+                            ),
+                        },
+                    ]}
+                />
+            </div>
         </>
     );
 };
 
-registerAssetLocation("https://ist.pistonite.app/static/item-assets/");
+registerAssetLocation("/static/item-assets/");
 
 void (async function main() {
     await initI18n(true);

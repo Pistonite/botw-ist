@@ -16,11 +16,10 @@ import {
     getExtension,
     type FirstPartyExtension,
 } from "self::extensions";
-
 import {
     getSheikaBackgroundUrl,
     probeAndRegisterAssetLocation,
-} from "./ui/asset.ts";
+} from "self::ui/functions";
 
 async function boot() {
     // Initialize preferences, but do not persist settings

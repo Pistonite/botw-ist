@@ -1,4 +1,5 @@
 import { useDark } from "@pistonite/pure-react";
+
 import { registerAssetLocation } from "botw-item-assets";
 
 let assetPrefix = "/";

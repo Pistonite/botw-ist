@@ -1,6 +1,7 @@
 import { getActorParam } from "./ActorData.ts";
 import {
     CookEffect,
+    PouchCategory,
     PouchItemType,
     PouchItemUse,
     SpecialStatus,
@@ -160,4 +161,28 @@ export const getWeaponSpecialStatusToDisplay = (
         selectedModifier,
         (modifierSet & WeaponModifier.Yellow) !== 0,
     );
+};
+
+export const getPouchCategoryFromType = (type: number): PouchCategory => {
+    switch (type) {
+        case PouchItemType.Sword:
+            return PouchCategory.Sword;
+        case PouchItemType.Bow:
+        case PouchItemType.Arrow:
+            return PouchCategory.Bow;
+        case PouchItemType.Shield:
+            return PouchCategory.Shield;
+        // note only ArmorHead is usually possible in the tabs data
+        case PouchItemType.ArmorHead:
+        case PouchItemType.ArmorUpper:
+        case PouchItemType.ArmorLower:
+            return PouchCategory.Armor;
+        case PouchItemType.Material:
+            return PouchCategory.Material;
+        case PouchItemType.Food:
+            return PouchCategory.Food;
+        case PouchItemType.KeyItem:
+            return PouchCategory.KeyItem;
+    }
+    return PouchCategory.Invalid;
 };

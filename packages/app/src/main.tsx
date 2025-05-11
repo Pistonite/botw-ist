@@ -28,13 +28,12 @@ import {
 } from "self::application/runtime";
 import { useApplicationStore, useSessionStore } from "self::application/store";
 import { initNarrow, isLessProductive } from "self::pure-contrib";
-
-import { App } from "./ui/App.tsx";
 import {
     getSheikaBackgroundUrl,
     probeAndRegisterAssetLocation,
-} from "./ui/asset.ts";
-import { BootScreen, type BootScreenProps } from "./ui/BootScreen.tsx";
+} from "self::ui/functions";
+
+import { App, BootScreen, type BootScreenProps } from "self::ui/surfaces/root";
 
 /**
  * Application boot flow

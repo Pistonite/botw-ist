@@ -108,9 +108,9 @@ impl RunOutput {
                 node_pos: 418,
                 node_prev: 0.into(),
                 node_next: 0.into(),
-                allocated_idx: 1,
+                allocated_idx: 2,
                 unallocated_idx: -1,
-                tab_idx: 1,tab_slot: 0,
+                tab_idx: 3,tab_slot: 0,
                 accessible: true,
                 dpad_accessible: true,
             }

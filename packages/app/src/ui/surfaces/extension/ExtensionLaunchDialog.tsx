@@ -31,24 +31,19 @@ import {
     useExtensionName,
 } from "self::application/store";
 import { openExtensionPopup } from "self::application/extension";
-import { useUIStore } from "./store";
+import { useStyleEngine, useUIStore } from "self::ui/functions";
 
 const useStyles = makeStyles({
     dialogBody: {
-        display: "flex",
-        flexDirection: "column",
         gap: "16px",
-    },
-    otherOptions: {
-        display: "flex",
-        flexDirection: "column",
     },
 });
 
 const ExtensionLaunchDialogImpl: React.FC = () => {
+    const m = useStyleEngine();
     const t = useUITranslation();
+    const c = useStyles();
     const narrow = useNarrow();
-    const styles = useStyles();
 
     const open =
         useUIStore((state) => state.openedDialogId) === "extension-launch";
@@ -238,7 +233,7 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
                         {t("dialog.extension_launch.title")}
                     </DialogTitle>
                     <DialogContent>
-                        <div className={styles.dialogBody}>
+                        <div className={m("flex-col", c.dialogBody)}>
                             <div>
                                 <Field
                                     label={t(
@@ -269,7 +264,7 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
                                 {$OpenModeRadioGroup}
                                 {$OpenModePopoutCheckbox}
                             </Field>
-                            <div className={styles.otherOptions}>
+                            <div className={m("flex-col")}>
                                 {$RememberCheckbox}
                             </div>
                         </div>

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+/** Ids of all dialogs that can be opened */
 export type DialogId = "extension-launch" | "custom-extension";
 
 export type UIStore = {
@@ -19,6 +20,10 @@ export type UIStore = {
     /** Id of the currently open dialog */
     openedDialogId: DialogId | undefined;
     setOpenedDialog: (id: DialogId | undefined) => void;
+
+    /** If the inventory should be displayed by item tabs */
+    isTabViewEnabled: boolean;
+    setIsTabViewEnabled: (enabled: boolean) => void;
 };
 
 /**
@@ -51,6 +56,11 @@ export const useUIStore = create<UIStore>()(
             openedDialogId: undefined,
             setOpenedDialog: (id) => {
                 set({ openedDialogId: id });
+            },
+
+            isTabViewEnabled: false,
+            setIsTabViewEnabled: (enabled) => {
+                set({ isTabViewEnabled: enabled });
             },
         }),
         {

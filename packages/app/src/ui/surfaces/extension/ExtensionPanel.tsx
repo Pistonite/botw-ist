@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { makeStyles } from "@fluentui/react-components";
 import { ResizeLayout } from "@pistonite/shared-controls";
 
 import {
@@ -8,33 +7,15 @@ import {
     useCurrentSecondaryExtensionId,
     useExtensionStore,
 } from "self::application/store";
+import { useStyleEngine, useUIStore } from "self::ui/functions";
+import { ExtensionWindow } from "self::ui/components";
 
-import { useUIStore } from "./store.ts";
 import { ExtensionToolbarPrimary } from "./ExtensionToolbarPrimary.tsx";
 import { ExtensionToolbarSecondary } from "./ExtensionToolbarSecondary.tsx";
-import { ExtensionWindow } from "./components/ExtensionWindow.tsx";
-
-const useStyles = makeStyles({
-    container: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        height: "100%",
-    },
-    main: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
-    },
-    extensionWindow: {
-        width: "100%",
-        height: "100%",
-    },
-});
 
 const ExtensionPanelConnected: React.FC = () => {
-    const styles = useStyles();
+    const m = useStyleEngine();
+
     const primaryIds = useExtensionStore(getPrimaryExtensionIdsForDropdown);
     const secondaryIds = useExtensionStore(getSecondaryExtensionIdsForDropdown);
     const currentPrimaryId = useExtensionStore((state) => state.currentPrimary);
@@ -48,13 +29,13 @@ const ExtensionPanelConnected: React.FC = () => {
     );
 
     const primaryWindow = (
-        <div className={styles.container}>
+        <div className={m("flex-col flex-1 wh-100")}>
             <ExtensionToolbarPrimary />
             <ExtensionWindow ids={primaryIds} currentId={currentPrimaryId} />
         </div>
     );
     const secondaryWindow = (
-        <div className={styles.container}>
+        <div className={m("flex-col flex-1 wh-100")}>
             <ExtensionToolbarSecondary />
             <ExtensionWindow
                 ids={secondaryIds}
@@ -64,22 +45,18 @@ const ExtensionPanelConnected: React.FC = () => {
     );
     const hasTwoWindows = currentPrimaryId && currentSecondaryId;
     return (
-        <div className={styles.main}>
+        <div className={m("flex-1 wh-100")}>
             {!hasTwoWindows && currentPrimaryId && primaryWindow}
             {!hasTwoWindows && currentSecondaryId && secondaryWindow}
             {hasTwoWindows && (
                 <ResizeLayout
-                    className={styles.extensionWindow}
+                    className={m("wh-100")}
                     vertical
                     valuePercent={primaryExtensionWindowPercentage}
                     setValuePercent={setPrimaryExtensionWindowPercentage}
                 >
-                    <div className={styles.extensionWindow}>
-                        {primaryWindow}
-                    </div>
-                    <div className={styles.extensionWindow}>
-                        {secondaryWindow}
-                    </div>
+                    <div className={m("wh-100")}>{primaryWindow}</div>
+                    <div className={m("wh-100")}>{secondaryWindow}</div>
                 </ResizeLayout>
             )}
         </div>

@@ -21,10 +21,8 @@ import {
     getCustomExtensionConfigText,
     useExtensionStore,
 } from "self::application/store";
-
-import { useUIStore } from "./store.ts";
-import { Code } from "./components/Code.tsx";
-import { Interpolate } from "./components/Interpolate.tsx";
+import { Code, Interpolate } from "self::ui/components";
+import { useUIStore } from "self::ui/functions";
 
 const FORMAT = "NAME=URL";
 

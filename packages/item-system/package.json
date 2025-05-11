@@ -10,8 +10,8 @@
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons": "catalog:",
         "@pistonite/skybook-api": "workspace:*",
-        "react": "catalog:",
         "botw-item-assets": "workspace:*",
+        "react": "catalog:",
         "skybook-localization": "workspace:*"
     },
     "devDependencies": {
@@ -19,6 +19,7 @@
         "@types/react-dom": "catalog:",
         "mono-dev": "workspace:*",
         "react-dom": "catalog:",
-        "vite": "catalog:"
+        "vite": "catalog:",
+        "vite-plugin-serve-static": "^1.1.0"
     }
 }

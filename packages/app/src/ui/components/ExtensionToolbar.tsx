@@ -4,12 +4,12 @@ import {
     Option,
     Tooltip,
     makeStyles,
-    mergeClasses,
 } from "@fluentui/react-components";
 import { Dismiss20Regular, WindowNew20Regular } from "@fluentui/react-icons";
 import type { PropsWithChildren } from "react";
 
 import { useUITranslation } from "skybook-localization";
+import { useStyleEngine } from "../functions/SharedStyles";
 
 export type ExtensionToolbarProps = {
     /** Id of the current opened extension */
@@ -47,12 +47,7 @@ export type ExtensionToolbarProps = {
 
 const useStyles = makeStyles({
     container: {
-        display: "flex",
-        flexDirection: "row",
         gap: "4px",
-    },
-    fullWidth: {
-        flex: 1,
     },
     selectorButton: {
         // truncate text
@@ -69,15 +64,16 @@ const useStyles = makeStyles({
 export const ExtensionToolbar: React.FC<
     PropsWithChildren<ExtensionToolbarProps>
 > = ({ id, allIds, onClickPopout, onClickClose, onSelect, children }) => {
+    const m = useStyleEngine();
     const t = useUITranslation();
-    const styles = useStyles();
+    const c = useStyles();
     return (
-        <div className={mergeClasses(styles.container)}>
+        <div className={m("flex-row", c.container)}>
             <Dropdown
-                className={mergeClasses(styles.fullWidth)}
+                className={m("flex-1")}
                 appearance="filled-darker"
                 button={
-                    <span className={styles.selectorButton}>
+                    <span className={c.selectorButton}>
                         {t(`extension.${id}.name`)}
                     </span>
                 }
