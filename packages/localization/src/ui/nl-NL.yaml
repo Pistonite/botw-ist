@@ -166,3 +166,9 @@ tooltip.stamina_recover: "+{{wheels}} cirkel(s)"
 tooltip.stamina_recover_ex: "{{wheels}} cirkel(s)"
 tooltip.translucent: "Spookvak"
 tooltip.value: "Waarde: {{value}}"
+
+# Crash Screen
+crash_screen.button.reload: "Herladen zonder script te wijzigen"
+crash_screen.button.save_reload: "Script opslaan en herladen"
+crash_screen.desc: "Als u een lokaal script gebruikte, kunt u het hieronder bewerken om een crashlus te voorkomen."
+crash_screen.title: "Er is een fatale fout opgetreden in Skybook."

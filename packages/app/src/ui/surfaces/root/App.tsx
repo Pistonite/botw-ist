@@ -1,5 +1,7 @@
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { ResizeLayout } from "@pistonite/shared-controls";
+
+import { useUITranslation } from "skybook-localization";
 
 import { useIsShowingExtensionPanel } from "self::application/store";
 import { useNarrow, isLessProductive } from "self::pure-contrib";
@@ -17,7 +19,36 @@ import { useStyleEngine, useUIStore } from "self::ui/functions";
 
 const AppImpl: React.FC = () => {
     const m = useStyleEngine();
+    const t = useUITranslation();
     const narrow = useNarrow();
+
+    // save the crash localization to localstorage, so we can
+    // use it in the future if needed without relying on the translation
+    // component being functional
+    const crashScreenTitle = t("crash_screen.title");
+    const crashScreenDesc = t("crash_screen.desc");
+    const crashScreenButtonSaveReload = t("crash_screen.button.save_reload");
+    const crashScreenButtonReload = t("crash_screen.button.reload");
+    useEffect(() => {
+        try {
+            localStorage.setItem(
+                "Skybook.CrashScreenLocalization",
+                JSON.stringify({
+                    title: crashScreenTitle,
+                    desc: crashScreenDesc,
+                    button_save_reload: crashScreenButtonSaveReload,
+                    button_reload: crashScreenButtonReload,
+                }),
+            );
+        } catch {
+            // ignore error
+        }
+    }, [
+        crashScreenTitle,
+        crashScreenDesc,
+        crashScreenButtonSaveReload,
+        crashScreenButtonReload,
+    ]);
 
     const showExtensionPanel = useIsShowingExtensionPanel();
 

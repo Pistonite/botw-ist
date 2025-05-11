@@ -28,4 +28,7 @@ export interface RuntimeApp {
 
     /** Send latest performance data to the app */
     updatePerfData(data: PerformanceData): WxPromise<void>;
+
+    /** Signal the application to crash because unrecoverable error occurred in the runtime */
+    crashApplication(): WxPromise<void>;
 }

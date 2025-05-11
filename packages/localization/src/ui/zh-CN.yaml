@@ -166,3 +166,9 @@ tooltip.stamina_recover: "+{{wheels}} 圈"
 tooltip.stamina_recover_ex: "{{wheels}} 圈"
 tooltip.translucent: "虚像格"
 tooltip.value: "数值: {{value}}"
+
+# Crash Screen
+crash_screen.button.reload: "不修改脚本直接重启"
+crash_screen.button.save_reload: "保存脚本并重启"
+crash_screen.desc: "如果正在使用本地脚本，您可以尝试在下方编辑本地脚本，防止重复崩溃"
+crash_screen.title: "Skybook 发生错误"

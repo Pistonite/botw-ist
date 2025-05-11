@@ -166,3 +166,9 @@ tooltip.stamina_recover: "+{{wheels}} круг(ов)"
 tooltip.stamina_recover_ex: "{{wheels}} круг(ов)"
 tooltip.translucent: "Призрачная ячейка"
 tooltip.value: "Значение: {{value}}"
+
+# Crash Screen
+crash_screen.button.reload: "Перезагрузить без изменения скрипта"
+crash_screen.button.save_reload: "Сохранить скрипт и перезагрузить"
+crash_screen.desc: "Если вы использовали локальный скрипт, вы можете отредактировать его ниже, чтобы попытаться избежать цикла сбоев."
+crash_screen.title: "В Skybook произошла фатальная ошибка."
