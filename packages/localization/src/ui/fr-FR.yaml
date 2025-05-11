@@ -63,13 +63,15 @@ menu.open_configure_extension: "Ouvrir/configurer les extensions"
 menu.open_configure_extension.desc: "Sélectionnez une extension à ouvrir ou à configurer son mode d’ouverture"
 
 # Main inventory display
-main.gdt_inventory.desc: "Données d'inventaire stockées dans le système de drapeaux (GDT) du jeu. Les objets sont affichés comme s'ils étaient chargés dans l'inventaire, et les emplacements sont alignés en fonction de la case d'inventaire qui sera effectivement enregistrée dans le slot GDT."
+main.gdt_inventory.desc: "Données d'inventaire stockées dans le système de drapeaux du jeu (GDT). Les objets sont affichés comme s'ils étaient chargés dans l'inventaire, et les emplacements sont alignés avec l'inventaire en fonction de la corruption."
 main.gdt_inventory.title: "GameData"
-main.mcount_desc: "Nombre d'emplacements d'objets suivis par la liste des objets utilisés"
+main.tabbed_inventory.bad_msgbar.body: "Les données des onglets sont corrompues. Cela est peut-être dû à une exploitation de corruption de mémoire."
+main.tabbed_inventory.bad_msgbar.title: "Impossible d'afficher les onglets !"
+main.tabbed_inventory.button_tooltip: "Basculer entre la vue Liste/onglets"
 main.visible_inventory.desc: "Objets visibles lors de l'ouverture de l'inventaire"
 main.visible_inventory.title: "Inventaire Visible"
 
-
+main.bug_report: "Veuillez le signaler sur {{github}} si vous pensez qu'il s'agit d'un bug du simulateur."
 
 # Generic error messages
 error.internal: "Erreur interne: {{error}}"

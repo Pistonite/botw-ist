@@ -63,13 +63,15 @@ menu.open_configure_extension: "Abrir/configurar extensiones"
 menu.open_configure_extension.desc: "Selecciona una extensión para abrirla o cambiar cómo se abre"
 
 # Main inventory display
-main.gdt_inventory.desc: "Datos de inventario almacenados en el sistema de banderas (GDT) del juego. Los objetos se muestran como si estuvieran cargados en el inventario, y las ranuras están alineadas según la ranura de inventario que se guardará efectivamente en el GDT."
+main.gdt_inventory.desc: "Datos de inventario almacenados en el sistema de banderas del juego (GDT). Los objetos se muestran como si estuvieran cargados en el inventario, y las ranuras se alinean con el inventario según la corrupción."
 main.gdt_inventory.title: "GameData"
-main.mcount_desc: "Número de espacios de objetos rastreados por la lista de objetos en uso"
+main.tabbed_inventory.bad_msgbar.body: "Los datos de las pestañas están dañados. Posiblemente debido a un exploit de corrupción de memoria."
+main.tabbed_inventory.bad_msgbar.title: "¡No se pueden mostrar las pestañas!"
+main.tabbed_inventory.button_tooltip: "Alternar vista de lista/pestañas"
 main.visible_inventory.desc: "Objetos que ves al abrir el inventario"
 main.visible_inventory.title: "Inventario Visible"
 
-
+main.bug_report: "Por favor, repórtalo en {{github}} si crees que es un error del simulador."
 
 # Generic error messages
 error.internal: "Error interno: {{error}}"
