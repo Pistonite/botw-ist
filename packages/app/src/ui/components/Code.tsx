@@ -18,14 +18,11 @@ const useStyles = makeStyles({
 
 /** Inline code text */
 export const Code: React.FC<PropsWithChildren> = ({ children }) => {
-    const styles = useStyles();
+    const c = useStyles();
     const dark = useDark();
     return (
         <Text
-            className={mergeClasses(
-                styles.base,
-                dark ? styles.dark : styles.light,
-            )}
+            className={mergeClasses(c.base, dark ? c.dark : c.light)}
             font="monospace"
         >
             {children}

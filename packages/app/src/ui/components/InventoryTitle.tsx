@@ -1,18 +1,18 @@
 import type { PropsWithChildren } from "react";
 import {
-    Spinner,
-    Tooltip,
+    FluentProvider,
     makeStyles,
-    mergeClasses,
+    webDarkTheme,
+    webLightTheme,
 } from "@fluentui/react-components";
-import { Info16Regular } from "@fluentui/react-icons";
+
+import { useStyleEngine } from "self::ui/functions";
 
 import { GlowyText } from "./GlowyText.tsx";
 
 const useStyles = makeStyles({
     title: {
         margin: "0 4px",
-        display: "flex",
         gap: "2px",
     },
     titleColorDark: {
@@ -21,38 +21,18 @@ const useStyles = makeStyles({
     titleColorLight: {
         color: "#000000",
     },
-    supertitle: {
-        display: "inline-flex",
-        alignItems: "start",
-        gap: "2px",
-    },
-    infoIcon: {
-        paddingTop: "1px",
-    },
     container: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
         padding: "4px 4px 8px 0px",
         gap: "4px",
     },
-    end: {
-        flexGrow: 1,
-    },
-    loadingSpinner: {
-        justifyContent: "flex-end",
+    noBackground: {
+        backgroundColor: "transparent",
     },
 });
 
 export type InventoryTitleProps = {
     /** Title of the section of the inventory. */
     title: string;
-    /** Description of the section of the inventory. */
-    description?: string;
-    /** Super text after the title and description tooltip icon */
-    supertitle?: JSX.Element;
-    /** Whether to display a loading spinner. */
-    loading?: boolean;
     /** Whether to display the title in dark mode theme (which means the title is light-colored) */
     dark?: boolean;
 };
@@ -60,39 +40,27 @@ export type InventoryTitleProps = {
 /** Header of the inventory display section. */
 export const InventoryTitle: React.FC<
     PropsWithChildren<InventoryTitleProps>
-> = ({ title, description, supertitle, loading, dark, children }) => {
-    const styles = useStyles();
+> = ({ title, dark, children }) => {
+    const m = useStyleEngine();
+    const c = useStyles();
     return (
-        <div className={styles.container}>
-            <span
-                className={mergeClasses(
-                    styles.title,
-                    dark ? styles.titleColorDark : styles.titleColorLight,
-                )}
-            >
-                <GlowyText size={500} weight="bold" dark={dark}>
-                    {title}
-                </GlowyText>
-                <span className={styles.supertitle}>
-                    {description && (
-                        <Tooltip relationship="label" content={description}>
-                            <Info16Regular className={styles.infoIcon} />
-                        </Tooltip>
-                    )}
-                    {supertitle}
+        <FluentProvider
+            className={c.noBackground}
+            theme={dark ? webDarkTheme : webLightTheme}
+        >
+            <div className={m("flex-row flex-centera", c.container)}>
+                <span
+                    className={m("flex", [
+                        c.title,
+                        dark ? c.titleColorDark : c.titleColorLight,
+                    ])}
+                >
+                    <GlowyText size={500} weight="bold" dark={dark}>
+                        {title}
+                    </GlowyText>
                 </span>
-            </span>
-            {children}
-            <span className={styles.end}>
-                {loading && (
-                    <Spinner
-                        className={styles.loadingSpinner}
-                        as="span"
-                        size="tiny"
-                        delay={300}
-                    />
-                )}
-            </span>
-        </div>
+                {children}
+            </div>
+        </FluentProvider>
     );
 };

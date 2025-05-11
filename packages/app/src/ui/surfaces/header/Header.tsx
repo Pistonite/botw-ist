@@ -19,38 +19,28 @@ import { GitHubLink } from "@pistonite/shared-controls";
 
 import { useSessionStore } from "self::application/store";
 import { isLessProductive } from "self::pure-contrib";
+import { ExtensionsMenu } from "self::ui/surfaces/extension";
+import { useStyleEngine } from "self::ui/functions";
 
 import icon from "./icon.svg";
 import iconPurple from "./icon-purple.svg";
 import { SettingsMenu } from "./SettingsMenu.tsx";
-import { ExtensionsMenu } from "./ExtensionsMenu.tsx";
 import { PerfMonitor } from "./PerfMonitor.tsx";
 
 const useStyles = makeStyles({
     container: {
         backgroundColor: tokens.colorNeutralBackground2,
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
         gap: "4px",
         height: "40px",
     },
     logo: {
         width: "40px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    end: {
-        flexGrow: 1,
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "flex-end",
     },
 });
 
 const HeaderImpl: React.FC = () => {
-    const styles = useStyles();
+    const m = useStyleEngine();
+    const c = useStyles();
     const version = import.meta.env.VERSION.replace("0.", "v");
     const commitShort = import.meta.env.COMMIT.substring(0, 8);
 
@@ -58,8 +48,8 @@ const HeaderImpl: React.FC = () => {
         (state) => state.runningCustomImageVersion,
     );
     return (
-        <div className={styles.container}>
-            <div className={styles.logo}>
+        <div className={m("flex-row flex-centera", c.container)}>
+            <div className={m("flex flex-center", c.logo)}>
                 <img
                     src={isRunningCustomImage ? iconPurple : icon}
                     height="32px"
@@ -95,7 +85,7 @@ const HeaderImpl: React.FC = () => {
                     </MenuList>
                 </MenuPopover>
             </Menu>
-            <div className={styles.end}>
+            <div className={m("flex-row flex-1 flex-end")}>
                 <PerfMonitor />
             </div>
         </div>

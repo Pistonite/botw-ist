@@ -23,7 +23,7 @@ import {
 import { useUITranslation } from "skybook-localization";
 
 import { useApplicationStore } from "self::application/store";
-import { isLessProductive } from "../pure-contrib/platform";
+import { isLessProductive } from "self::pure-contrib";
 
 /** Settings menu in the header */
 const SettingsMenuImpl: React.FC = () => {

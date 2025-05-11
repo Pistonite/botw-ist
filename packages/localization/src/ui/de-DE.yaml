@@ -63,13 +63,15 @@ menu.open_configure_extension: "Erweiterungen öffnen/konfigurieren"
 menu.open_configure_extension.desc: "Wähle eine Erweiterung aus, um sie zu öffnen oder ihre Öffnungseinstellungen zu ändern"
 
 # Main inventory display
-main.gdt_inventory.desc: "Inventardaten, die im Flaggensystem (GDT) des Spiels gespeichert sind. Gegenstände werden so angezeigt, als wären sie im Inventar geladen, und die Slots sind entsprechend dem tatsächlichen Speicherplatz im GDT ausgerichtet."
+main.gdt_inventory.desc: "Inventardaten, die im Flaggensystem des Spiels (GDT) gespeichert sind. Gegenstände werden angezeigt, als wären sie im Inventar geladen, und die Slots sind basierend auf Korruption an das Inventar ausgerichtet."
 main.gdt_inventory.title: "GameData"
-main.mcount_desc: "Anzahl der Inventarplätze, die durch die Liste der verwendeten Gegenstände verfolgt werden"
+main.tabbed_inventory.bad_msgbar.body: "Tab-Daten sind beschädigt. Möglicherweise aufgrund eines Speicherbeschädigungs-Exploits."
+main.tabbed_inventory.bad_msgbar.title: "Tabs können nicht angezeigt werden!"
+main.tabbed_inventory.button_tooltip: "Listen-/Tabellenansicht umschalten"
 main.visible_inventory.desc: "Gegenstände, die beim Öffnen des Inventars sichtbar sind"
 main.visible_inventory.title: "Sichtbares Inventar"
 
-
+main.bug_report: "Bitte melden Sie es auf {{github}}, wenn Sie denken, dass dies ein Fehler im Simulator ist."
 
 # Generic error messages
 error.internal: "Interner Fehler: {{error}}"

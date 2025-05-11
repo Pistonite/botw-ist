@@ -6,8 +6,7 @@ import {
     useExtensionStore,
 } from "self::application/store";
 import { openExtensionPopup } from "self::application/extension";
-
-import { ExtensionToolbar } from "./components/ExtensionToolbar.tsx";
+import { ExtensionToolbar } from "self::ui/components";
 
 const ExtensionToolbarSecondaryConnected: React.FC = () => {
     const currentSecondaryId = useCurrentSecondaryExtensionId();

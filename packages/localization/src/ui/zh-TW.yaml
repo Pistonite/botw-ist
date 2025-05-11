@@ -63,13 +63,15 @@ menu.open_configure_extension: "開啟或設定擴充功能"
 menu.open_configure_extension.desc: "選擇擴充功能以開啟或調整開啟方式"
 
 # Main inventory display
-main.gdt_inventory.desc: "儲存在遊戲旗標系統（GDT）中的背包資料。物品以讀取進背包的形式顯示，並依據各背包格將儲存至GDT格的位置對齊排列。"
+main.gdt_inventory.desc: "儲存於遊戲 Flag 系統（GDT）中的物品資料。物品狀態以讀取入背包後的形式顯示。背包格讹轉的目標資料格與該背包格對齊顯示。"
 main.gdt_inventory.title: "GDT內部資料"
-main.mcount_desc: "使用中物品清單所追蹤的物品格數量"
+main.tabbed_inventory.bad_msgbar.body: "分頁資料已損壞，可能是因記憶體損壞漏洞所致。"
+main.tabbed_inventory.bad_msgbar.title: "無法顯示分頁！"
+main.tabbed_inventory.button_tooltip: "切換清單/分頁檢視"
 main.visible_inventory.desc: "當你打開背包時所看到的物品"
 main.visible_inventory.title: "可見背包"
 
-
+main.bug_report: "若您認為這是模擬器的錯誤，請至 {{github}} 回報。"
 
 # Generic error messages
 error.internal: "內部錯誤: {{error}}"

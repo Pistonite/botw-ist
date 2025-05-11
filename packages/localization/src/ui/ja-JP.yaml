@@ -63,13 +63,15 @@ menu.open_configure_extension: "拡張機能を開く／設定する"
 menu.open_configure_extension.desc: "開きたい拡張機能を選ぶか、開き方を変更します"
 
 # Main inventory display
-main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されたインベントリデータです。アイテムはインベントリにロードされた状態で表示され、各スロットはGDTスロットに保存される対応スロットに合わせて配置されています。"
+main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されたインベントリーデータ。アイテムはインベントリーに読み込まれたかのように表示され、スロットはコラプションに基づいてインベントリーに整列されます。"
 main.gdt_inventory.title: "ゲームデータ"
-main.mcount_desc: "使用中のアイテムリストによって追跡されるアイテムスロット数"
+main.tabbed_inventory.bad_msgbar.body: "タブのデータが破損しています。メモリ破損のエクスプロイトが原因の可能性があります。"
+main.tabbed_inventory.bad_msgbar.title: "タブを表示できません！"
+main.tabbed_inventory.button_tooltip: "リスト/タブ表示を切り替え"
 main.visible_inventory.desc: "インベントリを開いたときに表示されるアイテム"
 main.visible_inventory.title: "表示インベントリ"
 
-
+main.bug_report: "これがシミュレーターのバグだと思われる場合は、{{github}} に報告してください。"
 
 # Generic error messages
 error.internal: "内部エラー: {{error}}"

@@ -63,13 +63,15 @@ menu.open_configure_extension: "확장 기능 열기/설정"
 menu.open_configure_extension.desc: "확장 기능을 선택하여 열거나 열리는 방식을 변경하세요"
 
 # Main inventory display
-main.gdt_inventory.desc: "게임의 플래그 시스템(GDT)에 저장된 인벤토리 데이터입니다. 아이템은 인벤토리에 로드된 것처럼 표시되며, 슬롯은 실제로 GDT 슬롯에 저장될 인벤토리 슬롯에 맞추어 정렬됩니다."
+main.gdt_inventory.desc: "게임의 플래그 시스템(GDT)에 저장된 인벤토리 데이터입니다. 아이템은 인벤토리에 로드된 것처럼 표시되며, 슬롯은 코럽션에 따라 인벤토리에 정렬됩니다."
 main.gdt_inventory.title: "GameData"
-main.mcount_desc: "사용 중인 아이템 목록에 의해 추적되는 아이템 슬롯 수"
+main.tabbed_inventory.bad_msgbar.body: "탭 데이터가 손상되었습니다. 메모리 손상 익스플로잇으로 인해 발생했을 수 있습니다."
+main.tabbed_inventory.bad_msgbar.title: "탭을 표시할 수 없습니다!"
+main.tabbed_inventory.button_tooltip: "목록/탭 보기 전환"
 main.visible_inventory.desc: "인벤토리를 열었을 때 보이는 아이템"
 main.visible_inventory.title: "표시 인벤토리"
 
-
+main.bug_report: "이것이 시뮬레이터의 버그라고 생각되면 {{github}}에 보고해 주세요."
 
 # Generic error messages
 error.internal: "내부 오류: {{error}}"

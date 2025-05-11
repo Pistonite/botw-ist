@@ -1,38 +1,23 @@
 import { memo } from "react";
-import { makeStyles } from "@fluentui/react-components";
 import { ResizeLayout } from "@pistonite/shared-controls";
 
 import { useIsShowingExtensionPanel } from "self::application/store";
 import { useNarrow, isLessProductive } from "self::pure-contrib";
-
-import { ExtensionPanel } from "./ExtensionPanel.tsx";
-import { useUIStore } from "./store.ts";
-import { Header } from "./Header.tsx";
-import { PouchInventoryPanel } from "./PouchInventoryPanel.tsx";
-import { GdtInventoryPanel } from "./GdtInventoryPanel.tsx";
-import { ExtensionLaunchDialog } from "./ExtensionLaunchDialog.tsx";
-import { CustomExtensionDialog } from "./CustomExtensionDialog.tsx";
-
-const useStyles = makeStyles({
-    root: {
-        width: "100vw",
-        height: "100vh",
-    },
-    side: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-    },
-    fullwh: {
-        width: "100%",
-        height: "100%",
-    },
-});
+import {
+    ExtensionPanel,
+    ExtensionLaunchDialog,
+    CustomExtensionDialog,
+} from "self::ui/surfaces/extension";
+import { Header } from "self::ui/surfaces/header";
+import {
+    PouchInventoryPanel,
+    GdtInventoryPanel,
+} from "self::ui/surfaces/inventory";
+import { useStyleEngine, useUIStore } from "self::ui/functions";
 
 const AppImpl: React.FC = () => {
+    const m = useStyleEngine();
     const narrow = useNarrow();
-    const styles = useStyles();
 
     const showExtensionPanel = useIsShowingExtensionPanel();
 
@@ -53,7 +38,7 @@ const AppImpl: React.FC = () => {
     return (
         <>
             <ResizeLayout
-                className={styles.root}
+                className={m("wh-100v")}
                 vertical={narrow || !showExtensionPanel}
                 disabled={!showExtensionPanel}
                 naturalSize={!showExtensionPanel}
@@ -63,13 +48,13 @@ const AppImpl: React.FC = () => {
                 minHeight={45}
                 touch={isLessProductive}
             >
-                <div className={styles.side}>
+                <div className={m("flex-col wh-100")}>
                     <Header />
                     {showExtensionPanel && <ExtensionPanel />}
                 </div>
-                <main className={styles.fullwh}>
+                <main className={m("wh-100")}>
                     <ResizeLayout
-                        className={styles.fullwh}
+                        className={m("wh-100")}
                         vertical
                         valuePercent={gamedataInventoryPercentage}
                         setValuePercent={setGamedataInventoryPercentage}

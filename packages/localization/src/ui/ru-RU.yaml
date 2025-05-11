@@ -63,13 +63,15 @@ menu.open_configure_extension: "Открыть/настроить расшире
 menu.open_configure_extension.desc: "Выберите расширение, чтобы открыть его или изменить способ его открытия"
 
 # Main inventory display
-main.gdt_inventory.desc: "Данные инвентаря, сохранённые в системе флагов (GDT) игры. Предметы отображаются так, как если бы они были загружены в инвентарь, а ячейки выровнены в соответствии с теми, которые будут сохранены в слотах GDT."
+main.gdt_inventory.desc: "Данные инвентаря, сохранённые в системе флагов игры (GDT). Предметы отображаются так, как если бы они были загружены в инвентарь, а слоты выравниваются с инвентарём в зависимости от коррупции."
 main.gdt_inventory.title: "GameData"
-main.mcount_desc: "Количество ячеек, отслеживаемых списком используемых предметов"
+main.tabbed_inventory.bad_msgbar.body: "Данные вкладок повреждены. Возможно, из-за эксплойта повреждения памяти."
+main.tabbed_inventory.bad_msgbar.title: "Не удаётся отобразить вкладки!"
+main.tabbed_inventory.button_tooltip: "Переключить вид списка/вкладок"
 main.visible_inventory.desc: "Предметы, которые вы видите при открытии инвентаря"
 main.visible_inventory.title: "Видимый инвентарь"
 
-
+main.bug_report: "Пожалуйста, сообщите об этом на {{github}}, если считаете, что это ошибка в симуляторе."
 
 # Generic error messages
 error.internal: "Внутренняя ошибка: {{error}}"

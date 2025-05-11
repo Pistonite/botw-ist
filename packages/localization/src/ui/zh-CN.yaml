@@ -63,13 +63,15 @@ menu.open_configure_extension: "打开或设置扩展"
 menu.open_configure_extension.desc: "打开扩展或者调整扩展打开的方式"
 
 # Main inventory display
-main.gdt_inventory.desc: "储存与游戏Flag系统（GDT）内的物品数据。物品状态以数据读取入背包后的形式显示。同步时背包格存入的目标数据格与该背包格对齐显示。"
+main.gdt_inventory.desc: "储存与游戏Flag系统（GDT）内的物品数据。物品状态以数据读取入背包后的形式显示。背包格讹转的目标数据格与该背包格对齐显示。"
 main.gdt_inventory.title: "GDT内部数据"
-main.mcount_desc: "使用中物品的列表所记录的物品格子数量"
+main.tabbed_inventory.bad_msgbar.body: "页面数据损坏（可能由内存损坏利用导致）。"
+main.tabbed_inventory.bad_msgbar.title: "无法以页面形式显示！"
+main.tabbed_inventory.button_tooltip: "切换列表/页面显示"
 main.visible_inventory.desc: "当你打开背包时所看见的物品"
 main.visible_inventory.title: "可视背包"
 
-
+main.bug_report: "如果您认为这是模拟器的BUG，请提交反馈到{{github}}。"
 
 # Generic error messages
 error.internal: "内部错误: {{error}}"

@@ -63,13 +63,15 @@ menu.open_configure_extension: "Extensies openen/configureren"
 menu.open_configure_extension.desc: "Selecteer een extensie om te openen of hoe deze geopend moet worden aan te passen"
 
 # Main inventory display
-main.gdt_inventory.desc: "Inventarisgegevens die zijn opgeslagen in het vlaggensysteem (GDT) van het spel. Items worden weergegeven alsof ze in de inventaris zijn geladen, en de vakjes zijn uitgelijnd met de inventarisslot die daadwerkelijk naar de GDT-slot wordt opgeslagen."
+main.gdt_inventory.desc: "Voorraaddata opgeslagen in het vlaggensysteem van het spel (GDT). Items worden weergegeven alsof ze in de inventaris zijn geladen, en de slots zijn uitgelijnd met de inventaris op basis van corruptie."
 main.gdt_inventory.title: "GameData"
-main.mcount_desc: "Aantal itemslots gevolgd door de lijst van gebruikte objecten"
+main.tabbed_inventory.bad_msgbar.body: "Tabbladgegevens zijn beschadigd. Mogelijk door een geheugenbeschadigingsexploit."
+main.tabbed_inventory.bad_msgbar.title: "Kan tabbladen niet weergeven!"
+main.tabbed_inventory.button_tooltip: "Lijst-/tabweergave wisselen"
 main.visible_inventory.desc: "Items die je ziet wanneer je de inventaris opent"
 main.visible_inventory.title: "Zichtbare Inventaris"
 
-
+main.bug_report: "Meld het op {{github}} als u denkt dat dit een bug in de simulator is."
 
 # Generic error messages
 error.internal: "Interne fout: {{error}}"

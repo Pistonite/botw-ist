@@ -63,13 +63,15 @@ menu.open_configure_extension: "Apri/configura estensioni"
 menu.open_configure_extension.desc: "Seleziona un'estensione da aprire o modifica come deve essere aperta"
 
 # Main inventory display
-main.gdt_inventory.desc: "Dati dell'inventario memorizzati nel sistema di flag (GDT) del gioco. Gli oggetti vengono visualizzati come se fossero caricati nell'inventario, e gli slot sono allineati in base a quale slot dell'inventario verrà effettivamente salvato nello slot GDT."
+main.gdt_inventory.desc: "Dati dell'inventario memorizzati nel sistema di flag del gioco (GDT). Gli oggetti vengono visualizzati come se fossero caricati nell'inventario, e gli slot sono allineati all'inventario in base alla corruzione."
 main.gdt_inventory.title: "GameData"
-main.mcount_desc: "Numero di slot oggetti tracciati dall'elenco degli oggetti in uso"
+main.tabbed_inventory.bad_msgbar.body: "I dati delle schede sono danneggiati. Possibilmente a causa di un exploit di corruzione della memoria."
+main.tabbed_inventory.bad_msgbar.title: "Impossibile visualizzare le schede!"
+main.tabbed_inventory.button_tooltip: "Attiva/disattiva vista elenco/schede"
 main.visible_inventory.desc: "Oggetti che vedi quando apri l'inventario"
 main.visible_inventory.title: "Inventario Visibile"
 
-
+main.bug_report: "Segnalalo su {{github}} se pensi che sia un bug del simulatore."
 
 # Generic error messages
 error.internal: "Errore interno: {{error}}"
