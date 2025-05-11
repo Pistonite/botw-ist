@@ -11,11 +11,6 @@ export type InventoryTabButtonProps = {
 };
 
 const useStyles = makeStyles({
-    container: {
-        flexShrink: 0,
-        boxSizing: "border-box",
-        cursor: "pointer",
-    },
     innerContainer: {
         width: "48px",
         height: "48px",

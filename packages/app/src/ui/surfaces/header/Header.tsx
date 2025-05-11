@@ -20,12 +20,12 @@ import { GitHubLink } from "@pistonite/shared-controls";
 import { useSessionStore } from "self::application/store";
 import { isLessProductive } from "self::pure-contrib";
 import { ExtensionsMenu } from "self::ui/surfaces/extension";
+import { useStyleEngine } from "self::ui/functions";
 
 import icon from "./icon.svg";
 import iconPurple from "./icon-purple.svg";
 import { SettingsMenu } from "./SettingsMenu.tsx";
 import { PerfMonitor } from "./PerfMonitor.tsx";
-import { useStyleEngine } from "../../functions/SharedStyles.ts";
 
 const useStyles = makeStyles({
     container: {

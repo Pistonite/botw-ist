@@ -31,7 +31,6 @@ import {
     getTabNodesFromPouch,
     useStyleEngine,
 } from "self::ui/functions";
-
 import {
     InventoryTitle,
     InventoryTabButton,

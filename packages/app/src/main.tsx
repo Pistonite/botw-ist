@@ -32,7 +32,6 @@ import {
     getSheikaBackgroundUrl,
     probeAndRegisterAssetLocation,
 } from "self::ui/functions";
-
 import { App, BootScreen, type BootScreenProps } from "self::ui/surfaces/root";
 
 /**

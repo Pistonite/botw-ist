@@ -9,7 +9,8 @@ import { Dismiss20Regular, WindowNew20Regular } from "@fluentui/react-icons";
 import type { PropsWithChildren } from "react";
 
 import { useUITranslation } from "skybook-localization";
-import { useStyleEngine } from "../functions/SharedStyles";
+
+import { useStyleEngine } from "self::ui/functions";
 
 export type ExtensionToolbarProps = {
     /** Id of the current opened extension */
