@@ -48,6 +48,7 @@ dialog.custom_image.title: "Custom Image Setup"
 
 # Menu Headers
 menu.header.extensions: "Extensions"
+menu.header.more: "More"
 menu.header.pinned: "Pinned"
 menu.header.preference: "Preference"
 menu.header.recent: "Recent"
@@ -61,6 +62,8 @@ menu.high_res_icons: "High Quality Icons"
 menu.high_res_icons.desc: "Enable high-resolution icons and item animations. Disabling this could save bandwidth if connection is poor and icons are not loading for you."
 menu.open_configure_extension: "Open/Configure Extensions"
 menu.open_configure_extension.desc: "Select an extension to open or change how it should be opened"
+menu.report_issue: "Feedback"
+menu.skybook_manual: "Skybook Manual"
 
 # Main inventory display
 main.gdt_inventory.desc: "Inventory data stored in the game's flag system (GDT). Items are displayed as if they are loaded to inventory, and slots are aligned to inventory based on corruption"

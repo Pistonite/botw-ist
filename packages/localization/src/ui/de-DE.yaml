@@ -48,6 +48,7 @@ dialog.custom_image.title: "Benutzerdefinierte Abbild-Einrichtung"
 
 # Menu Headers
 menu.header.extensions: "Erweiterungen"
+menu.header.more: "Mehr"
 menu.header.pinned: "Angeheftet"
 menu.header.preference: "Einstellungen"
 menu.header.recent: "Kürzlich geöffnet"
@@ -61,6 +62,8 @@ menu.high_res_icons: "HD-Symbole"
 menu.high_res_icons.desc: "Aktivieren Sie hochauflösende Symbole und Animationen von Gegenständen. Das Deaktivieren kann Bandbreite sparen, wenn die Verbindung schlecht ist und Symbole nicht richtig geladen werden."
 menu.open_configure_extension: "Erweiterungen öffnen/konfigurieren"
 menu.open_configure_extension.desc: "Wähle eine Erweiterung aus, um sie zu öffnen oder ihre Öffnungseinstellungen zu ändern"
+menu.report_issue: "Feedback"
+menu.skybook_manual: "Skybook-Handbuch"
 
 # Main inventory display
 main.gdt_inventory.desc: "Inventardaten, die im Flaggensystem des Spiels (GDT) gespeichert sind. Gegenstände werden angezeigt, als wären sie im Inventar geladen, und die Slots sind basierend auf Korruption an das Inventar ausgerichtet."

@@ -48,6 +48,7 @@ dialog.custom_image.title: "Instellingen voor aangepaste schijfkopie"
 
 # Menu Headers
 menu.header.extensions: "Extensies"
+menu.header.more: "Meer"
 menu.header.pinned: "Vastgemaakt"
 menu.header.preference: "Voorkeuren"
 menu.header.recent: "Recent geopend"
@@ -61,6 +62,8 @@ menu.high_res_icons: "HD-iconen"
 menu.high_res_icons.desc: "Schakel hoge-resolutie iconen en item-animaties in. Uitschakelen kan bandbreedte besparen als de verbinding slecht is en iconen niet goed laden."
 menu.open_configure_extension: "Extensies openen/configureren"
 menu.open_configure_extension.desc: "Selecteer een extensie om te openen of hoe deze geopend moet worden aan te passen"
+menu.report_issue: "Feedback"
+menu.skybook_manual: "Skybook-handleiding"
 
 # Main inventory display
 main.gdt_inventory.desc: "Voorraaddata opgeslagen in het vlaggensysteem van het spel (GDT). Items worden weergegeven alsof ze in de inventaris zijn geladen, en de slots zijn uitgelijnd met de inventaris op basis van corruptie."

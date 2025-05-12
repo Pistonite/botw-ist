@@ -1,21 +1,5 @@
 import { memo } from "react";
-import {
-    Menu,
-    Button,
-    makeStyles,
-    tokens,
-    MenuTrigger,
-    MenuPopover,
-    MenuList,
-    MenuDivider,
-    Caption1,
-    MenuItem,
-} from "@fluentui/react-components";
-import {
-    BookQuestionMark20Regular,
-    MoreHorizontal20Regular,
-} from "@fluentui/react-icons";
-import { GitHubLink } from "@pistonite/shared-controls";
+import { makeStyles, tokens } from "@fluentui/react-components";
 
 import { useSessionStore } from "self::application/store";
 import { isLessProductive } from "self::pure-contrib";
@@ -26,6 +10,7 @@ import icon from "./icon.svg";
 import iconPurple from "./icon-purple.svg";
 import { SettingsMenu } from "./SettingsMenu.tsx";
 import { PerfMonitor } from "./PerfMonitor.tsx";
+import { MiscMenu } from "./MiscMenu.tsx";
 
 const useStyles = makeStyles({
     container: {
@@ -41,8 +26,6 @@ const useStyles = makeStyles({
 const HeaderImpl: React.FC = () => {
     const m = useStyleEngine();
     const c = useStyles();
-    const version = import.meta.env.VERSION.replace("0.", "v");
-    const commitShort = import.meta.env.COMMIT.substring(0, 8);
 
     const isRunningCustomImage = useSessionStore(
         (state) => state.runningCustomImageVersion,
@@ -63,28 +46,7 @@ const HeaderImpl: React.FC = () => {
                 // for this menu
                 !isLessProductive && <ExtensionsMenu />
             }
-
-            <Menu>
-                <MenuTrigger disableButtonEnhancement>
-                    <Button
-                        appearance="subtle"
-                        icon={<MoreHorizontal20Regular />}
-                    />
-                </MenuTrigger>
-                <MenuPopover>
-                    <MenuList>
-                        <MenuItem icon={<BookQuestionMark20Regular />}>
-                            Skybook Manual
-                        </MenuItem>
-                        <GitHubLink href="https://github.com/Pistonite/botw-ist" />
-                        <MenuDivider />
-
-                        <Caption1>
-                            {version} ({commitShort})
-                        </Caption1>
-                    </MenuList>
-                </MenuPopover>
-            </Menu>
+            <MiscMenu />
             <div className={m("flex-row flex-1 flex-end")}>
                 <PerfMonitor />
             </div>

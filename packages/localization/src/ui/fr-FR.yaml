@@ -48,6 +48,7 @@ dialog.custom_image.title: "Configuration de l’image disque personnalisée"
 
 # Menu Headers
 menu.header.extensions: "Extensions"
+menu.header.more: "Plus"
 menu.header.pinned: "Épinglés"
 menu.header.preference: "Préférences"
 menu.header.recent: "Récents"
@@ -61,6 +62,8 @@ menu.high_res_icons: "Icônes HD"
 menu.high_res_icons.desc: "Activez les icônes haute résolution et les animations des objets. Désactiver cette option peut économiser de la bande passante si votre connexion est lente ou si les icônes ne se chargent pas correctement."
 menu.open_configure_extension: "Ouvrir/configurer les extensions"
 menu.open_configure_extension.desc: "Sélectionnez une extension à ouvrir ou à configurer son mode d’ouverture"
+menu.report_issue: "Commentaires"
+menu.skybook_manual: "Manuel de Skybook"
 
 # Main inventory display
 main.gdt_inventory.desc: "Données d'inventaire stockées dans le système de drapeaux du jeu (GDT). Les objets sont affichés comme s'ils étaient chargés dans l'inventaire, et les emplacements sont alignés avec l'inventaire en fonction de la corruption."
