@@ -48,6 +48,7 @@ dialog.custom_image.title: "사용자 지정 디스크 이미지 설정"
 
 # Menu Headers
 menu.header.extensions: "확장 기능"
+menu.header.more: "더보기"
 menu.header.pinned: "고정됨"
 menu.header.preference: "설정"
 menu.header.recent: "최근 항목"
@@ -61,6 +62,8 @@ menu.high_res_icons: "고화질"
 menu.high_res_icons.desc: "고해상도 아이콘과 아이템 애니메이션을 활성화합니다. 연결 상태가 불안정하여 아이콘이 제대로 로드되지 않는 경우, 비활성화하면 대역폭을 절약할 수 있습니다."
 menu.open_configure_extension: "확장 기능 열기/설정"
 menu.open_configure_extension.desc: "확장 기능을 선택하여 열거나 열리는 방식을 변경하세요"
+menu.report_issue: "피드백"
+menu.skybook_manual: "Skybook 매뉴얼"
 
 # Main inventory display
 main.gdt_inventory.desc: "게임의 플래그 시스템(GDT)에 저장된 인벤토리 데이터입니다. 아이템은 인벤토리에 로드된 것처럼 표시되며, 슬롯은 코럽션에 따라 인벤토리에 정렬됩니다."

@@ -48,6 +48,7 @@ dialog.custom_image.title: "自訂磁碟映像設定"
 
 # Menu Headers
 menu.header.extensions: "擴充功能"
+menu.header.more: "更多"
 menu.header.pinned: "釘選"
 menu.header.preference: "設定"
 menu.header.recent: "最近開啟"
@@ -61,6 +62,8 @@ menu.high_res_icons: "高品質圖示"
 menu.high_res_icons.desc: "啟用高解析度圖示和物品動畫效果。如果連線不穩定或無法載入圖示，可以考慮關閉此選項以節省頻寬。"
 menu.open_configure_extension: "開啟或設定擴充功能"
 menu.open_configure_extension.desc: "選擇擴充功能以開啟或調整開啟方式"
+menu.report_issue: "意見回饋"
+menu.skybook_manual: "Skybook 使用手冊"
 
 # Main inventory display
 main.gdt_inventory.desc: "儲存於遊戲 Flag 系統（GDT）中的物品資料。物品狀態以讀取入背包後的形式顯示。背包格讹轉的目標資料格與該背包格對齊顯示。"

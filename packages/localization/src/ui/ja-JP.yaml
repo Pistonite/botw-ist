@@ -48,6 +48,7 @@ dialog.custom_image.title: "カスタムディスクイメージ設定"
 
 # Menu Headers
 menu.header.extensions: "拡張機能"
+menu.header.more: "その他"
 menu.header.pinned: "ピン留め"
 menu.header.preference: "設定"
 menu.header.recent: "最近開いたもの"
@@ -61,6 +62,8 @@ menu.high_res_icons: "高解像度"
 menu.high_res_icons.desc: "高解像度アイコンとアイテムアニメーションを有効にします。接続が不安定でアイコンが正常に読み込めない場合は、無効にすると帯域幅を節約できます。"
 menu.open_configure_extension: "拡張機能を開く／設定する"
 menu.open_configure_extension.desc: "開きたい拡張機能を選ぶか、開き方を変更します"
+menu.report_issue: "フィードバック"
+menu.skybook_manual: "Skybook マニュアル"
 
 # Main inventory display
 main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されたインベントリーデータ。アイテムはインベントリーに読み込まれたかのように表示され、スロットはコラプションに基づいてインベントリーに整列されます。"
