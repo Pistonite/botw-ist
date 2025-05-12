@@ -20,7 +20,7 @@ additional-css = [
 
 [preprocessor.admonish]
 command = "mdbook-admonish"
-assets_version = "3.0.2" # do not edit: managed by `mdbook-admonish install`
+assets_version = "3.0.3" # do not edit: managed by `mdbook-admonish install`
 
 [preprocessor.skybook]
 command = "cargo run --bin skybook-manual-preprocessor --quiet"
