@@ -14,8 +14,11 @@ export interface ExtensionApp {
      * Set the simulator script.
      *
      * This will trigger a rerun of the simulation using the new script
+     *
+     * Position is the current cursor position in the script as
+     * a character offset (not byte offset) and is 0-based.
      */
-    setScript(script: string): WxPromise<void>;
+    setScript(script: string, position: number): WxPromise<void>;
 
     /**
      * Resolve an item from a query

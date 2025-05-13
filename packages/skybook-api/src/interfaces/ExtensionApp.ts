@@ -68,9 +68,12 @@ export class _wxSenderImpl implements ExtensionApp {
      * Set the simulator script.
      * 
      * This will trigger a rerun of the simulation using the new script
+     * 
+     * Position is the current cursor position in the script as
+     * a character offset (not byte offset) and is 0-based.
      */
-    public setScript( script: string ): WxPromise<void> {
-        return this.sender.sendVoid(24 /* ExtensionApp.setScript */, [ script ]);
+    public setScript( script: string, position: number ): WxPromise<void> {
+        return this.sender.sendVoid(24 /* ExtensionApp.setScript */, [ script, position ]);
     }
 }
 
@@ -95,8 +98,8 @@ export const _wxRecverImpl = (handler: ExtensionApp): WxBusRecvHandler => {
             return handler.resolveItem( a0, a1, a2 );
         }
         case 24 /* ExtensionApp.setScript */: {
-            const [ a0 ] = args;
-            return handler.setScript( a0 );
+            const [ a0, a1 ] = args;
+            return handler.setScript( a0, a1 );
         }
     } return Promise.resolve({ err: { code: "UnknownFunction" } }); }) as WxBusRecvHandler;
 };
