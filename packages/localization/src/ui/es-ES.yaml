@@ -20,8 +20,6 @@ button.setup: "Configurar"
 prompt.closing.edit: "Hay cambios no guardados que se perderán si cierras ahora, ¿continuar?"
 prompt.closing.local: "Guardado en progreso. La última edición se perderá si cierras ahora, ¿continuar?"
 
-# Help improve translation!
-prompt.translation_contact: "¡Por favor, ayúdenos a mejorar las traducciones al español! Lea más:"
 # Boot Prompts
 prompt.boot.button.learn_more: "Más información sobre imágenes de disco personalizadas"
 prompt.boot.custom_or_default: "¿Permitir que el script se cargue con una imagen de disco personalizada?"

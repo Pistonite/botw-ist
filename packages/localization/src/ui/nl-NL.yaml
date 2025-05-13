@@ -20,8 +20,6 @@ button.setup: "Instellen"
 prompt.closing.edit: "Er zijn niet-opgeslagen wijzigingen die verloren gaan als u nu sluit, doorgaan?"
 prompt.closing.local: "Opslaan is bezig. De laatste bewerking gaat verloren als u nu sluit, doorgaan?"
 
-# Help improve translation!
-prompt.translation_contact: "Help ons alstublieft de Nederlandse vertalingen te verbeteren! Lees meer:"
 # Boot Prompts
 prompt.boot.button.learn_more: "Meer informatie over aangepaste schijfkopieën"
 prompt.boot.custom_or_default: "Script toestaan om te laden met een aangepaste schijfkopie?"

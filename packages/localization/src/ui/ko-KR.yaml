@@ -20,8 +20,6 @@ button.setup: "설정"
 prompt.closing.edit: "저장되지 않은 변경 사항이 있습니다. 지금 닫으면 변경 사항이 손실됩니다. 계속하시겠습니까?"
 prompt.closing.local: "저장 중입니다. 지금 닫으면 마지막 편집 내용이 손실됩니다. 계속하시겠습니까?"
 
-# Help improve translation!
-prompt.translation_contact: "한국어 번역을 개선하는 데 도움을 주세요! 자세히 알아보기:"
 # Boot Prompts
 prompt.boot.button.learn_more: "사용자 지정 디스크 이미지에 대해 자세히 알아보기"
 prompt.boot.custom_or_default: "스크립트가 사용자 지정 디스크 이미지로 로드되도록 허용하시겠습니까?"

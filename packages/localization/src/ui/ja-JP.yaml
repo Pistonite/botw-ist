@@ -20,8 +20,6 @@ button.setup: "セットアップ"
 prompt.closing.edit: "保存されていない変更があります。今閉じると失われますが、続行しますか？"
 prompt.closing.local: "保存中です。今閉じると最後の編集が失われますが、続行しますか？"
 
-# Help improve translation!
-prompt.translation_contact: "日本語の翻訳を改善するためにご協力ください！詳細はこちら："
 # Boot Prompts
 prompt.boot.button.learn_more: "カスタムディスクイメージの詳細"
 prompt.boot.custom_or_default: "スクリプトをカスタムディスクイメージでロードすることを許可しますか？"
