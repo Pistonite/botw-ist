@@ -397,7 +397,6 @@ const bootMainUI = async (context: BootContext) => {
                     </QueryClientProvider>
                 </RuntimeContext.Provider>
             </CatchCrash>
-            ,
         </StrictMode>,
     );
 
