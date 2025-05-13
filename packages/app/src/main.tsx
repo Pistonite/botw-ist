@@ -382,22 +382,23 @@ const bootMainUI = async (context: BootContext) => {
         return;
     }
     ReactRoot = createReactRoot();
-    // <StrictMode>
-    // </StrictMode>,
     ReactRoot.render(
-        <CatchCrash>
-            <RuntimeContext.Provider value={runtime}>
-                <QueryClientProvider client={queryClient}>
-                    <ThemeProvider>
-                        <ItemTooltipProvider
-                            backgroundUrl={getSheikaBackgroundUrl()}
-                        >
-                            <App />
-                        </ItemTooltipProvider>
-                    </ThemeProvider>
-                </QueryClientProvider>
-            </RuntimeContext.Provider>
-        </CatchCrash>,
+        <StrictMode>
+            <CatchCrash>
+                <RuntimeContext.Provider value={runtime}>
+                    <QueryClientProvider client={queryClient}>
+                        <ThemeProvider>
+                            <ItemTooltipProvider
+                                backgroundUrl={getSheikaBackgroundUrl()}
+                            >
+                                <App />
+                            </ItemTooltipProvider>
+                        </ThemeProvider>
+                    </QueryClientProvider>
+                </RuntimeContext.Provider>
+            </CatchCrash>
+            ,
+        </StrictMode>,
     );
 
     void removeBootCurtain(true);
