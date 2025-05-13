@@ -28,7 +28,7 @@ tasks:
     vars:
       COMMIT_SHORT:
         sh: git rev-parse HEAD | cut -c1-8
-    desc: Copy build artifacts locally to dist
+    desc: Build and copy build artifacts locally to dist
     cmds:
       - task: runtime-wasm:build-wasm
       - task: runtime-wasm:build-dist-min

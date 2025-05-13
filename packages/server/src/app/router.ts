@@ -120,6 +120,7 @@ Disallow: /github/
                         "Cache-Control": "public, max-age=600",
                     },
                 }),
+            outbound: [withCorpHeaders],
         }),
         // bundled assets are hashed and can be cached forever
         "/assets/*": builder.route({

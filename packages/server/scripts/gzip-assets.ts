@@ -10,7 +10,8 @@ const gzipDir = async (dir: string) => {
         if (
             path.endsWith(".gz") ||
             path.endsWith(".webp") ||
-            path.endsWith(".png")
+            path.endsWith(".png") ||
+            path.endsWith(".jpg")
         ) {
             return;
         }
