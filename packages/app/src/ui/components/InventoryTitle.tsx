@@ -22,7 +22,7 @@ const useStyles = makeStyles({
         color: "#000000",
     },
     container: {
-        padding: "4px 4px 8px 0px",
+        padding: "4px 0px 8px 0px",
         gap: "4px",
     },
     noBackground: {

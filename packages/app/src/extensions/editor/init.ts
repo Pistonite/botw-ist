@@ -1,6 +1,7 @@
-import { initCodeEditor } from "@pistonite/intwc";
-import type { ExtensionApp } from "@pistonite/skybook-api";
+import { initCodeEditor, type LanguageClient } from "@pistonite/intwc";
 import { once } from "@pistonite/pure/sync";
+
+import type { ExtensionApp } from "@pistonite/skybook-api";
 
 import { language, configuration } from "./language.ts";
 import { provideParserDiagnostics } from "./marker.ts";
@@ -12,11 +13,11 @@ export const setApp = (app: ExtensionApp) => {
     theApp = app;
 };
 
-export const updateScriptInApp = (script: string) => {
+export const updateScriptInApp = (script: string, charPos: number) => {
     if (!theApp) {
         return;
     }
-    void theApp.setScript(script);
+    void theApp.setScript(script, charPos);
 };
 
 export const getScriptFromApp = async () => {
@@ -27,63 +28,57 @@ export const getScriptFromApp = async () => {
     return script.val || "";
 };
 
+const CustomLanguageOptions: LanguageClient = {
+    getId: () => "skybook",
+    getExtensions: () => [".skyb"],
+    getTokenizer: () => language,
+    getConfiguration: () => configuration,
+    // the parser and runtime can both produce diagnostics
+    getMarkerOwners: () => ["parser"],
+    provideMarkers: (model) => {
+        if (!theApp) {
+            return undefined;
+        }
+        return provideParserDiagnostics(theApp, model);
+    },
+    getSemanticTokensLegend: () => legend,
+    provideDocumentRangeSemanticTokens: (model, range, token) => {
+        if (!theApp) {
+            return undefined;
+        }
+        return provideSemanticTokens(theApp, model, range, token);
+    },
+};
+
+/** Token colors for special tokens in skybook script */
+const CustomTokenColors = [
+    {
+        token: "string.item.quoted",
+        value: "string.regexp",
+    },
+    {
+        token: "string.item.literal",
+        value: "string.regexp",
+    },
+    {
+        token: "string.blockliteral",
+        value: "tag",
+    },
+    {
+        token: "function.command.super",
+        value: "meta.macro",
+    },
+];
+
 /** Initialize the code editor framework for this window */
 export const init = once({
     fn: () => {
         initCodeEditor({
             language: {
-                custom: [
-                    {
-                        getId: () => "skybook",
-                        getExtensions: () => [".skyb"],
-                        getTokenizer: () => language,
-                        getConfiguration: () => configuration,
-                        // the parser and runtime can both produce diagnostics
-                        getMarkerOwners: () => ["parser"],
-                        provideMarkers: (model) => {
-                            if (!theApp) {
-                                return undefined;
-                            }
-                            return provideParserDiagnostics(theApp, model);
-                        },
-                        getSemanticTokensLegend: () => legend,
-                        provideDocumentRangeSemanticTokens: (
-                            model,
-                            range,
-                            token,
-                        ) => {
-                            if (!theApp) {
-                                return undefined;
-                            }
-                            return provideSemanticTokens(
-                                theApp,
-                                model,
-                                range,
-                                token,
-                            );
-                        },
-                    },
-                ],
+                custom: [CustomLanguageOptions],
             },
             theme: {
-                customTokenColors: [
-                    {
-                        token: "string.item.quoted",
-                        value: "string.regexp",
-                    },
-                    {
-                        token: "string.item.literal",
-                        value: "string.regexp",
-                    },
-                    {
-                        token: "string.blockliteral",
-                        value: "tag",
-                    },
-                    {
-                        token: "function.command.super",
-                        value: "meta.macro",
-                    },
-                ],
+                customTokenColors: CustomTokenColors,
             },
         });
     },

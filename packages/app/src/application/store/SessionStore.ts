@@ -58,7 +58,7 @@ export type SessionStore = {
 
     /** The script that is currently being edited */
     activeScript: string;
-    setActiveScript: (script: string, charPos?: number) => void;
+    setActiveScript: (script: string, charPos: number) => void;
 
     /** The version of the custom image that is currently running */
     runningCustomImageVersion: ScriptEnvImage | "";
@@ -66,9 +66,6 @@ export type SessionStore = {
 
     /** Current byte position of the active selection (caret) in the script */
     bytePos: number;
-    setBytePos: (bytePos: number) => void;
-    setCharPos: (charPos: number) => void;
-
     /** Current step index of the active selection */
     stepIndex: number;
     setStepIndex: (stepIndex: number) => void;
@@ -193,14 +190,21 @@ export const useSessionStore = create<SessionStore>()((set) => {
 
         activeScript: savedScript,
         setActiveScript: (script, charPos) => {
-            set(({ mode, initialScript }) => {
+            set(({ mode, activeScript, initialScript }) => {
+                const newScript = activeScript === script ? undefined : script;
                 if (mode === "read-only") {
-                    return {};
+                    return getSetActiveScriptPayload(
+                        activeScript,
+                        newScript,
+                        false,
+                        charPos,
+                    );
                 }
                 if (mode === "edit-only") {
                     const hasUnsavedChanges = initialScript !== script;
                     return getSetActiveScriptPayload(
-                        script,
+                        activeScript,
+                        newScript,
                         hasUnsavedChanges,
                         charPos,
                     );
@@ -209,7 +213,8 @@ export const useSessionStore = create<SessionStore>()((set) => {
                 const hasUnsavedChanges = savedScript !== script;
                 setTimeout(() => persistScript(script), 0);
                 return getSetActiveScriptPayload(
-                    script,
+                    activeScript,
+                    newScript,
                     hasUnsavedChanges,
                     charPos,
                 );
@@ -222,15 +227,6 @@ export const useSessionStore = create<SessionStore>()((set) => {
         },
 
         bytePos: 0,
-        setBytePos: (bytePos) => {
-            set({ bytePos });
-        },
-        setCharPos: (charPos) => {
-            set(({ activeScript }) => {
-                return { bytePos: charPosToBytePos(activeScript, charPos) };
-            });
-        },
-
         stepIndex: 0,
         setStepIndex: (stepIndex) => {
             set({ stepIndex });
@@ -302,19 +298,20 @@ export const useSessionStore = create<SessionStore>()((set) => {
 });
 
 const getSetActiveScriptPayload = (
-    script: string,
+    currentScript: string,
+    newScript: string | undefined,
     hasUnsavedChanges: boolean,
-    charPos: number | undefined,
+    charPos: number,
 ) => {
-    if (charPos !== undefined) {
+    if (newScript === undefined) {
         return {
-            activeScript: script,
             hasUnsavedChanges,
-            bytePos: charPosToBytePos(script, charPos),
+            bytePos: charPosToBytePos(currentScript, charPos),
         };
     }
     return {
-        activeScript: script,
+        activeScript: newScript,
         hasUnsavedChanges,
+        bytePos: charPosToBytePos(newScript, charPos),
     };
 };

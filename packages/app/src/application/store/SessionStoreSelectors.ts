@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import type { WxPromise } from "@pistonite/workex";
 
@@ -49,9 +49,9 @@ export const usePouchListView = (): CachedRuntimeData<InvView_PouchList> => {
 const getPouchListShim = (
     runtime: Runtime,
     activeScript: string,
-    stepIndex: number,
+    bytePos: number,
 ) => {
-    return runtime.getPouchList(activeScript, stepIndex);
+    return runtime.getPouchList(activeScript, bytePos);
 };
 
 /** Get the list view of the GDT inventory of the current script and step */
@@ -72,9 +72,9 @@ export const useGdtInventoryView = (): CachedRuntimeData<InvView_Gdt> => {
 const getGdtInventoryShim = (
     runtime: Runtime,
     activeScript: string,
-    stepIndex: number,
+    bytePos: number,
 ) => {
-    return runtime.getGdtInventory(activeScript, stepIndex);
+    return runtime.getGdtInventory(activeScript, bytePos);
 };
 
 /** Get the view of the overworld items of the current script and step */
@@ -96,9 +96,9 @@ export const useOverworldItemsView =
 const getOverworldItemsShim = (
     runtime: Runtime,
     activeScript: string,
-    stepIndex: number,
+    bytePos: number,
 ) => {
-    return runtime.getOverworldItems(activeScript, stepIndex);
+    return runtime.getOverworldItems(activeScript, bytePos);
 };
 
 /**
@@ -113,7 +113,7 @@ const useStoreCachedRuntimeData = <T>(
     runFn: (
         runtime: Runtime,
         activeScript: string,
-        stepIndex: number,
+        bytePos: number,
     ) => WxPromise<T>,
     setFn: (stepIndex: number, view: T) => void,
 ): CachedRuntimeData<T> => {
@@ -123,6 +123,7 @@ const useStoreCachedRuntimeData = <T>(
     );
     const inProgress = useSessionStore((state) => state.executionInProgress);
     const stepIndex = useSessionStore((state) => state.stepIndex);
+    const bytePos = useSessionStore((state) => state.bytePos);
 
     const inventory: T | undefined = cachedViews[stepIndex];
     const cacheIsValid = !!(cacheValidity.includes(stepIndex) && inventory);
@@ -130,14 +131,52 @@ const useStoreCachedRuntimeData = <T>(
     const runtime = useRuntime();
 
     useEffect(() => {
-        if (inProgress || cacheIsValid) {
+        if (cacheIsValid) {
             return;
         }
+        // Note that this hook is executed per-use, meaning if multiple
+        // components need to access the pouch view, they are all going
+        // to fire the request at the runtime.
+        //
+        // This introduces extra load on the runtime thread that may
+        // slightly hurt the runtime performance. However, they don't
+        // result in new simulation runs, since as long as the script
+        // stays the same, the runtime will batch the request and cache
+        // the results
+        //
+        // When the first request is done, all the components will rerender,
+        // and they will see the cache is now valid, and cancel the previous
+        // request to not update the store again.
+        //
+        // If we want to optimize this, we can store in SessionStore
+        // if the run request is made per-inventory (pouch, gdt, overworld) and
+        // per-step, and prevent re-firing the same request at the runtime.
+        // I don't think this is worth the effort right now.
+        //
+        // Note that we are not taking the approach where only one component
+        // fires the request, or to execute the script in a centralized manner.
+        // This is so that we only execute when needed. Although that certainly
+        // means "always" right now (because the component is always visible),
+        // executing the script is the most expensive operation in the app,
+        // and we want to avoid it as much as possible.
         let current = true;
-        const updateInventory = async () => {
-            const view = await runFn(runtime, activeScript, stepIndex);
+        const isCurrent = () => {
+            if (!current) {
+                return false;
+            }
             const activeScriptNow = useSessionStore.getState().activeScript;
-            if (!current || activeScriptNow !== activeScript) {
+            return activeScriptNow === activeScript;
+        };
+        const updateInventory = async () => {
+            const stepIndex = await runtime.getStepFromPos(
+                activeScript,
+                bytePos,
+            );
+            if (!isCurrent() || stepIndex.err) {
+                return;
+            }
+            const view = await runFn(runtime, activeScript, bytePos);
+            if (!isCurrent()) {
                 return;
             }
             if (view.err) {
@@ -148,9 +187,9 @@ const useStoreCachedRuntimeData = <T>(
                 return;
             }
             console.log(
-                `useStoreCachedRuntimeData: ${name} updated for step ${stepIndex}`,
+                `useStoreCachedRuntimeData: ${name} updated for bytePos(${bytePos}) step ${stepIndex.val}`,
             );
-            setFn(stepIndex, view.val);
+            setFn(stepIndex.val, view.val);
         };
 
         void updateInventory();
@@ -158,11 +197,25 @@ const useStoreCachedRuntimeData = <T>(
         return () => {
             current = false;
         };
+        // note we don't trigger when stepIndex updates, because
+        // it is computed asynchronously from bytePos
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [inProgress, cacheIsValid, runtime, activeScript, stepIndex, setFn]);
+    }, [cacheIsValid, runtime, activeScript, bytePos, setFn]);
+
+    // Create a per-component cache. If the view is not ready when
+    // creating new steps, then we can still render the old result,
+    // instead of showing empty state (which causes large UI flickering)
+    const inventoryViewCache = useRef<T | undefined>(undefined);
+    useEffect(() => {
+        if (inventory) {
+            inventoryViewCache.current = inventory;
+        }
+    }, [inventory]);
 
     return {
-        data: inventory as T | undefined,
+        // if state for current step is not ready,
+        // display the previous step to avoid flickering
+        data: (inventory || inventoryViewCache.current) as T | undefined,
         stale: !cacheIsValid,
         loading: inProgress,
     };
