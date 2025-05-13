@@ -19,9 +19,7 @@ impl RunOutput {
     // TODO: error
     pub fn get_pouch_list(&self, step: usize) -> iv::PouchList {
         // mock data
-
-        let items = vec![
-            iv::PouchItem {
+        let mock_item1 = iv::PouchItem {
                 common: iv::CommonItem{
                     actor_name: "Weapon_Sword_070".to_string(),
                     value: 4000,
@@ -51,7 +49,9 @@ impl RunOutput {
                 tab_idx: 0,tab_slot: 0,
                 accessible: true,
                 dpad_accessible: true,
-            },
+            };
+
+        let mock_item2 = 
             iv::PouchItem {
                 common: iv::CommonItem{
                     actor_name: "NormalArrow".to_string(),
@@ -82,7 +82,9 @@ impl RunOutput {
                 tab_idx: 1,tab_slot: 0,
                 accessible: true,
                 dpad_accessible: true,
-            },
+            };
+
+        let mock_item3 = 
             iv::PouchItem {
                 common: iv::CommonItem{
                     actor_name: "Item_Fruit_A".to_string(),
@@ -113,15 +115,39 @@ impl RunOutput {
                 tab_idx: 3,tab_slot: 0,
                 accessible: true,
                 dpad_accessible: true,
-            }
-        ];
+            };
 
-        iv::PouchList {
-            count: 2,
-            items,
-            are_tabs_valid: true,
-            num_tabs: 4,
-            tabs: vec![
+        let mut items = vec![ ];
+            items.push(mock_item1);
+        if step >= 1 {
+            items.push(mock_item2);
+        }
+        if step >= 2 {
+            items.push(mock_item3);
+        }
+
+        let tabs = match step {
+            0 => vec![
+                iv::PouchTab {
+                    item_idx: 0,
+                    tab_type: 0 // sword
+                },
+            ],
+            1 => vec![
+                iv::PouchTab {
+                    item_idx: 0,
+                    tab_type: 0 // sword
+                },
+                iv::PouchTab {
+                    item_idx: 1,
+                    tab_type: 1, //bow
+                },
+                iv::PouchTab {
+                    item_idx: -1,
+                    tab_type: 3, //shield
+                },
+            ],
+            _ => vec![
                 iv::PouchTab {
                     item_idx: 0,
                     tab_type: 0 // sword
@@ -139,6 +165,14 @@ impl RunOutput {
                     tab_type: 7, //material
                 },
             ]
+        };
+
+        iv::PouchList {
+            count: items.len() as i32 - 1,
+            items,
+            are_tabs_valid: true,
+            num_tabs: tabs.len() as i32,
+            tabs
         }
 
 

@@ -33,8 +33,8 @@ class ExtensionAppHost implements ExtensionApp {
     public async getScript() {
         return { val: useSessionStore.getState().activeScript };
     }
-    public async setScript(script: string) {
-        useSessionStore.getState().setActiveScript(script);
+    public async setScript(script: string, charPos: number) {
+        useSessionStore.getState().setActiveScript(script, charPos);
         return {};
     }
     public async resolveItem(

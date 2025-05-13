@@ -1,4 +1,8 @@
-import { CodeEditor, type CodeEditorApi } from "@pistonite/intwc";
+import {
+    getNormalizedPath,
+    CodeEditor,
+    type CodeEditorApi,
+} from "@pistonite/intwc";
 import type { WxPromise } from "@pistonite/workex";
 
 import type { ExtensionApp } from "@pistonite/skybook-api";
@@ -12,7 +16,7 @@ import { init, setApp, updateScriptInApp } from "./init.ts";
 
 init();
 
-const FILE = "script.skyb";
+const FILE = getNormalizedPath("script.skyb");
 
 export class EditorExtension
     extends FirstPartyExtensionAdapter
@@ -62,15 +66,29 @@ export class EditorExtension
 
         this.editor = editor;
 
-        const unsubscribeEditor = editor.subscribe((filename) => {
+        const updateHandler = (filename: string) => {
             if (filename !== FILE) {
                 return;
             }
-            updateScriptInApp(editor.getFileContent(FILE));
-        });
+            updateScriptInApp(
+                editor.getFileContent(FILE),
+                editor.getCursorOffset() || 0,
+            );
+        };
+
+        const unsubscribeContentChange = editor.subscribe(
+            "content-changed",
+            updateHandler,
+        );
+        const unsubscribeCursorPositionChange = editor.subscribe(
+            "cursor-position-changed",
+            updateHandler,
+        );
+
         this.detachEditor = () => {
             this.detachEditor = undefined;
-            unsubscribeEditor();
+            unsubscribeContentChange();
+            unsubscribeCursorPositionChange();
             this.editor = undefined;
         };
         if (this.scriptChangedBeforeEditorReady !== undefined) {

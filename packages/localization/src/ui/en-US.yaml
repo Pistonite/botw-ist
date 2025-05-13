@@ -20,8 +20,6 @@ button.setup: "Setup"
 prompt.closing.edit: "There are unsaved changes which will be lost if you close now, continue?"
 prompt.closing.local: "Save is in-progress. The last edit will be lost if you close now, continue?"
 
-# Help improve translation!
-prompt.translation_contact: ""
 # Boot Prompts
 prompt.boot.button.learn_more: "Learn more about Custom Images"
 prompt.boot.custom_or_default: "Allow the script to load with a custom image?"

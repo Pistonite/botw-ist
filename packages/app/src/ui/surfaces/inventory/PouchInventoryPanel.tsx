@@ -57,7 +57,7 @@ const useStyles = makeStyles({
     toolbar: {
         padding: "4px",
         gap: "4px",
-        backgroundColor: "#00000066",
+        backgroundColor: "#00000044",
         borderRadius: "4px",
     },
 
@@ -68,7 +68,7 @@ const useStyles = makeStyles({
 
     tabsMinimap: {
         borderRadius: "4px",
-        backgroundColor: "#00000033",
+        backgroundColor: "#00000044",
     },
 });
 

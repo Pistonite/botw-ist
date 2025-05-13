@@ -20,8 +20,6 @@ button.setup: "进入設定"
 prompt.closing.edit: "當前窗口有未保存的內容！關閉窗口會導致未保存的內容丟失，是否繼續？"
 prompt.closing.local: "正在保存中，如果現在關閉，最後的編輯將會丟失，是否繼續？"
 
-# Help improve translation!
-prompt.translation_contact: "請幫助改進中文翻譯！了解更多："
 # Boot Prompts
 prompt.boot.button.learn_more: "了解更多關於自訂磁碟映像"
 prompt.boot.custom_or_default: "是否允許此腳本使用自訂磁碟映像運行？"

@@ -20,8 +20,6 @@ button.setup: "Configurare"
 prompt.closing.edit: "Ci sono modifiche non salvate che andranno perse se chiudi ora, continuare?"
 prompt.closing.local: "Salvataggio in corso. L'ultima modifica andrà persa se chiudi ora, continuare?"
 
-# Help improve translation!
-prompt.translation_contact: "Per favore, aiutaci a migliorare le traduzioni italiane! Leggi di più:"
 # Boot Prompts
 prompt.boot.button.learn_more: "Ulteriori informazioni sulle immagini disco personalizzate"
 prompt.boot.custom_or_default: "Consentire allo script di caricarsi con un'immagine disco personalizzata?"

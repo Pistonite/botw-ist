@@ -60,6 +60,12 @@ export async function createRuntime() {
                 bytePos,
             );
             checkCancel();
+            const { activeScript: activeScriptNow } =
+                useSessionStore.getState();
+            if (activeScriptNow !== activeScript) {
+                // script changed while waiting for result
+                return;
+            }
             setExecutionInProgress(false);
             if (stepIndex.err) {
                 console.error("failed to get step index:", stepIndex.err);

@@ -20,8 +20,6 @@ button.setup: "Einrichten"
 prompt.closing.edit: "Es gibt ungespeicherte Änderungen, die verloren gehen, wenn Sie jetzt schließen. Fortfahren?"
 prompt.closing.local: "Speichern läuft. Die letzte Bearbeitung geht verloren, wenn Sie jetzt schließen. Fortfahren?"
 
-# Help improve translation!
-prompt.translation_contact: "Bitte helfen Sie uns, die deutschen Übersetzungen zu verbessern! Lesen Sie mehr:"
 # Boot Prompts
 prompt.boot.button.learn_more: "Erfahren Sie mehr über benutzerdefinierte Abbilder"
 prompt.boot.custom_or_default: "Erlauben Sie dem Skript, mit einem benutzerdefinierten Abbild zu laden?"

@@ -20,8 +20,6 @@ button.setup: "进入配置"
 prompt.closing.edit: "当前窗口有未保存的内容！关闭窗口会导致未保存的内容丢失，是否继续？"
 prompt.closing.local: "正在保存中，如果现在关闭，最后的编辑将会丢失，是否继续？"
 
-# Help improve translation!
-prompt.translation_contact: ""
 # Boot Prompts
 prompt.boot.button.learn_more: "查看自定义镜像帮助文档"
 prompt.boot.custom_or_default: "是否允许此脚本使用自定义镜像运行？"
