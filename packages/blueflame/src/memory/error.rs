@@ -1,7 +1,7 @@
 use enumset::EnumSet;
 
-use super::region::RegionType;
 use super::access::MemAccess;
+use super::region::RegionType;
 
 /// Memory errors
 #[derive(Debug, Clone, thiserror::Error)]
@@ -33,6 +33,6 @@ pub enum Error {
 
     #[error("unexpected error: {0}")]
     Unexpected(String),
-
-
+    #[error("unexpected error at instruction {0:#0x}: {1}")]
+    UnexpectedAt(u64, String),
 }

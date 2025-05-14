@@ -1,6 +1,1 @@
-
-
-
-/// TODO: TriggerParam
-pub struct GdtTriggerParam {
-}
+pub mod trigger_param;

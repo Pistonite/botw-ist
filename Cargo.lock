@@ -161,6 +161,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a8241f3ebb85c056b509d4327ad0358fbbba6ffb340bf388f26350aeda225b1"
 
 [[package]]
+name = "bitfield-struct"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2be5a46ba01b60005ae2c51a36a29cfe134bcacae2dd5cedcd4615fbaad1494b"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.98",
+]
+
+[[package]]
 name = "bitflags"
 version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -171,6 +182,9 @@ name = "bitflags"
 version = "2.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f68f53c83ab957f72c32642f3868eec03eb974d1fb82e453128456482613d36"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "bitvec"
@@ -197,30 +211,41 @@ dependencies = [
 name = "blueflame"
 version = "0.0.0"
 dependencies = [
- "blueflame-macros",
- "blueflame-program",
- "blueflame-singleton",
- "blueflame-utils",
+ "anyhow",
+ "blueflame-program 0.0.0 (git+https://github.com/Pistonite/botw-ist?branch=main)",
+ "blueflame-singleton 0.0.0 (git+https://github.com/Pistonite/botw-ist?branch=main)",
+ "blueflame-utils 0.0.0 (git+https://github.com/Pistonite/botw-ist?branch=main)",
+ "crc32fast",
  "derive_more",
+ "disarm64",
+ "disarm64_defn",
  "enumset",
+ "mem_macro",
+ "paste",
  "rand_xoshiro",
+ "serde_json",
+ "serde_yaml",
  "sha2",
  "thiserror 2.0.11",
-]
-
-[[package]]
-name = "blueflame-macros"
-version = "0.0.0"
-dependencies = [
- "quote",
- "syn 2.0.98",
 ]
 
 [[package]]
 name = "blueflame-program"
 version = "0.0.0"
 dependencies = [
- "blueflame-utils",
+ "blueflame-utils 0.0.0",
+ "deku",
+ "derive_more",
+ "flate2",
+ "thiserror 2.0.11",
+]
+
+[[package]]
+name = "blueflame-program"
+version = "0.0.0"
+source = "git+https://github.com/Pistonite/botw-ist?branch=main#46c787ac9442f0dc45844faa3e567ae7b71c9ae2"
+dependencies = [
+ "blueflame-utils 0.0.0 (git+https://github.com/Pistonite/botw-ist?branch=main)",
  "deku",
  "derive_more",
  "flate2",
@@ -231,9 +256,18 @@ dependencies = [
 name = "blueflame-singleton"
 version = "0.0.0"
 dependencies = [
- "blueflame-utils",
+ "blueflame-utils 0.0.0",
  "deku",
  "serde",
+ "static_assertions",
+]
+
+[[package]]
+name = "blueflame-singleton"
+version = "0.0.0"
+source = "git+https://github.com/Pistonite/botw-ist?branch=main#46c787ac9442f0dc45844faa3e567ae7b71c9ae2"
+dependencies = [
+ "blueflame-utils 0.0.0 (git+https://github.com/Pistonite/botw-ist?branch=main)",
  "static_assertions",
 ]
 
@@ -244,6 +278,14 @@ dependencies = [
  "deku",
  "enum-map",
  "serde",
+]
+
+[[package]]
+name = "blueflame-utils"
+version = "0.0.0"
+source = "git+https://github.com/Pistonite/botw-ist?branch=main#46c787ac9442f0dc45844faa3e567ae7b71c9ae2"
+dependencies = [
+ "deku",
 ]
 
 [[package]]
@@ -633,6 +675,27 @@ checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
 dependencies = [
  "block-buffer",
  "crypto-common",
+]
+
+[[package]]
+name = "disarm64"
+version = "0.1.25"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "23e4fd71988ebb18a57c1df165bbbbc4750d85f1cbfc40785a14dd3baae274a4"
+dependencies = [
+ "bitfield-struct",
+ "disarm64_defn",
+]
+
+[[package]]
+name = "disarm64_defn"
+version = "0.1.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a968ec75d668b2e37898ba8b84d522e7261abde8721d0da8d877c2f51d911b2"
+dependencies = [
+ "bitflags 2.8.0",
+ "serde",
+ "strum",
 ]
 
 [[package]]
@@ -1523,6 +1586,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "mem_macro"
+version = "0.0.0"
+dependencies = [
+ "quote",
+ "syn 2.0.98",
+]
+
+[[package]]
 name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1767,6 +1838,12 @@ dependencies = [
  "smallvec",
  "windows-targets",
 ]
+
+[[package]]
+name = "paste"
+version = "1.0.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
 name = "pathdiff"
@@ -2171,9 +2248,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.138"
+version = "1.0.140"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d434192e7da787e94a6ea7e9670b26a036d0ca41e0b7efb2676dd32bae872949"
+checksum = "20068b6e96dc6c9bd23e01df8827e6c7e1f2fddd43c21810382803c136b99373"
 dependencies = [
  "itoa",
  "memchr",
@@ -2191,6 +2268,19 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "serde_yaml"
+version = "0.9.34+deprecated"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a8b1a1a2ebf674015cc02edccce75287f1a0130d394307b36743c2f5d504b47"
+dependencies = [
+ "indexmap",
+ "itoa",
+ "ryu",
+ "serde",
+ "unsafe-libyaml",
 ]
 
 [[package]]
@@ -2363,6 +2453,28 @@ name = "strsim"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
+
+[[package]]
+name = "strum"
+version = "0.26.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8fec0f0aef304996cf250b31b5a10dee7980c85da9d759361292b8bca5a18f06"
+dependencies = [
+ "strum_macros",
+]
+
+[[package]]
+name = "strum_macros"
+version = "0.26.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4c6bee85a5a24955dc440386795aa378cd9cf82acd5f764469152d2270e581be"
+dependencies = [
+ "heck",
+ "proc-macro2",
+ "quote",
+ "rustversion",
+ "syn 2.0.98",
+]
 
 [[package]]
 name = "syn"
@@ -2739,6 +2851,12 @@ name = "unicode-ident"
 version = "1.0.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a210d160f08b701c8721ba1c726c11662f877ea6b7094007e1ca9a1041945034"
+
+[[package]]
+name = "unsafe-libyaml"
+version = "0.2.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "673aac59facbab8a9007c7f6108d11f63b603f7cabff99fabf650fea5c32b861"
 
 [[package]]
 name = "url"

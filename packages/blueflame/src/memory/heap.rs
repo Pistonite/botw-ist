@@ -1,7 +1,10 @@
 use derive_more::derive::{Deref, DerefMut};
 
-use super::{align_up, error::Error, region::{Region, RegionType}};
-
+use super::{
+    align_up,
+    error::Error,
+    region::{Region, RegionType},
+};
 
 /// A simple heap region implementation
 ///
@@ -10,7 +13,7 @@ use super::{align_up, error::Error, region::{Region, RegionType}};
 /// - Singleton allocations are allocated so they have the same
 ///   offsets relative to each other regardless of the heap start
 /// - All newer allocations come after the singletons
-/// 
+///
 /// Since the simulator doesn't make much heap allocation (usually),
 /// freed memory are never reclaimed. This is fine, because
 /// each re-run of the simulation will have a fresh heap.
@@ -59,6 +62,6 @@ impl SimpleHeap {
 
     /// Return if the address is in the allocated region of the heap
     pub fn is_allocated(&self, addr: u64) -> bool {
-        return addr < self.next_alloc;
+        addr < self.next_alloc
     }
 }

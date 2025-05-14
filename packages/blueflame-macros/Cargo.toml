@@ -1,12 +1,11 @@
 [package]
-name = "blueflame-macros"
+name = "mem_macro"
 version = "0.0.0"
 edition = "2021"
-description = "proc-macro crate for blueflame"
-
-[dependencies]
-quote = "1.0.38"
-syn = "2.0.98"
 
 [lib]
 proc-macro = true
+
+[dependencies]
+syn = "2.0.96"
+quote = "1.0.38"

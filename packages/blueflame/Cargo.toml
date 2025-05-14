@@ -3,17 +3,9 @@ name = "blueflame"
 version = "0.0.0"
 edition = "2021"
 
-[dependencies.blueflame-utils]
-path = "../blueflame-utils"
-
-[dependencies.blueflame-singleton]
-path = "../blueflame-singleton"
-
-[dependencies.blueflame-program]
-path = "../blueflame-program"
-
-[dependencies.blueflame-macros]
-path = "../blueflame-macros"
+[[bin]]
+name = "blueflame"
+path = "src/main.rs" 
 
 [dependencies]
 derive_more = { version = "1.0.0", features = ["constructor", "deref", "deref_mut"] }
@@ -21,3 +13,17 @@ enumset = "1.1.5"
 rand_xoshiro = "0.6.0"
 sha2 = "0.10.8"
 thiserror = "2.0.11"
+anyhow = "1.0.94"
+disarm64 = "0.1.20"
+disarm64_defn = "0.1.9"
+mem_macro = { path = "../blueflame-macros" }
+paste = "1.0.15"
+crc32fast = "1.4.2"
+blueflame-singleton = { git = "https://github.com/Pistonite/botw-ist", branch = "main" }
+# blueflame-singleton = {git = "https://github.com/repineap/botw-ist-custom.git", branch="main"}
+blueflame-utils = { git = "https://github.com/Pistonite/botw-ist", branch = "main" }
+blueflame-program = { git = "https://github.com/Pistonite/botw-ist", branch = "main" }
+# blueflame-program = { git = "https://github.com/Pistonite/botw-ist", rev = "8f4ed5e573d1394c6c576e81448206bc6aec200e" }
+# blueflame-utils = { git = "https://github.com/Pistonite/botw-ist", rev = "8f4ed5e573d1394c6c576e81448206bc6aec200e" }
+serde_yaml = "0.9.34"
+serde_json = "1.0.140"

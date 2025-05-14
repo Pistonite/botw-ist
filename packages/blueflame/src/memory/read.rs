@@ -21,7 +21,14 @@ pub struct Reader<'m> {
 }
 
 impl<'m> Reader<'m> {
-    pub fn new(memory: &'m Memory, region: &'m Region, page: &'m Page, region_page_idx: u32, page_off: u32, execute: bool) -> Self {
+    pub fn new(
+        memory: &'m Memory,
+        region: &'m Region,
+        page: &'m Page,
+        region_page_idx: u32,
+        page_off: u32,
+        execute: bool,
+    ) -> Self {
         Self {
             memory,
             region,
@@ -44,6 +51,16 @@ impl<'m> Reader<'m> {
     /// Get the current reading physical address
     pub fn current_addr(&self) -> u64 {
         self.region.start + (self.region_page_idx as u64 * PAGE_SIZE as u64) + self.page_off as u64
+    }
+
+    /// Read a `bool` from the memory, advance by 1 byte
+    #[inline]
+    pub fn read_bool<T: From<bool>>(&mut self) -> Result<T, Error> {
+        self.prep_read(1)?;
+        let val = self.page.read_u8(self.page_off) > 0;
+        self.skip(1);
+
+        Ok(val.into())
     }
 
     /// Read a `u8` from the memory, advance by 1 byte
@@ -147,7 +164,7 @@ impl<'m> Reader<'m> {
         // advance to the next page in the region if needed
         if self.page_off >= PAGE_SIZE {
             self.region_page_idx += self.page_off / PAGE_SIZE;
-            self.page_off = self.page_off % PAGE_SIZE;
+            self.page_off %= PAGE_SIZE;
             self.page = match self.region.get(self.region_page_idx) {
                 Some(page) => page.as_ref(),
                 None => return Err(Error::Unallocated(current_addr)),
@@ -155,29 +172,31 @@ impl<'m> Reader<'m> {
         }
 
         // now check we can actually read `len` bytes at the current address
-        if self.memory.flags.enable_allocated_check && self.region.typ == RegionType::Heap {
-            if !self.memory.heap.is_allocated(current_addr) {
-                return Err(Error::Unallocated(current_addr));
-            }
+        if self.memory.flags.enable_allocated_check
+            && self.region.typ == RegionType::Heap
+            && !self.memory.heap.is_allocated(current_addr)
+        {
+            return Err(Error::Unallocated(current_addr));
         }
 
         if self.memory.flags.enable_permission_check {
-            if self.execute  {
-                if !self.page.has_permission(AccessType::Read | AccessType::Execute) {
+            if self.execute {
+                if !self
+                    .page
+                    .has_permission(AccessType::Read | AccessType::Execute)
+                {
                     return Err(Error::PermissionDenied(MemAccess {
                         typ: AccessType::Execute,
                         addr: self.current_addr(),
                         bytes: len,
                     }));
-                } 
-            }else {
-                if !self.page.has_permission(AccessType::Read) {
-                    return Err(Error::PermissionDenied(MemAccess {
-                        typ: AccessType::Read,
-                        addr: self.current_addr(),
-                        bytes: len,
-                    }));
                 }
+            } else if !self.page.has_permission(AccessType::Read) {
+                return Err(Error::PermissionDenied(MemAccess {
+                    typ: AccessType::Read,
+                    addr: self.current_addr(),
+                    bytes: len,
+                }));
             }
         }
 
