@@ -1,4 +1,10 @@
-use super::{access::{AccessType, MemAccess}, error::Error, page::{Page, PAGE_SIZE}, region::{Region, RegionType}, Memory};
+use super::{
+    access::{AccessType, MemAccess},
+    error::Error,
+    page::{Page, PAGE_SIZE},
+    region::{Region, RegionType},
+    Memory,
+};
 
 /// Stream writer to memory
 pub struct Writer<'m> {
@@ -17,7 +23,12 @@ pub struct Writer<'m> {
 }
 
 impl<'m> Writer<'m> {
-    pub fn new(memory: &'m mut Memory, region_type: RegionType, region_page_idx: u32, page_off: u32) -> Self {
+    pub fn new(
+        memory: &'m mut Memory,
+        region_type: RegionType,
+        region_page_idx: u32,
+        page_off: u32,
+    ) -> Self {
         Self {
             memory,
             region_type,
@@ -40,15 +51,23 @@ impl<'m> Writer<'m> {
 
     /// Get the current reading address
     pub fn current_addr(&self) -> u64 {
-        self.region().start + (self.region_page_idx as u64 * PAGE_SIZE as u64) + self.page_off as u64
+        self.region().start
+            + (self.region_page_idx as u64 * PAGE_SIZE as u64)
+            + self.page_off as u64
+    }
+
+    /// Write a `bool` to the memory, advance by 1 byte
+    #[inline]
+    pub fn write_bool(&mut self, val: impl Into<bool>) -> Result<(), Error> {
+        self.checked_page_mut(1, |page, off| {
+            page.write_u8(off, if val.into() { 1 } else { 0 })
+        })
     }
 
     /// Write a `u8` to the memory, advance by 1 byte
     #[inline]
     pub fn write_u8(&mut self, val: impl Into<u8>) -> Result<(), Error> {
-        self.checked_page_mut(1, |page, off| {
-            page.write_u8(off, val.into())
-        })
+        self.checked_page_mut(1, |page, off| page.write_u8(off, val.into()))
     }
 
     /// Read a `i8` from the memory, advance by 1 byte
@@ -59,9 +78,7 @@ impl<'m> Writer<'m> {
     /// Write a `u16` to the memory, advance by 2 bytes
     #[inline]
     pub fn write_u16(&mut self, val: impl Into<u16>) -> Result<(), Error> {
-        self.checked_page_mut(2, |page, off| {
-            page.write_u16(off, val.into())
-        })
+        self.checked_page_mut(2, |page, off| page.write_u16(off, val.into()))
     }
 
     /// Write a `i16` to the memory, advance by 2 bytes
@@ -72,9 +89,7 @@ impl<'m> Writer<'m> {
     /// Write a `u32` to the memory, advance by 4 bytes
     #[inline]
     pub fn write_u32(&mut self, val: impl Into<u32>) -> Result<(), Error> {
-        self.checked_page_mut(4, |page, off| {
-            page.write_u32(off, val.into())
-        })
+        self.checked_page_mut(4, |page, off| page.write_u32(off, val.into()))
     }
 
     /// Write a `i32` to the memory, advance by 4 bytes
@@ -85,9 +100,7 @@ impl<'m> Writer<'m> {
     /// Write a `u64` to the memory, advance by 8 bytes
     #[inline]
     pub fn write_u64(&mut self, val: impl Into<u64>) -> Result<(), Error> {
-        self.checked_page_mut(8, |page, off| {
-            page.write_u64(off, val.into())
-        })
+        self.checked_page_mut(8, |page, off| page.write_u64(off, val.into()))
     }
 
     /// Write a `i64` to the memory, advance by 8 bytes
@@ -110,12 +123,13 @@ impl<'m> Writer<'m> {
     /// Prepare a write, then operate on the page
     ///
     /// This must be done through a FnOnce closure because of borrowing rules
-    fn checked_page_mut<F: FnOnce(&mut Page, u32)>(
-        &mut self, len: u32, f:F) -> Result<(), Error> {
+    fn checked_page_mut<F: FnOnce(&mut Page, u32)>(&mut self, len: u32, f: F) -> Result<(), Error> {
         {
             // first check if we are still inside the region
             let region = self.region();
-            let current_addr = region.start + (self.region_page_idx as u64 * PAGE_SIZE as u64) + self.page_off as u64;
+            let current_addr = region.start
+                + (self.region_page_idx as u64 * PAGE_SIZE as u64)
+                + self.page_off as u64;
             if current_addr >= region.get_end() {
                 // advance to next region if possible
                 match self.memory.get_region_by_addr(current_addr) {
@@ -134,7 +148,7 @@ impl<'m> Writer<'m> {
         // advance to the next page in the region if needed
         if self.page_off >= PAGE_SIZE {
             self.region_page_idx += self.page_off / PAGE_SIZE;
-            self.page_off = self.page_off % PAGE_SIZE;
+            self.page_off %= PAGE_SIZE;
             if self.region().get(self.region_page_idx).is_none() {
                 return Err(Error::Unallocated(self.current_addr()));
             }
@@ -164,7 +178,7 @@ impl<'m> Writer<'m> {
                 addr: self.current_addr(),
                 bytes: len,
             }));
-        } 
+        }
 
         if page_off + len > PAGE_SIZE {
             return Err(Error::PageBoundary(MemAccess {

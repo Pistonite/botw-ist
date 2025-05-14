@@ -46,7 +46,7 @@ impl Page {
     /// Read a u16 at offset without checking permissions or bounds
     #[inline]
     pub fn read_u16(&self, off: u32) -> u16 {
-        u16::from_le_bytes([self.data[off as usize], self.data[off as usize+ 1]])
+        u16::from_le_bytes([self.data[off as usize], self.data[off as usize + 1]])
     }
 
     /// Write a u16 at offset without checking permissions or bounds

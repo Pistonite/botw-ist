@@ -22,13 +22,24 @@ pub struct Memory {
     stack: Arc<Region>,
     /// heap region
     pub heap: Arc<SimpleHeap>,
+    /// pmdm address
+    pmdm_addr: Option<u64>,
+    /// main offset
+    main_offset: Option<u32>,
+    /// trigger param addr
+    trigger_param_addr: Option<u64>,
 }
 
 impl Memory {
     /// Create a reader to start reading at address
     ///
     /// Only allow reading from certain regions if `region` is specified
-    pub fn read(&self, address: u64, region: Option<EnumSet<RegionType>>, execute: bool) -> Result<Reader, Error> {
+    pub fn read(
+        &self,
+        address: u64,
+        region: Option<EnumSet<RegionType>>,
+        execute: bool,
+    ) -> Result<Reader, Error> {
         let regions = if self.flags.enable_strict_region {
             region.unwrap_or(EnumSet::all())
         } else {
@@ -43,13 +54,13 @@ impl Memory {
         // region read_by_addr will fail if the address is not allocated,
         // in those cases, we want to return Unallocated error
         if self.program.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address))
+            return Err(Error::Unallocated(address));
         }
         if self.stack.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address))
+            return Err(Error::Unallocated(address));
         }
         if self.heap.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address))
+            return Err(Error::Unallocated(address));
         }
         Err(Error::InvalidRegion(address))
     }
@@ -57,7 +68,11 @@ impl Memory {
     /// Create a writer to start writing at address
     ///
     /// Only allow writing to certain regions if `region` is specified
-    pub fn write(&mut self, address: u64, region: Option<EnumSet<RegionType>>) -> Result<Writer, Error> {
+    pub fn write(
+        &mut self,
+        address: u64,
+        region: Option<EnumSet<RegionType>>,
+    ) -> Result<Writer, Error> {
         let regions = if self.flags.enable_strict_region {
             region.unwrap_or(EnumSet::all())
         } else {
@@ -72,16 +87,15 @@ impl Memory {
         // region read_by_addr will fail if the address is not allocated,
         // in those cases, we want to return Unallocated error
         if self.program.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address))
+            return Err(Error::Unallocated(address));
         }
         if self.stack.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address))
+            return Err(Error::Unallocated(address));
         }
         if self.heap.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address))
+            return Err(Error::Unallocated(address));
         }
         Err(Error::InvalidRegion(address))
-
     }
 
     /// If `address` is inside a region, return the region, page, region page index, and page offset
@@ -145,12 +159,28 @@ impl Memory {
         match typ {
             RegionType::Program => Arc::make_mut(&mut self.program),
             RegionType::Stack => Arc::make_mut(&mut self.stack),
-            RegionType::Heap => Arc::make_mut(&mut self.heap).deref_mut()
+            RegionType::Heap => Arc::make_mut(&mut self.heap).deref_mut(),
         }
     }
 
     pub fn heap_mut(&mut self) -> &mut SimpleHeap {
         Arc::make_mut(&mut self.heap)
+    }
+
+    pub fn get_pmdm_addr(&self) -> u64 {
+        self.pmdm_addr.unwrap_or(0)
+    }
+
+    pub fn get_main_offset(&self) -> u32 {
+        self.main_offset.unwrap_or(0)
+    }
+
+    pub fn set_trigger_param_addr(&mut self, address: u64) {
+        self.trigger_param_addr = Some(address)
+    }
+
+    pub fn get_trigger_param_addr(&self) -> u64 {
+        self.trigger_param_addr.unwrap_or(0)
     }
 }
 

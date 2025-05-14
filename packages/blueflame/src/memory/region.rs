@@ -1,17 +1,14 @@
 use std::sync::Arc;
 
-use enumset::{EnumSet, EnumSetType};
 use blueflame_program::ProgramRegion;
-
+use enumset::{EnumSet, EnumSetType};
 
 use super::access::AccessType;
 use super::error::Error;
 use super::page::{Page, PAGE_SIZE};
 use super::{align_down, align_up};
 
-
 pub const REGION_ALIGN: u64 = 0x10000;
-
 
 /// Memory region implementation
 ///
@@ -44,7 +41,11 @@ impl Region {
     ///
     /// `program_start` is the physical address where the program is loaded
     /// will be aligned down to the nearest 0x10000, if not already
-    pub fn new_program(program_start: u64, program_size: u32, regions: &[ProgramRegion]) -> Result< Self, Error> {
+    pub fn new_program(
+        program_start: u64,
+        program_size: u32,
+        regions: &[ProgramRegion],
+    ) -> Result<Self, Error> {
         let start = align_down!(program_start, REGION_ALIGN);
         let num_pages = align_up!(program_size, PAGE_SIZE) / PAGE_SIZE;
         let mut pages = Vec::with_capacity(num_pages as usize);
@@ -56,7 +57,10 @@ impl Region {
             let region_start = align_down!(region.rel_start, PAGE_SIZE);
             if current_start > region_start {
                 // should not happen unless the program image is bad
-                return Err(Error::Unexpected(format!("program image has overlapping regions! current: 0x{:08x} > next: 0x{:08x}", current_start, region_start)));
+                return Err(Error::Unexpected(format!(
+                    "program image has overlapping regions! current: 0x{:08x} > next: 0x{:08x}",
+                    current_start, region_start
+                )));
             }
             while current_start < region_start {
                 // invalid regions are supposed to be inaccessible,
@@ -134,21 +138,20 @@ impl Region {
     ///
     /// If the page is currently shared, it will be cloned (clone-on-write)
     pub fn get_mut(&mut self, page_idx: u32) -> Option<&mut Page> {
-        self.pages.get_mut(page_idx as usize).map(|page| Arc::make_mut(page))
+        self.pages.get_mut(page_idx as usize).map(Arc::make_mut)
     }
 
-    /// Return true if the address is in addresses reserved for this region 
+    /// Return true if the address is in addresses reserved for this region
     pub fn is_addr_in_region(&self, addr: u64) -> bool {
         addr >= self.start && addr < self.start + self.capacity as u64
     }
 
-
     /// Get the page for the given address as (Page, page_index, page_offset)
     ///
     /// Returns `None` if the address is not in this region,
-    /// or if the page is unallocated. 
+    /// or if the page is unallocated.
     pub fn read_at_addr(&self, addr: u64) -> Option<(&Page, u32, u32)> {
-        if addr < self.start || addr >= self.start + self.len_bytes() as u64{
+        if addr < self.start || addr >= self.start + self.len_bytes() as u64 {
             return None;
         }
         // relative address in the region
@@ -161,7 +164,7 @@ impl Region {
 
     // /// Split the address into region page index and offset
     // ///
-    // /// Returns (0, 0) if the address is not in this region - 
+    // /// Returns (0, 0) if the address is not in this region -
     // /// only use if you have already checked that the address is in this region
     // pub fn split_addr(&self, addr: u64) -> (usize, usize) {
     //     if addr < self.start || addr >= self.start + self.len_bytes() {
@@ -173,7 +176,6 @@ impl Region {
     //     (region_page_idx as usize, page_off)
     // }
 }
-
 
 /// Type of the region used for tracking and debugging purposes
 ///
@@ -190,9 +192,7 @@ pub enum RegionType {
     /// but the simulator will only have one thread
     Stack,
     /// The heap segment
-    Heap
-
-    // do we need TLS (Thread Local)?
+    Heap, // do we need TLS (Thread Local)?
 }
 
 impl std::fmt::Display for RegionType {

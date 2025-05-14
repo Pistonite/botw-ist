@@ -1,6 +1,5 @@
 use enumset::{enum_set, EnumSet, EnumSetType};
 
-
 /// Information for accessing memory for tracking and reporting
 #[derive(Debug, Clone)]
 pub struct MemAccess {
