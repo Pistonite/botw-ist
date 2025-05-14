@@ -1,6 +1,6 @@
 use crate::{Bytecode, VirtualMachine};
 
-use blueflame_utils::{DataType, ProxyType, Environment};
+use blueflame_utils::{DataType, Environment, ProxyType};
 
 /// Information about a singleton
 #[derive(Debug, Clone)]
@@ -47,16 +47,13 @@ impl Singleton {
 pub fn pmdm(env: Environment) -> Singleton {
     let rel_start = 0x0; // TODO, based on env
     let size = 0x44808; // should be the same for all envs
-    let main_offset = if env.is150() {
-        0x25d75b8
-    } else {
-        0x2ca6d50
-    };
-                        //
-    let bytecode  = if env.is150() {
+    let main_offset = if env.is150() { 0x25d75b8 } else { 0x2ca6d50 };
+    //
+    let bytecode = if env.is150() {
         vec![
+            Bytecode::Enter(0x0096AAA0),
+            Bytecode::ExecuteToComplete,
             Bytecode::Enter(0x0096b1cc),
-        
             Bytecode::ExecuteUntilThenAllocSingletonSkipOne(0x0096b200),
             // skip the Disposer ctor
             Bytecode::ExecuteUntilThenSkipOne(0x0096b218),
@@ -70,7 +67,7 @@ pub fn pmdm(env: Environment) -> Singleton {
         vec![] //TODO
     };
 
-    Singleton::new( rel_start, size, main_offset, bytecode)
+    Singleton::new(rel_start, size, main_offset, bytecode)
 }
 
 /// ksys::gdt::Manager
@@ -86,11 +83,9 @@ pub fn gdt_manager(env: Environment) -> Singleton {
     let bytecode = if env.is150() {
         vec![
             Bytecode::Enter(0x00dce964),
-
             Bytecode::ExecuteUntilThenAllocSingletonSkipOne(0x00dce994),
             // skip the Disposer ctor
             Bytecode::ExecuteUntilThenSkipOne(0x00dce9ac),
-
             // --- enter ctor
             // skip some data ctors
             Bytecode::ExecuteUntilThenSkipOne(0x00dcea24),
@@ -106,26 +101,21 @@ pub fn gdt_manager(env: Environment) -> Singleton {
             Bytecode::ExecuteUntilThenSkipOne(0x00dcec0c),
             // finish the function
             Bytecode::ExecuteUntil(0x00dcec24),
-
             // replace return with a B to init
             Bytecode::Jump(0x00dcf1c4),
             Bytecode::GetSingleton(0),
             Bytecode::SetRegLo(1, 0),
             Bytecode::SetRegLo(2, 0),
-
             // --- init
             // skip 2 GetSystemTick calls
             Bytecode::ExecuteUntil(0x00dcf1f8),
             Bytecode::Jump(0x00dcf200),
-
             // skip DualHeap creation, set to null
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf23c),
             Bytecode::SetRegLo(0, 0),
-
             // allocate increase logger
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf254),
             Bytecode::Allocate(0x3098),
-
             // skip SaveMgr creation
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf268),
             // skip debug and SaveMgr init
@@ -136,32 +126,30 @@ pub fn gdt_manager(env: Environment) -> Singleton {
             Bytecode::ExecuteUntil(0x00dcf428),
             Bytecode::Jump(0x00dcf4e0),
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf4fc),
-
             // skip save area DualHeap creation, set to null
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf530),
             Bytecode::SetRegLo(0, 0),
-
             // skip loading save and some other stuff
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf53c),
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf550),
-
             // skip loading game data arc
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf5cc),
             // skip loading shop data
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf618),
             // skip unloading resources
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf680),
-
             // create trigger param and store it in param and param1
             Bytecode::AllocateProxy(ProxyType::TriggerParam),
             Bytecode::CopyReg(0, 21),
             Bytecode::GetSingleton(19),
             Bytecode::JumpExecute(0x00dcfe88),
             Bytecode::JumpExecute(0x00dd2ed4),
-
             // finish init normally
             Bytecode::Jump(0x00dcf684),
             Bytecode::ExecuteToComplete,
+            // init common flags
+            // Bytecode::Enter(0x008BF8A0),
+            // Bytecode::ExecuteToComplete
         ]
     } else {
         vec![] //TODO
@@ -189,11 +177,14 @@ pub fn info_data(env: Environment) -> Singleton {
             // B to init
             Bytecode::Jump(0x00d2e2d8),
             Bytecode::GetSingleton(0),
+            Bytecode::CopyReg(0, 3),
             // load data into args
             Bytecode::AllocateData(DataType::ActorInfoByml),
             Bytecode::CopyReg(0, 1),
+            Bytecode::CopyReg(3, 0),
             Bytecode::SetRegLo(2, 0),
             Bytecode::SetRegLo(3, 0),
+            //Bytecode::SetRegLo(0, 0)
             // root yaml iter
             Bytecode::ExecuteUntilThenSkipOne(0x00d2e314),
             Bytecode::Allocate(0x10),
@@ -207,11 +198,9 @@ pub fn info_data(env: Environment) -> Singleton {
             Bytecode::ExecuteToComplete,
         ]
     } else {
-        vec![
-            Bytecode::Enter(0x00d2e16c),
-        ] // TODO
+        vec![Bytecode::Enter(0x00d2e16c)] // TODO
     };
-    
+
     Singleton::new(rel_start, size, main_offset, bytecode)
 }
 
@@ -237,7 +226,6 @@ pub fn aoc_manager(env: Environment) -> Singleton {
             Bytecode::ExecuteUntilThenSkipOne(0x00d69240),
             Bytecode::ExecuteUntilThenSkipOne(0x00d69294),
             Bytecode::ExecuteUntilThenSkipOne(0x00d69788),
-
             Bytecode::ExecuteUntil(0x00d691ec),
             // initial DLC version
             Bytecode::Jump(0x00d6c3f4),
@@ -246,8 +234,8 @@ pub fn aoc_manager(env: Environment) -> Singleton {
             Bytecode::ExecuteUntil(0x00d6c3f8),
         ]
     } else {
-        vec![ ] // TODO
+        vec![] // TODO
     };
-    
+
     Singleton::new(rel_start, size, main_offset, bytecode)
 }
