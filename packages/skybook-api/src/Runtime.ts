@@ -6,12 +6,13 @@ import type {
     InvView_Gdt,
     InvView_Overworld,
     InvView_PouchList,
+    MaybeAborted,
 } from "./runtime";
 import type {
     ItemSearchResult,
-    RuntimeInitArgs,
-    RuntimeInitError,
-    RuntimeInitOutput,
+    RuntimeWorkerInitArgs,
+    RuntimeWorkerInitOutput,
+    RuntimeWorkerInitError,
 } from "./types.ts";
 
 /**
@@ -22,8 +23,8 @@ export interface Runtime {
      * Initialize the runtime with the given arguments.
      */
     initialize(
-        args: RuntimeInitArgs,
-    ): WxPromise<Result<RuntimeInitOutput, RuntimeInitError>>;
+        args: RuntimeWorkerInitArgs,
+    ): WxPromise<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>>;
 
     /**
      * Resolve an item identifier search query to a list of items, ordered by score (best first).
@@ -54,31 +55,44 @@ export interface Runtime {
     /** Get index of the step from byte position in the script */
     getStepFromPos(script: string, pos: number): WxPromise<number>;
 
-    /**
-     * Start executing the script in the background
-     */
-    executeScript(script: string): WxPromise<void>;
+    /** Abort a task by task id passed into one of the runtime functions that execute the script */
+    abortTask(taskId: string): WxPromise<void>;
 
     /**
      * Execute the script if not up-to-date, and return the pouch inventory list view
      * at the byte offset `pos` in the script.
+     *
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    getPouchList(script: string, pos: number): WxPromise<InvView_PouchList>;
+    getPouchList(
+        script: string,
+        taskId: string,
+        pos: number,
+    ): WxPromise<MaybeAborted<InvView_PouchList>>;
 
     /**
      * Execute the script if not up-to-date, and return the GDT inventory view
      * at the byte offset `pos` in the script.
+     *
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    getGdtInventory(script: string, pos: number): WxPromise<InvView_Gdt>;
+    getGdtInventory(
+        script: string,
+        taskId: string,
+        pos: number,
+    ): WxPromise<MaybeAborted<InvView_Gdt>>;
 
     /**
      * Execute the script if not up-to-date, and return the overworld item view
      * at the byte offset `pos` in the script.
+     *
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
     getOverworldItems(
         script: string,
+        taskId: string,
         pos: number,
-    ): WxPromise<InvView_Overworld>;
+    ): WxPromise<MaybeAborted<InvView_Overworld>>;
 
     // getRuntimeDiagnostics(
     //     script: string,

@@ -1,3 +1,5 @@
+use std::panic::UnwindSafe;
+
 use crate::memory::traits::MemWrite;
 use blueflame_utils::ProxyType;
 use error::{Error, ExecutionError};
@@ -337,17 +339,18 @@ impl Core<'_, '_, '_> {
         let block_base = pc & !(BLOCK_SIZE - 1);
         let offset = ((pc - block_base) / INST_SIZE) as usize;
 
+        // log::debug!("fetching instruction at pc: {:#x}", pc);
+        let inst = self.mem.mem_read_inst(pc)?;
         let block = self
             .cpu
             .inst_cache
             .entry(block_base)
             .or_insert_with(|| vec![None; (BLOCK_SIZE / INST_SIZE) as usize]);
-
+        
         if block[offset].is_none() {
-            let inst = self.mem.mem_read_inst(pc)?;
             block[offset] = Some(inst);
         }
-
+        
         block
             .get(offset)
             .and_then(|slot| slot.as_ref())
@@ -359,10 +362,12 @@ impl Core<'_, '_, '_> {
 
     pub fn execute_at_pc(&mut self) -> Result<(), Error> {
         let s = self.cpu.check_pc(self.mem.get_main_offset()).cloned();
+        // let s = self.cpu.check_pc(self.mem.get_main_offset()).cloned();
 
         if let Some(stub) = s {
             let condition_met = {
-                let condition = &stub.borrow().condition; // Immutable borrow ends here
+                let lock = stub.lock().unwrap();
+                let condition = &lock.condition; // Immutable borrow ends here
                 if let Some(cond) = condition {
                     (cond)(self.cpu).map_err(|e| {
                         Error::Cpu(crate::processor::Error::Unexpected(format!("{:?}", e)))
@@ -372,7 +377,9 @@ impl Core<'_, '_, '_> {
                 }
             };
             if condition_met {
-                (stub.borrow_mut().func)(self).unwrap();
+                // TODO: fix the mutability check - Stub needs to be moved out of CPU
+                let lock = stub.lock().unwrap();
+                (lock.func)(self).unwrap();
             }
         } else {
             let inst = self.fetch_instruction(self.cpu.pc)?;

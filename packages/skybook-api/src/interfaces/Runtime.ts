@@ -9,8 +9,8 @@ import type { Runtime } from "../Runtime.ts";
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
 import type { ParserErrorReport } from "../parser";
-import type { InvView_Gdt, InvView_Overworld, InvView_PouchList } from "../runtime";
-import type { ItemSearchResult, RuntimeInitArgs, RuntimeInitError, RuntimeInitOutput } from "../types.ts";
+import type { InvView_Gdt, InvView_Overworld, InvView_PouchList, MaybeAborted } from "../runtime";
+import type { ItemSearchResult, RuntimeWorkerInitArgs, RuntimeWorkerInitOutput, RuntimeWorkerInitError } from "../types.ts";
 
 /*
  * These generated implementations are used internally by other generated code.
@@ -28,26 +28,30 @@ export class _wxSenderImpl implements Runtime {
     }
 
     /**
-     * Start executing the script in the background
+     * Abort a task by task id passed into one of the runtime functions that execute the script
      */
-    public executeScript( script: string ): WxPromise<void> {
-        return this.sender.sendVoid(25 /* Runtime.executeScript */, [ script ]);
+    public abortTask( taskId: string ): WxPromise<void> {
+        return this.sender.sendVoid(25 /* Runtime.abortTask */, [ taskId ]);
     }
 
     /**
      * Execute the script if not up-to-date, and return the GDT inventory view
      * at the byte offset `pos` in the script.
+     * 
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    public getGdtInventory( script: string, pos: number ): WxPromise<InvView_Gdt> {
-        return this.sender.send<InvView_Gdt>(26 /* Runtime.getGdtInventory */, [ script, pos ]);
+    public getGdtInventory( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<InvView_Gdt>> {
+        return this.sender.send<MaybeAborted<InvView_Gdt>>(26 /* Runtime.getGdtInventory */, [ script, taskId, pos ]);
     }
 
     /**
      * Execute the script if not up-to-date, and return the overworld item view
      * at the byte offset `pos` in the script.
+     * 
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    public getOverworldItems( script: string, pos: number ): WxPromise<InvView_Overworld> {
-        return this.sender.send<InvView_Overworld>(27 /* Runtime.getOverworldItems */, [ script, pos ]);
+    public getOverworldItems( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<InvView_Overworld>> {
+        return this.sender.send<MaybeAborted<InvView_Overworld>>(27 /* Runtime.getOverworldItems */, [ script, taskId, pos ]);
     }
 
     /**
@@ -62,9 +66,11 @@ export class _wxSenderImpl implements Runtime {
     /**
      * Execute the script if not up-to-date, and return the pouch inventory list view
      * at the byte offset `pos` in the script.
+     * 
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    public getPouchList( script: string, pos: number ): WxPromise<InvView_PouchList> {
-        return this.sender.send<InvView_PouchList>(29 /* Runtime.getPouchList */, [ script, pos ]);
+    public getPouchList( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<InvView_PouchList>> {
+        return this.sender.send<MaybeAborted<InvView_PouchList>>(29 /* Runtime.getPouchList */, [ script, taskId, pos ]);
     }
 
     /**
@@ -88,8 +94,8 @@ export class _wxSenderImpl implements Runtime {
     /**
      * Initialize the runtime with the given arguments.
      */
-    public initialize( args: RuntimeInitArgs ): WxPromise<Result<RuntimeInitOutput, RuntimeInitError>> {
-        return this.sender.send<Result<RuntimeInitOutput, RuntimeInitError>>(32 /* Runtime.initialize */, [ args ]);
+    public initialize( args: RuntimeWorkerInitArgs ): WxPromise<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>> {
+        return this.sender.send<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>>(32 /* Runtime.initialize */, [ args ]);
     }
 
     /**
@@ -106,25 +112,25 @@ export class _wxSenderImpl implements Runtime {
  */
 export const _wxRecverImpl = (handler: Runtime): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 25 /* Runtime.executeScript */: {
+        case 25 /* Runtime.abortTask */: {
             const [ a0 ] = args;
-            return handler.executeScript( a0 );
+            return handler.abortTask( a0 );
         }
         case 26 /* Runtime.getGdtInventory */: {
-            const [ a0, a1 ] = args;
-            return handler.getGdtInventory( a0, a1 );
+            const [ a0, a1, a2 ] = args;
+            return handler.getGdtInventory( a0, a1, a2 );
         }
         case 27 /* Runtime.getOverworldItems */: {
-            const [ a0, a1 ] = args;
-            return handler.getOverworldItems( a0, a1 );
+            const [ a0, a1, a2 ] = args;
+            return handler.getOverworldItems( a0, a1, a2 );
         }
         case 28 /* Runtime.getParserDiagnostics */: {
             const [ a0 ] = args;
             return handler.getParserDiagnostics( a0 );
         }
         case 29 /* Runtime.getPouchList */: {
-            const [ a0, a1 ] = args;
-            return handler.getPouchList( a0, a1 );
+            const [ a0, a1, a2 ] = args;
+            return handler.getPouchList( a0, a1, a2 );
         }
         case 30 /* Runtime.getSemanticTokens */: {
             const [ a0, a1, a2 ] = args;

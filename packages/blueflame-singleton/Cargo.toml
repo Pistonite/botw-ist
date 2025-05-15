@@ -9,6 +9,7 @@ path = "../blueflame-utils"
 
 [dependencies]
 deku = { version = "0.18.1", optional = true }
+log = "0.4.27"
 serde = { version = "1.0.217", features = ["derive"], optional = true }
 static_assertions = "1.1.0"
 

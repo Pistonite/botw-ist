@@ -4,7 +4,7 @@ use blueflame_program::Program;
 use blueflame_singleton::VirtualMachine;
 use blueflame_utils::{DataType, Environment, ProxyType};
 
-use crate::error::Error as CrateError;
+use crate::error::{Error as CrateError, ExecutionError};
 use crate::memory::{
     align_down, align_up, Memory, MemoryFlags, Proxies, Region, RegionType, SimpleHeap, PAGE_SIZE,
     REGION_ALIGN,
@@ -129,13 +129,16 @@ pub fn init_memory(
 
     // construct the memory
 
+    log::debug!("creating program region");
     let program_region = Arc::new(Region::new_program(
         image.program_start,
         image.program_size,
         image.regions(),
     )?);
 
+    log::debug!("creating stack region");
     let stack_region = Arc::new(Region::new_rw(RegionType::Stack, stack_start, stack_size));
+    log::debug!("creating heap region");
     let heap_region = Arc::new(SimpleHeap::new(
         heap_start,
         heap_size,
@@ -148,6 +151,8 @@ pub fn init_memory(
         enable_allocated_check: true,
     };
 
+    log::debug!("creating memory");
+
     let mut memory = Memory::new(
         flags,
         program_region,
@@ -157,6 +162,8 @@ pub fn init_memory(
         Some(image.env.main_offset()),
         None,
     );
+
+    log::debug!("creating temporary processor");
 
     // create a temporary processor to initialize the singletons
 
@@ -170,9 +177,17 @@ pub fn init_memory(
         image,
     };
 
-    for singleton in singletons {
-        singleton.create(&mut singleton_init)?;
+    log::debug!("creating singletons");
+    for (i, singleton) in singletons.iter().enumerate() {
+        log::debug!("creating singleton {i}");
+        if let Err(e) = singleton.create(&mut singleton_init) {
+            let x = ExecutionError::new(e.clone(), 0, singleton_init.core.cpu.stack_trace.clone());
+            log::error!("failed to create singleton {i}: {}", x);
+            return Err(e);
+        }
     }
+
+    log::debug!("memory initialization done");
 
     Ok((memory, proxies))
 }
@@ -235,7 +250,7 @@ impl VirtualMachine for SingletonInit<'_, '_, '_, '_> {
     fn enter(&mut self, target: u32) -> Result<(), Self::Error> {
         let main_offset = self.env.main_offset();
         self.set_reg(30, ENTER_ADDR)?;
-        self.core.cpu.set_pc((target + main_offset) as u64);
+        self.core.cpu.set_pc((target + main_offset) as u64 + self.image.program_start);
         Ok(())
     }
 
@@ -281,7 +296,10 @@ impl VirtualMachine for SingletonInit<'_, '_, '_, '_> {
     }
 
     fn execute_until(&mut self, target: u32) -> Result<(), Self::Error> {
-        while self.core.cpu.pc != Into::<u64>::into(target + self.env.main_offset()) {
+        while self.core.cpu.pc != Into::<u64>::into(target + self.env.main_offset()) + self.image.program_start {
+            if target == 0xdcf680 {
+                log::debug!("Executing at PC: {:#x}", self.core.cpu.pc);
+            }
             self.core.execute_at_pc()?;
         }
         Ok(())
@@ -291,7 +309,7 @@ impl VirtualMachine for SingletonInit<'_, '_, '_, '_> {
         let main_offset = self.env.main_offset();
         // physical address of the instruction we need to set PC to
         // let address = self.program_start + main_offset as u64 + pc as u64;
-        self.core.cpu.pc = (main_offset + pc) as u64;
+        self.core.cpu.pc = (main_offset + pc) as u64 + self.image.program_start;
         Ok(())
     }
 

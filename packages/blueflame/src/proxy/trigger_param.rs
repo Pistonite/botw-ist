@@ -452,9 +452,9 @@ macro_rules! load_yaml {
     ($file_name:ident, $data_name:ident, $flag_list_name:ident, $typ:ty, $read_value:ident, $converter:expr) => {
         paste::item! {
             fn [<load_ $file_name _flags>](&mut self) -> LoadResult {
-                let path = concat!("./res/flag/", stringify!($file_name), "_data.yml");
-                let file = std::fs::File::open(path)?;
-                let value: Value = serde_yaml::from_reader(file)?;
+                let file = include_str!(concat!("../../res/Flag/", stringify!($file_name), "_data.yml"));
+                // let file = include_str!(path);
+                let value: Value = serde_yaml::from_str(file)?;
                 let top_name = concat!(stringify!($data_name), "_data");
                 let data_list = Self::read_value_seq(&value, top_name)?;
                 for entry in data_list {
@@ -482,9 +482,9 @@ macro_rules! load_yaml_array {
     ($name:ident, $data_name:ident, $typ:ty, $read_value:ident, $converter:expr) => {
         paste::item! {
             fn [<load_ $name _array_flags>](&mut self) -> LoadResult {
-                let path = concat!("./res/flag/", stringify!($name), "_array_data.yml");
-                let file = std::fs::File::open(path)?;
-                let value: Value = serde_yaml::from_reader(file)?;
+                let file = include_str!(concat!("../../res/Flag/", stringify!($name), "_array_data.yml"));
+                // let file = std::fs::File::open(path)?;
+                let value: Value = serde_yaml::from_str(file)?;
                 let top_name = concat!(stringify!($data_name), "_array_data");
                 let data_list = Self::read_value_seq(&value, top_name)?;
                 for entry in data_list {

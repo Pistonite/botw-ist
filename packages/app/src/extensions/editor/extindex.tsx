@@ -14,7 +14,7 @@ import {
 
 import { init, setApp, updateScriptInApp } from "./init.ts";
 
-init();
+void init();
 
 const FILE = getNormalizedPath("script.skyb");
 

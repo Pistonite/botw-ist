@@ -1,14 +1,22 @@
-use std::sync::Arc;
+use std::{cell::OnceCell, sync::Arc};
 
-use js_sys::Function;
+use blueflame_utils::GameVer;
+use js_sys::{Function, Uint32Array, Uint8Array};
 use serde::{Deserialize, Serialize};
 use skybook_parser::{search, ParseOutput};
-use skybook_runtime::{iv, RunOutput};
+use skybook_runtime::{
+    erc, error::MaybeAborted, exec::Spawner, iv, CustomImageInitParams, ResultInterop, RunHandle,
+    RunOutput, Runtime, RuntimeInitError, RuntimeInitOutput,
+};
 use tsify_next::Tsify;
 use wasm_bindgen::prelude::*;
 
 mod js_item_resolve;
 use js_item_resolve::JsQuotedItemResolver;
+
+thread_local! {
+    static RUNTIME: OnceCell<Runtime> = OnceCell::new();
+}
 
 #[wasm_bindgen]
 extern "C" {
@@ -18,11 +26,56 @@ extern "C" {
 
 /// Initialize the WASM module
 #[wasm_bindgen]
-pub fn module_init() {
+pub async fn module_init(wasm_module_path: String, wasm_bindgen_js_path: String) {
+    let _ = console_log::init_with_level(log::Level::Debug);
+    log::info!("initializing wasm module");
     std::panic::set_hook(Box::new(move |info| {
         console_error_panic_hook::hook(info);
         __global_crash_handler();
     }));
+
+    let spawner = match Spawner::try_new(&wasm_module_path, &wasm_bindgen_js_path).await {
+        Ok(spawner) => spawner,
+        Err(e) => {
+            panic!("failed to initialize spawner: {}", e);
+        }
+    };
+
+    RUNTIME.with(|runtime| {
+        let _ = runtime.set(Runtime::new(spawner));
+    });
+
+    log::info!("wasm module initialized successfully");
+}
+
+/// Initialize the simulator runtime
+#[wasm_bindgen]
+pub fn init_runtime(
+    // the params should be one Option, but wasm-bindgen doesn't support tuples
+    custom_image: Option<Uint8Array>,
+    custom_image_params: Option<CustomImageInitParams>,
+) -> ResultInterop<RuntimeInitOutput, RuntimeInitError> {
+    let custom_image = match (custom_image, custom_image_params) {
+        (Some(data), Some(params)) => {
+            let data = data.to_vec();
+            Some((data, params))
+        }
+        _ => None,
+    };
+
+    RUNTIME.with(|runtime| {
+        let runtime = runtime.get().unwrap();
+        if let Err(e) = runtime.init(custom_image) {
+            return ResultInterop::Err(e);
+        }
+        let game_version = match runtime.game_version() {
+            GameVer::X150 => "1.5",
+            GameVer::X160 => "1.6",
+        };
+        ResultInterop::Ok(RuntimeInitOutput {
+            game_version: game_version.to_string(),
+        })
+    })
 }
 
 //////////// Item Resolver //////////
@@ -81,9 +134,7 @@ pub fn parse_script_semantic(script: String, start: usize, end: usize) -> Vec<u3
 /// ## Pointer Ownership
 /// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
-pub fn get_parser_errors(
-    parse_output_ref: *const ParseOutput, // borrowed
-) -> Vec<skybook_parser::ErrorReport> {
+pub fn get_parser_errors(parse_output_ref: *const ParseOutput) -> Vec<skybook_parser::ErrorReport> {
     if parse_output_ref.is_null() {
         return Vec::new();
     }
@@ -97,35 +148,12 @@ pub fn get_parser_errors(
 /// ## Pointer Ownership
 /// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
-pub fn get_step_count(parse_output_ref: *const ParseOutput, // borrowed
-) -> usize {
+pub fn get_step_count(parse_output_ref: *const ParseOutput) -> usize {
     if parse_output_ref.is_null() {
         return 0;
     }
     let parse_output = unsafe { &*parse_output_ref };
     parse_output.steps.len()
-}
-
-/// Free the parse output
-#[wasm_bindgen]
-pub fn free_parse_output(parse_output: *const ParseOutput, // takes ownership
-) {
-    if parse_output.is_null() {
-        return;
-    }
-    let _ = unsafe { Arc::from_raw(parse_output) };
-}
-
-/// Add ref for the parse output
-#[wasm_bindgen]
-pub fn add_ref_parse_output(parse_output_ref: *const ParseOutput) -> *const ParseOutput {
-    if parse_output_ref.is_null() {
-        return std::ptr::null();
-    }
-    let x = unsafe { Arc::from_raw(parse_output_ref) };
-    let x2 = Arc::clone(&x);
-    let _ = Arc::into_raw(x);
-    Arc::into_raw(x2)
 }
 
 /// Get index of the step from byte position in script
@@ -145,38 +173,40 @@ pub fn get_step_from_pos(parse_output_ref: *const ParseOutput, pos: usize) -> us
 
 ////////// Runtime //////////
 
+/// Make a run handle that you can pass back into run_parsed
+/// to be able to abort the run
+#[wasm_bindgen]
+pub fn make_task_handle() -> *const RunHandle {
+    let handle = Arc::new(RunHandle::new());
+    RunHandle::into_raw(handle)
+}
+
+/// Abort the task using the handle. Frees the handle
+#[wasm_bindgen]
+pub fn abort_task(ptr: *const RunHandle) {
+    let handle = RunHandle::from_raw(ptr);
+    handle.abort();
+}
+
 /// Run simulation using the ParseOutput
 ///
 /// ## Pointer Ownership
 /// Takes ownership of the ParseOutput pointer. Returns
 /// ownership of the RunOutput pointer.
 #[wasm_bindgen]
-pub async fn run_parsed(parse_output: *const ParseOutput) -> *const RunOutput {
+pub async fn run_parsed(
+    parse_output: *const ParseOutput,
+    handle: *const RunHandle,
+) -> MaybeAborted<usize> {
     let parse_output = unsafe { Arc::from_raw(parse_output) };
-    let run_output = skybook_runtime::run_parsed(&parse_output).await;
-    Arc::into_raw(Arc::new(run_output))
-}
-
-/// Free the run output
-#[wasm_bindgen]
-pub fn free_run_output(run_output: *const RunOutput, // takes ownership
-) {
-    if run_output.is_null() {
-        return;
+    let handle = RunHandle::from_raw(handle);
+    match skybook_runtime::run_parsed(parse_output, handle).await {
+        MaybeAborted::Ok(run_output) => {
+            let run_output_ptr = Arc::into_raw(Arc::new(run_output));
+            MaybeAborted::Ok(run_output_ptr as usize)
+        }
+        MaybeAborted::Aborted => MaybeAborted::Aborted,
     }
-    let _ = unsafe { Arc::from_raw(run_output) };
-}
-
-/// Add ref for the run output
-#[wasm_bindgen]
-pub fn add_ref_run_output(run_output_ref: *const RunOutput) -> *const RunOutput {
-    if run_output_ref.is_null() {
-        return std::ptr::null();
-    }
-    let x = unsafe { Arc::from_raw(run_output_ref) };
-    let x2 = Arc::clone(&x);
-    let _ = Arc::into_raw(x);
-    Arc::into_raw(x2)
 }
 
 /// Get the Pouch inventory view for the given byte position in the script
@@ -234,4 +264,30 @@ pub fn get_overworld_items(
     let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
     let run_output = unsafe { &*run_output_ref };
     run_output.get_overworld_items(step)
+}
+
+////////// Ref Counting //////////
+#[wasm_bindgen]
+pub fn free_parse_output(ptr: *const ParseOutput) {
+    erc::free(ptr);
+}
+#[wasm_bindgen]
+pub fn add_ref_parse_output(ptr: *const ParseOutput) -> *const ParseOutput {
+    erc::add_ref(ptr)
+}
+#[wasm_bindgen]
+pub fn free_task_handle(ptr: *const RunHandle) {
+    erc::free(ptr);
+}
+#[wasm_bindgen]
+pub fn add_ref_task_handle(ptr: *const RunHandle) -> *const RunHandle {
+    erc::add_ref(ptr)
+}
+#[wasm_bindgen]
+pub fn free_run_output(ptr: *const RunOutput) {
+    erc::free(ptr);
+}
+#[wasm_bindgen]
+pub fn add_ref_run_output(ptr: *const RunOutput) -> *const RunOutput {
+    erc::add_ref(ptr)
 }

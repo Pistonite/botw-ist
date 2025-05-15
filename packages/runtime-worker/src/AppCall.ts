@@ -9,6 +9,8 @@ import type {
     RuntimeApp,
 } from "@pistonite/skybook-api";
 
+import type { QuotedItemResolverFn } from "./NativeApi.ts";
+
 const { promise: appPromise, resolve: resolveApp } =
     wxMakePromise<RuntimeApp>();
 
@@ -40,9 +42,6 @@ export const resolveQuotedItem: QuotedItemResolverFn = async (query) => {
     quotedItemCache.set(query, item);
     return item;
 };
-export type QuotedItemResolverFn = (
-    query: string,
-) => Promise<{ actor: string; cookEffect: number } | undefined | null>;
 
 export const getCustomBlueFlameImage = async () => {
     return (await appPromise).getCustomBlueFlameImage();

@@ -4,8 +4,11 @@ version = "0.0.0"
 edition = "2021"
 publish = false
 
+[workspace]
+
 [dependencies]
 skybook-runtime = { path = "../runtime", features = ["wasm"] }
+blueflame-utils = { path = "../blueflame-utils" }
 skybook-parser = { path = "../parser", features = ["wasm", "cached"] }
 wasm-bindgen = { version = "0.2.99", features = ["serde", "serde-serialize"] }
 tsify-next = { version = "0.5.4", features = ["js"], default-features = false }
@@ -14,6 +17,8 @@ ts-rs = "10.1.0"
 js-sys = "0.3.77"
 wasm-bindgen-futures = "0.4.50"
 console_error_panic_hook = "0.1.7"
+console_log = { version = "1.0.0", features = ["color"] }
+log = "0.4.27"
 
 [lib]
 crate-type = ["cdylib"]

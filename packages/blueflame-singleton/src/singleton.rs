@@ -136,6 +136,9 @@ pub fn gdt_manager(env: Environment) -> Singleton {
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf5cc),
             // skip loading shop data
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf618),
+            // skip tree node stuff
+            Bytecode::ExecuteUntil(0x00dcf634),
+            Bytecode::Jump(0x00dcf670),
             // skip unloading resources
             Bytecode::ExecuteUntilThenSkipOne(0x00dcf680),
             // create trigger param and store it in param and param1

@@ -4,7 +4,9 @@ use crate::syn;
 
 // this module exists because the TS binding needs a different name
 mod parser_error_report {
-    #[derive(Debug, Clone, serde::Serialize)]
+    use serde::Serialize;
+
+    #[derive(Debug, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
@@ -35,8 +37,10 @@ impl From<teleparse::syntax::Error<syn::TT>> for ErrorReport {
             teleparse::syntax::ErrorKind::Custom(message) => Error::Unexpected(message),
             teleparse::syntax::ErrorKind::UnexpectedCharacters => Error::SyntaxUnexpected,
             teleparse::syntax::ErrorKind::UnexpectedTokens => Error::SyntaxUnexpected,
-            teleparse::syntax::ErrorKind::Expecting(first_set) => {
-                Error::SyntaxUnexpectedExpecting(first_set.to_string())
+            teleparse::syntax::ErrorKind::Expecting(_) => {
+                // not really useful to display the expected set, since it can
+                // be a large set of tokens sometimes
+                Error::SyntaxUnexpected
             }
             teleparse::syntax::ErrorKind::UnexpectedEof => Error::SyntaxUnexpectedEof,
             teleparse::syntax::ErrorKind::UnexpectedNoAdvanceInLoop => {
@@ -53,11 +57,12 @@ impl From<teleparse::syntax::Error<syn::TT>> for ErrorReport {
 
 // this module exists because the TS binding needs a different name
 mod parser_error {
+    use serde::Serialize;
 
     use crate::cir;
 
     /// Error type for the parser
-    #[derive(Debug, Clone, thiserror::Error, serde::Serialize)]
+    #[derive(Debug, Clone, thiserror::Error, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]

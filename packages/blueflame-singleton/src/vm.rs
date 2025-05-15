@@ -72,6 +72,7 @@ pub trait VirtualMachine {
         }
         let mut prev_lo_value = 0u32;
         for bytecode in program {
+            log::debug!("Executing bytecode: {:?}", bytecode);
             match *bytecode {
                 Bytecode::Enter(target) => {
                     self.enter(target)?

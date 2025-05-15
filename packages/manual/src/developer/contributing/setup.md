@@ -18,7 +18,7 @@ WSL is recommended for Windows.
 
 For first-time setup, run the following commands
 ```
-git clone git@github.com:Pistonite/botw-ist
+git clone git@github.com:Pistonite/botw-ist --depth 1
 cd botw-ist
 magoo install
 task exec -- research:install

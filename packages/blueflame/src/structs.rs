@@ -182,8 +182,8 @@ pub struct CookData {
 pub struct WeaponData {
     #[offset(0x0)]
     mModifierValue: u32,
-    #[offset(0x4)]
-    mUnused: u32,
+    // #[offset(0x4)]
+    // mUnused: u32,
     #[offset(0x8)]
     mModifier: u32,
     #[offset(0xc)]
@@ -194,7 +194,7 @@ impl From<CookData> for WeaponData {
     fn from(cook: CookData) -> Self {
         WeaponData {
             mModifierValue: cook.mSellPrice as u32,
-            mUnused: 0,
+            // mUnused: 0,
             mModifier: cook.mHealthRecover as u32,
             mEffectUnused: cook.mEffect,
         }

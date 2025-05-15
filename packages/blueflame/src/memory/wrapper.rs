@@ -136,7 +136,7 @@ impl Memory {
 
     /// Reads an instruction object from memory
     pub fn mem_read_inst(&mut self, address: u64) -> Result<Box<dyn ExecutableInstruction>, Error> {
-        let mut reader = self.read(address, None, true)?;
+        let mut reader = self.read(address, Some(RegionType::Program.into()), true)?;
         reader.read_instruction()
     }
 

@@ -1,5 +1,6 @@
 use anyhow::Result;
 use disarm64::decoder::{self};
+use std::panic::UnwindSafe;
 use std::str::FromStr;
 use thiserror::Error;
 
@@ -84,7 +85,7 @@ pub enum InstructionType {
     Branch,
 }
 
-pub trait ExecutableInstruction: ExecutableInstructionClone {
+pub trait ExecutableInstruction: ExecutableInstructionClone + Send + Sync + UnwindSafe + 'static{
     fn exec_on(&self, proc: &mut Core) -> Result<(), Error>;
     fn instruction_type(&self) -> Option<InstructionType> {
         None

@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Void } from "@pistonite/pure/result";
 import { ThemeProvider } from "@pistonite/shared-controls";
 
-import { initI18n, translateUI } from "skybook-localization";
+import { type Translator, initI18n, translateUI } from "skybook-localization";
 import { ItemTooltipProvider } from "skybook-item-system";
 import { extractDirectLoad } from "@pistonite/skybook-api/client";
 import {
@@ -13,7 +13,7 @@ import {
     type DirectLoad,
     parseEnvFromScript,
     type ScriptEnvImage,
-    type RuntimeInitArgs,
+    type RuntimeWorkerInitArgs,
     type ScriptEnv,
 } from "@pistonite/skybook-api";
 
@@ -62,12 +62,14 @@ let crashed = false;
  * 3. Mount the main React root with the app
  */
 const boot = async () => {
+    let context: BootContext | undefined = undefined;
     registerCrashHandler(() => {
         if (crashed) {
             console.warn("crash handler invoked multiple times");
             return;
         }
         crashed = true;
+        context?.unmountBootUI?.();
         (ReactRoot || createReactRoot()).render(<CrashScreen />);
         void removeBootCurtain(false);
     });
@@ -110,7 +112,7 @@ const boot = async () => {
         await initI18n(true);
     };
 
-    const context: BootContext = {
+    context = {
         beforeBootUI,
         beforeMainUI,
         runtime,
@@ -304,7 +306,7 @@ const continueBootWithDialog = async (
                             params={env.params}
                             {...props}
                             onSuccess={() => {
-                                bootMainUI(context);
+                                void bootMainUI(context);
                             }}
                         />
                     </ThemeProvider>
@@ -361,8 +363,8 @@ const continueBootWithDefaultImage = async (
 
 const initRuntimeWithArgs = async (
     context: BootContext,
-    args: RuntimeInitArgs,
-): Promise<Void<string>> => {
+    args: RuntimeWorkerInitArgs,
+): Promise<Void<(translator: Translator) => string>> => {
     return await initRuntime(await context.runtime, args);
 };
 
@@ -382,22 +384,22 @@ const bootMainUI = async (context: BootContext) => {
         return;
     }
     ReactRoot = createReactRoot();
+    // <StrictMode>
+    // </StrictMode>,
     ReactRoot.render(
-        <StrictMode>
-            <CatchCrash>
-                <RuntimeContext.Provider value={runtime}>
-                    <QueryClientProvider client={queryClient}>
-                        <ThemeProvider>
-                            <ItemTooltipProvider
-                                backgroundUrl={getSheikaBackgroundUrl()}
-                            >
-                                <App />
-                            </ItemTooltipProvider>
-                        </ThemeProvider>
-                    </QueryClientProvider>
-                </RuntimeContext.Provider>
-            </CatchCrash>
-        </StrictMode>,
+        <CatchCrash>
+            <RuntimeContext.Provider value={runtime}>
+                <QueryClientProvider client={queryClient}>
+                    <ThemeProvider>
+                        <ItemTooltipProvider
+                            backgroundUrl={getSheikaBackgroundUrl()}
+                        >
+                            <App />
+                        </ItemTooltipProvider>
+                    </ThemeProvider>
+                </QueryClientProvider>
+            </RuntimeContext.Provider>
+        </CatchCrash>,
     );
 
     void removeBootCurtain(true);
