@@ -46,9 +46,7 @@ const openImageDB = (): Promise<IDBDatabase | undefined> => {
  *
  * Undefined means to delete the stored image
  */
-export const putImage = async (
-    image: Uint8Array | undefined,
-): Promise<boolean> => {
+const putImage = async (image: Uint8Array | undefined): Promise<boolean> => {
     const db = await openImageDB();
     if (!db) {
         return false;
@@ -77,7 +75,7 @@ export const putImage = async (
 };
 
 /** Get the image from the IndexedDB, returns undefined if fails */
-export const getImage = async (): Promise<Uint8Array | undefined> => {
+const getImage = async (): Promise<Uint8Array | undefined> => {
     const db = await openImageDB();
     if (!db) {
         return undefined;
@@ -103,4 +101,9 @@ export const getImage = async (): Promise<Uint8Array | undefined> => {
         console.error("Failed to get image", e);
         return undefined;
     }
+};
+
+export const IndexedDBImageMgr = {
+    putImage,
+    getImage,
 };

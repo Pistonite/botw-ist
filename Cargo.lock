@@ -212,9 +212,9 @@ name = "blueflame"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "blueflame-program 0.0.0 (git+https://github.com/Pistonite/botw-ist?branch=main)",
- "blueflame-singleton 0.0.0 (git+https://github.com/Pistonite/botw-ist?branch=main)",
- "blueflame-utils 0.0.0 (git+https://github.com/Pistonite/botw-ist?branch=main)",
+ "blueflame-program",
+ "blueflame-singleton",
+ "blueflame-utils",
  "crc32fast",
  "derive_more",
  "disarm64",
@@ -226,48 +226,27 @@ dependencies = [
  "serde_json",
  "serde_yaml",
  "sha2",
- "thiserror 2.0.11",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
 name = "blueflame-program"
 version = "0.0.0"
 dependencies = [
- "blueflame-utils 0.0.0",
+ "blueflame-utils",
  "deku",
  "derive_more",
  "flate2",
- "thiserror 2.0.11",
-]
-
-[[package]]
-name = "blueflame-program"
-version = "0.0.0"
-source = "git+https://github.com/Pistonite/botw-ist?branch=main#46c787ac9442f0dc45844faa3e567ae7b71c9ae2"
-dependencies = [
- "blueflame-utils 0.0.0 (git+https://github.com/Pistonite/botw-ist?branch=main)",
- "deku",
- "derive_more",
- "flate2",
- "thiserror 2.0.11",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
 name = "blueflame-singleton"
 version = "0.0.0"
 dependencies = [
- "blueflame-utils 0.0.0",
+ "blueflame-utils",
  "deku",
  "serde",
- "static_assertions",
-]
-
-[[package]]
-name = "blueflame-singleton"
-version = "0.0.0"
-source = "git+https://github.com/Pistonite/botw-ist?branch=main#46c787ac9442f0dc45844faa3e567ae7b71c9ae2"
-dependencies = [
- "blueflame-utils 0.0.0 (git+https://github.com/Pistonite/botw-ist?branch=main)",
  "static_assertions",
 ]
 
@@ -278,14 +257,6 @@ dependencies = [
  "deku",
  "enum-map",
  "serde",
-]
-
-[[package]]
-name = "blueflame-utils"
-version = "0.0.0"
-source = "git+https://github.com/Pistonite/botw-ist?branch=main#46c787ac9442f0dc45844faa3e567ae7b71c9ae2"
-dependencies = [
- "deku",
 ]
 
 [[package]]
@@ -1013,7 +984,7 @@ dependencies = [
  "pest_derive",
  "serde",
  "serde_json",
- "thiserror 2.0.11",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
@@ -1864,7 +1835,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b7cafe60d6cf8e62e1b9b2ea516a089c008945bb5a275416789e7db0bc199dc"
 dependencies = [
  "memchr",
- "thiserror 2.0.11",
+ "thiserror 2.0.12",
  "ucd-trie",
 ]
 
@@ -2351,7 +2322,7 @@ dependencies = [
  "static_assertions",
  "teleparse",
  "textdistance",
- "thiserror 2.0.11",
+ "thiserror 2.0.12",
  "tokio",
  "ts-rs",
  "tsify-next",
@@ -2363,8 +2334,10 @@ name = "skybook-runtime"
 version = "0.0.0"
 dependencies = [
  "blueflame",
+ "blueflame-utils",
  "serde",
  "skybook-parser",
+ "thiserror 2.0.12",
  "tokio",
  "ts-rs",
  "tsify-next",
@@ -2375,6 +2348,7 @@ dependencies = [
 name = "skybook-runtime-wasm"
 version = "0.0.0"
 dependencies = [
+ "blueflame-utils",
  "console_error_panic_hook",
  "js-sys",
  "serde",
@@ -2528,7 +2502,7 @@ dependencies = [
  "num",
  "serde",
  "teleparse-macros",
- "thiserror 2.0.11",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
@@ -2605,11 +2579,11 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "2.0.11"
+version = "2.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d452f284b73e6d76dd36758a0c8684b1d5be31f92b89d07fd5822175732206fc"
+checksum = "567b8a2dae586314f7be2a752ec7474332959c6460e02bde30d702a66d488708"
 dependencies = [
- "thiserror-impl 2.0.11",
+ "thiserror-impl 2.0.12",
 ]
 
 [[package]]
@@ -2625,9 +2599,9 @@ dependencies = [
 
 [[package]]
 name = "thiserror-impl"
-version = "2.0.11"
+version = "2.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "26afc1baea8a989337eeb52b6e72a039780ce45c3edfcc9c5b9d112feeb173c2"
+checksum = "7f7cf42b4507d8ea322120659672cf1b9dbb93f8f2d4ecfd6e51350ff5b17a1d"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2769,7 +2743,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e640d9b0964e9d39df633548591090ab92f7a4567bc31d3891af23471a3365c6"
 dependencies = [
  "lazy_static",
- "thiserror 2.0.11",
+ "thiserror 2.0.12",
  "ts-rs-macros",
 ]
 

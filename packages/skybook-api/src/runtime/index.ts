@@ -1,3 +1,4 @@
+export * from "./CustomImageInitParams.ts";
 export * from "./InvView_CommonItem.ts";
 export * from "./InvView_Gdt.ts";
 export * from "./InvView_GdtInvInfo.ts";
@@ -11,4 +12,8 @@ export * from "./InvView_PouchItem.ts";
 export * from "./InvView_PouchList.ts";
 export * from "./InvView_PouchTab.ts";
 export * from "./InvView_WeaponModifier.ts";
+export * from "./MaybeAborted.ts";
 export * from "./Pointer.ts";
+export * from "./ResultInterop.ts";
+export * from "./RuntimeInitError.ts";
+export * from "./RuntimeInitOutput.ts";

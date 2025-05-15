@@ -1,7 +1,10 @@
 use std::{collections::{HashMap, VecDeque}, future::Future, sync::{atomic::{AtomicBool, AtomicU64}, Arc}};
 
+use error::MaybeAborted;
+use serde::{Deserialize, Serialize};
 use skybook_parser::{search::QuotedItemResolver, ParseOutput};
 use blueflame::{error::Error, memory::{Memory, Proxies}};
+use blueflame_utils::Environment;
 
 mod scheduler;
 use scheduler::Scheduler;
@@ -9,6 +12,7 @@ use scheduler::Scheduler;
 /// Inventory View
 pub mod iv;
 pub mod pointer;
+pub mod error;
 
 pub struct RunOutput {
     /// State at each simulation step
@@ -271,8 +275,115 @@ impl RunOutput {
     }
 }
 
-pub async fn run_parsed(parsed: &ParseOutput) -> RunOutput {
-    RunOutput { states: vec![] }
+pub struct Runtime {
+    pub env: Environment,
+}
+
+impl Runtime {
+    pub fn new_init(custom_image: Option<(Vec<u8>,CustomImageInitParams)>) -> Result<Runtime, RuntimeInitError> {
+        Ok(Runtime {
+            env: Environment { game_ver: blueflame_utils::GameVer::X150, dlc_ver: blueflame_utils::DlcVer::V300 }
+        })
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+#[cfg_attr(feature = "__ts-binding", ts(export))]
+#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", tsify(into_wasm_abi, from_wasm_abi))]
+#[serde(rename_all = "camelCase")]
+pub struct CustomImageInitParams {
+    /// DLC version to simulate
+    ///
+    /// 0 means no DLC, 1-3 means DLC version 1.0, 2.0, or 3.0
+    #[serde(default)]
+    pub dlc: u32,
+
+    /// Program start address
+    ///
+    /// The string should look like 0x000000XXXXX00000, where X is a hex digit
+    /// 
+    /// Unspecified (empty string) means the script can run with any program start address
+    #[serde(default)]
+    pub program_start: String,
+
+    /// Stack start address
+    ///
+    /// The string should look like 0x000000XXXXX00000, where X is a hex digit
+    ///
+    /// Unspecified (empty string) means using the internal default
+    #[serde(default)]
+    pub stack_start: String,
+
+    /// Size of the stack
+    ///
+    /// Unspecified, or 0, means using the internal default
+    #[serde(default)]
+    pub stack_size: u32,
+
+    /// Size of the free region of the heap
+    ///
+    /// Unspecified, or 0, means using the internal default
+    #[serde(default)]
+    pub heap_free_size: u32,
+
+    /// Physical address of the PauseMenuDataMgr. Used to calculate heap start
+    ///
+    /// Unspecified (empty string) means using the internal default
+    #[serde(default)]
+    pub pmdm_addr: String
+}
+
+#[derive(Debug, Clone, thiserror::Error, Serialize)]
+#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+#[cfg_attr(feature = "__ts-binding", ts(export))]
+#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+#[serde(tag="type", content="data")]
+pub enum RuntimeInitError {
+    #[error("invalid DLC version: {0}. Valid versions are 0, 1, 2 or 3")]
+    BadDlcVersion(u32),
+    #[error("invalid custom image (1.6 is not supported right now)")]
+    BadImage,
+    #[error("program-start param is invalid")]
+    InvalidProgramStart,
+    #[error("stack-start param is invalid")]
+    InvalidStackStart,
+    #[error("pmdm-addr param is invalid")]
+    InvalidPmdmAddr,
+    #[error("the custom image provided has program-start = {0}, which does not match the one requested by the environment = {0}")]
+    ProgramStartMismatch(String, String)
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+#[cfg_attr(feature = "__ts-binding", ts(export))]
+#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+#[serde(rename_all = "camelCase")]
+pub struct RuntimeInitOutput {
+    /// "1.5" or "1.6"
+    pub game_version: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+#[cfg_attr(feature = "__ts-binding", ts(export))]
+#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+pub enum ResultInterop<T, E> {
+    /// Result<T, Error>
+    #[serde(rename = "val")]
+    Ok(T),
+    /// Result<Error, Error>
+    #[serde(rename = "err")]
+    Err(E),
+}
+
+/// Return None means it's aborted
+pub async fn run_parsed(parsed: &ParseOutput, handle: Arc<RunHandle>) -> MaybeAborted<RunOutput> {
+    MaybeAborted::Ok(RunOutput { states: vec![] })
 }
 
 #[derive(Clone)]
@@ -359,17 +470,75 @@ pub struct ActorState {
     pub modifier_value: i32,
 }
 
-impl GameState {
+// impl GameState {
+//
+//     // just a placeholder
+//     // probably some kind of macro to generate these
+//     pub async fn get_item(mut self, scheduler: impl Scheduler, item: &str) -> Result<GameState, Error> {
+//         scheduler.run_on_core(move |p| {
+//             let core = p.attach(&mut self.memory, &mut self.proxies);
+//             // todo: real function
+//             core.pmdm_item_get(item, 0, 0)?;
+//
+//             Ok(self)
+//         }).await
+//     }
+// }
+//
 
-    // just a placeholder
-    // probably some kind of macro to generate these
-    pub async fn get_item(mut self, scheduler: impl Scheduler, item: &str) -> Result<GameState, Error> {
-        scheduler.run_on_core(move |p| {
-            let core = p.attach(&mut self.memory, &mut self.proxies);
-            // todo: real function
-            core.pmdm_item_get(item, 0, 0)?;
+#[repr(transparent)]
+pub struct RunHandle {
+    is_aborted: AtomicBool,
+}
 
-            Ok(self)
-        }).await
+impl RunHandle {
+    pub fn new() -> Self {
+        Self {
+            is_aborted: AtomicBool::new(false),
+        }
+    }
+    pub fn is_aborted(&self) -> bool {
+        self.is_aborted.load(std::sync::atomic::Ordering::Relaxed)
+    }
+    pub fn abort(&self) {
+        self.is_aborted.store(true, std::sync::atomic::Ordering::Relaxed);
+    }
+    pub fn into_raw(s: Arc<Self>) -> *const Self {
+        return Arc::into_raw(s);
+    }
+    pub fn from_raw(ptr: *const Self) -> Arc<Self> {
+        if ptr.is_null() {
+            // make sure it's safe
+            return Arc::new(Self::new());
+        }
+        return unsafe { Arc::from_raw(ptr) };
+    }
+}
+
+pub mod erc {
+    use std::sync::Arc;
+
+    /// Free an Arc previously leaked to external code as a pointer
+    pub fn free<T: Send + Sync + 'static>(ptr: *const T) {
+        if !ptr.is_null() {
+            let _ = unsafe { Arc::from_raw(ptr) };
+        }
+    }
+
+    pub fn add_ref<T: Send + Sync + 'static>(ptr: *const T) -> *const T {
+        if ptr.is_null() {
+            return std::ptr::null();
+        }
+        let x = unsafe { Arc::from_raw(ptr) };
+        // increase the ref count
+        let x2 = Arc::clone(&x);
+        // leak the original pointer back
+        let p1 = Arc::into_raw(x);
+        // leak the new pointer (should be the same one)
+        let p2 = Arc::into_raw(x2);
+        assert!(ptr == p1, "add_ref: input pointer mismatched");
+        assert!(p1 == p2, "add_ref: output pointer mismatched");
+        // return the new pointer
+        p2
     }
 }

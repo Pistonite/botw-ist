@@ -21,6 +21,11 @@ includes:
     dir: ./packages/runtime-wasm
     internal: true
 
+  runtime-worker:
+    taskfile: ./packages/runtime-worker
+    dir: ./packages/runtime-worker
+    internal: true
+
   parser:
     taskfile: ./packages/parser
     dir: ./packages/parser
@@ -133,6 +138,7 @@ tasks:
       - item-system:check
       - app:check
       - server:check
+      - runtime-worker:check
 
   check-layer-3:
     deps:

@@ -6,8 +6,10 @@ publish = false
 
 [dependencies]
 blueflame = { path = "../blueflame" }
+blueflame-utils = { path = "../blueflame-utils" }
 serde = { version = "1.0.218", features = ["derive"] }
 skybook-parser = { path = "../parser" }
+thiserror = "2.0.12"
 
 # TS/WASM dependencies
 ts-rs = { version = "10.1.0", optional = true }

@@ -26,7 +26,7 @@
     - [Build and Run](./developer/contributing/run.md)
     - [End-to-end Tests]()
     - [Translations](./developer/contributing/translation.md)
-  - [Architecture](./developer/architecture.md)
+  - [Architecture](./developer/arch/index.md)
     - [Runtime]()
     - [Application]()
     - [Extensions]()

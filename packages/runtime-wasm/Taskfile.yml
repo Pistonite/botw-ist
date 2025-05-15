@@ -56,7 +56,7 @@ tasks:
           cp pkg/skybook_runtime_wasm.js {{.WORKER_JS}};
           echo 'self["__skybook_path_base"]="/runtime/skybook";' >> {{.WORKER_JS}};
           echo 'self["__min"]=false;' >> {{.WORKER_JS}};
-          bun build src/worker.ts >> {{.WORKER_JS}};
+          bun build src/main.ts >> {{.WORKER_JS}};
         silent: true
 
   build-dist-min:
@@ -84,7 +84,7 @@ tasks:
           cp {{.SKYBOOK_MIN_JS}} {{.WORKER_MIN_JS}};
           echo 'self["__skybook_path_base"]="/runtime/skybook-{{.COMMIT_SHORT}}";' >> {{.WORKER_MIN_JS}};
           echo 'self["__min"]=true;' >> {{.WORKER_MIN_JS}};
-          bun build --minify src/worker.ts >> {{.WORKER_MIN_JS}};
+          bun build --minify src/main.ts >> {{.WORKER_MIN_JS}};
         silent: true
     
 

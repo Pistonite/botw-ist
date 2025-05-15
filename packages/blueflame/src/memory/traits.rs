@@ -434,7 +434,7 @@ impl FromRegisterVal for bool {
 }
 impl FromRegisterVal for usize {
     fn from_register_val(value: i64, _: &mut Memory) -> Result<Self, Error> {
-        Ok(usize::from_le_bytes(value.to_le_bytes()))
+        Ok(u64::from_le_bytes(value.to_le_bytes()) as usize)
     }
 }
 impl FromRegisterVal for u64 {
@@ -454,7 +454,7 @@ impl<T> FromRegisterVal for Ptr<T> {
 }
 impl FromRegisterVal for i32 {
     fn from_register_val(value: i64, _: &mut Memory) -> Result<Self, Error> {
-        Ok((value & 0xffff) as i32)
+        Ok((value & 0xffffffff) as i32)
     }
 }
 impl FromRegisterVal for f32 {
