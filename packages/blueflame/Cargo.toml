@@ -3,9 +3,9 @@ name = "blueflame"
 version = "0.0.0"
 edition = "2021"
 
-[[bin]]
-name = "blueflame"
-path = "src/main.rs" 
+# [[bin]]
+# name = "blueflame"
+# path = "src/main.rs" 
 
 [dependencies]
 derive_more = { version = "1.0.0", features = ["constructor", "deref", "deref_mut"] }
@@ -24,3 +24,8 @@ blueflame-utils = { path = "../blueflame-utils" }
 blueflame-program = { path = "../blueflame-program" }
 serde_yaml = "0.9.34"
 serde_json = "1.0.140"
+
+[lib]
+name = "blueflame"
+path = "src/lib.rs"
+crate-type = ["lib", "staticlib"]

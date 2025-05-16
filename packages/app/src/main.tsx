@@ -13,7 +13,7 @@ import {
     type DirectLoad,
     parseEnvFromScript,
     type ScriptEnvImage,
-    type RuntimeInitArgs,
+    type RuntimeWorkerInitArgs,
     type ScriptEnv,
 } from "@pistonite/skybook-api";
 
@@ -361,7 +361,7 @@ const continueBootWithDefaultImage = async (
 
 const initRuntimeWithArgs = async (
     context: BootContext,
-    args: RuntimeInitArgs,
+    args: RuntimeWorkerInitArgs,
 ): Promise<Void<string>> => {
     return await initRuntime(await context.runtime, args);
 };

@@ -55,7 +55,7 @@ export type BootScreenProps = {
     params: RuntimeInitParams;
     /** State of the boot flow when initially showing the screen */
     initialState: BootScreenState;
-    /** Initial error string, if the state is "InitializeError" */
+    /** Initial localized error string, if the state is "InitializeError" */
     initialErrorString?: string;
     /** If the initial state is "OpenSetupOrUseDefaultImage", this is the prompt type */
     openSetupOrDefaultPromptType?: OpenSetupOrDefaultPromptType;

@@ -1,14 +1,14 @@
 import type { Void } from "@pistonite/pure/result";
 
-import type { Runtime, RuntimeInitArgs } from "@pistonite/skybook-api";
+import type { Runtime, RuntimeWorkerInitArgs } from "@pistonite/skybook-api";
 import { translateGenericError } from "skybook-localization";
 
 import { useApplicationStore, useSessionStore } from "self::application/store";
 
-/** Initialize the runtime with the given arguments */
+/** Initialize the runtime with the given arguments, return localized error message on error */
 export async function initRuntime(
     runtime: Runtime,
-    args: RuntimeInitArgs,
+    args: RuntimeWorkerInitArgs,
 ): Promise<Void<string>> {
     const isCustomImage = args.isCustomImage;
     updateLogo(isCustomImage);
