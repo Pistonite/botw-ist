@@ -4,10 +4,10 @@ import type { Result } from "@pistonite/pure/result";
 import type {
     Runtime,
     RuntimeWorkerInitArgs,
-    RuntimeInitError,
     RuntimeWorkerInitOutput,
     ScriptEnvImage,
     CustomImageInitParams,
+    RuntimeWorkerInitError,
 } from "@pistonite/skybook-api";
 
 import type { ParseMgr } from "./ParseMgr.ts";
@@ -78,7 +78,7 @@ const initializeRuntimeWorker = async (
     napi: NativeApi,
     imageMgr: ImageMgr,
     args: RuntimeWorkerInitArgs,
-): Pwr<Result<RuntimeWorkerInitOutput, RuntimeInitError>> => {
+): Pwr<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>> => {
     if (args.isCustomImage) {
         return await initializeRuntimeWorkerWithCustomImage(
             napi,
@@ -114,31 +114,21 @@ const initializeRuntimeWorkerWithCustomImage = async (
     napi: NativeApi,
     imageMgr: ImageMgr,
     params: CustomImageInitParams,
-): Pwr<Result<RuntimeWorkerInitOutput, RuntimeInitError>> => {
+): Pwr<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>> => {
     // try reading the image from the database
     let customImage = await imageMgr.getImage();
     if (!customImage) {
         // try requesting the image from the app
         const newImage = await getCustomBlueFlameImage();
         if (newImage.err || !newImage.val) {
-            return {
-                err: {
-                    type: "ImageError",
-                    message: "Failed to get custom image from app",
-                },
-            };
+            return { val: { err: { type: "NoImageFromApp" } } };
         }
         // save the image
         const ok = await imageMgr.putImage(newImage.val);
         if (!ok) {
             // technically we can still use the image in memory,
             // but the state will be inconsistency the next time
-            return {
-                err: {
-                    type: "ImageError",
-                    message: "Failed to save custom image",
-                },
-            };
+            return { val: { err: { type: "SaveImage" } } };
         }
         customImage = newImage.val;
     }

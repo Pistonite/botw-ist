@@ -2,6 +2,11 @@ import type { Result } from "@pistonite/pure/result";
 
 import type { MaybeAborted } from "@pistonite/skybook-api";
 
+/**
+ * Errors that can happen in the worker thread.
+ *
+ * With the exception of Aborted, these are only for *unexpected* errors.
+ */
 export type WorkerError = {
     message?: string;
 } & (
@@ -13,9 +18,6 @@ export type WorkerError = {
       }
     | {
           type: "UnexpectedNullptr";
-      }
-    | {
-          type: "ImageError";
       }
 );
 
