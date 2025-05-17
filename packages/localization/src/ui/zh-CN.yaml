@@ -145,6 +145,7 @@ crash_screen.desc: "如果正在使用本地脚本，您可以尝试在下方编
 crash_screen.title: "Skybook 发生错误"
 
 # Generic error messages
+error: "错误"
 error.abort: "操作已取消"
 error.internal: "内部错误: {{error}}"
 error.unknown: "未知内部错误"

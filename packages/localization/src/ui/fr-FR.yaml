@@ -145,6 +145,7 @@ crash_screen.desc: "Si vous utilisiez un script local, vous pouvez le modifier c
 crash_screen.title: "Une erreur fatale est survenue dans Skybook."
 
 # Generic error messages
+error: "Erreur"
 error.abort: "L'opération a été annulée"
 error.internal: "Erreur interne: {{error}}"
 error.unknown: "Erreur interne inconnue"

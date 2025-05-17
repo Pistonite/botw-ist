@@ -145,6 +145,7 @@ crash_screen.desc: "Wenn Sie ein lokales Skript verwendet haben, können Sie es 
 crash_screen.title: "Ein schwerwiegender Fehler ist in Skybook aufgetreten."
 
 # Generic error messages
+error: "Fehler"
 error.abort: "Der Vorgang wurde abgebrochen"
 error.internal: "Interner Fehler: {{error}}"
 error.unknown: "Unbekannter interner Fehler"

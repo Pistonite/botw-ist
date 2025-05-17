@@ -145,6 +145,7 @@ crash_screen.desc: "Als u een lokaal script gebruikte, kunt u het hieronder bewe
 crash_screen.title: "Er is een fatale fout opgetreden in Skybook."
 
 # Generic error messages
+error: "Fout"
 error.abort: "De bewerking is geannuleerd"
 error.internal: "Interne fout: {{error}}"
 error.unknown: "Onbekende interne fout"

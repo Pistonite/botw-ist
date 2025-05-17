@@ -145,6 +145,7 @@ crash_screen.desc: "Если вы использовали локальный с
 crash_screen.title: "В Skybook произошла фатальная ошибка."
 
 # Generic error messages
+error: "Ошибка"
 error.abort: "Операция была отменена"
 error.internal: "Внутренняя ошибка: {{error}}"
 error.unknown: "Неизвестная внутренняя ошибка"

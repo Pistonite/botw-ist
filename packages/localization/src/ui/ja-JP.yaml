@@ -145,6 +145,7 @@ crash_screen.desc: "ローカルスクリプトを使用している場合は、
 crash_screen.title: "Skybookで致命的なエラーが発生しました。"
 
 # Generic error messages
+error: "エラー"
 error.abort: "操作がキャンセルされました"
 error.internal: "内部エラー: {{error}}"
 error.unknown: "不明な内部エラー"

@@ -145,6 +145,7 @@ crash_screen.desc: "如果您正在使用本機腳本，您可以在下方進行
 crash_screen.title: "Skybook 發生致命錯誤。"
 
 # Generic error messages
+error: "錯誤"
 error.abort: "操作已取消"
 error.internal: "內部錯誤: {{error}}"
 error.unknown: "未知內部錯誤"
