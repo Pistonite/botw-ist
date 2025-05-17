@@ -65,12 +65,12 @@ console.log(key); // Check the type of key with LS to see what's missing
         ),
     );
     fs.writeFileSync(
-        makeOutFilePath("runtime_worker"),
+        makeOutFilePath("runtime_init"),
         generateCheckerFile(
-            "worker.",
-            "WorkerError",
-            "skybook-runtime-worker",
-            ["Aborted"],
+            "runtime_init.",
+            "RuntimeWorkerInitError",
+            "@pistonite/skybook-api",
+            [],
         ),
     );
 });

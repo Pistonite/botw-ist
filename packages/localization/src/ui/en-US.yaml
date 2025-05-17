@@ -145,9 +145,9 @@ crash_screen.desc: "If you were using the local script, you can edit it below to
 crash_screen.title: "A fatal error occured in Skybook."
 
 # Generic error messages
+error.abort: "The operation is cancelled"
 error.internal: "Internal error: {{error}}"
 error.unknown: "Unknown internal error"
-error.abort: "The operation is cancelled"
 
 # Parser error messages
 parser.FloatFormat: "`{{arg}}` is not a valid floating-point number"
@@ -176,7 +176,12 @@ parser.TooManyIngredients: "An item can have at most 5 ingredients"
 parser.UnexpectedMetaKeyWithValue: "The `{{arg}}` property should not have a value in this context"
 parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 
-# (Runtime) Worker error messages
-worker.NativePanic: "Panic detected in native code"
-worker.UnexpectedNullptr: "Unexpected null pointer error in native code"
-worker.ImageError: "There was an error loading the Custom Image"
+# Runtime Init error messages
+runtime_init.BadDlcVersion: "Bad DLC Version: {{version}}. Allowed versions are 0 (no DLC), 1, 2 and 3"
+runtime_init.BadImage: "Bad Custom Image"
+runtime_init.InvalidPmdmAddr: "The format of the pmdm-addr parameter is invalid"
+runtime_init.InvalidProgramStart: "The format of the program-start parameter is invalid"
+runtime_init.InvalidStackStart: "The format of the stack-start parameter is invalid"
+runtime_init.NoImageFromApp: "Failed to get Custom Image data from app"
+runtime_init.ProgramStartMismatch: "Program start address from the Custom Image ({{addr_ci}}) does not match the one specified in the script ({{addr_script}})"
+runtime_init.SaveImage: "Failed to store Custom Image data"
