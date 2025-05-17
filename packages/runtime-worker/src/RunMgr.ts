@@ -154,10 +154,10 @@ export class RunMgr {
             // put the resolve in the awaiters synchronously
             const outputPromise = new Promise<
                 Result<AsyncErc<RunOutput>, WorkerError>
-                >((resolve) => {
-                    this.runAwaiters.push(resolve);
-                    this.runAwaiterTaskIds.push(taskId);
-                });
+            >((resolve) => {
+                this.runAwaiters.push(resolve);
+                this.runAwaiterTaskIds.push(taskId);
+            });
             // mark task as running, but not holding on to a resource
             this.taskMgr.run(taskId);
             const output = await outputPromise;
@@ -191,8 +191,11 @@ export class RunMgr {
             }
         };
         const checkAborted = () => {
-            return this.taskMgr.isAborted(taskId) && this.taskMgr.areAllAborted(awaiterTaskIdsForThisRun);
-        }
+            return (
+                this.taskMgr.isAborted(taskId) &&
+                this.taskMgr.areAllAborted(awaiterTaskIdsForThisRun)
+            );
+        };
 
         const start = performance.now();
         console.log(`[worker] task: ${taskId} start executing script`);
@@ -325,7 +328,6 @@ export class RunMgr {
         } else {
             returnStrongErc = makeRunOutputErc(outputRaw);
         }
-
 
         // resolve all awaiters - each must get its own strong pointer
         for (const resolve of awaitersForThisRun) {

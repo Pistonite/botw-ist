@@ -69,7 +69,7 @@ const useStyles = makeStyles({
 
     errors: {
         gap: "4px",
-    }
+    },
 });
 
 export const PouchInventoryPanelImpl: React.FC = () => {
@@ -77,7 +77,12 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     const c = useStyles();
     const t = useUITranslation();
 
-    const { data: pouch, stale, loading, error: pouchError } = usePouchListView();
+    const {
+        data: pouch,
+        stale,
+        loading,
+        error: pouchError,
+    } = usePouchListView();
     const {
         data: overworld,
         stale: overworldStale,
@@ -171,7 +176,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     );
 
     const $TabsWarning = isTabView && pouch && tabNodes === undefined && (
-        <ErrorBar title={ t("main.tabbed_inventory.bad_msgbar.title") }>
+        <ErrorBar title={t("main.tabbed_inventory.bad_msgbar.title")}>
             {t("main.tabbed_inventory.bad_msgbar.body")}
         </ErrorBar>
     );
@@ -266,7 +271,9 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                     <div className={m("flex-col", c.errors)}>
                         {$TabsWarning}
                         {pouchError && <ErrorBar>{pouchError}</ErrorBar>}
-                        {overworldError && <ErrorBar>{overworldError}</ErrorBar>}
+                        {overworldError && (
+                            <ErrorBar>{overworldError}</ErrorBar>
+                        )}
                         {gdtError && <ErrorBar>{gdtError}</ErrorBar>}
                     </div>
                     {$TabsMinimap}

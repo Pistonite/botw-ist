@@ -304,7 +304,7 @@ const continueBootWithDialog = async (
                             params={env.params}
                             {...props}
                             onSuccess={() => {
-                                bootMainUI(context);
+                                void bootMainUI(context);
                             }}
                         />
                     </ThemeProvider>
@@ -385,19 +385,19 @@ const bootMainUI = async (context: BootContext) => {
     // <StrictMode>
     // </StrictMode>,
     ReactRoot.render(
-            <CatchCrash>
-                <RuntimeContext.Provider value={runtime}>
-                    <QueryClientProvider client={queryClient}>
-                        <ThemeProvider>
-                            <ItemTooltipProvider
-                                backgroundUrl={getSheikaBackgroundUrl()}
-                            >
-                                <App />
-                            </ItemTooltipProvider>
-                        </ThemeProvider>
-                    </QueryClientProvider>
-                </RuntimeContext.Provider>
-            </CatchCrash>
+        <CatchCrash>
+            <RuntimeContext.Provider value={runtime}>
+                <QueryClientProvider client={queryClient}>
+                    <ThemeProvider>
+                        <ItemTooltipProvider
+                            backgroundUrl={getSheikaBackgroundUrl()}
+                        >
+                            <App />
+                        </ItemTooltipProvider>
+                    </ThemeProvider>
+                </QueryClientProvider>
+            </RuntimeContext.Provider>
+        </CatchCrash>,
     );
 
     void removeBootCurtain(true);

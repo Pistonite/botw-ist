@@ -145,7 +145,7 @@ const useStoreCachedRuntimeData = <T>(
         if (cacheIsValid) {
             return;
         }
-        let taskId: string|undefined = undefined;
+        let taskId: string | undefined = undefined;
         const isCurrent = () => {
             const activeScriptNow = useSessionStore.getState().activeScript;
             return activeScriptNow === activeScript;

@@ -213,7 +213,7 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
             if (remember) {
                 updateOpenMode(selectedExtensionId, "popout");
             }
-            openExtensionPopup(selectedExtensionId);
+            void openExtensionPopup(selectedExtensionId);
             return;
         }
 

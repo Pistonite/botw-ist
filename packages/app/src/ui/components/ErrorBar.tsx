@@ -1,5 +1,10 @@
 import type { PropsWithChildren } from "react";
-import { Text, MessageBar, MessageBarBody, MessageBarTitle } from "@fluentui/react-components";
+import {
+    Text,
+    MessageBar,
+    MessageBarBody,
+    MessageBarTitle,
+} from "@fluentui/react-components";
 
 import { useUITranslation } from "skybook-localization";
 
@@ -10,19 +15,19 @@ export type ErrorBarProps = {
     title?: string;
 };
 
-export const ErrorBar: React.FC<PropsWithChildren<ErrorBarProps>> = ({ title, children }) => {
+export const ErrorBar: React.FC<PropsWithChildren<ErrorBarProps>> = ({
+    title,
+    children,
+}) => {
     const t = useUITranslation();
     return (
         <MessageBar intent="error">
             <MessageBarBody>
-                <MessageBarTitle>
-                    {title || t("error")}
-                </MessageBarTitle>
+                <MessageBarTitle>{title || t("error")}</MessageBarTitle>
                 <Text>
-                    {children}{" "}
-                    <BugReportText />
+                    {children} <BugReportText />
                 </Text>
             </MessageBarBody>
         </MessageBar>
     );
-}
+};

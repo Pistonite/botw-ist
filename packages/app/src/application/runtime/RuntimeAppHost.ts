@@ -82,7 +82,7 @@ export async function createRuntime() {
             scriptChanged ||
             curr.bytePos !== prev.bytePos
         ) {
-            triggerSimulation(scriptChanged);
+            void triggerSimulation(scriptChanged);
         }
     });
 
