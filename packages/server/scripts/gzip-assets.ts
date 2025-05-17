@@ -39,6 +39,6 @@ const gzipDir = async (dir: string) => {
     await Promise.all(promises);
 };
 
-gzipDir("dist/app/assets");
-gzipDir("dist/app/runtime");
-gzipDir("dist/app/static");
+void gzipDir("dist/app/assets");
+void gzipDir("dist/app/runtime");
+void gzipDir("dist/app/static");
