@@ -5,7 +5,7 @@
  */
 
 import type { ScriptEnvImage } from "./envParser.ts";
-import type { CustomImageInitParams } from "./runtime";
+import type { CustomImageInitParams, RuntimeInitError } from "./runtime";
 
 /**
  * Type used for JS side item search queries
@@ -59,6 +59,17 @@ export type RuntimeWorkerInitOutput = {
      */
     storedVersion: ScriptEnvImage | "" | "not-changed";
 };
+
+export type RuntimeWorkerInitError =
+    | {
+          /** Failed to get custom image from app */
+          type: "NoImageFromApp";
+      }
+    | {
+          /** Failed to save custom image */
+          type: "SaveImage";
+      }
+    | RuntimeInitError;
 
 export type PerformanceData = {
     /** Instructions per second */

@@ -9,8 +9,8 @@ import type { Runtime } from "../Runtime.ts";
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
 import type { ParserErrorReport } from "../parser";
-import type { InvView_Gdt, InvView_Overworld, InvView_PouchList, MaybeAborted, RuntimeInitError } from "../runtime";
-import type { ItemSearchResult, RuntimeWorkerInitArgs, RuntimeWorkerInitOutput } from "../types.ts";
+import type { InvView_Gdt, InvView_Overworld, InvView_PouchList, MaybeAborted } from "../runtime";
+import type { ItemSearchResult, RuntimeWorkerInitArgs, RuntimeWorkerInitOutput, RuntimeWorkerInitError } from "../types.ts";
 
 /*
  * These generated implementations are used internally by other generated code.
@@ -94,8 +94,8 @@ export class _wxSenderImpl implements Runtime {
     /**
      * Initialize the runtime with the given arguments.
      */
-    public initialize( args: RuntimeWorkerInitArgs ): WxPromise<Result<RuntimeWorkerInitOutput, RuntimeInitError>> {
-        return this.sender.send<Result<RuntimeWorkerInitOutput, RuntimeInitError>>(32 /* Runtime.initialize */, [ args ]);
+    public initialize( args: RuntimeWorkerInitArgs ): WxPromise<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>> {
+        return this.sender.send<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>>(32 /* Runtime.initialize */, [ args ]);
     }
 
     /**

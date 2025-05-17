@@ -7,12 +7,12 @@ import type {
     InvView_Overworld,
     InvView_PouchList,
     MaybeAborted,
-    RuntimeInitError,
 } from "./runtime";
 import type {
     ItemSearchResult,
     RuntimeWorkerInitArgs,
     RuntimeWorkerInitOutput,
+    RuntimeWorkerInitError,
 } from "./types.ts";
 
 /**
@@ -24,7 +24,7 @@ export interface Runtime {
      */
     initialize(
         args: RuntimeWorkerInitArgs,
-    ): WxPromise<Result<RuntimeWorkerInitOutput, RuntimeInitError>>;
+    ): WxPromise<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>>;
 
     /**
      * Resolve an item identifier search query to a list of items, ordered by score (best first).
