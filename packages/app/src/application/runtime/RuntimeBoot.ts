@@ -1,7 +1,10 @@
 import type { Void } from "@pistonite/pure/result";
 
 import type { Runtime, RuntimeWorkerInitArgs } from "@pistonite/skybook-api";
-import { translateGenericError } from "skybook-localization";
+import {
+    translateGenericError,
+    translateRuntimeInitError,
+} from "skybook-localization";
 
 import { useApplicationStore, useSessionStore } from "self::application/store";
 
@@ -16,8 +19,9 @@ export async function initRuntime(
 
     const initWorkerResult = await runtime.initialize(args);
 
+    // IPC error
     if (initWorkerResult.err) {
-        console.warn("[boot] runtime initialization failed (worker)");
+        console.warn("[boot] runtime initialization failed (IPC)");
         if (isCustomImage) {
             useApplicationStore.getState().setCustomImageVersion("");
         }
@@ -25,12 +29,11 @@ export async function initRuntime(
     }
     const initResult = initWorkerResult.val;
     if (initResult.err) {
-        console.warn("[boot] runtime initialization failed");
+        console.warn("[boot] runtime initialization failed (Runtime Init)");
         if (isCustomImage) {
             useApplicationStore.getState().setCustomImageVersion("");
         }
-        // TODO: worker error structure, tracked by #69
-        return { err: "initResult.err" };
+        return { err: translateRuntimeInitError(initResult.err) };
     }
 
     const { version, storedVersion } = initResult.val;

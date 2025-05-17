@@ -20,8 +20,8 @@ import {
 
 import type {
     Runtime,
-    RuntimeInitArgs,
-    RuntimeInitParams,
+    RuntimeWorkerInitArgs,
+    CustomImageInitParams,
 } from "@pistonite/skybook-api";
 import { translateUI, useUITranslation } from "skybook-localization";
 
@@ -52,7 +52,7 @@ export type BootScreenProps = {
     /** The version of the script image, read from env block */
     scriptImageVersion?: string;
     /** Params from the script */
-    params: RuntimeInitParams;
+    params: CustomImageInitParams;
     /** State of the boot flow when initially showing the screen */
     initialState: BootScreenState;
     /** Initial localized error string, if the state is "InitializeError" */
@@ -172,7 +172,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
     }
 
     // function to start booting
-    const bootCallback = async (args: RuntimeInitArgs) => {
+    const bootCallback = async (args: RuntimeWorkerInitArgs) => {
         // safety check to make sure this is only called once
         if (bootScreenSuccessCalled) {
             console.warn("[boot] bootCallback called multiple times!!");
@@ -406,7 +406,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                 setCustomImageToProvide(customImageUpload.bytes);
             }
             setUseCustomImageByDefaultInStore(isUseByDefaultSelected);
-            const args: RuntimeInitArgs = {
+            const args: RuntimeWorkerInitArgs = {
                 isCustomImage: true,
                 params,
             };
@@ -416,7 +416,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
         if (isDeletePreviousSelected) {
             setStoredCustomImageVersion("");
         }
-        const args: RuntimeInitArgs = {
+        const args: RuntimeWorkerInitArgs = {
             isCustomImage: false,
             deleteCustomImage: isDeletePreviousSelected,
         };

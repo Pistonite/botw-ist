@@ -23,6 +23,7 @@
         "skybook-item-system": "workspace:*",
         "skybook-localization": "workspace:*",
         "skybook-parser-legacy": "workspace:*",
+        "uuid": "^11.1.0",
         "zustand": "^5.0.2"
     },
     "devDependencies": {
