@@ -15,6 +15,10 @@ tasks:
     aliases: [b]
     cmds:
       - python scripts/generate.py
+
+  clean:
+    cmds:
+      - rm -rf node_modules/.cache
       
   check:
     cmds:

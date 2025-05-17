@@ -2,7 +2,9 @@ import type { RuntimeWorkerInitError } from "@pistonite/skybook-api";
 
 import { translateUI } from "../translate.ts";
 
-export const translateRuntimeInitError = (error: RuntimeWorkerInitError): string => {
+export const translateRuntimeInitError = (
+    error: RuntimeWorkerInitError,
+): string => {
     const key = `runtime_init.${error.type}`;
     switch (error.type) {
         case "BadDlcVersion":
