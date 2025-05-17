@@ -62,7 +62,7 @@ export class ParseMgr {
             return { err: nullptrError("parseScript returned nullptr") };
         }
         const out = await fn(ptr);
-        parseResult.val.free();
+        await parseResult.val.free();
         return out;
     }
 
@@ -114,7 +114,7 @@ export class ParseMgr {
             if (serialBefore === this.serial) {
                 this.isRunning = false;
                 this.runAwaiters = [];
-                this.cachedErc.free();
+                await this.cachedErc.free();
             }
             for (const resolve of awaitersForThisRun) {
                 resolve(outputRaw);
@@ -127,7 +127,7 @@ export class ParseMgr {
         if (serialBefore === this.serial) {
             this.isRunning = false;
             this.runAwaiters = [];
-            this.cachedErc.assign(outputRaw.val);
+            await this.cachedErc.assign(outputRaw.val);
             returnStrongErc = await this.cachedErc.getStrong();
         } else {
             returnStrongErc = makeParseOutputErc(outputRaw.val);

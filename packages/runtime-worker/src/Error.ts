@@ -31,7 +31,8 @@ export const nullptrError = (message: string): WorkerError => ({
 export const unwrap = <T>(result: Result<T, WorkerError>): T => {
     if (result.err) {
         const { type, message } = result.err;
-        throw new Error(`WorkerError: ${type}${message ? "" : ": " + message}`);
+        const messagePart = message ? `: ${message}` : "";
+        throw new Error(`WorkerError: ${type}${messagePart}`);
     }
     return result.val;
 };

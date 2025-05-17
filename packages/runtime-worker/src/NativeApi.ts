@@ -118,11 +118,11 @@ export interface NativeApi {
     // === ref counting api ===
 
     addRefNativeHandle(ptr: number): Promise<number>;
-    freeNativeHandle(ptr: number): void;
+    freeNativeHandle(ptr: number): Promise<void>;
     addRefParseOutput(ptr: number): Promise<number>;
-    freeParseOutput(ptr: number): void;
+    freeParseOutput(ptr: number): Promise<void>;
     addRefRunOutput(ptr: number): Promise<number>;
-    freeRunOutput(ptr: number): void;
+    freeRunOutput(ptr: number): Promise<void>;
 }
 
 const NativeHandle = Symbol("NativeHandle");

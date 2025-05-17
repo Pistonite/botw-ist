@@ -69,12 +69,9 @@ export class TaskHandle {
     }
 
     /**
-     * Mark the task as running on the native side.
-     *
-     * If a native handle is provided, the task will be marked as consuming
-     * native resource
+     * Mark the task as running on the native side with a native resource
      */
-    public markRunning(nativeHandleRaw?: number) {
+    public async markRunningWithNativeHandle(nativeHandleRaw: number) {
         if (this.state === TaskState.Aborted) {
             // aborted before the task can even start, which is fine
             return;
@@ -85,12 +82,22 @@ export class TaskHandle {
             );
             return;
         }
-        if (nativeHandleRaw === undefined) {
-            this.state = TaskState.Pending;
-        } else {
-            this.nativeHandle.assign(nativeHandleRaw);
-            this.state = TaskState.Running;
+        await this.nativeHandle.assign(nativeHandleRaw);
+        this.state = TaskState.Running;
+    }
+
+    public markRunning() {
+        if (this.state === TaskState.Aborted) {
+            // aborted before the task can even start, which is fine
+            return;
         }
+        if (this.state !== TaskState.Created) {
+            console.warn(
+                `cannot mark task as running, task is already in state: ${this.state}. This is a bug!`,
+            );
+            return;
+        }
+        this.state = TaskState.Pending;
     }
 
     /**
@@ -101,7 +108,7 @@ export class TaskHandle {
         if (this.state !== TaskState.Aborted) {
             this.state = TaskState.Finished;
         }
-        this.nativeHandle.free();
+        void this.nativeHandle.free();
     }
 }
 
@@ -116,7 +123,7 @@ export class TaskMgr {
 
     constructor(napi: NativeApi, nativeConcurrency: number) {
         this.napi = napi;
-        this.nativeConcurrency = nativeConcurrency;
+        this.nativeConcurrency = Math.max(1, nativeConcurrency);
         this.tasks = new Map();
     }
 
@@ -146,6 +153,16 @@ export class TaskMgr {
             return handle.isAborted();
         }
         // task is not found, so it is aborted previously
+        return true;
+    }
+
+    public areAllAborted(ids: string[]) {
+        for (const id of ids) {
+            const handle = this.tasks.get(id);
+            if (handle && !handle.isAborted()) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -201,7 +218,7 @@ export class TaskMgr {
         if (raw.err) {
             return raw;
         }
-        handle.markRunning(raw.val);
+        await handle.markRunningWithNativeHandle(raw.val);
         console.log(`[task] ${id} acquired a native resource`);
         return { val: await handle.getNativeHandle() };
     }

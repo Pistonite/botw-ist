@@ -33,7 +33,7 @@ export class WasmApi implements NativeApi {
         (globalThis as any)["__global_crash_handler"] = () => {
             console.error("Panic invoked from WASM. Recovery is NOT possible!");
             this.panicked = true;
-            crashApplication();
+            void crashApplication();
         };
     }
 
@@ -173,8 +173,8 @@ export class WasmApi implements NativeApi {
         });
     }
 
-    public freeNativeHandle(ptr: number): void {
-        this.exec(() => {
+    public async freeNativeHandle(ptr: number): Promise<void> {
+        await this.exec(() => {
             return wasm_bindgen.free_task_handle(ptr);
         });
     }
@@ -185,8 +185,8 @@ export class WasmApi implements NativeApi {
         });
     }
 
-    public freeParseOutput(ptr: number): void {
-        this.exec(() => {
+    public async freeParseOutput(ptr: number): Promise<void> {
+        await this.exec(() => {
             return wasm_bindgen.free_parse_output(ptr);
         });
     }
@@ -197,8 +197,8 @@ export class WasmApi implements NativeApi {
         });
     }
 
-    public freeRunOutput(ptr: number): void {
-        this.exec(() => {
+    public async freeRunOutput(ptr: number): Promise<void> {
+        await this.exec(() => {
             return wasm_bindgen.free_run_output(ptr);
         });
     }
@@ -206,7 +206,7 @@ export class WasmApi implements NativeApi {
     private nullptrCrash(message: string) {
         console.error(`nullptr crash: ${message}`);
         this.panicked = true;
-        crashApplication();
+        void crashApplication();
     }
 
     private async execAddRef(
@@ -244,7 +244,7 @@ export class WasmApi implements NativeApi {
             console.error(e);
             console.error("Panic detected in WASM. Recovery is NOT possible!");
             this.panicked = true;
-            crashApplication();
+            void crashApplication();
         }
         return { err: { type: "NativePanic" } };
     }

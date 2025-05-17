@@ -27,6 +27,8 @@ export class RunMgr {
     private runAwaiters: ((
         x: Result<AsyncErc<RunOutput>, WorkerError>,
     ) => void)[] = [];
+    private runAwaiterTaskIds: string[] = [];
+
     private lastScript: string;
     private serial: number;
     private cachedErc: AsyncErc<RunOutput>;
@@ -37,6 +39,7 @@ export class RunMgr {
         this.parseMgr = parseMgr;
         this.isRunning = false;
         this.runAwaiters = [];
+        this.runAwaiterTaskIds = [];
         this.lastScript = "";
         this.serial = 0;
         this.cachedErc = makeRunOutputErc(undefined);
@@ -119,17 +122,17 @@ export class RunMgr {
         }
         const runOutput = await this.executeScript(script, taskId);
         if (runOutput.err) {
-            parseOutputErc.free();
+            await parseOutputErc.free();
             return runOutput;
         }
         const runOutputErc = runOutput.val;
         if (runOutputErc.value === undefined) {
-            parseOutputErc.free();
+            await parseOutputErc.free();
             return { err: nullptrError("executeScript returned nullptr") };
         }
         const out = await fn(parseOutputErc.value, runOutputErc.value);
-        parseOutputErc.free();
-        runOutputErc.free();
+        await parseOutputErc.free();
+        await runOutputErc.free();
         return out;
     }
 
@@ -148,14 +151,16 @@ export class RunMgr {
         }
 
         if (this.isRunning && isScriptUpToDate) {
+            // put the resolve in the awaiters synchronously
+            const outputPromise = new Promise<
+                Result<AsyncErc<RunOutput>, WorkerError>
+                >((resolve) => {
+                    this.runAwaiters.push(resolve);
+                    this.runAwaiterTaskIds.push(taskId);
+                });
             // mark task as running, but not holding on to a resource
             this.taskMgr.run(taskId);
-            const output = await new Promise<
-                Result<AsyncErc<RunOutput>, WorkerError>
-            >((resolve) => {
-                this.runAwaiters.push(resolve);
-            });
-            this.taskMgr.finish(taskId);
+            const output = await outputPromise;
             return output;
         }
 
@@ -167,19 +172,30 @@ export class RunMgr {
         script: string,
         taskId: string,
     ): Pwr<AsyncErc<RunOutput>> {
+        this.taskMgr.register(taskId);
         this.isRunning = true;
+        // clear the awaiters. Previous runs still have their awaiters,
+        // but newer awaiters will be added to this run
         this.runAwaiters = [];
+        this.runAwaiterTaskIds = [];
         const awaitersForThisRun = this.runAwaiters;
+        const awaiterTaskIdsForThisRun = this.runAwaiterTaskIds;
         const resolveAwaiters = (
             x: Result<AsyncErc<RunOutput>, WorkerError>,
         ) => {
+            for (const taskId of awaiterTaskIdsForThisRun) {
+                this.taskMgr.finish(taskId);
+            }
             for (const resolve of awaitersForThisRun) {
                 resolve(x);
             }
         };
+        const checkAborted = () => {
+            return this.taskMgr.isAborted(taskId) && this.taskMgr.areAllAborted(awaiterTaskIdsForThisRun);
+        }
 
         const start = performance.now();
-        console.log("[worker] start executing script");
+        console.log(`[worker] task: ${taskId} start executing script`);
 
         this.serial++;
         const serialBefore = this.serial;
@@ -208,7 +224,8 @@ export class RunMgr {
 
             // ready to execute the steps
             // first check it's not aborted yet
-            if (this.taskMgr.isAborted(taskId)) {
+            if (checkAborted()) {
+                console.warn("aborted???");
                 this.taskMgr.finish(taskId);
                 this.handleError(serialBefore);
                 const result = {
@@ -237,7 +254,7 @@ export class RunMgr {
                 await new Promise((resolve) => {
                     setTimeout(resolve, 1000);
                 });
-                if (this.taskMgr.isAborted(taskId)) {
+                if (checkAborted()) {
                     this.taskMgr.finish(taskId);
                     this.handleError(serialBefore);
                     const result = {
@@ -283,7 +300,13 @@ export class RunMgr {
             void sendPerfData({ ips, sps });
 
             // run is done - not abortable now :)
+            console.log(
+                `[worker] finished tasks:\n  ${taskId}\n  ${awaiterTaskIdsForThisRun.join("\n  ")}`,
+            );
             this.taskMgr.finish(taskId);
+            for (const taskId of awaiterTaskIdsForThisRun) {
+                this.taskMgr.finish(taskId);
+            }
             outputRaw = outputResult.val.value;
             console.log(
                 `[worker] executing script finished in ${Math.round(msElapsed)}ms`,
@@ -297,11 +320,12 @@ export class RunMgr {
         if (serialBefore === this.serial) {
             this.isRunning = false;
             this.runAwaiters = [];
-            this.cachedErc.assign(outputRaw);
+            await this.cachedErc.assign(outputRaw);
             returnStrongErc = await this.cachedErc.getStrong();
         } else {
             returnStrongErc = makeRunOutputErc(outputRaw);
         }
+
 
         // resolve all awaiters - each must get its own strong pointer
         for (const resolve of awaitersForThisRun) {
@@ -317,6 +341,6 @@ export class RunMgr {
         }
         this.isRunning = false;
         this.runAwaiters = [];
-        this.cachedErc.free();
+        void this.cachedErc.free();
     }
 }

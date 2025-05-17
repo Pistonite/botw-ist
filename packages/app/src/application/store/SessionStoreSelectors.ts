@@ -145,13 +145,8 @@ const useStoreCachedRuntimeData = <T>(
         if (cacheIsValid) {
             return;
         }
-        const taskId = makeUUID();
-        console.log(`[rtux] starting task ${taskId} for ${name}`);
-        let current = true;
+        let taskId: string|undefined = undefined;
         const isCurrent = () => {
-            if (!current) {
-                return false;
-            }
             const activeScriptNow = useSessionStore.getState().activeScript;
             return activeScriptNow === activeScript;
         };
@@ -160,21 +155,21 @@ const useStoreCachedRuntimeData = <T>(
                 activeScript,
                 bytePos,
             );
-            if (!isCurrent()) {
-                return;
-            }
             if (stepIndex.err) {
                 console.error(
-                    `[rtux] task ${taskId} for ${name} failed. cannot get step index.`,
+                    `[rtux] ${name} failed. cannot get step index.`,
                     stepIndex.err,
                 );
                 setErrorMessage(translateGenericError(stepIndex.err.message));
                 return;
             }
-            const view = await runFn(runtime, taskId, activeScript, bytePos);
             if (!isCurrent()) {
                 return;
             }
+            // we only need task id once we request the run
+            taskId = makeUUID();
+            console.log(`[rtux] starting task ${taskId} for ${name}`);
+            const view = await runFn(runtime, taskId, activeScript, bytePos);
             // IPC error
             if (view.err) {
                 console.error(
@@ -185,7 +180,10 @@ const useStoreCachedRuntimeData = <T>(
                 return;
             }
             if (view.val.type === "Aborted") {
-                console.warn(`[rtux] task ${taskId} aborted`);
+                console.warn(`[rtux] task ${taskId} for ${name} aborted`);
+                return;
+            }
+            if (!isCurrent()) {
                 return;
             }
             // TODO: when getting certain view, the runtime may return error
@@ -198,8 +196,12 @@ const useStoreCachedRuntimeData = <T>(
         void updateInventory();
 
         return () => {
-            current = false;
-            void runtime.abortTask(taskId);
+            // we only want to abort the task if the script
+            // has changed. Otherwise, if we are the only one running,
+            // we are aborting the old task and starting over, which is not helpful
+            if (taskId && !isCurrent()) {
+                void runtime.abortTask(taskId);
+            }
         };
         // note we don't trigger when stepIndex updates, because
         // it is computed asynchronously from bytePos

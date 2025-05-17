@@ -382,8 +382,9 @@ const bootMainUI = async (context: BootContext) => {
         return;
     }
     ReactRoot = createReactRoot();
+    // <StrictMode>
+    // </StrictMode>,
     ReactRoot.render(
-        <StrictMode>
             <CatchCrash>
                 <RuntimeContext.Provider value={runtime}>
                     <QueryClientProvider client={queryClient}>
@@ -397,7 +398,6 @@ const bootMainUI = async (context: BootContext) => {
                     </QueryClientProvider>
                 </RuntimeContext.Provider>
             </CatchCrash>
-        </StrictMode>,
     );
 
     void removeBootCurtain(true);
