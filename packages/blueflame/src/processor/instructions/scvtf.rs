@@ -58,7 +58,7 @@ pub fn simple_scvtf_test() -> anyhow::Result<()> {
         mem: &mut mem,
         proxies: &mut proxies,
     };
-    core.handle_string_command(&String::from("fmov s0, #4"))?;
+    core.handle_string_command(&String::from("mov s0, #4"))?;
     core.handle_string_command(&String::from("scvtf s0, s0"))?;
     assert_eq!(
         core.cpu.read_reg(&RegisterType::SReg(0)),
