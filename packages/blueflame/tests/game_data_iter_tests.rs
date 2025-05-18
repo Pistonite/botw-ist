@@ -7,12 +7,6 @@ use blueflame::{
     Core,
 };
 
-macro_rules! assert_delta {
-    ($x:expr, $y:expr, $d:expr) => {
-        assert!($x - $y < $d || $y - $x < $d);
-    };
-}
-
 #[test]
 fn test_one_simple_item() -> Result<(), Box<dyn Error>> {
     let data = std::fs::read("../test_files/program.blfm").unwrap();
@@ -180,7 +174,7 @@ fn test_food_items() -> Result<(), Box<dyn Error>> {
     assert_eq!(0, cook_data.sell_price);
     assert_eq!(0, cook_data.health_recover);
     assert_eq!(4, cook_data.effect_duration);
-    assert_delta!(4.0, cook_data.effect.1, f32::EPSILON);
+    assert_eq!(4.0, cook_data.effect.1);
 
     Ok(())
 }
