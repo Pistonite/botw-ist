@@ -407,7 +407,10 @@ impl Processor {
                 Ok(())
             }
             RegisterType::SReg(_) => {
-                self.write_reg(reg, &RegisterValue::SReg(val as f32))?;
+                self.write_reg(
+                    reg,
+                    &RegisterValue::SReg(f32::from_le_bytes((val as i32).to_le_bytes())),
+                )?;
                 Ok(())
             }
             RegisterType::WZR => Ok(()),

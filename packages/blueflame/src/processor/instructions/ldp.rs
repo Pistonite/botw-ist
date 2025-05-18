@@ -96,16 +96,8 @@ impl Core<'_, '_, '_> {
         let loaded_val: i64 = match xt1 {
             RegisterType::XReg(_) => self.mem.mem_read_i64(address)?,
             RegisterType::WReg(_) => self.mem.mem_read_i32(address)? as i64,
-            RegisterType::SReg(_) => {
-                let val = self.mem.mem_read_f32(address)?;
-                self.cpu.write_reg(&xt1, &RegisterValue::SReg(val))?;
-                return Result::Ok(());
-            }
-            RegisterType::DReg(_) => {
-                let val = self.mem.mem_read_f64(address)?;
-                self.cpu.write_reg(&xt1, &RegisterValue::DReg(val))?;
-                return Result::Ok(());
-            }
+            RegisterType::SReg(_) => self.mem.mem_read_i32(address)? as i64,
+            RegisterType::DReg(_) => self.mem.mem_read_i64(address)?,
             _ => {
                 return Err(Error::InstructionError(String::from(
                     "Loading into non-general register type",
@@ -116,16 +108,8 @@ impl Core<'_, '_, '_> {
         let loaded_val: i64 = match xt2 {
             RegisterType::XReg(_) => self.mem.mem_read_i64(address + 8)?,
             RegisterType::WReg(_) => self.mem.mem_read_i32(address + 4)? as i64,
-            RegisterType::SReg(_) => {
-                let val = self.mem.mem_read_f32(address)? as f64;
-                self.cpu.write_reg(&xt2, &RegisterValue::HReg(val))?;
-                return Result::Ok(());
-            }
-            RegisterType::DReg(_) => {
-                let val = self.mem.mem_read_f64(address)?;
-                self.cpu.write_reg(&xt1, &RegisterValue::DReg(val))?;
-                return Result::Ok(());
-            }
+            RegisterType::SReg(_) => self.mem.mem_read_i32(address + 4)? as i64,
+            RegisterType::DReg(_) => self.mem.mem_read_i64(address + 8)?,
             _ => {
                 return Err(Error::InstructionError(String::from(
                     "Loading into non-general register type",
