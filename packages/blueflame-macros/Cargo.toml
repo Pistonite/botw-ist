@@ -1,5 +1,5 @@
 [package]
-name = "mem_macro"
+name = "blueflame-macros"
 version = "0.0.0"
 edition = "2021"
 

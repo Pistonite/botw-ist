@@ -1,5 +1,5 @@
 use super::error::Error;
-use super::{MemoryFlags, Reader, Region, RegionType, SimpleHeap};
+use super::{Reader, Region, RegionType, SimpleHeap};
 use crate::memory::util::ByteAble;
 // use crate::processor::instruction_parse;
 // use crate::processor::instruction_registry::ExecutableInstruction;
@@ -10,15 +10,15 @@ use std::sync::Arc;
 impl Memory {
     /// Generates a memory instance entirely composed of stack memory for simple testing
     pub fn new_empty_mem(size: u32) -> Self {
-        let mem_flags = MemoryFlags {
-            enable_strict_region: false,
-            enable_permission_check: false,
-            enable_allocated_check: false,
-        };
+        // let mem_flags = MemoryFlags {
+        //     enable_strict_region: false,
+        //     enable_permission_check: false,
+        //     enable_allocated_check: false,
+        // };
         let p = Arc::new(Region::new_rw(RegionType::Program, size as u64, 0));
         let s = Arc::new(Region::new_rw(RegionType::Stack, 0, size));
         let h = Arc::new(SimpleHeap::new(size as u64, 0, 0));
-        Memory::new(mem_flags, p, s, h, None, None, None)
+        Memory::new(p, s, h, None, None, None)
     }
 
     /// Writes a byte to memory a specific address

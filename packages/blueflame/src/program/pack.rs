@@ -4,7 +4,7 @@ use deku::{DekuContainerRead, DekuContainerWrite};
 use flate2::write::GzEncoder;
 use flate2::Compression;
 
-use crate::Program;
+use crate::program::Program;
 
 /// Errors packing or unpacking programs
 #[derive(Debug, thiserror::Error)]
@@ -20,8 +20,8 @@ pub enum Error {
     Deserialize(String),
 }
 
-/// Pack the program into a Blueflame image for IST Simulator
-pub fn pack_blueflame(program: &Program) -> Result<Vec<u8>, Error> {
+/// Pack the program into a Blueflame image
+pub fn pack(program: &Program) -> Result<Vec<u8>, Error> {
     let data = program
         .to_bytes()
         .map_err(|e| Error::Serialize(e.to_string()))?;
@@ -36,7 +36,7 @@ pub fn pack_blueflame(program: &Program) -> Result<Vec<u8>, Error> {
 }
 
 /// Unpack a Blueflame image into a program
-pub fn unpack_blueflame(data: &[u8]) -> Result<Program, Error> {
+pub fn unpack(data: &[u8]) -> Result<Program, Error> {
     let mut decoder = flate2::read::GzDecoder::new(data);
     let mut data = Vec::new();
     decoder
@@ -46,4 +46,3 @@ pub fn unpack_blueflame(data: &[u8]) -> Result<Program, Error> {
         Program::from_bytes((&data, 0)).map_err(|e| Error::Deserialize(e.to_string()))?;
     Ok(program)
 }
-

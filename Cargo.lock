@@ -212,17 +212,15 @@ name = "blueflame"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "blueflame-program",
- "blueflame-singleton",
- "blueflame-utils",
+ "blueflame-macros",
  "crc32fast",
  "deku",
  "derive_more",
  "disarm64",
  "disarm64_defn",
  "enumset",
+ "flate2",
  "log",
- "mem_macro",
  "paste",
  "rand_xoshiro",
  "serde",
@@ -234,34 +232,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "blueflame-program"
+name = "blueflame-macros"
 version = "0.0.0"
 dependencies = [
- "blueflame-utils",
- "deku",
- "derive_more",
- "flate2",
- "thiserror 2.0.12",
-]
-
-[[package]]
-name = "blueflame-singleton"
-version = "0.0.0"
-dependencies = [
- "blueflame-utils",
- "deku",
- "log",
- "serde",
- "static_assertions",
-]
-
-[[package]]
-name = "blueflame-utils"
-version = "0.0.0"
-dependencies = [
- "deku",
- "enum-map",
- "serde",
+ "proc-macro-crate",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.101",
 ]
 
 [[package]]
@@ -694,26 +671,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "enum-map"
-version = "2.7.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6866f3bfdf8207509a033af1a75a7b08abda06bbaaeae6669323fd5a097df2e9"
-dependencies = [
- "enum-map-derive",
-]
-
-[[package]]
-name = "enum-map-derive"
-version = "0.17.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f282cfdfe92516eb26c2af8589c274c7c17681f5ecc03c18255fe741c6aa64eb"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.101",
-]
-
-[[package]]
 name = "enumset"
 version = "1.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -793,9 +750,9 @@ dependencies = [
 
 [[package]]
 name = "flate2"
-version = "1.0.35"
+version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c936bfdafb507ebbf50b8074c54fa31c5be9a1e7e5f467dd659697041407d07c"
+checksum = "7ced92e76e966ca2fd84c8f7aa01a4aea65b0eb6648d72f7c8f3e2764a67fece"
 dependencies = [
  "crc32fast",
  "miniz_oxide",
@@ -1552,16 +1509,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mem_macro"
-version = "0.0.0"
-dependencies = [
- "proc-macro-crate",
- "proc-macro2",
- "quote",
- "syn 2.0.101",
-]
-
-[[package]]
 name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1585,9 +1532,9 @@ dependencies = [
 
 [[package]]
 name = "miniz_oxide"
-version = "0.8.2"
+version = "0.8.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ffbe83022cedc1d264172192511ae958937694cd57ce297164951b8b3568394"
+checksum = "3be647b768db090acb35d5ec5db2b0e1f1de11133ca123b9eacf5137868f892a"
 dependencies = [
  "adler2",
 ]
@@ -2337,8 +2284,6 @@ name = "skybook-runtime"
 version = "0.0.0"
 dependencies = [
  "blueflame",
- "blueflame-program",
- "blueflame-utils",
  "log",
  "oneshot",
  "serde",

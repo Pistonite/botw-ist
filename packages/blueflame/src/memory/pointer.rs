@@ -33,11 +33,6 @@ impl<T> Ptr<T> {
         }
     }
 
-    // TODO --cleanup: rename to as_raw
-    pub fn get_addr(&self) -> u64 {
-        self.addr
-    }
-
     pub const fn as_raw(&self) -> u64 {
         self.addr
     }

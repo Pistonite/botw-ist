@@ -3,9 +3,8 @@ name = "blueflame"
 version = "0.0.0"
 edition = "2021"
 
-# [[bin]]
-# name = "blueflame"
-# path = "src/main.rs" 
+[dependencies.blueflame-macros]
+path = "../blueflame-macros"
 
 [dependencies]
 derive_more = { version = "1.0.0", features = ["constructor", "deref", "deref_mut"] }
@@ -15,18 +14,17 @@ sha2 = "0.10.8"
 thiserror = "2.0.12"
 disarm64 = "0.1.20"
 disarm64_defn = "0.1.9"
-mem_macro = { path = "../blueflame-macros" }
 paste = "1.0.15"
 crc32fast = "1.4.2"
-blueflame-singleton = { path = "../blueflame-singleton" }
-blueflame-utils = { path = "../blueflame-utils" }
-blueflame-program = { path = "../blueflame-program" }
 serde_yaml = "0.9.34"
 serde_json = "1.0.140"
 log = "0.4.27"
 deku = "0.19.0"
 serde = { version = "1.0.219", features = ["derive"] }
 static_assertions = "1.1.0"
+
+# program module
+flate2 = { version = "1.0.35", default-features = false, features = ["rust_backend"] } # explicitly request pure-rust backend
 
 # TODO --cleanup: move to dev-dependencies
 anyhow = "1.0.94"

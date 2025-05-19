@@ -9,7 +9,7 @@ use std::marker::PhantomData;
 use crate::memory::{MemObject, MemSized, Memory, Ptr, Reader, Writer};
 // use crate::Core;
 use derive_more::derive::Constructor;
-use mem_macro::MemObject;
+use blueflame_macros::MemObject;
 
 // #[allow(non_snake_case)]
 #[derive(MemObject, Default, Clone)]

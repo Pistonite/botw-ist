@@ -1,10 +1,6 @@
-use super::{
-    access::{AccessType, MemAccess},
-    error::Error,
-    page::{Page, PAGE_SIZE},
-    region::{Region, RegionType},
-    Memory,
-};
+use blueflame_macros::enabled;
+
+use crate::memory::{AccessType, MemAccess, Error, Page, PAGE_SIZE, Region, RegionType, Memory};
 
 /// Stream writer to memory
 pub struct Writer<'m> {
@@ -155,7 +151,7 @@ impl<'m> Writer<'m> {
         }
 
         // now check we can actually read `len` bytes at the current address
-        if self.memory.flags.enable_allocated_check && self.region().typ == RegionType::Heap {
+        if enabled!("mem-heap-check-allocated") && self.region().typ == RegionType::Heap {
             let current_addr = self.current_addr();
             if !self.memory.heap.is_allocated(current_addr) {
                 return Err(Error::Unallocated(current_addr));
@@ -163,7 +159,6 @@ impl<'m> Writer<'m> {
         }
         // copy these value out since we will lose immutable borrow to self
         let region_page_idx = self.region_page_idx;
-        let check_permission = self.memory.flags.enable_permission_check;
         let page_off = self.page_off;
         // re-borrow the region as mutable and clone on write
         let region = self.region_mut();
@@ -172,7 +167,7 @@ impl<'m> Writer<'m> {
             None => return Err(Error::Unallocated(self.current_addr())),
         };
 
-        if check_permission && !page.has_permission(AccessType::Write) {
+        if !page.has_permission(AccessType::Write) && enabled!("mem-permission"){
             return Err(Error::PermissionDenied(MemAccess {
                 typ: AccessType::Write,
                 addr: self.current_addr(),

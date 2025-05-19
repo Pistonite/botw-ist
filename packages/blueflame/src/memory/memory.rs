@@ -1,6 +1,7 @@
 use std::ops::DerefMut;
 use std::sync::Arc;
 
+use blueflame_macros::enabled;
 use derive_more::derive::Constructor;
 use enumset::EnumSet;
 
@@ -14,8 +15,6 @@ use super::write::Writer;
 /// Memory of the simulated process
 #[derive(Debug, Clone, Constructor)]
 pub struct Memory {
-    /// Memory feature flags
-    pub flags: MemoryFlags,
     /// program region
     program: Arc<Region>,
     /// stack region
@@ -24,13 +23,18 @@ pub struct Memory {
     pub heap: Arc<SimpleHeap>,
     /// pmdm address
     pmdm_addr: Option<u64>,
-    /// main offset
-    main_offset: Option<u32>,
+    /// offset of the main module compared to program region start
+    main_offset: u32,
     /// trigger param addr
     trigger_param_addr: Option<u64>,
 }
 
 impl Memory {
+    /// Get the physical starting address of the main module
+    pub fn main_start(&self) -> u64 {
+        self.program.start + self.main_offset as u64
+    }
+
     /// Create a reader to start reading at address
     ///
     /// Only allow reading from certain regions if `region` is specified
@@ -40,7 +44,7 @@ impl Memory {
         region: Option<EnumSet<RegionType>>,
         execute: bool,
     ) -> Result<Reader, Error> {
-        let regions = if self.flags.enable_strict_region {
+        let regions = if enabled!("mem-strict-region") {
             region.unwrap_or(EnumSet::all())
         } else {
             EnumSet::all()
@@ -73,7 +77,7 @@ impl Memory {
         address: u64,
         region: Option<EnumSet<RegionType>>,
     ) -> Result<Writer, Error> {
-        let regions = if self.flags.enable_strict_region {
+        let regions = if enabled!("mem-strict-region") {
             region.unwrap_or(EnumSet::all())
         } else {
             EnumSet::all()
@@ -141,9 +145,6 @@ impl Memory {
         self.pmdm_addr.unwrap_or(0)
     }
 
-    pub fn get_main_offset(&self) -> u32 {
-        self.main_offset.unwrap_or(0)
-    }
 
     pub fn set_trigger_param_addr(&mut self, address: u64) {
         self.trigger_param_addr = Some(address)
@@ -153,17 +154,17 @@ impl Memory {
         self.trigger_param_addr.unwrap_or(0)
     }
 }
-
-#[derive(Debug, Clone)]
-pub struct MemoryFlags {
-    /// If enabled, region must be specified when accessing memory.
-    /// If the address is not in the specified regions, an error will be thrown
-    pub enable_strict_region: bool,
-
-    /// If permission checks are enabled
-    pub enable_permission_check: bool,
-
-    /// If an address is in the heap region, check
-    /// if it is in the allocated part of the region
-    pub enable_allocated_check: bool,
-}
+//
+// #[derive(Debug, Clone)]
+// pub struct MemoryFlags {
+//     /// If enabled, region must be specified when accessing memory.
+//     /// If the address is not in the specified regions, an error will be thrown
+//     pub enable_strict_region: bool,
+//
+//     /// If permission checks are enabled
+//     pub enable_permission_check: bool,
+//
+//     /// If an address is in the heap region, check
+//     /// if it is in the allocated part of the region
+//     pub enable_allocated_check: bool,
+// }

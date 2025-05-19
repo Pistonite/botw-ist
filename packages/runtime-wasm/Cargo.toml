@@ -1,15 +1,24 @@
 [package]
 name = "skybook-runtime-wasm"
+description = "WASM API for Skybook Runtime"
 version = "0.0.0"
 edition = "2021"
 publish = false
 
 [workspace]
 
-[dependencies]
-skybook-runtime = { path = "../runtime", features = ["wasm"] }
-blueflame-utils = { path = "../blueflame-utils" }
-skybook-parser = { path = "../parser", features = ["wasm", "cached"] }
+[dependencies.blueflame]
+path = "../blueflame"
+features = ["wasm"]
+
+[dependencies.skybook-runtime]
+path = "../runtime"
+features = ["wasm"]
+
+[dependencies.skybook-parser]
+path = "../parser"
+features = ["wasm", "cached"]
+
 wasm-bindgen = { version = "0.2.99", features = ["serde", "serde-serialize"] }
 tsify-next = { version = "0.5.4", features = ["js"], default-features = false }
 serde = { version = "1.0.217", features = ["derive"] }

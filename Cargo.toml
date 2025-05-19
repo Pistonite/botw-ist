@@ -4,10 +4,6 @@ members = [
     "packages/runtime",
     "packages/manual",
     "packages/parser", 
-    # "packages/runtime-wasm", 
     "packages/blueflame", 
     "packages/blueflame-macros", 
-    "packages/blueflame-singleton",
-    "packages/blueflame-utils",
-    "packages/blueflame-program",
 ]

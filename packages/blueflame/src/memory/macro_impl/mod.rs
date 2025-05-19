@@ -1,6 +1,9 @@
 use crate::memory::{Reader, Writer, Ptr, Error};
 
+// Re-export other crates to be referenced in macros
+#[doc(hidden)]
 pub use static_assertions as sa;
+
 
 /// Implementation for primitive and basic types
 mod basic_types;
@@ -113,12 +116,9 @@ impl<T, const OFFSET: u32, const SIZE: u32> FieldMetadata<T, OFFSET, SIZE> {
 mod tests {
     use std::sync::Arc;
 
-    use crate::memory::{MemObject, Ptr};
-    use mem_macro::MemObject;
+    use blueflame_macros::MemObject;
 
-    use crate::memory::{Memory, MemoryFlags, Reader, Region, RegionType, SimpleHeap, Writer};
-
-    use crate::error::Error;
+    use crate::memory::{Ptr, Memory, Region, RegionType, SimpleHeap};
 
     #[derive(MemObject)]
     #[size(0x40)]
@@ -149,15 +149,10 @@ mod tests {
 
     #[test]
     pub fn test_memread() -> anyhow::Result<()> {
-        let mem_flags = MemoryFlags {
-            enable_strict_region: true,
-            enable_permission_check: true,
-            enable_allocated_check: true,
-        };
         let p = Arc::new(Region::new_rw(RegionType::Program, 0, 0));
         let s = Arc::new(Region::new_rw(RegionType::Stack, 0x100, 0x1000));
         let h = Arc::new(SimpleHeap::new(0x2000, 0, 0));
-        let mut mem = Memory::new(mem_flags, p, s, h, None, None, None);
+        let mut mem = Memory::new(p, s, h, None, 0, None);
         let ts = TestSub {
             one: 0x15,
             two: 0x20,

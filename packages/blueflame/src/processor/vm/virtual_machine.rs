@@ -1,6 +1,5 @@
-use crate::Bytecode;
 
-use blueflame_utils::{DataType, ProxyType};
+use super::{Bytecode, DataId, ProxyId};
 
 /// Trait implemented by external consumers to visit the singleton creation process
 pub trait VirtualMachine {
@@ -35,17 +34,16 @@ pub trait VirtualMachine {
     fn allocate_memory(&mut self, bytes: u32) -> Result<(), Self::Error>;
 
     /// Allocate a proxy object of the type, and put the address in X0
-    fn allocate_proxy(&mut self, proxy: ProxyType) -> Result<(), Self::Error>;
+    fn allocate_proxy(&mut self, proxy: ProxyId) -> Result<(), Self::Error>;
 
     /// Allocate raw data in heap, and put the address in X0
-    fn allocate_data(&mut self, data: DataType) -> Result<(), Self::Error>;
+    fn allocate_data(&mut self, data: DataId) -> Result<(), Self::Error>;
 
     /// Simulate allocating space for the singleton. Put the address in X0
-    ///
-    /// No allocation is really happening here, since the singleton addresses
-    /// are pre-determined in BlueFlame and the spaces are already preserved.
-    /// The executor only needs to convert the relative start to the physical address
     fn allocate_singleton(&mut self, rel_start: u32, _size: u32) -> Result<(), Self::Error> {
+        // No allocation is really happening here, since the singleton addresses
+        // are pre-determined in BlueFlame and the spaces are already preserved.
+        // The executor only needs to convert the relative start to the physical address
         self.get_singleton(0, rel_start)
     }
 
@@ -97,11 +95,12 @@ pub trait VirtualMachine {
                     self.execute_until(target)?;
                     self.jump(target + 4)?
                 }
-                Bytecode::ExecuteUntilThenAllocSingletonSkipOne(target) => {
-                    self.execute_until(target)?;
-                    self.allocate_singleton(singleton_heap_rel_start, singleton_size)?;
-                    self.jump(target + 4)?
-                }
+                // TODO --cleanup: too big bytecode
+                // Bytecode::ExecuteUntilThenAllocSingletonSkipOne(target) => {
+                //     self.execute_until(target)?;
+                //     self.allocate_singleton(singleton_heap_rel_start, singleton_size)?;
+                //     self.jump(target + 4)?
+                // }
                 Bytecode::Jump(target) => {
                     self.jump(target)?
                 },

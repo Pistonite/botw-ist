@@ -1,3 +1,5 @@
+use blueflame_macros::enabled;
+
 use super::access::{AccessType, MemAccess};
 use super::error::Error;
 use super::page::{Page, PAGE_SIZE};
@@ -172,14 +174,13 @@ impl<'m> Reader<'m> {
         }
 
         // now check we can actually read `len` bytes at the current address
-        if self.memory.flags.enable_allocated_check
-            && self.region.typ == RegionType::Heap
+        if self.region.typ == RegionType::Heap && enabled!("mem-heap-check-allocated")
             && !self.memory.heap.is_allocated(current_addr)
         {
             return Err(Error::Unallocated(current_addr));
         }
 
-        if self.memory.flags.enable_permission_check {
+        if enabled!("mem-permission") {
             if self.execute {
                 if !self
                     .page

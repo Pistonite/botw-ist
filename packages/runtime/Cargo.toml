@@ -1,17 +1,20 @@
 [package]
 name = "skybook-runtime"
+description = "Runtime for Skybook, the IST simulator"
 version = "0.0.0"
 edition = "2021"
 publish = false
 
+[dependencies.blueflame]
+path = "../blueflame"
+
+[dependencies.skybook-parser]
+path = "../parser"
+
 [dependencies]
-blueflame = { path = "../blueflame" }
-blueflame-program = { path = "../blueflame-program" }
-blueflame-utils = { path = "../blueflame-utils" }
 log = "0.4.27"
 oneshot = "0.1.11"
 serde = { version = "1.0.218", features = ["derive"] }
-skybook-parser = { path = "../parser" }
 thiserror = "2.0.12"
 
 # TS/WASM dependencies

@@ -414,7 +414,7 @@ impl Core<'_, '_> {
     //     ExecutionError::new(error, ida_addr, self.cpu.stack_trace.clone())
     // }
     pub(crate) fn compute_ida_addr(&self, addr: u64) -> u64 {
-        0x7100000000 + addr - (self.mem.get_main_offset() as u64)
+        0x7100000000 + addr - self.mem.main_start()
     }
 }
 
@@ -423,7 +423,7 @@ pub mod memory;
 
 pub mod error;
 
-// pub mod processor;
+pub mod processor;
 
 /// Initialization for the memory
 // pub mod boot;
@@ -436,4 +436,13 @@ pub mod structs;
 
 pub mod singleton;
 
+
+/// Handle core feature flags (core-* flags in the script)
+pub mod features;
+
+pub mod process;
+
+/// Utilities for handling program images
+pub mod program;
+/// Other utils and shared types
 pub mod util;
