@@ -15,6 +15,11 @@ pub enum Error {
     #[error("attempt to access address: 0x{0:08x}, which is not in {1:?}")]
     DisallowedRegion(u64, EnumSet<RegionType>),
 
+    #[error("size mismatch in {0}: expected: 0x{1:x}, got 0x{2:x}")]
+    SizeAssert(String, u32, u32),
+    #[error("size out of range in {0}: expected: 0x{1:x} <= SIZE <= 0x{2:x}, got 0x{3:x}")]
+    SizeRangeAssert(String, u32, u32, u32),
+
     /// Region must be valid, but it's not allocated
     /// (suppressable with :disable mem-check-allocated
     #[error("attempt to access unallocated memory: 0x{0:08x}")]

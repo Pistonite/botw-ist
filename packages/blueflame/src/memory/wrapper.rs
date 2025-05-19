@@ -1,8 +1,8 @@
 use super::error::Error;
 use super::{MemoryFlags, Reader, Region, RegionType, SimpleHeap};
 use crate::memory::util::ByteAble;
-use crate::processor::instruction_parse;
-use crate::processor::instruction_registry::ExecutableInstruction;
+// use crate::processor::instruction_parse;
+// use crate::processor::instruction_registry::ExecutableInstruction;
 use crate::Memory;
 use std::ffi::CString;
 use std::sync::Arc;
@@ -134,11 +134,11 @@ impl Memory {
         self.mem_write_bytes(base_address, byte_vec)
     }
 
-    /// Reads an instruction object from memory
-    pub fn mem_read_inst(&mut self, address: u64) -> Result<Box<dyn ExecutableInstruction>, Error> {
-        let mut reader = self.read(address, Some(RegionType::Program.into()), true)?;
-        reader.read_instruction()
-    }
+    // /// Reads an instruction object from memory
+    // pub fn mem_read_inst(&mut self, address: u64) -> Result<Box<dyn ExecutableInstruction>, Error> {
+    //     let mut reader = self.read(address, Some(RegionType::Program.into()), true)?;
+    //     reader.read_instruction()
+    // }
 
     /// Checks if a given address is aligned to 4 byte alignment
     pub fn verify_memory_alignment(&mut self, address: u64) -> bool {
@@ -158,15 +158,15 @@ impl Memory {
     }
 }
 
-impl Reader<'_> {
-    pub fn read_instruction(&mut self) -> Result<Box<dyn ExecutableInstruction>, Error> {
-        let inst_bytes: u32 = self.read_u32()?;
-        match instruction_parse::byte_to_inst(inst_bytes) {
-            Ok(inst) => Ok(inst),
-            Err(e) => {
-                let addr = self.current_addr();
-                Err(Error::UnexpectedAt(addr, format!("{}", e)))
-            }
-        }
-    }
-}
+// impl Reader<'_> {
+//     pub fn read_instruction(&mut self) -> Result<Box<dyn ExecutableInstruction>, Error> {
+//         let inst_bytes: u32 = self.read_u32()?;
+//         match instruction_parse::byte_to_inst(inst_bytes) {
+//             Ok(inst) => Ok(inst),
+//             Err(e) => {
+//                 let addr = self.current_addr();
+//                 Err(Error::UnexpectedAt(addr, format!("{}", e)))
+//             }
+//         }
+//     }
+// }

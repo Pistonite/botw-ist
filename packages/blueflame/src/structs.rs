@@ -1,22 +1,19 @@
 #![allow(unused_variables)]
 #![allow(non_snake_case)]
 
-use std::collections::HashMap;
+// use std::collections::HashMap;
 use std::fmt;
 use std::marker::PhantomData;
 
-use crate::error::Error;
-use crate::memory::Memory;
-use crate::memory::{
-    traits::{MemRead, MemWrite, Ptr},
-    Reader, Writer,
-};
-use crate::Core;
+// use crate::error::Error;
+use crate::memory::{MemObject, MemSized, Memory, Ptr, Reader, Writer};
+// use crate::Core;
 use derive_more::derive::Constructor;
-use mem_macro::{MemRead, MemWrite};
+use mem_macro::MemObject;
 
-#[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+// #[allow(non_snake_case)]
+#[derive(MemObject, Default, Clone)]
+#[size(0x10)]
 pub struct SafeString {
     #[offset(0x0)]
     pub vtable: u64,
@@ -24,8 +21,10 @@ pub struct SafeString {
     pub mStringTop: u64,
 }
 
+// static_assertions::assert_impl_all!(SafeString: MemObject);
+
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone)]
 #[size(0x58)]
 pub struct FixedSafeString40 {
     #[offset(0x0)]
@@ -34,6 +33,16 @@ pub struct FixedSafeString40 {
     pub mBufferSize: i32,
     #[offset(0x14)]
     pub mBuffer: [u8; 64],
+}
+
+impl Default for FixedSafeString40 {
+    fn default() -> Self {
+        FixedSafeString40 {
+            safeString: SafeString::default(),
+            mBufferSize: 0,
+            mBuffer: [0; 64],
+        }
+    }
 }
 
 impl fmt::Display for FixedSafeString40 {
@@ -130,7 +139,8 @@ pub enum PouchCategory {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Default, Clone)]
+#[size(0x10)]
 pub struct GrabbedItemInfo {
     #[offset(0x0)]
     item: Ptr<PouchItem>,
@@ -141,7 +151,8 @@ pub struct GrabbedItemInfo {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone, Copy)]
+#[size(0x10)]
 pub struct ListNode {
     #[offset(0x0)]
     pub mPrev: Ptr<ListNode>,
@@ -150,7 +161,8 @@ pub struct ListNode {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy, Debug)]
+#[derive(MemObject, Clone, Copy, Debug)]
+#[size(0x8)]
 pub struct Vector2f {
     #[offset(0x0)]
     pub x: f32,
@@ -165,7 +177,8 @@ impl PartialEq<Vec<f32>> for Vector2f {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone, Copy)]
+#[size(0x14)]
 pub struct CookData {
     #[offset(0x0)]
     pub mHealthRecover: i32,
@@ -178,7 +191,8 @@ pub struct CookData {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone, Copy)]
+#[size(0x14)]
 pub struct WeaponData {
     #[offset(0x0)]
     mModifierValue: u32,
@@ -221,7 +235,8 @@ pub enum CookEffectId {
 
 #[allow(non_snake_case)]
 #[allow(clippy::too_many_arguments)]
-#[derive(MemRead, MemWrite, Clone, Copy, Constructor)]
+#[derive(MemObject, Clone, Constructor)]
+#[size(0x288)]
 pub struct CookItem {
     #[offset(0x0)]
     actor_name: FixedSafeString40,
@@ -242,7 +257,8 @@ pub struct CookItem {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone, Copy)]
+#[size(0x10)]
 struct PtrArrayImpl {
     #[offset(0x0)]
     mPtrNum: i32,
@@ -253,14 +269,16 @@ struct PtrArrayImpl {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone, Copy)]
+#[size(0x8)]
 struct FreeListNode {
     #[offset(0x0)]
     nextFree: Ptr<FreeListNode>,
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone, Copy)]
+#[size(0x10)]
 struct FreeList {
     #[offset(0x0)]
     mFree: FreeListNode,
@@ -269,7 +287,8 @@ struct FreeList {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone, Copy)]
+#[size(0x20)]
 struct SafeStringArray {
     #[offset(0x0)]
     base: PtrArrayImpl,
@@ -278,7 +297,8 @@ struct SafeStringArray {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone, Copy)]
+#[size(0x200)]
 struct FixedSafeStringArray {
     #[offset(0x0)]
     base: SafeStringArray,
@@ -287,7 +307,7 @@ struct FixedSafeStringArray {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone)]
 #[size(0x298)]
 pub struct PouchItem {
     #[offset(0x8)]
@@ -363,7 +383,8 @@ impl fmt::Display for PouchItem {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone)]
+#[size(0x18)]
 pub struct PouchItemOffsetList {
     #[offset(0x0)]
     pub mStartEnd: ListNode,
@@ -374,7 +395,7 @@ pub struct PouchItemOffsetList {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone)]
 #[size(0x44190)]
 pub struct PauseMenuDataMgrLists {
     #[offset(0x0)]
@@ -396,7 +417,7 @@ impl PauseMenuDataMgrLists {
 }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone)]
 #[size(0x44808)]
 pub struct PauseMenuDataMgr {
     #[offset(0x68)]
@@ -457,31 +478,31 @@ pub struct PauseMenuDataMgr {
     pub mCategoryToSort: i32,
 }
 
-impl PauseMenuDataMgr {
-    pub fn get_last_item_added_name(&self, mem: &Memory) -> Result<String, Error> {
-        let last_pouch_item = self.mLastAddedItem.deref(mem)?;
-        Ok(last_pouch_item.mName.to_string())
-    }
-
-    pub fn get_newly_added_name(&self) -> String {
-        self.mNewlyAddedItem.get_name()
-    }
-
-    pub fn get_newly_added_item(&self) -> PouchItem {
-        self.mNewlyAddedItem
-    }
-
-    pub fn get_active_item_iter(&self) -> OffsetListIter<PouchItem> {
-        self.mItemLists.get_active_item_iter()
-    }
-
-    pub fn get_inactive_item_iter(&self) -> OffsetListIter<PouchItem> {
-        self.mItemLists.get_inactive_item_iter()
-    }
-}
+// impl PauseMenuDataMgr {
+//     pub fn get_last_item_added_name(&self, mem: &Memory) -> Result<String, Error> {
+//         let last_pouch_item = self.mLastAddedItem.deref(mem)?;
+//         Ok(last_pouch_item.mName.to_string())
+//     }
+//
+//     pub fn get_newly_added_name(&self) -> String {
+//         self.mNewlyAddedItem.get_name()
+//     }
+//
+//     pub fn get_newly_added_item(&self) -> PouchItem {
+//         self.mNewlyAddedItem
+//     }
+//
+//     pub fn get_active_item_iter(&self) -> OffsetListIter<PouchItem> {
+//         self.mItemLists.get_active_item_iter()
+//     }
+//
+//     pub fn get_inactive_item_iter(&self) -> OffsetListIter<PouchItem> {
+//         self.mItemLists.get_inactive_item_iter()
+//     }
+// }
 
 #[allow(non_snake_case)]
-#[derive(MemRead, MemWrite, Clone, Copy)]
+#[derive(MemObject, Clone)]
 #[size(0x98)]
 pub struct InfoData {
     #[offset(0x40)]
@@ -527,32 +548,32 @@ impl<T> OffsetListIter<T> {
     }
 }
 
-impl OffsetListIter<PouchItem> {
-    pub fn get_entry(&self) -> Ptr<PouchItem> {
-        self.current_node.get_entry_ptr::<PouchItem>(self.offset)
-    }
+// impl OffsetListIter<PouchItem> {
+//     pub fn get_entry(&self) -> Ptr<PouchItem> {
+//         self.current_node.get_entry_ptr::<PouchItem>(self.offset)
+//     }
+//
+//     pub fn next(&mut self, mem: &Memory) -> Result<Ptr<PouchItem>, Error> {
+//         let return_node = self.get_entry();
+//         self.index += 1;
+//         self.current_node = self.current_node.deref(mem)?.mNext;
+//         Ok(return_node)
+//     }
+//
+//     pub fn has_next(&self) -> bool {
+//         self.index < self.count
+//     }
+// }
 
-    pub fn next(&mut self, mem: &Memory) -> Result<Ptr<PouchItem>, Error> {
-        let return_node = self.get_entry();
-        self.index += 1;
-        self.current_node = self.current_node.deref(mem)?.mNext;
-        Ok(return_node)
-    }
-
-    pub fn has_next(&self) -> bool {
-        self.index < self.count
-    }
-}
-
-impl Ptr<ListNode> {
-    pub fn get_entry_ptr<T>(&self, offset: i32) -> Ptr<T> {
-        Ptr::new(
-            (self.get_addr() as i64 - (offset as i64))
-                .try_into()
-                .unwrap(),
-        )
-    }
-}
+// impl Ptr<ListNode> {
+//     pub fn get_entry_ptr<T>(&self, offset: i32) -> Ptr<T> {
+//         Ptr::new(
+//             (self.get_addr() as i64 - (offset as i64))
+//                 .try_into()
+//                 .unwrap(),
+//         )
+//     }
+// }
 
 pub struct PorchWeaponData {
     pub modifier: i32,
@@ -604,298 +625,299 @@ impl PorchItem {
     }
 }
 
-pub struct GameDataItemIter<'a, 'x, 'y, 'z> {
-    index: usize,
-    num_swords: usize,
-    num_bows: usize,
-    num_shields: usize,
-    num_food: usize,
-
-    core: &'a Core<'x, 'y, 'z>,
-    pouch_item_lookup: PouchItemTypeLookup,
-}
-impl<'a, 'x, 'y, 'z> GameDataItemIter<'a, 'x, 'y, 'z> {
-    const MAX_LEN: usize = 420;
-
-    pub fn new(core: &'a Core<'x, 'y, 'z>, pouch_item_lookup: PouchItemTypeLookup) -> Self {
-        GameDataItemIter {
-            index: 0,
-            num_swords: 0,
-            num_bows: 0,
-            num_shields: 0,
-            num_food: 0,
-
-            core,
-            pouch_item_lookup,
-        }
-    }
-
-    pub fn next_item(&mut self) -> Result<PorchItem, Error> {
-        let trigger_param_addr = self.core.mem.get_trigger_param_addr();
-        let trigger_param = self
-            .core
-            .proxies
-            .get_trigger_param(self.core.mem, trigger_param_addr)?;
-        let item_name = trigger_param
-            .get_string64_array_value("PorchItem", self.index)
-            .ok_or_else(|| {
-                Error::Mem(crate::memory::Error::Unexpected(format!(
-                    "item at index {} does not exist",
-                    self.index
-                )))
-            })?;
-        let typ = self.pouch_item_lookup.get_type(&item_name);
-        let value = trigger_param
-            .get_s32_array_value("PorchItem_Value1", self.index)
-            .ok_or_else(|| {
-                Error::Mem(crate::memory::Error::Unexpected(format!(
-                    "item at index {} does not exist",
-                    self.index
-                )))
-            })?;
-        match typ {
-            PouchItemType::Sword => {
-                let modifier = trigger_param
-                    .get_s32_array_value("PorchSword_FlagSp", self.num_swords)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "sword at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let modifier_value = trigger_param
-                    .get_s32_array_value("PorchSword_ValueSp", self.num_swords)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "sword at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let weapon_data = PorchWeaponData {
-                    modifier,
-                    modifier_value,
-                };
-                self.num_swords += 1;
-                self.index += 1;
-                Ok(PorchItem::weapon(item_name, typ, value, weapon_data))
-            }
-            PouchItemType::Bow => {
-                let modifier = trigger_param
-                    .get_s32_array_value("PorchBow_FlagSp", self.num_bows)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "bow at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let modifier_value = trigger_param
-                    .get_s32_array_value("PorchBow_ValueSp", self.num_bows)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "bow at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let weapon_data = PorchWeaponData {
-                    modifier,
-                    modifier_value,
-                };
-                self.num_bows += 1;
-                self.index += 1;
-                Ok(PorchItem::weapon(item_name, typ, value, weapon_data))
-            }
-            PouchItemType::Shield => {
-                let modifier = trigger_param
-                    .get_s32_array_value("PorchShield_FlagSp", self.num_shields)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "shield at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let modifier_value = trigger_param
-                    .get_s32_array_value("PorchShield_ValueSp", self.num_shields)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "shield at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let weapon_data = PorchWeaponData {
-                    modifier,
-                    modifier_value,
-                };
-                self.num_shields += 1;
-                self.index += 1;
-                Ok(PorchItem::weapon(item_name, typ, value, weapon_data))
-            }
-            PouchItemType::Food => {
-                let (health_recover, effect_duration) = trigger_param
-                    .get_vector2f_array_value("StaminaRecover", self.num_food)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "food at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let effect = trigger_param
-                    .get_vector2f_array_value("CookEffect0", self.num_food)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "food at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let (sell_price, _) = trigger_param
-                    .get_vector2f_array_value("CookEffect1", self.num_food)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "food at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let m1 = trigger_param
-                    .get_string64_array_value("CookMaterialName0", self.num_food)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "food at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let m2 = trigger_param
-                    .get_string64_array_value("CookMaterialName1", self.num_food)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "food at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let m3 = trigger_param
-                    .get_string64_array_value("CookMaterialName2", self.num_food)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "food at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let m4 = trigger_param
-                    .get_string64_array_value("CookMaterialName3", self.num_food)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "food at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                let m5 = trigger_param
-                    .get_string64_array_value("CookMaterialName4", self.num_food)
-                    .ok_or_else(|| {
-                        Error::Mem(crate::memory::Error::Unexpected(format!(
-                            "food at index {} does not exist",
-                            self.index
-                        )))
-                    })?;
-                self.num_food += 1;
-                self.index += 1;
-                Ok(PorchItem::food(
-                    item_name,
-                    typ,
-                    value,
-                    PorchCookData {
-                        health_recover: health_recover as i32,
-                        effect_duration: effect_duration as i32,
-                        sell_price: sell_price as i32,
-                        effect,
-                        ingredients: [m1, m2, m3, m4, m5],
-                    },
-                ))
-            }
-            PouchItemType::ArmorHead
-            | PouchItemType::ArmorUpper
-            | PouchItemType::ArmorLower
-            | PouchItemType::Arrow
-            | PouchItemType::Material
-            | PouchItemType::KeyItem
-            | PouchItemType::Invalid => {
-                self.index += 1;
-                Ok(PorchItem::default(item_name, typ, value))
-            }
-        }
-    }
-
-    pub fn has_next(&self) -> bool {
-        self.index < Self::MAX_LEN
-    }
-}
-
-pub struct PouchItemTypeLookup {
-    profiles: HashMap<String, String>,
-    tags: HashMap<String, Vec<String>>,
-}
-impl PouchItemTypeLookup {
-    pub fn new() -> anyhow::Result<Self> {
-        let file = std::fs::File::open("res/item_data.json")?;
-        let reader = std::io::BufReader::new(file);
-        let json: HashMap<String, serde_json::Value> = serde_json::from_reader(reader)?;
-        let mut profiles = HashMap::new();
-        for (key, value) in json {
-            if let Some(profile) = value.get("profile").and_then(|c| c.as_str()) {
-                profiles.insert(key, profile.to_string());
-            }
-        }
-
-        let file = std::fs::File::open("res/actor_tags.json")?;
-        let reader = std::io::BufReader::new(file);
-        let tags: HashMap<String, Vec<String>> = serde_json::from_reader(reader)?;
-
-        Ok(Self { profiles, tags })
-    }
-
-    pub fn get_type(&self, name: &String) -> PouchItemType {
-        let profile = self.profiles.get(name);
-        let tags = self.tags.get(name);
-        if let (Some(profile), Some(tags)) = (profile, tags) {
-            if tags.contains(&String::from("Arrow")) {
-                return PouchItemType::Arrow;
-            }
-
-            if profile == "WeaponSmallSword"
-                || profile == "WeaponLongSword"
-                || profile == "WeaponSpear"
-            {
-                return PouchItemType::Sword;
-            }
-            if profile == "WeaponBow" {
-                return PouchItemType::Bow;
-            }
-            if profile == "WeaponShield" {
-                return PouchItemType::Shield;
-            }
-            if profile == "ArmorHead" {
-                return PouchItemType::ArmorHead;
-            }
-            if profile == "ArmorUpper" {
-                return PouchItemType::ArmorUpper;
-            }
-            if profile == "ArmorLower" {
-                return PouchItemType::ArmorLower;
-            }
-            if profile == "HorseReins" {
-                return PouchItemType::KeyItem;
-            }
-
-            if tags.contains(&String::from("CookResult"))
-                || tags.contains(&String::from("RoastItem"))
-            {
-                return PouchItemType::Food;
-            }
-
-            if tags.contains(&String::from("Important")) {
-                return PouchItemType::KeyItem;
-            }
-
-            PouchItemType::Material
-        } else {
-            PouchItemType::Invalid
-        }
-    }
-}
+// pub struct GameDataItemIter<'a,  'y, 'z> {
+//     index: usize,
+//     num_swords: usize,
+//     num_bows: usize,
+//     num_shields: usize,
+//     num_food: usize,
+//
+//     core: &'a Core< 'y, 'z>,
+//     pouch_item_lookup: PouchItemTypeLookup,
+// }
+// impl<'a,  'y, 'z> GameDataItemIter<'a,  'y, 'z> {
+//     const MAX_LEN: usize = 420;
+//
+//     pub fn new(core: &'a Core< 'y, 'z>, pouch_item_lookup: PouchItemTypeLookup) -> Self {
+//         GameDataItemIter {
+//             index: 0,
+//             num_swords: 0,
+//             num_bows: 0,
+//             num_shields: 0,
+//             num_food: 0,
+//
+//             core,
+//             pouch_item_lookup,
+//         }
+//     }
+//
+//     pub fn next_item(&mut self) -> Result<PorchItem, Error> {
+//         let trigger_param_addr = self.core.mem.get_trigger_param_addr();
+//         let trigger_param = self
+//             .core
+//             .proxies
+//             .get_trigger_param(self.core.mem, trigger_param_addr)?;
+//         let item_name = trigger_param
+//             .get_string64_array_value("PorchItem", self.index)
+//             .ok_or_else(|| {
+//                 Error::Mem(crate::memory::Error::Unexpected(format!(
+//                     "item at index {} does not exist",
+//                     self.index
+//                 )))
+//             })?;
+//         let typ = self.pouch_item_lookup.get_type(&item_name);
+//         let value = trigger_param
+//             .get_s32_array_value("PorchItem_Value1", self.index)
+//             .ok_or_else(|| {
+//                 Error::Mem(crate::memory::Error::Unexpected(format!(
+//                     "item at index {} does not exist",
+//                     self.index
+//                 )))
+//             })?;
+//         match typ {
+//             PouchItemType::Sword => {
+//                 let modifier = trigger_param
+//                     .get_s32_array_value("PorchSword_FlagSp", self.num_swords)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "sword at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let modifier_value = trigger_param
+//                     .get_s32_array_value("PorchSword_ValueSp", self.num_swords)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "sword at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let weapon_data = PorchWeaponData {
+//                     modifier,
+//                     modifier_value,
+//                 };
+//                 self.num_swords += 1;
+//                 self.index += 1;
+//                 Ok(PorchItem::weapon(item_name, typ, value, weapon_data))
+//             }
+//             PouchItemType::Bow => {
+//                 let modifier = trigger_param
+//                     .get_s32_array_value("PorchBow_FlagSp", self.num_bows)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "bow at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let modifier_value = trigger_param
+//                     .get_s32_array_value("PorchBow_ValueSp", self.num_bows)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "bow at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let weapon_data = PorchWeaponData {
+//                     modifier,
+//                     modifier_value,
+//                 };
+//                 self.num_bows += 1;
+//                 self.index += 1;
+//                 Ok(PorchItem::weapon(item_name, typ, value, weapon_data))
+//             }
+//             PouchItemType::Shield => {
+//                 let modifier = trigger_param
+//                     .get_s32_array_value("PorchShield_FlagSp", self.num_shields)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "shield at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let modifier_value = trigger_param
+//                     .get_s32_array_value("PorchShield_ValueSp", self.num_shields)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "shield at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let weapon_data = PorchWeaponData {
+//                     modifier,
+//                     modifier_value,
+//                 };
+//                 self.num_shields += 1;
+//                 self.index += 1;
+//                 Ok(PorchItem::weapon(item_name, typ, value, weapon_data))
+//             }
+//             PouchItemType::Food => {
+//                 let (health_recover, effect_duration) = trigger_param
+//                     .get_vector2f_array_value("StaminaRecover", self.num_food)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "food at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let effect = trigger_param
+//                     .get_vector2f_array_value("CookEffect0", self.num_food)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "food at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let (sell_price, _) = trigger_param
+//                     .get_vector2f_array_value("CookEffect1", self.num_food)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "food at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let m1 = trigger_param
+//                     .get_string64_array_value("CookMaterialName0", self.num_food)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "food at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let m2 = trigger_param
+//                     .get_string64_array_value("CookMaterialName1", self.num_food)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "food at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let m3 = trigger_param
+//                     .get_string64_array_value("CookMaterialName2", self.num_food)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "food at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let m4 = trigger_param
+//                     .get_string64_array_value("CookMaterialName3", self.num_food)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "food at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 let m5 = trigger_param
+//                     .get_string64_array_value("CookMaterialName4", self.num_food)
+//                     .ok_or_else(|| {
+//                         Error::Mem(crate::memory::Error::Unexpected(format!(
+//                             "food at index {} does not exist",
+//                             self.index
+//                         )))
+//                     })?;
+//                 self.num_food += 1;
+//                 self.index += 1;
+//                 Ok(PorchItem::food(
+//                     item_name,
+//                     typ,
+//                     value,
+//                     PorchCookData {
+//                         health_recover: health_recover as i32,
+//                         effect_duration: effect_duration as i32,
+//                         sell_price: sell_price as i32,
+//                         effect,
+//                         ingredients: [m1, m2, m3, m4, m5],
+//                     },
+//                 ))
+//             }
+//             PouchItemType::ArmorHead
+//             | PouchItemType::ArmorUpper
+//             | PouchItemType::ArmorLower
+//             | PouchItemType::Arrow
+//             | PouchItemType::Material
+//             | PouchItemType::KeyItem
+//             | PouchItemType::Invalid => {
+//                 self.index += 1;
+//                 Ok(PorchItem::default(item_name, typ, value))
+//             }
+//         }
+//     }
+//
+//     pub fn has_next(&self) -> bool {
+//         self.index < Self::MAX_LEN
+//     }
+// }
+//
+// pub struct PouchItemTypeLookup {
+//     profiles: HashMap<String, String>,
+//     tags: HashMap<String, Vec<String>>,
+// }
+// impl PouchItemTypeLookup {
+//     pub fn new() -> Self {
+//         // TODO: --cleanup: unwraps
+//         let file = std::fs::File::open("res/item_data.json").unwrap();
+//         let reader = std::io::BufReader::new(file);
+//         let json: HashMap<String, serde_json::Value> = serde_json::from_reader(reader).unwrap();
+//         let mut profiles = HashMap::new();
+//         for (key, value) in json {
+//             if let Some(profile) = value.get("profile").and_then(|c| c.as_str()) {
+//                 profiles.insert(key, profile.to_string());
+//             }
+//         }
+//
+//         let file = std::fs::File::open("res/actor_tags.json").unwrap();
+//         let reader = std::io::BufReader::new(file);
+//         let tags: HashMap<String, Vec<String>> = serde_json::from_reader(reader).unwrap();
+//
+//         Self { profiles, tags }
+//     }
+//
+//     pub fn get_type(&self, name: &String) -> PouchItemType {
+//         let profile = self.profiles.get(name);
+//         let tags = self.tags.get(name);
+//         if let (Some(profile), Some(tags)) = (profile, tags) {
+//             if tags.contains(&String::from("Arrow")) {
+//                 return PouchItemType::Arrow;
+//             }
+//
+//             if profile == "WeaponSmallSword"
+//                 || profile == "WeaponLongSword"
+//                 || profile == "WeaponSpear"
+//             {
+//                 return PouchItemType::Sword;
+//             }
+//             if profile == "WeaponBow" {
+//                 return PouchItemType::Bow;
+//             }
+//             if profile == "WeaponShield" {
+//                 return PouchItemType::Shield;
+//             }
+//             if profile == "ArmorHead" {
+//                 return PouchItemType::ArmorHead;
+//             }
+//             if profile == "ArmorUpper" {
+//                 return PouchItemType::ArmorUpper;
+//             }
+//             if profile == "ArmorLower" {
+//                 return PouchItemType::ArmorLower;
+//             }
+//             if profile == "HorseReins" {
+//                 return PouchItemType::KeyItem;
+//             }
+//
+//             if tags.contains(&String::from("CookResult"))
+//                 || tags.contains(&String::from("RoastItem"))
+//             {
+//                 return PouchItemType::Food;
+//             }
+//
+//             if tags.contains(&String::from("Important")) {
+//                 return PouchItemType::KeyItem;
+//             }
+//
+//             PouchItemType::Material
+//         } else {
+//             PouchItemType::Invalid
+//         }
+//     }
+// }

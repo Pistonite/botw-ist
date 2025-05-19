@@ -80,16 +80,16 @@ pub enum InstructionParseError {
     ParseError(String),
 }
 
-pub enum InstructionType {
-    Return,
-    Branch,
-}
+// pub enum InstructionType {
+//     Return,
+//     Branch,
+// }
 
 pub trait ExecutableInstruction: ExecutableInstructionClone + Send + Sync + UnwindSafe + 'static{
     fn exec_on(&self, proc: &mut Core) -> Result<(), Error>;
-    fn instruction_type(&self) -> Option<InstructionType> {
-        None
-    }
+    // fn instruction_type(&self) -> Option<InstructionType> {
+    //     None
+    // }
 }
 
 pub trait ExecutableInstructionClone {
@@ -928,9 +928,9 @@ impl ExecutableInstruction for BlInstruction {
         proc.bl(self.label_offset)
     }
 
-    fn instruction_type(&self) -> Option<InstructionType> {
-        Some(InstructionType::Branch)
-    }
+    // fn instruction_type(&self) -> Option<InstructionType> {
+    //     Some(InstructionType::Branch)
+    // }
 }
 
 #[derive(Clone)]
@@ -971,9 +971,9 @@ impl ExecutableInstruction for BlrInstruction {
         proc.blr(self.rn)
     }
 
-    fn instruction_type(&self) -> Option<InstructionType> {
-        Some(InstructionType::Branch)
-    }
+    // fn instruction_type(&self) -> Option<InstructionType> {
+    //     Some(InstructionType::Branch)
+    // }
 }
 
 #[derive(Clone)]
@@ -1020,9 +1020,10 @@ impl ExecutableInstruction for RetInstruction {
         Ok(())
     }
 
-    fn instruction_type(&self) -> Option<InstructionType> {
-        Some(InstructionType::Return)
-    }
+    // TODO: delete
+    // fn instruction_type(&self) -> Option<InstructionType> {
+    //     Some(InstructionType::Return)
+    // }
 }
 
 #[derive(Clone)]
@@ -1035,9 +1036,10 @@ impl ExecutableInstruction for RetArgsInstruction {
         proc.ret_with_arg(self.rn)
     }
 
-    fn instruction_type(&self) -> Option<InstructionType> {
-        Some(InstructionType::Return)
-    }
+    // TODO: delete
+    // fn instruction_type(&self) -> Option<InstructionType> {
+    //     Some(InstructionType::Return)
+    // }
 }
 
 #[derive(Clone)]

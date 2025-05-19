@@ -9,10 +9,10 @@ use blueflame::{
 
 #[test]
 fn test_one_simple_item() -> Result<(), Box<dyn Error>> {
-    let data = std::fs::read("../test_files/program.blfm").unwrap();
+    let data = std::fs::read("./test_files/program.blfm").unwrap();
     let program = blueflame_program::unpack_blueflame(&data).unwrap();
     let (mut mem, mut prox) =
-        init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+        init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
     let mut cpu = Processor::default();
     let mut core = Core {
         cpu: &mut cpu,
@@ -39,10 +39,10 @@ fn test_one_simple_item() -> Result<(), Box<dyn Error>> {
 
 #[test]
 fn test_many_simple_items() -> Result<(), Box<dyn Error>> {
-    let data = std::fs::read("../test_files/program.blfm").unwrap();
+    let data = std::fs::read("./test_files/program.blfm").unwrap();
     let program = blueflame_program::unpack_blueflame(&data).unwrap();
     let (mut mem, mut prox) =
-        init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+        init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
     let mut cpu = Processor::default();
     let mut core = Core {
         cpu: &mut cpu,
@@ -87,10 +87,10 @@ fn test_many_simple_items() -> Result<(), Box<dyn Error>> {
 
 #[test]
 fn test_weapon_items() -> Result<(), Box<dyn Error>> {
-    let data = std::fs::read("../test_files/program.blfm").unwrap();
+    let data = std::fs::read("./test_files/program.blfm").unwrap();
     let program = blueflame_program::unpack_blueflame(&data).unwrap();
     let (mut mem, mut prox) =
-        init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+        init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
     let mut cpu = Processor::default();
     let mut core = Core {
         cpu: &mut cpu,
@@ -138,10 +138,10 @@ fn test_weapon_items() -> Result<(), Box<dyn Error>> {
 
 #[test]
 fn test_food_items() -> Result<(), Box<dyn Error>> {
-    let data = std::fs::read("../test_files/program.blfm").unwrap();
+    let data = std::fs::read("./test_files/program.blfm").unwrap();
     let program = blueflame_program::unpack_blueflame(&data).unwrap();
     let (mut mem, mut prox) =
-        init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+        init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
     let mut cpu = Processor::default();
     let mut core = Core {
         cpu: &mut cpu,
@@ -177,4 +177,5 @@ fn test_food_items() -> Result<(), Box<dyn Error>> {
     assert_eq!(4.0, cook_data.effect.1);
 
     Ok(())
+
 }

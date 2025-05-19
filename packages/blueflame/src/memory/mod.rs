@@ -14,12 +14,18 @@ mod write;
 pub use write::*;
 mod memory;
 pub use memory::*;
+mod pointer;
+pub use pointer::*;
 mod proxy;
 pub use proxy::*;
 
 pub mod traits;
 pub mod util;
 pub mod wrapper;
+
+/// Implementation for proc macros (don't use directly)
+pub mod macro_impl;
+pub use macro_impl::{MemObject, MemSized};
 
 macro_rules! align_down {
     ($addr:expr, $align:expr) => {

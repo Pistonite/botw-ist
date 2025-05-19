@@ -4,8 +4,8 @@ use rand_xoshiro::rand_core::{RngCore, SeedableRng};
 use rand_xoshiro::Xoshiro256PlusPlus;
 use sha2::{Digest, Sha256};
 
-use crate::processor::{Processor, Stub};
-use crate::proxy::trigger_param::GdtTriggerParam;
+// use crate::processor::{Processor, Stub};
+// use crate::proxy::trigger_param::GdtTriggerParam;
 
 use super::error::Error;
 use super::memory::Memory;
@@ -22,7 +22,7 @@ pub struct Proxies {
     // just as a placeholder
     // do this and implement each function below for TriggerParam
     string_proxies: Arc<ProxyList<String>>,
-    trigger_param_proxies: Arc<ProxyList<GdtTriggerParam>>,
+    // trigger_param_proxies: Arc<ProxyList<GdtTriggerParam>>,
 }
 
 macro_rules! proxy_funcs {
@@ -43,92 +43,92 @@ macro_rules! proxy_funcs {
 
 impl Proxies {
     proxy_funcs!(string, String);
-    proxy_funcs!(trigger_param, GdtTriggerParam);
+    // proxy_funcs!(trigger_param, GdtTriggerParam);
 
-    pub fn init_trigger_param_stubs(processor: &mut Processor) {
-        macro_rules! reg_flag_stubs {
-            ($name:ident, $get:expr, $get_idx_from_hash:expr, $reset:expr, $set:expr, $set_by_name:expr) => {
-                paste! {
-                    processor.register_stub_function($get, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<get_ $name>](c))));
-                    processor.register_stub_function($get_idx_from_hash, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<get_ $name _index>](c))));
-                    processor.register_stub_function($reset, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<reset_ $name>](c))));
-                    processor.register_stub_function($set, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<set_ $name>](c))));
-                    processor.register_stub_function($set_by_name, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<set_ $name _safe_string>](c))));
-                }
-            }
-        }
-        macro_rules! reg_array_flag_stubs {
-            ($name: ident, $get:expr, $get_idx_from_hash:expr, $reset:expr, $len:expr, $set:expr, $set_by_name:expr) => {
-                paste! {
-                    processor.register_stub_function($get, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<get_ $name _array>](c))));
-                    processor.register_stub_function($get_idx_from_hash, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<get_ $name _index>](c))));
-                    processor.register_stub_function($reset, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<reset_ $name _array>](c))));
-                    processor.register_stub_function($len, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<get_ $name _array_size>](c))));
-                    processor.register_stub_function($set, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<set_ $name>](c))));
-                    processor.register_stub_function($set_by_name, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<set_ $name _safe_string>](c))));
-                }
-            }
-        }
-
-        reg_flag_stubs!(bool, 0xDDF0F8, 0xDF08B8, 0xDE6F1C, 0xDE1B64, 0xDE59E4);
-        reg_flag_stubs!(s32, 0xDDF174, 0xDF0970, 0xDE7004, 0xDE22F8, 0xDE5B0C);
-        reg_flag_stubs!(f32, 0xDDF1EC, 0xDF0A28, 0xDE70EC, 0xDE2908, 0xDE5C34);
-        reg_flag_stubs!(string32, 0xDDF264, 0xDF0AE0, 0, 0xDE2F20, 0xDE5D64);
-        reg_flag_stubs!(string64, 0xDDF2F0, 0xDF0B98, 0xDE71D4, 0xDE37B0, 0xDE5E8C);
-        reg_flag_stubs!(string256, 0xDDF37C, 0xDF0C50, 0, 0xDE4040, 0);
-        reg_flag_stubs!(vector3f, 0xDDF408, 0xDF0DC0, 0xDE72BC, 0xDE4EA0, 0xDE5FB4);
-
-        reg_array_flag_stubs!(
-            bool_array, 0xDE002C, 0xDF0E78, 0xDE77E4, 0xDE0D3C, 0xDE6170, 0xDE6B04
-        );
-        reg_array_flag_stubs!(
-            s32_array, 0xDE00D0, 0xDF0F08, 0xDE7900, 0xDE0D74, 0xDE625C, 0xDE6C08
-        );
-        reg_array_flag_stubs!(
-            f32_array, 0xDE0170, 0xDF0F98, 0xDE7A1C, 0xDE0DAC, 0xDE63E0, 0xDE6D0C
-        );
-        reg_array_flag_stubs!(
-            string64_array,
-            0xDE0210,
-            0xDF1028,
-            0xDE7C54,
-            0xDE0E1C,
-            0xDE656C,
-            0xDE6E18
-        );
-        reg_array_flag_stubs!(
-            string256_array,
-            0xDE02C4,
-            0xDF10B8,
-            0xDE7D70,
-            0xDE0E54,
-            0xDE6758,
-            0
-        );
-        reg_array_flag_stubs!(
-            vector2f_array,
-            0xDE0378,
-            0xDF1148,
-            0xDE7E8C,
-            0xDE0E8C,
-            0xDE6944,
-            0
-        );
-        reg_array_flag_stubs!(
-            vector3f_array,
-            0xDE0418,
-            0xDF11D8,
-            0xDE7FA8,
-            0xDE0EC4,
-            0xDE6A24,
-            0
-        );
-
-        processor.register_stub_function(
-            0xDEEB8C,
-            Stub::simple(Box::new(GdtTriggerParam::reset_all_flags_to_initial_values)),
-        );
-    }
+    // pub fn init_trigger_param_stubs(processor: &mut Processor) {
+    //     macro_rules! reg_flag_stubs {
+    //         ($name:ident, $get:expr, $get_idx_from_hash:expr, $reset:expr, $set:expr, $set_by_name:expr) => {
+    //             paste! {
+    //                 processor.register_stub_function($get, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<get_ $name>](c))));
+    //                 processor.register_stub_function($get_idx_from_hash, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<get_ $name _index>](c))));
+    //                 processor.register_stub_function($reset, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<reset_ $name>](c))));
+    //                 processor.register_stub_function($set, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<set_ $name>](c))));
+    //                 processor.register_stub_function($set_by_name, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<set_ $name _safe_string>](c))));
+    //             }
+    //         }
+    //     }
+    //     macro_rules! reg_array_flag_stubs {
+    //         ($name: ident, $get:expr, $get_idx_from_hash:expr, $reset:expr, $len:expr, $set:expr, $set_by_name:expr) => {
+    //             paste! {
+    //                 processor.register_stub_function($get, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<get_ $name _array>](c))));
+    //                 processor.register_stub_function($get_idx_from_hash, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<get_ $name _index>](c))));
+    //                 processor.register_stub_function($reset, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<reset_ $name _array>](c))));
+    //                 processor.register_stub_function($len, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<get_ $name _array_size>](c))));
+    //                 processor.register_stub_function($set, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<set_ $name>](c))));
+    //                 processor.register_stub_function($set_by_name, Stub::run_and_ret(Box::new(|c| GdtTriggerParam::[<set_ $name _safe_string>](c))));
+    //             }
+    //         }
+    //     }
+    //
+    //     reg_flag_stubs!(bool, 0xDDF0F8, 0xDF08B8, 0xDE6F1C, 0xDE1B64, 0xDE59E4);
+    //     reg_flag_stubs!(s32, 0xDDF174, 0xDF0970, 0xDE7004, 0xDE22F8, 0xDE5B0C);
+    //     reg_flag_stubs!(f32, 0xDDF1EC, 0xDF0A28, 0xDE70EC, 0xDE2908, 0xDE5C34);
+    //     reg_flag_stubs!(string32, 0xDDF264, 0xDF0AE0, 0, 0xDE2F20, 0xDE5D64);
+    //     reg_flag_stubs!(string64, 0xDDF2F0, 0xDF0B98, 0xDE71D4, 0xDE37B0, 0xDE5E8C);
+    //     reg_flag_stubs!(string256, 0xDDF37C, 0xDF0C50, 0, 0xDE4040, 0);
+    //     reg_flag_stubs!(vector3f, 0xDDF408, 0xDF0DC0, 0xDE72BC, 0xDE4EA0, 0xDE5FB4);
+    //
+    //     reg_array_flag_stubs!(
+    //         bool_array, 0xDE002C, 0xDF0E78, 0xDE77E4, 0xDE0D3C, 0xDE6170, 0xDE6B04
+    //     );
+    //     reg_array_flag_stubs!(
+    //         s32_array, 0xDE00D0, 0xDF0F08, 0xDE7900, 0xDE0D74, 0xDE625C, 0xDE6C08
+    //     );
+    //     reg_array_flag_stubs!(
+    //         f32_array, 0xDE0170, 0xDF0F98, 0xDE7A1C, 0xDE0DAC, 0xDE63E0, 0xDE6D0C
+    //     );
+    //     reg_array_flag_stubs!(
+    //         string64_array,
+    //         0xDE0210,
+    //         0xDF1028,
+    //         0xDE7C54,
+    //         0xDE0E1C,
+    //         0xDE656C,
+    //         0xDE6E18
+    //     );
+    //     reg_array_flag_stubs!(
+    //         string256_array,
+    //         0xDE02C4,
+    //         0xDF10B8,
+    //         0xDE7D70,
+    //         0xDE0E54,
+    //         0xDE6758,
+    //         0
+    //     );
+    //     reg_array_flag_stubs!(
+    //         vector2f_array,
+    //         0xDE0378,
+    //         0xDF1148,
+    //         0xDE7E8C,
+    //         0xDE0E8C,
+    //         0xDE6944,
+    //         0
+    //     );
+    //     reg_array_flag_stubs!(
+    //         vector3f_array,
+    //         0xDE0418,
+    //         0xDF11D8,
+    //         0xDE7FA8,
+    //         0xDE0EC4,
+    //         0xDE6A24,
+    //         0
+    //     );
+    //
+    //     processor.register_stub_function(
+    //         0xDEEB8C,
+    //         Stub::simple(Box::new(GdtTriggerParam::reset_all_flags_to_initial_values)),
+    //     );
+    // }
 }
 
 impl ProxyObject for String {
@@ -153,14 +153,14 @@ impl Default for ProxyList<String> {
     }
 }
 
-impl Default for ProxyList<GdtTriggerParam> {
-    fn default() -> Self {
-        Self {
-            rng: Xoshiro256PlusPlus::seed_from_u64(0),
-            objects: Vec::new(),
-        }
-    }
-}
+// impl Default for ProxyList<GdtTriggerParam> {
+//     fn default() -> Self {
+//         Self {
+//             rng: Xoshiro256PlusPlus::seed_from_u64(0),
+//             objects: Vec::new(),
+//         }
+//     }
+// }
 
 #[derive(Clone)]
 struct Entry<T: ProxyObject> {

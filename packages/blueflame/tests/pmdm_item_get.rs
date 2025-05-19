@@ -12,11 +12,11 @@ mod singleton_tests {
 
     #[test]
     pub fn test_item_get_general() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
 
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -90,10 +90,10 @@ mod singleton_tests {
 
     #[test]
     pub fn test_item_get_sword() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -112,10 +112,10 @@ mod singleton_tests {
 
     #[test]
     pub fn test_item_get_bow() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -134,10 +134,10 @@ mod singleton_tests {
 
     #[test]
     pub fn test_item_get_shield() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -156,10 +156,10 @@ mod singleton_tests {
 
     #[test]
     pub fn test_item_get_material() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -178,10 +178,10 @@ mod singleton_tests {
 
     #[test]
     pub fn test_item_get_food() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -200,10 +200,10 @@ mod singleton_tests {
 
     #[test]
     pub fn test_item_get_armor() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -222,10 +222,10 @@ mod singleton_tests {
 
     #[test]
     pub fn test_item_get_koroknuts() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -260,10 +260,10 @@ mod singleton_tests {
 
     #[test]
     pub fn test_cook_item_get() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -336,10 +336,10 @@ mod singleton_tests {
 
     #[test]
     pub fn test_item_get_iter() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -438,11 +438,11 @@ mod singleton_tests {
 
     #[test]
     pub fn test_init_common_flags() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
 
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -455,11 +455,11 @@ mod singleton_tests {
 
     #[test]
     pub fn test_get_actor_type() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
 
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -476,13 +476,14 @@ mod singleton_tests {
         assert_eq!(item_type, PouchItemType::Food);
     }
 
+    // can probably delete this
     #[test]
     pub fn test_hash_gen() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
 
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -493,7 +494,8 @@ mod singleton_tests {
         let hash = core.get_hash_for_actor("Armor_008_Upper").unwrap();
 
         let table = generate_crc32_table();
-        let mem_table: [u32; 0x100] = Ptr::new(39835392).deref(&mem).unwrap();
+        // TODO: hardcoded program start
+        let mem_table: [u32; 0x100] = Ptr::new(0x1234500000 + 39835392).deref(&mem).unwrap();
         assert_eq!(table, mem_table);
         assert_eq!(
             hash,

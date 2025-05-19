@@ -2,11 +2,11 @@ use std::fmt::Debug;
 
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {
-    #[error("boot crash: {0}")]
-    Boot(#[from] crate::boot::Error),
-
-    #[error("CPU error")]
-    Cpu(crate::processor::Error),
+    // #[error("boot crash: {0}")]
+    // Boot(#[from] crate::boot::Error),
+    //
+    // #[error("CPU error")]
+    // Cpu(crate::processor::Error),
 
     #[error("memory error: {0}")]
     Mem(crate::memory::Error),
@@ -18,15 +18,15 @@ impl From<crate::memory::Error> for Error {
     }
 }
 
-impl From<crate::processor::Error> for Error {
-    fn from(err: crate::processor::Error) -> Self {
-        if let crate::processor::Error::Mem(m) = err {
-            Error::Mem(m)
-        } else {
-            Error::Cpu(err)
-        }
-    }
-}
+// impl From<crate::processor::Error> for Error {
+//     fn from(err: crate::processor::Error) -> Self {
+//         if let crate::processor::Error::Mem(m) = err {
+//             Error::Mem(m)
+//         } else {
+//             Error::Cpu(err)
+//         }
+//     }
+// }
 
 #[derive(thiserror::Error)]
 pub struct ExecutionError {

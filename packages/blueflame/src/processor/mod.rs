@@ -242,8 +242,9 @@ impl Processor {
         core.cpu.write_arg(0, core.mem.get_pmdm_addr());
         core.cpu.write_arg(1, value as u64);
         core.cpu.write_arg(2, slot_idx as u64);
+        // TODO: hardcoded program start
         core.cpu
-            .set_pc((0x971438 - 4 + core.mem.get_main_offset()).into());
+            .set_pc((0x1234500000u64 + 0x971438 - 4 + core.mem.get_main_offset() as u64).into());
         Ok(())
     }
 

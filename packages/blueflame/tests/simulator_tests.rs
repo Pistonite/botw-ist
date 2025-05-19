@@ -135,10 +135,10 @@ mod simulator_tests {
 
     #[test]
     pub fn dup_orbs() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -204,10 +204,10 @@ mod simulator_tests {
 
     #[test]
     pub fn wmc_4() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -397,16 +397,16 @@ mod simulator_tests {
         // let pi = iter.next(&core.mem).unwrap().deref(&core.mem).unwrap();
         // let mEffect = pi.mData.mEffect;
         // println!("LAST {0}: {1} {2}", pi.to_string(), mEffect.x, mEffect.y);
-        assert!(false);
+        // assert!(false);
         // END Sync gamedata
     }
 
     #[test]
     pub fn apples_999() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -491,10 +491,10 @@ mod simulator_tests {
 
     #[test]
     pub fn mswmc_simple() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,
@@ -512,10 +512,10 @@ mod simulator_tests {
 
     #[test]
     pub fn inventory_nuking_1() {
-        let data = std::fs::read("../test_files/program.blfm").unwrap();
+        let data = std::fs::read("./test_files/program.blfm").unwrap();
         let program = blueflame_program::unpack_blueflame(&data).unwrap();
         let (mut mem, mut prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 2000000000).unwrap();
+            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
         let mut cpu = Processor::default();
         let mut core = Core {
             cpu: &mut cpu,

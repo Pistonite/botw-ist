@@ -115,36 +115,6 @@ impl Memory {
         None
     }
 
-    // // remove this if not needed
-    // pub fn get_cloest_next_region_by_addr(&self, address: u64) -> Option<&Region> {
-    //     if let Some((region, _, _, _)) = self.get_region_by_addr(address) {
-    //         return Some(region);
-    //     }
-    //     let mut closest = None;
-    //     let mut closest_dist = u64::MAX;
-    //     if address < self.program.start {
-    //         let dist = self.program.start - address;
-    //         if dist < closest_dist {
-    //             closest = Some(self.program.as_ref());
-    //             closest_dist = dist;
-    //         }
-    //     }
-    //     if address < self.stack.start {
-    //         let dist = self.stack.start - address;
-    //         if dist < closest_dist {
-    //             closest = Some(self.stack.as_ref());
-    //             closest_dist = dist;
-    //         }
-    //     }
-    //     if address < self.heap.start {
-    //         let dist = self.heap.start - address;
-    //         if dist < closest_dist {
-    //             closest = Some(self.heap.as_ref());
-    //         }
-    //     }
-    //     closest
-    // }
-    //
     pub fn get_region(&self, typ: RegionType) -> &Region {
         match typ {
             RegionType::Program => self.program.as_ref(),
