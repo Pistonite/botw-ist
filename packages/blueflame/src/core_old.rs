@@ -418,6 +418,12 @@ impl Core<'_, '_> {
     }
 }
 
+// The library is divided into layers and modules,
+// lower layer should not include from higher layers.
+// There is not enforcement at the moment since it's not worth
+// the effort trying to set it up (because shared dependency
+// management will be a pain)
+
 /// Memory implementation
 pub mod memory;
 
@@ -437,12 +443,17 @@ pub mod structs;
 pub mod singleton;
 
 
-/// Handle core feature flags (core-* flags in the script)
-pub mod features;
 
 pub mod process;
 
+/////// --- LAYER --- ///////
+
 /// Utilities for handling program images
 pub mod program;
+
+/////// --- LAYER --- ///////
+
 /// Other utils and shared types
 pub mod util;
+/// Handle core feature flags (core-* flags in the script)
+pub mod features;

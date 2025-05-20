@@ -1,10 +1,13 @@
+use crate::program as __self;
+
 use std::io::{Read, Write};
 
 use deku::{DekuContainerRead, DekuContainerWrite};
 use flate2::write::GzEncoder;
 use flate2::Compression;
 
-use crate::program::Program;
+
+use __self::Program;
 
 /// Errors packing or unpacking programs
 #[derive(Debug, thiserror::Error)]

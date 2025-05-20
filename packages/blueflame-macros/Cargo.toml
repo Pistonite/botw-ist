@@ -1,13 +1,13 @@
 [package]
 name = "blueflame-macros"
 version = "0.0.0"
-edition = "2021"
+edition = "2024"
 
 [lib]
 proc-macro = true
 
 [dependencies]
-syn = "2.0.96"
-quote = "1.0.38"
+syn = "2.0.101"
+quote = "1.0.40"
 proc-macro-crate = "3.3.0"
 proc-macro2 = "1.0.95"
