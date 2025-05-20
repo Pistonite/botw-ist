@@ -19,6 +19,7 @@ pub struct SingletonInfo {
 }
 
 /// Get the singleton info for the given path
+#[macro_export]
 macro_rules! singleton_info {
     ($($path:ident)::* ( $env:expr )) => {
         $crate::singleton::SingletonInfo {
@@ -29,7 +30,6 @@ macro_rules! singleton_info {
         }
     };
 }
-pub(crate) use singleton_info;
 
 #[cfg(test)]
 mod tests {

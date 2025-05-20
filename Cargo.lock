@@ -224,6 +224,7 @@ dependencies = [
  "layered-crate",
  "log",
  "paste",
+ "phf",
  "rand_xoshiro",
  "serde",
  "serde_json",

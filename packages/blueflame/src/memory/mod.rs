@@ -20,7 +20,8 @@ mod proxy;
 pub use proxy::*;
 
 pub mod traits;
-pub mod util;
+// TODO --cleanup
+// pub mod util;
 pub mod wrapper;
 
 /// Implementation for proc macros (don't use directly)
@@ -41,6 +42,25 @@ macro_rules! align_up {
     }};
 }
 pub(crate) use align_up;
+
+macro_rules! assert_zst {
+    () => {
+    const __ASSERT_ZST: fn() = || {
+        let _ = std::mem::transmute::<Self, ()>;
+    };
+    };
+    ($t:ty) => {
+        static_assertions::assert_eq_size!($t, ());
+    }
+}
+pub(crate) use assert_zst;
+
+macro_rules! assert_size_less_than {
+    ($actual_size:expr, $max_space:literal) => {
+        static_assertions::const_assert!($max_space >= $actual_size);
+    }
+}
+pub(crate) use assert_size_less_than;
 
 #[cfg(test)]
 mod test {

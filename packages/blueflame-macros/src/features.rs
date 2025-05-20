@@ -17,28 +17,45 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
     let syn::Data::Enum(input) = input.data else {
         syn_error!(
             input,
-            "DefaultFeatures can only be derived for enums"
+            "can only be derived for enums"
         );
     };
 
     let mut default_features_impl = TokenStream2::new();
+    let mut feature_map_impl = TokenStream2::new();
+
     for v in input.variants.iter() {
         if v.attrs.iter().find(|a| a.path().is_ident("on")).is_none() {
             continue;
         }
         let ident = &v.ident;
+        let ident_kebab_str = ident.to_string().replace("_", "-");
         default_features_impl.extend(quote! {
             #name::#ident |
+        });
+        feature_map_impl.extend(quote! {
+            #ident_kebab_str => #name::#ident,
         });
     }
 
     let expanded = quote! {
+        #[automatically_derived]
         impl #name {
-            pub const fn default_const() -> #blueflame::features::FeatureSet {
-                use #blueflame::features::enumset::EnumSet;
-                #blueflame::features::enumset::enum_set!( #default_features_impl )
+            /// Get the default set of features for this enum, See the enum doc for more
+            pub const fn default_const() -> #blueflame::env::FeatureSet {
+                use #blueflame::__re::enumset::EnumSet;
+                #blueflame::__re::enumset::enum_set!( #default_features_impl )
+            }
+
+            /// Parse the kebab-case string feature name to the feature enum
+            pub fn parse(input: &str) -> ::std::option::Option<#blueflame::env::Feature> {
+                FEATURE_MAP.get(input).copied()
             }
         }
+
+        static FEATURE_MAP: #blueflame::__re::phf::Map<&'static str, #name> = #blueflame::__re::phf::phf_map! {
+            #feature_map_impl
+        };
     };
 
     Ok(expanded.into())
@@ -54,7 +71,7 @@ pub fn expand_enable_macro(input: TokenStream) -> TokenStream {
 
     let blueflame = util::crate_ident();
     let expanded = quote! {
-        #blueflame::features::is_enabled(#blueflame::features::Feature::#feature_ident)
+        #blueflame::env::is_feature_enabled(#blueflame::env::Feature::#feature_ident)
     };
 
     expanded.into()

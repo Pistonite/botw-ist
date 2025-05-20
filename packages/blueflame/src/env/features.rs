@@ -1,6 +1,6 @@
 use enumset::EnumSetType;
 
-use blueflame_macros::DefaultFeatures;
+use crate::macros::FeatureFlags;
 
 // re-export to use in proc-macros
 #[doc(hidden)]
@@ -8,10 +8,17 @@ pub use enumset;
 
 /// BlueFlame features that can be enabled or disabled at init time.
 /// They should not be changed after init
-#[derive(DefaultFeatures, Debug, Hash, EnumSetType)]
+///
+/// TODO manual
+#[derive(FeatureFlags, Debug, Hash, EnumSetType)]
 #[allow(non_camel_case_types)] // to be more readable
-#[rustfmt::skip] // so the #[enable] is before
 pub enum Feature {
+
+    // #[on] means this feature is on by default
+    // in scripts, replace `_` with `-` as the feature name 
+    // (i.e. mem-strict-region instead of mem_strict_region)
+
+
     /// If enabled and a region is provided when accessing memory,
     /// it will not allow accessing other regions, even if the address
     /// is in another valid region
@@ -34,7 +41,7 @@ static mut FEATURES: FeatureSet = Feature::default_const();
 /// features flag should be done before using anything in the crate.
 ///
 /// Before this is called, the "default" set of features is used.
-pub unsafe fn init(features: FeatureSet) {
+pub unsafe fn init_features(features: FeatureSet) {
     FEATURES = features;
 }
 
@@ -45,7 +52,7 @@ pub unsafe fn init(features: FeatureSet) {
 /// is the same as `enabled!("mem-strict-region")`. Kebab case is used
 /// to be consistent with the style used in scripts
 #[inline(always)]
-pub fn is_enabled(feature: Feature) -> bool {
+pub fn is_feature_enabled(feature: Feature) -> bool {
     unsafe { 
         // SAFETY: we are just reading a number
         // if people read the thing above, it will be safe

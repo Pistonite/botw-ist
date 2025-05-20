@@ -55,14 +55,14 @@ macro_rules! assert_zst {
     };
     };
     ($t:ty) => {
-        $crate::memory::macro_impl::sa::assert_eq_size!($t, ());
+        static_assertions::assert_eq_size!($t, ());
     }
 }
 pub(crate) use assert_zst;
 
 macro_rules! assert_size_less_than {
     ($actual_size:expr, $max_space:literal) => {
-        $crate::memory::macro_impl::sa::const_assert!($max_space >= $actual_size);
+        static_assertions::const_assert!($max_space >= $actual_size);
     }
 }
 pub(crate) use assert_size_less_than;
