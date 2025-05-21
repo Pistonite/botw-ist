@@ -3,18 +3,10 @@ name = "blueflame"
 version = "0.0.0"
 edition = "2021"
 
-# [workspace]
-# resolve = "2"
-# members = [
-#     "./env",
-#     "./macros",
-#     "."
-# ]
-
-# [workspace.dependencies]
-
 [dependencies.blueflame-macros]
 path = "../blueflame-macros"
+[dependencies.blueflame-proc-macros]
+path = "../blueflame-proc-macros"
 
 
 [dependencies]
@@ -41,13 +33,11 @@ flate2 = { version = "1.0.35", default-features = false, features = ["rust_backe
 
 # [workspace.dev-dependencies]
 
-# TODO --cleanup: move to dev-dependencies
-anyhow = "1.0.94"
-layered-crate = "0.1.0"
+layered-crate = "0.1.1"
 phf = { version = "0.11.3", features = ["macros"] }
 
-# bf-env.workspace = true
-# bf-macros.workspace = true
+# TODO --cleanup: move to dev-dependencies
+anyhow = "1.0.94"
 
 
 [lib]

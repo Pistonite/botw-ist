@@ -4,6 +4,7 @@ members = [
     "packages/runtime",
     "packages/manual",
     "packages/parser", 
-    # "packages/blueflame", 
-    # "packages/blueflame-macros", 
+    "packages/blueflame", 
+    "packages/blueflame-macros", 
+    "packages/blueflame-proc-macros", 
 ]

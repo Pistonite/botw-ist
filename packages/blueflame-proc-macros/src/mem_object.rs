@@ -33,7 +33,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
                 // use the size from the type
                 let size_tokens = quote_spanned! {
                     size_span => {
-                        <#field_type as #blueflame::memory::MemSized>::SIZE
+                        <#field_type as #blueflame::memory::MemObject>::SIZE
                     }
                 };
                 (size_tokens, size_span)
@@ -55,15 +55,6 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
             name: field_name,
             typ: field_type,
         });
-
-
-        // field_accessors.push(quote! {
-        //     reader.skip(#offset - cur_offset);
-        //     cur_offset = #offset;
-        //     let #field_name = <#field_type>::read_from_mem(reader)?;
-        //     cur_offset += <#field_type as #blueflame::memory::MemObject>::SIZE;
-        // });
-        // field_names.push(quote! { #field_name, });
     }
 
     fields_ordered_by_offset.sort_by_key(|f| f.offset);
@@ -92,7 +83,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
         let size_tokens = &field_data.size_tokens;
         size_asserts.extend(quote_spanned! {
             field_data.size_span => {
-                #blueflame::memory::macro_impl::assert_size_less_than!(#size_tokens, #max_size);
+                #blueflame::memory::assert_size_less_than!(#size_tokens, #max_size);
             }
         });
 
@@ -137,11 +128,11 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
         });
 
         layout_struct_impl.extend(quote!{
-            pub #field_name: #blueflame::memory::macro_impl::FieldMetadata<#field_type, #curr_offset, #size_tokens>,
+            pub #field_name: #blueflame::memory::traits::FieldMetadata<#field_type, #curr_offset, #size_tokens>,
         });
 
         layout_new_impl.extend(quote! {
-            #field_name: #blueflame::memory::macro_impl::FieldMetadata::new(),
+            #field_name: #blueflame::memory::traits::FieldMetadata::new(),
         });
     }
 
@@ -150,8 +141,9 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
 
             #[automatically_derived]
             impl #blueflame::memory::MemObject for #struct_name {
+                const SIZE: u32 = #size;
                 fn read_sized(reader: &mut #blueflame::memory::Reader, size: u32) -> ::std::result::Result<Self, #blueflame::memory::Error> {
-                    #blueflame::memory::macro_impl::assert_size_range::<Self>(
+                    #blueflame::memory::assert_size_range::<Self>(
                         #last_field_offset,
                         #size,
                         size,
@@ -163,7 +155,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
                     Ok(Self { #constructor_impl })
                 }
                 fn write_sized(&self, writer: &mut #blueflame::memory::Writer, size: u32) -> ::std::result::Result<(), #blueflame::memory::Error> {
-                    #blueflame::memory::macro_impl::assert_size_range::<Self>(
+                    #blueflame::memory::assert_size_range::<Self>(
                         #last_field_offset,
                         #size,
                         size,
@@ -177,12 +169,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
             }
 
             #[automatically_derived]
-            impl #blueflame::memory::MemSized for #struct_name {
-                const SIZE: u32 = #size;
-            }
-
-            #[automatically_derived]
-            impl #blueflame::memory::macro_impl::GetLayout for #struct_name {
+            impl #blueflame::memory::MemLayout for #struct_name {
                 type Layout = __Layout;
                 fn __layout() -> Self::Layout { __Layout::new() }
             }

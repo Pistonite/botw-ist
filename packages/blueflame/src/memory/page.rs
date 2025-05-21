@@ -2,7 +2,7 @@ use enumset::EnumSet;
 
 use super::access::AccessType;
 
-pub const PAGE_SIZE: u32 = 0x1000;
+const PAGE_SIZE: u32 = 0x1000;
 
 /// A page in memory
 #[derive(Debug, Clone)]

@@ -1,12 +1,17 @@
+use crate::memory::{self as self_, crate_};
+
 use std::sync::Arc;
 
-use blueflame_program::ProgramRegion;
 use enumset::{EnumSet, EnumSetType};
 
-use super::access::AccessType;
-use super::error::Error;
-use super::page::{Page, PAGE_SIZE};
-use super::{align_down, align_up};
+use crate_::program::ProgramRegion;
+
+use self_::{
+    AccessType,
+    Error,
+    Page, PAGE_SIZE,
+    align_down, align_up,
+};
 
 pub const REGION_ALIGN: u64 = 0x10000;
 
@@ -162,19 +167,6 @@ impl Region {
         Some((page.as_ref(), region_page_idx, page_off))
     }
 
-    // /// Split the address into region page index and offset
-    // ///
-    // /// Returns (0, 0) if the address is not in this region -
-    // /// only use if you have already checked that the address is in this region
-    // pub fn split_addr(&self, addr: u64) -> (usize, usize) {
-    //     if addr < self.start || addr >= self.start + self.len_bytes() {
-    //         return (0, 0);
-    //     }
-    //     let region_addr = addr - self.start;
-    //     let region_page_idx = region_addr / PAGE_SIZE as u64;
-    //     let page_off = (region_addr % PAGE_SIZE as u64) as usize;
-    //     (region_page_idx as usize, page_off)
-    // }
 }
 
 /// Type of the region used for tracking and debugging purposes
@@ -192,7 +184,10 @@ pub enum RegionType {
     /// but the simulator will only have one thread
     Stack,
     /// The heap segment
-    Heap, // do we need TLS (Thread Local)?
+    Heap, 
+
+    //
+    // do we need TLS (Thread Local)?
 }
 
 impl std::fmt::Display for RegionType {

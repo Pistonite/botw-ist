@@ -214,6 +214,7 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "blueflame-macros",
+ "blueflame-proc-macros",
  "crc32fast",
  "deku",
  "derive_more",
@@ -236,6 +237,10 @@ dependencies = [
 
 [[package]]
 name = "blueflame-macros"
+version = "0.0.0"
+
+[[package]]
+name = "blueflame-proc-macros"
 version = "0.0.0"
 dependencies = [
  "proc-macro-crate",
@@ -1379,9 +1384,9 @@ dependencies = [
 
 [[package]]
 name = "layered-crate"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ee334c4c423477d6ed159c8b471d554031a399f4c9ce4c21b2b5b54f6c14f9aa"
+checksum = "e0a3400367e7743aae382a0d1baca83d99e11ca061e285f75c87d4236d39d1ff"
 dependencies = [
  "proc-macro2",
  "quote",

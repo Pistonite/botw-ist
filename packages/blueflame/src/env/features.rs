@@ -1,6 +1,7 @@
 use enumset::EnumSetType;
 
-use crate::macros::FeatureFlags;
+use blueflame_proc_macros::FeatureFlags;
+pub use blueflame_proc_macros::enabled;
 
 // re-export to use in proc-macros
 #[doc(hidden)]
