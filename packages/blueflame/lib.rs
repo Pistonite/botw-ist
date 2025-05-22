@@ -2,9 +2,9 @@ extern crate self as blueflame;
 
 #[layered_crate::layers]
 mod src {
-    /// High-level facade for the processor to access different parts of the process (memory, etc)
-    #[depends_on(memory)]
-    pub extern crate process;
+    // /// High-level facade for the processor to access different parts of the process (memory, etc)
+    // #[depends_on(memory)]
+    // pub extern crate process;
 
 
 

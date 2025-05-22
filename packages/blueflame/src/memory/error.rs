@@ -12,8 +12,8 @@ pub enum Error {
     PageBoundary(MemAccess),
     #[error("attempt to access invalid memory region: 0x{0:08x}")]
     InvalidRegion(u64),
-    #[error("attempt to access address: 0x{0:08x}, which is not in {1:?}")]
-    DisallowedRegion(u64, EnumSet<RegionType>),
+    #[error("TODO --cleanup message")]
+    DisallowedRegion(MemAccess),
 
     #[error("size mismatch in {0}: expected: 0x{1:x}, got 0x{2:x}")]
     SizeAssert(String, u32, u32),

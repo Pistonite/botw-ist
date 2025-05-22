@@ -6,10 +6,9 @@ use std::fmt;
 use std::marker::PhantomData;
 
 // use crate::error::Error;
-use crate::memory::{MemObject, MemSized, Memory, Ptr, Reader, Writer};
+use crate::memory::{MemObject, Memory, Ptr, Reader, Writer};
 // use crate::Core;
 use derive_more::derive::Constructor;
-use blueflame_macros::MemObject;
 
 // #[allow(non_snake_case)]
 #[derive(MemObject, Default, Clone)]
@@ -143,7 +142,7 @@ pub enum PouchCategory {
 #[size(0x10)]
 pub struct GrabbedItemInfo {
     #[offset(0x0)]
-    item: Ptr<PouchItem>,
+    item: Ptr![PouchItem],
     #[offset(0x8)]
     _8: bool,
     #[offset(0x9)]
@@ -155,9 +154,9 @@ pub struct GrabbedItemInfo {
 #[size(0x10)]
 pub struct ListNode {
     #[offset(0x0)]
-    pub mPrev: Ptr<ListNode>,
+    pub mPrev: Ptr![ListNode],
     #[offset(0x8)]
-    pub mNext: Ptr<ListNode>,
+    pub mNext: Ptr![ListNode],
 }
 
 #[allow(non_snake_case)]
@@ -265,7 +264,7 @@ struct PtrArrayImpl {
     #[offset(0x4)]
     mPtrNumMax: i32,
     #[offset(0x8)]
-    mPtrs: Ptr<Ptr<FixedSafeString40>>,
+    mPtrs: Ptr![Ptr![FixedSafeString40]],
 }
 
 #[allow(non_snake_case)]
@@ -273,7 +272,7 @@ struct PtrArrayImpl {
 #[size(0x8)]
 struct FreeListNode {
     #[offset(0x0)]
-    nextFree: Ptr<FreeListNode>,
+    nextFree: Ptr![FreeListNode],
 }
 
 #[allow(non_snake_case)]
@@ -283,7 +282,7 @@ struct FreeList {
     #[offset(0x0)]
     mFree: FreeListNode,
     #[offset(0x8)]
-    mWork: Ptr<FixedSafeString40>,
+    mWork: Ptr![FixedSafeString40],
 }
 
 #[allow(non_snake_case)]
@@ -423,14 +422,14 @@ pub struct PauseMenuDataMgr {
     #[offset(0x68)]
     pub mItemLists: PauseMenuDataMgrLists,
     #[offset(0x441f8)]
-    mListHeads: [Ptr<Ptr<PouchItem>>; 7],
+    mListHeads: [Ptr![Ptr![PouchItem]]; 7],
     #[offset(0x44230)]
-    mTabs: [Ptr<PouchItem>; 50],
+    mTabs: [Ptr![PouchItem]; 50],
     // PouchItemType
     #[offset(0x443c0)]
     mTabsType: [i32; 50],
     #[offset(0x44488)]
-    pub mLastAddedItem: Ptr<PouchItem>,
+    pub mLastAddedItem: Ptr![PouchItem],
     #[offset(0x44490)]
     mLastAddedItemTab: i32,
     #[offset(0x44494)]
@@ -440,7 +439,7 @@ pub struct PauseMenuDataMgr {
     #[offset(0x444a0)]
     mGrabbedItems: [GrabbedItemInfo; 5],
     #[offset(0x444f0)]
-    mItem_444f0: Ptr<PouchItem>,
+    mItem_444f0: Ptr![PouchItem],
     #[offset(0x444f8)]
     _444f8: i32,
     #[offset(0x444fc)]
@@ -458,13 +457,13 @@ pub struct PauseMenuDataMgr {
     #[offset(0x44514)]
     _44514: u32,
     #[offset(0x44518)]
-    mRitoSoulItem: Ptr<PouchItem>,
+    mRitoSoulItem: Ptr![PouchItem],
     #[offset(0x44520)]
-    mGoronSoulItem: Ptr<PouchItem>,
+    mGoronSoulItem: Ptr![PouchItem],
     #[offset(0x44528)]
-    mZoraSoulItem: Ptr<PouchItem>,
+    mZoraSoulItem: Ptr![PouchItem],
     #[offset(0x44530)]
-    mGerudoSoulItem: Ptr<PouchItem>,
+    mGerudoSoulItem: Ptr![PouchItem],
     #[offset(0x44538)]
     mCanSeeHealthBar: bool,
     #[offset(0x44540)]
@@ -472,7 +471,7 @@ pub struct PauseMenuDataMgr {
     #[offset(0x447d8)]
     mIsPouchForQuest: bool,
     #[offset(0x447e0)]
-    mEquippedWeapons: [Ptr<PouchItem>; 4],
+    mEquippedWeapons: [Ptr![PouchItem]; 4],
     // PouchCategory
     #[offset(0x44800)]
     pub mCategoryToSort: i32,
@@ -506,13 +505,13 @@ pub struct PauseMenuDataMgr {
 #[size(0x98)]
 pub struct InfoData {
     #[offset(0x40)]
-    pub mHashesBytes: Ptr<u8>,
+    pub mHashesBytes: Ptr![u8],
     #[offset(0x48)]
-    pub mHashes: Ptr<u32>,
+    pub mHashes: Ptr![u32],
     #[offset(0x50)]
-    pub mActorsBytes: Ptr<u8>,
+    pub mActorsBytes: Ptr![u8],
     #[offset(0x58)]
-    pub mActorOffsets: Ptr<u32>,
+    pub mActorOffsets: Ptr![u32],
     #[offset(0x60)]
     pub mTagsIdx: i32,
     #[offset(0x78)]
@@ -522,7 +521,7 @@ pub struct InfoData {
 #[allow(unused)]
 pub struct OffsetListIter<T> {
     start_end_node: ListNode,
-    current_node: Ptr<ListNode>,
+    current_node: Ptr![ListNode],
     pub offset: i32,
     pub count: i32,
     index: i32,

@@ -1,12 +1,8 @@
 use crate::memory::{self as self_};
 
-use enumset::EnumSet;
+use self_::{Memory, MemLayout, Error, MemObject, Unsigned, Reader, Writer, assert_size_eq, access, AccessFlags};
 
-
-use self_::{Memory, MemLayout, Error, MemObject, Unsigned};
-
-use super::RegionType;
-
+#[doc(inline)]
 pub use blueflame_macros::Ptr;
 
 /// Wrapper around a raw physical address. i.e. a pointer
@@ -84,6 +80,18 @@ impl<T, const SIZE: u32> PtrToSized<T, SIZE> {
     pub const fn to_array<const LEN: usize>(self) -> PtrToArray<T, SIZE, LEN> {
         PtrToArray::new_const(self.value)
     }
+
+    /// Change the pointer type
+    #[inline(always)]
+    pub const fn reinterpret<T2: MemObject, const SIZE2: u32>(self) -> PtrToSized<T2, SIZE2> {
+        PtrToSized::new_const(self.value)
+    }
+
+    /// Change the pointer type
+    #[inline(always)]
+    pub const fn reinterpret_array<T2: MemObject, const SIZE2: u32, const LEN: usize>(self) -> PtrToArray<T2, SIZE2, LEN> {
+        PtrToArray::new_const(self.value)
+    }
 }
 
 impl<T, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SIZE, LEN> {
@@ -150,6 +158,18 @@ impl<T, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SIZE, LEN> {
     pub const fn len(self) -> usize {
         LEN
     }
+
+    /// Change the pointer type
+    #[inline(always)]
+    pub const fn reinterpret<T2: MemObject, const SIZE2: u32>(self) -> PtrToSized<T2, SIZE2> {
+        PtrToSized::new_const(self.value)
+    }
+
+    /// Change the pointer type
+    #[inline(always)]
+    pub const fn reinterpret_array<T2: MemObject, const SIZE2: u32, const LEN2: usize>(self) -> PtrToArray<T2, SIZE2, LEN2> {
+        PtrToArray::new_const(self.value)
+    }
 }
 
 #[rustfmt::skip]
@@ -165,9 +185,9 @@ const _: () = {
     // Conversion - 
     // note we don't allow directly converting size into array - just use to_array or decay
     impl<T, const SIZE: u32> From<u64> for PtrToSized<T, SIZE> { fn from(addr: u64) -> Self { Self::new(addr) } }
-    impl<T, const SIZE: u32> From<i64> for PtrToSized<T, SIZE> { fn from(addr: i64) -> Self { Self::new(addr) } }
+    impl<T, const SIZE: u32> From<i64> for PtrToSized<T, SIZE> { fn from(addr: i64) -> Self { Self::new(addr as u64) } }
     impl<T, const SIZE: u32, const LEN: usize> From<u64> for PtrToArray<T, SIZE, LEN> { fn from(addr: u64) -> Self { Self::new(addr) } }
-    impl<T, const SIZE: u32, const LEN: usize> From<i64> for PtrToArray<T, SIZE, LEN> { fn from(addr: i64) -> Self { Self::new(addr) } }
+    impl<T, const SIZE: u32, const LEN: usize> From<i64> for PtrToArray<T, SIZE, LEN> { fn from(addr: i64) -> Self { Self::new(addr as u64) } }
 
     // Comparison, we can compare any ptr to any other ptr
     impl<T, TRhs, const SIZE: u32, const SIZE_RHS: u32> PartialEq<PtrToSized<TRhs, SIZE_RHS>> for PtrToSized<T, SIZE> {
@@ -188,7 +208,7 @@ const _: () = {
     // Ord, Add, Sub probably not worth the effort
 };
 
-/// Get layout of the pointee type
+// Get layout of the pointee type
 #[doc(hidden)]
 impl<T: MemLayout, const SIZE: u32> PtrToSized<T, SIZE> {
     #[inline(always)]
@@ -197,7 +217,38 @@ impl<T: MemLayout, const SIZE: u32> PtrToSized<T, SIZE> {
     }
 }
 
-/// Load/store
+// pointer itself can be load/store from memory
+impl<T: MemObject, const S: u32> MemObject for PtrToSized<T, S> {
+    const SIZE: u32 = std::mem::size_of::<Self>() as u32;
+
+    fn read_sized(reader: &mut Reader, size: u32) -> Result<Self, Error> {
+        assert_size_eq::<Self>(size, Self::SIZE, "read_sized")?;
+        let addr = <u64 as MemObject>::read_sized(reader, size)?;
+        Ok(Self::new(addr))
+    }
+
+    fn write_sized(&self, writer: &mut Writer, size: u32) -> Result<(), Error> {
+        assert_size_eq::<Self>(size, Self::SIZE, "write_sized")?;
+        <u64 as MemObject>::write_sized(&self.value, writer, size)
+    }
+}
+
+impl<T: MemObject, const S: u32, const L: usize> MemObject for PtrToArray<T, S, L> {
+    const SIZE: u32 = std::mem::size_of::<Self>() as u32;
+
+    fn read_sized(reader: &mut Reader, size: u32) -> Result<Self, Error> {
+        assert_size_eq::<Self>(size, Self::SIZE, "read_sized")?;
+        let addr = <u64 as MemObject>::read_sized(reader, size)?;
+        Ok(Self::new(addr))
+    }
+
+    fn write_sized(&self, writer: &mut Writer, size: u32) -> Result<(), Error> {
+        assert_size_eq::<Self>(size, Self::SIZE, "write_sized")?;
+        <u64 as MemObject>::write_sized(&self.value, writer, size)
+    }
+}
+
+// load/store emulation
 impl<T: MemObject, const SIZE: u32> PtrToSized<T, SIZE> {
     /// Load the object from emulated memory onto owned type of `T`
     ///
@@ -207,23 +258,17 @@ impl<T: MemObject, const SIZE: u32> PtrToSized<T, SIZE> {
     /// T obj = *ptr;
     /// ```
     ///
-    /// Any region is allowed. Use [`load_in`](Self::load_in) to restrict the region
-    ///
-    /// This cannot be used to load instructions to execute. This will load
-    /// the raw instruction bytes, but may not be valid to execute (because of stubs and patches)
-    pub fn load(&self, memory: &Memory) -> Result<T, Error> {
-        self.load_in(memory, None)
+    /// Any region is allowed. Use [`load_with`](Self::load_with) to specify extra flags.
+    pub fn load(self, memory: &Memory) -> Result<T, Error> {
+        self.load_with(memory, access!(default))
     }
 
     /// Load the object from emulated memory onto owned type of `T` with region restriction
     ///
     /// See [`load`](Self::load) for more details
-    ///
-    /// This cannot be used to load instructions to execute. This will load
-    /// the raw instruction bytes, but may not be valid to execute (because of stubs and patches)
-    pub fn load_in(&self, memory: &Memory, region: Option<EnumSet<RegionType>>) -> Result<T, Error> {
-        let mut reader = memory.read(self.addr, region, false)?;
-        <T as MemObject>::read_sized(&mut reader, self.size)
+    pub fn load_with(self, memory: &Memory, flags: AccessFlags) -> Result<T, Error> {
+        let mut reader = memory.read(self.value, flags)?;
+        <T as MemObject>::read_sized(&mut reader, SIZE)
     }
 
     /// Store the object into emulated memory
@@ -235,16 +280,144 @@ impl<T: MemObject, const SIZE: u32> PtrToSized<T, SIZE> {
     /// *ptr = obj;
     /// ```
     ///
-    /// Any region is allowed. Use [`store_in`](Self::store_in) to restrict the region
-    pub fn store(&self, memory: &mut Memory, t: &T) -> Result<(), Error> {
-        self.store_in(memory, None, t)
+    /// Any region is allowed. Use [`store_with`](Self::store_with) to specify extra flags.
+    pub fn store(self, t: &T, memory: &mut Memory) -> Result<(), Error> {
+        self.store_with(t, memory, access!(default))
     }
 
     /// Store the object into emulated memory with region restriction
     ///
     /// See [`store`](Self::store) for more details
-    pub fn store_in(&self, memory: &mut Memory, region: Option<EnumSet<RegionType>>, t: &T) -> Result<(), Error> {
-        let mut writer = memory.write(self.addr, region)?;
-        MemObject::write_sized(t, &mut writer, self.size)
+    pub fn store_with(self, t: &T, memory: &mut Memory, flags: AccessFlags) -> Result<(), Error> {
+        let mut writer = memory.write(self.value, flags)?;
+        MemObject::write_sized(t, &mut writer, SIZE)
+    }
+}
+
+impl<T: MemObject, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SIZE, LEN> {
+    /// Load all values in the array from emulated memory onto a Vec
+    ///
+    /// Any region is allowed. Use [`load_vec_with`](Self::load_vec_with) to specify extra flags.
+    pub fn load_vec(self, memory: &Memory) -> Result<Vec<T>, Error> {
+        self.load_vec_with(memory, access!(default))
+    }
+
+    /// Load all values in the array from emulated memory onto a Vec, with extra flags
+    pub fn load_vec_with(self, memory: &Memory, flags: AccessFlags) -> Result<Vec<T>, Error> {
+        let mut out = Vec::with_capacity(LEN);
+        let mut reader = memory.read(self.value, flags)?;
+        for _ in 0..LEN {
+            out.push(T::read_sized(&mut reader, ELEM_SIZE)?);
+        }
+        Ok(out)
+    }
+
+    /// Load values from emulated memory into a slice.
+    ///
+    /// `min(LEN, out.len())` elements will be loaded into the slice,
+    /// the number of elements loaded is returned.
+    ///
+    /// Any region is allowed. Use [`load_slice_with`](Self::load_slice_with) to specify extra flags.
+    pub fn load_slice(self, out: &mut [T], memory: &Memory) -> Result<usize, Error> {
+        self.load_slice_with(out, memory, access!(default))
+    }
+
+    /// See [`load_slice`](Self::load_slice)
+    pub fn load_slice_with(self, out: &mut [T], memory: &Memory, flags: AccessFlags) -> Result<usize, Error> {
+        let mut reader = memory.read(self.value, flags)?;
+        let mut count = 0;
+        for x in out.iter_mut().take(LEN) {
+            *x = T::read_sized(&mut reader, ELEM_SIZE)?;
+            count += 1;
+        }
+        Ok(count)
+    }
+
+    /// Store values from a slice to emulated memory
+    ///
+    /// `min(LEN, t.len())` elements will be stored from the slice,
+    /// the number of elements stored is returned.
+    ///
+    /// Any region is allowed. Use [`store_with`](Self::store_with) to specify extra flags.
+    pub fn store(self, t: &[T], memory: &mut Memory) -> Result<usize, Error> {
+        self.store_with(t, memory, access!(default))
+    }
+
+    /// See [`store`](Self::store)
+    pub fn store_with(self, t: &[T], memory: &mut Memory, flags: AccessFlags) -> Result<usize, Error> {
+        let mut writer = memory.write(self.value, flags)?;
+        let mut count = 0;
+        for x in t.iter().take(LEN) {
+            MemObject::write_sized(x, &mut writer, ELEM_SIZE)?;
+            count += 1;
+        }
+        Ok(count)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use std::sync::Arc;
+
+    use self_::{Region, RegionType, SimpleHeap};
+
+    #[derive(MemObject)]
+    #[size(0x40)]
+    struct TestSub {
+        #[offset(0x10)]
+        one: u32,
+        #[offset(0x30)]
+        two: u64,
+    }
+
+    #[derive(MemObject)]
+    #[size(0x40)]
+    struct TestSubTwo {
+        #[offset(0x0)]
+        one: u64,
+        #[offset(0x15)]
+        two: u64,
+    }
+
+    #[derive(MemObject)]
+    #[size(0xC0)]
+    struct Test {
+        #[offset(0x40)]
+        t: TestSub,
+        #[offset(0x80)]
+        t2: TestSubTwo,
+    }
+
+    #[test]
+    pub fn test_pointers() -> anyhow::Result<()> {
+        let p = Arc::new(Region::new_rw(RegionType::Program, 0, 0));
+        let s = Arc::new(Region::new_rw(RegionType::Stack, 0x100, 0x1000));
+        let h = Arc::new(SimpleHeap::new(0x2000, 0, 0));
+        let mut mem = Memory::new(p, s, h, None, 0, None);
+        let ts = TestSub {
+            one: 0x15,
+            two: 0x20,
+        };
+        let ts2 = TestSubTwo { one: 0x4, two: 0x5 };
+        let value_to_store = Test { t: ts, t2: ts2 };
+        let p = Ptr!(<Test>(0x500));
+        p.store(&value_to_store, &mut mem)?;
+        let loaded_value = p.load(&mem)?;
+        assert_eq!(loaded_value.t.one, 0x15);
+        assert_eq!(loaded_value.t.two, 0x20);
+        assert_eq!(loaded_value.t2.one, 0x4);
+        assert_eq!(loaded_value.t2.two, 0x5);
+    
+        let array_to_store = [0x10u32; 20];
+        let array_p = Ptr!(<u32[20]>(0x750));
+        array_p.store(&array_to_store, &mut mem)?;
+    
+        let loaded_array = array_p.load_vec(&mem)?;
+        assert_eq!(loaded_array.len(), 20);
+        assert_eq!(loaded_array[10], 0x10u32);
+    
+        Ok(())
     }
 }

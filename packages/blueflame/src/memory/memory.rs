@@ -1,9 +1,15 @@
+use crate::memory::{self as self_, crate_};
+
 use std::ops::DerefMut;
 use std::sync::Arc;
 
-use blueflame_macros::enabled;
+// use blueflame_macros::enabled;
 use derive_more::derive::Constructor;
 use enumset::EnumSet;
+
+use crate_::env::enabled;
+
+use self_::{glue, AccessFlags, AccessFlag, MemAccess};
 
 use super::error::Error;
 use super::heap::SimpleHeap;
@@ -37,23 +43,28 @@ impl Memory {
 
     /// Create a reader to start reading at address
     ///
-    /// Only allow reading from certain regions if `region` is specified
+    /// # Flags
+    /// If any region bit is specified, then only those regions are allowed to
+    /// be accessed. If the execute permission bit is set, the region being accessed
+    /// also needs to have execute permission. Region permissions are still checked,
+    /// of course.
     pub fn read(
         &self,
         address: u64,
-        region: Option<EnumSet<RegionType>>,
-        execute: bool,
+        flags: AccessFlags,
     ) -> Result<Reader, Error> {
-        let regions = if enabled!("mem-strict-region") {
-            region.unwrap_or(EnumSet::all())
-        } else {
-            EnumSet::all()
-        };
+        let flags = convert_region_flags(flags);
+
         if let Some((region, page, page_idx, off)) = self.get_region_by_addr(address) {
-            if !regions.contains(region.typ) {
-                return Err(Error::DisallowedRegion(address, regions));
+            if !glue::access_flags_contains_region_type(flags, region.typ) {
+                return Err(Error::DisallowedRegion(MemAccess {
+                    flags,
+                    addr: address,
+                    bytes: 0,
+                }));
             }
-            return Ok(Reader::new(self, region, page, page_idx, off, execute));
+            // TODO --cleanup: remove execute from param
+            return Ok(Reader::new(self, region, page, page_idx, off, flags.has_all(AccessFlag::Execute)));
         }
         // region read_by_addr will fail if the address is not allocated,
         // in those cases, we want to return Unallocated error
@@ -71,20 +82,23 @@ impl Memory {
 
     /// Create a writer to start writing at address
     ///
-    /// Only allow writing to certain regions if `region` is specified
+    /// # Flags
+    /// If any region bit is specified, then only those regions are allowed to
+    /// be accessed. Otherwise all regions are allowed (permissions are still checked, of course)
     pub fn write(
         &mut self,
         address: u64,
-        region: Option<EnumSet<RegionType>>,
+        flags: AccessFlags,
     ) -> Result<Writer, Error> {
-        let regions = if enabled!("mem-strict-region") {
-            region.unwrap_or(EnumSet::all())
-        } else {
-            EnumSet::all()
-        };
+        let flags = convert_region_flags(flags);
+
         if let Some((region, _, page_idx, off)) = self.get_region_by_addr(address) {
-            if !regions.contains(region.typ) {
-                return Err(Error::DisallowedRegion(address, regions));
+            if !glue::access_flags_contains_region_type(flags, region.typ) {
+                return Err(Error::DisallowedRegion(MemAccess {
+                    flags,
+                    addr: address,
+                    bytes: 0,
+                }));
             }
             return Ok(Writer::new(self, region.typ, page_idx, off));
         }
@@ -154,17 +168,16 @@ impl Memory {
         self.trigger_param_addr.unwrap_or(0)
     }
 }
-//
-// #[derive(Debug, Clone)]
-// pub struct MemoryFlags {
-//     /// If enabled, region must be specified when accessing memory.
-//     /// If the address is not in the specified regions, an error will be thrown
-//     pub enable_strict_region: bool,
-//
-//     /// If permission checks are enabled
-//     pub enable_permission_check: bool,
-//
-//     /// If an address is in the heap region, check
-//     /// if it is in the allocated part of the region
-//     pub enable_allocated_check: bool,
-// }
+
+fn convert_region_flags(flags: AccessFlags) -> AccessFlags {
+        let region_flags = if enabled!("mem-strict-region") {
+            if flags.has_any(AccessFlags::region_all()) {
+                flags
+            } else {
+                AccessFlags::region_all()
+            }
+        } else {
+            AccessFlags::region_all() // TODO --cleanup: macro
+        };
+        flags | region_flags
+}

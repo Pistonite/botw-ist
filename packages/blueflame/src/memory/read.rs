@@ -1,10 +1,14 @@
-use blueflame_macros::enabled;
+use crate::memory::{self as self_, crate_};
 
 use super::access::{AccessType, MemAccess};
 use super::error::Error;
-use super::page::{Page, PAGE_SIZE};
+use super::page::Page;
 use super::region::{Region, RegionType};
 use super::Memory;
+
+use crate_::env::enabled;
+
+use self_::{PAGE_SIZE, glue};
 
 /// Stream reader from memory
 pub struct Reader<'m> {
@@ -187,14 +191,14 @@ impl<'m> Reader<'m> {
                     .has_permission(AccessType::Read | AccessType::Execute)
                 {
                     return Err(Error::PermissionDenied(MemAccess {
-                        typ: AccessType::Execute,
+                        flags: glue::access_type_to_flags(AccessType::Execute),
                         addr: self.current_addr(),
                         bytes: len,
                     }));
                 }
             } else if !self.page.has_permission(AccessType::Read) {
                 return Err(Error::PermissionDenied(MemAccess {
-                    typ: AccessType::Read,
+                    flags: glue::access_type_to_flags(AccessType::Read),
                     addr: self.current_addr(),
                     bytes: len,
                 }));
@@ -203,7 +207,7 @@ impl<'m> Reader<'m> {
 
         if self.page_off + len > PAGE_SIZE {
             return Err(Error::PageBoundary(MemAccess {
-                typ: AccessType::Read,
+                flags: glue::access_type_to_flags(AccessType::Read),
                 addr: self.current_addr(),
                 bytes: len,
             }));

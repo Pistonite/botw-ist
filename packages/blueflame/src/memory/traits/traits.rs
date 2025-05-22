@@ -1,6 +1,6 @@
 use crate::memory::{self as self_};
 
-use self_::{Reader, Writer, Ptr, Error, assert_zst};
+use self_::{Reader, Writer, PtrToSized, Error, assert_zst};
 
 /// An object with a fixed size in emulated memory.
 ///
@@ -72,8 +72,8 @@ impl<T, const OFFSET: u32, const SIZE: u32> FieldMetadata<T, OFFSET, SIZE> {
         SIZE
     }
     #[inline(always)]
-    pub const fn add(&self, base: u64) -> Ptr<T> {
-        Ptr::with_size_const(base + OFFSET as u64, SIZE)
+    pub const fn add(&self, base: u64) -> PtrToSized<T, SIZE> {
+        PtrToSized::new_const(base + OFFSET as u64)
     }
 }
 

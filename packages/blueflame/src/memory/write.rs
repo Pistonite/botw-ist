@@ -1,6 +1,8 @@
-use blueflame_macros::enabled;
+use crate::memory::{self as self_, crate_};
 
-use crate::memory::{AccessType, MemAccess, Error, Page, PAGE_SIZE, Region, RegionType, Memory};
+use crate_::env::enabled;
+
+use self_::{AccessType, MemAccess, Error, Page, PAGE_SIZE, Region, RegionType, Memory, glue};
 
 /// Stream writer to memory
 pub struct Writer<'m> {
@@ -169,7 +171,7 @@ impl<'m> Writer<'m> {
 
         if !page.has_permission(AccessType::Write) && enabled!("mem-permission"){
             return Err(Error::PermissionDenied(MemAccess {
-                typ: AccessType::Write,
+                flags: glue::access_type_to_flags(AccessType::Write),
                 addr: self.current_addr(),
                 bytes: len,
             }));
@@ -177,7 +179,7 @@ impl<'m> Writer<'m> {
 
         if page_off + len > PAGE_SIZE {
             return Err(Error::PageBoundary(MemAccess {
-                typ: AccessType::Write,
+                flags: glue::access_type_to_flags(AccessType::Write),
                 addr: self.current_addr(),
                 bytes: len,
             }));

@@ -1,5 +1,5 @@
 use crate::memory::Memory;
-use crate::error::Error;
+use crate::memory::Error;
 
 // We can't implement Into<T> for types we didn't create (ex. can't impl Into<bool> for i64)
 // So we use this instead, essentially copying Into<T> for our own usage

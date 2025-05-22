@@ -1,3 +1,5 @@
+use crate::memory::{self as self_, crate_};
+
 use std::sync::Arc;
 
 use rand_xoshiro::rand_core::{RngCore, SeedableRng};
@@ -12,6 +14,8 @@ use super::memory::Memory;
 use super::region::RegionType;
 
 use paste::paste;
+
+use self_::glue;
 
 /// The maximum number of proxy objects per type
 pub const MAX_OBJECTS: u32 = 1024000;
@@ -213,7 +217,7 @@ impl<T: ProxyObject> ProxyList<T> {
             return Err(Error::InvalidProxyObjectSize(size));
         }
         let mut hash = Sha256::new();
-        let mut w = mem.write(pointer, Some(RegionType::Heap.into()))?;
+        let mut w = mem.write(pointer, glue::region_type_to_flags(RegionType::Heap))?;
         w.write_u32(handle)?;
         hash.update(handle.to_le_bytes());
 
@@ -286,7 +290,8 @@ impl<T: ProxyObject> ProxyList<T> {
     fn get_checked_handle(&self, mem: &Memory, pointer: u64) -> Result<u32, Error> {
         let mut hash = Sha256::new();
         // read the handle
-        let mut r = mem.read(pointer, Some(RegionType::Heap.into()), false)?;
+        // TODO --cleanup: macro
+        let mut r = mem.read(pointer, glue::region_type_to_flags(RegionType::Heap))?;
         let handle: u32 = r.read_u32()?;
         hash.update(handle.to_le_bytes());
         let entry = match self.objects.get(handle as usize) {
