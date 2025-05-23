@@ -1,6 +1,5 @@
 
-mod _impl;
-pub use _impl::*;
+pub use blueflame_macros::singleton_info;
 
 pub struct SingletonInfo {
     /// Name of the singleton for debugging purposes
@@ -18,24 +17,11 @@ pub struct SingletonInfo {
     pub main_offset: u32,
 }
 
-/// Get the singleton info for the given path
-#[macro_export]
-macro_rules! singleton_info {
-    ($($path:ident)::* ( $env:expr )) => {
-        $crate::singleton::SingletonInfo {
-            name: $($path)::*::NAME,
-            rel_start: $($path)::*::rel_start($env),
-            size: $($path)::*::size($env),
-            main_offset: $($path)::*::main_offset($env),
-        }
-    };
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::singleton::{self as self_, crate_};
+    use crate::game::{self as self_, crate_};
 
-    use self_::SingletonInfo;
+    use self_::{SingletonInfo, singleton_info, singleton};
     use crate_::env::{DlcVer, Environment, GameVer};
 
     #[test]
@@ -57,10 +43,10 @@ mod tests {
 
     fn get_singletons(env: Environment) -> Vec<SingletonInfo> {
         vec![
-            singleton_info!(self_::pmdm(env)),
-            singleton_info!(self_::gdtm(env)),
-            singleton_info!(self_::info_data(env)),
-            singleton_info!(self_::aocm(env)),
+            singleton_info!(singleton::pmdm(env)),
+            singleton_info!(singleton::gdtm(env)),
+            singleton_info!(singleton::info_data(env)),
+            singleton_info!(singleton::aocm(env)),
         ]
     }
 

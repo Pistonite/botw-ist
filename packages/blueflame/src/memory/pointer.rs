@@ -395,7 +395,7 @@ mod tests {
         let p = Arc::new(Region::new_rw(RegionType::Program, 0, 0));
         let s = Arc::new(Region::new_rw(RegionType::Stack, 0x100, 0x1000));
         let h = Arc::new(SimpleHeap::new(0x2000, 0, 0));
-        let mut mem = Memory::new(p, s, h, None, 0, None);
+        let mut mem = Memory::new(p, s, h, None, None);
         let ts = TestSub {
             one: 0x15,
             two: 0x20,

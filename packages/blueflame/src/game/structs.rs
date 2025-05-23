@@ -1,12 +1,14 @@
 #![allow(unused_variables)]
 #![allow(non_snake_case)]
 
+use crate::game::{self as self_, crate_};
+
 // use std::collections::HashMap;
 use std::fmt;
 use std::marker::PhantomData;
 
 // use crate::error::Error;
-use crate::memory::{MemObject, Memory, Ptr, Reader, Writer};
+use crate_::memory::{MemObject, Memory, Ptr, Reader, Writer};
 // use crate::Core;
 use derive_more::derive::Constructor;
 

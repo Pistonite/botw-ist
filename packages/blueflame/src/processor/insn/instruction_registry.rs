@@ -1,14 +1,13 @@
+use crate::processor::{self as self_};
+
 use anyhow::Result;
 use disarm64::decoder::{self};
 use std::panic::UnwindSafe;
 use std::str::FromStr;
 use thiserror::Error;
 
-use crate::Core;
-
-use crate::processor::Error;
-
-use super::RegIndex;
+use self_::{Error, RegIndex};
+use self_::insn::Core;
 
 #[derive(Clone)]
 pub struct AuxiliaryOperation {
@@ -3548,23 +3547,23 @@ impl ExecutableInstruction for LegacyInstruction {
     }
 }
 
-impl Core<'_, '_, '_> {
-    pub fn split_insn(command: &str) -> (&str, &str) {
-        if let Some(split) = command.split_once(char::is_whitespace) {
-            split
-        } else {
-            (command, "")
-        }
+pub fn core_get_inst_type(inst: &str) -> &str {
+    let data = core_split_insn(inst);
+    if let Some(split) = data.0.split_once('.') {
+        split.0
+    } else {
+        data.0
     }
+}
+pub fn core_split_insn(command: &str) -> (&str, &str) {
+    if let Some(split) = command.split_once(char::is_whitespace) {
+        split
+    } else {
+        (command, "")
+    }
+}
+impl Core<'_, '_> {
 
-    pub fn get_inst_type(inst: &str) -> &str {
-        let data = Self::split_insn(inst);
-        if let Some(split) = data.0.split_once('.') {
-            split.0
-        } else {
-            data.0
-        }
-    }
 
     pub fn handle_string_command_no_inc(&mut self, command: &str) -> Result<(), anyhow::Error> {
         let inst = LegacyInstruction::from_str(command)?;

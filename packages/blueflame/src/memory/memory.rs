@@ -29,16 +29,20 @@ pub struct Memory {
     pub heap: Arc<SimpleHeap>,
     /// pmdm address
     pmdm_addr: Option<u64>,
-    /// offset of the main module compared to program region start
-    main_offset: u32,
+    // /// offset of the main module compared to program region start
+    // main_offset: u32,
     /// trigger param addr
     trigger_param_addr: Option<u64>,
 }
 
 impl Memory {
-    /// Get the physical starting address of the main module
-    pub fn main_start(&self) -> u64 {
-        self.program.start + self.main_offset as u64
+    /// Get the physical starting address of the program region
+    pub fn program_start(&self) -> u64 {
+        self.program.start
+    }
+
+    pub fn stack_end(&self) -> u64 {
+        self.stack.start + self.stack.len_bytes() as u64
     }
 
     /// Create a reader to start reading at address

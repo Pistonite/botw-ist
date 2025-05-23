@@ -27,7 +27,22 @@ pub enum Feature {
     /// If read, write and execute permission checks are enabled
     #[on] mem_permission,
     /// If enabled, accessing unallocated location on the heap will not be allowed
-    #[on] mem_heap_check_allocated
+    #[on] mem_heap_check_allocated,
+
+    /// If enabled, jumping to the middle of a replace-hooked code will not be allowed
+    #[on] proc_strict_replace_hook,
+
+    /// Limit the total number of blocks that can be executed
+    /// by one frame of the Core. This helps prevent infinite
+    /// calls
+    #[on] limited_block_count,
+
+    /// Limit the total number of instructions that can be executed
+    /// by one block. This helps prevent infinite loops
+    #[on] limited_block_iteration,
+
+    /// Make sure the stack frames push and pop match
+    #[on] check_stack_frames,
 }
 
 pub type FeatureSet = enumset::EnumSet<Feature>;

@@ -1,6 +1,6 @@
-use crate::singleton::crate_;
+use crate::game::crate_;
 
-use crate_::processor::vm::VirtualMachine;
+use crate_::vm::VirtualMachine;
 use crate_::env::Environment;
 
 pub static NAME: &str = "uking::ui::PauseMenuDataMgr";

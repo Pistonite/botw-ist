@@ -18,41 +18,6 @@ use std::sync::Mutex;
 
 pub type RegIndex = u32;
 
-#[derive(Debug, Clone, thiserror::Error)]
-pub enum Error {
-    #[error("Unhandled extra-op: {0}")]
-    UnhandledExtraOp(String),
-    #[error("Unrecognized conditional code: {0}")]
-    UnhandledConditionCode(String),
-    #[error("Instruction could not be read at address {0:#0x}")]
-    InstructionCouldNotBeRead(u64),
-    #[error("Cannot read {0} value from register {1:?}")]
-    InvalidRegisterRead(&'static str, RegisterType),
-    #[error("Cannot write {0} value to register {1:?}")]
-    InvalidRegisterWrite(&'static str, RegisterType),
-
-    #[error("Memory error: {0}")]
-    Mem(crate::memory::Error),
-    #[error("Instruction emitted an error: {0}")]
-    InstructionError(String),
-    #[error("Unexpected: {0}")]
-    Unexpected(String),
-}
-
-impl From<crate::memory::Error> for Error {
-    fn from(err: crate::memory::Error) -> Self {
-        Error::Mem(err)
-    }
-}
-
-#[derive(Debug)]
-pub struct Flags {
-    // Condition flags
-    pub n: bool, // Negative
-    pub z: bool, // Zero
-    pub c: bool, // Carry
-    pub v: bool, // Overflow
-}
 type StubCondFunction = dyn Fn(&Processor) -> Result<bool> + Send +UnwindSafe+ 'static;
 type StubFunction = dyn Fn(&mut Core) -> Result<()> + Send + UnwindSafe + 'static;
 pub struct Stub {
@@ -98,48 +63,6 @@ impl Stub {
 
 type InstructionBlock = Vec<Option<Box<dyn ExecutableInstruction>>>;
 
-// https://developer.arm.com/documentation/dui0801/l/Overview-of-AArch64-state/Registers-in-AArch64-state
-// #[allow(dead_code)]
-pub struct Processor {
-    // 31 general-purpose registers (called X0-X30 in code)
-    // X30 is used as the link register (LR)
-    pub x: [i64; 31],
-    // 32 floating-point registers (called S0-S31 in code) - 128 bits each
-    pub s: [f64; 32],
-    // 4 stack pointer registers
-    // https://developer.arm.com/documentation/dui0801/l/Overview-of-AArch64-state/Stack-Pointer-register?lang=en
-    // sp_el0 is the classic "SP" register
-    // The other 3 are stack pointers for each of the 3 exception levels
-    // This is why the exception link/program status registers go from 1-3 rather than 0-2
-    pub sp_el0: u64,
-    _sp_el1: u64,
-    _sp_el2: u64,
-    _sp_el3: u64,
-    // 3 exception link registers
-    _elr_el1: i64,
-    _elr_el2: i64,
-    _elr_el3: i64,
-    // 3 saved program status registers (these are 32 bits)
-    _spsr_el1: i32,
-    _spsr_el2: i32,
-    _spsr_el3: i32,
-    // Floating point status control register
-    _fpscr: i32,
-    // PC is not directly accessible to all instructions
-    pub pc: u64,
-
-    pub flags: Flags,
-
-    // pub memory: Memory,
-    pub stub_functions: HashMap<u64, Arc<Mutex<Stub>>>,
-
-    // stores addresses of all functions visited
-    // when function branched to, address is added (first entry is where the call was made from, second is where the branch was to)
-    // when function returns, address at the back is removed
-    pub stack_trace: Vec<(u64, u64)>,
-
-    pub inst_cache: HashMap<u64, InstructionBlock>,
-}
 
 #[derive(PartialEq, Debug)]
 pub enum RegisterValue {
@@ -153,12 +76,6 @@ pub enum RegisterValue {
     LR,
 }
 
-impl Default for Processor {
-    fn default() -> Self {
-        //Needs to not use init_memory, would cause infinite recursion
-        Self::new()
-    }
-}
 
 impl Processor {
     pub fn new() -> Self {
@@ -186,125 +103,6 @@ impl Processor {
         p
     }
 
-    fn init(&mut self) {
-        Proxies::init_trigger_param_stubs(self);
-
-        // memset_0 bl to memset
-        self.register_stub_function(0x180026c, Stub::simple(Box::new(Self::memset)));
-        // Some locking function
-        self.register_stub_function(0x18001e0, Stub::ret());
-        // Buffered safe string format - only used in debug format rn, could use sprintf crate to
-        // reimplement
-        self.register_stub_function(0xB0CE94, Stub::ret());
-        // std::strcmp
-        self.register_stub_function(0x1800760, Stub::simple(Box::new(Self::strcmp)));
-        // InfoData::logFailure
-        self.register_stub_function(0xD2E950, Stub::ret());
-        // memcpy
-        self.register_stub_function(0x494DB1C, Stub::simple(Box::new(Self::memcpy)));
-        // memcpy_0
-        self.register_stub_function(0x18001D0, Stub::simple(Box::new(Self::memcpy)));
-        // Mutex fn
-        self.register_stub_function(0x1800A1C, Stub::ret());
-        // Mutex fn
-        self.register_stub_function(0x1800A20, Stub::ret());
-        // System Tick
-        self.register_stub_function(0x1800270, Stub::ret());
-        // Dummy Vec2f flag intializer
-        self.register_stub_function(0xDF0D08, Stub::ret());
-
-        // initForOpenWorldDemo
-        self.register_stub_function(0x11F3364, Stub::simple(Box::new(Self::get_debug_heap)));
-        self.register_stub_function(0x85456C, Stub::simple(Box::new(Self::get_actor)));
-
-        // skip CreatePlayerActorEquipManager check in createPlayerEquipment
-        self.register_stub_function(0x971540, Stub::skip());
-        self.register_stub_function(0xAA81EC, Stub::skip());
-        // skip check for actor
-        self.register_stub_function(0x97166C, Stub::skip());
-
-        // stub out doRequestCreateArmor
-        self.register_stub_function(0x666CF8, Stub::ret());
-
-        // stub out doRequestCreateWeapon
-        self.register_stub_function(
-            0x6669F8,
-            Stub::simple(Box::new(Self::do_request_create_weapon)),
-        );
-
-        // skip Player::equipmentStuff
-        self.register_stub_function(0x849580, Stub::ret());
-    }
-
-    fn do_request_create_weapon(core: &mut Core<'_, '_, '_>) -> Result<()> {
-        let slot_idx = core.mem.mem_read_i32(core.cpu.read_arg(21) as u64 + 0x18)?;
-        let value = core.cpu.read_arg(3) as i32;
-        core.cpu.write_arg(0, core.mem.get_pmdm_addr());
-        core.cpu.write_arg(1, value as u64);
-        core.cpu.write_arg(2, slot_idx as u64);
-        // TODO: hardcoded program start
-        core.cpu
-            .set_pc((0x1234500000u64 + 0x971438 - 4 + core.mem.get_main_offset() as u64).into());
-        Ok(())
-    }
-
-    fn get_actor(core: &mut Core<'_, '_, '_>) -> Result<()> {
-        core.cpu.write_arg(0, 0);
-        core.ret();
-        Ok(())
-    }
-
-    fn get_debug_heap(core: &mut Core<'_, '_, '_>) -> Result<()> {
-        core.cpu.write_arg(0, 1);
-        core.ret();
-        Ok(())
-    }
-
-    /// Simulates memset
-    fn memset(core: &mut Core<'_, '_, '_>) -> Result<()> {
-        let s = core.cpu.read_arg(0) as u64;
-        let c = core.cpu.read_arg(1) as u8;
-        let n = core.cpu.read_arg(2) as u64;
-        let mut writer = core.mem.write(s, None)?;
-        for _ in 0..n {
-            writer.write_u8(c)?;
-        }
-        core.ret();
-        Ok(())
-    }
-
-    fn strcmp(core: &mut Core<'_, '_, '_>) -> Result<()> {
-        let mut string_a_ptr = core.cpu.read_arg(0) as u64;
-        let mut string_b_ptr = core.cpu.read_arg(1) as u64;
-        let mut ret_val: i8;
-        loop {
-            let string_a_val = core.mem.mem_read_byte(string_a_ptr)?;
-            let string_b_val = core.mem.mem_read_byte(string_b_ptr)?;
-            ret_val = string_a_val as i8 - string_b_val as i8;
-            if string_a_val != string_b_val || string_a_val == 0 {
-                break;
-            }
-            string_a_ptr += 1;
-            string_b_ptr += 1;
-        }
-        core.cpu
-            .write_gen_reg(&RegisterType::XReg(0), ret_val as i64)?;
-        core.ret();
-        Ok(())
-    }
-
-    fn memcpy(core: &mut Core<'_, '_, '_>) -> Result<()> {
-        let dest = core.cpu.read_arg(0) as u64;
-        let src = core.cpu.read_arg(1) as u64;
-        let num_bytes = core.cpu.read_arg(2) as usize;
-
-        core.mem.memcpy(dest, src, num_bytes)?;
-
-        core.cpu
-            .write_gen_reg(&RegisterType::XReg(0), dest as i64)?;
-        core.ret();
-        Ok(())
-    }
 
     pub fn read_arg(&self, i: RegIndex) -> i64 {
         let v = self.read_reg(&RegisterType::XReg(i));
@@ -596,50 +394,4 @@ impl Processor {
     //     }
     //     Ok(())
     // }
-}
-
-impl Processor {
-    /// Attach the processor to a memory instance
-    pub fn attach<'p, 'm, 'x>(
-        &'p mut self,
-        mem: &'m mut Memory,
-        proxies: &'x mut Proxies,
-    ) -> Core<'p, 'm, 'x> {
-        self.write_gen_reg(
-            &RegisterType::SP,
-            mem.get_region(crate::memory::RegionType::Stack).get_end() as i64,
-        )
-        .unwrap(); // We know this will not result in an error
-        Core {
-            cpu: self,
-            mem,
-            proxies,
-        }
-    }
-}
-
-impl Default for Flags {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl Flags {
-    pub fn new() -> Self {
-        Flags {
-            n: false,
-            z: false,
-            c: false,
-            v: false,
-        }
-    }
-
-    pub fn from_nzcv(nzcv: u8) -> Self {
-        Flags {
-            n: (nzcv & 0b1000) != 0,
-            z: (nzcv & 0b0100) != 0,
-            c: (nzcv & 0b0010) != 0,
-            v: (nzcv & 0b0001) != 0,
-        }
-    }
 }

@@ -1,35 +1,129 @@
+use crate::game::crate_;
 
-extern crate self as blueflame;
-use blueflame_utils::ProxyType;
+use crate_::processor::Cpu2;
 
-use error::{Error, ExecutionError};
-use memory::{Ptr, Memory, Proxies};
-// use processor::instruction_registry::ExecutableInstruction;
-// use processor::Processor;
-// use proxy::trigger_param::GdtTriggerParam;
-use structs::{CookEffectId, CookItem, FixedSafeString40, PouchItemType, SafeString};
 
-pub struct Core< 'm, 'x> {
-    // pub cpu: &'p mut Processor,
-    pub mem: &'m mut Memory,
-    pub proxies: &'x mut Proxies,
-}
-
-// const MAX_INSTRUCTIONS: u64 = 0x1000000000;
-// const MAX_INSTRUCTIONS: u64 = 0x100000;
-// const MAX_CALL_LEVEL: u64 = 64;
-const ENTER_ADDR: u64 = 100;
-
-/// Internal bindings to invoke functions
-impl Core<'_, '_> {
-    // TODO: hardcoded program start
+impl Cpu2<'_, '_> {
     const FIXED_SAFE_STRING40_VTABLE_ADDR: u64 = 0x1234500000 + 0x2356A90;
-    // these functions are called internally by the call
-    // to execute commands
+    // fn init(&mut self) {
+    //     Proxies::init_trigger_param_stubs(self);
     //
-    // these need to put the argument on the stack, set SP and PC
-    // correctly, and then run the function using the Processor
-
+    //     // memset_0 bl to memset
+    //     self.register_stub_function(0x180026c, Stub::simple(Box::new(Self::memset)));
+    //     // Some locking function
+    //     self.register_stub_function(0x18001e0, Stub::ret());
+    //     // Buffered safe string format - only used in debug format rn, could use sprintf crate to
+    //     // reimplement
+    //     self.register_stub_function(0xB0CE94, Stub::ret());
+    //     // std::strcmp
+    //     self.register_stub_function(0x1800760, Stub::simple(Box::new(Self::strcmp)));
+    //     // InfoData::logFailure
+    //     self.register_stub_function(0xD2E950, Stub::ret());
+    //     // memcpy
+    //     self.register_stub_function(0x494DB1C, Stub::simple(Box::new(Self::memcpy)));
+    //     // memcpy_0
+    //     self.register_stub_function(0x18001D0, Stub::simple(Box::new(Self::memcpy)));
+    //     // Mutex fn
+    //     self.register_stub_function(0x1800A1C, Stub::ret());
+    //     // Mutex fn
+    //     self.register_stub_function(0x1800A20, Stub::ret());
+    //     // System Tick
+    //     self.register_stub_function(0x1800270, Stub::ret());
+    //     // Dummy Vec2f flag intializer
+    //     self.register_stub_function(0xDF0D08, Stub::ret());
+    //
+    //     // initForOpenWorldDemo
+    //     self.register_stub_function(0x11F3364, Stub::simple(Box::new(Self::get_debug_heap)));
+    //     self.register_stub_function(0x85456C, Stub::simple(Box::new(Self::get_actor)));
+    //
+    //     // skip CreatePlayerActorEquipManager check in createPlayerEquipment
+    //     self.register_stub_function(0x971540, Stub::skip());
+    //     self.register_stub_function(0xAA81EC, Stub::skip());
+    //     // skip check for actor
+    //     self.register_stub_function(0x97166C, Stub::skip());
+    //
+    //     // stub out doRequestCreateArmor
+    //     self.register_stub_function(0x666CF8, Stub::ret());
+    //
+    //     // stub out doRequestCreateWeapon
+    //     self.register_stub_function(
+    //         0x6669F8,
+    //         Stub::simple(Box::new(Self::do_request_create_weapon)),
+    //     );
+    //
+    //     // skip Player::equipmentStuff
+    //     self.register_stub_function(0x849580, Stub::ret());
+    // }
+    //
+    // fn do_request_create_weapon(core: &mut Core<'_, '_, '_>) -> Result<()> {
+    //     let slot_idx = core.mem.mem_read_i32(core.cpu.read_arg(21) as u64 + 0x18)?;
+    //     let value = core.cpu.read_arg(3) as i32;
+    //     core.cpu.write_arg(0, core.mem.get_pmdm_addr());
+    //     core.cpu.write_arg(1, value as u64);
+    //     core.cpu.write_arg(2, slot_idx as u64);
+    //     // TODO: hardcoded program start
+    //     core.cpu
+    //         .set_pc((0x1234500000u64 + 0x971438 - 4 + core.mem.get_main_offset() as u64).into());
+    //     Ok(())
+    // }
+    //
+    // fn get_actor(core: &mut Core<'_, '_, '_>) -> Result<()> {
+    //     core.cpu.write_arg(0, 0);
+    //     core.ret();
+    //     Ok(())
+    // }
+    //
+    // fn get_debug_heap(core: &mut Core<'_, '_, '_>) -> Result<()> {
+    //     core.cpu.write_arg(0, 1);
+    //     core.ret();
+    //     Ok(())
+    // }
+    //
+    // /// Simulates memset
+    // fn memset(core: &mut Core<'_, '_, '_>) -> Result<()> {
+    //     let s = core.cpu.read_arg(0) as u64;
+    //     let c = core.cpu.read_arg(1) as u8;
+    //     let n = core.cpu.read_arg(2) as u64;
+    //     let mut writer = core.mem.write(s, None)?;
+    //     for _ in 0..n {
+    //         writer.write_u8(c)?;
+    //     }
+    //     core.ret();
+    //     Ok(())
+    // }
+    //
+    // fn strcmp(core: &mut Core<'_, '_, '_>) -> Result<()> {
+    //     let mut string_a_ptr = core.cpu.read_arg(0) as u64;
+    //     let mut string_b_ptr = core.cpu.read_arg(1) as u64;
+    //     let mut ret_val: i8;
+    //     loop {
+    //         let string_a_val = core.mem.mem_read_byte(string_a_ptr)?;
+    //         let string_b_val = core.mem.mem_read_byte(string_b_ptr)?;
+    //         ret_val = string_a_val as i8 - string_b_val as i8;
+    //         if string_a_val != string_b_val || string_a_val == 0 {
+    //             break;
+    //         }
+    //         string_a_ptr += 1;
+    //         string_b_ptr += 1;
+    //     }
+    //     core.cpu
+    //         .write_gen_reg(&RegisterType::XReg(0), ret_val as i64)?;
+    //     core.ret();
+    //     Ok(())
+    // }
+    //
+    // fn memcpy(core: &mut Core<'_, '_, '_>) -> Result<()> {
+    //     let dest = core.cpu.read_arg(0) as u64;
+    //     let src = core.cpu.read_arg(1) as u64;
+    //     let num_bytes = core.cpu.read_arg(2) as usize;
+    //
+    //     core.mem.memcpy(dest, src, num_bytes)?;
+    //
+    //     core.cpu
+    //         .write_gen_reg(&RegisterType::XReg(0), dest as i64)?;
+    //     core.ret();
+    //     Ok(())
+    // }
     // pub fn setup(&mut self) -> Result<(), ExecutionError> {
     //     // Run any game code functions that must execute prior to running other functions
     //     self.init_common_flags()
@@ -299,161 +393,12 @@ impl Core<'_, '_> {
     //     self.mem.mem_write_i32(base_address + 0x4, value)?;
     //     Ok(base_address)
     // }
-    //
-    // fn set_sp(&mut self) {
-    //     let new_sp = self.mem.get_region(memory::RegionType::Stack).start + 0x4000;
-    //     self.cpu.sp_el0 = new_sp;
+    // pub fn allocate_data(&mut self, data: Vec<u8>) -> Result<u64, crate::memory::Error> {
+    //     let start = self.mem.heap_mut().alloc(data.len() as u32)?;
+    //     self.mem.mem_write_bytes(start, data)?;
+    //     Ok(start)
     // }
-    //
-    // pub fn call_func_at_addr(&mut self, addr: u64) -> Result<(), ExecutionError> {
-    //     //Set pc to start of function
-    //     // TODO: hardcoded program start
-    //     self.cpu.set_pc(0x1234500000 + addr + (self.mem.get_main_offset() as u64));
-    //     self.set_sp();
-    //
-    //     //Call level representing if the function is still inside of the original function
-    //     // let mut call_level: u64 = 0;
-    //     // let mut instructions_ran: u64 = 0;
-    //     self.cpu.write_arg(30, ENTER_ADDR);
-    //     while self.cpu.pc != ENTER_ADDR {
-    //         let ida_addr = self.compute_ida_addr(self.cpu.pc);
-    //         let result = self.execute_at_pc();
-    //         match result {
-    //             Ok(_) => {}
-    //             Err(e) => {
-    //                 return Err(ExecutionError::new(
-    //                     e,
-    //                     ida_addr,
-    //                     self.cpu.stack_trace.clone(),
-    //                 ));
-    //             }
-    //         };
-    //         // instructions_ran += 1;
-    //     }
-    //     Ok(())
+    // pub(crate) fn compute_ida_addr(&self, addr: u64) -> u64 {
+    //     0x7100000000 + addr - self.mem.main_start()
     // }
-
-    // fn fetch_instruction(&mut self, pc: u64) -> Result<Box<dyn ExecutableInstruction>, Error> {
-    //     const BLOCK_SIZE: u64 = 64;
-    //     const INST_SIZE: u64 = 4;
-    //
-    //     let block_base = pc & !(BLOCK_SIZE - 1);
-    //     let offset = ((pc - block_base) / INST_SIZE) as usize;
-    //
-    //     // log::debug!("fetching instruction at pc: {:#x}", pc);
-    //     let inst = self.mem.mem_read_inst(pc)?;
-    //     let block = self
-    //         .cpu
-    //         .inst_cache
-    //         .entry(block_base)
-    //         .or_insert_with(|| vec![None; (BLOCK_SIZE / INST_SIZE) as usize]);
-    //    
-    //     if block[offset].is_none() {
-    //         block[offset] = Some(inst);
-    //     }
-    //    
-    //     block
-    //         .get(offset)
-    //         .and_then(|slot| slot.as_ref())
-    //         .ok_or(Error::Cpu(
-    //             crate::processor::Error::InstructionCouldNotBeRead(pc),
-    //         ))
-    //         .cloned()
-    // }
-
-    // pub fn execute_at_pc(&mut self) -> Result<(), Error> {
-    //     let s = self.cpu.check_pc(self.mem.get_main_offset()).cloned();
-    //     // let s = self.cpu.check_pc(self.mem.get_main_offset()).cloned();
-    //
-    //     if let Some(stub) = s {
-    //         let condition_met = {
-    //             let lock = stub.lock().unwrap();
-    //             let condition = &lock.condition; // Immutable borrow ends here
-    //             if let Some(cond) = condition {
-    //                 (cond)(self.cpu).map_err(|e| {
-    //                     Error::Cpu(crate::processor::Error::Unexpected(format!("{:?}", e)))
-    //                 })?
-    //             } else {
-    //                 true
-    //             }
-    //         };
-    //         if condition_met {
-    //             // TODO: fix the mutability check - Stub needs to be moved out of CPU
-    //             let lock = stub.lock().unwrap();
-    //             (lock.func)(self).unwrap();
-    //         }
-    //     } else {
-    //         let inst = self.fetch_instruction(self.cpu.pc)?;
-    //         inst.exec_on(self)?;
-    //     }
-    //     self.cpu.pc += 4;
-    //     Ok(())
-    // }
-
-    // pub fn allocate_proxy(&mut self, proxy: ProxyType) -> Result<u64, crate::memory::Error> {
-    //     match proxy {
-    //         ProxyType::TriggerParam => {
-    //             let mut trig = GdtTriggerParam::default();
-    //             trig.load_yaml_files()
-    //                 .map_err(|e| crate::memory::Error::Unexpected(format!("{}", e)))?;
-    //             let tp_addr = self.proxies.allocate_trigger_param(self.mem, trig)?;
-    //             self.mem.set_trigger_param_addr(tp_addr);
-    //             Ok(tp_addr)
-    //         }
-    //     }
-    // }
-
-    pub fn allocate_data(&mut self, data: Vec<u8>) -> Result<u64, crate::memory::Error> {
-        let start = self.mem.heap_mut().alloc(data.len() as u32)?;
-        self.mem.mem_write_bytes(start, data)?;
-        Ok(start)
-    }
-
-    // fn to_execution_error(&self, error: Error) -> ExecutionError {
-    //     let ida_addr = self.compute_ida_addr(self.cpu.pc);
-    //     ExecutionError::new(error, ida_addr, self.cpu.stack_trace.clone())
-    // }
-    pub(crate) fn compute_ida_addr(&self, addr: u64) -> u64 {
-        0x7100000000 + addr - self.mem.main_start()
-    }
 }
-
-// The library is divided into layers and modules,
-// lower layer should not include from higher layers.
-// There is not enforcement at the moment since it's not worth
-// the effort trying to set it up (because shared dependency
-// management will be a pain)
-
-/// Memory implementation
-pub mod memory;
-
-pub mod error;
-
-pub mod processor;
-
-/// Initialization for the memory
-// pub mod boot;
-
-/// Proxy objects
-// pub mod proxy;
-
-/// Struct Types
-pub mod structs;
-
-pub mod singleton;
-
-
-
-pub mod process;
-
-/////// --- LAYER --- ///////
-
-/// Utilities for handling program images
-pub mod program;
-
-/////// --- LAYER --- ///////
-
-/// Other utils and shared types
-pub mod util;
-/// Handle core feature flags (core-* flags in the script)
-pub mod features;

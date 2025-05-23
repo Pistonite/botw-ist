@@ -22,7 +22,7 @@ pub trait InsnParser {
     ) -> Result<Option<Box<dyn ExecutableInstruction>>, anyhow::Error>;
 }
 
-pub fn get_bit_range(bits: u32, start_idx: u8, end_idx: u8) -> u32 {
+pub const fn get_bit_range(bits: u32, start_idx: u8, end_idx: u8) -> u32 {
     // remove the bits that are before the start idx by moving them to the left, this uses the bitfield
     // convention where the MSB has index 31
     let truncate_start = bits << (31 - start_idx);

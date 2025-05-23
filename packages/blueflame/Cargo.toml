@@ -31,13 +31,13 @@ static_assertions = "1.1.0"
 # program module
 flate2 = { version = "1.0.35", default-features = false, features = ["rust_backend"] } # explicitly request pure-rust backend
 
-# [workspace.dev-dependencies]
-
 layered-crate = "0.1.1"
 phf = { version = "0.11.3", features = ["macros"] }
 
-# TODO --cleanup: move to dev-dependencies
+# TODO --cleanup: move anyhow to dev-dependencies
 anyhow = "1.0.94"
+no-panic = "0.1.35"
+enum-map = "2.7.3"
 
 
 [lib]

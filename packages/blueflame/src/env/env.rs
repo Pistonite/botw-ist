@@ -1,4 +1,5 @@
 use deku::{DekuRead, DekuWrite};
+use enum_map::Enum;
 use serde::{Serialize, Deserialize};
 
 /// Environment to simulate
@@ -42,7 +43,9 @@ impl Environment {
 }
 
 /// Version of the game
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, DekuRead, DekuWrite)]
+#[derive(Debug, Clone, Copy, 
+    PartialEq, Eq, PartialOrd, Ord, Hash, 
+    Serialize, Deserialize, DekuRead, DekuWrite, Enum)]
 #[deku(id_type = "u8")]
 #[repr(u8)]
 pub enum GameVer {

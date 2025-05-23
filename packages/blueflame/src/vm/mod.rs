@@ -1,4 +1,4 @@
-use crate::processor::crate_;
+use crate::vm::crate_;
 
 use crate_::env::{DataId, ProxyId};
 

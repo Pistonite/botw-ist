@@ -21,3 +21,8 @@ pub fn enabled(input: TokenStream) -> TokenStream {
     features::expand_enable_macro(input)
 }
 
+#[proc_macro_attribute]
+pub fn no_panic(_attr: TokenStream, input: TokenStream) -> TokenStream {
+    no_panic::expand(input)
+}
+mod no_panic;
