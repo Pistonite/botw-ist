@@ -3,6 +3,27 @@ use crate::Core;
 
 use crate::processor::instruction_registry::RegisterType;
 
+
+    fn parse_blr(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let rn = RegisterType::from_str(args)?;
+        Ok(Box::new(BlrInstruction { rn }))
+    }
+
+#[derive(Clone)]
+pub struct BlrInstruction {
+    rn: RegisterType,
+}
+
+impl ExecutableInstruction for BlrInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.blr(self.rn)
+    }
+
+    // fn instruction_type(&self) -> Option<InstructionType> {
+    //     Some(InstructionType::Branch)
+    // }
+}
+
 impl Core<'_, '_, '_> {
     /// Processes ARM64 command `blr xn`
     pub fn blr(&mut self, xn: RegisterType) -> Result<(), Error> {

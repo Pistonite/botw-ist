@@ -4,6 +4,44 @@ use crate::processor::instruction_registry::RegisterType;
 use crate::processor::Error;
 use crate::Core;
 
+    fn parse_cmn(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 2);
+        let rn = RegisterType::from_str(&collected_args[0])?;
+
+        if Self::is_imm(&collected_args[1]) {
+            let imm_val = Self::get_imm_val(&collected_args[1])? as u8;
+            Ok(Box::new(CmnImmInstruction { rn, imm_val }))
+        } else {
+            let rm = RegisterType::from_str(&collected_args[1])?;
+            Ok(Box::new(CmnInstruction { rn, rm }))
+        }
+    }
+
+
+#[derive(Clone)]
+pub struct CmnInstruction {
+    rn: RegisterType,
+    rm: RegisterType,
+}
+
+impl ExecutableInstruction for CmnInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.cmn(self.rn, self.rm)
+    }
+}
+
+#[derive(Clone)]
+pub struct CmnImmInstruction {
+    rn: RegisterType,
+    imm_val: u8,
+}
+
+impl ExecutableInstruction for CmnImmInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.cmn_imm(self.rn, self.imm_val)
+    }
+}
+
 impl Core<'_, '_, '_> {
     /// Processes the ARM64 command `cmn rn, rm`
     ///

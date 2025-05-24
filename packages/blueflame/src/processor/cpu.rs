@@ -1,19 +1,39 @@
+use std::ops::ControlFlow;
+
 use crate::processor::{self as self_, crate_};
 
+use derive_more::derive::{Deref, DerefMut};
 use enum_map::EnumMap;
 
-use self_::{ExecuteCache, Registers, Process, Error, Execute, StackTrace, FrameType, Frame};
+use self_::{ExecuteCache, Registers, Process, Error, Execute, StackTrace, reg, BLOCK_COUNT_LIMIT};
 use self_::insn::InsnVec;
 
 use crate_::env::{GameVer, enabled};
 use crate_::memory::{access, PAGE_SIZE};
 
+const INTERNAL_RETURN_ADDRESS: u64 = 0xDEAD464C414D45AAu64;
+// -----------------------------------------F-L-A-M-E-----
+
+// Note for using Deref/DerefMut for CPU layers:
+//
+// It's semanticaly not correct to use Deref/DerefMut here, 
+// because the structs are not smart pointers. 
+// We are using Deref/DerefMut to transparently allowing
+// higher layer to access lower layer, without having
+// to write long access chains. 
+//
+// Please do not copy this pattern without first considering the implications.
+// See https://doc.rust-lang.org/std/ops/trait.Deref.html#when-to-implement-deref-or-derefmut
+
 /// Level 2 CPU state.
 ///
 /// This is the association of a Cpu1 with the process
 /// it is currently running
+#[derive(Deref, DerefMut)]
 pub struct Cpu2<'a, 'b> {
-    pub cpu: &'a mut Cpu1,
+    #[deref]
+    #[deref_mut]
+    pub cpu1: &'a mut Cpu1,
     pub proc: &'b mut Process,
 }
 
@@ -21,20 +41,24 @@ pub struct Cpu2<'a, 'b> {
 ///
 /// This is responsible for fetching instructions, then using
 /// level 0 to execute them
+#[derive(Deref, DerefMut)]
 pub struct Cpu1 {
-    pub state: Cpu0,
+    // See NOTE at top about using Deref/DerefMut
+    #[deref]
+    #[deref_mut]
+    pub cpu0: Cpu0,
     pub cache: EnumMap<GameVer, ExecuteCache>,
 }
-
-const INTERNAL_RETURN_ADDRESS: u64 = 0xDEAD464C414D45AAu64;
-// -----------------------------------------F-L-A-M-E-----
-
 
 /// The bottom level of CPU state. This is what's needed
 /// to execute some instruction (i.e. instructions can read
 /// and write to these)
+#[derive(Debug, Default, Clone, Deref, DerefMut)]
 pub struct Cpu0 {
-    pub reg: Registers,
+    // See NOTE at top about using Deref/DerefMut
+    #[deref]
+    #[deref_mut]
+    inner: Registers,
 
     // stores addresses of all functions visited
     // when function branched to, address is added (first entry is where the call was made from, second is where the branch was to)
@@ -46,13 +70,11 @@ pub struct Cpu0 {
 impl Cpu2<'_, '_> {
     /// Make a jump to the target address and execute until it returns
     pub fn native_jump(&mut self, pc: u64) -> Result<(), Error> {
-        const BLOCK_COUNT_LIMIT: usize = 0x1000;
-        self.cpu.state.reg.set_lr(INTERNAL_RETURN_ADDRESS);
-        self.cpu.state.stack_trace.frames.push(Frame {
-            jump_target: pc,
-            jump_type: FrameType::Native,
-        });
-        self.cpu.state.reg.pc = pc;
+        let pc_before = self.pc;
+
+        self.write(reg!(lr), INTERNAL_RETURN_ADDRESS);
+        self.stack_trace.push_native(pc);
+        self.pc = pc;
 
         let has_limit = enabled!("limited-block-count");
 
@@ -60,16 +82,14 @@ impl Cpu2<'_, '_> {
             if has_limit && count > BLOCK_COUNT_LIMIT {
                 return Err(Error::BlockCountLimitReached);
             }
-            if self.cpu.state.reg.pc == INTERNAL_RETURN_ADDRESS {
+            if self.pc == INTERNAL_RETURN_ADDRESS {
                 break;
             }
             self.execute_once()?;
         }
 
-        let x = self.cpu.state.stack_trace.frames.pop();
-        if x.is_none() && enabled!("check-stack-frames") {
-            return Err(Error::StackFrameCorrupted);
-        }
+        self.pc = pc_before;
+
         Ok(())
     }
 
@@ -77,10 +97,10 @@ impl Cpu2<'_, '_> {
     pub fn execute_once(&mut self) -> Result<(), Error> {
         let ver = self.proc.game_ver();
 
-        let (fetch_max_bytes, is_hook) = match self.cpu.cache[ver].get(self.cpu.state.reg.pc) {
+        let (fetch_max_bytes, is_hook) = match self.cpu1.cache[ver].get(self.pc) {
             Ok((exe, step)) => {
                 // found in cache - execute
-                match exe.execute_from(&mut self.cpu.state, &mut self.proc, step) {
+                match exe.execute_from(&mut self.cpu1.cpu0, self.proc, step) {
                     Ok(_) => return Ok(()),
                     Err(e) => {
                         if !matches!(e, Error::StrictReplacement { .. }) {
@@ -100,48 +120,51 @@ impl Cpu2<'_, '_> {
         // not found in cache - load from process memory
         let bytes = fetch_max_bytes.max(4);
 
-        let mut reader = self.proc.memory().read(self.cpu.state.reg.pc, access!(execute))?;
+        let mut reader = self.proc.memory().read(self.pc, access!(execute))?;
         let mut insns = InsnVec::new();
-
-        let pc_before = self.cpu.state.reg.pc;
 
         for _ in 0..(bytes/4) {
             let insn_raw = reader.read_u32()?;
-            // actually increase the PC so we have correct report
-            // if failed to read memory
-            self.cpu.state.reg.pc = self.cpu.state.reg.pc.wrapping_add(4);
-            if !insns.disassemble(insn_raw) {
-                // done with this block
+
+            // TODO --cleanup: this won't work since the register 
+            // and stack and stuff aren't right, fix it to throw error later
+            if let ControlFlow::Break(e) = insns.disassemble(insn_raw) {
+                if let Some(e) = e {
+                    // set the PC to correctly point to the next instruction
+                    // i.e. the one that broke
+                    self.pc += insns.byte_size() as u64;
+                    return Err(e);
+                }
                 break;
             }
         }
 
-        // recover the PC
-        self.cpu.state.reg.pc = pc_before;
-
         // if we are in the middle of a replacement hook, then
         // just execute without caching
         if is_hook {
-            return insns.execute_from(&mut self.cpu.state, &mut self.proc, 0);
+            return insns.execute_from(&mut self.cpu1.cpu0, self.proc, 0);
         }
 
-        // add the cache
-        self.cpu.cache[ver].insert(false, 
-            self.proc.main_start(), 
-            pc_before, insns.byte_size(), Box::new(insns))?;
+        let pc = self.pc;
 
-        let Ok((exe, step)) = self.cpu.cache[ver].get(pc_before) else {
+        // add the cache
+        self.cpu1.cache[ver].insert(false, 
+            self.proc.main_start(), 
+            pc, insns.byte_size(), Box::new(insns))?;
+
+        let Ok((exe, step)) = self.cpu1.cache[ver].get(pc) else {
             return Err(Error::Unexpected("failed to insert to execute cache".to_string()))
         };
         // execute
-        exe.execute_from(&mut self.cpu.state, &mut self.proc, step)
+        exe.execute_from(&mut self.cpu1.cpu0, self.proc, step)
     }
 
     pub fn reset_stack(&mut self) {
-        self.cpu.state.stack_trace.frames.clear();
+        self.stack_trace.reset();
         // starting from middle of the last page
         // since calling function would store things on the stack before reserving space
-        self.cpu.state.reg.sp_el0 = self.proc.memory().stack_end() - (PAGE_SIZE / 2) as u64;
+        let sp = self.proc.memory().stack_end() - (PAGE_SIZE /2)as u64;
+        self.write(reg!(sp), sp);
     }
 }
 

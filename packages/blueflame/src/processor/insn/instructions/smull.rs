@@ -3,6 +3,29 @@ use crate::processor::instruction_registry::RegisterType;
 use crate::processor::Error;
 use crate::Core;
 
+    fn parse_smull(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 3);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let wn = RegisterType::from_str(&collected_args[1])?;
+        let wm = RegisterType::from_str(&collected_args[2])?;
+        Ok(Box::new(SmullInstruction { rd, wn, wm }))
+    }
+
+
+#[derive(Clone)]
+pub struct SmullInstruction {
+    rd: RegisterType,
+    wn: RegisterType,
+    wm: RegisterType,
+}
+
+impl ExecutableInstruction for SmullInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.smull(self.rd, self.wn, self.wm)
+    }
+}
+
+
 impl Core<'_, '_, '_> {
     pub fn smull(
         &mut self,

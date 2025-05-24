@@ -3,6 +3,30 @@ use crate::processor::instruction_registry::RegisterType;
 use crate::processor::Error;
 use crate::Core;
 
+    fn parse_sbfiz(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 4);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let rn = RegisterType::from_str(&collected_args[1])?;
+        let lsb = Self::get_imm_val(&collected_args[2])?;
+        let width = Self::get_imm_val(&collected_args[3])?;
+
+        Ok(Box::new(SbfizInstruction { rd, rn, lsb, width }))
+    }
+
+#[derive(Clone)]
+pub struct SbfizInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+    lsb: i64,
+    width: i64,
+}
+
+impl ExecutableInstruction for SbfizInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.sbfiz(self.rd, self.rn, self.lsb, self.width)
+    }
+}
+
 impl Core<'_, '_, '_> {
     pub fn sbfiz(
         &mut self,

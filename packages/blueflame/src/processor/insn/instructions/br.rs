@@ -3,6 +3,22 @@ use crate::Core;
 
 use crate::processor::instruction_registry::RegisterType;
 
+    fn parse_br(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let rn = RegisterType::from_str(args)?;
+        Ok(Box::new(BrInstruction { rn }))
+    }
+
+#[derive(Clone)]
+pub struct BrInstruction {
+    rn: RegisterType,
+}
+
+impl ExecutableInstruction for BrInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.br(self.rn)
+    }
+}
+
 impl Core<'_, '_, '_> {
     /// Processes ARM64 command `br xn`
     pub fn br(&mut self, xn: RegisterType) -> Result<(), Error> {

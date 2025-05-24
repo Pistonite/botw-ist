@@ -3,6 +3,28 @@ use crate::Core;
 
 use crate::processor::instruction_registry::RegisterType;
 
+    fn parse_adrp(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args: Vec<String> = Self::split_args(args, 2);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let label_offsetess = Self::get_label_val(&collected_args[1])?;
+        Ok(Box::new(AdrpInstruction {
+            rd,
+            label_offsetess,
+        }))
+    }
+
+#[derive(Clone)]
+pub struct AdrpInstruction {
+    rd: RegisterType,
+    label_offsetess: u64,
+}
+
+impl ExecutableInstruction for AdrpInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.adrp(self.rd, self.label_offsetess)
+    }
+}
+
 impl Core<'_, '_, '_> {
     /// Processes ARM64 command adrp xd, label
     ///

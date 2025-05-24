@@ -16,6 +16,8 @@ mod read;
 pub use read::*;
 mod write;
 pub use write::*;
+// TODO --cleanup will refactor this when refactoring the region stuff (the glue below)
+#[allow(clippy::module_inception)]
 mod memory;
 pub use memory::*;
 mod pointer;

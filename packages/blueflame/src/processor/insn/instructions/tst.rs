@@ -3,6 +3,45 @@ use crate::Core;
 
 use crate::processor::instruction_registry::RegisterType;
 
+    fn parse_tst(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 2);
+        let rn = RegisterType::from_str(&collected_args[0])?;
+
+        if Self::is_imm(&collected_args[1]) {
+            let imm_val = Self::get_imm_val(&collected_args[1])?;
+            Ok(Box::new(TstImmInstruction { rn, imm_val }))
+        } else {
+            let rm = RegisterType::from_str(&collected_args[1])?;
+            Ok(Box::new(TstInstruction { rn, rm }))
+        }
+    }
+
+
+#[derive(Clone)]
+pub struct TstInstruction {
+    rn: RegisterType,
+    rm: RegisterType,
+}
+
+impl ExecutableInstruction for TstInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.tst(self.rn, self.rm)
+    }
+}
+
+#[derive(Clone)]
+pub struct TstImmInstruction {
+    rn: RegisterType,
+    imm_val: i64,
+}
+
+impl ExecutableInstruction for TstImmInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.tst_imm(self.rn, self.imm_val)
+    }
+}
+
+
 impl Core<'_, '_, '_> {
     // Performs a bitwise and
     // Updates N and Z flags

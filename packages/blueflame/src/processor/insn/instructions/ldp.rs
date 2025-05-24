@@ -4,6 +4,141 @@ use crate::processor::Error;
 use crate::processor::RegisterValue;
 use crate::Core;
 
+    fn parse_ldp(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args: Vec<String> = Self::split_args(args, 3);
+        let split_third: Vec<String> = Self::split_bracket_args(&collected_args[2]);
+        let rt1 = RegisterType::from_str(&collected_args[0])?;
+        let rt2 = RegisterType::from_str(&collected_args[1])?;
+        let rn_sp = RegisterType::from_str(&split_third[0])?;
+        let extra_op = Self::parse_auxiliary(split_third.get(2))?;
+        let imm_val = if let Some(val) = split_third.get(1) {
+            if val.starts_with('#') {
+                Self::get_imm_val(val)?
+            } else {
+                let rm = RegisterType::from_str(val)?;
+                return Ok(Box::new(LdpInstruction {
+                    rt1,
+                    rt2,
+                    rn_sp,
+                    rm,
+                    extra_op,
+                }));
+            }
+        } else {
+            0
+        };
+        if Self::ends_with_exclam(&collected_args[2]) {
+            Ok(Box::new(LdpPreInstruction {
+                rt1,
+                rt2,
+                rn_sp,
+                imm_val,
+                extra_op,
+            }))
+        } else if collected_args[2].contains("], ") {
+            Ok(Box::new(LdpPostInstruction {
+                rt1,
+                rt2,
+                rn_sp,
+                imm_val,
+                extra_op,
+            }))
+        } else {
+            Ok(Box::new(LdpImmInstruction {
+                rt1,
+                rt2,
+                rn_sp,
+                imm_val,
+                extra_op,
+            }))
+        }
+    }
+
+#[derive(Clone)]
+pub struct LdpPostInstruction {
+    rt1: RegisterType,
+    rt2: RegisterType,
+    rn_sp: RegisterType,
+    imm_val: i64,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for LdpPostInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.ldp_post_idx(
+            self.rt1,
+            self.rt2,
+            self.rn_sp,
+            self.imm_val,
+            self.extra_op.clone(),
+        )
+    }
+}
+
+#[derive(Clone)]
+pub struct LdpImmInstruction {
+    rt1: RegisterType,
+    rt2: RegisterType,
+    rn_sp: RegisterType,
+    imm_val: i64,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for LdpImmInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.ldp_imm(
+            self.rt1,
+            self.rt2,
+            self.rn_sp,
+            self.imm_val,
+            self.extra_op.clone(),
+        )
+    }
+}
+
+#[derive(Clone)]
+pub struct LdpPreInstruction {
+    rt1: RegisterType,
+    rt2: RegisterType,
+    rn_sp: RegisterType,
+    imm_val: i64,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for LdpPreInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.ldp_pre_idx(
+            self.rt1,
+            self.rt2,
+            self.rn_sp,
+            self.imm_val,
+            self.extra_op.clone(),
+        )
+    }
+}
+
+
+#[derive(Clone)]
+pub struct LdpInstruction {
+    rt1: RegisterType,
+    rt2: RegisterType,
+    rn_sp: RegisterType,
+    rm: RegisterType,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for LdpInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.ldp(
+            self.rt1,
+            self.rt2,
+            self.rn_sp,
+            self.rm,
+            self.extra_op.clone(),
+        )
+    }
+}
+
 impl Core<'_, '_, '_> {
     pub fn ldp(
         &mut self,

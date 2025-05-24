@@ -3,6 +3,43 @@ use crate::processor::Error;
 
 use crate::Core;
 
+    fn parse_fmov(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 2);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        if collected_args[1].starts_with("#") {
+            let float_val = Self::convert_to_f64(&collected_args[1])?;
+            Ok(Box::new(FmovImmInstruction { rd, float_val }))
+        } else {
+            let rn = RegisterType::from_str(&collected_args[1])?;
+            Ok(Box::new(FmovInstruction { rd, rn }))
+        }
+    }
+
+
+#[derive(Clone)]
+pub struct FmovInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+}
+
+impl ExecutableInstruction for FmovInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.fmov(self.rd, self.rn)
+    }
+}
+
+#[derive(Clone)]
+pub struct FmovImmInstruction {
+    rd: RegisterType,
+    float_val: f64,
+}
+
+impl ExecutableInstruction for FmovImmInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.fmov_imm(self.rd, self.float_val)
+    }
+}
+
 impl Core<'_, '_, '_> {
     pub fn fmov(&mut self, rd: RegisterType, rn: RegisterType) -> Result<(), Error> {
         let rn_val = self.cpu.read_float_reg(&rn)?;

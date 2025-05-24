@@ -27,6 +27,8 @@ pub struct Memory {
     stack: Arc<Region>,
     /// heap region
     pub heap: Arc<SimpleHeap>,
+
+    // TODO --cleanup: below needs to be removed
     /// pmdm address
     pmdm_addr: Option<u64>,
     // /// offset of the main module compared to program region start

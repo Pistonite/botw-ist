@@ -25,14 +25,13 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
     let mut feature_map_impl = TokenStream2::new();
 
     for v in input.variants.iter() {
-        if v.attrs.iter().find(|a| a.path().is_ident("on")).is_none() {
-            continue;
-        }
         let ident = &v.ident;
         let ident_kebab_str = ident.to_string().replace("_", "-");
-        default_features_impl.extend(quote! {
-            #name::#ident |
-        });
+        if v.attrs.iter().any(|a| a.path().is_ident("on")) {
+            default_features_impl.extend(quote! {
+                #name::#ident |
+            });
+        }
         feature_map_impl.extend(quote! {
             #ident_kebab_str => #name::#ident,
         });

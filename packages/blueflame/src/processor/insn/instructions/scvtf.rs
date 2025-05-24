@@ -3,6 +3,27 @@ use crate::processor::{instruction_registry::RegisterType, RegisterValue};
 
 use crate::Core;
 
+    fn parse_scvtf(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 2);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let rn = RegisterType::from_str(&collected_args[1])?;
+        Ok(Box::new(ScvtfInstruction { rd, rn }))
+    }
+
+
+#[derive(Clone)]
+pub struct ScvtfInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+}
+
+impl ExecutableInstruction for ScvtfInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.scvtf(self.rd, self.rn)
+    }
+}
+
+
 impl Core<'_, '_, '_> {
     pub fn scvtf(&mut self, rd: RegisterType, rn: RegisterType) -> Result<(), Error> {
         match rd {

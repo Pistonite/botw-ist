@@ -3,6 +3,44 @@ use crate::Core;
 
 use crate::processor::instruction_registry::RegisterType;
 
+    fn parse_tbnz(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let split = Self::split_args(args, 3);
+        let rn = RegisterType::from_str(&split[0])?;
+        let imm_val = Self::get_imm_val(&split[1])? as u64;
+        let label_offset = Self::get_label_val(&split[2])?;
+        Ok(Box::new(TbnzInstruction {
+            rn,
+            imm_val,
+            label_offset,
+        }))
+    }
+
+    fn parse_tbz(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let split = Self::split_args(args, 3);
+        let rn = RegisterType::from_str(&split[0])?;
+        let imm_val = Self::get_imm_val(&split[1])? as u64;
+        let label_offset = Self::get_label_val(&split[2])?;
+        Ok(Box::new(TbzInstruction {
+            rn,
+            imm_val,
+            label_offset,
+        }))
+    }
+
+#[derive(Clone)]
+pub struct TbnzInstruction {
+    rn: RegisterType,
+    imm_val: u64,
+    label_offset: u64,
+}
+
+impl ExecutableInstruction for TbnzInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.tbnz(self.rn, self.imm_val, self.label_offset)
+    }
+}
+
+
 impl Core<'_, '_, '_> {
     // Note: imm is the bit number. Should be between 0 and 63 (or 0 and 31 for W registers)
     pub fn tbnz(&mut self, xn: RegisterType, imm: u64, label_offset: u64) -> Result<(), Error> {

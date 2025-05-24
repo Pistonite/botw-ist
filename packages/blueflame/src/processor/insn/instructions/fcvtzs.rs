@@ -3,6 +3,27 @@ use crate::processor::instruction_registry::RegisterType;
 use crate::processor::Error;
 use crate::Core;
 
+    fn parse_fcvtzs(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 2);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let rn = RegisterType::from_str(&collected_args[1])?;
+
+        Ok(Box::new(FcvtzsInstruction { rd, rn }))
+    }
+
+
+#[derive(Clone)]
+pub struct FcvtzsInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+}
+
+impl ExecutableInstruction for FcvtzsInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.fcvtzs(self.rd, self.rn)
+    }
+}
+
 impl Core<'_, '_, '_> {
     // rd is either an X or W register
     // rn is either an S or D register

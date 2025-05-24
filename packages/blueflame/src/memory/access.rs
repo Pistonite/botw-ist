@@ -237,9 +237,9 @@ impl AccessFlags {
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct PermFlags(AccessFlags);
 
-impl Into<u32> for PermFlags {
-    fn into(self) -> u32 {
-        self.0.0
+impl From<PermFlags> for u32 {
+    fn from(x: PermFlags) -> Self {
+        x.0.0
     }
 }
 

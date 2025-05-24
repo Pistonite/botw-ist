@@ -63,8 +63,7 @@ impl Region {
             if current_start > region_start {
                 // should not happen unless the program image is bad
                 return Err(Error::Unexpected(format!(
-                    "program image has overlapping regions! current: 0x{:08x} > next: 0x{:08x}",
-                    current_start, region_start
+                    "program image has overlapping regions! current: 0x{current_start:08x} > next: 0x{region_start:08x}",
                 )));
             }
             while current_start < region_start {

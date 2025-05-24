@@ -1,5 +1,25 @@
 use crate::{processor::Error, Core};
 
+    fn parse_bl(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let label_offset = Self::get_label_val(args)?;
+        Ok(Box::new(BlInstruction { label_offset }))
+    }
+
+#[derive(Clone)]
+pub struct BlInstruction {
+    label_offset: u64,
+}
+
+impl ExecutableInstruction for BlInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.bl(self.label_offset)
+    }
+
+    // fn instruction_type(&self) -> Option<InstructionType> {
+    //     Some(InstructionType::Branch)
+    // }
+}
+
 impl Core<'_, '_, '_> {
     /// Processes ARM64 command `bl label`
     ///

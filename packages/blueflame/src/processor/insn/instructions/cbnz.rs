@@ -3,6 +3,25 @@ use crate::Core;
 
 use crate::processor::instruction_registry::RegisterType;
 
+    fn parse_cbnz(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let split = Self::split_args(args, 2);
+        let rn = RegisterType::from_str(&split[0])?;
+        let label_offset = Self::get_label_val(&split[1])?;
+        Ok(Box::new(CbnzInstruction { rn, label_offset }))
+    }
+
+#[derive(Clone)]
+pub struct CbnzInstruction {
+    rn: RegisterType,
+    label_offset: u64,
+}
+
+impl ExecutableInstruction for CbnzInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.cbnz(self.rn, self.label_offset)
+    }
+}
+
 impl Core<'_, '_, '_> {
     /// Processes the ARM64 command `cbnz xn, label`
     ///

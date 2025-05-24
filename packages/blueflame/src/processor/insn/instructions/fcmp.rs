@@ -3,6 +3,43 @@ use crate::processor::{instruction_registry::RegisterType, Flags};
 
 use crate::Core;
 
+    fn parse_fcmp(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 2);
+        let rn = RegisterType::from_str(&collected_args[0])?;
+        if collected_args[1].starts_with("#0.0") {
+            // Variant where you don't compare register with anything
+            Ok(Box::new(FcmpZeroInstruction { rn }))
+        } else {
+            //Register offset
+            let rm = RegisterType::from_str(&collected_args[1])?;
+            Ok(Box::new(FcmpInstruction { rn, rm }))
+        }
+    }
+
+
+#[derive(Clone)]
+pub struct FcmpInstruction {
+    rn: RegisterType,
+    rm: RegisterType,
+}
+
+impl ExecutableInstruction for FcmpInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.fcmp(self.rn, self.rm)
+    }
+}
+
+#[derive(Clone)]
+pub struct FcmpZeroInstruction {
+    rn: RegisterType,
+}
+
+impl ExecutableInstruction for FcmpZeroInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.fcmp_zero(self.rn)
+    }
+}
+
 impl Core<'_, '_, '_> {
     pub fn fcmp(&mut self, rn: RegisterType, rm: RegisterType) -> Result<(), Error> {
         let value_n = self.cpu.read_float_reg(&rn)?;

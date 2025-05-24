@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 extern crate self as blueflame;
 
 #[layered_crate::layers]
@@ -30,14 +32,15 @@ mod src {
     /// Shared environment utilities
     pub extern crate env;
 
-
+    #[cfg(test)]
+    pub extern crate test_utils;
 }
 
 /// Re-export other crates to use in macros
 #[doc(hidden)]
 pub(crate) mod __re {
     pub use enumset;
+    pub use no_panic;
     pub use phf;
     pub use static_assertions;
-    pub use no_panic;
 }

@@ -118,69 +118,7 @@ impl Processor {
             .unwrap();
     }
 
-    #[allow(arithmetic_overflow)]
-    pub fn read_reg(&self, reg: &RegisterType) -> RegisterValue {
-        match reg {
-            RegisterType::XReg(idx) => RegisterValue::XReg(self.x[*idx as usize]),
-            RegisterType::WReg(idx) => RegisterValue::WReg(self.x[*idx as usize] as i32),
-            RegisterType::BReg(idx) => RegisterValue::BReg(self.s[*idx as usize]),
-            RegisterType::HReg(idx) => RegisterValue::HReg(self.s[*idx as usize]),
-            RegisterType::SReg(idx) => RegisterValue::SReg(self.s[*idx as usize] as f32),
-            RegisterType::DReg(idx) => RegisterValue::DReg(self.s[*idx as usize]),
-            //TODO: Fix QRegisters writing/shifting wrong
-            RegisterType::QReg(idx) => RegisterValue::QReg(vec![
-                self.s[*idx as usize],
-                ((self.s[*idx as usize] as u32) << 8) as f64,
-            ]),
-            RegisterType::XZR => RegisterValue::XReg(0),
-            RegisterType::WZR => RegisterValue::WReg(0),
-            RegisterType::SP => RegisterValue::XReg(self.sp_el0 as i64),
-            RegisterType::LR => RegisterValue::LR, //Return value
-        }
-    }
 
-    pub fn write_reg(&mut self, reg: &RegisterType, val: &RegisterValue) -> Result<(), Error> {
-        match (reg, val) {
-            (RegisterType::XReg(idx), RegisterValue::XReg(v)) => {
-                self.x[*idx as usize] = *v;
-                Ok(())
-            }
-            (RegisterType::WReg(idx), RegisterValue::WReg(v)) => {
-                self.x[*idx as usize] = *v as u32 as i64;
-                Ok(())
-            }
-            (RegisterType::BReg(idx), RegisterValue::BReg(v)) => {
-                self.s[*idx as usize] = *v;
-                Ok(())
-            }
-            (RegisterType::HReg(idx), RegisterValue::HReg(v)) => {
-                self.s[*idx as usize] = *v;
-                Ok(())
-            }
-            (RegisterType::SReg(idx), RegisterValue::SReg(v)) => {
-                self.s[*idx as usize] = *v as f64;
-                Ok(())
-            }
-            (RegisterType::DReg(idx), RegisterValue::DReg(v)) => {
-                self.s[*idx as usize] = *v;
-                Ok(())
-            }
-            // (RegisterType::QReg(idx), RegisterValue::QReg(v)) => {
-            //      self.s[*idx] = (((v[0] as u128) << 64) | (v[1] as u128)) as f32;
-            // },
-            (RegisterType::XZR, _) => Ok(()),
-            (RegisterType::WZR, _) => Ok(()),
-            (RegisterType::SP, RegisterValue::XReg(v)) => {
-                self.sp_el0 = *v as u64;
-                Ok(())
-            }
-            (RegisterType::LR, RegisterValue::XReg(v)) => {
-                self.x[30] = *v;
-                Ok(())
-            }
-            _ => Err(Error::InvalidRegisterWrite("any", *reg)),
-        }
-    }
 
     pub fn read_gen_reg(&self, reg: &RegisterType) -> Result<i64, Error> {
         let reg_val: RegisterValue = self.read_reg(reg);

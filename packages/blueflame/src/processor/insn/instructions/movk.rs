@@ -3,6 +3,32 @@ use crate::processor::instruction_registry::{AuxiliaryOperation, RegisterType};
 use crate::processor::Error;
 use crate::Core;
 
+    fn parse_movk(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 3);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let imm_val = Self::get_imm_val(&collected_args[1])? as u16;
+        let extra_op = Self::parse_auxiliary(collected_args.get(2))?;
+        Ok(Box::new(MovkInstruction {
+            rd,
+            imm_val,
+            extra_op,
+        }))
+    }
+
+
+#[derive(Clone)]
+pub struct MovkInstruction {
+    rd: RegisterType,
+    imm_val: u16,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for MovkInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.movk(self.rd, self.imm_val, self.extra_op.clone())
+    }
+}
+
 impl Core<'_, '_, '_> {
     pub fn movk(
         &mut self,

@@ -3,26 +3,23 @@ use crate::processor::{self as self_, crate_};
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use derive_more::derive::Constructor;
+
 use crate_::env::{Environment, enabled, GameVer};
 use crate_::memory::{Memory, Proxies, access};
-
 use self_::{Execute, Error};
 use self_::insn::InsnVec;
 
 /// The Process is the container for everything the core tracks
 /// that is not in the Processor.
+#[derive(Debug, Constructor)]
 pub struct Process {
     /// Game environment
     env: Environment,
-
     /// Main memory of the game
     memory: Arc<Memory>,
     /// Proxy implementation for some game objects
     proxies: Arc<Proxies>,
-
-    // hooks: Hooks,
-
-    // exec_cache: HashMap<u64, Box<dyn Execute>>
 }
 
 impl Process {

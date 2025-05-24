@@ -3,6 +3,27 @@ use crate::processor::instruction_registry::RegisterType;
 use crate::processor::Error;
 use crate::Core;
 
+    fn parse_cset(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 2);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let cond = collected_args[1].clone();
+
+        Ok(Box::new(CsetInstruction { rd, cond }))
+    }
+
+
+#[derive(Clone)]
+pub struct CsetInstruction {
+    rd: RegisterType,
+    cond: String,
+}
+
+impl ExecutableInstruction for CsetInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.cset(self.rd, &self.cond)
+    }
+}
+
 impl Core<'_, '_, '_> {
     /// Processes ARM64 command `cset, condition`
     ///

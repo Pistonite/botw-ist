@@ -3,6 +3,61 @@ use crate::processor::instruction_registry::{AuxiliaryOperation, RegisterType};
 use crate::processor::{Error, Flags};
 use crate::Core;
 
+    fn parse_ands(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 4);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let rn = RegisterType::from_str(&collected_args[1])?;
+        let extra_op = Self::parse_auxiliary(collected_args.get(3))?;
+        if collected_args[2].starts_with('#') {
+            //Immediate offset
+            let imm_val = Self::get_imm_val(&collected_args[2])?;
+            Ok(Box::new(AndsImmInstruction {
+                rd,
+                rn,
+                imm_val,
+                extra_op,
+            }))
+        } else {
+            //Register offset
+            let rm = RegisterType::from_str(&collected_args[2])?;
+            Ok(Box::new(AndsInstruction {
+                rd,
+                rn,
+                rm,
+                extra_op,
+            }))
+        }
+    }
+
+
+#[derive(Clone)]
+pub struct AndsInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+    rm: RegisterType,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for AndsInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.ands(self.rd, self.rn, self.rm, self.extra_op.clone())
+    }
+}
+
+#[derive(Clone)]
+pub struct AndsImmInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+    imm_val: i64,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for AndsImmInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.ands_imm(self.rd, self.rn, self.imm_val, self.extra_op.clone())
+    }
+}
+
 impl Core<'_, '_, '_> {
     /// Processes the ARM64 command `ands xd, xn, xm` with optional shift
     pub fn ands(

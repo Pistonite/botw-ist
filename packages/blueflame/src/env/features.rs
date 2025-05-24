@@ -43,6 +43,13 @@ pub enum Feature {
 
     /// Make sure the stack frames push and pop match
     #[on] check_stack_frames,
+
+    /// Make sure the LR matches the return address tracked by stack frames
+    #[on] check_return_address,
+
+    /// Abort when unable to decode an instruction. If disabled,
+    /// the instruction will simply be skipped
+    #[on] instruction_abort, // TODO --cleanup: implement this
 }
 
 pub type FeatureSet = enumset::EnumSet<Feature>;

@@ -3,6 +3,107 @@ use crate::processor::Error;
 
 use crate::Core;
 
+    fn parse_strh(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args: Vec<String> = Self::split_args(args, 2);
+        let split_second: Vec<String> = Self::split_bracket_args(&collected_args[1]);
+        let rt = RegisterType::from_str(&collected_args[0])?;
+        let rn_sp = RegisterType::from_str(&split_second[0])?;
+        let extra_op = Self::parse_auxiliary(split_second.get(2))?;
+        let imm_val = if let Some(val) = split_second.get(1) {
+            if val.starts_with('#') {
+                Self::get_imm_val(val)?
+            } else {
+                let rm = RegisterType::from_str(val)?;
+                return Ok(Box::new(StrhInstruction {
+                    rt,
+                    rn_sp,
+                    rm,
+                    extra_op,
+                }));
+            }
+        } else {
+            0
+        };
+        if Self::ends_with_exclam(&collected_args[1]) {
+            Ok(Box::new(StrhPreInstruction {
+                rt,
+                rn_sp,
+                imm_val,
+                extra_op,
+            }))
+        } else if collected_args[1].contains("], ") {
+            Ok(Box::new(StrhPostInstruction {
+                rt,
+                rn_sp,
+                imm_val,
+                extra_op,
+            }))
+        } else {
+            Ok(Box::new(StrhImmInstruction {
+                rt,
+                rn_sp,
+                imm_val,
+                extra_op,
+            }))
+        }
+    }
+
+#[derive(Clone)]
+pub struct StrhInstruction {
+    rt: RegisterType,
+    rn_sp: RegisterType,
+    rm: RegisterType,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for StrhInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.strh(self.rt, self.rn_sp, self.rm, self.extra_op.clone())
+    }
+}
+
+#[derive(Clone)]
+pub struct StrhPreInstruction {
+    rt: RegisterType,
+    rn_sp: RegisterType,
+    imm_val: i64,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for StrhPreInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.strh_pre_idx(self.rt, self.rn_sp, self.imm_val, self.extra_op.clone())
+    }
+}
+
+#[derive(Clone)]
+pub struct StrhPostInstruction {
+    rt: RegisterType,
+    rn_sp: RegisterType,
+    imm_val: i64,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for StrhPostInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.strh_post_idx(self.rt, self.rn_sp, self.imm_val, self.extra_op.clone())
+    }
+}
+
+#[derive(Clone)]
+pub struct StrhImmInstruction {
+    rt: RegisterType,
+    rn_sp: RegisterType,
+    imm_val: i64,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for StrhImmInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.strh_imm(self.rt, self.rn_sp, self.imm_val, self.extra_op.clone())
+    }
+}
+
 impl Core<'_, '_, '_> {
     pub fn strh(
         &mut self,

@@ -21,7 +21,7 @@ use self_::glue;
 pub const MAX_OBJECTS: u32 = 1024000;
 
 /// Holds all proxy objects in memory
-#[derive(Default, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct Proxies {
     // just as a placeholder
     // do this and implement each function below for TriggerParam
@@ -141,7 +141,7 @@ impl ProxyObject for String {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ProxyList<T: ProxyObject> {
     rng: Xoshiro256PlusPlus,
     objects: Vec<Arc<Entry<T>>>,
@@ -166,7 +166,7 @@ impl Default for ProxyList<String> {
 //     }
 // }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 struct Entry<T: ProxyObject> {
     /// The proxy object (clone on write)
     obj: T,

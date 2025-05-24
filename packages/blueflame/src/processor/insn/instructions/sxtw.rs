@@ -3,6 +3,25 @@ use crate::Core;
 
 use crate::processor::{instruction_registry::RegisterType, RegisterValue};
 
+    fn parse_sxtw(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args: Vec<String> = Self::split_args(args, 2);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let rn = RegisterType::from_str(&collected_args[1])?;
+        Ok(Box::new(SxtwInstruction { rd, rn }))
+    }
+
+#[derive(Clone)]
+pub struct SxtwInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+}
+
+impl ExecutableInstruction for SxtwInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.sxtw(self.rd, self.rn)
+    }
+}
+
 impl Core<'_, '_, '_> {
     pub fn sxtw(&mut self, xd: RegisterType, wn: RegisterType) -> Result<(), Error> {
         let reg_val: RegisterValue = self.cpu.read_reg(&wn);

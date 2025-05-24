@@ -3,6 +3,31 @@ use crate::processor::instruction_registry::RegisterType;
 use crate::processor::Error;
 use crate::Core;
 
+    fn parse_csel(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 4);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let rn = RegisterType::from_str(&collected_args[1])?;
+        let rm = RegisterType::from_str(&collected_args[2])?;
+        let cond = collected_args[3].clone();
+
+        Ok(Box::new(CselInstruction { rd, rn, rm, cond }))
+    }
+
+
+#[derive(Clone)]
+pub struct CselInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+    rm: RegisterType,
+    cond: String,
+}
+
+impl ExecutableInstruction for CselInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.csel(self.rd, self.rn, self.rm, &self.cond)
+    }
+}
+
 impl Core<'_, '_, '_> {
     /// Processes ARM64 command `csel, rn, rm, condition`
     ///

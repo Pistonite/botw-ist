@@ -1,4 +1,4 @@
-#![allow(unused_variables)]
+#![allow(clippy::too_many_arguments)]
 #![allow(non_snake_case)]
 
 use crate::game::{self as self_, crate_};
@@ -235,7 +235,6 @@ pub enum CookEffectId {
 }
 
 #[allow(non_snake_case)]
-#[allow(clippy::too_many_arguments)]
 #[derive(MemObject, Clone, Constructor)]
 #[size(0x288)]
 pub struct CookItem {

@@ -4,6 +4,64 @@ use crate::processor::{instruction_registry::RegisterType, Flags};
 
 use crate::Core;
 
+
+    fn parse_ccmp(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 4);
+        let rn = RegisterType::from_str(&collected_args[0])?;
+        let nzcv_val = Self::get_imm_val(&collected_args[2])? as u8;
+        let cond = collected_args[3].clone();
+
+        if collected_args[1].starts_with('#') {
+            // Immediate value case
+            let imm_val = Self::get_imm_val(&collected_args[1])? as u8;
+            Ok(Box::new(CcmpImmInstruction {
+                rn,
+                imm_val,
+                nzcv_val,
+                cond,
+            }))
+        } else {
+            // Register value case
+            let rm = RegisterType::from_str(&collected_args[1])?;
+            Ok(Box::new(CcmpInstruction {
+                rn,
+                rm,
+                nzcv_val,
+                cond,
+            }))
+        }
+    }
+
+
+#[derive(Clone)]
+pub struct CcmpInstruction {
+    rn: RegisterType,
+    rm: RegisterType,
+    nzcv_val: u8,
+    cond: String,
+}
+
+impl ExecutableInstruction for CcmpInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.ccmp(self.rn, self.rm, self.nzcv_val, &self.cond)
+    }
+}
+
+#[derive(Clone)]
+pub struct CcmpImmInstruction {
+    rn: RegisterType,
+    imm_val: u8,
+    nzcv_val: u8,
+    cond: String,
+}
+
+impl ExecutableInstruction for CcmpImmInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.ccmp_imm(self.rn, self.imm_val, self.nzcv_val, &self.cond)
+    }
+}
+
+
 impl Core<'_, '_, '_> {
     /// Processes ARM64 command `ccmp rn, rm, nzcv, condition`
     ///

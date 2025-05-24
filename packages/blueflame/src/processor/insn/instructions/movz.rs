@@ -1,13 +1,14 @@
-use super::super::instruction_parse::InsnParser;
-use crate::processor::instruction_registry::{ExecutableInstruction, RegisterType};
+use crate::processor::{self as self_, crate_};
 
-use crate::processor::Error;
-use crate::Core;
+use disarm64::decoder::{Mnemonic, Opcode};
+use disarm64::arm64::InsnOpcode;
 
-use disarm64_defn::defn::InsnOpcode;
+use self_::insn::instruction_registry::ExecutableInstruction;
+use self_::insn::instruction_parse::{InsnParser, get_bit_range};
+use self_::insn::Core;
+use self_::{glue, Error, RegisterType};
 
-use super::super::instruction_parse::get_bit_range;
-use anyhow::bail;
+
 
 #[derive(Clone)]
 pub struct InsnMovz {
@@ -17,17 +18,20 @@ pub struct InsnMovz {
 }
 
 impl ExecutableInstruction for InsnMovz {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         let res_val = (self.imm as i64) << self.shift;
-        proc.cpu.write_gen_reg(&self.rd, res_val)?;
+        glue::write_gen_reg(core.cpu, &self.rd, res_val);
         Ok(())
+    }
+    fn is_jump(&self) -> bool {
+        false
     }
 }
 impl InsnParser for InsnMovz {
     fn parse_from_decode(
-        d: &disarm64::Opcode,
-    ) -> std::result::Result<Option<Box<(dyn ExecutableInstruction)>>, anyhow::Error> {
-        if d.mnemonic != disarm64::decoder_full::Mnemonic::movz {
+        d: &Opcode,
+    ) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+        if d.mnemonic != Mnemonic::movz {
             return Ok(None);
         }
         let bits = d.operation.bits();
@@ -37,7 +41,10 @@ impl InsnParser for InsnMovz {
         let rd = match sf {
             0 => RegisterType::WReg(rd_idx),
             1 => RegisterType::XReg(rd_idx),
-            _ => bail!("Invalid decode value for sf in movz inst"),
+            _ => {
+                log::error!("Invalid sf value in movz instruction: {sf}");
+                return Err(Error::BadInstruction(bits))
+            }
         };
         let imm = get_bit_range(bits, 20, 5);
         let shift = hw * 16;
@@ -50,20 +57,19 @@ impl InsnParser for InsnMovz {
 }
 
 #[cfg(test)]
-use anyhow::Result;
-#[test]
-pub fn test_movz_parse() -> Result<()> {
-    let movz_test =
-        InsnMovz::parse_from_decode(&disarm64::decoder::decode(0x52800088).unwrap())?.unwrap();
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    movz_test.exec_on(&mut core)?;
-    assert_eq!(core.cpu.read_gen_reg(&RegisterType::WReg(8))?, 4);
-    Ok(())
+mod tests {
+    use super::*;
+    use crate::processor::{Cpu0, Process, reg};
+    #[test]
+    pub fn test_movz_parse() -> anyhow::Result<()> {
+        let opcode = disarm64::decoder::decode( 0x52800088).expect("Failed to decode instruction");
+        let movz_test = InsnMovz::parse_from_decode(&opcode)?.expect("Failed to parse movz instruction");
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        movz_test.exec_on(&mut core)?;
+        assert_eq!(cpu.read::<u32>(reg!(w[8])), 4);
+        assert_eq!(cpu.pc, 0); // PC should not change
+        Ok(())
+    }
 }

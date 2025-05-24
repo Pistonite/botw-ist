@@ -3,6 +3,29 @@ use crate::processor::instruction_registry::RegisterType;
 use crate::processor::Error;
 use crate::Core;
 
+    fn parse_ubfm(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args: Vec<String> = Self::split_args(args, 4);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let rn = RegisterType::from_str(&collected_args[1])?;
+        let immr = Self::get_imm_val(&collected_args[2])?;
+        let imms = Self::get_imm_val(&collected_args[3])?;
+        Ok(Box::new(UbfmInstruction { rn, rd, immr, imms }))
+    }
+
+#[derive(Clone)]
+pub struct UbfmInstruction {
+    rn: RegisterType,
+    rd: RegisterType,
+    immr: i64,
+    imms: i64,
+}
+
+impl ExecutableInstruction for UbfmInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.ubfm(self.rd, self.rn, self.immr, self.imms)
+    }
+}
+
 impl Core<'_, '_, '_> {
     pub fn ubfm(
         &mut self,

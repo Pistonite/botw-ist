@@ -3,6 +3,30 @@ use crate::processor::instruction_registry::RegisterType;
 use crate::processor::Error;
 use crate::Core;
 
+    fn parse_cinc(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 3);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let rn = RegisterType::from_str(&collected_args[1])?;
+        let cond = collected_args[2].clone();
+
+        Ok(Box::new(CincInstruction { rd, rn, cond }))
+    }
+
+
+
+#[derive(Clone)]
+pub struct CincInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+    cond: String,
+}
+
+impl ExecutableInstruction for CincInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.cinc(self.rd, self.rn, &self.cond)
+    }
+}
+
 impl Core<'_, '_, '_> {
     /// Processes ARM64 command `cinc rd, rn, condition`
     ///

@@ -3,6 +3,30 @@ use crate::processor::instruction_registry::RegisterType;
 use crate::processor::Error;
 use crate::Core;
 
+    fn parse_msub(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 4);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let rn = RegisterType::from_str(&collected_args[1])?;
+        let rm = RegisterType::from_str(&collected_args[2])?;
+        let xa = RegisterType::from_str(&collected_args[3])?;
+        Ok(Box::new(MsubInstruction { rd, rn, rm, xa }))
+    }
+
+
+#[derive(Clone)]
+pub struct MsubInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+    rm: RegisterType,
+    xa: RegisterType,
+}
+
+impl ExecutableInstruction for MsubInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.msub(self.rd, self.rn, self.rm, self.xa)
+    }
+}
+
 impl Core<'_, '_, '_> {
     pub fn msub(
         &mut self,

@@ -177,5 +177,4 @@ fn test_food_items() -> Result<(), Box<dyn Error>> {
     assert_eq!(4.0, cook_data.effect.1);
 
     Ok(())
-
 }

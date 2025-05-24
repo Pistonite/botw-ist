@@ -3,6 +3,46 @@ use crate::Core;
 
 use crate::processor::{instruction_registry::RegisterType, RegisterValue};
 
+    fn parse_ret(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        if args.is_empty() {
+            Ok(Box::new(RetInstruction))
+        } else {
+            let rn = RegisterType::from_str(args)?;
+            Ok(Box::new(RetArgsInstruction { rn }))
+        }
+    }
+
+#[derive(Clone)]
+pub struct RetInstruction;
+
+#[derive(Clone)]
+pub struct RetArgsInstruction {
+    rn: RegisterType,
+}
+
+impl ExecutableInstruction for RetArgsInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.ret_with_arg(self.rn)
+    }
+
+    // TODO: delete
+    // fn instruction_type(&self) -> Option<InstructionType> {
+    //     Some(InstructionType::Return)
+    // }
+}
+
+impl ExecutableInstruction for RetInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.ret();
+        Ok(())
+    }
+
+    // TODO: delete
+    // fn instruction_type(&self) -> Option<InstructionType> {
+    //     Some(InstructionType::Return)
+    // }
+}
+
 impl Core<'_, '_, '_> {
     // NOTE: Seems to function the same as br, but has a "hint" that this is a subroutine return
     pub fn ret_with_arg(&mut self, xn: RegisterType) -> Result<(), Error> {

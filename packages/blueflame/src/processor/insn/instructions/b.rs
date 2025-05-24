@@ -1,5 +1,21 @@
 use crate::{processor::Error, Core};
 
+    fn parse_b(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let label_offset = Self::get_label_val(args)?;
+        Ok(Box::new(BInstruction { label_offset }))
+    }
+
+#[derive(Clone)]
+pub struct BInstruction {
+    label_offset: u64,
+}
+
+impl ExecutableInstruction for BInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.b(self.label_offset)
+    }
+}
+
 impl Core<'_, '_, '_> {
     /// Processes the ARM64 command `b label`
     ///

@@ -3,6 +3,20 @@ use crate::Core;
 
 use crate::processor::instruction_registry::RegisterType;
 
+#[derive(Clone)]
+pub struct TbzInstruction {
+    rn: RegisterType,
+    imm_val: u64,
+    label_offset: u64,
+}
+
+impl ExecutableInstruction for TbzInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.tbz(self.rn, self.imm_val, self.label_offset)
+    }
+}
+
+
 impl Core<'_, '_, '_> {
     // Note: imm is the bit number. Should be between 0 and 63 (or 0 and 31 for W registers)
     pub fn tbz(&mut self, xn: RegisterType, imm: u64, label_offset: u64) -> Result<(), Error> {

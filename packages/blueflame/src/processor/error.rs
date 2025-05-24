@@ -8,17 +8,20 @@ pub enum Error {
         new_start: u32,
         existing_start: u32,
     },
-
     #[error("[proc-strict-replace-hook] unsupported jump to middle of replaced code at main+0x{main_offset:08x}")]
     StrictReplacement {
         main_offset: u32,
     },
-
     #[error("[limited-block-count] block count limit reached")]
     BlockCountLimitReached,
-
+    #[error("[limited-block-iteration] block iteration limit reached")]
+    BlockIterationLimitReached,
     #[error("[check-stack-frames] stack frames are corrupted")]
     StackFrameCorrupted,
+    #[error("[check-return-address] return address 0x{0:016x} does not match expected 0x{1:016x}")]
+    ReturnAddressMismatch(u64, u64),
+    #[error("[instruction-abort] bad instruction 0x{0:08x}")]
+    BadInstruction(u32),
 
 
 

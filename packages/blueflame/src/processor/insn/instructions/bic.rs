@@ -6,8 +6,63 @@ use crate::{
     Core,
 };
 
+    fn parse_bic(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 4);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let rn = RegisterType::from_str(&collected_args[1])?;
+        let extra_op = Self::parse_auxiliary(collected_args.get(3))?;
+        if collected_args[2].starts_with('#') {
+            //Immediate offset
+            let imm_val = Self::get_imm_val(&collected_args[2])?;
+            Ok(Box::new(BicImmInstruction {
+                rd,
+                rn,
+                imm_val,
+                extra_op,
+            }))
+        } else {
+            //Register offset
+            let rm = RegisterType::from_str(&collected_args[2])?;
+            Ok(Box::new(BicInstruction {
+                rd,
+                rn,
+                rm,
+                extra_op,
+            }))
+        }
+    }
+
+
+#[derive(Clone)]
+pub struct BicInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+    rm: RegisterType,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for BicInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.bic(self.rd, self.rn, self.rm, self.extra_op.clone())
+    }
+}
+
+#[derive(Clone)]
+pub struct BicImmInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+    imm_val: i64,
+    extra_op: Option<AuxiliaryOperation>,
+}
+
+impl ExecutableInstruction for BicImmInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.bic_imm(self.rd, self.rn, self.imm_val, self.extra_op.clone())
+    }
+}
+
 impl Core<'_, '_, '_> {
-    /// Processes ARM64 command `eor xd, xn, xm` with optional shift
+    /// Processes ARM64 command `bic xd, xn, xm` with optional shift
     pub fn bic(
         &mut self,
         xd: RegisterType,
@@ -26,7 +81,7 @@ impl Core<'_, '_, '_> {
         Ok(())
     }
 
-    /// Processes ARM64 command `eor xd, xn, imm` with optional shift
+    /// Processes ARM64 command `bic xd, xn, imm` with optional shift
     pub fn bic_imm(
         &mut self,
         xd: RegisterType,

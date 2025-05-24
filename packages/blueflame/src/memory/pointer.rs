@@ -155,6 +155,7 @@ impl<T, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SIZE, LEN> {
 
     /// Get the length of the array
     #[inline(always)]
+    #[allow(clippy::len_without_is_empty)]
     pub const fn len(self) -> usize {
         LEN
     }
@@ -178,8 +179,8 @@ const _: () = {
     impl<T, const SIZE: u32> Default for PtrToSized<T, SIZE> { fn default() -> Self { Self::nullptr() } }
     impl<T, const SIZE: u32, const LEN: usize> Default for PtrToArray<T, SIZE, LEN> { fn default() -> Self { Self::nullptr() } }
     // Copy
-    impl<T, const SIZE: u32> Clone for PtrToSized<T, SIZE> { fn clone(&self) -> Self { Self::new(self.value) } }
-    impl<T, const SIZE: u32, const LEN: usize> Clone for PtrToArray<T, SIZE, LEN> { fn clone(&self) -> Self { Self::new(self.value) } }
+    impl<T, const SIZE: u32> Clone for PtrToSized<T, SIZE> { fn clone(&self) -> Self { *self } }
+    impl<T, const SIZE: u32, const LEN: usize> Clone for PtrToArray<T, SIZE, LEN> { fn clone(&self) -> Self { *self } }
     impl<T, const SIZE: u32> Copy for PtrToSized<T, SIZE> {}
     impl<T, const SIZE: u32, const LEN: usize> Copy for PtrToArray<T, SIZE, LEN> {}
     // Conversion - 

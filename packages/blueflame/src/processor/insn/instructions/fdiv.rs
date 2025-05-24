@@ -3,6 +3,29 @@ use crate::processor::{instruction_registry::RegisterType, RegisterValue};
 
 use crate::Core;
 
+    fn parse_fdiv(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
+        let collected_args = Self::split_args(args, 3);
+        let rd = RegisterType::from_str(&collected_args[0])?;
+        let rn = RegisterType::from_str(&collected_args[1])?;
+        let rm = RegisterType::from_str(&collected_args[2])?;
+
+        Ok(Box::new(FdivInstruction { rd, rn, rm }))
+    }
+
+
+#[derive(Clone)]
+pub struct FdivInstruction {
+    rd: RegisterType,
+    rn: RegisterType,
+    rm: RegisterType,
+}
+
+impl ExecutableInstruction for FdivInstruction {
+    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
+        proc.fdiv(self.rd, self.rn, self.rm)
+    }
+}
+
 impl Core<'_, '_, '_> {
     pub fn fdiv(
         &mut self,
