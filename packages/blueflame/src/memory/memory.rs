@@ -7,7 +7,7 @@ use std::sync::Arc;
 use derive_more::derive::Constructor;
 use enumset::EnumSet;
 
-use crate_::env::enabled;
+use crate_::env::{Environment, enabled};
 
 use self_::{glue, AccessFlags, AccessFlag, MemAccess, access};
 
@@ -21,26 +21,29 @@ use super::write::Writer;
 /// Memory of the simulated process
 #[derive(Debug, Clone, Constructor)]
 pub struct Memory {
+    env: Environment,
     /// program region
     program: Arc<Region>,
     /// stack region
     stack: Arc<Region>,
     /// heap region
     pub heap: Arc<SimpleHeap>,
-
-    // TODO --cleanup: below needs to be removed
-    /// pmdm address
-    pmdm_addr: Option<u64>,
-    // /// offset of the main module compared to program region start
-    // main_offset: u32,
-    /// trigger param addr
-    trigger_param_addr: Option<u64>,
 }
 
 impl Memory {
+    /// Get the emulated environment constants
+    pub fn env(&self) -> Environment {
+        self.env
+    }
+
     /// Get the physical starting address of the program region
     pub fn program_start(&self) -> u64 {
         self.program.start
+    }
+
+    /// Get the physical starting address of the main module
+    pub fn main_start(&self) -> u64 {
+        self.program.start + self.env.main_offset() as u64
     }
 
     pub fn stack_end(&self) -> u64 {
@@ -162,19 +165,6 @@ impl Memory {
 
     pub fn heap_mut(&mut self) -> &mut SimpleHeap {
         Arc::make_mut(&mut self.heap)
-    }
-
-    pub fn get_pmdm_addr(&self) -> u64 {
-        self.pmdm_addr.unwrap_or(0)
-    }
-
-
-    pub fn set_trigger_param_addr(&mut self, address: u64) {
-        self.trigger_param_addr = Some(address)
-    }
-
-    pub fn get_trigger_param_addr(&self) -> u64 {
-        self.trigger_param_addr.unwrap_or(0)
     }
 }
 

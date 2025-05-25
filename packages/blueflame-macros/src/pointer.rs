@@ -63,6 +63,10 @@ macro_rules! Ptr {
         blueflame::memory::PtrToArray::<$t, { <$t as blueflame::memory::MemObject>::SIZE }, $len>::new_const($value)
     };
 
+    (nullptr) => {
+        blueflame::memory::PtrToSized::nullptr()
+    };
+
     ($t:ty) => {
         blueflame::memory::PtrToSized::<$t, { <$t as blueflame::memory::MemObject>::SIZE }>
     };

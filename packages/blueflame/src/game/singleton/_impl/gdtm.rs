@@ -1,9 +1,11 @@
-use crate::game::crate_;
+use crate::game::{self as self_, crate_};
 
 use crate_::vm::VirtualMachine;
 use crate_::env::{Environment, ProxyId};
 
 pub static NAME: &str = "ksys::gdt::Manager";
+
+pub type Type = self_::GdtManager;
 
 pub const fn size(_env: Environment) -> u32 {
     0xdc8

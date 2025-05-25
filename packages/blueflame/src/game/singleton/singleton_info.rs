@@ -43,10 +43,10 @@ mod tests {
 
     fn get_singletons(env: Environment) -> Vec<SingletonInfo> {
         vec![
-            singleton_info!(singleton::pmdm(env)),
-            singleton_info!(singleton::gdtm(env)),
-            singleton_info!(singleton::info_data(env)),
-            singleton_info!(singleton::aocm(env)),
+            singleton_info!(pmdm(env)),
+            singleton_info!(gdtm(env)),
+            singleton_info!(info_data(env)),
+            singleton_info!(aocm(env)),
         ]
     }
 

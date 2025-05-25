@@ -1,5 +1,7 @@
 use crate::memory::{self as self_};
 
+use num_traits::Zero;
+
 use self_::{Memory, MemLayout, Error, MemObject, Unsigned, Reader, Writer, assert_size_eq, access, AccessFlags};
 
 #[doc(inline)]
@@ -293,8 +295,37 @@ impl<T: MemObject, const SIZE: u32> PtrToSized<T, SIZE> {
         let mut writer = memory.write(self.value, flags)?;
         MemObject::write_sized(t, &mut writer, SIZE)
     }
+
+    /// Store slice of the object into emulated memory as an array
+    ///
+    /// This is equivalent to the C operation:
+    /// ```c
+    /// T* array; // some pointer to an array
+    /// int size; // size of the array
+    /// T* ptr;   // ptr to store to
+    /// for (int i = 0; i < size; i++) {
+    ///     *ptr++ = array[i];
+    /// }
+    /// ```
+    ///
+    /// Any region is allowed. Use [`store_slice_with`](Self::store_slice_with) to specify extra flags.
+    pub fn store_slice(self, t: &[T], memory: &mut Memory) -> Result<(), Error> {
+        self.store_slice_with(t, memory, access!(default))
+    }
+
+    /// Store slice of the object into emulated memory as an array with region restriction
+    ///
+    /// See [`store_slice`](Self::store_slice) for more details
+    pub fn store_slice_with(self, t: &[T], memory: &mut Memory, flags: AccessFlags) -> Result<(), Error> {
+        let mut writer = memory.write(self.value, flags)?;
+        for x in t {
+            MemObject::write_sized(x, &mut writer, SIZE)?;
+        }
+        Ok(())
+    }
 }
 
+// load/store array
 impl<T: MemObject, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SIZE, LEN> {
     /// Load all values in the array from emulated memory onto a Vec
     ///
@@ -356,6 +387,37 @@ impl<T: MemObject, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SI
     }
 }
 
+// load zero-terminated array
+impl<T: MemObject + Zero + PartialEq + Copy, const SIZE: u32> PtrToSized<T, SIZE> {
+
+    /// Load zero-terminated array starting from this pointer.
+    ///
+    /// **The returned vector DOES NOT include the zero terminator**
+    ///
+    /// Any region is allowed. Use [`load_zero_terminated_with`](Self::load_zero_terminated_with) to specify extra flags.
+    pub fn load_zero_terminated(self, memory: &Memory) -> Result<Vec<T>, Error> {
+        self.load_zero_terminated_with(memory, access!(default))
+    }
+
+    /// Load zero-terminated array starting from this pointer, with extra flags
+    ///
+    /// **The returned vector DOES NOT include the zero terminator**
+    ///
+    /// See [`load_zero_terminated`](Self::load_zero_terminated) for more details
+    pub fn load_zero_terminated_with(self, memory: &Memory, flags: AccessFlags) -> Result<Vec<T>, Error> {
+        let mut out = Vec::new();
+        let mut reader = memory.read(self.value, flags)?;
+        loop {
+            let val = T::read_sized(&mut reader, SIZE)?;
+            if val.is_zero() {
+                break;
+            }
+            out.push(val);
+        }
+        Ok(out)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -393,10 +455,7 @@ mod tests {
 
     #[test]
     pub fn test_pointers() -> anyhow::Result<()> {
-        let p = Arc::new(Region::new_rw(RegionType::Program, 0, 0));
-        let s = Arc::new(Region::new_rw(RegionType::Stack, 0x100, 0x1000));
-        let h = Arc::new(SimpleHeap::new(0x2000, 0, 0));
-        let mut mem = Memory::new(p, s, h, None, None);
+        let mut mem = Memory::new_for_test();
         let ts = TestSub {
             one: 0x15,
             two: 0x20,

@@ -8,7 +8,8 @@ use std::ops::ControlFlow;
 use derive_more::derive::Constructor;
 
 use crate_::env::{Environment, enabled, GameVer};
-use crate_::memory::{Memory, Proxies, access};
+use crate_::memory::{Memory, access};
+use crate_::game::Proxies;
 use self_::{Execute, Error};
 use self_::insn::InsnVec;
 
@@ -16,8 +17,6 @@ use self_::insn::InsnVec;
 /// that is not in the Processor.
 #[derive(Constructor)]
 pub struct Process {
-    /// Game environment
-    env: Environment,
     /// Main memory of the game
     memory: Arc<Memory>,
     /// Proxy implementation for some game objects
@@ -34,8 +33,8 @@ impl std::fmt::Debug for Process {
 
 impl Process {
     /// Get the game version
-    pub const fn game_ver(&self) -> GameVer {
-        self.env.game_ver
+    pub fn game_ver(&self) -> GameVer {
+        self.memory.env().game_ver
     }
 
     /// Access the main memory of the process
@@ -48,16 +47,24 @@ impl Process {
         Arc::make_mut(&mut self.memory)
     }
 
+    pub fn proxies(&self) -> &Proxies {
+        &self.proxies
+    }
+
+    pub fn proxies_mut(&mut self) -> &mut Proxies {
+        Arc::make_mut(&mut self.proxies)
+    }
+
     /// Get the physical starting address of the main module
     pub fn main_start(&self) -> u64 {
-        self.memory.program_start() + self.env.main_offset() as u64
+        self.memory.main_start()
     }
 
     /// Fetch a block of code for execution
     pub fn fetch_execute_block(&self, pc: u64, max_bytes: u32) -> Result<(Box<dyn Execute>, u32), Error> {
         // find execute hook at this location
         let main_offset: u32 = (pc - self.main_start()) as u32;
-        if let Some((x, bytes)) = self.hook.fetch(main_offset, self.env)? {
+        if let Some((x, bytes)) = self.hook.fetch(main_offset, self.memory.env())? {
             if bytes > max_bytes {
                 return Err(Error::TooBigHook(main_offset))
             }

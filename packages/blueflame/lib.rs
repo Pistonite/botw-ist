@@ -4,17 +4,25 @@ extern crate self as blueflame;
 
 #[layered_crate::layers]
 mod src {
-    /// Simulation of the game's data and functions
-    #[depends_on(processor)]
+    // /// Top-level setup implementation for starting and connecting
+    // /// everything in a program
+    // #[depends_on(processor)]
+    // #[depends_on(memory)]
+    // #[depends_on(vm)]
+    // #[depends_on(env)]
+    // pub extern crate linker;
+
+    /// Implementation of the processor (CPU) layers
+    #[depends_on(game)]
+    #[depends_on(memory)]
+    #[depends_on(env)]
+    pub extern crate processor;
+
+    /// Mid-level simulation of some of the game's types and systems
     #[depends_on(memory)]
     #[depends_on(vm)]
     #[depends_on(env)]
     pub extern crate game;
-
-    /// Implementation of the processor (CPU), including the ARMv8 architecture
-    #[depends_on(memory)]
-    #[depends_on(env)]
-    pub extern crate processor;
 
     /// Low-level memory emulation
     #[depends_on(program)]

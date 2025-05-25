@@ -29,11 +29,6 @@ pub use proxy::*;
 pub mod traits;
 #[doc(inline)]
 pub use traits::{MemLayout, MemObject, Unsigned32, Unsigned};
-// TODO --cleanup
-// pub mod util;
-pub mod wrapper;
-
-mod from_reg_val;
 
 pub use blueflame_proc_macros::MemObject;
 pub use blueflame_macros::{align_up, align_down};
