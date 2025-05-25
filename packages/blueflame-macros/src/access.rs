@@ -23,7 +23,5 @@
 /// Use [`perm`] or [`region`] to specify single permission or region.
 #[macro_export]
 macro_rules! access {
-    ($single:ident) => {{
-        blueflame::memory::AccessFlags::$single()
-    }};
+    ($single:ident) => {{ blueflame::memory::AccessFlags::$single() }};
 }

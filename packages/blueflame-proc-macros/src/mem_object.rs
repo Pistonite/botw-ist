@@ -37,7 +37,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
                     }
                 };
                 (size_tokens, size_span)
-            },
+            }
             Some((size, lit)) => {
                 let size_span = lit.span();
                 let size_tokens = quote_spanned! {
@@ -74,9 +74,15 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
 
     for (i, field_data) in fields_ordered_by_offset.iter().enumerate() {
         let curr_offset = field_data.offset;
-        let next_offset = fields_ordered_by_offset.get(i + 1).map(|f| f.offset).unwrap_or(size);
+        let next_offset = fields_ordered_by_offset
+            .get(i + 1)
+            .map(|f| f.offset)
+            .unwrap_or(size);
         if next_offset <= curr_offset {
-            syn_error!(field_data.size_tokens.clone(), "Fields cannot start at the same offset or overlap");
+            syn_error!(
+                field_data.size_tokens.clone(),
+                "Fields cannot start at the same offset or overlap"
+            );
         }
         let max_size = next_offset - curr_offset;
 

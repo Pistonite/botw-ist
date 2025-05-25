@@ -1,14 +1,12 @@
-use super::super::instruction_parse::InsnParser;
-use crate::processor::instruction_parse::get_bit_range_big;
-use crate::processor::instruction_registry::{ExecutableInstruction, RegisterType};
+use crate::processor::{self as self_, crate_};
 
-use crate::processor::Error;
-use crate::Core;
+use disarm64::decoder::{Mnemonic, Opcode};
+use disarm64::arm64::InsnOpcode;
 
-use disarm64_defn::defn::InsnOpcode;
+use self_::insn::instruction_parse::{self as parse, ExecutableInstruction, get_bit_range};
+use self_::insn::Core;
+use self_::{glue, Error, RegisterType};
 
-use super::super::instruction_parse::get_bit_range;
-use anyhow::bail;
 #[derive(Clone)]
 pub struct InsnBfm {
     rd: RegisterType,
@@ -17,86 +15,128 @@ pub struct InsnBfm {
     imms: u8,
 }
 
-impl Core<'_, '_, '_> {
-    pub fn bfm(
-        &mut self,
-        rd: RegisterType,
-        rn: RegisterType,
-        immr: u8,
-        imms: u8,
-    ) -> Result<(), Error> {
-        let mut rd_val = self.cpu.read_gen_reg(&rd)? as u64;
-        let rn_val = self.cpu.read_gen_reg(&rn)? as u64;
-
-        if imms >= immr {
-            let start_idx = immr;
-            let copy_size = 1 + imms - immr;
-            let end_idx = start_idx + copy_size - 1;
-
-            let src_bits = get_bit_range_big(rn_val, end_idx, start_idx);
-
-            let mask = ((1u64 << copy_size) - 1) << start_idx;
-            rd_val = (rd_val & !mask) | (src_bits << start_idx);
-        } else {
-            let copy_size = imms + 1;
-            let src_bits = get_bit_range_big(rn_val, copy_size - 1, 0);
-
-            let mask = ((1u64 << copy_size) - 1) << immr;
-            rd_val = (rd_val & !mask) | (src_bits << immr);
-        }
-
-        self.cpu.write_gen_reg(&rd, rd_val as i64)?;
-        Ok(())
+pub    fn parse(
+    d: &Opcode,
+) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+    if d.mnemonic != Mnemonic::bfm {
+        return Ok(None);
     }
+    let bits = d.operation.bits();
+    let sf = get_bit_range(bits, 31, 31);
+    let rd_idx = get_bit_range(bits, 4, 0);
+    let rn_idx = get_bit_range(bits, 9, 5);
+    let imms = get_bit_range(bits, 15, 10);
+    let immr = get_bit_range(bits, 21, 16);
+    let rd = match sf {
+        0 => RegisterType::WReg(rd_idx),
+        1 => RegisterType::XReg(rd_idx),
+        _ => {log::error!("Invalid decode value for sf in bfm inst: {sf}");
+            return Err(Error::BadInstruction(bits));
+        },
+    };
+    let rn = match sf {
+        0 => RegisterType::WReg(rn_idx),
+        1 => RegisterType::XReg(rn_idx),
+        _ => {log::error!("Invalid decode value for sf in bfm inst: {sf}");
+            return Err(Error::BadInstruction(bits));
+        },
+    };
+    Ok(Some(Box::new(InsnBfm {
+        rd,
+        rn,
+        immr: immr as u8,
+        imms: imms as u8,
+    })))
 }
 
 impl ExecutableInstruction for InsnBfm {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.bfm(self.rd, self.rn, self.immr, self.imms)?;
-        Ok(())
-    }
-}
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let mut rd_val = glue::read_gen_reg(core.cpu, &self.rd) as u64;
+        let rn_val = glue::read_gen_reg(core.cpu, &self.rn) as u64;
 
-impl InsnParser for InsnBfm {
-    fn parse_from_decode(
-        d: &disarm64::Opcode,
-    ) -> std::result::Result<Option<Box<(dyn ExecutableInstruction)>>, anyhow::Error> {
-        if d.mnemonic != disarm64::decoder_full::Mnemonic::bfm {
-            return Ok(None);
+        if self.imms >= self.immr {
+            let start_idx = self.immr;
+            let copy_size = 1 + self.imms - self.immr;
+            let end_idx = start_idx + copy_size - 1;
+
+            let src_bits = parse::get_bit_range_big(rn_val, end_idx, start_idx);
+
+            let mask = 1u64.overflowing_shl(copy_size as u32).0 - 1;
+            let mask = mask << start_idx;
+            rd_val = ((rd_val & !mask) | (src_bits << start_idx)) >> self.immr;
+        } else {
+            let copy_size = self.imms + 1;
+            let src_bits = parse::get_bit_range_big(rn_val, copy_size - 1, 0);
+
+            let mask = 1u64.overflowing_shl(copy_size as u32).0 - 1;
+            let mask = mask << self.immr;
+            rd_val = ((rd_val & !mask) | (src_bits << self.immr)) >> self.immr;
         }
-        let bits = d.operation.bits();
-        let sf = get_bit_range(bits, 31, 31);
-        let rd_idx = get_bit_range(bits, 4, 0);
-        let rn_idx = get_bit_range(bits, 9, 5);
-        let imms = get_bit_range(bits, 15, 10);
-        let immr = get_bit_range(bits, 21, 16);
-        let rd = match sf {
-            0 => RegisterType::WReg(rd_idx),
-            1 => RegisterType::XReg(rd_idx),
-            _ => bail!("Invalid decode value for sf in bfm inst"),
-        };
-        let rn = match sf {
-            0 => RegisterType::WReg(rn_idx),
-            1 => RegisterType::XReg(rn_idx),
-            _ => bail!("Invalid decode value for sf in bfm inst"),
-        };
-        Ok(Some(Box::new(InsnBfm {
-            rd,
-            rn,
-            immr: immr as u8,
-            imms: imms as u8,
-        })))
+
+        glue::write_gen_reg(core.cpu, &self.rd, rd_val as i64);
+        Ok(())
     }
 }
 
 #[cfg(test)]
-use anyhow::Result;
-#[test]
-// Simple test to make sure that movz instructions don't parse as bfms
-pub fn test_bfm_parse_neg() -> Result<()> {
-    let bfm_test = InsnBfm::parse_from_decode(&disarm64::decoder::decode(0x52800088).unwrap())?;
-    if let Some(_) = bfm_test {
-        panic!("movz parsed as bfm")
+mod tests {
+    use super::*;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
+
+    fn test_bfm(bits: u32, input: u64, expected: u64) -> anyhow::Result<()> {
+        let opcode = disarm64::decoder::decode(bits).expect("failed to decode");
+        let insn = parse(&opcode)?.unwrap();
+        let mut cpu = Cpu0::default();
+        cpu.write(reg!(x[1]), input);
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        insn.exec_on(&mut core)?;
+        assert_eq!(cpu.read::<u64>(reg!(x[0])), expected);
+        Ok(())
     }
-    Ok(())
+
+    #[test]
+    pub fn test_full_bitfield() -> anyhow::Result<()> {
+        // bfm x0, x1, #0, #63
+        test_bfm(paste_insn!(20 FC 40 B3), 0xffff_ffff_ffff_ffff, 0xffff_ffff_ffff_ffff)
+    }
+
+    #[test]
+    pub fn test_low_byte() -> anyhow::Result<()> {
+        // bfm X0, X1, #0, #7
+        test_bfm(paste_insn!(20 1C 40 B3), 0x0123_4567_89ab_cdef, 
+            0x0000_0000_0000_00ef)
+    }
+
+    #[test]
+    pub fn test_bits_8_to_15() -> anyhow::Result<()> {
+        // bfm X0, X1, #8, #15
+        test_bfm(paste_insn!(20 3C 48 B3), 0x0123_4567_89ab_cdef, 
+            0x0000_0000_0000_00cd)
+    }
+
+    #[test]
+    pub fn test_upper_half_wrapped() -> anyhow::Result<()> {
+        // bfm X0, X1, #32, #47
+        test_bfm(paste_insn!(20 BC 60 B3), 0xffff_ffff_1234_5678, 0x0000_0000_0000_ffff)
+    }
+
+    #[test]
+    pub fn test_middle_word() -> anyhow::Result<()> {
+        // bfm X0, X1, #16, #31
+        test_bfm(paste_insn!(20 7C 50 B3), 0x0000_0000_ffff_ffff, 0x0000_0000_0000_ffff)
+    }
+
+    #[test]
+    pub fn test_single_high_bit() -> anyhow::Result<()> {
+        // bfm X0, X1, #63, #63
+        test_bfm(paste_insn!(20 FC 7F B3), 0x0000_0000_0000_0001, 0x0000_0000_0000_0000)
+    }
+
+    #[test]
+    pub fn test_single_bit_wraparound() -> anyhow::Result<()> {
+        // bfm X0, X1, #63, #63
+        test_bfm(paste_insn!(20 FC 7F B3), 0x8000_0000_0000_0000, 0x0000_0000_0000_0001)
+    }
 }

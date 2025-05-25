@@ -1,12 +1,12 @@
-use crate::processor::Error;
-use crate::Core;
+use crate::processor as self_;
 
-use crate::processor::instruction_registry::RegisterType;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error, reg};
 
-
-    fn parse_blr(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
-        let rn = RegisterType::from_str(args)?;
-        Ok(Box::new(BlrInstruction { rn }))
+pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+        let rn = glue::parse_reg_or_panic(args);
+        Some(Box::new(BlrInstruction { rn }))
     }
 
 #[derive(Clone)]
@@ -15,49 +15,36 @@ pub struct BlrInstruction {
 }
 
 impl ExecutableInstruction for BlrInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.blr(self.rn)
-    }
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let xn_val = glue::read_gen_reg(core.cpu, &self.rn) as u64 - 4;
+        let pc = core.cpu.pc;
+        let lr = pc + 4;
 
-    // fn instruction_type(&self) -> Option<InstructionType> {
-    //     Some(InstructionType::Branch)
-    // }
-}
+        let target = xn_val + 4;
 
-impl Core<'_, '_, '_> {
-    /// Processes ARM64 command `blr xn`
-    pub fn blr(&mut self, xn: RegisterType) -> Result<(), Error> {
-        let xn_val = self.cpu.read_gen_reg(&xn)? as u64 - 4;
-        let lr = self.cpu.pc + 4;
-
-        self.cpu.stack_trace.push((
-            self.compute_ida_addr(self.cpu.pc),
-            self.compute_ida_addr(xn_val + 4),
-        ));
-        self.cpu.pc = xn_val;
-        self.cpu.x[30] = lr as i64;
+        core.cpu.stack_trace.push_blr(target, self.rn.to_regname(), pc);
+        core.cpu.pc = xn_val; // before incrementing
+        core.cpu.write(reg!(lr), lr);
         Ok(())
     }
 }
 
 #[cfg(test)]
-#[test]
-pub fn simple_blr_test() -> anyhow::Result<()> {
-    use crate::processor::instruction_registry::RegisterType;
+mod tests {
+    use super::*;
+    use self_::{Cpu0, Process, reg};
 
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.cpu.pc = 0x1000;
-    core.cpu.write_gen_reg(&RegisterType::XReg(30), 5)?;
-    core.cpu.write_gen_reg(&RegisterType::XReg(10), 0x50)?;
-    core.handle_string_command(&String::from("blr x10"))?;
-    assert_eq!(core.cpu.pc, 0x50);
-    assert_eq!(core.cpu.read_gen_reg(&RegisterType::XReg(30))?, 0x1004);
-    Ok(())
+    #[test]
+    pub fn simple_blr_test() -> anyhow::Result<()> {
+         let mut cpu = Cpu0::default();
+        cpu.pc = 0x1000;
+        cpu.write(reg!(lr), 5);
+        cpu.write(reg!(x[10]), 0x50);
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command(&String::from("blr x10"))?;
+        assert_eq!(core.cpu.pc, 0x50);
+        assert_eq!(cpu.read::<u64>(reg!(lr)), 0x1004);
+        Ok(())
+    }
 }

@@ -1,7 +1,7 @@
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
-use syn::{parse_macro_input, spanned::Spanned as _};
 use quote::quote;
+use syn::{parse_macro_input, spanned::Spanned as _};
 
 use crate::util::{self, syn_error};
 
@@ -15,10 +15,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
     let name = &input.ident;
 
     let syn::Data::Enum(input) = input.data else {
-        syn_error!(
-            input,
-            "can only be derived for enums"
-        );
+        syn_error!(input, "can only be derived for enums");
     };
 
     let mut default_features_impl = TokenStream2::new();
@@ -64,9 +61,7 @@ pub fn expand_enable_macro(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as syn::LitStr);
 
     let feature_name = input.value();
-    let feature_ident = syn::Ident::new(&feature_name.replace("-", "_")
-        , feature_name.span());
-
+    let feature_ident = syn::Ident::new(&feature_name.replace("-", "_"), feature_name.span());
 
     let blueflame = util::crate_ident();
     let expanded = quote! {

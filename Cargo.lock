@@ -226,6 +226,7 @@ dependencies = [
  "layered-crate",
  "log",
  "no-panic",
+ "num-traits",
  "paste",
  "phf",
  "rand_xoshiro",
@@ -676,8 +677,8 @@ dependencies = [
 
 [[package]]
 name = "disarm64-custom"
-version = "0.1.1"
-source = "git+https://github.com/Pistonite/disarm64-custom?branch=main#7e1d8fd8d45665e4e40cd7f41a63d8ffcf749c6e"
+version = "0.1.2"
+source = "git+https://github.com/Pistonite/disarm64-custom?branch=main#4508ab6ad5c348524b84fab8237ddf297440b2b1"
 dependencies = [
  "bitfield-struct",
  "disarm64_defn",

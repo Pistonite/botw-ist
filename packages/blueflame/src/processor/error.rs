@@ -25,8 +25,6 @@ pub enum Error {
 
 
 
-    #[error("Unhandled extra-op: {0}")]
-    UnhandledExtraOp(String),
     #[error("Unrecognized conditional code: {0}")]
     UnhandledConditionCode(String),
     #[error("Instruction could not be read at address {0:#0x}")]
@@ -39,8 +37,8 @@ pub enum Error {
 
     #[error("Memory error: {0}")]
     Mem(crate::memory::Error),
-    #[error("Instruction emitted an error: {0}")]
-    InstructionError(String),
+    // #[error("Instruction emitted an error: {0}")]
+    // InstructionError(String),
     #[error("Unexpected: {0}")]
     Unexpected(String),
 }

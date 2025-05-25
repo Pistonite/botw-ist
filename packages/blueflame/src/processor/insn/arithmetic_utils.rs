@@ -1,22 +1,9 @@
-use crate::{processor::Flags};
+use crate::processor as self_;
+
+use num_traits::Zero;
 use paste::paste;
 
-pub const IMMEDIATE_BITWIDTH: u8 = 32;
-
-pub trait Int: PartialOrd + PartialEq + Copy {
-    fn zero() -> Self;
-}
-
-impl Int for i32 {
-    fn zero() -> Self {
-        0
-    }
-}
-impl Int for i64 {
-    fn zero() -> Self {
-        0
-    }
-}
+use self_::Flags;
 
 macro_rules! signed_add_with_carry {
     ($sz: literal) => {
@@ -68,22 +55,17 @@ macro_rules! signed_add_with_carry {
 signed_add_with_carry!(32);
 signed_add_with_carry!(64);
 
-// TODO --cleanup: find somewhere to put this
-// impl Core<'_, '_, '_> {
-//     pub(crate) fn update_nzcv_flags<T: Int>(
-//         &mut self,
-//         result: T,
-//         xn_val: T,
-//         xm_val: T,
-//         did_borrow: bool,
-//     ) {
-//         let new_flags = Flags {
-//             n: result < T::zero(),
-//             z: result == T::zero(),
-//             c: !did_borrow,
-//             v: (xn_val < T::zero() && xm_val > T::zero() && result > T::zero())
-//                 || (xn_val > T::zero() && xm_val < T::zero() && result < T::zero()),
-//         };
-//         self.cpu.flags = new_flags
-//     }
-// }
+pub(crate) fn get_nzcv_flags<T: Zero + PartialEq + PartialOrd + Ord + Eq + Copy>(
+    result: T,
+    xn_val: T,
+    xm_val: T,
+    did_borrow: bool,
+) -> Flags {
+    Flags {
+        n: result < T::zero(),
+        z: result == T::zero(),
+        c: !did_borrow,
+        v: (xn_val < T::zero() && xm_val > T::zero() && result > T::zero())
+        || (xn_val > T::zero() && xm_val < T::zero() && result < T::zero()),
+    }
+}

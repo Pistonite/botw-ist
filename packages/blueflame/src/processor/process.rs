@@ -68,4 +68,8 @@ impl Process {
         &self.memory
     }
 
+    pub fn memory_mut(&mut self) -> &mut Memory {
+        Arc::make_mut(&mut self.memory)
+    }
+
 }

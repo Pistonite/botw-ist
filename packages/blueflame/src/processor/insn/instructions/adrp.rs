@@ -1,17 +1,18 @@
-use crate::processor::Error;
-use crate::Core;
+use crate::processor as self_;
 
-use crate::processor::instruction_registry::RegisterType;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error};
 
-    fn parse_adrp(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
-        let collected_args: Vec<String> = Self::split_args(args, 2);
-        let rd = RegisterType::from_str(&collected_args[0])?;
-        let label_offsetess = Self::get_label_val(&collected_args[1])?;
-        Ok(Box::new(AdrpInstruction {
-            rd,
-            label_offsetess,
-        }))
-    }
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let collected_args: Vec<String> = parse::split_args(args, 2);
+    let rd = glue::parse_reg_or_panic(&collected_args[0]);
+    let label_offsetess = parse::get_label_val(&collected_args[1])?;
+    Some(Box::new(AdrpInstruction {
+        rd,
+        label_offsetess,
+    }))
+}
 
 #[derive(Clone)]
 pub struct AdrpInstruction {
@@ -20,42 +21,35 @@ pub struct AdrpInstruction {
 }
 
 impl ExecutableInstruction for AdrpInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.adrp(self.rd, self.label_offsetess)
-    }
-}
-
-impl Core<'_, '_, '_> {
-    /// Processes ARM64 command adrp xd, label
-    ///
-    /// This instruction adds an immediate value that is shifted left by 12 bits, to the PC value to form a PC-relative address, with the bottom 12 bits masked out, and writes the result to the destination register.
-    pub fn adrp(&mut self, xd: RegisterType, label_offset: u64) -> Result<(), Error> {
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         // zero out bottom 12 bits to get to a page offset
-        let label_page = label_offset & 0xFFFF_FFFF_FFFF_F000; // Align label address to 4 KB boundary
-        let pc_page = self.cpu.pc & 0xFFFF_FFFF_FFFF_F000;
+        let label_page = self.label_offsetess & 0xFFFF_FFFF_FFFF_F000; // Align label address to 4 KB boundary
+        let pc_page = core.cpu.pc & 0xFFFF_FFFF_FFFF_F000;
         let offset = label_page.wrapping_sub(pc_page);
         let page_val = pc_page.wrapping_add(offset);
 
         let result = pc_page + page_val;
-        self.cpu.write_gen_reg(&xd, result as i64)?;
+        glue::write_gen_reg(core.cpu, &self.rd, result as i64);
         Ok(())
     }
 }
 
 #[cfg(test)]
-#[test]
-pub fn adrp_simple() -> anyhow::Result<()> {
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    // Check that other flags are unaffected
-    core.cpu.pc = 0x4050;
-    core.handle_string_command(&String::from("adrp x0, 0x1000"))?;
-    assert_eq!(core.cpu.x[0], 0x5000);
-    Ok(())
+mod tests {
+    use super::*;
+    use disarm64::decoder::decode;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
+
+    #[test]
+    pub fn adrp_simple() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        cpu.pc = 0x4050;
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("adrp x0, 0x1000")?;
+        assert_eq!(cpu.read::<i64>(reg!(x[0])), 0x5000);
+        Ok(())
+    }
 }
+

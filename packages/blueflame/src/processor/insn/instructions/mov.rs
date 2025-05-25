@@ -1,24 +1,25 @@
-use crate::processor::instruction_registry::{AuxiliaryOperation, RegisterType};
+use crate::processor as self_;
 
-use crate::processor::Error;
-use crate::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error};
 
-    fn parse_mov(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
-        let collected_args = Self::split_args(args, 3);
-        let rd = RegisterType::from_str(&collected_args[0])?;
-        let extra_op = Self::parse_auxiliary(collected_args.get(2))?;
-        if collected_args[1].starts_with('#') {
-            let imm_val = Self::get_imm_val(&collected_args[1])?;
-            Ok(Box::new(MovImmInstruction {
-                rd,
-                imm_val,
-                extra_op,
-            }))
-        } else {
-            let rn = RegisterType::from_str(&collected_args[1])?;
-            Ok(Box::new(MovInstruction { rd, rn, extra_op }))
-        }
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let collected_args = parse::split_args(args, 3);
+    let rd = glue::parse_reg_or_panic(&collected_args[0]);
+    let extra_op = parse::parse_auxiliary(collected_args.get(2))?;
+    if collected_args[1].starts_with('#') {
+        let imm_val = parse::get_imm_val(&collected_args[1])?;
+        Some(Box::new(MovImmInstruction {
+            rd,
+            imm_val,
+            extra_op,
+        }))
+    } else {
+        let rn = glue::parse_reg_or_panic(&collected_args[1]);
+        Some(Box::new(MovInstruction { rd, rn, extra_op }))
     }
+}
 
 
 #[derive(Clone)]
@@ -29,8 +30,22 @@ pub struct MovInstruction {
 }
 
 impl ExecutableInstruction for MovInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.mov(self.rd, self.rn, self.extra_op.clone())
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        // updates xd
+        // restores xm
+        let (xm_val, _) = glue::handle_extra_op(
+            core.cpu,
+            glue::read_gen_reg(core.cpu, &self.rn),
+            self.rn,
+            self.rn.get_bitwidth(),
+            self.extra_op.as_ref(),
+        )?;
+        glue::write_gen_reg(
+            core.cpu,
+            &self.rd,
+            xm_val,
+        );
+        Ok(())
     }
 }
 
@@ -42,43 +57,18 @@ pub struct MovImmInstruction {
 }
 
 impl ExecutableInstruction for MovImmInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.mov_imm(self.rd, self.imm_val, self.extra_op.clone())
-    }
-}
-
-impl Core<'_, '_, '_> {
-    // updates xd
-    // restores xm
-    pub fn mov(
-        &mut self,
-        xd: RegisterType,
-        xm: RegisterType,
-        extra_op: Option<AuxiliaryOperation>,
-    ) -> Result<(), Error> {
-        let (xm_val, _) = self.cpu.handle_extra_op(
-            self.cpu.read_gen_reg(&xm)?,
-            xm,
-            xm.get_bitwidth(),
-            extra_op,
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let (imm_val, _) = glue::handle_extra_op_immbw(
+            core.cpu,
+            self.imm_val,
+            self.rd,
+            self.extra_op.as_ref(),
         )?;
-        self.cpu.write_gen_reg(&xd, xm_val)?;
-        Ok(())
-    }
-
-    pub fn mov_imm(
-        &mut self,
-        xd: RegisterType,
-        imm: i64,
-        extra_op: Option<AuxiliaryOperation>,
-    ) -> Result<(), Error> {
-        let (imm_val, _) = self.cpu.handle_extra_op(
-            imm,
-            xd,
-            crate::processor::arithmetic_utils::IMMEDIATE_BITWIDTH,
-            extra_op,
-        )?;
-        self.cpu.write_gen_reg(&xd, imm_val)?;
+        glue::write_gen_reg(
+            core.cpu,
+            &self.rd,
+            imm_val,
+        );
         Ok(())
     }
 }

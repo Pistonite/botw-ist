@@ -1,16 +1,16 @@
-use crate::processor::instruction_registry::RegisterType;
+use crate::processor as self_;
 
-use crate::processor::Error;
-use crate::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error};
 
-    fn parse_fcvtzs(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
-        let collected_args = Self::split_args(args, 2);
-        let rd = RegisterType::from_str(&collected_args[0])?;
-        let rn = RegisterType::from_str(&collected_args[1])?;
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let collected_args = parse::split_args(args, 2);
+    let rd = glue::parse_reg_or_panic(&collected_args[0]);
+    let rn = glue::parse_reg_or_panic(&collected_args[1]);
 
-        Ok(Box::new(FcvtzsInstruction { rd, rn }))
-    }
-
+    Some(Box::new(FcvtzsInstruction { rd, rn }))
+}
 
 #[derive(Clone)]
 pub struct FcvtzsInstruction {
@@ -19,52 +19,45 @@ pub struct FcvtzsInstruction {
 }
 
 impl ExecutableInstruction for FcvtzsInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.fcvtzs(self.rd, self.rn)
-    }
-}
-
-impl Core<'_, '_, '_> {
-    // rd is either an X or W register
-    // rn is either an S or D register
-    // Code seems to only use sn -> wn
-    // Used to cast the floating point register to an integer
-    pub fn fcvtzs(&mut self, rd: RegisterType, rn: RegisterType) -> Result<(), Error> {
-        match (rn, rd) {
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        match (self.rn, self.rd) {
             (RegisterType::SReg(_), RegisterType::WReg(_)) => {
-                let current_val = self.cpu.read_float_reg(&rn)?;
+                let current_val = glue::read_float_reg(core.cpu, &self.rn);
                 let new_val = current_val as i32;
-                self.cpu.write_gen_reg(&rd, new_val as i64)?;
+                glue::write_gen_reg(core.cpu, &self.rd, new_val as i64);
                 Ok(())
             }
-            _ => Err(Error::InstructionError(String::from(
-                "fcvtzs: Register type for rn or rd is not supported",
-            ))),
+            _ => {
+                log::error!("fcvtzs: Register type for rn or rd is not supported: rn = {:?}, rd = {:?}", self.rn, self.rd);
+                Err(Error::BadInstruction(0))
+            }
         }
     }
 }
 
 #[cfg(test)]
-#[test]
-pub fn simple_fcvtzs_test() -> anyhow::Result<()> {
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.handle_string_command(&String::from("fmov s0, #32"))?;
-    core.handle_string_command(&String::from("fcvtzs w0, s0"))?;
-    assert_eq!(core.cpu.read_gen_reg(&RegisterType::WReg(0))?, 32);
+mod tests {
+    use super::*;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
 
-    core.handle_string_command(&String::from("fmov s0, #32.89"))?;
-    core.handle_string_command(&String::from("fcvtzs w0, s0"))?;
-    assert_eq!(core.cpu.read_gen_reg(&RegisterType::WReg(0))?, 32);
+    #[test]
+    pub fn simple_fcvtzs_test() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("fmov s0, #32")?;
+        core.handle_string_command("fcvtzs w0, s0")?;
+        assert_eq!(core.cpu.read::<i32>(reg!(w[0])), 32);
 
-    core.handle_string_command(&String::from("fmov s0, #-32.89"))?;
-    core.handle_string_command(&String::from("fcvtzs w0, s0"))?;
-    assert_eq!(core.cpu.read_gen_reg(&RegisterType::WReg(0))?, -32);
-    Ok(())
+        core.handle_string_command("fmov s0, #32.89")?;
+        core.handle_string_command("fcvtzs w0, s0")?;
+        assert_eq!(core.cpu.read::<i32>(reg!(w[0])), 32);
+
+        core.handle_string_command("fmov s0, #-32.89")?;
+        core.handle_string_command("fcvtzs w0, s0")?;
+        assert_eq!(cpu.read::<i32>(reg!(w[0])), -32);
+        Ok(())
+    }
 }
+

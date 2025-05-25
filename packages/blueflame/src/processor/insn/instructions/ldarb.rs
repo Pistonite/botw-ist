@@ -1,12 +1,13 @@
-use super::super::instruction_parse::InsnParser;
-use crate::processor::instruction_registry::{ExecutableInstruction, RegisterType};
+use crate::processor::{self as self_, crate_};
 
-use crate::processor::Error;
-use crate::Core;
+use disarm64::decoder::{Mnemonic, Opcode};
+use disarm64::arm64::InsnOpcode;
 
-use disarm64_defn::defn::InsnOpcode;
+use crate_::memory::Ptr;
 
-use super::super::instruction_parse::get_bit_range;
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::insn::Core;
+use self_::{glue, Error, RegisterType};
 
 #[derive(Clone)]
 pub struct InsnLdarb {
@@ -15,19 +16,19 @@ pub struct InsnLdarb {
 }
 
 impl ExecutableInstruction for InsnLdarb {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        let addr = proc.cpu.read_gen_reg(&self.rn)? as u64;
-        let res_val = proc.mem.mem_read_byte(addr)? as u64;
-        proc.cpu.write_gen_reg(&self.rt, res_val as i64)?;
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let addr = glue::read_gen_reg(core.cpu, &self.rn) as u64;
+        let ptr = Ptr!(<u8>(addr));
+        let res_val = ptr.load(&core.proc.memory())?;
+        glue::write_gen_reg(core.cpu, &self.rt, res_val as i64);
         Ok(())
     }
 }
 
-impl InsnParser for InsnLdarb {
-    fn parse_from_decode(
-        d: &disarm64::Opcode,
-    ) -> std::result::Result<Option<Box<(dyn ExecutableInstruction)>>, anyhow::Error> {
-        if d.mnemonic != disarm64::decoder_full::Mnemonic::ldarb {
+pub    fn parse(
+        d: &Opcode,
+    ) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+        if d.mnemonic != Mnemonic::ldarb {
             return Ok(None);
         }
         let bits = d.operation.bits();
@@ -37,25 +38,25 @@ impl InsnParser for InsnLdarb {
         let rn = RegisterType::XReg(rn_idx);
         Ok(Some(Box::new(InsnLdarb { rt, rn })))
     }
-}
 
 #[cfg(test)]
-use anyhow::Result;
-#[test]
-pub fn test_ldarb_parse() -> Result<()> {
-    let ldar_test =
-        InsnLdarb::parse_from_decode(&disarm64::decoder::decode(0x08DFFC20).unwrap())?.unwrap();
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.mem.mem_write_byte(0x1000, 42)?;
-    core.cpu.write_gen_reg(&RegisterType::XReg(1), 0x1000)?;
-    ldar_test.exec_on(&mut core)?;
-    assert_eq!(core.cpu.read_gen_reg(&RegisterType::WReg(0))?, 42);
-    Ok(())
+mod tests {
+    use super::*;
+    use disarm64::decoder::decode;
+
+    use self_::{Cpu0, Process, reg};
+
+    #[test]
+    pub fn test_ldarb_parse() -> anyhow::Result<()> {
+        let opcode = decode(0x08DFFC20).expect("failed to decode instruction");
+        let insn = parse(&opcode)?.expect("failed to parse ldar instruction");
+        let mut cpu = Cpu0::default();
+        cpu.write(reg!(w[1]), 0x1000);
+        let mut proc = Process::new_for_test();
+        Ptr!(<u8>(0x1000)).store(&42, &mut proc.memory_mut())?;
+        let mut core = Core::new(&mut cpu, &mut proc);
+        insn.exec_on(&mut core)?;
+        assert_eq!(cpu.read::<u32>(reg!(w[0])), 42);
+        Ok(())
+    }
 }

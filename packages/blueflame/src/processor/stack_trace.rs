@@ -1,7 +1,7 @@
 use crate::processor::{self as self_, crate_};
 
 use crate_::env::enabled;
-use self_::Error;
+use self_::{RegName, Error};
 
 
 #[derive(Debug, Clone, Default)]
@@ -19,6 +19,22 @@ impl StackTrace {
         self.frames.push(Frame {
             jump_target: target,
             jump_type: FrameType::Native,
+        });
+    }
+
+    /// Push a jump to target address from BL instruction
+    pub fn push_bl(&mut self, target: u64, from: u64) {
+        self.frames.push(Frame {
+            jump_target: target,
+            jump_type: FrameType::Bl(from),
+        });
+    }
+
+    /// Push a jump to target address from BLR instruction
+    pub fn push_blr(&mut self, target: u64, reg: RegName, from: u64) {
+        self.frames.push(Frame {
+            jump_target: target,
+            jump_type: FrameType::Blr(from, reg),
         });
     }
 
@@ -60,7 +76,7 @@ pub enum FrameType {
     /// Branch with BL instruction
     Bl(u64),
     /// Branch with BLR instruction (TODO --cleanup: second is the reg)
-    Blr(u64, ()),
+    Blr(u64, RegName),
     /// Called from native implementation
     Native,
 }

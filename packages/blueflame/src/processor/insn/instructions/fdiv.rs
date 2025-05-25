@@ -1,17 +1,17 @@
-use crate::processor::Error;
-use crate::processor::{instruction_registry::RegisterType, RegisterValue};
+use crate::processor as self_;
 
-use crate::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error};
 
-    fn parse_fdiv(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
-        let collected_args = Self::split_args(args, 3);
-        let rd = RegisterType::from_str(&collected_args[0])?;
-        let rn = RegisterType::from_str(&collected_args[1])?;
-        let rm = RegisterType::from_str(&collected_args[2])?;
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let collected_args = parse::split_args(args, 3);
+    let rd = glue::parse_reg_or_panic(&collected_args[0]);
+    let rn = glue::parse_reg_or_panic(&collected_args[1]);
+    let rm = glue::parse_reg_or_panic(&collected_args[2]);
 
-        Ok(Box::new(FdivInstruction { rd, rn, rm }))
-    }
-
+    Some(Box::new(FdivInstruction { rd, rn, rm }))
+}
 
 #[derive(Clone)]
 pub struct FdivInstruction {
@@ -21,42 +21,33 @@ pub struct FdivInstruction {
 }
 
 impl ExecutableInstruction for FdivInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.fdiv(self.rd, self.rn, self.rm)
-    }
-}
-
-impl Core<'_, '_, '_> {
-    pub fn fdiv(
-        &mut self,
-        rd: RegisterType,
-        rn: RegisterType,
-        rm: RegisterType,
-    ) -> Result<(), Error> {
-        let value_n = self.cpu.read_float_reg(&rn)? as f32;
-        let value_m = self.cpu.read_float_reg(&rm)? as f32;
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let value_n = glue::read_float_reg(core.cpu, &self.rn) as f32;
+        let value_m = glue::read_float_reg(core.cpu, &self.rm) as f32;
 
         let result = value_n / value_m;
-        self.cpu.write_reg(&rd, &RegisterValue::SReg(result))?;
+        glue::write_float_reg(core.cpu, &self.rd, result as f64);
         Ok(())
     }
 }
 
 #[cfg(test)]
-#[test]
-pub fn simple_fdiv_test() -> anyhow::Result<()> {
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.handle_string_command(&String::from("fmov s0, #1"))?;
-    core.handle_string_command(&String::from("fmov s1, #3"))?;
-    core.handle_string_command(&String::from("fdiv s0, s0, s1"))?;
-    let result = core.cpu.read_float_reg(&RegisterType::SReg(0))?;
-    assert!((result - 0.333f64).abs() < 0.01);
-    Ok(())
+mod tests {
+    use super::*;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
+
+    #[test]
+    pub fn simple_fdiv_test() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("fmov s0, #1")?;
+        core.handle_string_command("fmov s1, #3")?;
+        core.handle_string_command("fdiv s0, s0, s1")?;
+        let result = cpu.read::<f32>(reg!(s[0]));
+        assert!((result - 0.333f32).abs() < 0.01);
+        Ok(())
+    }
 }
+

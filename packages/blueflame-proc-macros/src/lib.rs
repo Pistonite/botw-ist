@@ -26,3 +26,10 @@ pub fn no_panic(_attr: TokenStream, input: TokenStream) -> TokenStream {
     no_panic::expand(input)
 }
 mod no_panic;
+
+/// Macro to convert a paste-in instruction bytes to u32 literal
+#[proc_macro]
+pub fn paste_insn(input: TokenStream) -> TokenStream {
+    paste_insn::expand(input)
+}
+mod paste_insn;

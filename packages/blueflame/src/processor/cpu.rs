@@ -126,15 +126,7 @@ impl Cpu2<'_, '_> {
         for _ in 0..(bytes/4) {
             let insn_raw = reader.read_u32()?;
 
-            // TODO --cleanup: this won't work since the register 
-            // and stack and stuff aren't right, fix it to throw error later
-            if let ControlFlow::Break(e) = insns.disassemble(insn_raw) {
-                if let Some(e) = e {
-                    // set the PC to correctly point to the next instruction
-                    // i.e. the one that broke
-                    self.pc += insns.byte_size() as u64;
-                    return Err(e);
-                }
+            if let ControlFlow::Break(_) = insns.disassemble(insn_raw) {
                 break;
             }
         }
@@ -155,6 +147,7 @@ impl Cpu2<'_, '_> {
         let Ok((exe, step)) = self.cpu1.cache[ver].get(pc) else {
             return Err(Error::Unexpected("failed to insert to execute cache".to_string()))
         };
+        debug_assert!(step == 0, "step should be 0 after inserting to cache with the same PC");
         // execute
         exe.execute_from(&mut self.cpu1.cpu0, self.proc, step)
     }

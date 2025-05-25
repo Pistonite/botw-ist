@@ -1,20 +1,20 @@
-use crate::processor::instruction_registry::RegisterType;
-use crate::processor::Error;
+use crate::processor as self_;
 
-use crate::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error};
 
-    fn parse_fmov(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
-        let collected_args = Self::split_args(args, 2);
-        let rd = RegisterType::from_str(&collected_args[0])?;
-        if collected_args[1].starts_with("#") {
-            let float_val = Self::convert_to_f64(&collected_args[1])?;
-            Ok(Box::new(FmovImmInstruction { rd, float_val }))
-        } else {
-            let rn = RegisterType::from_str(&collected_args[1])?;
-            Ok(Box::new(FmovInstruction { rd, rn }))
-        }
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let collected_args = parse::split_args(args, 2);
+    let rd = glue::parse_reg_or_panic(&collected_args[0]);
+    if collected_args[1].starts_with("#") {
+        let float_val = parse::convert_to_f64(&collected_args[1])?;
+        Some(Box::new(FmovImmInstruction { rd, float_val }))
+    } else {
+        let rn = glue::parse_reg_or_panic(&collected_args[1]);
+        Some(Box::new(FmovInstruction { rd, rn }))
     }
-
+}
 
 #[derive(Clone)]
 pub struct FmovInstruction {
@@ -23,8 +23,10 @@ pub struct FmovInstruction {
 }
 
 impl ExecutableInstruction for FmovInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.fmov(self.rd, self.rn)
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let rn_val = glue::read_float_reg(core.cpu, &self.rn);
+        glue::write_float_reg(core.cpu, &self.rd, rn_val);
+        Ok(())
     }
 }
 
@@ -35,66 +37,36 @@ pub struct FmovImmInstruction {
 }
 
 impl ExecutableInstruction for FmovImmInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.fmov_imm(self.rd, self.float_val)
-    }
-}
-
-impl Core<'_, '_, '_> {
-    pub fn fmov(&mut self, rd: RegisterType, rn: RegisterType) -> Result<(), Error> {
-        let rn_val = self.cpu.read_float_reg(&rn)?;
-        self.cpu.write_float_reg(&rd, rn_val)?;
-        Ok(())
-    }
-
-    pub fn fmov_imm(&mut self, rd: RegisterType, float_value: f64) -> Result<(), Error> {
-        self.cpu.write_float_reg(&rd, float_value)?;
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        glue::write_float_reg(core.cpu, &self.rd, self.float_val);
         Ok(())
     }
 }
 
 #[cfg(test)]
-#[test]
-pub fn simple_fmov_test() -> anyhow::Result<()> {
-    use crate::processor::RegisterValue;
+mod tests {
+    use super::*;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
 
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.handle_string_command(&String::from("fmov	s1, #3.000000000000000000e+01"))?;
-    core.handle_string_command(&String::from("fmov	s2, #-3.000000000000000000e+01"))?;
-    core.handle_string_command(&String::from("fmov	s3, #1.250000000000000000e+01"))?;
-    core.handle_string_command(&String::from("fmov	s4, #30.00000000000000000e-01"))?;
-    core.handle_string_command(&String::from("fmov	s5, #3"))?;
-    core.handle_string_command(&String::from("fmov	s6, #3.5"))?;
-    assert_eq!(
-        core.cpu.read_reg(&RegisterType::SReg(1)),
-        RegisterValue::SReg(30.0)
-    );
-    assert_eq!(
-        core.cpu.read_reg(&RegisterType::SReg(2)),
-        RegisterValue::SReg(-30.0)
-    );
-    assert_eq!(
-        core.cpu.read_reg(&RegisterType::SReg(3)),
-        RegisterValue::SReg(12.5)
-    );
-    assert_eq!(
-        core.cpu.read_reg(&RegisterType::SReg(4)),
-        RegisterValue::SReg(3.0)
-    );
-    assert_eq!(
-        core.cpu.read_reg(&RegisterType::SReg(5)),
-        RegisterValue::SReg(3.0)
-    );
-    assert_eq!(
-        core.cpu.read_reg(&RegisterType::SReg(6)),
-        RegisterValue::SReg(3.5)
-    );
-    Ok(())
+    #[test]
+    pub fn simple_fmov_test() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("fmov	s1, #3.000000000000000000e+01")?;
+        core.handle_string_command("fmov	s2, #-3.000000000000000000e+01")?;
+        core.handle_string_command("fmov	s3, #1.250000000000000000e+01")?;
+        core.handle_string_command("fmov	s4, #30.00000000000000000e-01")?;
+        core.handle_string_command("fmov	s5, #3")?;
+        core.handle_string_command("fmov	s6, #3.5")?;
+        assert_eq!(cpu.read::<f32>(reg!(s[1])), 30.0);
+        assert_eq!(cpu.read::<f32>(reg!(s[2])), -30.0);
+        assert_eq!(cpu.read::<f32>(reg!(s[3])), 12.5);
+        assert_eq!(cpu.read::<f32>(reg!(s[4])), 3.0);
+        assert_eq!(cpu.read::<f32>(reg!(s[5])), 3.0);
+        assert_eq!(cpu.read::<f32>(reg!(s[6])), 3.5);
+        Ok(())
+    }
 }
+

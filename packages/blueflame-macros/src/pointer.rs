@@ -1,4 +1,3 @@
-
 /// Pointer helper macro
 ///
 /// This has 2 uses:
@@ -18,7 +17,7 @@
 /// Ptr!(...)   // PtrToSized::new_const(...)
 /// Ptr!([]...)   // PtrToArray::new_const(...)
 /// ```
-#[macro_export] 
+#[macro_export]
 macro_rules! Ptr {
 
     (& $ptr:ident -> $field:ident) => {{

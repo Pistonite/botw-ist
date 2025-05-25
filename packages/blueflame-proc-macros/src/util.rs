@@ -5,12 +5,12 @@ pub type Span2 = proc_macro2::Span;
 
 pub const CRATE: &str = "blueflame";
 
-pub fn crate_ident() -> proc_macro2::TokenStream{
+pub fn crate_ident() -> proc_macro2::TokenStream {
     match proc_macro_crate::crate_name(CRATE) {
         Ok(proc_macro_crate::FoundCrate::Name(s)) => {
             let ident = syn::Ident::new(&s, Span2::call_site());
             quote! { #ident }
-        },
+        }
         // Ok(proc_macro_crate::FoundCrate::Itself) => {
         //     quote! { crate }
         // }
@@ -24,7 +24,7 @@ pub fn crate_ident() -> proc_macro2::TokenStream{
 pub fn unwrap_result(result: syn::Result<TokenStream>) -> TokenStream {
     match result {
         Ok(x) => x,
-        Err(e) => e.into_compile_error().into()
+        Err(e) => e.into_compile_error().into(),
     }
 }
 
@@ -44,7 +44,7 @@ pub fn get_struct_size(input: &syn::DeriveInput) -> syn::Result<u32> {
 
 /// Get the #[size] attribute on a field
 pub fn get_field_size(input: &syn::Field) -> syn::Result<Option<(u32, syn::LitInt)>> {
-    let Some(size_attr) = input.attrs.iter().find(|attr| attr.path().is_ident("size"))else {
+    let Some(size_attr) = input.attrs.iter().find(|attr| attr.path().is_ident("size")) else {
         return Ok(None);
     };
     let (size, lit) = parse_u32_attribute("size", size_attr)?;
@@ -62,15 +62,25 @@ pub fn get_struct_fields(input: &syn::DeriveInput) -> syn::Result<&syn::FieldsNa
     };
 
     let syn::Fields::Named(fields) = &data.fields else {
-        syn_error!(&data.fields, "MemObject can only be derived for structs with named fields");
+        syn_error!(
+            &data.fields,
+            "MemObject can only be derived for structs with named fields"
+        );
     };
 
     Ok(fields)
 }
 
 pub fn get_field_offset(input: &syn::Field) -> syn::Result<u32> {
-    let Some(attr) = input.attrs.iter().find(|attr| attr.path().is_ident("offset")) else {
-        syn_error!(input, "Missing #[offset] attribute for field in MemObject derive");
+    let Some(attr) = input
+        .attrs
+        .iter()
+        .find(|attr| attr.path().is_ident("offset"))
+    else {
+        syn_error!(
+            input,
+            "Missing #[offset] attribute for field in MemObject derive"
+        );
     };
 
     let (offset, _) = parse_u32_attribute("offset", attr)?;
@@ -79,15 +89,27 @@ pub fn get_field_offset(input: &syn::Field) -> syn::Result<u32> {
 
 pub fn parse_u32_attribute(id: &str, attr: &syn::Attribute) -> syn::Result<(u32, syn::LitInt)> {
     let Ok(meta_list) = attr.meta.require_list() else {
-        syn_error!(attr, "Attribute #[{}(...)] should contain a single u32 literal", id);
+        syn_error!(
+            attr,
+            "Attribute #[{}(...)] should contain a single u32 literal",
+            id
+        );
     };
 
     let Ok(syn::Lit::Int(lit)) = meta_list.parse_args::<syn::Lit>() else {
-        syn_error!(meta_list, "Attribute #[{}(...)] should contain a valid u32 literal", id);
+        syn_error!(
+            meta_list,
+            "Attribute #[{}(...)] should contain a valid u32 literal",
+            id
+        );
     };
 
     let Ok(n) = lit.base10_parse::<u32>() else {
-        syn_error!(lit, "Attribute #[{}(...)] should contain a valid u32 literal", id);
+        syn_error!(
+            lit,
+            "Attribute #[{}(...)] should contain a valid u32 literal",
+            id
+        );
     };
 
     Ok((n, lit))

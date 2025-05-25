@@ -1,34 +1,34 @@
-use crate::processor::instruction_registry::{AuxiliaryOperation, RegisterType};
+use crate::processor as self_;
 
-use crate::processor::{Error, Flags};
-use crate::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error};
 
-    fn parse_ands(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
-        let collected_args = Self::split_args(args, 4);
-        let rd = RegisterType::from_str(&collected_args[0])?;
-        let rn = RegisterType::from_str(&collected_args[1])?;
-        let extra_op = Self::parse_auxiliary(collected_args.get(3))?;
-        if collected_args[2].starts_with('#') {
-            //Immediate offset
-            let imm_val = Self::get_imm_val(&collected_args[2])?;
-            Ok(Box::new(AndsImmInstruction {
-                rd,
-                rn,
-                imm_val,
-                extra_op,
-            }))
-        } else {
-            //Register offset
-            let rm = RegisterType::from_str(&collected_args[2])?;
-            Ok(Box::new(AndsInstruction {
-                rd,
-                rn,
-                rm,
-                extra_op,
-            }))
-        }
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let collected_args = parse::split_args(args, 4);
+    let rd = glue::parse_reg_or_panic(&collected_args[0]);
+    let rn = glue::parse_reg_or_panic(&collected_args[1]);
+    let extra_op = parse::parse_auxiliary(collected_args.get(3))?;
+    if collected_args[2].starts_with('#') {
+        //Immediate offset
+        let imm_val = parse::get_imm_val(&collected_args[2])?;
+        Some(Box::new(AndsImmInstruction {
+            rd,
+            rn,
+            imm_val,
+            extra_op,
+        }))
+    } else {
+        //Register offset
+        let rm = glue::parse_reg_or_panic(&collected_args[2]);
+        Some(Box::new(AndsInstruction {
+            rd,
+            rn,
+            rm,
+            extra_op,
+        }))
     }
-
+}
 
 #[derive(Clone)]
 pub struct AndsInstruction {
@@ -39,8 +39,24 @@ pub struct AndsInstruction {
 }
 
 impl ExecutableInstruction for AndsInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.ands(self.rd, self.rn, self.rm, self.extra_op.clone())
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let xn_val = glue::read_gen_reg(core.cpu, &self.rn);
+        let (xm_val, carry) = glue::handle_extra_op(
+            core.cpu,
+            glue::read_gen_reg(core.cpu, &self.rm),
+            self.rm,
+            self.rm.get_bitwidth(),
+            self.extra_op.as_ref(),
+        )?;
+        let result = xn_val & xm_val;
+        glue::write_gen_reg(core.cpu, &self.rd, result);
+        core.cpu.flags = self_::Flags {
+            n: result < 0,
+            z: result == 0,
+            c: carry,
+            v: core.cpu.flags.v,
+        };
+        Ok(())
     }
 }
 
@@ -53,83 +69,46 @@ pub struct AndsImmInstruction {
 }
 
 impl ExecutableInstruction for AndsImmInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.ands_imm(self.rd, self.rn, self.imm_val, self.extra_op.clone())
-    }
-}
-
-impl Core<'_, '_, '_> {
-    /// Processes the ARM64 command `ands xd, xn, xm` with optional shift
-    pub fn ands(
-        &mut self,
-        xd: RegisterType,
-        xn: RegisterType,
-        xm: RegisterType,
-        extra_op: Option<AuxiliaryOperation>,
-    ) -> Result<(), Error> {
-        let xn_val = self.cpu.read_gen_reg(&xn)?;
-        let (xm_val, carry) = self.cpu.handle_extra_op(
-            self.cpu.read_gen_reg(&xm)?,
-            xm,
-            xm.get_bitwidth(),
-            extra_op,
-        )?;
-        let result = xn_val & xm_val;
-        self.cpu.write_gen_reg(&xd, result)?;
-        self.cpu.flags = Flags {
-            n: result < 0,
-            z: result == 0,
-            c: carry,
-            v: self.cpu.flags.v,
-        };
-        Ok(())
-    }
-
-    /// Processes the ARM64 command `ands xd, xn, imm` with optional shift
-    pub fn ands_imm(
-        &mut self,
-        xd: RegisterType,
-        xn: RegisterType,
-        imm: i64,
-        extra_op: Option<AuxiliaryOperation>,
-    ) -> Result<(), Error> {
-        let xn_val = self.cpu.read_gen_reg(&xn)?;
-        let (imm_val, carry) = self.cpu.handle_extra_op(
-            imm,
-            xn,
-            crate::processor::arithmetic_utils::IMMEDIATE_BITWIDTH,
-            extra_op,
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let xn_val = glue::read_gen_reg(core.cpu, &self.rn);
+        let (imm_val, carry) = glue::handle_extra_op_immbw(
+            core.cpu,
+            self.imm_val,
+            self.rn,
+            self.extra_op.as_ref(),
         )?;
         let result = xn_val & imm_val;
-        self.cpu.write_gen_reg(&xd, result)?;
-        self.cpu.flags = Flags {
+        glue::write_gen_reg(core.cpu, &self.rd, result);
+        core.cpu.flags = self_::Flags {
             n: result < 0,
             z: result == 0,
             c: carry,
-            v: self.cpu.flags.v,
+            v: core.cpu.flags.v,
         };
         Ok(())
     }
 }
 
 #[cfg(test)]
-#[test]
-pub fn simple_ands_test() -> anyhow::Result<()> {
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.handle_string_command(&String::from("mov x1, #17"))?;
-    core.handle_string_command(&String::from("mov x2, #14"))?;
-    core.handle_string_command(&String::from("ands x3, x1, x2"))?;
-    assert_eq!(core.cpu.read_gen_reg(&RegisterType::XReg(3))?, 0);
-    assert!(core.cpu.flags.z);
-    assert!(!core.cpu.flags.n);
-    assert!(!core.cpu.flags.v);
-    assert!(!core.cpu.flags.c);
-    Ok(())
+mod tests {
+    use super::*;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
+
+    #[test]
+    pub fn simple_ands_test() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("mov x1, #17")?;
+        core.handle_string_command("mov x2, #14")?;
+        core.handle_string_command("ands x3, x1, x2")?;
+        assert_eq!(cpu.read::<i64>(reg!(x[3])), 0);
+        assert!(cpu.flags.z);
+        assert!(!cpu.flags.n);
+        assert!(!cpu.flags.v);
+        assert!(!cpu.flags.c);
+        Ok(())
+    }
 }
+

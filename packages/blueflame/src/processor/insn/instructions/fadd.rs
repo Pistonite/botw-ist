@@ -1,13 +1,11 @@
-use super::super::instruction_parse::InsnParser;
-use crate::processor::instruction_registry::{ExecutableInstruction, RegisterType};
+use crate::processor::{self as self_, crate_};
 
-use crate::processor::{Error, RegisterValue};
-use crate::Core;
+use disarm64::decoder::{Mnemonic, Opcode};
+use disarm64::arm64::InsnOpcode;
 
-use disarm64_defn::defn::InsnOpcode;
-
-use super::super::instruction_parse::get_bit_range;
-use anyhow::bail;
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::insn::Core;
+use self_::{glue, Error, RegisterType, glue::RegisterValue};
 
 #[derive(Clone)]
 pub struct InsnFadd {
@@ -17,74 +15,73 @@ pub struct InsnFadd {
 }
 
 impl ExecutableInstruction for InsnFadd {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        let rn_val = proc.cpu.read_reg(&self.rn);
-        let rm_val = proc.cpu.read_reg(&self.rm);
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let rn_val = glue::read_reg(core.cpu, &self.rn);
+        let rm_val = glue::read_reg(core.cpu, &self.rm);
         match (rn_val, rm_val) {
             (RegisterValue::SReg(rn), RegisterValue::SReg(rm)) => {
-                proc.cpu.write_reg(&self.rd, &RegisterValue::SReg(rn + rm))
+                glue::write_reg(core.cpu, &self.rd, &RegisterValue::SReg(rn + rm))
             }
             (RegisterValue::DReg(rn), RegisterValue::DReg(rm)) => {
-                proc.cpu.write_reg(&self.rd, &RegisterValue::DReg(rn + rm))
+                glue::write_reg(core.cpu, &self.rd, &RegisterValue::DReg(rn + rm))
             }
-            _ => Ok(()),
+            _ => {},
         }
+        Ok(())
     }
 }
 
-impl InsnParser for InsnFadd {
-    fn parse_from_decode(
-        d: &disarm64::Opcode,
-    ) -> std::result::Result<Option<Box<(dyn ExecutableInstruction)>>, anyhow::Error> {
-        if d.mnemonic != disarm64::decoder_full::Mnemonic::fadd {
-            return Ok(None);
-        }
-        let bits = d.operation.bits();
-        let sf = get_bit_range(bits, 22, 22);
-        let rd_idx = get_bit_range(bits, 4, 0);
-        let rn_idx = get_bit_range(bits, 9, 5);
-        let rm_idx = get_bit_range(bits, 20, 16);
-        let reg_type = match sf {
-            0 => RegisterType::SReg,
-            1 => RegisterType::DReg,
-            _ => bail!("Invalid sf value for fadd"),
-        };
-        Ok(Some(Box::new(InsnFadd {
-            rd: reg_type(rd_idx),
-            rn: reg_type(rn_idx),
-            rm: reg_type(rm_idx),
-        })))
+pub fn parse(
+    d: &Opcode,
+) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+    if d.mnemonic != Mnemonic::fadd {
+        return Ok(None);
     }
+    let bits = d.operation.bits();
+    let sf = get_bit_range(bits, 22, 22);
+    let rd_idx = get_bit_range(bits, 4, 0);
+    let rn_idx = get_bit_range(bits, 9, 5);
+    let rm_idx = get_bit_range(bits, 20, 16);
+    let reg_type = match sf {
+        0 => RegisterType::SReg,
+        1 => RegisterType::DReg,
+        _ => {
+            log::error!("Invalid sf value for fadd: {sf}");
+            return Err(Error::BadInstruction(bits));
+        }
+    };
+    Ok(Some(Box::new(InsnFadd {
+        rd: reg_type(rd_idx),
+        rn: reg_type(rn_idx),
+        rm: reg_type(rm_idx),
+    })))
 }
 
 #[cfg(test)]
-use anyhow::Result;
-#[test]
-pub fn test_fsub_parse() -> Result<()> {
-    // `fadd d0, d1, d2`: 0x1E622820
-    let fadd_test =
-        InsnFadd::parse_from_decode(&disarm64::decoder::decode(0x1E622820).unwrap())?.unwrap();
+mod tests {
+    use super::*;
+    use disarm64::decoder::decode;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
 
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
+    #[test]
+    pub fn test_fsub_parse() -> anyhow::Result<()> {
+        let opcode = decode(0x1E622820).expect("failed to decode");
+        let insn = parse(&opcode)?.expect("failed to parse");
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
 
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
+        // Set D1 = 5.5, D2 = 2.0, so result in D0 should be 7.5
+        cpu.write(reg!(d[1]), 5.5f64);
+        cpu.write(reg!(d[2]), 2.0f64);
 
-    // Set D1 = 5.5, D2 = 2.0, so result in D0 should be 7.5
-    core.cpu
-        .write_reg(&RegisterType::DReg(1), &RegisterValue::DReg(5.5))?;
-    core.cpu
-        .write_reg(&RegisterType::DReg(2), &RegisterValue::DReg(2.0))?;
+        let mut core = Core::new(&mut cpu, &mut proc);
+        insn.exec_on(&mut core)?;
 
-    fadd_test.exec_on(&mut core)?;
+        let result = cpu.read::<f64>(reg!(d[0]));
+        assert_eq!(result, 7.5f64); // exact repr
 
-    let result = core.cpu.read_float_reg(&RegisterType::DReg(0))?;
-    assert!((result - 7.5).abs() < 1e-6, "Expected 7.5, got {}", result);
-
-    Ok(())
+        Ok(())
+    }
 }
+

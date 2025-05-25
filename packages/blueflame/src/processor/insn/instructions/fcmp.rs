@@ -1,21 +1,21 @@
-use crate::processor::Error;
-use crate::processor::{instruction_registry::RegisterType, Flags};
+use crate::processor as self_;
 
-use crate::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error};
 
-    fn parse_fcmp(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
-        let collected_args = Self::split_args(args, 2);
-        let rn = RegisterType::from_str(&collected_args[0])?;
-        if collected_args[1].starts_with("#0.0") {
-            // Variant where you don't compare register with anything
-            Ok(Box::new(FcmpZeroInstruction { rn }))
-        } else {
-            //Register offset
-            let rm = RegisterType::from_str(&collected_args[1])?;
-            Ok(Box::new(FcmpInstruction { rn, rm }))
-        }
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let collected_args = parse::split_args(args, 2);
+    let rn = glue::parse_reg_or_panic(&collected_args[0]);
+    if collected_args[1].starts_with("#0.0") {
+        // Variant where you don't compare register with anything
+        Some(Box::new(FcmpZeroInstruction { rn }))
+    } else {
+        //Register offset
+        let rm = glue::parse_reg_or_panic(&collected_args[1]);
+        Some(Box::new(FcmpInstruction { rn, rm }))
     }
-
+}
 
 #[derive(Clone)]
 pub struct FcmpInstruction {
@@ -24,29 +24,12 @@ pub struct FcmpInstruction {
 }
 
 impl ExecutableInstruction for FcmpInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.fcmp(self.rn, self.rm)
-    }
-}
-
-#[derive(Clone)]
-pub struct FcmpZeroInstruction {
-    rn: RegisterType,
-}
-
-impl ExecutableInstruction for FcmpZeroInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.fcmp_zero(self.rn)
-    }
-}
-
-impl Core<'_, '_, '_> {
-    pub fn fcmp(&mut self, rn: RegisterType, rm: RegisterType) -> Result<(), Error> {
-        let value_n = self.cpu.read_float_reg(&rn)?;
-        let value_m = self.cpu.read_float_reg(&rm)?;
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let value_n = glue::read_float_reg(core.cpu, &self.rn);
+        let value_m = glue::read_float_reg(core.cpu, &self.rm);
 
         if value_n.is_nan() || value_m.is_nan() {
-            self.cpu.flags = Flags {
+            core.cpu.flags = self_::Flags {
                 n: false,
                 z: false,
                 c: false,
@@ -56,7 +39,7 @@ impl Core<'_, '_, '_> {
 
         let diff = value_n - value_m;
 
-        self.cpu.flags = Flags {
+        core.cpu.flags = self_::Flags {
             n: diff < 0.0,
             z: diff == 0.0,
             c: diff > 0.0,
@@ -65,12 +48,19 @@ impl Core<'_, '_, '_> {
 
         Ok(())
     }
+}
 
-    pub fn fcmp_zero(&mut self, rn: RegisterType) -> Result<(), Error> {
-        let value_n = self.cpu.read_float_reg(&rn)?;
+#[derive(Clone)]
+pub struct FcmpZeroInstruction {
+    rn: RegisterType,
+}
+
+impl ExecutableInstruction for FcmpZeroInstruction {
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let value_n = glue::read_float_reg(core.cpu, &self.rn);
 
         if value_n.is_nan() {
-            self.cpu.flags = Flags {
+            core.cpu.flags = self_::Flags {
                 n: false,
                 z: false,
                 c: false,
@@ -80,7 +70,7 @@ impl Core<'_, '_, '_> {
 
         let diff = value_n;
 
-        self.cpu.flags = Flags {
+        core.cpu.flags = self_::Flags {
             n: diff < 0.0,
             z: diff == 0.0,
             c: diff > 0.0,
@@ -93,39 +83,55 @@ impl Core<'_, '_, '_> {
 
 // TODO: Write test for overflow
 #[cfg(test)]
-#[test]
-pub fn simple_fcmp_test() -> anyhow::Result<()> {
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.handle_string_command(&String::from("fmov s0, #2.111e+01"))?;
-    core.handle_string_command(&String::from("fmov s1, #3.111e+01"))?;
-    core.handle_string_command(&String::from("fcmp s0, s1"))?;
-    assert!(core.cpu.flags.n);
-    assert!(!core.cpu.flags.z);
-    assert!(!core.cpu.flags.c);
-    assert!(!core.cpu.flags.v);
+mod tests {
+    use super::*;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
 
-    core.handle_string_command(&String::from("fmov s0, #2.111e+01"))?;
-    core.handle_string_command(&String::from("fmov s1, #2.111e+01"))?;
-    core.handle_string_command(&String::from("fcmp s0, s1"))?;
-    assert!(!core.cpu.flags.n);
-    assert!(core.cpu.flags.z);
-    assert!(!core.cpu.flags.c);
-    assert!(!core.cpu.flags.v);
-
-    core.handle_string_command(&String::from("fmov s0, #5.111e+01"))?;
-    core.handle_string_command(&String::from("fmov s1, #2.111e+01"))?;
-    core.handle_string_command(&String::from("fcmp s0, s1"))?;
-    assert!(!core.cpu.flags.n);
-    assert!(!core.cpu.flags.z);
-    assert!(core.cpu.flags.c);
-    assert!(!core.cpu.flags.v);
-
-    Ok(())
+    #[test]
+    pub fn simple_fcmp_test_less() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("fmov s0, #2.111e+01")?;
+        core.handle_string_command("fmov s1, #3.111e+01")?;
+        core.handle_string_command("fcmp s0, s1")?;
+        assert!(cpu.flags.n);
+        assert!(!cpu.flags.z);
+        assert!(!cpu.flags.c);
+        assert!(!cpu.flags.v);
+        Ok(())
 }
+
+    #[test]
+    pub fn simple_fcmp_test_equal() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("fmov s0, #2.111e+01")?;
+        core.handle_string_command("fmov s1, #2.111e+01")?;
+        core.handle_string_command("fcmp s0, s1")?;
+        assert!(!cpu.flags.n);
+        assert!(cpu.flags.z);
+        assert!(!cpu.flags.c);
+        assert!(!cpu.flags.v);
+        Ok(()) }
+
+    #[test]
+    pub fn simple_fcmp_test_greater() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+
+        core.handle_string_command("fmov s0, #5.111e+01")?;
+        core.handle_string_command("fmov s1, #2.111e+01")?;
+        core.handle_string_command("fcmp s0, s1")?;
+        assert!(!cpu.flags.n);
+        assert!(!cpu.flags.z);
+        assert!(cpu.flags.c);
+        assert!(!cpu.flags.v);
+
+        Ok(())
+    }
+}
+

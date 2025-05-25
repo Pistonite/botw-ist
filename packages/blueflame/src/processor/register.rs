@@ -4,6 +4,7 @@ use crate_::env::no_panic;
 
 pub use blueflame_macros::reg;
 
+// todo --cleanup: remove this
 pub type RegIndex = u32;
 #[derive(Clone, Copy, Debug)]
 pub enum RegisterType {

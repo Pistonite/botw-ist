@@ -4,7 +4,9 @@ use crate::memory::{Memory, Region, RegionType, SimpleHeap, Proxies};
 use crate::processor::Process;
 use crate::env::{Environment, GameVer, DlcVer};
 
-pub fn logging() {
+pub use blueflame_proc_macros::paste_insn;
+
+pub fn init_log() {
     let mut builder = colog::default_builder();
     builder.init();
 }

@@ -2,10 +2,14 @@
 mod insn_vec;
 pub use insn_vec::*;
 
+mod op;
+pub use op::*;
+
 
 
 mod arithmetic_utils;
 mod instruction_parse;
+pub use instruction_parse::AuxiliaryOperation;
 mod instruction_registry;
 mod instructions;
 

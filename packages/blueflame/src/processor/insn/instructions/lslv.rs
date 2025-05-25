@@ -1,13 +1,11 @@
-use super::super::instruction_parse::InsnParser;
-use crate::processor::instruction_registry::{ExecutableInstruction, RegisterType};
+use crate::processor::{self as self_, crate_};
 
-use crate::processor::Error;
-use crate::Core;
+use disarm64::decoder::{Mnemonic, Opcode};
+use disarm64::arm64::InsnOpcode;
 
-use disarm64_defn::defn::InsnOpcode;
-
-use super::super::instruction_parse::get_bit_range;
-use anyhow::bail;
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::insn::Core;
+use self_::{glue, Error, RegisterType};
 
 #[derive(Clone)]
 pub struct InsnLslv {
@@ -17,20 +15,19 @@ pub struct InsnLslv {
 }
 
 impl ExecutableInstruction for InsnLslv {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        let rn_val = proc.cpu.read_gen_reg(&self.rn)? as u64;
-        let shift_val = (proc.cpu.read_gen_reg(&self.rm)? as u64) & 0x3F;
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let rn_val = glue::read_gen_reg(core.cpu, &self.rn) as u64;
+        let shift_val = (glue::read_gen_reg(core.cpu, &self.rm) as u64) & 0x3F;
         let res_val = rn_val << shift_val;
-        proc.cpu.write_gen_reg(&self.rd, res_val as i64)?;
+        glue::write_gen_reg(core.cpu, &self.rd, res_val as i64);
         Ok(())
     }
 }
 
-impl InsnParser for InsnLslv {
-    fn parse_from_decode(
-        d: &disarm64::Opcode,
-    ) -> std::result::Result<Option<Box<(dyn ExecutableInstruction)>>, anyhow::Error> {
-        if d.mnemonic != disarm64::decoder_full::Mnemonic::lslv {
+pub    fn parse(
+        d: &Opcode,
+    ) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+        if d.mnemonic != Mnemonic::lslv {
             return Ok(None);
         }
         let bits = d.operation.bits();
@@ -41,39 +38,48 @@ impl InsnParser for InsnLslv {
         let rd = match sf {
             0 => RegisterType::WReg(rd_idx),
             1 => RegisterType::XReg(rd_idx),
-            _ => bail!("Invalid decode value for sf in lslv inst"),
+        _ => {
+            log::error!("Invalid sf value in lslv instruction: {sf}");
+            return Err(Error::BadInstruction(bits))
+        }
         };
         let rn = match sf {
             0 => RegisterType::WReg(rn_idx),
             1 => RegisterType::XReg(rn_idx),
-            _ => bail!("Invalid decode value for sf in lslv inst"),
+        _ => {
+            log::error!("Invalid sf value in lslv instruction: {sf}");
+            return Err(Error::BadInstruction(bits))
+        }
         };
         let rm = match sf {
             0 => RegisterType::WReg(rm_idx),
             1 => RegisterType::XReg(rm_idx),
-            _ => bail!("Invalid decode value for sf in lslv inst"),
+        _ => {
+            log::error!("Invalid sf value in lslv instruction: {sf}");
+            return Err(Error::BadInstruction(bits))
+        }
         };
         Ok(Some(Box::new(InsnLslv { rd, rn, rm })))
     }
-}
 
 #[cfg(test)]
-use anyhow::Result;
-#[test]
-pub fn test_lslv_parse() -> Result<()> {
-    let lslv_test =
-        InsnLslv::parse_from_decode(&disarm64::decoder::decode(0x9ac32041).unwrap())?.unwrap();
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.cpu.write_gen_reg(&RegisterType::WReg(2), 1)?;
-    core.cpu.write_gen_reg(&RegisterType::WReg(3), 3)?;
-    lslv_test.exec_on(&mut core)?;
-    assert_eq!(core.cpu.read_gen_reg(&RegisterType::WReg(1))?, 8);
-    Ok(())
+mod tests {
+    use super::*;
+    use disarm64::decoder::decode;
+
+    use self_::{Cpu0, Process, reg};
+
+    #[test]
+    fn test_lslv_parse() -> anyhow::Result<()> {
+        let opcode = decode(0x9ac32041).expect("failed to decode");
+        let insn = parse(&opcode)?.expect("failed to parse lslv instruction");
+        let mut cpu = Cpu0::default();
+        cpu.write(reg!(w[2]), 1);
+        cpu.write(reg!(w[3]), 3);
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        insn.exec_on(&mut core)?;
+        assert_eq!(cpu.read::<u32>(reg!(w[1])), 8);
+        Ok(())
+    }
 }
