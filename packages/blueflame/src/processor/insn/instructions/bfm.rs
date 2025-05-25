@@ -82,7 +82,7 @@ impl ExecutableInstruction for InsnBfm {
 mod tests {
     use super::*;
     use crate::test_utils::*;
-    use self_::{Cpu0, Process, reg};
+    use self_::{Cpu0, Process, reg, insn::paste_insn};
 
     fn test_bfm(bits: u32, input: u64, expected: u64) -> anyhow::Result<()> {
         let opcode = disarm64::decoder::decode(bits).expect("failed to decode");

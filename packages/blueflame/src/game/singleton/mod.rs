@@ -13,3 +13,5 @@ pub use _impl::*;
 
 mod singleton_info;
 pub use singleton_info::*;
+
+pub use blueflame_macros::singleton_instance;

@@ -24,6 +24,8 @@ pub struct Reader<'m> {
     page_off: u32,
     /// If the read is for execution, so the execute permission is checked
     execute: bool,
+    /// Disable RX permission check
+    disable_permission_check: bool,
 }
 
 impl<'m> Reader<'m> {
@@ -34,6 +36,7 @@ impl<'m> Reader<'m> {
         region_page_idx: u32,
         page_off: u32,
         execute: bool,
+        disable_permission_check: bool,
     ) -> Self {
         Self {
             memory,
@@ -42,6 +45,7 @@ impl<'m> Reader<'m> {
             region_page_idx,
             page_off,
             execute,
+            disable_permission_check,
         }
     }
 
@@ -184,7 +188,7 @@ impl<'m> Reader<'m> {
             return Err(Error::Unallocated(current_addr));
         }
 
-        if enabled!("mem-permission") {
+        if !self.disable_permission_check && enabled!("mem-permission") {
             if self.execute {
                 if !self
                     .page

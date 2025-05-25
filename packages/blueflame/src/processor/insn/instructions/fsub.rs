@@ -61,9 +61,8 @@ pub    fn parse(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::*;
     use disarm64::decoder::decode;
-    use self_::{Cpu0, Process, reg};
+    use self_::{Cpu0, Process, reg, insn::paste_insn};
 
     #[test]
     pub fn test_fsub_parse() -> anyhow::Result<()> {

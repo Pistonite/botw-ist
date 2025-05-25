@@ -1,9 +1,11 @@
-use crate::game::crate_;
+use crate::game::{self as self_ ,crate_};
 
 use crate_::vm::VirtualMachine;
 use crate_::env::Environment;
 
 pub static NAME: &str = "uking::ui::PauseMenuDataMgr";
+
+pub type Type = self_::PauseMenuDataMgr;
 
 pub const fn size(_env: Environment) -> u32 {
     0x44808

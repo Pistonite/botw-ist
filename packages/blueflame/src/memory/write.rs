@@ -18,6 +18,9 @@ pub struct Writer<'m> {
     region_page_idx: u32,
     /// Offset into the current page
     page_off: u32,
+
+    /// Disable W permission check
+    disable_permission_check: bool,
 }
 
 impl<'m> Writer<'m> {
@@ -26,12 +29,14 @@ impl<'m> Writer<'m> {
         region_type: RegionType,
         region_page_idx: u32,
         page_off: u32,
+        disable_permission_check: bool,
     ) -> Self {
         Self {
             memory,
             region_type,
             region_page_idx,
             page_off,
+            disable_permission_check,
         }
     }
     /// Skip `len` bytes in the memory
@@ -162,6 +167,7 @@ impl<'m> Writer<'m> {
         // copy these value out since we will lose immutable borrow to self
         let region_page_idx = self.region_page_idx;
         let page_off = self.page_off;
+        let permission_check = !self.disable_permission_check;
         // re-borrow the region as mutable and clone on write
         let region = self.region_mut();
         let page = match region.get_mut(region_page_idx) {
@@ -169,7 +175,7 @@ impl<'m> Writer<'m> {
             None => return Err(Error::Unallocated(self.current_addr())),
         };
 
-        if !page.has_permission(AccessType::Write) && enabled!("mem-permission"){
+        if permission_check && !page.has_permission(AccessType::Write) && enabled!("mem-permission"){
             return Err(Error::PermissionDenied(MemAccess {
                 flags: glue::access_type_to_flags(AccessType::Write),
                 addr: self.current_addr(),

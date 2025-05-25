@@ -1,15 +1,15 @@
-use crate::processor::Error;
-use crate::processor::{instruction_registry::RegisterType, RegisterValue};
+use crate::processor as self_;
 
-use crate::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error};
 
-    fn parse_scvtf(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
-        let collected_args = Self::split_args(args, 2);
-        let rd = RegisterType::from_str(&collected_args[0])?;
-        let rn = RegisterType::from_str(&collected_args[1])?;
-        Ok(Box::new(ScvtfInstruction { rd, rn }))
-    }
-
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let collected_args = parse::split_args(args, 2);
+    let rd = glue::parse_reg_or_panic(&collected_args[0]);
+    let rn = glue::parse_reg_or_panic(&collected_args[1]);
+    Some(Box::new(ScvtfInstruction { rd, rn }))
+}
 
 #[derive(Clone)]
 pub struct ScvtfInstruction {
@@ -18,72 +18,56 @@ pub struct ScvtfInstruction {
 }
 
 impl ExecutableInstruction for ScvtfInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.scvtf(self.rd, self.rn)
-    }
-}
-
-
-impl Core<'_, '_, '_> {
-    pub fn scvtf(&mut self, rd: RegisterType, rn: RegisterType) -> Result<(), Error> {
-        match rd {
-            RegisterType::SReg(_) => match rn {
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        match self.rd {
+            RegisterType::SReg(_) => match self.rn {
                 RegisterType::WReg(_) => {
-                    let current_val = self.cpu.read_gen_reg(&rn)?;
+                    let current_val = glue::read_gen_reg(core.cpu, &self.rn);
                     let new_val = current_val as f32;
-                    let register_value: RegisterValue = RegisterValue::SReg(new_val);
-                    self.cpu.write_reg(&rd, &register_value)?;
+                    glue::write_float_reg(core.cpu, &self.rd, new_val as f64);
                     Ok(())
                 }
                 RegisterType::SReg(_) => {
-                    let current_val = self.cpu.read_float_reg(&rn)? as f32;
+                    let current_val = glue::read_float_reg(core.cpu, &self.rn) as f32;
                     let new_val = i32::from_le_bytes(current_val.to_le_bytes());
-                    let register_value: RegisterValue = RegisterValue::SReg(new_val as f32);
-                    self.cpu.write_reg(&rd, &register_value)?;
+                    glue::write_float_reg(core.cpu, &self.rd, new_val as f32 as f64);
                     Ok(())
                 }
-                _ => Err(Error::InstructionError(String::from(
-                    "scvtf: Register type for rn is not supported",
-                ))),
+                _ => {
+                    log::error!("scvtf: Register type for rn is not supported: {:?}", self.rn);
+                    Err(Error::BadInstruction(0))
+                }
             },
-            _ => Err(Error::InstructionError(String::from(
-                "scvtf: Register type for rd is not supported",
-            ))),
+                _ => {
+                    log::error!("scvtf: Register type for rd is not supported: {:?}", self.rn);
+                    Err(Error::BadInstruction(0))
+                }
         }
     }
 }
 
 #[cfg(test)]
-#[test]
-pub fn simple_scvtf_test() -> anyhow::Result<()> {
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.handle_string_command(&String::from("mov w0, #4"))?;
-    core.handle_string_command(&String::from("scvtf s0, w0"))?;
-    assert_eq!(
-        core.cpu.read_reg(&RegisterType::SReg(0)),
-        RegisterValue::SReg(4.0)
-    );
+mod tests {
+    use super::*;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
 
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.handle_string_command(&String::from("mov s0, #4"))?;
-    core.handle_string_command(&String::from("scvtf s0, s0"))?;
-    assert_eq!(
-        core.cpu.read_reg(&RegisterType::SReg(0)),
-        RegisterValue::SReg(4.0)
-    );
-    Ok(())
+    #[test]
+    pub fn simple_scvtf_test() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("mov w0, #4")?;
+        core.handle_string_command("scvtf s0, w0")?;
+        assert_eq!(cpu.read::<f32>(reg!(s[0])), 4.0);
+
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("mov s0, #4")?;
+        core.handle_string_command("scvtf s0, s0")?;
+        assert_eq!(cpu.read::<f32>(reg!(s[0])), 4.0);
+        Ok(())
+    }
 }
+

@@ -1,16 +1,16 @@
-use crate::processor::instruction_registry::RegisterType;
+use crate::processor as self_;
 
-use crate::processor::Error;
-use crate::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error};
 
-    fn parse_smull(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
-        let collected_args = Self::split_args(args, 3);
-        let rd = RegisterType::from_str(&collected_args[0])?;
-        let wn = RegisterType::from_str(&collected_args[1])?;
-        let wm = RegisterType::from_str(&collected_args[2])?;
-        Ok(Box::new(SmullInstruction { rd, wn, wm }))
-    }
-
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let collected_args = parse::split_args(args, 3);
+    let rd = glue::parse_reg_or_panic(&collected_args[0]);
+    let wn = glue::parse_reg_or_panic(&collected_args[1]);
+    let wm = glue::parse_reg_or_panic(&collected_args[2]);
+    Some(Box::new(SmullInstruction { rd, wn, wm }))
+}
 
 #[derive(Clone)]
 pub struct SmullInstruction {
@@ -20,40 +20,30 @@ pub struct SmullInstruction {
 }
 
 impl ExecutableInstruction for SmullInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.smull(self.rd, self.wn, self.wm)
-    }
-}
-
-
-impl Core<'_, '_, '_> {
-    pub fn smull(
-        &mut self,
-        xd: RegisterType,
-        wn: RegisterType,
-        wm: RegisterType,
-    ) -> Result<(), Error> {
-        let xn_val = self.cpu.read_gen_reg(&wn)?;
-        let xm_val = self.cpu.read_gen_reg(&wm)?;
-        self.cpu.write_gen_reg(&xd, xn_val * xm_val)?;
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let xn_val = glue::read_gen_reg(core.cpu, &self.wn);
+        let xm_val = glue::read_gen_reg(core.cpu, &self.wm);
+        glue::write_gen_reg(core.cpu, &self.rd, xn_val * xm_val);
         Ok(())
     }
 }
 
 #[cfg(test)]
-#[test]
-pub fn simple_smull_test() -> anyhow::Result<()> {
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.handle_string_command(&String::from("mov w1, #2"))?;
-    core.handle_string_command(&String::from("mov w2, #3"))?;
-    core.handle_string_command(&String::from("smull x4, w1, w2"))?;
-    assert_eq!(core.cpu.read_gen_reg(&RegisterType::XReg(4))?, 6);
-    Ok(())
+mod tests {
+    use super::*;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
+
+    #[test]
+    pub fn simple_smull_test() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("mov w1, #2")?;
+        core.handle_string_command("mov w2, #3")?;
+        core.handle_string_command("smull x4, w1, w2")?;
+        assert_eq!(cpu.read::<i64>(reg!(x[4])), 6);
+        Ok(())
+    }
 }
+

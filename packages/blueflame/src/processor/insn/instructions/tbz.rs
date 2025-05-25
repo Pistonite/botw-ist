@@ -1,7 +1,20 @@
-use crate::processor::Error;
-use crate::Core;
+use crate::processor as self_;
 
-use crate::processor::instruction_registry::RegisterType;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error};
+
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let split = parse::split_args(args, 3);
+    let rn = glue::parse_reg_or_panic(&split[0]);
+    let imm_val = parse::get_imm_val(&split[1])? as u64;
+    let label_offset = parse::get_label_val(&split[2])?;
+    Some(Box::new(TbzInstruction {
+        rn,
+        imm_val,
+        label_offset,
+    }))
+}
 
 #[derive(Clone)]
 pub struct TbzInstruction {
@@ -11,60 +24,47 @@ pub struct TbzInstruction {
 }
 
 impl ExecutableInstruction for TbzInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.tbz(self.rn, self.imm_val, self.label_offset)
-    }
-}
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let xn_val = glue::read_gen_reg(core.cpu, &self.rn);
 
-
-impl Core<'_, '_, '_> {
-    // Note: imm is the bit number. Should be between 0 and 63 (or 0 and 31 for W registers)
-    pub fn tbz(&mut self, xn: RegisterType, imm: u64, label_offset: u64) -> Result<(), Error> {
-        let xn_val = self.cpu.read_gen_reg(&xn)?;
-
-        let bit_value = xn_val & (0b1 << imm);
+        let bit_value = xn_val & (0b1 << self.imm_val);
 
         if bit_value == 0 {
-            let new_pc = self.cpu.pc.wrapping_add_signed((label_offset - 4) as i64);
-            self.cpu.pc = new_pc;
-            // self.cpu.pc = label_offset - 4;
+            let new_pc = core.cpu.pc.wrapping_add_signed((self.label_offset - 4) as i64);
+            core.cpu.pc = new_pc;
         }
         Ok(())
     }
 }
 
 #[cfg(test)]
-#[test]
-pub fn tbz_does_branch() -> anyhow::Result<()> {
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.cpu.pc = 0x1000;
-    core.cpu.write_gen_reg(&RegisterType::XReg(30), 4)?;
-    core.handle_string_command(&String::from("tbz x30, 0, 50"))?;
-    assert_eq!(core.cpu.pc, 0x1050);
-    Ok(())
+mod tests {
+    use super::*;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
+
+    #[test]
+    pub fn tbz_does_branch() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        cpu.pc = 0x1000;
+        cpu.write(reg!(x[30]), 4);
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("tbz x30, 0, 50")?;
+        assert_eq!(cpu.pc, 0x1050);
+        Ok(())
+    }
+
+    #[test]
+    pub fn tbz_does_not_branch() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        cpu.pc = 0x1000;
+        cpu.write(reg!(x[30]), 4);
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("tbz x30, 2, 50")?;
+        assert_eq!(cpu.pc, 0x1004);
+        Ok(())
+    }
 }
 
-#[cfg(test)]
-#[test]
-pub fn tbz_does_not_branch() -> anyhow::Result<()> {
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.cpu.pc = 0x1000;
-    core.cpu.write_gen_reg(&RegisterType::XReg(30), 4)?;
-    core.handle_string_command(&String::from("tbz x30, 2, 50"))?;
-    assert_eq!(core.cpu.pc, 0x1004);
-    Ok(())
-}

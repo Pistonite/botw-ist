@@ -8,6 +8,8 @@ pub enum Error {
         new_start: u32,
         existing_start: u32,
     },
+    #[error("hook at main+0x{0:08x} is too big (this is a bug)")]
+    TooBigHook(u32),
     #[error("[proc-strict-replace-hook] unsupported jump to middle of replaced code at main+0x{main_offset:08x}")]
     StrictReplacement {
         main_offset: u32,

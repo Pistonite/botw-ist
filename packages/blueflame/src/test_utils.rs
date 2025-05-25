@@ -1,10 +1,8 @@
 use std::sync::Arc;
 
 use crate::memory::{Memory, Region, RegionType, SimpleHeap, Proxies};
-use crate::processor::Process;
+use crate::processor::{Process, HookProvider, Execute};
 use crate::env::{Environment, GameVer, DlcVer};
-
-pub use blueflame_proc_macros::paste_insn;
 
 pub fn init_log() {
     let mut builder = colog::default_builder();
@@ -20,11 +18,18 @@ impl Memory {
     }
 }
 
+struct EmptyHookProvider;
+impl HookProvider for EmptyHookProvider {
+    fn fetch(&self, main_offset: u32, env: Environment) -> Result<Option<(Box<dyn Execute>, u32)>, crate::processor::Error> {
+        Ok(None)
+    }
+}
+
 impl Process {
     pub fn new_for_test() -> Self {
         let mem = Arc::new(Memory::new_for_test());
         let proxies = Arc::new(Proxies::default());
-        Self::new(Environment::new_for_test(), mem, proxies)
+        Self::new(Environment::new_for_test(), mem, proxies, Arc::new(EmptyHookProvider))
     }
 }
 

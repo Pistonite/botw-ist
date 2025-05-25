@@ -1,16 +1,21 @@
-use crate::processor::instruction_registry::RegisterType;
+use crate::processor as self_;
 
-use crate::processor::Error;
-use crate::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
+use self_::{glue, RegisterType, Error};
 
-    fn parse_ubfm(args: &str) -> Result<Box<dyn ExecutableInstruction>> {
-        let collected_args: Vec<String> = Self::split_args(args, 4);
-        let rd = RegisterType::from_str(&collected_args[0])?;
-        let rn = RegisterType::from_str(&collected_args[1])?;
-        let immr = Self::get_imm_val(&collected_args[2])?;
-        let imms = Self::get_imm_val(&collected_args[3])?;
-        Ok(Box::new(UbfmInstruction { rn, rd, immr, imms }))
-    }
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let collected_args: Vec<String> = parse::split_args(args, 4);
+    let rd = glue::parse_reg_or_panic(&collected_args[0]);
+    let rn = glue::parse_reg_or_panic(&collected_args[1]);
+    let immr = parse::get_imm_val(&collected_args[2])?;
+    let imms = parse::get_imm_val(&collected_args[3])?;
+    Some(Box::new(UbfmInstruction { rn, rd, immr, imms }))
+}
+
+fn select_bits(value: i64, m: i64, n: i64) -> i64 {
+    (value >> m) & ((1 << (n - m)) - 1)
+}
 
 #[derive(Clone)]
 pub struct UbfmInstruction {
@@ -21,58 +26,47 @@ pub struct UbfmInstruction {
 }
 
 impl ExecutableInstruction for UbfmInstruction {
-    fn exec_on(&self, proc: &mut Core) -> Result<(), Error> {
-        proc.ubfm(self.rd, self.rn, self.immr, self.imms)
-    }
-}
-
-impl Core<'_, '_, '_> {
-    pub fn ubfm(
-        &mut self,
-        rd: RegisterType,
-        rn: RegisterType,
-        immr: i64,
-        imms: i64,
-    ) -> Result<(), Error> {
-        let val = self.cpu.read_gen_reg(&rn)?;
-        if imms >= immr {
-            let start = immr;
-            let end = imms + 1;
+    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+        let val = glue::read_gen_reg(core.cpu, &self.rn);
+        if self.imms >= self.immr {
+            let start = self.immr;
+            let end = self.imms + 1;
             let bits = select_bits(val, start, end);
-            self.cpu.write_gen_reg(&rd, bits)?;
+            glue::write_gen_reg(core.cpu, &self.rd, bits);
         } else {
             let start = 0;
-            let end = imms + 1;
+            let end = self.imms + 1;
             let bits = select_bits(val, start, end);
-            let regsz = match &rd {
+            let regsz = match &self.rd {
                 RegisterType::XReg(_) => 64,
                 RegisterType::WReg(_) => 32,
-                _ => return Err(Error::InvalidRegisterWrite("ubfm", rd)),
+                _ => {
+                    log::error!("Invalid register type for UBFM: {:?}", self.rd);
+                    return Err(Error::BadInstruction(0));
+                }
             };
-            let bits = bits << (regsz - immr);
-            self.cpu.write_gen_reg(&rd, bits)?;
+            let bits = bits << (regsz - self.immr);
+            glue::write_gen_reg(core.cpu, &self.rd, bits);
         }
         Ok(())
     }
 }
 
-fn select_bits(value: i64, m: i64, n: i64) -> i64 {
-    (value >> m) & ((1 << (n - m)) - 1)
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::test_utils::*;
+    use self_::{Cpu0, Process, reg};
+
+    #[test]
+    pub fn simple_ubfm_test() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+        core.handle_string_command("add w9, wzr, #11")?; // b0...01011
+        core.handle_string_command("ubfm w8, w9, #1, #3")?; // should end up with b101 (5)
+        assert_eq!(cpu.read::<i32>(reg!(w[8])), 5);
+        Ok(())
+    }
 }
 
-#[cfg(test)]
-#[test]
-pub fn simple_ubfm_test() -> anyhow::Result<()> {
-    let mut cpu = crate::Processor::default();
-    let mut mem = crate::Memory::new_empty_mem(0x10000);
-    let mut proxies = crate::Proxies::default();
-    let mut core = crate::Core {
-        cpu: &mut cpu,
-        mem: &mut mem,
-        proxies: &mut proxies,
-    };
-    core.handle_string_command(&String::from("add w9, wzr, #11"))?; // b0...01011
-    core.handle_string_command(&String::from("ubfm w8, w9, #1, #3"))?; // should end up with b101 (5)
-    assert_eq!(core.cpu.read_gen_reg(&RegisterType::WReg(8))?, 5);
-    Ok(())
-}

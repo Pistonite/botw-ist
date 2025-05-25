@@ -13,6 +13,8 @@ pub use instruction_parse::AuxiliaryOperation;
 mod instruction_registry;
 mod instructions;
 
+pub use blueflame_proc_macros::paste_insn;
+
 
 // TODO --cleanup: remove this
 #[derive(derive_more::derive::Constructor)]

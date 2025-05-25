@@ -49,10 +49,9 @@ pub    fn parse( d: &Opcode,) -> Result<Option<Box<(dyn ExecutableInstruction)>>
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::*;
 
     use disarm64::decoder::decode;
-    use self_::{Cpu0, Process, reg};
+    use self_::{Cpu0, Process, reg, insn::paste_insn};
 
     #[test]
     pub fn test_movz_parse() -> anyhow::Result<()> {

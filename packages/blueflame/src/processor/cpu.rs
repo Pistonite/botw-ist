@@ -11,6 +11,8 @@ use self_::insn::InsnVec;
 use crate_::env::{GameVer, enabled};
 use crate_::memory::{access, PAGE_SIZE};
 
+use super::RegName;
+
 const INTERNAL_RETURN_ADDRESS: u64 = 0xDEAD464C414D45AAu64;
 // -----------------------------------------F-L-A-M-E-----
 
@@ -120,29 +122,18 @@ impl Cpu2<'_, '_> {
         // not found in cache - load from process memory
         let bytes = fetch_max_bytes.max(4);
 
-        let mut reader = self.proc.memory().read(self.pc, access!(execute))?;
-        let mut insns = InsnVec::new();
-
-        for _ in 0..(bytes/4) {
-            let insn_raw = reader.read_u32()?;
-
-            if let ControlFlow::Break(_) = insns.disassemble(insn_raw) {
-                break;
-            }
-        }
+        let (exe, bytes) = self.proc.fetch_execute_block(self.pc, bytes)?;
 
         // if we are in the middle of a replacement hook, then
         // just execute without caching
         if is_hook {
-            return insns.execute_from(&mut self.cpu1.cpu0, self.proc, 0);
+            return exe.execute_from(&mut self.cpu1.cpu0, self.proc, 0);
         }
 
         let pc = self.pc;
 
         // add the cache
-        self.cpu1.cache[ver].insert(false, 
-            self.proc.main_start(), 
-            pc, insns.byte_size(), Box::new(insns))?;
+        self.cpu1.cache[ver].insert(false, self.proc.main_start(), pc, bytes, exe)?;
 
         let Ok((exe, step)) = self.cpu1.cache[ver].get(pc) else {
             return Err(Error::Unexpected("failed to insert to execute cache".to_string()))
@@ -161,12 +152,18 @@ impl Cpu2<'_, '_> {
     }
 }
 
-// impl Cpu0 {
-//     pub fn push_stack_trace(&mut self, target: u64, jump_type: FrameType) {
-//         // TODO --cleanup: move to stack
-//         self.stack_trace.frames.push(Frame {
-//             jump_target: pc,
-//             jump_type,
-//         });
-//     }
-// }
+impl Cpu0 {
+    /// Simulate the `ret` instruction.
+    pub fn ret(&mut self) -> Result<(), Error> {
+        self.retr(reg!(lr))
+    }
+
+    /// Simulate the `ret` instruction with a register
+    pub fn retr(&mut self, reg: RegName) -> Result<(), Error> {
+        let xn_val: u64 = self.read(reg);
+        let new_pc = xn_val - 4;
+        self.stack_trace.pop_checked(xn_val)?;
+        self.pc = new_pc as u64;
+        Ok(())
+    }
+}

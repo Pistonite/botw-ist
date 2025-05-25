@@ -87,6 +87,9 @@ pub enum AccessFlag {
     /// Access for read
     Read = 0x4,
 
+    /// Permission checks are disabled
+    Force = 0x8,
+
 
     /// Access the .text (RX) region of the program
     Text = 0x20,
@@ -178,6 +181,12 @@ impl AccessFlags {
     #[inline(always)]
     pub const fn read() -> Self {
         Self(AccessFlag::Read as u32 | Self::region_all().0)
+    }
+
+    /// Create flags for access the memory with no permission checks
+    #[inline(always)]
+    pub const fn force() -> Self {
+        Self(AccessFlag::Read as u32 | AccessFlag::Write as u32 | AccessFlag::Execute as u32 | AccessFlag::Force as u32 | Self::region_all().0)
     }
 
     /// Create flags for access the memory for writing to any region

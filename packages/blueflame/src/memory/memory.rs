@@ -9,7 +9,7 @@ use enumset::EnumSet;
 
 use crate_::env::enabled;
 
-use self_::{glue, AccessFlags, AccessFlag, MemAccess};
+use self_::{glue, AccessFlags, AccessFlag, MemAccess, access};
 
 use super::error::Error;
 use super::heap::SimpleHeap;
@@ -69,8 +69,10 @@ impl Memory {
                     bytes: 0,
                 }));
             }
+            let is_execute = flags.has_all(AccessFlag::Execute);
+            let disable_permission_check = flags.has_all(access!(force));
             // TODO --cleanup: remove execute from param
-            return Ok(Reader::new(self, region, page, page_idx, off, flags.has_all(AccessFlag::Execute)));
+            return Ok(Reader::new(self, region, page, page_idx, off, is_execute, disable_permission_check));
         }
         // region read_by_addr will fail if the address is not allocated,
         // in those cases, we want to return Unallocated error
@@ -106,7 +108,8 @@ impl Memory {
                     bytes: 0,
                 }));
             }
-            return Ok(Writer::new(self, region.typ, page_idx, off));
+            let disable_permission_check = flags.has_all(access!(force));
+            return Ok(Writer::new(self, region.typ, page_idx, off, disable_permission_check));
         }
         // region read_by_addr will fail if the address is not allocated,
         // in those cases, we want to return Unallocated error
