@@ -1,6 +1,7 @@
 use crate::processor::{self as self_, crate_};
 
 use crate_::env::no_panic;
+use crate_::memory::{MemObject, PtrToSized, PtrToArray};
 
 pub use blueflame_macros::reg;
 
@@ -248,9 +249,12 @@ impl_reg_value!(i64, signed, u64);
 #[rustfmt::skip]
 impl RegValue for f32 {
     #[inline(always)] fn from_32(x: u32) -> Self { f32::from_bits(x) }
-    // this is really invalid operation, so we can do whatever
-    // current implementation is only use the lower 32 bits
-    #[inline(always)] fn from_64(x: u64) -> Self { f32::from_bits(x as u32) }
+    fn from_64(x: u64) -> Self { 
+        log::warn!("reading f32 from a 64-bit register, this is likely invalid");
+        // this is really invalid operation, so we can do whatever
+        // current implementation is only use the lower 32 bits
+        f32::from_bits(x as u32)
+    }
     #[inline(always)] fn from_128(x: u64, _: u64) -> Self { f32::from_bits(x as u32) }
     // zero upper bits
     #[inline(always)] fn into_64(self) -> u64 { self.to_bits() as u64 }
@@ -261,12 +265,41 @@ impl RegValue for f64 {
     // this DOES make sense - reading as f32 then casting to f64
     #[inline(always)] fn from_32(x: u32) -> Self { f32::from_bits(x) as Self }
     #[inline(always)] fn from_64(x: u64) -> Self { f64::from_bits(x) }
-    // this is really invalid operation, so we can do whatever
-    // current implementation is only use the lower 64 bits
-    #[inline(always)] fn from_128(x: u64, _: u64) -> Self { f64::from_bits(x) }
+    fn from_128(x: u64, _: u64) -> Self {
+        // this is really invalid operation, so we can do whatever
+        // current implementation is only use the lower 64 bits
+        log::warn!("reading f64 from a 128-bit register, this is likely invalid");
+        f64::from_bits(x)
+    }
     #[inline(always)] fn into_64(self) -> u64 { self.to_bits() }
     // zero upper bits
     #[inline(always)] fn into_128(self) -> (u64, u64) { (self.to_bits() , 0) }
+}
+
+#[rustfmt::skip]
+impl<T: MemObject, const SIZE: u32> RegValue for PtrToSized<T, SIZE> {
+    // pointer is 64 bit so this is likely invalid
+    fn from_32(x: u32) -> Self { 
+        log::warn!("reading pointer from a 32-bit register, this is likely invalid");
+        Self::new(x as u64)
+    }
+    #[inline(always)] fn from_64(x: u64) -> Self { Self::new(x) }
+    #[inline(always)] fn from_128(lo: u64, _: u64) -> Self { Self::new(lo) }
+    #[inline(always)] fn into_64(self) -> u64 { self.to_raw() }
+    #[inline(always)] fn into_128(self) -> (u64, u64) { (self.to_raw(), 0) }
+}
+
+#[rustfmt::skip]
+impl<T: MemObject, const SIZE: u32, const LEN: usize> RegValue for PtrToArray<T, SIZE, LEN> {
+    // pointer is 64 bit so this is likely invalid
+    fn from_32(x: u32) -> Self { 
+        log::warn!("reading pointer from a 32-bit register, this is likely invalid");
+        Self::new(x as u64)
+    }
+    #[inline(always)] fn from_64(x: u64) -> Self { Self::new(x) }
+    #[inline(always)] fn from_128(lo: u64, _: u64) -> Self { Self::new(lo) }
+    #[inline(always)] fn into_64(self) -> u64 { self.to_raw() }
+    #[inline(always)] fn into_128(self) -> (u64, u64) { (self.to_raw(), 0) }
 }
 
 // no current implementation for 128 bit values yet

@@ -9,7 +9,7 @@ use enumset::EnumSet;
 
 use crate_::env::{Environment, enabled};
 
-use self_::{glue, AccessFlags, AccessFlag, MemAccess, access};
+use self_::{glue, AccessFlags, AccessFlag, MemAccess, access, Ptr};
 
 use super::error::Error;
 use super::heap::SimpleHeap;
@@ -165,6 +165,17 @@ impl Memory {
 
     pub fn heap_mut(&mut self) -> &mut SimpleHeap {
         Arc::make_mut(&mut self.heap)
+    }
+
+    /// Allocate space on the heap for the given byte slice,
+    /// and copy the slice to the allocated space.
+    ///
+    /// Return the pointer to the slice
+    pub fn alloc_with(&mut self, data: &[u8]) -> Result<u64, Error> {
+        let heap = self.heap_mut();
+        let ptr = heap.alloc(data.len() as u32)?;
+        Ptr!(<u8>(ptr)).store_slice(data, self)?;
+        Ok(ptr)
     }
 }
 

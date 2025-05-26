@@ -1,4 +1,4 @@
-use crate::game::crate_;
+use crate::linker::crate_;
 
 use crate_::processor::Cpu2;
 

@@ -18,6 +18,8 @@ use paste::paste;
 
 use self_::glue;
 
+pub use blueflame_macros::proxy;
+
 /// The maximum number of proxy objects per type
 pub const MAX_OBJECTS: u32 = 1024000;
 

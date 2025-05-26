@@ -1,16 +1,16 @@
-#![allow(unused)]
+#![feature(string_from_utf8_lossy_owned)]
 
 extern crate self as blueflame;
 
 #[layered_crate::layers]
 mod src {
-    // /// Top-level setup implementation for starting and connecting
-    // /// everything in a program
-    // #[depends_on(processor)]
-    // #[depends_on(memory)]
-    // #[depends_on(vm)]
-    // #[depends_on(env)]
-    // pub extern crate linker;
+    /// Top-level setup implementation for starting and connecting
+    /// everything in a program
+    #[depends_on(processor)]
+    #[depends_on(game)]
+    #[depends_on(memory)]
+    #[depends_on(env)]
+    pub extern crate linker;
 
     /// Implementation of the processor (CPU) layers
     #[depends_on(game)]

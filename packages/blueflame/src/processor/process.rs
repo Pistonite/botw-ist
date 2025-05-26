@@ -8,7 +8,7 @@ use std::ops::ControlFlow;
 use derive_more::derive::Constructor;
 
 use crate_::env::{Environment, enabled, GameVer};
-use crate_::memory::{Memory, access};
+use crate_::memory::{Memory, access, ProxyObject, ProxyList, ProxyGuardMut};
 use crate_::game::Proxies;
 use self_::{Execute, Error};
 use self_::insn::InsnVec;
@@ -51,8 +51,16 @@ impl Process {
         &self.proxies
     }
 
-    pub fn proxies_mut(&mut self) -> &mut Proxies {
-        Arc::make_mut(&mut self.proxies)
+    // pub fn proxies_mut(&mut self) -> &mut Proxies {
+    //     Arc::make_mut(&mut self.proxies)
+    // }
+
+    pub fn proxies_mut<T: ProxyObject, F: FnOnce(&mut Proxies) -> &mut ProxyList<T>>(&mut self, f: F) -> ProxyGuardMut<'_, '_, T> {
+        let memory = Arc::make_mut(&mut self.memory);
+        let proxies = Arc::make_mut(&mut self.proxies);
+        let proxy_list = f(proxies);
+    
+        proxy_list.write(memory)
     }
 
     /// Get the physical starting address of the main module

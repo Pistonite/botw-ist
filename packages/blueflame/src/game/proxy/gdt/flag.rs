@@ -58,20 +58,88 @@ impl<T: Clone> Flag<T>
     pub fn name(&self) -> &str {
         &self.name
     }
+
+    pub fn readable(&self) -> bool {
+        self.is_program_readable
+    }
+
+    pub fn writable(&self) -> bool {
+        self.is_program_writeable
+    }
 }
 
 impl<T: Clone> Flag<Box<[T]>>
 {
-    // TODO --cleanup: array range check
-    pub fn reset_at(&mut self, idx: usize) {
-        let init_value = self.initial_value[idx].clone();
-        self.value[idx] = init_value;
+    pub fn len(&self) -> usize {
+        self.value.len()
     }
-    pub fn set_at(&mut self, idx: usize, value: T) {
-        self.value[idx] = value;
+    pub fn get_at<I: FlagIndex>(&self, idx: I) -> Option<&T> {
+        self.value.get(idx.to_index()?)
+    }
+    #[must_use]
+    pub fn reset_at<I: FlagIndex>(&mut self, idx: I) -> bool {
+        let Some(i) = idx.to_index() else {
+            return false;
+        };
+        let Some(init_value) = self.initial_value.get(i) else {
+            return false;
+        };
+        let init_value = init_value.clone();
+        let Some(x) = self.value.get_mut(i) else {
+            return false;
+        };
+        *x = init_value;
+        true
+    }
+    #[must_use]
+    pub fn set_at<I: FlagIndex>(&mut self, idx: I, value: T) -> bool {
+        let Some(i) = idx.to_index() else {
+            return false;
+        };
+        let Some(x) = self.value.get_mut(i) else {
+            return false;
+        };
+        *x = value;
+        true
     }
 }
 
 pub fn get_hash(name: &str) -> i32 {
     crc32fast::hash(name.as_bytes()) as i32
 }
+
+/// Helper trait for checking index for getter and setters
+pub trait FlagIndex {
+    fn to_index(self) -> Option<usize>;
+}
+#[rustfmt::skip]
+const _: () = {
+    impl FlagIndex for u8 { #[inline(always)] fn to_index(self) -> Option<usize> { Some(self as usize) } }
+    impl FlagIndex for u16 { #[inline(always)] fn to_index(self) -> Option<usize> { Some(self as usize) } }
+    impl FlagIndex for u32 { #[inline(always)] fn to_index(self) -> Option<usize> { Some(self as usize) } }
+    impl FlagIndex for usize { #[inline(always)] fn to_index(self) -> Option<usize> { Some(self) } }
+    impl FlagIndex for u64 { #[inline(always)] fn to_index(self) -> Option<usize> { 
+        if self > usize::MAX as u64 {
+            None
+        } else {
+            Some(self as usize)
+        }
+    }}
+    impl FlagIndex for i8 { #[inline(always)] fn to_index(self) -> Option<usize> { (self as isize).to_index() } }
+    impl FlagIndex for i16 { #[inline(always)] fn to_index(self) -> Option<usize> { (self as isize).to_index() } }
+    impl FlagIndex for i32 { #[inline(always)] fn to_index(self) -> Option<usize> { (self as isize).to_index() } }
+    impl FlagIndex for isize { #[inline(always)] fn to_index(self) -> Option<usize> { 
+        if self < 0 {
+            None
+        } else {
+            Some(self as usize)
+        }
+    } }
+    impl FlagIndex for i64 { #[inline(always)] fn to_index(self) -> Option<usize> { 
+        if self < 0 || self > usize::MAX as i64 {
+            None
+        } else {
+            Some(self as usize)
+        }
+    } }
+};

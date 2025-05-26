@@ -1,5 +1,7 @@
 use crate::memory::{self as self_};
 
+use std::ffi::{CStr, CString};
+
 use num_traits::Zero;
 
 use self_::{Memory, MemLayout, Error, MemObject, Unsigned, Reader, Writer, assert_size_eq, access, AccessFlags};
@@ -418,13 +420,51 @@ impl<T: MemObject + Zero + PartialEq + Copy, const SIZE: u32> PtrToSized<T, SIZE
     }
 }
 
+// load/store string from char*
+impl Ptr![u8] {
+    /// Load a zero-terminated C string from the pointer as a char*
+    pub fn load_c_string(self, memory: &Memory) -> Result<CString, Error> {
+        let bytes = self.load_zero_terminated(memory)?;
+        // we know the bytes only have one zero terminator at the end
+        Ok(CString::new(bytes).unwrap())
+    }
+
+    /// Store a zero-terminated C string into the pointer as a char*
+    pub fn store_c_string(self, s: impl AsRef<CStr>, memory: &mut Memory) -> Result<(), Error> {
+        // store the bytes of the CString, including the zero terminator
+        let bytes = s.as_ref().to_bytes_with_nul();
+        self.store_slice(bytes, memory)?;
+        Ok(())
+    }
+
+    /// Load a zero-terminated UTF-8 string from the pointer as a char*
+    pub fn load_utf8_lossy(self, memory: &Memory) -> Result<String, Error> {
+        let bytes = self.load_zero_terminated(memory)?;
+        let utf8_error = match String::from_utf8(bytes) {
+            Ok(s) => return Ok(s),
+            Err(e) => e,
+        };
+        let lossy = utf8_error.into_utf8_lossy();
+        log::warn!("invalid utf-8 read from pointer: {:016x}, lossy value = {lossy}", self.to_raw());
+        // we know the bytes only have one zero terminator at the end
+        Ok(lossy)
+    }
+
+    /// Store a string into memory as a zero-terminated UTF-8 string
+    pub fn store_string(self, s: impl AsRef<str>, memory: &mut Memory) -> Result<(), Error> {
+        // store the bytes of the string
+        let bytes = s.as_ref().as_bytes();
+        let byte_len = bytes.len();
+        self.store_slice(bytes, memory)?;
+        // store null terminator
+        Ptr!(<u8>(self.to_raw() + byte_len as u64)).store(&0u8, memory)?;
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    use std::sync::Arc;
-
-    use self_::{Region, RegionType, SimpleHeap};
 
     #[derive(MemObject)]
     #[size(0x40)]

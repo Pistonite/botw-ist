@@ -80,32 +80,35 @@ impl TriggerParam {
     }
     /// Get flag by CRC32 hash of its name
     pub fn by_hash<Fd: gdt::FlagDescriptor>(&self, hash: i32) -> Option<&gdt::Flag<Fd::T>> {
-        self.get::<Fd>(self.index_from_hash::<Fd>(hash)?)
+        self.get::<Fd, usize>(self.index_from_hash::<Fd>(hash)?)
     }
 
     /// Get flag by CRC32 hash of its name for mutation
     pub fn by_hash_mut<Fd: gdt::FlagDescriptor>(&mut self, hash: i32) -> Option<&mut gdt::Flag<Fd::T>> {
-        self.get_mut::<Fd>(self.index_from_hash::<Fd>(hash)?)
+        self.get_mut::<Fd, usize>(self.index_from_hash::<Fd>(hash)?)
     }
 
     /// Get flag by its name
     pub fn by_name<Fd: gdt::FlagDescriptor>(&self, name: impl AsRef<str>) -> Option<&gdt::Flag<Fd::T>> {
-        self.get::<Fd>(self.index_from_name::<Fd>(name)?)
+        self.get::<Fd, usize>(self.index_from_name::<Fd>(name)?)
     }
 
     /// Get flag by its name for mutation
     pub fn by_name_mut<Fd: gdt::FlagDescriptor>(&mut self, name: impl AsRef<str>) -> Option<&mut gdt::Flag<Fd::T>> {
-        self.get_mut::<Fd>(self.index_from_name::<Fd>(name)?)
+        self.get_mut::<Fd, usize>(self.index_from_name::<Fd>(name)?)
     }
 
     /// Get flag by index in the flag list
-    pub fn get<Fd: gdt::FlagDescriptor>(&self, idx: usize) -> Option<&gdt::Flag<Fd::T>> {
-        Fd::list(self).get(idx)
+    pub fn get<Fd: gdt::FlagDescriptor, I: gdt::FlagIndex>(&self, idx: I) -> Option<&gdt::Flag<Fd::T>> {
+        Fd::list(self).get(idx.to_index()?)
     }
+
+
     /// Get flag by index in the flag list for mutation
-    pub fn get_mut<Fd: gdt::FlagDescriptor>(&mut self, idx: usize) -> Option<&mut gdt::Flag<Fd::T>> {
-        Fd::list_mut(self).get_mut(idx)
+    pub fn get_mut<Fd: gdt::FlagDescriptor, I: gdt::FlagIndex>(&mut self, idx: I) -> Option<&mut gdt::Flag<Fd::T>> {
+        Fd::list_mut(self).get_mut(idx.to_index()?)
     }
+
 
     /// Get the index of the flag from CRC32 hash of its name
     pub fn index_from_hash<Fd: gdt::FlagDescriptor>(&self, hash: i32) -> Option<usize> {
@@ -142,6 +145,11 @@ impl TriggerParam {
         for flag in Fd::list_mut(self) {
             flag.reset();
         }
+    }
+
+    /// Get the length of the flags array of the type
+    pub fn len<Fd: gdt::FlagDescriptor>(&self) -> usize {
+        Fd::list(self).len()
     }
 }
 impl ProxyObject for TriggerParam {

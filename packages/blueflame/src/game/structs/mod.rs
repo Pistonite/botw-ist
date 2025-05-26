@@ -3,6 +3,8 @@
 
 mod gdt;
 pub use gdt::*;
+mod string;
+pub use string::*;
 
 use crate::game::{self as self_, crate_};
 
@@ -14,17 +16,6 @@ use std::marker::PhantomData;
 use crate_::memory::{MemObject, Memory, Ptr, Reader, Writer};
 // use crate::Core;
 use derive_more::derive::Constructor;
-
-#[derive(MemObject, Default, Clone)]
-#[size(0x10)]
-pub struct SafeString {
-    #[offset(0x0)]
-    pub vtable: u64,
-    #[offset(0x8)]
-    pub mStringTop: Ptr![u8],
-}
-
-// static_assertions::assert_impl_all!(SafeString: MemObject);
 
 #[allow(non_snake_case)]
 #[derive(MemObject, Clone)]
