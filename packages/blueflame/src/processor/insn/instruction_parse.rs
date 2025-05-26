@@ -1,12 +1,11 @@
-use crate::processor::{self as self_, crate_};
-
 use disarm64::decoder::Opcode;
-use disarm64::arm64::InsnOpcode;
 
-use self_::Error;
-use self_::insn::Core;
-
-use super::instructions as xxx;
+#[layered_crate::import]
+use processor::{
+    Error,
+    insn::Core,
+    insn::instructions as xxx
+};
 
 type ParseFn = fn(&Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error>;
 static PARSE_LIST: &[ParseFn] = &[
@@ -41,7 +40,7 @@ pub fn opcode_to_inst(opcode: Opcode) -> Option<Box<dyn ExecutableInstruction>> 
         match parsefn(&opcode) {
             Ok(None) => continue,
             Ok(Some(inst)) => return Some(inst),
-            Err(e) => {
+            Err(_) => {
                 return None;
             }
         }
@@ -268,12 +267,6 @@ pub     fn get_imm_val(imm: &String) -> Option<i64> {
 pub struct AuxiliaryOperation {
     pub operation: String,
     pub shift_val: i64,
-}
-
-pub enum AuxParseResult {
-    Error,
-    None,
-    Some(AuxiliaryOperation),
 }
 
 pub trait ExecutableInstruction: ExecutableInstructionClone + Send + Sync + std::panic::UnwindSafe + 'static{

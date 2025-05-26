@@ -1,14 +1,15 @@
-use crate::processor::{self as self_, crate_};
-
 use std::ops::ControlFlow;
 
 use disarm64::decoder::Opcode;
 use disarm64::arm64::InsnOpcode;
 
-use crate_::env::enabled;
-use self_::{Cpu0, Error, Execute, Process, BLOCK_ITERATION_LIMIT};
-use self_::insn::{Core, instruction_parse, op};
-use self_::insn::instruction_parse::ExecutableInstruction;
+#[layered_crate::import]
+use processor::{
+    super::env::enabled,
+    self::{Cpu0, Error, Execute, Process, BLOCK_ITERATION_LIMIT},
+    self::insn::{Core, instruction_parse, op},
+    self::insn::instruction_parse::ExecutableInstruction,
+};
 
 #[derive(Default)]
 pub struct InsnVec {

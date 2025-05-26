@@ -1,6 +1,5 @@
-use crate::game as self_;
-
-use self_::gdt;
+#[layered_crate::import]
+use game::gdt;
 
 /// Descriptor for accessing flag types from TriggerParam
 ///

@@ -19,10 +19,11 @@ pub struct SingletonInfo {
 
 #[cfg(test)]
 mod tests {
-    use crate::game::{self as self_, crate_};
-
-    use self_::{SingletonInfo, singleton_info, singleton};
-    use crate_::env::{DlcVer, Environment, GameVer};
+    #[layered_crate::import]
+    use game::{
+        super::env::{Environment, GameVer, DlcVer},
+        self::{SingletonInfo, singleton_info},
+    };
 
     #[test]
     fn test_not_overlap() {

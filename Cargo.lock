@@ -1427,9 +1427,9 @@ dependencies = [
 
 [[package]]
 name = "layered-crate"
-version = "0.1.2"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "78ace4f568ba927e092a0874136ebb596db712a84d5912f4cda20e45afde7c86"
+checksum = "864187994a41295c4374817379798851a821245f33d19cdfdb130d24757919d5"
 dependencies = [
  "proc-macro2",
  "quote",

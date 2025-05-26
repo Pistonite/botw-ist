@@ -1,5 +1,8 @@
-use super::Cpu0;
-
+#[layered_crate::import]
+use processor::{
+    super::memory,
+    Cpu0
+};
 
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {
@@ -38,15 +41,15 @@ pub enum Error {
     // InvalidRegisterWrite(&'static str, RegisterType),
 
     #[error("Memory error: {0}")]
-    Mem(crate::memory::Error),
+    Mem(memory::Error),
     // #[error("Instruction emitted an error: {0}")]
     // InstructionError(String),
     #[error("Unexpected: {0}")]
     Unexpected(String),
 }
 
-impl From<crate::memory::Error> for Error {
-    fn from(err: crate::memory::Error) -> Self {
+impl From<memory::Error> for Error {
+    fn from(err: memory::Error) -> Self {
         Error::Mem(err)
     }
 }

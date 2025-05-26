@@ -1,17 +1,17 @@
-use crate::processor::{self as self_, crate_};
-
-use std::collections::HashMap;
 use std::panic::UnwindSafe;
 use std::sync::Arc;
 use std::ops::ControlFlow;
 
 use derive_more::derive::Constructor;
 
-use crate_::env::{Environment, enabled, GameVer};
-use crate_::memory::{Memory, access, ProxyObject, ProxyList, ProxyGuardMut};
-use crate_::game::Proxies;
-use self_::{Execute, Error};
-use self_::insn::InsnVec;
+#[layered_crate::import]
+use processor::{
+    super::env::{Environment, GameVer},
+    super::memory::{Memory, access, ProxyObject, ProxyList, ProxyGuardMut},
+    super::game::Proxies,
+    self::{Execute, Error},
+    self::insn::InsnVec,
+};
 
 /// The Process is the container for everything the core tracks
 /// that is not in the Processor.
@@ -69,14 +69,16 @@ impl Process {
     }
 
     /// Fetch a block of code for execution
-    pub fn fetch_execute_block(&self, pc: u64, max_bytes: u32) -> Result<(Box<dyn Execute>, u32), Error> {
+    pub fn fetch_execute_block(&self, pc: u64, max_bytes: u32, allow_hooks: bool) -> Result<(Box<dyn Execute>, u32), Error> {
         // find execute hook at this location
         let main_offset: u32 = (pc - self.main_start()) as u32;
-        if let Some((x, bytes)) = self.hook.fetch(main_offset, self.memory.env())? {
-            if bytes > max_bytes {
-                return Err(Error::TooBigHook(main_offset))
+        if allow_hooks {
+            if let Some((x, bytes)) = self.hook.fetch(main_offset, self.memory.env())? {
+                if bytes > max_bytes {
+                    return Err(Error::TooBigHook(main_offset))
+                }
+                return Ok((x, bytes))
             }
-            return Ok((x, bytes))
         }
 
         // if no hook, fetch the instructions from memory

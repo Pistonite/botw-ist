@@ -1,6 +1,7 @@
 use enumset::EnumSet;
 
-use super::access::AccessType;
+#[layered_crate::import]
+use memory::AccessType;
 
 const PAGE_SIZE: u32 = 0x1000;
 

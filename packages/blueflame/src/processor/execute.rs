@@ -1,11 +1,9 @@
-use crate::processor::{self as self_, crate_};
-
-use std::{collections::HashMap, sync::{Arc, Mutex}};
-
-use crate_::memory::Memory;
-use crate_::env::no_panic;
-
-use self_::{Error, Cpu0, Process};
+#[layered_crate::import]
+use processor::{
+    super::env::no_panic,
+    super::memory::Memory,
+    self::{Error, Cpu0, Process}
+};
 
 pub trait Execute: Send + Sync + std::panic::UnwindSafe + 'static {
     /// Execute this code the middle. `step` is number of instructions
@@ -39,6 +37,7 @@ Fn(&mut Cpu0, &mut Process) -> Result<(), Error> + Send + Sync
 /// The execute cache is a per-processor cache for saving instruction
 /// fetch results in blocks, so we can avoid duplicated memory reads
 /// and instruction decodes
+#[derive(Default)]
 pub struct ExecuteCache {
     /// Entries in the cache, sorted by starting addresses
     /// and cannot overlap
@@ -157,9 +156,12 @@ impl ExecuteCache {
 #[cfg(test)]
 mod tests {
     use super::*;
+    
+    #[layered_crate::import]
+    use processor::box_execute;
 
     fn make_entry(start: u64, size: u32) -> ExecuteCacheEntry {
-        ExecuteCacheEntry { is_permanent: false, start, size, f: self_::box_execute(|_, _| Ok(())) }
+        ExecuteCacheEntry { is_permanent: false, start, size, f: box_execute(|_, _| Ok(())) }
     }
 
     fn make_vec() -> ExecuteCache {
@@ -176,11 +178,11 @@ mod tests {
     fn test_register_get() {
         let mut hv = make_vec();
 
-        assert!(hv.insert(true, 0, 40, 80, self_::box_execute(|_, _| {
+        assert!(hv.insert(true, 0, 40, 80, box_execute(|_, _| {
             // this is a test so we can execute it and see the result
             return Err( Error::StrictReplacement { main_offset: 42 })
         })) .is_ok());
-        assert!(hv.insert(true, 0, 52, 16, self_::box_execute(|_, _| Ok(()))) .is_err());
+        assert!(hv.insert(true, 0, 52, 16, box_execute(|_, _| Ok(()))) .is_err());
         let (_entry, step) = hv.get(40).unwrap();
         assert_eq!(step, 0);
         // TODO --cleanup: core - check if the entry is the same

@@ -1,7 +1,5 @@
-use enumset::EnumSet;
-
-use super::access::MemAccess;
-use super::region::RegionType;
+#[layered_crate::import]
+use memory::{MemAccess, RegionType};
 
 /// Memory errors
 #[derive(Debug, Clone, thiserror::Error)]

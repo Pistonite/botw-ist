@@ -1,8 +1,8 @@
-use crate::processor::{self as self_, crate_};
-
-use crate_::env::enabled;
-use self_::{RegName, Error};
-
+#[layered_crate::import]
+use processor::{
+    super::env::enabled,
+    self::{RegName, Error},
+};
 
 #[derive(Debug, Clone, Default)]
 pub struct StackTrace {

@@ -1,8 +1,7 @@
-use crate::program::crate_;
-
 use deku::{DekuRead, DekuWrite};
 
-use crate_::env::{GameVer, DataId};
+#[layered_crate::import]
+use program::super_::env::{GameVer, DataId};
 
 /// Image of a program at runtime
 #[derive(Debug, Clone, PartialEq, Eq, DekuRead, DekuWrite)]

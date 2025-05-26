@@ -5,12 +5,6 @@
 /// (This is a macro to easily support any integer type)
 #[macro_export]
 macro_rules! align_down {
-    ($addr:expr, page) => {
-        $addr & !(blueflame::memory::PAGE_SIZE - 1)
-    };
-    ($addr:expr, region) => {
-        $addr & !(blueflame::memory::REGION_ALIGN - 1)
-    };
     ($addr:expr, $align:expr) => {
         $addr & !($align - 1)
     };
@@ -21,8 +15,6 @@ macro_rules! align_down {
 /// (This is a macro to easily support any integer type)
 #[macro_export]
 macro_rules! align_up {
-    ($addr:expr, page) => {{ $crate::align_up!($addr, blueflame::memory::PAGE_SIZE) }};
-    ($addr:expr, region) => {{ $crate::align_up!($addr, blueflame::memory::REGION_ALIGN) }};
     ($addr:expr, $align:expr) => {{
         let align = $align;
         $crate::align_down!($addr + align - 1, align)

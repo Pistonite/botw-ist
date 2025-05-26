@@ -1,10 +1,7 @@
 use derive_more::derive::{Deref, DerefMut};
 
-use super::{
-    align_up,
-    error::Error,
-    region::{Region, RegionType},
-};
+#[layered_crate::import]
+use memory::{align_up, Error, Region, RegionType};
 
 /// A simple heap region implementation
 ///

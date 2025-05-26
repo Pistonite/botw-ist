@@ -1,10 +1,8 @@
-use crate::game::{self as self_, crate_};
-
-use thiserror::Error;
-
-use crate::memory::{self, Memory, Ptr, ProxyObject};
-
-use self_::{gdt, singleton_instance, singleton};
+#[layered_crate::import]
+use game::{
+    super::memory::{self, Memory, Ptr, ProxyObject},
+    self::{gdt, singleton_instance},
+};
 
 
 // #[derive(Error, Debug)]
@@ -434,8 +432,8 @@ mod tests {
     use super::*;
     #[test]
     fn test_init() -> anyhow::Result<()> {
-        let mut params = gdt::TriggerParam::loaded();
-        let mut flag1 = params.by_hash::<gdt::fd!(bool)>(530692287).expect("flag not found");
+        let params = gdt::TriggerParam::loaded();
+        let flag1 = params.by_hash::<gdt::fd!(bool)>(530692287).expect("flag not found");
         assert!(!flag1.get());
         assert_eq!(flag1.name(), "BarrelErrand_Intro_Finished");
 

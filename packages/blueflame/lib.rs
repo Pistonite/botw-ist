@@ -9,12 +9,15 @@ mod src {
     #[depends_on(processor)]
     #[depends_on(game)]
     #[depends_on(memory)]
+    #[depends_on(program)]
     #[depends_on(env)]
     pub extern crate linker;
 
     /// Implementation of the processor (CPU) layers
     #[depends_on(game)]
     #[depends_on(memory)]
+    #[depends_on(program)]
+    #[depends_on(vm)]
     #[depends_on(env)]
     pub extern crate processor;
 
@@ -46,8 +49,9 @@ mod src {
 
 /// Re-export other crates to use in macros
 #[doc(hidden)]
-pub(crate) mod __re {
+pub mod __re {
     pub use enumset;
+    #[allow(unused_imports)] // release mode only
     pub use no_panic;
     pub use phf;
     pub use static_assertions;

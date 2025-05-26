@@ -1,10 +1,10 @@
-use crate::processor::{self as self_};
-
 use disarm64::decoder::{Opcode, Operation};
-use disarm64::arm64::InsnOpcode;
 
-use self_::{Process, Cpu0, Error};
+#[layered_crate::import]
+use processor::{Process, Cpu0, Error};
 
+/// Check if the instruction *could* branch to another place (instead of
+/// the next instruction)
 pub fn is_branch(opcode: Opcode) -> bool {
     matches!(opcode.operation, 
         Operation::BRANCH_IMM(_) | 

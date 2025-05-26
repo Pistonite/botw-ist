@@ -1,7 +1,8 @@
-use crate::processor::{self as self_, crate_};
-
-use crate_::env::no_panic;
-use crate_::memory::{MemObject, PtrToSized, PtrToArray};
+#[layered_crate::import]
+use processor::{
+    super::env::no_panic,
+    super::memory::{MemObject, PtrToSized, PtrToArray},
+};
 
 pub use blueflame_macros::reg;
 

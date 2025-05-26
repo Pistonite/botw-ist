@@ -1,22 +1,13 @@
-use crate::memory::{self as self_, crate_};
-
 use std::ops::DerefMut;
 use std::sync::Arc;
 
-// use blueflame_macros::enabled;
 use derive_more::derive::Constructor;
-use enumset::EnumSet;
 
-use crate_::env::{Environment, enabled};
-
-use self_::{glue, AccessFlags, AccessFlag, MemAccess, access, Ptr};
-
-use super::error::Error;
-use super::heap::SimpleHeap;
-use super::page::Page;
-use super::read::Reader;
-use super::region::{Region, RegionType};
-use super::write::Writer;
+#[layered_crate::import]
+use memory::{
+    super::env::{Environment, enabled},
+    self::{glue, AccessFlags, AccessFlag, MemAccess, access, Ptr, Error, SimpleHeap, Page, Reader, Region, RegionType, Writer}
+};
 
 /// Memory of the simulated process
 #[derive(Debug, Clone, Constructor)]

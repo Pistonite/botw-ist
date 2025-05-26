@@ -1,6 +1,7 @@
 use enumset::{enum_set, EnumSet, EnumSetType};
 
-use super::Unsigned32;
+#[layered_crate::import]
+use memory::Unsigned32;
 
 #[doc(inline)]
 pub use blueflame_macros::access;

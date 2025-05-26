@@ -1,16 +1,11 @@
-use crate::memory::{self as self_, crate_};
-
 use std::sync::Arc;
 
 use enumset::{EnumSet, EnumSetType};
 
-use crate_::program::ProgramRegion;
-
-use self_::{
-    AccessType,
-    Error,
-    Page, PAGE_SIZE,
-    align_down, align_up,
+#[layered_crate::import]
+use memory::{
+    super::program::ProgramRegion, 
+    self::{AccessType, Error, Page, PAGE_SIZE, align_down, align_up}
 };
 
 pub const REGION_ALIGN: u64 = 0x10000;

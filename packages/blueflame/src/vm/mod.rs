@@ -1,6 +1,5 @@
-use crate::vm::crate_;
-
-use crate_::env::{DataId, ProxyId};
+#[layered_crate::import]
+use vm::super_::env::{DataId, ProxyId};
 
 /// Trait implemented by the processor to help navigate and execute
 /// gadgets in the existing program. For example to call a function
@@ -35,7 +34,12 @@ pub trait VirtualMachine {
     fn v_execute_until(&mut self, target: u32) -> Result<(), Self::Error>;
 
     /// Equivalent to `v_execute_until(X); v_singleton_alloc(A, B); v_jump(X + 4)`
-    fn v_execute_until_then_single_alloc_skip_one(&mut self, target: u32, rel_start: u32, size: u32) -> Result<(), Self::Error> {
+    fn v_execute_until_then_single_alloc_skip_one(
+        &mut self,
+        target: u32,
+        rel_start: u32,
+        size: u32,
+    ) -> Result<(), Self::Error> {
         self.v_execute_until(target)?;
         self.v_singleton_alloc(rel_start, size)?;
         self.v_jump(target + 4)
@@ -159,5 +163,4 @@ pub trait VirtualMachine {
     //     }
     //     self.finish()
     // }
-
 }

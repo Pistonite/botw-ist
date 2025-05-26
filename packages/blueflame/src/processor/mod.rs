@@ -47,7 +47,7 @@ impl RegisterType {
             match self {
                 RegisterType::XReg(i) => reg!(x[i]),
                 RegisterType::WReg(i) => reg!(w[i]),
-                RegisterType::BReg(i) => panic!("cannot convert b reg to reg name"),
+                RegisterType::BReg(_) => panic!("cannot convert b reg to reg name"),
                 RegisterType::HReg(_) => panic!("cannot convert h reg to reg name"),
                 RegisterType::SReg(i) => reg!(s[i]),
                 RegisterType::DReg(i) => reg!(d[i]),
@@ -126,7 +126,7 @@ impl FromStr for RegisterType {
             RegisterType::HReg(idx) => RegisterValue::HReg(cpu.read(reg!(d[*idx]))),
             RegisterType::SReg(idx) => RegisterValue::SReg(cpu.read(reg!(s[*idx]))),
             RegisterType::DReg(idx) => RegisterValue::DReg(cpu.read(reg!(d[*idx]))),
-            RegisterType::QReg(idx) => {
+            RegisterType::QReg(_) => {
                 log::error!("QReg not implemented now, aborting");
                 panic!("QReg not implemented now, aborting");
             }
@@ -229,7 +229,7 @@ impl FromStr for RegisterType {
 
     // Returns the value and the carry bit
     pub fn handle_extra_op(
-        cpu: &mut Cpu0,
+        _cpu: &mut Cpu0,
         val: i64,
         val_size: RegisterType,
         bitwidth: u8,
@@ -336,7 +336,7 @@ impl FromStr for RegisterType {
     }
 
     pub fn handle_extra_op_unsigned(
-        cpu: &mut Cpu0,
+        _cpu: &mut Cpu0,
         val: u64,
         op: Option<&insn::AuxiliaryOperation>,
     ) -> u64 {

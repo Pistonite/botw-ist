@@ -1,6 +1,6 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
 use self_::insn::Core;
 use self_::{glue, RegisterType, Error};
 
@@ -37,9 +37,8 @@ impl ExecutableInstruction for AdrpInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use disarm64::decoder::decode;
-    use crate::test_utils::*;
-    use self_::{Cpu0, Process, reg};
+    #[layered_crate::import]
+    use processor::{Cpu0, Process, reg};
 
     #[test]
     pub fn adrp_simple() -> anyhow::Result<()> {

@@ -1,6 +1,5 @@
-use crate::game::{self as self_, crate_};
-
-use crate_::memory::{self, Memory, MemObject, Ptr};
+#[layered_crate::import]
+use memory::{self, Memory, MemObject, Ptr};
 
 #[derive(MemObject, Default, Clone, Copy)]
 #[size(0x10)]

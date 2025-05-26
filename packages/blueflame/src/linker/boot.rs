@@ -1,16 +1,16 @@
+
 use std::sync::Arc;
 
-use blueflame_program::Program;
-use blueflame_singleton::VirtualMachine;
-use blueflame_utils::{DataType, Environment, ProxyType};
-
-use crate::error::{Error as CrateError, ExecutionError};
-use crate::memory::{
-    align_down, align_up, Memory, MemoryFlags, Proxies, Region, RegionType, SimpleHeap, PAGE_SIZE,
-    REGION_ALIGN,
+use blueflame_macros::align_up;
+#[layered_crate::import]
+use linker::{
+    super::program::Program,
+    super::processor::{self, Cpu1, Cpu3, Process},
+    super::game::{Proxies, singleton},
+    super::env::{DlcVer, Environment},
+    super::memory::{self, Memory, align_down, PAGE_SIZE, REGION_ALIGN, RegionType, Region, SimpleHeap},
+    self::{patch_memory, GameHooks}
 };
-use crate::processor::{Processor, RegIndex};
-use crate::Core;
 
 /// Error that only happens during boot
 #[derive(Debug, Clone, thiserror::Error)]
@@ -25,18 +25,24 @@ pub enum Error {
     NoData,
     #[error("proxy failed to allocate")]
     ProxyError,
+    #[error("memory error: {0}")]
+    Memory(#[from] memory::Error),
+    #[error("processor error: {0}")]
+    Processor(#[from] processor::Error)
 }
 
 /// Initialize memory for the process
 ///
 /// Return the memory state after all singletons are created and initialized
-pub fn init_memory(
+pub fn init_process(
     image: &Program,
+    dlc_version: DlcVer,
     stack_start: u64,
     stack_size: u32,
     pmdm_address: u64,
     heap_size: u32,
-) -> Result<(Memory, Proxies), CrateError> {
+) -> Result<Process, Error> {
+    let env = Environment::new(image.ver, dlc_version);
     // calculate heap start address
     // we need the heap to be as small as possible,
     // but the relative address of the singleton could be really big
@@ -57,25 +63,13 @@ pub fn init_memory(
     // heap_adjustment is positive and guarateed to be less than rel_start
     // of any singleton
 
-    let pmdm = blueflame_singleton::pmdm(image.env);
-    let pmdm_rel_start = pmdm.rel_start;
+    let pmdm_rel_start = singleton::pmdm::rel_start(env);
     if pmdm_rel_start as u64 > pmdm_address {
         return Err(Error::InvalidPmdmAddress(pmdm_address).into());
     }
 
-    let singletons = [
-        pmdm,
-        blueflame_singleton::gdt_manager(image.env),
-        blueflame_singleton::info_data(image.env),
-        blueflame_singleton::aoc_manager(image.env),
-    ];
-
     let min_heap_start = pmdm_address - pmdm_rel_start as u64;
-    let min_rel_start = singletons
-        .iter()
-        .map(|s| s.rel_start)
-        .min()
-        .unwrap_or_default();
+    let min_rel_start = singleton::get_min_rel_start(env);
 
     let max_heap_start = min_heap_start + min_rel_start as u64;
     let heap_start = align_down!(max_heap_start, REGION_ALIGN);
@@ -87,11 +81,7 @@ pub fn init_memory(
     let heap_adjustment = heap_start - min_heap_start;
 
     // calculate how much space will be needed for all the singletons
-    let max_rel_start = singletons
-        .iter()
-        .map(|s| s.rel_start)
-        .max()
-        .unwrap_or_default();
+    let max_rel_start = singleton::get_max_rel_start(env);
     let heap_end = min_heap_start + max_rel_start as u64;
     // align up to the next page, and reserve 1 page for some spacing
     let heap_singletons_end = align_up!(heap_end, PAGE_SIZE as u64) + PAGE_SIZE as u64;
@@ -145,203 +135,86 @@ pub fn init_memory(
         heap_min_size as u64 + heap_start, //
     ));
 
-    let flags = MemoryFlags {
-        enable_strict_region: true,
-        enable_permission_check: true,
-        enable_allocated_check: true,
-    };
-
     log::debug!("creating memory");
 
     let mut memory = Memory::new(
-        flags,
+        env,
         program_region,
         stack_region,
         heap_region,
-        Some(pmdm_address),
-        Some(image.env.main_offset()),
-        None,
     );
 
-    log::debug!("creating temporary processor");
+    // patch the memory
+    log::debug!("patching memory");
+    patch_memory(&mut memory, env);
+
+    log::debug!("creating process");
+    let mut proc = Process::new(
+        Arc::new(memory),
+        Arc::new(Proxies::default()),
+        Arc::new(GameHooks),
+    );
 
     // create a temporary processor to initialize the singletons
+    log::debug!("creating cpu3");
+    let mut cpu1 = Cpu1::default();
+    let heap_start_adjusted = heap_start - heap_adjustment;
+    let mut cpu3 = Cpu3::new(&mut cpu1, &mut proc, image, heap_start_adjusted);
 
-    let mut processor = Processor::default();
-    let mut proxies = Proxies::default();
+    log::debug!("initializing pmdm");
+    singleton::pmdm::create_instance(&mut cpu3, env)?;
+    log::debug!("initializing gdtm");
+    singleton::gdtm::create_instance(&mut cpu3, env)?;
+    log::debug!("initializing info_data");
+    singleton::info_data::create_instance(&mut cpu3, env)?;
+    log::debug!("initializing aocm");
+    singleton::aocm::create_instance(&mut cpu3, env)?;
 
-    let mut singleton_init = SingletonInit {
-        env: image.env,
-        core: processor.attach(&mut memory, &mut proxies),
-        heap_start_adjusted: heap_start - heap_adjustment,
-        image,
-    };
+    log::debug!("process created");
 
-    log::debug!("creating singletons");
-    for (i, singleton) in singletons.iter().enumerate() {
-        log::debug!("creating singleton {i}");
-        if let Err(e) = singleton.create(&mut singleton_init) {
-            let x = ExecutionError::new(e.clone(), 0, singleton_init.core.cpu.stack_trace.clone());
-            log::error!("failed to create singleton {i}: {}", x);
-            return Err(e);
-        }
-    }
-
-    log::debug!("memory initialization done");
-
-    Ok((memory, proxies))
+    Ok(proc)
 }
 
-pub fn init_memory_simple(
-    image: &Program,
-    stack_start: u64,
-    stack_size: u32,
-    heap_size: u32,
-) -> Result<(Memory, Proxies), CrateError> {
-    let program_region = Arc::new(Region::new_program(
-        image.program_start,
-        image.program_size,
-        image.regions(),
-    )?);
-    let stack_region = Arc::new(Region::new_rw(RegionType::Stack, stack_start, stack_size));
-    let heap_region = Arc::new(SimpleHeap::new(
-        stack_size as u64 + stack_start,
-        heap_size,
-        0_u64,
-    ));
-
-    let flags = MemoryFlags {
-        enable_strict_region: true,
-        enable_permission_check: true,
-        enable_allocated_check: true,
-    };
-
-    let memory = Memory::new(
-        flags,
-        program_region,
-        stack_region,
-        heap_region,
-        None,
-        None,
-        None,
-    );
-    let proxies = Proxies::default();
-    Ok((memory, proxies))
-}
+// TODO --cleanup: remove
+// pub fn init_memory_simple(
+//     image: &Program,
+//     stack_start: u64,
+//     stack_size: u32,
+//     heap_size: u32,
+// ) -> Result<(Memory, Proxies), CrateError> {
+//     let program_region = Arc::new(Region::new_program(
+//         image.program_start,
+//         image.program_size,
+//         image.regions(),
+//     )?);
+//     let stack_region = Arc::new(Region::new_rw(RegionType::Stack, stack_start, stack_size));
+//     let heap_region = Arc::new(SimpleHeap::new(
+//         stack_size as u64 + stack_start,
+//         heap_size,
+//         0_u64,
+//     ));
+//
+//     let flags = MemoryFlags {
+//         enable_strict_region: true,
+//         enable_permission_check: true,
+//         enable_allocated_check: true,
+//     };
+//
+//     let memory = Memory::new(
+//         flags,
+//         program_region,
+//         stack_region,
+//         heap_region,
+//         None,
+//         None,
+//         None,
+//     );
+//     let proxies = Proxies::default();
+//     Ok((memory, proxies))
+// }
 
 fn overlaps(a_start: u64, a_size: u32, b_start: u64, b_size: u32) -> bool {
     let a_end = a_start + a_size as u64;
     let b_end = b_start + b_size as u64;
     (b_start < a_end && b_start >= a_start) || (b_end < a_end && b_end >= a_start)
-}
-
-pub struct SingletonInit<'p, 'm, 'x, 'pr> {
-    env: Environment,
-    core: Core<'p, 'm, 'x>,
-    heap_start_adjusted: u64,
-    image: &'pr Program,
-}
-
-const ENTER_ADDR: u64 = 100;
-
-impl VirtualMachine for SingletonInit<'_, '_, '_, '_> {
-    type Error = CrateError;
-
-    fn enter(&mut self, target: u32) -> Result<(), Self::Error> {
-        let main_offset = self.env.main_offset();
-        self.set_reg(30, ENTER_ADDR)?;
-        self.core.cpu.set_pc((target + main_offset) as u64 + self.image.program_start);
-        Ok(())
-    }
-
-    fn set_reg(&mut self, reg: u8, value: u64) -> Result<(), Self::Error> {
-        if reg <= 31 {
-            self.core.cpu.write_gen_reg(
-                &crate::processor::instruction_registry::RegisterType::XReg(reg as RegIndex),
-                value as i64,
-            )?;
-        } else {
-            self.core.cpu.write_gen_reg(
-                &crate::processor::instruction_registry::RegisterType::SReg((reg - 32) as RegIndex),
-                value as i64,
-            )?;
-        }
-        Ok(())
-    }
-
-    fn copy_reg(&mut self, from: u8, to: u8) -> Result<(), Self::Error> {
-        let v = if from <= 31 {
-            self.core.cpu.read_gen_reg(
-                &crate::processor::instruction_registry::RegisterType::XReg(from as RegIndex),
-            )? as u64
-        } else {
-            self.core.cpu.read_gen_reg(
-                &crate::processor::instruction_registry::RegisterType::SReg(
-                    (from - 32) as RegIndex,
-                ),
-            )? as u64
-        };
-        if to <= 31 {
-            self.core.cpu.write_gen_reg(
-                &crate::processor::instruction_registry::RegisterType::XReg(to as RegIndex),
-                v as i64,
-            )?;
-        } else {
-            self.core.cpu.write_gen_reg(
-                &crate::processor::instruction_registry::RegisterType::SReg((to - 32) as RegIndex),
-                v as i64,
-            )?;
-        }
-        Ok(())
-    }
-
-    fn execute_until(&mut self, target: u32) -> Result<(), Self::Error> {
-        while self.core.cpu.pc != Into::<u64>::into(target + self.env.main_offset()) + self.image.program_start {
-            if target == 0xdcf680 {
-                log::debug!("Executing at PC: {:#x}", self.core.cpu.pc);
-            }
-            self.core.execute_at_pc()?;
-        }
-        Ok(())
-    }
-
-    fn jump(&mut self, pc: u32) -> Result<(), Self::Error> {
-        let main_offset = self.env.main_offset();
-        // physical address of the instruction we need to set PC to
-        // let address = self.program_start + main_offset as u64 + pc as u64;
-        self.core.cpu.pc = (main_offset + pc) as u64 + self.image.program_start;
-        Ok(())
-    }
-
-    fn allocate_memory(&mut self, bytes: u32) -> Result<(), Self::Error> {
-        let pointer = self.core.mem.heap_mut().alloc(bytes)?;
-        self.set_reg(0, pointer)
-    }
-
-    fn allocate_proxy(&mut self, proxy: ProxyType) -> Result<(), Self::Error> {
-        let proxy_start = self.core.allocate_proxy(proxy)?;
-        self.set_reg(0, proxy_start)
-    }
-
-    fn allocate_data(&mut self, data: DataType) -> Result<(), Self::Error> {
-        let prog_data = self.image.get_data(data);
-        let start = if let Some(prog) = prog_data {
-            self.core.allocate_data(prog.bytes().to_vec())
-        } else {
-            return Err(crate::Error::Boot(Error::NoData));
-        }?;
-        self.set_reg(0, start)
-    }
-
-    fn get_singleton(&mut self, reg: u8, rel_start: u32) -> Result<(), Self::Error> {
-        let singleton_address = self.heap_start_adjusted + rel_start as u64;
-        self.set_reg(reg, singleton_address)
-    }
-
-    fn execute_to_complete(&mut self) -> Result<(), Self::Error> {
-        while self.core.cpu.pc != ENTER_ADDR {
-            self.core.execute_at_pc()?;
-        }
-        Ok(())
-    }
 }

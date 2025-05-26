@@ -1,14 +1,8 @@
-use crate::memory::{self as self_, crate_};
-
-use super::access::{AccessType, MemAccess};
-use super::error::Error;
-use super::page::Page;
-use super::region::{Region, RegionType};
-use super::Memory;
-
-use crate_::env::enabled;
-
-use self_::{PAGE_SIZE, glue};
+#[layered_crate::import]
+use memory::{
+    super::env::enabled,
+    self::{AccessType, MemAccess, Error, Page, Region, RegionType, Memory, PAGE_SIZE, glue}
+};
 
 /// Stream reader from memory
 pub struct Reader<'m> {

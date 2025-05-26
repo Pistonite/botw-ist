@@ -1,11 +1,11 @@
-use crate::linker::{self as self_, crate_};
-
-use crate_::processor::{self, HookProvider, Execute, Cpu0, Process, reg};
-use crate_::processor::insn::paste_insn;
-use crate_::memory::{self, Ptr, access, Memory};
-use crate_::env::{Environment, GameVer, DlcVer};
-use crate_::game::{gdt, singleton, singleton_instance, PauseMenuDataMgr};
-
+#[layered_crate::import]
+use linker::{
+    super::game::{gdt, singleton_instance},
+    super::memory::{self, Memory, access},
+    super::processor::{self, reg, Cpu0, Process, HookProvider, Execute},
+    super::processor::insn::paste_insn,
+    super::env::{Environment, GameVer, DlcVer},
+};
 use super::gdt_hooks;
 
 macro_rules! fn_table {
@@ -39,7 +39,7 @@ pub fn patch_memory(memory: &mut Memory, env: Environment) -> Result<(), memory:
     Ok(())
 }
 
-struct GameHooks;
+pub struct GameHooks;
 impl HookProvider for GameHooks {
     fn fetch(&self, main_offset: u32, env: Environment) -> Result<Option<(Box<dyn Execute>, u32)>, processor::Error> {
         if env.is160() {
@@ -85,91 +85,92 @@ impl HookProvider for GameHooks {
         0x00de08e0  000372 return_false,//_ZNK4ksys3gdt12TriggerParam6getStrEPPKcRKN4sead14SafeStringBaseIcEEibb
         0x00de0a54  000372 gdt_hooks::get_str_array_by_name::<gdt::fd!(str64[])>,//_ZNK4ksys3gdt12TriggerParam8getStr64EPPKcRKN4sead14SafeStringBaseIcEEibb
         0x00de0bc8  000372 gdt_hooks::get_str_array_by_name::<gdt::fd!(str256[])>,//_ZNK4ksys3gdt12TriggerParam9getStr256EPPKcRKN4sead14SafeStringBaseIcEEibb
-0x0000007100de0d3c,O,000056,_ZNK4ksys3gdt12TriggerParam16getBoolArraySizeEPii
-0x0000007100de0d74,O,000056,_ZNK4ksys3gdt12TriggerParam15getS32ArraySizeEPii
-0x0000007100de0dac,O,000056,_ZNK4ksys3gdt12TriggerParam15getF32ArraySizeEPii
-0x0000007100de0de4,O,000056,_ZNK4ksys3gdt12TriggerParam15getStrArraySizeEPii
-0x0000007100de0e1c,O,000056,_ZNK4ksys3gdt12TriggerParam17getStr64ArraySizeEPii
-0x0000007100de0e54,O,000056,_ZNK4ksys3gdt12TriggerParam18getStr256ArraySizeEPii
-0x0000007100de0e8c,O,000056,_ZNK4ksys3gdt12TriggerParam17getVec2fArraySizeEPii
-0x0000007100de0ec4,O,000056,_ZNK4ksys3gdt12TriggerParam17getVec3fArraySizeEPii
-0x0000007100de0efc,O,000056,_ZNK4ksys3gdt12TriggerParam17getVec4fArraySizeEPii
-0x0000007100de0f34,O,000192,_ZNK4ksys3gdt12TriggerParam22getBoolArraySizeByHashEPij
-0x0000007100de0ff4,O,000192,_ZNK4ksys3gdt12TriggerParam21getS32ArraySizeByHashEPij
-0x0000007100de10b4,O,000192,_ZNK4ksys3gdt12TriggerParam21getF32ArraySizeByHashEPij
-0x0000007100de1174,O,000192,_ZNK4ksys3gdt12TriggerParam21getStrArraySizeByHashEPij
-0x0000007100de1234,O,000192,_ZNK4ksys3gdt12TriggerParam23getStr64ArraySizeByHashEPij
-0x0000007100de12f4,O,000192,_ZNK4ksys3gdt12TriggerParam24getStr256ArraySizeByHashEPij
-0x0000007100de13b4,O,000192,_ZNK4ksys3gdt12TriggerParam23getVec2fArraySizeByHashEPij
-0x0000007100de1474,O,000192,_ZNK4ksys3gdt12TriggerParam23getVec3fArraySizeByHashEPij
-0x0000007100de1534,O,000192,_ZNK4ksys3gdt12TriggerParam23getVec4fArraySizeByHashEPij
-0x0000007100de15f4,O,000248,_ZNK4ksys3gdt12TriggerParam15getS32ArraySizeEPiRKN4sead14SafeStringBaseIcEE
-0x0000007100de16ec,O,000248,_ZNK4ksys3gdt12TriggerParam17getStr64ArraySizeEPiRKN4sead14SafeStringBaseIcEE
-0x0000007100de17e4,O,000248,_ZNK4ksys3gdt12TriggerParam17getVec3fArraySizeEPiRKN4sead14SafeStringBaseIcEE
-0x0000007100de18dc,O,000324,_ZNK4ksys3gdt12TriggerParam17getMinValueForS32EPiRKN4sead14SafeStringBaseIcEE
-0x0000007100de1a20,O,000324,_ZNK4ksys3gdt12TriggerParam17getMaxValueForS32EPiRKN4sead14SafeStringBaseIcEE
+        0x00de0d3c  000056 gdt_hooks::get_array_size::<gdt::fd!(bool[])>,//_ZNK4ksys3gdt12TriggerParam16getBoolArraySizeEPii
+        0x00de0d74  000056 gdt_hooks::get_array_size::<gdt::fd!(s32[])>,//_ZNK4ksys3gdt12TriggerParam15getS32ArraySizeEPii
+        0x00de0dac  000056 gdt_hooks::get_array_size::<gdt::fd!(f32[])>,//_ZNK4ksys3gdt12TriggerParam15getF32ArraySizeEPii
+        0x00de0de4  000056 return_0,//_ZNK4ksys3gdt12TriggerParam15getStrArraySizeEPii
+        0x00de0e1c  000056 gdt_hooks::get_array_size::<gdt::fd!(str64[])>,//_ZNK4ksys3gdt12TriggerParam17getStr64ArraySizeEPii
+        0x00de0e54  000056 gdt_hooks::get_array_size::<gdt::fd!(str256[])>,//_ZNK4ksys3gdt12TriggerParam18getStr256ArraySizeEPii
+        0x00de0e8c  000056 gdt_hooks::get_array_size::<gdt::fd!(vec2f[])>,//_ZNK4ksys3gdt12TriggerParam17getVec2fArraySizeEPii
+        0x00de0ec4  000056 gdt_hooks::get_array_size::<gdt::fd!(vec3f[])>,//_ZNK4ksys3gdt12TriggerParam17getVec3fArraySizeEPii
+        0x00de0efc  000056 return_0,//_ZNK4ksys3gdt12TriggerParam17getVec4fArraySizeEPii
+        0x00de0f34  000192 gdt_hooks::get_array_size_by_hash::<gdt::fd!(bool[])>,//_ZNK4ksys3gdt12TriggerParam22getBoolArraySizeByHashEPij
+        0x00de0ff4  000192 gdt_hooks::get_array_size_by_hash::<gdt::fd!(s32[])>,//_ZNK4ksys3gdt12TriggerParam21getS32ArraySizeByHashEPij
+        0x00de10b4  000192 gdt_hooks::get_array_size_by_hash::<gdt::fd!(f32[])>,//_ZNK4ksys3gdt12TriggerParam21getF32ArraySizeByHashEPij
+        0x00de1174  000192 return_0,//_ZNK4ksys3gdt12TriggerParam21getStrArraySizeByHashEPij
+        0x00de1234  000192 gdt_hooks::get_array_size_by_hash::<gdt::fd!(str64[])>,//_ZNK4ksys3gdt12TriggerParam23getStr64ArraySizeByHashEPij
+        0x00de12f4  000192 gdt_hooks::get_array_size_by_hash::<gdt::fd!(str256[])>,//_ZNK4ksys3gdt12TriggerParam24getStr256ArraySizeByHashEPij
+        0x00de13b4  000192 gdt_hooks::get_array_size_by_hash::<gdt::fd!(vec2f[])>,//_ZNK4ksys3gdt12TriggerParam23getVec2fArraySizeByHashEPij
+        0x00de1474  000192 gdt_hooks::get_array_size_by_hash::<gdt::fd!(vec3f[])>,//_ZNK4ksys3gdt12TriggerParam23getVec3fArraySizeByHashEPij
+        0x00de1534  000192 return_0, //_ZNK4ksys3gdt12TriggerParam23getVec4fArraySizeByHashEPij
+        // 0x00de15f4  000248,_ZNK4ksys3gdt12TriggerParam15getS32ArraySizeEPiRKN4sead14SafeStringBaseIcEE
+        // 0x00de16ec  000248,_ZNK4ksys3gdt12TriggerParam17getStr64ArraySizeEPiRKN4sead14SafeStringBaseIcEE
+        // 0x00de17e4  000248,_ZNK4ksys3gdt12TriggerParam17getVec3fArraySizeEPiRKN4sead14SafeStringBaseIcEE
+        // 0x00de18dc  000324,_ZNK4ksys3gdt12TriggerParam17getMinValueForS32EPiRKN4sead14SafeStringBaseIcEE
+        // 0x00de1a20  000324,_ZNK4ksys3gdt12TriggerParam17getMaxValueForS32EPiRKN4sead14SafeStringBaseIcEE
+            // ^ min/max is needed but we don't have that in data yet
+            // used in doAddToPouch
+
         0x00de1b64  000236 gdt_hooks::set_bool, // setBool by idx
         0x00de22f8  000332 gdt_hooks::set_s32,  // setS32 by idx
-0x0000007100de2908,O,000340,_ZN4ksys3gdt12TriggerParam6setF32Efibb
-0x0000007100de2f20,O,000432,_ZN4ksys3gdt12TriggerParam6setStrEPKcibb
-0x0000007100de37b0,O,000432,_ZN4ksys3gdt12TriggerParam8setStr64EPKcibb
-0x0000007100de4040,O,000440,_ZN4ksys3gdt12TriggerParam9setStr256EPKcibb
-0x0000007100de4ea0,O,000180,_ZN4ksys3gdt12TriggerParam8setVec3fERKN4sead7Vector3IfEEibb
+        0x00de2908  000340 gdt_hooks::set_f32,//_ZN4ksys3gdt12TriggerParam6setF32Efibb
+        0x00de2f20  000432 gdt_hooks::set_str::<gdt::fd!(str32)>,//_ZN4ksys3gdt12TriggerParam6setStrEPKcibb
+        0x00de37b0  000432 gdt_hooks::set_str::<gdt::fd!(str64)>,//_ZN4ksys3gdt12TriggerParam8setStr64EPKcibb
+        0x00de4040  000440 gdt_hooks::set_str::<gdt::fd!(str256)>,//_ZN4ksys3gdt12TriggerParam9setStr256EPKcibb
+        0x00de4ea0  000180 gdt_hooks::set_vec3f,//_ZN4ksys3gdt12TriggerParam8setVec3fERKN4sead7Vector3IfEEibb
         0x00de59e4  000296 gdt_hooks::set_bool_by_name, // setBool by name
         0x00de5b0c  000296 gdt_hooks::set_s32_by_name,  // setS32 by name
-0x0000007100de5c34,O,000304,_ZN4ksys3gdt12TriggerParam6setF32EfRKN4sead14SafeStringBaseIcEEbbb
-0x0000007100de5d64,O,000296,_ZN4ksys3gdt12TriggerParam6setStrEPKcRKN4sead14SafeStringBaseIcEEbbb
-0x0000007100de5e8c,O,000296,_ZN4ksys3gdt12TriggerParam8setStr64EPKcRKN4sead14SafeStringBaseIcEEbbb
-0x0000007100de5fb4,m,000444,_ZN4ksys3gdt12TriggerParam8setVec3fERKN4sead7Vector3IfEERKNS2_14SafeStringBaseIcEEbbb
-0x0000007100de6170,O,000236,_ZN4ksys3gdt12TriggerParam7setBoolEbiibb
-0x0000007100de625c,O,000388,_ZN4ksys3gdt12TriggerParam6setS32Eiiibb
-0x0000007100de63e0,O,000396,_ZN4ksys3gdt12TriggerParam6setF32Efiibb
-0x0000007100de656c,O,000492,_ZN4ksys3gdt12TriggerParam8setStr64EPKciibb
-0x0000007100de6758,O,000492,_ZN4ksys3gdt12TriggerParam9setStr256EPKciibb
-0x0000007100de6944,O,000224,_ZN4ksys3gdt12TriggerParam8setVec2fERKN4sead7Vector2IfEEiibb
-0x0000007100de6a24,O,000224,_ZN4ksys3gdt12TriggerParam8setVec3fERKN4sead7Vector3IfEEiibb
-0x0000007100de6b04,O,000260,_ZN4ksys3gdt12TriggerParam7setBoolEbRKN4sead14SafeStringBaseIcEEibbb
-0x0000007100de6c08,O,000260,_ZN4ksys3gdt12TriggerParam6setS32EiRKN4sead14SafeStringBaseIcEEibbb
-0x0000007100de6d0c,O,000268,_ZN4ksys3gdt12TriggerParam6setF32EfRKN4sead14SafeStringBaseIcEEibbb
-0x0000007100de6e18,O,000260,_ZN4ksys3gdt12TriggerParam8setStr64EPKcRKN4sead14SafeStringBaseIcEEibbb
+        0x00de5c34  000304 gdt_hooks::set_f32_by_name,//_ZN4ksys3gdt12TriggerParam6setF32EfRKN4sead14SafeStringBaseIcEEbbb
+        0x00de5d64  000296 gdt_hooks::set_str_by_name::<gdt::fd!(str32)>,//_ZN4ksys3gdt12TriggerParam6setStrEPKcRKN4sead14SafeStringBaseIcEEbbb
+        0x00de5e8c  000296 gdt_hooks::set_str_by_name::<gdt::fd!(str64)>,//_ZN4ksys3gdt12TriggerParam8setStr64EPKcRKN4sead14SafeStringBaseIcEEbbb
+        0x00de5fb4  000444 gdt_hooks::set_vec3f_by_name,//_ZN4ksys3gdt12TriggerParam8setVec3fERKN4sead7Vector3IfEERKNS2_14SafeStringBaseIcEEbbb
+        0x00de6170  000236 gdt_hooks::set_bool_array,//_ZN4ksys3gdt12TriggerParam7setBoolEbiibb
+        0x00de625c  000388 gdt_hooks::set_s32_array,//_ZN4ksys3gdt12TriggerParam6setS32Eiiibb
+        0x00de63e0  000396 gdt_hooks::set_f32_array,//_ZN4ksys3gdt12TriggerParam6setF32Efiibb
+        0x00de656c  000492 gdt_hooks::set_str_array::<gdt::fd!(str64[])>,//_ZN4ksys3gdt12TriggerParam8setStr64EPKciibb
+        0x00de6758  000492 gdt_hooks::set_str_array::<gdt::fd!(str256[])>,//_ZN4ksys3gdt12TriggerParam9setStr256EPKciibb
+        0x00de6944  000224 gdt_hooks::set_vec2f_array,//_ZN4ksys3gdt12TriggerParam8setVec2fERKN4sead7Vector2IfEEiibb
+        0x00de6a24  000224 gdt_hooks::set_vec3f_array,//_ZN4ksys3gdt12TriggerParam8setVec3fERKN4sead7Vector3IfEEiibb
+        0x00de6b04  000260 gdt_hooks::set_bool_array_by_name,//_ZN4ksys3gdt12TriggerParam7setBoolEbRKN4sead14SafeStringBaseIcEEibbb
+        0x00de6c08  000260 gdt_hooks::set_s32_array_by_name,//_ZN4ksys3gdt12TriggerParam6setS32EiRKN4sead14SafeStringBaseIcEEibbb
+        0x00de6d0c  000268 gdt_hooks::set_f32_array_by_name,//_ZN4ksys3gdt12TriggerParam6setF32EfRKN4sead14SafeStringBaseIcEEibbb
+        0x00de6e18  000260 gdt_hooks::set_str_array_by_name::<gdt::fd!(str64[])>,//_ZN4ksys3gdt12TriggerParam8setStr64EPKcRKN4sead14SafeStringBaseIcEEibbb
         0x00de6f1c  000232 gdt_hooks::reset::<gdt::fd!(bool)>, // resetBool
         0x00de7004  000232 gdt_hooks::reset::<gdt::fd!(s32)>,  // resetS32
-0x0000007100de70ec,O,000232,_ZN4ksys3gdt12TriggerParam8resetF32Eib
-0x0000007100de71d4,O,000232,_ZN4ksys3gdt12TriggerParam10resetStr64Eib
-0x0000007100de72bc,O,000232,_ZN4ksys3gdt12TriggerParam10resetVec3fEib
-0x0000007100de73a4,O,000272,_ZN4ksys3gdt12TriggerParam9resetBoolERKN4sead14SafeStringBaseIcEEbb
-0x0000007100de74b4,O,000272,_ZN4ksys3gdt12TriggerParam8resetS32ERKN4sead14SafeStringBaseIcEEbb
-0x0000007100de75c4,O,000272,_ZN4ksys3gdt12TriggerParam10resetStr64ERKN4sead14SafeStringBaseIcEEbb
-0x0000007100de76d4,O,000272,_ZN4ksys3gdt12TriggerParam10resetVec3fERKN4sead14SafeStringBaseIcEEbb
-0x0000007100de77e4,O,000284,_ZN4ksys3gdt12TriggerParam9resetBoolEiib
-0x0000007100de7900,O,000284,_ZN4ksys3gdt12TriggerParam8resetS32Eiib
-0x0000007100de7a1c,O,000284,_ZN4ksys3gdt12TriggerParam8resetF32Eiib
-0x0000007100de7b38,O,000284,_ZN4ksys3gdt12TriggerParam8resetStrEiib
-0x0000007100de7c54,O,000284,_ZN4ksys3gdt12TriggerParam10resetStr64Eiib
-0x0000007100de7d70,O,000284,_ZN4ksys3gdt12TriggerParam11resetStr256Eiib
-0x0000007100de7e8c,O,000284,_ZN4ksys3gdt12TriggerParam10resetVec2fEiib
-0x0000007100de7fa8,O,000284,_ZN4ksys3gdt12TriggerParam10resetVec3fEiib
-0x0000007100de80c4,O,000284,_ZN4ksys3gdt12TriggerParam10resetVec4fEiib
+        0x00de70ec  000232 gdt_hooks::reset::<gdt::fd!(f32)>,//_ZN4ksys3gdt12TriggerParam8resetF32Eib
+        0x00de71d4  000232 gdt_hooks::reset::<gdt::fd!(str64)>,//_ZN4ksys3gdt12TriggerParam10resetStr64Eib
+        0x00de72bc  000232 gdt_hooks::reset::<gdt::fd!(vec3f)>,//_ZN4ksys3gdt12TriggerParam10resetVec3fEib
+        0x00de73a4  000272 gdt_hooks::reset_by_name::<gdt::fd!(bool)>,//_ZN4ksys3gdt12TriggerParam9resetBoolERKN4sead14SafeStringBaseIcEEbb
+        0x00de74b4  000272 gdt_hooks::reset_by_name::<gdt::fd!(s32)>,//_ZN4ksys3gdt12TriggerParam8resetS32ERKN4sead14SafeStringBaseIcEEbb
+        0x00de75c4  000272 gdt_hooks::reset_by_name::<gdt::fd!(f32)>,//_ZN4ksys3gdt12TriggerParam10resetStr64ERKN4sead14SafeStringBaseIcEEbb
+        0x00de76d4  000272 gdt_hooks::reset_by_name::<gdt::fd!(vec3f)>,//_ZN4ksys3gdt12TriggerParam10resetVec3fERKN4sead14SafeStringBaseIcEEbb
+        0x00de77e4  000284 gdt_hooks::reset_array::<gdt::fd!(bool[])>,//_ZN4ksys3gdt12TriggerParam9resetBoolEiib
+        0x00de7900  000284 gdt_hooks::reset_array::<gdt::fd!(s32[])>,//_ZN4ksys3gdt12TriggerParam8resetS32Eiib
+        0x00de7a1c  000284 gdt_hooks::reset_array::<gdt::fd!(f32[])>,//_ZN4ksys3gdt12TriggerParam8resetF32Eiib
+        0x00de7b38  000284 return_false,//_ZN4ksys3gdt12TriggerParam8resetStrEiib
+        0x00de7c54  000284 gdt_hooks::reset_array::<gdt::fd!(str64[])>,//_ZN4ksys3gdt12TriggerParam10resetStr64Eiib
+        0x00de7d70  000284 gdt_hooks::reset_array::<gdt::fd!(str256[])>,//_ZN4ksys3gdt12TriggerParam11resetStr256Eiib
+        0x00de7e8c  000284 gdt_hooks::reset_array::<gdt::fd!(vec2f[])>,//_ZN4ksys3gdt12TriggerParam10resetVec2fEiib
+        0x00de7fa8  000284 gdt_hooks::reset_array::<gdt::fd!(vec3f[])>,//_ZN4ksys3gdt12TriggerParam10resetVec3fEiib
+        0x00de80c4  000284 return_false,//_ZN4ksys3gdt12TriggerParam10resetVec4fEiib
             // not doing copyFlags stuff
-0x0000007100deeb8c,O,002628,_ZN4ksys3gdt12TriggerParam28resetAllFlagsToInitialValuesEv
+        0x00deeb8c  002628 gdt_hooks::reset_all,//_ZN4ksys3gdt12TriggerParam28resetAllFlagsToInitialValuesEv
         
         0x00df08b8  000184 gdt_hooks::idx_from_hash::<gdt::fd!(bool)>, // getBoolIdx by hash
         0x00df0970  000184 gdt_hooks::idx_from_hash::<gdt::fd!(s32)>,  // getS32Idx by hash
-0x0000007100df0a28,O,000184,_ZNK4ksys3gdt12TriggerParam9getF32IdxEj
-0x0000007100df0ae0,O,000184,_ZNK4ksys3gdt12TriggerParam9getStrIdxEj
-0x0000007100df0b98,O,000184,_ZNK4ksys3gdt12TriggerParam11getStr64IdxEj
-0x0000007100df0c50,O,000184,_ZNK4ksys3gdt12TriggerParam12getStr256IdxEj
-0x0000007100df0d08,O,000184,_ZNK4ksys3gdt12TriggerParam11getVec2fIdxEj
-0x0000007100df0dc0,O,000184,_ZNK4ksys3gdt12TriggerParam11getVec3fIdxEj
-0x0000007100df0e78,O,000144,_ZNK4ksys3gdt12TriggerParam15getBoolArrayIdxEj
-0x0000007100df0f08,O,000144,_ZNK4ksys3gdt12TriggerParam14getS32ArrayIdxEj
-0x0000007100df0f98,O,000144,_ZNK4ksys3gdt12TriggerParam14getF32ArrayIdxEj
-0x0000007100df1028,O,000144,_ZNK4ksys3gdt12TriggerParam16getStr64ArrayIdxEj
-0x0000007100df10b8,O,000144,_ZNK4ksys3gdt12TriggerParam17getStr256ArrayIdxEj
-0x0000007100df1148,O,000144,_ZNK4ksys3gdt12TriggerParam16getVec2fArrayIdxEj
-0x0000007100df11d8,O,000144,_ZNK4ksys3gdt12TriggerParam16getVec3fArrayIdxEj
-            //
-        0x00df0d08  000184 return_neg1_32, // getVec2fIdx -- not used in game
+        0x00df0a28  000184 gdt_hooks::idx_from_hash::<gdt::fd!(f32)>,//_ZNK4ksys3gdt12TriggerParam9getF32IdxEj
+        0x00df0ae0  000184 gdt_hooks::idx_from_hash::<gdt::fd!(str32)>,//_ZNK4ksys3gdt12TriggerParam9getStrIdxEj
+        0x00df0b98  000184 gdt_hooks::idx_from_hash::<gdt::fd!(str64)>,//_ZNK4ksys3gdt12TriggerParam11getStr64IdxEj
+        0x00df0c50  000184 gdt_hooks::idx_from_hash::<gdt::fd!(str256)>,//_ZNK4ksys3gdt12TriggerParam12getStr256IdxEj
+        0x00df0d08  000184 gdt_hooks::idx_from_hash::<gdt::fd!(vec2f)>,//_ZNK4ksys3gdt12TriggerParam11getVec2fIdxEj
+        0x00df0dc0  000184 gdt_hooks::idx_from_hash::<gdt::fd!(vec3f)>,//_ZNK4ksys3gdt12TriggerParam11getVec3fIdxEj
+        0x00df0e78  000144 gdt_hooks::idx_from_hash::<gdt::fd!(bool[])>,//_ZNK4ksys3gdt12TriggerParam15getBoolArrayIdxEj
+        0x00df0f08  000144 gdt_hooks::idx_from_hash::<gdt::fd!(s32[])>,//_ZNK4ksys3gdt12TriggerParam14getS32ArrayIdxEj
+        0x00df0f98  000144 gdt_hooks::idx_from_hash::<gdt::fd!(f32[])>,//_ZNK4ksys3gdt12TriggerParam14getF32ArrayIdxEj
+        0x00df1028  000144 gdt_hooks::idx_from_hash::<gdt::fd!(str64[])>,//_ZNK4ksys3gdt12TriggerParam16getStr64ArrayIdxEj
+        0x00df10b8  000144 gdt_hooks::idx_from_hash::<gdt::fd!(str256[])>,//_ZNK4ksys3gdt12TriggerParam17getStr256ArrayIdxEj
+        0x00df1148  000144 gdt_hooks::idx_from_hash::<gdt::fd!(vec2f[])>,//_ZNK4ksys3gdt12TriggerParam16getVec2fArrayIdxEj
+        0x00df11d8  000144 gdt_hooks::idx_from_hash::<gdt::fd!(vec3f[])>,//_ZNK4ksys3gdt12TriggerParam16getVec3fArrayIdxEj
         
         0x011f3364  000032 return_0, // ksys::util::getDebugHeap
         
@@ -189,12 +190,9 @@ impl HookProvider for GameHooks {
     }
 }
 
-fn get_player(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+fn get_player(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> {
     let player_ptr: u64 = 0xDEAD_AAAA_0001_CCCC; // some value easy to spot in the debugger
-    reg! { cpu:
-        x[0] = player_ptr,
-        return
-    };
+    reg! { cpu: x[0] = player_ptr, return };
 }
 
 fn do_request_create_weapon_150(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
@@ -209,8 +207,8 @@ fn do_request_create_weapon(cpu: &mut Cpu0, proc: &mut Process, env: Environment
 
     reg! { cpu:
         x[0] = pmdm_ptr.to_raw(),
-        w[1] => slot_idx: i32,
-        w[3] => value: i32,
+        w[1] => let slot_idx: i32,
+        w[3] => let value: i32,
         w[1] = value,
         w[2] = match slot_idx {
             0 => 0, // sword
@@ -228,10 +226,12 @@ fn do_request_create_weapon(cpu: &mut Cpu0, proc: &mut Process, env: Environment
 /// memcpy(dest, src, size)
 fn memcpy(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
     reg! { cpu:
-        x[0] => dest: u64,
-        x[1] => src: u64,
-        x[2] => size: u64,
+        x[0] => let dest: u64,
+        x[1] => let src: u64,
+        x[2] => let size: u64,
     };
+
+    // TODO --optimize: Vec isn't needed here
 
     let mut buf = Vec::with_capacity(size as usize);
     let mut reader = proc.memory().read(src, access!(read))?;
@@ -250,9 +250,9 @@ fn memcpy(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
 /// memset(start, value, size)
 fn memset(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
     reg! { cpu:
-        x[0] => start: u64,
-        x[1] => value: u8,
-        x[2] => size: u64,
+        x[0] => let start: u64,
+        x[1] => let value: u8,
+        x[2] => let size: u64,
     };
 
     let mut writer = proc.memory_mut().write(start, access!(write))?;
@@ -265,8 +265,8 @@ fn memset(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
 /// strcmp(s1, s2)
 fn strcmp(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
     reg! { cpu:
-        x[0] => s1: u64,
-        x[1] => s2: u64,
+        x[0] => let s1: u64,
+        x[1] => let s2: u64,
     };
     let mut reader1 = proc.memory().read(s1, access!(read))?;
     let mut reader2 = proc.memory().read(s2, access!(read))?;

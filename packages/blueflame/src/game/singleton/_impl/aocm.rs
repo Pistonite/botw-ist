@@ -1,7 +1,8 @@
-use crate::game::crate_;
-
-use crate_::vm::VirtualMachine;
-use crate_::env::Environment;
+#[layered_crate::import]
+use game::{
+    super::vm::VirtualMachine,
+    super::env::Environment,
+};
 
 pub static NAME: &str = "uking::aoc::Manager";
 

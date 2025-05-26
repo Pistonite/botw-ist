@@ -1,8 +1,9 @@
-use crate::memory::{self as self_, crate_};
+#[layered_crate::import]
+use memory::{
+    super::env::enabled,
+    self::{AccessType, MemAccess, Error, Page, PAGE_SIZE, Region, RegionType, Memory, glue}
+};
 
-use crate_::env::enabled;
-
-use self_::{AccessType, MemAccess, Error, Page, PAGE_SIZE, Region, RegionType, Memory, glue};
 
 /// Stream writer to memory
 pub struct Writer<'m> {

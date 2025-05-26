@@ -1,9 +1,12 @@
-use crate::processor as self_;
-
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
-use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
-use self_::insn::arithmetic_utils;
+#[layered_crate::import]
+use processor::{
+    self::{glue, RegisterType, Error},
+    self::insn::Core,
+    self::insn::instruction_parse::{
+        self as parse, AuxiliaryOperation, ExecutableInstruction,
+    },
+    self::insn::arithmetic_utils
+};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args = parse::split_args(args, 4);
@@ -91,9 +94,8 @@ impl ExecutableInstruction for AddsImmInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use disarm64::decoder::decode;
-    use crate::test_utils::*;
-    use self_::{Cpu0, Process, reg};
+    #[layered_crate::import]
+    use processor::{Cpu0, Process, reg};
 
     #[test]
     pub fn simple_adds_test() -> anyhow::Result<()> {

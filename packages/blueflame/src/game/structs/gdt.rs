@@ -1,5 +1,5 @@
-use crate::game::{self as self_, crate_};
-use crate_::memory::MemObject;
+#[layered_crate::import]
+use memory::MemObject;
 
 #[allow(non_snake_case)]
 #[derive(MemObject, Default, Clone)]

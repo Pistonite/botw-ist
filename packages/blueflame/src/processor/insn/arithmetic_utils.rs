@@ -1,9 +1,8 @@
-use crate::processor as self_;
-
 use num_traits::Zero;
 use paste::paste;
 
-use self_::Flags;
+#[layered_crate::import]
+use processor::Flags;
 
 macro_rules! signed_add_with_carry {
     ($sz: literal) => {

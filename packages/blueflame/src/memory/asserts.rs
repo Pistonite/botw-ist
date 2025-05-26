@@ -1,6 +1,5 @@
-use crate::memory::{self as self_};
-
-use self_::Error;
+#[layered_crate::import]
+use memory::Error;
 
 pub use blueflame_macros::{assert_zst, assert_size_less_than};
 

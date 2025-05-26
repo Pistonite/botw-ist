@@ -1,5 +1,3 @@
-use crate::memory::{self as self_, crate_};
-
 use std::panic::UnwindSafe;
 use std::sync::Arc;
 
@@ -7,39 +5,13 @@ use rand_xoshiro::rand_core::{RngCore, SeedableRng};
 use rand_xoshiro::Xoshiro256PlusPlus;
 use sha2::{Digest, Sha256};
 
-// use crate::processor::{Processor, Stub};
-// use crate::proxy::trigger_param::GdtTriggerParam;
-
-use super::error::Error;
-use super::memory::Memory;
-use super::region::RegionType;
-
-use paste::paste;
-
-use self_::glue;
+#[layered_crate::import]
+use memory::{Error, Memory, RegionType, glue};
 
 pub use blueflame_macros::proxy;
 
 /// The maximum number of proxy objects per type
 pub const MAX_OBJECTS: u32 = 1024000;
-
-// TODO --cleanup: remove this if not needed
-// macro_rules! proxy_funcs {
-//     ($name:ident, $typ:ty) => {
-//         paste::item! {
-//             pub fn [<get_ $name>](&self, mem: &Memory, address: u64) -> Result<&$typ, Error> {
-//                 self.[<$name _proxies>].get_at_addr(mem, address)
-//             }
-//             pub fn [<mut_ $name>]<'s>(&'s mut self, mem: &mut Memory, address: u64) -> Result<&'s mut $typ, Error> {
-//                 Arc::make_mut(&mut self.[<$name _proxies>]).mut_at_addr(mem, address)
-//             }
-//             pub fn [<allocate_ $name>](&mut self, mem: &mut Memory, v: $typ) -> Result<u64, Error> {
-//                 Arc::make_mut(&mut self.[<$name _proxies>]).allocate(mem, v)
-//             }
-//         }
-//     }
-// }
-
 
 /// Clone-on-Write wrapper for inner ProxyList
 #[derive(Debug, Clone)]
@@ -199,7 +171,7 @@ impl<T: ProxyObject> ProxyGuardMut<'_, '_, T> {
 
 impl<T: ProxyObject> Drop for ProxyObjectGuardMut<'_, T> {
     fn drop(&mut self) {
-        ProxyListInner::<T>::write_proxy_object(
+        let _ = ProxyListInner::<T>::write_proxy_object(
             self.list_rng,
             self.memory,
             self.address,

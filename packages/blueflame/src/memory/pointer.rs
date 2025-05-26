@@ -1,10 +1,9 @@
-use crate::memory::{self as self_};
-
 use std::ffi::{CStr, CString};
 
 use num_traits::Zero;
 
-use self_::{Memory, MemLayout, Error, MemObject, Unsigned, Reader, Writer, assert_size_eq, access, AccessFlags};
+#[layered_crate::import]
+use memory::{Memory, MemLayout, Error, MemObject, Unsigned, Reader, Writer, assert_size_eq, access, AccessFlags};
 
 #[doc(inline)]
 pub use blueflame_macros::Ptr;

@@ -1,38 +1,39 @@
-#[cfg(test)]
-mod singleton_tests {
-    use blueflame::error::Error;
-    use blueflame::memory::{
-        traits::{MemRead, MemWrite},
-        Reader, Writer,
-    };
-    use blueflame::{boot::init_memory, memory::traits::Ptr};
-    use mem_macro::{MemRead, MemWrite};
+use blueflame::env::{Environment, DlcVer};
+use blueflame::memory::{MemObject, Ptr};
+use blueflame::game::singleton_instance;
+use blueflame::linker;
+use blueflame::program;
 
-    #[derive(MemWrite, MemRead)]
-    #[allow(non_snake_case, unused_variables)]
-    struct Pmdm {
-        #[offset(0x0)]
-        __vftable: u64,
-        #[offset(0x443c0)]
-        mTabsType: [i32; 50],
-    }
+#[derive(MemObject)]
+#[size(0x8)]
+struct Pmdm {
+    #[offset(0x0)]
+    vtable: u64,
+}
+// make sure the singleton initialization runs without error
+#[test]
+pub fn test_init_singleton() -> anyhow::Result<()> {
+    let data = std::fs::read("./test_files/program.blfm")?;
+    let program = program::unpack(&data)?;
 
-    #[test]
-    pub fn test_init_singleton() {
-        let data = std::fs::read("./test_files/program.blfm").unwrap();
-        let program = blueflame_program::unpack_blueflame(&data).unwrap();
+    let env = Environment::new(program.ver, DlcVer::V300);
+    let pmdm_addr_for_test = 0x38a0000;
+    let process = linker::init_process(
+        &program,
+        env.dlc_ver,
+        0x8888800000,
+        0x4000,
+        pmdm_addr_for_test,
+        2000000
+    )?;
 
-        //Error in ksys:gdt::Manager::IncreaseLogger::IncreaseLogger at 0x7100dcf8d0
-        //Goes to memset_0 and then an error happens somewhere
-        //Need to stub memset
-        let (mem, _prox) =
-            init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
-        assert!(true);
-        let pmdm_ptr: Ptr<Pmdm> = Ptr::new(0x38a0000);
-        let p = Box::new(pmdm_ptr.deref(&mem).unwrap());
-        println!("{0:#0x}", p.__vftable);
-        println!("{0}", p.mTabsType[0]);
-        println!("Done initializing singletons");
-        //assert!(false);
-    }
+    let pmdm_actual_addr = singleton_instance!(pmdm(process.memory()))?;
+    assert_eq!(pmdm_actual_addr.to_raw(), pmdm_addr_for_test);
+
+    let expected_vptr = process.main_start() + 0x02476c38;
+    let pmdm_casted: Ptr![Pmdm] = pmdm_actual_addr.reinterpret();
+    let actual_vptr = Ptr!(&pmdm_casted->vtable).load(process.memory())?;
+    assert_eq!(actual_vptr, expected_vptr);
+
+    Ok(())
 }

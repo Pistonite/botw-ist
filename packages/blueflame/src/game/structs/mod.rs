@@ -6,16 +6,13 @@ pub use gdt::*;
 mod string;
 pub use string::*;
 
-use crate::game::{self as self_, crate_};
-
-// use std::collections::HashMap;
 use std::fmt;
 use std::marker::PhantomData;
 
-// use crate::error::Error;
-use crate_::memory::{MemObject, Memory, Ptr, Reader, Writer};
-// use crate::Core;
 use derive_more::derive::Constructor;
+
+#[layered_crate::import]
+use game::super_::memory::{MemObject, Ptr};
 
 #[allow(non_snake_case)]
 #[derive(MemObject, Clone)]

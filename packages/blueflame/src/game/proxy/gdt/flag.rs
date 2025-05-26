@@ -76,7 +76,7 @@ impl<T: Clone> Flag<Box<[T]>>
     pub fn get_at<I: FlagIndex>(&self, idx: I) -> Option<&T> {
         self.value.get(idx.to_index()?)
     }
-    #[must_use]
+    #[must_use = "game implementation checks if the array index is valid"]
     pub fn reset_at<I: FlagIndex>(&mut self, idx: I) -> bool {
         let Some(i) = idx.to_index() else {
             return false;
@@ -91,7 +91,7 @@ impl<T: Clone> Flag<Box<[T]>>
         *x = init_value;
         true
     }
-    #[must_use]
+    #[must_use = "game implementation checks if the array index is valid"]
     pub fn set_at<I: FlagIndex>(&mut self, idx: I, value: T) -> bool {
         let Some(i) = idx.to_index() else {
             return false;

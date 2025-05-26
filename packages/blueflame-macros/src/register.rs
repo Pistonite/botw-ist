@@ -38,18 +38,32 @@ macro_rules! reg {
     (wzr) => { blueflame::processor::RegName::wzr() };
 
     // reads
-    ($cpu:ident : $(,)? $regn:ident [ $regi:expr ] => $var:ident : $t:ty $(,)? ) => {
+    ($cpu:ident : $(,)? $regn:ident [ $regi:expr ] => let $var:ident : $t:ty $(,)? ) => {
          let $var: $t = $cpu.read($crate::reg!($regn[$regi]));
     };
-    ($cpu:ident : $(,)? $regn:ident => $var:ident : $t:ty $(,)? ) => {
+    ($cpu:ident : $(,)? $regn:ident [ $regi:expr ] => let mut $var:ident : $t:ty $(,)? ) => {
+         let mut $var: $t = $cpu.read($crate::reg!($regn[$regi]));
+    };
+    ($cpu:ident : $(,)? $regn:ident => let $var:ident : $t:ty $(,)? ) => {
          let $var: $t = $cpu.read($crate::reg!($regn));
     };
-    ($cpu:ident : $(,)? $regn:ident [ $regi:expr ] => $var:ident : $t:ty $( , $($rest:tt)* )? ) => {
+    ($cpu:ident : $(,)? $regn:ident => let mut $var:ident : $t:ty $(,)? ) => {
+         let mut $var: $t = $cpu.read($crate::reg!($regn));
+    };
+    ($cpu:ident : $(,)? $regn:ident [ $regi:expr ] => let $var:ident : $t:ty $( , $($rest:tt)* )? ) => {
          let $var: $t = $cpu.read($crate::reg!($regn[$regi]));
          $( $crate::reg!($cpu : $($rest)*) )?
     };
-    ($cpu:ident : $(,)? $regn:ident => $var:ident : $t:ty $( , $($rest:tt)* )? ) => {
+    ($cpu:ident : $(,)? $regn:ident [ $regi:expr ] => let mut $var:ident : $t:ty $( , $($rest:tt)* )? ) => {
+         let mut $var: $t = $cpu.read($crate::reg!($regn[$regi]));
+         $( $crate::reg!($cpu : $($rest)*) )?
+    };
+    ($cpu:ident : $(,)? $regn:ident => let $var:ident : $t:ty $( , $($rest:tt)* )? ) => {
          let $var: $t = $cpu.read($crate::reg!($regn));
+         $( $crate::reg!($cpu : $($rest)*) )?
+    };
+    ($cpu:ident : $(,)? $regn:ident => let mut $var:ident : $t:ty $( , $($rest:tt)* )? ) => {
+         let mut $var: $t = $cpu.read($crate::reg!($regn));
          $( $crate::reg!($cpu : $($rest)*) )?
     };
 
