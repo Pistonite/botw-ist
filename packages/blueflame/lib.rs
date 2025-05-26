@@ -11,6 +11,7 @@ mod src {
     #[depends_on(memory)]
     #[depends_on(program)]
     #[depends_on(env)]
+    #[cfg(feature = "data")]
     pub extern crate linker;
 
     /// Implementation of the processor (CPU) layers
@@ -19,12 +20,14 @@ mod src {
     #[depends_on(program)]
     #[depends_on(vm)]
     #[depends_on(env)]
+    #[cfg(feature = "data")]
     pub extern crate processor;
 
     /// Mid-level simulation of some of the game's types and systems
     #[depends_on(memory)]
     #[depends_on(vm)]
     #[depends_on(env)]
+    #[cfg(feature = "data")]
     pub extern crate game;
 
     /// Low-level memory emulation
