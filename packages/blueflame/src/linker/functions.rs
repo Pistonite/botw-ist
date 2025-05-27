@@ -1,6 +1,67 @@
-use crate::linker::crate_;
+#[layered_crate::import]
+use linker::{
+    super::game::{FixedSafeString40, WeaponModifierInfo, singleton_instance},
+    super::memory::Ptr,
+    super::processor::{self, Cpu2, reg}
+};
 
-use crate_::processor::Cpu2;
+pub fn call_pmdm_item_get(cpu: &mut Cpu2, actor: &str, value: i32) -> Result<(), processor::Error> {
+    call_pmdm_item_get_with_modifier(cpu, actor, value, 0, 0)
+}
+
+pub fn call_pmdm_item_get_with_modifier(
+    cpu: &mut Cpu2,
+    actor: &str,
+    value: i32,
+    modifier_flags: u32,
+    modifier_value: i32,
+) -> Result<(), processor::Error>{
+    cpu.reset_stack();
+
+    // x0 - this
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    // x1 - actor name ptr
+    let name_ptr = cpu.stack_alloc::<FixedSafeString40>()?;
+    let name_ptr = Ptr!(<FixedSafeString40>(name_ptr));
+    name_ptr.construct(cpu.proc.memory_mut())?;
+    name_ptr.cstr(cpu.proc.memory())?.store_string(actor, cpu.proc.memory_mut())?;
+    // w2 - value (scalar)
+    
+    // x3 - modifier info ptr
+    let modifier_info_ptr = if modifier_flags != 0 {
+        let ptr = cpu.stack_alloc::<WeaponModifierInfo>()?;
+        let ptr = Ptr!(<WeaponModifierInfo>(ptr));
+        let info = WeaponModifierInfo {
+            flags: modifier_flags,
+            value: modifier_value,
+        };
+        ptr.store(&info, cpu.proc.memory_mut())?;
+        ptr.to_raw()
+    } else {
+        0
+    };
+
+    reg! { cpu:
+        x[0] = this_ptr,
+        x[1] = name_ptr,
+        w[2] = value,
+        x[3] = modifier_info_ptr,
+    };
+
+    cpu.native_jump_to_main_offset(0x0096efb8)?;
+    cpu.stack_check::<FixedSafeString40>(name_ptr.to_raw())?;
+    cpu.stack_check::<WeaponModifierInfo>(modifier_info_ptr)?;
+    Ok(())
+}
+
+pub fn call_load_from_game_data(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+    };
+    cpu.native_jump_to_main_offset(0x0096be24)
+}
 
 
 impl Cpu2<'_, '_> {
@@ -16,10 +77,6 @@ impl Cpu2<'_, '_> {
     //     self.init_common_flags()
     // }
 
-    // pub fn load_from_game_data(&mut self) -> Result<(), ExecutionError> {
-    //     self.cpu.write_arg(0, self.mem.get_pmdm_addr());
-    //     self.call_func_at_addr(0x96BE24)
-    // }
     //
     // pub fn save_to_game_data(&mut self) -> Result<(), ExecutionError> {
     //     self.cpu.write_arg(0, self.mem.get_pmdm_addr());
@@ -38,25 +95,6 @@ impl Cpu2<'_, '_> {
     //     self.cpu.write_arg(2, tag as u64);
     //     self.call_func_at_addr(0xD2F900)?;
     //     Ok(self.cpu.read_arg(0) != 0)
-    // }
-
-    // // 0x96efb8
-    // pub fn pmdm_item_get(
-    //     &mut self,
-    //     actor: &str,
-    //     value: i32,
-    //     modifier_flags: u32,
-    //     modifier_value: i32,
-    // ) -> Result<(), ExecutionError> {
-    //     let actor_name_addr = self.alloc_fixed_safe_string40(actor)?;
-    //     let modifier_info_addr = self
-    //         .alloc_weapon_modifier_info(modifier_flags, modifier_value)
-    //         .map_err(|e| self.to_execution_error(e))?;
-    //     self.cpu.write_arg(0, self.mem.get_pmdm_addr());
-    //     self.cpu.write_arg(1, actor_name_addr);
-    //     self.cpu.write_arg(2, value as u64);
-    //     self.cpu.write_arg(3, modifier_info_addr);
-    //     self.call_func_at_addr(0x96EFB8)
     // }
 
     // // 0x970060

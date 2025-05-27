@@ -16,7 +16,8 @@ pub use execute::*;
 mod stack_trace;
 pub use stack_trace::*;
 
-pub const BLOCK_COUNT_LIMIT: usize = 0x1000;
+pub const STACK_RESERVATION: u64 = 0x100;
+pub const BLOCK_COUNT_LIMIT: usize = 0x10000;
 pub const BLOCK_ITERATION_LIMIT: usize = 0x400000;
 
 
@@ -127,7 +128,7 @@ impl FromStr for RegisterType {
             RegisterType::SReg(idx) => RegisterValue::SReg(cpu.read(reg!(s[*idx]))),
             RegisterType::DReg(idx) => RegisterValue::DReg(cpu.read(reg!(d[*idx]))),
             RegisterType::QReg(_) => {
-                log::error!("QReg not implemented now, aborting");
+                log::error!("QReg not implemented now, aborting, pc=0x{:016x}, reading {:?}", cpu.pc, reg);
                 panic!("QReg not implemented now, aborting");
             }
             RegisterType::XZR => RegisterValue::XReg(0),
@@ -138,7 +139,6 @@ impl FromStr for RegisterType {
     }
 
     pub fn write_gen_reg(cpu: &mut Cpu0, reg: &RegisterType, val: i64) {
-        log::debug!("write_gen_reg: {reg:?} with value {val}");
         match reg {
             RegisterType::XReg(_) => {
                 glue::write_reg(cpu, reg, &RegisterValue::XReg(val));
@@ -165,7 +165,6 @@ impl FromStr for RegisterType {
     }
 
     pub fn write_reg(cpu: &mut Cpu0, reg: &RegisterType, val: &RegisterValue) {
-        log::debug!("write_reg: {reg:?} with value {val:?}");
         match (reg, val) {
             (RegisterType::XReg(idx), RegisterValue::XReg(v)) => {
                 cpu.write(reg!(x[*idx]), *v);

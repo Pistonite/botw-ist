@@ -34,7 +34,7 @@ use game::{
 //     Vector4fArray = 17,
 // }
 
-
+/// Get the trigger param raw pointer from GDTM instance
 pub fn trigger_param_ptr(memory: &Memory) -> Result<u64, memory::Error> {
     let gdt_manager = singleton_instance!(gdtm(memory))?;
     let params_ptr = Ptr!(&gdt_manager->mFlagBuffer);

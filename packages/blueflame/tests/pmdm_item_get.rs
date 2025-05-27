@@ -1,3 +1,107 @@
+use blueflame::env::{DlcVer, Environment};
+use blueflame::game::{gdt, singleton_instance, PouchItemType};
+use blueflame::linker;
+use blueflame::memory::{proxy, Ptr};
+use blueflame::processor::{Cpu1, Cpu2, CrashReport};
+use blueflame::program;
+
+#[derive(Debug, thiserror::Error)]
+enum ErrorWrapper {
+    #[error("{0:?}")]
+    Crash(#[from] CrashReport),
+}
+
+#[test]
+pub fn test_item_get_general() -> anyhow::Result<()> {
+    let data = std::fs::read("./test_files/program.bfi")?;
+    let program = program::unpack(&data)?;
+    let env = Environment::new(program.ver, DlcVer::V300);
+    let pmdm_addr_for_test = 0x2222200000;
+    let mut proc = linker::init_process(
+        &program,
+        env.dlc_ver,
+        0x8888800000,
+        0x4000,
+        pmdm_addr_for_test,
+        20000000,
+    )?;
+
+    let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
+
+    let mut cpu1 = Cpu1::default();
+    let mut cpu2 = Cpu2::new(&mut cpu1, &mut proc);
+
+    colog::init();
+
+    // value is durability for equipment, amount for other
+    cpu2.with_crash_report(|cpu| {
+        linker::call_pmdm_item_get(cpu, "Armor_176_Head", 10000)?;
+        let last_added_item = Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?;
+        assert!(!last_added_item.is_nullptr());
+        let last_added_item_name = Ptr!(&last_added_item->mName);
+        assert_eq!(
+            last_added_item_name.utf8_lossy(cpu.proc.memory())?,
+            "Armor_176_Head"
+        );
+        let last_added_item_type = Ptr!(&last_added_item->mType).load(cpu.proc.memory())?;
+        assert_eq!(last_added_item_type, PouchItemType::ArmorHead as i32);
+        let last_added_item_value = Ptr!(&last_added_item->mValue).load(cpu.proc.memory())?;
+        assert_eq!(last_added_item_value, -1); // outside of range 0-15
+
+        linker::call_load_from_game_data(cpu)?;
+
+        linker::call_pmdm_item_get(cpu, "Obj_KorokNuts", 100)?;
+        linker::call_pmdm_item_get(cpu, "Obj_KorokNuts", 100)?;
+        linker::call_pmdm_item_get(cpu, "Obj_KorokNuts", 100)?;
+        linker::call_pmdm_item_get(cpu, "Obj_KorokNuts", 100)?;
+        linker::call_pmdm_item_get(cpu, "Obj_KorokNuts", 100)?;
+
+        let last_added_item = Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?;
+        assert!(!last_added_item.is_nullptr());
+        let last_added_item_name = Ptr!(&last_added_item->mName);
+        assert_eq!(
+            last_added_item_name.utf8_lossy(cpu.proc.memory())?,
+            "Obj_KorokNuts"
+        );
+        let last_added_item_type = Ptr!(&last_added_item->mType).load(cpu.proc.memory())?;
+        assert_eq!(last_added_item_type, PouchItemType::KeyItem as i32);
+        let last_added_item_value = Ptr!(&last_added_item->mValue).load(cpu.proc.memory())?;
+        assert_eq!(last_added_item_value, 500);
+
+        let gdt_ptr = gdt::trigger_param_ptr(cpu.proc.memory())?;
+        let proc = &cpu.proc;
+        proxy! { let params = *gdt_ptr as trigger_param in proc };
+
+        let flag = params.by_name::<gdt::fd!(s32)>("KorokNutsNum").unwrap();
+        assert_eq!(*flag.get(), 500);
+
+        Ok(())
+    })
+    .map_err(ErrorWrapper::Crash)?;
+
+    // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
+    // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
+    // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
+    // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
+    // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
+    // let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
+    // let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
+    // let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
+    // assert_eq!(new_item.get_name(), "Obj_KorokNuts");
+    // assert_eq!(new_item.get_type(), PouchItemType::KeyItem);
+    // let trigger_param = core
+    //     .proxies
+    //     .get_trigger_param(&core.mem, core.mem.get_trigger_param_addr())
+    //     .unwrap();
+    // assert_eq!(
+    //     *trigger_param
+    //         .get_s32_flag_by_name(String::from("KorokNutsNum"))
+    //         .unwrap()
+    //         .get(),
+    //     500
+    // );
+    Ok(())
+}
 // #[cfg(test)]
 // mod singleton_tests {
 //     use std::u32;
@@ -10,83 +114,6 @@
 //
 //     use crate::{compute_hash, generate_crc32_table};
 //
-//     #[test]
-//     pub fn test_item_get_general() {
-//         let data = std::fs::read("./test_files/program.blfm").unwrap();
-//         let program = blueflame_program::unpack_blueflame(&data).unwrap();
-//
-//         let (mut mem, mut prox) =
-//             init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
-//         let mut cpu = Processor::default();
-//         let mut core = Core {
-//             cpu: &mut cpu,
-//             mem: &mut mem,
-//             proxies: &mut prox,
-//         };
-//         core.setup().unwrap();
-//
-//         // value is durability for equipment, amount for other
-//
-//         core.pmdm_item_get("Armor_176_Head", 10000, 0x0, 0).unwrap();
-//         let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
-//         let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-//         let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
-//         assert_eq!(new_item.get_name(), "Armor_176_Head");
-//         assert_eq!(new_item.get_type(), PouchItemType::ArmorHead);
-//
-//         core.load_from_game_data().unwrap();
-//
-//         core.pmdm_item_get("Item_Roast_07", 100, 0, 0x0).unwrap();
-//         let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
-//         let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-//         let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
-//         assert_eq!(new_item.get_name(), "Item_Roast_07");
-//         assert_eq!(new_item.get_type(), PouchItemType::Food);
-//
-//         // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//
-//         // core.pmdm_item_get("Item_Roast_07", 50, 0, 0x0).unwrap();
-//
-//         // core.pmdm_item_get("Item_Fruit_B", 50, 0, 0x0).unwrap();
-//
-//         // let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-//
-//         // let mut iter = pmdm.get_active_item_iter();
-//         // while iter.has_next() {
-//         //     let pi = iter.next(&core.mem).unwrap().deref(&core.mem).unwrap();
-//         //     println!("{0}", pi.to_string());
-//         // }
-//
-//         // assert!(false);
-//
-//         core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
-//         let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-//         let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
-//         assert_eq!(new_item.get_name(), "Obj_KorokNuts");
-//         assert_eq!(new_item.get_type(), PouchItemType::KeyItem);
-//         let trigger_param = core
-//             .proxies
-//             .get_trigger_param(&core.mem, core.mem.get_trigger_param_addr())
-//             .unwrap();
-//         assert_eq!(
-//             *trigger_param
-//                 .get_s32_flag_by_name(String::from("KorokNutsNum"))
-//                 .unwrap()
-//                 .get(),
-//             500
-//         );
-//
-//         core.load_from_game_data().unwrap();
-//     }
 //
 //     #[test]
 //     pub fn test_item_get_sword() {

@@ -30,16 +30,17 @@ pub fn create_instance<VM: VirtualMachine>(cpu: &mut VM, env: Environment) -> Re
 
     cpu.v_enter(0x00d2e16c)?;
     cpu.v_execute_until_then_single_alloc_skip_one(0x00d2e19c, rel_start(env), size(env))?;
+    // skip disposoer ctor
+    cpu.v_execute_until_then_skip_one(0x00d2e1b4)?;
     // finish the function
     cpu.v_execute_until(0x00d2e220)?;
     // B to init
     cpu.v_jump(0x00d2e2d8)?;
-    cpu.v_singleton_get(0, rel_start(env))?;
-    cpu.v_reg_copy(0, 3)?;
     // load data into args
     cpu.v_data_alloc(DataId::ActorInfoByml)?;
     cpu.v_reg_copy(0, 1)?;
-    cpu.v_reg_copy(3, 0)?;
+    cpu.v_singleton_get(0, rel_start(env))?;
+    // setting heaps to null
     cpu.v_reg_set(2, 0)?;
     cpu.v_reg_set(3, 0)?;
     // cpu.v_reg_set(0, 0)?; -- nop

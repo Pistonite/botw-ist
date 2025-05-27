@@ -32,7 +32,7 @@ pub fn create_instance<VM: VirtualMachine>(cpu: &mut VM, env: Environment) -> Re
     }
 
     cpu.v_enter(0x00dce964)?;
-    cpu.v_execute_until_then_single_alloc_skip_one(0x00dce9a0, rel_start(env), size(env))?;
+    cpu.v_execute_until_then_single_alloc_skip_one(0x00dce994, rel_start(env), size(env))?;
     // skip the Disposer ctor
     cpu.v_execute_until_then_skip_one(0x00dce9ac)?;
     // --- enter ctor
@@ -63,7 +63,7 @@ pub fn create_instance<VM: VirtualMachine>(cpu: &mut VM, env: Environment) -> Re
     cpu.v_execute_until_then_skip_one(0x00dcf23c)?;
     cpu.v_reg_set(0, 0)?;
     // allocate increase logger
-    cpu.v_execute_until(0x00dcf254)?;
+    cpu.v_execute_until_then_skip_one(0x00dcf254)?;
     cpu.v_mem_alloc(0x3098)?;
     // skip SaveMgr creation
     cpu.v_execute_until_then_skip_one(0x00dcf268)?;
@@ -99,8 +99,9 @@ pub fn create_instance<VM: VirtualMachine>(cpu: &mut VM, env: Environment) -> Re
     // finish init normally
     cpu.v_jump(0x00dcf684)?;
     cpu.v_execute_to_complete()?;
-            // TODO --cleanup init common flags
-            // Bytecode::Enter(0x008BF8A0),
-            // Bytecode::ExecuteToComplete
+
+    // init common flags
+    cpu.v_enter(0x008bf8a0)?;
+    cpu.v_execute_to_complete()?;
     Ok(())
 }

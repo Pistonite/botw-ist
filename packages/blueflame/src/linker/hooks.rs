@@ -12,7 +12,10 @@ macro_rules! fn_table {
     ($main_offset:ident size fn $( $offset:literal $size:literal $function:expr ),* $(,)?) => {
         match $main_offset {
         $(
-            $offset => return Ok(Some((processor::box_execute($function), $size))),
+            $offset => {
+                log::trace!("reached hook function at 0x{:#08x} with size {}: {}", $offset, $size, stringify!($function));
+                return Ok(Some((processor::box_execute($function), $size)));
+            }
         )*
         _ => {}
         }
@@ -297,6 +300,7 @@ fn return_void(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> 
 }
 
 fn return_true(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> {
+    log::debug!("here");
     reg! { cpu: x[0] = true, return }
 }
 

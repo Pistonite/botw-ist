@@ -5,7 +5,7 @@ use blueflame_macros::align_up;
 #[layered_crate::import]
 use linker::{
     super::program::Program,
-    super::processor::{self, Cpu1, Cpu3, Process},
+    super::processor::{self, Cpu1, Cpu3, Process, CrashReport},
     super::game::{Proxies, singleton},
     super::env::{DlcVer, Environment},
     super::memory::{self, Memory, align_down, PAGE_SIZE, REGION_ALIGN, RegionType, Region, SimpleHeap},
@@ -27,8 +27,8 @@ pub enum Error {
     ProxyError,
     #[error("memory error: {0}")]
     Memory(#[from] memory::Error),
-    #[error("processor error: {0}")]
-    Processor(#[from] processor::Error)
+    #[error("{0:?}")]
+    Crash(#[from] CrashReport)
 }
 
 /// Initialize memory for the process
@@ -146,7 +146,7 @@ pub fn init_process(
 
     // patch the memory
     log::debug!("patching memory");
-    patch_memory(&mut memory, env);
+    patch_memory(&mut memory, env)?;
 
     log::debug!("creating process");
     let mut proc = Process::new(
@@ -160,15 +160,19 @@ pub fn init_process(
     let mut cpu1 = Cpu1::default();
     let heap_start_adjusted = heap_start - heap_adjustment;
     let mut cpu3 = Cpu3::new(&mut cpu1, &mut proc, image, heap_start_adjusted);
+    cpu3.reset_stack();
+    cpu3.with_crash_report(|cpu| {
+        log::debug!("initializing pmdm");
+        singleton::pmdm::create_instance(cpu, env)?;
+        log::debug!("initializing gdtm");
+        singleton::gdtm::create_instance(cpu, env)?;
+        log::debug!("initializing info_data");
+        singleton::info_data::create_instance(cpu, env)?;
+        log::debug!("initializing aocm");
+        singleton::aocm::create_instance(cpu, env)?;
+        Ok(())
+    })?;
 
-    log::debug!("initializing pmdm");
-    singleton::pmdm::create_instance(&mut cpu3, env)?;
-    log::debug!("initializing gdtm");
-    singleton::gdtm::create_instance(&mut cpu3, env)?;
-    log::debug!("initializing info_data");
-    singleton::info_data::create_instance(&mut cpu3, env)?;
-    log::debug!("initializing aocm");
-    singleton::aocm::create_instance(&mut cpu3, env)?;
 
     log::debug!("process created");
 

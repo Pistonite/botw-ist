@@ -33,7 +33,6 @@ impl InsnVec {
     /// Returns Break if we should stop disassembling further instructions,
     /// either because there is a jump or an error occurred.
     pub fn disassemble(&mut self, bits: u32) -> ControlFlow<()> {
-        log::trace!("disassembling: {bits:#08x}");
         let Some(opcode) = disarm64::decoder::decode(bits) else {
             log::warn!("failed to decode instruction 0x{bits:08x}");
             self.insns.push(Entry::CannotDecode(bits));

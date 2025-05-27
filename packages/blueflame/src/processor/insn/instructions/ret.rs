@@ -24,13 +24,28 @@ pub struct RetArgsInstruction {
 impl ExecutableInstruction for RetArgsInstruction {
     // NOTE: Seems to function the same as br, but has a "hint" that this is a subroutine return
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
-        core.cpu.retr(self.rn.to_regname())
+        let regname = self.rn.to_regname();
+        let pc = core.cpu.pc;
+        let main_start = core.proc.main_start();
+        log::trace!("executing RETR to {} at main+0x{:08x}", regname, pc - main_start);
+        let xn_val: u64 = core.cpu.read(regname);
+        // instruction executor will increment PC later
+        let new_pc = xn_val - 4;
+        core.cpu.stack_trace.pop_checked(xn_val)?;
+        core.cpu.pc = new_pc as u64;
+        Ok(())
     }
 }
 
 impl ExecutableInstruction for RetInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
-        core.cpu.ret()
+        log::trace!("executing ret instruction");
+        let xn_val: u64 = core.cpu.read(reg!(lr));
+        // instruction executor will increment PC later
+        let new_pc = xn_val - 4;
+        core.cpu.stack_trace.pop_checked(xn_val)?;
+        core.cpu.pc = new_pc as u64;
+        Ok(())
     }
 }
 

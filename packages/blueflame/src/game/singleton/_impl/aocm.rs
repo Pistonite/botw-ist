@@ -44,6 +44,7 @@ pub fn create_instance<VM: VirtualMachine>(cpu: &mut VM, env: Environment) -> Re
     cpu.v_reg_set(8, version as u64)?;
     cpu.v_execute_until(0x00d6c3f8)?;
     // jump back
-    cpu.v_jump_execute(0x00d691ec)?;
+    cpu.v_jump(0x00d691ec)?;
+    cpu.v_execute_to_complete()?;
     Ok(())
 }

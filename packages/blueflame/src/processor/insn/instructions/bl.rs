@@ -17,6 +17,8 @@ pub struct BlInstruction {
 impl ExecutableInstruction for BlInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         let pc = core.cpu.pc;
+        let main_start = core.proc.main_start();
+        log::trace!("executing BL at main+0x{:08x}", pc - main_start);
         // Save to next instruction, 4 bytes past current instruction
         core.cpu.write(reg!(lr), pc + 4);
         let func_address = pc.wrapping_add_signed((self.label_offset - 4) as i64);

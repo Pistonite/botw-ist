@@ -1,7 +1,7 @@
 #[layered_crate::import]
 use processor::{
     super::env::enabled,
-    self::{RegName, Error},
+    self::{RegName, Error, format_address},
 };
 
 #[derive(Debug, Clone, Default)]
@@ -63,6 +63,15 @@ impl StackTrace {
         Ok(())
     }
 
+    pub fn format_with_main_start(&self, main_start: u64) -> String {
+        let mut result = String::new();
+        for frame in self.frames.iter().rev() {
+            result.push_str(&frame.format_with_main_start(main_start));
+            result.push('\n');
+        }
+        result
+    }
+
 }
 
 #[derive(Debug, Clone)]
@@ -80,3 +89,27 @@ pub enum FrameType {
     /// Called from native implementation
     Native,
 }
+
+impl Frame {
+    pub fn format_with_main_start(&self, main_start: u64) -> String {
+        match self.jump_type {
+            FrameType::Bl(from) => {
+                format!("  {} BL      -> {}", 
+                        format_address(from, main_start), 
+                        format_address(self.jump_target, main_start))
+            },
+            FrameType::Blr(from, reg_name) => {
+                let reg = format!("{:4}", reg_name.to_string());
+                format!("  {} BLR{} -> {}", 
+                    format_address(from, main_start), 
+                    reg,
+                    format_address(self.jump_target, main_start))
+            },
+            FrameType::Native => {
+                format!("                                   native jump -> {}", 
+                    format_address(self.jump_target, main_start))
+            }
+        }
+    }
+}
+

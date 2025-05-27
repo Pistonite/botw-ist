@@ -12,7 +12,7 @@ path = "../blueflame-proc-macros"
 package = "disarm64-custom"
 git = "https://github.com/Pistonite/disarm64-custom"
 branch = "main"
-version = "0.1.2"
+version = "0.1.5"
 optional = true
 
 [dependencies]

@@ -3,6 +3,7 @@ use crate::processor::{self as self_, crate_};
 use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
 use self_::{glue, RegisterType, Error};
+use self_::reg;
 use crate_::memory::Ptr;
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
@@ -62,25 +63,51 @@ fn stp_core(
     address: u64,
 ) -> Result<(), Error> {
     // Implements core of stp, interfacing w/ memory
-    let xt_val = glue::read_gen_reg(core.cpu, &xt1);
     match xt1 {
-        RegisterType::XReg(_) => Ptr!(<i64>(address)).store(&xt_val, core.proc.memory_mut())?,
-        RegisterType::WReg(_) => Ptr!(<i32>(address)).store(&(xt_val as i32), core.proc.memory_mut())?,
+        RegisterType::XReg(_) => {
+            let xt_val = glue::read_gen_reg(core.cpu, &xt1);
+            Ptr!(<i64>(address)).store(&xt_val, core.proc.memory_mut())?;
+        }
+        RegisterType::WReg(_) => {
+            let xt_val = glue::read_gen_reg(core.cpu, &xt1);
+            Ptr!(<i32>(address)).store(&(xt_val as i32), core.proc.memory_mut())?;
+        }
         RegisterType::XZR => Ptr!(<i64>(address)).store(&0, core.proc.memory_mut())?,
         RegisterType::WZR => Ptr!(<i32>(address)).store(&0, core.proc.memory_mut())?,
-        RegisterType::SReg(_) => Ptr!(<f32>(address)).store(&(glue::read_float_reg(core.cpu, &xt1) as f32), core.proc.memory_mut())?,
+        RegisterType::SReg(_) => {
+            let xt_val = glue::read_float_reg(core.cpu, &xt1);
+            Ptr!(<f32>(address)).store(&(xt_val as f32), core.proc.memory_mut())?;
+        }
+        RegisterType::QReg(i) => {
+            let (lo, hi) = core.cpu.read::<(u64, u64)>(reg!(q[i]));
+            Ptr!(<u64>(address)).store(&lo, core.proc.memory_mut())?;
+            Ptr!(<u64>(address + 8)).store(&hi, core.proc.memory_mut())?;
+        }
         _ => {
             log::error!("Invalid register write xt1: {:?}", xt1);
             return Err(Error::BadInstruction(0));
         }
     };
-    let xt_val = glue::read_gen_reg(core.cpu, &xt2);
     match xt2 {
-        RegisterType::XReg(_) => Ptr!(<i64>(address + 8)).store(&xt_val, core.proc.memory_mut())?,
-        RegisterType::WReg(_) => Ptr!(<i32>(address + 4)).store(&(xt_val as i32), core.proc.memory_mut())?,
+        RegisterType::XReg(_) => {
+            let xt_val = glue::read_gen_reg(core.cpu, &xt2);
+            Ptr!(<i64>(address + 8)).store(&xt_val, core.proc.memory_mut())?;
+        }
+        RegisterType::WReg(_) => {
+            let xt_val = glue::read_gen_reg(core.cpu, &xt2);
+            Ptr!(<i32>(address + 4)).store(&(xt_val as i32), core.proc.memory_mut())?;
+        }
         RegisterType::XZR => Ptr!(<i64>(address + 8)).store(&0, core.proc.memory_mut())?,
         RegisterType::WZR => Ptr!(<i32>(address + 4)).store(&0, core.proc.memory_mut())?,
-        RegisterType::SReg(_) => Ptr!(<f32>(address + 4)).store(&(glue::read_float_reg(core.cpu, &xt2) as f32), core.proc.memory_mut())?,
+        RegisterType::SReg(_) => {
+            let xt_val = glue::read_float_reg(core.cpu, &xt2);
+            Ptr!(<f32>(address + 4)).store(&(xt_val as f32), core.proc.memory_mut())?;
+        }
+        RegisterType::QReg(i) => {
+            let (lo, hi) = core.cpu.read::<(u64, u64)>(reg!(q[i]));
+            Ptr!(<u64>(address + 16)).store(&lo, core.proc.memory_mut())?;
+            Ptr!(<u64>(address + 24)).store(&hi, core.proc.memory_mut())?;
+        }
         _ => {
             log::error!("Invalid register write xt2: {:?}", xt2);
             return Err(Error::BadInstruction(0));

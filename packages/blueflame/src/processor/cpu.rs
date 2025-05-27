@@ -5,14 +5,15 @@ use enum_map::EnumMap;
 use processor::{
     super::env::{GameVer, enabled, ProxyId, DataId},
     super::vm::VirtualMachine,
-    super::memory::{Ptr, PAGE_SIZE},
+    super::memory::{MemObject, Ptr},
     super::program::Program,
     super::game::gdt,
-    self::{RegName, ExecuteCache, Registers, Process, Error, StackTrace, reg, BLOCK_COUNT_LIMIT},
+    self::{ExecuteCache, Registers, Process, Error, StackTrace, reg, BLOCK_COUNT_LIMIT, CrashReport, BLOCK_ITERATION_LIMIT, STACK_RESERVATION},
 };
 
 const INTERNAL_RETURN_ADDRESS: u64 = 0xDEAD464C414D45AAu64;
 // -----------------------------------------F-L-A-M-E-----
+const STACK_CHECK: u64 = 0xDEADBEEFCAFEAAAA;
 
 // Note for using Deref/DerefMut for CPU layers:
 //
@@ -74,11 +75,7 @@ pub struct Cpu0 {
     #[deref_mut]
     inner: Registers,
 
-    // stores addresses of all functions visited
-    // when function branched to, address is added (first entry is where the call was made from, second is where the branch was to)
-    // when function returns, address at the back is removed
-    // first is pc of branch insn, second is address branched to
-    pub stack_trace: StackTrace
+    pub stack_trace: StackTrace,
 }
 
 impl<'a, 'b, 'c> Cpu3<'a, 'b, 'c> {
@@ -105,7 +102,9 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
 
     fn v_enter(&mut self, target: u32) -> Result<(), Self::Error> {
         self.write(reg!(lr), INTERNAL_RETURN_ADDRESS);
-        self.pc = target as u64 + self.proc.main_start();
+        let target_abs = target as u64 + self.proc.main_start();
+        self.stack_trace.push_native(target_abs);
+        self.pc = target_abs;
         Ok(())
     }
 
@@ -134,18 +133,29 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
 
     fn v_execute_until(&mut self, target: u32) -> Result<(), Self::Error> {
         let target_abs = target as u64 + self.proc.main_start();
-        while self.pc != target_abs {
+        let has_limit = enabled!("limited-block-iteration");
+
+        for count in 0.. {
+            if has_limit && count > BLOCK_ITERATION_LIMIT {
+                log::error!("Block iteration limit reached in v_execute_until");
+                return Err(Error::BlockIterationLimitReached);
+            }
+            if self.pc == target_abs {
+                break;
+            }
             self.execute_one_insn()?;
         }
         Ok(())
     }
 
     fn v_jump(&mut self, target: u32) -> Result<(), Self::Error> {
+        log::debug!("v_jump to 0x{:08x}", target);
         self.pc = target as u64 + self.proc.main_start();
         Ok(())
     }
 
     fn v_mem_alloc(&mut self, bytes: u32) -> Result<(), Self::Error> {
+        log::debug!("v_mem_alloc {} bytes", bytes);
         let ptr = self.proc.memory_mut().heap_mut().alloc(bytes)?;
         self.write(reg!(x[0]), ptr);
         Ok(())
@@ -170,9 +180,11 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
             )));
         };
         let bytes = data.bytes();
+        log::debug!("allocating data, length={}", bytes.len());
         let ptr = self.proc.memory_mut().heap_mut().alloc(bytes.len() as u32)?;
         let ptr = Ptr!(<u8>(ptr));
         ptr.store_slice(bytes, self.proc.memory_mut())?;
+        self.write(reg!(x[0]), ptr.to_raw());
         Ok(())
     }
 
@@ -183,16 +195,51 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     }
 
     fn v_execute_to_complete(&mut self) -> Result<(), Self::Error> {
-        while self.pc != INTERNAL_RETURN_ADDRESS {
-            self.execute_once()?;
+        let target_abs = INTERNAL_RETURN_ADDRESS;
+        let has_limit = enabled!("limited-block-iteration");
+
+        for count in 0.. {
+            if has_limit && count > BLOCK_ITERATION_LIMIT {
+                log::error!("Block iteration limit reached in v_execute_to_complete");
+                return Err(Error::BlockCountLimitReached);
+            }
+            if self.pc == target_abs {
+                break;
+            }
+            self.execute_one_insn()?;
         }
         Ok(())
     }
 }
 
+impl Cpu3<'_, '_, '_> {
+    /// Execute the function, and turn any error that happened into a [`CrashReport`]
+    pub fn with_crash_report<T, F: FnOnce(&mut Self) -> Result<T, Error>>(&mut self, f: F) -> Result<T, CrashReport> {
+        match f(self) {
+            Ok(result) => Ok(result),
+            Err(e) => Err(self.make_crash_report(e))
+        }
+    }
+}
+
+impl<'a, 'b> Cpu2<'a, 'b> {
+    pub fn new(cpu1: &'a mut Cpu1, proc: &'b mut Process) -> Self {
+        Self {
+            cpu1,
+            proc,
+        }
+    }
+}
 impl Cpu2<'_, '_> {
+    pub fn native_jump_to_main_offset(&mut self, off: u32) -> Result<(), Error> {
+        let main_start = self.proc.main_start();
+        self.native_jump(main_start + off as u64)
+
+    }
     /// Make a jump to the target address and execute until it returns
     pub fn native_jump(&mut self, pc: u64) -> Result<(), Error> {
+        let main_start = self.proc.main_start();
+        log::debug!("native_jump to 0x{:08x}", pc - main_start);
         let pc_before = self.pc;
 
         self.write(reg!(lr), INTERNAL_RETURN_ADDRESS);
@@ -212,6 +259,7 @@ impl Cpu2<'_, '_> {
         }
 
         self.pc = pc_before;
+        log::debug!("native_jump finished, returning to 0x{:08x}", self.pc);
 
         Ok(())
     }
@@ -243,7 +291,7 @@ impl Cpu2<'_, '_> {
         // not found in cache - load from process memory
         let bytes = fetch_max_bytes.max(4);
 
-        let (exe, bytes) = self.proc.fetch_execute_block(self.pc, bytes, true)?;
+        let (exe, bytes) = self.proc.fetch_execute_block(self.pc, Some(bytes))?;
 
         // if we are in the middle of a replacement hook, then
         // just execute without caching
@@ -264,42 +312,116 @@ impl Cpu2<'_, '_> {
         exe.execute_from(&mut self.cpu1.cpu0, self.proc, step)
     }
 
-    /// Execute a single instruction at PC, ignoring caches
-    /// PC is still updated depending on the instruction
+    /// Execute a single instruction at PC, ignoring caches,
+    /// but still using hooks
     pub fn execute_one_insn(&mut self) -> Result<(), Error> {
-        // fetch one instruction directly from process
-        // not allowing hooks
-        let (exe, bytes) = self.proc.fetch_execute_block(self.pc, 4, false)?;
-        if bytes != 4 {
-            return Err(Error::Unexpected(format!(
-                "expected 4 bytes for instruction, got {}",
-                bytes
-            )));
-        }
+        // fetch one instruction directly from process and bypass size
+        // check for hooks
+        let (exe, _) = self.proc.fetch_execute_block(self.pc, None)?;
         exe.execute_from(&mut self.cpu1.cpu0, self.proc, 0)
     }
 
     pub fn reset_stack(&mut self) {
         self.stack_trace.reset();
-        // starting from middle of the last page
-        // since calling function would store things on the stack before reserving space
-        let sp = self.proc.memory().stack_end() - (PAGE_SIZE /2)as u64;
+        let stack_end = self.proc.memory().stack_end();
+
+        // starting from 0x100 because some function reuses stack frames
+        let sp = stack_end - STACK_RESERVATION;
         self.write(reg!(sp), sp);
+    }
+
+    /// Execute the function, and turn any error that happened into a [`CrashReport`]
+    pub fn with_crash_report<T, F: FnOnce(&mut Self) -> Result<T, Error>>(&mut self, f: F) -> Result<T, CrashReport> {
+        match f(self) {
+            Ok(result) => Ok(result),
+            Err(e) => Err(self.make_crash_report(e))
+        }
+    }
+
+    /// Create a crash report with the error and CPU state dump
+    ///
+    /// You can use the [`with_crash_report`](Self::with_crash_report) to define a scope
+    /// where processor errors will be turned into a [`CrashReport`]
+    pub fn make_crash_report(&self, error: Error) -> CrashReport {
+        let main_start = self.proc.main_start();
+        let cpu0 = self.cpu1.cpu0.clone();
+        CrashReport::new(cpu0, main_start, error)
+    }
+
+    pub fn stack_alloc<T: MemObject>(&mut self) -> Result<u64, Error> {
+        self.stack_alloc_size(T::SIZE)
+    }
+
+    /// Reserve `size` bytes on the stack, moving the stack pointer
+    /// accordingly.
+    ///
+    /// When done, the address should be returned with [`stack_check`](Self::stack_check)
+    /// to check for stack corruption
+    pub fn stack_alloc_size(&mut self, size: u32) -> Result<u64, Error> {
+        let sp = self.read::<u64>(reg!(sp));
+        // reserve 0x100 from current SP
+        let sp = sp - STACK_RESERVATION;
+        // write integrity data
+        for i in 0..(STACK_RESERVATION / std::mem::size_of::<u64>() as u64) {
+            let sp_ptr = Ptr!(<u64>(sp + i * std::mem::size_of::<u64>() as u64));
+            sp_ptr.store(&STACK_CHECK, self.proc.memory_mut())?;
+        }
+        // allocate the data
+        let sp = sp - size as u64;
+        let addr = sp;
+        // reserve another 0x100
+        let sp = sp - STACK_RESERVATION;
+        self.write(reg!(sp), sp);
+
+        Ok(addr)
+    }
+
+    pub fn stack_check<T: MemObject>(&mut self, addr: u64) -> Result<(), Error> {
+        self.stack_free_size(addr, T::SIZE)
+    }
+
+    pub fn stack_free_size(&mut self, addr: u64, size: u32) -> Result<(), Error> {
+        if !enabled!("check-stack-corruption") {
+            return Ok(());
+        }
+        if addr == 0 {
+            // nullptr, no check
+            return Ok(());
+        }
+        let start = addr + size as u64;
+        // check
+        for i in 0..(STACK_RESERVATION / std::mem::size_of::<u64>() as u64) {
+            let sp_ptr = Ptr!(<u64>(start + i * std::mem::size_of::<u64>() as u64));
+            let x = sp_ptr.load(self.proc.memory())?;
+            if x != STACK_CHECK {
+                return Err(Error::StackCorruption(addr, size));
+            }
+        }
+        Ok(())
     }
 }
 
 impl Cpu0 {
-    /// Simulate the `ret` instruction.
-    pub fn ret(&mut self) -> Result<(), Error> {
-        self.retr(reg!(lr))
-    }
-
-    /// Simulate the `ret` instruction with a register
-    pub fn retr(&mut self, reg: RegName) -> Result<(), Error> {
-        let xn_val: u64 = self.read(reg);
-        let new_pc = xn_val - 4;
-        self.stack_trace.pop_checked(xn_val)?;
-        self.pc = new_pc as u64;
+    /// Load the LR, pop and check the stack frame, and set PC to LR
+    ///
+    /// Note that this is different from the implementation of the `ret`
+    /// instruction, because `ret` instruction sets the PC to `LR - 4`,
+    /// and then it's increment by the executor
+    pub fn return_to_lr(&mut self) -> Result<(), Error> {
+        let lr = self.read(reg!(lr));
+        self.stack_trace.pop_checked(lr)?;
+        self.pc = lr;
         Ok(())
     }
+
+    //
+    // /// Simulate the `ret` instruction with a register
+    // pub fn retr(&mut self, reg: RegName) -> Result<(), Error> {
+    //     log::debug!("executing ret instruction to ({})", reg);
+    //     let xn_val: u64 = self.read(reg);
+    //     let new_pc = xn_val - 4;
+    //     self.stack_trace.pop_checked(xn_val)?;
+    //     self.pc = new_pc as u64;
+    //     Ok(())
+    // }
 }

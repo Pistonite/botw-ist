@@ -69,16 +69,25 @@ impl Process {
     }
 
     /// Fetch a block of code for execution
-    pub fn fetch_execute_block(&self, pc: u64, max_bytes: u32, allow_hooks: bool) -> Result<(Box<dyn Execute>, u32), Error> {
+    ///
+    /// If `max_bytes` is `Some(n)`, then the function will
+    /// make sure the block fetched is not larger than the size, even
+    /// if it's a hook.
+    ///
+    /// If `max_bytes` is `None`, then the function will only fetch
+    /// one instruction max, and will ignore the check if a hook is found
+    pub fn fetch_execute_block(&self, pc: u64, max_bytes: Option<u32>) -> Result<(Box<dyn Execute>, u32), Error> {
         // find execute hook at this location
         let main_offset: u32 = (pc - self.main_start()) as u32;
-        if allow_hooks {
-            if let Some((x, bytes)) = self.hook.fetch(main_offset, self.memory.env())? {
-                if bytes > max_bytes {
-                    return Err(Error::TooBigHook(main_offset))
-                }
-                return Ok((x, bytes))
+        let (ignore_hook_size_check, max_bytes) = match max_bytes {
+            Some(n) => (false, n),
+            None => (true, 4), // fetch one instruction
+        };
+        if let Some((x, bytes)) = self.hook.fetch(main_offset, self.memory.env())? {
+            if !ignore_hook_size_check && bytes > max_bytes {
+                return Err(Error::TooBigHook(main_offset))
             }
+            return Ok((x, bytes))
         }
 
         // if no hook, fetch the instructions from memory

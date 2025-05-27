@@ -83,7 +83,7 @@ macro_rules! reg {
          $( $crate::reg!($cpu : $($rest)*) )?
     };
     ($cpu:ident : $(,)? return) => {{
-        $cpu.ret()?;
+        $cpu.return_to_lr()?;
         return Ok(());
     }};
 }

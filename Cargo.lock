@@ -677,8 +677,8 @@ dependencies = [
 
 [[package]]
 name = "disarm64-custom"
-version = "0.1.2"
-source = "git+https://github.com/Pistonite/disarm64-custom?branch=main#4508ab6ad5c348524b84fab8237ddf297440b2b1"
+version = "0.1.5"
+source = "git+https://github.com/Pistonite/disarm64-custom?branch=main#6182cbddebd041d903e2c22f398b0f3bf50b6fcf"
 dependencies = [
  "bitfield-struct",
  "disarm64_defn",

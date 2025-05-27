@@ -303,50 +303,82 @@ impl<T: MemObject, const SIZE: u32, const LEN: usize> RegValue for PtrToArray<T,
     #[inline(always)] fn into_128(self) -> (u64, u64) { (self.to_raw(), 0) }
 }
 
-// no current implementation for 128 bit values yet
+#[rustfmt::skip]
+impl RegValue for (u64, u64) {
+    #[inline(always)] fn from_32(x: u32) -> Self { (x as u64, 0) }
+    #[inline(always)] fn from_64(x: u64) -> Self { (x, 0) }
+    #[inline(always)] fn from_128(lo: u64, hi: u64) -> Self { (lo, hi) }
+    #[inline(always)] fn into_64(self) -> u64 { self.0 }
+    #[inline(always)] fn into_128(self) -> (u64, u64) { (self.0, self.1) }
+}
+
+
+// no other implementation for 128 bit values yet
 
 impl Registers {
     /// Read a register
     ///
     /// For performance, there is no error checking here in release mode,
     /// it's undefined behavior if the register is not valid
-    #[no_panic]
     pub fn read<R: RegValue>(&self, name: RegName) -> R {
         let i = name.idx();
         match (name.is_fp(), name.qbit()) {
             (true, true) => {
-                RegValue::from_128(self.v[i as usize], self.q[i as usize])
+                let lo = self.v[i as usize];
+                let hi = self.q[i as usize];
+                log::trace!("[{i:02}] {:4} Q=>(q={lo}, v={hi})", name.to_string());
+                RegValue::from_128(lo, hi)
             }
             (true, false) => {
                 match name.is_64_bits() {
-                    true => RegValue::from_64(self.v[i as usize]),
-                    false => RegValue::from_32(self.v[i as usize] as u32),
+                    true => {
+                        let x = self.v[i as usize];
+                        log::trace!("[{i:02}] {:4} v=>0x{x:016x}", name.to_string());
+                        RegValue::from_64(x)
+                    }
+                    false => {
+                        let w = self.v[i as usize] as u32;
+                        log::trace!("[{i:02}] {:4} v=>0x{w:08x}", name.to_string());
+                        RegValue::from_32(w)
+                    }
                 }
             }
             (false, qbit) => {
                 if i == 31 {
                     if !qbit {
                         // zero
+                        log::trace!("[{i:02}]*{:4} x=>0", name.to_string());
                         return RegValue::from_64(0)
                     }
                     debug_assert!(name == RegName::sp(), "invalid register");
-                }
-                // named GP or SP
-                match name.is_64_bits() {
-                    true => RegValue::from_64(self.x[i as usize]),
-                    false => RegValue::from_32(self.x[i as usize] as u32),
+                    let x = self.x[i as usize];
+                    log::trace!("[{i:02}]*{:4} x=>0x{x:016x}", name.to_string());
+                    RegValue::from_64(x)
+                } else {
+                    // named GP
+                    match name.is_64_bits() {
+                        true => {
+                            let x = self.x[i as usize];
+                            log::trace!("[{i:02}] {:4} x=>0x{x:016x}", name.to_string());
+                            RegValue::from_64(x)
+                        }
+                        false => {
+                            let w = self.x[i as usize] as u32;
+                            log::trace!("[{i:02}] {:4} x=>0x{w:08x}", name.to_string());
+                            RegValue::from_32(w)
+                        }
+                    }
                 }
             }
         }
     }
     /// Write a register
-    #[no_panic]
     pub fn write<R: RegValue>(&mut self, name: RegName, value: R) {
         let i = name.idx();
         match (name.is_fp(), name.qbit()) {
             (true, true) => {
                 let (lo, hi) = value.into_128();
-                log::debug!("reg write: {name:?} <-[{i}] q={lo}, v={hi}");
+                log::trace!("[{i:02}] {:4} Q= (q={lo}, v={hi})", name.to_string());
                 self.q[i as usize] = hi;
                 self.v[i as usize] = lo;
             }
@@ -355,24 +387,28 @@ impl Registers {
                 if !name.is_64_bits() {
                     x = x as u32 as u64; // truncate
                 }
-                log::debug!("reg write: {name:?} <-[{i}] v={x}");
+                log::trace!("[{i:02}] {:4} v= 0x{x:016x}", name.to_string());
                 self.v[i as usize] = x;
             }
             (false, qbit) => {
                 if i == 31 {
+                    let x = value.into_64();
+                    log::trace!("[{i:02}]*{:4} x= 0x{x:016x}", name.to_string());
                     if !qbit {
                         // writing to zero
                         return;
                     }
                     debug_assert!(name == RegName::sp(), "invalid register");
+                    self.x[i as usize] = x;
+                } else {
+                    // named GP or SP
+                    let mut x = value.into_64();
+                    if !name.is_64_bits() {
+                        x = x as u32 as u64; // truncate
+                    }
+                    log::trace!("[{i:02}] {:4} x= 0x{x:016x}", name.to_string());
+                    self.x[i as usize] = x
                 }
-                // named GP or SP
-                let mut x = value.into_64();
-                if !name.is_64_bits() {
-                    x = x as u32 as u64; // truncate
-                }
-                log::debug!("reg write: {name:?} <-[{i}] x={x}");
-                self.x[i as usize] = x
             }
         }
     }

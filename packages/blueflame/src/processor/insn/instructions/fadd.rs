@@ -61,11 +61,10 @@ pub fn parse(
 mod tests {
     use super::*;
     use disarm64::decoder::decode;
-    use crate::test_utils::*;
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn test_fsub_parse() -> anyhow::Result<()> {
+    pub fn test_fadd_parse() -> anyhow::Result<()> {
         let opcode = decode(0x1E622820).expect("failed to decode");
         let insn = parse(&opcode)?.expect("failed to parse");
         let mut cpu = Cpu0::default();

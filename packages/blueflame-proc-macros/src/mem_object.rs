@@ -20,8 +20,6 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
 
     let mut fields_ordered_by_offset = Vec::with_capacity(fields.named.len());
 
-    // let mut field_accessors = Vec::new();
-    // let mut field_names = Vec::new();
     for field in fields.named.iter() {
         let offset = util::get_field_offset(field)?;
         let field_size = util::get_field_size(field)?;

@@ -50,6 +50,10 @@ pub enum Feature {
     /// Abort when unable to decode an instruction. If disabled,
     /// the instruction will simply be skipped
     #[on] instruction_abort, // TODO --cleanup: implement this
+    
+    /// If enabled, objects allocated on the stack will reserve
+    /// extra space to check for stack corruption
+    #[on] check_stack_corruption,
 }
 
 pub type FeatureSet = enumset::EnumSet<Feature>;

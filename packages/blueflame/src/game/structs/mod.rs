@@ -1,10 +1,11 @@
 #![allow(clippy::too_many_arguments)]
-#![allow(non_snake_case)]
 
 mod gdt;
 pub use gdt::*;
 mod string;
 pub use string::*;
+mod pouch;
+pub use pouch::*;
 
 use std::fmt;
 use std::marker::PhantomData;
@@ -14,43 +15,6 @@ use derive_more::derive::Constructor;
 #[layered_crate::import]
 use game::super_::memory::{MemObject, Ptr};
 
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone)]
-#[size(0x58)]
-pub struct FixedSafeString40 {
-    #[offset(0x0)]
-    pub safeString: SafeString,
-    #[offset(0x10)]
-    pub mBufferSize: i32,
-    #[offset(0x14)]
-    pub mBuffer: [u8; 64],
-}
-
-impl Default for FixedSafeString40 {
-    fn default() -> Self {
-        FixedSafeString40 {
-            safeString: SafeString::default(),
-            mBufferSize: 0,
-            mBuffer: [0; 64],
-        }
-    }
-}
-
-impl fmt::Display for FixedSafeString40 {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            String::from_utf8_lossy(
-                &self.mBuffer[..self
-                    .mBuffer
-                    .iter()
-                    .position(|&x| x == 0)
-                    .unwrap_or(self.mBuffer.len())],
-            )
-        )
-    }
-}
 
 impl FixedSafeString40 {
     pub fn update_buffer(&mut self, new_val: &str) {

@@ -76,6 +76,7 @@ impl ExecuteCache {
         size: u32,
         f: Box<dyn Execute>,
     ) -> Result<(), Error> {
+        log::trace!("inserting execute cache entry: start=0x{:016x}, size={}", start, size);
         match self.find(start, size) {
             Ok(i) => {
                 Err(Error::ExecuteCacheOverlap { new_start: (start - main_start) as u32,
@@ -108,12 +109,16 @@ impl ExecuteCache {
                 Ok((entry.f.as_ref(), step))
             }
             Err(i) => {
+                log::trace!("execute cache entry not found: pc=0x{:016x}", pc);
                 const MAX: u64 = 0x200000;
-                match self.entries.get(i.saturating_add(1)) {
+                match self.entries.get(i) {
                     Some(next_entry) => {
-                        Err((next_entry.start - pc).min(MAX) as u32)
+                        let max = (next_entry.start - pc).min(MAX) as u32;
+                        log::trace!("next entry start=0x{:016x}, max bytes={}", next_entry.start, max);
+                        Err(max)
                     }
                     None => {
+                        log::trace!("next entry not found, returning max bytes");
                         Err(MAX as u32)
                     }
                 }
@@ -188,6 +193,21 @@ mod tests {
         // TODO --cleanup: core - check if the entry is the same
         let (_, step) = hv.get(48).unwrap();
         assert_eq!(step, 2);
+    }
+
+    #[test]
+    fn test_insert_get() {
+        let mut hv = ExecuteCache::default();
+
+        assert!(hv.insert(true, 0, 0x7213c, 24, box_execute(|_, _| Ok(()))).is_ok());
+        assert!(hv.insert(true, 0, 0x72154, 8, box_execute(|_, _| Ok(()))).is_ok());
+
+        match hv.get(0x72138) {
+            Ok(_) => panic!("Expected error, but got Ok"),
+            Err(max) => {
+                assert_eq!(max, 4);
+            }
+        }
     }
 
     #[test]

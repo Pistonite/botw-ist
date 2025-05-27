@@ -16,8 +16,10 @@ pub struct BlrInstruction {
 
 impl ExecutableInstruction for BlrInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
-        let xn_val = glue::read_gen_reg(core.cpu, &self.rn) as u64 - 4;
         let pc = core.cpu.pc;
+        let main_start = core.proc.main_start();
+        log::trace!("executing BLR at main+0x{:08x}", pc - main_start);
+        let xn_val = glue::read_gen_reg(core.cpu, &self.rn) as u64 - 4;
         let lr = pc + 4;
 
         let target = xn_val + 4;
