@@ -1,3 +1,5 @@
+use derive_more::derive::Constructor;
+
 #[layered_crate::import]
 use memory::{
     super::env::enabled,
@@ -5,6 +7,7 @@ use memory::{
 };
 
 /// Stream reader from memory
+#[derive(Constructor)]
 pub struct Reader<'m> {
     /// Memory being read
     memory: &'m Memory,
@@ -20,28 +23,28 @@ pub struct Reader<'m> {
     execute: bool,
     /// Disable RX permission check
     disable_permission_check: bool,
+
+    /// Offset to subtract while tracing
+    ///
+    /// This is mainly used for tracing `main` module, since
+    /// the start of program isn't the start of the main module
+    trace_offset: u64,
+    // ^ TODO --cleanup: this isn't needed after region refactoring
+}
+
+macro_rules! trace {
+    (bool, $tag:expr, $addr:expr, $start:expr, $value:expr) => { {
+            blueflame_macros::trace_memory!(concat!("ld1  {}+0x{:08x} =>{}"), $tag, {$addr} - {$start}, if $value { "true" } else { "false" });
+        } };
+    ($len:expr, $tag:expr, $addr:expr, $start:expr, $value:expr, $width:literal) => { {
+            blueflame_macros::trace_memory!(concat!("ld{:2} {}+0x{:08x} =>0x{:0", $width, "x}"), $len * 8, $tag, {$addr} - {$start}, $value);
+        } };
+    ($len:expr, $tag:expr, $addr:expr, $start:expr, $value:literal) => { {
+            blueflame_macros::trace_memory!(concat!("ld{:2} {}+0x{:08x} =>", $value), $len * 8, $tag, {$addr} - {$start});
+        } };
 }
 
 impl<'m> Reader<'m> {
-    pub fn new(
-        memory: &'m Memory,
-        region: &'m Region,
-        page: &'m Page,
-        region_page_idx: u32,
-        page_off: u32,
-        execute: bool,
-        disable_permission_check: bool,
-    ) -> Self {
-        Self {
-            memory,
-            region,
-            page,
-            region_page_idx,
-            page_off,
-            execute,
-            disable_permission_check,
-        }
-    }
 
     /// Skip `len` bytes in the memory
     #[inline]
@@ -61,7 +64,8 @@ impl<'m> Reader<'m> {
     #[inline]
     pub fn read_bool<T: From<bool>>(&mut self) -> Result<T, Error> {
         self.prep_read(1)?;
-        let val = self.page.read_u8(self.page_off) > 0;
+        let val = self.page.read_u8(self.page_off) & 1 == 1;
+        trace!(bool, self.region.tag, self.current_addr(), self.region.start + self.trace_offset, val);
         self.skip(1);
 
         Ok(val.into())
@@ -72,6 +76,7 @@ impl<'m> Reader<'m> {
     pub fn read_u8<T: From<u8>>(&mut self) -> Result<T, Error> {
         self.prep_read(1)?;
         let val = self.page.read_u8(self.page_off);
+        trace!(1, self.region.tag, self.current_addr(), self.region.start + self.trace_offset, val, 2);
         self.skip(1);
 
         Ok(val.into())
@@ -88,6 +93,7 @@ impl<'m> Reader<'m> {
     pub fn read_u16<T: From<u16>>(&mut self) -> Result<T, Error> {
         self.prep_read(2)?;
         let val = self.page.read_u16(self.page_off);
+        trace!(2, self.region.tag, self.current_addr(), self.region.start + self.trace_offset, val, 4);
         self.skip(2);
 
         Ok(val.into())
@@ -104,6 +110,7 @@ impl<'m> Reader<'m> {
     pub fn read_u32<T: From<u32>>(&mut self) -> Result<T, Error> {
         self.prep_read(4)?;
         let val = self.page.read_u32(self.page_off);
+        trace!(4, self.region.tag, self.current_addr(), self.region.start + self.trace_offset, val, 8);
         self.skip(4);
 
         Ok(val.into())
@@ -120,6 +127,7 @@ impl<'m> Reader<'m> {
     pub fn read_u64<T: From<u64>>(&mut self) -> Result<T, Error> {
         self.prep_read(8)?;
         let val = self.page.read_u64(self.page_off);
+        trace!(8, self.region.tag, self.current_addr(), self.region.start + self.trace_offset, val, 16);
         self.skip(8);
 
         Ok(val.into())
@@ -154,6 +162,7 @@ impl<'m> Reader<'m> {
             // advance to next region if possible
             match self.memory.get_region_by_addr(current_addr) {
                 None => {
+                    trace!(len, "??", current_addr, 0, "invalid region");
                     return Err(Error::InvalidRegion(current_addr));
                 }
                 Some((region, page, idx, off)) => {
@@ -171,7 +180,10 @@ impl<'m> Reader<'m> {
             self.page_off %= PAGE_SIZE;
             self.page = match self.region.get(self.region_page_idx) {
                 Some(page) => page.as_ref(),
-                None => return Err(Error::Unallocated(current_addr)),
+                None => {
+                    trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "unallocated");
+                    return Err(Error::Unallocated(current_addr));
+                }
             }
         }
 
@@ -179,6 +191,7 @@ impl<'m> Reader<'m> {
         if self.region.typ == RegionType::Heap && enabled!("mem-heap-check-allocated")
             && !self.memory.heap.is_allocated(current_addr)
         {
+            trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "heap unallocated");
             return Err(Error::Unallocated(current_addr));
         }
 
@@ -188,6 +201,7 @@ impl<'m> Reader<'m> {
                     .page
                     .has_permission(AccessType::Read | AccessType::Execute)
                 {
+                    trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "permission denied (rx)");
                     return Err(Error::PermissionDenied(MemAccess {
                         flags: glue::access_type_to_flags(AccessType::Execute),
                         addr: self.current_addr(),
@@ -195,6 +209,7 @@ impl<'m> Reader<'m> {
                     }));
                 }
             } else if !self.page.has_permission(AccessType::Read) {
+                trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "permission denied (r)");
                 return Err(Error::PermissionDenied(MemAccess {
                     flags: glue::access_type_to_flags(AccessType::Read),
                     addr: self.current_addr(),
@@ -204,6 +219,7 @@ impl<'m> Reader<'m> {
         }
 
         if self.page_off + len > PAGE_SIZE {
+            trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "page align fault");
             return Err(Error::PageBoundary(MemAccess {
                 flags: glue::access_type_to_flags(AccessType::Read),
                 addr: self.current_addr(),
@@ -213,4 +229,5 @@ impl<'m> Reader<'m> {
 
         Ok(())
     }
+
 }

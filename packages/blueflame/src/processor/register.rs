@@ -5,6 +5,7 @@ use processor::{
 };
 
 pub use blueflame_macros::reg;
+use blueflame_macros::trace_register;
 
 // todo --cleanup: remove this
 pub type RegIndex = u32;
@@ -326,19 +327,19 @@ impl Registers {
             (true, true) => {
                 let lo = self.v[i as usize];
                 let hi = self.q[i as usize];
-                log::trace!("[{i:02}] {:4} Q=>(q={lo}, v={hi})", name.to_string());
+                trace_register!("{:4} Q ->(q={lo}, v={hi})", name.to_string());
                 RegValue::from_128(lo, hi)
             }
             (true, false) => {
                 match name.is_64_bits() {
                     true => {
                         let x = self.v[i as usize];
-                        log::trace!("[{i:02}] {:4} v=>0x{x:016x}", name.to_string());
+                        trace_register!("{:4} v ->0x{x:016x}", name.to_string());
                         RegValue::from_64(x)
                     }
                     false => {
                         let w = self.v[i as usize] as u32;
-                        log::trace!("[{i:02}] {:4} v=>0x{w:08x}", name.to_string());
+                        trace_register!("{:4} v ->0x{w:08x}", name.to_string());
                         RegValue::from_32(w)
                     }
                 }
@@ -347,24 +348,24 @@ impl Registers {
                 if i == 31 {
                     if !qbit {
                         // zero
-                        log::trace!("[{i:02}]*{:4} x=>0", name.to_string());
+                        trace_register!("{:4} x =>0", name.to_string());
                         return RegValue::from_64(0)
                     }
                     debug_assert!(name == RegName::sp(), "invalid register");
                     let x = self.x[i as usize];
-                    log::trace!("[{i:02}]*{:4} x=>0x{x:016x}", name.to_string());
+                    trace_register!("{:4} x ->0x{x:016x}", name.to_string());
                     RegValue::from_64(x)
                 } else {
                     // named GP
                     match name.is_64_bits() {
                         true => {
                             let x = self.x[i as usize];
-                            log::trace!("[{i:02}] {:4} x=>0x{x:016x}", name.to_string());
+                            trace_register!("{:4} x ->0x{x:016x}", name.to_string());
                             RegValue::from_64(x)
                         }
                         false => {
                             let w = self.x[i as usize] as u32;
-                            log::trace!("[{i:02}] {:4} x=>0x{w:08x}", name.to_string());
+                            trace_register!("{:4} x ->0x{w:08x}", name.to_string());
                             RegValue::from_32(w)
                         }
                     }
@@ -378,7 +379,7 @@ impl Registers {
         match (name.is_fp(), name.qbit()) {
             (true, true) => {
                 let (lo, hi) = value.into_128();
-                log::trace!("[{i:02}] {:4} Q= (q={lo}, v={hi})", name.to_string());
+                trace_register!("{:4} Q<- (q={lo}, v={hi})", name.to_string());
                 self.q[i as usize] = hi;
                 self.v[i as usize] = lo;
             }
@@ -387,13 +388,13 @@ impl Registers {
                 if !name.is_64_bits() {
                     x = x as u32 as u64; // truncate
                 }
-                log::trace!("[{i:02}] {:4} v= 0x{x:016x}", name.to_string());
+                trace_register!("{:4} v<- 0x{x:016x}", name.to_string());
                 self.v[i as usize] = x;
             }
             (false, qbit) => {
                 if i == 31 {
                     let x = value.into_64();
-                    log::trace!("[{i:02}]*{:4} x= 0x{x:016x}", name.to_string());
+                    trace_register!("{:4} x<- 0x{x:016x}", name.to_string());
                     if !qbit {
                         // writing to zero
                         return;
@@ -406,7 +407,7 @@ impl Registers {
                     if !name.is_64_bits() {
                         x = x as u32 as u64; // truncate
                     }
-                    log::trace!("[{i:02}] {:4} x= 0x{x:016x}", name.to_string());
+                    trace_register!("{:4} x<- 0x{x:016x}", name.to_string());
                     self.x[i as usize] = x
                 }
             }
@@ -536,42 +537,36 @@ impl Flags {
 
 #[cfg(test)]
 mod tests {
-    // TODO --cleanup: enable these tests
-    // #[test]
-    // pub fn eq_condional_passes() -> anyhow::Result<()> {
-    //     use crate::processor::instruction_registry::RegisterType;
-    //
-    //     let mut cpu = crate::Processor::default();
-    //     let mut mem = crate::Memory::new_empty_mem(0x10000);
-    //     let mut proxies = crate::Proxies::default();
-    //     let mut core = crate::Core {
-    //         cpu: &mut cpu,
-    //         mem: &mut mem,
-    //         proxies: &mut proxies,
-    //     };
-    //     core.cpu.flags.z = true;
-    //     core.handle_string_command(&String::from("add x9, xzr, #1"))?;
-    //     core.handle_string_command(&String::from("add.eq x9, x9, #1"))?;
-    //     assert_eq!(core.cpu.read_gen_reg(&RegisterType::XReg(9))?, 2);
-    //     Ok(())
-    // }
-    //
-    // #[test]
-    // pub fn eq_condional_fails() -> anyhow::Result<()> {
-    //     use crate::processor::instruction_registry::RegisterType;
-    //
-    //     let mut cpu = crate::Processor::default();
-    //     let mut mem = crate::Memory::new_empty_mem(0x10000);
-    //     let mut proxies = crate::Proxies::default();
-    //     let mut core = crate::Core {
-    //         cpu: &mut cpu,
-    //         mem: &mut mem,
-    //         proxies: &mut proxies,
-    //     };
-    //     core.cpu.flags.z = false;
-    //     core.handle_string_command(&String::from("add x9, xzr, #1"))?;
-    //     core.handle_string_command(&String::from("add.eq x9, x9, #1"))?;
-    //     assert_eq!(core.cpu.read_gen_reg(&RegisterType::XReg(9))?, 1);
-    //     Ok(())
-    // }
+    use super::*;
+
+    #[layered_crate::import]
+    use processor::{
+        self::{Cpu0, Process},
+        self::insn::Core,
+    };
+    #[test]
+    pub fn eq_condional_passes() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        cpu.flags.z = true;
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+
+        core.handle_string_command("add x9, xzr, #1")?;
+        core.handle_string_command("add.eq x9, x9, #1")?;
+        assert_eq!(cpu.read::<u64>(reg!(x[9])), 2);
+        Ok(())
+    }
+    
+    #[test]
+    pub fn eq_condional_fails() -> anyhow::Result<()> {
+        let mut cpu = Cpu0::default();
+        cpu.flags.z = false;
+        let mut proc = Process::new_for_test();
+        let mut core = Core::new(&mut cpu, &mut proc);
+
+        core.handle_string_command("add x9, xzr, #1")?;
+        core.handle_string_command("add.eq x9, x9, #1")?;
+        assert_eq!(cpu.read::<u64>(reg!(x[9])), 1);
+        Ok(())
+    }
 }

@@ -1,8 +1,10 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::instruction_parse::{ExecutableInstruction};
 use self_::insn::Core;
 use self_::{glue, RegisterType, Error, reg};
+
+use blueflame_macros::trace_call;
 
 pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
         if args.is_empty() {
@@ -25,10 +27,16 @@ impl ExecutableInstruction for RetArgsInstruction {
     // NOTE: Seems to function the same as br, but has a "hint" that this is a subroutine return
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         let regname = self.rn.to_regname();
-        let pc = core.cpu.pc;
-        let main_start = core.proc.main_start();
-        log::trace!("executing RETR to {} at main+0x{:08x}", regname, pc - main_start);
+        if regname != reg!(lr) {
+            // check if we actually have any other register
+            panic!("RET instruction must use LR register, got {}", regname);
+        }
         let xn_val: u64 = core.cpu.read(regname);
+        trace_call!(
+            "main+0x{:08x} ret     >>>>> main+0x{:08x}", 
+            core.cpu.pc - core.proc.main_start(),
+            xn_val - core.proc.main_start()
+        );
         // instruction executor will increment PC later
         let new_pc = xn_val - 4;
         core.cpu.stack_trace.pop_checked(xn_val)?;
@@ -39,13 +47,14 @@ impl ExecutableInstruction for RetArgsInstruction {
 
 impl ExecutableInstruction for RetInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
-        log::trace!("executing ret instruction");
-        let xn_val: u64 = core.cpu.read(reg!(lr));
-        // instruction executor will increment PC later
-        let new_pc = xn_val - 4;
-        core.cpu.stack_trace.pop_checked(xn_val)?;
-        core.cpu.pc = new_pc as u64;
-        Ok(())
+        panic!("RET instruction is not used since it's parsed as RET LR")
+        // log::trace!("executing ret instruction");
+        // let xn_val: u64 = core.cpu.read(reg!(lr));
+        // // instruction executor will increment PC later
+        // let new_pc = xn_val - 4;
+        // core.cpu.stack_trace.pop_checked(xn_val)?;
+        // core.cpu.pc = new_pc as u64;
+        // Ok(())
     }
 }
 

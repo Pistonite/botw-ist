@@ -15,19 +15,6 @@ use derive_more::derive::Constructor;
 #[layered_crate::import]
 use game::super_::memory::{MemObject, Ptr};
 
-
-impl FixedSafeString40 {
-    pub fn update_buffer(&mut self, new_val: &str) {
-        self.mBuffer = [0; 64];
-        for (i, c) in new_val.as_bytes().iter().enumerate() {
-            if i > 63 {
-                break;
-            }
-            self.mBuffer[i] = *c;
-        }
-    }
-}
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(i32)]
 pub enum PouchItemType {
@@ -151,21 +138,15 @@ pub struct CookData {
 pub struct WeaponData {
     #[offset(0x0)]
     mModifierValue: u32,
-    // #[offset(0x4)]
-    // mUnused: u32,
     #[offset(0x8)]
     mModifier: u32,
-    #[offset(0xc)]
-    mEffectUnused: Vector2f,
 }
 
 impl From<CookData> for WeaponData {
     fn from(cook: CookData) -> Self {
         WeaponData {
             mModifierValue: cook.mSellPrice as u32,
-            // mUnused: 0,
             mModifier: cook.mHealthRecover as u32,
-            mEffectUnused: cook.mEffect,
         }
     }
 }
@@ -219,7 +200,7 @@ struct PtrArrayImpl {
     #[offset(0x4)]
     mPtrNumMax: i32,
     #[offset(0x8)]
-    mPtrs: Ptr![Ptr![FixedSafeString40]],
+    mPtrs: Ptr![Ptr![FixedSafeString40][5]],
 }
 
 #[allow(non_snake_case)]
@@ -393,24 +374,6 @@ pub struct PauseMenuDataMgr {
     mNumTabs: i32,
     #[offset(0x444a0)]
     mGrabbedItems: [GrabbedItemInfo; 5],
-    #[offset(0x444f0)]
-    mItem_444f0: Ptr![PouchItem],
-    #[offset(0x444f8)]
-    _444f8: i32,
-    #[offset(0x444fc)]
-    _444fc: i32,
-    #[offset(0x44500)]
-    _44500: i32,
-    #[offset(0x44504)]
-    _44504: u32,
-    #[offset(0x44508)]
-    _44508: u32,
-    #[offset(0x4450c)]
-    _4450c: u32,
-    #[offset(0x44510)]
-    _44510: u32,
-    #[offset(0x44514)]
-    _44514: u32,
     #[offset(0x44518)]
     mRitoSoulItem: Ptr![PouchItem],
     #[offset(0x44520)]
@@ -419,8 +382,6 @@ pub struct PauseMenuDataMgr {
     mZoraSoulItem: Ptr![PouchItem],
     #[offset(0x44530)]
     mGerudoSoulItem: Ptr![PouchItem],
-    #[offset(0x44538)]
-    mCanSeeHealthBar: bool,
     #[offset(0x44540)]
     mNewlyAddedItem: PouchItem,
     #[offset(0x447d8)]
@@ -473,7 +434,6 @@ pub struct InfoData {
     pub mNumActors: i32,
 }
 
-#[allow(unused)]
 pub struct OffsetListIter<T> {
     start_end_node: ListNode,
     current_node: Ptr![ListNode],

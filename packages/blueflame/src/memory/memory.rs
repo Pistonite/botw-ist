@@ -65,8 +65,20 @@ impl Memory {
             }
             let is_execute = flags.has_all(AccessFlag::Execute);
             let disable_permission_check = flags.has_all(access!(force));
+
+            let trace_offset = if region.tag == "main" {
+                self.env.main_offset()
+            } else {
+                0
+            };
             // TODO --cleanup: remove execute from param
-            return Ok(Reader::new(self, region, page, page_idx, off, is_execute, disable_permission_check));
+            return Ok(Reader::new(
+                self, 
+                region, 
+                page, 
+                page_idx, off, is_execute, disable_permission_check,
+                trace_offset as u64
+            ));
         }
         // region read_by_addr will fail if the address is not allocated,
         // in those cases, we want to return Unallocated error
@@ -103,7 +115,12 @@ impl Memory {
                 }));
             }
             let disable_permission_check = flags.has_all(access!(force));
-            return Ok(Writer::new(self, region.typ, page_idx, off, disable_permission_check));
+            let trace_offset = if region.tag == "main" {
+                self.env.main_offset()
+            } else {
+                0
+            };
+            return Ok(Writer::new(self, region.typ, page_idx, off, disable_permission_check, trace_offset as u64));
         }
         // region read_by_addr will fail if the address is not allocated,
         // in those cases, we want to return Unallocated error

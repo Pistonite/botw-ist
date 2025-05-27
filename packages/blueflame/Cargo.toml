@@ -42,9 +42,10 @@ phf = { version = "0.11.3", features = ["macros"] }
 anyhow = "1.0.94"
 no-panic = "0.1.35"
 enum-map = "2.7.3"
-# TODO --cleanup: move colog to dev-dependencies
-colog = "1.3.0"
 num-traits = "0.2.19"
+
+[dev-dependencies]
+colog = "1.3.0"
 
 
 [lib]
@@ -52,5 +53,17 @@ name = "blueflame"
 path = "lib.rs"
 
 [features]
-default = ["data"]
+default = [
+    "data",
+    "trace-register",
+    "trace-memory",
+    "trace-call",
+]
+
 data = ["dep:disarm64"]
+
+# The trace-* features control what log::trace! statements are kept
+# These are mainly used for debugging
+trace-register = []
+trace-memory = []
+trace-call = []

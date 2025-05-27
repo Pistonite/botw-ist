@@ -1,8 +1,10 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error, reg};
+use self_::{Error, reg};
+
+use blueflame_macros::trace_call;
 
 pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
         let label_offset = parse::get_label_val(args)?;
@@ -17,11 +19,14 @@ pub struct BlInstruction {
 impl ExecutableInstruction for BlInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         let pc = core.cpu.pc;
-        let main_start = core.proc.main_start();
-        log::trace!("executing BL at main+0x{:08x}", pc - main_start);
         // Save to next instruction, 4 bytes past current instruction
         core.cpu.write(reg!(lr), pc + 4);
         let func_address = pc.wrapping_add_signed((self.label_offset - 4) as i64);
+        trace_call!(
+            "main+0x{:08x} bl      >>>>> main+0x{:08x}", 
+            core.cpu.pc - core.proc.main_start(),
+            func_address + 4 - core.proc.main_start()
+        );
         core.cpu.stack_trace.push_bl(func_address + 4, pc);
         core.cpu.pc = func_address;
         Ok(())

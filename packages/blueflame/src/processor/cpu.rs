@@ -1,6 +1,8 @@
 use derive_more::derive::{Deref, DerefMut};
 use enum_map::EnumMap;
 
+use blueflame_macros::trace_call;
+
 #[layered_crate::import]
 use processor::{
     super::env::{GameVer, enabled, ProxyId, DataId},
@@ -238,8 +240,7 @@ impl Cpu2<'_, '_> {
     }
     /// Make a jump to the target address and execute until it returns
     pub fn native_jump(&mut self, pc: u64) -> Result<(), Error> {
-        let main_start = self.proc.main_start();
-        log::debug!("native_jump to 0x{:08x}", pc - main_start);
+        trace_call!("            native jump >>>>> main+0x{:08x}", pc - self.proc.main_start());
         let pc_before = self.pc;
 
         self.write(reg!(lr), INTERNAL_RETURN_ADDRESS);
@@ -259,7 +260,7 @@ impl Cpu2<'_, '_> {
         }
 
         self.pc = pc_before;
-        log::debug!("native_jump finished, returning to 0x{:08x}", self.pc);
+        trace_call!("   native jump finished >>>>> 0x{:016x} (main+0x{:08x})", self.pc, self.pc - self.proc.main_start());
 
         Ok(())
     }

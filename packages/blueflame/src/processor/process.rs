@@ -15,7 +15,10 @@ use processor::{
 
 /// The Process is the container for everything the core tracks
 /// that is not in the Processor.
-#[derive(Constructor)]
+///
+/// Cloning the process will `fork` the process, and the memory will
+/// be shared (clone on write)
+#[derive(Clone, Constructor)]
 pub struct Process {
     /// Main memory of the game
     memory: Arc<Memory>,

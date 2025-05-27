@@ -19,6 +19,8 @@ pub const REGION_ALIGN: u64 = 0x10000;
 /// but the page contents are clone-on-write
 #[derive(Debug, Clone)]
 pub struct Region {
+    /// Type of the region, used for tracking and debugging
+    pub tag: &'static str,
     pub typ: RegionType,
     /// Physical start address of the region. Must be aligned to 0x10000
     pub start: u64,
@@ -88,6 +90,7 @@ impl Region {
             current_start += PAGE_SIZE;
         }
         Ok(Self {
+            tag: "main", // TODO --cleanup: region for all modules
             typ: RegionType::Program,
             start,
             capacity: program_size,
@@ -109,6 +112,11 @@ impl Region {
             pages.push(page);
         }
         Self {
+            tag: match region_type {
+                RegionType::Program => "main",
+                RegionType::Stack => "stack",
+                RegionType::Heap => "heap",
+            },
             typ: region_type,
             start,
             capacity: size,

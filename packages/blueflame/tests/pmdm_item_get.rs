@@ -1,8 +1,8 @@
 use blueflame::env::{DlcVer, Environment};
-use blueflame::game::{gdt, singleton_instance, PouchItemType};
+use blueflame::game::{gdt, singleton_instance, PouchItemType, PouchItem};
 use blueflame::linker;
-use blueflame::memory::{proxy, Ptr};
-use blueflame::processor::{Cpu1, Cpu2, CrashReport};
+use blueflame::memory::{self, proxy, Ptr, Memory};
+use blueflame::processor::{Cpu1, Cpu2, CrashReport, Process};
 use blueflame::program;
 
 #[derive(Debug, thiserror::Error)]
@@ -12,12 +12,12 @@ enum ErrorWrapper {
 }
 
 #[test]
-pub fn test_item_get_general() -> anyhow::Result<()> {
+pub fn test_item_getters() -> anyhow::Result<()> {
     let data = std::fs::read("./test_files/program.bfi")?;
     let program = program::unpack(&data)?;
     let env = Environment::new(program.ver, DlcVer::V300);
     let pmdm_addr_for_test = 0x2222200000;
-    let mut proc = linker::init_process(
+    let proc = linker::init_process(
         &program,
         env.dlc_ver,
         0x8888800000,
@@ -26,27 +26,27 @@ pub fn test_item_get_general() -> anyhow::Result<()> {
         20000000,
     )?;
 
-    let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
+    test_get_general(proc.clone())?;
+    test_get_sword(proc.clone())?;
+    test_get_bow(proc.clone())?;
+    test_get_shield(proc.clone())?;
+    test_get_material(proc.clone())?;
+    test_get_food(proc.clone())?;
+    test_get_armor(proc)?;
 
+    Ok(())
+}
+
+fn test_get_general(mut proc: Process) -> anyhow::Result<()> {
+    let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
     let mut cpu1 = Cpu1::default();
     let mut cpu2 = Cpu2::new(&mut cpu1, &mut proc);
-
-    colog::init();
 
     // value is durability for equipment, amount for other
     cpu2.with_crash_report(|cpu| {
         linker::call_pmdm_item_get(cpu, "Armor_176_Head", 10000)?;
-        let last_added_item = Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?;
-        assert!(!last_added_item.is_nullptr());
-        let last_added_item_name = Ptr!(&last_added_item->mName);
-        assert_eq!(
-            last_added_item_name.utf8_lossy(cpu.proc.memory())?,
-            "Armor_176_Head"
-        );
-        let last_added_item_type = Ptr!(&last_added_item->mType).load(cpu.proc.memory())?;
-        assert_eq!(last_added_item_type, PouchItemType::ArmorHead as i32);
-        let last_added_item_value = Ptr!(&last_added_item->mValue).load(cpu.proc.memory())?;
-        assert_eq!(last_added_item_value, -1); // outside of range 0-15
+
+        assert_item_helper(Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?, cpu.proc.memory(), "Armor_176_Head", PouchItemType::ArmorHead, -1)?;
 
         linker::call_load_from_game_data(cpu)?;
 
@@ -56,22 +56,17 @@ pub fn test_item_get_general() -> anyhow::Result<()> {
         linker::call_pmdm_item_get(cpu, "Obj_KorokNuts", 100)?;
         linker::call_pmdm_item_get(cpu, "Obj_KorokNuts", 100)?;
 
-        let last_added_item = Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?;
-        assert!(!last_added_item.is_nullptr());
-        let last_added_item_name = Ptr!(&last_added_item->mName);
-        assert_eq!(
-            last_added_item_name.utf8_lossy(cpu.proc.memory())?,
-            "Obj_KorokNuts"
-        );
-        let last_added_item_type = Ptr!(&last_added_item->mType).load(cpu.proc.memory())?;
-        assert_eq!(last_added_item_type, PouchItemType::KeyItem as i32);
-        let last_added_item_value = Ptr!(&last_added_item->mValue).load(cpu.proc.memory())?;
-        assert_eq!(last_added_item_value, 500);
+        assert_item_helper(
+            Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+            cpu.proc.memory(),
+            "Obj_KorokNuts",
+            PouchItemType::KeyItem,
+            500,
+        )?;
 
         let gdt_ptr = gdt::trigger_param_ptr(cpu.proc.memory())?;
         let proc = &cpu.proc;
         proxy! { let params = *gdt_ptr as trigger_param in proc };
-
         let flag = params.by_name::<gdt::fd!(s32)>("KorokNutsNum").unwrap();
         assert_eq!(*flag.get(), 500);
 
@@ -79,211 +74,134 @@ pub fn test_item_get_general() -> anyhow::Result<()> {
     })
     .map_err(ErrorWrapper::Crash)?;
 
-    // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-    // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-    // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-    // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-    // core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-    // let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
-    // let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-    // let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
-    // assert_eq!(new_item.get_name(), "Obj_KorokNuts");
-    // assert_eq!(new_item.get_type(), PouchItemType::KeyItem);
-    // let trigger_param = core
-    //     .proxies
-    //     .get_trigger_param(&core.mem, core.mem.get_trigger_param_addr())
-    //     .unwrap();
-    // assert_eq!(
-    //     *trigger_param
-    //         .get_s32_flag_by_name(String::from("KorokNutsNum"))
-    //         .unwrap()
-    //         .get(),
-    //     500
-    // );
     Ok(())
 }
-// #[cfg(test)]
-// mod singleton_tests {
-//     use std::u32;
-//
-//     use blueflame::boot::init_memory;
-//     use blueflame::memory::traits::Ptr;
-//     use blueflame::processor::Processor;
-//     use blueflame::structs::{CookEffectId, ItemUse, PauseMenuDataMgr, PouchItemType};
-//     use blueflame::Core;
-//
-//     use crate::{compute_hash, generate_crc32_table};
-//
-//
-//     #[test]
-//     pub fn test_item_get_sword() {
-//         let data = std::fs::read("./test_files/program.blfm").unwrap();
-//         let program = blueflame_program::unpack_blueflame(&data).unwrap();
-//         let (mut mem, mut prox) =
-//             init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
-//         let mut cpu = Processor::default();
-//         let mut core = Core {
-//             cpu: &mut cpu,
-//             mem: &mut mem,
-//             proxies: &mut prox,
-//         };
-//         core.setup().unwrap();
-//
-//         core.pmdm_item_get("Weapon_Sword_009", 50, 0, 0x0).unwrap();
-//         let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
-//         let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-//         let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
-//         assert_eq!(new_item.get_name(), "Weapon_Sword_009");
-//         assert_eq!(new_item.get_type(), PouchItemType::Sword);
-//     }
-//
-//     #[test]
-//     pub fn test_item_get_bow() {
-//         let data = std::fs::read("./test_files/program.blfm").unwrap();
-//         let program = blueflame_program::unpack_blueflame(&data).unwrap();
-//         let (mut mem, mut prox) =
-//             init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
-//         let mut cpu = Processor::default();
-//         let mut core = Core {
-//             cpu: &mut cpu,
-//             mem: &mut mem,
-//             proxies: &mut prox,
-//         };
-//         core.setup().unwrap();
-//
-//         core.pmdm_item_get("Weapon_Bow_027", 50, 0, 0x0).unwrap();
-//         let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
-//         let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-//         let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
-//         assert_eq!(new_item.get_name(), "Weapon_Bow_027");
-//         assert_eq!(new_item.get_type(), PouchItemType::Bow);
-//     }
-//
-//     #[test]
-//     pub fn test_item_get_shield() {
-//         let data = std::fs::read("./test_files/program.blfm").unwrap();
-//         let program = blueflame_program::unpack_blueflame(&data).unwrap();
-//         let (mut mem, mut prox) =
-//             init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
-//         let mut cpu = Processor::default();
-//         let mut core = Core {
-//             cpu: &mut cpu,
-//             mem: &mut mem,
-//             proxies: &mut prox,
-//         };
-//         core.setup().unwrap();
-//
-//         core.pmdm_item_get("Weapon_Shield_005", 50, 0, 0x0).unwrap();
-//         let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
-//         let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-//         let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
-//         assert_eq!(new_item.get_name(), "Weapon_Shield_005");
-//         assert_eq!(new_item.get_type(), PouchItemType::Shield);
-//     }
-//
-//     #[test]
-//     pub fn test_item_get_material() {
-//         let data = std::fs::read("./test_files/program.blfm").unwrap();
-//         let program = blueflame_program::unpack_blueflame(&data).unwrap();
-//         let (mut mem, mut prox) =
-//             init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
-//         let mut cpu = Processor::default();
-//         let mut core = Core {
-//             cpu: &mut cpu,
-//             mem: &mut mem,
-//             proxies: &mut prox,
-//         };
-//         core.setup().unwrap();
-//
-//         core.pmdm_item_get("Item_Fruit_B", 50, 0, 0x0).unwrap();
-//         let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
-//         let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-//         let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
-//         assert_eq!(new_item.get_name(), "Item_Fruit_B");
-//         assert_eq!(new_item.get_type(), PouchItemType::Material);
-//     }
-//
-//     #[test]
-//     pub fn test_item_get_food() {
-//         let data = std::fs::read("./test_files/program.blfm").unwrap();
-//         let program = blueflame_program::unpack_blueflame(&data).unwrap();
-//         let (mut mem, mut prox) =
-//             init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
-//         let mut cpu = Processor::default();
-//         let mut core = Core {
-//             cpu: &mut cpu,
-//             mem: &mut mem,
-//             proxies: &mut prox,
-//         };
-//         core.setup().unwrap();
-//
-//         core.pmdm_item_get("Item_Roast_07", 100, 0, 0x0).unwrap();
-//         let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
-//         let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-//         let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
-//         assert_eq!(new_item.get_name(), "Item_Roast_07");
-//         assert_eq!(new_item.get_type(), PouchItemType::Food);
-//     }
-//
-//     #[test]
-//     pub fn test_item_get_armor() {
-//         let data = std::fs::read("./test_files/program.blfm").unwrap();
-//         let program = blueflame_program::unpack_blueflame(&data).unwrap();
-//         let (mut mem, mut prox) =
-//             init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
-//         let mut cpu = Processor::default();
-//         let mut core = Core {
-//             cpu: &mut cpu,
-//             mem: &mut mem,
-//             proxies: &mut prox,
-//         };
-//         core.setup().unwrap();
-//
-//         core.pmdm_item_get("Armor_176_Head", 10000, 0x0, 0).unwrap();
-//         let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
-//         let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-//         let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
-//         assert_eq!(new_item.get_name(), "Armor_176_Head");
-//         assert_eq!(new_item.get_type(), PouchItemType::ArmorHead);
-//     }
-//
-//     #[test]
-//     pub fn test_item_get_koroknuts() {
-//         let data = std::fs::read("./test_files/program.blfm").unwrap();
-//         let program = blueflame_program::unpack_blueflame(&data).unwrap();
-//         let (mut mem, mut prox) =
-//             init_memory(&program, 58843136 + 0x100, 0x5000, 0x38a0000, 20000000).unwrap();
-//         let mut cpu = Processor::default();
-//         let mut core = Core {
-//             cpu: &mut cpu,
-//             mem: &mut mem,
-//             proxies: &mut prox,
-//         };
-//         core.setup().unwrap();
-//
-//         core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//         core.pmdm_item_get("Obj_KorokNuts", 100, 0, 0x0).unwrap();
-//
-//         let pmdm_ptr: Ptr<PauseMenuDataMgr> = Ptr::new(core.mem.get_pmdm_addr());
-//         let pmdm = Box::new(pmdm_ptr.deref(&core.mem).unwrap());
-//         let new_item = pmdm.mLastAddedItem.deref(&core.mem).unwrap();
-//         assert_eq!(new_item.get_name(), "Obj_KorokNuts");
-//         assert_eq!(new_item.get_type(), PouchItemType::KeyItem);
-//         let trigger_param = core
-//             .proxies
-//             .get_trigger_param(&core.mem, core.mem.get_trigger_param_addr())
-//             .unwrap();
-//         assert_eq!(
-//             *trigger_param
-//                 .get_s32_flag_by_name(String::from("KorokNutsNum"))
-//                 .unwrap()
-//                 .get(),
-//             500
-//         );
-//     }
+
+pub fn test_get_sword(mut proc: Process) -> anyhow::Result<()> {
+    let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
+    let mut cpu1 = Cpu1::default();
+    let mut cpu2 = Cpu2::new(&mut cpu1, &mut proc);
+
+    cpu2.with_crash_report(|cpu| {
+        linker::call_pmdm_item_get(cpu, "Weapon_Sword_009", 50)?;
+
+        assert_item_helper(
+            Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+            cpu.proc.memory(),
+            "Weapon_Sword_009",
+            PouchItemType::Sword,
+            50,
+        )?;
+
+        Ok(())
+    }).map_err(ErrorWrapper::Crash)?;
+
+    Ok(())
+}
+
+fn test_get_bow(mut proc: Process) -> anyhow::Result<()> {
+    let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
+    let mut cpu1 = Cpu1::default();
+    let mut cpu2 = Cpu2::new(&mut cpu1, &mut proc);
+
+    cpu2.with_crash_report(|cpu| {
+        linker::call_pmdm_item_get(cpu, "Weapon_Bow_027", 50)?;
+        assert_item_helper(
+            Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+            cpu.proc.memory(),
+            "Weapon_Bow_027",
+            PouchItemType::Bow,
+            50,
+        )?;
+        Ok(())
+    }).map_err(ErrorWrapper::Crash)?;
+
+    Ok(())
+}
+
+fn test_get_shield(mut proc: Process) -> anyhow::Result<()> {
+    let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
+    let mut cpu1 = Cpu1::default();
+    let mut cpu2 = Cpu2::new(&mut cpu1, &mut proc);
+
+    cpu2.with_crash_report(|cpu| {
+        linker::call_pmdm_item_get(cpu, "Weapon_Shield_005", 50)?;
+        assert_item_helper(
+            Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+            cpu.proc.memory(),
+            "Weapon_Shield_005",
+            PouchItemType::Shield,
+            50,
+        )?;
+        Ok(())
+    })
+    .map_err(ErrorWrapper::Crash)?;
+
+    Ok(())
+}
+
+fn test_get_material(mut proc: Process) -> anyhow::Result<()> {
+    let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
+    let mut cpu1 = Cpu1::default();
+    let mut cpu2 = Cpu2::new(&mut cpu1, &mut proc);
+
+    cpu2.with_crash_report(|cpu| {
+        linker::call_pmdm_item_get(cpu, "Item_Fruit_B", 50)?;
+        assert_item_helper(
+            Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+            cpu.proc.memory(),
+            "Item_Fruit_B",
+            PouchItemType::Material,
+            50,
+        )?;
+        Ok(())
+    }).map_err(ErrorWrapper::Crash)?;
+
+    Ok(())
+}
+
+fn test_get_food(mut proc: Process) -> anyhow::Result<()> {
+    let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
+    let mut cpu1 = Cpu1::default();
+    let mut cpu2 = Cpu2::new(&mut cpu1, &mut proc);
+
+    cpu2.with_crash_report(|cpu| {
+        linker::call_pmdm_item_get(cpu, "Item_Roast_07", 100)?;
+        assert_item_helper(
+            Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+            cpu.proc.memory(),
+            "Item_Roast_07",
+            PouchItemType::Food,
+            100,
+        )?;
+        Ok(())
+    })
+    .map_err(ErrorWrapper::Crash)?;
+
+    Ok(())
+}
+
+
+
+    fn test_get_armor(mut proc: Process) -> anyhow::Result<()> {
+        let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
+        let mut cpu1 = Cpu1::default();
+        let mut cpu2 = Cpu2::new(&mut cpu1, &mut proc);
+
+        cpu2.with_crash_report(|cpu| {
+            linker::call_pmdm_item_get(cpu, "Armor_001_Head", 8)?;
+            assert_item_helper(
+                Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+                cpu.proc.memory(),
+                "Armor_001_Head",
+                PouchItemType::ArmorHead,
+                8,
+            )?;
+            Ok(())
+        }).map_err(ErrorWrapper::Crash)?;
+
+        Ok(())
+    }
 //
 //     #[test]
 //     pub fn test_cook_item_get() {
@@ -568,3 +486,23 @@ pub fn test_item_get_general() -> anyhow::Result<()> {
 //     context.hash = hash;
 //     !hash // Return the final hash (bitwise NOT)
 // }
+fn assert_item_helper(
+    item: Ptr![PouchItem],
+    memory: &Memory,
+    expected_name: &str,
+    expected_type: PouchItemType,
+    expected_value: i32,
+) -> Result<(), memory::Error> {
+    assert!(!item.is_nullptr());
+
+    let name_ptr = Ptr!(&item->mName);
+    assert_eq!(name_ptr.utf8_lossy(memory)?, expected_name);
+
+    let item_type = Ptr!(&item->mType).load(memory)?;
+    assert_eq!(item_type, expected_type as i32);
+
+    let value = Ptr!(&item->mValue).load(memory)?;
+    assert_eq!(value, expected_value);
+
+    Ok(())
+}

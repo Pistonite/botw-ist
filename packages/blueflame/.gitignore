@@ -3,3 +3,6 @@
 /test_files
 *.blfm
 *.bfi
+
+# trace files sometimes
+out

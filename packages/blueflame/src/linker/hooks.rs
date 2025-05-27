@@ -13,7 +13,7 @@ macro_rules! fn_table {
         match $main_offset {
         $(
             $offset => {
-                log::trace!("reached hook function at 0x{:#08x} with size {}: {}", $offset, $size, stringify!($function));
+                // log::trace!("reached hook function at 0x{:#08x} with size {}: {}", $offset, $size, stringify!($function));
                 return Ok(Some((processor::box_execute($function), $size)));
             }
         )*

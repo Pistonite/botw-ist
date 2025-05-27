@@ -4,6 +4,8 @@ use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, Executab
 use self_::insn::Core;
 use self_::{glue, RegisterType, Error, reg};
 
+use blueflame_macros::trace_call;
+
 pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
         let rn = glue::parse_reg_or_panic(args);
         Some(Box::new(BlrInstruction { rn }))
@@ -17,14 +19,19 @@ pub struct BlrInstruction {
 impl ExecutableInstruction for BlrInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         let pc = core.cpu.pc;
-        let main_start = core.proc.main_start();
-        log::trace!("executing BLR at main+0x{:08x}", pc - main_start);
+        let regname = self.rn.to_regname();
         let xn_val = glue::read_gen_reg(core.cpu, &self.rn) as u64 - 4;
+        trace_call!(
+            "main+0x{:08x} blr {:3} >>>>> main+0x{:08x}", 
+            core.cpu.pc - core.proc.main_start(),
+            regname.to_string(),
+            xn_val + 4 - core.proc.main_start()
+        );
         let lr = pc + 4;
 
         let target = xn_val + 4;
 
-        core.cpu.stack_trace.push_blr(target, self.rn.to_regname(), pc);
+        core.cpu.stack_trace.push_blr(target, regname, pc);
         core.cpu.pc = xn_val; // before incrementing
         core.cpu.write(reg!(lr), lr);
         Ok(())
