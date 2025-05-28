@@ -28,6 +28,7 @@ pub fn create_dark_style_sheet_for_flavor(
     let blue = colors.blue.hex;
     let pink = colors.pink.hex;
 
+    #[allow(clippy::uninlined_format_args)]
     let css = format!(
         r#"
 .{0} .skybook-tt-Comment {{ color: {gray}; font-style: italic; }}
@@ -62,6 +63,7 @@ pub fn create_light_style_sheet_for_flavor(
     let red = colors.red.hex;
     let maroon = colors.maroon.hex;
 
+    #[allow(clippy::uninlined_format_args)]
     let css = format!(
         r#"
 .{0} .skybook-tt-Comment {{ color: {gray}; font-style: italic; }}
