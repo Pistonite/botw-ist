@@ -4,8 +4,8 @@ use processor::{
     super::memory::{MemObject, PtrToSized, PtrToArray},
 };
 
-pub use blueflame_macros::reg;
-use blueflame_macros::trace_register;
+pub use blueflame_deps::reg;
+use blueflame_deps::trace_register;
 
 // todo --cleanup: remove this
 pub type RegIndex = u32;

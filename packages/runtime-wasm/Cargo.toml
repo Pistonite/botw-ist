@@ -7,7 +7,6 @@ publish = false
 
 [dependencies.blueflame]
 path = "../blueflame"
-features = ["wasm"]
 
 [dependencies.skybook-runtime]
 path = "../runtime"
@@ -17,6 +16,7 @@ features = ["wasm"]
 path = "../parser"
 features = ["wasm", "cached"]
 
+[dependencies]
 wasm-bindgen = { version = "0.2.99", features = ["serde", "serde-serialize"] }
 tsify-next = { version = "0.5.4", features = ["js"], default-features = false }
 serde = { version = "1.0.217", features = ["derive"] }

@@ -32,12 +32,24 @@ tasks:
     cmds:
       - gcloud storage cp src/generated/*.ts gs://ist-private/artifacts/skybook-item-system/
 
-  pull-artifacts:
+  pull-artifacts-public:
     cmds:
       - $(which mkdir) -p src/generated
+      - wget -O src/generated/ActorDataMap.ts https://skybook.pistonite.dev/botw-ist/packages/item-system/ActorDataMap.ts
+
+  package-artifacts-public:
+    cmds:
+      - $(which mkdir) -p ../manual/book/botw-ist/packages/item-system
+      - cp src/generated/ActorDataMap.ts ../manual/book/botw-ist/packages/item-system/
+
+  pull-artifacts:
+    cmds:
       - $(which mkdir) -p public
-      - gcloud storage cp gs://ist-private/artifacts/skybook-item-system/*.ts src/generated
       - gcloud storage cp gs://ist-private/images/SheikahBackground*.png public
       - gcloud storage cp gs://ist-private/images/bg-*.jpg public
+      - task: pull-artifacts-ts
 
-
+  pull-artifacts-ts:
+    cmds:
+      - $(which mkdir) -p src/generated
+      - gcloud storage cp gs://ist-private/artifacts/skybook-item-system/*.ts src/generated

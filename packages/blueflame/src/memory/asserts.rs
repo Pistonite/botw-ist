@@ -1,7 +1,7 @@
 #[layered_crate::import]
 use memory::Error;
 
-pub use blueflame_macros::{assert_zst, assert_size_less_than};
+pub use blueflame_deps::{assert_zst, assert_size_less_than};
 
 /// Assertion for size check in read() and write() implementations
 pub fn assert_size_eq<T>(expected: u32, actual: u32, caller: &'static str) -> Result<(), Error> {

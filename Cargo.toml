@@ -1,10 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
-    "packages/runtime",
+    "packages/blueflame", 
+    "packages/blueflame-deps", 
+    "packages/blueflame-proc-macros", 
     "packages/manual",
     "packages/parser", 
-    "packages/blueflame", 
-    "packages/blueflame-macros", 
-    "packages/blueflame-proc-macros", 
+    "packages/runtime",
+    "packages/runtime-wasm",
 ]

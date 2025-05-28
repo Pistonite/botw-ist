@@ -5,4 +5,4 @@ rustflags = ["-Z", "threads=4"]
 rustflags = ["-C", "target-feature=+atomics,+bulk-memory,+mutable-globals"]
 
 [target.wasm32-unknown-unknown.unstable]
-build-std = ["panic_abort", "std"]
+build-std = "panic_abort,std"

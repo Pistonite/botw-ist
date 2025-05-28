@@ -8,7 +8,7 @@ use sha2::{Digest, Sha256};
 #[layered_crate::import]
 use memory::{Error, Memory, RegionType, glue};
 
-pub use blueflame_macros::proxy;
+pub use blueflame_deps::proxy;
 
 /// The maximum number of proxy objects per type
 pub const MAX_OBJECTS: u32 = 1024000;

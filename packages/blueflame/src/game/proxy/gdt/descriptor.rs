@@ -1,18 +1,23 @@
 #[layered_crate::import]
 use game::gdt;
 
+pub use blueflame_deps::fd;
+
 /// Descriptor for accessing flag types from TriggerParam
 ///
 /// Use [`fd!`] macro to create a descriptor for a specific flag type.
 pub trait FlagDescriptor {
-    type T: Clone;
+    type T: gdt::FlagType;
 
     fn list(trigger_param: &gdt::TriggerParam) -> &gdt::FlagList<Self::T>;
     fn list_mut(trigger_param: &mut gdt::TriggerParam) -> &mut gdt::FlagList<Self::T>;
 }
 
+/// Descriptor for accessing array flag types from TriggerParam
+///
+/// Use [`fd!`] macro to create a descriptor for a specific flag type.
 pub trait ArrayFlagDescriptor {
-    type ElemT: Clone;
+    type ElemT: gdt::FlagType;
 
     fn list(trigger_param: &gdt::TriggerParam) -> &gdt::FlagList<Box<[Self::ElemT]>>;
     fn list_mut(trigger_param: &mut gdt::TriggerParam) -> &mut gdt::FlagList<Box<[Self::ElemT]>>;
@@ -83,4 +88,5 @@ make_descriptor!(array, FdString64Array, String, string64_array_flags);
 make_descriptor!(array, FdString256Array, String, string256_array_flags);
 make_descriptor!(array, FdVector2fArray, (f32, f32), vector2f_array_flags);
 make_descriptor!(array, FdVector3fArray, (f32, f32, f32), vector3f_array_flags);
-pub use blueflame_macros::fd;
+
+

@@ -4,8 +4,12 @@ use error::MaybeAborted;
 use exec::{Executor, Spawner};
 use serde::{Deserialize, Serialize};
 use skybook_parser::{search::QuotedItemResolver, ParseOutput};
-use blueflame::{error::Error, memory::{Memory, Proxies}, processor::Processor};
-use blueflame_utils::{DlcVer, Environment, GameVer};
+use blueflame::processor::Process;
+use blueflame::game::Proxies;
+use blueflame::memory::Memory;
+use blueflame::linker;
+use blueflame::program;
+use blueflame::env::{DlcVer, Environment, GameVer};
 
 /// Executor - handles pooling script execution on multiple emulator cores
 pub mod exec;
@@ -287,7 +291,7 @@ pub struct Run {
 pub struct Runtime {
     pub env: Mutex<Environment>,
     pub executor: Executor,
-    pub initial_memory: Mutex<Option<(Memory, Proxies)>>,
+    pub initial_process: Mutex<Option<Process>>,
 
     // TODO: pool + Spawn
     // TODO: initial memory (Mutex<Option<Arc<Memory>>> probably? or Mutex<Option<Memory>>)
@@ -300,7 +304,7 @@ impl Runtime {
         Self {
             env: Mutex::new(Environment::new(GameVer::X150, DlcVer::None)),
             executor,
-            initial_memory: Mutex::new(None),
+            initial_process: Mutex::new(None),
         }
     }
 
@@ -324,7 +328,7 @@ impl Runtime {
 
         log::debug!("initializing runtime with custom image params: {:?}", params);
 
-        let program = match blueflame_program::unpack_blueflame(&bytes) {
+        let program = match program::unpack(&bytes) {
             Err(e) => {
                 log::error!("failed to unpack blueflame image: {}", e);
                 return Err(RuntimeInitError::BadImage);
@@ -332,7 +336,7 @@ impl Runtime {
             Ok(program) => program,
         };
 
-        if program.env.is160() {
+        if program.ver == GameVer::X160 {
             log::error!(">>>> + LOOK HERE + <<<< Only 1.5 is supported for now");
             return Err(RuntimeInitError::BadImage);
         }
@@ -343,7 +347,7 @@ impl Runtime {
         // it doesn't matter statically
         {
             let mut env = self.env.lock().unwrap();
-            env.game_ver = program.env.game_ver;
+            env.game_ver = program.ver;
             env.dlc_ver = match DlcVer::from_num(params.dlc) {
                 Some(dlc) => dlc,
                 None => return Err(RuntimeInitError::BadDlcVersion(params.dlc)),
@@ -353,13 +357,15 @@ impl Runtime {
         // TODO: take the param
         log::debug!("initializing memory");
 
-        let (memory, proxies) = match blueflame::boot::init_memory(
+        let process = match linker::init_process(
             &program, 
-            58843136 + 0x100, // stack start
-            0x5000, // stack size
-            0x38a0000,
+            DlcVer::V300, // TODO: take from param
+            
+            0x8888800000,
+            0x4000, // stack size
+            0x2222200000,
             20000000 // this heap looks hug
-) {
+        ) {
             Err(e) => {
                 log::error!("failed to initialize memory: {}", e);
                 // TODO: actual error
@@ -370,8 +376,8 @@ impl Runtime {
 
         log::debug!("memory initialized successfully");
         {
-            let mut initial_memory = self.initial_memory.lock().unwrap();
-            *initial_memory = Some((memory, proxies));
+            let mut initial_memory = self.initial_process.lock().unwrap();
+            *initial_memory = Some(process);
         }
 
 
@@ -508,8 +514,8 @@ pub enum Game {
     Off,
     /// Game is running
     Running(GameState),
-    /// Game has crashed (must manually reboot)
-    Crashed(Error) // TODO: more crash info (dump, stack trace, etc)
+    // /Game has crashed (must manually reboot)
+    // Crashed(Error) // TODO: more crash info (dump, stack trace, etc)
 }
 
 #[derive(Clone)]

@@ -6,70 +6,22 @@ includes:
     flatten: true
     optional: true
 
-  server:
-    taskfile: ./packages/server
-    dir: ./packages/server
-    internal: true
-
-  app:
-    taskfile: ./packages/app
-    dir: ./packages/app
-    internal: true
-
-  runtime-wasm:
-    taskfile: ./packages/runtime-wasm
-    dir: ./packages/runtime-wasm
-    internal: true
-
-  runtime-worker:
-    taskfile: ./packages/runtime-worker
-    dir: ./packages/runtime-worker
-    internal: true
-
-  parser:
-    taskfile: ./packages/parser
-    dir: ./packages/parser
-    internal: true
-
-  parser-legacy:
-    taskfile: ./packages/parser-legacy
-    dir: ./packages/parser-legacy
-    internal: true
-
-  item-system:
-    taskfile: ./packages/item-system
-    dir: ./packages/item-system
-    internal: true
-
-  skybook-api:
-    taskfile: ./packages/skybook-api
-    dir: ./packages/skybook-api
-    internal: true
-
-  research:
-    taskfile: ./packages/research-scripts
-    dir: ./packages/research-scripts
-    internal: true
-
-  localization:
-    taskfile: ./packages/localization
-    dir: ./packages/localization
-    internal: true
-
-  item-assets:
-    taskfile: ./packages/item-assets
-    dir: ./packages/item-assets
-    internal: true
-
-  manual:
-    taskfile: ./packages/manual
-    dir: ./packages/manual
-    internal: true
-
-  intwc:
-    taskfile: ./packages/intwc
-    dir: ./packages/intwc
-    internal: true
+  server:         {taskfile: ./packages/server,           dir: ./packages/server,           internal: true}
+  app:            {taskfile: ./packages/app,              dir: ./packages/app,              internal: true}
+  blueflame:      {taskfile: ./packages/blueflame,        dir: ./packages/blueflame,        internal: true}
+  blueflame-deps: {taskfile: ./packages/blueflame-deps,   dir: ./packages/blueflame-deps,   internal: true}
+  blueflame-proc-macros: {taskfile: ./packages/blueflame-proc-macros, dir: ./packages/blueflame-proc-macros, internal: true}
+  runtime-wasm:   {taskfile: ./packages/runtime-wasm,     dir: ./packages/runtime-wasm,     internal: true}
+  runtime-worker: {taskfile: ./packages/runtime-worker,   dir: ./packages/runtime-worker,   internal: true}
+  parser:         {taskfile: ./packages/parser,           dir: ./packages/parser,           internal: true}
+  parser-legacy:  {taskfile: ./packages/parser-legacy,    dir: ./packages/parser-legacy,    internal: true}
+  item-system:    {taskfile: ./packages/item-system,      dir: ./packages/item-system,      internal: true}
+  skybook-api:    {taskfile: ./packages/skybook-api,      dir: ./packages/skybook-api,      internal: true}
+  research:       {taskfile: ./packages/research-scripts, dir: ./packages/research-scripts, internal: true}
+  localization:   {taskfile: ./packages/localization,     dir: ./packages/localization,     internal: true}
+  item-assets:    {taskfile: ./packages/item-assets,      dir: ./packages/item-assets,      internal: true}
+  manual:         {taskfile: ./packages/manual,           dir: ./packages/manual,           internal: true}
+  intwc:          {taskfile: ./packages/intwc,            dir: ./packages/intwc,            internal: true}
 
 tasks:
   install-cargo-extra-tools:
@@ -104,6 +56,7 @@ tasks:
     cmds:
       - task: parser:pull-artifacts-public
       - task: item-assets:pull-artifacts-public
+      - task: blueflame-deps:pull-artifacts-public
       - task: research:build
       - task: localization:build
       - task: item-assets:build-src
@@ -117,6 +70,7 @@ tasks:
       - item-assets:pull-artifacts
       - item-system:pull-artifacts
       - parser:pull-artifacts
+      - blueflame-deps:pull-artifacts
 
   check:
     desc: Run ALL of the checks
@@ -141,19 +95,37 @@ tasks:
       - runtime-worker:check
 
   check-layer-3:
-    deps:
-      - parser:check
+    cmds:
+      - task: parser:check
+      - task: blueflame-proc-macros:check
+      - task: blueflame-deps:check
+      # - task: blueflame:check
       # - task: runtime:check
       - task: runtime-wasm:check
       
 
   test:
     desc: Run ALL of the tests
+    cmds:
+      - task: test-layer-0
+      - task: test-layer-1
+      - task: test-layer-2
+      - cmd: echo 'All tests passed!'
+        silent: true
+
+  test-layer-2:
+    cmds:
+      - task: parser:test
+      - task: blueflame:test
+
+  test-layer-1:
     deps:
       - item-system:test
       - skybook-api:test
-    cmds:
-      - task: parser:test
+
+  test-layer-0:
+    deps:
+      - blueflame-deps:pull-artifacts
 
   build:
     desc: Check that components can build without failure
@@ -168,6 +140,8 @@ tasks:
     cmds:
       - task: parser:pull-artifacts
       - task: item-assets:pull-artifacts-ts
+      - task: item-system:pull-artifacts-ts
+      - task: blueflame-deps:pull-artifacts
         # this technically isn't needed, but not installing pnpm
         # causes CI to be unreliable due to cache issues
         # (and I couldn't figure out how to optinally enable the setup)
@@ -190,6 +164,7 @@ tasks:
   build-runtime-ci:
     cmds:
       - task: parser:pull-artifacts
+      - task: blueflame-deps:pull-artifacts
       - pnpm install --frozen-lockfile
       - task: runtime-wasm:build
       - task: runtime-wasm:clean-dist # so we don't upload non-min bundles
@@ -198,6 +173,7 @@ tasks:
   build-runtime-fast-ci:
     cmds:
       - task: parser:pull-artifacts
+      - task: blueflame-deps:pull-artifacts
       - pnpm install --frozen-lockfile
       - task: runtime-wasm:build-wasm
       - task: runtime-wasm:build-dist-min

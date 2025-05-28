@@ -1,5 +1,5 @@
 
-pub use blueflame_macros::singleton_info;
+pub use blueflame_deps::singleton_info;
 
 pub struct SingletonInfo {
     /// Name of the singleton for debugging purposes

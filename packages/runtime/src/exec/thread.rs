@@ -1,6 +1,6 @@
 use std::sync::mpsc;
 
-use blueflame::processor::Processor;
+use blueflame::processor::Cpu1;
 
 use crate::exec::{Job, JobSender};
 
@@ -11,7 +11,7 @@ use crate::exec::{Job, JobSender};
 pub struct Thread {
     slot: usize,
     recv: mpsc::Receiver<Job>,
-    cpu: Processor
+    cpu: Cpu1
 }
 
 impl Thread {
@@ -35,7 +35,7 @@ impl Thread {
     }
 }
 
-pub fn make_thread(slot: usize, cpu: Processor) -> (Thread, JobSender) {
+pub fn make_thread(slot: usize, cpu: Cpu1) -> (Thread, JobSender) {
     let (send, recv) = mpsc::channel();
     let thread = Thread {
         slot,

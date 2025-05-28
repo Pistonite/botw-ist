@@ -52,4 +52,4 @@ __impl! {
 mod singleton_info;
 pub use singleton_info::*;
 
-pub use blueflame_macros::singleton_instance;
+pub use blueflame_deps::singleton_instance;

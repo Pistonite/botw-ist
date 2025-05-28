@@ -36,13 +36,13 @@ pub struct Writer<'m> {
 
 macro_rules! trace {
     (bool, $tag:expr, $addr:expr, $start:expr, $value:expr) => { {
-            blueflame_macros::trace_memory!(concat!("st1  {}+0x{:08x}<= {}"), $tag, {$addr} - {$start}, if $value { "true" } else { "false" });
+            blueflame_deps::trace_memory!(concat!("st1  {}+0x{:08x}<= {}"), $tag, {$addr} - {$start}, if $value { "true" } else { "false" });
         } };
     ($len:expr, $tag:expr, $addr:expr, $start:expr, $value:expr, $width:literal) => { {
-            blueflame_macros::trace_memory!(concat!("st{:2} {}+0x{:08x}<= 0x{:0", $width, "x}"), $len * 8, $tag, {$addr} - {$start}, $value);
+            blueflame_deps::trace_memory!(concat!("st{:2} {}+0x{:08x}<= 0x{:0", $width, "x}"), $len * 8, $tag, {$addr} - {$start}, $value);
         } };
     ($len:expr, $tag:expr, $addr:expr, $start:expr, $value:literal) => { {
-            blueflame_macros::trace_memory!(concat!("st{:2} {}+0x{:08x}<= ", $value), $len * 8, $tag, {$addr} - {$start});
+            blueflame_deps::trace_memory!(concat!("st{:2} {}+0x{:08x}<= ", $value), $len * 8, $tag, {$addr} - {$start});
         } };
 }
 

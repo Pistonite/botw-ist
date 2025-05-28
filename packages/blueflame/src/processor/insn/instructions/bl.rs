@@ -4,7 +4,7 @@ use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
 use self_::insn::Core;
 use self_::{Error, reg};
 
-use blueflame_macros::trace_call;
+use blueflame_deps::trace_call;
 
 pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
         let label_offset = parse::get_label_val(args)?;

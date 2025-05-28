@@ -4,7 +4,7 @@ use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, Executab
 use self_::insn::Core;
 use self_::{glue, RegisterType, Error, reg};
 
-use blueflame_macros::trace_call;
+use blueflame_deps::trace_call;
 
 pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
         let rn = glue::parse_reg_or_panic(args);

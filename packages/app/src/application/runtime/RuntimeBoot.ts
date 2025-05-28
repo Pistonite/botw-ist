@@ -26,7 +26,9 @@ export async function initRuntime(
         if (isCustomImage) {
             useApplicationStore.getState().setCustomImageVersion("");
         }
-        return { err: (t) => translateGenericError(initWorkerResult.err.message, t) };
+        return {
+            err: (t) => translateGenericError(initWorkerResult.err.message, t),
+        };
     }
     const initResult = initWorkerResult.val;
     if (initResult.err) {

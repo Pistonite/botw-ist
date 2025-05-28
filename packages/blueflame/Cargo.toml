@@ -3,8 +3,8 @@ name = "blueflame"
 version = "0.0.0"
 edition = "2021"
 
-[dependencies.blueflame-macros]
-path = "../blueflame-macros"
+[dependencies.blueflame-deps]
+path = "../blueflame-deps"
 [dependencies.blueflame-proc-macros]
 path = "../blueflame-proc-macros"
 
@@ -60,7 +60,7 @@ default = [
     "trace-call",
 ]
 
-data = ["dep:disarm64"]
+data = ["dep:disarm64", "blueflame-deps/data"]
 
 # The trace-* features control what log::trace! statements are kept
 # These are mainly used for debugging

@@ -21,6 +21,7 @@ enum Entry {
     LegacyParse(Opcode, Option<Box<dyn ExecutableInstruction>>),
 }
 // ensure the size doesn't unexpectedly change
+#[cfg(not(target_arch = "wasm32"))] // wasm32 has different usize
 static_assertions::const_assert_eq!(std::mem::size_of::<Entry>(), 0x20);
 
 impl InsnVec {

@@ -1,7 +1,7 @@
 use derive_more::derive::{Deref, DerefMut};
 use enum_map::EnumMap;
 
-use blueflame_macros::trace_call;
+use blueflame_deps::trace_call;
 
 #[layered_crate::import]
 use processor::{

@@ -23,7 +23,11 @@ import type {
     RuntimeWorkerInitArgs,
     CustomImageInitParams,
 } from "@pistonite/skybook-api";
-import { type Translator, translateUI, useUITranslation } from "skybook-localization";
+import {
+    type Translator,
+    translateUI,
+    useUITranslation,
+} from "skybook-localization";
 
 import { useApplicationStore } from "self::application/store";
 import {
@@ -56,7 +60,7 @@ export type BootScreenProps = {
     params: CustomImageInitParams;
     /** State of the boot flow when initially showing the screen */
     initialState: BootScreenState;
-    /** 
+    /**
      * Initial localized error string, if the state is "InitializeError"
      * This is a function because some errors needs to be localized,
      * which isn't available yet when the error occured
@@ -116,7 +120,9 @@ export const BootScreen: React.FC<BootScreenProps> = ({
         openSetupOrDefaultPromptType || "LocalNoImage",
     );
     const t = useUITranslation();
-    const [errorStringGetter, setErrorStringGetter] = useState<((translator: Translator) => string) | undefined>(() => initialErrorString);
+    const [errorStringGetter, setErrorStringGetter] = useState<
+        ((translator: Translator) => string) | undefined
+    >(() => initialErrorString);
     const errorString = useMemo(() => {
         if (!errorStringGetter) {
             return undefined;
@@ -152,7 +158,6 @@ export const BootScreen: React.FC<BootScreenProps> = ({
         setDialogOpen(machineState !== "Initializing");
     }, [machineState]);
 
-
     if (machineState === "Initializing") {
         return null;
     }
@@ -177,7 +182,10 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                                 {t("button.refresh")}
                             </Button>
                             <DialogTrigger disableButtonEnhancement>
-                                <Button appearance="secondary" onClick={openSetupDialog}>
+                                <Button
+                                    appearance="secondary"
+                                    onClick={openSetupDialog}
+                                >
                                     {t("button.setup")}
                                 </Button>
                             </DialogTrigger>
@@ -237,9 +245,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                     )}
                 </p>
                 {promptType === "InitializeError" && (
-                    <ErrorBar>
-                        {errorString}
-                    </ErrorBar>
+                    <ErrorBar>{errorString}</ErrorBar>
                 )}
                 <Link
                     href="https://skybook.pistonite.dev/user/custom_image"

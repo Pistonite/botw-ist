@@ -14,7 +14,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
         }
         let byte = byte.strip_prefix('x').unwrap_or(byte);
         if !byte.chars().all(|c| c.is_ascii_hexdigit()) {
-            let error = format!("invalid byte: `{}`", byte);
+            let error = format!("invalid byte: `{byte}`");
             return syn::Error::new_spanned(input2, error)
                 .to_compile_error()
                 .into();
@@ -23,14 +23,14 @@ pub fn expand(input: TokenStream) -> TokenStream {
         let part: u32 = match u8::from_str_radix(byte, 16) {
             Ok(val) => val as u32,
             Err(_) => {
-                let error = format!("invalid byte value: `{}`", byte);
+                let error = format!("invalid byte value: `{byte}`");
                 return syn::Error::new_spanned(input2, error)
                     .to_compile_error()
                     .into();
             }
         };
 
-        result = result | (part << (8 * i));
+        result |= part << (8 * i);
     }
     TokenStream::from(quote_spanned! { input2.span() => #result })
 }

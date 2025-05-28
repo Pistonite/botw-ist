@@ -21,7 +21,7 @@ impl Memory {
 
 struct EmptyHookProvider;
 impl HookProvider for EmptyHookProvider {
-    fn fetch(&self, main_offset: u32, env: Environment) -> Result<Option<(Box<dyn Execute>, u32)>, crate::processor::Error> {
+    fn fetch(&self, _: u32, _: Environment) -> Result<Option<(Box<dyn Execute>, u32)>, crate::processor::Error> {
         Ok(None)
     }
 }

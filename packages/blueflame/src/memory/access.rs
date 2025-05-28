@@ -4,7 +4,7 @@ use enumset::{enum_set, EnumSet, EnumSetType};
 use memory::Unsigned32;
 
 #[doc(inline)]
-pub use blueflame_macros::access;
+pub use blueflame_deps::access;
 
 /// Information for accessing memory for tracking and reporting
 #[derive(Debug, Clone)]

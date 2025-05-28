@@ -1,6 +1,6 @@
 use std::sync::mpsc;
 
-use blueflame::processor::Processor;
+use blueflame::processor::Cpu1;
 
 mod error;
 pub use error::Error;
@@ -10,7 +10,7 @@ pub use thread::*;
 
 
 pub type JobSender = mpsc::Sender<Job>;
-pub type Job = Box<dyn FnOnce(&mut Processor) + Send + 'static>;
+pub type Job = Box<dyn FnOnce(&mut Cpu1) + Send + 'static>;
 
 /// Trait for platform-specific thread implementation to provide
 /// method to spawn and join threads

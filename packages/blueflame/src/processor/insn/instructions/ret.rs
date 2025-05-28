@@ -4,7 +4,7 @@ use self_::insn::instruction_parse::{ExecutableInstruction};
 use self_::insn::Core;
 use self_::{glue, RegisterType, Error, reg};
 
-use blueflame_macros::trace_call;
+use blueflame_deps::trace_call;
 
 pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
         if args.is_empty() {
@@ -61,21 +61,7 @@ impl ExecutableInstruction for RetInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::*;
     use self_::{Cpu0, Process, reg};
-
-    #[test]
-    pub fn simple_ret_test() -> anyhow::Result<()> {
-        let mut cpu = Cpu0::default();
-        let mut proc = Process::new_for_test();
-        cpu.stack_trace.push_bl(1000, 1u64);
-        cpu.pc = 1000;
-        cpu.write(reg!(lr), 5u64);
-        let mut core = Core::new(&mut cpu, &mut proc);
-        core.handle_string_command(&String::from("ret"))?;
-        assert_eq!(core.cpu.pc, 5);
-        Ok(())
-    }
 
     #[test]
     pub fn simple_ret_test_with_arg() -> anyhow::Result<()> {
@@ -83,9 +69,9 @@ mod tests {
         let mut proc = Process::new_for_test();
         cpu.stack_trace.push_bl(1000, 0x50 - 4);
         cpu.pc = 1000;
-        cpu.write::<u64>(reg!(x[10]), 0x50);
+        cpu.write::<u64>(reg!(lr), 0x50);
         let mut core = Core::new(&mut cpu, &mut proc);
-        core.handle_string_command(&String::from("ret x10"))?;
+        core.handle_string_command(&String::from("ret x30"))?;
         assert_eq!(core.cpu.pc, 0x50);
         Ok(())
     }

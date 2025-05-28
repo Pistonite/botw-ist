@@ -6,10 +6,11 @@ includes:
     internal: true
 
 tasks:
-  dev-doc:
+  check:
     cmds:
-      - task: cargo:watch-serve-doc
+      - task: cargo:clippy-all
+      - task: cargo:fmt-check
 
-  test:
+  fix:
     cmds:
-      - cargo test --lib
+      - task: cargo:fmt-fix

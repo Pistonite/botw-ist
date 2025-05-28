@@ -1,7 +1,7 @@
 
 use std::sync::{atomic::AtomicU32, Mutex, RwLock};
 
-use blueflame::processor::Processor;
+use blueflame::processor::Cpu1;
 
 use crate::exec::{Spawn, Join, JobSender, Error};
 
@@ -59,7 +59,7 @@ impl<S: Spawn> ExecutorImpl<S> {
     /// Execute a job
     pub async fn execute<F, T>(&self, f: F)  -> Result<T, Error>
     where 
-        F: FnOnce(&mut Processor) -> T + Send + 'static,
+        F: FnOnce(&mut Cpu1) -> T + Send + 'static,
         T: Send + 'static,
     {
         let (send, recv) = oneshot::channel();

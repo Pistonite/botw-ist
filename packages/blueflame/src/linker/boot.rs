@@ -1,14 +1,13 @@
 
 use std::sync::Arc;
 
-use blueflame_macros::align_up;
 #[layered_crate::import]
 use linker::{
     super::program::Program,
     super::processor::{self, Cpu1, Cpu3, Process, CrashReport},
     super::game::{Proxies, singleton},
     super::env::{DlcVer, Environment},
-    super::memory::{self, Memory, align_down, PAGE_SIZE, REGION_ALIGN, RegionType, Region, SimpleHeap},
+    super::memory::{self, Memory, align_up, align_down, PAGE_SIZE, REGION_ALIGN, RegionType, Region, SimpleHeap},
     self::{patch_memory, GameHooks}
 };
 

@@ -92,7 +92,9 @@ mod tests {
         core.handle_string_command("add w9, wzr, #1")?;
         core.handle_string_command("add x8, xzr, #10")?;
         core.handle_string_command("add x21, x8, w9, sxtw #4")?;
-        assert_eq!(cpu.read::<i64>(reg!(x[21])), 26);
+        assert_eq!(core.cpu.read::<i64>(reg!(x[21])), 26);
+        core.handle_string_command("add x21, x8, w9, sxtw #4")?;
+
         Ok(())
     }
 }
