@@ -180,6 +180,7 @@ parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 # Runtime Init error messages
 runtime_init.BadDlcVersion: "Versione DLC non valida: {{version}}. Le versioni consentite sono 0 (nessun DLC), 1, 2 e 3"
 runtime_init.BadImage: "Immagine personalizzata non valida"
+runtime_init.Executor: "Impossibile creare i thread dell'esecutore"
 runtime_init.InvalidPmdmAddr: "Il formato del parametro 'pmdm-addr' non è valido"
 runtime_init.InvalidProgramStart: "Il formato del parametro 'program-start' non è valido"
 runtime_init.InvalidStackStart: "Il formato del parametro 'stack-start' non è valido"

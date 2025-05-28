@@ -180,6 +180,7 @@ parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 # Runtime Init error messages
 runtime_init.BadDlcVersion: "Недопустимая версия DLC: {{version}}. Допустимые версии: 0 (без DLC), 1, 2 и 3"
 runtime_init.BadImage: "Недопустимый пользовательский образ"
+runtime_init.Executor: "Не удалось создать потоки исполнителя"
 runtime_init.InvalidPmdmAddr: "Недопустимый формат параметра 'pmdm-addr'"
 runtime_init.InvalidProgramStart: "Недопустимый формат параметра 'program-start'"
 runtime_init.InvalidStackStart: "Недопустимый формат параметра 'stack-start'"

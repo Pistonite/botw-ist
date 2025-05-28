@@ -180,6 +180,7 @@ parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 # Runtime Init error messages
 runtime_init.BadDlcVersion: "Ongeldige DLC-versie: {{version}}. Toegestane versies zijn 0 (geen DLC), 1, 2 en 3"
 runtime_init.BadImage: "Ongeldige aangepaste afbeelding"
+runtime_init.Executor: "Kan executor-threads niet aanmaken"
 runtime_init.InvalidPmdmAddr: "Het formaat van de parameter 'pmdm-addr' is ongeldig"
 runtime_init.InvalidProgramStart: "Het formaat van de parameter 'program-start' is ongeldig"
 runtime_init.InvalidStackStart: "Het formaat van de parameter 'stack-start' is ongeldig"

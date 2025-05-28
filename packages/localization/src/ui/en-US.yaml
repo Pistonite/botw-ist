@@ -180,6 +180,7 @@ parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 # Runtime Init error messages
 runtime_init.BadDlcVersion: "Bad DLC Version: {{version}}. Allowed versions are 0 (no DLC), 1, 2 and 3"
 runtime_init.BadImage: "Bad Custom Image"
+runtime_init.Executor: "Could not create executor threads"
 runtime_init.InvalidPmdmAddr: "The format of the pmdm-addr parameter is invalid"
 runtime_init.InvalidProgramStart: "The format of the program-start parameter is invalid"
 runtime_init.InvalidStackStart: "The format of the stack-start parameter is invalid"

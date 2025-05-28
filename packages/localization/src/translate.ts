@@ -2,7 +2,10 @@ import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { useCallback } from "react";
 
-export type Translator = (key: string, options?: Record<string, unknown>) => string;
+export type Translator = (
+    key: string,
+    options?: Record<string, unknown>,
+) => string;
 
 export const translateUI = (key: string, options?: Record<string, unknown>) => {
     return i18next.t(`ui:${key}`, options);

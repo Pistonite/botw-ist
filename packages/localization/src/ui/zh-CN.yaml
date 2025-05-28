@@ -180,6 +180,7 @@ parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 # Runtime Init error messages
 runtime_init.BadDlcVersion: "无效DLC版本: {{version}}. 有效版本为: 0 (无DLC), 1, 2 和 3"
 runtime_init.BadImage: "无效自定义镜像数据"
+runtime_init.Executor: "创造执行器线程失败"
 runtime_init.InvalidPmdmAddr: "pmdm-addr参数格式错误"
 runtime_init.InvalidProgramStart: "program-start参数格式错误"
 runtime_init.InvalidStackStart: "stack-start参数格式错误"

@@ -180,6 +180,7 @@ parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 # Runtime Init error messages
 runtime_init.BadDlcVersion: "잘못된 DLC 버전: {{version}}. 허용되는 버전은 0 (DLC 없음), 1, 2, 3입니다"
 runtime_init.BadImage: "잘못된 사용자 정의 이미지입니다"
+runtime_init.Executor: "실행기 스레드를 생성할 수 없습니다"
 runtime_init.InvalidPmdmAddr: "'pmdm-addr' 매개변수의 형식이 잘못되었습니다"
 runtime_init.InvalidProgramStart: "'program-start' 매개변수의 형식이 잘못되었습니다"
 runtime_init.InvalidStackStart: "'stack-start' 매개변수의 형식이 잘못되었습니다"

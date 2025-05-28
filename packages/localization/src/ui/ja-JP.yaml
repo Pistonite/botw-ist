@@ -180,6 +180,7 @@ parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 # Runtime Init error messages
 runtime_init.BadDlcVersion: "無効なDLCバージョン: {{version}}。許可されているバージョンは0（DLCなし）、1、2、3です"
 runtime_init.BadImage: "無効なカスタムイメージです"
+runtime_init.Executor: "エグゼキュータースレッドを作成できませんでした"
 runtime_init.InvalidPmdmAddr: "パラメータ 'pmdm-addr' の形式が無効です"
 runtime_init.InvalidProgramStart: "パラメータ 'program-start' の形式が無効です"
 runtime_init.InvalidStackStart: "パラメータ 'stack-start' の形式が無効です"

@@ -4,7 +4,7 @@ import { type Translator, translateUI } from "../translate.ts";
 
 export const translateRuntimeInitError = (
     error: RuntimeWorkerInitError,
-    translator: Translator  = translateUI,
+    translator: Translator = translateUI,
 ): string => {
     const key = `runtime_init.${error.type}`;
     switch (error.type) {

@@ -5,7 +5,10 @@ import { type Translator, translateUI } from "../translate.ts";
 import { translateCategory } from "./Category.ts";
 import { translateGenericError } from "./Error.ts";
 
-export const translateParserError = (error: ParserError, translator:Translator = translateUI): string => {
+export const translateParserError = (
+    error: ParserError,
+    translator: Translator = translateUI,
+): string => {
     const key = `parser.${error.type}`;
     switch (error.type) {
         case "Unexpected":
