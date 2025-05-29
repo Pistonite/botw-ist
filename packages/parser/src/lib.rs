@@ -7,8 +7,8 @@ pub mod syn;
 pub mod search;
 
 mod parse_output;
-pub use parse_output::parse_script as parse;
 pub use parse_output::ParseOutput;
+pub use parse_output::parse_script as parse;
 pub use parse_output::{parse_semantic, parse_tokens};
 
 mod semantic_token;

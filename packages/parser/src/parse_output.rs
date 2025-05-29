@@ -2,11 +2,11 @@ use std::sync::Arc;
 
 use teleparse::{Parser, Span, ToSpan};
 
+use crate::SemanticToken;
 use crate::cir;
 use crate::error::{Error, ErrorReport};
 use crate::search::QuotedItemResolver;
 use crate::syn;
-use crate::SemanticToken;
 
 /// Output of parsing the script
 #[derive(Debug, Clone, Default)]
@@ -41,11 +41,7 @@ impl ParseOutput {
             Ok(i) => i,
             Err(i) => i.saturating_sub(1),
         };
-        if i < self.steps.len() {
-            Some(i)
-        } else {
-            None
-        }
+        if i < self.steps.len() { Some(i) } else { None }
     }
 }
 

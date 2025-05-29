@@ -1,7 +1,7 @@
 mod item_search_common;
 use item_search_common::test_item_search;
 use skybook_parser::cir;
-use skybook_parser::search::{search_item_by_ident, search_item_by_ident_all, ResolvedItem};
+use skybook_parser::search::{ResolvedItem, search_item_by_ident, search_item_by_ident_all};
 
 #[test]
 fn test_item_search_empty() {

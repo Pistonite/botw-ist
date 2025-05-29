@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use teleparse::{tp, Span, ToSpan};
+use teleparse::{Span, ToSpan, tp};
 
 use crate::error::{Error, ErrorReport};
 use crate::syn;
