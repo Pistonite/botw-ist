@@ -1,12 +1,12 @@
+use super::gdt_hooks;
 #[layered_crate::import]
 use linker::{
+    super::env::{DlcVer, Environment, GameVer},
     super::game::{gdt, singleton_instance},
     super::memory::{self, Memory, access},
-    super::processor::{self, reg, Cpu0, Process, HookProvider, Execute},
     super::processor::insn::paste_insn,
-    super::env::{Environment, GameVer, DlcVer},
+    super::processor::{self, Cpu0, Execute, HookProvider, Process, reg},
 };
-use super::gdt_hooks;
 
 macro_rules! fn_table {
     ($main_offset:ident size fn $( $offset:literal $size:literal $function:expr ),* $(,)?) => {
@@ -31,20 +31,27 @@ pub fn patch_memory(memory: &mut Memory, env: Environment) -> Result<(), memory:
         return Ok(());
     }
 
-    let f= access!(force);
+    let f = access!(force);
 
     // in uking::ui::PauseMenuDataMgr::createPlayerEquipment and doCreateEquipmentFromItem
     // skip the check for if CreatePlayerEquipActorMgr is null
-    memory.write(main_start + 0x971540, f)?.write_u32(paste_insn!(1F 20 03 D5))?;
-    memory.write(main_start + 0xaa81ec, f)?.write_u32(paste_insn!(1F 20 03 D5))?;
-
+    memory
+        .write(main_start + 0x971540, f)?
+        .write_u32(paste_insn!(1F 20 03 D5))?;
+    memory
+        .write(main_start + 0xaa81ec, f)?
+        .write_u32(paste_insn!(1F 20 03 D5))?;
 
     Ok(())
 }
 
 pub struct GameHooks;
 impl HookProvider for GameHooks {
-    fn fetch(&self, main_offset: u32, env: Environment) -> Result<Option<(Box<dyn Execute>, u32)>, processor::Error> {
+    fn fetch(
+        &self,
+        main_offset: u32,
+        env: Environment,
+    ) -> Result<Option<(Box<dyn Execute>, u32)>, processor::Error> {
         if env.is160() {
             // TODO --160: hooks for 160
             return Ok(None);
@@ -58,7 +65,7 @@ impl HookProvider for GameHooks {
         0x00849580  003456 return_void, // Player::equipmentStuff
         0x0085456c  000068 get_player,  // ksys::act::PlayerInfo::getPlayer
         0x00d2e950  000348 return_void, // ksys::act::InfoData::logFailure
-           
+
         // ksys::gdt::TriggerParam
         0x00ddf0f8  000124 gdt_hooks::get_bool, // getBool by idx
         0x00ddf174  000120 gdt_hooks::get_s32,  // getS32 by idx
@@ -158,7 +165,7 @@ impl HookProvider for GameHooks {
         0x00de80c4  000284 return_false,//_ZN4ksys3gdt12TriggerParam10resetVec4fEiib
             // not doing copyFlags stuff
         0x00deeb8c  002628 gdt_hooks::reset_all,//_ZN4ksys3gdt12TriggerParam28resetAllFlagsToInitialValuesEv
-        
+
         0x00df08b8  000184 gdt_hooks::idx_from_hash::<gdt::fd!(bool)>, // getBoolIdx by hash
         0x00df0970  000184 gdt_hooks::idx_from_hash::<gdt::fd!(s32)>,  // getS32Idx by hash
         0x00df0a28  000184 gdt_hooks::idx_from_hash::<gdt::fd!(f32)>,//_ZNK4ksys3gdt12TriggerParam9getF32IdxEj
@@ -174,9 +181,9 @@ impl HookProvider for GameHooks {
         0x00df10b8  000144 gdt_hooks::idx_from_hash::<gdt::fd!(str256[])>,//_ZNK4ksys3gdt12TriggerParam17getStr256ArrayIdxEj
         0x00df1148  000144 gdt_hooks::idx_from_hash::<gdt::fd!(vec2f[])>,//_ZNK4ksys3gdt12TriggerParam16getVec2fArrayIdxEj
         0x00df11d8  000144 gdt_hooks::idx_from_hash::<gdt::fd!(vec3f[])>,//_ZNK4ksys3gdt12TriggerParam16getVec3fArrayIdxEj
-        
+
         0x011f3364  000032 return_0, // ksys::util::getDebugHeap
-        
+
         // --- .plt
         0x018001d0  000016 memcpy,
         0x018001e0  000016 return_true, // __cxa_guard_acquire
@@ -186,7 +193,7 @@ impl HookProvider for GameHooks {
         0x01800a10  000016 return_void, // nn::os::LockMutex
         0x01800a20  000016 return_void, // nn::os::UnlockMutex
         0x01800bf0  000016 vsnprintf,   // nn::util::VSNPrintf
-        
+
         };
 
         Ok(None)
@@ -198,13 +205,20 @@ fn get_player(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> {
     reg! { cpu: x[0] = player_ptr, return };
 }
 
-fn do_request_create_weapon_150(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+fn do_request_create_weapon_150(
+    cpu: &mut Cpu0,
+    proc: &mut Process,
+) -> Result<(), processor::Error> {
     do_request_create_weapon(cpu, proc, Environment::new(GameVer::X150, DlcVer::V300))
 }
 
 /// uking::act::CreatePlayerEquipActorMgr::doRequestCreateWeapon
 /// (this, i32 slot_idx, sead::SafeString* name, int value, WeaponModifierInfo* modifier, _)
-fn do_request_create_weapon(cpu: &mut Cpu0, proc: &mut Process, env: Environment) -> Result<(), processor::Error> {
+fn do_request_create_weapon(
+    cpu: &mut Cpu0,
+    proc: &mut Process,
+    env: Environment,
+) -> Result<(), processor::Error> {
     let main_start = proc.main_start();
     let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
 
@@ -248,7 +262,6 @@ fn memcpy(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
     }
     reg! { cpu: return }; // returning x0 -- already in there
 }
-
 
 /// memset(start, value, size)
 fn memset(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
@@ -300,7 +313,6 @@ fn return_void(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> 
 }
 
 fn return_true(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> {
-    log::debug!("here");
     reg! { cpu: x[0] = true, return }
 }
 

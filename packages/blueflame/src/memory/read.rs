@@ -2,12 +2,14 @@ use derive_more::derive::Constructor;
 
 #[layered_crate::import]
 use memory::{
+    self::{AccessFlags, Error, Memory, PAGE_SIZE, Page},
     super::env::enabled,
-    self::{AccessFlags, Error, Page, Memory, PAGE_SIZE}
 };
 
 #[cfg(feature = "trace-memory")]
-static READS: std::sync::LazyLock<std::sync::Arc<std::sync::Mutex<std::collections::BTreeSet<u64>>>> = std::sync::LazyLock::new(|| {
+static READS: std::sync::LazyLock<
+    std::sync::Arc<std::sync::Mutex<std::collections::BTreeSet<u64>>>,
+> = std::sync::LazyLock::new(|| {
     std::sync::Arc::new(std::sync::Mutex::new(std::collections::BTreeSet::new()))
 });
 
@@ -53,7 +55,6 @@ pub struct Reader<'m> {
 
     // note that both page_off and addr are needed,
     // because we need to know when we are crossing page boundary
-
     /// Current offset into the current page
     page_off: u32,
     /// Maximum page offset this reader can read to (exclusive)
@@ -61,23 +62,37 @@ pub struct Reader<'m> {
     max_page_off: u32,
     /// Current physical address being read
     addr: u64,
-    
+
     flags: AccessFlags,
 }
 
 macro_rules! trace {
-    (bool, $addr:expr, $addr_str:expr, $value:expr) => { {
-            #[cfg(feature = "trace-memory")] { record_read($addr); }
-            blueflame_deps::trace_memory!(concat!("ld1  {} =>{}"), $addr_str, if $value { "true" } else { "false" });
-        } };
-    ($len:expr, $addr:expr, $addr_str:expr, $value:expr, $width:literal) => { {
-            #[cfg(feature = "trace-memory")] { record_read($addr); }
-            blueflame_deps::trace_memory!(concat!("ld{:<2} {} =>0x{:0", $width, "x}"), $len * 8, $addr_str, $value);
-        } };
+    (bool, $addr:expr, $addr_str:expr, $value:expr) => {{
+        #[cfg(feature = "trace-memory")]
+        {
+            record_read($addr);
+        }
+        blueflame_deps::trace_memory!(
+            concat!("ld1  {} =>{}"),
+            $addr_str,
+            if $value { "true" } else { "false" }
+        );
+    }};
+    ($len:expr, $addr:expr, $addr_str:expr, $value:expr, $width:literal) => {{
+        #[cfg(feature = "trace-memory")]
+        {
+            record_read($addr);
+        }
+        blueflame_deps::trace_memory!(
+            concat!("ld{:<2} {} =>0x{:0", $width, "x}"),
+            $len * 8,
+            $addr_str,
+            $value
+        );
+    }};
 }
 
 impl<'m> Reader<'m> {
-
     /// Skip `len` bytes in the memory
     #[inline]
     pub fn skip(&mut self, len: u32) {
@@ -194,23 +209,24 @@ impl<'m> Reader<'m> {
     /// First it will make sure the region and page reference are valid,
     /// then, it will check if the read is allowed
     fn prep_read(&mut self, len: u32) -> Result<(), Error> {
-
         // are we still on the same page?
         if self.page_off >= self.max_page_off {
             // query the memory for the next page
-            let (section_idx, page_idx, page_off, max_page_off) = 
-            self.memory.calculate(self.addr, self.flags)?;
+            let (section_idx, page_idx, page_off, max_page_off) =
+                self.memory.calculate(self.addr, self.flags)?;
             self.page = self.memory.page_by_indices_unchecked(section_idx, page_idx);
             self.page_off = page_off;
             self.max_page_off = max_page_off;
         }
 
         if self.page_off + len > self.max_page_off {
-            log::error!("boundary hit at {}, reading {len} bytes", self.memory.format_addr(self.addr));
+            log::error!(
+                "boundary hit at {}, reading {len} bytes",
+                self.memory.format_addr(self.addr)
+            );
             return Err(Error::Boundary(self.addr, self.flags));
         }
 
         Ok(())
     }
-
 }

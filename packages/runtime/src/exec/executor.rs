@@ -1,9 +1,8 @@
-
-use std::sync::{atomic::AtomicU32, Mutex, RwLock};
+use std::sync::{Mutex, RwLock, atomic::AtomicU32};
 
 use blueflame::processor::Cpu1;
 
-use crate::exec::{Spawn, Join, JobSender, Error};
+use crate::exec::{Error, JobSender, Join, Spawn};
 
 /// A non-work-stealing executor pool of emulated processors
 ///
@@ -32,14 +31,20 @@ impl<S: Spawn> ExecutorImpl<S> {
         {
             let handles = self.handles.read().map_err(|_| Error::Lock)?;
             if handles.len() >= size {
-                log::info!("already have {} threads, not creating new threads", handles.len());
+                log::info!(
+                    "already have {} threads, not creating new threads",
+                    handles.len()
+                );
                 return Ok(());
             }
         }
         {
             let mut handles = self.handles.write().map_err(|_| Error::Lock)?;
             if handles.len() >= size {
-                log::info!("already have {} threads, not creating new threads", handles.len());
+                log::info!(
+                    "already have {} threads, not creating new threads",
+                    handles.len()
+                );
                 return Ok(());
             }
             let to_create = size - handles.len();
@@ -57,8 +62,8 @@ impl<S: Spawn> ExecutorImpl<S> {
     }
 
     /// Execute a job
-    pub async fn execute<F, T>(&self, f: F)  -> Result<T, Error>
-    where 
+    pub async fn execute<F, T>(&self, f: F) -> Result<T, Error>
+    where
         F: FnOnce(&mut Cpu1) -> T + Send + 'static,
         T: Send + 'static,
     {
@@ -69,14 +74,19 @@ impl<S: Spawn> ExecutorImpl<S> {
             if handles.is_empty() {
                 return Err(Error::EmptyPool);
             }
-            let serial = self.serial.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let serial = self
+                .serial
+                .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             let i = (serial as usize) % handles.len();
 
             log::debug!("executing job on processor thread {}", i);
-            handles[i].1.send(Box::new(|p| {
-                let t = f(p);
-                let _ = send.send(t);
-            })).map_err(|e| Error::SendJob(e.to_string()))?;
+            handles[i]
+                .1
+                .send(Box::new(|p| {
+                    let t = f(p);
+                    let _ = send.send(t);
+                }))
+                .map_err(|e| Error::SendJob(e.to_string()))?;
 
             i
         };
@@ -87,11 +97,15 @@ impl<S: Spawn> ExecutorImpl<S> {
                 log::debug!("processor thread {} finished job", i);
                 return Ok(t);
             }
-            Err(e) => e
+            Err(e) => e,
         };
 
         // if error happens, try to kill the thread and make a new one
-        log::error!("failed to send job to processor thread {}: {}", i, exec_error);
+        log::error!(
+            "failed to send job to processor thread {}: {}",
+            i,
+            exec_error
+        );
         log::info!("trying to spawn new processor thread");
         let (join, send) = {
             let mut handles = self.handles.write().map_err(|_| Error::Lock)?;

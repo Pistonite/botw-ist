@@ -1,16 +1,15 @@
-
 use std::sync::Arc;
 
 use rkyv::{Deserialize, rancor};
 
 #[layered_crate::import]
 use linker::{
-    super::program::ArchivedProgram,
-    super::processor::{self, Cpu1, Cpu3, Process, CrashReport},
-    super::game::{Proxies, singleton},
+    self::{GameHooks, patch_memory},
     super::env::{DlcVer, Environment, GameVer},
-    super::memory::{self, Memory, align_up, align_down, PAGE_SIZE, REGION_ALIGN, SimpleHeap},
-    self::{patch_memory, GameHooks}
+    super::game::{Proxies, singleton},
+    super::memory::{self, Memory, PAGE_SIZE, REGION_ALIGN, SimpleHeap, align_down, align_up},
+    super::processor::{self, Cpu1, Cpu3, CrashReport, Process},
+    super::program::ArchivedProgram,
 };
 
 /// Error that only happens during boot
@@ -31,7 +30,7 @@ pub enum Error {
     #[error("memory error: {0}")]
     Memory(#[from] memory::Error),
     #[error("{0:?}")]
-    Crash(#[from] CrashReport)
+    Crash(#[from] CrashReport),
 }
 
 /// Initialize memory for the process
@@ -45,8 +44,7 @@ pub fn init_process(
     pmdm_address: u64,
     heap_size: u32,
 ) -> Result<Process, Error> {
-    let ver = 
-    rkyv::deserialize::<GameVer, rancor::Error>(&image.ver)
+    let ver = rkyv::deserialize::<GameVer, rancor::Error>(&image.ver)
         .map_err(|e| Error::BadImage(e.to_string()))?;
     let env = Environment::new(ver, dlc_version);
     // calculate heap start address
@@ -105,34 +103,29 @@ pub fn init_process(
     let program_size = image.program_size.into();
 
     // check the regions don't overlap before allocating memory
-    if overlaps(
-        program_start,
-        program_size,
-        stack_start,
-        stack_size,
-    ) {
-        return Err(Error::RegionOverlap("program".to_string(), "stack".to_string()));
+    if overlaps(program_start, program_size, stack_start, stack_size) {
+        return Err(Error::RegionOverlap(
+            "program".to_string(),
+            "stack".to_string(),
+        ));
     }
 
-    if overlaps(
-        program_start,
-        program_size,
-        heap_start,
-        heap_size,
-    ) {
-        return Err(Error::RegionOverlap("program".to_string(), "heap".to_string()));
+    if overlaps(program_start, program_size, heap_start, heap_size) {
+        return Err(Error::RegionOverlap(
+            "program".to_string(),
+            "heap".to_string(),
+        ));
     }
     if overlaps(stack_start, stack_size, heap_start, heap_size) {
-        return Err(Error::RegionOverlap("stack".to_string(), "heap".to_string()));
+        return Err(Error::RegionOverlap(
+            "stack".to_string(),
+            "heap".to_string(),
+        ));
     }
 
     // construct the memory
     log::debug!("creating memory");
-    let heap = SimpleHeap::new(
-        heap_start,
-        heap_size,
-        heap_min_size as u64 + heap_start,
-    );
+    let heap = SimpleHeap::new(heap_start, heap_size, heap_min_size as u64 + heap_start);
     let mut memory = Memory::new_program_zc(
         env,
         program_start,
@@ -170,7 +163,6 @@ pub fn init_process(
         singleton::aocm::create_instance(cpu, env)?;
         Ok(())
     })?;
-
 
     log::debug!("process created");
 

@@ -5,12 +5,15 @@ use blueflame_deps::trace_call;
 
 #[layered_crate::import]
 use processor::{
-    super::env::{GameVer, enabled, ProxyId, DataId},
-    super::vm::VirtualMachine,
+    self::{
+        BLOCK_COUNT_LIMIT, BLOCK_ITERATION_LIMIT, CrashReport, Error, ExecuteCache, Process,
+        Registers, STACK_RESERVATION, StackTrace, reg,
+    },
+    super::env::{DataId, GameVer, ProxyId, enabled},
+    super::game::gdt,
     super::memory::{MemObject, Ptr},
     super::program::ArchivedProgram,
-    super::game::gdt,
-    self::{ExecuteCache, Registers, Process, Error, StackTrace, reg, BLOCK_COUNT_LIMIT, CrashReport, BLOCK_ITERATION_LIMIT, STACK_RESERVATION},
+    super::vm::VirtualMachine,
 };
 
 const INTERNAL_RETURN_ADDRESS: u64 = 0xDEAD464C414D45AAu64;
@@ -19,11 +22,11 @@ const STACK_CHECK: u64 = 0xDEADBEEFCAFEAAAA;
 
 // Note for using Deref/DerefMut for CPU layers:
 //
-// It's semanticaly not correct to use Deref/DerefMut here, 
-// because the structs are not smart pointers. 
+// It's semanticaly not correct to use Deref/DerefMut here,
+// because the structs are not smart pointers.
 // We are using Deref/DerefMut to transparently allowing
 // higher layer to access lower layer, without having
-// to write long access chains. 
+// to write long access chains.
 //
 // Please do not copy this pattern without first considering the implications.
 // See https://doc.rust-lang.org/std/ops/trait.Deref.html#when-to-implement-deref-or-derefmut
@@ -39,7 +42,7 @@ pub struct Cpu3<'a, 'b, 'c> {
     pub program: &'c ArchivedProgram,
     // adding singleton rel_start to this gets the physical
     // address of the singleton
-    heap_start_adjusted: u64
+    heap_start_adjusted: u64,
 }
 
 /// Level 2 CPU state.
@@ -82,8 +85,8 @@ pub struct Cpu0 {
 
 impl<'a, 'b, 'c> Cpu3<'a, 'b, 'c> {
     pub fn new(
-        cpu1: &'a mut Cpu1, 
-        process: &'b mut Process, 
+        cpu1: &'a mut Cpu1,
+        process: &'b mut Process,
         program: &'c ArchivedProgram,
         heap_start_adjusted: u64,
     ) -> Self {
@@ -115,7 +118,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
             0..31 => self.write(reg!(x[reg]), value),
             31 => {
                 log::error!("attempt to write to X31 in VM, which is a reserved register");
-            },
+            }
             _ => self.write(reg!(d[reg - 32]), value),
         }
         Ok(())
@@ -127,8 +130,8 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
             31 => {
                 log::error!("attempt to copy from X31 in VM, which is a reserved register");
                 return Ok(());
-            },
-            _ => self.read(reg!(d[from - 32]))
+            }
+            _ => self.read(reg!(d[from - 32])),
         };
         self.v_reg_set(to, value)
     }
@@ -175,9 +178,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     }
 
     fn v_data_alloc(&mut self, id: DataId) -> Result<(), Self::Error> {
-        let Some(data) = self.program.data.iter().find(|d| {
-            d.id == id
-        }) else {
+        let Some(data) = self.program.data.iter().find(|d| d.id == id) else {
             return Err(Error::MissingData(id));
         };
         let bytes = &data.bytes;
@@ -215,31 +216,33 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
 
 impl Cpu3<'_, '_, '_> {
     /// Execute the function, and turn any error that happened into a [`CrashReport`]
-    pub fn with_crash_report<T, F: FnOnce(&mut Self) -> Result<T, Error>>(&mut self, f: F) -> Result<T, CrashReport> {
+    pub fn with_crash_report<T, F: FnOnce(&mut Self) -> Result<T, Error>>(
+        &mut self,
+        f: F,
+    ) -> Result<T, CrashReport> {
         match f(self) {
             Ok(result) => Ok(result),
-            Err(e) => Err(self.make_crash_report(e))
+            Err(e) => Err(self.make_crash_report(e)),
         }
     }
 }
 
 impl<'a, 'b> Cpu2<'a, 'b> {
     pub fn new(cpu1: &'a mut Cpu1, proc: &'b mut Process) -> Self {
-        Self {
-            cpu1,
-            proc,
-        }
+        Self { cpu1, proc }
     }
 }
 impl Cpu2<'_, '_> {
     pub fn native_jump_to_main_offset(&mut self, off: u32) -> Result<(), Error> {
         let main_start = self.proc.main_start();
         self.native_jump(main_start + off as u64)
-
     }
     /// Make a jump to the target address and execute until it returns
     pub fn native_jump(&mut self, pc: u64) -> Result<(), Error> {
-        trace_call!("            native jump >>>>> main+0x{:08x}", pc - self.proc.main_start());
+        trace_call!(
+            "            native jump >>>>> main+0x{:08x}",
+            pc - self.proc.main_start()
+        );
         let pc_before = self.pc;
 
         self.write(reg!(lr), INTERNAL_RETURN_ADDRESS);
@@ -259,7 +262,11 @@ impl Cpu2<'_, '_> {
         }
 
         self.pc = pc_before;
-        trace_call!("   native jump finished >>>>> 0x{:016x} (main+0x{:08x})", self.pc, self.pc - self.proc.main_start());
+        trace_call!(
+            "   native jump finished >>>>> 0x{:016x} (main+0x{:08x})",
+            self.pc,
+            self.pc - self.proc.main_start()
+        );
 
         Ok(())
     }
@@ -285,8 +292,8 @@ impl Cpu2<'_, '_> {
                         (0x4000, true)
                     }
                 }
-            },
-            Err(bytes) => (bytes, false)
+            }
+            Err(bytes) => (bytes, false),
         };
         // not found in cache - load from process memory
         let bytes = fetch_max_bytes.max(4);
@@ -305,9 +312,14 @@ impl Cpu2<'_, '_> {
         self.cpu1.cache[ver].insert(false, self.proc.main_start(), pc, bytes, exe)?;
 
         let Ok((exe, step)) = self.cpu1.cache[ver].get(pc) else {
-            return Err(Error::Unexpected("failed to insert to execute cache".to_string()))
+            return Err(Error::Unexpected(
+                "failed to insert to execute cache".to_string(),
+            ));
         };
-        debug_assert!(step == 0, "step should be 0 after inserting to cache with the same PC");
+        debug_assert!(
+            step == 0,
+            "step should be 0 after inserting to cache with the same PC"
+        );
         // execute
         exe.execute_from(&mut self.cpu1.cpu0, self.proc, step)
     }
@@ -331,10 +343,13 @@ impl Cpu2<'_, '_> {
     }
 
     /// Execute the function, and turn any error that happened into a [`CrashReport`]
-    pub fn with_crash_report<T, F: FnOnce(&mut Self) -> Result<T, Error>>(&mut self, f: F) -> Result<T, CrashReport> {
+    pub fn with_crash_report<T, F: FnOnce(&mut Self) -> Result<T, Error>>(
+        &mut self,
+        f: F,
+    ) -> Result<T, CrashReport> {
         match f(self) {
             Ok(result) => Ok(result),
-            Err(e) => Err(self.make_crash_report(e))
+            Err(e) => Err(self.make_crash_report(e)),
         }
     }
 

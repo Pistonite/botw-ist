@@ -1,5 +1,6 @@
 #![feature(string_from_utf8_lossy_owned)]
 #![feature(optimize_attribute)]
+#![feature(proc_macro_hygiene)]
 
 extern crate self as blueflame;
 
@@ -13,7 +14,7 @@ mod src {
     #[depends_on(program)]
     #[depends_on(env)]
     #[cfg(feature = "data")]
-    pub extern crate linker;
+    pub mod linker;
 
     /// Implementation of the processor (CPU) layers
     #[depends_on(game)]
@@ -22,33 +23,33 @@ mod src {
     #[depends_on(vm)]
     #[depends_on(env)]
     #[cfg(feature = "data")]
-    pub extern crate processor;
+    pub mod processor;
 
     /// Mid-level simulation of some of the game's types and systems
     #[depends_on(memory)]
     #[depends_on(vm)]
     #[depends_on(env)]
     #[cfg(feature = "data")]
-    pub extern crate game;
+    pub mod game;
 
     /// Low-level memory emulation
     #[depends_on(program)]
     #[depends_on(env)]
-    pub extern crate memory;
+    pub mod memory;
 
     /// Utilities for handling BlueFlame program images
     #[depends_on(env)]
-    pub extern crate program;
+    pub mod program;
 
     /// Virtual machine to execute logical main module gadgets
     #[depends_on(env)]
-    pub extern crate vm;
+    pub mod vm;
 
     /// Shared environment utilities
-    pub extern crate env;
+    pub mod env;
 
     #[cfg(test)]
-    pub extern crate test_utils;
+    pub mod test_utils;
 }
 
 /// Re-export other crates to use in macros

@@ -1,7 +1,7 @@
 #[layered_crate::import]
 use program::{
-    super::env::{GameVer, DataId},
-    self::{Program, Module, Section, Segment, Data},
+    self::{Data, Module, Program, Section, Segment},
+    super::env::{DataId, GameVer},
 };
 
 /// Start building a program image
@@ -48,13 +48,13 @@ pub struct BuilderPhase2(Builder);
 impl BuilderPhase2 {
     /// Add a new section with relative start to the program start.
     /// It will be automatically added to the right module
-    pub fn add_section(
-        mut self,
-        rel_start: u32,
-        permissions: u32,
-    ) -> Self {
+    pub fn add_section(mut self, rel_start: u32, permissions: u32) -> Self {
         log::debug!("adding section at rel_start: {rel_start:#08x}");
-        let i = match self.0.modules.binary_search_by_key(&rel_start, |m| m.rel_start) {
+        let i = match self
+            .0
+            .modules
+            .binary_search_by_key(&rel_start, |m| m.rel_start)
+        {
             Ok(i) => i,
             Err(i) => {
                 assert!(i >= 1, "New section starts before the first module");
@@ -88,7 +88,11 @@ impl BuilderPhase3 {
     pub fn add_segment(mut self, rel_start: u32, data: Vec<u8>) -> Self {
         log::debug!("adding segment at rel_start: {rel_start:#08x}");
         // find the module
-        let i = match self.0.modules.binary_search_by_key(&rel_start, |m| m.rel_start) {
+        let i = match self
+            .0
+            .modules
+            .binary_search_by_key(&rel_start, |m| m.rel_start)
+        {
             Ok(i) => i,
             Err(i) => {
                 assert!(i >= 1, "New segment starts before the first module");
@@ -98,7 +102,10 @@ impl BuilderPhase3 {
         log::debug!("found module index: {i}");
         let module = &mut self.0.modules[i];
         // find the section
-        let i = match module.sections.binary_search_by_key(&rel_start, |s| s.rel_start) {
+        let i = match module
+            .sections
+            .binary_search_by_key(&rel_start, |s| s.rel_start)
+        {
             Ok(i) => i,
             Err(i) => {
                 assert!(i >= 1, "New segment starts before the first section");
@@ -108,10 +115,7 @@ impl BuilderPhase3 {
         log::debug!("found section index: {i}");
         let section = &mut module.sections[i];
         // add the segment to the section
-        section.segments.push(Segment {
-            rel_start,
-            data,
-        });
+        section.segments.push(Segment { rel_start, data });
         self
     }
 

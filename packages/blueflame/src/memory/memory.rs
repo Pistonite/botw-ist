@@ -2,9 +2,12 @@ use std::sync::Arc;
 
 #[layered_crate::import]
 use memory::{
+    self::{
+        AccessFlag, AccessFlags, Error, PAGE_SIZE, Page, Ptr, REGION_ALIGN, Reader, Section,
+        SimpleHeap, Writer, align_up, perm, region,
+    },
     super::env::{Environment, enabled},
     super::program::ArchivedModule,
-    self::{align_up, REGION_ALIGN, Section, AccessFlags, AccessFlag, perm, region, Ptr, Error, SimpleHeap, Page, Reader, Writer, PAGE_SIZE}
 };
 
 /// Memory of the simulated process
@@ -26,7 +29,7 @@ impl Memory {
             "stack",
             align_up!(0x1000 + heap_section.len_bytes() as u64, REGION_ALIGN),
             stack_size,
-            perm!(rw) | region!(stack)
+            perm!(rw) | region!(stack),
         );
         let stack_end = stack_section.start() + stack_section.len_bytes() as u64;
         Self {
@@ -38,7 +41,8 @@ impl Memory {
         }
     }
 
-    pub fn new_program_zc(env: Environment,
+    pub fn new_program_zc(
+        env: Environment,
         program_start: u64,
         program_size: u32,
         modules: &[ArchivedModule],
@@ -46,7 +50,6 @@ impl Memory {
         stack_start: u64,
         stack_size: u32,
     ) -> Result<Self, Error> {
-
         let mut sections = Vec::new();
 
         for module in modules.into_iter() {
@@ -71,12 +74,8 @@ impl Memory {
 
         let heap_section = heap.create_section();
         sections.push(Arc::new(heap_section));
-        let stack_section = Section::new_region(
-            "stack",
-            stack_start,
-            stack_size,
-            perm!(rw) | region!(stack)
-        );
+        let stack_section =
+            Section::new_region("stack", stack_start, stack_size, perm!(rw) | region!(stack));
         let stack_end = stack_section.start() + stack_section.len_bytes() as u64;
         sections.push(Arc::new(stack_section));
 
@@ -87,7 +86,7 @@ impl Memory {
             sections,
             heap,
             program_start,
-            stack_end
+            stack_end,
         })
     }
 
@@ -118,14 +117,17 @@ impl Memory {
                 // address is before the first section, format as absolute address
                 // (probably offseting off a nullptr or something)
                 return format!("0x{addr:016x}");
-            },
-            Err(i) => i-1
+            }
+            Err(i) => i - 1,
         };
         let section = &self.sections[i];
         let in_section = section.end() > addr;
         let section_off = addr - section.module_start;
         let name = &section.module_name;
-        format!("{name}+0x{section_off:08x}{}", if in_section { ' ' } else { '~' })
+        format!(
+            "{name}+0x{section_off:08x}{}",
+            if in_section { ' ' } else { '~' }
+        )
     }
 
     /// Create a reader to start reading at address
@@ -135,16 +137,12 @@ impl Memory {
     /// be accessed. If the execute permission bit is set, the region being accessed
     /// also needs to have execute permission. Region permissions are still checked,
     /// of course.
-    pub fn read( &self, addr: u64, flags: AccessFlags,) -> Result<Reader, Error> {
+    pub fn read(&self, addr: u64, flags: AccessFlags) -> Result<Reader, Error> {
         let flags = perm!(r) | convert_region_flags(flags);
-        let (
-            section_idx, 
-            page_idx, 
-            page_off, 
-            max_page_off) = self.calculate(addr, flags)?;
+        let (section_idx, page_idx, page_off, max_page_off) = self.calculate(addr, flags)?;
         let page = self.page_by_indices_unchecked(section_idx, page_idx);
 
-        Ok(Reader::new(self,page,page_off,max_page_off, addr, flags))
+        Ok(Reader::new(self, page, page_off, max_page_off, addr, flags))
     }
 
     /// Create a writer to start writing at address
@@ -152,17 +150,18 @@ impl Memory {
     /// # Flags
     /// If any region bit is specified, then only those regions are allowed to
     /// be accessed. Otherwise all regions are allowed (permissions are still checked, of course)
-    pub fn write(
-        &mut self,
-        addr: u64,
-        flags: AccessFlags,
-    ) -> Result<Writer, Error> {
+    pub fn write(&mut self, addr: u64, flags: AccessFlags) -> Result<Writer, Error> {
         let flags = perm!(w) | convert_region_flags(flags);
         let (section_idx, page_idx, page_off, max_page_off) = self.calculate(addr, flags)?;
 
         Ok(Writer::new(
             self,
-            section_idx, page_idx, page_off, max_page_off,addr,flags
+            section_idx,
+            page_idx,
+            page_off,
+            max_page_off,
+            addr,
+            flags,
         ))
     }
 
@@ -183,17 +182,29 @@ impl Memory {
         // return section index, page index, page offset, max page offset
         if !self.heap.check_allocated(addr) {
             if enabled!("mem-strict-heap") {
-                log::error!("accessing unallocated heap address: 0x{addr:016x} ({})", self.format_addr(addr));
+                log::error!(
+                    "accessing unallocated heap address: 0x{addr:016x} ({})",
+                    self.format_addr(addr)
+                );
                 return Err(Error::HeapUnallocated(addr, flags));
             }
-            log::warn!("bypassed - accessing unallocated heap address: 0x{addr:016x} ({})", self.format_addr(addr));
+            log::warn!(
+                "bypassed - accessing unallocated heap address: 0x{addr:016x} ({})",
+                self.format_addr(addr)
+            );
         }
         let Some(section_idx) = self.find_section_idx(addr) else {
             if enabled!("mem-strict-section") {
-                log::error!("accessing invalid section: 0x{addr:016x} ({})", self.format_addr(addr));
+                log::error!(
+                    "accessing invalid section: 0x{addr:016x} ({})",
+                    self.format_addr(addr)
+                );
                 return Err(Error::InvalidSection(addr, flags));
             }
-            log::warn!("bypassed - accessing invalid section: 0x{addr:016x} ({})", self.format_addr(addr));
+            log::warn!(
+                "bypassed - accessing invalid section: 0x{addr:016x} ({})",
+                self.format_addr(addr)
+            );
             return Err(Error::Bypassed);
         };
         let section = &self.sections[section_idx];
@@ -204,10 +215,16 @@ impl Memory {
                 log::debug!("input flags: {:08x?}", flags);
                 log::debug!("perm flags: {:08x?}", flags.perms());
                 if enabled!("mem-permission") {
-                    log::error!("permission denied: 0x{addr:016x} ({})", self.format_addr(addr));
+                    log::error!(
+                        "permission denied: 0x{addr:016x} ({})",
+                        self.format_addr(addr)
+                    );
                     return Err(Error::PermissionDenied(addr, flags));
                 }
-                log::warn!("bypassed - accessing section without permission: 0x{addr:016x} ({})", self.format_addr(addr));
+                log::warn!(
+                    "bypassed - accessing section without permission: 0x{addr:016x} ({})",
+                    self.format_addr(addr)
+                );
             }
         }
         let rel_addr = addr - section.start();
@@ -221,7 +238,7 @@ impl Memory {
         let i = match self.sections.binary_search_by_key(&address, |s| s.start()) {
             Ok(i) => i,
             Err(0) => return None, // address is before the first section
-            Err(i) => i-1
+            Err(i) => i - 1,
         };
         if self.sections[i].end() > address {
             Some(i)

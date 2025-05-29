@@ -104,3 +104,10 @@ tasks:
       - wget -O dist/worker.js {{.ORIGIN}}/runtime/worker-{{.COMMIT}}.min.js
       - wget -O dist/skybook.js {{.ORIGIN}}/runtime/skybook-{{.COMMIT}}.min.js
       - wget -O dist/skybook.wasm {{.ORIGIN}}/runtime/skybook-{{.COMMIT}}.wasm
+
+  clean:
+    desc: Clean the wasm artifacts that might help resolve build issues
+    cmds:
+      - rm -f rustc-ice-*
+      - rm -rf dist pkg
+      - cargo clean --target-dir target

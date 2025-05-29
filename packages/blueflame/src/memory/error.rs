@@ -1,5 +1,5 @@
 #[layered_crate::import]
-use memory::{AccessFlags};
+use memory::AccessFlags;
 
 /// Memory errors
 #[derive(Debug, Clone, thiserror::Error)]
@@ -7,14 +7,19 @@ pub enum Error {
     #[error("unable to construct section: {0}")]
     SectionConstruction(String),
 
-
-    #[error("[mem-strict-heap] attempt to access part of the heap that is not allocated: 0x{0:016x}, flags: {1}")]
+    #[error(
+        "[mem-strict-heap] attempt to access part of the heap that is not allocated: 0x{0:016x}, flags: {1}"
+    )]
     HeapUnallocated(u64, AccessFlags),
-    #[error("[mem-strict-section] attempt to access invalid memory that is not in any section: 0x{0:016x}, flags: {1}")]
+    #[error(
+        "[mem-strict-section] attempt to access invalid memory that is not in any section: 0x{0:016x}, flags: {1}"
+    )]
     InvalidSection(u64, AccessFlags),
     #[error("[mem-permission] permission denied: 0x{0:016x}, flags: {1}")]
     PermissionDenied(u64, AccessFlags),
-    #[error("attempting to access across boundary of a page or valid memory region: 0x{0:016x}, flags: {1}")]
+    #[error(
+        "attempting to access across boundary of a page or valid memory region: 0x{0:016x}, flags: {1}"
+    )]
     Boundary(u64, AccessFlags),
 
     /// An invalid memory access was made, but it was bypassed,

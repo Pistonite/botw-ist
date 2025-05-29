@@ -1,19 +1,19 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error, reg};
+use self_::insn::instruction_parse::ExecutableInstruction;
+use self_::{Error, RegisterType, glue, reg};
 
 use blueflame_deps::trace_call;
 
-pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
-        if args.is_empty() {
-            Some(Box::new(RetInstruction))
-        } else {
-            let rn = glue::parse_reg_or_panic(args);
-            Some(Box::new(RetArgsInstruction { rn }))
-        }
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    if args.is_empty() {
+        Some(Box::new(RetInstruction))
+    } else {
+        let rn = glue::parse_reg_or_panic(args);
+        Some(Box::new(RetArgsInstruction { rn }))
     }
+}
 
 #[derive(Clone)]
 pub struct RetInstruction;
@@ -33,7 +33,7 @@ impl ExecutableInstruction for RetArgsInstruction {
         }
         let xn_val: u64 = core.cpu.read(regname);
         trace_call!(
-            "main+0x{:08x} ret     >>>>> main+0x{:08x}", 
+            "main+0x{:08x} ret     >>>>> main+0x{:08x}",
             core.cpu.pc - core.proc.main_start(),
             xn_val - core.proc.main_start()
         );

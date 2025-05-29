@@ -1,9 +1,9 @@
 use crate::processor::{self as self_, crate_};
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
-use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
 use crate_::memory::Ptr;
+use self_::insn::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args: Vec<String> = parse::split_args(args, 2);
@@ -54,11 +54,15 @@ fn str_core(core: &mut Core, xt: RegisterType, address: u64) -> Result<(), Error
     let xt_val = glue::read_gen_reg(core.cpu, &xt);
     match xt {
         RegisterType::XReg(_) => Ptr!(<i64>(address)).store(&xt_val, core.proc.memory_mut())?,
-        RegisterType::WReg(_) => Ptr!(<i32>(address)).store(&(xt_val as i32), core.proc.memory_mut())?,
+        RegisterType::WReg(_) => {
+            Ptr!(<i32>(address)).store(&(xt_val as i32), core.proc.memory_mut())?
+        }
         RegisterType::XZR => Ptr!(<i64>(address)).store(&0, core.proc.memory_mut())?,
         RegisterType::WZR => Ptr!(<i32>(address)).store(&0, core.proc.memory_mut())?,
         RegisterType::DReg(_) => Ptr!(<i64>(address)).store(&xt_val, core.proc.memory_mut())?,
-        RegisterType::SReg(_) => Ptr!(<i32>(address)).store(&(xt_val as i32), core.proc.memory_mut())?,
+        RegisterType::SReg(_) => {
+            Ptr!(<i32>(address)).store(&(xt_val as i32), core.proc.memory_mut())?
+        }
         _ => {
             log::error!("Invalid register write: {xt:?} at address {address:#016x}");
             return Err(Error::BadInstruction(0));
@@ -178,4 +182,3 @@ mod tests {
         Ok(())
     }
 }
-

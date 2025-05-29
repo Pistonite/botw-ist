@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let split = parse::split_args(args, 2);
@@ -22,7 +22,10 @@ impl ExecutableInstruction for CbnzInstruction {
         let xn_val = glue::read_gen_reg(core.cpu, &self.rn);
 
         if xn_val != 0 {
-            let new_pc = core.cpu.pc.wrapping_add_signed((self.label_offset - 4) as i64);
+            let new_pc = core
+                .cpu
+                .pc
+                .wrapping_add_signed((self.label_offset - 4) as i64);
             core.cpu.pc = new_pc;
             // core.cpu.pc = self.label_offset - 4;
         }
@@ -60,4 +63,3 @@ mod tests {
         Ok(())
     }
 }
-

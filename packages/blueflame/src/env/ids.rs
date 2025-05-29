@@ -1,9 +1,21 @@
 use serde::{Deserialize, Serialize};
 
 /// Type for static data files used by BlueFlame
-#[derive( Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash,)]
-#[derive( Serialize, Deserialize,)]
-#[derive( rkyv::Serialize, rkyv::Deserialize, rkyv::Archive,)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    Serialize,
+    Deserialize,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    rkyv::Archive,
+)]
 #[rkyv(compare(PartialEq), derive(Clone, Copy))]
 #[repr(u8)]
 pub enum DataId {
@@ -20,9 +32,21 @@ impl From<ArchivedDataId> for DataId {
 }
 
 /// Proxy type identifiers
-#[derive( Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash,)]
-#[derive( Serialize, Deserialize,)]
-#[derive( rkyv::Serialize, rkyv::Deserialize, rkyv::Archive,)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    Serialize,
+    Deserialize,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    rkyv::Archive,
+)]
 #[rkyv(compare(PartialEq), derive(Clone, Copy))]
 #[repr(u8)]
 pub enum ProxyId {

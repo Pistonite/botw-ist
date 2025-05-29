@@ -1,13 +1,13 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
-pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
-        let rn = glue::parse_reg_or_panic(args);
-        Some(Box::new(BrInstruction { rn }))
-    }
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let rn = glue::parse_reg_or_panic(args);
+    Some(Box::new(BrInstruction { rn }))
+}
 
 #[derive(Clone)]
 pub struct BrInstruction {
@@ -16,7 +16,7 @@ pub struct BrInstruction {
 
 impl ExecutableInstruction for BrInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
-        let xn_val = glue::read_gen_reg(core.cpu,&self.rn) as u64;
+        let xn_val = glue::read_gen_reg(core.cpu, &self.rn) as u64;
         core.cpu.pc = xn_val - 4;
         Ok(())
     }

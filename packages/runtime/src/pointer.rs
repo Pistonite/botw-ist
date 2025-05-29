@@ -1,4 +1,3 @@
-
 /// Pointer interop type
 ///
 /// This uses a u128 internal storage for a u64 value

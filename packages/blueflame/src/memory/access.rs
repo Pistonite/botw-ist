@@ -17,7 +17,6 @@ pub enum AccessFlag {
     /// Permission checks are disabled
     Force = 0x8,
 
-
     /// Access the .text (RX) section(s) of the program
     Text = 0x20,
     /// Access the .rodata (RO) section(s) of the program
@@ -29,7 +28,6 @@ pub enum AccessFlag {
     /// Access the heap region
     Heap = 0x200,
 }
-
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 #[repr(transparent)]
@@ -85,7 +83,6 @@ impl AccessFlags {
         Self(self.0 & __Perm::rwx().0)
     }
 }
-
 
 /// Helper to create permission flags.
 #[doc(hidden)]

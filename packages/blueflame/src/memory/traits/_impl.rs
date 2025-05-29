@@ -1,5 +1,5 @@
 #[layered_crate::import]
-use memory::{MemObject, Reader, Writer, Error, assert_size_eq, assert_size_range};
+use memory::{Error, MemObject, Reader, Writer, assert_size_eq, assert_size_range};
 
 macro_rules! primitive_type_mem_object_impl {
     ($type:ty, $reader_fn:ident, $writer_fn:ident) => {
@@ -7,7 +7,12 @@ macro_rules! primitive_type_mem_object_impl {
             const SIZE: u32 = std::mem::size_of::<$type>() as u32;
             fn read_sized(reader: &mut Reader, size: u32) -> Result<Self, Error> {
                 assert_size_eq::<Self>(Self::SIZE, size, "read_sized")?;
-                assert!(size == Self::SIZE, "Size mismatch: expected {}, got {}", Self::SIZE, size);
+                assert!(
+                    size == Self::SIZE,
+                    "Size mismatch: expected {}, got {}",
+                    Self::SIZE,
+                    size
+                );
                 reader.$reader_fn()
             }
             fn write_sized(&self, writer: &mut Writer, size: u32) -> Result<(), Error> {

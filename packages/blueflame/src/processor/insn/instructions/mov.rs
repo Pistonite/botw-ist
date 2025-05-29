@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args = parse::split_args(args, 3);
@@ -20,7 +20,6 @@ pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
         Some(Box::new(MovInstruction { rd, rn, extra_op }))
     }
 }
-
 
 #[derive(Clone)]
 pub struct MovInstruction {
@@ -40,11 +39,7 @@ impl ExecutableInstruction for MovInstruction {
             self.rn.get_bitwidth(),
             self.extra_op.as_ref(),
         )?;
-        glue::write_gen_reg(
-            core.cpu,
-            &self.rd,
-            xm_val,
-        );
+        glue::write_gen_reg(core.cpu, &self.rd, xm_val);
         Ok(())
     }
 }
@@ -58,17 +53,9 @@ pub struct MovImmInstruction {
 
 impl ExecutableInstruction for MovImmInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
-        let (imm_val, _) = glue::handle_extra_op_immbw(
-            core.cpu,
-            self.imm_val,
-            self.rd,
-            self.extra_op.as_ref(),
-        )?;
-        glue::write_gen_reg(
-            core.cpu,
-            &self.rd,
-            imm_val,
-        );
+        let (imm_val, _) =
+            glue::handle_extra_op_immbw(core.cpu, self.imm_val, self.rd, self.extra_op.as_ref())?;
+        glue::write_gen_reg(core.cpu, &self.rd, imm_val);
         Ok(())
     }
 }

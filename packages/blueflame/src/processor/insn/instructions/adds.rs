@@ -1,11 +1,9 @@
 #[layered_crate::import]
 use processor::{
-    self::{glue, RegisterType, Error},
     self::insn::Core,
-    self::insn::instruction_parse::{
-        self as parse, AuxiliaryOperation, ExecutableInstruction,
-    },
-    self::insn::arithmetic_utils
+    self::insn::arithmetic_utils,
+    self::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction},
+    self::{Error, RegisterType, glue},
 };
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
@@ -74,12 +72,8 @@ pub struct AddsImmInstruction {
 impl ExecutableInstruction for AddsImmInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         let xn_val = glue::read_gen_reg(core.cpu, &self.rn);
-        let (imm_val, _) = glue::handle_extra_op_immbw(
-            core.cpu,
-            self.imm_val,
-            self.rn,
-            self.extra_op.as_ref(),
-        )?;
+        let (imm_val, _) =
+            glue::handle_extra_op_immbw(core.cpu, self.imm_val, self.rn, self.extra_op.as_ref())?;
         glue::write_gen_reg(core.cpu, &self.rd, xn_val + imm_val);
         let flags = if self.rn.get_bitwidth() == 32 {
             arithmetic_utils::signed_add_with_carry32(xn_val as i32, imm_val as i32, false)
@@ -141,4 +135,3 @@ mod tests {
         Ok(())
     }
 }
-

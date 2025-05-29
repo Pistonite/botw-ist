@@ -203,3 +203,11 @@ tasks:
       - task: parser-legacy:install
       - task: server:install
       - task: server:build
+
+  clean:
+    desc: Clean the whole repo for temporaries that might help resolve build issues
+    cmds:
+      - rm -f rustc-ice-*
+      - cargo clean
+      - rustup update
+      - task: runtime-wasm:clean

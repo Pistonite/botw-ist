@@ -1,8 +1,8 @@
 use std::panic::UnwindSafe;
 use std::sync::Arc;
 
-use rand_xoshiro::rand_core::{RngCore, SeedableRng};
 use rand_xoshiro::Xoshiro256PlusPlus;
+use rand_xoshiro::rand_core::{RngCore, SeedableRng};
 use sha2::{Digest, Sha256};
 
 #[layered_crate::import]
@@ -144,9 +144,7 @@ impl<T: ProxyObject> ProxyGuardMut<'_, '_, T> {
     ///
     /// Returns [`Error::InvalidProxyHandle`] if the corresponding memory location has been changed,
     /// as determined by the integrity hash.
-    pub fn get_mut<'g>(&'g mut self, address: u64) -> Result<
-    ProxyObjectGuardMut<'g, T>, Error> 
-    {
+    pub fn get_mut<'g>(&'g mut self, address: u64) -> Result<ProxyObjectGuardMut<'g, T>, Error> {
         let handle = self.list.0.get_checked_handle(self.memory, address)?;
         // clone the proxy list on write if needed
         let mut_list = Arc::make_mut(&mut self.list.0);
@@ -287,7 +285,7 @@ impl<T: ProxyObject> ProxyListInner<T> {
     }
 }
 
-pub trait ProxyObject: Clone + Send + Sync + UnwindSafe +'static {
+pub trait ProxyObject: Clone + Send + Sync + UnwindSafe + 'static {
     /// Get the size of the object to mock in memory
     /// The size must be at least 4 bytes
     fn mem_size(&self) -> u32;

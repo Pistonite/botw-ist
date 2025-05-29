@@ -1,10 +1,22 @@
 use enum_map::Enum;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// Environment to simulate
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[derive(Serialize, Deserialize)]
-#[derive(rkyv::Serialize, rkyv::Deserialize, rkyv::Archive)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    Serialize,
+    Deserialize,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    rkyv::Archive,
+)]
 #[rkyv(compare(PartialEq), derive(Clone, Copy))]
 pub struct Environment {
     /// Version of the game
@@ -45,17 +57,29 @@ impl Environment {
 }
 
 /// Version of the game
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[derive(Serialize, Deserialize)]
-#[derive(Enum)]
-#[derive(rkyv::Serialize, rkyv::Deserialize, rkyv::Archive)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    Serialize,
+    Deserialize,
+    Enum,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    rkyv::Archive,
+)]
 #[rkyv(compare(PartialEq), derive(Clone, Copy))]
 #[repr(u8)]
 pub enum GameVer {
     /// Switch 1.5.0
     X150,
     /// Switch 1.6.0
-    X160
+    X160,
 }
 
 impl From<ArchivedGameVer> for GameVer {
@@ -68,9 +92,21 @@ impl From<ArchivedGameVer> for GameVer {
 }
 
 /// Version of the DLC
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[derive(Serialize, Deserialize)]
-#[derive(rkyv::Serialize, rkyv::Deserialize, rkyv::Archive)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    Serialize,
+    Deserialize,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    rkyv::Archive,
+)]
 #[rkyv(compare(PartialEq), derive(Clone, Copy))]
 #[repr(u8)]
 pub enum DlcVer {

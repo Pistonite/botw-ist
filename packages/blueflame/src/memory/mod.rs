@@ -28,8 +28,8 @@ pub mod traits;
 #[doc(inline)]
 pub use traits::{MemLayout, MemObject};
 
+pub use blueflame_deps::{align_down, align_up};
 pub use blueflame_proc_macros::MemObject;
-pub use blueflame_deps::{align_up, align_down};
 
 pub const PAGE_SIZE: u32 = 0x1000;
 pub const REGION_ALIGN: u64 = 0x10000;

@@ -1,7 +1,7 @@
 #[layered_crate::import]
 use game::{
-    super::memory::{self, Memory, Ptr, ProxyObject},
     self::{gdt, singleton_instance},
+    super::memory::{self, Memory, ProxyObject, Ptr},
 };
 
 // TODO --cleanup: remove if not needed
@@ -42,7 +42,6 @@ pub fn trigger_param_ptr(memory: &Memory) -> Result<u64, memory::Error> {
 #[derive(Debug, Clone, Default)]
 pub struct TriggerParam {
     // these are pub(crate) for the flag descriptors to access them
-
     pub(crate) bool_flags: gdt::FlagList<bool>,
     pub(crate) s32_flags: gdt::FlagList<i32>,
     pub(crate) f32_flags: gdt::FlagList<f32>,
@@ -74,37 +73,52 @@ impl TriggerParam {
     }
 
     /// Get flag by CRC32 hash of its name for mutation
-    pub fn by_hash_mut<Fd: gdt::FlagDescriptor>(&mut self, hash: i32) -> Option<&mut gdt::Flag<Fd::T>> {
+    pub fn by_hash_mut<Fd: gdt::FlagDescriptor>(
+        &mut self,
+        hash: i32,
+    ) -> Option<&mut gdt::Flag<Fd::T>> {
         self.get_mut::<Fd, usize>(self.index_from_hash::<Fd>(hash)?)
     }
 
     /// Get flag by its name
-    pub fn by_name<Fd: gdt::FlagDescriptor>(&self, name: impl AsRef<str>) -> Option<&gdt::Flag<Fd::T>> {
+    pub fn by_name<Fd: gdt::FlagDescriptor>(
+        &self,
+        name: impl AsRef<str>,
+    ) -> Option<&gdt::Flag<Fd::T>> {
         self.get::<Fd, usize>(self.index_from_name::<Fd>(name)?)
     }
 
     /// Get flag by its name for mutation
-    pub fn by_name_mut<Fd: gdt::FlagDescriptor>(&mut self, name: impl AsRef<str>) -> Option<&mut gdt::Flag<Fd::T>> {
+    pub fn by_name_mut<Fd: gdt::FlagDescriptor>(
+        &mut self,
+        name: impl AsRef<str>,
+    ) -> Option<&mut gdt::Flag<Fd::T>> {
         self.get_mut::<Fd, usize>(self.index_from_name::<Fd>(name)?)
     }
 
     /// Get flag by index in the flag list
-    pub fn get<Fd: gdt::FlagDescriptor, I: gdt::FlagIndex>(&self, idx: I) -> Option<&gdt::Flag<Fd::T>> {
+    pub fn get<Fd: gdt::FlagDescriptor, I: gdt::FlagIndex>(
+        &self,
+        idx: I,
+    ) -> Option<&gdt::Flag<Fd::T>> {
         Fd::list(self).get(idx.to_index()?)
     }
 
-
     /// Get flag by index in the flag list for mutation
-    pub fn get_mut<Fd: gdt::FlagDescriptor, I: gdt::FlagIndex>(&mut self, idx: I) -> Option<&mut gdt::Flag<Fd::T>> {
+    pub fn get_mut<Fd: gdt::FlagDescriptor, I: gdt::FlagIndex>(
+        &mut self,
+        idx: I,
+    ) -> Option<&mut gdt::Flag<Fd::T>> {
         Fd::list_mut(self).get_mut(idx.to_index()?)
     }
 
-
     /// Get the index of the flag from CRC32 hash of its name
     pub fn index_from_hash<Fd: gdt::FlagDescriptor>(&self, hash: i32) -> Option<usize> {
-        Fd::list(self).binary_search_by_key(&hash, |flag| flag.hash()).ok()
+        Fd::list(self)
+            .binary_search_by_key(&hash, |flag| flag.hash())
+            .ok()
     }
-    
+
     /// Get the index of the flag its name
     pub fn index_from_name<Fd: gdt::FlagDescriptor>(&self, name: impl AsRef<str>) -> Option<usize> {
         self.index_from_hash::<Fd>(get_hash(name.as_ref()))
@@ -153,22 +167,26 @@ struct Builder;
 impl Builder {
     fn build(self) -> gdt::TriggerParam {
         TriggerParam {
-            bool_flags : blueflame_deps::gdt::unpack_bool_flags(),
-        s32_flags : blueflame_deps::gdt::unpack_s32_flags(),
-        f32_flags : blueflame_deps::generated::gdt::generate_F32_yaml_flags(),
-        string32_flags : blueflame_deps::generated::gdt::generate_String32_yaml_flags(),
-        string64_flags : blueflame_deps::generated::gdt::generate_String64_yaml_flags(),
-        string256_flags : blueflame_deps::generated::gdt::generate_String256_yaml_flags(),
-        vector2f_flags : blueflame_deps::generated::gdt::generate_Vector2f_yaml_flags(),
-        vector3f_flags : blueflame_deps::generated::gdt::generate_Vector3f_yaml_flags(),
-        vector4f_flags : blueflame_deps::generated::gdt::generate_Vector4f_yaml_flags(),
-        bool_array_flags : blueflame_deps::generated::gdt::generate_ArrayBool_yaml_flags(),
-        s32_array_flags : blueflame_deps::generated::gdt::generate_ArrayS32_yaml_flags(),
-        f32_array_flags : blueflame_deps::generated::gdt::generate_ArrayF32_yaml_flags(),
-        string64_array_flags : blueflame_deps::generated::gdt::generate_ArrayString64_yaml_flags(),
-        string256_array_flags : blueflame_deps::generated::gdt::generate_ArrayString256_yaml_flags(),
-        vector2f_array_flags : blueflame_deps::generated::gdt::generate_ArrayVector2f_yaml_flags(),
-        vector3f_array_flags : blueflame_deps::generated::gdt::generate_ArrayVector3f_yaml_flags(),
+            bool_flags: blueflame_deps::gdt::unpack_bool_flags(),
+            s32_flags: blueflame_deps::gdt::unpack_s32_flags(),
+            f32_flags: blueflame_deps::generated::gdt::generate_F32_yaml_flags(),
+            string32_flags: blueflame_deps::generated::gdt::generate_String32_yaml_flags(),
+            string64_flags: blueflame_deps::generated::gdt::generate_String64_yaml_flags(),
+            string256_flags: blueflame_deps::generated::gdt::generate_String256_yaml_flags(),
+            vector2f_flags: blueflame_deps::generated::gdt::generate_Vector2f_yaml_flags(),
+            vector3f_flags: blueflame_deps::generated::gdt::generate_Vector3f_yaml_flags(),
+            vector4f_flags: blueflame_deps::generated::gdt::generate_Vector4f_yaml_flags(),
+            bool_array_flags: blueflame_deps::generated::gdt::generate_ArrayBool_yaml_flags(),
+            s32_array_flags: blueflame_deps::generated::gdt::generate_ArrayS32_yaml_flags(),
+            f32_array_flags: blueflame_deps::generated::gdt::generate_ArrayF32_yaml_flags(),
+            string64_array_flags: blueflame_deps::generated::gdt::generate_ArrayString64_yaml_flags(
+            ),
+            string256_array_flags:
+                blueflame_deps::generated::gdt::generate_ArrayString256_yaml_flags(),
+            vector2f_array_flags: blueflame_deps::generated::gdt::generate_ArrayVector2f_yaml_flags(
+            ),
+            vector3f_array_flags: blueflame_deps::generated::gdt::generate_ArrayVector3f_yaml_flags(
+            ),
         }
     }
 }
@@ -228,28 +246,40 @@ mod tests {
         let mut vec = params.vector3f_array_flags.clone();
         vec.sort_by_key(|flag| flag.hash());
         assert_eq!(vec, params.vector3f_array_flags);
-
     }
     #[test]
     fn test_init() -> anyhow::Result<()> {
         let params = gdt::TriggerParam::loaded();
-        let flag1 = params.by_hash::<gdt::fd!(bool)>(530692287).expect("flag not found");
+        let flag1 = params
+            .by_hash::<gdt::fd!(bool)>(530692287)
+            .expect("flag not found");
         assert!(!flag1.get());
         // assert_eq!(flag1.name(), "BarrelErrand_Intro_Finished");
 
-        let flag2 = params.by_hash::<gdt::fd!(bool[])>(-1649503087).expect("flag not found");
-        assert_eq!(&Box::from([false, false, false, false, false, false, false, false]), flag2.get());
+        let flag2 = params
+            .by_hash::<gdt::fd!(bool[])>(-1649503087)
+            .expect("flag not found");
+        assert_eq!(
+            &Box::from([false, false, false, false, false, false, false, false]),
+            flag2.get()
+        );
         // assert_eq!("dummy_bool_array", flag2.name());
 
-        let flag3 = params.by_hash::<gdt::fd!(vec3f)>(-1542741757).expect("flag not found");
+        let flag3 = params
+            .by_hash::<gdt::fd!(vec3f)>(-1542741757)
+            .expect("flag not found");
         assert_eq!((-1130.0, 237.4, 1914.5), *flag3.get());
         // assert_eq!("PlayerSavePos", flag3.name());
 
-        let flag4 = params.by_hash::<gdt::fd!(bool)>(595714052).expect("flag not found");
+        let flag4 = params
+            .by_hash::<gdt::fd!(bool)>(595714052)
+            .expect("flag not found");
         assert!(!flag4.get());
         // assert_eq!("MainField_LinkTagAnd_02894606454", flag4.name());
 
-        let flag = params.by_name::<gdt::fd!(s32)>("KorokNutsNum").expect("flag not found");
+        let flag = params
+            .by_name::<gdt::fd!(s32)>("KorokNutsNum")
+            .expect("flag not found");
         assert_eq!(*flag.get(), 0);
         Ok(())
     }
@@ -258,7 +288,9 @@ mod tests {
     fn test_get_set_reset() -> Result<(), Box<dyn std::error::Error>> {
         let mut params = gdt::TriggerParam::loaded();
 
-        let flag = params.by_hash_mut::<gdt::fd!(bool)>(530692287).expect("flag not found");
+        let flag = params
+            .by_hash_mut::<gdt::fd!(bool)>(530692287)
+            .expect("flag not found");
         flag.set(true);
         assert!(flag.get());
         flag.reset();

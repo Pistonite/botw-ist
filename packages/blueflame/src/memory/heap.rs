@@ -1,5 +1,5 @@
 #[layered_crate::import]
-use memory::{align_down, align_up, Error, Section, PAGE_SIZE, REGION_ALIGN, region, perm};
+use memory::{Error, PAGE_SIZE, REGION_ALIGN, Section, align_down, align_up, perm, region};
 
 /// A simple heap region implementation
 ///
@@ -38,13 +38,7 @@ impl SimpleHeap {
 
     /// Create a section of memory that corresponds to this heap region
     pub fn create_section(&self) -> Section {
-        Section::new_region(
-            "heap",
-            self.start,
-            self.size,
-            perm!(rw) | region!(heap)
-        )
-        
+        Section::new_region("heap", self.start, self.size, perm!(rw) | region!(heap))
     }
 
     /// If the address is in the last page of the allocated region

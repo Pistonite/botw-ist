@@ -1,11 +1,11 @@
 use crate::processor::{self as self_, crate_};
 
-use disarm64::decoder::{Mnemonic, Opcode};
 use disarm64::arm64::InsnOpcode;
+use disarm64::decoder::{Mnemonic, Opcode};
 
-use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType, glue::RegisterValue};
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::{Error, RegisterType, glue, glue::RegisterValue};
 
 #[derive(Clone)]
 pub struct InsnLsrv {
@@ -24,9 +24,7 @@ impl ExecutableInstruction for InsnLsrv {
     }
 }
 
-pub fn parse(
-    d: &Opcode,
-) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
     if d.mnemonic != Mnemonic::lsrv {
         return Ok(None);
     }
@@ -65,8 +63,8 @@ pub fn parse(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use disarm64::decoder::decode;
     use crate::test_utils::*;
+    use disarm64::decoder::decode;
     use self_::{Cpu0, Process, reg};
 
     #[test]
@@ -83,4 +81,3 @@ mod tests {
         Ok(())
     }
 }
-

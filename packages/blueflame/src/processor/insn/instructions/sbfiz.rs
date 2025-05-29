@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args = parse::split_args(args, 4);
@@ -33,11 +33,7 @@ impl ExecutableInstruction for SbfizInstruction {
         let extracted = (xn_val & mask) << lsb_val;
         let shift = 64 - (lsb_val + width_val);
 
-        glue::write_gen_reg(
-            core.cpu,
-            &self.rd,
-            ((extracted << shift) >> shift) as i64,
-        );
+        glue::write_gen_reg(core.cpu, &self.rd, ((extracted << shift) >> shift) as i64);
         Ok(())
     }
 }
@@ -60,4 +56,3 @@ mod tests {
         Ok(())
     }
 }
-

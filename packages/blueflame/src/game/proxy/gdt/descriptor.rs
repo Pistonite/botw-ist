@@ -66,7 +66,9 @@ macro_rules! make_descriptor {
                 &trigger_param.$field
             }
             #[inline(always)]
-            fn list_mut(trigger_param: &mut gdt::TriggerParam) -> &mut gdt::FlagList<Box<[Self::ElemT]>> {
+            fn list_mut(
+                trigger_param: &mut gdt::TriggerParam,
+            ) -> &mut gdt::FlagList<Box<[Self::ElemT]>> {
                 &mut trigger_param.$field
             }
         }
@@ -87,6 +89,9 @@ make_descriptor!(array, FdF32Array, f32, f32_array_flags);
 make_descriptor!(array, FdString64Array, String, string64_array_flags);
 make_descriptor!(array, FdString256Array, String, string256_array_flags);
 make_descriptor!(array, FdVector2fArray, (f32, f32), vector2f_array_flags);
-make_descriptor!(array, FdVector3fArray, (f32, f32, f32), vector3f_array_flags);
-
-
+make_descriptor!(
+    array,
+    FdVector3fArray,
+    (f32, f32, f32),
+    vector3f_array_flags
+);

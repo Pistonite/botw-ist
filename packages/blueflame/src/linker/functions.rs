@@ -2,7 +2,7 @@
 use linker::{
     super::game::{FixedSafeString40, WeaponModifierInfo, singleton_instance},
     super::memory::Ptr,
-    super::processor::{self, Cpu2, reg}
+    super::processor::{self, Cpu2, reg},
 };
 
 pub fn call_pmdm_item_get(cpu: &mut Cpu2, actor: &str, value: i32) -> Result<(), processor::Error> {
@@ -15,7 +15,7 @@ pub fn call_pmdm_item_get_with_modifier(
     value: i32,
     modifier_flags: u32,
     modifier_value: i32,
-) -> Result<(), processor::Error>{
+) -> Result<(), processor::Error> {
     cpu.reset_stack();
 
     // x0 - this
@@ -24,9 +24,11 @@ pub fn call_pmdm_item_get_with_modifier(
     let name_ptr = cpu.stack_alloc::<FixedSafeString40>()?;
     let name_ptr = Ptr!(<FixedSafeString40>(name_ptr));
     name_ptr.construct(cpu.proc.memory_mut())?;
-    name_ptr.cstr(cpu.proc.memory())?.store_string(actor, cpu.proc.memory_mut())?;
+    name_ptr
+        .cstr(cpu.proc.memory())?
+        .store_string(actor, cpu.proc.memory_mut())?;
     // w2 - value (scalar)
-    
+
     // x3 - modifier info ptr
     let modifier_info_ptr = if modifier_flags != 0 {
         let ptr = cpu.stack_alloc::<WeaponModifierInfo>()?;
@@ -62,7 +64,6 @@ pub fn call_load_from_game_data(cpu: &mut Cpu2) -> Result<(), processor::Error> 
     };
     cpu.native_jump_to_main_offset(0x0096be24)
 }
-
 
 impl Cpu2<'_, '_> {
     const FIXED_SAFE_STRING40_VTABLE_ADDR: u64 = 0x1234500000 + 0x2356A90;

@@ -1,12 +1,12 @@
 use std::{cell::OnceCell, sync::Arc};
 
 use blueflame::env::GameVer;
-use js_sys::{Function, Uint32Array, Uint8Array};
+use js_sys::{Function, Uint8Array, Uint32Array};
 use serde::{Deserialize, Serialize};
-use skybook_parser::{search, ParseOutput};
+use skybook_parser::{ParseOutput, search};
 use skybook_runtime::{
-    erc, error::MaybeAborted, exec::Spawner, iv, CustomImageInitParams, ResultInterop, RunHandle,
-    RunOutput, Runtime, RuntimeInitError, RuntimeInitOutput,
+    CustomImageInitParams, ResultInterop, RunHandle, RunOutput, Runtime, RuntimeInitError,
+    RuntimeInitOutput, erc, error::MaybeAborted, exec::Spawner, iv,
 };
 use tsify_next::Tsify;
 use wasm_bindgen::prelude::*;

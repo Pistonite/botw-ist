@@ -1,13 +1,13 @@
 use crate::processor::{self as self_, crate_};
 
-use disarm64::decoder::{Mnemonic, Opcode};
 use disarm64::arm64::InsnOpcode;
+use disarm64::decoder::{Mnemonic, Opcode};
 
 use crate_::memory::Ptr;
 
-use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType};
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::{Error, RegisterType, glue};
 
 #[derive(Clone)]
 pub struct InsnLdarb {
@@ -25,19 +25,17 @@ impl ExecutableInstruction for InsnLdarb {
     }
 }
 
-pub    fn parse(
-        d: &Opcode,
-    ) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
-        if d.mnemonic != Mnemonic::ldarb {
-            return Ok(None);
-        }
-        let bits = d.operation.bits();
-        let rt_idx = get_bit_range(bits, 4, 0);
-        let rn_idx = get_bit_range(bits, 9, 5);
-        let rt = RegisterType::WReg(rt_idx);
-        let rn = RegisterType::XReg(rn_idx);
-        Ok(Some(Box::new(InsnLdarb { rt, rn })))
+pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+    if d.mnemonic != Mnemonic::ldarb {
+        return Ok(None);
     }
+    let bits = d.operation.bits();
+    let rt_idx = get_bit_range(bits, 4, 0);
+    let rn_idx = get_bit_range(bits, 9, 5);
+    let rt = RegisterType::WReg(rt_idx);
+    let rn = RegisterType::XReg(rn_idx);
+    Ok(Some(Box::new(InsnLdarb { rt, rn })))
+}
 
 #[cfg(test)]
 mod tests {

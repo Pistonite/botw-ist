@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args = parse::split_args(args, 4);
@@ -71,12 +71,8 @@ pub struct AndsImmInstruction {
 impl ExecutableInstruction for AndsImmInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         let xn_val = glue::read_gen_reg(core.cpu, &self.rn);
-        let (imm_val, carry) = glue::handle_extra_op_immbw(
-            core.cpu,
-            self.imm_val,
-            self.rn,
-            self.extra_op.as_ref(),
-        )?;
+        let (imm_val, carry) =
+            glue::handle_extra_op_immbw(core.cpu, self.imm_val, self.rn, self.extra_op.as_ref())?;
         let result = xn_val & imm_val;
         glue::write_gen_reg(core.cpu, &self.rd, result);
         core.cpu.flags = self_::Flags {
@@ -111,4 +107,3 @@ mod tests {
         Ok(())
     }
 }
-

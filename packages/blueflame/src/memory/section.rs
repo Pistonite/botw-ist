@@ -2,13 +2,13 @@ use std::sync::Arc;
 
 #[layered_crate::import]
 use memory::{
-    super::program::{ArchivedSection}, 
-    self::{AccessFlags, Error, Page, PAGE_SIZE, align_down, align_up, perm, region, REGION_ALIGN}
+    self::{AccessFlags, Error, PAGE_SIZE, Page, REGION_ALIGN, align_down, align_up, perm, region},
+    super::program::ArchivedSection,
 };
 
 /// Memory section implementation
 ///
-/// Cloning a section will clone the page table, 
+/// Cloning a section will clone the page table,
 /// the page contents are clone-on-write
 #[derive(Clone)]
 pub struct Section {
@@ -51,7 +51,9 @@ impl Section {
         section: &ArchivedSection,
     ) -> Result<Self, Error> {
         let section_rel_start = section.rel_start.to_native();
-        log::debug!("constructing section for module `{module_name}`, at rel_start=0x{section_rel_start:08x}, size=0x{byte_size:08x}");
+        log::debug!(
+            "constructing section for module `{module_name}`, at rel_start=0x{section_rel_start:08x}, size=0x{byte_size:08x}"
+        );
 
         let section_abs_start = program_start + section_rel_start as u64;
         let num_pages = align_up!(byte_size, PAGE_SIZE) / PAGE_SIZE;
@@ -62,7 +64,9 @@ impl Section {
         for segment in section.segments.iter() {
             let seg_rel_start = align_down!(segment.rel_start.to_native(), PAGE_SIZE);
             if current_seg_rel_start > seg_rel_start {
-                return Err(Error::SectionConstruction(format!("program image has overlapping sections! current: 0x{current_seg_rel_start:08x}, segment: 0x{seg_rel_start:08x}")));
+                return Err(Error::SectionConstruction(format!(
+                    "program image has overlapping sections! current: 0x{current_seg_rel_start:08x}, segment: 0x{seg_rel_start:08x}"
+                )));
             }
             while current_seg_rel_start < seg_rel_start {
                 // fill the gap with zeroed pages
@@ -73,8 +77,10 @@ impl Section {
             let num_pages_for_seg = align_up!(seg_size, PAGE_SIZE) / PAGE_SIZE;
             for i in 0..num_pages_for_seg {
                 let start_byte = (i * PAGE_SIZE) as usize;
-                let end_byte = ((i+1) * PAGE_SIZE).min(seg_size) as usize;
-                pages.push(Arc::new(Page::from_slice(&segment.data[start_byte..end_byte])));
+                let end_byte = ((i + 1) * PAGE_SIZE).min(seg_size) as usize;
+                pages.push(Arc::new(Page::from_slice(
+                    &segment.data[start_byte..end_byte],
+                )));
                 current_seg_rel_start += PAGE_SIZE;
             }
         }
@@ -93,9 +99,11 @@ impl Section {
         };
         let flags = flags | section_flags;
 
-        log::debug!("section for module `{module_name}` constructed at 0x{section_abs_start:08x}, size=0x{byte_size:08x}, flags: {flags}");
+        log::debug!(
+            "section for module `{module_name}` constructed at 0x{section_abs_start:08x}, size=0x{byte_size:08x}, flags: {flags}"
+        );
 
-        Ok( Self {
+        Ok(Self {
             module_name: module_name.to_string(),
             module_start,
             flags,

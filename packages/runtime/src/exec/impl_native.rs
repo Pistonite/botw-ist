@@ -1,10 +1,9 @@
-
 use std::thread::JoinHandle;
 
-use crate::exec::{self, Spawn, Join, JobSender, Job, Error};
+use crate::exec::{self, Error, Job, JobSender, Join, Spawn};
 
 pub struct Spawner;
-impl Spawn for Spawner{
+impl Spawn for Spawner {
     type Joiner = JoinHandle<()>;
 
     fn spawn(&mut self, slot: usize) -> Result<(Self::Joiner, JobSender), Error> {
@@ -20,8 +19,7 @@ impl Spawn for Spawner{
 
 impl Join for JoinHandle<()> {
     fn join(self) -> Result<(), Error> {
-        self.join().map_err(|_| {
-            Error::Join("failed to join thread".to_string())
-        })
+        self.join()
+            .map_err(|_| Error::Join("failed to join thread".to_string()))
     }
 }

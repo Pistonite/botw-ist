@@ -2,10 +2,9 @@ use derive_more::derive::Constructor;
 
 #[layered_crate::import]
 use memory::{
+    self::{AccessFlags, Error, Memory, PAGE_SIZE, Page},
     super::env::enabled,
-    self::{AccessFlags, Error, Page, PAGE_SIZE, Memory}
 };
-
 
 /// Stream writer to memory
 #[derive(Constructor)]
@@ -21,7 +20,6 @@ pub struct Writer<'m> {
     // this is due to Rust's safety measures
     // 1. use section_idx to mutably borrow the section in memory
     // 2. use page_idx to mutably borrow the page in that section
-
     /// Current region being written to
     section_idx: u32,
     /// Index of the page currently being written to
@@ -35,12 +33,21 @@ pub struct Writer<'m> {
 }
 
 macro_rules! trace {
-    (bool, $addr_str:expr, $value:expr) => { {
-            blueflame_deps::trace_memory!(concat!("st1  {}<= {}"), $addr_str, if $value { "true" } else { "false" });
-        } };
-    ($len:expr, $addr_str:expr, $value:expr, $width:literal) => { {
-            blueflame_deps::trace_memory!(concat!("st{:<2} {}<= 0x{:0", $width, "x}"), $len * 8, $addr_str, $value);
-        } };
+    (bool, $addr_str:expr, $value:expr) => {{
+        blueflame_deps::trace_memory!(
+            concat!("st1  {}<= {}"),
+            $addr_str,
+            if $value { "true" } else { "false" }
+        );
+    }};
+    ($len:expr, $addr_str:expr, $value:expr, $width:literal) => {{
+        blueflame_deps::trace_memory!(
+            concat!("st{:<2} {}<= 0x{:0", $width, "x}"),
+            $len * 8,
+            $addr_str,
+            $value
+        );
+    }};
 }
 
 impl<'m> Writer<'m> {
@@ -59,7 +66,9 @@ impl<'m> Writer<'m> {
         };
         let val: bool = val.into();
         trace!(bool, self.memory.format_addr(self.addr), val);
-        let page = self.memory.page_by_indices_mut_unchecked(self.section_idx, self.page_idx);
+        let page = self
+            .memory
+            .page_by_indices_mut_unchecked(self.section_idx, self.page_idx);
         page.write_u8(self.page_off, if val { 1 } else { 0 });
         self.skip(1);
         Ok(())
@@ -74,7 +83,9 @@ impl<'m> Writer<'m> {
         };
         let val: u8 = val.into();
         trace!(1, self.memory.format_addr(self.addr), val, 2);
-        let page = self.memory.page_by_indices_mut_unchecked(self.section_idx, self.page_idx);
+        let page = self
+            .memory
+            .page_by_indices_mut_unchecked(self.section_idx, self.page_idx);
         page.write_u8(self.page_off, val);
         self.skip(1);
         Ok(())
@@ -94,7 +105,9 @@ impl<'m> Writer<'m> {
         };
         let val: u16 = val.into();
         trace!(2, self.memory.format_addr(self.addr), val, 4);
-        let page = self.memory.page_by_indices_mut_unchecked(self.section_idx, self.page_idx);
+        let page = self
+            .memory
+            .page_by_indices_mut_unchecked(self.section_idx, self.page_idx);
         page.write_u16(self.page_off, val);
         self.skip(2);
         Ok(())
@@ -114,7 +127,9 @@ impl<'m> Writer<'m> {
         };
         let val: u32 = val.into();
         trace!(4, self.memory.format_addr(self.addr), val, 8);
-        let page = self.memory.page_by_indices_mut_unchecked(self.section_idx, self.page_idx);
+        let page = self
+            .memory
+            .page_by_indices_mut_unchecked(self.section_idx, self.page_idx);
         page.write_u32(self.page_off, val);
         self.skip(4);
         Ok(())
@@ -134,7 +149,9 @@ impl<'m> Writer<'m> {
         };
         let val: u64 = val.into();
         trace!(8, self.memory.format_addr(self.addr), val, 16);
-        let page = self.memory.page_by_indices_mut_unchecked(self.section_idx, self.page_idx);
+        let page = self
+            .memory
+            .page_by_indices_mut_unchecked(self.section_idx, self.page_idx);
         page.write_u64(self.page_off, val);
         self.skip(8);
         Ok(())
@@ -161,11 +178,10 @@ impl<'m> Writer<'m> {
     ///
     /// This must be done through a FnOnce closure because of borrowing rules
     fn prep_write(&mut self, len: u32) -> Result<(), Error> {
-
         if self.page_off >= self.max_page_off {
             // query the memory for the next page
-            let (section_idx, page_idx, page_off, max_page_off) = 
-self.memory.calculate(self.addr, self.flags)?;
+            let (section_idx, page_idx, page_off, max_page_off) =
+                self.memory.calculate(self.addr, self.flags)?;
             self.section_idx = section_idx;
             self.page_idx = page_idx;
             self.page_off = page_off;
@@ -173,7 +189,10 @@ self.memory.calculate(self.addr, self.flags)?;
         }
 
         if self.page_off + len > self.max_page_off {
-            log::error!("boundary hit at {}, writing {len} bytes", self.memory.format_addr(self.addr));
+            log::error!(
+                "boundary hit at {}, writing {len} bytes",
+                self.memory.format_addr(self.addr)
+            );
             return Err(Error::Boundary(self.addr, self.flags));
         }
         Ok(())

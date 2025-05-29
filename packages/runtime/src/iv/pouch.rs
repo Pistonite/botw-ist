@@ -1,15 +1,15 @@
 //! Item data for the pouch
 
 mod __impl {
-    use serde::Serialize;
-    use crate::pointer::Pointer;
     use crate::iv;
+    use crate::pointer::Pointer;
+    use serde::Serialize;
 
     /// List view of the Pouch Inventory.
     ///
     /// In this view, the inventory is represented as a vector
     /// of items. Unallocated items are not included in the view.
-    /// 
+    ///
     /// This view can only available if PMDM is not corrupted
     #[derive(Debug, Default, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
@@ -44,13 +44,12 @@ mod __impl {
     #[serde(rename_all = "camelCase")]
     #[allow(non_camel_case_types)]
     pub struct InvView_PouchTab {
-        /// Index of the item in the list. 
+        /// Index of the item in the list.
         ///
         /// -1 if nullptr, which is when the tab is empty
         pub item_idx: isize,
         /// The type of the tab (in mTabsType), -1 if invalid
         pub tab_type: i32,
-
         // TODO: do we need num items in the tab here?
     }
 
@@ -105,7 +104,7 @@ mod __impl {
         pub node_valid: bool,
 
         /// Position of the node
-        /// 
+        ///
         /// If the node is valid, this is the index of the node in the item array.
         /// Otherwise, this is the byte offset (ptrdiff) of the node from beginning of PMDM
         pub node_pos: i128,
@@ -119,16 +118,15 @@ mod __impl {
         // both allocated_idx and unallocated_idx is here because
         // it could be theoretically possible that both lists eventually
         // reach this node, as a result of ISU corruption
-
         /// Position of the node in the allocated list.
-        /// i.e. how many times `.next` needs to be followed from the head of the list 
+        /// i.e. how many times `.next` needs to be followed from the head of the list
         /// to reach this node.
         ///
         /// If this node is not reachable from the head of the list by following `.next` , this is -1
         pub allocated_idx: i32,
 
         /// Position of the node in the unallocated list.
-        /// i.e. how many times `.next` needs to be followed from the head of the list 
+        /// i.e. how many times `.next` needs to be followed from the head of the list
         /// to reach this node.
         ///
         /// If this node is not reachable from the head of the list by following `.next` , this is -1
@@ -154,11 +152,10 @@ mod __impl {
 
         /// If the item is accessible via the dpad menu
         pub dpad_accessible: bool,
-
     }
 }
-pub use __impl::InvView_PouchList as PouchList;
 pub use __impl::InvView_PouchItem as PouchItem;
+pub use __impl::InvView_PouchList as PouchList;
 pub use __impl::InvView_PouchTab as PouchTab;
 // not worrying about supporting graph view yet
 

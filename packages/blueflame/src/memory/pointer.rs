@@ -3,7 +3,9 @@ use std::ffi::{CStr, CString};
 use num_traits::Zero;
 
 #[layered_crate::import]
-use memory::{Memory, MemLayout, Error, MemObject, Reader, Writer, assert_size_eq, access, AccessFlags};
+use memory::{
+    AccessFlags, Error, MemLayout, MemObject, Memory, Reader, Writer, access, assert_size_eq,
+};
 
 #[doc(inline)]
 pub use blueflame_deps::Ptr;
@@ -92,7 +94,9 @@ impl<T, const SIZE: u32> PtrToSized<T, SIZE> {
 
     /// Change the pointer type
     #[inline(always)]
-    pub const fn reinterpret_array<T2: MemObject, const SIZE2: u32, const LEN: usize>(self) -> PtrToArray<T2, SIZE2, LEN> {
+    pub const fn reinterpret_array<T2: MemObject, const SIZE2: u32, const LEN: usize>(
+        self,
+    ) -> PtrToArray<T2, SIZE2, LEN> {
         PtrToArray::new_const(self.value)
     }
 }
@@ -171,7 +175,9 @@ impl<T, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SIZE, LEN> {
 
     /// Change the pointer type
     #[inline(always)]
-    pub const fn reinterpret_array<T2: MemObject, const SIZE2: u32, const LEN2: usize>(self) -> PtrToArray<T2, SIZE2, LEN2> {
+    pub const fn reinterpret_array<T2: MemObject, const SIZE2: u32, const LEN2: usize>(
+        self,
+    ) -> PtrToArray<T2, SIZE2, LEN2> {
         PtrToArray::new_const(self.value)
     }
 }
@@ -317,7 +323,12 @@ impl<T: MemObject, const SIZE: u32> PtrToSized<T, SIZE> {
     /// Store slice of the object into emulated memory as an array with region restriction
     ///
     /// See [`store_slice`](Self::store_slice) for more details
-    pub fn store_slice_with(self, t: &[T], memory: &mut Memory, flags: AccessFlags) -> Result<(), Error> {
+    pub fn store_slice_with(
+        self,
+        t: &[T],
+        memory: &mut Memory,
+        flags: AccessFlags,
+    ) -> Result<(), Error> {
         let mut writer = memory.write(self.value, flags)?;
         for x in t {
             MemObject::write_sized(x, &mut writer, SIZE)?;
@@ -356,7 +367,12 @@ impl<T: MemObject, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SI
     }
 
     /// See [`load_slice`](Self::load_slice)
-    pub fn load_slice_with(self, out: &mut [T], memory: &Memory, flags: AccessFlags) -> Result<usize, Error> {
+    pub fn load_slice_with(
+        self,
+        out: &mut [T],
+        memory: &Memory,
+        flags: AccessFlags,
+    ) -> Result<usize, Error> {
         let mut reader = memory.read(self.value, flags)?;
         let mut count = 0;
         for x in out.iter_mut().take(LEN) {
@@ -377,7 +393,12 @@ impl<T: MemObject, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SI
     }
 
     /// See [`store`](Self::store)
-    pub fn store_with(self, t: &[T], memory: &mut Memory, flags: AccessFlags) -> Result<usize, Error> {
+    pub fn store_with(
+        self,
+        t: &[T],
+        memory: &mut Memory,
+        flags: AccessFlags,
+    ) -> Result<usize, Error> {
         let mut writer = memory.write(self.value, flags)?;
         let mut count = 0;
         for x in t.iter().take(LEN) {
@@ -390,7 +411,6 @@ impl<T: MemObject, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SI
 
 // load zero-terminated array
 impl<T: MemObject + Zero + PartialEq + Copy, const SIZE: u32> PtrToSized<T, SIZE> {
-
     /// Load zero-terminated array starting from this pointer.
     ///
     /// **The returned vector DOES NOT include the zero terminator**
@@ -405,7 +425,11 @@ impl<T: MemObject + Zero + PartialEq + Copy, const SIZE: u32> PtrToSized<T, SIZE
     /// **The returned vector DOES NOT include the zero terminator**
     ///
     /// See [`load_zero_terminated`](Self::load_zero_terminated) for more details
-    pub fn load_zero_terminated_with(self, memory: &Memory, flags: AccessFlags) -> Result<Vec<T>, Error> {
+    pub fn load_zero_terminated_with(
+        self,
+        memory: &Memory,
+        flags: AccessFlags,
+    ) -> Result<Vec<T>, Error> {
         let mut out = Vec::new();
         let mut reader = memory.read(self.value, flags)?;
         loop {
@@ -444,7 +468,10 @@ impl Ptr![u8] {
             Err(e) => e,
         };
         let lossy = utf8_error.into_utf8_lossy();
-        log::warn!("invalid utf-8 read from pointer: {:016x}, lossy value = {lossy}", self.to_raw());
+        log::warn!(
+            "invalid utf-8 read from pointer: {:016x}, lossy value = {lossy}",
+            self.to_raw()
+        );
         // we know the bytes only have one zero terminator at the end
         Ok(lossy)
     }
@@ -508,15 +535,15 @@ mod tests {
         assert_eq!(loaded_value.t.two, 0x20);
         assert_eq!(loaded_value.t2.one, 0x4);
         assert_eq!(loaded_value.t2.two, 0x5);
-    
+
         let array_to_store = [0x10u32; 20];
         let array_p = Ptr!(<u32[20]>(0x750));
         array_p.store(&array_to_store, &mut mem)?;
-    
+
         let loaded_array = array_p.load_vec(&mem)?;
         assert_eq!(loaded_array.len(), 20);
         assert_eq!(loaded_array[10], 0x10u32);
-    
+
         Ok(())
     }
 }

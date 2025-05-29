@@ -1,15 +1,15 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error, reg};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue, reg};
 
 use blueflame_deps::trace_call;
 
-pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
-        let rn = glue::parse_reg_or_panic(args);
-        Some(Box::new(BlrInstruction { rn }))
-    }
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let rn = glue::parse_reg_or_panic(args);
+    Some(Box::new(BlrInstruction { rn }))
+}
 
 #[derive(Clone)]
 pub struct BlrInstruction {
@@ -22,7 +22,7 @@ impl ExecutableInstruction for BlrInstruction {
         let regname = self.rn.to_regname();
         let xn_val = glue::read_gen_reg(core.cpu, &self.rn) as u64 - 4;
         trace_call!(
-            "main+0x{:08x} blr {:3} >>>>> main+0x{:08x}", 
+            "main+0x{:08x} blr {:3} >>>>> main+0x{:08x}",
             core.cpu.pc - core.proc.main_start(),
             regname.to_string(),
             xn_val + 4 - core.proc.main_start()
@@ -45,7 +45,7 @@ mod tests {
 
     #[test]
     pub fn simple_blr_test() -> anyhow::Result<()> {
-         let mut cpu = Cpu0::default();
+        let mut cpu = Cpu0::default();
         cpu.pc = 0x1000;
         cpu.write(reg!(lr), 5);
         cpu.write(reg!(x[10]), 0x50);
