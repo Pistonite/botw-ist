@@ -56,12 +56,12 @@ tasks:
     cmds:
       - task: parser:pull-artifacts-public
       - task: item-assets:pull-artifacts-public
-      - task: blueflame-deps:pull-artifacts-public
       - task: research:build
       - task: localization:build
       - task: item-assets:build-src
       - task: item-system:build
       - task: runtime-wasm:pull-dist
+      - task: blueflame-deps:build
 
   pull-artifacts:
     desc: Pull artifacts from storage (requires gcloud access)
@@ -140,8 +140,6 @@ tasks:
     cmds:
       - task: parser:pull-artifacts
       - task: item-assets:pull-artifacts-ts
-      - task: item-system:pull-artifacts-ts
-      - task: blueflame-deps:pull-artifacts
         # this technically isn't needed, but not installing pnpm
         # causes CI to be unreliable due to cache issues
         # (and I couldn't figure out how to optinally enable the setup)

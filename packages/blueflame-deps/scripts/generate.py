@@ -28,6 +28,7 @@ def main():
         "EMPTY_STR": 0,
         "VEC2F_NEGONE_ZERO": 0,
     }
+    gen_bool_flag_pack()
     generate_flag_function("ArrayBool.yaml", lines, max_lengths)
     generate_flag_function("ArrayS32.yaml", lines, max_lengths)
     generate_flag_function("ArrayF32.yaml", lines, max_lengths)
@@ -35,7 +36,7 @@ def main():
     generate_flag_function("ArrayString256.yaml", lines, max_lengths)
     generate_flag_function("ArrayVector2f.yaml", lines, max_lengths)
     generate_flag_function("ArrayVector3f.yaml", lines, max_lengths)
-    generate_flag_function("Bool.yaml", lines, max_lengths)
+    # generate_flag_function("Bool.yaml", lines, max_lengths)
     generate_flag_function("F32.yaml", lines, max_lengths)
     generate_flag_function("S32.yaml", lines, max_lengths)
     generate_flag_function("String32.yaml", lines, max_lengths)
@@ -91,8 +92,6 @@ def generate_flag_function(file: str, lines: list[str], max_lengths):
     lines += [
         "#[rustfmt::skip]",
         "#[doc(hidden)]",
-        "#[inline(never)]",
-        "#[optimize(none)]",
         f"pub fn generate_{flag_name}_flags() -> gdt::FlagList<{flag_type}> {{ vec![",
     ]
     static_values = []
@@ -125,12 +124,30 @@ def generate_flag_entry(entry, typ, is_array, max_lengths, static_values):
         max_lengths,
         static_values
     )
+
+    hash_str = f"0x{(hash & 0xffffffff):08x}u32 as i32"
     
     if minmax is None:
-        return f"gdt::Flag::new(\"{name}\", {hash_signed}, {value_tokens}, {flags})"
+        return f"gdt::Flag::new({hash_str},{value_tokens},{flags})/*{name}*/"
     min_tokens = to_token(name+"_MIN", minmax[0], typ, False, max_lengths, static_values)
     max_tokens = to_token(name+"_MAX", minmax[1], typ, False, max_lengths, static_values)
-    return f"gdt::Flag::new_minmax(\"{name}\", {hash_signed}, {value_tokens}, {flags}, {min_tokens}, {max_tokens})"
+    return f"gdt::Flag::new_minmax({hash_str},{value_tokens},{flags},{min_tokens},{max_tokens})/*{name}*/"
+
+def gen_bool_flag_pack():
+    print("Generating bool flag pack...")
+    with open(os.path.join(RESEARCH_SCRIPTS_DIR, "output", "GameData", "Bool.yaml"), "r", encoding="utf-8") as f:
+        entries = yaml.safe_load(f)
+    bytes = bytearray()
+    for entry in entries:
+        hash = entry["hash"]
+        bytes += hash.to_bytes(4, byteorder='little', signed=False)
+        initial = entry["initial"]
+        last_byte = 0x80 if initial else 0x00
+        last_byte |= entry["prop_flags"]
+        bytes.append(last_byte)
+    with open(os.path.join(SELF_DIR, "src", "generated", "bool_flag_pack.bin"), "wb") as f:
+        f.write(bytes)
+
 
 def to_token(name, value, typ, is_array, max_lengths, static_values):
     if isinstance(value, str):

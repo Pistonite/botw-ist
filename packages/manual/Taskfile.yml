@@ -15,14 +15,6 @@ includes:
     taskfile: ../item-assets
     dir: ../item-assets
     internal: true
-  item-system:
-    taskfile: ../item-system
-    dir: ../item-system
-    internal: true
-  blueflame-deps:
-    taskfile: ../blueflame-deps
-    dir: ../blueflame-deps
-    internal: true
 
 tasks:
   install:
@@ -46,8 +38,6 @@ tasks:
       - mdbook build
       - task: parser:package-artifacts-public
       - task: item-assets:package-artifacts-public
-      - task: item-system:package-artifacts-public
-      - task: blueflame-deps:package-artifacts-public
       - bun preprocess/inject-meta.ts post
 
   check:

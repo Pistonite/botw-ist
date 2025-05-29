@@ -1,54 +1,23 @@
 /// Make a `gdt::FlagDescriptor` from shorthand
 #[macro_export]
+#[rustfmt::skip]
 macro_rules! fd {
-    (bool) => {
-        blueflame::game::gdt::FdBool
-    };
-    (s32) => {
-        blueflame::game::gdt::FdS32
-    };
-    (f32) => {
-        blueflame::game::gdt::FdF32
-    };
-    (str32) => {
-        blueflame::game::gdt::FdString32
-    };
-    (str64) => {
-        blueflame::game::gdt::FdString64
-    };
-    (str256) => {
-        blueflame::game::gdt::FdString256
-    };
-    (vec2f) => {
-        blueflame::game::gdt::FdVector2f
-    };
-    (vec3f) => {
-        blueflame::game::gdt::FdVector3f
-    };
-    (vec4f) => {
-        blueflame::game::gdt::FdVector4f
-    };
-    (bool[]) => {
-        blueflame::game::gdt::FdBoolArray
-    };
-    (s32[]) => {
-        blueflame::game::gdt::FdS32Array
-    };
-    (f32[]) => {
-        blueflame::game::gdt::FdF32Array
-    };
-    (str64[]) => {
-        blueflame::game::gdt::FdString64Array
-    };
-    (str256[]) => {
-        blueflame::game::gdt::FdString256Array
-    };
-    (vec2f[]) => {
-        blueflame::game::gdt::FdVector2fArray
-    };
-    (vec3f[]) => {
-        blueflame::game::gdt::FdVector3fArray
-    };
+    (bool) => { blueflame::game::gdt::FdBool };
+    (s32) => { blueflame::game::gdt::FdS32 };
+    (f32) => { blueflame::game::gdt::FdF32 };
+    (str32) => { blueflame::game::gdt::FdString32 };
+    (str64) => { blueflame::game::gdt::FdString64 };
+    (str256) => { blueflame::game::gdt::FdString256 };
+    (vec2f) => { blueflame::game::gdt::FdVector2f };
+    (vec3f) => { blueflame::game::gdt::FdVector3f };
+    (vec4f) => { blueflame::game::gdt::FdVector4f };
+    (bool[]) => { blueflame::game::gdt::FdBoolArray };
+    (s32[]) => { blueflame::game::gdt::FdS32Array };
+    (f32[]) => { blueflame::game::gdt::FdF32Array };
+    (str64[]) => { blueflame::game::gdt::FdString64Array };
+    (str256[]) => { blueflame::game::gdt::FdString256Array };
+    (vec2f[]) => { blueflame::game::gdt::FdVector2fArray };
+    (vec3f[]) => { blueflame::game::gdt::FdVector3fArray };
 }
 
 /// Helper trait for checking index for getter and setters
@@ -168,7 +137,8 @@ pub struct Flag<T: FlagType> {
     value: T,
     initial_value: T::StaticType,
     hash: i32,
-    name: &'static str, // Even if not required to run, useful for debugging purposes
+    // #[cfg(feature = "flag-name")]
+    // name: String, // Even if not required to run, useful for debugging purposes
     min: T::ValueType,
     max: T::ValueType,
     properties: u8,
@@ -184,7 +154,7 @@ enum PropertyFlag {
 
 impl<T: FlagType> Flag<T> {
     pub fn new(
-        name: &'static str,
+        // name: &'static str,
         hash: i32,
         initial_value: T::StaticType,
         properties: u8,
@@ -193,14 +163,14 @@ impl<T: FlagType> Flag<T> {
             value: T::from_static(initial_value),
             initial_value,
             hash,
-            name,
+            // name,
             min: T::stub(),
             max: T::stub(),
             properties,
         }
     }
     pub fn new_minmax(
-        name: &'static str,
+        // name: &'static str,
         hash: i32,
         initial_value: T::StaticType,
         properties: u8,
@@ -211,7 +181,7 @@ impl<T: FlagType> Flag<T> {
             value: T::from_static(initial_value),
             initial_value,
             hash,
-            name,
+            // name,
             min,
             max,
             properties,
@@ -231,9 +201,9 @@ impl<T: FlagType> Flag<T> {
     pub fn hash(&self) -> i32 {
         self.hash
     }
-    pub fn name(&self) -> &str {
-        self.name
-    }
+    // pub fn name(&self) -> &str {
+    //     self.name
+    // }
 
     pub fn readable(&self) -> bool {
         self.properties & (PropertyFlag::IsProgramReadable as u8) != 0
@@ -277,4 +247,28 @@ impl<T: FlagType> Flag<Box<[T]>> {
         *x = value;
         true
     }
+}
+
+#[cfg(feature = "data")]
+static BOOL_FLAG_PACK: &[u8] = include_bytes!("generated/bool_flag_pack.bin");
+
+#[cfg(feature = "data")]
+pub fn unpack_bool_flags() -> Vec<Flag<bool>> {
+    if BOOL_FLAG_PACK.len() % 5 != 0 {
+        panic!("Invalid bool flag pack length");
+    }
+    let num_flags = BOOL_FLAG_PACK.len() / 5;
+    let mut flags = Vec::with_capacity(num_flags);
+    for i in 0..num_flags {
+        let offset = i * 5;
+        // first 4 bytes are the hash, in LE
+        let hash = i32::from_le_bytes(BOOL_FLAG_PACK[offset..offset + 4].try_into().unwrap());
+        // last byte is X00 FFFFF, X is initial value, FFFFF is the properties
+        let last_byte = BOOL_FLAG_PACK[offset + 4];
+        let initial_value = last_byte & 0x80 != 0;
+        let properties = last_byte & 0x1F;
+        flags.push(Flag::new(hash, initial_value, properties));
+    }
+
+    flags
 }

@@ -26,23 +26,11 @@ tasks:
     cmds:
       - task: cargo:fmt-fix
 
-  pull-artifacts-public:
-    cmds:
-      - $(which mkdir) -p src/generated
-      - wget -O src/generated/gdt.rs https://skybook.pistonite.dev/botw-ist/packages/blueflame-deps/gdt.rs
-      - wget -O src/generated/actor.rs https://skybook.pistonite.dev/botw-ist/packages/blueflame-deps/actor.rs
-
-  package-artifacts-public:
-    cmds:
-      - $(which mkdir) -p ../manual/book/botw-ist/packages/blueflame-deps
-      - cp src/generated/gdt.rs ../manual/book/botw-ist/packages/blueflame-deps/
-      - cp src/generated/actor.rs ../manual/book/botw-ist/packages/blueflame-deps/
-
   push-artifacts:
     cmds:
-      - gcloud storage cp src/generated/*.rs gs://ist-private/artifacts/blueflame-deps/
+      - gcloud storage cp src/generated/* gs://ist-private/artifacts/blueflame-deps/
 
   pull-artifacts:
     cmds:
       - $(which mkdir) -p src/generated
-      - gcloud storage cp gs://ist-private/artifacts/blueflame-deps/*.rs src/generated
+      - gcloud storage cp gs://ist-private/artifacts/blueflame-deps/* src/generated
