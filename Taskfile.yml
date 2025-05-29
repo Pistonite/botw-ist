@@ -139,6 +139,7 @@ tasks:
   test-layer-2:
     cmds:
       - task: parser:test
+      - task: blueflame-deps:test
       - task: blueflame:test
 
   test-layer-1:

@@ -6,7 +6,7 @@ use rand_xoshiro::Xoshiro256PlusPlus;
 use sha2::{Digest, Sha256};
 
 #[layered_crate::import]
-use memory::{Error, Memory, RegionType, glue};
+use memory::{Error, Memory, perm, region};
 
 pub use blueflame_deps::proxy;
 
@@ -186,7 +186,7 @@ impl<T: ProxyObject> ProxyListInner<T> {
     /// Allocate a new proxy object in memory and return its address
     fn allocate(&mut self, mem: &mut Memory, t: T) -> Result<u64, Error> {
         // allocate the proxy object in memory
-        let pointer = mem.heap_mut().alloc(t.mem_size())?;
+        let pointer = mem.alloc(t.mem_size())?;
         self.create_entry(mem, pointer, t)?;
         Ok(pointer)
     }
@@ -225,7 +225,7 @@ impl<T: ProxyObject> ProxyListInner<T> {
             return Err(Error::InvalidProxyObjectSize(size));
         }
         let mut hash = Sha256::new();
-        let mut w = mem.write(pointer, glue::region_type_to_flags(RegionType::Heap))?;
+        let mut w = mem.write(pointer, perm!(w) | region!(heap))?;
         w.write_u32(handle)?;
         hash.update(handle.to_le_bytes());
 
@@ -265,7 +265,7 @@ impl<T: ProxyObject> ProxyListInner<T> {
         let mut hash = Sha256::new();
         // read the handle
         // TODO --cleanup: macro
-        let mut r = mem.read(pointer, glue::region_type_to_flags(RegionType::Heap))?;
+        let mut r = mem.read(pointer, perm!(r) | region!(heap))?;
         let handle: u32 = r.read_u32()?;
         hash.update(handle.to_le_bytes());
         let entry = match self.objects.get(handle as usize) {

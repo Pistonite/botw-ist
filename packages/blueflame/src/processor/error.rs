@@ -3,11 +3,14 @@ use derive_more::derive::Constructor;
 #[layered_crate::import]
 use processor::{
     super::memory,
+    super::env::DataId,
     self::{Cpu0, reg}
 };
 
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {
+    #[error("missing required data {0:?}")]
+    MissingData(DataId),
     #[error("new cache at main+0x{new_start:08x} overlaps with existing cache at main+0x{existing_start:08x} (this is a bug)")]
     ExecuteCacheOverlap {
         new_start: u32,
@@ -41,6 +44,7 @@ pub enum Error {
 
     #[error("Memory error: {0}")]
     Memory(#[from] memory::Error),
+
     #[error("Unexpected: {0}")]
     Unexpected(String),
 }

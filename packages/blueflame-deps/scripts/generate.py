@@ -1,7 +1,6 @@
 import os
 
 import yaml
-import struct
 SELF_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 RESEARCH_SCRIPTS_DIR = os.path.join(os.path.dirname(SELF_DIR), "research-scripts")
 if not os.path.exists(RESEARCH_SCRIPTS_DIR):
@@ -29,6 +28,7 @@ def main():
         "VEC2F_NEGONE_ZERO": 0,
     }
     gen_bool_flag_pack()
+    gen_s32_flag_pack()
     generate_flag_function("ArrayBool.yaml", lines, max_lengths)
     generate_flag_function("ArrayS32.yaml", lines, max_lengths)
     generate_flag_function("ArrayF32.yaml", lines, max_lengths)
@@ -38,7 +38,7 @@ def main():
     generate_flag_function("ArrayVector3f.yaml", lines, max_lengths)
     # generate_flag_function("Bool.yaml", lines, max_lengths)
     generate_flag_function("F32.yaml", lines, max_lengths)
-    generate_flag_function("S32.yaml", lines, max_lengths)
+    # generate_flag_function("S32.yaml", lines, max_lengths)
     generate_flag_function("String32.yaml", lines, max_lengths)
     generate_flag_function("String64.yaml", lines, max_lengths)
     generate_flag_function("String256.yaml", lines, max_lengths)
@@ -106,7 +106,6 @@ def generate_flag_function(file: str, lines: list[str], max_lengths):
 def generate_flag_entry(entry, typ, is_array, max_lengths, static_values):
     name = entry["name"]
     hash = entry["hash"]
-    hash_signed = struct.unpack('i', struct.pack('I', hash))[0]
     flags = entry["prop_flags"]
     minmax = (entry["min"], entry["max"]) if ("min" in entry and "max" in entry) else None
     initial = entry["initial"]
@@ -146,6 +145,25 @@ def gen_bool_flag_pack():
         last_byte |= entry["prop_flags"]
         bytes.append(last_byte)
     with open(os.path.join(SELF_DIR, "src", "generated", "bool_flag_pack.bin"), "wb") as f:
+        f.write(bytes)
+
+def gen_s32_flag_pack():
+    print("Generating s32 flag pack...")
+    with open(os.path.join(RESEARCH_SCRIPTS_DIR, "output", "GameData", "S32.yaml"), "r", encoding="utf-8") as f:
+        entries = yaml.safe_load(f)
+    bytes = bytearray()
+    for entry in entries:
+        hash = entry["hash"]
+        bytes += hash.to_bytes(4, byteorder='little', signed=False)
+        initial = entry["initial"]
+        bytes += initial.to_bytes(4, byteorder='little', signed=True)
+        min = entry["min"]
+        max = entry["max"]
+        bytes += min.to_bytes(4, byteorder='little', signed=True)
+        bytes += max.to_bytes(4, byteorder='little', signed=True)
+        prop_flags = entry["prop_flags"]
+        bytes.append(prop_flags & 0xFF)
+    with open(os.path.join(SELF_DIR, "src", "generated", "s32_flag_pack.bin"), "wb") as f:
         f.write(bytes)
 
 

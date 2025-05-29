@@ -20,17 +20,17 @@ pub enum Feature {
     // (i.e. mem-strict-region instead of mem_strict_region)
 
 
-    /// If enabled and a region is provided when accessing memory,
-    /// it will not allow accessing other regions, even if the address
-    /// is in another valid region
-    #[on] mem_strict_region,
+    /// Enable strict section checks:
+    /// - Memory access may specify which section(s) it is allowed to access
+    /// - Access to invalid sections will be denied (bypass will return 0 for reads)
+    #[on] mem_strict_section,
     /// If read, write and execute permission checks are enabled
     #[on] mem_permission,
     /// If enabled, accessing unallocated location on the heap will not be allowed
-    #[on] mem_heap_check_allocated,
+    #[on] mem_strict_heap,
 
     /// If enabled, jumping to the middle of a replace-hooked code will not be allowed
-    #[on] proc_strict_replace_hook,
+    #[on] strict_replace_hook,
 
     /// Limit the total number of blocks that can be executed
     /// by one frame of the Core. This helps prevent infinite

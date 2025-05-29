@@ -1,11 +1,12 @@
 use std::sync::Arc;
 
+use bit_set::BitSet;
 use enumset::{EnumSet, EnumSetType};
 
 #[layered_crate::import]
 use memory::{
-    super::program::ProgramRegion, 
-    self::{AccessType, Error, Page, PAGE_SIZE, align_down, align_up}
+    super::program::{ProgramRegion, ArchivedProgramRegion}, 
+    self::{AccessFlags, Error, Page, PAGE_SIZE, align_down, align_up}
 };
 
 pub const REGION_ALIGN: u64 = 0x10000;
@@ -21,16 +22,46 @@ pub const REGION_ALIGN: u64 = 0x10000;
 pub struct Region {
     /// Type of the region, used for tracking and debugging
     pub tag: &'static str,
-    pub typ: RegionType,
+    /// The flags for this region, which indicates its type and permissions
+    pub flags: AccessFlags,
     /// Physical start address of the region. Must be aligned to 0x10000
     pub start: u64,
     /// Maximum capacity of the region in bytes
     pub capacity: u32,
 
+    /// Clone-on-write page table
     pages: Vec<Arc<Page>>,
 }
 
 impl Region {
+    /// Construct a program region from program region definition
+    ///
+    /// All pages in the program region are eagerly allocated. For simplicity,
+    /// this also include blank pages excluded from the image, which are zeroed.
+    /// The entire program region is around 70MB, which should be well under
+    /// the memory limit for WASM32
+    ///
+    /// The program region is assumed to be page-aligned, but as fail-safe,
+    /// it will be aligned up to the next page boundary
+    ///
+    /// `program_start` is the physical address where the program is loaded
+    /// will be aligned down to the nearest 0x10000, if not already
+    pub fn from_program_regions(program_start: u64, program_size: u32, regions: &[ArchivedProgramRegion]) -> Result<Vec<Self>, Error> {
+        let start = align_down!(program_start, REGION_ALIGN);
+
+        let mut region_meta = Vec::new();
+
+
+
+        let num_pages = align_up!(program_size, PAGE_SIZE) / PAGE_SIZE;
+    }
+
+    // pub fn new_rx(
+    //     start: u64, byte_size: u32, data: &[ArchivedProgramRegion]) -> Self {
+    //
+    //     todo!()
+    //    
+    // }
     /// Construct a program region from program region definition
     ///
     /// All pages in the program region are eagerly allocated. For simplicity,
@@ -70,9 +101,9 @@ impl Region {
                 pages.push(page);
                 current_start += PAGE_SIZE;
             }
-            // number of pages for this region in the image, align just for safety
             let data_len = region.data().len() as u32;
             let permissions = AccessType::from_perms(region.permissions);
+            // number of pages for this region in the image, align just for safety
             let num_pages_curr = align_up!(data_len, PAGE_SIZE) / PAGE_SIZE;
             for i in 0..num_pages_curr {
                 // usize should be either 32 or 64 on our supported platforms
@@ -131,8 +162,13 @@ impl Region {
         self.pages.len() as u32 * PAGE_SIZE
     }
 
+    /// Get the start physical address of the region
+    pub const fn start(&self) -> u64 {
+        self.start
+    }
+
     /// Get the end physical address of the region (exclusive)
-    pub fn get_end(&self) -> u64 {
+    pub fn end(&self) -> u64 {
         self.start + self.capacity as u64
     }
 

@@ -8,7 +8,7 @@ use processor::{
     super::env::{GameVer, enabled, ProxyId, DataId},
     super::vm::VirtualMachine,
     super::memory::{MemObject, Ptr},
-    super::program::Program,
+    super::program::ArchivedProgram,
     super::game::gdt,
     self::{ExecuteCache, Registers, Process, Error, StackTrace, reg, BLOCK_COUNT_LIMIT, CrashReport, BLOCK_ITERATION_LIMIT, STACK_RESERVATION},
 };
@@ -36,7 +36,7 @@ pub struct Cpu3<'a, 'b, 'c> {
     #[deref]
     #[deref_mut]
     pub cpu2: Cpu2<'a, 'b>,
-    pub program: &'c Program,
+    pub program: &'c ArchivedProgram,
     // adding singleton rel_start to this gets the physical
     // address of the singleton
     heap_start_adjusted: u64
@@ -84,7 +84,7 @@ impl<'a, 'b, 'c> Cpu3<'a, 'b, 'c> {
     pub fn new(
         cpu1: &'a mut Cpu1, 
         process: &'b mut Process, 
-        program: &'c Program,
+        program: &'c ArchivedProgram,
         heap_start_adjusted: u64,
     ) -> Self {
         let cpu2 = Cpu2 {
@@ -158,7 +158,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
 
     fn v_mem_alloc(&mut self, bytes: u32) -> Result<(), Self::Error> {
         log::debug!("v_mem_alloc {} bytes", bytes);
-        let ptr = self.proc.memory_mut().heap_mut().alloc(bytes)?;
+        let ptr = self.proc.memory_mut().alloc(bytes)?;
         self.write(reg!(x[0]), ptr);
         Ok(())
     }
@@ -175,15 +175,14 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     }
 
     fn v_data_alloc(&mut self, id: DataId) -> Result<(), Self::Error> {
-        let Some(data) = self.program.data(id) else {
-            return Err(Error::Unexpected(format!(
-                "data {:?} not found in program",
-                id
-            )));
+        let Some(data) = self.program.data.iter().find(|d| {
+            d.id == id
+        }) else {
+            return Err(Error::MissingData(id));
         };
-        let bytes = data.bytes();
+        let bytes = &data.bytes;
         log::debug!("allocating data, length={}", bytes.len());
-        let ptr = self.proc.memory_mut().heap_mut().alloc(bytes.len() as u32)?;
+        let ptr = self.proc.memory_mut().alloc(bytes.len() as u32)?;
         let ptr = Ptr!(<u8>(ptr));
         ptr.store_slice(bytes, self.proc.memory_mut())?;
         self.write(reg!(x[0]), ptr.to_raw());
@@ -279,7 +278,7 @@ impl Cpu2<'_, '_> {
                             return Err(e);
                         }
                         // executing the middle of replacement code
-                        if enabled!("proc-strict-replace-hook") {
+                        if enabled!("strict-replace-hook") {
                             return Err(e);
                         }
                         // probably doesn't need to fetch that much

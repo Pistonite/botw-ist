@@ -54,10 +54,6 @@ impl Process {
         &self.proxies
     }
 
-    // pub fn proxies_mut(&mut self) -> &mut Proxies {
-    //     Arc::make_mut(&mut self.proxies)
-    // }
-
     pub fn proxies_mut<T: ProxyObject, F: FnOnce(&mut Proxies) -> &mut ProxyList<T>>(&mut self, f: F) -> ProxyGuardMut<'_, '_, T> {
         let memory = Arc::make_mut(&mut self.memory);
         let proxies = Arc::make_mut(&mut self.proxies);

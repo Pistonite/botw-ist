@@ -1,27 +1,96 @@
-use std::ops::DerefMut;
 use std::sync::Arc;
-
-use derive_more::derive::Constructor;
 
 #[layered_crate::import]
 use memory::{
     super::env::{Environment, enabled},
-    self::{glue, AccessFlags, AccessFlag, MemAccess, access, Ptr, Error, SimpleHeap, Page, Reader, Region, RegionType, Writer}
+    super::program::ArchivedModule,
+    self::{align_up, REGION_ALIGN, Section, AccessFlags, AccessFlag, perm, region, Ptr, Error, SimpleHeap, Page, Reader, Writer, PAGE_SIZE}
 };
 
 /// Memory of the simulated process
-#[derive(Debug, Clone, Constructor)]
+#[derive(Clone)]
 pub struct Memory {
     env: Environment,
-    /// program region
-    program: Arc<Region>,
-    /// stack region
-    stack: Arc<Region>,
-    /// heap region
-    pub heap: Arc<SimpleHeap>,
+    sections: Vec<Arc<Section>>,
+    heap: SimpleHeap,
+    program_start: u64,
+    stack_end: u64,
 }
 
 impl Memory {
+    /// Create a new memory without the program, only heap and stack,
+    pub fn new(env: Environment, heap_size: u32, heap_alloc: u64, stack_size: u32) -> Self {
+        let heap = SimpleHeap::new(0, heap_size, heap_alloc);
+        let heap_section = heap.create_section();
+        let stack_section = Section::new_region(
+            "stack",
+            align_up!(0x1000 + heap_section.len_bytes() as u64, REGION_ALIGN),
+            stack_size,
+            perm!(rw) | region!(stack)
+        );
+        let stack_end = stack_section.start() + stack_section.len_bytes() as u64;
+        Self {
+            env,
+            sections: vec![Arc::new(heap_section), Arc::new(stack_section)],
+            heap,
+            program_start: 0,
+            stack_end,
+        }
+    }
+
+    pub fn new_program_zc(env: Environment,
+        program_start: u64,
+        program_size: u32,
+        modules: &[ArchivedModule],
+        heap: SimpleHeap,
+        stack_start: u64,
+        stack_size: u32,
+    ) -> Result<Self, Error> {
+
+        let mut sections = Vec::new();
+
+        for module in modules.into_iter() {
+            let module_start = module.rel_start.to_native() as u64 + program_start;
+            let module_name = module.name.as_str();
+            for i in 0..module.sections.len() {
+                let section_rel_start = module.sections[i].rel_start.to_native();
+                let section_size = match module.sections.get(i + 1) {
+                    Some(next) => next.rel_start.to_native() - section_rel_start,
+                    None => program_size - section_rel_start,
+                };
+                let section = Section::new_program_zc(
+                    module_name,
+                    program_start,
+                    module_start,
+                    section_size,
+                    &module.sections[i],
+                )?;
+                sections.push(Arc::new(section));
+            }
+        }
+
+        let heap_section = heap.create_section();
+        sections.push(Arc::new(heap_section));
+        let stack_section = Section::new_region(
+            "stack",
+            stack_start,
+            stack_size,
+            perm!(rw) | region!(stack)
+        );
+        let stack_end = stack_section.start() + stack_section.len_bytes() as u64;
+        sections.push(Arc::new(stack_section));
+
+        sections.sort_by_key(|s| s.start());
+
+        Ok(Self {
+            env,
+            sections,
+            heap,
+            program_start,
+            stack_end
+        })
+    }
+
     /// Get the emulated environment constants
     pub fn env(&self) -> Environment {
         self.env
@@ -29,16 +98,34 @@ impl Memory {
 
     /// Get the physical starting address of the program region
     pub fn program_start(&self) -> u64 {
-        self.program.start
+        self.program_start
     }
 
     /// Get the physical starting address of the main module
     pub fn main_start(&self) -> u64 {
-        self.program.start + self.env.main_offset() as u64
+        self.program_start + self.env.main_offset() as u64
     }
 
     pub fn stack_end(&self) -> u64 {
-        self.stack.start + self.stack.len_bytes() as u64
+        self.stack_end
+    }
+
+    /// Format the address as section+offset
+    pub fn format_addr(&self, addr: u64) -> String {
+        let i = match self.sections.binary_search_by_key(&addr, |s| s.start()) {
+            Ok(i) => i,
+            Err(0) => {
+                // address is before the first section, format as absolute address
+                // (probably offseting off a nullptr or something)
+                return format!("0x{addr:016x}");
+            },
+            Err(i) => i-1
+        };
+        let section = &self.sections[i];
+        let in_section = section.end() > addr;
+        let section_off = addr - section.module_start;
+        let name = &section.module_name;
+        format!("{name}+0x{section_off:08x}{}", if in_section { ' ' } else { '~' })
     }
 
     /// Create a reader to start reading at address
@@ -48,50 +135,16 @@ impl Memory {
     /// be accessed. If the execute permission bit is set, the region being accessed
     /// also needs to have execute permission. Region permissions are still checked,
     /// of course.
-    pub fn read(
-        &self,
-        address: u64,
-        flags: AccessFlags,
-    ) -> Result<Reader, Error> {
-        let flags = convert_region_flags(flags);
+    pub fn read( &self, addr: u64, flags: AccessFlags,) -> Result<Reader, Error> {
+        let flags = perm!(r) | convert_region_flags(flags);
+        let (
+            section_idx, 
+            page_idx, 
+            page_off, 
+            max_page_off) = self.calculate(addr, flags)?;
+        let page = self.page_by_indices_unchecked(section_idx, page_idx);
 
-        if let Some((region, page, page_idx, off)) = self.get_region_by_addr(address) {
-            if !glue::access_flags_contains_region_type(flags, region.typ) {
-                return Err(Error::DisallowedRegion(MemAccess {
-                    flags,
-                    addr: address,
-                    bytes: 0,
-                }));
-            }
-            let is_execute = flags.has_all(AccessFlag::Execute);
-            let disable_permission_check = flags.has_all(access!(force));
-
-            let trace_offset = if region.tag == "main" {
-                self.env.main_offset()
-            } else {
-                0
-            };
-            // TODO --cleanup: remove execute from param
-            return Ok(Reader::new(
-                self, 
-                region, 
-                page, 
-                page_idx, off, is_execute, disable_permission_check,
-                trace_offset as u64
-            ));
-        }
-        // region read_by_addr will fail if the address is not allocated,
-        // in those cases, we want to return Unallocated error
-        if self.program.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address));
-        }
-        if self.stack.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address));
-        }
-        if self.heap.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address));
-        }
-        Err(Error::InvalidRegion(address))
+        Ok(Reader::new(self,page,page_off,max_page_off, addr, flags))
     }
 
     /// Create a writer to start writing at address
@@ -101,78 +154,125 @@ impl Memory {
     /// be accessed. Otherwise all regions are allowed (permissions are still checked, of course)
     pub fn write(
         &mut self,
-        address: u64,
+        addr: u64,
         flags: AccessFlags,
     ) -> Result<Writer, Error> {
-        let flags = convert_region_flags(flags);
+        let flags = perm!(w) | convert_region_flags(flags);
+        let (section_idx, page_idx, page_off, max_page_off) = self.calculate(addr, flags)?;
 
-        if let Some((region, _, page_idx, off)) = self.get_region_by_addr(address) {
-            if !glue::access_flags_contains_region_type(flags, region.typ) {
-                return Err(Error::DisallowedRegion(MemAccess {
-                    flags,
-                    addr: address,
-                    bytes: 0,
-                }));
+        Ok(Writer::new(
+            self,
+            section_idx, page_idx, page_off, max_page_off,addr,flags
+        ))
+    }
+
+    /// Get a page by section index and page index without checking bounds.
+    /// This is safe if the bounds are get through `calculate` method.
+    pub fn page_by_indices_unchecked(&self, section_idx: u32, page_idx: u32) -> &Page {
+        self.sections[section_idx as usize].get_unchecked(page_idx)
+    }
+    /// Get a mutable page by section index and page index without checking bounds.
+    /// This is safe if the bounds are get through `calculate` method.
+    pub fn page_by_indices_mut_unchecked(&mut self, section_idx: u32, page_idx: u32) -> &mut Page {
+        Arc::make_mut(&mut self.sections[section_idx as usize]).get_mut_unchecked(page_idx)
+    }
+
+    /// Calculate the section index, page index, page offset, and max page offset
+    /// for the given address. Also checks if access the address is allowed
+    pub fn calculate(&self, addr: u64, flags: AccessFlags) -> Result<(u32, u32, u32, u32), Error> {
+        // return section index, page index, page offset, max page offset
+        if !self.heap.check_allocated(addr) {
+            if enabled!("mem-strict-heap") {
+                log::error!("accessing unallocated heap address: 0x{addr:016x} ({})", self.format_addr(addr));
+                return Err(Error::HeapUnallocated(addr, flags));
             }
-            let disable_permission_check = flags.has_all(access!(force));
-            let trace_offset = if region.tag == "main" {
-                self.env.main_offset()
-            } else {
-                0
-            };
-            return Ok(Writer::new(self, region.typ, page_idx, off, disable_permission_check, trace_offset as u64));
+            log::warn!("bypassed - accessing unallocated heap address: 0x{addr:016x} ({})", self.format_addr(addr));
         }
-        // region read_by_addr will fail if the address is not allocated,
-        // in those cases, we want to return Unallocated error
-        if self.program.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address));
+        let Some(section_idx) = self.find_section_idx(addr) else {
+            if enabled!("mem-strict-section") {
+                log::error!("accessing invalid section: 0x{addr:016x} ({})", self.format_addr(addr));
+                return Err(Error::InvalidSection(addr, flags));
+            }
+            log::warn!("bypassed - accessing invalid section: 0x{addr:016x} ({})", self.format_addr(addr));
+            return Err(Error::Bypassed);
+        };
+        let section = &self.sections[section_idx];
+        // permission check
+        if !flags.all(AccessFlag::Force) {
+            if !section.flags.all(flags.perms()) {
+                log::debug!("section flags: {:08x?}", section.flags);
+                log::debug!("input flags: {:08x?}", flags);
+                log::debug!("perm flags: {:08x?}", flags.perms());
+                if enabled!("mem-permission") {
+                    log::error!("permission denied: 0x{addr:016x} ({})", self.format_addr(addr));
+                    return Err(Error::PermissionDenied(addr, flags));
+                }
+                log::warn!("bypassed - accessing section without permission: 0x{addr:016x} ({})", self.format_addr(addr));
+            }
         }
-        if self.stack.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address));
-        }
-        if self.heap.is_addr_in_region(address) {
-            return Err(Error::Unallocated(address));
-        }
-        Err(Error::InvalidRegion(address))
+        let rel_addr = addr - section.start();
+        let page_idx = (rel_addr / PAGE_SIZE as u64) as u32;
+        let page_off = (rel_addr % PAGE_SIZE as u64) as u32;
+        let max_page_off = self.heap.check_max_page_offset(addr).unwrap_or(PAGE_SIZE);
+        Ok((section_idx as u32, page_idx, page_off, max_page_off))
     }
 
-    /// If `address` is inside a region, return the region, page, region page index, and page offset
-    ///
-    /// This does not check permissions or if the address
-    /// is in an unallocated part of the region
-    pub fn get_region_by_addr(&self, address: u64) -> Option<(&Region, &Page, u32, u32)> {
-        if let Some((page, idx, off)) = self.program.read_at_addr(address) {
-            return Some((self.program.as_ref(), page, idx, off));
-        }
-        if let Some((page, idx, off)) = self.stack.read_at_addr(address) {
-            return Some((self.stack.as_ref(), page, idx, off));
-        }
-        if let Some((page, idx, off)) = self.heap.read_at_addr(address) {
-            return Some((self.heap.as_ref(), page, idx, off));
-        }
-        None
-    }
-
-    pub fn get_region(&self, typ: RegionType) -> &Region {
-        match typ {
-            RegionType::Program => self.program.as_ref(),
-            RegionType::Stack => self.stack.as_ref(),
-            RegionType::Heap => self.heap.as_ref(),
+    fn find_section_idx(&self, address: u64) -> Option<usize> {
+        let i = match self.sections.binary_search_by_key(&address, |s| s.start()) {
+            Ok(i) => i,
+            Err(0) => return None, // address is before the first section
+            Err(i) => i-1
+        };
+        if self.sections[i].end() > address {
+            Some(i)
+        } else {
+            None // address is after the last section
         }
     }
 
-    /// Get region by type for mutation. The region's page table
-    /// will be cloned on write if it is shared
-    pub fn mut_region(&mut self, typ: RegionType) -> &mut Region {
-        match typ {
-            RegionType::Program => Arc::make_mut(&mut self.program),
-            RegionType::Stack => Arc::make_mut(&mut self.stack),
-            RegionType::Heap => Arc::make_mut(&mut self.heap).deref_mut(),
-        }
-    }
 
-    pub fn heap_mut(&mut self) -> &mut SimpleHeap {
-        Arc::make_mut(&mut self.heap)
+    // /// If `address` is inside a region, return the region, page, region page index, and page offset
+    // ///
+    // /// This does not check permissions or if the address
+    // /// is in an unallocated part of the region
+    // pub fn get_region_by_addr(&self, address: u64) -> Option<(&Region, &Page, u32, u32)> {
+    //     if let Some((page, idx, off)) = self.program.read_at_addr(address) {
+    //         return Some((self.program.as_ref(), page, idx, off));
+    //     }
+    //     if let Some((page, idx, off)) = self.stack.read_at_addr(address) {
+    //         return Some((self.stack.as_ref(), page, idx, off));
+    //     }
+    //     if let Some((page, idx, off)) = self.heap.read_at_addr(address) {
+    //         return Some((self.heap.as_ref(), page, idx, off));
+    //     }
+    //     None
+    // }
+
+    // pub fn get_region(&self, typ: RegionType) -> &Region {
+    //     match typ {
+    //         RegionType::Program => self.program.as_ref(),
+    //         RegionType::Stack => self.stack.as_ref(),
+    //         RegionType::Heap => self.heap.as_ref(),
+    //     }
+    // }
+    //
+    // /// Get region by type for mutation. The region's page table
+    // /// will be cloned on write if it is shared
+    // pub fn mut_region(&mut self, typ: RegionType) -> &mut Region {
+    //     match typ {
+    //         RegionType::Program => Arc::make_mut(&mut self.program),
+    //         RegionType::Stack => Arc::make_mut(&mut self.stack),
+    //         RegionType::Heap => Arc::make_mut(&mut self.heap).deref_mut(),
+    //     }
+    // }
+    //
+    // pub fn heap_mut(&mut self) -> &mut SimpleHeap {
+    //     Arc::make_mut(&mut self.heap)
+    // }
+
+    /// Allocate `size` bytes on the heap.
+    pub fn alloc(&mut self, size: u32) -> Result<u64, Error> {
+        self.heap.alloc(size)
     }
 
     /// Allocate space on the heap for the given byte slice,
@@ -180,22 +280,16 @@ impl Memory {
     ///
     /// Return the pointer to the slice
     pub fn alloc_with(&mut self, data: &[u8]) -> Result<u64, Error> {
-        let heap = self.heap_mut();
-        let ptr = heap.alloc(data.len() as u32)?;
+        let ptr = self.heap.alloc(data.len() as u32)?;
         Ptr!(<u8>(ptr)).store_slice(data, self)?;
         Ok(ptr)
     }
 }
 
 fn convert_region_flags(flags: AccessFlags) -> AccessFlags {
-        let region_flags = if enabled!("mem-strict-region") {
-            if flags.has_any(AccessFlags::region_all()) {
-                flags
-            } else {
-                AccessFlags::region_all()
-            }
-        } else {
-            AccessFlags::region_all() // TODO --cleanup: macro
-        };
-        flags | region_flags
+    if flags.any(region!(all)) && enabled!("mem-strict-section") {
+        flags
+    } else {
+        flags | region!(all) // allow all regions
+    }
 }

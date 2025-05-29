@@ -154,7 +154,7 @@ impl Builder {
     fn build(self) -> gdt::TriggerParam {
         TriggerParam {
             bool_flags : blueflame_deps::gdt::unpack_bool_flags(),
-        s32_flags : blueflame_deps::generated::gdt::generate_S32_yaml_flags(),
+        s32_flags : blueflame_deps::gdt::unpack_s32_flags(),
         f32_flags : blueflame_deps::generated::gdt::generate_F32_yaml_flags(),
         string32_flags : blueflame_deps::generated::gdt::generate_String32_yaml_flags(),
         string64_flags : blueflame_deps::generated::gdt::generate_String64_yaml_flags(),
@@ -249,6 +249,8 @@ mod tests {
         assert!(!flag4.get());
         // assert_eq!("MainField_LinkTagAnd_02894606454", flag4.name());
 
+        let flag = params.by_name::<gdt::fd!(s32)>("KorokNutsNum").expect("flag not found");
+        assert_eq!(*flag.get(), 0);
         Ok(())
     }
 

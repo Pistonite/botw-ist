@@ -1,9 +1,11 @@
-use deku::{DekuRead, DekuWrite};
+// use deku::{DekuRead, DekuWrite};
 use enum_map::Enum;
 use serde::{Serialize, Deserialize};
 
 /// Environment to simulate
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, DekuRead, DekuWrite)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Serialize, Deserialize)]
+#[derive(rkyv::Serialize, rkyv::Deserialize, rkyv::Archive)]
 pub struct Environment {
     /// Version of the game
     pub game_ver: GameVer,
@@ -43,36 +45,39 @@ impl Environment {
 }
 
 /// Version of the game
-#[derive(Debug, Clone, Copy, 
-    PartialEq, Eq, PartialOrd, Ord, Hash, 
-    Serialize, Deserialize, DekuRead, DekuWrite, Enum)]
-#[deku(id_type = "u8")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Serialize, Deserialize)]
+#[derive(Enum)]
+#[derive(rkyv::Serialize, rkyv::Deserialize, rkyv::Archive)]
+// #[deku(id_type = "u8")]
 #[repr(u8)]
 pub enum GameVer {
     /// Switch 1.5.0
-    #[deku(id = 0x01)]
+    // #[deku(id = 0x01)]
     X150,
     /// Switch 1.6.0
-    #[deku(id = 0x02)]
+    // #[deku(id = 0x02)]
     X160
 }
 
 /// Version of the DLC
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, DekuRead, DekuWrite)]
-#[deku(id_type = "u8")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Serialize, Deserialize)]
+#[derive(rkyv::Serialize, rkyv::Deserialize, rkyv::Archive)]
+// #[deku(id_type = "u8")]
 #[repr(u8)]
 pub enum DlcVer {
     /// Not installed
-    #[deku(id = 0x00)]
+    // #[deku(id = 0x00)]
     None,
     /// Version 1.0.0 (Day 1 stuff)
-    #[deku(id = 0x01)]
+    // #[deku(id = 0x01)]
     V100,
     /// Version 2.0.0 (Master Trials)
-    #[deku(id = 0x02)]
+    // #[deku(id = 0x02)]
     V200,
     /// Version 3.0.0 (Champions Ballad)
-    #[deku(id = 0x03)]
+    // #[deku(id = 0x03)]
     V300,
 }
 
