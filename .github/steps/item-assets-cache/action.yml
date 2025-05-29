@@ -10,4 +10,5 @@ runs:
         path: packages/item-assets/public
         key: item-assets
     - run: task exec -- item-assets:pull-artifacts
+      shell: bash
       if: steps.cache-item-assets.outputs.cache-hit != 'true'

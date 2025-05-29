@@ -64,6 +64,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           rust_targets: wasm32-unknown-unknown,x86_64-unknown-linux-gnu
+          rust_components: rust-src
       - run: task build-runtime-fast-ci
         if: github.event_name != 'pull_request'
       - run: task build-runtime-ci

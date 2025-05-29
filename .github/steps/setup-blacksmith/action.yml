@@ -8,6 +8,9 @@ inputs:
   rust_targets:
     description: "Targets for rust-toolchain"
     default: ""
+  rust_components:
+    description: "Components for rust-toolchain"
+    default: ""
 
 runs:
   using: composite
@@ -27,6 +30,7 @@ runs:
     - uses: dtolnay/rust-toolchain@nightly
       with:
         targets: ${{ inputs.rust_targets }}
+        components: ${{ inputs.rust_components }}
     - uses: useblacksmith/rust-cache@v3
     - uses: taiki-e/install-action@v2
       with:
