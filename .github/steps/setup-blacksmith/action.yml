@@ -24,7 +24,7 @@ runs:
         node-version: 22
         cache: 'pnpm'
     - uses: oven-sh/setup-bun@v2
-    - uses: dtolnay/rust-toolchain@stable
+    - uses: dtolnay/rust-toolchain@nightly
       with:
         targets: ${{ inputs.rust_targets }}
     - uses: useblacksmith/rust-cache@v3

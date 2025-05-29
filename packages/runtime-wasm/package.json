@@ -11,5 +11,8 @@
     },
     "devDependencies": {
         "mono-dev": "workspace:*"
-    }
+    },
+    "nocheck": [
+        "src/skybook_runtime_wasm.d.ts"
+    ]
 }

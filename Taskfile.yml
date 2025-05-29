@@ -72,6 +72,18 @@ tasks:
       - parser:pull-artifacts
       - blueflame-deps:pull-artifacts
 
+  check-ci:
+    deps:
+      - localization:pull-artifacts
+      - item-assets:pull-artifacts-ts
+      - item-system:pull-artifacts-ts
+      - parser:pull-artifacts
+      - blueflame-deps:pull-artifacts
+    cmds:
+      - pnpm install --frozen-lockfile
+      - task: post-install
+      - task: check
+
   check:
     desc: Run ALL of the checks
     cmds:
@@ -102,12 +114,23 @@ tasks:
       # - task: blueflame:check
       # - task: runtime:check
       - task: runtime-wasm:check
+
+  test-ci:
+    deps:
+      - localization:pull-artifacts
+      - item-assets:pull-artifacts-ts
+      - item-system:pull-artifacts-ts
+      - parser:pull-artifacts
+      - blueflame-deps:pull-artifacts
+    cmds:
+      - pnpm install --frozen-lockfile
+      - task: post-install
+      - task: test
       
 
   test:
     desc: Run ALL of the tests
     cmds:
-      - task: test-layer-0
       - task: test-layer-1
       - task: test-layer-2
       - cmd: echo 'All tests passed!'
@@ -123,9 +146,6 @@ tasks:
       - item-system:test
       - skybook-api:test
 
-  test-layer-0:
-    deps:
-      - blueflame-deps:pull-artifacts
 
   build:
     desc: Check that components can build without failure
