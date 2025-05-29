@@ -10,7 +10,7 @@ inputs:
     default: ""
   rust_components:
     description: "Components for rust-toolchain"
-    default: ""
+    default: "clippy,rustfmt"
 
 runs:
   using: composite
