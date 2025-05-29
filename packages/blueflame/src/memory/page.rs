@@ -1,5 +1,3 @@
-use std::mem::MaybeUninit;
-
 #[layered_crate::import]
 use memory::PAGE_SIZE;
 
@@ -20,23 +18,11 @@ impl Page {
 
     /// Create a new page with the given data padded with zeros to the page size
     pub fn from_slice(data: &[u8]) -> Self {
-        let mut page = Self::uninit();
+        // TODO --optimize: how much boot perf can be get if we uninit this?
+        let mut page = Self::zeroed();
         page.data[..data.len()].copy_from_slice(data);
         page
     }
-
-    fn uninit() -> Self {
-        Self {
-            // SAFETY: this is safe because u8 slice are not dropped
-            data: unsafe { MaybeUninit::uninit().assume_init() },
-        }
-    }
-
-    // TODO --cleanup remove
-    // /// Check if the page has all of the given permission set
-    // pub fn has_permission(&self, perm: impl Into<EnumSet<AccessType>>) -> bool {
-    //     !self.perm.intersection(perm.into()).is_empty()
-    // }
 
     /// Read a u8 at offset without checking permissions
     #[inline(always)]

@@ -23,7 +23,6 @@ pub const BLOCK_ITERATION_LIMIT: usize = 0x400000;
 
 // TODO --cleanup: remove this
 pub mod glue {
-    use std::str::FromStr;
 
     use super::*;
 
@@ -60,37 +59,31 @@ impl RegisterType {
             }
         }
 }
-impl FromStr for RegisterType {
-    type Err = anyhow::Error;
-    fn from_str(reg: &str) -> Result<Self, Self::Err> {
+
+    pub fn parse_reg_or_panic(reg: &str) -> RegisterType {
         match reg.to_lowercase().as_str() {
-            "xzr" => return Ok(RegisterType::XZR),
-            "wzr" => return Ok(RegisterType::WZR),
-            "sp" => return Ok(RegisterType::SP),
-            "lr" => return Ok(RegisterType::LR),
+            "xzr" => return RegisterType::XZR,
+            "wzr" => return RegisterType::WZR,
+            "sp" => return RegisterType::SP,
+            "lr" => return RegisterType::LR,
             _ => {}
         };
         let (reg_type, idx) = reg.split_at(1);
-        let reg_num = idx.parse::<RegIndex>()?;
+        let Ok(reg_num) = idx.parse::<RegIndex>() else {
+            log::error!("Failed to parse register: {reg}, failed to parse index: {idx}");
+            panic!("Invalid register format: {reg}");
+        };
         match reg_type.to_lowercase().as_str() {
-            "w" => Ok(RegisterType::WReg(reg_num)),
-            "x" => Ok(RegisterType::XReg(reg_num)),
-            "b" => Ok(RegisterType::BReg(reg_num)),
-            "h" => Ok(RegisterType::HReg(reg_num)),
-            "s" => Ok(RegisterType::SReg(reg_num)),
-            "d" => Ok(RegisterType::DReg(reg_num)),
-            "q" => Ok(RegisterType::QReg(reg_num)),
-            _ => Err(anyhow::anyhow!("Unknown register type: {reg}")),
-        }
-    }
-}
-
-    pub fn parse_reg_or_panic(reg: &str) -> RegisterType {
-        match RegisterType::from_str(reg) {
-            Ok(r) => r,
-            Err(e) => {
-                log::error!("Failed to parse register: {reg}, error: {e}");
-                panic!("Invalid register: {reg}");
+            "w" => RegisterType::WReg(reg_num),
+            "x" => RegisterType::XReg(reg_num),
+            "b" => RegisterType::BReg(reg_num),
+            "h" => RegisterType::HReg(reg_num),
+            "s" => RegisterType::SReg(reg_num),
+            "d" => RegisterType::DReg(reg_num),
+            "q" => RegisterType::QReg(reg_num),
+            _ => {
+                log::error!("Failed to parse register: {reg}");
+                panic!("Unknown register type: {reg}");
             }
         }
     }

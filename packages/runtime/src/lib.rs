@@ -328,7 +328,8 @@ impl Runtime {
 
         log::debug!("initializing runtime with custom image params: {:?}", params);
 
-        let program = match program::unpack(&bytes) {
+        let mut program_bytes = Vec::new();
+        let program = match program::unpack_zc(&bytes, &mut program_bytes) {
             Err(e) => {
                 log::error!("failed to unpack blueflame image: {}", e);
                 return Err(RuntimeInitError::BadImage);
@@ -347,7 +348,7 @@ impl Runtime {
         // it doesn't matter statically
         {
             let mut env = self.env.lock().unwrap();
-            env.game_ver = program.ver;
+            env.game_ver = program.ver.into();
             env.dlc_ver = match DlcVer::from_num(params.dlc) {
                 Some(dlc) => dlc,
                 None => return Err(RuntimeInitError::BadDlcVersion(params.dlc)),

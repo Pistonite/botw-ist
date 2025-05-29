@@ -3,7 +3,7 @@ use derive_more::derive::Constructor;
 #[layered_crate::import]
 use memory::{
     super::env::enabled,
-    self::{AccessFlags, MemAccess, Error, Page, Memory, PAGE_SIZE}
+    self::{AccessFlags, Error, Page, Memory, PAGE_SIZE}
 };
 
 #[cfg(feature = "trace-memory")]
@@ -63,22 +63,6 @@ pub struct Reader<'m> {
     addr: u64,
     
     flags: AccessFlags,
-
-    // // // /// The current region being read
-    // // // region: &'m Region,
-    // // /// Index of the page in the current region
-    // // region_page_idx: u32,
-    // /// If the read is for execution, so the execute permission is checked
-    // execute: bool,
-    // /// Disable RX permission check
-    // disable_permission_check: bool,
-
-    // /// Offset to subtract while tracing
-    // ///
-    // /// This is mainly used for tracing `main` module, since
-    // /// the start of program isn't the start of the main module
-    // trace_offset: u64,
-    // // ^ TODO --cleanup: this isn't needed after region refactoring
 }
 
 macro_rules! trace {
@@ -88,12 +72,8 @@ macro_rules! trace {
         } };
     ($len:expr, $addr:expr, $addr_str:expr, $value:expr, $width:literal) => { {
             #[cfg(feature = "trace-memory")] { record_read($addr); }
-            blueflame_deps::trace_memory!(concat!("ld{:2} {} =>0x{:0", $width, "x}"), $len * 8, $addr_str, $value);
+            blueflame_deps::trace_memory!(concat!("ld{:<2} {} =>0x{:0", $width, "x}"), $len * 8, $addr_str, $value);
         } };
-    // ($len:expr, $addr:expr, $addr_str:expr, $start:expr, $value:literal) => { {
-    //         #[cfg(feature = "trace-memory")] { record_read($addr); }
-    //         blueflame_deps::trace_memory!(concat!("ld{:2} {}+0x{:08x} =>", $value), $len * 8, $tag, {$addr} - {$start});
-    //     } };
 }
 
 impl<'m> Reader<'m> {
@@ -107,11 +87,6 @@ impl<'m> Reader<'m> {
         // this is so that if we read the last data and advance into
         // invalid memory, no exception will be thrown
     }
-
-    // /// Get the current reading physical address
-    // pub fn current_addr(&self) -> u64 {
-    //     self.region.start + (self.region_page_idx as u64 * PAGE_SIZE as u64) + self.page_off as u64
-    // }
 
     /// Read a `bool` from the memory, advance by 1 byte
     pub fn read_bool<T: From<bool>>(&mut self) -> Result<T, Error> {
@@ -234,77 +209,6 @@ impl<'m> Reader<'m> {
             log::error!("boundary hit at {}, reading {len} bytes", self.memory.format_addr(self.addr));
             return Err(Error::Boundary(self.addr, self.flags));
         }
-
-        // // first check if we are still inside the region
-        // let current_addr = self.current_addr();
-        // if current_addr >= self.region.get_end() {
-        //     // advance to next region if possible
-        //     match self.memory.get_region_by_addr(current_addr) {
-        //         None => {
-        //             trace!(len, "??", current_addr, 0, "invalid region");
-        //             return Err(Error::InvalidRegion(current_addr));
-        //         }
-        //         Some((region, page, idx, off)) => {
-        //             // fix up the state
-        //             self.region = region;
-        //             self.page = page;
-        //             self.region_page_idx = idx;
-        //             self.page_off = off;
-        //         }
-        //     }
-        // }
-        // // advance to the next page in the region if needed
-        // if self.page_off >= PAGE_SIZE {
-        //     self.region_page_idx += self.page_off / PAGE_SIZE;
-        //     self.page_off %= PAGE_SIZE;
-        //     self.page = match self.region.get(self.region_page_idx) {
-        //         Some(page) => page.as_ref(),
-        //         None => {
-        //             trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "unallocated");
-        //             return Err(Error::Unallocated(current_addr));
-        //         }
-        //     }
-        // }
-        //
-        // // now check we can actually read `len` bytes at the current address
-        // if self.region.typ == RegionType::Heap && enabled!("mem-heap-check-allocated")
-        //     && !self.memory.heap.is_allocated(current_addr)
-        // {
-        //     trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "heap unallocated");
-        //     return Err(Error::Unallocated(current_addr));
-        // }
-
-        // if !self.disable_permission_check && enabled!("mem-permission") {
-        //     if self.execute {
-        //         if !self
-        //             .page
-        //             .has_permission(AccessType::Read | AccessType::Execute)
-        //         {
-        //             trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "permission denied (rx)");
-        //             return Err(Error::PermissionDenied(MemAccess {
-        //                 flags: glue::access_type_to_flags(AccessType::Execute),
-        //                 addr: self.current_addr(),
-        //                 bytes: len,
-        //             }));
-        //         }
-        //     } else if !self.page.has_permission(AccessType::Read) {
-        //         trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "permission denied (r)");
-        //         return Err(Error::PermissionDenied(MemAccess {
-        //             flags: glue::access_type_to_flags(AccessType::Read),
-        //             addr: self.current_addr(),
-        //             bytes: len,
-        //         }));
-        //     }
-        // }
-
-        // if self.page_off + len > PAGE_SIZE {
-        //     trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "page align fault");
-        //     return Err(Error::PageBoundary(MemAccess {
-        //         flags: glue::access_type_to_flags(AccessType::Read),
-        //         addr: self.current_addr(),
-        //         bytes: len,
-        //     }));
-        // }
 
         Ok(())
     }

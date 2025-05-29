@@ -230,46 +230,6 @@ impl Memory {
         }
     }
 
-
-    // /// If `address` is inside a region, return the region, page, region page index, and page offset
-    // ///
-    // /// This does not check permissions or if the address
-    // /// is in an unallocated part of the region
-    // pub fn get_region_by_addr(&self, address: u64) -> Option<(&Region, &Page, u32, u32)> {
-    //     if let Some((page, idx, off)) = self.program.read_at_addr(address) {
-    //         return Some((self.program.as_ref(), page, idx, off));
-    //     }
-    //     if let Some((page, idx, off)) = self.stack.read_at_addr(address) {
-    //         return Some((self.stack.as_ref(), page, idx, off));
-    //     }
-    //     if let Some((page, idx, off)) = self.heap.read_at_addr(address) {
-    //         return Some((self.heap.as_ref(), page, idx, off));
-    //     }
-    //     None
-    // }
-
-    // pub fn get_region(&self, typ: RegionType) -> &Region {
-    //     match typ {
-    //         RegionType::Program => self.program.as_ref(),
-    //         RegionType::Stack => self.stack.as_ref(),
-    //         RegionType::Heap => self.heap.as_ref(),
-    //     }
-    // }
-    //
-    // /// Get region by type for mutation. The region's page table
-    // /// will be cloned on write if it is shared
-    // pub fn mut_region(&mut self, typ: RegionType) -> &mut Region {
-    //     match typ {
-    //         RegionType::Program => Arc::make_mut(&mut self.program),
-    //         RegionType::Stack => Arc::make_mut(&mut self.stack),
-    //         RegionType::Heap => Arc::make_mut(&mut self.heap).deref_mut(),
-    //     }
-    // }
-    //
-    // pub fn heap_mut(&mut self) -> &mut SimpleHeap {
-    //     Arc::make_mut(&mut self.heap)
-    // }
-
     /// Allocate `size` bytes on the heap.
     pub fn alloc(&mut self, size: u32) -> Result<u64, Error> {
         self.heap.alloc(size)

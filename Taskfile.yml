@@ -111,7 +111,7 @@ tasks:
       - task: parser:check
       - task: blueflame-proc-macros:check
       - task: blueflame-deps:check
-      # - task: blueflame:check
+      - task: blueflame:check
       # - task: runtime:check
       - task: runtime-wasm:check
 

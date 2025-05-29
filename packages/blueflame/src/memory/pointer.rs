@@ -3,7 +3,7 @@ use std::ffi::{CStr, CString};
 use num_traits::Zero;
 
 #[layered_crate::import]
-use memory::{Memory, MemLayout, Error, MemObject, Unsigned, Reader, Writer, assert_size_eq, access, AccessFlags};
+use memory::{Memory, MemLayout, Error, MemObject, Reader, Writer, assert_size_eq, access, AccessFlags};
 
 #[doc(inline)]
 pub use blueflame_deps::Ptr;
@@ -146,8 +146,8 @@ impl<T, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SIZE, LEN> {
     ///
     /// This can accept any unsigned type, use `ith_const` if you need to use in const context
     #[inline(always)]
-    pub fn ith(self, i: impl Unsigned) -> PtrToSized<T, ELEM_SIZE> {
-        self.ith_const(i.to_u64())
+    pub fn ith(self, i: u64) -> PtrToSized<T, ELEM_SIZE> {
+        self.ith_const(i)
     }
 
     /// See [`ith`](Self::ith)

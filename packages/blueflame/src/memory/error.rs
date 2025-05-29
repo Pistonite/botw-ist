@@ -22,11 +22,6 @@ pub enum Error {
     #[error("")]
     Bypassed,
 
-    // #[error("attempt to access invalid memory region: 0x{0:08x}")]
-    // InvalidRegion(u64),
-    // #[error("TODO --cleanup message")]
-    // DisallowedRegion(MemAccess),
-
     #[error("size mismatch in {0}: expected: 0x{1:x}, got 0x{2:x}")]
     SizeAssert(String, u32, u32),
     #[error("size out of range in {0}: expected: 0x{1:x} <= SIZE <= 0x{2:x}, got 0x{3:x}")]
@@ -43,9 +38,4 @@ pub enum Error {
     CorruptedProxyObject(u32, u64, u32),
     #[error("too many proxy objects")]
     ProxyOutOfMemory,
-
-    // #[error("unexpected error: {0}")]
-    // Unexpected(String),
-    // #[error("unexpected error at instruction {0:#0x}: {1}")]
-    // UnexpectedAt(u64, String),
 }

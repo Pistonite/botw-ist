@@ -1,4 +1,3 @@
-// use deku::{DekuRead, DekuWrite};
 use enum_map::Enum;
 use serde::{Serialize, Deserialize};
 
@@ -6,6 +5,7 @@ use serde::{Serialize, Deserialize};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[derive(Serialize, Deserialize)]
 #[derive(rkyv::Serialize, rkyv::Deserialize, rkyv::Archive)]
+#[rkyv(compare(PartialEq), derive(Clone, Copy))]
 pub struct Environment {
     /// Version of the game
     pub game_ver: GameVer,
@@ -49,35 +49,38 @@ impl Environment {
 #[derive(Serialize, Deserialize)]
 #[derive(Enum)]
 #[derive(rkyv::Serialize, rkyv::Deserialize, rkyv::Archive)]
-// #[deku(id_type = "u8")]
+#[rkyv(compare(PartialEq), derive(Clone, Copy))]
 #[repr(u8)]
 pub enum GameVer {
     /// Switch 1.5.0
-    // #[deku(id = 0x01)]
     X150,
     /// Switch 1.6.0
-    // #[deku(id = 0x02)]
     X160
+}
+
+impl From<ArchivedGameVer> for GameVer {
+    fn from(ver: ArchivedGameVer) -> Self {
+        match ver {
+            ArchivedGameVer::X150 => GameVer::X150,
+            ArchivedGameVer::X160 => GameVer::X160,
+        }
+    }
 }
 
 /// Version of the DLC
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[derive(Serialize, Deserialize)]
 #[derive(rkyv::Serialize, rkyv::Deserialize, rkyv::Archive)]
-// #[deku(id_type = "u8")]
+#[rkyv(compare(PartialEq), derive(Clone, Copy))]
 #[repr(u8)]
 pub enum DlcVer {
     /// Not installed
-    // #[deku(id = 0x00)]
     None,
     /// Version 1.0.0 (Day 1 stuff)
-    // #[deku(id = 0x01)]
     V100,
     /// Version 2.0.0 (Master Trials)
-    // #[deku(id = 0x02)]
     V200,
     /// Version 3.0.0 (Champions Ballad)
-    // #[deku(id = 0x03)]
     V300,
 }
 
@@ -100,6 +103,16 @@ impl DlcVer {
             DlcVer::V100 => 0x100,
             DlcVer::V200 => 0x200,
             DlcVer::V300 => 0x300,
+        }
+    }
+}
+impl From<ArchivedDlcVer> for DlcVer {
+    fn from(ver: ArchivedDlcVer) -> Self {
+        match ver {
+            ArchivedDlcVer::None => DlcVer::None,
+            ArchivedDlcVer::V100 => DlcVer::V100,
+            ArchivedDlcVer::V200 => DlcVer::V200,
+            ArchivedDlcVer::V300 => DlcVer::V300,
         }
     }
 }

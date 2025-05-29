@@ -1,4 +1,4 @@
-use blueflame::env::{DlcVer, Environment};
+use blueflame::env::DlcVer;
 use blueflame::game::singleton_instance;
 use blueflame::linker;
 use blueflame::memory::{MemObject, Ptr};
@@ -13,14 +13,14 @@ struct Pmdm {
 // make sure the singleton initialization runs without error
 #[test]
 pub fn test_init_singleton() -> anyhow::Result<()> {
+    colog::init();
     let data = std::fs::read("./test_files/program.bfi")?;
-    let program = program::unpack(&data)?;
-
-    let env = Environment::new(program.ver, DlcVer::V300);
+    let mut program_bytes = Vec::new();
+    let program = program::unpack_zc(&data, &mut program_bytes)?;
     let pmdm_addr_for_test = 0x2222200000;
     let process = linker::init_process(
         &program,
-        env.dlc_ver,
+        DlcVer::V300,
         0x8888800000,
         0x4000,
         pmdm_addr_for_test,

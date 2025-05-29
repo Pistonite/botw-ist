@@ -51,18 +51,18 @@ impl Section {
         section: &ArchivedSection,
     ) -> Result<Self, Error> {
         let section_rel_start = section.rel_start.to_native();
-        log::debug!("constructing section for module `{module_name}`, at rel_start={section_rel_start:#08x}, size={byte_size:#08x}");
+        log::debug!("constructing section for module `{module_name}`, at rel_start=0x{section_rel_start:08x}, size=0x{byte_size:08x}");
 
         let section_abs_start = program_start + section_rel_start as u64;
         let num_pages = align_up!(byte_size, PAGE_SIZE) / PAGE_SIZE;
         let mut pages = Vec::with_capacity(num_pages as usize);
 
         // construct pages with data from the image
-        let mut current_seg_rel_start = 0;
+        let mut current_seg_rel_start = section_rel_start;
         for segment in section.segments.iter() {
             let seg_rel_start = align_down!(segment.rel_start.to_native(), PAGE_SIZE);
             if current_seg_rel_start > seg_rel_start {
-                return Err(Error::SectionConstruction(format!("program image has overlapping sections! current: {current_seg_rel_start:#08x}, segment: {seg_rel_start:#08x}")));
+                return Err(Error::SectionConstruction(format!("program image has overlapping sections! current: 0x{current_seg_rel_start:08x}, segment: 0x{seg_rel_start:08x}")));
             }
             while current_seg_rel_start < seg_rel_start {
                 // fill the gap with zeroed pages
@@ -92,6 +92,8 @@ impl Section {
             region!(rodata)
         };
         let flags = flags | section_flags;
+
+        log::debug!("section for module `{module_name}` constructed at 0x{section_abs_start:08x}, size=0x{byte_size:08x}, flags: {flags}");
 
         Ok( Self {
             module_name: module_name.to_string(),
@@ -137,16 +139,4 @@ impl Section {
     pub fn get_mut_unchecked(&mut self, page_idx: u32) -> &mut Page {
         Arc::make_mut(&mut self.pages[page_idx as usize])
     }
-
-    // /// If the address is in this section, return the page index and page offset.
-    // /// Otherwise, return None.
-    // pub fn split_addr(&self, addr: u64) -> Option<(u32, u32)> {
-    //     if addr < self.start || addr >= self.start + self.len_bytes() as u64 {
-    //         return None;
-    //     }
-    //     let rel_addr = addr - self.start;
-    //     let page_idx = (rel_addr / PAGE_SIZE as u64) as u32;
-    //     let page_off = (rel_addr % PAGE_SIZE as u64) as u32;
-    //     return Some((page_idx, page_off));
-    // }
 }

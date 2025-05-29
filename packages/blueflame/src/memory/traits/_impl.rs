@@ -1,5 +1,5 @@
 #[layered_crate::import]
-use memory::{MemObject, Reader, Writer, Error, Unsigned32, Unsigned, assert_size_eq, assert_size_range};
+use memory::{MemObject, Reader, Writer, Error, assert_size_eq, assert_size_range};
 
 macro_rules! primitive_type_mem_object_impl {
     ($type:ty, $reader_fn:ident, $writer_fn:ident) => {
@@ -17,20 +17,6 @@ macro_rules! primitive_type_mem_object_impl {
         }
     };
 }
-macro_rules! primitive_type_unsigned_impl {
-    ($type:ty) => {
-        impl Unsigned32 for $type {
-            #[inline(always)]
-            fn to_u32(self) -> u32 {
-                self as u32
-            }
-            #[inline(always)]
-            fn to_usize(self) -> usize {
-                self as usize
-            }
-        }
-    }
-}
 primitive_type_mem_object_impl!(u8, read_u8, write_u8);
 primitive_type_mem_object_impl!(u16, read_u16, write_u16);
 primitive_type_mem_object_impl!(u32, read_u32, write_u32);
@@ -42,15 +28,6 @@ primitive_type_mem_object_impl!(i64, read_i64, write_i64);
 primitive_type_mem_object_impl!(bool, read_bool, write_bool);
 primitive_type_mem_object_impl!(f32, read_f32, write_f32);
 primitive_type_mem_object_impl!(f64, read_f64, write_f64);
-primitive_type_unsigned_impl!(u8);
-primitive_type_unsigned_impl!(u16);
-primitive_type_unsigned_impl!(u32);
-impl Unsigned for u64 {
-    #[inline(always)]
-    fn to_u64(self) -> u64 {
-        self
-    }
-}
 
 macro_rules! tuple_type_mem_object_impl {
     ($( $t:ident , )* ,$last:ident) => {

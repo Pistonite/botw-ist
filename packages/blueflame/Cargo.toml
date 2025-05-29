@@ -1,7 +1,7 @@
 [package]
 name = "blueflame"
 version = "0.0.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies.blueflame-deps]
 path = "../blueflame-deps"
@@ -17,10 +17,7 @@ version = "0.1.5"
 optional = true
 
 [dependencies]
-deku = "0.19.0"
 serde = { version = "1.0.219", features = ["derive"] }
-
-
 derive_more = { version = "1.0.0", features = ["constructor", "deref", "deref_mut"] }
 enumset = "1.1.5"
 rand_xoshiro = "0.6.0"
@@ -32,15 +29,9 @@ serde_yaml = "0.9.34"
 serde_json = "1.0.140"
 log = "0.4.27"
 static_assertions = "1.1.0"
-
-# program module
 flate2 = { version = "1.0.35", default-features = false, features = ["rust_backend"] } # explicitly request pure-rust backend
-
 layered-crate = "0.2.1"
 phf = { version = "0.11.3", features = ["macros"] }
-
-# TODO --cleanup: move anyhow to dev-dependencies
-anyhow = "1.0.94"
 no-panic = "0.1.35"
 enum-map = "2.7.3"
 num-traits = "0.2.19"
@@ -49,6 +40,7 @@ rkyv = "0.8.10"
 
 [dev-dependencies]
 colog = "1.3.0"
+anyhow = "1.0.94"
 
 
 [lib]
@@ -58,9 +50,9 @@ path = "lib.rs"
 [features]
 default = [
     "data",
-    "trace-register",
-    "trace-memory",
-    "trace-call",
+    # "trace-register",
+    # "trace-memory",
+    # "trace-call",
 ]
 
 data = ["dep:disarm64", "blueflame-deps/data"]

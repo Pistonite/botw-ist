@@ -47,6 +47,9 @@ impl SimpleHeap {
         
     }
 
+    /// If the address is in the last page of the allocated region
+    /// in the heap, then return the maximum page offset that is the boundary
+    /// of the allocated region. Otherwise, return None.
     pub fn check_max_page_offset(&self, addr: u64) -> Option<u32> {
         if addr < self.start || addr >= self.start + self.size as u64 {
             return None; // outside the heap region

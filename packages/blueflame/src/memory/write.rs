@@ -3,7 +3,7 @@ use derive_more::derive::Constructor;
 #[layered_crate::import]
 use memory::{
     super::env::enabled,
-    self::{AccessFlags, MemAccess, Error, Page, PAGE_SIZE, Memory}
+    self::{AccessFlags, Error, Page, PAGE_SIZE, Memory}
 };
 
 
@@ -32,16 +32,6 @@ pub struct Writer<'m> {
 
     addr: u64,
     flags: AccessFlags,
-    //
-    // /// Disable W permission check
-    // disable_permission_check: bool,
-    //
-    // /// Offset to subtract while tracing
-    // ///
-    // /// This is mainly used for tracing `main` module, since
-    // /// the start of program isn't the start of the main module
-    // trace_offset: u64,
-    // // ^ TODO --cleanup: this isn't needed after region refactoring
 }
 
 macro_rules! trace {
@@ -49,11 +39,8 @@ macro_rules! trace {
             blueflame_deps::trace_memory!(concat!("st1  {}<= {}"), $addr_str, if $value { "true" } else { "false" });
         } };
     ($len:expr, $addr_str:expr, $value:expr, $width:literal) => { {
-            blueflame_deps::trace_memory!(concat!("st{:2} {}<= 0x{:0", $width, "x}"), $len * 8, $addr_str, $value);
+            blueflame_deps::trace_memory!(concat!("st{:<2} {}<= 0x{:0", $width, "x}"), $len * 8, $addr_str, $value);
         } };
-    // ($len:expr, $addr_str:expr, :expr, $value:literal) => { {
-    //         blueflame_deps::trace_memory!(concat!("st{:2} {}+0x{:08x}<= ", $value), $len * 8, $tag, {$addr} - {$start});
-    //     } };
 }
 
 impl<'m> Writer<'m> {
@@ -62,25 +49,6 @@ impl<'m> Writer<'m> {
         self.page_off += len;
         self.addr += len as u64;
     }
-
-    // fn region(&self) -> &Region {
-    //     self.memory.get_region(self.region_type)
-    // }
-    //
-    // fn region_mut(&mut self) -> &mut Region {
-    //     self.memory.mut_region(self.region_type)
-    // }
-    //
-    // /// Get the current reading address
-    // pub fn current_addr(&self) -> u64 {
-    //     self.region().start
-    //         + (self.region_page_idx as u64 * PAGE_SIZE as u64)
-    //         + self.page_off as u64
-    // }
-    //
-    // pub fn trace_start_addr(&self) -> u64 {
-    //     self.region().start + self.trace_offset
-    // }
 
     /// Write a `bool` to the memory, advance by 1 byte
     pub fn write_bool(&mut self, val: impl Into<bool>) -> Result<(), Error> {
