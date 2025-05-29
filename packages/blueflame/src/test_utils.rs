@@ -1,27 +1,24 @@
 use std::sync::Arc;
 
+use crate::env::{DlcVer, Environment, GameVer};
 use crate::game::Proxies;
-use crate::memory::{Memory, Region, RegionType, SimpleHeap};
-use crate::processor::{Process, HookProvider, Execute};
-use crate::env::{Environment, GameVer, DlcVer};
-
-pub fn init_log() {
-    let mut builder = colog::default_builder();
-    builder.init();
-}
+use crate::memory::Memory;
+use crate::processor::{Execute, HookProvider, Process};
 
 impl Memory {
     pub fn new_for_test() -> Self {
-        let p = Arc::new(Region::new_rw(RegionType::Program, 0x4000, 0));
-        let s = Arc::new(Region::new_rw(RegionType::Stack, 0, 0x4000));
-        let h = Arc::new(SimpleHeap::new(0x4000, 0, 0));
-        Self::new(Environment::new_for_test(), p, s, h)
+        let env = Environment::new_for_test();
+        Self::new(env, 0x4000, 0x2000, 0x4000)
     }
 }
 
 struct EmptyHookProvider;
 impl HookProvider for EmptyHookProvider {
-    fn fetch(&self, _: u32, _: Environment) -> Result<Option<(Box<dyn Execute>, u32)>, crate::processor::Error> {
+    fn fetch(
+        &self,
+        _: u32,
+        _: Environment,
+    ) -> Result<Option<(Box<dyn Execute>, u32)>, crate::processor::Error> {
         Ok(None)
     }
 }

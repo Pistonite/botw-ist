@@ -1,6 +1,5 @@
 #[layered_crate::import]
-use memory::{self, Memory, MemObject, Ptr};
-
+use memory::{self, MemObject, Memory, Ptr};
 
 #[allow(non_snake_case)]
 #[derive(MemObject, Default, Clone, Copy)]

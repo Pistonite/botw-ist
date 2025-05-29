@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args = parse::split_args(args, 2);
@@ -101,7 +101,7 @@ mod tests {
         assert!(!cpu.flags.c);
         assert!(!cpu.flags.v);
         Ok(())
-}
+    }
 
     #[test]
     pub fn simple_fcmp_test_equal() -> anyhow::Result<()> {
@@ -115,7 +115,8 @@ mod tests {
         assert!(cpu.flags.z);
         assert!(!cpu.flags.c);
         assert!(!cpu.flags.v);
-        Ok(()) }
+        Ok(())
+    }
 
     #[test]
     pub fn simple_fcmp_test_greater() -> anyhow::Result<()> {
@@ -134,4 +135,3 @@ mod tests {
         Ok(())
     }
 }
-

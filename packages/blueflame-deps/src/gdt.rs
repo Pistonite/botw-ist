@@ -251,7 +251,6 @@ impl<T: FlagType> Flag<Box<[T]>> {
 
 #[cfg(feature = "data")]
 static BOOL_FLAG_PACK: &[u8] = include_bytes!("generated/bool_flag_pack.bin");
-
 #[cfg(feature = "data")]
 pub fn unpack_bool_flags() -> Vec<Flag<bool>> {
     if BOOL_FLAG_PACK.len() % 5 != 0 {
@@ -271,4 +270,44 @@ pub fn unpack_bool_flags() -> Vec<Flag<bool>> {
     }
 
     flags
+}
+
+#[cfg(feature = "data")]
+static S32_FLAG_PACK: &[u8] = include_bytes!("generated/s32_flag_pack.bin");
+#[cfg(feature = "data")]
+pub fn unpack_s32_flags() -> Vec<Flag<i32>> {
+    if S32_FLAG_PACK.len() % 17 != 0 {
+        panic!("Invalid s32 flag pack length");
+    }
+
+    let num_flags = S32_FLAG_PACK.len() / 17;
+    let mut flags = Vec::with_capacity(num_flags);
+    for i in 0..num_flags {
+        let offset = i * 17;
+        // first 16 bytes are 4 i32s in LE:
+        // hash, initial_value, min, max
+        // last byte is the property flags
+        let hash = i32::from_le_bytes(S32_FLAG_PACK[offset..offset + 4].try_into().unwrap());
+        let initial_value =
+            i32::from_le_bytes(S32_FLAG_PACK[offset + 4..offset + 8].try_into().unwrap());
+        let min = i32::from_le_bytes(S32_FLAG_PACK[offset + 8..offset + 12].try_into().unwrap());
+        let max = i32::from_le_bytes(S32_FLAG_PACK[offset + 12..offset + 16].try_into().unwrap());
+        // last byte is X00 FFFFF, X is initial value, FFFFF is the properties
+        let properties = S32_FLAG_PACK[offset + 16] & 0x1F;
+        flags.push(Flag::new_minmax(hash, initial_value, properties, min, max));
+    }
+
+    flags
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[cfg(feature = "data")]
+    fn test_unpack() {
+        unpack_bool_flags();
+        unpack_s32_flags();
+    }
 }

@@ -1,10 +1,10 @@
 use crate::processor::{self as self_, crate_};
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
-use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
-use self_::reg;
 use crate_::memory::Ptr;
+use self_::insn::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::reg;
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args: Vec<String> = parse::split_args(args, 3);
@@ -233,4 +233,3 @@ mod tests {
         Ok(())
     }
 }
-

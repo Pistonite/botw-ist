@@ -1,8 +1,8 @@
 #[layered_crate::import]
 use linker::{
-    super::game::{gdt, SafeString},
+    super::game::{SafeString, gdt},
     super::memory::{Memory, Ptr, proxy},
-    super::processor::{self, reg, Cpu0, Process},
+    super::processor::{self, Cpu0, Process, reg},
 };
 
 // this macro is needed because template generic types are not stable
@@ -139,9 +139,10 @@ mod __impl_set {
 
 
 
-} pub use __impl_set::*;
+}
+pub use __impl_set::*;
 
-/// Implements getXXX by index 
+/// Implements getXXX by index
 ///
 /// Args: (this, T* out, i32 idx, bool check_perms)
 fn get_flag_impl<
@@ -162,17 +163,17 @@ fn get_flag_impl<
         w[3] => let check_perms: bool,
     };
 
-    proxy!{ let params = *this_ptr as trigger_param in proc };
+    proxy! { let params = *this_ptr as trigger_param in proc };
     let Some(flag) = params.get::<Fd, _>(idx) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     if check_perms && !flag.readable() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
     let value = extractor(flag.get())?;
 
     storer(value, out_ptr, proc.memory_mut())?;
-    reg!{ cpu: x[0] = true, return };
+    reg! { cpu: x[0] = true, return };
 }
 
 /// Impelements getXXX by name
@@ -199,15 +200,15 @@ fn get_flag_by_name_impl<
     let m = proc.memory();
     let name = name_ptr.cstr(m)?.load_utf8_lossy(m)?;
     if name.is_empty() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
 
-    proxy!{ let params = *this_ptr as trigger_param in proc };
+    proxy! { let params = *this_ptr as trigger_param in proc };
     let Some(flag) = params.by_name::<Fd>(name) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     if check_perms && !flag.readable() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
     let value = extractor(flag.get())?;
 
@@ -239,19 +240,19 @@ fn get_flag_array_by_index_impl<
 
     proxy! {let params = *this_ptr as trigger_param in proc};
     let Some(flag) = params.get::<Fd, _>(idx) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
 
     if check_perms && !flag.readable() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
 
     let Some(entry) = flag.get_at(array_idx) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     let value = extractor(entry)?;
     storer(value, out_ptr, proc.memory_mut())?;
-    reg!{ cpu: x[0] = true, return };
+    reg! { cpu: x[0] = true, return };
 }
 
 /// Implements getXXX by name with array index
@@ -281,23 +282,26 @@ fn get_flag_array_by_name_impl<
 
     proxy! {let params = *this_ptr as trigger_param in proc};
     let Some(flag) = params.by_name::<Fd>(name) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
 
     if check_perms && !flag.readable() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
 
     let Some(entry) = flag.get_at(array_idx) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     let value = extractor(entry)?;
     storer(value, out_ptr, proc.memory_mut())?;
-    reg!{ cpu: x[0] = true, return };
+    reg! { cpu: x[0] = true, return };
 }
 
 /// Implements getXXXArraySize
-pub fn get_array_size<Fd: gdt::ArrayFlagDescriptor> (cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+pub fn get_array_size<Fd: gdt::ArrayFlagDescriptor>(
+    cpu: &mut Cpu0,
+    proc: &mut Process,
+) -> Result<(), processor::Error> {
     reg! { cpu:
         x[0] => let this_ptr: u64,
         x[1] => let out_ptr: Ptr![i32],
@@ -306,15 +310,18 @@ pub fn get_array_size<Fd: gdt::ArrayFlagDescriptor> (cpu: &mut Cpu0, proc: &mut 
 
     proxy! { let params = *this_ptr as trigger_param in proc };
     let Some(array) = params.get::<Fd, _>(idx) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     let result = array.len() as i32;
     out_ptr.store(&result, proc.memory_mut())?;
-    reg!{ cpu: x[0] = true, return };
+    reg! { cpu: x[0] = true, return };
 }
 
 /// Implements getXXXArraySizeByHash
-pub fn get_array_size_by_hash<Fd: gdt::ArrayFlagDescriptor> (cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+pub fn get_array_size_by_hash<Fd: gdt::ArrayFlagDescriptor>(
+    cpu: &mut Cpu0,
+    proc: &mut Process,
+) -> Result<(), processor::Error> {
     reg! { cpu:
         x[0] => let this_ptr: u64,
         x[1] => let out_ptr: Ptr![i32],
@@ -323,11 +330,11 @@ pub fn get_array_size_by_hash<Fd: gdt::ArrayFlagDescriptor> (cpu: &mut Cpu0, pro
 
     proxy! { let params = *this_ptr as trigger_param in proc };
     let Some(array) = params.by_hash::<Fd>(hash) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     let result = array.len() as i32;
     out_ptr.store(&result, proc.memory_mut())?;
-    reg!{ cpu: x[0] = true, return };
+    reg! { cpu: x[0] = true, return };
 }
 
 /// Implements setXXX
@@ -336,8 +343,15 @@ pub fn get_array_size_by_hash<Fd: gdt::ArrayFlagDescriptor> (cpu: &mut Cpu0, pro
 ///
 /// since T-in is by value, if it's a float, it uses s0 and the rest of the register
 /// shifts
-fn set_flag_by_index_impl<Fd: gdt::FlagDescriptor, Rd: FnOnce(&mut Cpu0, &mut Process) -> Result<Fd::T, processor::Error>,
->(cpu: &mut Cpu0, proc: &mut Process, is_float: bool, reader: Rd) -> Result<(), processor::Error> {
+fn set_flag_by_index_impl<
+    Fd: gdt::FlagDescriptor,
+    Rd: FnOnce(&mut Cpu0, &mut Process) -> Result<Fd::T, processor::Error>,
+>(
+    cpu: &mut Cpu0,
+    proc: &mut Process,
+    is_float: bool,
+    reader: Rd,
+) -> Result<(), processor::Error> {
     reg! { cpu:
         x[0] =>                        let this_ptr: u64,
         x[if is_float {1} else {2}] => let idx: i32,
@@ -348,14 +362,14 @@ fn set_flag_by_index_impl<Fd: gdt::FlagDescriptor, Rd: FnOnce(&mut Cpu0, &mut Pr
 
     proxy! { let mut params = *this_ptr as trigger_param in proc };
     let Some(flag) = params.get_mut::<Fd, _>(idx) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     if check_perms && !flag.writable() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
     // we ignore one_trigger and initial value check
     flag.set(value);
-    reg!{ cpu: x[0] = true, return };
+    reg! { cpu: x[0] = true, return };
 }
 
 /// Implements setXXX
@@ -363,7 +377,15 @@ fn set_flag_by_index_impl<Fd: gdt::FlagDescriptor, Rd: FnOnce(&mut Cpu0, &mut Pr
 /// Args: (this, T/T* in, sead::SafeString* name, bool check_perms, bool unused, bool ignore_one_trigger)
 ///
 /// Since T-in is by value, if it's a float, it uses s0 and the rest of the register
-fn set_flag_by_name_impl<Fd: gdt::FlagDescriptor, Rd: FnOnce(&mut Cpu0, &mut Process) -> Result<Fd::T, processor::Error>>(cpu: &mut Cpu0, proc: &mut Process, is_float: bool, reader: Rd) -> Result<(), processor::Error> {
+fn set_flag_by_name_impl<
+    Fd: gdt::FlagDescriptor,
+    Rd: FnOnce(&mut Cpu0, &mut Process) -> Result<Fd::T, processor::Error>,
+>(
+    cpu: &mut Cpu0,
+    proc: &mut Process,
+    is_float: bool,
+    reader: Rd,
+) -> Result<(), processor::Error> {
     reg! { cpu:
         x[0] =>                        let this_ptr:    u64,
         x[if is_float {1} else {2}] => let name_ptr:    Ptr![SafeString],
@@ -376,19 +398,19 @@ fn set_flag_by_name_impl<Fd: gdt::FlagDescriptor, Rd: FnOnce(&mut Cpu0, &mut Pro
     let m = proc.memory();
     let name = name_ptr.cstr(m)?.load_utf8_lossy(m)?;
     if name.is_empty() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
 
     proxy! { let mut params = *this_ptr as trigger_param in proc };
     let Some(flag) = params.by_name_mut::<Fd>(name) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     if check_perms && !flag.writable() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
     // we ignore one_trigger and initial value check
     flag.set(value);
-    reg!{ cpu: x[0] = true, return };
+    reg! { cpu: x[0] = true, return };
 }
 
 /// Implements setXXX
@@ -397,8 +419,15 @@ fn set_flag_by_name_impl<Fd: gdt::FlagDescriptor, Rd: FnOnce(&mut Cpu0, &mut Pro
 ///
 /// since T-in is by value, if it's a float, it uses s0 and the rest of the register
 /// shifts
-fn set_flag_array_by_index_impl<Fd: gdt::ArrayFlagDescriptor, Rd: FnOnce(&mut Cpu0, &mut Process) -> Result<Fd::ElemT, processor::Error>,
->(cpu: &mut Cpu0, proc: &mut Process, is_float: bool, reader: Rd) -> Result<(), processor::Error> {
+fn set_flag_array_by_index_impl<
+    Fd: gdt::ArrayFlagDescriptor,
+    Rd: FnOnce(&mut Cpu0, &mut Process) -> Result<Fd::ElemT, processor::Error>,
+>(
+    cpu: &mut Cpu0,
+    proc: &mut Process,
+    is_float: bool,
+    reader: Rd,
+) -> Result<(), processor::Error> {
     reg! { cpu:
         x[0] =>                        let this_ptr: u64,
         x[if is_float {1} else {2}] => let idx: i32,
@@ -410,14 +439,14 @@ fn set_flag_array_by_index_impl<Fd: gdt::ArrayFlagDescriptor, Rd: FnOnce(&mut Cp
 
     proxy! { let mut params = *this_ptr as trigger_param in proc };
     let Some(flag) = params.get_mut::<Fd, _>(idx) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     if check_perms && !flag.writable() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
     // we ignore one_trigger and initial value check
     let result = flag.set_at(array_idx, value);
-    reg!{ cpu: x[0] = result, return };
+    reg! { cpu: x[0] = result, return };
 }
 
 /// Implements setXXX
@@ -425,7 +454,15 @@ fn set_flag_array_by_index_impl<Fd: gdt::ArrayFlagDescriptor, Rd: FnOnce(&mut Cp
 /// Args:(this, T/T* in, sead::SafeString* name, i32 idx, bool check_perms, bool unused, bool ignore_ot)
 /// since T-in is by value, if it's a float, it uses s0 and the rest of the register
 /// shifts
-fn set_flag_array_by_name_impl<Fd: gdt::ArrayFlagDescriptor, Rd: FnOnce(&mut Cpu0, &mut Process) -> Result<Fd::ElemT, processor::Error>>(cpu: &mut Cpu0, proc: &mut Process, is_float: bool, reader: Rd) -> Result<(), processor::Error> {
+fn set_flag_array_by_name_impl<
+    Fd: gdt::ArrayFlagDescriptor,
+    Rd: FnOnce(&mut Cpu0, &mut Process) -> Result<Fd::ElemT, processor::Error>,
+>(
+    cpu: &mut Cpu0,
+    proc: &mut Process,
+    is_float: bool,
+    reader: Rd,
+) -> Result<(), processor::Error> {
     reg! { cpu:
         x[0]                        => let this_ptr:    u64,
         x[if is_float {1} else {2}] => let name_ptr:    Ptr![SafeString],
@@ -439,23 +476,26 @@ fn set_flag_array_by_name_impl<Fd: gdt::ArrayFlagDescriptor, Rd: FnOnce(&mut Cpu
     let m = proc.memory();
     let name = name_ptr.cstr(m)?.load_utf8_lossy(m)?;
     if name.is_empty() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
 
     proxy! { let mut params = *this_ptr as trigger_param in proc };
     let Some(flag) = params.by_name_mut::<Fd>(name) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     if check_perms && !flag.writable() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
     // we ignore one_trigger and initial value check
     let result = flag.set_at(array_idx, value);
-    reg!{ cpu: x[0] = result, return };
+    reg! { cpu: x[0] = result, return };
 }
 
 /// Implements resetXXX
-pub fn reset<Fd: gdt::FlagDescriptor>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+pub fn reset<Fd: gdt::FlagDescriptor>(
+    cpu: &mut Cpu0,
+    proc: &mut Process,
+) -> Result<(), processor::Error> {
     reg! { cpu:
         x[0] => let this_ptr: u64,
         w[1] => let idx: i32,
@@ -464,17 +504,20 @@ pub fn reset<Fd: gdt::FlagDescriptor>(cpu: &mut Cpu0, proc: &mut Process) -> Res
 
     proxy! { let mut params = *this_ptr as trigger_param in proc };
     let Some(flag) = params.get_mut::<Fd, _>(idx) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     if check_perms && !flag.writable() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
     flag.reset();
-    reg!{ cpu: x[0] = true, return }
+    reg! { cpu: x[0] = true, return }
 }
 
 /// Implements resetXXX by name
-pub fn reset_by_name<Fd: gdt::FlagDescriptor>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+pub fn reset_by_name<Fd: gdt::FlagDescriptor>(
+    cpu: &mut Cpu0,
+    proc: &mut Process,
+) -> Result<(), processor::Error> {
     reg! { cpu:
         x[0] => let this_ptr: u64,
         x[1] => let name_ptr: Ptr![SafeString],
@@ -484,22 +527,25 @@ pub fn reset_by_name<Fd: gdt::FlagDescriptor>(cpu: &mut Cpu0, proc: &mut Process
     let m = proc.memory();
     let name = name_ptr.cstr(m)?.load_utf8_lossy(m)?;
     if name.is_empty() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
 
     proxy! { let mut params = *this_ptr as trigger_param in proc };
     let Some(flag) = params.by_name_mut::<Fd>(name) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     if check_perms && !flag.writable() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
     flag.reset();
-    reg!{ cpu: x[0] = true, return }
+    reg! { cpu: x[0] = true, return }
 }
 
 /// Implements resetXXX array
-pub fn reset_array<Fd: gdt::ArrayFlagDescriptor>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+pub fn reset_array<Fd: gdt::ArrayFlagDescriptor>(
+    cpu: &mut Cpu0,
+    proc: &mut Process,
+) -> Result<(), processor::Error> {
     reg! { cpu:
         x[0] => let this_ptr: u64,
         w[1] => let idx: i32,
@@ -509,13 +555,13 @@ pub fn reset_array<Fd: gdt::ArrayFlagDescriptor>(cpu: &mut Cpu0, proc: &mut Proc
 
     proxy! { let mut params = *this_ptr as trigger_param in proc };
     let Some(flag) = params.get_mut::<Fd, _>(idx) else {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     };
     if check_perms && !flag.writable() {
-        reg!{ cpu: x[0] = false, return };
+        reg! { cpu: x[0] = false, return };
     }
     let result = flag.reset_at(array_idx);
-    reg!{ cpu: x[0] = result, return }
+    reg! { cpu: x[0] = result, return }
 }
 
 pub fn reset_all(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
@@ -528,7 +574,7 @@ pub fn reset_all(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Er
 }
 
 /// ksys::gdt::TriggerParam::getXXXIdx(this, i32 hash) -> int
-pub fn idx_from_hash< Fd: gdt::FlagDescriptor, >(
+pub fn idx_from_hash<Fd: gdt::FlagDescriptor>(
     cpu: &mut Cpu0,
     proc: &mut Process,
 ) -> Result<(), processor::Error> {
@@ -539,7 +585,7 @@ pub fn idx_from_hash< Fd: gdt::FlagDescriptor, >(
     proxy! { let params = *this_ptr as trigger_param in proc };
     let index = match params.index_from_hash::<Fd>(hash) {
         Some(i) => i as i32,
-        None => -1
+        None => -1,
     };
 
     reg! { cpu: w[0] = index, return };

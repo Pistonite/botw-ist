@@ -17,6 +17,10 @@ tasks:
       - bun scripts/gen-actors.ts
       - task: cargo:fmt-fix
 
+  test:
+    cmds:
+      - cargo test
+
   check:
     cmds:
       - task: cargo:clippy-all

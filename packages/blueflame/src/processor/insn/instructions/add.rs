@@ -1,10 +1,8 @@
 #[layered_crate::import]
 use processor::{
-    self::{glue, RegisterType, Error},
     self::insn::Core,
-    self::insn::instruction_parse::{
-        self as parse, AuxiliaryOperation, ExecutableInstruction,
-    },
+    self::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction},
+    self::{Error, RegisterType, glue},
 };
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
@@ -67,12 +65,8 @@ pub struct AddImmInstruction {
 impl ExecutableInstruction for AddImmInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         let xn_val = glue::read_gen_reg(core.cpu, &self.rn);
-        let (imm_val, _) = glue::handle_extra_op_immbw(
-            core.cpu,
-            self.imm_val,
-            self.rn,
-            self.extra_op.as_ref(),
-        )?;
+        let (imm_val, _) =
+            glue::handle_extra_op_immbw(core.cpu, self.imm_val, self.rn, self.extra_op.as_ref())?;
         glue::write_gen_reg(core.cpu, &self.rd, xn_val + imm_val);
         Ok(())
     }
@@ -98,4 +92,3 @@ mod tests {
         Ok(())
     }
 }
-

@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args = parse::split_args(args, 2);
@@ -28,7 +28,11 @@ impl ExecutableInstruction for FcvtzsInstruction {
                 Ok(())
             }
             _ => {
-                log::error!("fcvtzs: Register type for rn or rd is not supported: rn = {:?}, rd = {:?}", self.rn, self.rd);
+                log::error!(
+                    "fcvtzs: Register type for rn or rd is not supported: rn = {:?}, rd = {:?}",
+                    self.rn,
+                    self.rd
+                );
                 Err(Error::BadInstruction(0))
             }
         }
@@ -60,4 +64,3 @@ mod tests {
         Ok(())
     }
 }
-

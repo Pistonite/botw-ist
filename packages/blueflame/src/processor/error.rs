@@ -2,23 +2,25 @@ use derive_more::derive::Constructor;
 
 #[layered_crate::import]
 use processor::{
+    self::{Cpu0, reg},
+    super::env::DataId,
     super::memory,
-    self::{Cpu0, reg}
 };
 
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {
-    #[error("new cache at main+0x{new_start:08x} overlaps with existing cache at main+0x{existing_start:08x} (this is a bug)")]
-    ExecuteCacheOverlap {
-        new_start: u32,
-        existing_start: u32,
-    },
+    #[error("missing required data {0:?}")]
+    MissingData(DataId),
+    #[error(
+        "new cache at main+0x{new_start:08x} overlaps with existing cache at main+0x{existing_start:08x} (this is a bug)"
+    )]
+    ExecuteCacheOverlap { new_start: u32, existing_start: u32 },
     #[error("hook at main+0x{0:08x} is too big (this is a bug)")]
     TooBigHook(u32),
-    #[error("[proc-strict-replace-hook] unsupported jump to middle of replaced code at main+0x{main_offset:08x}")]
-    StrictReplacement {
-        main_offset: u32,
-    },
+    #[error(
+        "[proc-strict-replace-hook] unsupported jump to middle of replaced code at main+0x{main_offset:08x}"
+    )]
+    StrictReplacement { main_offset: u32 },
     #[error("[limited-block-count] block count limit reached")]
     BlockCountLimitReached,
     #[error("[limited-block-iteration] block iteration limit reached")]
@@ -32,8 +34,6 @@ pub enum Error {
     #[error("[check-stack-corruption] stack object at 0x{0:016x} with size 0x{1:x} is corrupted")]
     StackCorruption(u64, u32),
 
-
-
     #[error("Unrecognized conditional code: {0}")]
     UnhandledConditionCode(String),
     #[error("Instruction could not be read at address {0:#0x}")]
@@ -41,6 +41,7 @@ pub enum Error {
 
     #[error("Memory error: {0}")]
     Memory(#[from] memory::Error),
+
     #[error("Unexpected: {0}")]
     Unexpected(String),
 }
@@ -49,7 +50,7 @@ pub enum Error {
 pub struct CrashReport {
     pub cpu: Cpu0,
     pub main_start: u64,
-    pub error: Error
+    pub error: Error,
 }
 
 impl std::fmt::Display for CrashReport {
@@ -82,15 +83,26 @@ impl std::fmt::Debug for CrashReport {
             let reg3 = format!("{:4}", reg3.to_string());
             let reg4 = format!("{:4}", reg4.to_string());
             // don't show Q regs right now, probably not important
-            writeln!(f, "  {reg1}= 0x{x:016x}  {reg3}= 0x{x2:016x}  {reg2}= 0x{v:016x}  {reg4}= 0x{v2:016x}")?;
+            writeln!(
+                f,
+                "  {reg1}= 0x{x:016x}  {reg3}= 0x{x2:016x}  {reg2}= 0x{v:016x}  {reg4}= 0x{v2:016x}"
+            )?;
         }
 
         writeln!(f, "")?;
         writeln!(f, "Main Start: 0x{:016x}", self.main_start)?;
         writeln!(f, "PC: {}", format_address(self.cpu.pc, self.main_start))?;
-        writeln!(f, "LR: {}", format_address(self.cpu.read::<u64>(reg!(lr)), self.main_start))?;
+        writeln!(
+            f,
+            "LR: {}",
+            format_address(self.cpu.read::<u64>(reg!(lr)), self.main_start)
+        )?;
         writeln!(f, "Stack Trace: (top is most recent)")?;
-        writeln!(f, "{}", self.cpu.stack_trace.format_with_main_start(self.main_start))?;
+        writeln!(
+            f,
+            "{}",
+            self.cpu.stack_trace.format_with_main_start(self.main_start)
+        )?;
 
         Ok(())
     }

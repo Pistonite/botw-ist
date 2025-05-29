@@ -1,7 +1,7 @@
 #[layered_crate::import]
 use processor::{
     super::env::no_panic,
-    super::memory::{MemObject, PtrToSized, PtrToArray},
+    super::memory::{MemObject, PtrToArray, PtrToSized},
 };
 
 pub use blueflame_deps::reg;
@@ -41,7 +41,7 @@ pub enum RegisterType {
 /// ```
 ///
 /// - Index: 0-31
-/// - Width: 
+/// - Width:
 ///   - 0 is 32 bits, 1 is 64 bits, 2 is 128 bits (FP/SIMD only)
 /// - Type:
 ///   - 0 = General Purpose (GP, or X/W registers)
@@ -159,7 +159,6 @@ impl RegName {
 #[derive(Debug, Default, Clone)]
 pub struct Registers {
     // https://developer.arm.com/documentation/dui0801/l/Overview-of-AArch64-state/Registers-in-AArch64-state
-
     /// 31 general-purpose registers (called X0-X30 in code)
     /// X30 is used as the link register (LR)
     /// X31 is SP in our code, see below
@@ -178,7 +177,6 @@ pub struct Registers {
     // sp_el0 is the classic "SP" register and is X31 in our representation
     // The other 3 are stack pointers for each of the 3 exception levels
     // This is why the exception link/program status registers go from 1-3 rather than 0-2
-
     /// NZCV register
     pub flags: Flags,
     // == the exception registers are unused at the moment ==
@@ -220,22 +218,52 @@ macro_rules! impl_reg_value {
     // Write: Truncate/ZeroExtend
     ($type:ty, unsigned) => {
         impl RegValue for $type {
-            #[inline(always)] fn from_32(x: u32) -> Self { x as Self }
-            #[inline(always)] fn from_64(x: u64) -> Self { x as Self }
-            #[inline(always)] fn from_128(x: u64, _: u64) -> Self { x as Self }
-            #[inline(always)] fn into_64(self) -> u64 { self as u64 }
-            #[inline(always)] fn into_128(self) -> (u64, u64) { (self as u64, 0) }
+            #[inline(always)]
+            fn from_32(x: u32) -> Self {
+                x as Self
+            }
+            #[inline(always)]
+            fn from_64(x: u64) -> Self {
+                x as Self
+            }
+            #[inline(always)]
+            fn from_128(x: u64, _: u64) -> Self {
+                x as Self
+            }
+            #[inline(always)]
+            fn into_64(self) -> u64 {
+                self as u64
+            }
+            #[inline(always)]
+            fn into_128(self) -> (u64, u64) {
+                (self as u64, 0)
+            }
         }
     };
     // Read: SignExtend (for example if you read a i64 from a W register, it can be negative)
     // Write: UpperZeroed
     ($type:ty, signed, $unsigned_type:ty) => {
         impl RegValue for $type {
-            #[inline(always)] fn from_32(x: u32) -> Self { x as i32 as Self }
-            #[inline(always)] fn from_64(x: u64) -> Self { x as i64 as Self }
-            #[inline(always)] fn from_128(x: u64, _: u64) -> Self { Self::from_64(x) }
-            #[inline(always)] fn into_64(self) -> u64 { self as $unsigned_type as u64 }
-            #[inline(always)] fn into_128(self) -> (u64, u64) { (self.into_64() , 0) }
+            #[inline(always)]
+            fn from_32(x: u32) -> Self {
+                x as i32 as Self
+            }
+            #[inline(always)]
+            fn from_64(x: u64) -> Self {
+                x as i64 as Self
+            }
+            #[inline(always)]
+            fn from_128(x: u64, _: u64) -> Self {
+                Self::from_64(x)
+            }
+            #[inline(always)]
+            fn into_64(self) -> u64 {
+                self as $unsigned_type as u64
+            }
+            #[inline(always)]
+            fn into_128(self) -> (u64, u64) {
+                (self.into_64(), 0)
+            }
         }
     };
 }
@@ -313,7 +341,6 @@ impl RegValue for (u64, u64) {
     #[inline(always)] fn into_128(self) -> (u64, u64) { (self.0, self.1) }
 }
 
-
 // no other implementation for 128 bit values yet
 
 impl Registers {
@@ -330,26 +357,24 @@ impl Registers {
                 trace_register!("{:4} Q ->(q={lo}, v={hi})", name.to_string());
                 RegValue::from_128(lo, hi)
             }
-            (true, false) => {
-                match name.is_64_bits() {
-                    true => {
-                        let x = self.v[i as usize];
-                        trace_register!("{:4} v ->0x{x:016x}", name.to_string());
-                        RegValue::from_64(x)
-                    }
-                    false => {
-                        let w = self.v[i as usize] as u32;
-                        trace_register!("{:4} v ->0x{w:08x}", name.to_string());
-                        RegValue::from_32(w)
-                    }
+            (true, false) => match name.is_64_bits() {
+                true => {
+                    let x = self.v[i as usize];
+                    trace_register!("{:4} v ->0x{x:016x}", name.to_string());
+                    RegValue::from_64(x)
                 }
-            }
+                false => {
+                    let w = self.v[i as usize] as u32;
+                    trace_register!("{:4} v ->0x{w:08x}", name.to_string());
+                    RegValue::from_32(w)
+                }
+            },
             (false, qbit) => {
                 if i == 31 {
                     if !qbit {
                         // zero
                         trace_register!("{:4} x =>0", name.to_string());
-                        return RegValue::from_64(0)
+                        return RegValue::from_64(0);
                     }
                     debug_assert!(name == RegName::sp(), "invalid register");
                     let x = self.x[i as usize];
@@ -468,9 +493,7 @@ impl Flags {
             "cs" => self.check_cs(),
             "cc" => self.check_lo(), // carry clear
             // TODO --cleanup: change condition code to enum
-            _ => panic!(
-                "Unhandled condition code: {cond}",
-            ),
+            _ => panic!("Unhandled condition code: {cond}",),
         }
     }
 
@@ -541,8 +564,8 @@ mod tests {
 
     #[layered_crate::import]
     use processor::{
-        self::{Cpu0, Process},
         self::insn::Core,
+        self::{Cpu0, Process},
     };
     #[test]
     pub fn eq_condional_passes() -> anyhow::Result<()> {
@@ -556,7 +579,7 @@ mod tests {
         assert_eq!(cpu.read::<u64>(reg!(x[9])), 2);
         Ok(())
     }
-    
+
     #[test]
     pub fn eq_condional_fails() -> anyhow::Result<()> {
         let mut cpu = Cpu0::default();

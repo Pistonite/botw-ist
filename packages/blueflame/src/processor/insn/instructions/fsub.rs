@@ -1,11 +1,11 @@
 use crate::processor::{self as self_, crate_};
 
-use disarm64::decoder::{Mnemonic, Opcode};
 use disarm64::arm64::InsnOpcode;
+use disarm64::decoder::{Mnemonic, Opcode};
 
-use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType, glue::RegisterValue};
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::{Error, RegisterType, glue, glue::RegisterValue};
 
 #[derive(Clone)]
 pub struct InsnFsub {
@@ -32,37 +32,35 @@ impl ExecutableInstruction for InsnFsub {
     }
 }
 
-pub    fn parse(
-        d: &Opcode,
-    ) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
-        if d.mnemonic != Mnemonic::fsub {
-            return Ok(None);
-        }
-        let bits = d.operation.bits();
-        let sf = get_bit_range(bits, 22, 22);
-        let rd_idx = get_bit_range(bits, 4, 0);
-        let rn_idx = get_bit_range(bits, 9, 5);
-        let rm_idx = get_bit_range(bits, 20, 16);
-        let reg_type = match sf {
-            0 => RegisterType::SReg,
-            1 => RegisterType::DReg,
+pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+    if d.mnemonic != Mnemonic::fsub {
+        return Ok(None);
+    }
+    let bits = d.operation.bits();
+    let sf = get_bit_range(bits, 22, 22);
+    let rd_idx = get_bit_range(bits, 4, 0);
+    let rn_idx = get_bit_range(bits, 9, 5);
+    let rm_idx = get_bit_range(bits, 20, 16);
+    let reg_type = match sf {
+        0 => RegisterType::SReg,
+        1 => RegisterType::DReg,
         _ => {
             log::error!("Invalid sf value in fsub instruction: {sf}");
-            return Err(Error::BadInstruction(bits))
+            return Err(Error::BadInstruction(bits));
         }
-        };
-        Ok(Some(Box::new(InsnFsub {
-            rd: reg_type(rd_idx),
-            rn: reg_type(rn_idx),
-            rm: reg_type(rm_idx),
-        })))
-    }
+    };
+    Ok(Some(Box::new(InsnFsub {
+        rd: reg_type(rd_idx),
+        rn: reg_type(rn_idx),
+        rm: reg_type(rm_idx),
+    })))
+}
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use disarm64::decoder::decode;
-    use self_::{Cpu0, Process, reg, insn::paste_insn};
+    use self_::{Cpu0, Process, insn::paste_insn, reg};
 
     #[test]
     pub fn test_fsub_parse() -> anyhow::Result<()> {

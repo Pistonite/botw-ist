@@ -1,7 +1,7 @@
 #[layered_crate::import]
 use processor::{
+    self::{Error, RegName, format_address},
     super::env::enabled,
-    self::{RegName, Error, format_address},
 };
 
 #[derive(Debug, Clone, Default)]
@@ -46,7 +46,7 @@ impl StackTrace {
                     let source = match frame.jump_type {
                         FrameType::Bl(source) => source,
                         FrameType::Blr(source, _) => source,
-                        _ => return Ok(())
+                        _ => return Ok(()),
                     };
                     if source + 4 != lr {
                         return Err(Error::ReturnAddressMismatch(lr, source + 4));
@@ -71,7 +71,6 @@ impl StackTrace {
         }
         result
     }
-
 }
 
 #[derive(Debug, Clone)]
@@ -94,22 +93,27 @@ impl Frame {
     pub fn format_with_main_start(&self, main_start: u64) -> String {
         match self.jump_type {
             FrameType::Bl(from) => {
-                format!("  {} BL      -> {}", 
-                        format_address(from, main_start), 
-                        format_address(self.jump_target, main_start))
-            },
+                format!(
+                    "  {} BL      -> {}",
+                    format_address(from, main_start),
+                    format_address(self.jump_target, main_start)
+                )
+            }
             FrameType::Blr(from, reg_name) => {
                 let reg = format!("{:4}", reg_name.to_string());
-                format!("  {} BLR{} -> {}", 
-                    format_address(from, main_start), 
+                format!(
+                    "  {} BLR{} -> {}",
+                    format_address(from, main_start),
                     reg,
-                    format_address(self.jump_target, main_start))
-            },
+                    format_address(self.jump_target, main_start)
+                )
+            }
             FrameType::Native => {
-                format!("                                   native jump -> {}", 
-                    format_address(self.jump_target, main_start))
+                format!(
+                    "                                   native jump -> {}",
+                    format_address(self.jump_target, main_start)
+                )
             }
         }
     }
 }
-

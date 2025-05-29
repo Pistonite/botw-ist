@@ -20,29 +20,27 @@ pub const STACK_RESERVATION: u64 = 0x100;
 pub const BLOCK_COUNT_LIMIT: usize = 0x10000;
 pub const BLOCK_ITERATION_LIMIT: usize = 0x400000;
 
-
 // TODO --cleanup: remove this
 pub mod glue {
-    use std::str::FromStr;
 
     use super::*;
 
-impl RegisterType {
-    pub(crate) fn get_bitwidth(&self) -> u8 {
-        match self {
-            RegisterType::XReg(_) => 64,
-            RegisterType::WReg(_) => 32,
-            RegisterType::BReg(_) => 64,
-            RegisterType::HReg(_) => 64,
-            RegisterType::SReg(_) => 32,
-            RegisterType::DReg(_) => 64,
-            RegisterType::QReg(_) => 128,
-            RegisterType::XZR => 64,
-            RegisterType::WZR => 32,
-            RegisterType::SP => 64,
-            RegisterType::LR => 64,
+    impl RegisterType {
+        pub(crate) fn get_bitwidth(&self) -> u8 {
+            match self {
+                RegisterType::XReg(_) => 64,
+                RegisterType::WReg(_) => 32,
+                RegisterType::BReg(_) => 64,
+                RegisterType::HReg(_) => 64,
+                RegisterType::SReg(_) => 32,
+                RegisterType::DReg(_) => 64,
+                RegisterType::QReg(_) => 128,
+                RegisterType::XZR => 64,
+                RegisterType::WZR => 32,
+                RegisterType::SP => 64,
+                RegisterType::LR => 64,
+            }
         }
-    }
 
         pub fn to_regname(self) -> RegName {
             match self {
@@ -59,38 +57,32 @@ impl RegisterType {
                 RegisterType::LR => reg!(lr),
             }
         }
-}
-impl FromStr for RegisterType {
-    type Err = anyhow::Error;
-    fn from_str(reg: &str) -> Result<Self, Self::Err> {
+    }
+
+    pub fn parse_reg_or_panic(reg: &str) -> RegisterType {
         match reg.to_lowercase().as_str() {
-            "xzr" => return Ok(RegisterType::XZR),
-            "wzr" => return Ok(RegisterType::WZR),
-            "sp" => return Ok(RegisterType::SP),
-            "lr" => return Ok(RegisterType::LR),
+            "xzr" => return RegisterType::XZR,
+            "wzr" => return RegisterType::WZR,
+            "sp" => return RegisterType::SP,
+            "lr" => return RegisterType::LR,
             _ => {}
         };
         let (reg_type, idx) = reg.split_at(1);
-        let reg_num = idx.parse::<RegIndex>()?;
+        let Ok(reg_num) = idx.parse::<RegIndex>() else {
+            log::error!("Failed to parse register: {reg}, failed to parse index: {idx}");
+            panic!("Invalid register format: {reg}");
+        };
         match reg_type.to_lowercase().as_str() {
-            "w" => Ok(RegisterType::WReg(reg_num)),
-            "x" => Ok(RegisterType::XReg(reg_num)),
-            "b" => Ok(RegisterType::BReg(reg_num)),
-            "h" => Ok(RegisterType::HReg(reg_num)),
-            "s" => Ok(RegisterType::SReg(reg_num)),
-            "d" => Ok(RegisterType::DReg(reg_num)),
-            "q" => Ok(RegisterType::QReg(reg_num)),
-            _ => Err(anyhow::anyhow!("Unknown register type: {reg}")),
-        }
-    }
-}
-
-    pub fn parse_reg_or_panic(reg: &str) -> RegisterType {
-        match RegisterType::from_str(reg) {
-            Ok(r) => r,
-            Err(e) => {
-                log::error!("Failed to parse register: {reg}, error: {e}");
-                panic!("Invalid register: {reg}");
+            "w" => RegisterType::WReg(reg_num),
+            "x" => RegisterType::XReg(reg_num),
+            "b" => RegisterType::BReg(reg_num),
+            "h" => RegisterType::HReg(reg_num),
+            "s" => RegisterType::SReg(reg_num),
+            "d" => RegisterType::DReg(reg_num),
+            "q" => RegisterType::QReg(reg_num),
+            _ => {
+                log::error!("Failed to parse register: {reg}");
+                panic!("Unknown register type: {reg}");
             }
         }
     }
@@ -128,7 +120,11 @@ impl FromStr for RegisterType {
             RegisterType::SReg(idx) => RegisterValue::SReg(cpu.read(reg!(s[*idx]))),
             RegisterType::DReg(idx) => RegisterValue::DReg(cpu.read(reg!(d[*idx]))),
             RegisterType::QReg(_) => {
-                log::error!("QReg not implemented now, aborting, pc=0x{:016x}, reading {:?}", cpu.pc, reg);
+                log::error!(
+                    "QReg not implemented now, aborting, pc=0x{:016x}, reading {:?}",
+                    cpu.pc,
+                    reg
+                );
                 panic!("QReg not implemented now, aborting");
             }
             RegisterType::XZR => RegisterValue::XReg(0),
@@ -150,14 +146,10 @@ impl FromStr for RegisterType {
                 glue::write_reg(cpu, reg, &RegisterValue::XReg(val));
             }
             RegisterType::SReg(_) => {
-                glue::write_reg(
-                    cpu,
-                    reg,
-                    &RegisterValue::SReg(f32::from_bits(val as u32)),
-                );
+                glue::write_reg(cpu, reg, &RegisterValue::SReg(f32::from_bits(val as u32)));
             }
-            RegisterType::WZR => {},
-            RegisterType::XZR => {},
+            RegisterType::WZR => {}
+            RegisterType::XZR => {}
             _ => {
                 panic!("Invalid register write for general register: {reg:?} with value {val}");
             }
@@ -188,14 +180,14 @@ impl FromStr for RegisterType {
             //      self.s[*idx] = (((v[0] as u128) << 64) | (v[1] as u128)) as f32;
             // },
             (RegisterType::XZR, _) => {}
-            (RegisterType::WZR, _) => {},
+            (RegisterType::WZR, _) => {}
             (RegisterType::SP, RegisterValue::XReg(v)) => {
                 cpu.write(reg!(sp), *v);
             }
             (RegisterType::LR, RegisterValue::XReg(v)) => {
                 cpu.write(reg!(lr), *v);
             }
-            _ =>  {
+            _ => {
                 panic!("Invalid register write: {reg:?} with value {val:?}");
             }
         }
@@ -224,7 +216,6 @@ impl FromStr for RegisterType {
     ) -> Result<(i64, bool), Error> {
         handle_extra_op(cpu, val, val_size, 32, op)
     }
-
 
     // Returns the value and the carry bit
     pub fn handle_extra_op(
@@ -323,7 +314,7 @@ impl FromStr for RegisterType {
                             Ok((result, false))
                         }
                         //the distinct signed/unsigned extend behavior between uxtw and lsl (technically sxtw)
-                        _ =>  {
+                        _ => {
                             panic!("unhandled extra op: {}", extra_op.operation);
                         }
                     }

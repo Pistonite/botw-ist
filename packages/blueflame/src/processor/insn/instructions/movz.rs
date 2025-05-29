@@ -1,11 +1,11 @@
 use crate::processor::{self as self_, crate_};
 
-use disarm64::decoder::{Mnemonic, Opcode};
 use disarm64::arm64::InsnOpcode;
+use disarm64::decoder::{Mnemonic, Opcode};
 
-use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType};
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::{Error, RegisterType, glue};
 
 #[derive(Clone)]
 struct InsnMovz {
@@ -21,7 +21,7 @@ impl ExecutableInstruction for InsnMovz {
         Ok(())
     }
 }
-pub    fn parse( d: &Opcode,) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
     if d.mnemonic != Mnemonic::movz {
         return Ok(None);
     }
@@ -34,7 +34,7 @@ pub    fn parse( d: &Opcode,) -> Result<Option<Box<(dyn ExecutableInstruction)>>
         1 => RegisterType::XReg(rd_idx),
         _ => {
             log::error!("Invalid sf value in movz instruction: {sf}");
-            return Err(Error::BadInstruction(bits))
+            return Err(Error::BadInstruction(bits));
         }
     };
     let imm = get_bit_range(bits, 20, 5);
@@ -51,7 +51,7 @@ mod tests {
     use super::*;
 
     use disarm64::decoder::decode;
-    use self_::{Cpu0, Process, reg, insn::paste_insn};
+    use self_::{Cpu0, Process, insn::paste_insn, reg};
 
     #[test]
     pub fn test_movz_parse() -> anyhow::Result<()> {

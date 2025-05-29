@@ -11,7 +11,7 @@ use crate::exec::{Job, JobSender};
 pub struct Thread {
     slot: usize,
     recv: mpsc::Receiver<Job>,
-    cpu: Cpu1
+    cpu: Cpu1,
 }
 
 impl Thread {
@@ -26,7 +26,11 @@ impl Thread {
                     f(&mut self.cpu);
                 }
                 Err(e) => {
-                    log::debug!("processor thread {} failed to receive job, sender must have been dropped: {}", self.slot, e);
+                    log::debug!(
+                        "processor thread {} failed to receive job, sender must have been dropped: {}",
+                        self.slot,
+                        e
+                    );
                     break;
                 }
             }
@@ -37,10 +41,6 @@ impl Thread {
 
 pub fn make_thread(slot: usize, cpu: Cpu1) -> (Thread, JobSender) {
     let (send, recv) = mpsc::channel();
-    let thread = Thread {
-        slot,
-        recv,
-        cpu
-    };
+    let thread = Thread { slot, recv, cpu };
     (thread, send)
 }

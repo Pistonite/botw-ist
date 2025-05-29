@@ -1,11 +1,7 @@
 use disarm64::decoder::Opcode;
 
 #[layered_crate::import]
-use processor::{
-    Error,
-    insn::Core,
-    insn::instructions as xxx
-};
+use processor::{Error, insn::Core, insn::instructions as xxx};
 
 type ParseFn = fn(&Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error>;
 static PARSE_LIST: &[ParseFn] = &[
@@ -59,7 +55,8 @@ impl LegacyInstruction {
             &insn_string
                 .split_whitespace()
                 .collect::<Vec<&str>>()
-                .join(" ")) ;
+                .join(" "),
+        );
 
         if insn.is_none() {
             log::error!("failed to parse instruction as string: {insn_string}");
@@ -84,7 +81,7 @@ impl ExecutableInstruction for LegacyInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         let should_run = match &self.condition {
             Some(cond) => core.cpu.check_condition(cond),
-            None => true
+            None => true,
         };
         if should_run {
             return self.inst.exec_on(core);
@@ -183,85 +180,88 @@ pub fn split_args(args: &str, n: usize) -> Vec<String> {
     split_args.map(|s| s.to_string()).collect()
 }
 
-   pub  fn parse_auxiliary(fourth_arg: Option<&String>) -> Option<Option<AuxiliaryOperation>> {
-        if let Some(arg) = fourth_arg {
-            let split_arg: Vec<String> = arg
-                .split(char::is_whitespace)
-                .map(|s| s.to_string())
-                .collect();
-            let shift_val = if split_arg.len() > 1 {
-                match get_imm_val(&split_arg[1]) {
-                    Some(val) => val,
-                    None => {
-                        log::error!("Failed to parse shift value from argument: {}", split_arg[1]);
-                        return None
-                    }
+pub fn parse_auxiliary(fourth_arg: Option<&String>) -> Option<Option<AuxiliaryOperation>> {
+    if let Some(arg) = fourth_arg {
+        let split_arg: Vec<String> = arg
+            .split(char::is_whitespace)
+            .map(|s| s.to_string())
+            .collect();
+        let shift_val = if split_arg.len() > 1 {
+            match get_imm_val(&split_arg[1]) {
+                Some(val) => val,
+                None => {
+                    log::error!(
+                        "Failed to parse shift value from argument: {}",
+                        split_arg[1]
+                    );
+                    return None;
                 }
-            } else {
-                0
-            };
-            Some(Some(AuxiliaryOperation {
-                operation: split_arg.first().unwrap().to_string(),
-                shift_val,
-            }))
+            }
         } else {
-            Some(None)
-        }
+            0
+        };
+        Some(Some(AuxiliaryOperation {
+            operation: split_arg.first().unwrap().to_string(),
+            shift_val,
+        }))
+    } else {
+        Some(None)
     }
-pub     fn get_imm_val(imm: &String) -> Option<i64> {
-        let no_hash = imm.strip_prefix('#').unwrap_or(imm);
-        let mult = if no_hash.starts_with('-') { -1 } else { 1 };
-        let no_dash = no_hash.replace(['-', '!', ' ', '\t'], "");
+}
+pub fn get_imm_val(imm: &String) -> Option<i64> {
+    let no_hash = imm.strip_prefix('#').unwrap_or(imm);
+    let mult = if no_hash.starts_with('-') { -1 } else { 1 };
+    let no_dash = no_hash.replace(['-', '!', ' ', '\t'], "");
 
-        if let Some(hex) = no_dash.strip_prefix("0x") {
-            match u64::from_str_radix(hex, 16) {
-                Ok(val) => Some((val as i64) * mult),
-                Err(_) => {
-                    log::error!("get_imm_val failed to parse hex value: {hex}");
-                    None
-                }
-            }
-        } else {
-            match no_dash.parse::<i64>() {
-                Ok(val) => Some(val * mult),
-                Err(_) => {
-                    log::error!("get_imm_val failed to parse value (decimal): {no_dash}");
-                    None
-                }
+    if let Some(hex) = no_dash.strip_prefix("0x") {
+        match u64::from_str_radix(hex, 16) {
+            Ok(val) => Some((val as i64) * mult),
+            Err(_) => {
+                log::error!("get_imm_val failed to parse hex value: {hex}");
+                None
             }
         }
-    }
-    pub fn get_label_val(imm: &str) -> Option<u64> {
-        let stripped = imm.strip_prefix("0x").unwrap_or(imm);
-        match u64::from_str_radix(stripped, 16) {
-            Ok(val) => Some(val),
+    } else {
+        match no_dash.parse::<i64>() {
+            Ok(val) => Some(val * mult),
             Err(_) => {
-                log::error!("get_label_val failed to parse label value: {stripped}");
+                log::error!("get_imm_val failed to parse value (decimal): {no_dash}");
                 None
             }
         }
     }
-    pub fn is_imm(str: &str) -> bool {
-        str.starts_with('#') || str.starts_with("0x")
-    }
-    pub fn convert_to_f64(input: &str) -> Option<f64> {
-        let trimmed_input = input.trim_start_matches('#');
-        match trimmed_input.parse::<f64>() {
-            Ok(val) => Some(val),
-            Err(_) => {
-                log::error!("convert_to_f64 failed to parse value: {trimmed_input}");
-                None
-            }
+}
+pub fn get_label_val(imm: &str) -> Option<u64> {
+    let stripped = imm.strip_prefix("0x").unwrap_or(imm);
+    match u64::from_str_radix(stripped, 16) {
+        Ok(val) => Some(val),
+        Err(_) => {
+            log::error!("get_label_val failed to parse label value: {stripped}");
+            None
         }
     }
-    pub fn ends_with_exclam(arg: &str) -> bool {
-        arg.ends_with('!')
+}
+pub fn is_imm(str: &str) -> bool {
+    str.starts_with('#') || str.starts_with("0x")
+}
+pub fn convert_to_f64(input: &str) -> Option<f64> {
+    let trimmed_input = input.trim_start_matches('#');
+    match trimmed_input.parse::<f64>() {
+        Ok(val) => Some(val),
+        Err(_) => {
+            log::error!("convert_to_f64 failed to parse value: {trimmed_input}");
+            None
+        }
     }
-    pub fn split_bracket_args(bracketed: &str) -> Vec<String> {
-        let binding = bracketed.replace(['[', ']'], "");
-        let split_string = binding.splitn(3, ", ");
-        split_string.map(|s| s.to_string()).collect()
-    }
+}
+pub fn ends_with_exclam(arg: &str) -> bool {
+    arg.ends_with('!')
+}
+pub fn split_bracket_args(bracketed: &str) -> Vec<String> {
+    let binding = bracketed.replace(['[', ']'], "");
+    let split_string = binding.splitn(3, ", ");
+    split_string.map(|s| s.to_string()).collect()
+}
 
 #[derive(Clone)]
 pub struct AuxiliaryOperation {
@@ -269,7 +269,9 @@ pub struct AuxiliaryOperation {
     pub shift_val: i64,
 }
 
-pub trait ExecutableInstruction: ExecutableInstructionClone + Send + Sync + std::panic::UnwindSafe + 'static{
+pub trait ExecutableInstruction:
+    ExecutableInstructionClone + Send + Sync + std::panic::UnwindSafe + 'static
+{
     fn exec_on(&self, proc: &mut Core) -> Result<(), Error>;
 }
 
@@ -299,22 +301,16 @@ pub struct LegacyInstruction {
 }
 
 impl Core<'_, '_> {
-
-
     pub fn handle_string_command_no_inc(&mut self, command: &str) -> Result<(), Error> {
         // 0 is placeholder, as we don't have the raw instruction here
-        let inst = LegacyInstruction::do_parse(command)
-            .ok_or( Error::BadInstruction(0)
-            )?;
+        let inst = LegacyInstruction::do_parse(command).ok_or(Error::BadInstruction(0))?;
         inst.exec_on(self)?;
         Ok(())
     }
 
     pub fn handle_string_command(&mut self, command: &str) -> Result<(), Error> {
         // 0 is placeholder, as we don't have the raw instruction here
-        let inst = LegacyInstruction::do_parse(command)
-            .ok_or( Error::BadInstruction(0)
-            )?;
+        let inst = LegacyInstruction::do_parse(command).ok_or(Error::BadInstruction(0))?;
 
         inst.exec_on(self)?;
         self.cpu.pc += 4;

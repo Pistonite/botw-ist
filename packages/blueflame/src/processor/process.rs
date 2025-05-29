@@ -1,16 +1,16 @@
+use std::ops::ControlFlow;
 use std::panic::UnwindSafe;
 use std::sync::Arc;
-use std::ops::ControlFlow;
 
 use derive_more::derive::Constructor;
 
 #[layered_crate::import]
 use processor::{
-    super::env::{Environment, GameVer},
-    super::memory::{Memory, access, ProxyObject, ProxyList, ProxyGuardMut},
-    super::game::Proxies,
-    self::{Execute, Error},
     self::insn::InsnVec,
+    self::{Error, Execute},
+    super::env::{Environment, GameVer},
+    super::game::Proxies,
+    super::memory::{Memory, ProxyGuardMut, ProxyList, ProxyObject, access},
 };
 
 /// The Process is the container for everything the core tracks
@@ -54,15 +54,14 @@ impl Process {
         &self.proxies
     }
 
-    // pub fn proxies_mut(&mut self) -> &mut Proxies {
-    //     Arc::make_mut(&mut self.proxies)
-    // }
-
-    pub fn proxies_mut<T: ProxyObject, F: FnOnce(&mut Proxies) -> &mut ProxyList<T>>(&mut self, f: F) -> ProxyGuardMut<'_, '_, T> {
+    pub fn proxies_mut<T: ProxyObject, F: FnOnce(&mut Proxies) -> &mut ProxyList<T>>(
+        &mut self,
+        f: F,
+    ) -> ProxyGuardMut<'_, '_, T> {
         let memory = Arc::make_mut(&mut self.memory);
         let proxies = Arc::make_mut(&mut self.proxies);
         let proxy_list = f(proxies);
-    
+
         proxy_list.write(memory)
     }
 
@@ -79,7 +78,11 @@ impl Process {
     ///
     /// If `max_bytes` is `None`, then the function will only fetch
     /// one instruction max, and will ignore the check if a hook is found
-    pub fn fetch_execute_block(&self, pc: u64, max_bytes: Option<u32>) -> Result<(Box<dyn Execute>, u32), Error> {
+    pub fn fetch_execute_block(
+        &self,
+        pc: u64,
+        max_bytes: Option<u32>,
+    ) -> Result<(Box<dyn Execute>, u32), Error> {
         // find execute hook at this location
         let main_offset: u32 = (pc - self.main_start()) as u32;
         let (ignore_hook_size_check, max_bytes) = match max_bytes {
@@ -88,16 +91,16 @@ impl Process {
         };
         if let Some((x, bytes)) = self.hook.fetch(main_offset, self.memory.env())? {
             if !ignore_hook_size_check && bytes > max_bytes {
-                return Err(Error::TooBigHook(main_offset))
+                return Err(Error::TooBigHook(main_offset));
             }
-            return Ok((x, bytes))
+            return Ok((x, bytes));
         }
 
         // if no hook, fetch the instructions from memory
         let mut reader = self.memory.read(pc, access!(execute))?;
         let mut insns = InsnVec::new();
 
-        for _ in 0..(max_bytes/4) {
+        for _ in 0..(max_bytes / 4) {
             let insn_raw = reader.read_u32()?;
 
             if let ControlFlow::Break(_) = insns.disassemble(insn_raw) {
@@ -108,12 +111,14 @@ impl Process {
         let size = insns.byte_size();
         Ok((Box::new(insns), size))
     }
-
-
 }
 
 pub trait HookProvider: Send + Sync + UnwindSafe {
     /// Hook execution at PC. Return the execute function and the byte
     /// size of the hook
-    fn fetch(&self, main_offset: u32, env: Environment) -> Result<Option<(Box<dyn Execute>, u32)>, Error>;
+    fn fetch(
+        &self,
+        main_offset: u32,
+        env: Environment,
+    ) -> Result<Option<(Box<dyn Execute>, u32)>, Error>;
 }

@@ -1,10 +1,10 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
-pub     fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let label_offset = parse::get_label_val(args)?;
     Some(Box::new(BInstruction { label_offset }))
 }
@@ -26,7 +26,7 @@ impl ExecutableInstruction for BInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use self_::{Cpu0, Process, reg}; 
+    use self_::{Cpu0, Process, reg};
     #[test]
     pub fn simple_b_test() -> anyhow::Result<()> {
         let mut cpu = Cpu0::default();

@@ -1,4 +1,3 @@
-
 macro_rules! __impl {
     ($( pub mod $xxx:ident; )*) => {
         mod _impl {
@@ -33,7 +32,7 @@ macro_rules! __impl {
             )*
             out
         }
-        
+
     };
 }
 

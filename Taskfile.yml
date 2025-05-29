@@ -111,7 +111,7 @@ tasks:
       - task: parser:check
       - task: blueflame-proc-macros:check
       - task: blueflame-deps:check
-      # - task: blueflame:check
+      - task: blueflame:check
       # - task: runtime:check
       - task: runtime-wasm:check
 
@@ -139,6 +139,7 @@ tasks:
   test-layer-2:
     cmds:
       - task: parser:test
+      - task: blueflame-deps:test
       - task: blueflame:test
 
   test-layer-1:
@@ -202,3 +203,11 @@ tasks:
       - task: parser-legacy:install
       - task: server:install
       - task: server:build
+
+  clean:
+    desc: Clean the whole repo for temporaries that might help resolve build issues
+    cmds:
+      - rm -f rustc-ice-*
+      - cargo clean
+      - rustup update
+      - task: runtime-wasm:clean

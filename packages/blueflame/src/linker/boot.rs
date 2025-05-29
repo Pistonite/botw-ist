@@ -1,47 +1,48 @@
-
 use std::sync::Arc;
+
+use rkyv::rancor;
 
 #[layered_crate::import]
 use linker::{
-    super::program::Program,
-    super::processor::{self, Cpu1, Cpu3, Process, CrashReport},
+    self::{GameHooks, patch_memory},
+    super::env::{DlcVer, Environment, GameVer},
     super::game::{Proxies, singleton},
-    super::env::{DlcVer, Environment},
-    super::memory::{self, Memory, align_up, align_down, PAGE_SIZE, REGION_ALIGN, RegionType, Region, SimpleHeap},
-    self::{patch_memory, GameHooks}
+    super::memory::{self, Memory, PAGE_SIZE, REGION_ALIGN, SimpleHeap, align_down, align_up},
+    super::processor::{Cpu1, Cpu3, CrashReport, Process},
+    super::program::ArchivedProgram,
 };
 
 /// Error that only happens during boot
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {
-    #[error("PMDM address is impossible to satisfy: 0x{0:08x}")]
+    #[error("program is not a valid archive: {0}")]
+    BadImage(String),
+    #[error("PMDM address is impossible to satisfy: 0x{0:016x}")]
     InvalidPmdmAddress(u64),
     #[error("heap is too small: need at least {0} bytes")]
     HeapTooSmall(u32),
     #[error("region overlap: {0} and {1}")]
-    RegionOverlap(RegionType, RegionType),
-    #[error("no data found for type")]
-    NoData,
-    #[error("proxy failed to allocate")]
-    ProxyError,
+    RegionOverlap(String, String),
     #[error("memory error: {0}")]
     Memory(#[from] memory::Error),
     #[error("{0:?}")]
-    Crash(#[from] CrashReport)
+    Crash(#[from] CrashReport),
 }
 
 /// Initialize memory for the process
 ///
 /// Return the memory state after all singletons are created and initialized
 pub fn init_process(
-    image: &Program,
+    image: &ArchivedProgram,
     dlc_version: DlcVer,
     stack_start: u64,
     stack_size: u32,
     pmdm_address: u64,
     heap_size: u32,
 ) -> Result<Process, Error> {
-    let env = Environment::new(image.ver, dlc_version);
+    let ver = rkyv::deserialize::<GameVer, rancor::Error>(&image.ver)
+        .map_err(|e| Error::BadImage(e.to_string()))?;
+    let env = Environment::new(ver, dlc_version);
     // calculate heap start address
     // we need the heap to be as small as possible,
     // but the relative address of the singleton could be really big
@@ -75,7 +76,7 @@ pub fn init_process(
     if heap_start < min_heap_start {
         // somehow align down made it smaller
         // maybe possible with some pmdm_address
-        return Err(Error::InvalidPmdmAddress(pmdm_address).into());
+        return Err(Error::InvalidPmdmAddress(pmdm_address));
     }
     let heap_adjustment = heap_start - min_heap_start;
 
@@ -91,58 +92,45 @@ pub fn init_process(
     let heap_size = align_up!(heap_size, PAGE_SIZE);
 
     if heap_size < heap_min_size {
-        return Err(Error::HeapTooSmall(heap_min_size).into());
+        return Err(Error::HeapTooSmall(heap_min_size));
     }
+
+    let program_start = image.program_start.into();
+    let program_size = image.program_size.into();
 
     // check the regions don't overlap before allocating memory
-    if overlaps(
-        image.program_start,
-        image.program_size,
-        stack_start,
-        stack_size,
-    ) {
-        return Err(Error::RegionOverlap(RegionType::Program, RegionType::Stack).into());
+    if overlaps(program_start, program_size, stack_start, stack_size) {
+        return Err(Error::RegionOverlap(
+            "program".to_string(),
+            "stack".to_string(),
+        ));
     }
 
-    if overlaps(
-        image.program_start,
-        image.program_size,
-        heap_start,
-        heap_size,
-    ) {
-        return Err(Error::RegionOverlap(RegionType::Program, RegionType::Heap).into());
+    if overlaps(program_start, program_size, heap_start, heap_size) {
+        return Err(Error::RegionOverlap(
+            "program".to_string(),
+            "heap".to_string(),
+        ));
     }
     if overlaps(stack_start, stack_size, heap_start, heap_size) {
-        return Err(Error::RegionOverlap(RegionType::Stack, RegionType::Heap).into());
+        return Err(Error::RegionOverlap(
+            "stack".to_string(),
+            "heap".to_string(),
+        ));
     }
 
     // construct the memory
-
-    log::debug!("creating program region");
-    let program_region = Arc::new(Region::new_program(
-        image.program_start,
-        image.program_size,
-        image.regions(),
-    )?);
-
-    log::debug!("creating stack region");
-    let stack_region = Arc::new(Region::new_rw(RegionType::Stack, stack_start, stack_size));
-    log::debug!("creating heap region");
-    let heap_region = Arc::new(SimpleHeap::new(
-        heap_start,
-        heap_size,
-        heap_min_size as u64 + heap_start, //
-    ));
-
     log::debug!("creating memory");
-
-    let mut memory = Memory::new(
+    let heap = SimpleHeap::new(heap_start, heap_size, heap_min_size as u64 + heap_start);
+    let mut memory = Memory::new_program_zc(
         env,
-        program_region,
-        stack_region,
-        heap_region,
-    );
-
+        program_start,
+        program_size,
+        &image.modules,
+        heap,
+        stack_start,
+        stack_size,
+    )?;
     // patch the memory
     log::debug!("patching memory");
     patch_memory(&mut memory, env)?;
@@ -171,7 +159,6 @@ pub fn init_process(
         singleton::aocm::create_instance(cpu, env)?;
         Ok(())
     })?;
-
 
     log::debug!("process created");
 

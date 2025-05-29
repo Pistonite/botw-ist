@@ -1,10 +1,10 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
-pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args = parse::split_args(args, 3);
     let rd = glue::parse_reg_or_panic(&collected_args[0]);
     let imm_val = parse::get_imm_val(&collected_args[1])? as u16;
@@ -16,7 +16,6 @@ pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     }))
 }
 
-
 #[derive(Clone)]
 pub struct MovkInstruction {
     rd: RegisterType,
@@ -26,16 +25,13 @@ pub struct MovkInstruction {
 
 impl ExecutableInstruction for MovkInstruction {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
-        let imm_val = glue::handle_extra_op_unsigned(core.cpu, self.imm_val as u64, self.extra_op.as_ref());
+        let imm_val =
+            glue::handle_extra_op_unsigned(core.cpu, self.imm_val as u64, self.extra_op.as_ref());
         let xd_val = glue::read_gen_reg(core.cpu, &self.rd) as u64;
         let xd_top_bits = xd_val & 0xFFFF_FFFF_FFFF_0000;
         let imm_bottom_bits = imm_val & 0x0000_0000_0000_FFFF;
 
-        glue::write_gen_reg(
-            core.cpu,
-            &self.rd,
-            (xd_top_bits | imm_bottom_bits) as i64,
-        );
+        glue::write_gen_reg(core.cpu, &self.rd, (xd_top_bits | imm_bottom_bits) as i64);
 
         Ok(())
     }

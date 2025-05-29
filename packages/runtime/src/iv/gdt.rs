@@ -1,8 +1,8 @@
 //! GameData (GDT) inventory view types
 
 mod __impl {
-    use serde::Serialize;
     use crate::iv;
+    use serde::Serialize;
 
     /// Inventory data stored in GameData (GDT)
     ///
@@ -65,7 +65,6 @@ mod __impl {
         pub material_tab_discovered: bool,
         pub food_tab_discovered: bool,
         pub key_item_tab_discovered: bool,
-
     }
 
     /// One item in GDT
@@ -98,36 +97,36 @@ mod __impl {
         #[default]
         None,
         /// Sword info, loaded from PorchSword_FlagSp and PorchSword_ValueSp
-        Sword { 
+        Sword {
             /// Index of the data in the PorchSword_* array
-            idx: u32, 
+            idx: u32,
             /// modifier data loaded from GDT
-            info: iv::WeaponModifier
+            info: iv::WeaponModifier,
         },
         /// Bow info, loaded from PorchBow_FlagSp and PorchBow_ValueSp
-        Bow { 
+        Bow {
             /// Index of the data in the PorchBow_* array
-            idx: u32, 
+            idx: u32,
             /// modifier data loaded from GDT
-            info: iv::WeaponModifier
+            info: iv::WeaponModifier,
         },
         /// Shield info, loaded from PorchShield_FlagSp and PorchShield_ValueSp
-        Shield { 
+        Shield {
             /// Index of the data in the PorchShield_* array
-            idx: u32, 
+            idx: u32,
             /// modifier data loaded from GDT
-            info: iv::WeaponModifier
+            info: iv::WeaponModifier,
         },
         /// Food info, loaded from StaminaRecover, CookEffect0, and CookEffect1 flags
-        Food { 
+        Food {
             /// Index of the data in the various GDT array that stores food info
-            idx: u32, 
+            idx: u32,
             /// Food info loaded from GDT
-            info: iv::ItemData, 
+            info: iv::ItemData,
             /// The y value of CookEffect1
-            unused_effect_1y: f32, 
+            unused_effect_1y: f32,
             /// The ingredient names, loaded from CookMaterialX flags, where X is 0-4
-            ingredients: [String; 5]
+            ingredients: [String; 5],
         },
     }
 }

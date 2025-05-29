@@ -1,15 +1,15 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
 use self_::insn::Core;
+use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
 use self_::{Error, reg};
 
 use blueflame_deps::trace_call;
 
-pub    fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
-        let label_offset = parse::get_label_val(args)?;
-        Some(Box::new(BlInstruction { label_offset }))
-    }
+pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
+    let label_offset = parse::get_label_val(args)?;
+    Some(Box::new(BlInstruction { label_offset }))
+}
 
 #[derive(Clone)]
 pub struct BlInstruction {
@@ -23,7 +23,7 @@ impl ExecutableInstruction for BlInstruction {
         core.cpu.write(reg!(lr), pc + 4);
         let func_address = pc.wrapping_add_signed((self.label_offset - 4) as i64);
         trace_call!(
-            "main+0x{:08x} bl      >>>>> main+0x{:08x}", 
+            "main+0x{:08x} bl      >>>>> main+0x{:08x}",
             core.cpu.pc - core.proc.main_start(),
             func_address + 4 - core.proc.main_start()
         );
@@ -39,7 +39,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
     #[test]
     pub fn simple_bl_test() -> anyhow::Result<()> {
-         let mut cpu = Cpu0::default();
+        let mut cpu = Cpu0::default();
         cpu.pc = 0x1000;
         cpu.write(reg!(lr), 5);
         let mut proc = Process::new_for_test();

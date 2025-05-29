@@ -313,7 +313,16 @@ impl PouchItem {
 
 impl fmt::Display for PouchItem {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "PouchItem {0}:\n -Type: {1:?}\n -Use: {2:?}\n -Value: {3}\n -Equipped: {4}\n -InInventory: {5}", self.get_name(), self.get_type(), self.get_use(), self.mValue, self.mEquipped, self.mInInventory)
+        write!(
+            f,
+            "PouchItem {0}:\n -Type: {1:?}\n -Use: {2:?}\n -Value: {3}\n -Equipped: {4}\n -InInventory: {5}",
+            self.get_name(),
+            self.get_type(),
+            self.get_use(),
+            self.mValue,
+            self.mEquipped,
+            self.mInInventory
+        )
     }
 }
 

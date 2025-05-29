@@ -2,81 +2,128 @@ use derive_more::derive::Constructor;
 
 #[layered_crate::import]
 use memory::{
+    self::{AccessFlags, Error, Memory, PAGE_SIZE, Page},
     super::env::enabled,
-    self::{AccessType, MemAccess, Error, Page, Region, RegionType, Memory, PAGE_SIZE, glue}
 };
+
+#[cfg(feature = "trace-memory")]
+static READS: std::sync::LazyLock<
+    std::sync::Arc<std::sync::Mutex<std::collections::BTreeSet<u64>>>,
+> = std::sync::LazyLock::new(|| {
+    std::sync::Arc::new(std::sync::Mutex::new(std::collections::BTreeSet::new()))
+});
+
+#[inline(always)]
+#[cfg(feature = "trace-memory")]
+fn record_read(addr: u64) {
+    {
+        let page = addr / (PAGE_SIZE as u64);
+        let mut set = std::sync::LazyLock::force(&READS).lock().unwrap();
+        set.insert(page);
+    }
+}
+
+/// Get the recorded reads across all memory instances
+/// returns list of (start, end) ranges of physical addresses aligned to page size
+#[cfg(feature = "trace-memory")]
+pub fn get_read_page_ranges() -> Vec<(u64, u64)> {
+    let mut ranges = Vec::new();
+    {
+        let set = std::sync::LazyLock::force(&READS).lock().unwrap();
+        for addr in set.iter().copied() {
+            let Some(range) = ranges.last_mut() else {
+                ranges.push((addr * PAGE_SIZE as u64, (addr + 1) * PAGE_SIZE as u64));
+                continue;
+            };
+            if addr == range.1 {
+                range.1 += PAGE_SIZE as u64;
+                continue;
+            }
+            ranges.push((addr * PAGE_SIZE as u64, (addr + 1) * PAGE_SIZE as u64));
+        }
+    }
+    ranges
+}
 
 /// Stream reader from memory
 #[derive(Constructor)]
 pub struct Reader<'m> {
     /// Memory being read
     memory: &'m Memory,
-    /// The current region being read
-    region: &'m Region,
-    /// The current page being read
+    /// The current page being read (so we only need to check memory when crossing page boundary)
     page: &'m Page,
-    /// Index of the page in the current region
-    region_page_idx: u32,
+
+    // note that both page_off and addr are needed,
+    // because we need to know when we are crossing page boundary
     /// Current offset into the current page
     page_off: u32,
-    /// If the read is for execution, so the execute permission is checked
-    execute: bool,
-    /// Disable RX permission check
-    disable_permission_check: bool,
+    /// Maximum page offset this reader can read to (exclusive)
+    /// until it has to ask the memory again to check stuff
+    max_page_off: u32,
+    /// Current physical address being read
+    addr: u64,
 
-    /// Offset to subtract while tracing
-    ///
-    /// This is mainly used for tracing `main` module, since
-    /// the start of program isn't the start of the main module
-    trace_offset: u64,
-    // ^ TODO --cleanup: this isn't needed after region refactoring
+    flags: AccessFlags,
 }
 
 macro_rules! trace {
-    (bool, $tag:expr, $addr:expr, $start:expr, $value:expr) => { {
-            blueflame_deps::trace_memory!(concat!("ld1  {}+0x{:08x} =>{}"), $tag, {$addr} - {$start}, if $value { "true" } else { "false" });
-        } };
-    ($len:expr, $tag:expr, $addr:expr, $start:expr, $value:expr, $width:literal) => { {
-            blueflame_deps::trace_memory!(concat!("ld{:2} {}+0x{:08x} =>0x{:0", $width, "x}"), $len * 8, $tag, {$addr} - {$start}, $value);
-        } };
-    ($len:expr, $tag:expr, $addr:expr, $start:expr, $value:literal) => { {
-            blueflame_deps::trace_memory!(concat!("ld{:2} {}+0x{:08x} =>", $value), $len * 8, $tag, {$addr} - {$start});
-        } };
+    (bool, $addr:expr, $addr_str:expr, $value:expr) => {{
+        #[cfg(feature = "trace-memory")]
+        {
+            record_read($addr);
+        }
+        blueflame_deps::trace_memory!(
+            concat!("ld1  {} =>{}"),
+            $addr_str,
+            if $value { "true" } else { "false" }
+        );
+    }};
+    ($len:expr, $addr:expr, $addr_str:expr, $value:expr, $width:literal) => {{
+        #[cfg(feature = "trace-memory")]
+        {
+            record_read($addr);
+        }
+        blueflame_deps::trace_memory!(
+            concat!("ld{:<2} {} =>0x{:0", $width, "x}"),
+            $len * 8,
+            $addr_str,
+            $value
+        );
+    }};
 }
 
 impl<'m> Reader<'m> {
-
     /// Skip `len` bytes in the memory
     #[inline]
     pub fn skip(&mut self, len: u32) {
         self.page_off += len;
+        self.addr += len as u64;
         // checks are done in prep_read, the next time a read is performed
         // this is so that if we read the last data and advance into
         // invalid memory, no exception will be thrown
     }
 
-    /// Get the current reading physical address
-    pub fn current_addr(&self) -> u64 {
-        self.region.start + (self.region_page_idx as u64 * PAGE_SIZE as u64) + self.page_off as u64
-    }
-
     /// Read a `bool` from the memory, advance by 1 byte
-    #[inline]
     pub fn read_bool<T: From<bool>>(&mut self) -> Result<T, Error> {
-        self.prep_read(1)?;
-        let val = self.page.read_u8(self.page_off) & 1 == 1;
-        trace!(bool, self.region.tag, self.current_addr(), self.region.start + self.trace_offset, val);
+        let val = match self.prep_read(1) {
+            Ok(_) => self.page.read_u8(self.page_off) & 1 == 1,
+            Err(Error::Bypassed) => false,
+            Err(e) => return Err(e),
+        };
+        trace!(bool, self.addr, self.memory.format_addr(self.addr), val);
         self.skip(1);
 
         Ok(val.into())
     }
 
     /// Read a `u8` from the memory, advance by 1 byte
-    #[inline]
     pub fn read_u8<T: From<u8>>(&mut self) -> Result<T, Error> {
-        self.prep_read(1)?;
-        let val = self.page.read_u8(self.page_off);
-        trace!(1, self.region.tag, self.current_addr(), self.region.start + self.trace_offset, val, 2);
+        let val = match self.prep_read(1) {
+            Ok(_) => self.page.read_u8(self.page_off),
+            Err(Error::Bypassed) => 0,
+            Err(e) => return Err(e),
+        };
+        trace!(1, self.addr, self.memory.format_addr(self.addr), val, 2);
         self.skip(1);
 
         Ok(val.into())
@@ -89,11 +136,13 @@ impl<'m> Reader<'m> {
     }
 
     /// Read a `u16` from the memory, advance by 2 bytes
-    #[inline]
     pub fn read_u16<T: From<u16>>(&mut self) -> Result<T, Error> {
-        self.prep_read(2)?;
-        let val = self.page.read_u16(self.page_off);
-        trace!(2, self.region.tag, self.current_addr(), self.region.start + self.trace_offset, val, 4);
+        let val = match self.prep_read(2) {
+            Ok(_) => self.page.read_u16(self.page_off),
+            Err(Error::Bypassed) => 0,
+            Err(e) => return Err(e),
+        };
+        trace!(2, self.addr, self.memory.format_addr(self.addr), val, 4);
         self.skip(2);
 
         Ok(val.into())
@@ -106,11 +155,13 @@ impl<'m> Reader<'m> {
     }
 
     /// Read a `u32` from the memory, advance by 4 bytes
-    #[inline]
     pub fn read_u32<T: From<u32>>(&mut self) -> Result<T, Error> {
-        self.prep_read(4)?;
-        let val = self.page.read_u32(self.page_off);
-        trace!(4, self.region.tag, self.current_addr(), self.region.start + self.trace_offset, val, 8);
+        let val = match self.prep_read(4) {
+            Ok(_) => self.page.read_u32(self.page_off),
+            Err(Error::Bypassed) => 0,
+            Err(e) => return Err(e),
+        };
+        trace!(4, self.addr, self.memory.format_addr(self.addr), val, 8);
         self.skip(4);
 
         Ok(val.into())
@@ -123,11 +174,13 @@ impl<'m> Reader<'m> {
     }
 
     /// Read a `u64` from the memory, advance by 8 bytes
-    #[inline]
     pub fn read_u64<T: From<u64>>(&mut self) -> Result<T, Error> {
-        self.prep_read(8)?;
-        let val = self.page.read_u64(self.page_off);
-        trace!(8, self.region.tag, self.current_addr(), self.region.start + self.trace_offset, val, 16);
+        let val = match self.prep_read(8) {
+            Ok(_) => self.page.read_u64(self.page_off),
+            Err(Error::Bypassed) => 0,
+            Err(e) => return Err(e),
+        };
+        trace!(8, self.addr, self.memory.format_addr(self.addr), val, 16);
         self.skip(8);
 
         Ok(val.into())
@@ -156,78 +209,24 @@ impl<'m> Reader<'m> {
     /// First it will make sure the region and page reference are valid,
     /// then, it will check if the read is allowed
     fn prep_read(&mut self, len: u32) -> Result<(), Error> {
-        // first check if we are still inside the region
-        let current_addr = self.current_addr();
-        if current_addr >= self.region.get_end() {
-            // advance to next region if possible
-            match self.memory.get_region_by_addr(current_addr) {
-                None => {
-                    trace!(len, "??", current_addr, 0, "invalid region");
-                    return Err(Error::InvalidRegion(current_addr));
-                }
-                Some((region, page, idx, off)) => {
-                    // fix up the state
-                    self.region = region;
-                    self.page = page;
-                    self.region_page_idx = idx;
-                    self.page_off = off;
-                }
-            }
-        }
-        // advance to the next page in the region if needed
-        if self.page_off >= PAGE_SIZE {
-            self.region_page_idx += self.page_off / PAGE_SIZE;
-            self.page_off %= PAGE_SIZE;
-            self.page = match self.region.get(self.region_page_idx) {
-                Some(page) => page.as_ref(),
-                None => {
-                    trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "unallocated");
-                    return Err(Error::Unallocated(current_addr));
-                }
-            }
+        // are we still on the same page?
+        if self.page_off >= self.max_page_off {
+            // query the memory for the next page
+            let (section_idx, page_idx, page_off, max_page_off) =
+                self.memory.calculate(self.addr, self.flags)?;
+            self.page = self.memory.page_by_indices_unchecked(section_idx, page_idx);
+            self.page_off = page_off;
+            self.max_page_off = max_page_off;
         }
 
-        // now check we can actually read `len` bytes at the current address
-        if self.region.typ == RegionType::Heap && enabled!("mem-heap-check-allocated")
-            && !self.memory.heap.is_allocated(current_addr)
-        {
-            trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "heap unallocated");
-            return Err(Error::Unallocated(current_addr));
-        }
-
-        if !self.disable_permission_check && enabled!("mem-permission") {
-            if self.execute {
-                if !self
-                    .page
-                    .has_permission(AccessType::Read | AccessType::Execute)
-                {
-                    trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "permission denied (rx)");
-                    return Err(Error::PermissionDenied(MemAccess {
-                        flags: glue::access_type_to_flags(AccessType::Execute),
-                        addr: self.current_addr(),
-                        bytes: len,
-                    }));
-                }
-            } else if !self.page.has_permission(AccessType::Read) {
-                trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "permission denied (r)");
-                return Err(Error::PermissionDenied(MemAccess {
-                    flags: glue::access_type_to_flags(AccessType::Read),
-                    addr: self.current_addr(),
-                    bytes: len,
-                }));
-            }
-        }
-
-        if self.page_off + len > PAGE_SIZE {
-            trace!(len, self.region.tag, current_addr, self.region.start + self.trace_offset, "page align fault");
-            return Err(Error::PageBoundary(MemAccess {
-                flags: glue::access_type_to_flags(AccessType::Read),
-                addr: self.current_addr(),
-                bytes: len,
-            }));
+        if self.page_off + len > self.max_page_off {
+            log::error!(
+                "boundary hit at {}, reading {len} bytes",
+                self.memory.format_addr(self.addr)
+            );
+            return Err(Error::Boundary(self.addr, self.flags));
         }
 
         Ok(())
     }
-
 }

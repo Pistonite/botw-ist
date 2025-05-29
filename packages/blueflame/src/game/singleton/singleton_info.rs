@@ -1,4 +1,3 @@
-
 pub use blueflame_deps::singleton_info;
 
 pub struct SingletonInfo {
@@ -21,8 +20,8 @@ pub struct SingletonInfo {
 mod tests {
     #[layered_crate::import]
     use game::{
-        super::env::{Environment, GameVer, DlcVer},
         self::{SingletonInfo, singleton_info},
+        super::env::{DlcVer, Environment, GameVer},
     };
 
     #[test]
@@ -31,7 +30,7 @@ mod tests {
         let singletons = get_singletons(Environment::new(GameVer::X150, DlcVer::V300));
 
         for i in 0..singletons.len() {
-            for j in i+1..singletons.len() {
+            for j in i + 1..singletons.len() {
                 assert!(!overlaps(
                     singletons[i].rel_start,
                     singletons[i].size,

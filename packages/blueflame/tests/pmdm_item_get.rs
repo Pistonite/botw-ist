@@ -1,7 +1,7 @@
-use blueflame::env::{DlcVer, Environment};
-use blueflame::game::{gdt, singleton_instance, PouchItemType, PouchItem};
+use blueflame::env::DlcVer;
+use blueflame::game::{PouchItem, PouchItemType, gdt, singleton_instance};
 use blueflame::linker;
-use blueflame::memory::{self, proxy, Ptr, Memory};
+use blueflame::memory::{self, Memory, Ptr, proxy};
 use blueflame::processor::{Cpu1, Cpu2, CrashReport, Process};
 use blueflame::program;
 
@@ -14,12 +14,12 @@ enum ErrorWrapper {
 #[test]
 pub fn test_item_getters() -> anyhow::Result<()> {
     let data = std::fs::read("./test_files/program.bfi")?;
-    let program = program::unpack(&data)?;
-    let env = Environment::new(program.ver, DlcVer::V300);
+    let mut program_bytes = Vec::new();
+    let program = program::unpack_zc(&data, &mut program_bytes)?;
     let pmdm_addr_for_test = 0x2222200000;
     let proc = linker::init_process(
         &program,
-        env.dlc_ver,
+        DlcVer::V300,
         0x8888800000,
         0x4000,
         pmdm_addr_for_test,
@@ -46,7 +46,13 @@ fn test_get_general(mut proc: Process) -> anyhow::Result<()> {
     cpu2.with_crash_report(|cpu| {
         linker::call_pmdm_item_get(cpu, "Armor_176_Head", 10000)?;
 
-        assert_item_helper(Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?, cpu.proc.memory(), "Armor_176_Head", PouchItemType::ArmorHead, -1)?;
+        assert_item_helper(
+            Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+            cpu.proc.memory(),
+            "Armor_176_Head",
+            PouchItemType::ArmorHead,
+            -1,
+        )?;
 
         linker::call_load_from_game_data(cpu)?;
 
@@ -94,7 +100,8 @@ pub fn test_get_sword(mut proc: Process) -> anyhow::Result<()> {
         )?;
 
         Ok(())
-    }).map_err(ErrorWrapper::Crash)?;
+    })
+    .map_err(ErrorWrapper::Crash)?;
 
     Ok(())
 }
@@ -114,7 +121,8 @@ fn test_get_bow(mut proc: Process) -> anyhow::Result<()> {
             50,
         )?;
         Ok(())
-    }).map_err(ErrorWrapper::Crash)?;
+    })
+    .map_err(ErrorWrapper::Crash)?;
 
     Ok(())
 }
@@ -155,7 +163,8 @@ fn test_get_material(mut proc: Process) -> anyhow::Result<()> {
             50,
         )?;
         Ok(())
-    }).map_err(ErrorWrapper::Crash)?;
+    })
+    .map_err(ErrorWrapper::Crash)?;
 
     Ok(())
 }
@@ -181,27 +190,26 @@ fn test_get_food(mut proc: Process) -> anyhow::Result<()> {
     Ok(())
 }
 
+fn test_get_armor(mut proc: Process) -> anyhow::Result<()> {
+    let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
+    let mut cpu1 = Cpu1::default();
+    let mut cpu2 = Cpu2::new(&mut cpu1, &mut proc);
 
-
-    fn test_get_armor(mut proc: Process) -> anyhow::Result<()> {
-        let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
-        let mut cpu1 = Cpu1::default();
-        let mut cpu2 = Cpu2::new(&mut cpu1, &mut proc);
-
-        cpu2.with_crash_report(|cpu| {
-            linker::call_pmdm_item_get(cpu, "Armor_001_Head", 8)?;
-            assert_item_helper(
-                Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
-                cpu.proc.memory(),
-                "Armor_001_Head",
-                PouchItemType::ArmorHead,
-                8,
-            )?;
-            Ok(())
-        }).map_err(ErrorWrapper::Crash)?;
-
+    cpu2.with_crash_report(|cpu| {
+        linker::call_pmdm_item_get(cpu, "Armor_001_Head", 8)?;
+        assert_item_helper(
+            Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+            cpu.proc.memory(),
+            "Armor_001_Head",
+            PouchItemType::ArmorHead,
+            8,
+        )?;
         Ok(())
-    }
+    })
+    .map_err(ErrorWrapper::Crash)?;
+
+    Ok(())
+}
 //
 //     #[test]
 //     pub fn test_cook_item_get() {

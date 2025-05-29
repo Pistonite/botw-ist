@@ -1,29 +1,39 @@
 #[layered_crate::import]
-use memory::{MemAccess, RegionType};
+use memory::AccessFlags;
 
 /// Memory errors
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {
-    #[error("permission denied: {0}")]
-    PermissionDenied(MemAccess),
-    #[error("page boundary hit: {0}")]
-    PageBoundary(MemAccess),
-    #[error("attempt to access invalid memory region: 0x{0:08x}")]
-    InvalidRegion(u64),
-    #[error("TODO --cleanup message")]
-    DisallowedRegion(MemAccess),
+    #[error("unable to construct section: {0}")]
+    SectionConstruction(String),
+
+    #[error(
+        "[mem-strict-heap] attempt to access part of the heap that is not allocated: 0x{0:016x}, flags: {1}"
+    )]
+    HeapUnallocated(u64, AccessFlags),
+    #[error(
+        "[mem-strict-section] attempt to access invalid memory that is not in any section: 0x{0:016x}, flags: {1}"
+    )]
+    InvalidSection(u64, AccessFlags),
+    #[error("[mem-permission] permission denied: 0x{0:016x}, flags: {1}")]
+    PermissionDenied(u64, AccessFlags),
+    #[error(
+        "attempting to access across boundary of a page or valid memory region: 0x{0:016x}, flags: {1}"
+    )]
+    Boundary(u64, AccessFlags),
+
+    /// An invalid memory access was made, but it was bypassed,
+    /// do whatever you want since there's nothing to be accessed
+    #[error("")]
+    Bypassed,
 
     #[error("size mismatch in {0}: expected: 0x{1:x}, got 0x{2:x}")]
     SizeAssert(String, u32, u32),
     #[error("size out of range in {0}: expected: 0x{1:x} <= SIZE <= 0x{2:x}, got 0x{3:x}")]
     SizeRangeAssert(String, u32, u32, u32),
 
-    /// Region must be valid, but it's not allocated
-    /// (suppressable with :disable mem-check-allocated
-    #[error("attempt to access unallocated memory: 0x{0:08x}")]
-    Unallocated(u64),
-    #[error("{1} region out of memory: 0x{0:08x}")]
-    OutOfMemory(u64, RegionType),
+    #[error("heap out of memory")]
+    HeapOutOfMemory,
 
     #[error("proxy object is too small: {0} bytes, need at least 4 bytes")]
     InvalidProxyObjectSize(u32),
@@ -33,9 +43,4 @@ pub enum Error {
     CorruptedProxyObject(u32, u64, u32),
     #[error("too many proxy objects")]
     ProxyOutOfMemory,
-
-    #[error("unexpected error: {0}")]
-    Unexpected(String),
-    #[error("unexpected error at instruction {0:#0x}: {1}")]
-    UnexpectedAt(u64, String),
 }

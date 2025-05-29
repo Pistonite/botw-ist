@@ -1,11 +1,11 @@
 use crate::processor::{self as self_, crate_};
 
-use disarm64::decoder::{Mnemonic, Opcode};
 use disarm64::arm64::InsnOpcode;
+use disarm64::decoder::{Mnemonic, Opcode};
 
-use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType, glue::RegisterValue};
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::{Error, RegisterType, glue, glue::RegisterValue};
 
 #[derive(Clone)]
 pub struct InsnFadd {
@@ -25,15 +25,13 @@ impl ExecutableInstruction for InsnFadd {
             (RegisterValue::DReg(rn), RegisterValue::DReg(rm)) => {
                 glue::write_reg(core.cpu, &self.rd, &RegisterValue::DReg(rn + rm))
             }
-            _ => {},
+            _ => {}
         }
         Ok(())
     }
 }
 
-pub fn parse(
-    d: &Opcode,
-) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
     if d.mnemonic != Mnemonic::fadd {
         return Ok(None);
     }
@@ -83,4 +81,3 @@ mod tests {
         Ok(())
     }
 }
-

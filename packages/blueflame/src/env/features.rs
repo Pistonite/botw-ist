@@ -1,6 +1,5 @@
 use enumset::EnumSetType;
 
-use blueflame_proc_macros::FeatureFlags;
 pub use blueflame_proc_macros::enabled;
 
 // re-export to use in proc-macros
@@ -11,26 +10,27 @@ pub use enumset;
 /// They should not be changed after init
 ///
 /// TODO manual
-#[derive(FeatureFlags, Debug, Hash, EnumSetType)]
+#[rustfmt::skip] // to be more readable
 #[allow(non_camel_case_types)] // to be more readable
+#[derive(Debug, Hash, EnumSetType)]
+#[blueflame_proc_macros::derive_feature_set] // if rust-analyzer errors here, just ignore it
 pub enum Feature {
-
     // #[on] means this feature is on by default
-    // in scripts, replace `_` with `-` as the feature name 
+    // in scripts, replace `_` with `-` as the feature name
     // (i.e. mem-strict-region instead of mem_strict_region)
 
+    /// Enable strict section checks:
+    /// - Memory access may specify which section(s) it is allowed to access
+    /// - Access to invalid sections will be denied (bypass will return 0 for reads)
+    #[on] mem_strict_section,
 
-    /// If enabled and a region is provided when accessing memory,
-    /// it will not allow accessing other regions, even if the address
-    /// is in another valid region
-    #[on] mem_strict_region,
     /// If read, write and execute permission checks are enabled
     #[on] mem_permission,
     /// If enabled, accessing unallocated location on the heap will not be allowed
-    #[on] mem_heap_check_allocated,
+    #[on] mem_strict_heap,
 
     /// If enabled, jumping to the middle of a replace-hooked code will not be allowed
-    #[on] proc_strict_replace_hook,
+    #[on] strict_replace_hook,
 
     /// Limit the total number of blocks that can be executed
     /// by one frame of the Core. This helps prevent infinite
@@ -50,7 +50,7 @@ pub enum Feature {
     /// Abort when unable to decode an instruction. If disabled,
     /// the instruction will simply be skipped
     #[on] instruction_abort, // TODO --cleanup: implement this
-    
+
     /// If enabled, objects allocated on the stack will reserve
     /// extra space to check for stack corruption
     #[on] check_stack_corruption,
@@ -69,7 +69,9 @@ static mut FEATURES: FeatureSet = Feature::default_const();
 ///
 /// Before this is called, the "default" set of features is used.
 pub unsafe fn init_features(features: FeatureSet) {
-    FEATURES = features;
+    unsafe {
+        FEATURES = features;
+    }
 }
 
 /// Check if a feature is enabled
@@ -80,7 +82,7 @@ pub unsafe fn init_features(features: FeatureSet) {
 /// to be consistent with the style used in scripts
 #[inline(always)]
 pub fn is_feature_enabled(feature: Feature) -> bool {
-    unsafe { 
+    unsafe {
         // SAFETY: we are just reading a number
         // if people read the thing above, it will be safe
         #[allow(static_mut_refs)]

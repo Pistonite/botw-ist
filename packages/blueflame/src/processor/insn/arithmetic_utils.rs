@@ -65,6 +65,6 @@ pub(crate) fn get_nzcv_flags<T: Zero + PartialEq + PartialOrd + Ord + Eq + Copy>
         z: result == T::zero(),
         c: !did_borrow,
         v: (xn_val < T::zero() && xm_val > T::zero() && result > T::zero())
-        || (xn_val > T::zero() && xm_val < T::zero() && result < T::zero()),
+            || (xn_val > T::zero() && xm_val < T::zero() && result < T::zero()),
     }
 }

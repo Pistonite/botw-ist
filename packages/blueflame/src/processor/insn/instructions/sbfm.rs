@@ -1,11 +1,11 @@
 use crate::processor::{self as self_, crate_};
 
-use disarm64::decoder::{Mnemonic, Opcode};
 use disarm64::arm64::InsnOpcode;
+use disarm64::decoder::{Mnemonic, Opcode};
 
-use self_::insn::instruction_parse::{self as parse, ExecutableInstruction, get_bit_range};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType};
+use self_::insn::instruction_parse::{self as parse, ExecutableInstruction, get_bit_range};
+use self_::{Error, RegisterType, glue};
 
 #[derive(Clone)]
 pub struct InsnSbfm {
@@ -57,18 +57,12 @@ impl ExecutableInstruction for InsnSbfm {
                 reg_out_val >>= 32;
             }
         }
-        glue::write_gen_reg(
-            core.cpu,
-            &self.rd,
-            reg_out_val,
-        );
+        glue::write_gen_reg(core.cpu, &self.rd, reg_out_val);
         Ok(())
     }
 }
 
-pub    fn parse(
-    d: &Opcode,
-) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
     if d.mnemonic != Mnemonic::sbfm {
         return Ok(None);
     }
@@ -83,7 +77,7 @@ pub    fn parse(
         1 => RegisterType::XReg(rd_idx),
         _ => {
             log::error!("Invalid decode value for sf in sbfm inst: {sf}");
-            return Err(Error::BadInstruction(bits))
+            return Err(Error::BadInstruction(bits));
         }
     };
     let rn = match sf {
@@ -91,7 +85,7 @@ pub    fn parse(
         1 => RegisterType::XReg(rn_idx),
         _ => {
             log::error!("Invalid decode value for sf in sbfm inst: {sf}");
-            return Err(Error::BadInstruction(bits))
+            return Err(Error::BadInstruction(bits));
         }
     };
     Ok(Some(Box::new(InsnSbfm {
@@ -101,7 +95,6 @@ pub    fn parse(
         imms: imms as u8,
     })))
 }
-
 
 #[cfg(test)]
 mod tests {

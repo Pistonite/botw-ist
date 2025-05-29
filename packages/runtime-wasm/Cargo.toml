@@ -2,7 +2,7 @@
 name = "skybook-runtime-wasm"
 description = "WASM API for Skybook Runtime"
 version = "0.0.0"
-edition = "2021"
+edition = "2024"
 publish = false
 
 [dependencies.blueflame]

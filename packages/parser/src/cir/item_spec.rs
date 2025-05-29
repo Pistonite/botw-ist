@@ -1,4 +1,4 @@
-use teleparse::{tp, ToSpan};
+use teleparse::{ToSpan, tp};
 
 use crate::cir;
 use crate::error::{Error, ErrorReport};

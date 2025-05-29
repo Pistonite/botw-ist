@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, RegisterType, Error};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args = parse::split_args(args, 2);
@@ -34,14 +34,20 @@ impl ExecutableInstruction for ScvtfInstruction {
                     Ok(())
                 }
                 _ => {
-                    log::error!("scvtf: Register type for rn is not supported: {:?}", self.rn);
+                    log::error!(
+                        "scvtf: Register type for rn is not supported: {:?}",
+                        self.rn
+                    );
                     Err(Error::BadInstruction(0))
                 }
             },
-                _ => {
-                    log::error!("scvtf: Register type for rd is not supported: {:?}", self.rn);
-                    Err(Error::BadInstruction(0))
-                }
+            _ => {
+                log::error!(
+                    "scvtf: Register type for rd is not supported: {:?}",
+                    self.rn
+                );
+                Err(Error::BadInstruction(0))
+            }
         }
     }
 }
@@ -70,4 +76,3 @@ mod tests {
         Ok(())
     }
 }
-

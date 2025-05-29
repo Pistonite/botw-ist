@@ -1,8 +1,8 @@
 //! Item data for overworld actors
 
 mod __impl {
-    use serde::Serialize;
     use crate::iv;
+    use serde::Serialize;
 
     /// View of the items in the overworld (technically not inventory, but convienient to think of
     /// it this way)
@@ -29,16 +29,23 @@ mod __impl {
         /// Equipment on the player (weapons and armors - actor name and value)
         ///
         /// Modifier is 0,0 if no modifier
-        Equipped { 
-            actor: String, value: i32, modifier: iv::WeaponModifier },
+        Equipped {
+            actor: String,
+            value: i32,
+            modifier: iv::WeaponModifier,
+        },
         /// Holding in your hand (holding one)
-        Held { actor: String},
+        Held { actor: String },
         /// Equipment on the ground (actor name and value)
         ///
         /// Modifier is 0,0 if no modifier
-        GroundEquipment{actor:String, value:i32, modifier: iv::WeaponModifier},
+        GroundEquipment {
+            actor: String,
+            value: i32,
+            modifier: iv::WeaponModifier,
+        },
         /// Other items dropped on the ground
-        GroundItem{actor:String},
+        GroundItem { actor: String },
     }
 }
 pub use __impl::InvView_Overworld as Overworld;

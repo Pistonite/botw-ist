@@ -8,7 +8,6 @@ pub mod executor;
 mod thread;
 pub use thread::*;
 
-
 pub type JobSender = mpsc::Sender<Job>;
 pub type Job = Box<dyn FnOnce(&mut Cpu1) + Send + 'static>;
 

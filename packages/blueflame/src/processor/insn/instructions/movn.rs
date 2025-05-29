@@ -1,11 +1,11 @@
 use crate::processor::{self as self_, crate_};
 
-use disarm64::decoder::{Mnemonic, Opcode};
 use disarm64::arm64::InsnOpcode;
+use disarm64::decoder::{Mnemonic, Opcode};
 
-use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType};
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::{Error, RegisterType, glue};
 
 #[derive(Clone)]
 struct InsnMovn {
@@ -21,32 +21,30 @@ impl ExecutableInstruction for InsnMovn {
         Ok(())
     }
 }
-pub    fn parse(
-        d: &Opcode,
-    ) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
-        if d.mnemonic != Mnemonic::movn {
-            return Ok(None);
-        }
-        let bits = d.operation.bits();
-        let sf = get_bit_range(bits, 31, 31);
-        let rd_idx = get_bit_range(bits, 4, 0);
-        let hw = get_bit_range(bits, 22, 21);
-        let rd = match sf {
-            0 => RegisterType::WReg(rd_idx),
-            1 => RegisterType::XReg(rd_idx),
-            _ => {
-                log::error!("Invalid sf value in movz instruction: {sf}");
-                return Err(Error::BadInstruction(bits))
-            }
-        };
-        let imm = get_bit_range(bits, 20, 5);
-        let shift = hw * 16;
-        Ok(Some(Box::new(InsnMovn {
-            rd,
-            imm: imm as u16,
-            shift: shift as u16,
-        })))
+pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+    if d.mnemonic != Mnemonic::movn {
+        return Ok(None);
     }
+    let bits = d.operation.bits();
+    let sf = get_bit_range(bits, 31, 31);
+    let rd_idx = get_bit_range(bits, 4, 0);
+    let hw = get_bit_range(bits, 22, 21);
+    let rd = match sf {
+        0 => RegisterType::WReg(rd_idx),
+        1 => RegisterType::XReg(rd_idx),
+        _ => {
+            log::error!("Invalid sf value in movz instruction: {sf}");
+            return Err(Error::BadInstruction(bits));
+        }
+    };
+    let imm = get_bit_range(bits, 20, 5);
+    let shift = hw * 16;
+    Ok(Some(Box::new(InsnMovn {
+        rd,
+        imm: imm as u16,
+        shift: shift as u16,
+    })))
+}
 
 #[cfg(test)]
 mod tests {

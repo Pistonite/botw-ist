@@ -1,14 +1,14 @@
 use std::ops::ControlFlow;
 
-use disarm64::decoder::Opcode;
 use disarm64::arm64::InsnOpcode;
+use disarm64::decoder::Opcode;
 
 #[layered_crate::import]
 use processor::{
-    super::env::enabled,
-    self::{Cpu0, Error, Execute, Process, BLOCK_ITERATION_LIMIT},
-    self::insn::{Core, instruction_parse, op},
     self::insn::instruction_parse::ExecutableInstruction,
+    self::insn::{Core, instruction_parse, op},
+    self::{BLOCK_ITERATION_LIMIT, Cpu0, Error, Execute, Process},
+    super::env::enabled,
 };
 
 #[derive(Default)]
@@ -69,15 +69,11 @@ impl Execute for InsnVec {
             if i >= limit {
                 return Err(Error::BlockIterationLimitReached);
             }
-            let (opcode, legacy_insn) =  match x {
-                Entry::CannotDecode(bits) => {
-                    return Err(Error::BadInstruction(*bits))
-                }
-                Entry::LegacyParse(opcode, legacy_insn) => {
-                    (opcode, legacy_insn.as_ref())
-                }
+            let (opcode, legacy_insn) = match x {
+                Entry::CannotDecode(bits) => return Err(Error::BadInstruction(*bits)),
+                Entry::LegacyParse(opcode, legacy_insn) => (opcode, legacy_insn.as_ref()),
             };
-            
+
             match op::execute_opcode(cpu, proc, *opcode) {
                 op::ExecResult::Handled => {
                     cpu.inc_pc();
@@ -93,14 +89,14 @@ impl Execute for InsnVec {
 
             match legacy_insn {
                 None => {
-                    log::error!("could not execute instruction, legacy parse failed: {}", opcode.to_string());
+                    log::error!(
+                        "could not execute instruction, legacy parse failed: {}",
+                        opcode.to_string()
+                    );
                     return Err(Error::BadInstruction(opcode.bits()));
                 }
                 Some(x) => {
-                    x.exec_on(&mut Core {
-                        cpu,
-                        proc,
-                    })?;
+                    x.exec_on(&mut Core { cpu, proc })?;
                     cpu.inc_pc();
                 }
             }

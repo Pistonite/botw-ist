@@ -1,5 +1,5 @@
 #[layered_crate::import]
-use memory::{Reader, Writer, PtrToSized, Error, assert_zst};
+use memory::{Error, PtrToSized, Reader, Writer, assert_zst};
 
 /// Implementation of traits for primitive types
 mod _impl;
@@ -79,24 +79,3 @@ impl<T, const OFFSET: u32, const SIZE: u32> FieldMetadata<T, OFFSET, SIZE> {
         PtrToSized::new_const(base + OFFSET as u64)
     }
 }
-
-/// Used internally to make function accept any unsigned type
-#[doc(hidden)]
-pub trait Unsigned: Copy {
-    fn to_u64(self) -> u64;
-}
-
-/// Used internally to make function accept any unsigned type <= 32 bits
-#[doc(hidden)]
-pub trait Unsigned32: Copy {
-    fn to_u32(self) -> u32;
-    fn to_usize(self) -> usize;
-}
-
-impl<T: Unsigned32> Unsigned for T {
-    #[inline(always)]
-    fn to_u64(self) -> u64 {
-        self.to_u32() as u64
-    }
-}
-
