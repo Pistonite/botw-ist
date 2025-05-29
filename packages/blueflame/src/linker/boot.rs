@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use rkyv::{Deserialize, rancor};
+use rkyv::rancor;
 
 #[layered_crate::import]
 use linker::{
@@ -8,7 +8,7 @@ use linker::{
     super::env::{DlcVer, Environment, GameVer},
     super::game::{Proxies, singleton},
     super::memory::{self, Memory, PAGE_SIZE, REGION_ALIGN, SimpleHeap, align_down, align_up},
-    super::processor::{self, Cpu1, Cpu3, CrashReport, Process},
+    super::processor::{Cpu1, Cpu3, CrashReport, Process},
     super::program::ArchivedProgram,
 };
 
@@ -23,10 +23,6 @@ pub enum Error {
     HeapTooSmall(u32),
     #[error("region overlap: {0} and {1}")]
     RegionOverlap(String, String),
-    // #[error("no data found for type")]
-    // NoData,
-    // #[error("proxy failed to allocate")]
-    // ProxyError,
     #[error("memory error: {0}")]
     Memory(#[from] memory::Error),
     #[error("{0:?}")]
