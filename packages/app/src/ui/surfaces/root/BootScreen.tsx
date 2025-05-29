@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FsErr, fsOpenFile } from "@pistonite/pure/fs";
 import {
     Text,
@@ -20,10 +20,14 @@ import {
 
 import type {
     Runtime,
-    RuntimeInitArgs,
-    RuntimeInitParams,
+    RuntimeWorkerInitArgs,
+    CustomImageInitParams,
 } from "@pistonite/skybook-api";
-import { translateUI, useUITranslation } from "skybook-localization";
+import {
+    type Translator,
+    translateUI,
+    useUITranslation,
+} from "skybook-localization";
 
 import { useApplicationStore } from "self::application/store";
 import {
@@ -31,6 +35,7 @@ import {
     setCustomImageToProvide,
 } from "self::application/runtime";
 import { useStyleEngine } from "self::ui/functions";
+import { ErrorBar } from "../../components/ErrorBar";
 
 export type BootScreenState =
     | "OpenSetupOrUseDefaultImage"
@@ -52,11 +57,15 @@ export type BootScreenProps = {
     /** The version of the script image, read from env block */
     scriptImageVersion?: string;
     /** Params from the script */
-    params: RuntimeInitParams;
+    params: CustomImageInitParams;
     /** State of the boot flow when initially showing the screen */
     initialState: BootScreenState;
-    /** Initial error string, if the state is "InitializeError" */
-    initialErrorString?: string;
+    /**
+     * Initial localized error string, if the state is "InitializeError"
+     * This is a function because some errors needs to be localized,
+     * which isn't available yet when the error occured
+     */
+    initialErrorString?: (translator: Translator) => string;
     /** If the initial state is "OpenSetupOrUseDefaultImage", this is the prompt type */
     openSetupOrDefaultPromptType?: OpenSetupOrDefaultPromptType;
     /** Callback to call when booting is successful */
@@ -110,7 +119,16 @@ export const BootScreen: React.FC<BootScreenProps> = ({
     const [promptType, setPromptType] = useState<OpenSetupOrDefaultPromptType>(
         openSetupOrDefaultPromptType || "LocalNoImage",
     );
-    const [errorString, setErrorString] = useState(initialErrorString || "");
+    const t = useUITranslation();
+    const [errorStringGetter, setErrorStringGetter] = useState<
+        ((translator: Translator) => string) | undefined
+    >(() => initialErrorString);
+    const errorString = useMemo(() => {
+        if (!errorStringGetter) {
+            return undefined;
+        }
+        return errorStringGetter(t);
+    }, [errorStringGetter, t]);
 
     // setup dialog states
     const [isCustomImageSelected, setIsCustomImageSelected] = useState(true);
@@ -140,14 +158,13 @@ export const BootScreen: React.FC<BootScreenProps> = ({
         setDialogOpen(machineState !== "Initializing");
     }, [machineState]);
 
-    const t = useUITranslation();
-
     if (machineState === "Initializing") {
         return null;
     }
 
     if (machineState === "Error") {
         // unrecoverable error, the only option is to reboot the app
+        // or, let the user setup the image
         return (
             <Dialog modalType="alert" open>
                 <DialogSurface>
@@ -155,7 +172,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                         <DialogTitle>{t("title.error")}</DialogTitle>
                         <DialogContent>
                             <p>{t("prompt.boot.error")}</p>
-                            <p>{errorString}</p>
+                            <ErrorBar>{errorString}</ErrorBar>
                         </DialogContent>
                         <DialogActions>
                             <Button
@@ -164,6 +181,14 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                             >
                                 {t("button.refresh")}
                             </Button>
+                            <DialogTrigger disableButtonEnhancement>
+                                <Button
+                                    appearance="secondary"
+                                    onClick={openSetupDialog}
+                                >
+                                    {t("button.setup")}
+                                </Button>
+                            </DialogTrigger>
                         </DialogActions>
                     </DialogBody>
                 </DialogSurface>
@@ -172,7 +197,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
     }
 
     // function to start booting
-    const bootCallback = async (args: RuntimeInitArgs) => {
+    const bootCallback = async (args: RuntimeWorkerInitArgs) => {
         // safety check to make sure this is only called once
         if (bootScreenSuccessCalled) {
             console.warn("[boot] bootCallback called multiple times!!");
@@ -184,7 +209,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
             return;
         }
         if (result.err) {
-            setErrorString(result.err);
+            setErrorStringGetter(() => result.err);
             if (args.isCustomImage) {
                 console.log("[boot] failed to initialize custom image");
                 // if failed to initialize custom image,
@@ -219,6 +244,9 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                         bodyTranslationArgs,
                     )}
                 </p>
+                {promptType === "InitializeError" && (
+                    <ErrorBar>{errorString}</ErrorBar>
+                )}
                 <Link
                     href="https://skybook.pistonite.dev/user/custom_image"
                     target="_blank"
@@ -406,7 +434,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                 setCustomImageToProvide(customImageUpload.bytes);
             }
             setUseCustomImageByDefaultInStore(isUseByDefaultSelected);
-            const args: RuntimeInitArgs = {
+            const args: RuntimeWorkerInitArgs = {
                 isCustomImage: true,
                 params,
             };
@@ -416,7 +444,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
         if (isDeletePreviousSelected) {
             setStoredCustomImageVersion("");
         }
-        const args: RuntimeInitArgs = {
+        const args: RuntimeWorkerInitArgs = {
             isCustomImage: false,
             deleteCustomImage: isDeletePreviousSelected,
         };

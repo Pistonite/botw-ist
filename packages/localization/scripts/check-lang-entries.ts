@@ -2,6 +2,8 @@ import fs from "node:fs";
 import subprocess from "node:child_process";
 import YAML from "js-yaml";
 
+// just checking en-US is fine, since missing keys are duplicated to other language files
+// automatically
 const LANG_TO_CHECK = ["en-US"];
 
 // Check completeness of some lang entries using TypeScript
@@ -22,27 +24,55 @@ fs.writeFileSync(`${DIR}/tsconfig.json`, JSON.stringify(TSCONFIG, null, 2));
 LANG_TO_CHECK.forEach((lang) => {
     const langFile = `src/ui/${lang}.yaml`;
     const langData = YAML.load(fs.readFileSync(langFile, "utf8"));
-    const parserErrorKeyInLang: string[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    for (const key in langData as any) {
-        if (key.startsWith("parser.")) {
-            const parserError = key.split(".")[1];
-            parserErrorKeyInLang.push(parserError);
+
+    const generateCheckerFile = (
+        keysPrefix: string,
+        checkType: string,
+        importFrom: string,
+        ignore: string[],
+    ) => {
+        const keysInLang: string[] = [];
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        for (const key in langData as any) {
+            if (key.startsWith(keysPrefix)) {
+                keysInLang.push(key.split(".")[1]);
+            }
         }
-    }
-    const outFile = `${SRC_DIR}/parser_${lang}.ts`;
-    const toSwitchCase = (key: string) => `case "${key}": return true;`;
-    const outContent = `
-import type { ParserError } from "@pistonite/skybook-api";
-function checkParserErrorKey(key: ParserError): boolean {
+
+        return `
+import type { ${checkType} } from "${importFrom}";
+function __if_you_see_this_add_missing_translation_for_${checkType}(key: ${checkType}): boolean {
 switch (key.type) {
-case "Unexpected": return true; // this is handled as a generic error
-${parserErrorKeyInLang.map(toSwitchCase).join("\n")}
+${ignore.map(toSwitchCase).join("\n")}
+${keysInLang.map(toSwitchCase).join("\n")}
 }
 console.log(key); // Check the type of key with LS to see what's missing
 }
 `;
-    fs.writeFileSync(outFile, outContent);
+    };
+    const toSwitchCase = (key: string) => `case "${key}": return true;`;
+    const makeOutFilePath = (prefix: string) =>
+        `${SRC_DIR}/${prefix}_${lang}.ts`;
+
+    fs.writeFileSync(
+        makeOutFilePath("parser"),
+        generateCheckerFile(
+            "parser.",
+            "ParserError",
+            "@pistonite/skybook-api",
+            ["Unexpected"],
+        ),
+    );
+    fs.writeFileSync(
+        makeOutFilePath("runtime_init"),
+        generateCheckerFile(
+            "runtime_init.",
+            "RuntimeWorkerInitError",
+            "@pistonite/skybook-api",
+            [],
+        ),
+    );
 });
 
 const result = subprocess.spawnSync("pnpm", ["exec", "tsc", "-p", DIR], {
@@ -53,5 +83,6 @@ if (result.status !== 0) {
     console.error("Lang entry check failed!!!");
     console.error("Please ensure these keys are defined in lang files:");
     console.error("  - One `parser.<ParserError>` for each ParserError type");
+    console.error("  - One `worker.<WorkerError>` for each WorkerError type");
     process.exit(2);
 }

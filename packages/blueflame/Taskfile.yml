@@ -1,0 +1,15 @@
+version: '3'
+
+includes:
+  cargo:
+    taskfile: ../mono-dev/task/cargo.yaml
+    internal: true
+
+tasks:
+  dev-doc:
+    cmds:
+      - task: cargo:watch-serve-doc
+
+  test:
+    cmds:
+      - cargo test --lib

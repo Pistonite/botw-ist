@@ -75,7 +75,7 @@ fn test_item_search_v3_alias() {
 fn test_item_search_v3_effect() {
     for (effect_name, effect_id) in COOK_EFFECT_NAMES {
         assert_eq!(
-            search_item_by_ident(&format!("{}_elixir", effect_name)),
+            search_item_by_ident(&format!("{effect_name}_elixir")),
             Some(ResolvedItem {
                 actor: "Item_Cook_C_17".to_string(),
                 meta: Some(cir::ItemMeta {
@@ -85,7 +85,7 @@ fn test_item_search_v3_effect() {
             })
         );
         assert_eq!(
-            search_item_by_ident_all(&format!("{}_elixir", effect_name))[0],
+            search_item_by_ident_all(&format!("{effect_name}_elixir"))[0],
             ResolvedItem {
                 actor: "Item_Cook_C_17".to_string(),
                 meta: Some(cir::ItemMeta {

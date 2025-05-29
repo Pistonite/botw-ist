@@ -1,0 +1,9 @@
+/target
+/res
+/res_old
+/test_files
+*.blfm
+*.bfi
+
+# trace files sometimes
+out

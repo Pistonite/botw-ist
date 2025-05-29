@@ -1,14 +1,26 @@
-use std::{collections::{HashMap, VecDeque}, future::Future, sync::{atomic::{AtomicBool, AtomicU64}, Arc}};
+use std::{collections::{HashMap, VecDeque}, future::Future, sync::{atomic::{AtomicBool, AtomicU64}, Arc, Mutex}};
 
+use error::MaybeAborted;
+use exec::{Executor, Spawner};
+use serde::{Deserialize, Serialize};
 use skybook_parser::{search::QuotedItemResolver, ParseOutput};
-use blueflame::{error::Error, memory::{Memory, Proxies}};
+use blueflame::processor::Process;
+use blueflame::game::Proxies;
+use blueflame::memory::Memory;
+use blueflame::linker;
+use blueflame::program;
+use blueflame::env::{DlcVer, Environment, GameVer};
 
-mod scheduler;
-use scheduler::Scheduler;
+/// Executor - handles pooling script execution on multiple emulator cores
+pub mod exec;
 
 /// Inventory View
 pub mod iv;
 pub mod pointer;
+pub mod error;
+
+/// External ref counting helpers
+pub mod erc;
 
 pub struct RunOutput {
     /// State at each simulation step
@@ -271,8 +283,207 @@ impl RunOutput {
     }
 }
 
-pub async fn run_parsed(parsed: &ParseOutput) -> RunOutput {
-    RunOutput { states: vec![] }
+pub struct Run {
+    handle: Arc<RunHandle>,
+    states: Vec<Arc<State>>,
+}
+
+pub struct Runtime {
+    pub env: Mutex<Environment>,
+    pub executor: Executor,
+    pub initial_process: Mutex<Option<Process>>,
+
+    // TODO: pool + Spawn
+    // TODO: initial memory (Mutex<Option<Arc<Memory>>> probably? or Mutex<Option<Memory>>)
+}
+
+impl Runtime {
+    /// Create the runtime, but do not initialize it yet
+    pub fn new(spawner: Spawner) -> Self {
+        let executor = Executor::new(spawner);
+        Self {
+            env: Mutex::new(Environment::new(GameVer::X150, DlcVer::None)),
+            executor,
+            initial_process: Mutex::new(None),
+        }
+    }
+
+    pub fn game_version(&self) -> GameVer {
+        self.env.lock().unwrap().game_ver
+    }
+    pub fn dlc_version(&self) -> DlcVer {
+        self.env.lock().unwrap().dlc_ver
+    }
+
+    /// Initialize the runtime
+    pub fn init(&self, custom_image: Option<(Vec<u8>,CustomImageInitParams)>) -> Result<(), RuntimeInitError> {
+        if let Err(e) = self.executor.ensure_threads(4) {
+            log::error!("failed to create threads: {}", e);
+            return Err(RuntimeInitError::Executor);
+        }
+        let Some((bytes, params)) = custom_image else {
+            log::error!("must provide custom image for now");
+            return Err(RuntimeInitError::BadImage);
+        };
+
+        log::debug!("initializing runtime with custom image params: {:?}", params);
+
+        let program = match program::unpack(&bytes) {
+            Err(e) => {
+                log::error!("failed to unpack blueflame image: {}", e);
+                return Err(RuntimeInitError::BadImage);
+            }
+            Ok(program) => program,
+        };
+
+        if program.ver == GameVer::X160 {
+            log::error!(">>>> + LOOK HERE + <<<< Only 1.5 is supported for now");
+            return Err(RuntimeInitError::BadImage);
+        }
+
+        log::debug!("program start: {:#x}", program.program_start);
+
+        // TODO: program should not have DLC version, since
+        // it doesn't matter statically
+        {
+            let mut env = self.env.lock().unwrap();
+            env.game_ver = program.ver;
+            env.dlc_ver = match DlcVer::from_num(params.dlc) {
+                Some(dlc) => dlc,
+                None => return Err(RuntimeInitError::BadDlcVersion(params.dlc)),
+            };
+        }
+
+        // TODO: take the param
+        log::debug!("initializing memory");
+
+        let process = match linker::init_process(
+            &program, 
+            DlcVer::V300, // TODO: take from param
+            
+            0x8888800000,
+            0x4000, // stack size
+            0x2222200000,
+            20000000 // this heap looks hug
+        ) {
+            Err(e) => {
+                log::error!("failed to initialize memory: {}", e);
+                // TODO: actual error
+                return Err(RuntimeInitError::BadImage);
+            }
+            Ok(x) => x
+        };
+
+        log::debug!("memory initialized successfully");
+        {
+            let mut initial_memory = self.initial_process.lock().unwrap();
+            *initial_memory = Some(process);
+        }
+
+
+        // todo!()
+        Ok(())
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+#[cfg_attr(feature = "__ts-binding", ts(export))]
+#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", tsify(into_wasm_abi, from_wasm_abi))]
+#[serde(rename_all = "camelCase")]
+pub struct CustomImageInitParams {
+    /// DLC version to simulate
+    ///
+    /// 0 means no DLC, 1-3 means DLC version 1.0, 2.0, or 3.0
+    #[serde(default)]
+    pub dlc: u32,
+
+    /// Program start address
+    ///
+    /// The string should look like 0x000000XXXXX00000, where X is a hex digit
+    /// 
+    /// Unspecified (empty string) means the script can run with any program start address
+    #[serde(default)]
+    pub program_start: String,
+
+    /// Stack start address
+    ///
+    /// The string should look like 0x000000XXXXX00000, where X is a hex digit
+    ///
+    /// Unspecified (empty string) means using the internal default
+    #[serde(default)]
+    pub stack_start: String,
+
+    /// Size of the stack
+    ///
+    /// Unspecified, or 0, means using the internal default
+    #[serde(default)]
+    pub stack_size: u32,
+
+    /// Size of the free region of the heap
+    ///
+    /// Unspecified, or 0, means using the internal default
+    #[serde(default)]
+    pub heap_free_size: u32,
+
+    /// Physical address of the PauseMenuDataMgr. Used to calculate heap start
+    ///
+    /// Unspecified (empty string) means using the internal default
+    #[serde(default)]
+    pub pmdm_addr: String
+}
+
+#[derive(Debug, Clone, thiserror::Error, Serialize)]
+#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+#[cfg_attr(feature = "__ts-binding", ts(export))]
+#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+#[serde(tag="type", content="data")]
+pub enum RuntimeInitError {
+    #[error("executor error")]
+    Executor,
+    #[error("invalid DLC version: {0}. Valid versions are 0, 1, 2 or 3")]
+    BadDlcVersion(u32),
+    #[error("invalid custom image (1.6 is not supported right now)")]
+    BadImage,
+    #[error("program-start param is invalid")]
+    InvalidProgramStart,
+    #[error("stack-start param is invalid")]
+    InvalidStackStart,
+    #[error("pmdm-addr param is invalid")]
+    InvalidPmdmAddr,
+    #[error("the custom image provided has program-start = {0}, which does not match the one requested by the environment = {0}")]
+    ProgramStartMismatch(String, String)
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+#[cfg_attr(feature = "__ts-binding", ts(export))]
+#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+#[serde(rename_all = "camelCase")]
+pub struct RuntimeInitOutput {
+    /// "1.5" or "1.6"
+    pub game_version: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+#[cfg_attr(feature = "__ts-binding", ts(export))]
+#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+pub enum ResultInterop<T, E> {
+    /// Result<T, Error>
+    #[serde(rename = "val")]
+    Ok(T),
+    /// Result<Error, Error>
+    #[serde(rename = "err")]
+    Err(E),
+}
+
+pub async fn run_parsed(parsed: Arc<ParseOutput>, handle: Arc<RunHandle>) -> MaybeAborted<RunOutput> {
+    MaybeAborted::Ok(RunOutput { states: vec![] })
 }
 
 #[derive(Clone)]
@@ -303,8 +514,8 @@ pub enum Game {
     Off,
     /// Game is running
     Running(GameState),
-    /// Game has crashed (must manually reboot)
-    Crashed(Error) // TODO: more crash info (dump, stack trace, etc)
+    // /Game has crashed (must manually reboot)
+    // Crashed(Error) // TODO: more crash info (dump, stack trace, etc)
 }
 
 #[derive(Clone)]
@@ -361,15 +572,59 @@ pub struct ActorState {
 
 impl GameState {
 
-    // just a placeholder
-    // probably some kind of macro to generate these
-    pub async fn get_item(mut self, scheduler: impl Scheduler, item: &str) -> Result<GameState, Error> {
-        scheduler.run_on_core(move |p| {
-            let core = p.attach(&mut self.memory, &mut self.proxies);
-            // todo: real function
-            core.pmdm_item_get(item, 0, 0)?;
+    // // just a placeholder
+    // // probably some kind of macro to generate these
+    // pub async fn get_item_with_pool<S: pool::Spawn>(
+    //     mut self, pool: &mut pool::Pool<S>, item: String
+    // ) -> Result<GameState, crate::error::Error> {
+    //     let state = pool.execute(move |p| {
+    //         let mut core = p.attach(&mut self.memory, &mut self.proxies);
+    //         // todo: real function
+    //         core.pmdm_item_get(&item, 0, 0,0).unwrap();
+    //         self
+    //     }).await?;
+    //
+    //     Ok(state)
+    // }
 
-            Ok(self)
-        }).await
+    // // this kind would already have the processor
+    // pub fn get_item<S: pool::Spawn>(
+    //     &mut self, cpu: &mut Processor, item: &str
+    // ) -> Result<(), crate::error::Error> {
+    //     let mut core = cpu.attach(&mut self.memory, &mut self.proxies);
+    //     // todo: real function
+    //     core.pmdm_item_get(item, 0, 0,0).unwrap();
+    //
+    //     Ok(())
+    // }
+}
+
+
+#[repr(transparent)]
+pub struct RunHandle {
+    is_aborted: AtomicBool,
+}
+
+impl RunHandle {
+    pub fn new() -> Self {
+        Self {
+            is_aborted: AtomicBool::new(false),
+        }
+    }
+    pub fn is_aborted(&self) -> bool {
+        self.is_aborted.load(std::sync::atomic::Ordering::Relaxed)
+    }
+    pub fn abort(&self) {
+        self.is_aborted.store(true, std::sync::atomic::Ordering::Relaxed);
+    }
+    pub fn into_raw(s: Arc<Self>) -> *const Self {
+        return Arc::into_raw(s);
+    }
+    pub fn from_raw(ptr: *const Self) -> Arc<Self> {
+        if ptr.is_null() {
+            // make sure it's safe
+            return Arc::new(Self::new());
+        }
+        return unsafe { Arc::from_raw(ptr) };
     }
 }

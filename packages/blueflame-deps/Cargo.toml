@@ -1,0 +1,10 @@
+[package]
+name = "blueflame-deps"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+phf = { version = "0.11.3", features = ["macros"], optional = true }
+
+[features]
+data = ["dep:phf"]

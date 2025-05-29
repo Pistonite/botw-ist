@@ -141,7 +141,7 @@ const ExtensionMenuItem: React.FC<ExtensionMenuItemProps> = ({ id }) => {
                 updateRecency(id);
                 if (mode === "popout") {
                     // this covers the custom case
-                    openExtensionPopup(id);
+                    void openExtensionPopup(id);
                 } else {
                     openExtension(id, mode);
                 }

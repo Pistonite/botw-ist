@@ -193,7 +193,7 @@ fn supplement_search_strings(search_str: &str) -> Vec<String> {
         let Some(rest) = search_str.strip_suffix(find) else {
             continue;
         };
-        let new_search_str = format!("{}{}", rest, replace);
+        let new_search_str = format!("{rest}{replace}");
         all_search_strs.push(new_search_str);
     }
     all_search_strs

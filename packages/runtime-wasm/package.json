@@ -5,11 +5,14 @@
     "type": "module",
     "dependencies": {
         "@pistonite/pure": "catalog:",
-        "@pistonite/workex": "catalog:",
         "@pistonite/skybook-api": "workspace:*",
-        "lru-cache": "^11.0.2"
+        "@pistonite/workex": "catalog:",
+        "skybook-runtime-worker": "workspace:*"
     },
     "devDependencies": {
         "mono-dev": "workspace:*"
-    }
+    },
+    "nocheck": [
+        "src/skybook_runtime_wasm.d.ts"
+    ]
 }

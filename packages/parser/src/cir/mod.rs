@@ -74,10 +74,10 @@ pub enum MetaValue {
 impl std::fmt::Display for MetaValue {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Bool(b) => write!(f, "{}", b),
-            Self::Int(i) => write!(f, "{}", i),
-            Self::Float(fl) => write!(f, "{}", fl),
-            Self::String(s) => write!(f, "{}", s),
+            Self::Bool(b) => write!(f, "{b}"),
+            Self::Int(i) => write!(f, "{i}"),
+            Self::Float(fl) => write!(f, "{fl}"),
+            Self::String(s) => write!(f, "{s}"),
         }
     }
 }
@@ -115,28 +115,28 @@ impl MetaValue {
                     None => return Ok(Self::Float(int_part as f64)),
                 };
                 let decimal_str: &str = decimal_part;
+                let full_str = format!("{int_part}.{decimal_str}");
                 let decimal_num = match decimal_part.strip_prefix("0x") {
                     Some(_) => {
                         // float part can't be hex
-                        return Err(
-                            Error::FloatFormat(format!("{}.{}", int_part, decimal_str)).spanned(x)
-                        );
+                        return Err(Error::FloatFormat(full_str).spanned(x));
                     }
 
-                    None => decimal_part.parse::<i64>().map_err(|_| {
-                        Error::FloatFormat(format!("{}.{}", int_part, decimal_str)).spanned(x)
-                    })?,
+                    None => {
+                        let Ok(num) = decimal_part.parse::<i64>() else {
+                            // float part can't be non-numeric
+                            return Err(Error::FloatFormat(full_str).spanned(x));
+                        };
+                        num
+                    }
                 };
                 // float part can't be negative
                 if decimal_num < 0 {
-                    return Err(
-                        Error::FloatFormat(format!("{}.{}", int_part, decimal_str)).spanned(x)
-                    );
+                    return Err(Error::FloatFormat(full_str).spanned(x));
                 }
-                let full_str = format!("{}.{}", int_part, decimal_str);
-                let value = full_str.parse::<f64>().map_err(|_| {
-                    Error::FloatFormat(format!("{}.{}", int_part, decimal_str)).spanned(x)
-                })?;
+                let value = full_str
+                    .parse::<f64>()
+                    .map_err(|_| Error::FloatFormat(full_str).spanned(x))?;
 
                 Ok(Self::Float(value))
             }

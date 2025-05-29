@@ -1,17 +1,20 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import type { WxPromise } from "@pistonite/workex";
+import { v4 as makeUUID } from "uuid";
 
 import type {
     InvView_Gdt,
     InvView_Overworld,
     InvView_PouchList,
+    MaybeAborted,
     Runtime,
 } from "@pistonite/skybook-api";
 
 import { useRuntime } from "self::application/runtime";
 
 import { useSessionStore } from "./SessionStore.ts";
+import { translateGenericError } from "skybook-localization";
 
 /**
  * Get the debounced value of hasUnsavedChanges of the session
@@ -29,6 +32,8 @@ export type CachedRuntimeData<T> = {
     stale: boolean;
     /** If new data is currently being processed in the runtime */
     loading: boolean;
+    /** Error in runtime. Empty strings means no error */
+    error: string;
 };
 
 /** Get the list view of the visible inventory of the current script and step */
@@ -48,10 +53,11 @@ export const usePouchListView = (): CachedRuntimeData<InvView_PouchList> => {
 };
 const getPouchListShim = (
     runtime: Runtime,
+    taskId: string,
     activeScript: string,
     bytePos: number,
 ) => {
-    return runtime.getPouchList(activeScript, bytePos);
+    return runtime.getPouchList(activeScript, taskId, bytePos);
 };
 
 /** Get the list view of the GDT inventory of the current script and step */
@@ -71,10 +77,11 @@ export const useGdtInventoryView = (): CachedRuntimeData<InvView_Gdt> => {
 };
 const getGdtInventoryShim = (
     runtime: Runtime,
+    taskId: string,
     activeScript: string,
     bytePos: number,
 ) => {
-    return runtime.getGdtInventory(activeScript, bytePos);
+    return runtime.getGdtInventory(activeScript, taskId, bytePos);
 };
 
 /** Get the view of the overworld items of the current script and step */
@@ -95,10 +102,11 @@ export const useOverworldItemsView =
     };
 const getOverworldItemsShim = (
     runtime: Runtime,
+    taskId: string,
     activeScript: string,
     bytePos: number,
 ) => {
-    return runtime.getOverworldItems(activeScript, bytePos);
+    return runtime.getOverworldItems(activeScript, taskId, bytePos);
 };
 
 /**
@@ -112,9 +120,10 @@ const useStoreCachedRuntimeData = <T>(
     // must be stable
     runFn: (
         runtime: Runtime,
+        taskId: string,
         activeScript: string,
         bytePos: number,
-    ) => WxPromise<T>,
+    ) => WxPromise<MaybeAborted<T>>,
     setFn: (stepIndex: number, view: T) => void,
 ): CachedRuntimeData<T> => {
     const activeScript = useDebounce(
@@ -130,40 +139,14 @@ const useStoreCachedRuntimeData = <T>(
 
     const runtime = useRuntime();
 
+    const [errorMessage, setErrorMessage] = useState("");
+
     useEffect(() => {
         if (cacheIsValid) {
             return;
         }
-        // Note that this hook is executed per-use, meaning if multiple
-        // components need to access the pouch view, they are all going
-        // to fire the request at the runtime.
-        //
-        // This introduces extra load on the runtime thread that may
-        // slightly hurt the runtime performance. However, they don't
-        // result in new simulation runs, since as long as the script
-        // stays the same, the runtime will batch the request and cache
-        // the results
-        //
-        // When the first request is done, all the components will rerender,
-        // and they will see the cache is now valid, and cancel the previous
-        // request to not update the store again.
-        //
-        // If we want to optimize this, we can store in SessionStore
-        // if the run request is made per-inventory (pouch, gdt, overworld) and
-        // per-step, and prevent re-firing the same request at the runtime.
-        // I don't think this is worth the effort right now.
-        //
-        // Note that we are not taking the approach where only one component
-        // fires the request, or to execute the script in a centralized manner.
-        // This is so that we only execute when needed. Although that certainly
-        // means "always" right now (because the component is always visible),
-        // executing the script is the most expensive operation in the app,
-        // and we want to avoid it as much as possible.
-        let current = true;
+        let taskId: string | undefined = undefined;
         const isCurrent = () => {
-            if (!current) {
-                return false;
-            }
             const activeScriptNow = useSessionStore.getState().activeScript;
             return activeScriptNow === activeScript;
         };
@@ -172,30 +155,53 @@ const useStoreCachedRuntimeData = <T>(
                 activeScript,
                 bytePos,
             );
-            if (!isCurrent() || stepIndex.err) {
+            if (stepIndex.err) {
+                console.error(
+                    `[rtux] ${name} failed. cannot get step index.`,
+                    stepIndex.err,
+                );
+                setErrorMessage(translateGenericError(stepIndex.err.message));
                 return;
             }
-            const view = await runFn(runtime, activeScript, bytePos);
             if (!isCurrent()) {
                 return;
             }
+            // we only need task id once we request the run
+            taskId = makeUUID();
+            console.log(`[rtux] starting task ${taskId} for ${name}`);
+            const view = await runFn(runtime, taskId, activeScript, bytePos);
+            // IPC error
             if (view.err) {
                 console.error(
-                    `useStoreCachedRuntimeData failed for ${name}`,
+                    `[rtux] task ${taskId} for ${name} failed. IPC error.`,
                     view.err,
                 );
+                setErrorMessage(translateGenericError(view.err.message));
                 return;
             }
-            console.log(
-                `useStoreCachedRuntimeData: ${name} updated for bytePos(${bytePos}) step ${stepIndex.val}`,
-            );
-            setFn(stepIndex.val, view.val);
+            if (view.val.type === "Aborted") {
+                console.warn(`[rtux] task ${taskId} for ${name} aborted`);
+                return;
+            }
+            if (!isCurrent()) {
+                return;
+            }
+            // TODO: when getting certain view, the runtime may return error
+            // if cannot get that view
+            console.log(`[rtux] task ${taskId} for ${name} succeeded`);
+            const viewVal = view.val.value;
+            setFn(stepIndex.val, viewVal);
         };
 
         void updateInventory();
 
         return () => {
-            current = false;
+            // we only want to abort the task if the script
+            // has changed. Otherwise, if we are the only one running,
+            // we are aborting the old task and starting over, which is not helpful
+            if (taskId && !isCurrent()) {
+                void runtime.abortTask(taskId);
+            }
         };
         // note we don't trigger when stepIndex updates, because
         // it is computed asynchronously from bytePos
@@ -218,5 +224,6 @@ const useStoreCachedRuntimeData = <T>(
         data: (inventory || inventoryViewCache.current) as T | undefined,
         stale: !cacheIsValid,
         loading: inProgress,
+        error: errorMessage,
     };
 };

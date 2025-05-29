@@ -15,7 +15,8 @@
         "i18next": "catalog:",
         "lru-cache": "^11.0.2",
         "react": "catalog:",
-        "react-i18next": "catalog:"
+        "react-i18next": "catalog:",
+        "skybook-runtime-worker": "workspace:*"
     },
     "devDependencies": {
         "@types/bun": "catalog:",

@@ -1,0 +1,18 @@
+{
+    "name": "skybook-runtime-worker",
+    "private": true,
+    "type": "module",
+    "version": "0.0.0",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "dependencies": {
+        "@pistonite/pure": "catalog:",
+        "@pistonite/workex": "catalog:",
+        "@pistonite/skybook-api": "workspace:*",
+        "lru-cache": "^11.0.2"
+    },
+    "devDependencies": {
+        "mono-dev": "workspace:*"
+    }
+}

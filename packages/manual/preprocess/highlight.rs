@@ -16,7 +16,7 @@ pub fn run_highlight() -> anyhow::Result<()> {
 
     if !errors.is_empty() {
         for error in errors {
-            eprintln!("Error: {}", error);
+            eprintln!("Error: {error}");
         }
         std::process::exit(1);
     }
@@ -139,5 +139,5 @@ fn get_skybook_token_css_class(ty: skybook_parser::syn::TT) -> String {
         .unwrap_or_default()
         .replace("\"", "");
 
-    format!("skybook-tt-{}", token_name)
+    format!("skybook-tt-{token_name}")
 }

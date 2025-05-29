@@ -2,54 +2,83 @@ use std::ops::DerefMut;
 use std::sync::Arc;
 
 use derive_more::derive::Constructor;
-use enumset::EnumSet;
 
-use super::error::Error;
-use super::heap::SimpleHeap;
-use super::page::Page;
-use super::read::Reader;
-use super::region::{Region, RegionType};
-use super::write::Writer;
+#[layered_crate::import]
+use memory::{
+    super::env::{Environment, enabled},
+    self::{glue, AccessFlags, AccessFlag, MemAccess, access, Ptr, Error, SimpleHeap, Page, Reader, Region, RegionType, Writer}
+};
 
 /// Memory of the simulated process
 #[derive(Debug, Clone, Constructor)]
 pub struct Memory {
-    /// Memory feature flags
-    pub flags: MemoryFlags,
+    env: Environment,
     /// program region
     program: Arc<Region>,
     /// stack region
     stack: Arc<Region>,
     /// heap region
     pub heap: Arc<SimpleHeap>,
-    /// pmdm address
-    pmdm_addr: Option<u64>,
-    /// main offset
-    main_offset: Option<u32>,
-    /// trigger param addr
-    trigger_param_addr: Option<u64>,
 }
 
 impl Memory {
+    /// Get the emulated environment constants
+    pub fn env(&self) -> Environment {
+        self.env
+    }
+
+    /// Get the physical starting address of the program region
+    pub fn program_start(&self) -> u64 {
+        self.program.start
+    }
+
+    /// Get the physical starting address of the main module
+    pub fn main_start(&self) -> u64 {
+        self.program.start + self.env.main_offset() as u64
+    }
+
+    pub fn stack_end(&self) -> u64 {
+        self.stack.start + self.stack.len_bytes() as u64
+    }
+
     /// Create a reader to start reading at address
     ///
-    /// Only allow reading from certain regions if `region` is specified
+    /// # Flags
+    /// If any region bit is specified, then only those regions are allowed to
+    /// be accessed. If the execute permission bit is set, the region being accessed
+    /// also needs to have execute permission. Region permissions are still checked,
+    /// of course.
     pub fn read(
         &self,
         address: u64,
-        region: Option<EnumSet<RegionType>>,
-        execute: bool,
+        flags: AccessFlags,
     ) -> Result<Reader, Error> {
-        let regions = if self.flags.enable_strict_region {
-            region.unwrap_or(EnumSet::all())
-        } else {
-            EnumSet::all()
-        };
+        let flags = convert_region_flags(flags);
+
         if let Some((region, page, page_idx, off)) = self.get_region_by_addr(address) {
-            if !regions.contains(region.typ) {
-                return Err(Error::DisallowedRegion(address, regions));
+            if !glue::access_flags_contains_region_type(flags, region.typ) {
+                return Err(Error::DisallowedRegion(MemAccess {
+                    flags,
+                    addr: address,
+                    bytes: 0,
+                }));
             }
-            return Ok(Reader::new(self, region, page, page_idx, off, execute));
+            let is_execute = flags.has_all(AccessFlag::Execute);
+            let disable_permission_check = flags.has_all(access!(force));
+
+            let trace_offset = if region.tag == "main" {
+                self.env.main_offset()
+            } else {
+                0
+            };
+            // TODO --cleanup: remove execute from param
+            return Ok(Reader::new(
+                self, 
+                region, 
+                page, 
+                page_idx, off, is_execute, disable_permission_check,
+                trace_offset as u64
+            ));
         }
         // region read_by_addr will fail if the address is not allocated,
         // in those cases, we want to return Unallocated error
@@ -67,22 +96,31 @@ impl Memory {
 
     /// Create a writer to start writing at address
     ///
-    /// Only allow writing to certain regions if `region` is specified
+    /// # Flags
+    /// If any region bit is specified, then only those regions are allowed to
+    /// be accessed. Otherwise all regions are allowed (permissions are still checked, of course)
     pub fn write(
         &mut self,
         address: u64,
-        region: Option<EnumSet<RegionType>>,
+        flags: AccessFlags,
     ) -> Result<Writer, Error> {
-        let regions = if self.flags.enable_strict_region {
-            region.unwrap_or(EnumSet::all())
-        } else {
-            EnumSet::all()
-        };
+        let flags = convert_region_flags(flags);
+
         if let Some((region, _, page_idx, off)) = self.get_region_by_addr(address) {
-            if !regions.contains(region.typ) {
-                return Err(Error::DisallowedRegion(address, regions));
+            if !glue::access_flags_contains_region_type(flags, region.typ) {
+                return Err(Error::DisallowedRegion(MemAccess {
+                    flags,
+                    addr: address,
+                    bytes: 0,
+                }));
             }
-            return Ok(Writer::new(self, region.typ, page_idx, off));
+            let disable_permission_check = flags.has_all(access!(force));
+            let trace_offset = if region.tag == "main" {
+                self.env.main_offset()
+            } else {
+                0
+            };
+            return Ok(Writer::new(self, region.typ, page_idx, off, disable_permission_check, trace_offset as u64));
         }
         // region read_by_addr will fail if the address is not allocated,
         // in those cases, we want to return Unallocated error
@@ -115,36 +153,6 @@ impl Memory {
         None
     }
 
-    // // remove this if not needed
-    // pub fn get_cloest_next_region_by_addr(&self, address: u64) -> Option<&Region> {
-    //     if let Some((region, _, _, _)) = self.get_region_by_addr(address) {
-    //         return Some(region);
-    //     }
-    //     let mut closest = None;
-    //     let mut closest_dist = u64::MAX;
-    //     if address < self.program.start {
-    //         let dist = self.program.start - address;
-    //         if dist < closest_dist {
-    //             closest = Some(self.program.as_ref());
-    //             closest_dist = dist;
-    //         }
-    //     }
-    //     if address < self.stack.start {
-    //         let dist = self.stack.start - address;
-    //         if dist < closest_dist {
-    //             closest = Some(self.stack.as_ref());
-    //             closest_dist = dist;
-    //         }
-    //     }
-    //     if address < self.heap.start {
-    //         let dist = self.heap.start - address;
-    //         if dist < closest_dist {
-    //             closest = Some(self.heap.as_ref());
-    //         }
-    //     }
-    //     closest
-    // }
-    //
     pub fn get_region(&self, typ: RegionType) -> &Region {
         match typ {
             RegionType::Program => self.program.as_ref(),
@@ -167,33 +175,27 @@ impl Memory {
         Arc::make_mut(&mut self.heap)
     }
 
-    pub fn get_pmdm_addr(&self) -> u64 {
-        self.pmdm_addr.unwrap_or(0)
-    }
-
-    pub fn get_main_offset(&self) -> u32 {
-        self.main_offset.unwrap_or(0)
-    }
-
-    pub fn set_trigger_param_addr(&mut self, address: u64) {
-        self.trigger_param_addr = Some(address)
-    }
-
-    pub fn get_trigger_param_addr(&self) -> u64 {
-        self.trigger_param_addr.unwrap_or(0)
+    /// Allocate space on the heap for the given byte slice,
+    /// and copy the slice to the allocated space.
+    ///
+    /// Return the pointer to the slice
+    pub fn alloc_with(&mut self, data: &[u8]) -> Result<u64, Error> {
+        let heap = self.heap_mut();
+        let ptr = heap.alloc(data.len() as u32)?;
+        Ptr!(<u8>(ptr)).store_slice(data, self)?;
+        Ok(ptr)
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct MemoryFlags {
-    /// If enabled, region must be specified when accessing memory.
-    /// If the address is not in the specified regions, an error will be thrown
-    pub enable_strict_region: bool,
-
-    /// If permission checks are enabled
-    pub enable_permission_check: bool,
-
-    /// If an address is in the heap region, check
-    /// if it is in the allocated part of the region
-    pub enable_allocated_check: bool,
+fn convert_region_flags(flags: AccessFlags) -> AccessFlags {
+        let region_flags = if enabled!("mem-strict-region") {
+            if flags.has_any(AccessFlags::region_all()) {
+                flags
+            } else {
+                AccessFlags::region_all()
+            }
+        } else {
+            AccessFlags::region_all() // TODO --cleanup: macro
+        };
+        flags | region_flags
 }

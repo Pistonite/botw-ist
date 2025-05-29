@@ -21,7 +21,7 @@ const ExtensionToolbarSecondaryConnected: React.FC = () => {
             allIds={secondaryIds}
             onClickPopout={() => {
                 updateRecency(currentSecondaryId);
-                openExtensionPopup(currentSecondaryId);
+                void openExtensionPopup(currentSecondaryId);
                 closeSecondary();
             }}
             onSelect={(id) => {

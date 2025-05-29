@@ -22,7 +22,7 @@ const ExtensionToolbarPrimaryConnected: React.FC = () => {
             allIds={primaryIds}
             onClickPopout={() => {
                 updateRecency(currentPrimaryId);
-                openExtensionPopup(currentPrimaryId);
+                void openExtensionPopup(currentPrimaryId);
                 closePrimary();
             }}
             onSelect={(id) => {

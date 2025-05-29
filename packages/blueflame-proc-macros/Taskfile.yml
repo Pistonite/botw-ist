@@ -1,0 +1,16 @@
+version: '3'
+
+includes:
+  cargo:
+    taskfile: ../mono-dev/task/cargo.yaml
+    internal: true
+
+tasks:
+  check:
+    cmds:
+      - task: cargo:clippy-all
+      - task: cargo:fmt-check
+
+  fix:
+    cmds:
+      - task: cargo:fmt-fix

@@ -1,12 +1,8 @@
 import { memo, useMemo } from "react";
 import {
-    Text,
     makeStyles,
     Tooltip,
     ToggleButton,
-    MessageBar,
-    MessageBarBody,
-    MessageBarTitle,
     Button,
 } from "@fluentui/react-components";
 import { Grid20Regular, Info20Regular } from "@fluentui/react-icons";
@@ -35,7 +31,7 @@ import {
     InventoryTitle,
     InventoryTabButton,
     InventorySpinner,
-    BugReportText,
+    ErrorBar,
 } from "self::ui/components";
 
 const useStyles = makeStyles({
@@ -70,6 +66,10 @@ const useStyles = makeStyles({
         borderRadius: "4px",
         backgroundColor: "#00000044",
     },
+
+    errors: {
+        gap: "4px",
+    },
 });
 
 export const PouchInventoryPanelImpl: React.FC = () => {
@@ -77,13 +77,19 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     const c = useStyles();
     const t = useUITranslation();
 
-    const { data: pouch, stale, loading } = usePouchListView();
+    const {
+        data: pouch,
+        stale,
+        loading,
+        error: pouchError,
+    } = usePouchListView();
     const {
         data: overworld,
         stale: overworldStale,
         loading: overworldLoading,
+        error: overworldError,
     } = useOverworldItemsView();
-    const { data: gdt } = useGdtInventoryView();
+    const { data: gdt, error: gdtError } = useGdtInventoryView();
 
     const showSpinner =
         loading || stale || !pouch || overworldLoading || overworldStale;
@@ -170,17 +176,9 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     );
 
     const $TabsWarning = isTabView && pouch && tabNodes === undefined && (
-        <MessageBar intent="error">
-            <MessageBarBody>
-                <MessageBarTitle>
-                    {t("main.tabbed_inventory.bad_msgbar.title")}
-                </MessageBarTitle>
-                <Text>
-                    {t("main.tabbed_inventory.bad_msgbar.body")}{" "}
-                    <BugReportText />
-                </Text>
-            </MessageBarBody>
-        </MessageBar>
+        <ErrorBar title={t("main.tabbed_inventory.bad_msgbar.title")}>
+            {t("main.tabbed_inventory.bad_msgbar.body")}
+        </ErrorBar>
     );
 
     const $PouchItems = pouch !== undefined && !isTabView && (
@@ -270,7 +268,14 @@ export const PouchInventoryPanelImpl: React.FC = () => {
             >
                 <div className={m("flex-col flex-1", c.inventoryContainer)}>
                     {$Title}
-                    {$TabsWarning}
+                    <div className={m("flex-col", c.errors)}>
+                        {$TabsWarning}
+                        {pouchError && <ErrorBar>{pouchError}</ErrorBar>}
+                        {overworldError && (
+                            <ErrorBar>{overworldError}</ErrorBar>
+                        )}
+                        {gdtError && <ErrorBar>{gdtError}</ErrorBar>}
+                    </div>
                     {$TabsMinimap}
                     {$PouchItems}
                     {$TabbedPouchItems}

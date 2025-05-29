@@ -1,36 +1,42 @@
 import type { Void } from "@pistonite/pure/result";
 
-import type { Runtime, RuntimeInitArgs } from "@pistonite/skybook-api";
-import { translateGenericError } from "skybook-localization";
+import type { Runtime, RuntimeWorkerInitArgs } from "@pistonite/skybook-api";
+import {
+    type Translator,
+    translateGenericError,
+    translateRuntimeInitError,
+} from "skybook-localization";
 
 import { useApplicationStore, useSessionStore } from "self::application/store";
 
-/** Initialize the runtime with the given arguments */
+/** Initialize the runtime with the given arguments, return localized error message on error */
 export async function initRuntime(
     runtime: Runtime,
-    args: RuntimeInitArgs,
-): Promise<Void<string>> {
+    args: RuntimeWorkerInitArgs,
+): Promise<Void<(translator: Translator) => string>> {
     const isCustomImage = args.isCustomImage;
     updateLogo(isCustomImage);
     console.log(`[boot] initializing runtime, custom image: ${isCustomImage}`);
 
     const initWorkerResult = await runtime.initialize(args);
 
+    // IPC error
     if (initWorkerResult.err) {
-        console.warn("[boot] runtime initialization failed (worker)");
+        console.warn("[boot] runtime initialization failed (IPC)");
         if (isCustomImage) {
             useApplicationStore.getState().setCustomImageVersion("");
         }
-        return { err: translateGenericError(initWorkerResult.err.message) };
+        return {
+            err: (t) => translateGenericError(initWorkerResult.err.message, t),
+        };
     }
     const initResult = initWorkerResult.val;
     if (initResult.err) {
-        console.warn("[boot] runtime initialization failed");
+        console.warn("[boot] runtime initialization failed (Runtime Init)");
         if (isCustomImage) {
             useApplicationStore.getState().setCustomImageVersion("");
         }
-        // TODO: worker error structure, tracked by #69
-        return { err: "initResult.err" };
+        return { err: (t) => translateRuntimeInitError(initResult.err, t) };
     }
 
     const { version, storedVersion } = initResult.val;

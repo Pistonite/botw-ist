@@ -18,11 +18,18 @@ import {
     getTabNodesForGdt,
     useStyleEngine,
 } from "self::ui/functions";
-import { InventoryTitle, InventorySpinner } from "self::ui/components";
+import {
+    InventoryTitle,
+    InventorySpinner,
+    ErrorBar,
+} from "self::ui/components";
 
 const useStyles = makeStyles({
     main: {
         padding: "8px",
+    },
+    errors: {
+        gap: "4px",
     },
 });
 
@@ -30,10 +37,19 @@ const GdtInventoryPanelImpl: React.FC = () => {
     const m = useStyleEngine();
     const c = useStyles();
     const dark = useDark();
-    const { data: pouch } = usePouchListView();
-    const { data: gdt, stale, loading } = useGdtInventoryView();
+    const {
+        data: pouch,
+        loading: pouchLoading,
+        error: pouchError,
+    } = usePouchListView();
+    const {
+        data: gdt,
+        stale,
+        loading,
+        error: gdtError,
+    } = useGdtInventoryView();
 
-    const showSpinner = loading || stale || !gdt;
+    const showSpinner = loading || pouchLoading || stale || !gdt;
     const t = useUITranslation();
 
     const isTabView = useUIStore((state) => state.isTabViewEnabled);
@@ -128,6 +144,10 @@ const GdtInventoryPanelImpl: React.FC = () => {
                     </Tooltip>
                     <InventorySpinner show={showSpinner} />
                 </InventoryTitle>
+                <div className={m("flex-col", c.errors)}>
+                    {pouchError && <ErrorBar>{pouchError}</ErrorBar>}
+                    {gdtError && <ErrorBar>{gdtError}</ErrorBar>}
+                </div>
                 {$TabView || $ListView}
             </div>
         </div>

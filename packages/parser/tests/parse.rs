@@ -82,10 +82,10 @@ async fn test_parser_snapshot(path: &str, script: &str) -> anyhow::Result<()> {
 
     let script = normalize_newlines(script);
 
-    let lex_path = format!("tests/parse/{}.lex", path);
-    let syn_path = format!("tests/parse/{}.syn", path);
-    let cir_path = format!("tests/parse/{}.cir", path);
-    let sem_path = format!("tests/parse/{}.sem", path);
+    let lex_path = format!("tests/parse/{path}.lex");
+    let syn_path = format!("tests/parse/{path}.syn");
+    let cir_path = format!("tests/parse/{path}.cir");
+    let sem_path = format!("tests/parse/{path}.sem");
 
     let lex_out = format!("{:#?}", skybook_parser::parse_tokens(&script));
     let syn_out = format!(
@@ -115,7 +115,7 @@ async fn test_parser_snapshot(path: &str, script: &str) -> anyhow::Result<()> {
 
     if !errors.is_empty() {
         for e in &errors {
-            eprintln!("{}", e);
+            eprintln!("{e}");
         }
         bail!("{} snapshot errors", errors.len());
     }

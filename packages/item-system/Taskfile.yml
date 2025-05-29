@@ -34,10 +34,12 @@ tasks:
 
   pull-artifacts:
     cmds:
-      - $(which mkdir) -p src/generated
       - $(which mkdir) -p public
-      - gcloud storage cp gs://ist-private/artifacts/skybook-item-system/*.ts src/generated
       - gcloud storage cp gs://ist-private/images/SheikahBackground*.png public
       - gcloud storage cp gs://ist-private/images/bg-*.jpg public
+      - task: pull-artifacts-ts
 
-
+  pull-artifacts-ts:
+    cmds:
+      - $(which mkdir) -p src/generated
+      - gcloud storage cp gs://ist-private/artifacts/skybook-item-system/*.ts src/generated

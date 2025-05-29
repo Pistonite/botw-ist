@@ -1,0 +1,38 @@
+name: PR
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    name: check
+    runs-on: blacksmith-4vcpu-ubuntu-2204
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: ./.github/steps/setup-blacksmith
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: task check-ci --output group
+
+  test:
+    name: test
+    runs-on: blacksmith-4vcpu-ubuntu-2204
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: true
+      - uses: ./.github/steps/setup-blacksmith
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: task test-ci --output group

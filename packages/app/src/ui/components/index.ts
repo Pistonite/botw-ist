@@ -1,5 +1,6 @@
 export * from "./BugReportText.tsx";
 export * from "./Code.tsx";
+export * from "./ErrorBar.tsx";
 export * from "./ExtensionToolbar.tsx";
 export * from "./ExtensionWindow.tsx";
 export * from "./GlowyText.tsx";
