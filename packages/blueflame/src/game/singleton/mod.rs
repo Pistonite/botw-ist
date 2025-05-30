@@ -33,6 +33,14 @@ macro_rules! __impl {
             out
         }
 
+        pub fn singleton_infos(env: crate::env::Environment) -> Vec<SingletonInfo> {
+            vec![
+                $(
+                    singleton_info!($xxx(env)),
+                )*
+            ]
+        }
+
     };
 }
 

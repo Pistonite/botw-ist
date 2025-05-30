@@ -11,7 +11,6 @@ use blueflame::env::{DlcVer, Environment, GameVer};
 use blueflame::game::Proxies;
 use blueflame::linker;
 use blueflame::memory::Memory;
-use blueflame::processor::Process;
 use blueflame::program;
 use error::MaybeAborted;
 use exec::{Executor, Spawner};
@@ -28,6 +27,9 @@ pub mod pointer;
 
 /// External ref counting helpers
 pub mod erc;
+
+/// Simulator
+pub mod sim;
 
 pub struct RunOutput {
     /// State at each simulation step
@@ -515,13 +517,16 @@ pub async fn run_parsed(
     MaybeAborted::Ok(RunOutput { states: vec![] })
 }
 
+use blueflame::game::gdt;
+use blueflame::processor::Process;
+
 #[derive(Clone)]
 pub struct State {
     // named gamedata in saves
-    saves: HashMap<String, u64>,
+    saves: HashMap<String, gdt::TriggerParam>,
 
     // gamedata in manual save
-    manual_save: u64,
+    manual_save: gdt::TriggerParam,
 
     /// Current game state
     game: Game,
@@ -564,15 +569,10 @@ pub enum Screen {
 /// State available when the game is running
 #[derive(Clone)]
 pub struct GameState {
-    // gamedata TriggerParam*
-    gamedata: u64,
-    // memory states
-    //
-    /// Full process memory
-    memory: Memory,
+    /// Running game's process
+    process: Process,
 
-    /// Proxy objects in memory
-    proxies: Proxies,
+
 
     /// Current actors in the overworld
     /// TODO: make this copy on write and Arc
