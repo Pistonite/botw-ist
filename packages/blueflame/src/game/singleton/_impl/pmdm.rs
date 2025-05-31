@@ -1,9 +1,8 @@
-#[layered_crate::import]
-use game::{
-    super::vm::VirtualMachine,
-    super::env::Environment,
+use crate::game::{
     PauseMenuDataMgr,
 };
+use crate::vm::VirtualMachine;
+use crate::env::Environment;
 
 pub static NAME: &str = "uking::ui::PauseMenuDataMgr";
 

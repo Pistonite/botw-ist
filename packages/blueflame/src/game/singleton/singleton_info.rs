@@ -20,18 +20,13 @@ pub struct SingletonInfo {
 
 #[cfg(test)]
 mod tests {
-    #[layered_crate::import]
-    use game::{
-        self::singleton,
-        super::env::{DlcVer, Environment, GameVer},
-    };
+    use crate::env::{DlcVer, Environment, GameVer};
+    use crate::game::singleton;
 
     #[test]
     fn test_not_overlap() {
         // TODO --160: all environments
-        let singletons = singleton::singleton_infos(
-            Environment::new(GameVer::X150, DlcVer::V300)
-        );
+        let singletons = singleton::singleton_infos(Environment::new(GameVer::X150, DlcVer::V300));
 
         for i in 0..singletons.len() {
             for j in i + 1..singletons.len() {

@@ -1,5 +1,4 @@
-#[layered_crate::import]
-use game::super_::memory::MemObject;
+use crate::memory::MemObject;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, MemObject)]
 #[size(0x8)]

@@ -1,5 +1,4 @@
-#[layered_crate::import]
-use memory::{Error, PAGE_SIZE, REGION_ALIGN, Section, align_down, align_up, perm, region};
+use crate::memory::{align_down, align_up, perm, region, Error, Section, PAGE_SIZE, REGION_ALIGN};
 
 /// A simple heap region implementation
 ///

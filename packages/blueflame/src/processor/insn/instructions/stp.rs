@@ -1,10 +1,10 @@
-use crate::processor::{self as self_, crate_};
+use crate::processor::{self as self_};
 
-use crate_::memory::Ptr;
-use self_::insn::Core;
+use crate::memory::Ptr;
 use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::Core;
 use self_::reg;
-use self_::{Error, RegisterType, glue};
+use self_::{glue, Error, RegisterType};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args: Vec<String> = parse::split_args(args, 3);
@@ -217,8 +217,7 @@ impl ExecutableInstruction for StpImmInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::*;
-    use self_::{Cpu0, Process, reg};
+    use self_::{Cpu0, Process};
 
     #[test]
     pub fn simple_stp_test() -> anyhow::Result<()> {

@@ -3,12 +3,11 @@ use std::ops::ControlFlow;
 use disarm64::arm64::InsnOpcode;
 use disarm64::decoder::Opcode;
 
-#[layered_crate::import]
-use processor::{
-    self::insn::instruction_parse::ExecutableInstruction,
-    self::insn::{Core, instruction_parse, op},
-    self::{BLOCK_ITERATION_LIMIT, Cpu0, Error, Execute, Process},
-    super::env::enabled,
+use crate::env::enabled;
+use crate::processor::{
+    insn::instruction_parse::ExecutableInstruction,
+    insn::{instruction_parse, op, Core},
+    {Cpu0, Error, Execute, Process, BLOCK_ITERATION_LIMIT},
 };
 
 #[derive(Default)]

@@ -1,11 +1,8 @@
 use derive_more::derive::Constructor;
 
-#[layered_crate::import]
-use processor::{
-    self::{Cpu0, reg},
-    super::env::DataId,
-    super::memory,
-};
+use crate::env::DataId;
+use crate::memory;
+use crate::processor::{reg, Cpu0};
 
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {

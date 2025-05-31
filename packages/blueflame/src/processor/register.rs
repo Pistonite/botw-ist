@@ -1,8 +1,4 @@
-#[layered_crate::import]
-use processor::{
-    super::env::no_panic,
-    super::memory::{MemObject, PtrToArray, PtrToSized},
-};
+use crate::memory::{MemObject, PtrToArray, PtrToSized};
 
 pub use blueflame_deps::reg;
 use blueflame_deps::trace_register;
@@ -562,10 +558,9 @@ impl Flags {
 mod tests {
     use super::*;
 
-    #[layered_crate::import]
-    use processor::{
-        self::insn::Core,
-        self::{Cpu0, Process},
+    use crate::processor::{
+        insn::Core,
+        {Cpu0, Process},
     };
     #[test]
     pub fn eq_condional_passes() -> anyhow::Result<()> {

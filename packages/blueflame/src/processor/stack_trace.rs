@@ -1,8 +1,5 @@
-#[layered_crate::import]
-use processor::{
-    self::{Error, RegName, format_address},
-    super::env::enabled,
-};
+use crate::env::enabled;
+use crate::processor::{format_address, Error, RegName};
 
 #[derive(Debug, Clone, Default)]
 pub struct StackTrace {

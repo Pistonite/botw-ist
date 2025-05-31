@@ -1,5 +1,4 @@
-#[layered_crate::import]
-use memory::Error;
+use crate::memory::Error;
 
 pub use blueflame_deps::{assert_size_less_than, assert_zst};
 

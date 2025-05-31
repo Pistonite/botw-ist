@@ -1,8 +1,5 @@
-#[layered_crate::import]
-use program::{
-    self::{Data, Module, Program, Section, Segment},
-    super::env::{DataId, GameVer},
-};
+use crate::env::{DataId, GameVer};
+use crate::program::{Data, Module, Program, Section, Segment};
 
 /// Start building a program image
 pub fn builder(ver: GameVer, program_start: u64, program_size: u32) -> BuilderPhase1 {

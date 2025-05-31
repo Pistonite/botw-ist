@@ -1,9 +1,6 @@
-#[layered_crate::import]
-use game::{
-    super::vm::VirtualMachine,
-    super::env::{Environment, ProxyId},
-    GdtManager,
-};
+use crate::game::{ GdtManager, };
+use crate::vm::VirtualMachine;
+use crate::env::{Environment, ProxyId};
 
 pub static NAME: &str = "ksys::gdt::Manager";
 

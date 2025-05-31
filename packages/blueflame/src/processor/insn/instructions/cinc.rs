@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
+use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
 use self_::insn::Core;
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
-use self_::{Error, RegisterType, glue};
+use self_::{glue, Error, RegisterType};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args = parse::split_args(args, 3);
@@ -35,8 +35,7 @@ impl ExecutableInstruction for CincInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::*;
-    use self_::{Cpu0, Process, reg};
+    use self_::{reg, Cpu0, Process};
 
     #[test]
     pub fn test_cinc_when_true() -> anyhow::Result<()> {

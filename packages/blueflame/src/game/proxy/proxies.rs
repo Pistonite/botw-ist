@@ -1,5 +1,5 @@
-#[layered_crate::import]
-use game::{self::gdt, super::memory::ProxyList};
+use crate::game::gdt;
+use crate::memory::ProxyList;
 
 /// Holds all proxy objects in memory
 #[derive(Debug, Default, Clone)]

@@ -1,7 +1,6 @@
 use disarm64::decoder::Opcode;
 
-#[layered_crate::import]
-use processor::{Error, insn::Core, insn::instructions as xxx};
+use crate::processor::{insn::instructions as xxx, insn::Core, Error};
 
 type ParseFn = fn(&Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error>;
 static PARSE_LIST: &[ParseFn] = &[

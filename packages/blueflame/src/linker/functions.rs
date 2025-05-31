@@ -1,9 +1,6 @@
-#[layered_crate::import]
-use linker::{
-    super::game::{FixedSafeString40, WeaponModifierInfo, singleton_instance},
-    super::memory::Ptr,
-    super::processor::{self, Cpu2, reg},
-};
+use crate::game::{singleton_instance, FixedSafeString40, WeaponModifierInfo};
+use crate::memory::Ptr;
+use crate::processor::{self, reg, Cpu2};
 
 pub fn call_pmdm_item_get(cpu: &mut Cpu2, actor: &str, value: i32) -> Result<(), processor::Error> {
     call_pmdm_item_get_with_modifier(cpu, actor, value, 0, 0)
@@ -65,8 +62,7 @@ pub fn call_load_from_game_data(cpu: &mut Cpu2) -> Result<(), processor::Error> 
     cpu.native_jump_to_main_offset(0x0096be24)
 }
 
-impl Cpu2<'_, '_> {
-    const FIXED_SAFE_STRING40_VTABLE_ADDR: u64 = 0x1234500000 + 0x2356A90;
+// impl Cpu2<'_, '_> {
     // fn init(&mut self) {
     //     Proxies::init_trigger_param_stubs(self);
     //
@@ -327,4 +323,4 @@ impl Cpu2<'_, '_> {
     // pub(crate) fn compute_ida_addr(&self, addr: u64) -> u64 {
     //     0x7100000000 + addr - self.mem.main_start()
     // }
-}
+// }

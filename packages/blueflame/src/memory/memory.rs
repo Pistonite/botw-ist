@@ -1,14 +1,11 @@
 use std::sync::Arc;
 
-#[layered_crate::import]
-use memory::{
-    self::{
-        AccessFlag, AccessFlags, Error, PAGE_SIZE, Page, Ptr, REGION_ALIGN, Reader, Section,
-        SimpleHeap, Writer, align_up, perm, region,
-    },
-    super::env::{Environment, enabled},
-    super::program::ArchivedModule,
+use crate::env::{enabled, Environment};
+use crate::memory::{
+    align_up, perm, region, AccessFlag, AccessFlags, Error, Page, Ptr, Reader, Section, SimpleHeap,
+    Writer, PAGE_SIZE, REGION_ALIGN,
 };
+use crate::program::ArchivedModule;
 
 /// Memory of the simulated process
 #[derive(Clone)]

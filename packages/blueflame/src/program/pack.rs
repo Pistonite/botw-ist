@@ -1,11 +1,10 @@
 use std::io::{Read, Write};
 
-use flate2::Compression;
 use flate2::write::GzEncoder;
+use flate2::Compression;
 use rkyv::rancor;
 
-#[layered_crate::import]
-use program::{ArchivedProgram, Program};
+use crate::program::{ArchivedProgram, Program};
 
 /// Errors packing or unpacking programs
 #[derive(Debug, thiserror::Error)]

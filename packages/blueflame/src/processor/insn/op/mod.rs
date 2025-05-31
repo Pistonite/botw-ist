@@ -1,7 +1,6 @@
 use disarm64::decoder::{Opcode, Operation};
 
-#[layered_crate::import]
-use processor::{Cpu0, Error, Process};
+use crate::processor::{Cpu0, Error, Process};
 
 /// Check if the instruction *could* branch to another place (instead of
 /// the next instruction)
@@ -22,6 +21,7 @@ pub enum ExecResult {
     Error(Error),
 }
 
+#[allow(unused_variables)]
 pub fn execute_opcode(cpu: &mut Cpu0, proc: &mut Process, opcode: Opcode) -> ExecResult {
     match opcode.operation {
         Operation::ADDSUB_CARRY(addsub_carry) => {

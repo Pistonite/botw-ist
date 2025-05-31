@@ -3,18 +3,15 @@ use enum_map::EnumMap;
 
 use blueflame_deps::trace_call;
 
-#[layered_crate::import]
-use processor::{
-    self::{
-        BLOCK_COUNT_LIMIT, BLOCK_ITERATION_LIMIT, CrashReport, Error, ExecuteCache, Process,
-        Registers, STACK_RESERVATION, StackTrace, reg,
-    },
-    super::env::{DataId, GameVer, ProxyId, enabled},
-    super::game::gdt,
-    super::memory::{MemObject, Ptr},
-    super::program::ArchivedProgram,
-    super::vm::VirtualMachine,
+use crate::env::{enabled, DataId, GameVer, ProxyId};
+use crate::game::gdt;
+use crate::memory::{MemObject, Ptr};
+use crate::processor::{
+    reg, CrashReport, Error, ExecuteCache, Process, Registers, StackTrace, BLOCK_COUNT_LIMIT,
+    BLOCK_ITERATION_LIMIT, STACK_RESERVATION,
 };
+use crate::program::ArchivedProgram;
+use crate::vm::VirtualMachine;
 
 const INTERNAL_RETURN_ADDRESS: u64 = 0xDEAD464C414D45AAu64;
 // -----------------------------------------F-L-A-M-E-----

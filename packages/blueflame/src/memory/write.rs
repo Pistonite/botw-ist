@@ -1,10 +1,6 @@
 use derive_more::derive::Constructor;
 
-#[layered_crate::import]
-use memory::{
-    self::{AccessFlags, Error, Memory, PAGE_SIZE, Page},
-    super::env::enabled,
-};
+use crate::memory::{AccessFlags, Error, Memory};
 
 /// Stream writer to memory
 #[derive(Constructor)]

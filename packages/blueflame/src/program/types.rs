@@ -1,8 +1,7 @@
 // use deku::{DekuRead, DekuWrite};
 use rkyv::{Archive, Deserialize, Serialize};
 
-#[layered_crate::import]
-use program::super_::env::{DataId, GameVer};
+use crate::env::{DataId, GameVer};
 
 /// Image of a program at runtime
 #[derive(Debug, Clone, PartialEq, Eq, Archive, Serialize, Deserialize)]

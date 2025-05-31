@@ -2,15 +2,12 @@ use std::sync::Arc;
 
 use rkyv::rancor;
 
-#[layered_crate::import]
-use linker::{
-    self::{GameHooks, patch_memory},
-    super::env::{DlcVer, Environment, GameVer},
-    super::game::{Proxies, singleton},
-    super::memory::{self, Memory, PAGE_SIZE, REGION_ALIGN, SimpleHeap, align_down, align_up},
-    super::processor::{Cpu1, Cpu3, CrashReport, Process},
-    super::program::ArchivedProgram,
-};
+use crate::env::{DlcVer, Environment, GameVer};
+use crate::game::{singleton, Proxies};
+use crate::linker::{patch_memory, GameHooks};
+use crate::memory::{self, align_down, align_up, Memory, SimpleHeap, PAGE_SIZE, REGION_ALIGN};
+use crate::processor::{Cpu1, Cpu3, CrashReport, Process};
+use crate::program::ArchivedProgram;
 
 /// Error that only happens during boot
 #[derive(Debug, Clone, thiserror::Error)]

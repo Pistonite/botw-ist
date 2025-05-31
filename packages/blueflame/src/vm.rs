@@ -1,5 +1,4 @@
-#[layered_crate::import]
-use vm::super_::env::{DataId, ProxyId};
+use crate::env::{DataId, ProxyId};
 
 /// Trait implemented by the processor to help navigate and execute
 /// gadgets in the existing program. For example to call a function

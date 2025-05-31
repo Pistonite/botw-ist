@@ -2,9 +2,8 @@ use std::ffi::{CStr, CString};
 
 use num_traits::Zero;
 
-#[layered_crate::import]
-use memory::{
-    AccessFlags, Error, MemLayout, MemObject, Memory, Reader, Writer, access, assert_size_eq,
+use crate::memory::{
+    access, assert_size_eq, AccessFlags, Error, MemLayout, MemObject, Memory, Reader, Writer,
 };
 
 #[doc(inline)]

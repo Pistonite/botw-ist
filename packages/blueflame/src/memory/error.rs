@@ -1,5 +1,4 @@
-#[layered_crate::import]
-use memory::AccessFlags;
+use crate::memory::AccessFlags;
 
 /// Memory errors
 #[derive(Debug, Clone, thiserror::Error)]

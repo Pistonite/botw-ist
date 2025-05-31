@@ -1,8 +1,5 @@
-#[layered_crate::import]
-use game::{
-    self::{gdt, singleton_instance},
-    super::memory::{self, Memory, ProxyObject, Ptr},
-};
+use crate::game::{gdt, singleton_instance};
+use crate::memory::{self, Memory, ProxyObject, Ptr};
 
 // TODO --cleanup: remove if not needed
 // pub enum FlagType {

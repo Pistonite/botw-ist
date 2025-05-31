@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::Core;
 use self_::insn::instruction_parse::ExecutableInstruction;
-use self_::{Error, RegisterType, glue, reg};
+use self_::insn::Core;
+use self_::{glue, reg, Error, RegisterType};
 
 use blueflame_deps::trace_call;
 
@@ -46,7 +46,7 @@ impl ExecutableInstruction for RetArgsInstruction {
 }
 
 impl ExecutableInstruction for RetInstruction {
-    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+    fn exec_on(&self, _: &mut Core) -> Result<(), Error> {
         panic!("RET instruction is not used since it's parsed as RET LR")
         // log::trace!("executing ret instruction");
         // let xn_val: u64 = core.cpu.read(reg!(lr));
@@ -61,7 +61,7 @@ impl ExecutableInstruction for RetInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use self_::{Cpu0, Process, reg};
+    use self_::{reg, Cpu0, Process};
 
     #[test]
     pub fn simple_ret_test_with_arg() -> anyhow::Result<()> {

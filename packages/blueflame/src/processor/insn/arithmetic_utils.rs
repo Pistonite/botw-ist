@@ -1,8 +1,7 @@
 use num_traits::Zero;
 use paste::paste;
 
-#[layered_crate::import]
-use processor::Flags;
+use crate::processor::Flags;
 
 macro_rules! signed_add_with_carry {
     ($sz: literal) => {

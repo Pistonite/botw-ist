@@ -4,14 +4,11 @@ use std::sync::Arc;
 
 use derive_more::derive::Constructor;
 
-#[layered_crate::import]
-use processor::{
-    self::insn::InsnVec,
-    self::{Error, Execute},
-    super::env::{Environment, GameVer},
-    super::game::Proxies,
-    super::memory::{Memory, ProxyGuardMut, ProxyList, ProxyObject, access},
-};
+use crate::env::{Environment, GameVer};
+use crate::game::Proxies;
+use crate::memory::{access, Memory, ProxyGuardMut, ProxyList, ProxyObject};
+use crate::processor::insn::InsnVec;
+use crate::processor::{Error, Execute};
 
 /// The Process is the container for everything the core tracks
 /// that is not in the Processor.

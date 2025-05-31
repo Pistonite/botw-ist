@@ -1,7 +1,6 @@
-#[layered_crate::import]
-use memory::{self, MemObject, Memory, Ptr};
+#![allow(non_snake_case)]
+use crate::memory::{self, MemObject, Memory, Ptr};
 
-#[allow(non_snake_case)]
 #[derive(MemObject, Default, Clone, Copy)]
 #[size(0x10)]
 pub struct SafeString {
@@ -40,7 +39,6 @@ impl Ptr![SafeString] {
     }
 }
 
-#[allow(non_snake_case)]
 #[derive(MemObject, Clone)]
 #[size(0x58)]
 pub struct FixedSafeString40 {

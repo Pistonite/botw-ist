@@ -1,11 +1,11 @@
-use crate::processor::{self as self_, crate_};
+use crate::processor::{self as self_};
 
 use disarm64::arm64::InsnOpcode;
 use disarm64::decoder::{Mnemonic, Opcode};
 
+use self_::insn::instruction_parse::{get_bit_range, ExecutableInstruction};
 use self_::insn::Core;
-use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
-use self_::{Error, RegisterType, glue};
+use self_::{glue, Error, RegisterType};
 
 #[derive(Clone)]
 struct InsnMovn {
@@ -49,7 +49,7 @@ pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Err
 #[cfg(test)]
 mod tests {
     use super::*;
-    use self_::{Cpu0, Process, reg};
+    use self_::{reg, Cpu0, Process};
     #[test]
     pub fn test_movn_parse() -> anyhow::Result<()> {
         let opcode = disarm64::decoder::decode(0x12800016).expect("failed to decode");
