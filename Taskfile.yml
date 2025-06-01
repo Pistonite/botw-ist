@@ -23,6 +23,7 @@ includes:
   item-assets:    {taskfile: ./packages/item-assets,      dir: ./packages/item-assets,      internal: true}
   manual:         {taskfile: ./packages/manual,           dir: ./packages/manual,           internal: true}
   intwc:          {taskfile: ./packages/intwc,            dir: ./packages/intwc,            internal: true}
+  shared-controls: {taskfile: ./packages/shared-controls, dir: ./packages/shared-controls,  internal: true}
 
 tasks:
   install-cargo-extra-tools:
@@ -56,6 +57,8 @@ tasks:
       - task: parser-legacy:install
       - task: manual:install
       - task: intwc:install
+      - task: item-assets:install
+      - task: shared-controls:install
       - task: server:install
 
   build-artifacts:
