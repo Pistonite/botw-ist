@@ -6,19 +6,9 @@ pub type Span2 = proc_macro2::Span;
 pub const CRATE: &str = "blueflame";
 
 pub fn crate_ident() -> proc_macro2::TokenStream {
-    // match proc_macro_crate::crate_name(CRATE) {
-    //     Ok(proc_macro_crate::FoundCrate::Name(s)) => {
-    //         let ident = syn::Ident::new(&s, Span2::call_site());
-    //         quote! { #ident }
-    //     }
-    //     // Ok(proc_macro_crate::FoundCrate::Itself) => {
-    //     //     quote! { crate }
-    //     // }
-    //     _ => {
-            let ident = syn::Ident::new(CRATE, Span2::call_site());
-            quote! { #ident }
-    //     }
-    // }
+    // this won't work if user rename blueflame crate - a case we don't support right now
+    let ident = syn::Ident::new(CRATE, Span2::call_site());
+    quote! { #ident }
 }
 
 pub fn unwrap_result(result: syn::Result<TokenStream>) -> TokenStream {

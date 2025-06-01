@@ -1,6 +1,6 @@
 use wasm_bindgen_spawn::{JoinHandle, ThreadCreator};
 
-use crate::exec::{self, Error, Job, JobSender, Join, Spawn};
+use crate::exec::{self, Error, JobSender, Join, Spawn};
 
 pub struct Spawner {
     creator: ThreadCreator,

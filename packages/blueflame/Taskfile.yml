@@ -24,7 +24,7 @@ tasks:
     env:
       RUSTFLAGS: "-Dunused-imports"
     cmds:
-      - ../../../layered-crate/target/debug/layered-crate -- check --lib --color=always --all-features
+      - layered-crate -- check --lib --color=always --all-features
 
   fix:
     cmds:

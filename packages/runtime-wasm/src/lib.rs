@@ -1,7 +1,7 @@
 use std::{cell::OnceCell, sync::Arc};
 
 use blueflame::env::GameVer;
-use js_sys::{Function, Uint8Array, Uint32Array};
+use js_sys::{Function, Uint8Array};
 use serde::{Deserialize, Serialize};
 use skybook_parser::{ParseOutput, search};
 use skybook_runtime::{

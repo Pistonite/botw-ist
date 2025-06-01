@@ -1,21 +1,15 @@
 use std::{
     collections::{HashMap, VecDeque},
-    future::Future,
-    sync::{
-        Arc, Mutex,
-        atomic::{AtomicBool, AtomicU64},
-    },
+    sync::{Arc, Mutex, atomic::AtomicBool},
 };
 
 use blueflame::env::{DlcVer, Environment, GameVer};
-use blueflame::game::Proxies;
 use blueflame::linker;
-use blueflame::memory::Memory;
 use blueflame::program;
 use error::MaybeAborted;
 use exec::{Executor, Spawner};
 use serde::{Deserialize, Serialize};
-use skybook_parser::{ParseOutput, search::QuotedItemResolver};
+use skybook_parser::ParseOutput;
 
 /// Executor - handles pooling script execution on multiple emulator cores
 pub mod exec;
@@ -571,8 +565,6 @@ pub enum Screen {
 pub struct GameState {
     /// Running game's process
     process: Process,
-
-
 
     /// Current actors in the overworld
     /// TODO: make this copy on write and Arc

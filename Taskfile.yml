@@ -11,6 +11,7 @@ includes:
   blueflame:      {taskfile: ./packages/blueflame,        dir: ./packages/blueflame,        internal: true}
   blueflame-deps: {taskfile: ./packages/blueflame-deps,   dir: ./packages/blueflame-deps,   internal: true}
   blueflame-proc-macros: {taskfile: ./packages/blueflame-proc-macros, dir: ./packages/blueflame-proc-macros, internal: true}
+  runtime:        {taskfile: ./packages/runtime,          dir: ./packages/runtime,          internal: true}
   runtime-wasm:   {taskfile: ./packages/runtime-wasm,     dir: ./packages/runtime-wasm,     internal: true}
   runtime-worker: {taskfile: ./packages/runtime-worker,   dir: ./packages/runtime-worker,   internal: true}
   parser:         {taskfile: ./packages/parser,           dir: ./packages/parser,           internal: true}
@@ -27,8 +28,14 @@ tasks:
   install-cargo-extra-tools:
     aliases: [icets]
     cmds:
-      - cargo install magoo mdbook mdbook-admonish live-server cargo-watch wasm-pack ripgrep
-      - cargo install --git https://github.com/Pistonite/workex
+      - task: cargo-binstall
+        vars:
+          PACKAGES: mdbook mdbook-admonish live-server cargo-watch wasm-pack ripgrep layered-crate
+      - task: cargo-binstall
+        vars:
+          PACKAGES: workex --git https://github.com/Pistonite/workex
+      # only needed for regenerating app icons
+      # - cargo install --git https://github.com/Pistonite/prism
 
   install:
     desc: Install packages for local development
@@ -112,7 +119,7 @@ tasks:
       - task: blueflame-proc-macros:check
       - task: blueflame-deps:check
       - task: blueflame:check
-      # - task: runtime:check
+      - task: runtime:check
       - task: runtime-wasm:check
 
   test-ci:
