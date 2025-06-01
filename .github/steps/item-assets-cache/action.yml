@@ -4,11 +4,9 @@ description: "Item Assets Cache Setup"
 runs:
   using: composite
   steps:
-    - uses: useblacksmith/cache@v5
-      id: cache-item-assets
+    - uses: Pistonight/mono-dev/actions/permanent-cache@main
       with:
         path: packages/item-assets/public
         key: item-assets
-    - run: task exec -- item-assets:pull-artifacts
-      shell: bash
-      if: steps.cache-item-assets.outputs.cache-hit != 'true'
+      task: exec -- item-assets:pull-artifacts
+      runner: blacksmith

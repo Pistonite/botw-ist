@@ -1,0 +1,28 @@
+name: Release
+on:
+  push:
+    tags:
+      - v*.*.*
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    # permission for publishing docker image
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: Pistonight/mono-dev/actions/setup@main
+        with:
+          submodules: true
+          ecma-bun: true
+      - uses: Pistonight/mono-dev/actions/docker-image@main
+        with:
+          artifacts-workflow: build.yml
+          artifacts-path: packages/server/dist
+          task: exec -- server:package-assets-ci
+          image: pistonite/skybook-server
+          path: packages/server
+          version: ${{ github.ref_name }}

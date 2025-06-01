@@ -190,7 +190,7 @@ tasks:
       - task: intwc:install
       - task: app:build
 
-  build-runtime-ci:
+  build-runtime-ci-pr:
     cmds:
       - task: parser:pull-artifacts
       - task: blueflame-deps:pull-artifacts
@@ -199,7 +199,7 @@ tasks:
       - task: runtime-wasm:clean-dist # so we don't upload non-min bundles
       - task: runtime-wasm:build-dist-min
 
-  build-runtime-fast-ci:
+  build-runtime-ci:
     cmds:
       - task: parser:pull-artifacts
       - task: blueflame-deps:pull-artifacts
@@ -221,3 +221,17 @@ tasks:
       - cargo clean
       - rustup update
       - task: runtime-wasm:clean
+
+  publish:
+    desc: Publish artifacts
+    vars:
+      SKYBOOK_VERSION_TAG:
+        sh: echo "v"$(jq '.version' package.json | tr -d '"')
+    cmds:
+      - cmd: git tag -d {{.SKYBOOK_VERSION_TAG}}
+        ignore_error: true
+      - cmd: git push origin {{.SKYBOOK_VERSION_TAG}} --delete
+        ignore_error: true
+      - git tag {{.SKYBOOK_VERSION_TAG}}
+      - git push origin {{.SKYBOOK_VERSION_TAG}}
+      # TODO: publish skybook-api

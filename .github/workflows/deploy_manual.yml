@@ -6,26 +6,25 @@ on:
 
 jobs:
   build:
-    name: build
     runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          persist-credentials: false
+          runner: blacksmith
           submodules: true
-      - uses: ./.github/steps/setup-blacksmith
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ecma-pnpm: true
+          ecma-bun: true
+          rust: nightly
+          tool-mdbook: true
       - run: task build-manual-ci
       - uses: actions/upload-pages-artifact@v3
         with:
           path: packages/manual/book
           retention-days: 3
   deploy:
-    name: deploy
     needs:
       - build
     if: github.event_name != 'pull_request'
