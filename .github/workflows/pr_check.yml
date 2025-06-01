@@ -18,7 +18,7 @@ jobs:
           ecma-pnpm: true
           ecma-bun: true
           rust: nightly
-          tool-cargo-binstall: ripgrep,workex,layered-crate
+          tool-cargo-binstall: ripgrep,workex=Pistonite/workex,layered-crate
       - uses: Pistonight/mono-dev/actions/pistonstor@main
       - run: task check-ci --output group
 
