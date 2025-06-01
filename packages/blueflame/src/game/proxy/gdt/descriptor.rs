@@ -1,5 +1,4 @@
-#[layered_crate::import]
-use game::gdt;
+use crate::game::gdt;
 
 pub use blueflame_deps::fd;
 

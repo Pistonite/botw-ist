@@ -87,7 +87,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
         let size_tokens = &field_data.size_tokens;
         size_asserts.extend(quote_spanned! {
             field_data.size_span => {
-                #blueflame::memory::assert_size_less_than!(#size_tokens, #max_size);
+                blueflame_deps::assert_size_less_than!(#size_tokens, #max_size);
             }
         });
 

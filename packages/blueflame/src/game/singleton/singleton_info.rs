@@ -1,5 +1,7 @@
 pub use blueflame_deps::singleton_info;
 
+// pub use crate::processor::Process;
+
 pub struct SingletonInfo {
     /// Name of the singleton for debugging purposes
     pub name: &'static str,
@@ -18,16 +20,13 @@ pub struct SingletonInfo {
 
 #[cfg(test)]
 mod tests {
-    #[layered_crate::import]
-    use game::{
-        self::{SingletonInfo, singleton_info},
-        super::env::{DlcVer, Environment, GameVer},
-    };
+    use crate::env::{DlcVer, Environment, GameVer};
+    use crate::game::singleton;
 
     #[test]
     fn test_not_overlap() {
         // TODO --160: all environments
-        let singletons = get_singletons(Environment::new(GameVer::X150, DlcVer::V300));
+        let singletons = singleton::singleton_infos(Environment::new(GameVer::X150, DlcVer::V300));
 
         for i in 0..singletons.len() {
             for j in i + 1..singletons.len() {
@@ -39,15 +38,6 @@ mod tests {
                 ));
             }
         }
-    }
-
-    fn get_singletons(env: Environment) -> Vec<SingletonInfo> {
-        vec![
-            singleton_info!(pmdm(env)),
-            singleton_info!(gdtm(env)),
-            singleton_info!(info_data(env)),
-            singleton_info!(aocm(env)),
-        ]
     }
 
     fn overlaps(start1: u32, size1: u32, start2: u32, size2: u32) -> bool {

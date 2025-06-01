@@ -1,17 +1,15 @@
 use super::gdt_hooks;
-#[layered_crate::import]
-use linker::{
-    super::env::{DlcVer, Environment, GameVer},
-    super::game::{gdt, singleton_instance},
-    super::memory::{self, Memory, access},
-    super::processor::insn::paste_insn,
-    super::processor::{self, Cpu0, Execute, HookProvider, Process, reg},
-};
+use crate::env::{DlcVer, Environment, GameVer};
+use crate::game::{gdt, singleton_instance};
+use crate::memory::{self, Memory, access};
+use crate::processor::insn::paste_insn;
+use crate::processor::{self, Cpu0, Execute, HookProvider, Process, reg};
 
 macro_rules! fn_table {
     ($main_offset:ident size fn $( $offset:literal $size:literal $function:expr ),* $(,)?) => {
         match $main_offset {
         $(
+            #[allow(clippy::zero_prefixed_literal)]
             $offset => {
                 // log::trace!("reached hook function at 0x{:#08x} with size {}: {}", $offset, $size, stringify!($function));
                 return Ok(Some((processor::box_execute($function), $size)));
@@ -205,6 +203,7 @@ fn get_player(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> {
     reg! { cpu: x[0] = player_ptr, return };
 }
 
+#[allow(dead_code)]
 fn do_request_create_weapon_150(
     cpu: &mut Cpu0,
     proc: &mut Process,
@@ -212,12 +211,13 @@ fn do_request_create_weapon_150(
     do_request_create_weapon(cpu, proc, Environment::new(GameVer::X150, DlcVer::V300))
 }
 
+#[allow(dead_code)]
 /// uking::act::CreatePlayerEquipActorMgr::doRequestCreateWeapon
 /// (this, i32 slot_idx, sead::SafeString* name, int value, WeaponModifierInfo* modifier, _)
 fn do_request_create_weapon(
     cpu: &mut Cpu0,
     proc: &mut Process,
-    env: Environment,
+    _env: Environment,
 ) -> Result<(), processor::Error> {
     let main_start = proc.main_start();
     let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
@@ -304,6 +304,7 @@ fn vsnprintf(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> {
     reg! { cpu: w[0] = -1i32, return }
 }
 
+#[allow(dead_code)]
 fn return_neg1_32(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> {
     reg! { cpu: w[0] = -1i32, return }
 }

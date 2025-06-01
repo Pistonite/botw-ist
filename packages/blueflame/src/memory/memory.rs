@@ -1,14 +1,11 @@
 use std::sync::Arc;
 
-#[layered_crate::import]
-use memory::{
-    self::{
-        AccessFlag, AccessFlags, Error, PAGE_SIZE, Page, Ptr, REGION_ALIGN, Reader, Section,
-        SimpleHeap, Writer, align_up, perm, region,
-    },
-    super::env::{Environment, enabled},
-    super::program::ArchivedModule,
+use crate::env::{Environment, enabled};
+use crate::memory::{
+    AccessFlag, AccessFlags, Error, PAGE_SIZE, Page, Ptr, REGION_ALIGN, Reader, Section,
+    SimpleHeap, Writer, align_up, perm, region,
 };
+use crate::program::ArchivedModule;
 
 /// Memory of the simulated process
 #[derive(Clone)]
@@ -52,7 +49,7 @@ impl Memory {
     ) -> Result<Self, Error> {
         let mut sections = Vec::new();
 
-        for module in modules.into_iter() {
+        for module in modules {
             let module_start = module.rel_start.to_native() as u64 + program_start;
             let module_name = module.name.as_str();
             for i in 0..module.sections.len() {
@@ -209,23 +206,18 @@ impl Memory {
         };
         let section = &self.sections[section_idx];
         // permission check
-        if !flags.all(AccessFlag::Force) {
-            if !section.flags.all(flags.perms()) {
-                log::debug!("section flags: {:08x?}", section.flags);
-                log::debug!("input flags: {:08x?}", flags);
-                log::debug!("perm flags: {:08x?}", flags.perms());
-                if enabled!("mem-permission") {
-                    log::error!(
-                        "permission denied: 0x{addr:016x} ({})",
-                        self.format_addr(addr)
-                    );
-                    return Err(Error::PermissionDenied(addr, flags));
-                }
-                log::warn!(
-                    "bypassed - accessing section without permission: 0x{addr:016x} ({})",
+        if !flags.all(AccessFlag::Force) && !section.flags.all(flags.perms()) {
+            if enabled!("mem-permission") {
+                log::error!(
+                    "permission denied: 0x{addr:016x} ({})",
                     self.format_addr(addr)
                 );
+                return Err(Error::PermissionDenied(addr, flags));
             }
+            log::warn!(
+                "bypassed - accessing section without permission: 0x{addr:016x} ({})",
+                self.format_addr(addr)
+            );
         }
         let rel_addr = addr - section.start();
         let page_idx = (rel_addr / PAGE_SIZE as u64) as u32;

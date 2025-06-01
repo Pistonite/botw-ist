@@ -1,5 +1,4 @@
-#[layered_crate::import]
-use memory::PAGE_SIZE;
+use crate::memory::PAGE_SIZE;
 
 /// A page in emulated memory is a simple container of bytes
 #[derive(Debug, Clone)]

@@ -37,8 +37,7 @@ impl ExecutableInstruction for AdrpInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[layered_crate::import]
-    use processor::{Cpu0, Process, reg};
+    use crate::processor::{Cpu0, Process, reg};
 
     #[test]
     pub fn adrp_simple() -> anyhow::Result<()> {

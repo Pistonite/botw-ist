@@ -1,9 +1,5 @@
-#[layered_crate::import]
-use processor::{
-    self::{Cpu0, Error, Process},
-    super::env::no_panic,
-    super::memory::Memory,
-};
+use crate::env::no_panic;
+use crate::processor::{Cpu0, Error, Process};
 
 pub trait Execute: Send + Sync + std::panic::UnwindSafe + 'static {
     /// Execute this code the middle. `step` is number of instructions
@@ -174,8 +170,7 @@ impl ExecuteCache {
 mod tests {
     use super::*;
 
-    #[layered_crate::import]
-    use processor::box_execute;
+    use crate::processor::box_execute;
 
     fn make_entry(start: u64, size: u32) -> ExecuteCacheEntry {
         ExecuteCacheEntry {
@@ -208,7 +203,7 @@ mod tests {
                 80,
                 box_execute(|_, _| {
                     // this is a test so we can execute it and see the result
-                    return Err(Error::StrictReplacement { main_offset: 42 });
+                    Err(Error::StrictReplacement { main_offset: 42 })
                 })
             )
             .is_ok()

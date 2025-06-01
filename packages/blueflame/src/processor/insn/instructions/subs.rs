@@ -109,7 +109,6 @@ impl ExecutableInstruction for SubsImmInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::*;
     use self_::{Cpu0, Process, reg};
 
     #[test]

@@ -1,6 +1,6 @@
-use crate::processor::{self as self_, crate_};
+use crate::processor::{self as self_};
 
-use crate_::memory::Ptr;
+use crate::memory::Ptr;
 use self_::insn::Core;
 use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::{Error, RegisterType, glue};
@@ -153,8 +153,7 @@ impl ExecutableInstruction for StrhImmInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::*;
-    use self_::{Cpu0, Process, reg};
+    use self_::{Cpu0, Process};
 
     #[test]
     pub fn simple_strh_test() -> anyhow::Result<()> {

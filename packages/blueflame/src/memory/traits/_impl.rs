@@ -1,5 +1,4 @@
-#[layered_crate::import]
-use memory::{Error, MemObject, Reader, Writer, assert_size_eq, assert_size_range};
+use crate::memory::{Error, MemObject, Reader, Writer, assert_size_eq, assert_size_range};
 
 macro_rules! primitive_type_mem_object_impl {
     ($type:ty, $reader_fn:ident, $writer_fn:ident) => {

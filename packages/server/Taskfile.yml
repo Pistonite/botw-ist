@@ -45,9 +45,17 @@ tasks:
     cmds:
       - rm -rf dist
       - magnesis
+      - task: package-assets-ci
+
+  package-assets-ci:
+    cmds:
+      - task: package-assets-mv-server-bin
+      - task: package-assets
+
+  package-assets-mv-server-bin:
+    cmds:
       - mv dist/server/server-bin dist
       - rm -r dist/server
-      - task: package-assets
 
   package-assets:
     cmds:

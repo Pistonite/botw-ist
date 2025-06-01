@@ -1,4 +1,5 @@
 #![allow(clippy::too_many_arguments)]
+#![allow(non_snake_case)]
 
 mod gdt;
 pub use gdt::*;
@@ -12,8 +13,7 @@ use std::marker::PhantomData;
 
 use derive_more::derive::Constructor;
 
-#[layered_crate::import]
-use game::super_::memory::{MemObject, Ptr};
+use crate::memory::{MemObject, Ptr};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(i32)]
@@ -444,11 +444,11 @@ pub struct InfoData {
 }
 
 pub struct OffsetListIter<T> {
-    start_end_node: ListNode,
-    current_node: Ptr![ListNode],
+    _start_end_node: ListNode,
+    _current_node: Ptr![ListNode],
     pub offset: i32,
     pub count: i32,
-    index: i32,
+    _index: i32,
     _marker: PhantomData<T>,
 }
 
@@ -461,12 +461,12 @@ impl PouchItemOffsetList {
 impl<T> OffsetListIter<T> {
     pub fn new(start_end_node: ListNode, offset: i32, count: i32) -> Self {
         OffsetListIter::<T> {
-            start_end_node,
-            current_node: start_end_node.mNext,
+            _start_end_node: start_end_node,
+            _current_node: start_end_node.mNext,
             _marker: PhantomData,
             offset,
             count,
-            index: 0,
+            _index: 0,
         }
     }
 }
@@ -519,6 +519,7 @@ pub struct PorchItem {
     pub weapon_data: Option<PorchWeaponData>,
 }
 impl PorchItem {
+    #[allow(dead_code)]
     fn default(name: String, typ: PouchItemType, value: i32) -> Self {
         PorchItem {
             name,
@@ -528,6 +529,7 @@ impl PorchItem {
             weapon_data: None,
         }
     }
+    #[allow(dead_code)]
     fn weapon(name: String, typ: PouchItemType, value: i32, data: PorchWeaponData) -> Self {
         PorchItem {
             name,
@@ -537,6 +539,7 @@ impl PorchItem {
             weapon_data: Some(data),
         }
     }
+    #[allow(dead_code)]
     fn food(name: String, typ: PouchItemType, value: i32, data: PorchCookData) -> Self {
         PorchItem {
             name,

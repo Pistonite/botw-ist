@@ -1,8 +1,7 @@
-#[layered_crate::import]
-use processor::{
-    self::insn::Core,
-    self::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction},
-    self::{Error, RegisterType, glue},
+use crate::processor::{
+    Error, RegisterType, glue,
+    insn::Core,
+    insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction},
 };
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
@@ -75,8 +74,7 @@ impl ExecutableInstruction for AddImmInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[layered_crate::import]
-    use processor::{Cpu0, Process, reg};
+    use crate::processor::{Cpu0, Process, reg};
 
     #[test]
     pub fn simple_add_test() -> anyhow::Result<()> {

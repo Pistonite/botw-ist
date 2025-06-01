@@ -2,7 +2,7 @@ use crate::processor as self_;
 
 use self_::insn::Core;
 use self_::insn::arithmetic_utils;
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
 use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
@@ -61,8 +61,7 @@ impl ExecutableInstruction for CmnImmInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::*;
-    use self_::{Cpu0, Process, reg};
+    use self_::{Cpu0, Process};
 
     #[test]
     pub fn test_cmn_reg_when_true() -> anyhow::Result<()> {

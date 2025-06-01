@@ -1,7 +1,7 @@
 use crate::processor as self_;
 
 use self_::insn::Core;
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::insn::instruction_parse::ExecutableInstruction;
 use self_::{Error, RegisterType, glue, reg};
 
 use blueflame_deps::trace_call;

@@ -1,11 +1,8 @@
 use derive_more::derive::Constructor;
 
-#[layered_crate::import]
-use processor::{
-    self::{Cpu0, reg},
-    super::env::DataId,
-    super::memory,
-};
+use crate::env::DataId;
+use crate::memory;
+use crate::processor::{Cpu0, reg};
 
 #[derive(Debug, Clone, thiserror::Error)]
 pub enum Error {
@@ -48,7 +45,7 @@ pub enum Error {
 
 #[derive(Constructor, Clone)]
 pub struct CrashReport {
-    pub cpu: Cpu0,
+    pub cpu: Box<Cpu0>,
     pub main_start: u64,
     pub error: Error,
 }
@@ -66,7 +63,7 @@ impl std::fmt::Debug for CrashReport {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "=== BLUEFLAME CRASH REPORT ===")?;
         writeln!(f, "Cause: {}", self.error)?;
-        writeln!(f, "")?;
+        writeln!(f)?;
         writeln!(f, "Registers:")?;
         for i in 0..16 {
             let i2 = i + 16;
@@ -89,7 +86,7 @@ impl std::fmt::Debug for CrashReport {
             )?;
         }
 
-        writeln!(f, "")?;
+        writeln!(f)?;
         writeln!(f, "Main Start: 0x{:016x}", self.main_start)?;
         writeln!(f, "PC: {}", format_address(self.cpu.pc, self.main_start))?;
         writeln!(
@@ -110,8 +107,8 @@ impl std::fmt::Debug for CrashReport {
 
 pub fn format_address(addr: u64, main_start: u64) -> String {
     if main_start <= addr {
-        format!("0x{:016x} (main+0x{:08x})", addr, addr - main_start)
+        format!("0x{addr:016x} (main+0x{:08x})", addr - main_start)
     } else {
-        format!("0x{:016x}                ", addr)
+        format!("0x{addr:016x}                ")
     }
 }

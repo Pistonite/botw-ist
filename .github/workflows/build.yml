@@ -16,13 +16,15 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          persist-credentials: false
+          runner: blacksmith
           submodules: true
-      - uses: ./.github/steps/setup-blacksmith
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ecma-pnpm: true
+          ecma-bun: true
+          rust: nightly
+          tool-mdbook: true
+      - uses: Pistonight/mono-dev/actions/pistonstor@main
       - run: task build-manual-ci
 
   build-app:
@@ -32,45 +34,43 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          persist-credentials: false
+          runner: blacksmith
           submodules: true
-      - uses: ./.github/steps/setup-blacksmith
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ecma-pnpm: true
+          ecma-bun: true
+          rust: nightly
+      - uses: Pistonight/mono-dev/actions/pistonstor@main
       - uses: ./.github/steps/item-assets-cache
       - run: task build-app-ci
-
-      # upload artifacts
       - uses: actions/upload-artifact@v4
         with:
           path: packages/app/dist
           name: app
           retention-days: 3
       
-  build-runtime:
-    name: runtime
+  build-runtime-wasm:
+    name: runtime-wasm
     runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          persist-credentials: false
+          runner: blacksmith
           submodules: true
-      - uses: ./.github/steps/setup-blacksmith
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          rust_targets: wasm32-unknown-unknown,x86_64-unknown-linux-gnu
-          rust_components: rust-src
-      - run: task build-runtime-fast-ci
-        if: github.event_name != 'pull_request'
-      - run: task build-runtime-ci
-        if: github.event_name == 'pull_request'
-
-      # upload artifacts
+          ecma-pnpm: true
+          ecma-bun: true
+          rust: nightly
+          rust-wasm: true
+          rust-src: true
+      - uses: Pistonight/mono-dev/actions/pistonstor@main
+      - if: github.event_name != 'pull_request'
+        run: task build-runtime-ci
+      - if: github.event_name == 'pull_request'
+        run: task build-runtime-ci-pr
       - uses: actions/upload-artifact@v4
         with:
           path: packages/runtime-wasm/dist
@@ -84,16 +84,13 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          persist-credentials: false
+          runner: blacksmith
           submodules: true
-      - uses: ./.github/steps/setup-blacksmith
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ecma-pnpm: true
+          ecma-bun: true
       - run: task build-server-ci
-
-      # upload artifacts
       - uses: actions/upload-artifact@v4
         with:
           path: packages/server/dist

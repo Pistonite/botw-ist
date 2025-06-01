@@ -1,5 +1,4 @@
-#[layered_crate::import]
-use memory::{Error, PtrToSized, Reader, Writer, assert_zst};
+use crate::memory::{Error, PtrToSized, Reader, Writer, assert_zst};
 
 /// Implementation of traits for primitive types
 mod _impl;

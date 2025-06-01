@@ -74,8 +74,7 @@ impl ExecutableInstruction for AndImmInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[layered_crate::import]
-    use processor::{Cpu0, Process, reg};
+    use crate::processor::{Cpu0, Process, reg};
 
     #[test]
     pub fn simple_and_test() -> anyhow::Result<()> {

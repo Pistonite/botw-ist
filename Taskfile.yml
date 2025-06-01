@@ -11,6 +11,7 @@ includes:
   blueflame:      {taskfile: ./packages/blueflame,        dir: ./packages/blueflame,        internal: true}
   blueflame-deps: {taskfile: ./packages/blueflame-deps,   dir: ./packages/blueflame-deps,   internal: true}
   blueflame-proc-macros: {taskfile: ./packages/blueflame-proc-macros, dir: ./packages/blueflame-proc-macros, internal: true}
+  runtime:        {taskfile: ./packages/runtime,          dir: ./packages/runtime,          internal: true}
   runtime-wasm:   {taskfile: ./packages/runtime-wasm,     dir: ./packages/runtime-wasm,     internal: true}
   runtime-worker: {taskfile: ./packages/runtime-worker,   dir: ./packages/runtime-worker,   internal: true}
   parser:         {taskfile: ./packages/parser,           dir: ./packages/parser,           internal: true}
@@ -22,18 +23,26 @@ includes:
   item-assets:    {taskfile: ./packages/item-assets,      dir: ./packages/item-assets,      internal: true}
   manual:         {taskfile: ./packages/manual,           dir: ./packages/manual,           internal: true}
   intwc:          {taskfile: ./packages/intwc,            dir: ./packages/intwc,            internal: true}
+  shared-controls: {taskfile: ./packages/shared-controls, dir: ./packages/shared-controls,  internal: true}
 
 tasks:
   install-cargo-extra-tools:
     aliases: [icets]
     cmds:
-      - cargo install magoo mdbook mdbook-admonish live-server cargo-watch wasm-pack ripgrep
-      - cargo install --git https://github.com/Pistonite/workex
+      - task: cargo-binstall
+        vars:
+          PACKAGES: mdbook mdbook-admonish live-server cargo-watch wasm-pack ripgrep layered-crate
+      - task: cargo-binstall
+        vars:
+          PACKAGES: workex --git https://github.com/Pistonite/workex
+      # only needed for regenerating app icons
+      # - cargo install --git https://github.com/Pistonite/prism
 
   install:
     desc: Install packages for local development
     aliases: [i]
     cmds:
+      - echo "nightly" > rust-toolchain
       - magoo install
       - pnpm install
       - task: post-install
@@ -49,6 +58,8 @@ tasks:
       - task: parser-legacy:install
       - task: manual:install
       - task: intwc:install
+      - task: item-assets:install
+      - task: shared-controls:install
       - task: server:install
 
   build-artifacts:
@@ -112,7 +123,7 @@ tasks:
       - task: blueflame-proc-macros:check
       - task: blueflame-deps:check
       - task: blueflame:check
-      # - task: runtime:check
+      - task: runtime:check
       - task: runtime-wasm:check
 
   test-ci:
@@ -180,7 +191,7 @@ tasks:
       - task: intwc:install
       - task: app:build
 
-  build-runtime-ci:
+  build-runtime-ci-pr:
     cmds:
       - task: parser:pull-artifacts
       - task: blueflame-deps:pull-artifacts
@@ -189,7 +200,7 @@ tasks:
       - task: runtime-wasm:clean-dist # so we don't upload non-min bundles
       - task: runtime-wasm:build-dist-min
 
-  build-runtime-fast-ci:
+  build-runtime-ci:
     cmds:
       - task: parser:pull-artifacts
       - task: blueflame-deps:pull-artifacts
@@ -211,3 +222,17 @@ tasks:
       - cargo clean
       - rustup update
       - task: runtime-wasm:clean
+
+  publish:
+    desc: Publish artifacts
+    vars:
+      SKYBOOK_VERSION_TAG:
+        sh: echo "v"$(jq '.version' package.json | tr -d '"')
+    cmds:
+      - cmd: git tag -d {{.SKYBOOK_VERSION_TAG}}
+        ignore_error: true
+      - cmd: git push origin {{.SKYBOOK_VERSION_TAG}} --delete
+        ignore_error: true
+      - git tag {{.SKYBOOK_VERSION_TAG}}
+      - git push origin {{.SKYBOOK_VERSION_TAG}}
+      # TODO: publish skybook-api

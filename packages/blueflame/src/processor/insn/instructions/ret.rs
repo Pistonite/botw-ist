@@ -29,7 +29,7 @@ impl ExecutableInstruction for RetArgsInstruction {
         let regname = self.rn.to_regname();
         if regname != reg!(lr) {
             // check if we actually have any other register
-            panic!("RET instruction must use LR register, got {}", regname);
+            panic!("RET instruction must use LR register, got {regname}");
         }
         let xn_val: u64 = core.cpu.read(regname);
         trace_call!(
@@ -40,13 +40,13 @@ impl ExecutableInstruction for RetArgsInstruction {
         // instruction executor will increment PC later
         let new_pc = xn_val - 4;
         core.cpu.stack_trace.pop_checked(xn_val)?;
-        core.cpu.pc = new_pc as u64;
+        core.cpu.pc = new_pc;
         Ok(())
     }
 }
 
 impl ExecutableInstruction for RetInstruction {
-    fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
+    fn exec_on(&self, _: &mut Core) -> Result<(), Error> {
         panic!("RET instruction is not used since it's parsed as RET LR")
         // log::trace!("executing ret instruction");
         // let xn_val: u64 = core.cpu.read(reg!(lr));

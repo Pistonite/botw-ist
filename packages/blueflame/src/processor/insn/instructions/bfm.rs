@@ -1,4 +1,4 @@
-use crate::processor::{self as self_, crate_};
+use crate::processor::{self as self_};
 
 use disarm64::arm64::InsnOpcode;
 use disarm64::decoder::{Mnemonic, Opcode};
@@ -81,7 +81,6 @@ impl ExecutableInstruction for InsnBfm {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::*;
     use self_::{Cpu0, Process, insn::paste_insn, reg};
 
     fn test_bfm(bits: u32, input: u64, expected: u64) -> anyhow::Result<()> {

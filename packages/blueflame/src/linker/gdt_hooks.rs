@@ -1,9 +1,6 @@
-#[layered_crate::import]
-use linker::{
-    super::game::{SafeString, gdt},
-    super::memory::{Memory, Ptr, proxy},
-    super::processor::{self, Cpu0, Process, reg},
-};
+use crate::game::{SafeString, gdt};
+use crate::memory::{Memory, Ptr, proxy};
+use crate::processor::{self, Cpu0, Process, reg};
 
 // this macro is needed because template generic types are not stable
 macro_rules! get_flag_impl {

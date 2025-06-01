@@ -19,7 +19,7 @@ pub fn test_init_singleton() -> anyhow::Result<()> {
     let program = program::unpack_zc(&data, &mut program_bytes)?;
     let pmdm_addr_for_test = 0x2222200000;
     let process = linker::init_process(
-        &program,
+        program,
         DlcVer::V300,
         0x8888800000,
         0x4000,

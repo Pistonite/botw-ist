@@ -8,7 +8,7 @@ const LANG_TO_CHECK = ["en-US"];
 
 // Check completeness of some lang entries using TypeScript
 const TSCONFIG = {
-    extends: "../../../../mono-dev/tsconfig/defaults.json",
+    extends: "../../../../mono-dev/toolsets/mono-lint/default-tsconfig.json",
     compilerOptions: {
         lib: ["esnext", "dom"],
     },

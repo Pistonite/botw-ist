@@ -1,10 +1,9 @@
 use std::sync::Arc;
 
-#[layered_crate::import]
-use memory::{
-    self::{AccessFlags, Error, PAGE_SIZE, Page, REGION_ALIGN, align_down, align_up, perm, region},
-    super::program::ArchivedSection,
+use crate::memory::{
+    AccessFlags, Error, PAGE_SIZE, Page, REGION_ALIGN, align_down, align_up, perm, region,
 };
+use crate::program::ArchivedSection;
 
 /// Memory section implementation
 ///

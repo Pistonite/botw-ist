@@ -1,9 +1,9 @@
-use crate::processor::{self as self_, crate_};
+use crate::processor::{self as self_};
 
 use disarm64::arm64::InsnOpcode;
 use disarm64::decoder::{Mnemonic, Opcode};
 
-use crate_::memory::Ptr;
+use crate::memory::Ptr;
 
 use self_::insn::Core;
 use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
@@ -19,7 +19,7 @@ impl ExecutableInstruction for InsnLdarb {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         let addr = glue::read_gen_reg(core.cpu, &self.rn) as u64;
         let ptr = Ptr!(<u8>(addr));
-        let res_val = ptr.load(&core.proc.memory())?;
+        let res_val = ptr.load(core.proc.memory())?;
         glue::write_gen_reg(core.cpu, &self.rt, res_val as i64);
         Ok(())
     }
@@ -51,7 +51,7 @@ mod tests {
         let mut cpu = Cpu0::default();
         cpu.write(reg!(w[1]), 0x1000);
         let mut proc = Process::new_for_test();
-        Ptr!(<u8>(0x1000)).store(&42, &mut proc.memory_mut())?;
+        Ptr!(<u8>(0x1000)).store(&42, proc.memory_mut())?;
         let mut core = Core::new(&mut cpu, &mut proc);
         insn.exec_on(&mut core)?;
         assert_eq!(cpu.read::<u32>(reg!(w[0])), 42);

@@ -1,4 +1,4 @@
-use crate::processor::{self as self_, crate_};
+use crate::processor::{self as self_};
 
 use disarm64::arm64::InsnOpcode;
 use disarm64::decoder::{Mnemonic, Opcode};

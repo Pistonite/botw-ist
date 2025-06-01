@@ -25,8 +25,8 @@ catalogs:
       specifier: ^0.7.9
       version: 0.7.9
     '@pistonite/workex':
-      specifier: ^0.1.0
-      version: 0.1.0
+      specifier: ^0.1.1
+      version: 0.1.1
     '@types/bun':
       specifier: ^1.2.13
       version: 1.2.13
@@ -99,7 +99,7 @@ importers:
         version: link:../skybook-api
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.1.0
+        version: 0.1.1
       '@tanstack/react-query':
         specifier: ^5.62.11
         version: 5.76.1(react@18.3.1)
@@ -342,6 +342,9 @@ importers:
       '@prettier/cli':
         specifier: ^0.7.6
         version: 0.7.6(prettier@3.4.2)
+      '@typescript/native-preview':
+        specifier: 7.0.0-dev.20250530.1
+        version: 7.0.0-dev.20250530.1
       '@vitejs/plugin-react':
         specifier: ^4.4.0
         version: 4.4.1(vite@6.3.5(@types/node@22.15.18))
@@ -396,7 +399,7 @@ importers:
         version: link:../skybook-api
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.1.0
+        version: 0.1.1
       skybook-runtime-worker:
         specifier: workspace:*
         version: link:../runtime-worker
@@ -415,7 +418,7 @@ importers:
         version: link:../skybook-api
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.1.0
+        version: 0.1.1
       lru-cache:
         specifier: ^11.0.2
         version: 11.1.0
@@ -487,7 +490,7 @@ importers:
         version: 0.26.3
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.1.0
+        version: 0.1.1
     devDependencies:
       mono-dev:
         specifier: workspace:*
@@ -1384,8 +1387,8 @@ packages:
   '@pistonite/pure@0.26.3':
     resolution: {integrity: sha512-mXKnjdE8fDEb4k6Tv8v66VeV2xfIaP2mey6//nKL8RrgQmhQ+11pscIgmO04haoADTjQoCRJ1z+/SlZLHArD1Q==}
 
-  '@pistonite/workex@0.1.0':
-    resolution: {integrity: sha512-kY+L0naJZXW8Rm5wZVyX18TrrN2/k+6dPLs5NGOVF+Db3DY5kJu9I5PJBnAAYcdAqqA62GzNmjp25NsnhhJbOw==}
+  '@pistonite/workex@0.1.1':
+    resolution: {integrity: sha512-15+BRT2Ovw4In+kdtS0CrGdiZkwBCusWSo5iGZDzvQQDVvrCPLrENIQBc6eBwKIWkKa02CNvkZ6U2ZTHMdudVg==}
 
   '@prettier/cli@0.7.6':
     resolution: {integrity: sha512-akQoMNuOQa5rtJkI9H5oC74rCp9ABnuBulHJaAYKAWESYYFydC3RfrYwObJW4PcbfNE5LUya0XXqT//5z46g0Q==}
@@ -1600,6 +1603,53 @@ packages:
   '@typescript-eslint/visitor-keys@8.32.1':
     resolution: {integrity: sha512-ar0tjQfObzhSaW3C3QNmTc5ofj0hDoNQ5XWrCy6zDyabdr0TWhCkClp+rywGNj/odAFBVzzJrK4tEq5M4Hmu4w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20250530.1':
+    resolution: {integrity: sha512-SxSSCgXHHuoc0573cVPcyAMBaSiBdSN48hEx+XAhV9gVzKJugejctaBoma5zFvJGDSoirw1KE5O5lXR73EED7w==}
+    engines: {node: '>=20.6.0'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@typescript/native-preview-darwin-x64@7.0.0-dev.20250530.1':
+    resolution: {integrity: sha512-OGdM0LAgBXJFBfp7s5LltYlCQ866ah8bE8iYUHdPfWwT8nWXS9dL1DRRAVTfnY41aFFgW/pkJj+vS9Xgo1yKKQ==}
+    engines: {node: '>=20.6.0'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@typescript/native-preview-linux-arm64@7.0.0-dev.20250530.1':
+    resolution: {integrity: sha512-XfS8JUUTA9Q5RQ4ExboWjxXk7otnfr8sOajykCXq/R6iwSMdOU6jSe+YcoQ2Li5NygJRsUTO2eWn4Q0fOQC1OQ==}
+    engines: {node: '>=20.6.0'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@typescript/native-preview-linux-arm@7.0.0-dev.20250530.1':
+    resolution: {integrity: sha512-9LpFrEj7fDji5klj1qf+loFy8/EqoQYT/B2Npc0WLiaOd1R+TPcyYlqMUo59+cNCjwjtyNGaBKPWpFYwBHUv0A==}
+    engines: {node: '>=20.6.0'}
+    cpu: [arm]
+    os: [linux]
+
+  '@typescript/native-preview-linux-x64@7.0.0-dev.20250530.1':
+    resolution: {integrity: sha512-OXfmVH+TPtdrYgYmhxMTkQEPTsUJIAc69Al5klq6C2SiIEJQqbL9QISQw2ARyY/BjsbeCpp7Py8U4jQCjpw71A==}
+    engines: {node: '>=20.6.0'}
+    cpu: [x64]
+    os: [linux]
+
+  '@typescript/native-preview-win32-arm64@7.0.0-dev.20250530.1':
+    resolution: {integrity: sha512-ASSZCskCcvRWq80HC8d1bQSPPkNAvpqGhelKcsuocY+0cFafG35GOhQ4mUIxczVgeS6yol8EeRvwQ4Jxdn1eiw==}
+    engines: {node: '>=20.6.0'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@typescript/native-preview-win32-x64@7.0.0-dev.20250530.1':
+    resolution: {integrity: sha512-FCWCL/z8wfcQPXJfiK00Jnp8zRWb8nrF5dyT8G+zvIk9AuhGxNzSEXii6//gcwOMB3MpfsmOsWXvFIu3PbUzQw==}
+    engines: {node: '>=20.6.0'}
+    cpu: [x64]
+    os: [win32]
+
+  '@typescript/native-preview@7.0.0-dev.20250530.1':
+    resolution: {integrity: sha512-9yJcfo2xD7JrB8+zFE3rFYgiOaFfcMhWPzbRNcNEwpL0bPyPuLDfk1FnVAFkisggmqdSHYmGNnh/9ABwqHvAvQ==}
+    engines: {node: '>=20.6.0'}
+    hasBin: true
 
   '@uidotdev/usehooks@2.4.1':
     resolution: {integrity: sha512-1I+RwWyS+kdv3Mv0Vmc+p0dPYH0DTRAo04HLyXReYBL9AeseDWUJyi4THuksBJcu9F0Pih69Ak150VDnqbVnXg==}
@@ -4527,7 +4577,7 @@ snapshots:
     dependencies:
       denque: 2.1.0
 
-  '@pistonite/workex@0.1.0':
+  '@pistonite/workex@0.1.1':
     dependencies:
       '@pistonite/pure': 0.26.3
 
@@ -4762,6 +4812,37 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.32.1
       eslint-visitor-keys: 4.2.0
+
+  '@typescript/native-preview-darwin-arm64@7.0.0-dev.20250530.1':
+    optional: true
+
+  '@typescript/native-preview-darwin-x64@7.0.0-dev.20250530.1':
+    optional: true
+
+  '@typescript/native-preview-linux-arm64@7.0.0-dev.20250530.1':
+    optional: true
+
+  '@typescript/native-preview-linux-arm@7.0.0-dev.20250530.1':
+    optional: true
+
+  '@typescript/native-preview-linux-x64@7.0.0-dev.20250530.1':
+    optional: true
+
+  '@typescript/native-preview-win32-arm64@7.0.0-dev.20250530.1':
+    optional: true
+
+  '@typescript/native-preview-win32-x64@7.0.0-dev.20250530.1':
+    optional: true
+
+  '@typescript/native-preview@7.0.0-dev.20250530.1':
+    optionalDependencies:
+      '@typescript/native-preview-darwin-arm64': 7.0.0-dev.20250530.1
+      '@typescript/native-preview-darwin-x64': 7.0.0-dev.20250530.1
+      '@typescript/native-preview-linux-arm': 7.0.0-dev.20250530.1
+      '@typescript/native-preview-linux-arm64': 7.0.0-dev.20250530.1
+      '@typescript/native-preview-linux-x64': 7.0.0-dev.20250530.1
+      '@typescript/native-preview-win32-arm64': 7.0.0-dev.20250530.1
+      '@typescript/native-preview-win32-x64': 7.0.0-dev.20250530.1
 
   '@uidotdev/usehooks@2.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:

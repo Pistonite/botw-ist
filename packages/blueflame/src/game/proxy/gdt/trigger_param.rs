@@ -1,8 +1,5 @@
-#[layered_crate::import]
-use game::{
-    self::{gdt, singleton_instance},
-    super::memory::{self, Memory, ProxyObject, Ptr},
-};
+use crate::game::{gdt, singleton_instance};
+use crate::memory::{self, Memory, ProxyObject, Ptr};
 
 // TODO --cleanup: remove if not needed
 // pub enum FlagType {
@@ -149,11 +146,6 @@ impl TriggerParam {
         for flag in Fd::list_mut(self) {
             flag.reset();
         }
-    }
-
-    /// Get the length of the flags array of the type
-    pub fn len<Fd: gdt::FlagDescriptor>(&self) -> usize {
-        Fd::list(self).len()
     }
 }
 impl ProxyObject for TriggerParam {

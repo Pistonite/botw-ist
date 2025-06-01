@@ -3,18 +3,15 @@ use enum_map::EnumMap;
 
 use blueflame_deps::trace_call;
 
-#[layered_crate::import]
-use processor::{
-    self::{
-        BLOCK_COUNT_LIMIT, BLOCK_ITERATION_LIMIT, CrashReport, Error, ExecuteCache, Process,
-        Registers, STACK_RESERVATION, StackTrace, reg,
-    },
-    super::env::{DataId, GameVer, ProxyId, enabled},
-    super::game::gdt,
-    super::memory::{MemObject, Ptr},
-    super::program::ArchivedProgram,
-    super::vm::VirtualMachine,
+use crate::env::{DataId, GameVer, ProxyId, enabled};
+use crate::game::gdt;
+use crate::memory::{MemObject, Ptr};
+use crate::processor::{
+    BLOCK_COUNT_LIMIT, BLOCK_ITERATION_LIMIT, CrashReport, Error, ExecuteCache, Process, Registers,
+    STACK_RESERVATION, StackTrace, reg,
 };
+use crate::program::ArchivedProgram;
+use crate::vm::VirtualMachine;
 
 const INTERNAL_RETURN_ADDRESS: u64 = 0xDEAD464C414D45AAu64;
 // -----------------------------------------F-L-A-M-E-----
@@ -154,13 +151,13 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     }
 
     fn v_jump(&mut self, target: u32) -> Result<(), Self::Error> {
-        log::debug!("v_jump to 0x{:08x}", target);
+        log::debug!("v_jump to 0x{target:08x}");
         self.pc = target as u64 + self.proc.main_start();
         Ok(())
     }
 
     fn v_mem_alloc(&mut self, bytes: u32) -> Result<(), Self::Error> {
-        log::debug!("v_mem_alloc {} bytes", bytes);
+        log::debug!("v_mem_alloc {bytes} bytes");
         let ptr = self.proc.memory_mut().alloc(bytes)?;
         self.write(reg!(x[0]), ptr);
         Ok(())
@@ -360,7 +357,7 @@ impl Cpu2<'_, '_> {
     pub fn make_crash_report(&self, error: Error) -> CrashReport {
         let main_start = self.proc.main_start();
         let cpu0 = self.cpu1.cpu0.clone();
-        CrashReport::new(cpu0, main_start, error)
+        CrashReport::new(Box::new(cpu0), main_start, error)
     }
 
     pub fn stack_alloc<T: MemObject>(&mut self) -> Result<u64, Error> {
@@ -428,15 +425,4 @@ impl Cpu0 {
         self.pc = lr;
         Ok(())
     }
-
-    //
-    // /// Simulate the `ret` instruction with a register
-    // pub fn retr(&mut self, reg: RegName) -> Result<(), Error> {
-    //     log::debug!("executing ret instruction to ({})", reg);
-    //     let xn_val: u64 = self.read(reg);
-    //     let new_pc = xn_val - 4;
-    //     self.stack_trace.pop_checked(xn_val)?;
-    //     self.pc = new_pc as u64;
-    //     Ok(())
-    // }
 }

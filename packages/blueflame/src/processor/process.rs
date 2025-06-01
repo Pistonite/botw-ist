@@ -4,14 +4,11 @@ use std::sync::Arc;
 
 use derive_more::derive::Constructor;
 
-#[layered_crate::import]
-use processor::{
-    self::insn::InsnVec,
-    self::{Error, Execute},
-    super::env::{Environment, GameVer},
-    super::game::Proxies,
-    super::memory::{Memory, ProxyGuardMut, ProxyList, ProxyObject, access},
-};
+use crate::env::{Environment, GameVer};
+use crate::game::Proxies;
+use crate::memory::{Memory, ProxyGuardMut, ProxyList, ProxyObject, access};
+use crate::processor::insn::InsnVec;
+use crate::processor::{Error, Execute};
 
 /// The Process is the container for everything the core tracks
 /// that is not in the Processor.
@@ -116,6 +113,7 @@ impl Process {
 pub trait HookProvider: Send + Sync + UnwindSafe {
     /// Hook execution at PC. Return the execute function and the byte
     /// size of the hook
+    #[allow(clippy::type_complexity)]
     fn fetch(
         &self,
         main_offset: u32,

@@ -1,8 +1,5 @@
-#[layered_crate::import]
-use program::{
-    self::{Data, Module, Program, Section, Segment},
-    super::env::{DataId, GameVer},
-};
+use crate::env::{DataId, GameVer};
+use crate::program::{Data, Module, Program, Section, Segment};
 
 /// Start building a program image
 pub fn builder(ver: GameVer, program_start: u64, program_size: u32) -> BuilderPhase1 {
@@ -120,7 +117,7 @@ impl BuilderPhase3 {
     }
 
     pub fn add_data(mut self, data: DataId, bytes: Vec<u8>) -> Self {
-        log::debug!("adding data: {:?}", data);
+        log::debug!("adding data: {data:?}, len={}", bytes.len());
         self.1.push(Data::new(data, bytes));
         self
     }

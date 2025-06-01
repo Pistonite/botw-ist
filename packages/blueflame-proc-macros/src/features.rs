@@ -43,17 +43,17 @@ fn expand_internal(mut input: syn::DeriveInput) -> syn::Result<TokenStream> {
             impl #name {
                 /// Get the default set of features for this enum, See the enum doc for more
                 pub const fn default_const() -> #blueflame::env::FeatureSet {
-                    use #blueflame::__re::enumset::EnumSet;
-                    #blueflame::__re::enumset::enum_set!( #default_features_impl )
+                    use enumset::EnumSet;
+                    enumset::enum_set!( #default_features_impl )
                 }
 
                 /// Parse the kebab-case string feature name to the feature enum
-                pub fn parse(input: &str) -> ::std::option::Option<#blueflame::env::Feature> {
+                pub fn parse(input: &str) -> ::std::option::Option<blueflame::env::Feature> {
                     FEATURE_MAP.get(input).copied()
                 }
             }
 
-            static FEATURE_MAP: #blueflame::__re::phf::Map<&'static str, #name> = #blueflame::__re::phf::phf_map! {
+            static FEATURE_MAP: phf::Map<&'static str, #name> = phf::phf_map! {
                 #feature_map_impl
             };
         };

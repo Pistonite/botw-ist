@@ -2,15 +2,12 @@ use std::sync::Arc;
 
 use rkyv::rancor;
 
-#[layered_crate::import]
-use linker::{
-    self::{GameHooks, patch_memory},
-    super::env::{DlcVer, Environment, GameVer},
-    super::game::{Proxies, singleton},
-    super::memory::{self, Memory, PAGE_SIZE, REGION_ALIGN, SimpleHeap, align_down, align_up},
-    super::processor::{Cpu1, Cpu3, CrashReport, Process},
-    super::program::ArchivedProgram,
-};
+use crate::env::{DlcVer, Environment, GameVer};
+use crate::game::{Proxies, singleton};
+use crate::linker::{GameHooks, patch_memory};
+use crate::memory::{self, Memory, PAGE_SIZE, REGION_ALIGN, SimpleHeap, align_down, align_up};
+use crate::processor::{Cpu1, Cpu3, CrashReport, Process};
+use crate::program::ArchivedProgram;
 
 /// Error that only happens during boot
 #[derive(Debug, Clone, thiserror::Error)]
@@ -65,7 +62,7 @@ pub fn init_process(
 
     let pmdm_rel_start = singleton::pmdm::rel_start(env);
     if pmdm_rel_start as u64 > pmdm_address {
-        return Err(Error::InvalidPmdmAddress(pmdm_address).into());
+        return Err(Error::InvalidPmdmAddress(pmdm_address));
     }
 
     let min_heap_start = pmdm_address - pmdm_rel_start as u64;

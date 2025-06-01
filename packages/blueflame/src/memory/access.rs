@@ -132,15 +132,15 @@ const _: () = {
     }
     impl std::ops::BitOr for AccessFlags {
         type Output = AccessFlags;
-        #[inline(always)] fn bitor(self, rhs: AccessFlags) -> Self::Output { AccessFlags(self.0 as u32 | rhs.0 as u32) }
+        #[inline(always)] fn bitor(self, rhs: AccessFlags) -> Self::Output { AccessFlags(self.0 | rhs.0) }
     }
     impl std::ops::BitOr<AccessFlags> for AccessFlag {
         type Output = AccessFlags;
-        #[inline(always)] fn bitor(self, rhs: AccessFlags) -> Self::Output { AccessFlags(self as u32 | rhs.0 as u32) }
+        #[inline(always)] fn bitor(self, rhs: AccessFlags) -> Self::Output { AccessFlags(self as u32 | rhs.0 ) }
     }
     impl std::ops::BitOr<AccessFlag> for AccessFlags {
         type Output = AccessFlags;
-        #[inline(always)] fn bitor(self, rhs: AccessFlag) -> Self::Output { AccessFlags(self.0 as u32 | rhs as u32) }
+        #[inline(always)] fn bitor(self, rhs: AccessFlag) -> Self::Output { AccessFlags(self.0 | rhs as u32) }
     }
 };
 

@@ -2,8 +2,7 @@ use std::ffi::{CStr, CString};
 
 use num_traits::Zero;
 
-#[layered_crate::import]
-use memory::{
+use crate::memory::{
     AccessFlags, Error, MemLayout, MemObject, Memory, Reader, Writer, access, assert_size_eq,
 };
 

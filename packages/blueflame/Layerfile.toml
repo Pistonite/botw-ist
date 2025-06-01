@@ -1,0 +1,30 @@
+[crate]
+
+[layer.linker]
+depends-on = [
+    "processor", 
+    "game", 
+    "memory", 
+    "program", 
+    "env"
+]
+
+[layer.processor]
+depends-on = [
+    "game", 
+    "memory", 
+    "program", 
+    "vm", 
+    "env"
+]
+
+[layer.game]
+depends-on = ["memory", "vm", "env"]
+impl = ["memory"]
+[layer.memory]
+depends-on = ["program", "env"]
+[layer.program]
+depends-on = ["env"]
+[layer.vm]
+depends-on = ["env"]
+[layer.env]

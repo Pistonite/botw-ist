@@ -1,7 +1,7 @@
-#[layered_crate::import]
-use memory::MemObject;
+#![allow(non_snake_case)]
 
-#[allow(non_snake_case)]
+use crate::memory::MemObject;
+
 #[derive(MemObject, Default, Clone)]
 #[size(0xdc8)]
 pub struct GdtManager {

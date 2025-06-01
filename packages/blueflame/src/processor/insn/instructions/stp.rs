@@ -1,6 +1,6 @@
-use crate::processor::{self as self_, crate_};
+use crate::processor::{self as self_};
 
-use crate_::memory::Ptr;
+use crate::memory::Ptr;
 use self_::insn::Core;
 use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::reg;
@@ -84,7 +84,7 @@ fn stp_core(
             Ptr!(<u64>(address + 8)).store(&hi, core.proc.memory_mut())?;
         }
         _ => {
-            log::error!("Invalid register write xt1: {:?}", xt1);
+            log::error!("Invalid register write xt1: {xt1:?}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -109,7 +109,7 @@ fn stp_core(
             Ptr!(<u64>(address + 24)).store(&hi, core.proc.memory_mut())?;
         }
         _ => {
-            log::error!("Invalid register write xt2: {:?}", xt2);
+            log::error!("Invalid register write xt2: {xt2:?}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -217,8 +217,7 @@ impl ExecutableInstruction for StpImmInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_utils::*;
-    use self_::{Cpu0, Process, reg};
+    use self_::{Cpu0, Process};
 
     #[test]
     pub fn simple_stp_test() -> anyhow::Result<()> {
