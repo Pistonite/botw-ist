@@ -1,5 +1,5 @@
 use crate::env::enabled;
-use crate::processor::{format_address, Error, RegName};
+use crate::processor::{Error, RegName, format_address};
 
 #[derive(Debug, Clone, Default)]
 pub struct StackTrace {

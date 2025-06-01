@@ -1,4 +1,4 @@
-use crate::memory::{align_down, align_up, perm, region, Error, Section, PAGE_SIZE, REGION_ALIGN};
+use crate::memory::{Error, PAGE_SIZE, REGION_ALIGN, Section, align_down, align_up, perm, region};
 
 /// A simple heap region implementation
 ///
@@ -58,7 +58,7 @@ impl SimpleHeap {
         }
         // on the last page of heap
         let max_page_off = max_rel_addr % PAGE_SIZE as u64;
-        return Some(max_page_off as u32);
+        Some(max_page_off as u32)
     }
 
     /// Allocate new space in the heap

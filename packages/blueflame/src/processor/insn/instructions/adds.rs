@@ -1,8 +1,8 @@
 use crate::processor::{
+    insn::Core,
     insn::arithmetic_utils,
     insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction},
-    insn::Core,
-    {glue, Error, RegisterType},
+    {Error, RegisterType, glue},
 };
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
@@ -87,7 +87,7 @@ impl ExecutableInstruction for AddsImmInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::processor::{reg, Cpu0, Process};
+    use crate::processor::{Cpu0, Process, reg};
 
     #[test]
     pub fn simple_adds_test() -> anyhow::Result<()> {

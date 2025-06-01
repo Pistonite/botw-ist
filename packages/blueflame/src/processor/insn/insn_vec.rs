@@ -6,8 +6,8 @@ use disarm64::decoder::Opcode;
 use crate::env::enabled;
 use crate::processor::{
     insn::instruction_parse::ExecutableInstruction,
-    insn::{instruction_parse, op, Core},
-    {Cpu0, Error, Execute, Process, BLOCK_ITERATION_LIMIT},
+    insn::{Core, instruction_parse, op},
+    {BLOCK_ITERATION_LIMIT, Cpu0, Error, Execute, Process},
 };
 
 #[derive(Default)]
@@ -88,10 +88,7 @@ impl Execute for InsnVec {
 
             match legacy_insn {
                 None => {
-                    log::error!(
-                        "could not execute instruction, legacy parse failed: {}",
-                        opcode.to_string()
-                    );
+                    log::error!("could not execute instruction, legacy parse failed: {opcode}");
                     return Err(Error::BadInstruction(opcode.bits()));
                 }
                 Some(x) => {

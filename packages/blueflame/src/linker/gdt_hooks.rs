@@ -1,6 +1,6 @@
-use crate::game::{gdt, SafeString};
-use crate::memory::{proxy, Memory, Ptr};
-use crate::processor::{self, reg, Cpu0, Process};
+use crate::game::{SafeString, gdt};
+use crate::memory::{Memory, Ptr, proxy};
+use crate::processor::{self, Cpu0, Process, reg};
 
 // this macro is needed because template generic types are not stable
 macro_rules! get_flag_impl {

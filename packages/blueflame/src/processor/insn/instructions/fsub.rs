@@ -3,9 +3,9 @@ use crate::processor::{self as self_};
 use disarm64::arm64::InsnOpcode;
 use disarm64::decoder::{Mnemonic, Opcode};
 
-use self_::insn::instruction_parse::{get_bit_range, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, glue::RegisterValue, Error, RegisterType};
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::{Error, RegisterType, glue, glue::RegisterValue};
 
 #[derive(Clone)]
 pub struct InsnFsub {
@@ -60,7 +60,7 @@ pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Err
 mod tests {
     use super::*;
     use disarm64::decoder::decode;
-    use self_::{insn::paste_insn, reg, Cpu0, Process};
+    use self_::{Cpu0, Process, insn::paste_insn, reg};
 
     #[test]
     pub fn test_fsub_parse() -> anyhow::Result<()> {

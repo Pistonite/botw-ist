@@ -3,9 +3,9 @@ use crate::processor::{self as self_};
 use disarm64::arm64::InsnOpcode;
 use disarm64::decoder::{Mnemonic, Opcode};
 
-use self_::insn::instruction_parse::{self as parse, get_bit_range, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType};
+use self_::insn::instruction_parse::{self as parse, ExecutableInstruction, get_bit_range};
+use self_::{Error, RegisterType, glue};
 
 #[derive(Clone)]
 pub struct InsnSbfm {

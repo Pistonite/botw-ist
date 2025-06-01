@@ -22,7 +22,7 @@ depends-on = [
 depends-on = ["memory", "vm", "env"]
 impl = ["memory"]
 [layer.memory]
-depends-on = ["program", "vm", "env"]
+depends-on = ["program", "env"]
 [layer.program]
 depends-on = ["env"]
 [layer.vm]

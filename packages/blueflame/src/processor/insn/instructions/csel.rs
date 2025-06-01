@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType};
+use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args = parse::split_args(args, 4);
@@ -38,7 +38,7 @@ impl ExecutableInstruction for CselInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use self_::{reg, Cpu0, Process};
+    use self_::{Cpu0, Process, reg};
 
     #[test]
     pub fn test_csel_when_true() -> anyhow::Result<()> {

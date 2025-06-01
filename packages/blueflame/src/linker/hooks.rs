@@ -1,14 +1,15 @@
 use super::gdt_hooks;
 use crate::env::{DlcVer, Environment, GameVer};
 use crate::game::{gdt, singleton_instance};
-use crate::memory::{self, access, Memory};
+use crate::memory::{self, Memory, access};
 use crate::processor::insn::paste_insn;
-use crate::processor::{self, reg, Cpu0, Execute, HookProvider, Process};
+use crate::processor::{self, Cpu0, Execute, HookProvider, Process, reg};
 
 macro_rules! fn_table {
     ($main_offset:ident size fn $( $offset:literal $size:literal $function:expr ),* $(,)?) => {
         match $main_offset {
         $(
+            #[allow(clippy::zero_prefixed_literal)]
             $offset => {
                 // log::trace!("reached hook function at 0x{:#08x} with size {}: {}", $offset, $size, stringify!($function));
                 return Ok(Some((processor::box_execute($function), $size)));

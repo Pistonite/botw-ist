@@ -1,9 +1,9 @@
 use crate::processor::{self as self_};
 
 use crate::memory::Ptr;
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args: Vec<String> = parse::split_args(args, 2);
@@ -154,13 +154,13 @@ impl ExecutableInstruction for LdurbImmInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use self_::{reg, Cpu0, Process};
+    use self_::{Cpu0, Process, reg};
 
     #[test]
     pub fn simple_ldurb_test() -> anyhow::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
-        Ptr!(<i32>(32)).store(&1234, &mut proc.memory_mut())?;
+        Ptr!(<i32>(32)).store(&1234, proc.memory_mut())?;
         let mut core = Core::new(&mut cpu, &mut proc);
         core.handle_string_command("add w0, wzr, #32")?;
         core.handle_string_command("ldurb w1, [w0]")?;

@@ -147,11 +147,6 @@ impl TriggerParam {
             flag.reset();
         }
     }
-
-    /// Get the length of the flags array of the type
-    pub fn len<Fd: gdt::FlagDescriptor>(&self) -> usize {
-        Fd::list(self).len()
-    }
 }
 impl ProxyObject for TriggerParam {
     fn mem_size(&self) -> u32 {

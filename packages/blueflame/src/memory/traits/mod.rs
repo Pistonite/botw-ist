@@ -1,4 +1,4 @@
-use crate::memory::{assert_zst, Error, PtrToSized, Reader, Writer};
+use crate::memory::{Error, PtrToSized, Reader, Writer, assert_zst};
 
 /// Implementation of traits for primitive types
 mod _impl;

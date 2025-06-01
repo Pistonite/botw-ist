@@ -1,3 +1,4 @@
+#![allow(clippy::needless_return)]
 use disarm64::decoder::{Opcode, Operation};
 
 use crate::processor::{Cpu0, Error, Process};

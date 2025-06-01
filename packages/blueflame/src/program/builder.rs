@@ -117,7 +117,7 @@ impl BuilderPhase3 {
     }
 
     pub fn add_data(mut self, data: DataId, bytes: Vec<u8>) -> Self {
-        log::debug!("adding data: {:?}", data);
+        log::debug!("adding data: {data:?}, len={}", bytes.len());
         self.1.push(Data::new(data, bytes));
         self
     }

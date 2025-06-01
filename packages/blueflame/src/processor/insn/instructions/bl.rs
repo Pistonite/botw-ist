@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{reg, Error};
+use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
+use self_::{Error, reg};
 
 use blueflame_deps::trace_call;
 
@@ -36,7 +36,7 @@ impl ExecutableInstruction for BlInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use self_::{reg, Cpu0, Process};
+    use self_::{Cpu0, Process, reg};
     #[test]
     pub fn simple_bl_test() -> anyhow::Result<()> {
         let mut cpu = Cpu0::default();

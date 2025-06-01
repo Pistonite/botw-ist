@@ -1,6 +1,6 @@
 use disarm64::decoder::Opcode;
 
-use crate::processor::{insn::instructions as xxx, insn::Core, Error};
+use crate::processor::{Error, insn::Core, insn::instructions as xxx};
 
 type ParseFn = fn(&Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error>;
 static PARSE_LIST: &[ParseFn] = &[
@@ -207,7 +207,7 @@ pub fn parse_auxiliary(fourth_arg: Option<&String>) -> Option<Option<AuxiliaryOp
         Some(None)
     }
 }
-pub fn get_imm_val(imm: &String) -> Option<i64> {
+pub fn get_imm_val(imm: &str) -> Option<i64> {
     let no_hash = imm.strip_prefix('#').unwrap_or(imm);
     let mult = if no_hash.starts_with('-') { -1 } else { 1 };
     let no_dash = no_hash.replace(['-', '!', ' ', '\t'], "");

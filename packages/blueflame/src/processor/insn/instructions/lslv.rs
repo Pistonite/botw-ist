@@ -3,9 +3,9 @@ use crate::processor::{self as self_};
 use disarm64::arm64::InsnOpcode;
 use disarm64::decoder::{Mnemonic, Opcode};
 
-use self_::insn::instruction_parse::{get_bit_range, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType};
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::{Error, RegisterType, glue};
 
 #[derive(Clone)]
 pub struct InsnLslv {
@@ -65,7 +65,7 @@ mod tests {
     use super::*;
     use disarm64::decoder::decode;
 
-    use self_::{reg, Cpu0, Process};
+    use self_::{Cpu0, Process, reg};
 
     #[test]
     fn test_lslv_parse() -> anyhow::Result<()> {

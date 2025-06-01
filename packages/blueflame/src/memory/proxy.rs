@@ -1,11 +1,11 @@
 use std::panic::UnwindSafe;
 use std::sync::Arc;
 
-use rand_xoshiro::rand_core::{RngCore, SeedableRng};
 use rand_xoshiro::Xoshiro256PlusPlus;
+use rand_xoshiro::rand_core::{RngCore, SeedableRng};
 use sha2::{Digest, Sha256};
 
-use crate::memory::{perm, region, Error, Memory};
+use crate::memory::{Error, Memory, perm, region};
 
 pub use blueflame_deps::proxy;
 
@@ -149,17 +149,17 @@ impl<T: ProxyObject> ProxyGuardMut<'_, '_, T> {
         let mut_list = Arc::make_mut(&mut self.list.0);
         // clone the entry on write if needed
         let entry = Arc::make_mut(&mut mut_list.objects[handle as usize]);
-        return Ok(ProxyObjectGuardMut {
+        Ok(ProxyObjectGuardMut {
             obj: entry,
             memory: self.memory,
             handle,
             address,
             list_rng: &mut mut_list.rng,
-        });
+        })
     }
 
     /// Allocate space in memory for the new proxy object T and return its address
-    pub fn alloc<'g>(&'g mut self, t: T) -> Result<u64, Error> {
+    pub fn alloc(&mut self, t: T) -> Result<u64, Error> {
         let mut_list = Arc::make_mut(&mut self.list.0);
         let pointer = mut_list.allocate(self.memory, t)?;
         Ok(pointer)

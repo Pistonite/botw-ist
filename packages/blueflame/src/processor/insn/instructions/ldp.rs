@@ -1,9 +1,9 @@
 use crate::processor::{self as self_};
 
 use crate::memory::Ptr;
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType};
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args: Vec<String> = parse::split_args(args, 3);
@@ -76,7 +76,7 @@ fn ldp_core(
         RegisterType::SReg(_) => Ptr!(<i32>(address)).load(core.proc.memory())? as i64,
         RegisterType::DReg(_) => Ptr!(<i64>(address)).load(core.proc.memory())?,
         _ => {
-            log::error!("Loading into non-general register type: {:?}", rt1);
+            log::error!("Loading into non-general register type: {rt1:?}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -86,7 +86,7 @@ fn ldp_core(
         RegisterType::SReg(_) => Ptr!(<i32>(address + 4)).load(core.proc.memory())? as i64,
         RegisterType::DReg(_) => Ptr!(<i64>(address + 8)).load(core.proc.memory())?,
         _ => {
-            log::error!("Loading into non-general register type: {:?}", rt2);
+            log::error!("Loading into non-general register type: {rt2:?}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -187,14 +187,14 @@ impl ExecutableInstruction for LdpInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use self_::{reg, Cpu0, Process};
+    use self_::{Cpu0, Process, reg};
 
     #[test]
     pub fn simple_ldp_test() -> anyhow::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
-        Ptr!(<i32>(32)).store(&1234, &mut proc.memory_mut())?;
-        Ptr!(<i32>(36)).store(&5678, &mut proc.memory_mut())?;
+        Ptr!(<i32>(32)).store(&1234, proc.memory_mut())?;
+        Ptr!(<i32>(36)).store(&5678, proc.memory_mut())?;
         let mut core = Core::new(&mut cpu, &mut proc);
         core.handle_string_command("add w0, wzr, #32")?;
         core.handle_string_command("ldp w1, w2, [w0]")?;

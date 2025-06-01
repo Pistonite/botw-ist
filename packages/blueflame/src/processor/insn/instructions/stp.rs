@@ -1,10 +1,10 @@
 use crate::processor::{self as self_};
 
 use crate::memory::Ptr;
-use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::insn::Core;
+use self_::insn::instruction_parse::{self as parse, AuxiliaryOperation, ExecutableInstruction};
 use self_::reg;
-use self_::{glue, Error, RegisterType};
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let collected_args: Vec<String> = parse::split_args(args, 3);
@@ -84,7 +84,7 @@ fn stp_core(
             Ptr!(<u64>(address + 8)).store(&hi, core.proc.memory_mut())?;
         }
         _ => {
-            log::error!("Invalid register write xt1: {:?}", xt1);
+            log::error!("Invalid register write xt1: {xt1:?}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -109,7 +109,7 @@ fn stp_core(
             Ptr!(<u64>(address + 24)).store(&hi, core.proc.memory_mut())?;
         }
         _ => {
-            log::error!("Invalid register write xt2: {:?}", xt2);
+            log::error!("Invalid register write xt2: {xt2:?}");
             return Err(Error::BadInstruction(0));
         }
     };

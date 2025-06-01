@@ -195,21 +195,23 @@ mod tests {
     fn test_register_get() {
         let mut hv = make_vec();
 
-        assert!(hv
-            .insert(
+        assert!(
+            hv.insert(
                 true,
                 0,
                 40,
                 80,
                 box_execute(|_, _| {
                     // this is a test so we can execute it and see the result
-                    return Err(Error::StrictReplacement { main_offset: 42 });
+                    Err(Error::StrictReplacement { main_offset: 42 })
                 })
             )
-            .is_ok());
-        assert!(hv
-            .insert(true, 0, 52, 16, box_execute(|_, _| Ok(())))
-            .is_err());
+            .is_ok()
+        );
+        assert!(
+            hv.insert(true, 0, 52, 16, box_execute(|_, _| Ok(())))
+                .is_err()
+        );
         let (_entry, step) = hv.get(40).unwrap();
         assert_eq!(step, 0);
         // TODO --cleanup: core - check if the entry is the same
@@ -221,12 +223,14 @@ mod tests {
     fn test_insert_get() {
         let mut hv = ExecuteCache::default();
 
-        assert!(hv
-            .insert(true, 0, 0x7213c, 24, box_execute(|_, _| Ok(())))
-            .is_ok());
-        assert!(hv
-            .insert(true, 0, 0x72154, 8, box_execute(|_, _| Ok(())))
-            .is_ok());
+        assert!(
+            hv.insert(true, 0, 0x7213c, 24, box_execute(|_, _| Ok(())))
+                .is_ok()
+        );
+        assert!(
+            hv.insert(true, 0, 0x72154, 8, box_execute(|_, _| Ok(())))
+                .is_ok()
+        );
 
         match hv.get(0x72138) {
             Ok(_) => panic!("Expected error, but got Ok"),
@@ -264,10 +268,10 @@ mod tests {
         assert_eq!(hv.find(8, 5), Ok(0)); // [8,13) overlaps [10,15)
         assert_eq!(hv.find(12, 2), Ok(0)); // [12,14) overlaps [10,15)
         assert_eq!(hv.find(14, 10), Ok(0)); // [14,24) overlaps [10,15) and [20,30), but should return first overlap (0)
-                                            // Overlaps with second hook
+        // Overlaps with second hook
         assert_eq!(hv.find(25, 2), Ok(1)); // [25,27) overlaps [20,30)
         assert_eq!(hv.find(29, 10), Ok(1)); // [29,39) overlaps [20,30) and [35,40), should return 1
-                                            // Overlaps with third hook
+        // Overlaps with third hook
         assert_eq!(hv.find(36, 1), Ok(2)); // [36,37) overlaps [35,40)
     }
 
@@ -281,8 +285,8 @@ mod tests {
         assert_eq!(hv.find(17, 2), Err(1)); // [17,19) strictly between [10,15) and [20,30)
         assert_eq!(hv.find(30, 2), Err(2)); // [30,32) strictly between [20,30) and [35,40)
         assert_eq!(hv.find(32, 2), Err(2)); // [32,34) strictly between [20,30) and [35,40)
-                                            // Between hooks, not overlapping, but touching previous end or next start (already covered in boundary test)
-                                            // After all
+        // Between hooks, not overlapping, but touching previous end or next start (already covered in boundary test)
+        // After all
         assert_eq!(hv.find(45, 5), Err(3));
     }
 
@@ -291,9 +295,9 @@ mod tests {
         let hv = make_vec();
         // End exactly at start of a hook (should not overlap)
         assert_eq!(hv.find(15, 5), Err(1)); // [15,20) ends at 20, which is start of second hook
-                                            // Start exactly at end of a hook (should not overlap)
+        // Start exactly at end of a hook (should not overlap)
         assert_eq!(hv.find(15, 5), Err(1)); // [15,20) after [10,15)
-                                            // Range exactly matches a hook
+        // Range exactly matches a hook
         assert_eq!(hv.find(10, 5), Ok(0));
         assert_eq!(hv.find(20, 10), Ok(1));
         assert_eq!(hv.find(35, 5), Ok(2));

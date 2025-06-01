@@ -1,5 +1,7 @@
 use derive_more::derive::Constructor;
 
+#[cfg(feature = "trace-memory")]
+use crate::memory::PAGE_SIZE;
 use crate::memory::{AccessFlags, Error, Memory, Page};
 
 #[cfg(feature = "trace-memory")]
@@ -69,7 +71,7 @@ macro_rules! trace {
             record_read($addr);
         }
         blueflame_deps::trace_memory!(
-            concat!("ld1  {} =>{}"),
+            "ld1  {} =>{}",
             $addr_str,
             if $value { "true" } else { "false" }
         );

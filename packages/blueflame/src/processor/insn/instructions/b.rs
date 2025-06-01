@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
-use self_::insn::Core;
 use self_::Error;
+use self_::insn::Core;
+use self_::insn::instruction_parse::{self as parse, ExecutableInstruction};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let label_offset = parse::get_label_val(args)?;

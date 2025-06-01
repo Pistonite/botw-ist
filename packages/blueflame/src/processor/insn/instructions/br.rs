@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::ExecutableInstruction;
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType};
+use self_::insn::instruction_parse::ExecutableInstruction;
+use self_::{Error, RegisterType, glue};
 
 pub fn parse(args: &str) -> Option<Box<dyn ExecutableInstruction>> {
     let rn = glue::parse_reg_or_panic(args);
@@ -25,7 +25,7 @@ impl ExecutableInstruction for BrInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use self_::{reg, Cpu0, Process};
+    use self_::{Cpu0, Process, reg};
     #[test]
     pub fn simple_br_test() -> anyhow::Result<()> {
         let mut cpu = Cpu0::default();

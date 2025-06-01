@@ -16,8 +16,15 @@ tasks:
 
   check:
     cmds:
-      # - task: cargo:clippy-all
+      - task: cargo:clippy-all
+      - task: check-layer
       - task: cargo:fmt-check
+
+  check-layer:
+    env:
+      RUSTFLAGS: "-Dunused-imports"
+    cmds:
+      - ../../../layered-crate/target/debug/layered-crate -- check --lib --color=always --all-features
 
   fix:
     cmds:

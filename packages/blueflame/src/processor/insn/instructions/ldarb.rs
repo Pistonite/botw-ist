@@ -5,9 +5,9 @@ use disarm64::decoder::{Mnemonic, Opcode};
 
 use crate::memory::Ptr;
 
-use self_::insn::instruction_parse::{get_bit_range, ExecutableInstruction};
 use self_::insn::Core;
-use self_::{glue, Error, RegisterType};
+use self_::insn::instruction_parse::{ExecutableInstruction, get_bit_range};
+use self_::{Error, RegisterType, glue};
 
 #[derive(Clone)]
 pub struct InsnLdarb {
@@ -19,7 +19,7 @@ impl ExecutableInstruction for InsnLdarb {
     fn exec_on(&self, core: &mut Core) -> Result<(), Error> {
         let addr = glue::read_gen_reg(core.cpu, &self.rn) as u64;
         let ptr = Ptr!(<u8>(addr));
-        let res_val = ptr.load(&core.proc.memory())?;
+        let res_val = ptr.load(core.proc.memory())?;
         glue::write_gen_reg(core.cpu, &self.rt, res_val as i64);
         Ok(())
     }
@@ -42,7 +42,7 @@ mod tests {
     use super::*;
     use disarm64::decoder::decode;
 
-    use self_::{reg, Cpu0, Process};
+    use self_::{Cpu0, Process, reg};
 
     #[test]
     pub fn test_ldarb_parse() -> anyhow::Result<()> {
@@ -51,7 +51,7 @@ mod tests {
         let mut cpu = Cpu0::default();
         cpu.write(reg!(w[1]), 0x1000);
         let mut proc = Process::new_for_test();
-        Ptr!(<u8>(0x1000)).store(&42, &mut proc.memory_mut())?;
+        Ptr!(<u8>(0x1000)).store(&42, proc.memory_mut())?;
         let mut core = Core::new(&mut cpu, &mut proc);
         insn.exec_on(&mut core)?;
         assert_eq!(cpu.read::<u32>(reg!(w[0])), 42);

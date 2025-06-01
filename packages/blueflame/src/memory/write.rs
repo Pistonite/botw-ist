@@ -31,7 +31,7 @@ pub struct Writer<'m> {
 macro_rules! trace {
     (bool, $addr_str:expr, $value:expr) => {{
         blueflame_deps::trace_memory!(
-            concat!("st1  {}<= {}"),
+            "st1  {}<= {}",
             $addr_str,
             if $value { "true" } else { "false" }
         );

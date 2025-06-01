@@ -3,9 +3,9 @@ use std::sync::Arc;
 use rkyv::rancor;
 
 use crate::env::{DlcVer, Environment, GameVer};
-use crate::game::{singleton, Proxies};
-use crate::linker::{patch_memory, GameHooks};
-use crate::memory::{self, align_down, align_up, Memory, SimpleHeap, PAGE_SIZE, REGION_ALIGN};
+use crate::game::{Proxies, singleton};
+use crate::linker::{GameHooks, patch_memory};
+use crate::memory::{self, Memory, PAGE_SIZE, REGION_ALIGN, SimpleHeap, align_down, align_up};
 use crate::processor::{Cpu1, Cpu3, CrashReport, Process};
 use crate::program::ArchivedProgram;
 
@@ -62,7 +62,7 @@ pub fn init_process(
 
     let pmdm_rel_start = singleton::pmdm::rel_start(env);
     if pmdm_rel_start as u64 > pmdm_address {
-        return Err(Error::InvalidPmdmAddress(pmdm_address).into());
+        return Err(Error::InvalidPmdmAddress(pmdm_address));
     }
 
     let min_heap_start = pmdm_address - pmdm_rel_start as u64;

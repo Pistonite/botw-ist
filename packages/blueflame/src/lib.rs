@@ -1,6 +1,4 @@
 #![feature(string_from_utf8_lossy_owned)]
-#![feature(optimize_attribute)]
-#![feature(proc_macro_hygiene)]
 
 extern crate self as blueflame;
 

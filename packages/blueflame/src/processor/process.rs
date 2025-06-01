@@ -6,7 +6,7 @@ use derive_more::derive::Constructor;
 
 use crate::env::{Environment, GameVer};
 use crate::game::Proxies;
-use crate::memory::{access, Memory, ProxyGuardMut, ProxyList, ProxyObject};
+use crate::memory::{Memory, ProxyGuardMut, ProxyList, ProxyObject, access};
 use crate::processor::insn::InsnVec;
 use crate::processor::{Error, Execute};
 
@@ -113,6 +113,7 @@ impl Process {
 pub trait HookProvider: Send + Sync + UnwindSafe {
     /// Hook execution at PC. Return the execute function and the byte
     /// size of the hook
+    #[allow(clippy::type_complexity)]
     fn fetch(
         &self,
         main_offset: u32,

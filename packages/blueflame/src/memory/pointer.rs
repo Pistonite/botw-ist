@@ -3,7 +3,7 @@ use std::ffi::{CStr, CString};
 use num_traits::Zero;
 
 use crate::memory::{
-    access, assert_size_eq, AccessFlags, Error, MemLayout, MemObject, Memory, Reader, Writer,
+    AccessFlags, Error, MemLayout, MemObject, Memory, Reader, Writer, access, assert_size_eq,
 };
 
 #[doc(inline)]

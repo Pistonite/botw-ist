@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::memory::{
-    align_down, align_up, perm, region, AccessFlags, Error, Page, PAGE_SIZE, REGION_ALIGN,
+    AccessFlags, Error, PAGE_SIZE, Page, REGION_ALIGN, align_down, align_up, perm, region,
 };
 use crate::program::ArchivedSection;
 

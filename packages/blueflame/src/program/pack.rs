@@ -1,7 +1,7 @@
 use std::io::{Read, Write};
 
-use flate2::write::GzEncoder;
 use flate2::Compression;
+use flate2::write::GzEncoder;
 use rkyv::rancor;
 
 use crate::program::{ArchivedProgram, Program};

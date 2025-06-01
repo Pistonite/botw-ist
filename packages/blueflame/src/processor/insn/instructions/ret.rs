@@ -1,8 +1,8 @@
 use crate::processor as self_;
 
-use self_::insn::instruction_parse::ExecutableInstruction;
 use self_::insn::Core;
-use self_::{glue, reg, Error, RegisterType};
+use self_::insn::instruction_parse::ExecutableInstruction;
+use self_::{Error, RegisterType, glue, reg};
 
 use blueflame_deps::trace_call;
 
@@ -29,7 +29,7 @@ impl ExecutableInstruction for RetArgsInstruction {
         let regname = self.rn.to_regname();
         if regname != reg!(lr) {
             // check if we actually have any other register
-            panic!("RET instruction must use LR register, got {}", regname);
+            panic!("RET instruction must use LR register, got {regname}");
         }
         let xn_val: u64 = core.cpu.read(regname);
         trace_call!(
@@ -40,7 +40,7 @@ impl ExecutableInstruction for RetArgsInstruction {
         // instruction executor will increment PC later
         let new_pc = xn_val - 4;
         core.cpu.stack_trace.pop_checked(xn_val)?;
-        core.cpu.pc = new_pc as u64;
+        core.cpu.pc = new_pc;
         Ok(())
     }
 }
@@ -61,7 +61,7 @@ impl ExecutableInstruction for RetInstruction {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use self_::{reg, Cpu0, Process};
+    use self_::{Cpu0, Process, reg};
 
     #[test]
     pub fn simple_ret_test_with_arg() -> anyhow::Result<()> {
