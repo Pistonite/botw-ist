@@ -10,14 +10,15 @@
 # Cache
 .eslintcache
 
-# (temporary)
-/next
-
 # Cargo
 /target
 
 # NPM
 node_modules
+
+# ignore the toolchain file generated locally
+# to not override the one in CI
+rust-toolchain
 
 # Ignore generated credentials from google-github-actions/auth
 gha-creds-*.json

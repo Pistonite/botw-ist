@@ -8,5 +8,5 @@ runs:
       with:
         path: packages/item-assets/public
         key: item-assets
-      task: exec -- item-assets:pull-artifacts
-      runner: blacksmith
+        task: exec -- item-assets:pull-artifacts
+        runner: blacksmith

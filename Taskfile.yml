@@ -42,6 +42,7 @@ tasks:
     desc: Install packages for local development
     aliases: [i]
     cmds:
+      - echo "nightly" > rust-toolchain
       - magoo install
       - pnpm install
       - task: post-install
