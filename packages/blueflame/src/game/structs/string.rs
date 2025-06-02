@@ -73,6 +73,17 @@ impl Ptr![FixedSafeString40] {
     pub fn cstr(self, memory: &Memory) -> Result<Ptr![u8], memory::Error> {
         Ptr!(&self->base.mStringTop).load(memory)
     }
+    
+    pub fn safe_store(self, value: impl AsRef<str>, memory: &mut Memory) -> Result<(), memory::Error> {
+        let string = value.as_ref();
+        if string.len() < 64 {
+            // safe to fit the whole string
+            return self.cstr(memory)?.store_string(string, memory);
+        }
+        // truncate to 63 bytes + null
+        let bytes = string.as_bytes();
+        self.cstr(memory)?.store_bytes_plus_nul(&bytes[..63], memory)
+    }
 
     pub fn utf8_lossy(self, memory: &Memory) -> Result<String, memory::Error> {
         let cstr_ptr = self.cstr(memory)?;

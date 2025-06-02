@@ -7,5 +7,6 @@ members = [
     "packages/manual",
     "packages/parser", 
     "packages/runtime",
+    "packages/runtime-tests",
     "packages/runtime-wasm",
 ]

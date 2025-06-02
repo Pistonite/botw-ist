@@ -11,6 +11,8 @@ use skybook_runtime::{
 use tsify_next::Tsify;
 use wasm_bindgen::prelude::*;
 
+mod interop;
+
 mod js_item_resolve;
 use js_item_resolve::JsQuotedItemResolver;
 

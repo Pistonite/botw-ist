@@ -1,7 +1,9 @@
+use crate::game::ActorInfoData;
 use crate::vm::VirtualMachine;
 use crate::env::{Environment, DataId};
 
 pub static NAME: &str = "ksys::act::InfoData";
+pub type Type = ActorInfoData;
 
 pub const fn size(_env: Environment) -> u32 {
     0x98

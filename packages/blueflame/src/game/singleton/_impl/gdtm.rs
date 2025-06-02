@@ -1,4 +1,4 @@
-use crate::game::{ GdtManager, };
+use crate::game::GdtManager;
 use crate::vm::VirtualMachine;
 use crate::env::{Environment, ProxyId};
 

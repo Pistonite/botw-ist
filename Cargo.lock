@@ -2524,6 +2524,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "skybook-runtime-tests"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "blueflame",
+ "colog",
+ "log",
+]
+
+[[package]]
 name = "skybook-runtime-wasm"
 version = "0.0.0"
 dependencies = [

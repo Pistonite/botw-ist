@@ -32,6 +32,9 @@ impl std::fmt::Debug for Process {
 }
 
 impl Process {
+    pub fn is160(&self) -> bool {
+        self.memory.env().is160()
+    }
     /// Get the game version
     pub fn game_ver(&self) -> GameVer {
         self.memory.env().game_ver

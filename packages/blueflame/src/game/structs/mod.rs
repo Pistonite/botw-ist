@@ -3,6 +3,8 @@
 
 mod gdt;
 pub use gdt::*;
+mod info_data;
+pub use info_data::*;
 mod string;
 pub use string::*;
 mod pouch;
@@ -10,8 +12,6 @@ pub use pouch::*;
 
 use std::fmt;
 use std::marker::PhantomData;
-
-use derive_more::derive::Constructor;
 
 use crate::memory::{MemObject, Ptr};
 
@@ -169,27 +169,6 @@ pub enum CookEffectId {
     Fireproof = 16,
 }
 
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone, Constructor)]
-#[size(0x288)]
-pub struct CookItem {
-    #[offset(0x0)]
-    actor_name: FixedSafeString40,
-    #[offset(0x58)]
-    ingredients: [FixedSafeString40; 5],
-    #[offset(0x210)]
-    life_recover: f32,
-    #[offset(0x214)]
-    effect_time: i32,
-    #[offset(0x218)]
-    sell_price: i32,
-    #[offset(0x21c)]
-    effect_id: i32,
-    #[offset(0x220)]
-    vitality_boost: f32,
-    #[offset(0x224)]
-    is_crit: bool,
-}
 
 #[allow(non_snake_case)]
 #[derive(MemObject, Clone, Copy)]

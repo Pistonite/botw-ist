@@ -7,7 +7,7 @@ use crate::memory::{
 };
 
 #[doc(inline)]
-pub use blueflame_deps::Ptr;
+pub use blueflame_deps::{Ptr, mem};
 
 /// Wrapper around a raw physical address. i.e. a pointer
 ///
@@ -459,6 +459,14 @@ impl Ptr![u8] {
         Ok(())
     }
 
+    /// Store a byte slice into the pointer as a char* plus a zero terminator
+    pub fn store_bytes_plus_nul(self, s: impl AsRef<[u8]>, memory: &mut Memory) -> Result<(), Error> {
+        let bytes = s.as_ref();
+        self.store_slice(bytes, memory)?;
+        Ptr!(<u8>(self.to_raw() + bytes.len() as u64)).store(&0u8, memory)?;
+        Ok(())
+    }
+
     /// Load a zero-terminated UTF-8 string from the pointer as a char*
     pub fn load_utf8_lossy(self, memory: &Memory) -> Result<String, Error> {
         let bytes = self.load_zero_terminated(memory)?;
@@ -477,13 +485,7 @@ impl Ptr![u8] {
 
     /// Store a string into memory as a zero-terminated UTF-8 string
     pub fn store_string(self, s: impl AsRef<str>, memory: &mut Memory) -> Result<(), Error> {
-        // store the bytes of the string
-        let bytes = s.as_ref().as_bytes();
-        let byte_len = bytes.len();
-        self.store_slice(bytes, memory)?;
-        // store null terminator
-        Ptr!(<u8>(self.to_raw() + byte_len as u64)).store(&0u8, memory)?;
-        Ok(())
+        self.store_bytes_plus_nul(s.as_ref().as_bytes(), memory)
     }
 }
 
