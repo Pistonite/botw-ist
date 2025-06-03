@@ -4,7 +4,7 @@ use teleparse::{Parser, Span, ToSpan};
 
 use crate::SemanticToken;
 use crate::cir;
-use crate::error::{Error, ErrorReport};
+use crate::error::{cir_push_error, ErrorReport, IntoErrorReport};
 use crate::search::QuotedItemResolver;
 use crate::syn;
 
@@ -60,18 +60,16 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
     let mut output = ParseOutput::default();
     let mut parser = match Parser::new(script) {
         Err(e) => {
-            output
-                .errors
-                .push(Error::Unexpected(e.to_string()).spanned(&full_span));
+            let errors = &mut output.errors;
+            cir_push_error!(errors, &full_span, Unexpected(e.to_string()));
             return output;
         }
         Ok(p) => p,
     };
     let parsed_script = match parser.parse::<syn::Script>() {
         Err(e) => {
-            output
-                .errors
-                .push(Error::Unexpected(e.to_string()).spanned(&full_span));
+            let errors = &mut output.errors;
+            cir_push_error!(errors, &full_span, Unexpected(e.to_string()));
             return output;
         }
         Ok(pt) => pt,
@@ -79,7 +77,7 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
 
     // extract syntax errors
     for error in std::mem::take(&mut parser.info_mut().errors) {
-        output.errors.push(error.into());
+        output.errors.push(error.into_error_report());
     }
 
     let Some(parsed_script) = parsed_script else {

@@ -8,7 +8,7 @@ use skybook_runtime::{
     CustomImageInitParams, ResultInterop, RunHandle, RunOutput, Runtime, RuntimeInitError,
     RuntimeInitOutput, erc, error::MaybeAborted, exec::Spawner, iv,
 };
-use tsify_next::Tsify;
+use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
 mod interop;
@@ -48,6 +48,14 @@ pub async fn module_init(wasm_module_path: String, wasm_bindgen_js_path: String)
     });
 
     log::info!("wasm module initialized successfully");
+}
+
+#[derive(Debug, Clone, Serialize, Tsify)]
+#[tsify(into_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+pub struct RuntimeInitOutput {
+    /// "1.5" or "1.6"
+    pub game_version: String,
 }
 
 /// Initialize the simulator runtime

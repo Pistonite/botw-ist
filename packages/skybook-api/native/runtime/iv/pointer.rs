@@ -7,7 +7,7 @@
 #[derive(Debug, Default, Clone, serde::Serialize)]
 #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
 #[cfg_attr(feature = "__ts-binding", ts(export))]
-#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+#[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
 #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
 #[repr(transparent)]
 pub struct Pointer(u128);

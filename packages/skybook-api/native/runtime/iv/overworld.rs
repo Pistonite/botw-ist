@@ -1,7 +1,7 @@
 //! Item data for overworld actors
 
 mod __impl {
-    use crate::iv;
+    use crate::runtime::iv;
     use serde::Serialize;
 
     /// View of the items in the overworld (technically not inventory, but convienient to think of
@@ -9,7 +9,7 @@ mod __impl {
     #[derive(Debug, Default, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
-    #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+    #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
     #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
     #[serde(rename_all = "camelCase")]
     #[allow(non_camel_case_types)]
@@ -21,7 +21,7 @@ mod __impl {
     #[derive(Debug, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
-    #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+    #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
     #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
     #[serde(rename_all = "kebab-case", tag = "type")]
     #[allow(non_camel_case_types)]

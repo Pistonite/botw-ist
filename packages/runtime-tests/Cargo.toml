@@ -8,6 +8,6 @@ path = "../blueflame"
 features = ["trace-memory"]
 
 [dependencies]
-anyhow = "1.0.98"
-colog = "1.3.0"
-log = "0.4.27"
+anyhow = { workspace = true }
+colog = { workspace = true }
+log = { workspace = true }

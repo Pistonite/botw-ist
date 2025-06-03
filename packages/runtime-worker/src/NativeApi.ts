@@ -3,7 +3,6 @@ import { type AsyncErc, makeAsyncErcType } from "@pistonite/pure/memory";
 import { once } from "@pistonite/pure/sync";
 
 import type {
-    RuntimeInitOutput,
     InvView_Gdt,
     InvView_Overworld,
     InvView_PouchList,
@@ -19,6 +18,10 @@ import type { Pwr, WorkerError } from "./Error.ts";
 export type QuotedItemResolverFn = (
     query: string,
 ) => Promise<ItemSearchResult | undefined | null>;
+
+export type RuntimeInitOutput = {
+    gameVersion: string;
+};
 
 export interface NativeApi {
     /** Initialize the runtime with the given image info */

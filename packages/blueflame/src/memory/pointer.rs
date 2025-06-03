@@ -214,7 +214,15 @@ const _: () = {
     impl<T, const SIZE: u32> Eq for PtrToSized<T, SIZE> {}
     impl<T, const SIZE: u32, const LEN: usize> Eq for PtrToArray<T, SIZE, LEN> {}
 
-    // Ord, Add, Sub probably not worth the effort
+    // Pointer Arithmetic
+    impl<T, const SIZE: u32> std::ops::Add<u64> for PtrToSized<T, SIZE> {
+        type Output = Self;
+        fn add(self, rhs: u64) -> Self::Output {
+            Self::new(self.value + rhs * SIZE as u64)
+        }
+    }
+
+    // Ord, Sub probably not worth the effort
 };
 
 // Get layout of the pointee type

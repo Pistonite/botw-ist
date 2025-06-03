@@ -51,10 +51,10 @@ pub fn get_cook_item(
     let m = cpu.proc.memory_mut();
 
     cook_item.construct(m)?;
-    mem! { m: safe_store(&cook_item->actor_name) = *actor; };
+    Ptr!(&cook_item->actor_name).safe_store(actor, m)?;
     for (i, ingredient) in ingredients.iter().take(5).enumerate() {
         let p = cook_item.ith_ingredient(i as u64);
-        mem! { m: safe_store(p) = *ingredient; };
+        p.safe_store(ingredient, m)?;
     }
     mem! { m:
         *(&cook_item->life_recover) = life_recover.unwrap_or(0.0);

@@ -234,8 +234,6 @@ dependencies = [
  "rand_xoshiro",
  "rkyv",
  "serde",
- "serde_json",
- "serde_yaml",
  "sha2",
  "static_assertions",
  "thiserror 2.0.12",
@@ -483,6 +481,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "convert_case"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bb402b8d4c85569410425650ce3eddc7d698ed96d39a73f941b08fb63082f1e7"
+dependencies = [
+ "unicode-segmentation",
+]
+
+[[package]]
 name = "core-foundation-sys"
 version = "0.8.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -671,22 +678,24 @@ dependencies = [
 
 [[package]]
 name = "derive_more"
-version = "1.0.0"
+version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4a9b99b9cbbe49445b21764dc0625032a89b145a2642e67603e1c936f5458d05"
+checksum = "093242cf7570c207c83073cf82f79706fe7b8317e98620a47d5be7c3d8497678"
 dependencies = [
  "derive_more-impl",
 ]
 
 [[package]]
 name = "derive_more-impl"
-version = "1.0.0"
+version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb7330aeadfbe296029522e6c40f315320aba36fc43a5b3632f3795348f3bd22"
+checksum = "bda628edc44c4bb645fbe0f758797143e4e07926f7ebf4e9bdfbd3d2ce621df3"
 dependencies = [
+ "convert_case",
  "proc-macro2",
  "quote",
  "syn 2.0.101",
+ "unicode-xid",
 ]
 
 [[package]]
@@ -2412,19 +2421,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_yaml"
-version = "0.9.34+deprecated"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a8b1a1a2ebf674015cc02edccce75287f1a0130d394307b36743c2f5d504b47"
-dependencies = [
- "indexmap",
- "itoa",
- "ryu",
- "serde",
- "unsafe-libyaml",
-]
-
-[[package]]
 name = "sha1"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2474,6 +2470,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56199f7ddabf13fe5074ce809e7d3f42b42ae711800501b5b16ea82ad029c39d"
 
 [[package]]
+name = "skybook-api"
+version = "0.0.0"
+dependencies = [
+ "enumset",
+ "serde",
+ "teleparse",
+ "thiserror 2.0.12",
+ "ts-rs",
+ "tsify",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "skybook-manual-preprocessor"
 version = "0.0.0"
 dependencies = [
@@ -2495,14 +2504,12 @@ dependencies = [
  "enumset",
  "indoc",
  "serde",
+ "skybook-api",
  "static_assertions",
  "teleparse",
  "textdistance",
  "thiserror 2.0.12",
  "tokio",
- "ts-rs",
- "tsify-next",
- "wasm-bindgen",
 ]
 
 [[package]]
@@ -2513,12 +2520,11 @@ dependencies = [
  "log",
  "oneshot",
  "serde",
+ "skybook-api",
  "skybook-parser",
+ "teleparse",
  "thiserror 2.0.12",
  "tokio",
- "ts-rs",
- "tsify-next",
- "wasm-bindgen",
  "wasm-bindgen-spawn",
  "web-sys",
 ]
@@ -2546,7 +2552,7 @@ dependencies = [
  "skybook-parser",
  "skybook-runtime",
  "ts-rs",
- "tsify-next",
+ "tsify",
  "wasm-bindgen",
  "wasm-bindgen-futures",
 ]
@@ -2819,9 +2825,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.45.0"
+version = "1.45.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2513ca694ef9ede0fb23fe71a4ee4107cb102b9dc1930f6d0fd77aae068ae165"
+checksum = "75ef51a33ef1da925cea3e4eb122833cb377c61439ca401b770f54902b806779"
 dependencies = [
  "backtrace",
  "bytes",
@@ -2959,22 +2965,22 @@ dependencies = [
 ]
 
 [[package]]
-name = "tsify-next"
-version = "0.5.6"
+name = "tsify"
+version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d0f2208feeb5f7a6edb15a2389c14cd42480ef6417318316bb866da5806a61d"
+checksum = "b2ec91b85e6c6592ed28636cb1dd1fac377ecbbeb170ff1d79f97aac5e38926d"
 dependencies = [
  "serde",
  "serde-wasm-bindgen",
- "tsify-next-macros",
+ "tsify-macros",
  "wasm-bindgen",
 ]
 
 [[package]]
-name = "tsify-next-macros"
-version = "0.5.6"
+name = "tsify-macros"
+version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f81253930d0d388a3ab8fa4ae56da9973ab171ef833d1be2e9080fc3ce502bd6"
+checksum = "9a324606929ad11628a19206d7853807481dcaecd6c08be70a235930b8241955"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3026,10 +3032,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5a5f39404a5da50712a4c1eecf25e90dd62b613502b7e925fd4e4d19b5c96512"
 
 [[package]]
-name = "unsafe-libyaml"
-version = "0.2.11"
+name = "unicode-segmentation"
+version = "1.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "673aac59facbab8a9007c7f6108d11f63b603f7cabff99fabf650fea5c32b861"
+checksum = "f6ccf251212114b54433ec949fd6a7841275f9ada20dddd2f29e9ceea4501493"
+
+[[package]]
+name = "unicode-xid"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853"
 
 [[package]]
 name = "url"

@@ -1,6 +1,6 @@
 use teleparse::Span;
 
-use crate::error::{Error, ErrorReport};
+use crate::error::{cir_error, ErrorReport};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Trial {
@@ -27,9 +27,9 @@ pub fn parse_trial(trial_name: &str, span: &Span) -> Result<Trial, ErrorReport> 
         "waterblight-refight" => Ok(Trial::RefightWater),
         "fireblight-refight" => Ok(Trial::RefightFire),
         "windblight-refight" => Ok(Trial::RefightWind),
-        _ => Err(ErrorReport::spanned(
+        _ => cir_error!(
             span,
-            Error::InvalidTrial(trial_name.to_string()),
-        )),
+            InvalidTrial(trial_name.to_string())
+        ),
     }
 }

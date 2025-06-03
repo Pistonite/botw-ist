@@ -1,8 +1,19 @@
+use std::sync::Mutex;
+
+use blueflame::env::{DlcVer, Environment, GameVer};
+use blueflame::processor::{Cpu1, Process};
+use blueflame::{program, linker};
+
+use crate::exec::{Executor, Spawner};
+use crate::{Report, RuntimeInitError};
+
+pub use skybook_api::runtime::sim::CustomImageInitParams;
+
 
 pub struct Runtime {
     pub env: Mutex<Environment>,
-    pub executor: Executor,
-    pub initial_process: Mutex<Option<Process>>,
+    executor: Executor,
+    initial_process: Mutex<Option<Process>>,
     // TODO: pool + Spawn
     // TODO: initial memory (Mutex<Option<Arc<Memory>>> probably? or Mutex<Option<Memory>>)
 }
@@ -16,6 +27,15 @@ impl Runtime {
             executor,
             initial_process: Mutex::new(None),
         }
+    }
+
+    /// Get the initial process, or return an error if not initialized
+    pub fn initial_process(&self) -> Result<Process, crate::error::Error> {
+        self.initial_process
+            .lock()
+            .unwrap()
+            .clone()
+            .ok_or(crate::error::Error::Uninitialized)
     }
 
     pub fn game_version(&self) -> GameVer {
@@ -96,7 +116,19 @@ impl Runtime {
             *initial_memory = Some(process);
         }
 
-        // todo!()
         Ok(())
     }
+
+    pub async fn execute<F, T>(&self, f: F) -> Report<T>
+    where
+        F: FnOnce(&mut Cpu1) -> T + Send + 'static,
+        T: Send + 'static,
+    {
+        match self.executor.execute(f).await {
+            Ok(_) => todo!(),
+            Err(e) => {
+            }
+        }
+    }
 }
+

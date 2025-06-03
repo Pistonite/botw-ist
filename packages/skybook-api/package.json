@@ -33,7 +33,6 @@
         "vitest": "catalog:"
     },
     "nocheck": [
-        "/src/sides/*.ts",
         "/src/interfaces/*.ts"
     ]
 }

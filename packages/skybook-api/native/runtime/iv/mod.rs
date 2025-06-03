@@ -6,3 +6,5 @@ mod overworld;
 pub use overworld::*;
 mod gdt;
 pub use gdt::*;
+mod pointer;
+pub use pointer::*;

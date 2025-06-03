@@ -1,11 +1,41 @@
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
-use crate::sim;
+use skybook_parser::ParseOutput;
+
+use crate::{sim, ErrorReport, MaybeAborted};
 
 pub struct Run {
+    /// Handle for the running task
     handle: Arc<RunHandle>,
-    states: Vec<Arc<sim::State>>,
+    /// Data produced by the run
+    output: sim::RunOutput,
+}
+
+impl Run {
+    pub fn new(handle: Arc<RunHandle>) -> Self {
+        Run {
+            handle,
+            output: Default::default(),
+        }
+    }
+
+    /// Execute the parsed simulation script
+    pub async fn run_parsed(
+        mut self,
+        parsed: Arc<ParseOutput>,
+        runtime: &sim::Runtime
+    ) -> MaybeAborted<sim::RunOutput> {
+        self.output.states.reserve(parsed.steps.len());
+
+        for step in &parsed.steps {
+            let state = self.output.states.last().cloned().unwrap_or_default();
+        }
+        // Here we would run the simulation using the parsed output
+        // and the handle to check for abortion requests.
+        // For now, we return an empty RunOutput.
+        MaybeAborted::Ok(RunOutput { states: vec![] })
+    }
 }
 
 /// Handle for a running simulation task.

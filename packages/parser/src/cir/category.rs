@@ -1,66 +1,11 @@
-use enumset::{EnumSet, EnumSetType, enum_set};
-use serde::Serialize;
+use enumset::EnumSet;
 use teleparse::ToSpan;
 
 use crate::cir;
-use crate::error::{Error, ErrorReport};
+use crate::error::{cir_error, ErrorReport};
 use crate::syn;
 
-#[derive(Debug, EnumSetType, Serialize)]
-#[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
-#[cfg_attr(feature = "__ts-binding", ts(export))]
-#[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
-#[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
-pub enum Category {
-    //////////////////////////////////
-    // DO NOT update the enum names
-    // The translation files needs to be updated accordingly!!!
-    //////////////////////////////////
-    Weapon,
-    Bow,
-    Shield,
-    Armor,
-    ArmorHead,
-    ArmorUpper,
-    ArmorLower,
-    Material,
-    Food,
-    KeyItem,
-}
-
-impl Category {
-    /// Check if this category is an armor category
-    pub const fn is_armor(&self) -> bool {
-        matches!(
-            self,
-            Category::Armor | Category::ArmorHead | Category::ArmorUpper | Category::ArmorLower
-        )
-    }
-
-    /// Return the armor category if this category is armor (or a subcategory of armor),
-    /// otherwise return the category itself
-    pub const fn coerce_armor(&self) -> Self {
-        match self {
-            Category::ArmorHead => Category::Armor,
-            Category::ArmorUpper => Category::Armor,
-            Category::ArmorLower => Category::Armor,
-            other => *other,
-        }
-    }
-
-    /// Return categories except for ArmorHead, ArmorUpper, and ArmorLower
-    pub const fn non_sub_categories() -> EnumSet<Self> {
-        enum_set!(
-            Category::Weapon
-                | Category::Bow
-                | Category::Shield
-                | Category::Armor
-                | Category::Material
-                | Category::Food
-                | Category::KeyItem
-        )
-    }
-}
+pub use skybook_api::parser::cir::Category;
 
 pub fn parse_category_in(
     category: &syn::Category,
@@ -69,7 +14,7 @@ pub fn parse_category_in(
     let filter = filter.into();
     let c = parse_category(category);
     if !filter.contains(c) {
-        return Err(Error::InvalidCategory(c).spanned(category));
+        cir_error!( category, InvalidCategory(c));
     }
     Ok(c)
 }
@@ -138,14 +83,12 @@ pub fn parse_use_category_with_times(
 }
 
 pub fn parse_times_clause(times: Option<&syn::TimesClause>) -> Result<i64, ErrorReport> {
-    match times {
-        None => Ok(1),
-        Some(times) => {
-            let t = cir::parse_syn_int_str_i32(&times.times, &times.span())?;
-            if t < 1 {
-                return Err(Error::InvalidTimesClause(t).spanned(times));
-            }
-            Ok(t as i64)
-        }
+    let Some(times) = times else {
+        return Ok(1);
+    };
+    let t = cir::parse_syn_int_str_i32(&times.times, &times.span())?;
+    if t < 1 {
+        cir_error!(times, InvalidTimesClause(t));
     }
+    Ok(t as i64)
 }

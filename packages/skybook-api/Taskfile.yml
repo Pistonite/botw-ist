@@ -34,6 +34,17 @@ tasks:
           src/RuntimeApp.ts
       - task: ecma:mono-fix
 
+  build-ts-binding:
+    env:
+      LC_ALL: C # consistent sort order
+    cmds:
+      - rm -f bindings/*.ts ../skybook-api/src/parser/*
+      - cargo test --lib --features __ts-binding
+      - find bindings -type f | sort | sed 's/^bindings/export * from "./' | sed 's/$/";/' > index.ts
+      - mv index.ts bindings
+      # - $(which mkdir) -p ../skybook-api/src/parser
+      # - mv bindings/*.ts ../skybook-api/src/parser
+
   check:
     cmds:
       - task: build

@@ -3,7 +3,7 @@ use std::sync::Arc;
 use teleparse::ToSpan;
 
 use crate::cir;
-use crate::error::{Error, ErrorReport};
+use crate::error::{cir_push_error, ErrorReport};
 use crate::search::QuotedItemResolver;
 use crate::syn;
 
@@ -273,7 +273,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             let i = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
                 Ok(i) if i >= 0 => i,
                 Ok(i) => {
-                    errors.push(Error::IntRange(i.to_string()).spanned(&cmd.items.0));
+                    cir_push_error!(errors, &cmd.items.0, IntRange(i.to_string()));
                     return None;
                 }
                 Err(e) => {
@@ -284,7 +284,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             let j = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
                 Ok(i) if i >= 0 => i,
                 Ok(i) => {
-                    errors.push(Error::IntRange(i.to_string()).spanned(&cmd.items.0));
+                    cir_push_error!(errors, &cmd.items.0, IntRange(i.to_string()));
                     return None;
                 }
                 Err(e) => {
@@ -298,7 +298,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             let i = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
                 Ok(i) if i >= 0 => i,
                 Ok(i) => {
-                    errors.push(Error::IntRange(i.to_string()).spanned(&cmd.items.0));
+                    cir_push_error!(errors, &cmd.items.0, IntRange(i.to_string()));
                     return None;
                 }
                 Err(e) => {
@@ -309,7 +309,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             let j = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
                 Ok(i) if i >= 0 => i,
                 Ok(i) => {
-                    errors.push(Error::IntRange(i.to_string()).spanned(&cmd.items.0));
+                    cir_push_error!(errors, &cmd.items.0, IntRange(i.to_string()));
                     return None;
                 }
                 Err(e) => {
@@ -370,10 +370,7 @@ pub fn parse_annotation(
                     None
                 }
                 Ok(x) if x < 8 || x > 20 => {
-                    errors.push(
-                        Error::InvalidEquipmentSlotNum(cir::Category::Weapon, x)
-                            .spanned(&cmd.amount.span()),
-                    );
+                    cir_push_error!(errors, &cmd.amount, InvalidEquipmentSlotNum(cir::Category::Weapon, x));
                     None
                 }
                 Ok(x) => Some(cir::Command::set_gdt_s32("WeaponPorchStockNum", x)),
@@ -386,10 +383,7 @@ pub fn parse_annotation(
                     None
                 }
                 Ok(x) if x < 5 || x > 14 => {
-                    errors.push(
-                        Error::InvalidEquipmentSlotNum(cir::Category::Bow, x)
-                            .spanned(&cmd.amount.span()),
-                    );
+                    cir_push_error!(errors, &cmd.amount, InvalidEquipmentSlotNum(cir::Category::Bow, x));
                     None
                 }
                 Ok(x) => Some(cir::Command::set_gdt_s32("BowPorchStockNum", x)),
@@ -402,10 +396,7 @@ pub fn parse_annotation(
                     None
                 }
                 Ok(x) if x < 4 || x > 20 => {
-                    errors.push(
-                        Error::InvalidEquipmentSlotNum(cir::Category::Shield, x)
-                            .spanned(&cmd.amount.span()),
-                    );
+                    cir_push_error!(errors, &cmd.amount, InvalidEquipmentSlotNum(cir::Category::Shield, x));
                     None
                 }
                 Ok(x) => Some(cir::Command::set_gdt_s32("ShieldPorchStockNum", x)),

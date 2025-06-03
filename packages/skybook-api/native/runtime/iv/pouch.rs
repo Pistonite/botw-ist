@@ -1,8 +1,7 @@
 //! Item data for the pouch
 
 mod __impl {
-    use crate::iv;
-    use crate::pointer::Pointer;
+    use crate::runtime::iv;
     use serde::Serialize;
 
     /// List view of the Pouch Inventory.
@@ -14,7 +13,7 @@ mod __impl {
     #[derive(Debug, Default, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
-    #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+    #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
     #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
     #[serde(rename_all = "camelCase")]
     #[allow(non_camel_case_types)]
@@ -39,7 +38,7 @@ mod __impl {
     #[derive(Debug, Default, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
-    #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+    #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
     #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
     #[serde(rename_all = "camelCase")]
     #[allow(non_camel_case_types)]
@@ -58,7 +57,7 @@ mod __impl {
     #[derive(Debug, Default, Clone, serde::Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
-    #[cfg_attr(feature = "wasm", derive(tsify_next::Tsify))]
+    #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
     #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
     #[serde(rename_all = "camelCase")]
     #[allow(non_camel_case_types)]
@@ -98,7 +97,7 @@ mod __impl {
         ///
         /// This is address of the list node, not the PouchItem.
         /// The PouchItem pointer can be obtained by subtracting 8 from this value
-        pub node_addr: Pointer,
+        pub node_addr: iv::Pointer,
 
         /// Is this a valid node, in the item array
         pub node_valid: bool,
@@ -110,10 +109,10 @@ mod __impl {
         pub node_pos: i128,
 
         /// Pointer to the previous node
-        pub node_prev: Pointer,
+        pub node_prev: iv::Pointer,
 
         /// Pointer to the next node
-        pub node_next: Pointer,
+        pub node_next: iv::Pointer,
 
         // both allocated_idx and unallocated_idx is here because
         // it could be theoretically possible that both lists eventually
