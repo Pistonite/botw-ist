@@ -1,17 +1,25 @@
-use std::sync::Arc;
+use blueflame::memory;
 
-use crate::{iv, sim, ErrorReport};
+use crate::{iv, sim};
+use crate::error::{RuntimeViewError, ErrorReport};
 
 #[derive(Clone, Default)]
 pub struct RunOutput {
     /// State at each simulation step
     pub states: Vec<sim::State>,
-    errors: Vec<ErrorReport>,
+    pub errors: Vec<ErrorReport>,
 }
 
 impl RunOutput {
-    // TODO: error
-    pub fn get_pouch_list(&self, step: usize) -> iv::PouchList {
+    /// Get the pouch inventory view for the given step in the script
+    ///
+    /// If there are no steps in the script, an empty pouch list is returned. Otherwise, 
+    /// the state at the given step is used to generate the pouch list unless the step is out of
+    /// bounds, in which case the last state is used.
+    pub fn get_pouch_list(&self, step: usize) -> Result<iv::PouchList, RuntimeViewError> {
+        let Some(state) = self.get_state_by_step(step) else {
+            return Ok(Default::default());
+        };
         // mock data
         let mock_item1 = iv::PouchItem {
             common: iv::CommonItem {
@@ -270,10 +278,10 @@ impl RunOutput {
         }
     }
 
-    // fn get_state_by_step(&self, step: usize) -> Option<sim::State> {
-    //     match self.states.get(step) {
-    //         Some(state) => Some(Arc::clone(state)),
-    //         None => Some(Arc::clone(self.states.last()?)),
-    //     }
-    // }
+    fn get_state_by_step(&self, step: usize) -> Option<&sim::State> {
+        if self.states.is_empty() {
+            return None;
+        }
+        self.states.get(step).or_else(|| self.states.last())
+    }
 }

@@ -51,6 +51,10 @@ impl ItemMeta {
     pub fn parse(&mut self, meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) {
         cir::parse_meta(meta, self, errors);
     }
+
+    pub fn life_recover_f32(&self) -> Option<f32> {
+        self.life_recover.map(|x| x as f32)
+    }
 }
 
 impl MetaParser for &mut ItemMeta {

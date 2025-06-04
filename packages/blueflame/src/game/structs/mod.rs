@@ -9,9 +9,8 @@ mod string;
 pub use string::*;
 mod pouch;
 pub use pouch::*;
-
-use std::fmt;
-use std::marker::PhantomData;
+mod container;
+pub use container::*;
 
 use crate::memory::{MemObject, Ptr};
 
@@ -92,64 +91,6 @@ pub struct GrabbedItemInfo {
     _9: bool,
 }
 
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone, Copy)]
-#[size(0x10)]
-pub struct ListNode {
-    #[offset(0x0)]
-    pub mPrev: Ptr![ListNode],
-    #[offset(0x8)]
-    pub mNext: Ptr![ListNode],
-}
-
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone, Copy, Debug)]
-#[size(0x8)]
-pub struct Vector2f {
-    #[offset(0x0)]
-    pub x: f32,
-    #[offset(0x4)]
-    pub y: f32,
-}
-
-impl PartialEq<Vec<f32>> for Vector2f {
-    fn eq(&self, other: &Vec<f32>) -> bool {
-        other.len() == 2 && self.x == other[0] && self.y == other[1]
-    }
-}
-
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone, Copy)]
-#[size(0x14)]
-pub struct CookData {
-    #[offset(0x0)]
-    pub mHealthRecover: i32,
-    #[offset(0x4)]
-    pub mEffectDuration: i32,
-    #[offset(0x8)]
-    pub mSellPrice: i32,
-    #[offset(0xc)]
-    pub mEffect: Vector2f,
-}
-
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone, Copy)]
-#[size(0x14)]
-pub struct WeaponData {
-    #[offset(0x0)]
-    mModifierValue: u32,
-    #[offset(0x8)]
-    mModifier: u32,
-}
-
-impl From<CookData> for WeaponData {
-    fn from(cook: CookData) -> Self {
-        WeaponData {
-            mModifierValue: cook.mSellPrice as u32,
-            mModifier: cook.mHealthRecover as u32,
-        }
-    }
-}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(i32)]
@@ -182,7 +123,6 @@ struct PtrArrayImpl {
     mPtrs: Ptr![Ptr![FixedSafeString40][5]],
 }
 
-#[allow(non_snake_case)]
 #[derive(MemObject, Clone, Copy)]
 #[size(0x8)]
 struct FreeListNode {
@@ -220,166 +160,89 @@ struct FixedSafeStringArray {
     mWork: [u8; 480],
 }
 
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone)]
-#[size(0x298)]
-pub struct PouchItem {
-    #[offset(0x8)]
-    mListNode: ListNode,
-    // PouchItemType
-    #[offset(0x18)]
-    mType: i32,
-    // ItemUse
-    #[offset(0x1c)]
-    mItemUse: i32,
-    #[offset(0x20)]
-    pub mValue: i32,
-    #[offset(0x24)]
-    mEquipped: bool,
-    #[offset(0x25)]
-    mInInventory: bool,
-    #[offset(0x28)]
-    mName: FixedSafeString40,
-    #[offset(0x80)]
-    pub mData: CookData,
-    #[offset(0x98)]
-    mIngredients: FixedSafeStringArray,
-}
 
-impl PouchItem {
-    pub fn get_name(&self) -> String {
-        self.mName.to_string()
-    }
+// impl PouchItem {
+//     pub fn get_name(&self) -> String {
+//         self.mName.to_string()
+//     }
+//
+//     pub fn get_type(&self) -> PouchItemType {
+//         match self.mType {
+//             0x0 => PouchItemType::Sword,
+//             0x1 => PouchItemType::Bow,
+//             0x2 => PouchItemType::Arrow,
+//             0x3 => PouchItemType::Shield,
+//             0x4 => PouchItemType::ArmorHead,
+//             0x5 => PouchItemType::ArmorUpper,
+//             0x6 => PouchItemType::ArmorLower,
+//             0x7 => PouchItemType::Material,
+//             0x8 => PouchItemType::Food,
+//             0x9 => PouchItemType::KeyItem,
+//             -1 => PouchItemType::Invalid,
+//             _ => PouchItemType::Invalid, // Handle invalid values
+//         }
+//     }
+//
+//     pub fn get_use(&self) -> ItemUse {
+//         match self.mItemUse {
+//             0x0 => ItemUse::WeaponSmallSword,
+//             0x1 => ItemUse::WeaponLargeSword,
+//             0x2 => ItemUse::WeaponSpear,
+//             0x3 => ItemUse::WeaponBow,
+//             0x4 => ItemUse::WeaponShield,
+//             0x5 => ItemUse::ArmorHead,
+//             0x6 => ItemUse::ArmorUpper,
+//             0x7 => ItemUse::ArmorLower,
+//             0x8 => ItemUse::Item,
+//             0x9 => ItemUse::ImportantItem,
+//             0xa => ItemUse::CureItem,
+//             _ => ItemUse::Invalid,
+//         }
+//     }
+//
+//     pub fn is_weapon(&self) -> bool {
+//         matches!(self.mItemUse, 0x0..=0x4)
+//     }
+// }
 
-    pub fn get_type(&self) -> PouchItemType {
-        match self.mType {
-            0x0 => PouchItemType::Sword,
-            0x1 => PouchItemType::Bow,
-            0x2 => PouchItemType::Arrow,
-            0x3 => PouchItemType::Shield,
-            0x4 => PouchItemType::ArmorHead,
-            0x5 => PouchItemType::ArmorUpper,
-            0x6 => PouchItemType::ArmorLower,
-            0x7 => PouchItemType::Material,
-            0x8 => PouchItemType::Food,
-            0x9 => PouchItemType::KeyItem,
-            -1 => PouchItemType::Invalid,
-            _ => PouchItemType::Invalid, // Handle invalid values
-        }
-    }
+// impl fmt::Display for PouchItem {
+//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+//         write!(
+//             f,
+//             "PouchItem {0}:\n -Type: {1:?}\n -Use: {2:?}\n -Value: {3}\n -Equipped: {4}\n -InInventory: {5}",
+//             self.get_name(),
+//             self.get_type(),
+//             self.get_use(),
+//             self.mValue,
+//             self.mEquipped,
+//             self.mInInventory
+//         )
+//     }
+// }
 
-    pub fn get_use(&self) -> ItemUse {
-        match self.mItemUse {
-            0x0 => ItemUse::WeaponSmallSword,
-            0x1 => ItemUse::WeaponLargeSword,
-            0x2 => ItemUse::WeaponSpear,
-            0x3 => ItemUse::WeaponBow,
-            0x4 => ItemUse::WeaponShield,
-            0x5 => ItemUse::ArmorHead,
-            0x6 => ItemUse::ArmorUpper,
-            0x7 => ItemUse::ArmorLower,
-            0x8 => ItemUse::Item,
-            0x9 => ItemUse::ImportantItem,
-            0xa => ItemUse::CureItem,
-            _ => ItemUse::Invalid,
-        }
-    }
 
-    pub fn is_weapon(&self) -> bool {
-        matches!(self.mItemUse, 0x0..=0x4)
-    }
-}
+// #[allow(non_snake_case)]
+// #[derive(MemObject, Clone)]
+// #[size(0x44190)]
+// pub struct PauseMenuDataMgrLists {
+//     #[offset(0x0)]
+//     pub list1: PouchItemOffsetList,
+//     #[offset(0x18)]
+//     list2: PouchItemOffsetList,
+//     // #[offset(0x30)]
+//     // buffer: [PouchItem; 420],
+// }
+//
+// impl PauseMenuDataMgrLists {
+//     pub fn get_active_item_iter(&self) -> OffsetListIter<PouchItem> {
+//         self.list1.to_iter()
+//     }
+//
+//     pub fn get_inactive_item_iter(&self) -> OffsetListIter<PouchItem> {
+//         self.list2.to_iter()
+//     }
+// }
 
-impl fmt::Display for PouchItem {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "PouchItem {0}:\n -Type: {1:?}\n -Use: {2:?}\n -Value: {3}\n -Equipped: {4}\n -InInventory: {5}",
-            self.get_name(),
-            self.get_type(),
-            self.get_use(),
-            self.mValue,
-            self.mEquipped,
-            self.mInInventory
-        )
-    }
-}
-
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone)]
-#[size(0x18)]
-pub struct PouchItemOffsetList {
-    #[offset(0x0)]
-    pub mStartEnd: ListNode,
-    #[offset(0x10)]
-    pub mCount: i32,
-    #[offset(0x14)]
-    mOffset: i32,
-}
-
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone)]
-#[size(0x44190)]
-pub struct PauseMenuDataMgrLists {
-    #[offset(0x0)]
-    pub list1: PouchItemOffsetList,
-    #[offset(0x18)]
-    list2: PouchItemOffsetList,
-    // #[offset(0x30)]
-    // buffer: [PouchItem; 420],
-}
-
-impl PauseMenuDataMgrLists {
-    pub fn get_active_item_iter(&self) -> OffsetListIter<PouchItem> {
-        self.list1.to_iter()
-    }
-
-    pub fn get_inactive_item_iter(&self) -> OffsetListIter<PouchItem> {
-        self.list2.to_iter()
-    }
-}
-
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone)]
-#[size(0x44808)]
-pub struct PauseMenuDataMgr {
-    #[offset(0x68)]
-    pub mItemLists: PauseMenuDataMgrLists,
-    #[offset(0x441f8)]
-    mListHeads: [Ptr![Ptr![PouchItem]]; 7],
-    #[offset(0x44230)]
-    mTabs: [Ptr![PouchItem]; 50],
-    // PouchItemType
-    #[offset(0x443c0)]
-    mTabsType: [i32; 50],
-    #[offset(0x44488)]
-    pub mLastAddedItem: Ptr![PouchItem],
-    #[offset(0x44490)]
-    mLastAddedItemTab: i32,
-    #[offset(0x44494)]
-    mLastAddedItemSlot: i32,
-    #[offset(0x44498)]
-    mNumTabs: i32,
-    #[offset(0x444a0)]
-    mGrabbedItems: [GrabbedItemInfo; 5],
-    #[offset(0x44518)]
-    mRitoSoulItem: Ptr![PouchItem],
-    #[offset(0x44520)]
-    mGoronSoulItem: Ptr![PouchItem],
-    #[offset(0x44528)]
-    mZoraSoulItem: Ptr![PouchItem],
-    #[offset(0x44530)]
-    mGerudoSoulItem: Ptr![PouchItem],
-    #[offset(0x44540)]
-    mNewlyAddedItem: PouchItem,
-    #[offset(0x447d8)]
-    mIsPouchForQuest: bool,
-    #[offset(0x447e0)]
-    mEquippedWeapons: [Ptr![PouchItem]; 4],
-    // PouchCategory
-    #[offset(0x44800)]
-    pub mCategoryToSort: i32,
-}
 
 // impl PauseMenuDataMgr {
 //     pub fn get_last_item_added_name(&self, mem: &Memory) -> Result<String, Error> {
@@ -404,51 +267,33 @@ pub struct PauseMenuDataMgr {
 //     }
 // }
 
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone)]
-#[size(0x98)]
-pub struct InfoData {
-    #[offset(0x40)]
-    pub mHashesBytes: Ptr![u8],
-    #[offset(0x48)]
-    pub mHashes: Ptr![u32],
-    #[offset(0x50)]
-    pub mActorsBytes: Ptr![u8],
-    #[offset(0x58)]
-    pub mActorOffsets: Ptr![u32],
-    #[offset(0x60)]
-    pub mTagsIdx: i32,
-    #[offset(0x78)]
-    pub mNumActors: i32,
-}
-
-pub struct OffsetListIter<T> {
-    _start_end_node: ListNode,
-    _current_node: Ptr![ListNode],
-    pub offset: i32,
-    pub count: i32,
-    _index: i32,
-    _marker: PhantomData<T>,
-}
-
-impl PouchItemOffsetList {
-    pub fn to_iter(&self) -> OffsetListIter<PouchItem> {
-        OffsetListIter::<PouchItem>::new(self.mStartEnd, self.mOffset, self.mCount)
-    }
-}
-
-impl<T> OffsetListIter<T> {
-    pub fn new(start_end_node: ListNode, offset: i32, count: i32) -> Self {
-        OffsetListIter::<T> {
-            _start_end_node: start_end_node,
-            _current_node: start_end_node.mNext,
-            _marker: PhantomData,
-            offset,
-            count,
-            _index: 0,
-        }
-    }
-}
+// pub struct OffsetListIter<T> {
+//     _start_end_node: ListNode,
+//     _current_node: Ptr![ListNode],
+//     pub offset: i32,
+//     pub count: i32,
+//     _index: i32,
+//     _marker: PhantomData<T>,
+// }
+//
+// impl PouchItemOffsetList {
+//     pub fn to_iter(&self) -> OffsetListIter<PouchItem> {
+//         OffsetListIter::<PouchItem>::new(self.mStartEnd, self.mOffset, self.mCount)
+//     }
+// }
+//
+// impl<T> OffsetListIter<T> {
+//     pub fn new(start_end_node: ListNode, offset: i32, count: i32) -> Self {
+//         OffsetListIter::<T> {
+//             _start_end_node: start_end_node,
+//             _current_node: start_end_node.mNext,
+//             _marker: PhantomData,
+//             offset,
+//             count,
+//             _index: 0,
+//         }
+//     }
+// }
 
 // impl OffsetListIter<PouchItem> {
 //     pub fn get_entry(&self) -> Ptr<PouchItem> {

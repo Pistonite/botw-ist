@@ -4,8 +4,8 @@ use blueflame::env::{DlcVer, Environment, GameVer};
 use blueflame::processor::{Cpu1, Process};
 use blueflame::{program, linker};
 
-use crate::exec::{Executor, Spawner};
-use crate::{Report, RuntimeInitError};
+use crate::exec::{self, Executor, Spawner};
+use crate::error::{RuntimeInitError};
 
 pub use skybook_api::runtime::sim::CustomImageInitParams;
 
@@ -14,8 +14,6 @@ pub struct Runtime {
     pub env: Mutex<Environment>,
     executor: Executor,
     initial_process: Mutex<Option<Process>>,
-    // TODO: pool + Spawn
-    // TODO: initial memory (Mutex<Option<Arc<Memory>>> probably? or Mutex<Option<Memory>>)
 }
 
 impl Runtime {
@@ -119,16 +117,12 @@ impl Runtime {
         Ok(())
     }
 
-    pub async fn execute<F, T>(&self, f: F) -> Report<T>
+    pub async fn execute<F, T>(&self, f: F) -> Result<T, exec::Error>
     where
         F: FnOnce(&mut Cpu1) -> T + Send + 'static,
         T: Send + 'static,
     {
-        match self.executor.execute(f).await {
-            Ok(_) => todo!(),
-            Err(e) => {
-            }
-        }
+         self.executor.execute(f).await
     }
 }
 

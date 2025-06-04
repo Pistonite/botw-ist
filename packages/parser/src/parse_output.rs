@@ -17,6 +17,9 @@ pub struct ParseOutput {
     /// where the command start.
     pub steps: Vec<cir::Step>,
 
+    /// Length of the script
+    pub script_len: usize,
+
     /// [WIP] Indices of the first command in each page
     ///
     /// If steps is empty, this is also empty. Otherwise, the first element
@@ -58,6 +61,7 @@ pub enum StepDisplay {
 pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> ParseOutput {
     let full_span = Span::new(0, script.len());
     let mut output = ParseOutput::default();
+    output.script_len = script.len();
     let mut parser = match Parser::new(script) {
         Err(e) => {
             let errors = &mut output.errors;

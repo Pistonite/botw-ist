@@ -4,8 +4,8 @@ mod __impl {
 
     /// Interop type for @pistonite/pure/result
     #[derive(Debug, Clone, Serialize)]
-    #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
-    #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+    #[derive(tsify::Tsify)]
+    #[tsify(into_wasm_abi)]
     pub enum ResultInterop<T, E> {
         #[serde(rename = "val")]
         Ok(T),

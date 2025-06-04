@@ -1,3 +1,4 @@
+use derive_more::{Deref, DerefMut};
 use teleparse::{ToSpan, tp};
 
 use crate::cir;
@@ -58,6 +59,15 @@ pub struct Item {
     /// is adjusted to be the actor with the given star num
     pub meta: Option<cir::ItemMeta>,
 }
+
+impl Item {
+    /// Check if the item is a CookResult (based on actor name)
+    pub fn is_cook_item(&self) -> bool {
+        self.actor.starts_with("Item_Cook_")
+    }
+}
+
+
 pub async fn parse_item_list_finite_optional<R: QuotedItemResolver>(
     list: &tp::Option<syn::ItemListFinite>,
     resolver: &R,

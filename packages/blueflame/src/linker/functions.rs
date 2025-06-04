@@ -2,8 +2,21 @@ use crate::game::{CookItem, FixedSafeString40, WeaponModifierInfo, singleton_ins
 use crate::memory::{mem, Ptr};
 use crate::processor::{self, Cpu2, reg};
 
-/// Get one item with the default life. Calls `doGetItem_0x710073A464`
+/// Get item with the given value or default value.
 pub fn get_item(
+    cpu: &mut Cpu2,
+    actor: &str,
+    value: Option<i32>,
+    modifier: Option<WeaponModifierInfo>,
+) -> Result<(), processor::Error> {
+    match value {
+        Some(value) => get_item_with_value(cpu, actor, value, modifier),
+        None => get_item_with_default_value(cpu, actor, modifier),
+    }
+}
+
+/// Get one item with the default life. Calls `doGetItem_0x710073A464`
+pub fn get_item_with_default_value(
     cpu: &mut Cpu2,
     actor: &str,
     modifier: Option<WeaponModifierInfo>,
@@ -40,7 +53,6 @@ pub fn get_cook_item(
     sell_price: Option<i32>,
     effect_id: Option<i32>,
     vitality_boost: Option<f32>, // i.e effect level
-    is_crit: bool,
 ) -> Result<(), processor::Error> {
     cpu.reset_stack();
 
@@ -62,7 +74,7 @@ pub fn get_cook_item(
         *(&cook_item->sell_price) = sell_price.unwrap_or(0);
         *(&cook_item->effect_id) = effect_id.unwrap_or(-1);
         *(&cook_item->vitality_boost) = vitality_boost.unwrap_or(0.0);
-        *(&cook_item->is_crit) = is_crit;
+        *(&cook_item->is_crit) = false;
     };
     reg! { cpu:
         x[0] = this_ptr,
@@ -79,52 +91,33 @@ pub fn get_cook_item(
     Ok(())
 }
 
-pub fn call_pmdm_item_get(cpu: &mut Cpu2, actor: &str, value: i32) -> Result<(), processor::Error> {
-    call_pmdm_item_get_with_modifier(cpu, actor, value, 0, 0)
-}
-
-pub fn call_pmdm_item_get_with_modifier(
+pub fn get_item_with_value(
     cpu: &mut Cpu2,
     actor: &str,
     value: i32,
-    modifier_flags: u32,
-    modifier_value: i32,
+    modifier: Option<WeaponModifierInfo>,
 ) -> Result<(), processor::Error> {
     cpu.reset_stack();
 
-    // x0 - this
     let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
-    // x1 - actor name ptr
-    let name_ptr = cpu.stack_alloc::<FixedSafeString40>()?;
-    let name_ptr = Ptr!(<FixedSafeString40>(name_ptr));
-    name_ptr.construct(cpu.proc.memory_mut())?;
-    name_ptr.safe_store(actor, cpu.proc.memory_mut())?;
-    // w2 - value (scalar)
-
-    // x3 - modifier info ptr
-    let modifier_info_ptr = if modifier_flags != 0 {
-        let ptr = cpu.stack_alloc::<WeaponModifierInfo>()?;
-        let ptr = Ptr!(<WeaponModifierInfo>(ptr));
-        let info = WeaponModifierInfo {
-            flags: modifier_flags,
-            value: modifier_value,
-        };
-        ptr.store(&info, cpu.proc.memory_mut())?;
-        ptr.to_raw()
-    } else {
-        0
-    };
+    let name_ptr = helper::stack_alloc_string40(cpu, actor)?;
+    let modifier_ptr = helper::stack_alloc_weapon_modifier(cpu, modifier)?;
 
     reg! { cpu:
         x[0] = this_ptr,
         x[1] = name_ptr,
         w[2] = value,
-        x[3] = modifier_info_ptr,
+        x[3] = modifier_ptr,
     };
 
-    cpu.native_jump_to_main_offset(0x0096efb8)?;
+    if cpu.proc.is160() {
+        panic!("1.6.0 not implemented yet");
+        // cpu.native_jump_to_main_offset(0x0096f3d0)?;
+    } else {
+        cpu.native_jump_to_main_offset(0x0096efb8)?;
+    }
     cpu.stack_check::<FixedSafeString40>(name_ptr.to_raw())?;
-    cpu.stack_check::<WeaponModifierInfo>(modifier_info_ptr)?;
+    cpu.stack_check::<WeaponModifierInfo>(modifier_ptr.to_raw())?;
     Ok(())
 }
 

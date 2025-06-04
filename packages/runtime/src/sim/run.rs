@@ -1,9 +1,11 @@
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
+use teleparse::Span;
 use skybook_parser::ParseOutput;
 
-use crate::{sim, ErrorReport, MaybeAborted};
+use crate::sim;
+use crate::error::{ErrorReport, MaybeAborted};
 
 pub struct Run {
     /// Handle for the running task
@@ -21,6 +23,9 @@ impl Run {
     }
 
     /// Execute the parsed simulation script
+    ///
+    /// All errors that happened, including internal (e.g. game crash) or
+    /// external are collected in the `RunOutput`.
     pub async fn run_parsed(
         mut self,
         parsed: Arc<ParseOutput>,
@@ -28,13 +33,32 @@ impl Run {
     ) -> MaybeAborted<sim::RunOutput> {
         self.output.states.reserve(parsed.steps.len());
 
-        for step in &parsed.steps {
-            let state = self.output.states.last().cloned().unwrap_or_default();
+        let mut state = sim::State::default();
+
+        for i in 0..parsed.steps.len() {
+            let step = &parsed.steps[i];
+            let span_end = parsed.steps.get(i + 1).map(|step| step.pos).unwrap_or(parsed.script_len);
+            let span = Span::new(step.pos, span_end);
+            let report = match state.execute_step(span, step, runtime).await {
+                Err(e) => {
+                    log::error!("failed to execute step {}: {}", i, e);
+                    if self.handle.is_aborted() {
+                        log::warn!("the run is aborted, so the error is ignored");
+                        return MaybeAborted::Aborted;
+                    }
+                    self.output.errors.push(ErrorReport::error(&span, crate::Error::Executor));
+                    return MaybeAborted::Ok(self.output);
+                }
+                Ok(report) => report
+            };
+            self.output.states.push(report.value.clone());
+            self.output.errors.extend(report.errors);
+            if self.handle.is_aborted() {
+                return MaybeAborted::Aborted;
+            }
+            state = report.value;
         }
-        // Here we would run the simulation using the parsed output
-        // and the handle to check for abortion requests.
-        // For now, we return an empty RunOutput.
-        MaybeAborted::Ok(RunOutput { states: vec![] })
+        MaybeAborted::Ok(self.output)
     }
 }
 
