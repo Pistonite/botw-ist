@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
-use blueflame::game::{singleton_instance, ListNode, PauseMenuDataMgr, PouchItem};
-use blueflame::memory::{Ptr, Memory};
+use blueflame::game::{gdt, singleton_instance, ListNode, PauseMenuDataMgr, PouchItem};
+use blueflame::memory::{self, Ptr, Memory, proxy};
 use blueflame::processor::Process;
 
 use crate::iv;
@@ -83,12 +83,20 @@ pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, RuntimeViewEr
         Some(x) => (true, x)
     };
 
+    let bow_slots: Result<i32, memory::Error> = try {
+        let gdt = gdt::trigger_param_ptr(memory)?;
+        proxy!{ let trigger_param = *gdt as trigger_param in proc };
+        trigger_param.by_name::<gdt::fd!(s32)>("BowPorchStockNum").map(|x| x.get()).copied().unwrap_or(0)
+    };
+    let bow_slots = try_mem!(bow_slots, e, "failed to read number of bow slots: {e}");
+
     // build the item list with the ptr data
     let mut tab_idx = 0;
     let mut next_tab_item_idx = tabs.get(1).map(|x|x.item_idx).unwrap_or(-1);
     let mut tab_slot = 0;
     let mut items = Vec::with_capacity(item_ptr_data.len());
     let mut seen_animated_icons = BTreeSet::new();
+    let mut num_bows = 0;
     for (i, data) in item_ptr_data.into_iter().enumerate() {
         if i as i32 == next_tab_item_idx {
             tab_idx += 1;
@@ -102,6 +110,8 @@ pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, RuntimeViewEr
             data.item,
             tab_idx as i32,
             tab_slot,
+            bow_slots,
+            &mut num_bows,
             &mut seen_animated_icons,
             memory
         )?;
@@ -180,6 +190,8 @@ fn extract_pouch_item(
     item: Ptr![PouchItem], 
     tab_idx: i32,
     tab_slot: i32,
+    bow_slots: i32,
+    num_bows: &mut i32,
     seen_animated_icons: &mut BTreeSet<String>,
     memory: &Memory
 ) -> Result<iv::PouchItem, RuntimeViewError> {
@@ -277,6 +289,17 @@ ingr_ptr.utf8_lossy(memory),e,"failed to load name of {i}-th ingredient for item
     Ptr!(&node_ptr->mNext).load(memory),
         e,"failed to load item.prev at list1 position {list_index}: {e}"
 );
+
+    if item_type == 1 {
+        *num_bows = *num_bows + 1;
+    }
+
+    // adjust the slot for arrows using the type
+    let tab_slot = if item_type == 2 {
+        tab_slot + bow_slots - *num_bows
+    } else {
+        tab_slot
+    };
 
     Ok(iv::PouchItem { 
         common, 
