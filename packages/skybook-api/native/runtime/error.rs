@@ -1,6 +1,5 @@
 use serde::Serialize;
 
-
 /// Wrapper for output of a task which may be aborted by calling `abort` on the handle.
 #[derive(Debug, Clone, Serialize)]
 #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
@@ -51,18 +50,20 @@ pub enum RuntimeError {
     // DO NOT update the enum names
     // The translation files needs to be updated accordingly!!!
     //////////////////////////////////
-
     #[error("the runtime has not been initialized yet, you need to call `Runtime::init`")]
     Uninitialized,
     #[error("game has crashed in this step")]
     Crash,
-    #[error("game has crashed in a previous step and you need to `reload` or `new-game` to continue")]
+    #[error(
+        "game has crashed in a previous step and you need to `reload` or `new-game` to continue"
+    )]
     PreviousCrash,
     #[error("unexpected executor error")]
     Executor,
-    #[error("this command or syntax is not implemented yet, please track the development on GitHub")]
+    #[error(
+        "this command or syntax is not implemented yet, please track the development on GitHub"
+    )]
     Unimplemented,
-
     //////////////////////////////////
     // Add new errors below
     // The translation files needs to be updated accordingly!!!
@@ -81,14 +82,12 @@ pub enum RuntimeViewError {
     // DO NOT update the enum names
     // The translation files needs to be updated accordingly!!!
     //////////////////////////////////
-
     #[error("game has crashed at or before this step")]
     Crash,
     #[error("failed to read state from memory")]
     Memory,
     #[error("coherence check failed when reading state")]
     Coherence,
-
     //////////////////////////////////
     // Add new errors below
     // The translation files needs to be updated accordingly!!!

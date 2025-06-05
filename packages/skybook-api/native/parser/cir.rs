@@ -1,4 +1,4 @@
-use enumset::{enum_set, EnumSet, EnumSetType};
+use enumset::{EnumSet, EnumSetType, enum_set};
 use serde::{Deserialize, Serialize};
 
 /// Category in parser CIR

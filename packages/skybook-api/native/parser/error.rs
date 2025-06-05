@@ -1,5 +1,5 @@
-use serde::Serialize;
 use super::cir;
+use serde::Serialize;
 
 /// Error type for the parser
 #[derive(Debug, Clone, thiserror::Error, Serialize)]

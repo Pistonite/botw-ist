@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-
 /// Parameters for initializing a custom image
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
