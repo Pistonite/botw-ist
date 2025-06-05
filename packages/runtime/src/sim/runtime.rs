@@ -1,11 +1,15 @@
+use std::num::NonZeroUsize;
 use std::sync::Mutex;
 
 use blueflame::env::{DlcVer, Environment, GameVer};
 use blueflame::processor::{Cpu1, Process};
 use blueflame::{program, linker};
+use lru::LruCache;
+use skybook_parser::cir;
 
 use crate::exec::{self, Executor, Spawner};
 use crate::error::{RuntimeInitError};
+use crate::sim;
 
 pub use skybook_api::runtime::sim::CustomImageInitParams;
 
@@ -14,6 +18,7 @@ pub struct Runtime {
     pub env: Mutex<Environment>,
     executor: Executor,
     initial_process: Mutex<Option<Process>>,
+    state_cache: Mutex<LruCache<Vec<cir::Command>, sim::State>>,
 }
 
 impl Runtime {
@@ -24,6 +29,7 @@ impl Runtime {
             env: Mutex::new(Environment::new(GameVer::X150, DlcVer::None)),
             executor,
             initial_process: Mutex::new(None),
+            state_cache: Mutex::new(LruCache::new(NonZeroUsize::new(1024).unwrap()))
         }
     }
 
@@ -123,6 +129,14 @@ impl Runtime {
         T: Send + 'static,
     {
          self.executor.execute(f).await
+    }
+
+    pub fn find_cached_state(&self, commands: &[cir::Command]) -> Option<sim::State> {
+        self.state_cache.lock().unwrap().get(commands).cloned()
+    }
+
+    pub fn set_state_cache(&self, commands: &[cir::Command], state: &sim::State) {
+        self.state_cache.lock().unwrap().put(commands.to_vec(), state.clone());
     }
 }
 

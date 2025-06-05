@@ -14,7 +14,7 @@ struct Pmdm {
 #[test]
 pub fn test_init_singleton() -> anyhow::Result<()> {
     colog::init();
-    let data = std::fs::read("./test_files/program.bfi")?;
+    let data = std::fs::read("../runtime/program.bfi")?;
     let mut program_bytes = Vec::new();
     let program = program::unpack_zc(&data, &mut program_bytes)?;
     let pmdm_addr_for_test = 0x2222200000;

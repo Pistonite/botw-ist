@@ -140,12 +140,14 @@ impl State {
         runtime: &sim::Runtime,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling GET command");
-        self.with_game(span, runtime, async move |game| {
+        let x = self.with_game(span, runtime, async move |game| {
             let items = items.to_vec();
             runtime.execute(move |cpu| {
                 game.cmd_get(cpu, &items).into_report(span)
             }).await
-        }).await
+        }).await;
+        log::debug!("Done with GET command");
+        x
     }
 
     /// Ensure the game is already running, or initialize it if not,

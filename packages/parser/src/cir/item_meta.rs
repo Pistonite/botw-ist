@@ -8,7 +8,7 @@ use crate::syn;
 use super::MetaParser;
 
 /// Item metadata used to select or specify item
-#[derive(Debug, Clone, Default, PartialEq)]
+#[derive(Debug, Clone, Default)]
 pub struct ItemMeta {
     /// The value of the item
     ///
@@ -39,6 +39,35 @@ pub struct ItemMeta {
 
     /// Number of upgrades on armor
     pub star: Option<i32>,
+}
+
+impl PartialEq for ItemMeta {
+    fn eq(&self, other: &Self) -> bool {
+        self.value == other.value
+            && self.equip == other.equip
+            && self.life_recover == other.life_recover
+            && self.effect_duration == other.effect_duration
+            && self.sell_price == other.sell_price
+            && self.effect_id == other.effect_id
+            && self.effect_level.map(|x| x.to_bits()) == other.effect_level.map(|x| x.to_bits())
+            && self.ingredients == other.ingredients
+            && self.star == other.star
+    }
+}
+impl Eq for ItemMeta {}
+
+impl std::hash::Hash for ItemMeta {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.value.hash(state);
+        self.equip.hash(state);
+        self.life_recover.hash(state);
+        self.effect_duration.hash(state);
+        self.sell_price.hash(state);
+        self.effect_id.hash(state);
+        self.effect_level.map(|x| f32::to_bits(x)).hash(state);
+        self.ingredients.hash(state);
+        self.star.hash(state);
+    }
 }
 
 impl ItemMeta {

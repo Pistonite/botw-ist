@@ -35,8 +35,9 @@ export const getTabNodesFromPouch = (
         return undefined;
     }
 
+    // TODO: this might still be displayable - can be implemented if needed
     if (!pouch.areTabsValid) {
-        console.warn("pouch.areTabsValid = false");
+        return undefined;
     }
 
     // TODO: this might still be displayable - can be implemented if needed

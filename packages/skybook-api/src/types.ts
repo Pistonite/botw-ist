@@ -48,6 +48,8 @@ export type RuntimeWorkerInitArgs =
           /** If a stored custom image should be loaded */
           isCustomImage: true;
           params: CustomImageInitParams;
+          /** Don't load previously stored image, always ask app for new image */
+          alwaysAskApp: boolean;
       };
 
 export type RuntimeWorkerInitOutput = {

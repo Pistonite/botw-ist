@@ -34,7 +34,7 @@ pub fn parse_category(category: &syn::Category) -> Category {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CategorySpec {
     /// Which category to select
     pub category: Category,

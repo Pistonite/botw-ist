@@ -84,6 +84,7 @@ const initializeRuntimeWorker = async (
             napi,
             imageMgr,
             args.params,
+            args.alwaysAskApp
         );
     }
     let storedVersion: "not-changed" | "" = "not-changed";
@@ -114,9 +115,10 @@ const initializeRuntimeWorkerWithCustomImage = async (
     napi: NativeApi,
     imageMgr: ImageMgr,
     params: CustomImageInitParams,
+    alwaysAskApp: boolean
 ): Pwr<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>> => {
     // try reading the image from the database
-    let customImage = await imageMgr.getImage();
+    let customImage = alwaysAskApp ? undefined : await imageMgr.getImage();
     if (!customImage) {
         // try requesting the image from the app
         const newImage = await getCustomBlueFlameImage();

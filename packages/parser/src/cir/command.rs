@@ -32,7 +32,7 @@ impl Step {
 }
 
 /// The command to be executed in the simulator
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Command {
     /// See [`syn::CmdGet`]
     Get(Vec<cir::ItemSpec>),

@@ -6,7 +6,7 @@ use crate::syn;
 
 use super::MetaParser;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub enum GdtValue {
     Bool(bool),
     S32(i32),
@@ -24,7 +24,55 @@ impl Default for GdtValue {
     }
 }
 
-#[derive(Debug, Clone, Default, PartialEq)]
+impl std::hash::Hash for GdtValue {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        std::mem::discriminant(self).hash(state);
+        match self {
+            GdtValue::Bool(b) => b.hash(state),
+            GdtValue::S32(i) => i.hash(state),
+            GdtValue::F32(f) => f.to_bits().hash(state),
+            GdtValue::String32(s) => s.hash(state),
+            GdtValue::String64(s) => s.hash(state),
+            GdtValue::String256(s) => s.hash(state),
+            GdtValue::Vec3f(x, y, z) => {
+                x.to_bits().hash(state);
+                y.to_bits().hash(state);
+                z.to_bits().hash(state);
+            }
+            GdtValue::Vec2f(x, y) => {
+                x.to_bits().hash(state);
+                y.to_bits().hash(state);
+            }
+        }
+    }
+}
+
+impl PartialEq for GdtValue {
+    fn eq(&self, other: &Self) -> bool {
+        use GdtValue::*;
+        match (self, other) {
+            (Bool(a), Bool(b)) => a == b,
+            (S32(a), S32(b)) => a == b,
+            (F32(a), F32(b)) => a.to_bits() == b.to_bits(),
+            (String32(a), String32(b)) => a == b,
+            (String64(a), String64(b)) => a == b,
+            (String256(a), String256(b)) => a == b,
+            (Vec3f(ax, ay, az), Vec3f(bx, by, bz)) => {
+                ax.to_bits() == bx.to_bits() &&
+                ay.to_bits() == by.to_bits() &&
+                az.to_bits() == bz.to_bits()
+            }
+            (Vec2f(ax, ay), Vec2f(bx, by)) => {
+                ax.to_bits() == bx.to_bits() &&
+                ay.to_bits() == by.to_bits()
+            }
+            _ => false,
+        }
+    }
+}
+impl Eq for GdtValue {}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Hash)]
 pub struct GdtMeta {
     pub value: GdtValue,
     pub array_idx: Option<usize>,

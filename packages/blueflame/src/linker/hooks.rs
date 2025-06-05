@@ -179,6 +179,8 @@ impl HookProvider for GameHooks {
         0x00df10b8  000144 gdt_hooks::idx_from_hash::<gdt::fd!(str256[])>,//_ZNK4ksys3gdt12TriggerParam17getStr256ArrayIdxEj
         0x00df1148  000144 gdt_hooks::idx_from_hash::<gdt::fd!(vec2f[])>,//_ZNK4ksys3gdt12TriggerParam16getVec2fArrayIdxEj
         0x00df11d8  000144 gdt_hooks::idx_from_hash::<gdt::fd!(vec3f[])>,//_ZNK4ksys3gdt12TriggerParam16getVec3fArrayIdxEj
+        //
+        0x00e491d4  000332 return_void, // EventMgr::auto1 (called from doGetItem)
 
         0x011f3364  000032 return_0, // ksys::util::getDebugHeap
 

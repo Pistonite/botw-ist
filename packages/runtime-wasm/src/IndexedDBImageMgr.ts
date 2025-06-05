@@ -5,9 +5,6 @@ const DbName = "BlueFlameImageDB";
 const DbStore = "Image";
 const DbKey = "Custom";
 
-// TODO: errors from the worker are currently logged to console
-// and returned as blanket errors. Tracked by #69
-
 /** Open the IndexedDB for the custom BlueFlame image, returns undefined if fails */
 const openImageDB = (): Promise<IDBDatabase | undefined> => {
     return new Promise((resolve) => {

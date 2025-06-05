@@ -265,6 +265,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                     await bootCallback({
                         isCustomImage: true,
                         params,
+                        alwaysAskApp: customImageUpload !== undefined
                     });
                 }}
             >
@@ -437,6 +438,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
             const args: RuntimeWorkerInitArgs = {
                 isCustomImage: true,
                 params,
+                alwaysAskApp: customImageUpload !== undefined
             };
             await bootCallback(args);
             return;

@@ -35,7 +35,7 @@ pub fn get_item_with_default_value(
         panic!("1.6.0 not implemented yet");
         // cpu.native_jump_to_main_offset(0x0096f3d0)?;
     } else {
-        cpu.native_jump_to_main_offset(0x0071a464)?;
+        cpu.native_jump_to_main_offset(0x0073a464)?;
     }
 
     cpu.stack_check::<FixedSafeString40>(actor_name_ptr.to_raw())?;

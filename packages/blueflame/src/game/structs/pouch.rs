@@ -17,8 +17,8 @@ pub struct PauseMenuDataMgr {
     // PouchItemType
     #[offset(0x443c0)]
     pub mTabsType: [i32; 50],
-    // #[offset(0x44488)]
-    // pub mLastAddedItem: Ptr![PouchItem],
+    #[offset(0x44488)]
+    pub mLastAddedItem: Ptr![PouchItem],
     // #[offset(0x44490)]
     // mLastAddedItemTab: i32,
     // #[offset(0x44494)]

@@ -103,6 +103,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     type Error = Error;
 
     fn v_enter(&mut self, target: u32) -> Result<(), Self::Error> {
+        trace_call!("v_enter to 0x{target:08x}");
         self.write(reg!(lr), INTERNAL_RETURN_ADDRESS);
         let target_abs = target as u64 + self.proc.main_start();
         self.stack_trace.push_native(target_abs);
@@ -134,6 +135,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     }
 
     fn v_execute_until(&mut self, target: u32) -> Result<(), Self::Error> {
+        trace_call!("v_execute_until 0x{target:08x}");
         let target_abs = target as u64 + self.proc.main_start();
         let has_limit = enabled!("limited-block-iteration");
 
@@ -151,13 +153,12 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     }
 
     fn v_jump(&mut self, target: u32) -> Result<(), Self::Error> {
-        log::debug!("v_jump to 0x{target:08x}");
+        trace_call!("v_jump to 0x{target:08x}");
         self.pc = target as u64 + self.proc.main_start();
         Ok(())
     }
 
     fn v_mem_alloc(&mut self, bytes: u32) -> Result<(), Self::Error> {
-        log::debug!("v_mem_alloc {bytes} bytes");
         let ptr = self.proc.memory_mut().alloc(bytes)?;
         self.write(reg!(x[0]), ptr);
         Ok(())
@@ -194,6 +195,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     }
 
     fn v_execute_to_complete(&mut self) -> Result<(), Self::Error> {
+        trace_call!("v_execute_to_complete");
         let target_abs = INTERNAL_RETURN_ADDRESS;
         let has_limit = enabled!("limited-block-iteration");
 

@@ -41,5 +41,12 @@ pub fn create_instance<VM: VirtualMachine>(cpu: &mut VM, env: Environment) -> Re
     cpu.v_execute_until_then_skip_one(0x0096b2e8)?;
     cpu.v_execute_to_complete()?;
     // no init() needed since it's empty
+    
+    // execute some static initializer
+    cpu.v_enter(0x0073e168)?; // tagCangetPouch
+    cpu.v_execute_to_complete()?;
+    cpu.v_enter(0x00648764)?; // weaponTypes
+    cpu.v_execute_to_complete()?;
+
     Ok(())
 }

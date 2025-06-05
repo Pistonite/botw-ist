@@ -2,7 +2,7 @@ use enumset::{EnumSet, EnumSetType, enum_set};
 use serde::{Deserialize, Serialize};
 
 /// Category in parser CIR
-#[derive(Debug, EnumSetType, Serialize)]
+#[derive(Debug, EnumSetType, Serialize, Hash)]
 #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
 #[cfg_attr(feature = "__ts-binding", ts(export))]
 #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]

@@ -31,14 +31,26 @@ impl Run {
         parsed: Arc<ParseOutput>,
         runtime: &sim::Runtime
     ) -> MaybeAborted<sim::RunOutput> {
+        // let commands = parsed.steps.iter().map(|x| x.command.clone()).collect::<Vec<_>>();
         self.output.states.reserve(parsed.steps.len());
 
         let mut state = sim::State::default();
+        let mut commands = Vec::with_capacity(parsed.steps.len());
 
         for i in 0..parsed.steps.len() {
             let step = &parsed.steps[i];
+            commands.push(step.command.clone());
+
+            if let Some(cached_state) = runtime.find_cached_state(&commands) {
+                self.output.states.push(cached_state.clone());
+                state = cached_state;
+                continue;
+            }
+
+
             let span_end = parsed.steps.get(i + 1).map(|step| step.pos).unwrap_or(parsed.script_len);
             let span = Span::new(step.pos, span_end);
+
             let report = match state.execute_step(span, step, runtime).await {
                 Err(e) => {
                     log::error!("failed to execute step {}: {}", i, e);
@@ -51,12 +63,14 @@ impl Run {
                 }
                 Ok(report) => report
             };
+
             self.output.states.push(report.value.clone());
             self.output.errors.extend(report.errors);
             if self.handle.is_aborted() {
                 return MaybeAborted::Aborted;
             }
             state = report.value;
+            runtime.set_state_cache(&commands, &state);
         }
         MaybeAborted::Ok(self.output)
     }

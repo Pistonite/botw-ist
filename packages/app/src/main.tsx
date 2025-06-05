@@ -325,6 +325,7 @@ const continueBootWithCustomImageWithNoDialog = async (
     const result = await initRuntimeWithArgs(context, {
         isCustomImage: true,
         params: env.params,
+        alwaysAskApp: false,
     });
     if (result.err) {
         console.log(

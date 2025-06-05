@@ -253,24 +253,6 @@ export class RunMgr {
 
             // execute with the native resource handle
 
-            // simulate some delay - until we have the real runtime
-            for (let i = 0; i < 5; i++) {
-                await new Promise((resolve) => {
-                    setTimeout(resolve, 1000);
-                });
-                if (checkAborted()) {
-                    this.taskMgr.finish(taskId);
-                    this.handleError(serialBefore);
-                    const result = {
-                        err: {
-                            type: "Aborted",
-                        },
-                    } as const;
-                    resolveAwaiters(result);
-                    return result;
-                }
-            }
-
             // passing in 0 if somehow the handle is null
             // should be fine since the native has redundant null checks
             const outputResult = await this.napi.runParsed(

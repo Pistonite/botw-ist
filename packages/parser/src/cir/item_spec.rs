@@ -1,4 +1,3 @@
-use derive_more::{Deref, DerefMut};
 use teleparse::{ToSpan, tp};
 
 use crate::cir;
@@ -8,7 +7,7 @@ use crate::syn;
 use crate::util;
 
 /// Specification for an item
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ItemSpec {
     /// Amount of the item
     ///
@@ -27,7 +26,7 @@ pub struct ItemSpec {
 /// selecting by category and selecting by slot number
 ///
 /// The meaning of the spec depends on the context
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ItemSelectSpec {
     /// Amount of the item
     ///
@@ -41,14 +40,14 @@ pub struct ItemSelectSpec {
     pub slot: i32,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ItemOrCategory {
     Item(Item),
     Category(cir::Category),
 }
 
 /// An item
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Item {
     /// The item actor name
     pub actor: String,
