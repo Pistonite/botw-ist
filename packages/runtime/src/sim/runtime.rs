@@ -62,8 +62,8 @@ impl Runtime {
             params
         );
 
-        let mut program_bytes = Vec::new();
-        let program = match program::unpack_zc(&bytes, &mut program_bytes) {
+        // let mut program_bytes = Vec::new();
+        let program = match program::unpack(&bytes) {
             Err(e) => {
                 log::error!("failed to unpack blueflame image: {}", e);
                 return Err(RuntimeInitError::BadImage);

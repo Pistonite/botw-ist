@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crate::memory::{
     AccessFlags, Error, PAGE_SIZE, Page, REGION_ALIGN, align_down, align_up, perm, region,
 };
-use crate::program::ArchivedSection;
+use crate::program::Section as ProgramSection;
 
 /// Memory section implementation
 ///
@@ -47,9 +47,9 @@ impl Section {
         program_start: u64,
         module_start: u64,
         byte_size: u32,
-        section: &ArchivedSection,
+        section: &ProgramSection,
     ) -> Result<Self, Error> {
-        let section_rel_start = section.rel_start.to_native();
+        let section_rel_start = section.rel_start;
         log::debug!(
             "constructing section for module `{module_name}`, at rel_start=0x{section_rel_start:08x}, size=0x{byte_size:08x}"
         );
@@ -61,7 +61,7 @@ impl Section {
         // construct pages with data from the image
         let mut current_seg_rel_start = section_rel_start;
         for segment in section.segments.iter() {
-            let seg_rel_start = align_down!(segment.rel_start.to_native(), PAGE_SIZE);
+            let seg_rel_start = align_down!(segment.rel_start, PAGE_SIZE);
             if current_seg_rel_start > seg_rel_start {
                 return Err(Error::SectionConstruction(format!(
                     "program image has overlapping sections! current: 0x{current_seg_rel_start:08x}, segment: 0x{seg_rel_start:08x}"
@@ -85,7 +85,7 @@ impl Section {
         }
 
         // compute flags
-        let flags = AccessFlags::from(section.permissions.to_native());
+        let flags = AccessFlags::from(section.permissions);
         let section_flags = if flags.all(perm!(x)) {
             // if it has execute, assume it's a text section
             region!(text)

@@ -7,7 +7,7 @@ use crate::game::{Proxies, singleton};
 use crate::linker::{GameHooks, patch_memory};
 use crate::memory::{self, Memory, PAGE_SIZE, REGION_ALIGN, SimpleHeap, align_down, align_up};
 use crate::processor::{Cpu1, Cpu3, CrashReport, Process};
-use crate::program::ArchivedProgram;
+use crate::program::Program;
 
 /// Error that only happens during boot
 #[derive(Debug, Clone, thiserror::Error)]
@@ -30,15 +30,16 @@ pub enum Error {
 ///
 /// Return the memory state after all singletons are created and initialized
 pub fn init_process(
-    image: &ArchivedProgram,
+    image: &Program,
     dlc_version: DlcVer,
     stack_start: u64,
     stack_size: u32,
     pmdm_address: u64,
     heap_size: u32,
 ) -> Result<Process, Error> {
-    let ver = rkyv::deserialize::<GameVer, rancor::Error>(&image.ver)
-        .map_err(|e| Error::BadImage(e.to_string()))?;
+    let ver = image.ver;
+    // rkyv::deserialize::<GameVer, rancor::Error>(&image.ver)
+    //     .map_err(|e| Error::BadImage(e.to_string()))?;
     let env = Environment::new(ver, dlc_version);
     // calculate heap start address
     // we need the heap to be as small as possible,
@@ -119,7 +120,7 @@ pub fn init_process(
     // construct the memory
     log::debug!("creating memory");
     let heap = SimpleHeap::new(heap_start, heap_size, heap_min_size as u64 + heap_start);
-    let mut memory = Memory::new_program_zc(
+    let mut memory = Memory::new_program(
         env,
         program_start,
         program_size,
