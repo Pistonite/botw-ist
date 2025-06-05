@@ -8,6 +8,7 @@ import type {
     InvView_PouchList,
     MaybeAborted,
     ParserError,
+    RuntimeViewError,
 } from "./native";
 import type {
     ItemSearchResult,
@@ -69,7 +70,7 @@ export interface Runtime {
         script: string,
         taskId: string,
         pos: number,
-    ): WxPromise<MaybeAborted<InvView_PouchList>>;
+    ): WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>>;
 
     /**
      * Execute the script if not up-to-date, and return the GDT inventory view
@@ -81,7 +82,7 @@ export interface Runtime {
         script: string,
         taskId: string,
         pos: number,
-    ): WxPromise<MaybeAborted<InvView_Gdt>>;
+    ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>;
 
     /**
      * Execute the script if not up-to-date, and return the overworld item view
@@ -93,7 +94,7 @@ export interface Runtime {
         script: string,
         taskId: string,
         pos: number,
-    ): WxPromise<MaybeAborted<InvView_Overworld>>;
+    ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>>;
 
     // getRuntimeDiagnostics(
     //     script: string,
