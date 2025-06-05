@@ -8,8 +8,7 @@ import type { Runtime } from "../Runtime.ts";
 
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
-import type { ParserErrorReport } from "../parser";
-import type { InvView_Gdt, InvView_Overworld, InvView_PouchList, MaybeAborted } from "../runtime";
+import type { ErrorReport, InvView_Gdt, InvView_Overworld, InvView_PouchList, MaybeAborted, ParserError } from "../native";
 import type { ItemSearchResult, RuntimeWorkerInitArgs, RuntimeWorkerInitOutput, RuntimeWorkerInitError } from "../types.ts";
 
 /*
@@ -59,8 +58,8 @@ export class _wxSenderImpl implements Runtime {
      * 
      * Note that the span in the errors are byte offsets, not character offsets.
      */
-    public getParserDiagnostics( script: string ): WxPromise<ParserErrorReport[]> {
-        return this.sender.send<ParserErrorReport[]>(28 /* Runtime.getParserDiagnostics */, [ script ]);
+    public getParserDiagnostics( script: string ): WxPromise<ErrorReport<ParserError>[]> {
+        return this.sender.send<ErrorReport<ParserError>[]>(28 /* Runtime.getParserDiagnostics */, [ script ]);
     }
 
     /**

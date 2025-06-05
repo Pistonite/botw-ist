@@ -1,13 +1,14 @@
 import type { WxPromise } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
 
-import type { ParserErrorReport } from "./parser";
 import type {
+    ErrorReport,
     InvView_Gdt,
     InvView_Overworld,
     InvView_PouchList,
     MaybeAborted,
-} from "./runtime";
+    ParserError,
+} from "./native";
 import type {
     ItemSearchResult,
     RuntimeWorkerInitArgs,
@@ -37,7 +38,7 @@ export interface Runtime {
      *
      * Note that the span in the errors are byte offsets, not character offsets.
      */
-    getParserDiagnostics(script: string): WxPromise<ParserErrorReport[]>;
+    getParserDiagnostics(script: string): WxPromise<ErrorReport<ParserError>[]>;
 
     /**
      * Parse the script and get semantic tokens in the range from the parser.

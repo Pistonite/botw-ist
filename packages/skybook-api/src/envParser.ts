@@ -1,7 +1,7 @@
 /** Parser for the env tag in the script */
 
 import type { Result } from "@pistonite/pure/result";
-import type { CustomImageInitParams } from "./runtime";
+import type { CustomImageInitParams } from "./native";
 
 /** Parse the leading env tag from the script */
 export const parseEnvFromScript = (script: string): ScriptEnv => {

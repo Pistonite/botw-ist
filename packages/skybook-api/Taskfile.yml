@@ -4,13 +4,8 @@ includes:
   ecma:
     taskfile: ../mono-dev/task/ecma.yaml
     internal: true
-  parser:
-    taskfile: ../parser
-    dir: ../parser
-    internal: true
-  runtime:
-    taskfile: ../runtime
-    dir: ../runtime
+  cargo:
+    taskfile: ../mono-dev/task/cargo.yaml
     internal: true
   git:
     taskfile: ../mono-dev/task/git.yaml
@@ -23,8 +18,7 @@ tasks:
       VERSION:
         sh: jq '.version' package.json | tr -d '"'
     cmds:
-      - task: parser:build-api-ts-binding
-      - task: runtime:build-api-ts-binding
+      - task: build-ts-binding
       - > 
           workex -p skyb-api-{{.VERSION}} --prefix skybook --no-gitignore
           -l Extension,ExtensionApp -l Runtime,RuntimeApp
@@ -38,12 +32,11 @@ tasks:
     env:
       LC_ALL: C # consistent sort order
     cmds:
-      - rm -f bindings/*.ts ../skybook-api/src/parser/*
+      - rm -f bindings/* src/native/*
       - cargo test --lib --features __ts-binding
-      - find bindings -type f | sort | sed 's/^bindings/export * from "./' | sed 's/$/";/' > index.ts
-      - mv index.ts bindings
-      # - $(which mkdir) -p ../skybook-api/src/parser
-      # - mv bindings/*.ts ../skybook-api/src/parser
+      - $(which mkdir) -p src/native
+      - find bindings -type f | sort | sed 's/^bindings/export * from "./' | sed 's/$/";/' > src/native/index.ts
+      - mv bindings/*.ts src/native
 
   check:
     cmds:
@@ -53,10 +46,13 @@ tasks:
           CHECK_PATH: packages/skybook-api/src
           CHECK_MESSAGE: Please regenerate and commit skybook-api bindings
       - task: ecma:mono-check
+      - task: cargo:clippy-all
+      - task: cargo:fmt-check
 
   fix:
     cmds:
       - task: ecma:mono-fix
+      - task: cargo:fmt-fix
 
   test:
     cmds:

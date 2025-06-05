@@ -84,9 +84,10 @@ pub enum RuntimeViewError {
 
     #[error("game has crashed at or before this step")]
     Crash,
-
     #[error("failed to read state from memory")]
     Memory,
+    #[error("coherence check failed when reading state")]
+    Coherence,
 
     //////////////////////////////////
     // Add new errors below

@@ -46,7 +46,7 @@ mod __impl {
         /// Index of the item in the list.
         ///
         /// -1 if nullptr, which is when the tab is empty
-        pub item_idx: isize,
+        pub item_idx: i32,
         /// The type of the tab (in mTabsType), -1 if invalid
         pub tab_type: i32,
         // TODO: do we need num items in the tab here?

@@ -5,7 +5,7 @@
  */
 
 import type { ScriptEnvImage } from "./envParser.ts";
-import type { CustomImageInitParams, RuntimeInitError } from "./runtime";
+import type { CustomImageInitParams, RuntimeInitError } from "./native";
 
 /**
  * Type used for JS side item search queries
