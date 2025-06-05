@@ -30,12 +30,6 @@ tasks:
       - $(which mkdir) -p node_modules/.wasm-out-type
       - cp pkg/skybook_runtime_wasm.d.ts node_modules/.wasm-out-type
 
-  build-debug:
-    cmds:
-      - wasm-pack build -t no-modules --no-pack --dev
-      - task: build-dist
-
-
   clean-dist:
     cmds:
       - rm -rf dist

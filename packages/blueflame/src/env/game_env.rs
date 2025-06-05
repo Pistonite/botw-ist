@@ -1,6 +1,5 @@
 use enum_map::Enum;
 use serde::{Deserialize, Serialize};
-use bincode::{Encode, Decode};
 
 /// Environment to simulate
 #[derive(
@@ -14,9 +13,11 @@ use bincode::{Encode, Decode};
     Hash,
     Serialize,
     Deserialize,
-    Encode, Decode
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    rkyv::Archive,
 )]
-// #[rkyv(compare(PartialEq), derive(Clone, Copy))]
+#[rkyv(compare(PartialEq), derive(Clone, Copy))]
 pub struct Environment {
     /// Version of the game
     pub game_ver: GameVer,
@@ -68,9 +69,11 @@ impl Environment {
     Serialize,
     Deserialize,
     Enum,
-    Encode, Decode
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    rkyv::Archive,
 )]
-// #[rkyv(compare(PartialEq), derive(Clone, Copy))]
+#[rkyv(compare(PartialEq), derive(Clone, Copy))]
 #[repr(u8)]
 pub enum GameVer {
     /// Switch 1.5.0
@@ -79,14 +82,14 @@ pub enum GameVer {
     X160,
 }
 
-// impl From<ArchivedGameVer> for GameVer {
-//     fn from(ver: ArchivedGameVer) -> Self {
-//         match ver {
-//             ArchivedGameVer::X150 => GameVer::X150,
-//             ArchivedGameVer::X160 => GameVer::X160,
-//         }
-//     }
-// }
+impl From<ArchivedGameVer> for GameVer {
+    fn from(ver: ArchivedGameVer) -> Self {
+        match ver {
+            ArchivedGameVer::X150 => GameVer::X150,
+            ArchivedGameVer::X160 => GameVer::X160,
+        }
+    }
+}
 
 /// Version of the DLC
 #[derive(
@@ -100,9 +103,11 @@ pub enum GameVer {
     Hash,
     Serialize,
     Deserialize,
-    Encode, Decode
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    rkyv::Archive,
 )]
-// #[rkyv(compare(PartialEq), derive(Clone, Copy))]
+#[rkyv(compare(PartialEq), derive(Clone, Copy))]
 #[repr(u8)]
 pub enum DlcVer {
     /// Not installed
@@ -137,13 +142,13 @@ impl DlcVer {
         }
     }
 }
-// impl From<ArchivedDlcVer> for DlcVer {
-//     fn from(ver: ArchivedDlcVer) -> Self {
-//         match ver {
-//             ArchivedDlcVer::None => DlcVer::None,
-//             ArchivedDlcVer::V100 => DlcVer::V100,
-//             ArchivedDlcVer::V200 => DlcVer::V200,
-//             ArchivedDlcVer::V300 => DlcVer::V300,
-//         }
-//     }
-// }
+impl From<ArchivedDlcVer> for DlcVer {
+    fn from(ver: ArchivedDlcVer) -> Self {
+        match ver {
+            ArchivedDlcVer::None => DlcVer::None,
+            ArchivedDlcVer::V100 => DlcVer::V100,
+            ArchivedDlcVer::V200 => DlcVer::V200,
+            ArchivedDlcVer::V300 => DlcVer::V300,
+        }
+    }
+}

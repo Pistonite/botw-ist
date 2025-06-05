@@ -5,7 +5,7 @@ use crate::memory::{
     AccessFlag, AccessFlags, Error, PAGE_SIZE, Page, Ptr, REGION_ALIGN, Reader, Section,
     SimpleHeap, Writer, align_up, perm, region,
 };
-use crate::program::Module;
+use crate::program::ArchivedModule;
 
 /// Memory of the simulated process
 #[derive(Clone)]
@@ -38,11 +38,11 @@ impl Memory {
         }
     }
 
-    pub fn new_program(
+    pub fn new_program_zc(
         env: Environment,
         program_start: u64,
         program_size: u32,
-        modules: &[Module],
+        modules: &[ArchivedModule],
         heap: SimpleHeap,
         stack_start: u64,
         stack_size: u32,
@@ -50,12 +50,12 @@ impl Memory {
         let mut sections = Vec::new();
 
         for module in modules {
-            let module_start = module.rel_start as u64 + program_start;
+            let module_start = module.rel_start.to_native() as u64 + program_start;
             let module_name = module.name.as_str();
             for i in 0..module.sections.len() {
-                let section_rel_start = module.sections[i].rel_start;
+                let section_rel_start = module.sections[i].rel_start.to_native();
                 let section_size = match module.sections.get(i + 1) {
-                    Some(next) => next.rel_start - section_rel_start,
+                    Some(next) => next.rel_start.to_native() - section_rel_start,
                     None => program_size - section_rel_start,
                 };
                 let section = Section::new_program_zc(

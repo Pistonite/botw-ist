@@ -10,7 +10,7 @@ use crate::processor::{
     BLOCK_COUNT_LIMIT, BLOCK_ITERATION_LIMIT, CrashReport, Error, ExecuteCache, Process, Registers,
     STACK_RESERVATION, StackTrace, reg,
 };
-use crate::program::Program;
+use crate::program::ArchivedProgram;
 use crate::vm::VirtualMachine;
 
 const INTERNAL_RETURN_ADDRESS: u64 = 0xDEAD464C414D45AAu64;
@@ -36,7 +36,7 @@ pub struct Cpu3<'a, 'b, 'c> {
     #[deref]
     #[deref_mut]
     pub cpu2: Cpu2<'a, 'b>,
-    pub program: &'c Program,
+    pub program: &'c ArchivedProgram,
     // adding singleton rel_start to this gets the physical
     // address of the singleton
     heap_start_adjusted: u64,
@@ -84,7 +84,7 @@ impl<'a, 'b, 'c> Cpu3<'a, 'b, 'c> {
     pub fn new(
         cpu1: &'a mut Cpu1,
         process: &'b mut Process,
-        program: &'c Program,
+        program: &'c ArchivedProgram,
         heap_start_adjusted: u64,
     ) -> Self {
         let cpu2 = Cpu2 {

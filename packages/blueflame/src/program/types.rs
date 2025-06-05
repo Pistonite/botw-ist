@@ -1,11 +1,10 @@
 // use deku::{DekuRead, DekuWrite};
 use rkyv::{Archive, Deserialize, Serialize};
-use bincode::{Encode, Decode};
 
 use crate::env::{DataId, GameVer};
 
 /// Image of a program at runtime
-#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[derive(Debug, Clone, PartialEq, Eq, Archive, Serialize, Deserialize)]
 pub struct Program {
     /// Version of the game in the program
     pub ver: GameVer,
@@ -19,7 +18,7 @@ pub struct Program {
     pub data: Vec<Data>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[derive(Debug, Clone, PartialEq, Eq, Archive, Serialize, Deserialize)]
 pub struct Module {
     /// Name of this module
     pub name: String,
@@ -30,7 +29,7 @@ pub struct Module {
 }
 
 /// A section, like .text or .data...
-#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[derive(Debug, Clone, PartialEq, Eq, Archive, Serialize, Deserialize)]
 pub struct Section {
     /// Relative start of this section compared to the start of the program
     pub rel_start: u32,
@@ -45,7 +44,7 @@ pub struct Section {
 
 /// A segment is a contiguous block of raw data in the program,
 /// with an offset relative to the start of the program.
-#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[derive(Debug, Clone, PartialEq, Eq, Archive, Serialize, Deserialize)]
 pub struct Segment {
     /// Relative start of the segment compared to start of the program
     pub rel_start: u32,
@@ -54,7 +53,7 @@ pub struct Segment {
 }
 
 /// Data stored in the program image
-#[derive(Debug, Clone, PartialEq, Eq, Encode, Decode)]
+#[derive(Debug, Clone, PartialEq, Eq, Archive, Serialize, Deserialize)]
 pub struct Data {
     /// Id (type) of the data
     pub id: DataId,
