@@ -1,4 +1,8 @@
+import type { ParserError, RuntimeError, RuntimeViewError, RuntimeWorkerInitError } from "@pistonite/skybook-api";
+
 import { type Translator, translateUI } from "../translate.ts";
+
+import { translateCategory } from "./Category.ts";
 
 /** Localize a generic error message */
 export const translateGenericError = (
@@ -9,4 +13,68 @@ export const translateGenericError = (
         return translator("error.internal", { error });
     }
     return translator("error.unknown");
+};
+
+
+export const translateParserError = (
+    error: ParserError,
+    translator: Translator = translateUI,
+): string => {
+    const key = `parser.${error.type}`;
+    switch (error.type) {
+        case "Unexpected":
+            return translateGenericError(error.data, translator);
+        case "InvalidMetaValue": {
+            const [metaKey, value] = error.data;
+            return translator(key, { key: metaKey, value });
+        }
+        case "InvalidCategory": {
+            const category = translateCategory(error.data, translator);
+            return translator(key, { arg: category });
+        }
+        case "InvalidEquipmentSlotNum": {
+            const [categoryStr, num] = error.data;
+            const category = translateCategory(categoryStr, translator);
+            return translator(key, { category, num });
+        }
+        default: {
+            if ("data" in error) {
+                return translator(key, { arg: error.data });
+            }
+            return translator(key);
+        }
+    }
+};
+
+export const translateRuntimeInitError = (
+    error: RuntimeWorkerInitError,
+    translator: Translator = translateUI,
+): string => {
+    const key = `runtime_init.${error.type}`;
+    switch (error.type) {
+        case "BadDlcVersion":
+            return translator(key, { version: error.data });
+        case "ProgramStartMismatch": {
+            const [addr_ci, addr_script] = error.data;
+            return translator(key, { addr_ci, addr_script });
+        }
+        default:
+            return translator(key);
+    }
+};
+
+export const translateRuntimeError = (
+    error: RuntimeError,
+    translator: Translator = translateUI,
+): string => {
+    const key = `runtime_error.${error.type}`;
+    return translator(key);
+};
+
+export const translateRuntimeViewError = (
+    error: RuntimeViewError,
+    translator: Translator = translateUI,
+): string => {
+    const key = `runtime_view_error.${error.type}`;
+    return translator(key);
 };

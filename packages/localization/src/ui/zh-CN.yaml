@@ -66,11 +66,13 @@ menu.skybook_manual: "Skybook 使用手册"
 # Main inventory display
 main.gdt_inventory.desc: "储存与游戏Flag系统（GDT）内的物品数据。物品状态以数据读取入背包后的形式显示。背包格讹转的目标数据格与该背包格对齐显示。"
 main.gdt_inventory.title: "GDT内部数据"
+main.gdt_inventory.view_error: "无法显示GDT内部数据！"
 main.tabbed_inventory.bad_msgbar.body: "页面数据损坏（可能由内存损坏利用导致）。"
 main.tabbed_inventory.bad_msgbar.title: "无法以页面形式显示！"
 main.tabbed_inventory.button_tooltip: "切换列表/页面显示"
 main.visible_inventory.desc: "当你打开背包时所看见的物品"
 main.visible_inventory.title: "可视背包"
+main.visible_inventory.view_error: "无法显示背包！"
 
 main.bug_report: "如果您认为这是模拟器的BUG，请提交反馈到{{github}}。"
 
@@ -187,3 +189,15 @@ runtime_init.InvalidStackStart: "stack-start参数格式错误"
 runtime_init.NoImageFromApp: "无法获取自定义镜像数据"
 runtime_init.ProgramStartMismatch: "自定义镜像的程序起始地址({{addr_ci}})和脚本环境需求({{addr_script}})不符"
 runtime_init.SaveImage: "保存自定义镜像数据失败"
+
+# Error/Diagnostic from Runtime
+runtime_error.Crash: "执行此步骤时游戏崩溃"
+runtime_error.Executor: "执行器出错"
+runtime_error.PreviousCrash: "因之前的步骤导致游戏崩溃，需要读档(`reload`)或开始新游戏(`new-game`)"
+runtime_error.Unimplemented: "还没做完"
+runtime_error.Uninitialized: "未初始化运行时"
+
+# Error from getting view from simulation output
+runtime_view_error.Coherence: "背包数据损坏，无法显示"
+runtime_view_error.Crash: "游戏崩溃了，无法读取背包"
+runtime_view_error.Memory: "读取内存失败，无法显示背包"

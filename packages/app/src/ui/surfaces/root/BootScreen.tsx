@@ -516,7 +516,7 @@ async function selectImageFile(): Promise<CustomImageSelection> {
                 description: translateUI(
                     "dialog.custom_image.button.select_file.type_desc",
                 ),
-                accept: [".blfm"],
+                accept: [".bfi"],
             },
         ],
     });

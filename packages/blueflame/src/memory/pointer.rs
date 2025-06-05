@@ -7,7 +7,7 @@ use crate::memory::{
 };
 
 #[doc(inline)]
-pub use blueflame_deps::{Ptr, mem};
+pub use blueflame_deps::{Ptr, mem, offsetof};
 
 /// Wrapper around a raw physical address. i.e. a pointer
 ///

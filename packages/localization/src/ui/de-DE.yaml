@@ -66,11 +66,13 @@ menu.skybook_manual: "Skybook-Handbuch"
 # Main inventory display
 main.gdt_inventory.desc: "Inventardaten, die im Flaggensystem des Spiels (GDT) gespeichert sind. Gegenstände werden angezeigt, als wären sie im Inventar geladen, und die Slots sind basierend auf Korruption an das Inventar ausgerichtet."
 main.gdt_inventory.title: "GameData"
+main.gdt_inventory.view_error: "Interne GDT-Daten können nicht angezeigt werden!"
 main.tabbed_inventory.bad_msgbar.body: "Tab-Daten sind beschädigt. Möglicherweise aufgrund eines Speicherbeschädigungs-Exploits."
 main.tabbed_inventory.bad_msgbar.title: "Tabs können nicht angezeigt werden!"
 main.tabbed_inventory.button_tooltip: "Listen-/Tabellenansicht umschalten"
 main.visible_inventory.desc: "Gegenstände, die beim Öffnen des Inventars sichtbar sind"
 main.visible_inventory.title: "Sichtbares Inventar"
+main.visible_inventory.view_error: "Inventar kann nicht angezeigt werden!"
 
 main.bug_report: "Bitte melden Sie es auf {{github}}, wenn Sie denken, dass dies ein Fehler im Simulator ist."
 
@@ -187,3 +189,15 @@ runtime_init.InvalidStackStart: "Das Format des Parameters 'stack-start' ist ung
 runtime_init.NoImageFromApp: "Benutzerdefinierte Image-Daten konnten nicht aus der App abgerufen werden"
 runtime_init.ProgramStartMismatch: "Die Programmstartadresse aus dem benutzerdefinierten Image ({{addr_ci}}) stimmt nicht mit der im Skript angegebenen Adresse ({{addr_script}}) überein"
 runtime_init.SaveImage: "Benutzerdefinierte Image-Daten konnten nicht gespeichert werden"
+
+# Error/Diagnostic from Runtime
+runtime_error.Crash: "Das Spiel ist in diesem Schritt abgestürzt"
+runtime_error.Executor: "Unerwarteter Fehler vom Executor"
+runtime_error.PreviousCrash: "Das Spiel ist in einem vorherigen Schritt abgestürzt. Sie müssen `neu laden` (`reload`) oder ein `neues Spiel starten` (`new-game`), bevor Sie fortfahren können"
+runtime_error.Unimplemented: "Dieser Befehl ist noch nicht implementiert :)"
+runtime_error.Uninitialized: "Laufzeitumgebung unerwartet nicht initialisiert"
+
+# Error from getting view from simulation output
+runtime_view_error.Coherence: "Die Inventardaten sind beschädigt und können nicht angezeigt werden"
+runtime_view_error.Crash: "Das Spiel ist bei oder vor diesem Schritt abgestürzt und das Inventar kann nicht angezeigt werden"
+runtime_view_error.Memory: "Beim Lesen des Spielspeichers ist ein Fehler aufgetreten und das Inventar kann nicht angezeigt werden"

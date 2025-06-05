@@ -1,6 +1,5 @@
-
 mod error;
-pub use error::{Error, ErrorReport, RuntimeInitError, MaybeAborted};
+pub use error::{Error, ErrorReport, RuntimeInitError, RuntimeViewError, MaybeAborted};
 /// Inventory View
 pub use skybook_api::runtime::iv;
 

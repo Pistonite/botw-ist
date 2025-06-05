@@ -13,7 +13,7 @@ import {
     OverworldItemSlotWithTooltip,
     PouchItemSlotWithTooltip,
 } from "skybook-item-system";
-import { useUITranslation } from "skybook-localization";
+import { translateRuntimeViewError, useUITranslation } from "skybook-localization";
 
 import {
     useGdtInventoryView,
@@ -95,7 +95,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         loading || stale || !pouch || overworldLoading || overworldStale;
 
     const itemSlotProps = useItemSlotPropsFromSettings();
-    const isMasterSwordFullPower = !!gdt?.masterSword?.isTrueForm;
+    const isMasterSwordFullPower = !!gdt?.val?.masterSword?.isTrueForm;
 
     const isTabView = useUIStore((state) => state.isTabViewEnabled);
     const setTabView = useUIStore((state) => state.setIsTabViewEnabled);
@@ -103,7 +103,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         if (!isTabView) {
             return undefined;
         }
-        return getTabNodesFromPouch(pouch);
+        return getTabNodesFromPouch(pouch?.val);
     }, [pouch, isTabView]);
 
     const $Background = (
@@ -181,14 +181,20 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         </ErrorBar>
     );
 
-    const $PouchItems = pouch !== undefined && !isTabView && (
+    const $PouchError = pouch?.err && (
+        <ErrorBar title={t("main.visible_inventory.view_error")}>
+            {translateRuntimeViewError(pouch.err, t)}
+        </ErrorBar>
+    );
+
+    const $PouchItems = pouch?.val && !isTabView && (
         <div className={m("flex-1 overflow-y-auto scrollbar-thin")}>
             <div className={m("flex flex-wrap max-h-0 overflow-visible")}>
-                {pouch.items.map((item, i) => (
+                {pouch.val.items.map((item, i) => (
                     <PouchItemSlotWithTooltip
                         item={item}
                         key={i}
-                        list1Count={pouch.count}
+                        list1Count={pouch.val.count}
                         isMasterSwordFullPower={isMasterSwordFullPower}
                         {...itemSlotProps}
                     />
@@ -197,7 +203,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         </div>
     );
 
-    const $TabbedPouchItems = pouch !== undefined && tabNodes !== undefined && (
+    const $TabbedPouchItems = pouch?.val && tabNodes !== undefined && (
         <div
             id="-tabbed-pouch-scroll-"
             ref={tabbedScrollHandler}
@@ -222,7 +228,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                                     <PouchItemSlotWithTooltip
                                         item={item}
                                         key={i}
-                                        list1Count={pouch.count}
+                                        list1Count={pouch.val.count}
                                         isMasterSwordFullPower={
                                             isMasterSwordFullPower
                                         }
@@ -238,8 +244,8 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     );
 
     const { ref: overworldScrollHandler } = useSwappedWheelScrollDirection();
-    const $OverworldItems = overworld !== undefined &&
-        overworld.items.length > 0 && (
+    const $OverworldItems = overworld?.val &&
+        overworld.val.items.length > 0 && (
             <div
                 className={m(
                     "pos-rel overflow-x-auto overflow-y-hidden scrollbar-thin",
@@ -248,7 +254,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                 ref={overworldScrollHandler}
             >
                 <div className={m("flex-row")}>
-                    {overworld.items.map((item, i) => (
+                    {overworld.val.items.map((item, i) => (
                         <OverworldItemSlotWithTooltip
                             item={item}
                             key={i}
@@ -270,6 +276,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                     {$Title}
                     <div className={m("flex-col", c.errors)}>
                         {$TabsWarning}
+                        {$PouchError}
                         {pouchError && <ErrorBar>{pouchError}</ErrorBar>}
                         {overworldError && (
                             <ErrorBar>{overworldError}</ErrorBar>

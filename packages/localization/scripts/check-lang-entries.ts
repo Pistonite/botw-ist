@@ -73,6 +73,24 @@ console.log(key); // Check the type of key with LS to see what's missing
             [],
         ),
     );
+    fs.writeFileSync(
+        makeOutFilePath("runtime"),
+        generateCheckerFile(
+            "runtime_error.",
+            "RuntimeError",
+            "@pistonite/skybook-api",
+            [],
+        ),
+    );
+    fs.writeFileSync(
+        makeOutFilePath("runtime_view"),
+        generateCheckerFile(
+            "runtime_view_error.",
+            "RuntimeViewError",
+            "@pistonite/skybook-api",
+            [],
+        ),
+    );
 });
 
 const result = subprocess.spawnSync("pnpm", ["exec", "tsc", "-p", DIR], {
@@ -81,8 +99,6 @@ const result = subprocess.spawnSync("pnpm", ["exec", "tsc", "-p", DIR], {
 });
 if (result.status !== 0) {
     console.error("Lang entry check failed!!!");
-    console.error("Please ensure these keys are defined in lang files:");
-    console.error("  - One `parser.<ParserError>` for each ParserError type");
-    console.error("  - One `worker.<WorkerError>` for each WorkerError type");
+    console.error("Please see hints from errors above");
     process.exit(2);
 }

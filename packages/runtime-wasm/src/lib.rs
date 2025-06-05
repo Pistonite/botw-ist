@@ -4,10 +4,10 @@ use blueflame::env::GameVer;
 use js_sys::{Function, Uint8Array};
 use serde::{Deserialize, Serialize};
 use skybook_parser::{ParseOutput, search};
-use skybook_runtime::{iv, erc};
-use skybook_runtime::sim::{self, CustomImageInitParams};
 use skybook_runtime::exec::Spawner;
-use skybook_runtime::{MaybeAborted, RuntimeInitError};
+use skybook_runtime::sim::{self, CustomImageInitParams};
+use skybook_runtime::{MaybeAborted, RuntimeInitError, RuntimeViewError};
+use skybook_runtime::{erc, iv};
 use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
@@ -216,7 +216,7 @@ pub async fn run_parsed(
         runtime.get().unwrap().clone()
     });
     let output = run.run_parsed(parse_output, &runtime).await;
-    
+
     match output {
         MaybeAborted::Ok(run_output) => {
             let run_output_ptr = Arc::into_raw(Arc::new(run_output));
@@ -235,14 +235,14 @@ pub fn get_pouch_list(
     run_output_ref: *const sim::RunOutput,
     parse_output_ref: *const ParseOutput,
     byte_pos: usize,
-) -> iv::PouchList {
+) -> interop::Result<iv::PouchList, RuntimeViewError> {
     if parse_output_ref.is_null() || run_output_ref.is_null() {
-        return Default::default();
+        return interop::Result::Ok(Default::default());
     }
     let parse_output = unsafe { &*parse_output_ref };
     let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
     let run_output = unsafe { &*run_output_ref };
-    run_output.get_pouch_list(step)
+    run_output.get_pouch_list(step).into()
 }
 
 /// Get the GDT inventory view for the given byte position in the script
@@ -254,14 +254,14 @@ pub fn get_gdt_inventory(
     run_output_ref: *const sim::RunOutput,
     parse_output_ref: *const ParseOutput,
     byte_pos: usize,
-) -> iv::Gdt {
+) -> interop::Result<iv::Gdt, RuntimeViewError> {
     if parse_output_ref.is_null() || run_output_ref.is_null() {
-        return Default::default();
+        return interop::Result::Ok(Default::default());
     }
     let parse_output = unsafe { &*parse_output_ref };
     let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
     let run_output = unsafe { &*run_output_ref };
-    run_output.get_gdt_inventory(step)
+    run_output.get_gdt_inventory(step).into()
 }
 
 /// Get the overworld items for the given byte position in the script
@@ -273,14 +273,14 @@ pub fn get_overworld_items(
     run_output_ref: *const sim::RunOutput,
     parse_output_ref: *const ParseOutput,
     byte_pos: usize,
-) -> iv::Overworld {
+) -> interop::Result<iv::Overworld, RuntimeViewError> {
     if parse_output_ref.is_null() || run_output_ref.is_null() {
-        return Default::default();
+        return interop::Result::Ok(Default::default());
     }
     let parse_output = unsafe { &*parse_output_ref };
     let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
     let run_output = unsafe { &*run_output_ref };
-    run_output.get_overworld_items(step)
+    run_output.get_overworld_items(step).into()
 }
 
 ////////// Ref Counting //////////

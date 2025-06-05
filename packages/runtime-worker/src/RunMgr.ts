@@ -5,6 +5,7 @@ import type {
     InvView_Gdt,
     InvView_Overworld,
     InvView_PouchList,
+    RuntimeViewError,
 } from "@pistonite/skybook-api";
 
 import {
@@ -49,7 +50,7 @@ export class RunMgr {
         script: string,
         taskId: string,
         bytePos: number,
-    ): Pwr<InvView_PouchList> {
+    ): Pwr<Result<InvView_PouchList, RuntimeViewError>> {
         return this.withParseAndRunOutput(
             script,
             taskId,
@@ -67,7 +68,7 @@ export class RunMgr {
         script: string,
         taskId: string,
         bytePos: number,
-    ): Pwr<InvView_Gdt> {
+    ): Pwr<Result<InvView_Gdt, RuntimeViewError>> {
         return this.withParseAndRunOutput(
             script,
             taskId,
@@ -85,7 +86,7 @@ export class RunMgr {
         script: string,
         taskId: string,
         bytePos: number,
-    ): Pwr<InvView_Overworld> {
+    ): Pwr<Result<InvView_Overworld, RuntimeViewError>> {
         return this.withParseAndRunOutput(
             script,
             taskId,

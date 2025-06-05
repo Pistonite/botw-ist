@@ -12,6 +12,7 @@ import type {
     ParserError,
     RuntimeInitError,
     CustomImageInitParams,
+    RuntimeViewError,
 } from "@pistonite/skybook-api";
 
 import type { Pwr } from "./Error.ts";
@@ -86,13 +87,12 @@ export interface NativeApi {
     /**
      * Get the Pouch inventory view for the given byte position in the script.
      * Does not consume either ptr.
-     * TODO: error type
      */
     getPouchList(
         runOutputPtr: number,
         parseOutputPtr: number,
         bytePos: number,
-    ): Pwr<InvView_PouchList>;
+    ): Pwr<Result<InvView_PouchList, RuntimeViewError>>;
     /**
      * Get the GDT inventory view for the given byte position in the script.
      * Does not consume either ptr.
@@ -102,17 +102,16 @@ export interface NativeApi {
         runOutputPtr: number,
         parseOutputPtr: number,
         bytePos: number,
-    ): Pwr<InvView_Gdt>;
+    ): Pwr<Result<InvView_Gdt, RuntimeViewError>>;
     /**
      * Get the overworld items for the given byte position in the script
      * Does not consume either ptr.
-     * TODO: error type
      */
     getOverworldItems(
         runOutputPtr: number,
         parseOutputPtr: number,
         bytePos: number,
-    ): Pwr<InvView_Overworld>;
+    ): Pwr<Result<InvView_Overworld, RuntimeViewError>>;
 
     // === ref counting api ===
 

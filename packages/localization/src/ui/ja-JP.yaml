@@ -66,11 +66,13 @@ menu.skybook_manual: "Skybook マニュアル"
 # Main inventory display
 main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されたインベントリーデータ。アイテムはインベントリーに読み込まれたかのように表示され、スロットはコラプションに基づいてインベントリーに整列されます。"
 main.gdt_inventory.title: "ゲームデータ"
+main.gdt_inventory.view_error: "GDT内部データを表示できません！"
 main.tabbed_inventory.bad_msgbar.body: "タブのデータが破損しています。メモリ破損のエクスプロイトが原因の可能性があります。"
 main.tabbed_inventory.bad_msgbar.title: "タブを表示できません！"
 main.tabbed_inventory.button_tooltip: "リスト/タブ表示を切り替え"
 main.visible_inventory.desc: "インベントリを開いたときに表示されるアイテム"
 main.visible_inventory.title: "表示インベントリ"
+main.visible_inventory.view_error: "インベントリを表示できません！"
 
 main.bug_report: "これがシミュレーターのバグだと思われる場合は、{{github}} に報告してください。"
 
@@ -187,3 +189,15 @@ runtime_init.InvalidStackStart: "パラメータ 'stack-start' の形式が無�
 runtime_init.NoImageFromApp: "アプリからカスタムイメージデータの取得に失敗しました"
 runtime_init.ProgramStartMismatch: "カスタムイメージのプログラム開始アドレス ({{addr_ci}}) がスクリプトで指定されたアドレス ({{addr_script}}) と一致しません"
 runtime_init.SaveImage: "カスタムイメージデータの保存に失敗しました"
+
+# Error/Diagnostic from Runtime
+runtime_error.Crash: "このステップでゲームがクラッシュしました"
+runtime_error.Executor: "Executorからの予期せぬエラー"
+runtime_error.PreviousCrash: "以前のステップでゲームがクラッシュしました。続行する前に`リロード` (`reload`)または`ニューゲーム` (`new-game`)が必要です"
+runtime_error.Unimplemented: "このコマンドはまだ実装されていません :)"
+runtime_error.Uninitialized: "予期せぬランタイム未初期化"
+
+# Error from getting view from simulation output
+runtime_view_error.Coherence: "インベントリデータが破損しているため、表示できません"
+runtime_view_error.Crash: "このステップまたはそれ以前にゲームがクラッシュしたため、インベントリを表示できません"
+runtime_view_error.Memory: "ゲームメモリの読み取り中にエラーが発生したため、インベントリを表示できません"

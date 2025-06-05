@@ -6,20 +6,6 @@ includes:
     internal: true
 
 tasks:
-  build-api-ts-binding:
-    env:
-      LC_ALL: C # consistent sort order
-    cmds:
-      - rm -f bindings/*.ts ../skybook-api/src/runtime/*
-      - cargo test --lib --features __ts-binding
-      # patch the imports for special types
-      # - echo 'import type { PouchItemInfo } from "./PouchItemInfo";' >> bindings/PouchGraphView.ts
-      # - echo 'import type { Pointer } from "./Pointer";' >> bindings/PouchGraphView.ts
-      - find bindings -type f | sort | sed 's/^bindings/export * from "./' | sed 's/$/";/' > index.ts
-      - mv index.ts bindings
-      - $(which mkdir) -p ../skybook-api/src/runtime
-      - mv bindings/*.ts ../skybook-api/src/runtime
-
   check:
     cmds:
       # - task: cargo:clippy-all

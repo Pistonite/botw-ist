@@ -66,11 +66,11 @@ impl<T, const OFFSET: u32, const SIZE: u32> FieldMetadata<T, OFFSET, SIZE> {
         FieldMetadata(std::marker::PhantomData)
     }
     #[inline(always)]
-    pub const fn offset() -> u32 {
+    pub const fn offset(&self) -> u32 {
         OFFSET
     }
     #[inline(always)]
-    pub const fn size() -> u32 {
+    pub const fn size(&self) -> u32 {
         SIZE
     }
     #[inline(always)]

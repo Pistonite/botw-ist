@@ -1,5 +1,5 @@
 use crate::game::{OffsetList, ListNode, FixedSafeString40};
-use crate::memory::{self, MemObject, Memory, Ptr};
+use crate::memory::{self, MemObject, Memory, Ptr, offsetof};
 
 #[derive(MemObject, Clone)]
 #[size(0x44808)]
@@ -10,8 +10,8 @@ pub struct PauseMenuDataMgr {
     pub mList2: OffsetList,
     #[offset(0x98)]
     pub mItemBuffer: [PouchItem; 420],
-    #[offset(0x441f8)]
-    mListHeads: [Ptr![Ptr![PouchItem]]; 7],
+    // #[offset(0x441f8)]
+    // mListHeads: [Ptr![Ptr![PouchItem]]; 7],
     #[offset(0x44230)]
     pub mTabs: [Ptr![PouchItem]; 50],
     // PouchItemType
@@ -46,23 +46,48 @@ pub struct PauseMenuDataMgr {
     // pub mCategoryToSort: i32,
 }
 
+impl Ptr![PauseMenuDataMgr] {
+    /// Get the index of the item in the item buffer, if the pointer
+    /// is a valid internal pointer to an item in the buffer
+    pub fn get_item_buffer_idx(self, item: Ptr![PouchItem]) -> Option<i32> {
+        if item.to_raw() <= self.to_raw(){
+            return None;
+        }
+        let ptr_diff = item.to_raw() - self.to_raw();
+        if ptr_diff >= PauseMenuDataMgr::SIZE as u64 {
+            return None;
+        }
+        let ptr_diff = ptr_diff as u32;
+        if ptr_diff < offsetof!(self, mItemBuffer) {
+            return None;
+        }
+        let ptr_diff = ptr_diff - offsetof!(self, mItemBuffer);
+        // not aligned
+        if ptr_diff % PouchItem::SIZE != 0 {
+            return None;
+        }
+
+        Some((ptr_diff / PouchItem::SIZE) as i32)
+    }
+}
+
 #[derive(MemObject, Default, Clone)]
 #[size(0x298)]
 pub struct PouchItem {
     #[offset(0x8)]
-    mListNode: ListNode,
+    pub mListNode: ListNode,
     #[offset(0x18)]
-    mType: i32,
+    pub mType: i32,
     #[offset(0x1c)]
-    mItemUse: i32,
+    pub mItemUse: i32,
     #[offset(0x20)]
     pub mValue: i32,
     #[offset(0x24)]
-    mEquipped: bool,
+    pub mEquipped: bool,
     #[offset(0x25)]
-    mInInventory: bool,
+    pub mInInventory: bool,
     #[offset(0x28)]
-    mName: FixedSafeString40,
+    pub mName: FixedSafeString40,
     #[offset(0x80)]
     pub mHealthRecover: i32, // also modifier value
     #[offset(0x84)]
@@ -74,13 +99,13 @@ pub struct PouchItem {
     #[offset(0x90)]
     pub mEffectLevel: f32,
     #[offset(0x98)]
-    mIngredients: PtrArrayImpl_FixedSafeString40,
+    pub mIngredients: PtrArrayImpl_FixedSafeString40,
 }
 
 #[allow(non_camel_case_types)]
 #[derive(MemObject, Default, Clone, Copy)]
 #[size(0x10)]
-struct PtrArrayImpl_FixedSafeString40 {
+pub struct PtrArrayImpl_FixedSafeString40 {
     #[offset(0x0)]
     mPtrNum: i32,
     #[offset(0x4)]

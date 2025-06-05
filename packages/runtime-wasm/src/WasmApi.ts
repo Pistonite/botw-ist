@@ -2,7 +2,8 @@ import { wxMakePromise } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
 
 import type {
-    ParserErrorReport,
+    ErrorReport,
+    ParserError,
     InvView_PouchList,
     InvView_Gdt,
     InvView_Overworld,
@@ -10,7 +11,7 @@ import type {
     MaybeAborted,
     CustomImageInitParams,
     RuntimeInitError,
-    RuntimeInitOutput,
+    RuntimeViewError,
 } from "@pistonite/skybook-api";
 import {
     crashApplication,
@@ -54,7 +55,7 @@ export class WasmApi implements NativeApi {
     public async initRuntime(
         customImage: Uint8Array | undefined,
         params: CustomImageInitParams | undefined,
-    ): Pwr<Result<RuntimeInitOutput, RuntimeInitError>> {
+    ): Pwr<Result<wasm_bindgen.RuntimeInitOutput, RuntimeInitError>> {
         const result = await this.exec(() => {
             return wasm_bindgen.init_runtime(customImage, params);
         }, true);
@@ -90,7 +91,7 @@ export class WasmApi implements NativeApi {
             return wasm_bindgen.parse_script_semantic(script, start, end);
         });
     }
-    public getParserErrors(ptr: number): Pwr<ParserErrorReport[]> {
+    public getParserErrors(ptr: number): Pwr<ErrorReport<ParserError>[]> {
         return this.exec(() => {
             return wasm_bindgen.get_parser_errors(ptr);
         });
@@ -131,7 +132,7 @@ export class WasmApi implements NativeApi {
         runOutputPtr: number,
         parseOutputPtr: number,
         bytePos: number,
-    ): Pwr<InvView_PouchList> {
+    ): Pwr<Result<InvView_PouchList, RuntimeViewError>> {
         return this.exec(() => {
             return wasm_bindgen.get_pouch_list(
                 runOutputPtr,
@@ -145,7 +146,7 @@ export class WasmApi implements NativeApi {
         runOutputPtr: number,
         parseOutputPtr: number,
         bytePos: number,
-    ): Pwr<InvView_Gdt> {
+    ): Pwr<Result<InvView_Gdt, RuntimeViewError>> {
         return this.exec(() => {
             return wasm_bindgen.get_gdt_inventory(
                 runOutputPtr,
@@ -159,7 +160,7 @@ export class WasmApi implements NativeApi {
         runOutputPtr: number,
         parseOutputPtr: number,
         bytePos: number,
-    ): Pwr<InvView_Overworld> {
+    ): Pwr<Result<InvView_Overworld, RuntimeViewError>> {
         return this.exec(() => {
             return wasm_bindgen.get_overworld_items(
                 runOutputPtr,

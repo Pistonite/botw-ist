@@ -66,11 +66,13 @@ menu.skybook_manual: "Manual de Skybook"
 # Main inventory display
 main.gdt_inventory.desc: "Datos de inventario almacenados en el sistema de banderas del juego (GDT). Los objetos se muestran como si estuvieran cargados en el inventario, y las ranuras se alinean con el inventario según la corrupción."
 main.gdt_inventory.title: "GameData"
+main.gdt_inventory.view_error: "¡No se pueden mostrar los datos internos de GDT!"
 main.tabbed_inventory.bad_msgbar.body: "Los datos de las pestañas están dañados. Posiblemente debido a un exploit de corrupción de memoria."
 main.tabbed_inventory.bad_msgbar.title: "¡No se pueden mostrar las pestañas!"
 main.tabbed_inventory.button_tooltip: "Alternar vista de lista/pestañas"
 main.visible_inventory.desc: "Objetos que ves al abrir el inventario"
 main.visible_inventory.title: "Inventario Visible"
+main.visible_inventory.view_error: "¡No se puede mostrar el inventario!"
 
 main.bug_report: "Por favor, repórtalo en {{github}} si crees que es un error del simulador."
 
@@ -187,3 +189,15 @@ runtime_init.InvalidStackStart: "El formato del parámetro 'stack-start' es inv�
 runtime_init.NoImageFromApp: "No se pudieron obtener los datos de la imagen personalizada desde la aplicación"
 runtime_init.ProgramStartMismatch: "La dirección de inicio del programa en la imagen personalizada ({{addr_ci}}) no coincide con la especificada en el script ({{addr_script}})"
 runtime_init.SaveImage: "No se pudieron guardar los datos de la imagen personalizada"
+
+# Error/Diagnostic from Runtime
+runtime_error.Crash: "El juego se ha colgado en este paso"
+runtime_error.Executor: "Error inesperado del Ejecutor"
+runtime_error.PreviousCrash: "El juego se ha colgado en un paso anterior. Necesitas `recargar` (`reload`) o iniciar una `nueva partida` (`new-game`) antes de continuar"
+runtime_error.Unimplemented: "Este comando aún no está implementado :)"
+runtime_error.Uninitialized: "Entorno de ejecución inesperadamente no inicializado"
+
+# Error from getting view from simulation output
+runtime_view_error.Coherence: "Los datos del inventario están corruptos y no se pueden mostrar"
+runtime_view_error.Crash: "El juego se ha colgado en este paso o antes y el inventario no se puede mostrar"
+runtime_view_error.Memory: "Ocurrió un error al leer la memoria del juego y el inventario no se puede mostrar"

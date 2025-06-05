@@ -66,11 +66,13 @@ menu.skybook_manual: "Skybook Manual"
 # Main inventory display
 main.gdt_inventory.desc: "Inventory data stored in the game's flag system (GDT). Items are displayed as if they are loaded to inventory, and slots are aligned to inventory based on corruption"
 main.gdt_inventory.title: "Game Data"
+main.gdt_inventory.view_error: "Cannot display Game Data!"
 main.tabbed_inventory.bad_msgbar.body: "Tab data is corrupted. This is possibly due to a memory corruption exploit."
 main.tabbed_inventory.bad_msgbar.title: "Cannot display tabs!"
 main.tabbed_inventory.button_tooltip: "Toggle List/Tab View"
 main.visible_inventory.desc: "Items you see when the inventory is opened"
 main.visible_inventory.title: "Visible Inventory"
+main.visible_inventory.view_error: "Cannot display inventory!"
 
 main.bug_report: "Please report it on {{github}} if you think this is a bug"
 
@@ -187,3 +189,15 @@ runtime_init.InvalidStackStart: "The format of the stack-start parameter is inva
 runtime_init.NoImageFromApp: "Failed to get Custom Image data from app"
 runtime_init.ProgramStartMismatch: "Program start address from the Custom Image ({{addr_ci}}) does not match the one specified in the script ({{addr_script}})"
 runtime_init.SaveImage: "Failed to store Custom Image data"
+
+# Error/Diagnostic from Runtime
+runtime_error.Crash: "The game crashed in this step"
+runtime_error.Executor: "Unexpected error from Executor"
+runtime_error.PreviousCrash: "The game has crashed in a previous step. You need to `reload` or `new-game` before continuing"
+runtime_error.Unimplemented: "This command is not implemented yet :)"
+runtime_error.Uninitialized: "Unexpected uninitialized Runtime"
+
+# Error from getting view from simulation output
+runtime_view_error.Coherence: "The inventory data is corrupted and cannot be displayed"
+runtime_view_error.Crash: "The game has crashed at or before this step and the inventory cannot be displayed"
+runtime_view_error.Memory: "An error occured while reading game memory and the inventory cannot be displayed"

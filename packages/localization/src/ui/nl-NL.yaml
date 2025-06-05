@@ -66,11 +66,13 @@ menu.skybook_manual: "Skybook-handleiding"
 # Main inventory display
 main.gdt_inventory.desc: "Voorraaddata opgeslagen in het vlaggensysteem van het spel (GDT). Items worden weergegeven alsof ze in de inventaris zijn geladen, en de slots zijn uitgelijnd met de inventaris op basis van corruptie."
 main.gdt_inventory.title: "GameData"
+main.gdt_inventory.view_error: "Interne GDT-gegevens kunnen niet worden weergegeven!"
 main.tabbed_inventory.bad_msgbar.body: "Tabbladgegevens zijn beschadigd. Mogelijk door een geheugenbeschadigingsexploit."
 main.tabbed_inventory.bad_msgbar.title: "Kan tabbladen niet weergeven!"
 main.tabbed_inventory.button_tooltip: "Lijst-/tabweergave wisselen"
 main.visible_inventory.desc: "Items die je ziet wanneer je de inventaris opent"
 main.visible_inventory.title: "Zichtbare Inventaris"
+main.visible_inventory.view_error: "Inventaris kan niet worden weergegeven!"
 
 main.bug_report: "Meld het op {{github}} als u denkt dat dit een bug in de simulator is."
 
@@ -187,3 +189,15 @@ runtime_init.InvalidStackStart: "Het formaat van de parameter 'stack-start' is o
 runtime_init.NoImageFromApp: "Kan aangepaste afbeeldinggegevens niet ophalen uit de app"
 runtime_init.ProgramStartMismatch: "Het programma startadres van de aangepaste afbeelding ({{addr_ci}}) komt niet overeen met het adres dat in het script is opgegeven ({{addr_script}})"
 runtime_init.SaveImage: "Kan aangepaste afbeeldinggegevens niet opslaan"
+
+# Error/Diagnostic from Runtime
+runtime_error.Crash: "Het spel is gecrasht tijdens deze stap"
+runtime_error.Executor: "Onverwachte fout van Executor"
+runtime_error.PreviousCrash: "Het spel is gecrasht in een vorige stap. U moet `herladen` (`reload`) of een `nieuw spel` (`new-game`) starten voordat u verder kunt gaan"
+runtime_error.Unimplemented: "Dit commando is nog niet geïmplementeerd :)"
+runtime_error.Uninitialized: "Onverwachte niet-geïnitialiseerde Runtime"
+
+# Error from getting view from simulation output
+runtime_view_error.Coherence: "De inventarisgegevens zijn beschadigd en kunnen niet worden weergegeven"
+runtime_view_error.Crash: "Het spel is gecrasht bij of vóór deze stap en de inventaris kan niet worden weergegeven"
+runtime_view_error.Memory: "Er is een fout opgetreden bij het lezen van het spelgeheugen en de inventaris kan niet worden weergegeven"

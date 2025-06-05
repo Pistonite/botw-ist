@@ -1,16 +1,18 @@
 import { create } from "zustand";
 import { debounce } from "@pistonite/pure/sync";
+import type { Result } from "@pistonite/pure/result";
+import { charPosToBytePos } from "@pistonite/intwc";
 
 import type {
     InvView_Gdt,
     InvView_Overworld,
     InvView_PouchList,
+    RuntimeViewError,
     ScriptEnvImage,
 } from "@pistonite/skybook-api";
 import { translateUI } from "skybook-localization";
 
 import { useApplicationStore } from "./ApplicationStore.ts";
-import { charPosToBytePos } from "@pistonite/intwc";
 
 /** State of the current session. This is not persisted */
 export type SessionStore = {
@@ -73,18 +75,22 @@ export type SessionStore = {
     executionInProgress: boolean;
     setExecutionInProgress: (inProgress: boolean) => void;
 
+    // The inventory view errors (RuntimeViewError) is not an error in the app
+    // It's expected if the simulation corrupted the game in some way
+    // so the inventory cannot be read
+
     /** Cached Pouch list views. Key is the step index */
     pouchCached: number[];
-    pouchViews: Record<number, InvView_PouchList>;
-    setPouchViewInCache: (step: number, view: InvView_PouchList) => void;
+    pouchViews: Record<number, Result<InvView_PouchList, RuntimeViewError>>;
+    setPouchViewInCache: (step: number, view: Result<InvView_PouchList, RuntimeViewError>) => void;
     /** Cached GDT inventory views. Key is the step index */
     gdtCached: number[];
-    gdtViews: Record<number, InvView_Gdt>;
-    setGdtViewInCache: (step: number, view: InvView_Gdt) => void;
+    gdtViews: Record<number, Result<InvView_Gdt, RuntimeViewError>>;
+    setGdtViewInCache: (step: number, view: Result<InvView_Gdt, RuntimeViewError>) => void;
     /** Cached Overworld item views. Key is the step index */
     overworldCached: number[];
-    overworldViews: Record<number, InvView_Overworld>;
-    setOverworldViewInCache: (step: number, view: InvView_Overworld) => void;
+    overworldViews: Record<number, Result<InvView_Overworld, RuntimeViewError>>;
+    setOverworldViewInCache: (step: number, view: Result<InvView_Overworld, RuntimeViewError>) => void;
 
     /** Invalidate all cached inventory views */
     invalidateInventoryCache: () => void;

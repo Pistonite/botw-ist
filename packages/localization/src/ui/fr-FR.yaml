@@ -66,11 +66,13 @@ menu.skybook_manual: "Manuel de Skybook"
 # Main inventory display
 main.gdt_inventory.desc: "Données d'inventaire stockées dans le système de drapeaux du jeu (GDT). Les objets sont affichés comme s'ils étaient chargés dans l'inventaire, et les emplacements sont alignés avec l'inventaire en fonction de la corruption."
 main.gdt_inventory.title: "GameData"
+main.gdt_inventory.view_error: "Impossible d'afficher les données internes GDT !"
 main.tabbed_inventory.bad_msgbar.body: "Les données des onglets sont corrompues. Cela est peut-être dû à une exploitation de corruption de mémoire."
 main.tabbed_inventory.bad_msgbar.title: "Impossible d'afficher les onglets !"
 main.tabbed_inventory.button_tooltip: "Basculer entre la vue Liste/onglets"
 main.visible_inventory.desc: "Objets visibles lors de l'ouverture de l'inventaire"
 main.visible_inventory.title: "Inventaire Visible"
+main.visible_inventory.view_error: "Impossible d'afficher l'inventaire !"
 
 main.bug_report: "Veuillez le signaler sur {{github}} si vous pensez qu'il s'agit d'un bug du simulateur."
 
@@ -187,3 +189,15 @@ runtime_init.InvalidStackStart: "Le format du paramètre 'stack-start' est inval
 runtime_init.NoImageFromApp: "Échec de l'obtention des données de l'image personnalisée depuis l'application"
 runtime_init.ProgramStartMismatch: "L'adresse de démarrage du programme dans l'image personnalisée ({{addr_ci}}) ne correspond pas à celle spécifiée dans le script ({{addr_script}})"
 runtime_init.SaveImage: "Échec de l'enregistrement des données de l'image personnalisée"
+
+# Error/Diagnostic from Runtime
+runtime_error.Crash: "Le jeu a planté à cette étape"
+runtime_error.Executor: "Erreur inattendue de l'Exécuteur"
+runtime_error.PreviousCrash: "Le jeu a planté à une étape précédente. Vous devez `recharger` (`reload`) ou commencer une `nouvelle partie` (`new-game`) avant de continuer"
+runtime_error.Unimplemented: "Cette commande n'est pas encore implémentée :)"
+runtime_error.Uninitialized: "Runtime non initialisé de manière inattendue"
+
+# Error from getting view from simulation output
+runtime_view_error.Coherence: "Les données de l'inventaire sont corrompues et ne peuvent pas être affichées"
+runtime_view_error.Crash: "Le jeu a planté à cette étape ou avant et l'inventaire ne peut pas être affiché"
+runtime_view_error.Memory: "Une erreur s'est produite lors de la lecture de la mémoire du jeu et l'inventaire ne peut pas être affiché"

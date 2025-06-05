@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import type { WxPromise } from "@pistonite/workex";
+import type { Result } from "@pistonite/pure/result";
 import { v4 as makeUUID } from "uuid";
 
 import type {
@@ -9,12 +10,13 @@ import type {
     InvView_PouchList,
     MaybeAborted,
     Runtime,
+    RuntimeViewError,
 } from "@pistonite/skybook-api";
+import { translateGenericError } from "skybook-localization";
 
 import { useRuntime } from "self::application/runtime";
 
 import { useSessionStore } from "./SessionStore.ts";
-import { translateGenericError } from "skybook-localization";
 
 /**
  * Get the debounced value of hasUnsavedChanges of the session
@@ -27,7 +29,7 @@ export const useDebouncedHasUnsavedChanges = (delay: number) => {
 };
 
 export type CachedRuntimeData<T> = {
-    data: T | undefined;
+    data: Result<T, RuntimeViewError> | undefined;
     /** If the data is from cache, but not up to date */
     stale: boolean;
     /** If new data is currently being processed in the runtime */
@@ -115,7 +117,7 @@ const getOverworldItemsShim = (
  */
 const useStoreCachedRuntimeData = <T>(
     name: string,
-    cachedViews: Record<number, T>,
+    cachedViews: Record<number, Result<T, RuntimeViewError>>,
     cacheValidity: number[],
     // must be stable
     runFn: (
@@ -123,8 +125,8 @@ const useStoreCachedRuntimeData = <T>(
         taskId: string,
         activeScript: string,
         bytePos: number,
-    ) => WxPromise<MaybeAborted<T>>,
-    setFn: (stepIndex: number, view: T) => void,
+    ) => WxPromise<MaybeAborted<Result<T, RuntimeViewError>>>,
+    setFn: (stepIndex: number, view: Result<T, RuntimeViewError>) => void,
 ): CachedRuntimeData<T> => {
     const activeScript = useDebounce(
         useSessionStore((state) => state.activeScript),
@@ -134,7 +136,7 @@ const useStoreCachedRuntimeData = <T>(
     const stepIndex = useSessionStore((state) => state.stepIndex);
     const bytePos = useSessionStore((state) => state.bytePos);
 
-    const inventory: T | undefined = cachedViews[stepIndex];
+    const inventory: Result<T, RuntimeViewError> | undefined = cachedViews[stepIndex];
     const cacheIsValid = !!(cacheValidity.includes(stepIndex) && inventory);
 
     const runtime = useRuntime();
@@ -211,7 +213,7 @@ const useStoreCachedRuntimeData = <T>(
     // Create a per-component cache. If the view is not ready when
     // creating new steps, then we can still render the old result,
     // instead of showing empty state (which causes large UI flickering)
-    const inventoryViewCache = useRef<T | undefined>(undefined);
+    const inventoryViewCache = useRef<Result<T, RuntimeViewError> | undefined>(undefined);
     useEffect(() => {
         if (inventory) {
             inventoryViewCache.current = inventory;
@@ -221,7 +223,7 @@ const useStoreCachedRuntimeData = <T>(
     return {
         // if state for current step is not ready,
         // display the previous step to avoid flickering
-        data: (inventory || inventoryViewCache.current) as T | undefined,
+        data: (inventory || inventoryViewCache.current),
         stale: !cacheIsValid,
         loading: inProgress,
         error: errorMessage,

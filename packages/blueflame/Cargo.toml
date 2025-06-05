@@ -33,7 +33,7 @@ no-panic = "0.1.35"
 enum-map = "2.7.3"
 num-traits = "0.2.19"
 bit-set = "0.8.0"
-rkyv = "0.8.10"
+rkyv = { version = "0.8.10", features = ["alloc", "unaligned"]}
 
 [dev-dependencies]
 colog = { workspace = true }

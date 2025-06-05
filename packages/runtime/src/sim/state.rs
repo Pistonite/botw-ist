@@ -77,7 +77,7 @@ pub struct GameState {
     screen: Screen,
 
     /// Running game's process
-    process: Process,
+    pub process: Process,
     //
     // /// Current actors in the overworld
     // /// TODO: make this copy on write and Arc
