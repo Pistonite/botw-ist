@@ -1,7 +1,7 @@
 import type { AsyncErc } from "@pistonite/pure/memory";
 import type { Result } from "@pistonite/pure/result";
 
-import type { ParserErrorReport } from "@pistonite/skybook-api";
+import type { ErrorReport, ParserError } from "@pistonite/skybook-api";
 
 import { resolveQuotedItem } from "./AppCall.ts";
 import {
@@ -33,16 +33,15 @@ export class ParseMgr {
     }
 
     /** Parse the script and get diagnostics from the parser */
-    public getParserDiagnostics(script: string): Pwr<ParserErrorReport[]> {
+    public getParserDiagnostics(
+        script: string,
+    ): Pwr<ErrorReport<ParserError>[]> {
         return this.withParseOutput(script, (ptr) => {
             return this.napi.getParserErrors(ptr);
         });
     }
 
-    public getStepFromPos(
-        script: string,
-        bytePos: number,
-    ): Promise<Result<number, WorkerError>> {
+    public getStepFromPos(script: string, bytePos: number): Pwr<number> {
         return this.withParseOutput(script, (ptr) => {
             return this.napi.getStepFromPos(ptr, bytePos);
         });
@@ -51,8 +50,8 @@ export class ParseMgr {
     /** Wrapper to call parseScript and use the result pointer, and free it afterwards */
     private async withParseOutput<T>(
         script: string,
-        fn: (parseOutputBorrowed: number) => Promise<Result<T, WorkerError>>,
-    ): Promise<Result<T, WorkerError>> {
+        fn: (parseOutputBorrowed: number) => Pwr<T>,
+    ): Pwr<T> {
         const parseResult = await this.parseScript(script);
         if (parseResult.err) {
             return parseResult;
@@ -69,9 +68,7 @@ export class ParseMgr {
     /**
      * Parse the script and returns a strong pointer to the output (that must be freed)
      */
-    public async parseScript(
-        script: string,
-    ): Promise<Result<AsyncErc<ParseOutput>, WorkerError>> {
+    public async parseScript(script: string): Pwr<AsyncErc<ParseOutput>> {
         const isScriptUpToDate = this.lastScript === script;
         // if the cache result is up-to-date, return it
         if (
@@ -95,7 +92,7 @@ export class ParseMgr {
 
     private async parseScriptInternal(
         script: string,
-    ): Promise<Result<AsyncErc<ParseOutput>, WorkerError>> {
+    ): Pwr<AsyncErc<ParseOutput>> {
         this.isRunning = true;
         // clear the awaiters. Previous runs still have their awaiters,
         // but newer awaiters will be added to this run
