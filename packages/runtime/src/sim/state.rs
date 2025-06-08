@@ -17,10 +17,10 @@ use super::util;
 pub struct State {
     /// Current game state
     pub game: Game,
-    /// named save data
-    saves: HashMap<String, Arc<gdt::TriggerParam>>,
-    /// The "manual" or "default" save (what is used if a name is not specified when saving)
-    manual_save: Option<gdt::TriggerParam>,
+    // /// named save data
+    // saves: HashMap<String, Arc<gdt::TriggerParam>>,
+    // /// The "manual" or "default" save (what is used if a name is not specified when saving)
+    // manual_save: Option<gdt::TriggerParam>,
 
 
 

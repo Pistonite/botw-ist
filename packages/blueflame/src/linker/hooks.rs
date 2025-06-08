@@ -115,9 +115,7 @@ impl HookProvider for GameHooks {
         // 0x00de16ec  000248,_ZNK4ksys3gdt12TriggerParam17getStr64ArraySizeEPiRKN4sead14SafeStringBaseIcEE
         // 0x00de17e4  000248,_ZNK4ksys3gdt12TriggerParam17getVec3fArraySizeEPiRKN4sead14SafeStringBaseIcEE
         // 0x00de18dc  000324,_ZNK4ksys3gdt12TriggerParam17getMinValueForS32EPiRKN4sead14SafeStringBaseIcEE
-        // 0x00de1a20  000324,_ZNK4ksys3gdt12TriggerParam17getMaxValueForS32EPiRKN4sead14SafeStringBaseIcEE
-            // ^ min/max is needed but we don't have that in data yet
-            // used in doAddToPouch
+        0x00de1a20  000324 gdt_hooks::get_s32_max,
 
         0x00de1b64  000236 gdt_hooks::set_bool, // setBool by idx
         0x00de22f8  000332 gdt_hooks::set_s32,  // setS32 by idx

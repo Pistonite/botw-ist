@@ -11,3 +11,5 @@ features = ["trace-memory"]
 anyhow = { workspace = true }
 colog = { workspace = true }
 log = { workspace = true }
+oneshot = "0.1.11"
+threadpool = "1.8.1"

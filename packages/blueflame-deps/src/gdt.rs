@@ -201,9 +201,10 @@ impl<T: FlagType> Flag<T> {
     pub fn hash(&self) -> i32 {
         self.hash
     }
-    // pub fn name(&self) -> &str {
-    //     self.name
-    // }
+
+    pub fn max(&self) -> T::ValueType {
+        self.max
+    }
 
     pub fn readable(&self) -> bool {
         self.properties & (PropertyFlag::IsProgramReadable as u8) != 0

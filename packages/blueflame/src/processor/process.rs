@@ -1,5 +1,5 @@
 use std::ops::ControlFlow;
-use std::panic::UnwindSafe;
+use std::panic::{RefUnwindSafe, UnwindSafe};
 use std::sync::Arc;
 
 use derive_more::derive::Constructor;
@@ -113,7 +113,7 @@ impl Process {
     }
 }
 
-pub trait HookProvider: Send + Sync + UnwindSafe {
+pub trait HookProvider: Send + Sync + UnwindSafe + RefUnwindSafe {
     /// Hook execution at PC. Return the execute function and the byte
     /// size of the hook
     #[allow(clippy::type_complexity)]

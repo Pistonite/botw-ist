@@ -1,5 +1,3 @@
-use blueflame::memory;
-
 use crate::{iv, sim};
 use crate::error::{RuntimeViewError, ErrorReport};
 
@@ -32,7 +30,7 @@ impl RunOutput {
     /// Get the GDT inventory view for the given step in the script
     ///
     /// Trailing items with empty names are not included
-    pub fn get_gdt_inventory(&self, step: usize) -> Result<iv::Gdt, RuntimeViewError> {
+    pub fn get_gdt_inventory(&self, _step: usize) -> Result<iv::Gdt, RuntimeViewError> {
         // mock data
         //
         Ok(iv::Gdt {
@@ -81,7 +79,7 @@ impl RunOutput {
         })
     }
 
-    pub fn get_overworld_items(&self, step: usize) -> Result<iv::Overworld, RuntimeViewError> {
+    pub fn get_overworld_items(&self, _step: usize) -> Result<iv::Overworld, RuntimeViewError> {
         // mock data
         Ok(iv::Overworld {
             items: vec![

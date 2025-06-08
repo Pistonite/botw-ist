@@ -4,6 +4,8 @@ use crate::memory::{self, MemObject, Memory, Ptr, offsetof};
 #[derive(MemObject, Clone)]
 #[size(0x44808)]
 pub struct PauseMenuDataMgr {
+    #[offset(0x0)]
+    vtable: u64,
     #[offset(0x68)]
     pub mList1: OffsetList,
     #[offset(0x80)]

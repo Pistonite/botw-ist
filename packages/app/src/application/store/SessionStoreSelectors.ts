@@ -130,7 +130,7 @@ const useStoreCachedRuntimeData = <T>(
 ): CachedRuntimeData<T> => {
     const activeScript = useDebounce(
         useSessionStore((state) => state.activeScript),
-        500,
+        100,
     );
     const inProgress = useSessionStore((state) => state.executionInProgress);
     const stepIndex = useSessionStore((state) => state.stepIndex);

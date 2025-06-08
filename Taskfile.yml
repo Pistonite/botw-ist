@@ -12,6 +12,7 @@ includes:
   blueflame-deps: {taskfile: ./packages/blueflame-deps,   dir: ./packages/blueflame-deps,   internal: true}
   blueflame-proc-macros: {taskfile: ./packages/blueflame-proc-macros, dir: ./packages/blueflame-proc-macros, internal: true}
   runtime:        {taskfile: ./packages/runtime,          dir: ./packages/runtime,          internal: true}
+  runtime-tests:  {taskfile: ./packages/runtime-tests,    dir: ./packages/runtime-tests,    internal: true}
   runtime-wasm:   {taskfile: ./packages/runtime-wasm,     dir: ./packages/runtime-wasm,     internal: true}
   runtime-worker: {taskfile: ./packages/runtime-worker,   dir: ./packages/runtime-worker,   internal: true}
   parser:         {taskfile: ./packages/parser,           dir: ./packages/parser,           internal: true}
@@ -124,6 +125,7 @@ tasks:
       - task: blueflame-deps:check
       - task: blueflame:check
       - task: runtime:check
+      - task: runtime-tests:check
       - task: runtime-wasm:check
 
   test-ci:

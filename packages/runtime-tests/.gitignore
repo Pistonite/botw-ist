@@ -1,2 +1,4 @@
 *.blfm
 *.bfi
+/failures
+trace.txt
