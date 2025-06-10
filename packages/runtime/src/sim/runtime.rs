@@ -11,11 +11,11 @@ use crate::exec::{self, Executor, Spawner};
 use crate::error::{RuntimeInitError};
 use crate::sim;
 
-pub use skybook_api::runtime::sim::CustomImageInitParams;
+#[doc(inline)]
+pub use skybook_api::runtime::sim::RuntimeInitParams;
 
 
 pub struct Runtime {
-    pub env: Mutex<Environment>,
     executor: Executor,
     initial_process: Mutex<Option<Process>>,
     state_cache: Mutex<LruCache<Vec<cir::Command>, sim::State>>,
@@ -26,7 +26,6 @@ impl Runtime {
     pub fn new(spawner: Spawner) -> Self {
         let executor = Executor::new(spawner);
         Self {
-            env: Mutex::new(Environment::new(GameVer::X150, DlcVer::None)),
             executor,
             initial_process: Mutex::new(None),
             state_cache: Mutex::new(LruCache::new(NonZeroUsize::new(1024).unwrap()))
@@ -37,39 +36,28 @@ impl Runtime {
     pub fn initial_process(&self) -> Result<Process, crate::error::Error> {
         self.initial_process
             .lock()
-            .unwrap()
+            .expect("cannot acquire")
             .clone()
             .ok_or(crate::error::Error::Uninitialized)
-    }
-
-    pub fn game_version(&self) -> GameVer {
-        self.env.lock().unwrap().game_ver
-    }
-    pub fn dlc_version(&self) -> DlcVer {
-        self.env.lock().unwrap().dlc_ver
     }
 
     /// Initialize the runtime
     pub fn init(
         &self,
-        custom_image: Option<(Vec<u8>, CustomImageInitParams)>,
-    ) -> Result<(), RuntimeInitError> {
-        if let Err(e) = self.executor.ensure_threads(4) {
+        image: &[u8],
+        threads: usize,
+        params: Option<&RuntimeInitParams>,
+    ) -> Result<Environment, RuntimeInitError> {
+        log::info!("initializing runtime");
+        if let Err(e) = self.executor.ensure_threads(threads.max(1)) {
             log::error!("failed to create threads: {}", e);
             return Err(RuntimeInitError::Executor);
         }
-        let Some((bytes, params)) = custom_image else {
-            log::error!("must provide custom image for now");
-            return Err(RuntimeInitError::BadImage);
-        };
 
-        log::debug!(
-            "initializing runtime with custom image params: {:?}",
-            params
-        );
+        log::debug!("initializing runtime with custom image params: {params:?}");
 
         let mut program_bytes = Vec::new();
-        let program = match program::unpack_zc(&bytes, &mut program_bytes) {
+        let program = match program::unpack_zc(image, &mut program_bytes) {
             Err(e) => {
                 log::error!("failed to unpack blueflame image: {}", e);
                 return Err(RuntimeInitError::BadImage);
@@ -77,34 +65,81 @@ impl Runtime {
             Ok(program) => program,
         };
 
-        if program.ver == GameVer::X160 {
-            log::error!(">>>> + LOOK HERE + <<<< Only 1.5 is supported for now");
-            return Err(RuntimeInitError::BadImage);
+        log::debug!("program start: 0x{:016x}", program.program_start);
+        if let Some(program_start) = params.map(|x| &x.program_start) {
+            if !program_start.is_empty() {
+                match parse_region_addr(program_start) {
+                    None => {
+                        log::error!("cannot parse program_start from the params, assuming we are OK with the default");
+                    }
+                    Some(expected_program_start) => {
+                        if expected_program_start != program.program_start {
+                            return Err(RuntimeInitError::ProgramStartMismatch(
+                                format!("0x{:016x}", program.program_start),
+                                format!("0x{:016x}", expected_program_start),
+                            ))
+                        }
+                    }
+                }
+            }
         }
 
-        log::debug!("program start: {:#x}", program.program_start);
-
-        // TODO: program should not have DLC version, since
-        // it doesn't matter statically
-        {
-            let mut env = self.env.lock().unwrap();
-            env.game_ver = program.ver.into();
-            env.dlc_ver = match DlcVer::from_num(params.dlc) {
+        let env = {
+            let game_ver = program.ver.into();
+            log::info!("game version is {game_ver:?}");
+            let params_dlc = params.map(|x| *x.dlc).unwrap_or(3);
+            let dlc_ver = match DlcVer::from_num(params_dlc) {
                 Some(dlc) => dlc,
-                None => return Err(RuntimeInitError::BadDlcVersion(params.dlc)),
+                None => return Err(RuntimeInitError::BadDlcVersion(params_dlc)),
             };
+            log::info!("dlc version is {dlc_ver:?}");
+
+            Environment::new(game_ver, dlc_ver)
+        };
+
+        if env.game_ver == GameVer::X160 {
+            log::error!(">>>> + LOOK HERE + <<<< Only 1.5 is supported for now");
+            return Err(RuntimeInitError::UnsupportedVersion);
         }
 
-        // TODO: take the param
-        log::debug!("initializing memory");
+        let stack_start = match params.map(|x| &x.stack_start) {
+            None => 0x8888800000,
+            Some(x) => {
+                match parse_region_addr(x) {
+                    Some(x) => x,
+                    None => {
+                        log::error!("failed to parse stack_start");
+                        return Err(RuntimeInitError::InvalidStackStart);
+                    }
+                }
+            }
+        };
+
+        let pmdm_addr = match params.map(|x| &x.stack_start) {
+            None => 0x2222248358,
+            Some(x) => {
+                match parse_region_addr(x) {
+                    Some(x) => x,
+                    None => {
+                        log::error!("failed to parse pmdm_addr");
+                        return Err(RuntimeInitError::InvalidPmdmAddr);
+                    }
+                }
+            }
+        };
+
+        let heap_free_size = params.map(|x| *x.heap_free_size).unwrap_or(20480000);
+        if heap_free_size > 40960000 {
+            return Err(RuntimeInitError::HeapTooBig);
+        }
 
         let process = match linker::init_process(
             &program,
-            DlcVer::V300, // TODO: take from param
-            0x8888800000,
-            0x4000, // stack size
-            0x2222200000,
-            20000000, // this heap looks hug
+            env.dlc_ver,
+            stack_start,
+            params.map(|x| *x.stack_size).unwrap_or(0x4000),
+            pmdm_addr,
+            heap_free_size
         ) {
             Err(e) => {
                 log::error!("failed to initialize memory: {}", e);
@@ -140,3 +175,16 @@ impl Runtime {
     }
 }
 
+fn parse_hex(s: &str) -> Option<u64> {
+    let s = s.strip_prefix("0x")?;
+    s.parse::<u64>().ok()
+}
+
+fn parse_region_addr(s: &str) -> Option<u64> {
+    let addr = parse_hex(s)?;
+    if (addr & 0xffffff00000fffffu64) != 0 {
+        log::error!("region address is not the correct format: {s}");
+        return None;
+    }
+    Some(addr)
+}

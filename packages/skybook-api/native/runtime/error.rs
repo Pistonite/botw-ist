@@ -24,10 +24,10 @@ pub enum RuntimeInitError {
     Executor,
     #[error("invalid DLC version: {0}. Valid versions are 0, 1, 2 or 3")]
     BadDlcVersion(u32),
-    #[error("invalid custom image (1.6 is not supported right now)")]
+    #[error("the game version is not supported")]
+    UnsupportedVersion,
+    #[error("the image file is invalid")]
     BadImage,
-    #[error("program-start param is invalid")]
-    InvalidProgramStart,
     #[error("stack-start param is invalid")]
     InvalidStackStart,
     #[error("pmdm-addr param is invalid")]
@@ -36,6 +36,8 @@ pub enum RuntimeInitError {
         "the custom image provided has program-start = {0}, which does not match the one requested by the environment = {0}"
     )]
     ProgramStartMismatch(String, String),
+    #[error("we don't support heap this big right now")]
+    HeapTooBig,
 }
 
 /// Error type for the runtime

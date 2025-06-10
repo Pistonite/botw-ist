@@ -1,4 +1,5 @@
 *.blfm
 *.bfi
 /failures
+/data
 trace.txt

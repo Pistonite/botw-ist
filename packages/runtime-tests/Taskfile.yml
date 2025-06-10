@@ -6,6 +6,17 @@ includes:
     internal: true
 
 tasks:
+  install:
+    desc: Install extra tools for working with BlueFlame images
+    cmds:
+      - cargo install uking-relocate --git https://github.com/Pistonight/symbotw --branch main
+
+  clean:
+    desc: Remove files
+    cmds:
+      - rm -rf failures data
+      - rm -f trace.txt
+
   check:
     cmds:
       - task: cargo:clippy-all
@@ -14,3 +25,51 @@ tasks:
   fix:
     cmds:
       - task: cargo:fmt-fix
+
+  run-full:
+    desc: Run the tests with the full image
+    env:
+      SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
+    cmds:
+      - cargo run --release
+
+  run-mini:
+    desc: Run the tests with the mini image
+    env:
+      SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-mini.bfi
+    cmds:
+      - cargo run --release
+
+  pull-deps:
+    desc: Download super secret files
+    cmds:
+      - $(which mkdir) -p data
+      - gcloud storage cp -r gs://ist-private/super-secret/botw150 data
+
+  build-full:
+    desc: Build the image that contains the full ExeFS
+    cmds:
+      - uking-relocate data/botw150/sdk.elf -s 0x1042000000 -o data/program-full.bfi
+    sources:
+      - data/botw150/main.elf
+    generates:
+      - data/program-full.bfi
+
+  build-mini:
+    desc: Build the image that only contains the needed parts
+    cmds:
+      - task: build-full
+      - task: run-full
+      - python scripts/relocate.py
+      - task: run-mini
+
+  push-artifacts:
+    desc: Upload built artifacts
+    cmds:
+      - gcloud storage cp data/program-mini.bfi gs://ist-private/super-secret/images/
+
+  pull-artifacts:
+    desc: Pull built artifacts
+    cmds:
+      - $(which mkdir) -p data
+      - gcloud storage cp gs://ist-private/super-secret/images/program-mini.bfi data

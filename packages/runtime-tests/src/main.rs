@@ -36,9 +36,10 @@ fn main() -> anyhow::Result<()> {
         BACKTRACE.with(|b| b.set(Some(trace)))
     }));
 
-    log::info!("loading BFI");
+    let image_file = std::env::var("SKYBOOK_RUNTIME_TEST_IMAGE").context("please define SKYBOOK_RUNTIME_TEST_IMAGE")?;
+    log::info!("loading {image_file}");
 
-    let image_bytes = std::fs::read("../../image/program.bfi").context("failed to read BFI")?;
+    let image_bytes = std::fs::read(image_file).context("failed to read BFI")?;
     let mut program_bytes = Vec::new();
     let program = program::unpack_zc(&image_bytes, &mut program_bytes).context("failed to deserialize BFI")?;
     let process = linker::init_process(program, DlcVer::V300, 0x8888800000, 0x8000, 0x2222200000, 0x20000000).context("failed to initialize process")?;
@@ -106,7 +107,7 @@ fn main() -> anyhow::Result<()> {
         }
         let rel_start = start - main_start;
         let rel_end = end - main_start;
-        read_report += &format!("-r main:0x{rel_start:08x}-0x{rel_end:08x}\n")
+        read_report += &format!("-r [main]:0x{rel_start:08x}-0x{rel_end:08x}\n")
     }
 
     std::fs::write("trace.txt", read_report).context("failed to save trace report")?;

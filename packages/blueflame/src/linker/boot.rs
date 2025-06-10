@@ -37,6 +37,7 @@ pub fn init_process(
     pmdm_address: u64,
     heap_size: u32,
 ) -> Result<Process, Error> {
+    log::info!("initializing process");
     let ver = rkyv::deserialize::<GameVer, rancor::Error>(&image.ver)
         .map_err(|e| Error::BadImage(e.to_string()))?;
     let env = Environment::new(ver, dlc_version);
@@ -52,7 +53,8 @@ pub fn init_process(
     //          |<----------min_rel_start------->|
     //          |<---------------------------max_rel_start--------------------->|
     // |<------------------------pmdm_address------------------>|
-    // |<min_hs>|
+    // |<......>|
+    //   ^min_heap_region_start_unaligned
     //
     // for any singleton:
     // rel_start - heap_adjustment + heap_start = address
@@ -62,20 +64,28 @@ pub fn init_process(
 
     let pmdm_rel_start = singleton::pmdm::rel_start(env);
     if pmdm_rel_start as u64 > pmdm_address {
+        log::error!("pmdm rel_start is greater than its physical address: 0x{pmdm_rel_start:x} > 0x{pmdm_address:x}");
         return Err(Error::InvalidPmdmAddress(pmdm_address));
     }
 
-    let min_heap_start = pmdm_address - pmdm_rel_start as u64;
+    let min_heap_region_start_unaligned = pmdm_address - pmdm_rel_start as u64;
     let min_rel_start = singleton::get_min_rel_start(env);
 
-    let max_heap_start = min_heap_start + min_rel_start as u64;
-    let heap_start = align_down!(max_heap_start, REGION_ALIGN);
-    if heap_start < min_heap_start {
-        // somehow align down made it smaller
-        // maybe possible with some pmdm_address
+    let max_heap_region_start_unaligned = min_heap_region_start_unaligned + min_rel_start as u64;
+    let heap_region_start = align_down!(max_heap_region_start_unaligned, REGION_ALIGN);
+    let min_heap_region_start = align_down!(min_heap_region_start_unaligned, REGION_ALIGN);
+    if heap_region_start < min_heap_region_start {
+        log::error!("cannot calculate heap_region_start");
+        log::error!("pmdm_address:                    0x{pmdm_addr:x}");
+        log::error!("pmdm_rel_start:                  0x{pmdm_rel_start:x}");
+        log::error!("min_heap_region_start_unaligned: 0x{min_heap_region_start_unaligned:x}");
+        log::error!("min_rel_start:                   0x{min_rel_start:x}");
+        log::error!("max_heap_region_start_unaligned: 0x{max_heap_region_start_unaligned:x}");
+        log::error!("heap_region_start:               0x{heap_region_start:x}");
+        log::error!("min_heap_region_start:           0x{min_heap_region_start:x}");
         return Err(Error::InvalidPmdmAddress(pmdm_address));
     }
-    let heap_adjustment = heap_start - min_heap_start;
+    let heap_adjustment = heap_region_start - min_heap_region_start;
 
     // calculate how much space will be needed for all the singletons
     let max_rel_start = singleton::get_max_rel_start(env);
