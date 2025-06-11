@@ -6,8 +6,10 @@
 export type RuntimeInitError =
     | { type: "Executor" }
     | { type: "BadDlcVersion"; data: number }
+    | { type: "UnsupportedVersion" }
     | { type: "BadImage" }
-    | { type: "InvalidProgramStart" }
     | { type: "InvalidStackStart" }
     | { type: "InvalidPmdmAddr" }
-    | { type: "ProgramStartMismatch"; data: [string, string] };
+    | { type: "ProgramStartMismatch"; data: [string, string] }
+    | { type: "HeapTooBig" }
+    | { type: "InitializeProcess" };

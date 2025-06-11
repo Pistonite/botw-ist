@@ -38,6 +38,8 @@ pub enum RuntimeInitError {
     ProgramStartMismatch(String, String),
     #[error("we don't support heap this big right now")]
     HeapTooBig,
+    #[error("failed to initialize the process")]
+    InitializeProcess,
 }
 
 /// Error type for the runtime

@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 pub struct RuntimeInitParams {
     /// DLC version to simulate
     ///
-    /// 0 means no DLC, 1-3 means DLC version 1.0 (Day 1), 
+    /// 0 means no DLC, 1-3 means DLC version 1.0 (Day 1),
     /// 2.0 (Master Trials), or 3.0 (Champion's Ballad)
     #[serde(default)]
     pub dlc: u32,

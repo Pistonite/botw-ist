@@ -1,5 +1,4 @@
 export * from "./Category.ts";
-export * from "./CustomImageInitParams.ts";
 export * from "./ErrorReport.ts";
 export * from "./InvView_CommonItem.ts";
 export * from "./InvView_Gdt.ts";
@@ -20,4 +19,5 @@ export * from "./ParserError.ts";
 export * from "./Pointer.ts";
 export * from "./RuntimeError.ts";
 export * from "./RuntimeInitError.ts";
+export * from "./RuntimeInitParams.ts";
 export * from "./RuntimeViewError.ts";

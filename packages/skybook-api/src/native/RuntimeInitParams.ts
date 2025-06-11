@@ -3,11 +3,12 @@
 /**
  * Parameters for initializing a custom image
  */
-export type CustomImageInitParams = {
+export type RuntimeInitParams = {
     /**
      * DLC version to simulate
      *
-     * 0 means no DLC, 1-3 means DLC version 1.0, 2.0, or 3.0
+     * 0 means no DLC, 1-3 means DLC version 1.0 (Day 1),
+     * 2.0 (Master Trials), or 3.0 (Champion's Ballad)
      */
     dlc: number;
     /**
@@ -39,7 +40,8 @@ export type CustomImageInitParams = {
      */
     heapFreeSize: number;
     /**
-     * Physical address of the PauseMenuDataMgr. Used to calculate heap start
+     * Physical address of the PauseMenuDataMgr. Used to calculate heap start.
+     * Should be a hex string prefixed with 0x
      *
      * Unspecified (empty string) means using the internal default
      */
