@@ -4,7 +4,7 @@ use teleparse::{Parser, Span, ToSpan};
 
 use crate::SemanticToken;
 use crate::cir;
-use crate::error::{cir_push_error, ErrorReport, IntoErrorReport};
+use crate::error::{ErrorReport, IntoErrorReport, cir_push_error};
 use crate::search::QuotedItemResolver;
 use crate::syn;
 
@@ -60,8 +60,10 @@ pub enum StepDisplay {
 /// Parse the script and get the simulation steps and errors
 pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> ParseOutput {
     let full_span = Span::new(0, script.len());
-    let mut output = ParseOutput::default();
-    output.script_len = script.len();
+    let mut output = ParseOutput {
+        script_len: script.len(),
+        ..Default::default()
+    };
     let mut parser = match Parser::new(script) {
         Err(e) => {
             let errors = &mut output.errors;

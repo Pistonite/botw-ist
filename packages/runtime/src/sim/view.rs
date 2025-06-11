@@ -1,11 +1,11 @@
 use std::collections::BTreeSet;
 
-use blueflame::game::{gdt, singleton_instance, ListNode, PauseMenuDataMgr, PouchItem};
-use blueflame::memory::{self, Ptr, Memory, proxy};
+use blueflame::game::{ListNode, PauseMenuDataMgr, PouchItem, gdt, singleton_instance};
+use blueflame::memory::{self, Memory, Ptr, proxy};
 use blueflame::processor::Process;
 
-use crate::iv;
 use crate::error::RuntimeViewError;
+use crate::iv;
 
 macro_rules! try_mem {
     ($op:expr, $error:ident, $format:literal) => {
@@ -16,7 +16,7 @@ macro_rules! try_mem {
                 return Err(RuntimeViewError::Memory);
             }
         }
-    }
+    };
 }
 
 macro_rules! coherence_error {
@@ -30,7 +30,7 @@ macro_rules! coherence_error {
 struct ItemPtrData {
     node: Ptr![ListNode],
     item: Ptr![PouchItem],
-    buffer_idx: i32
+    buffer_idx: i32,
 }
 
 /// Read the pouch view from the process memory.
@@ -43,18 +43,30 @@ pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, RuntimeViewEr
     log::debug!("extracting pouch view from process");
     let memory = proc.memory();
 
-    let pmdm = try_mem!(singleton_instance!(pmdm(memory)), e, "failed to read pmdm instance: {e}");
-    let count = try_mem!(Ptr!(&pmdm->mList1.mCount).load(memory), e, "failed to read pouch list1 count: {e}");
+    let pmdm = try_mem!(
+        singleton_instance!(pmdm(memory)),
+        e,
+        "failed to read pmdm instance: {e}"
+    );
+    let count = try_mem!(
+        Ptr!(&pmdm->mList1.mCount).load(memory),
+        e,
+        "failed to read pouch list1 count: {e}"
+    );
 
     let mut item_ptr_data = vec![];
     let mut list_index = 0;
     let mut list_iter = try_mem!(
-        Ptr!(&pmdm->mList1).begin(memory), 
-        e, 
+        Ptr!(&pmdm->mList1).begin(memory),
+        e,
         "failed to get pouch list1 begin: {e}"
     );
     let mut node_before = Ptr!(&pmdm->mList1.mStartEnd);
-    let iter_end = try_mem!(Ptr!(&pmdm->mList1).end(memory), e, "failed to get pouch list1 end: {e}");
+    let iter_end = try_mem!(
+        Ptr!(&pmdm->mList1).end(memory),
+        e,
+        "failed to get pouch list1 end: {e}"
+    );
 
     while list_iter != iter_end {
         let item_ptr: Ptr![PouchItem] = list_iter.get_tptr().into();
@@ -65,34 +77,51 @@ pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, RuntimeViewEr
             coherence_error!("item at list1 position {list_index} is not in item buffer");
         };
         let node = list_iter.curr;
-        let prev = try_mem!(Ptr!(&node->mPrev).load(memory), e, "failed to read prev node for item at list1 position {list_index}: {e}");
+        let prev = try_mem!(
+            Ptr!(&node->mPrev).load(memory),
+            e,
+            "failed to read prev node for item at list1 position {list_index}: {e}"
+        );
         if prev != node_before {
-            coherence_error!("item at list1 position {list_index} is not linked properly (prev not actually prev)");
+            coherence_error!(
+                "item at list1 position {list_index} is not linked properly (prev not actually prev)"
+            );
         }
         node_before = node;
         item_ptr_data.push(ItemPtrData {
-            node,item: item_ptr, buffer_idx: item_buffer_idx
+            node,
+            item: item_ptr,
+            buffer_idx: item_buffer_idx,
         });
-        list_index+=1;
-        try_mem!(list_iter.next(memory), e, "failed to advance to list1 position {list_index}: {e}");
+        list_index += 1;
+        try_mem!(
+            list_iter.next(memory),
+            e,
+            "failed to advance to list1 position {list_index}: {e}"
+        );
     }
 
     let mut tabs = vec![];
-    let (are_tabs_valid, num_tabs) = match extract_pouch_tabs(pmdm, memory, &item_ptr_data, &mut tabs) {
-        None => (false, 0),
-        Some(x) => (true, x)
-    };
+    let (are_tabs_valid, num_tabs) =
+        match extract_pouch_tabs(pmdm, memory, &item_ptr_data, &mut tabs) {
+            None => (false, 0),
+            Some(x) => (true, x),
+        };
 
     let bow_slots: Result<i32, memory::Error> = try {
         let gdt = gdt::trigger_param_ptr(memory)?;
-        proxy!{ let trigger_param = *gdt as trigger_param in proc };
-        trigger_param.by_name::<gdt::fd!(s32)>("BowPorchStockNum").map(|x| x.get()).copied().unwrap_or(0)
+        proxy! { let trigger_param = *gdt as trigger_param in proc };
+        trigger_param
+            .by_name::<gdt::fd!(s32)>("BowPorchStockNum")
+            .map(|x| x.get())
+            .copied()
+            .unwrap_or(0)
     };
     let bow_slots = try_mem!(bow_slots, e, "failed to read number of bow slots: {e}");
 
     // build the item list with the ptr data
     let mut tab_idx = 0;
-    let mut next_tab_item_idx = tabs.get(1).map(|x|x.item_idx).unwrap_or(-1);
+    let mut next_tab_item_idx = tabs.get(1).map(|x| x.item_idx).unwrap_or(-1);
     let mut tab_slot = 0;
     let mut items = Vec::with_capacity(item_ptr_data.len());
     let mut seen_animated_icons = BTreeSet::new();
@@ -101,7 +130,7 @@ pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, RuntimeViewEr
         if i as i32 == next_tab_item_idx {
             tab_idx += 1;
             tab_slot = 0;
-            next_tab_item_idx = tabs.get(tab_idx+1).map(|x|x.item_idx).unwrap_or(-1);
+            next_tab_item_idx = tabs.get(tab_idx + 1).map(|x| x.item_idx).unwrap_or(-1);
         }
         let item = extract_pouch_item(
             i as i32,
@@ -113,7 +142,7 @@ pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, RuntimeViewEr
             bow_slots,
             &mut num_bows,
             &mut seen_animated_icons,
-            memory
+            memory,
         )?;
         items.push(item);
         tab_slot += 1;
@@ -131,31 +160,31 @@ pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, RuntimeViewEr
 
 /// Extract tab data into the tabs vec. Return mNumTabs if tabs are valid
 fn extract_pouch_tabs(
-    pmdm: Ptr![PauseMenuDataMgr], 
-    memory: &Memory, 
+    pmdm: Ptr![PauseMenuDataMgr],
+    memory: &Memory,
     item_ptr_data: &[ItemPtrData],
-    out_tabs: &mut Vec<iv::PouchTab>
+    out_tabs: &mut Vec<iv::PouchTab>,
 ) -> Option<i32> {
     let num_tabs = match Ptr!(&pmdm->mNumTabs).load(memory) {
         Err(e) => {
             log::error!("failed to read num_tabs: {e}");
             return None;
         }
-        Ok(x) => x
+        Ok(x) => x,
     };
-    let tabs= match Ptr!(&pmdm->mTabs).load(memory) {
+    let tabs = match Ptr!(&pmdm->mTabs).load(memory) {
         Err(e) => {
             log::error!("failed to read tabs: {e}");
             return None;
         }
-        Ok(x) => x
+        Ok(x) => x,
     };
     let tab_types = match Ptr!(&pmdm->mTabsType).load(memory) {
         Err(e) => {
             log::error!("failed to read tab types: {e}");
             return None;
         }
-        Ok(x) => x
+        Ok(x) => x,
     };
     for i in 0..50 {
         let tab_item = tabs[i];
@@ -166,132 +195,149 @@ fn extract_pouch_tabs(
         let item_idx = if tab_item.is_nullptr() {
             -1
         } else {
-            match item_ptr_data.iter().position(|x|x.item == tab_item) {
+            match item_ptr_data.iter().position(|x| x.item == tab_item) {
                 None => {
                     log::error!("the tab data has an item that isn't in list1");
                     return None;
                 }
-                Some(x) => x as i32
+                Some(x) => x as i32,
             }
         };
-        out_tabs.push(iv::PouchTab {
-            item_idx,
-            tab_type
-        })
+        out_tabs.push(iv::PouchTab { item_idx, tab_type })
     }
 
     Some(num_tabs)
 }
 
+#[allow(clippy::too_many_arguments)]
 fn extract_pouch_item(
     list_index: i32,
     node_ptr: Ptr![ListNode],
     buffer_idx: i32,
-    item: Ptr![PouchItem], 
+    item: Ptr![PouchItem],
     tab_idx: i32,
     tab_slot: i32,
     bow_slots: i32,
     num_bows: &mut i32,
     seen_animated_icons: &mut BTreeSet<String>,
-    memory: &Memory
+    memory: &Memory,
 ) -> Result<iv::PouchItem, RuntimeViewError> {
     let name = try_mem!(
-        Ptr!(&item->mName).utf8_lossy(memory), 
-        e, 
-        "failed to load item.name at list1 position {list_index}: {e}");
+        Ptr!(&item->mName).utf8_lossy(memory),
+        e,
+        "failed to load item.name at list1 position {list_index}: {e}"
+    );
     let is_no_icon = is_animated_icon_actor(&name) && !seen_animated_icons.insert(name.clone());
     let value = try_mem!(
-        Ptr!(&item->mValue).load(memory), 
-        e, 
-        "failed to load item.value at list1 position {list_index}: {e}");
-    let is_equipped = 
-    try_mem!(
-        Ptr!(&item->mEquipped).load(memory), 
-        e, 
-        "failed to load item.is_equipped at list1 position {list_index}: {e}");
+        Ptr!(&item->mValue).load(memory),
+        e,
+        "failed to load item.value at list1 position {list_index}: {e}"
+    );
+    let is_equipped = try_mem!(
+        Ptr!(&item->mEquipped).load(memory),
+        e,
+        "failed to load item.is_equipped at list1 position {list_index}: {e}"
+    );
     let common = iv::CommonItem {
         actor_name: name,
         value,
-        is_equipped
+        is_equipped,
     };
-    let item_type = 
-    try_mem!(
-        Ptr!(&item->mType).load(memory), 
-        e, 
-        "failed to load item.type at list1 position {list_index}: {e}");
-    let item_use = 
-    try_mem!(
-        Ptr!(&item->mItemUse).load(memory), 
-        e, 
-        "failed to load item.use at list1 position {list_index}: {e}");
-    let is_in_inventory = 
-    try_mem!(
-        Ptr!(&item->mInInventory).load(memory), 
-        e, 
-        "failed to load item.is_in_inventory at list1 position {list_index}: {e}");
+    let item_type = try_mem!(
+        Ptr!(&item->mType).load(memory),
+        e,
+        "failed to load item.type at list1 position {list_index}: {e}"
+    );
+    let item_use = try_mem!(
+        Ptr!(&item->mItemUse).load(memory),
+        e,
+        "failed to load item.use at list1 position {list_index}: {e}"
+    );
+    let is_in_inventory = try_mem!(
+        Ptr!(&item->mInInventory).load(memory),
+        e,
+        "failed to load item.is_in_inventory at list1 position {list_index}: {e}"
+    );
 
-    let effect_value  =
-    try_mem!(
-        Ptr!(&item->mHealthRecover).load(memory), 
-        e, 
-        "failed to load item.effect_value at list1 position {list_index}: {e}");
-    let effect_duration  =
-    try_mem!(
-        Ptr!(&item->mEffectDuration).load(memory), 
-        e, 
-        "failed to load item.effect_duration at list1 position {list_index}: {e}");
-    let sell_price  =
-    try_mem!(
-        Ptr!(&item->mSellPrice).load(memory), 
-        e, 
-        "failed to load item.sell_price at list1 position {list_index}: {e}");
-    let effect_id  =
-    try_mem!(
-        Ptr!(&item->mEffectId).load(memory), 
-        e, 
-        "failed to load item.effect_id at list1 position {list_index}: {e}");
-    let effect_level  =
-    try_mem!(
-        Ptr!(&item->mEffectLevel).load(memory), 
-        e, 
-        "failed to load item.effect_level at list1 position {list_index}: {e}");
+    let effect_value = try_mem!(
+        Ptr!(&item->mHealthRecover).load(memory),
+        e,
+        "failed to load item.effect_value at list1 position {list_index}: {e}"
+    );
+    let effect_duration = try_mem!(
+        Ptr!(&item->mEffectDuration).load(memory),
+        e,
+        "failed to load item.effect_duration at list1 position {list_index}: {e}"
+    );
+    let sell_price = try_mem!(
+        Ptr!(&item->mSellPrice).load(memory),
+        e,
+        "failed to load item.sell_price at list1 position {list_index}: {e}"
+    );
+    let effect_id = try_mem!(
+        Ptr!(&item->mEffectId).load(memory),
+        e,
+        "failed to load item.effect_id at list1 position {list_index}: {e}"
+    );
+    let effect_level = try_mem!(
+        Ptr!(&item->mEffectLevel).load(memory),
+        e,
+        "failed to load item.effect_level at list1 position {list_index}: {e}"
+    );
     let data = iv::ItemData {
-        effect_value,effect_duration,sell_price,effect_id,effect_level
+        effect_value,
+        effect_duration,
+        sell_price,
+        effect_id,
+        effect_level,
     };
 
     let ingredients_ptr = try_mem!(
-    Ptr!(&item->mIngredients.mPtrs).load(memory)
-    ,e,"failed to load item.ingredients_ptr at list1 position {list_index}: {e}"
-);
-    let ingredients_num  =
-    try_mem!(
-        Ptr!(&item->mIngredients.mPtrNum).load(memory), 
-        e, 
-        "failed to load item.ingredients.ptr_num at list1 position {list_index}: {e}");
+        Ptr!(&item->mIngredients.mPtrs).load(memory),
+        e,
+        "failed to load item.ingredients_ptr at list1 position {list_index}: {e}"
+    );
+    let ingredients_num = try_mem!(
+        Ptr!(&item->mIngredients.mPtrNum).load(memory),
+        e,
+        "failed to load item.ingredients.ptr_num at list1 position {list_index}: {e}"
+    );
     if ingredients_num < 0 {
-        coherence_error!("item ingredients array at list1 position {list_index} has negative length");
+        coherence_error!(
+            "item ingredients array at list1 position {list_index} has negative length"
+        );
     }
     let ingredients_num = ingredients_num as usize;
     let mut ingredients: [String; 5] = std::array::from_fn(|_| String::default());
+
+    #[allow(clippy::needless_range_loop)]
     for i in 0..ingredients_num {
         let ingr_ptr = try_mem!(
-ingredients_ptr.ith(i as u64).load(memory),e,"failed to load {i}-th ingredient for item at list1 position {list_index}: {e}");
+            ingredients_ptr.ith(i as u64).load(memory),
+            e,
+            "failed to load {i}-th ingredient for item at list1 position {list_index}: {e}"
+        );
         let ingr_name = try_mem!(
-ingr_ptr.utf8_lossy(memory),e,"failed to load name of {i}-th ingredient for item at list1 position {list_index}: {e}");
+            ingr_ptr.utf8_lossy(memory),
+            e,
+            "failed to load name of {i}-th ingredient for item at list1 position {list_index}: {e}"
+        );
         ingredients[i] = ingr_name;
     }
 
     let prev = try_mem!(
-    Ptr!(&node_ptr->mPrev).load(memory),
-        e,"failed to load item.prev at list1 position {list_index}: {e}"
-);
+        Ptr!(&node_ptr->mPrev).load(memory),
+        e,
+        "failed to load item.prev at list1 position {list_index}: {e}"
+    );
     let next = try_mem!(
-    Ptr!(&node_ptr->mNext).load(memory),
-        e,"failed to load item.prev at list1 position {list_index}: {e}"
-);
+        Ptr!(&node_ptr->mNext).load(memory),
+        e,
+        "failed to load item.prev at list1 position {list_index}: {e}"
+    );
 
     if item_type == 1 {
-        *num_bows = *num_bows + 1;
+        *num_bows += 1;
     }
 
     // adjust the slot for arrows using the type
@@ -301,47 +347,46 @@ ingr_ptr.utf8_lossy(memory),e,"failed to load name of {i}-th ingredient for item
         tab_slot
     };
 
-    Ok(iv::PouchItem { 
-        common, 
-        item_type, 
-        item_use, 
-        is_in_inventory, 
+    Ok(iv::PouchItem {
+        common,
+        item_type,
+        item_use,
+        is_in_inventory,
         is_no_icon,
-        data, 
-        ingredients, 
+        data,
+        ingredients,
         holding_count: 0,
-        prompt_entangled: false, 
+        prompt_entangled: false,
         node_addr: node_ptr.to_raw().into(),
         node_valid: true,
         node_pos: buffer_idx as i128,
         node_prev: prev.to_raw().into(),
         node_next: next.to_raw().into(),
-        allocated_idx: list_index, 
+        allocated_idx: list_index,
         unallocated_idx: -1,
         tab_idx,
         tab_slot,
         accessible: true,
-        dpad_accessible: true
+        dpad_accessible: true,
     })
-    
 }
 
 pub fn is_animated_icon_actor(actor: &str) -> bool {
-    match actor {
-        "Obj_DungeonClearSeal" | "Obj_WarpDLC"
-        | "Obj_HeroSoul_Gerudo"
-        | "Obj_HeroSoul_Goron"
-        | "Obj_HeroSoul_Rito"
-        | "Obj_HeroSoul_Zora"
-        | "Obj_DLC_HeroSoul_Gerudo"
-        | "Obj_DLC_HeroSoul_Goron"
-        | "Obj_DLC_HeroSoul_Rito"
-        | "Obj_DLC_HeroSoul_Zora"
-        | "Obj_DLC_HeroSeal_Gerudo"
-        | "Obj_DLC_HeroSeal_Goron"
-        | "Obj_DLC_HeroSeal_Rito"
-        | "Obj_DLC_HeroSeal_Zora"
-        => true,
-        _ => false
-    }
+    matches!(
+        actor,
+        "Obj_DungeonClearSeal"
+            | "Obj_WarpDLC"
+            | "Obj_HeroSoul_Gerudo"
+            | "Obj_HeroSoul_Goron"
+            | "Obj_HeroSoul_Rito"
+            | "Obj_HeroSoul_Zora"
+            | "Obj_DLC_HeroSoul_Gerudo"
+            | "Obj_DLC_HeroSoul_Goron"
+            | "Obj_DLC_HeroSoul_Rito"
+            | "Obj_DLC_HeroSoul_Zora"
+            | "Obj_DLC_HeroSeal_Gerudo"
+            | "Obj_DLC_HeroSeal_Goron"
+            | "Obj_DLC_HeroSeal_Rito"
+            | "Obj_DLC_HeroSeal_Zora"
+    )
 }

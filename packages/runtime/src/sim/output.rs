@@ -1,5 +1,5 @@
+use crate::error::{ErrorReport, RuntimeViewError};
 use crate::{iv, sim};
-use crate::error::{RuntimeViewError, ErrorReport};
 
 #[derive(Clone, Default)]
 pub struct RunOutput {
@@ -11,7 +11,7 @@ pub struct RunOutput {
 impl RunOutput {
     /// Get the pouch inventory view for the given step in the script
     ///
-    /// If there are no steps in the script, an empty pouch list is returned. Otherwise, 
+    /// If there are no steps in the script, an empty pouch list is returned. Otherwise,
     /// the state at the given step is used to generate the pouch list unless the step is out of
     /// bounds, in which case the last state is used.
     pub fn get_pouch_list(&self, step: usize) -> Result<iv::PouchList, RuntimeViewError> {

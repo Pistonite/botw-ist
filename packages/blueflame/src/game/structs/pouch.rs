@@ -1,4 +1,4 @@
-use crate::game::{OffsetList, ListNode, FixedSafeString40};
+use crate::game::{FixedSafeString40, ListNode, OffsetList};
 use crate::memory::{self, MemObject, Memory, Ptr, offsetof};
 
 #[derive(MemObject, Clone)]
@@ -52,7 +52,7 @@ impl Ptr![PauseMenuDataMgr] {
     /// Get the index of the item in the item buffer, if the pointer
     /// is a valid internal pointer to an item in the buffer
     pub fn get_item_buffer_idx(self, item: Ptr![PouchItem]) -> Option<i32> {
-        if item.to_raw() <= self.to_raw(){
+        if item.to_raw() <= self.to_raw() {
             return None;
         }
         let ptr_diff = item.to_raw() - self.to_raw();

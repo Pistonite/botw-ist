@@ -3,7 +3,7 @@ use std::sync::Arc;
 use teleparse::ToSpan;
 
 use crate::cir;
-use crate::error::{cir_push_error, ErrorReport};
+use crate::error::{ErrorReport, cir_push_error};
 use crate::search::QuotedItemResolver;
 use crate::syn;
 
@@ -370,7 +370,11 @@ pub fn parse_annotation(
                     None
                 }
                 Ok(x) if x < 8 || x > 20 => {
-                    cir_push_error!(errors, &cmd.amount, InvalidEquipmentSlotNum(cir::Category::Weapon, x));
+                    cir_push_error!(
+                        errors,
+                        &cmd.amount,
+                        InvalidEquipmentSlotNum(cir::Category::Weapon, x)
+                    );
                     None
                 }
                 Ok(x) => Some(cir::Command::set_gdt_s32("WeaponPorchStockNum", x)),
@@ -383,7 +387,11 @@ pub fn parse_annotation(
                     None
                 }
                 Ok(x) if x < 5 || x > 14 => {
-                    cir_push_error!(errors, &cmd.amount, InvalidEquipmentSlotNum(cir::Category::Bow, x));
+                    cir_push_error!(
+                        errors,
+                        &cmd.amount,
+                        InvalidEquipmentSlotNum(cir::Category::Bow, x)
+                    );
                     None
                 }
                 Ok(x) => Some(cir::Command::set_gdt_s32("BowPorchStockNum", x)),
@@ -396,7 +404,11 @@ pub fn parse_annotation(
                     None
                 }
                 Ok(x) if x < 4 || x > 20 => {
-                    cir_push_error!(errors, &cmd.amount, InvalidEquipmentSlotNum(cir::Category::Shield, x));
+                    cir_push_error!(
+                        errors,
+                        &cmd.amount,
+                        InvalidEquipmentSlotNum(cir::Category::Shield, x)
+                    );
                     None
                 }
                 Ok(x) => Some(cir::Command::set_gdt_s32("ShieldPorchStockNum", x)),

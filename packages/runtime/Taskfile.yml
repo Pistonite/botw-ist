@@ -8,7 +8,7 @@ includes:
 tasks:
   check:
     cmds:
-      # - task: cargo:clippy-all
+      - task: cargo:clippy-all
       - task: cargo:fmt-check
 
   fix:

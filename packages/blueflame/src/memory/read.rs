@@ -34,7 +34,7 @@ pub fn get_read_page_ranges() -> Vec<(u64, u64)> {
                 continue;
             };
             let start = addr * PAGE_SIZE as u64;
-            let end = (addr + 1)* PAGE_SIZE as u64;
+            let end = (addr + 1) * PAGE_SIZE as u64;
             if start == range.1 {
                 range.1 = end;
                 continue;

@@ -91,7 +91,6 @@ pub struct GrabbedItemInfo {
     _9: bool,
 }
 
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(i32)]
 pub enum CookEffectId {
@@ -109,7 +108,6 @@ pub enum CookEffectId {
     ExGutsMaxUp = 15,
     Fireproof = 16,
 }
-
 
 #[allow(non_snake_case)]
 #[derive(MemObject, Clone, Copy)]
@@ -159,7 +157,6 @@ struct FixedSafeStringArray {
     #[offset(0x20)]
     mWork: [u8; 480],
 }
-
 
 // impl PouchItem {
 //     pub fn get_name(&self) -> String {
@@ -220,7 +217,6 @@ struct FixedSafeStringArray {
 //     }
 // }
 
-
 // #[allow(non_snake_case)]
 // #[derive(MemObject, Clone)]
 // #[size(0x44190)]
@@ -242,7 +238,6 @@ struct FixedSafeStringArray {
 //         self.list2.to_iter()
 //     }
 // }
-
 
 // impl PauseMenuDataMgr {
 //     pub fn get_last_item_added_name(&self, mem: &Memory) -> Result<String, Error> {

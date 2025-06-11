@@ -1,11 +1,11 @@
-use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
 
-use teleparse::Span;
 use skybook_parser::ParseOutput;
+use teleparse::Span;
 
-use crate::sim;
 use crate::error::{ErrorReport, MaybeAborted};
+use crate::sim;
 
 pub struct Run {
     /// Handle for the running task
@@ -29,7 +29,7 @@ impl Run {
     pub async fn run_parsed(
         mut self,
         parsed: Arc<ParseOutput>,
-        runtime: &sim::Runtime
+        runtime: &sim::Runtime,
     ) -> MaybeAborted<sim::RunOutput> {
         // let commands = parsed.steps.iter().map(|x| x.command.clone()).collect::<Vec<_>>();
         self.output.states.reserve(parsed.steps.len());
@@ -47,21 +47,26 @@ impl Run {
                 continue;
             }
 
-
-            let span_end = parsed.steps.get(i + 1).map(|step| step.pos).unwrap_or(parsed.script_len);
+            let span_end = parsed
+                .steps
+                .get(i + 1)
+                .map(|step| step.pos)
+                .unwrap_or(parsed.script_len);
             let span = Span::new(step.pos, span_end);
 
             let report = match state.execute_step(span, step, runtime).await {
                 Err(e) => {
-                    log::error!("failed to execute step {}: {}", i, e);
+                    log::error!("failed to execute step {i}: {e}");
                     if self.handle.is_aborted() {
                         log::warn!("the run is aborted, so the error is ignored");
                         return MaybeAborted::Aborted;
                     }
-                    self.output.errors.push(ErrorReport::error(&span, crate::Error::Executor));
+                    self.output
+                        .errors
+                        .push(ErrorReport::error(&span, crate::Error::Executor));
                     return MaybeAborted::Ok(self.output);
                 }
-                Ok(report) => report
+                Ok(report) => report,
             };
 
             self.output.states.push(report.value.clone());
@@ -79,6 +84,7 @@ impl Run {
 /// Handle for a running simulation task.
 ///
 /// See [`Run`] for more information.
+#[derive(Default)]
 #[repr(transparent)]
 pub struct RunHandle {
     is_aborted: AtomicBool,
@@ -86,9 +92,7 @@ pub struct RunHandle {
 
 impl RunHandle {
     pub fn new() -> Self {
-        Self {
-            is_aborted: AtomicBool::new(false),
-        }
+        Self::default()
     }
     pub fn is_aborted(&self) -> bool {
         self.is_aborted.load(std::sync::atomic::Ordering::Relaxed)
@@ -97,14 +101,19 @@ impl RunHandle {
         self.is_aborted
             .store(true, std::sync::atomic::Ordering::Relaxed);
     }
+    /// Convert the handle into a raw pointer to interface with external code
     pub fn into_raw(s: Arc<Self>) -> *const Self {
-        return Arc::into_raw(s);
+        Arc::into_raw(s)
     }
+    /// Convert the handle from a raw pointer back into rust object.
+    ///
+    /// The pointer must be one that's previously [`into_raw`](Self::into_raw)-ed
+    #[allow(clippy::not_unsafe_ptr_arg_deref)]
     pub fn from_raw(ptr: *const Self) -> Arc<Self> {
         if ptr.is_null() {
             // make sure it's safe
             return Arc::new(Self::new());
         }
-        return unsafe { Arc::from_raw(ptr) };
+        unsafe { Arc::from_raw(ptr) }
     }
 }

@@ -1,7 +1,6 @@
-pub use skybook_api::runtime::error::{MaybeAborted, RuntimeInitError, RuntimeViewError};
 pub use skybook_api::runtime::error::RuntimeError as Error;
+pub use skybook_api::runtime::error::{MaybeAborted, RuntimeInitError, RuntimeViewError};
 pub type ErrorReport = skybook_api::ErrorReport<Error>;
-
 
 pub struct Report<T> {
     pub value: T,
@@ -24,14 +23,20 @@ impl<T> Report<T> {
             errors: self.errors,
         }
     }
-    
+
     /// Create a new report with one error
     pub fn error(value: T, error: ErrorReport) -> Self {
-        Self { value, errors: vec![error] }
+        Self {
+            value,
+            errors: vec![error],
+        }
     }
 
     pub fn spanned(value: T, span: &Span, error: Error) -> Self {
-        Self { value, errors: vec![ErrorReport::error(span, error)] }
+        Self {
+            value,
+            errors: vec![ErrorReport::error(span, error)],
+        }
     }
 
     pub fn with_errors(value: T, errors: Vec<ErrorReport>) -> Self {
@@ -41,10 +46,9 @@ impl<T> Report<T> {
     pub fn push(&mut self, error: ErrorReport) {
         self.errors.push(error);
     }
-
 }
 
-// mod 
+// mod
 
 // #[derive(Debug, thiserror::Error)]
 // pub enum Error {
@@ -82,4 +86,3 @@ macro_rules! sim_warning {
 }
 pub(crate) use sim_warning;
 use teleparse::Span;
-

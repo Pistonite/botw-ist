@@ -271,7 +271,10 @@ pub mod glue {
                         }
                         //the distinct signed/unsigned extend behavior between uxtw and lsl (technically sxtw)
                         _ => {
-                            panic!("unhandled extra op: {}, shift={}", extra_op.operation, extra_op.shift_val);
+                            panic!(
+                                "unhandled extra op: {}, shift={}",
+                                extra_op.operation, extra_op.shift_val
+                            );
                         }
                     }
                 } else {
@@ -323,7 +326,10 @@ pub mod glue {
                         }
                         //the distinct signed/unsigned extend behavior between uxtw and lsl (technically sxtw)
                         _ => {
-                            panic!("unhandled extra op: {}, shift={}", extra_op.operation, extra_op.shift_val);
+                            panic!(
+                                "unhandled extra op: {}, shift={}",
+                                extra_op.operation, extra_op.shift_val
+                            );
                         }
                     }
                 } else {

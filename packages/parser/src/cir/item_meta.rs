@@ -1,7 +1,7 @@
 use teleparse::{Span, tp};
 
 use crate::cir;
-use crate::error::{cir_push_error, cir_push_warning, ErrorReport};
+use crate::error::{ErrorReport, cir_push_error, cir_push_warning};
 use crate::search;
 use crate::syn;
 
@@ -64,7 +64,7 @@ impl std::hash::Hash for ItemMeta {
         self.effect_duration.hash(state);
         self.sell_price.hash(state);
         self.effect_id.hash(state);
-        self.effect_level.map(|x| f32::to_bits(x)).hash(state);
+        self.effect_level.map(f32::to_bits).hash(state);
         self.ingredients.hash(state);
         self.star.hash(state);
     }
@@ -139,7 +139,7 @@ impl MetaParser for &mut ItemMeta {
                         self.life_recover = Some(x as i32);
                     }
                     Ok(mv) => {
-                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
+                        cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                     }
                     Err(e) => {
                         errors.push(e);
@@ -245,7 +245,7 @@ impl MetaParser for &mut ItemMeta {
                         }
                     },
                     Ok(mv) => {
-                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
+                        cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                     }
                     Err(e) => {
                         errors.push(e);

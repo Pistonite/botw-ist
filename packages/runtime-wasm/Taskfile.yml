@@ -86,7 +86,7 @@ tasks:
   check:
     cmds:
       - task: build-wasm-types
-      # - task: cargo:clippy-all
+      - task: cargo:clippy-all
       - task: cargo:fmt-check
       - task: ecma:mono-check
 

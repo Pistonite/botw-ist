@@ -1,5 +1,5 @@
 use crate::game::{SafeString, gdt};
-use crate::memory::{Memory, Ptr, proxy, mem};
+use crate::memory::{Memory, Ptr, mem, proxy};
 use crate::processor::{self, Cpu0, Process, reg};
 
 // this macro is needed because template generic types are not stable
@@ -589,10 +589,7 @@ pub fn idx_from_hash<Fd: gdt::FlagDescriptor>(
 }
 
 /// ksys::get::TriggerParam::getMaxValueForS32
-pub fn get_s32_max(
-    cpu: &mut Cpu0,
-    proc: &mut Process,
-) -> Result<(), processor::Error> {
+pub fn get_s32_max(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
     reg! { cpu:
         x[0] => let this_ptr: u64,
         x[1] => let out_ptr: Ptr![i32],

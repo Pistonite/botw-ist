@@ -468,7 +468,11 @@ impl Ptr![u8] {
     }
 
     /// Store a byte slice into the pointer as a char* plus a zero terminator
-    pub fn store_bytes_plus_nul(self, s: impl AsRef<[u8]>, memory: &mut Memory) -> Result<(), Error> {
+    pub fn store_bytes_plus_nul(
+        self,
+        s: impl AsRef<[u8]>,
+        memory: &mut Memory,
+    ) -> Result<(), Error> {
         let bytes = s.as_ref();
         self.store_slice(bytes, memory)?;
         Ptr!(<u8>(self.to_raw() + bytes.len() as u64)).store(&0u8, memory)?;

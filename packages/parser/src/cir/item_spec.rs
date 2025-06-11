@@ -1,7 +1,7 @@
 use teleparse::{ToSpan, tp};
 
 use crate::cir;
-use crate::error::{cir_error, cir_push_error, ErrorReport};
+use crate::error::{ErrorReport, cir_error, cir_push_error};
 use crate::search::{self, QuotedItemResolver, ResolvedItem};
 use crate::syn;
 use crate::util;
@@ -65,7 +65,6 @@ impl Item {
         self.actor.starts_with("Item_Cook_")
     }
 }
-
 
 pub async fn parse_item_list_finite_optional<R: QuotedItemResolver>(
     list: &tp::Option<syn::ItemListFinite>,

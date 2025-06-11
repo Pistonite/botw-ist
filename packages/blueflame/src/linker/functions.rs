@@ -1,5 +1,5 @@
 use crate::game::{CookItem, FixedSafeString40, WeaponModifierInfo, singleton_instance};
-use crate::memory::{mem, Ptr};
+use crate::memory::{Ptr, mem};
 use crate::processor::{self, Cpu2, reg};
 
 /// Get item with the given value or default value.
@@ -44,6 +44,7 @@ pub fn get_item_with_default_value(
 }
 
 /// Get a cook item with the cook data. Calls `uking::ui::PauseMenuDataMgr::cookItemGet`
+#[allow(clippy::too_many_arguments)]
 pub fn get_cook_item(
     cpu: &mut Cpu2,
     actor: &str,

@@ -1,9 +1,9 @@
 use teleparse::{Span, ToSpan, tp};
 
-use crate::error::{cir_error, ErrorReport};
+use crate::error::{ErrorReport, cir_error};
 
-use crate::syn;
 use crate::cir;
+use crate::syn;
 
 /// Parser for the item meta syntax
 ///
@@ -40,7 +40,9 @@ pub fn parse_meta<T: MetaParser>(
 
 /// Parse an optional value. If the value is not present (i.e. only the key is specified),
 /// the value is assumed to be the boolean value `true`.
-pub fn parse_optional_meta_value(value: Option<&syn::ItemMetaValue>) -> Result<cir::MetaValue, ErrorReport> {
+pub fn parse_optional_meta_value(
+    value: Option<&syn::ItemMetaValue>,
+) -> Result<cir::MetaValue, ErrorReport> {
     match value {
         Some(v) => Ok(parse_meta_value(&v.value)?),
         None => Ok(cir::MetaValue::Bool(true)),
@@ -88,8 +90,7 @@ pub fn parse_meta_value(value: &syn::MetaValueLiteral) -> Result<cir::MetaValue,
             if decimal_num < 0 {
                 cir_error!(x, FloatFormat(full_str));
             }
-            let Ok(value) = full_str
-                .parse::<f64>() else {
+            let Ok(value) = full_str.parse::<f64>() else {
                 cir_error!(x, FloatFormat(full_str));
             };
 

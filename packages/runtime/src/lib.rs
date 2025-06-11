@@ -1,7 +1,7 @@
 #![feature(try_blocks)]
 
 mod error;
-pub use error::{Error, ErrorReport, RuntimeInitError, RuntimeViewError, MaybeAborted};
+pub use error::{Error, ErrorReport, MaybeAborted, RuntimeInitError, RuntimeViewError};
 /// Inventory View
 pub use skybook_api::runtime::iv;
 

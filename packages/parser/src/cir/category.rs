@@ -2,7 +2,7 @@ use enumset::EnumSet;
 use teleparse::ToSpan;
 
 use crate::cir;
-use crate::error::{cir_error, ErrorReport};
+use crate::error::{ErrorReport, cir_error};
 use crate::syn;
 
 pub use skybook_api::parser::cir::Category;
@@ -14,7 +14,7 @@ pub fn parse_category_in(
     let filter = filter.into();
     let c = parse_category(category);
     if !filter.contains(c) {
-        cir_error!( category, InvalidCategory(c));
+        cir_error!(category, InvalidCategory(c));
     }
     Ok(c)
 }

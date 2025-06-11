@@ -1,7 +1,7 @@
 use teleparse::{Span, tp};
 
 use crate::cir;
-use crate::error::{cir_push_error, cir_push_warning, ErrorReport};
+use crate::error::{ErrorReport, cir_push_error, cir_push_warning};
 use crate::syn;
 
 use super::MetaParser;
@@ -58,13 +58,12 @@ impl PartialEq for GdtValue {
             (String64(a), String64(b)) => a == b,
             (String256(a), String256(b)) => a == b,
             (Vec3f(ax, ay, az), Vec3f(bx, by, bz)) => {
-                ax.to_bits() == bx.to_bits() &&
-                ay.to_bits() == by.to_bits() &&
-                az.to_bits() == bz.to_bits()
+                ax.to_bits() == bx.to_bits()
+                    && ay.to_bits() == by.to_bits()
+                    && az.to_bits() == bz.to_bits()
             }
             (Vec2f(ax, ay), Vec2f(bx, by)) => {
-                ax.to_bits() == bx.to_bits() &&
-                ay.to_bits() == by.to_bits()
+                ax.to_bits() == bx.to_bits() && ay.to_bits() == by.to_bits()
             }
             _ => false,
         }
@@ -139,7 +138,7 @@ impl MetaParser for GdtMetaParser<'_> {
                     self.vector_dim = 0;
                 }
                 Ok(mv) => {
-                    cir_push_error!( errors, value, InvalidMetaValue(key_str, mv));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
@@ -152,7 +151,7 @@ impl MetaParser for GdtMetaParser<'_> {
                     self.vector_dim = 0;
                 }
                 Ok(mv) => {
-                    cir_push_error!( errors, value, InvalidMetaValue(key_str, mv));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
@@ -165,7 +164,7 @@ impl MetaParser for GdtMetaParser<'_> {
                     self.vector_dim = 0;
                 }
                 Ok(mv) => {
-                    cir_push_error!( errors, value, InvalidMetaValue(key_str, mv));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
@@ -178,7 +177,7 @@ impl MetaParser for GdtMetaParser<'_> {
                     self.vector_dim = 0;
                 }
                 Ok(mv) => {
-                    cir_push_error!( errors, value, InvalidMetaValue(key_str, mv));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
@@ -205,7 +204,7 @@ impl MetaParser for GdtMetaParser<'_> {
                 Ok(cir::MetaValue::Bool(x)) if x => {
                     let string_value = self.string_value.unwrap_or("");
                     if string_value.len() >= 64 {
-                            cir_push_error!(errors, value, InvalidStringLength(64));
+                        cir_push_error!(errors, value, InvalidStringLength(64));
                     } else {
                         self.value = GdtValue::String64(string_value.to_string());
                         self.has_value = true;
@@ -213,14 +212,14 @@ impl MetaParser for GdtMetaParser<'_> {
                     }
                 }
                 _ => {
-                        cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
+                    cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
                 }
             },
             "string256" | "str256" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Bool(x)) if x => {
                     let string_value = self.string_value.unwrap_or("");
                     if string_value.len() >= 256 {
-                            cir_push_error!(errors, value, InvalidStringLength(256));
+                        cir_push_error!(errors, value, InvalidStringLength(256));
                     } else {
                         self.value = GdtValue::String64(string_value.to_string());
                         self.has_value = true;
@@ -228,7 +227,7 @@ impl MetaParser for GdtMetaParser<'_> {
                     }
                 }
                 _ => {
-                        cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
+                    cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
                 }
             },
             "vector2f" | "vec2f" => match cir::parse_optional_meta_value(value.as_ref()) {
@@ -236,7 +235,7 @@ impl MetaParser for GdtMetaParser<'_> {
                     self.vector_dim = 2;
                 }
                 _ => {
-                        cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
+                    cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
                 }
             },
             "vector3f" | "vec3f" => match cir::parse_optional_meta_value(value.as_ref()) {
@@ -244,12 +243,12 @@ impl MetaParser for GdtMetaParser<'_> {
                     self.vector_dim = 3;
                 }
                 _ => {
-                        cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
+                    cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
                 }
             },
             "x" => {
                 if self.vector_dim == 0 {
-                cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
+                    cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
                 } else {
                     match cir::parse_optional_meta_value(value.as_ref()) {
                         Ok(cir::MetaValue::Float(x)) => {
@@ -259,7 +258,7 @@ impl MetaParser for GdtMetaParser<'_> {
                             self.x = x as f32;
                         }
                         Ok(mv) => {
-                    cir_push_error!( errors, value, InvalidMetaValue(key_str, mv));
+                            cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                         }
                         Err(e) => {
                             errors.push(e);
@@ -269,7 +268,7 @@ impl MetaParser for GdtMetaParser<'_> {
             }
             "y" => {
                 if self.vector_dim == 0 {
-                cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
+                    cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
                 } else {
                     match cir::parse_optional_meta_value(value.as_ref()) {
                         Ok(cir::MetaValue::Float(y)) => {
@@ -279,7 +278,7 @@ impl MetaParser for GdtMetaParser<'_> {
                             self.y = y as f32;
                         }
                         Ok(mv) => {
-                    cir_push_error!( errors, value, InvalidMetaValue(key_str, mv));
+                            cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                         }
                         Err(e) => {
                             errors.push(e);
@@ -289,7 +288,7 @@ impl MetaParser for GdtMetaParser<'_> {
             }
             "z" => {
                 if self.vector_dim < 3 {
-                cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
+                    cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
                 } else {
                     match cir::parse_optional_meta_value(value.as_ref()) {
                         Ok(cir::MetaValue::Float(z)) => {
@@ -299,7 +298,7 @@ impl MetaParser for GdtMetaParser<'_> {
                             self.z = z as f32;
                         }
                         Ok(mv) => {
-                    cir_push_error!( errors, value, InvalidMetaValue(key_str, mv));
+                            cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                         }
                         Err(e) => {
                             errors.push(e);

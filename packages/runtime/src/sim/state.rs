@@ -1,16 +1,13 @@
-use std::collections::HashMap;
-use std::sync::Arc;
 use std::future::Future;
 
-use blueflame::game::gdt;
 use blueflame::linker;
 use blueflame::processor::{self, Cpu1, Cpu2, CrashReport, Process};
 use skybook_parser::cir;
 use teleparse::Span;
 
-use crate::{exec, sim};
-use crate::error::{sim_error, sim_warning, Report};
 use super::util;
+use crate::error::{Report, sim_error, sim_warning};
+use crate::{exec, sim};
 
 /// The state of the simulator
 #[derive(Clone, Default)]
@@ -21,8 +18,6 @@ pub struct State {
     // saves: HashMap<String, Arc<gdt::TriggerParam>>,
     // /// The "manual" or "default" save (what is used if a name is not specified when saving)
     // manual_save: Option<gdt::TriggerParam>,
-
-
 
     // /// If inventory/dialog screen is activated manually,
     // /// so auto-scoping will be disabled until returned to overworld screen
@@ -40,7 +35,7 @@ pub enum Game {
     /// Game is running
     Running(GameState),
     /// Game has crashed (must manually reboot)
-    Crashed(CrashReport)
+    Crashed(CrashReport),
 }
 
 trait IntoGameReport {
@@ -52,8 +47,7 @@ impl IntoGameReport for Result<GameState, CrashReport> {
         match self {
             Ok(game_state) => Report::new(Game::Running(game_state)),
             Err(crash_report) => {
-                Report::error(Game::Crashed(crash_report), 
-                    sim_error!( &span, Crash))
+                Report::error(Game::Crashed(crash_report), sim_error!(&span, Crash))
             }
         }
     }
@@ -67,15 +61,14 @@ pub enum TakeGame {
     /// Game is running
     Running(GameState),
     /// Game has crashed (must manually reboot)
-    Crashed
+    Crashed,
 }
 
 /// The state of the running game in the simulator
 #[derive(Clone)]
 pub struct GameState {
-    /// Current screen, only valid if game is running
-    screen: Screen,
-
+    // /// Current screen, only valid if game is running
+    // screen: Screen,
     /// Running game's process
     pub process: Process,
     //
@@ -112,24 +105,14 @@ pub enum Screen {
 
 impl State {
     pub async fn execute_step(
-        self, 
+        self,
         span: Span,
-        step: &cir::Step, 
-        runtime: &sim::Runtime
+        step: &cir::Step,
+        runtime: &sim::Runtime,
     ) -> Result<Report<Self>, exec::Error> {
         match &step.command {
-            cir::Command::Get(items) => {
-                self.handle_get(span, items, runtime).await
-            }
-            _ => {
-                Ok(Report::error(
-                    self,
-                    sim_error!(
-                        &span,
-                        Unimplemented
-                    )
-                ))
-            }
+            cir::Command::Get(items) => self.handle_get(span, items, runtime).await,
+            _ => Ok(Report::error(self, sim_error!(&span, Unimplemented))),
         }
     }
 
@@ -140,12 +123,14 @@ impl State {
         runtime: &sim::Runtime,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling GET command");
-        let x = self.with_game(span, runtime, async move |game| {
-            let items = items.to_vec();
-            runtime.execute(move |cpu| {
-                game.cmd_get(cpu, &items).into_report(span)
-            }).await
-        }).await;
+        let x = self
+            .with_game(span, runtime, async move |game| {
+                let items = items.to_vec();
+                runtime
+                    .execute(move |cpu| game.cmd_get(cpu, &items).into_report(span))
+                    .await
+            })
+            .await;
         log::debug!("Done with GET command");
         x
     }
@@ -160,17 +145,12 @@ impl State {
         runtime: &sim::Runtime,
         f: TFn,
     ) -> Result<Report<Self>, exec::Error>
-    where 
+    where
         TFuture: Future<Output = Result<Report<Game>, exec::Error>>,
         TFn: FnOnce(GameState) -> TFuture,
     {
         match self.game.take() {
-            TakeGame::Crashed => {
-                Ok(Report::error(self, sim_warning!(
-                    &span,
-                    PreviousCrash
-                )))
-            }
+            TakeGame::Crashed => Ok(Report::error(self, sim_warning!(&span, PreviousCrash))),
             TakeGame::Running(game) => {
                 let report = f(game).await?;
                 Ok(report.map(|game| {
@@ -182,10 +162,7 @@ impl State {
                 let process = match runtime.initial_process() {
                     Ok(process) => process,
                     Err(e) => {
-                        return Ok(Report::spanned(
-                            self,
-                            &span, e
-                        ));
+                        return Ok(Report::spanned(self, &span, e));
                     }
                 };
                 let game_state = GameState::new(process);
@@ -197,7 +174,6 @@ impl State {
             }
         }
     }
-
 }
 
 impl Game {
@@ -205,9 +181,7 @@ impl Game {
     pub fn take(&mut self) -> TakeGame {
         match std::mem::take(self) {
             Game::Uninit => TakeGame::Uninit,
-            Game::Running(game) => {
-                TakeGame::Running(game)
-            }
+            Game::Running(game) => TakeGame::Running(game),
             Game::Crashed(_) => TakeGame::Crashed,
         }
     }
@@ -216,7 +190,7 @@ impl Game {
 impl GameState {
     pub fn new(process: Process) -> Self {
         Self {
-            screen: Screen::Overworld,
+            // screen: Screen::Overworld,
             process,
         }
     }
@@ -231,7 +205,7 @@ impl GameState {
                     let meta = item.meta.as_ref();
                     if is_cook_item {
                         linker::get_cook_item(
-                            cpu2, 
+                            cpu2,
                             &item.actor,
                             meta.map(|m| m.ingredients.as_slice()).unwrap_or(&[]),
                             meta.and_then(|m| m.life_recover_f32()),
@@ -243,9 +217,7 @@ impl GameState {
                         continue;
                     };
                     let modifier = util::modifier_from_meta(meta);
-                    linker::get_item(cpu2, &item.actor, 
-                        meta.and_then(|m| m.value),
-                        modifier)?;
+                    linker::get_item(cpu2, &item.actor, meta.and_then(|m| m.value), modifier)?;
                 }
             }
             Ok(())
@@ -253,7 +225,8 @@ impl GameState {
     }
 
     fn cpu_exec<F>(mut self, cpu: &mut Cpu1, f: F) -> Result<Self, CrashReport>
-    where F: FnOnce(&mut Cpu2) -> Result<(), processor::Error>
+    where
+        F: FnOnce(&mut Cpu2) -> Result<(), processor::Error>,
     {
         let mut cpu2 = Cpu2::new(cpu, &mut self.process);
         cpu2.with_crash_report(f)?;

@@ -44,7 +44,7 @@ impl Spawn for Spawner {
                 thread.main_loop();
             })
             .map_err(|e| {
-                log::error!("failed to create thread: {}", e);
+                log::error!("failed to create thread: {e}");
                 Error::CreateThread(e.to_string())
             })?;
         Ok((join_handle, handle))

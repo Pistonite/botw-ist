@@ -22,7 +22,6 @@ impl IntoErrorReport for teleparse::syntax::Error<syn::TT> {
             teleparse::syntax::ErrorKind::UnexpectedEof => Error::SyntaxUnexpectedEof,
             teleparse::syntax::ErrorKind::UnexpectedNoAdvanceInLoop => {
                 Error::Unexpected("no advance in parser loop".to_string())
-
             }
         };
         ErrorReport::error(&span, error)

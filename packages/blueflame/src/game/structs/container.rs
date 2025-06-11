@@ -1,4 +1,4 @@
-use crate::memory::{self, MemObject, Memory, mem, Ptr};
+use crate::memory::{self, MemObject, Memory, Ptr, mem};
 
 #[derive(MemObject, Default, Clone, Copy)]
 #[size(0x10)]
@@ -39,7 +39,10 @@ impl Ptr![OffsetList] {
         mem! { memory:
             let offset = *(&self->mOffset);
         }
-        Ok(OffsetListIter { offset, curr: Ptr!(&self->mStartEnd) })
+        Ok(OffsetListIter {
+            offset,
+            curr: Ptr!(&self->mStartEnd),
+        })
     }
 }
 
@@ -53,7 +56,7 @@ impl OffsetListIter {
     /// Get the current location of the iterator as a T* (may be null)
     pub fn get_tptr(&self) -> u64 {
         if self.curr.is_nullptr() {
-            return self.curr.to_raw()
+            return self.curr.to_raw();
         }
         self.curr.to_raw() - self.offset as u64
     }

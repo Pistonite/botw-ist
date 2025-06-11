@@ -5,7 +5,7 @@ use js_sys::{Function, Uint8Array};
 use serde::{Deserialize, Serialize};
 use skybook_parser::{ParseOutput, search};
 use skybook_runtime::exec::Spawner;
-use skybook_runtime::sim::{self, CustomImageInitParams};
+use skybook_runtime::sim::{self, RuntimeInitParams};
 use skybook_runtime::{MaybeAborted, RuntimeInitError, RuntimeViewError};
 use skybook_runtime::{erc, iv};
 use tsify::Tsify;
@@ -63,22 +63,28 @@ pub struct RuntimeInitOutput {
 pub fn init_runtime(
     // the params should be one Option, but wasm-bindgen doesn't support tuples
     custom_image: Option<Uint8Array>,
-    custom_image_params: Option<CustomImageInitParams>,
+    params: Option<RuntimeInitParams>,
 ) -> interop::Result<RuntimeInitOutput, RuntimeInitError> {
-    let custom_image = match (custom_image, custom_image_params) {
-        (Some(data), Some(params)) => {
-            let data = data.to_vec();
-            Some((data, params))
-        }
-        _ => None,
-    };
-
     RUNTIME.with(|runtime| {
-        let runtime = runtime.get().unwrap();
-        if let Err(e) = runtime.init(custom_image) {
-            return interop::Result::Err(e);
-        }
-        let game_version = match runtime.game_version() {
+        let runtime = runtime.get().expect("init_runtime called before module_init");
+        let threads = 4;
+        let result = match custom_image {
+            Some(data) => {
+                log::info!("initializing runtime in WASM using custom image");
+                runtime.init(&data.to_vec(), threads, params.as_ref())
+            },
+            None => {
+                log::info!("initializing runtime in WASM using default image");
+                runtime.init(include_bytes!("../../runtime-tests/data/program-mini.bfi"), threads, params.as_ref())
+            }
+        };
+        let env = match result {
+            Err(e) => {
+                return interop::Result::Err(e);
+            }
+            Ok(x) => x
+        };
+        let game_version = match env.game_ver {
             GameVer::X150 => "1.5",
             GameVer::X160 => "1.6",
         };

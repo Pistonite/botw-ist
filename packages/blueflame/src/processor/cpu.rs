@@ -39,7 +39,7 @@ pub struct Cpu3<'a, 'b, 'c> {
     pub program: &'c ArchivedProgram,
     // adding singleton rel_start to this gets the physical
     // address of the singleton
-    heap_start_adjusted: u64,
+    heap_adjustment: u64,
 }
 
 /// Level 2 CPU state.
@@ -94,7 +94,7 @@ impl<'a, 'b, 'c> Cpu3<'a, 'b, 'c> {
         Self {
             cpu2,
             program,
-            heap_start_adjusted,
+            heap_adjustment: heap_start_adjusted,
         }
     }
 }
@@ -189,7 +189,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     }
 
     fn v_singleton_get(&mut self, reg: u8, rel_start: u32) -> Result<(), Self::Error> {
-        let addr = self.heap_start_adjusted + rel_start as u64;
+        let addr = self.heap_adjustment + rel_start as u64;
         self.write(reg!(x[reg]), addr);
         Ok(())
     }
