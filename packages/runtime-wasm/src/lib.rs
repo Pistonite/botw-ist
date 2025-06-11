@@ -1,3 +1,5 @@
+#![allow(clippy::not_unsafe_ptr_arg_deref)]
+
 use std::{cell::OnceCell, sync::Arc};
 
 use blueflame::env::GameVer;
@@ -17,7 +19,7 @@ mod js_item_resolve;
 use js_item_resolve::JsQuotedItemResolver;
 
 thread_local! {
-    static RUNTIME: OnceCell<Arc<sim::Runtime>> = OnceCell::new();
+    static RUNTIME: OnceCell<Arc<sim::Runtime>> = const { OnceCell::new() };
 }
 
 #[wasm_bindgen]
@@ -219,7 +221,7 @@ pub async fn run_parsed(
     let run = sim::Run::new(handle);
     let runtime = RUNTIME.with(|runtime| {
         // unwrap: the worker guarantees it calls init_runtime before this
-        runtime.get().unwrap().clone()
+        runtime.get().expect("run_parsed called before module_init").clone()
     });
     let output = run.run_parsed(parse_output, &runtime).await;
 
