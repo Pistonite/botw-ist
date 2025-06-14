@@ -190,10 +190,11 @@ ParseOutput {
             notes: "",
         },
     ],
+    script_len: 212,
     pages: [],
     display: [],
     errors: [
-        ParserErrorReport {
+        ErrorReport {
             span: (
                 36,
                 42,
@@ -206,7 +207,7 @@ ParseOutput {
                 ),
             ),
         },
-        ParserErrorReport {
+        ErrorReport {
             span: (
                 49,
                 56,
@@ -219,7 +220,7 @@ ParseOutput {
                 ),
             ),
         },
-        ParserErrorReport {
+        ErrorReport {
             span: (
                 200,
                 204,
