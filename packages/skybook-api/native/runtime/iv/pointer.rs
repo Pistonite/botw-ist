@@ -32,12 +32,14 @@ impl From<u64> for Pointer {
 }
 
 impl Pointer {
+    #[allow(clippy::unnecessary_cast)]
     pub fn as_u64(&self) -> u64 {
         self.0 as u64
     }
 }
 
 impl From<Pointer> for u64 {
+    #[allow(clippy::unnecessary_cast)]
     fn from(value: Pointer) -> Self {
         value.0 as u64
     }

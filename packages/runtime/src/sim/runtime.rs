@@ -124,12 +124,18 @@ impl Runtime {
             },
         };
 
-        let heap_free_size = params.map(|x| x.heap_free_size).take_if(|x| *x!=0).unwrap_or(20480000);
+        let heap_free_size = params
+            .map(|x| x.heap_free_size)
+            .take_if(|x| *x != 0)
+            .unwrap_or(20480000);
         if heap_free_size > 40960000 {
             return Err(RuntimeInitError::HeapTooBig);
         }
 
-        let stack_size = params.map(|x| x.stack_size).take_if(|x| *x != 0).unwrap_or(0x4000);
+        let stack_size = params
+            .map(|x| x.stack_size)
+            .take_if(|x| *x != 0)
+            .unwrap_or(0x4000);
 
         let process = match linker::init_process(
             program,

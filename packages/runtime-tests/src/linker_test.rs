@@ -1,7 +1,7 @@
+use blueflame::game::{PauseMenuDataMgr, PouchItem, PouchItemType, gdt, singleton_instance};
 use blueflame::linker;
-use blueflame::processor::{Error, Cpu2};
-use blueflame::game::{gdt, singleton_instance, PauseMenuDataMgr, PouchItem, PouchItemType};
-use blueflame::memory::{proxy, Memory, Ptr};
+use blueflame::memory::{Memory, Ptr, proxy};
+use blueflame::processor::{Cpu2, Error};
 
 pub fn pmdm_initialized(cpu: &mut Cpu2) -> Result<(), Error> {
     let pmdm_actual_addr = singleton_instance!(pmdm(cpu.proc.memory()))?;
@@ -156,8 +156,15 @@ pub fn get_food(cpu: &mut Cpu2) -> Result<(), Error> {
 
 pub fn get_food_with_effect(cpu: &mut Cpu2) -> Result<(), Error> {
     let pmdm_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
-    linker::get_cook_item(cpu, "Item_Cook_C_17", &["Animal_Insect_A", "Animal_Insect_A"],
-        Some(12.0), Some(300), Some(50), Some(13), Some(2.0)
+    linker::get_cook_item(
+        cpu,
+        "Item_Cook_C_17",
+        &["Animal_Insect_A", "Animal_Insect_A"],
+        Some(12.0),
+        Some(300),
+        Some(50),
+        Some(13),
+        Some(2.0),
     )?;
     assert_item_helper(
         Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
@@ -231,4 +238,3 @@ fn assert_item_helper(
 
     Ok(())
 }
-

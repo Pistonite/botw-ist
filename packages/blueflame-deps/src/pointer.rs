@@ -182,6 +182,8 @@ macro_rules! mem {
 #[macro_export]
 macro_rules! offsetof {
     ($ptr:ident, $field:ident) => {
-        blueflame::memory::PtrToSized::__pointee_layout($ptr).$field.offset()
-    }
+        blueflame::memory::PtrToSized::__pointee_layout($ptr)
+            .$field
+            .offset()
+    };
 }
