@@ -30,6 +30,7 @@ tasks:
     desc: Run the tests with the full image
     env:
       SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
+      RUST_BACKTRACE: 1
     cmds:
       - cargo run --release
 
@@ -37,6 +38,7 @@ tasks:
     desc: Run the tests with the mini image
     env:
       SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-mini.bfi
+      RUST_BACKTRACE: 1
     cmds:
       - cargo run --release
 

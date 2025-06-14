@@ -85,7 +85,7 @@ pub fn get_cook_item(
     if cpu.proc.is160() {
         cpu.native_jump_to_main_offset(0x010be740)?;
     } else {
-        cpu.native_jump_to_main_offset(0x00970158)?;
+        cpu.native_jump_to_main_offset(0x00970060)?;
     }
 
     cpu.stack_check::<CookItem>(cook_item.to_raw())?;

@@ -182,7 +182,10 @@ impl Game {
         match std::mem::take(self) {
             Game::Uninit => TakeGame::Uninit,
             Game::Running(game) => TakeGame::Running(game),
-            Game::Crashed(_) => TakeGame::Crashed,
+            Game::Crashed(report) => {
+                *self = Game::Crashed(report);
+                TakeGame::Crashed
+            }
         }
     }
 }

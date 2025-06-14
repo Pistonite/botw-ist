@@ -67,6 +67,29 @@ pub fn get_sword(cpu: &mut Cpu2) -> Result<(), Error> {
     Ok(())
 }
 
+pub fn get_arrow(cpu: &mut Cpu2) -> Result<(), Error> {
+    let pmdm_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    linker::get_item(cpu, "AncientArrow", None, None)?;
+    assert_item_helper(
+        Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+        cpu.proc.memory(),
+        "AncientArrow",
+        PouchItemType::Arrow,
+        1,
+    )?;
+
+    linker::get_item(cpu, "FireArrow", None, None)?;
+    assert_item_helper(
+        Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+        cpu.proc.memory(),
+        "FireArrow",
+        PouchItemType::Arrow,
+        1,
+    )?;
+
+    Ok(())
+}
+
 pub fn get_bow(cpu: &mut Cpu2) -> Result<(), Error> {
     let pmdm_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
     linker::get_item_with_value(cpu, "Weapon_Bow_027", 50, None)?;
@@ -127,6 +150,21 @@ pub fn get_food(cpu: &mut Cpu2) -> Result<(), Error> {
         "Item_Roast_07",
         PouchItemType::Food,
         100,
+    )?;
+    Ok(())
+}
+
+pub fn get_food_with_effect(cpu: &mut Cpu2) -> Result<(), Error> {
+    let pmdm_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    linker::get_cook_item(cpu, "Item_Cook_C_17", &["Animal_Insect_A", "Animal_Insect_A"],
+        Some(12.0), Some(300), Some(50), Some(13), Some(2.0)
+    )?;
+    assert_item_helper(
+        Ptr!(&pmdm_ptr->mLastAddedItem).load(cpu.proc.memory())?,
+        cpu.proc.memory(),
+        "Item_Cook_C_17",
+        PouchItemType::Food,
+        1,
     )?;
     Ok(())
 }

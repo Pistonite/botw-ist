@@ -102,7 +102,7 @@ impl Runtime {
             return Err(RuntimeInitError::UnsupportedVersion);
         }
 
-        let stack_start = match params.map(|x| &x.stack_start) {
+        let stack_start = match params.map(|x| &x.stack_start).take_if(|x| !x.is_empty()) {
             None => 0x8888800000,
             Some(x) => match parse_region_addr(x) {
                 Some(x) => x,
@@ -113,7 +113,7 @@ impl Runtime {
             },
         };
 
-        let pmdm_addr = match params.map(|x| &x.stack_start) {
+        let pmdm_addr = match params.map(|x| &x.pmdm_addr).take_if(|x| !x.is_empty()) {
             None => 0x2222248358,
             Some(x) => match parse_region_addr(x) {
                 Some(x) => x,
@@ -124,16 +124,18 @@ impl Runtime {
             },
         };
 
-        let heap_free_size = params.map(|x| x.heap_free_size).unwrap_or(20480000);
+        let heap_free_size = params.map(|x| x.heap_free_size).take_if(|x| *x!=0).unwrap_or(20480000);
         if heap_free_size > 40960000 {
             return Err(RuntimeInitError::HeapTooBig);
         }
+
+        let stack_size = params.map(|x| x.stack_size).take_if(|x| *x != 0).unwrap_or(0x4000);
 
         let process = match linker::init_process(
             program,
             env.dlc_ver,
             stack_start,
-            params.map(|x| x.stack_size).unwrap_or(0x4000),
+            stack_size,
             pmdm_addr,
             heap_free_size,
         ) {

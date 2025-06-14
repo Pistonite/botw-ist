@@ -1,3 +1,5 @@
+#![feature(panic_payload_as_str)]
+
 use std::backtrace::Backtrace;
 use std::cell::Cell;
 use std::panic::UnwindSafe;
@@ -11,8 +13,19 @@ use threadpool::ThreadPool;
 
 mod linker_test;
 
+struct PanicInfo {
+    message: String,
+    backtrace: Backtrace,
+}
+impl std::fmt::Display for PanicInfo {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "{}\n", self.message)?;
+        writeln!(f, "Backtrace:\n{}", self.backtrace)
+    }
+}
+
 thread_local! {
-    static BACKTRACE: Cell<Option<Backtrace>> = Cell::new(None)
+    static PANIC_INFO: Cell<Option<PanicInfo>> = Cell::new(None)
 }
 
 macro_rules! run_linker {
@@ -31,9 +44,17 @@ fn main() -> anyhow::Result<()> {
     }
     std::fs::create_dir_all(failures_dir).context("failed to create failures dir")?;
 
-    std::panic::set_hook(Box::new(|_| {
-        let trace = Backtrace::capture();
-        BACKTRACE.with(|b| b.set(Some(trace)))
+    std::panic::set_hook(Box::new(|info| {
+        let backtrace = Backtrace::capture();
+        let mut message = match info.location() {
+            Some(loc) => format!("file: {}, line: {}\n", loc.file(), loc.line()),
+            None => "unknown panic location\n".to_string()
+        };
+        match info.payload_as_str() {
+            Some(x) => message += x,
+            None => message += "unknown panic info",
+        };
+        PANIC_INFO.with(|b| b.set(Some(PanicInfo{ message, backtrace })))
     }));
 
     let image_file = std::env::var("SKYBOOK_RUNTIME_TEST_IMAGE").context("please define SKYBOOK_RUNTIME_TEST_IMAGE")?;
@@ -51,10 +72,12 @@ fn main() -> anyhow::Result<()> {
     run_linker!(handles, &pool, &process, linker_test::pmdm_initialized);
     run_linker!(handles, &pool, &process, linker_test::get_item_basic);
     run_linker!(handles, &pool, &process, linker_test::get_sword);
+    run_linker!(handles, &pool, &process, linker_test::get_arrow);
     run_linker!(handles, &pool, &process, linker_test::get_bow);
     run_linker!(handles, &pool, &process, linker_test::get_shield);
     run_linker!(handles, &pool, &process, linker_test::get_material);
     run_linker!(handles, &pool, &process, linker_test::get_food);
+    run_linker!(handles, &pool, &process, linker_test::get_food_with_effect);
     run_linker!(handles, &pool, &process, linker_test::get_armor);
     run_linker!(handles, &pool, &process, linker_test::get_orb);
 
@@ -136,8 +159,8 @@ where F: FnOnce(&mut Cpu2) -> Result<(), blueflame::processor::Error> + Send + U
         });
         match result {
             Err(_) => {
-                let trace = BACKTRACE.with(|b| b.take()).unwrap();
-                let _ = send.send(LinkerTestResult::Panic(trace));
+                let info = PANIC_INFO.with(|b| b.take()).unwrap();
+                let _ = send.send(LinkerTestResult::Panic(info));
             },
             Ok(Err(crash)) => {
                 let _ = send.send(LinkerTestResult::Crash(crash));
@@ -152,6 +175,6 @@ where F: FnOnce(&mut Cpu2) -> Result<(), blueflame::processor::Error> + Send + U
 
 enum LinkerTestResult {
     Ok,
-    Panic(Backtrace),
+    Panic(PanicInfo),
     Crash(CrashReport),
 }
