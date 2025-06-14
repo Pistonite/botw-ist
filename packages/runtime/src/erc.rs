@@ -30,8 +30,8 @@ pub fn add_ref<T: Send + Sync + 'static>(ptr: *const T) -> *const T {
     let p1 = Arc::into_raw(x);
     // leak the new pointer (should be the same one)
     let p2 = Arc::into_raw(x2);
-    assert!(ptr == p1, "add_ref: input pointer mismatched");
-    assert!(p1 == p2, "add_ref: output pointer mismatched");
+    assert!(std::ptr::eq(ptr, p1), "add_ref: input pointer mismatched");
+    assert!(std::ptr::eq(p1, p2), "add_ref: output pointer mismatched");
     // return the new pointer
     p2
 }
