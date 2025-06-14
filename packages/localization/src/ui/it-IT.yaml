@@ -66,11 +66,13 @@ menu.skybook_manual: "Manuale di Skybook"
 # Main inventory display
 main.gdt_inventory.desc: "Dati dell'inventario memorizzati nel sistema di flag del gioco (GDT). Gli oggetti vengono visualizzati come se fossero caricati nell'inventario, e gli slot sono allineati all'inventario in base alla corruzione."
 main.gdt_inventory.title: "GameData"
+main.gdt_inventory.view_error: "Impossibile visualizzare i dati interni GDT!"
 main.tabbed_inventory.bad_msgbar.body: "I dati delle schede sono danneggiati. Possibilmente a causa di un exploit di corruzione della memoria."
 main.tabbed_inventory.bad_msgbar.title: "Impossibile visualizzare le schede!"
 main.tabbed_inventory.button_tooltip: "Attiva/disattiva vista elenco/schede"
 main.visible_inventory.desc: "Oggetti che vedi quando apri l'inventario"
 main.visible_inventory.title: "Inventario Visibile"
+main.visible_inventory.view_error: "Impossibile visualizzare l'inventario!"
 
 main.bug_report: "Segnalalo su {{github}} se pensi che sia un bug del simulatore."
 
@@ -178,12 +180,26 @@ parser.UnexpectedMetaKeyWithValue: "The `{{arg}}` property should not have a val
 parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 
 # Runtime Init error messages
-runtime_init.BadDlcVersion: "Versione DLC non valida: {{version}}. Le versioni consentite sono 0 (nessun DLC), 1, 2 e 3"
-runtime_init.BadImage: "Immagine personalizzata non valida"
-runtime_init.Executor: "Impossibile creare i thread dell'esecutore"
-runtime_init.InvalidPmdmAddr: "Il formato del parametro 'pmdm-addr' non è valido"
-runtime_init.InvalidProgramStart: "Il formato del parametro 'program-start' non è valido"
-runtime_init.InvalidStackStart: "Il formato del parametro 'stack-start' non è valido"
-runtime_init.NoImageFromApp: "Impossibile ottenere i dati dell'immagine personalizzata dall'app"
-runtime_init.ProgramStartMismatch: "L'indirizzo di avvio del programma nell'immagine personalizzata ({{addr_ci}}) non corrisponde a quello specificato nello script ({{addr_script}})"
-runtime_init.SaveImage: "Impossibile salvare i dati dell'immagine personalizzata"
+runtime_init.BadDlcVersion: "Versione DLC non valida: {{version}}. Le versioni consentite sono 0 (nessun DLC), 1, 2 e 3."
+runtime_init.BadImage: "Immagine personalizzata non valida."
+runtime_init.Executor: "Impossibile creare i thread dell'esecutore."
+runtime_init.HeapTooBig: "L'heap nell'ambiente script è troppo grande."
+runtime_init.InitializeProcess: "Impossibile inizializzare il processo di gioco."
+runtime_init.InvalidPmdmAddr: "Il formato del parametro 'pmdm-addr' non è valido."
+runtime_init.InvalidStackStart: "Il formato del parametro 'stack-start' non è valido."
+runtime_init.NoImageFromApp: "Impossibile ottenere i dati dell'immagine personalizzata dall'app."
+runtime_init.ProgramStartMismatch: "L'indirizzo di avvio del programma nell'immagine personalizzata ({{addr_ci}}) non corrisponde a quello specificato nello script ({{addr_script}})."
+runtime_init.SaveImage: "Impossibile salvare i dati dell'immagine personalizzata."
+runtime_init.UnsupportedVersion: "L'immagine contiene una versione del gioco attualmente non supportata."
+
+# Error/Diagnostic from Runtime
+runtime_error.Crash: "Il gioco si è bloccato in questo passaggio."
+runtime_error.Executor: "Errore imprevisto dall'Esecutore."
+runtime_error.PreviousCrash: "Il gioco si è bloccato in un passaggio precedente. Devi `ricaricare` (`reload`) o iniziare una `nuova partita` (`new-game`) prima di continuare."
+runtime_error.Unimplemented: "Questo comando non è ancora implementato :)."
+runtime_error.Uninitialized: "Runtime imprevisto non inizializzato."
+
+# Error from getting view from simulation output
+runtime_view_error.Coherence: "I dati dell'inventario sono corrotti e non possono essere visualizzati."
+runtime_view_error.Crash: "Il gioco si è bloccato in questo passaggio o prima e l'inventario non può essere visualizzato."
+runtime_view_error.Memory: "Si è verificato un errore durante la lettura della memoria di gioco e l'inventario non può essere visualizzato."

@@ -6,7 +6,7 @@ import type {
     RuntimeWorkerInitArgs,
     RuntimeWorkerInitOutput,
     ScriptEnvImage,
-    CustomImageInitParams,
+    RuntimeInitParams,
     RuntimeWorkerInitError,
 } from "@pistonite/skybook-api";
 
@@ -84,6 +84,7 @@ const initializeRuntimeWorker = async (
             napi,
             imageMgr,
             args.params,
+            args.alwaysAskApp,
         );
     }
     let storedVersion: "not-changed" | "" = "not-changed";
@@ -113,10 +114,11 @@ const initializeRuntimeWorker = async (
 const initializeRuntimeWorkerWithCustomImage = async (
     napi: NativeApi,
     imageMgr: ImageMgr,
-    params: CustomImageInitParams,
+    params: RuntimeInitParams,
+    alwaysAskApp: boolean,
 ): Pwr<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>> => {
     // try reading the image from the database
-    let customImage = await imageMgr.getImage();
+    let customImage = alwaysAskApp ? undefined : await imageMgr.getImage();
     if (!customImage) {
         // try requesting the image from the app
         const newImage = await getCustomBlueFlameImage();

@@ -66,11 +66,13 @@ menu.skybook_manual: "Skybook 매뉴얼"
 # Main inventory display
 main.gdt_inventory.desc: "게임의 플래그 시스템(GDT)에 저장된 인벤토리 데이터입니다. 아이템은 인벤토리에 로드된 것처럼 표시되며, 슬롯은 코럽션에 따라 인벤토리에 정렬됩니다."
 main.gdt_inventory.title: "GameData"
+main.gdt_inventory.view_error: "GDT 내부 데이터를 표시할 수 없습니다!"
 main.tabbed_inventory.bad_msgbar.body: "탭 데이터가 손상되었습니다. 메모리 손상 익스플로잇으로 인해 발생했을 수 있습니다."
 main.tabbed_inventory.bad_msgbar.title: "탭을 표시할 수 없습니다!"
 main.tabbed_inventory.button_tooltip: "목록/탭 보기 전환"
 main.visible_inventory.desc: "인벤토리를 열었을 때 보이는 아이템"
 main.visible_inventory.title: "표시 인벤토리"
+main.visible_inventory.view_error: "인벤토리를 표시할 수 없습니다!"
 
 main.bug_report: "이것이 시뮬레이터의 버그라고 생각되면 {{github}}에 보고해 주세요."
 
@@ -178,12 +180,26 @@ parser.UnexpectedMetaKeyWithValue: "The `{{arg}}` property should not have a val
 parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 
 # Runtime Init error messages
-runtime_init.BadDlcVersion: "잘못된 DLC 버전: {{version}}. 허용되는 버전은 0 (DLC 없음), 1, 2, 3입니다"
-runtime_init.BadImage: "잘못된 사용자 정의 이미지입니다"
-runtime_init.Executor: "실행기 스레드를 생성할 수 없습니다"
-runtime_init.InvalidPmdmAddr: "'pmdm-addr' 매개변수의 형식이 잘못되었습니다"
-runtime_init.InvalidProgramStart: "'program-start' 매개변수의 형식이 잘못되었습니다"
-runtime_init.InvalidStackStart: "'stack-start' 매개변수의 형식이 잘못되었습니다"
-runtime_init.NoImageFromApp: "앱에서 사용자 정의 이미지 데이터를 가져오는 데 실패했습니다"
-runtime_init.ProgramStartMismatch: "사용자 정의 이미지의 프로그램 시작 주소 ({{addr_ci}})가 스크립트에서 지정한 주소 ({{addr_script}})와 일치하지 않습니다"
-runtime_init.SaveImage: "사용자 정의 이미지 데이터를 저장하는 데 실패했습니다"
+runtime_init.BadDlcVersion: "잘못된 DLC 버전: {{version}}. 허용되는 버전은 0 (DLC 없음), 1, 2, 3입니다."
+runtime_init.BadImage: "잘못된 사용자 정의 이미지입니다."
+runtime_init.Executor: "실행기 스레드를 생성할 수 없습니다."
+runtime_init.HeapTooBig: "스크립트 환경의 힙이 너무 큽니다."
+runtime_init.InitializeProcess: "게임 프로세스를 초기화하지 못했습니다."
+runtime_init.InvalidPmdmAddr: "'pmdm-addr' 매개변수의 형식이 잘못되었습니다."
+runtime_init.InvalidStackStart: "'stack-start' 매개변수의 형식이 잘못되었습니다."
+runtime_init.NoImageFromApp: "앱에서 사용자 정의 이미지 데이터를 가져오는 데 실패했습니다."
+runtime_init.ProgramStartMismatch: "사용자 정의 이미지의 프로그램 시작 주소 ({{addr_ci}})가 스크립트에서 지정한 주소 ({{addr_script}})와 일치하지 않습니다."
+runtime_init.SaveImage: "사용자 정의 이미지 데이터를 저장하는 데 실패했습니다."
+runtime_init.UnsupportedVersion: "이미지에 현재 지원되지 않는 게임 버전이 포함되어 있습니다."
+
+# Error/Diagnostic from Runtime
+runtime_error.Crash: "이 단계에서 게임이 충돌했습니다."
+runtime_error.Executor: "Executor에서 예상치 못한 오류 발생."
+runtime_error.PreviousCrash: "이전 단계에서 게임이 충돌했습니다. 계속하려면 `리로딩` (`reload`)하거나 `새 게임` (`new-game`)을 시작해야 합니다."
+runtime_error.Unimplemented: "이 명령어는 아직 구현되지 않았습니다 :)."
+runtime_error.Uninitialized: "예상치 못한 런타임 초기화되지 않음."
+
+# Error from getting view from simulation output
+runtime_view_error.Coherence: "인벤토리 데이터가 손상되어 표시할 수 없습니다."
+runtime_view_error.Crash: "이 단계 또는 이전 단계에서 게임이 충돌하여 인벤토리를 표시할 수 없습니다."
+runtime_view_error.Memory: "게임 메모리를 읽는 중 오류가 발생하여 인벤토리를 표시할 수 없습니다."

@@ -66,11 +66,13 @@ menu.skybook_manual: "Руководство по Skybook"
 # Main inventory display
 main.gdt_inventory.desc: "Данные инвентаря, сохранённые в системе флагов игры (GDT). Предметы отображаются так, как если бы они были загружены в инвентарь, а слоты выравниваются с инвентарём в зависимости от коррупции."
 main.gdt_inventory.title: "GameData"
+main.gdt_inventory.view_error: "Не удается отобразить внутренние данные GDT!"
 main.tabbed_inventory.bad_msgbar.body: "Данные вкладок повреждены. Возможно, из-за эксплойта повреждения памяти."
 main.tabbed_inventory.bad_msgbar.title: "Не удаётся отобразить вкладки!"
 main.tabbed_inventory.button_tooltip: "Переключить вид списка/вкладок"
 main.visible_inventory.desc: "Предметы, которые вы видите при открытии инвентаря"
 main.visible_inventory.title: "Видимый инвентарь"
+main.visible_inventory.view_error: "Не удается отобразить инвентарь!"
 
 main.bug_report: "Пожалуйста, сообщите об этом на {{github}}, если считаете, что это ошибка в симуляторе."
 
@@ -178,12 +180,26 @@ parser.UnexpectedMetaKeyWithValue: "The `{{arg}}` property should not have a val
 parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 
 # Runtime Init error messages
-runtime_init.BadDlcVersion: "Недопустимая версия DLC: {{version}}. Допустимые версии: 0 (без DLC), 1, 2 и 3"
-runtime_init.BadImage: "Недопустимый пользовательский образ"
-runtime_init.Executor: "Не удалось создать потоки исполнителя"
-runtime_init.InvalidPmdmAddr: "Недопустимый формат параметра 'pmdm-addr'"
-runtime_init.InvalidProgramStart: "Недопустимый формат параметра 'program-start'"
-runtime_init.InvalidStackStart: "Недопустимый формат параметра 'stack-start'"
-runtime_init.NoImageFromApp: "Не удалось получить данные пользовательского образа из приложения"
-runtime_init.ProgramStartMismatch: "Начальный адрес программы из пользовательского образа ({{addr_ci}}) не совпадает с адресом, указанным в скрипте ({{addr_script}})"
-runtime_init.SaveImage: "Не удалось сохранить данные пользовательского образа"
+runtime_init.BadDlcVersion: "Недопустимая версия DLC: {{version}}. Допустимые версии: 0 (без DLC), 1, 2 и 3."
+runtime_init.BadImage: "Недопустимый пользовательский образ."
+runtime_init.Executor: "Не удалось создать потоки исполнителя."
+runtime_init.HeapTooBig: "Куча в среде сценариев слишком велика."
+runtime_init.InitializeProcess: "Не удалось инициализировать игровой процесс."
+runtime_init.InvalidPmdmAddr: "Недопустимый формат параметра 'pmdm-addr'."
+runtime_init.InvalidStackStart: "Недопустимый формат параметра 'stack-start'."
+runtime_init.NoImageFromApp: "Не удалось получить данные пользовательского образа из приложения."
+runtime_init.ProgramStartMismatch: "Начальный адрес программы из пользовательского образа ({{addr_ci}}) не совпадает с адресом, указанным в скрипте ({{addr_script}})."
+runtime_init.SaveImage: "Не удалось сохранить данные пользовательского образа."
+runtime_init.UnsupportedVersion: "Образ содержит версию игры, которая в настоящее время не поддерживается."
+
+# Error/Diagnostic from Runtime
+runtime_error.Crash: "Игра аварийно завершилась на этом шаге."
+runtime_error.Executor: "Неожиданная ошибка от Executor."
+runtime_error.PreviousCrash: "Игра аварийно завершилась на предыдущем шаге. Вам необходимо `перезагрузить` (`reload`) или начать `новую игру` (`new-game`) для продолжения."
+runtime_error.Unimplemented: "Эта команда еще не реализована :)."
+runtime_error.Uninitialized: "Неожиданная неинициализированная среда выполнения."
+
+# Error from getting view from simulation output
+runtime_view_error.Coherence: "Данные инвентаря повреждены и не могут быть отображены."
+runtime_view_error.Crash: "Игра аварийно завершилась на этом или предыдущем шаге, инвентарь не может быть отображен."
+runtime_view_error.Memory: "Произошла ошибка при чтении памяти игры, инвентарь не может быть отображен."

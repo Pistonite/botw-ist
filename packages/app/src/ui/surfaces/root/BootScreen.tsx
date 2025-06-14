@@ -21,7 +21,7 @@ import {
 import type {
     Runtime,
     RuntimeWorkerInitArgs,
-    CustomImageInitParams,
+    RuntimeInitParams,
 } from "@pistonite/skybook-api";
 import {
     type Translator,
@@ -57,7 +57,7 @@ export type BootScreenProps = {
     /** The version of the script image, read from env block */
     scriptImageVersion?: string;
     /** Params from the script */
-    params: CustomImageInitParams;
+    params: RuntimeInitParams;
     /** State of the boot flow when initially showing the screen */
     initialState: BootScreenState;
     /**
@@ -265,6 +265,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                     await bootCallback({
                         isCustomImage: true,
                         params,
+                        alwaysAskApp: customImageUpload !== undefined,
                     });
                 }}
             >
@@ -437,6 +438,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
             const args: RuntimeWorkerInitArgs = {
                 isCustomImage: true,
                 params,
+                alwaysAskApp: customImageUpload !== undefined,
             };
             await bootCallback(args);
             return;
@@ -516,7 +518,7 @@ async function selectImageFile(): Promise<CustomImageSelection> {
                 description: translateUI(
                     "dialog.custom_image.button.select_file.type_desc",
                 ),
-                accept: [".blfm"],
+                accept: [".bfi"],
             },
         ],
     });

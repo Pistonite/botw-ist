@@ -262,12 +262,19 @@ pub mod glue {
                             ))
                         }
                         "uxtw" => {
-                            let result = ((val as u64) << extra_op.shift_val) as i64; // we essentially implicitly uxtw during conversion to u32.
+                            let result = ((val as u32 as u64) << extra_op.shift_val) as i64;
+                            Ok((result, false))
+                        }
+                        "uxtb" => {
+                            let result = ((val as u8 as u64) << extra_op.shift_val) as i64;
                             Ok((result, false))
                         }
                         //the distinct signed/unsigned extend behavior between uxtw and lsl (technically sxtw)
                         _ => {
-                            panic!("unhandled extra op: {}", extra_op.operation);
+                            panic!(
+                                "unhandled extra op: {}, shift={}",
+                                extra_op.operation, extra_op.shift_val
+                            );
                         }
                     }
                 } else {
@@ -310,12 +317,19 @@ pub mod glue {
                             ))
                         }
                         "uxtw" => {
-                            let result = ((val as u64) << extra_op.shift_val) as i64; // we essentially implicitly uxtw during conversion to u64.
+                            let result = ((val as u32 as u64) << extra_op.shift_val) as i64; // we essentially implicitly uxtw during conversion to u64.
+                            Ok((result, false))
+                        }
+                        "uxtb" => {
+                            let result = ((val as u8 as u64) << extra_op.shift_val) as i64; // we essentially implicitly uxtw during conversion to u64.
                             Ok((result, false))
                         }
                         //the distinct signed/unsigned extend behavior between uxtw and lsl (technically sxtw)
                         _ => {
-                            panic!("unhandled extra op: {}", extra_op.operation);
+                            panic!(
+                                "unhandled extra op: {}, shift={}",
+                                extra_op.operation, extra_op.shift_val
+                            );
                         }
                     }
                 } else {

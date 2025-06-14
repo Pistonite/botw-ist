@@ -4,11 +4,11 @@ extern crate self as blueflame;
 
 /// Top-level setup implementation for starting and connecting
 /// everything in a program
-#[cfg(feature = "data")]
+#[cfg(all(feature = "disarm", feature = "data"))]
 pub mod linker;
 
 /// Implementation of the processor (CPU) layers
-#[cfg(feature = "data")]
+#[cfg(all(feature = "disarm", feature = "data"))]
 pub mod processor;
 
 /// Mid-level simulation of some of the game's types and systems

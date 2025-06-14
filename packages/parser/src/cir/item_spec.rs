@@ -1,13 +1,13 @@
 use teleparse::{ToSpan, tp};
 
 use crate::cir;
-use crate::error::{Error, ErrorReport};
+use crate::error::{ErrorReport, cir_error, cir_push_error};
 use crate::search::{self, QuotedItemResolver, ResolvedItem};
 use crate::syn;
 use crate::util;
 
 /// Specification for an item
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ItemSpec {
     /// Amount of the item
     ///
@@ -26,7 +26,7 @@ pub struct ItemSpec {
 /// selecting by category and selecting by slot number
 ///
 /// The meaning of the spec depends on the context
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ItemSelectSpec {
     /// Amount of the item
     ///
@@ -40,14 +40,14 @@ pub struct ItemSelectSpec {
     pub slot: i32,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ItemOrCategory {
     Item(Item),
     Category(cir::Category),
 }
 
 /// An item
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Item {
     /// The item actor name
     pub actor: String,
@@ -58,6 +58,14 @@ pub struct Item {
     /// is adjusted to be the actor with the given star num
     pub meta: Option<cir::ItemMeta>,
 }
+
+impl Item {
+    /// Check if the item is a CookResult (based on actor name)
+    pub fn is_cook_item(&self) -> bool {
+        self.actor.starts_with("Item_Cook_")
+    }
+}
+
 pub async fn parse_item_list_finite_optional<R: QuotedItemResolver>(
     list: &tp::Option<syn::ItemListFinite>,
     resolver: &R,
@@ -226,26 +234,26 @@ async fn parse_item_name<R: QuotedItemResolver>(
         syn::ItemName::Word(word) => {
             let result = search::search_item_by_ident(word);
             if result.is_none() {
-                errors.push(Error::InvalidItem(word.to_string()).spanned(word));
+                cir_push_error!(errors, word, InvalidItem(word.to_string()));
             }
             result
         }
         syn::ItemName::Quoted(quoted_word) => {
             let name = quoted_word.as_str().trim_matches('"');
             if name.is_empty() {
-                errors.push(Error::InvalidEmptyItem.spanned(quoted_word));
+                cir_push_error!(errors, quoted_word, InvalidEmptyItem);
                 return None;
             }
             let result = resolver.resolve_quoted(name).await;
             if result.is_none() {
-                errors.push(Error::InvalidItem(name.to_string()).spanned(quoted_word));
+                cir_push_error!(errors, quoted_word, InvalidItem(name.to_string()));
             }
             result
         }
         syn::ItemName::Angle(angled_word) => {
             let name = &angled_word.name;
             if name.is_empty() {
-                errors.push(Error::InvalidEmptyItem.spanned(angled_word));
+                cir_push_error!(errors, angled_word, InvalidEmptyItem);
                 None
             } else {
                 Some(ResolvedItem::new(name.to_string()))
@@ -256,14 +264,12 @@ async fn parse_item_name<R: QuotedItemResolver>(
 
 /// Parse a SlotClause syntax node
 fn parse_slot_clause(slot: Option<&syn::SlotClause>) -> Result<i32, ErrorReport> {
-    match slot {
-        None => Ok(0),
-        Some(slot) => {
-            let slot_num = cir::parse_syn_int_str_i32(&slot.idx, &slot.idx.span())?;
-            if slot_num < 1 {
-                return Err(Error::InvalidSlotClause(slot_num).spanned(slot));
-            }
-            Ok(slot_num)
-        }
+    let Some(slot) = slot else {
+        return Ok(0);
+    };
+    let slot_num = cir::parse_syn_int_str_i32(&slot.idx, &slot.idx.span())?;
+    if slot_num < 1 {
+        cir_error!(slot, InvalidSlotClause(slot_num));
     }
+    Ok(slot_num)
 }

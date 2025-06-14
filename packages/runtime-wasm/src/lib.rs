@@ -1,21 +1,25 @@
+#![allow(clippy::not_unsafe_ptr_arg_deref)]
+
 use std::{cell::OnceCell, sync::Arc};
 
 use blueflame::env::GameVer;
 use js_sys::{Function, Uint8Array};
 use serde::{Deserialize, Serialize};
 use skybook_parser::{ParseOutput, search};
-use skybook_runtime::{
-    CustomImageInitParams, ResultInterop, RunHandle, RunOutput, Runtime, RuntimeInitError,
-    RuntimeInitOutput, erc, error::MaybeAborted, exec::Spawner, iv,
-};
-use tsify_next::Tsify;
+use skybook_runtime::exec::Spawner;
+use skybook_runtime::sim::{self, RuntimeInitParams};
+use skybook_runtime::{MaybeAborted, RuntimeInitError, RuntimeViewError};
+use skybook_runtime::{erc, iv};
+use tsify::Tsify;
 use wasm_bindgen::prelude::*;
+
+mod interop;
 
 mod js_item_resolve;
 use js_item_resolve::JsQuotedItemResolver;
 
 thread_local! {
-    static RUNTIME: OnceCell<Runtime> = OnceCell::new();
+    static RUNTIME: OnceCell<Arc<sim::Runtime>> = const { OnceCell::new() };
 }
 
 #[wasm_bindgen]
@@ -37,15 +41,23 @@ pub async fn module_init(wasm_module_path: String, wasm_bindgen_js_path: String)
     let spawner = match Spawner::try_new(&wasm_module_path, &wasm_bindgen_js_path).await {
         Ok(spawner) => spawner,
         Err(e) => {
-            panic!("failed to initialize spawner: {}", e);
+            panic!("failed to initialize spawner: {e}");
         }
     };
 
     RUNTIME.with(|runtime| {
-        let _ = runtime.set(Runtime::new(spawner));
+        let _ = runtime.set(Arc::new(sim::Runtime::new(spawner)));
     });
 
     log::info!("wasm module initialized successfully");
+}
+
+#[derive(Debug, Clone, Serialize, Tsify)]
+#[tsify(into_wasm_abi)]
+#[serde(rename_all = "camelCase")]
+pub struct RuntimeInitOutput {
+    /// "1.5" or "1.6"
+    pub game_version: String,
 }
 
 /// Initialize the simulator runtime
@@ -53,26 +65,38 @@ pub async fn module_init(wasm_module_path: String, wasm_bindgen_js_path: String)
 pub fn init_runtime(
     // the params should be one Option, but wasm-bindgen doesn't support tuples
     custom_image: Option<Uint8Array>,
-    custom_image_params: Option<CustomImageInitParams>,
-) -> ResultInterop<RuntimeInitOutput, RuntimeInitError> {
-    let custom_image = match (custom_image, custom_image_params) {
-        (Some(data), Some(params)) => {
-            let data = data.to_vec();
-            Some((data, params))
-        }
-        _ => None,
-    };
-
+    params: Option<RuntimeInitParams>,
+) -> interop::Result<RuntimeInitOutput, RuntimeInitError> {
     RUNTIME.with(|runtime| {
-        let runtime = runtime.get().unwrap();
-        if let Err(e) = runtime.init(custom_image) {
-            return ResultInterop::Err(e);
-        }
-        let game_version = match runtime.game_version() {
+        let runtime = runtime
+            .get()
+            .expect("init_runtime called before module_init");
+        let threads = 4;
+        let result = match custom_image {
+            Some(data) => {
+                log::info!("initializing runtime in WASM using custom image");
+                runtime.init(&data.to_vec(), threads, params.as_ref())
+            }
+            None => {
+                log::info!("initializing runtime in WASM using default image");
+                runtime.init(
+                    include_bytes!("../../runtime-tests/data/program-mini.bfi"),
+                    threads,
+                    params.as_ref(),
+                )
+            }
+        };
+        let env = match result {
+            Err(e) => {
+                return interop::Result::Err(e);
+            }
+            Ok(x) => x,
+        };
+        let game_version = match env.game_ver {
             GameVer::X150 => "1.5",
             GameVer::X160 => "1.6",
         };
-        ResultInterop::Ok(RuntimeInitOutput {
+        interop::Result::Ok(RuntimeInitOutput {
             game_version: game_version.to_string(),
         })
     })
@@ -176,15 +200,15 @@ pub fn get_step_from_pos(parse_output_ref: *const ParseOutput, pos: usize) -> us
 /// Make a run handle that you can pass back into run_parsed
 /// to be able to abort the run
 #[wasm_bindgen]
-pub fn make_task_handle() -> *const RunHandle {
-    let handle = Arc::new(RunHandle::new());
-    RunHandle::into_raw(handle)
+pub fn make_task_handle() -> *const sim::RunHandle {
+    let handle = Arc::new(sim::RunHandle::new());
+    sim::RunHandle::into_raw(handle)
 }
 
 /// Abort the task using the handle. Frees the handle
 #[wasm_bindgen]
-pub fn abort_task(ptr: *const RunHandle) {
-    let handle = RunHandle::from_raw(ptr);
+pub fn abort_task(ptr: *const sim::RunHandle) {
+    let handle = sim::RunHandle::from_raw(ptr);
     handle.abort();
 }
 
@@ -196,11 +220,21 @@ pub fn abort_task(ptr: *const RunHandle) {
 #[wasm_bindgen]
 pub async fn run_parsed(
     parse_output: *const ParseOutput,
-    handle: *const RunHandle,
+    handle: *const sim::RunHandle,
 ) -> MaybeAborted<usize> {
     let parse_output = unsafe { Arc::from_raw(parse_output) };
-    let handle = RunHandle::from_raw(handle);
-    match skybook_runtime::run_parsed(parse_output, handle).await {
+    let handle = sim::RunHandle::from_raw(handle);
+    let run = sim::Run::new(handle);
+    let runtime = RUNTIME.with(|runtime| {
+        // unwrap: the worker guarantees it calls init_runtime before this
+        runtime
+            .get()
+            .expect("run_parsed called before module_init")
+            .clone()
+    });
+    let output = run.run_parsed(parse_output, &runtime).await;
+
+    match output {
         MaybeAborted::Ok(run_output) => {
             let run_output_ptr = Arc::into_raw(Arc::new(run_output));
             MaybeAborted::Ok(run_output_ptr as usize)
@@ -215,17 +249,17 @@ pub async fn run_parsed(
 /// Borrows both the RunOutput and ParseOutput pointers.
 #[wasm_bindgen]
 pub fn get_pouch_list(
-    run_output_ref: *const RunOutput,
+    run_output_ref: *const sim::RunOutput,
     parse_output_ref: *const ParseOutput,
     byte_pos: usize,
-) -> iv::PouchList {
+) -> interop::Result<iv::PouchList, RuntimeViewError> {
     if parse_output_ref.is_null() || run_output_ref.is_null() {
-        return Default::default();
+        return interop::Result::Ok(Default::default());
     }
     let parse_output = unsafe { &*parse_output_ref };
     let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
     let run_output = unsafe { &*run_output_ref };
-    run_output.get_pouch_list(step)
+    run_output.get_pouch_list(step).into()
 }
 
 /// Get the GDT inventory view for the given byte position in the script
@@ -234,17 +268,17 @@ pub fn get_pouch_list(
 /// Borrows both the RunOutput and ParseOutput pointers.
 #[wasm_bindgen]
 pub fn get_gdt_inventory(
-    run_output_ref: *const RunOutput,
+    run_output_ref: *const sim::RunOutput,
     parse_output_ref: *const ParseOutput,
     byte_pos: usize,
-) -> iv::Gdt {
+) -> interop::Result<iv::Gdt, RuntimeViewError> {
     if parse_output_ref.is_null() || run_output_ref.is_null() {
-        return Default::default();
+        return interop::Result::Ok(Default::default());
     }
     let parse_output = unsafe { &*parse_output_ref };
     let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
     let run_output = unsafe { &*run_output_ref };
-    run_output.get_gdt_inventory(step)
+    run_output.get_gdt_inventory(step).into()
 }
 
 /// Get the overworld items for the given byte position in the script
@@ -253,17 +287,17 @@ pub fn get_gdt_inventory(
 /// Borrows both the RunOutput and ParseOutput pointers.
 #[wasm_bindgen]
 pub fn get_overworld_items(
-    run_output_ref: *const RunOutput,
+    run_output_ref: *const sim::RunOutput,
     parse_output_ref: *const ParseOutput,
     byte_pos: usize,
-) -> iv::Overworld {
+) -> interop::Result<iv::Overworld, RuntimeViewError> {
     if parse_output_ref.is_null() || run_output_ref.is_null() {
-        return Default::default();
+        return interop::Result::Ok(Default::default());
     }
     let parse_output = unsafe { &*parse_output_ref };
     let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
     let run_output = unsafe { &*run_output_ref };
-    run_output.get_overworld_items(step)
+    run_output.get_overworld_items(step).into()
 }
 
 ////////// Ref Counting //////////
@@ -276,18 +310,18 @@ pub fn add_ref_parse_output(ptr: *const ParseOutput) -> *const ParseOutput {
     erc::add_ref(ptr)
 }
 #[wasm_bindgen]
-pub fn free_task_handle(ptr: *const RunHandle) {
+pub fn free_task_handle(ptr: *const sim::RunHandle) {
     erc::free(ptr);
 }
 #[wasm_bindgen]
-pub fn add_ref_task_handle(ptr: *const RunHandle) -> *const RunHandle {
+pub fn add_ref_task_handle(ptr: *const sim::RunHandle) -> *const sim::RunHandle {
     erc::add_ref(ptr)
 }
 #[wasm_bindgen]
-pub fn free_run_output(ptr: *const RunOutput) {
+pub fn free_run_output(ptr: *const sim::RunOutput) {
     erc::free(ptr);
 }
 #[wasm_bindgen]
-pub fn add_ref_run_output(ptr: *const RunOutput) -> *const RunOutput {
+pub fn add_ref_run_output(ptr: *const sim::RunOutput) -> *const sim::RunOutput {
     erc::add_ref(ptr)
 }

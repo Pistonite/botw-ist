@@ -1,13 +1,15 @@
 import type { WxPromise } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
 
-import type { ParserErrorReport } from "./parser";
 import type {
+    ErrorReport,
     InvView_Gdt,
     InvView_Overworld,
     InvView_PouchList,
     MaybeAborted,
-} from "./runtime";
+    ParserError,
+    RuntimeViewError,
+} from "./native";
 import type {
     ItemSearchResult,
     RuntimeWorkerInitArgs,
@@ -37,7 +39,7 @@ export interface Runtime {
      *
      * Note that the span in the errors are byte offsets, not character offsets.
      */
-    getParserDiagnostics(script: string): WxPromise<ParserErrorReport[]>;
+    getParserDiagnostics(script: string): WxPromise<ErrorReport<ParserError>[]>;
 
     /**
      * Parse the script and get semantic tokens in the range from the parser.
@@ -68,7 +70,7 @@ export interface Runtime {
         script: string,
         taskId: string,
         pos: number,
-    ): WxPromise<MaybeAborted<InvView_PouchList>>;
+    ): WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>>;
 
     /**
      * Execute the script if not up-to-date, and return the GDT inventory view
@@ -80,7 +82,7 @@ export interface Runtime {
         script: string,
         taskId: string,
         pos: number,
-    ): WxPromise<MaybeAborted<InvView_Gdt>>;
+    ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>;
 
     /**
      * Execute the script if not up-to-date, and return the overworld item view
@@ -92,7 +94,7 @@ export interface Runtime {
         script: string,
         taskId: string,
         pos: number,
-    ): WxPromise<MaybeAborted<InvView_Overworld>>;
+    ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>>;
 
     // getRuntimeDiagnostics(
     //     script: string,

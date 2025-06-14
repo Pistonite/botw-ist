@@ -5,7 +5,7 @@
  */
 
 import type { ScriptEnvImage } from "./envParser.ts";
-import type { CustomImageInitParams, RuntimeInitError } from "./runtime";
+import type { RuntimeInitParams, RuntimeInitError } from "./native";
 
 /**
  * Type used for JS side item search queries
@@ -47,7 +47,9 @@ export type RuntimeWorkerInitArgs =
     | {
           /** If a stored custom image should be loaded */
           isCustomImage: true;
-          params: CustomImageInitParams;
+          params: RuntimeInitParams;
+          /** Don't load previously stored image, always ask app for new image */
+          alwaysAskApp: boolean;
       };
 
 export type RuntimeWorkerInitOutput = {

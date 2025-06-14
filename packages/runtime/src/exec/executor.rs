@@ -1,4 +1,4 @@
-use std::sync::{Mutex, RwLock, atomic::AtomicU32};
+use std::sync::{Mutex, atomic::AtomicU32};
 
 use blueflame::processor::Cpu1;
 
@@ -11,7 +11,7 @@ pub struct ExecutorImpl<S: Spawn> {
     /// Spawner to spawn new threads
     spawner: Mutex<S>,
     /// Handles to the spawned threads
-    handles: RwLock<Vec<(S::Joiner, JobSender)>>,
+    handles: Mutex<Vec<(S::Joiner, JobSender)>>,
     /// Serial number to round-robin the threads
     serial: AtomicU32,
 }
@@ -21,44 +21,32 @@ impl<S: Spawn> ExecutorImpl<S> {
     pub fn new(spawner: S) -> Self {
         ExecutorImpl {
             spawner: Mutex::new(spawner),
-            handles: RwLock::new(Vec::new()),
+            handles: Mutex::new(Vec::new()),
             serial: AtomicU32::new(0),
         }
     }
 
     /// Spawn threads until the pool has the given size
     pub fn ensure_threads(&self, size: usize) -> Result<(), Error> {
-        {
-            let handles = self.handles.read().map_err(|_| Error::Lock)?;
-            if handles.len() >= size {
-                log::info!(
-                    "already have {} threads, not creating new threads",
-                    handles.len()
-                );
-                return Ok(());
-            }
+        let mut handles = self.handles.lock().map_err(|_| Error::Lock)?;
+        let mut spawner = self.spawner.lock().map_err(|_| Error::Lock)?;
+        if handles.len() >= size {
+            log::info!(
+                "already have {} threads, not creating new threads",
+                handles.len()
+            );
+            return Ok(());
         }
-        {
-            let mut handles = self.handles.write().map_err(|_| Error::Lock)?;
-            if handles.len() >= size {
-                log::info!(
-                    "already have {} threads, not creating new threads",
-                    handles.len()
-                );
-                return Ok(());
-            }
-            let to_create = size - handles.len();
-            handles.reserve(to_create);
-            log::info!("creating {} threads", size);
-            for i in 0..to_create {
-                log::info!("spawning processor thread {}", i);
-                let mut spawner = self.spawner.lock().map_err(|_| Error::Lock)?;
-                let handle = spawner.spawn(i)?;
-                handles.push(handle);
-            }
-            log::info!("threads created successfully");
-            Ok(())
+        let to_create = size - handles.len();
+        handles.reserve(to_create);
+        log::info!("creating {size} threads");
+        for i in 0..to_create {
+            log::info!("spawning processor thread {i}");
+            let handle = spawner.spawn(i)?;
+            handles.push(handle);
         }
+        log::info!("threads created successfully");
+        Ok(())
     }
 
     /// Execute a job
@@ -70,7 +58,7 @@ impl<S: Spawn> ExecutorImpl<S> {
         let (send, recv) = oneshot::channel();
 
         let i = {
-            let handles = self.handles.read().map_err(|_| Error::Lock)?;
+            let handles = self.handles.lock().map_err(|_| Error::Lock)?;
             if handles.is_empty() {
                 return Err(Error::EmptyPool);
             }
@@ -79,7 +67,7 @@ impl<S: Spawn> ExecutorImpl<S> {
                 .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             let i = (serial as usize) % handles.len();
 
-            log::debug!("executing job on processor thread {}", i);
+            log::debug!("executing job on processor thread {i}");
             handles[i]
                 .1
                 .send(Box::new(|p| {
@@ -94,41 +82,37 @@ impl<S: Spawn> ExecutorImpl<S> {
         let exec_result = recv.await.map_err(|e| Error::RecvResult(e.to_string()));
         let exec_error = match exec_result {
             Ok(t) => {
-                log::debug!("processor thread {} finished job", i);
+                log::debug!("processor thread {i} finished job");
                 return Ok(t);
             }
             Err(e) => e,
         };
 
         // if error happens, try to kill the thread and make a new one
-        log::error!(
-            "failed to send job to processor thread {}: {}",
-            i,
-            exec_error
-        );
+        log::error!("failed to send job to processor thread {i}: {exec_error}",);
         log::info!("trying to spawn new processor thread");
         let (join, send) = {
-            let mut handles = self.handles.write().map_err(|_| Error::Lock)?;
+            let mut handles = self.handles.lock().map_err(|_| Error::Lock)?;
             let mut spawner = self.spawner.lock().map_err(|_| Error::Lock)?;
 
             // create new processor thread
             let mut thread_holder = match spawner.spawn(i) {
                 Ok(x) => x,
                 Err(e) => {
-                    log::error!("failed to spawn processor thread: {}", e);
+                    log::error!("failed to spawn processor thread: {e}");
                     // leave the bad processor thread in place, and try next time..
                     return Err(e);
                 }
             };
-            log::info!("spawned new processor thread {}", i);
+            log::info!("spawned new processor thread {i}");
             // remove the old thread
             std::mem::swap(&mut handles[i], &mut thread_holder);
             thread_holder
         };
-        log::info!("stopping old processor thread {}", i);
+        log::info!("stopping old processor thread {i}");
         drop(send);
         if let Err(e) = join.join() {
-            log::error!("failed to join old processor thread {}: {}", i, e);
+            log::error!("failed to join old processor thread {i}: {e}");
         }
 
         Err(exec_error)

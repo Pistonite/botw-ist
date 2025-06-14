@@ -8,8 +8,7 @@ import type { Runtime } from "../Runtime.ts";
 
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
-import type { ParserErrorReport } from "../parser";
-import type { InvView_Gdt, InvView_Overworld, InvView_PouchList, MaybeAborted } from "../runtime";
+import type { ErrorReport, InvView_Gdt, InvView_Overworld, InvView_PouchList, MaybeAborted, ParserError, RuntimeViewError } from "../native";
 import type { ItemSearchResult, RuntimeWorkerInitArgs, RuntimeWorkerInitOutput, RuntimeWorkerInitError } from "../types.ts";
 
 /*
@@ -40,8 +39,8 @@ export class _wxSenderImpl implements Runtime {
      * 
      * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    public getGdtInventory( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<InvView_Gdt>> {
-        return this.sender.send<MaybeAborted<InvView_Gdt>>(26 /* Runtime.getGdtInventory */, [ script, taskId, pos ]);
+    public getGdtInventory( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
+        return this.sender.send<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>(26 /* Runtime.getGdtInventory */, [ script, taskId, pos ]);
     }
 
     /**
@@ -50,8 +49,8 @@ export class _wxSenderImpl implements Runtime {
      * 
      * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    public getOverworldItems( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<InvView_Overworld>> {
-        return this.sender.send<MaybeAborted<InvView_Overworld>>(27 /* Runtime.getOverworldItems */, [ script, taskId, pos ]);
+    public getOverworldItems( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>> {
+        return this.sender.send<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>>(27 /* Runtime.getOverworldItems */, [ script, taskId, pos ]);
     }
 
     /**
@@ -59,8 +58,8 @@ export class _wxSenderImpl implements Runtime {
      * 
      * Note that the span in the errors are byte offsets, not character offsets.
      */
-    public getParserDiagnostics( script: string ): WxPromise<ParserErrorReport[]> {
-        return this.sender.send<ParserErrorReport[]>(28 /* Runtime.getParserDiagnostics */, [ script ]);
+    public getParserDiagnostics( script: string ): WxPromise<ErrorReport<ParserError>[]> {
+        return this.sender.send<ErrorReport<ParserError>[]>(28 /* Runtime.getParserDiagnostics */, [ script ]);
     }
 
     /**
@@ -69,8 +68,8 @@ export class _wxSenderImpl implements Runtime {
      * 
      * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    public getPouchList( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<InvView_PouchList>> {
-        return this.sender.send<MaybeAborted<InvView_PouchList>>(29 /* Runtime.getPouchList */, [ script, taskId, pos ]);
+    public getPouchList( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>> {
+        return this.sender.send<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>>(29 /* Runtime.getPouchList */, [ script, taskId, pos ]);
     }
 
     /**

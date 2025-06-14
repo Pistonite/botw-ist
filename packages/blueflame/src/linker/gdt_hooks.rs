@@ -1,5 +1,5 @@
 use crate::game::{SafeString, gdt};
-use crate::memory::{Memory, Ptr, proxy};
+use crate::memory::{Memory, Ptr, mem, proxy};
 use crate::processor::{self, Cpu0, Process, reg};
 
 // this macro is needed because template generic types are not stable
@@ -586,4 +586,29 @@ pub fn idx_from_hash<Fd: gdt::FlagDescriptor>(
     };
 
     reg! { cpu: w[0] = index, return };
+}
+
+/// ksys::get::TriggerParam::getMaxValueForS32
+pub fn get_s32_max(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+    reg! { cpu:
+        x[0] => let this_ptr: u64,
+        x[1] => let out_ptr: Ptr![i32],
+        x[2] => let name_ptr: Ptr![SafeString]
+    };
+
+    let m = proc.memory();
+    let name = name_ptr.cstr(m)?.load_utf8_lossy(m)?;
+    if name.is_empty() {
+        reg! { cpu: x[0] = false, return };
+    }
+
+    let value = {
+        proxy! { let mut params = *this_ptr as trigger_param in proc };
+        let Some(flag) = params.by_name_mut::<gdt::fd!(s32)>(name) else {
+            reg! { cpu: x[0] = false, return };
+        };
+        flag.max()
+    };
+    mem! { (proc.memory_mut()): *out_ptr = value; };
+    reg! { cpu: x[0] = true, return }
 }

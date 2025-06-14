@@ -66,11 +66,13 @@ menu.skybook_manual: "Skybook 使用手冊"
 # Main inventory display
 main.gdt_inventory.desc: "儲存於遊戲 Flag 系統（GDT）中的物品資料。物品狀態以讀取入背包後的形式顯示。背包格讹轉的目標資料格與該背包格對齊顯示。"
 main.gdt_inventory.title: "GDT內部資料"
+main.gdt_inventory.view_error: "無法顯示GDT內部資料！"
 main.tabbed_inventory.bad_msgbar.body: "分頁資料已損壞，可能是因記憶體損壞漏洞所致。"
 main.tabbed_inventory.bad_msgbar.title: "無法顯示分頁！"
 main.tabbed_inventory.button_tooltip: "切換清單/分頁檢視"
 main.visible_inventory.desc: "當你打開背包時所看到的物品"
 main.visible_inventory.title: "可見背包"
+main.visible_inventory.view_error: "無法顯示物品欄！"
 
 main.bug_report: "若您認為這是模擬器的錯誤，請至 {{github}} 回報。"
 
@@ -178,12 +180,26 @@ parser.UnexpectedMetaKeyWithValue: "The `{{arg}}` property should not have a val
 parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 
 # Runtime Init error messages
-runtime_init.BadDlcVersion: "無效的DLC版本：{{version}}。允許的版本為0（無DLC）、1、2和3"
-runtime_init.BadImage: "無效的自訂映像"
-runtime_init.Executor: "無法建立執行緒"
-runtime_init.InvalidPmdmAddr: "參數 'pmdm-addr' 的格式無效"
-runtime_init.InvalidProgramStart: "參數 'program-start' 的格式無效"
-runtime_init.InvalidStackStart: "參數 'stack-start' 的格式無效"
-runtime_init.NoImageFromApp: "無法從應用程式取得自訂映像資料"
-runtime_init.ProgramStartMismatch: "自訂映像中的程式起始位址 ({{addr_ci}}) 與腳本中指定的位址 ({{addr_script}}) 不符"
-runtime_init.SaveImage: "儲存自訂映像資料失敗"
+runtime_init.BadDlcVersion: "無效的DLC版本：{{version}}。允許的版本為0（無DLC）、1、2和3。"
+runtime_init.BadImage: "無效的自訂映像。"
+runtime_init.Executor: "無法建立執行緒。"
+runtime_init.HeapTooBig: "腳本環境中的堆積記憶體過大。"
+runtime_init.InitializeProcess: "初始化遊戲進程失敗。"
+runtime_init.InvalidPmdmAddr: "參數 'pmdm-addr' 的格式無效。"
+runtime_init.InvalidStackStart: "參數 'stack-start' 的格式無效。"
+runtime_init.NoImageFromApp: "無法從應用程式取得自訂映像資料。"
+runtime_init.ProgramStartMismatch: "自訂映像中的程式起始位址 ({{addr_ci}}) 與腳本中指定的位址 ({{addr_script}}) 不符。"
+runtime_init.SaveImage: "儲存自訂映像資料失敗。"
+runtime_init.UnsupportedVersion: "映像包含目前不支援的遊戲版本。"
+
+# Error/Diagnostic from Runtime
+runtime_error.Crash: "遊戲在此步驟崩潰。"
+runtime_error.Executor: "執行器發生未預期的錯誤。"
+runtime_error.PreviousCrash: "遊戲因先前的步驟而崩潰。您需要 `重新載入` (`reload`) 或 `開始新遊戲` (`new-game`) 才能繼續。"
+runtime_error.Unimplemented: "此指令尚未實作 :)。"
+runtime_error.Uninitialized: "未預期的未初始化執行階段。"
+
+# Error from getting view from simulation output
+runtime_view_error.Coherence: "物品欄資料已損毀，無法顯示。"
+runtime_view_error.Crash: "遊戲在此步驟或之前已崩潰，無法顯示物品欄。"
+runtime_view_error.Memory: "讀取遊戲記憶體時發生錯誤，無法顯示物品欄。"

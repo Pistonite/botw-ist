@@ -134,7 +134,7 @@ impl Memory {
     /// be accessed. If the execute permission bit is set, the region being accessed
     /// also needs to have execute permission. Region permissions are still checked,
     /// of course.
-    pub fn read(&self, addr: u64, flags: AccessFlags) -> Result<Reader, Error> {
+    pub fn read(&'_ self, addr: u64, flags: AccessFlags) -> Result<Reader<'_>, Error> {
         let flags = perm!(r) | convert_region_flags(flags);
         let (section_idx, page_idx, page_off, max_page_off) = self.calculate(addr, flags)?;
         let page = self.page_by_indices_unchecked(section_idx, page_idx);
@@ -147,7 +147,7 @@ impl Memory {
     /// # Flags
     /// If any region bit is specified, then only those regions are allowed to
     /// be accessed. Otherwise all regions are allowed (permissions are still checked, of course)
-    pub fn write(&mut self, addr: u64, flags: AccessFlags) -> Result<Writer, Error> {
+    pub fn write(&'_ mut self, addr: u64, flags: AccessFlags) -> Result<Writer<'_>, Error> {
         let flags = perm!(w) | convert_region_flags(flags);
         let (section_idx, page_idx, page_off, max_page_off) = self.calculate(addr, flags)?;
 

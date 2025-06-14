@@ -1,0 +1,27 @@
+[package]
+name = "skybook-api"
+description = "Native types that have bindings to TypeScript API"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+enumset.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+teleparse.workspace = true
+
+# TS/WASM dependencies
+ts-rs = { workspace = true, optional = true }
+tsify = { workspace = true, optional = true }
+wasm-bindgen = { workspace = true, optional = true }
+
+[lib]
+path = "native/lib.rs"
+
+[features]
+__ts-binding = ["dep:ts-rs"]
+wasm = [
+    "dep:tsify", 
+    "dep:wasm-bindgen"
+]

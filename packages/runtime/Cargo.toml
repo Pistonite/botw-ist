@@ -1,6 +1,5 @@
 [package]
 name = "skybook-runtime"
-description = "Runtime for Skybook, the IST simulator"
 version = "0.0.0"
 edition = "2024"
 publish = false
@@ -11,17 +10,20 @@ path = "../blueflame"
 [dependencies.skybook-parser]
 path = "../parser"
 
+[dependencies.skybook-api]
+path = "../skybook-api"
+
 [dependencies]
-log = "0.4.27"
+hashlink = "0.10.0"
+log.workspace = true
 oneshot = "0.1.11"
-serde = { version = "1.0.219", features = ["derive"] }
-thiserror = "2.0.12"
+serde.workspace = true
+thiserror.workspace = true
+teleparse.workspace = true
+static_assertions.workspace = true
 
 # TS/WASM dependencies
-ts-rs = { version = "10.1.0", optional = true }
-tsify-next = { version = "0.5.6", default-features = false, features = ["js"], optional = true }
-wasm-bindgen = { version = "0.2.100", optional = true, features = ["serde-serialize"] }
-wasm-bindgen-spawn = { version = "0.0.1", optional = true }
+wasm-bindgen-spawn = { version = "0.0.2", optional = true }
 web-sys = { version = "0.3.77", features = ["console"], optional = true }
 
 [dev-dependencies]
@@ -29,10 +31,8 @@ tokio = { version = "1.45.0", features = ["macros", "rt-multi-thread"] }
 
 [features]
 # default = ["wasm"]
-__ts-binding = ["dep:ts-rs"]
 wasm = [
-    "dep:tsify-next", 
-    "dep:wasm-bindgen", 
+    "skybook-api/wasm",
     "dep:wasm-bindgen-spawn",
     "dep:web-sys",
 ]

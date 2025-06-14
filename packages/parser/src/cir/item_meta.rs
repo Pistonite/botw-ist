@@ -1,14 +1,14 @@
 use teleparse::{Span, tp};
 
 use crate::cir;
-use crate::error::{Error, ErrorReport};
+use crate::error::{ErrorReport, cir_push_error, cir_push_warning};
 use crate::search;
 use crate::syn;
 
 use super::MetaParser;
 
 /// Item metadata used to select or specify item
-#[derive(Debug, Clone, Default, PartialEq)]
+#[derive(Debug, Clone, Default)]
 pub struct ItemMeta {
     /// The value of the item
     ///
@@ -41,6 +41,35 @@ pub struct ItemMeta {
     pub star: Option<i32>,
 }
 
+impl PartialEq for ItemMeta {
+    fn eq(&self, other: &Self) -> bool {
+        self.value == other.value
+            && self.equip == other.equip
+            && self.life_recover == other.life_recover
+            && self.effect_duration == other.effect_duration
+            && self.sell_price == other.sell_price
+            && self.effect_id == other.effect_id
+            && self.effect_level.map(|x| x.to_bits()) == other.effect_level.map(|x| x.to_bits())
+            && self.ingredients == other.ingredients
+            && self.star == other.star
+    }
+}
+impl Eq for ItemMeta {}
+
+impl std::hash::Hash for ItemMeta {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.value.hash(state);
+        self.equip.hash(state);
+        self.life_recover.hash(state);
+        self.effect_duration.hash(state);
+        self.sell_price.hash(state);
+        self.effect_id.hash(state);
+        self.effect_level.map(f32::to_bits).hash(state);
+        self.ingredients.hash(state);
+        self.star.hash(state);
+    }
+}
+
 impl ItemMeta {
     pub fn parse_syn(meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) -> Self {
         let mut parser = ItemMeta::default();
@@ -50,6 +79,10 @@ impl ItemMeta {
 
     pub fn parse(&mut self, meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) {
         cir::parse_meta(meta, self, errors);
+    }
+
+    pub fn life_recover_f32(&self) -> Option<f32> {
+        self.life_recover.map(|x| x as f32)
     }
 }
 
@@ -67,76 +100,76 @@ impl MetaParser for &mut ItemMeta {
     ) {
         let key_str = key.to_ascii_lowercase();
         match key_str.trim() {
-            "life" | "value" => match cir::MetaValue::parse_option(value.as_ref()) {
+            "life" | "value" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     self.value = Some(x as i32);
                 }
                 Ok(mv) => {
-                    errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
                 }
             },
-            "durability" | "dura" => match cir::MetaValue::parse_option(value.as_ref()) {
+            "durability" | "dura" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     self.value = Some((x * 100) as i32);
                 }
                 Ok(mv) => {
-                    errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
                 }
             },
-            "equip" | "equipped" => match cir::MetaValue::parse_option(value.as_ref()) {
+            "equip" | "equipped" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Bool(x)) => {
                     self.equip = Some(x);
                 }
                 Ok(mv) => {
-                    errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
                 }
             },
             "life_recover" | "hp" | "modpower" => {
-                match cir::MetaValue::parse_option(value.as_ref()) {
+                match cir::parse_optional_meta_value(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => {
                         self.life_recover = Some(x as i32);
                     }
                     Ok(mv) => {
-                        errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                        cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                     }
                     Err(e) => {
                         errors.push(e);
                     }
                 }
             }
-            "time" => match cir::MetaValue::parse_option(value.as_ref()) {
+            "time" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     self.effect_duration = Some(x as i32);
                 }
                 Ok(mv) => {
-                    errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
                 }
             },
-            "price" => match cir::MetaValue::parse_option(value.as_ref()) {
+            "price" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     self.sell_price = Some(x as i32);
                 }
                 Ok(mv) => {
-                    errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
                 }
             },
             "modifier" | "modtype" => {
-                match cir::MetaValue::parse_option(value.as_ref()) {
+                match cir::parse_optional_meta_value(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => {
                         // integer => same as price
                         self.sell_price = Some(x as i32);
@@ -148,12 +181,12 @@ impl MetaParser for &mut ItemMeta {
                                 self.sell_price = Some(self.sell_price.unwrap_or_default() | m)
                             }
                             None => {
-                                errors.push(Error::InvalidWeaponModifier(x).spanned(value));
+                                cir_push_error!(errors, value, InvalidWeaponModifier(x));
                             }
                         }
                     }
                     Ok(mv) => {
-                        errors.push(Error::InvalidWeaponModifier(mv.to_string()).spanned(value));
+                        cir_push_error!(errors, value, InvalidWeaponModifier(mv.to_string()));
                     }
                     Err(e) => {
                         errors.push(e);
@@ -161,7 +194,7 @@ impl MetaParser for &mut ItemMeta {
                 }
             }
             "effect" => {
-                match cir::MetaValue::parse_option(value.as_ref()) {
+                match cir::parse_optional_meta_value(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => {
                         // integer => set it without checking
                         self.effect_id = Some(x as i32);
@@ -171,19 +204,19 @@ impl MetaParser for &mut ItemMeta {
                         match parse_cook_effect(&x) {
                             Some(m) => self.effect_id = Some(m),
                             None => {
-                                errors.push(Error::InvalidCookEffect(x).spanned(value));
+                                cir_push_error!(errors, value, InvalidCookEffect(x));
                             }
                         }
                     }
                     Ok(mv) => {
-                        errors.push(Error::InvalidWeaponModifier(mv.to_string()).spanned(value));
+                        cir_push_error!(errors, value, InvalidCookEffect(mv.to_string()));
                     }
                     Err(e) => {
                         errors.push(e);
                     }
                 }
             }
-            "level" => match cir::MetaValue::parse_option(value.as_ref()) {
+            "level" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     self.effect_level = Some(x as f32);
                 }
@@ -191,7 +224,7 @@ impl MetaParser for &mut ItemMeta {
                     self.effect_level = Some(x as f32);
                 }
                 Ok(mv) => {
-                    errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
@@ -199,43 +232,43 @@ impl MetaParser for &mut ItemMeta {
             },
             "ingr" => {
                 if self.ingredients.len() >= 5 {
-                    errors.push(Error::TooManyIngredients.spanned(value));
+                    cir_push_error!(errors, value, TooManyIngredients);
                     return;
                 }
-                match cir::MetaValue::parse_option(value.as_ref()) {
+                match cir::parse_optional_meta_value(value.as_ref()) {
                     Ok(cir::MetaValue::String(x)) => match search::search_item_by_ident(&x) {
                         Some(item) => {
                             self.ingredients.push(item.actor);
                         }
                         None => {
-                            errors.push(Error::InvalidItem(x).spanned(value));
+                            cir_push_error!(errors, value, InvalidItem(x));
                         }
                     },
                     Ok(mv) => {
-                        errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                        cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                     }
                     Err(e) => {
                         errors.push(e);
                     }
                 }
             }
-            "star" => match cir::MetaValue::parse_option(value.as_ref()) {
+            "star" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     if x < 0 || x > 4 {
-                        errors.push(Error::InvalidArmorStarNum(x as i32).spanned(value));
+                        cir_push_error!(errors, value, InvalidArmorStarNum(x as i32));
                         return;
                     }
                     self.star = Some(x as i32);
                 }
                 Ok(mv) => {
-                    errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
                 }
             },
             _ => {
-                errors.push(Error::UnusedMetaKey(key_str).spanned_warning(&span));
+                cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
             }
         }
     }

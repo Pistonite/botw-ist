@@ -1,5 +1,5 @@
 use std::ops::ControlFlow;
-use std::panic::UnwindSafe;
+use std::panic::{RefUnwindSafe, UnwindSafe};
 use std::sync::Arc;
 
 use derive_more::derive::Constructor;
@@ -24,6 +24,7 @@ pub struct Process {
     /// Hooks for this process
     hook: Arc<dyn HookProvider>,
 }
+static_assertions::assert_impl_all!(Process: Send, Sync);
 
 impl std::fmt::Debug for Process {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -32,6 +33,9 @@ impl std::fmt::Debug for Process {
 }
 
 impl Process {
+    pub fn is160(&self) -> bool {
+        self.memory.env().is160()
+    }
     /// Get the game version
     pub fn game_ver(&self) -> GameVer {
         self.memory.env().game_ver
@@ -110,7 +114,7 @@ impl Process {
     }
 }
 
-pub trait HookProvider: Send + Sync + UnwindSafe {
+pub trait HookProvider: Send + Sync + UnwindSafe + RefUnwindSafe {
     /// Hook execution at PC. Return the execute function and the byte
     /// size of the hook
     #[allow(clippy::type_complexity)]

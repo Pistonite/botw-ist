@@ -1,3 +1,4 @@
 /bindings
 /index.ts
 *.blfm
+*.bfi

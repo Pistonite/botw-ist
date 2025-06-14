@@ -83,7 +83,7 @@ const GDT: InvView_GdtItem[] = [
     {
         common: {
             actorName: "Item_Cook_C_17",
-            value: 100,
+            value: 1,
             isEquipped: false,
         },
         idx: 2,
@@ -226,6 +226,38 @@ const POUCH: InvView_PouchItem[] = [
         tabSlot: 0,
         accessible: false,
         dpadAccessible: false,
+    },
+    {
+        common: {
+            actorName: "Item_Cook_C_17",
+            value: 1,
+            isEquipped: false,
+        },
+        itemType: PouchItemType.Material,
+        itemUse: PouchItemUse.Item,
+        isInInventory: true,
+        isNoIcon: false,
+        data: {
+            effectValue: 0,
+            effectDuration: 0,
+            effectId: -1,
+            effectLevel: 0,
+            sellPrice: 0,
+        },
+        ingredients: ["", "", "", "", ""],
+        holdingCount: 0,
+        promptEntangled: false,
+        nodeAddr: 0n,
+        nodeValid: true,
+        nodePos: 419n,
+        nodePrev: 0n,
+        nodeNext: 0n,
+        allocatedIdx: 0,
+        unallocatedIdx: -1,
+        tabIdx: 0,
+        tabSlot: 0,
+        accessible: true,
+        dpadAccessible: true,
     },
 ];
 

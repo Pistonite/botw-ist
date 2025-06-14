@@ -1,7 +1,7 @@
 use teleparse::{Span, tp};
 
 use crate::cir;
-use crate::error::{Error, ErrorReport};
+use crate::error::{ErrorReport, cir_push_error, cir_push_warning};
 use crate::syn;
 
 use super::MetaParser;
@@ -13,7 +13,7 @@ pub fn parse_entangle_meta(
 ) -> cir::CategorySpec {
     let parsed_category = cir::parse_category(category);
     if parsed_category.coerce_armor() != parsed_category {
-        errors.push(Error::InvalidCategory(parsed_category).spanned_warning(category));
+        cir_push_warning!(errors, category, InvalidCategory(parsed_category));
     }
 
     let spec = cir::CategorySpec {
@@ -47,49 +47,49 @@ impl MetaParser for EntangleMeta {
     ) {
         let key_str = key.to_ascii_lowercase();
         match key_str.trim() {
-            "page" | "tab" => match cir::MetaValue::parse_option(value.as_ref()) {
+            "page" | "tab" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     self.inner.amount = x;
                 }
                 Ok(mv) => {
-                    errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
                 }
             },
-            "row" => match cir::MetaValue::parse_option(value.as_ref()) {
+            "row" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     if x < 1 || x > 4 {
-                        errors.push(Error::InvalidInventoryRow(x as i32).spanned(value));
+                        cir_push_error!(errors, value, InvalidInventoryRow(x as i32));
                         return;
                     }
                     self.inner.row = x as i8;
                 }
                 Ok(mv) => {
-                    errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
                 }
             },
-            "col" => match cir::MetaValue::parse_option(value.as_ref()) {
+            "col" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     if x < 1 || x > 5 {
-                        errors.push(Error::InvalidInventoryCol(x as i32).spanned(value));
+                        cir_push_error!(errors, value, InvalidInventoryCol(x as i32));
                         return;
                     }
                     self.inner.row = x as i8;
                 }
                 Ok(mv) => {
-                    errors.push(Error::InvalidMetaValue(key_str, mv).spanned(value));
+                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
                 }
                 Err(e) => {
                     errors.push(e);
                 }
             },
             _ => {
-                errors.push(Error::UnusedMetaKey(key_str).spanned_warning(&span));
+                cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
             }
         }
     }

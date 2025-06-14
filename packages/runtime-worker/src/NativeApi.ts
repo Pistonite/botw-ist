@@ -3,28 +3,33 @@ import { type AsyncErc, makeAsyncErcType } from "@pistonite/pure/memory";
 import { once } from "@pistonite/pure/sync";
 
 import type {
-    RuntimeInitOutput,
     InvView_Gdt,
     InvView_Overworld,
     InvView_PouchList,
     ItemSearchResult,
     MaybeAborted,
-    ParserErrorReport,
+    ErrorReport,
+    ParserError,
     RuntimeInitError,
-    CustomImageInitParams,
+    RuntimeInitParams,
+    RuntimeViewError,
 } from "@pistonite/skybook-api";
 
-import type { Pwr, WorkerError } from "./Error.ts";
+import type { Pwr } from "./Error.ts";
 
 export type QuotedItemResolverFn = (
     query: string,
 ) => Promise<ItemSearchResult | undefined | null>;
 
+export type RuntimeInitOutput = {
+    gameVersion: string;
+};
+
 export interface NativeApi {
     /** Initialize the runtime with the given image info */
     initRuntime(
         customImage: Uint8Array | undefined,
-        customImageParams: CustomImageInitParams | undefined,
+        customImageParams: RuntimeInitParams | undefined,
     ): Pwr<Result<RuntimeInitOutput, RuntimeInitError>>;
 
     // === item api ===
@@ -36,7 +41,7 @@ export interface NativeApi {
     parseScript(
         script: string,
         resolveQuotedItem: QuotedItemResolverFn,
-    ): Promise<Result<number, WorkerError>>;
+    ): Pwr<number>;
     /**
      * Parse the semantics of the script in the given range
      *
@@ -46,27 +51,22 @@ export interface NativeApi {
         script: string,
         start: number,
         end: number,
-    ): Promise<Result<Uint32Array, WorkerError>>;
+    ): Pwr<Uint32Array>;
     /** Get the errors from the parse output. Does not consume the ptr */
-    getParserErrors(
-        ptr: number,
-    ): Promise<Result<ParserErrorReport[], WorkerError>>;
+    getParserErrors(ptr: number): Pwr<ErrorReport<ParserError>[]>;
     /** Get number of steps in the parse output. Does not consume the ptr */
-    getStepCount(ptr: number): Promise<Result<number, WorkerError>>;
+    getStepCount(ptr: number): Pwr<number>;
     /**
      * Get the step index from the byte position in the script in the parse output.
      *
      * Returns 0 if the steps are empty. Does not consume the ptr.
      */
-    getStepFromPos(
-        ptr: number,
-        bytePos: number,
-    ): Promise<Result<number, WorkerError>>;
+    getStepFromPos(ptr: number, bytePos: number): Pwr<number>;
 
     // === run/task api ===
 
     /** Make a new task handle and returns the ptr to it (that must be freed) */
-    makeTaskHandle(): Promise<Result<number, WorkerError>>;
+    makeTaskHandle(): Pwr<number>;
     /**
      * Request aborting a task
      *
@@ -87,13 +87,12 @@ export interface NativeApi {
     /**
      * Get the Pouch inventory view for the given byte position in the script.
      * Does not consume either ptr.
-     * TODO: error type
      */
     getPouchList(
         runOutputPtr: number,
         parseOutputPtr: number,
         bytePos: number,
-    ): Promise<Result<InvView_PouchList, WorkerError>>;
+    ): Pwr<Result<InvView_PouchList, RuntimeViewError>>;
     /**
      * Get the GDT inventory view for the given byte position in the script.
      * Does not consume either ptr.
@@ -103,17 +102,16 @@ export interface NativeApi {
         runOutputPtr: number,
         parseOutputPtr: number,
         bytePos: number,
-    ): Promise<Result<InvView_Gdt, WorkerError>>;
+    ): Pwr<Result<InvView_Gdt, RuntimeViewError>>;
     /**
      * Get the overworld items for the given byte position in the script
      * Does not consume either ptr.
-     * TODO: error type
      */
     getOverworldItems(
         runOutputPtr: number,
         parseOutputPtr: number,
         bytePos: number,
-    ): Promise<Result<InvView_Overworld, WorkerError>>;
+    ): Pwr<Result<InvView_Overworld, RuntimeViewError>>;
 
     // === ref counting api ===
 

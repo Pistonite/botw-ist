@@ -39,7 +39,7 @@ pub struct Cpu3<'a, 'b, 'c> {
     pub program: &'c ArchivedProgram,
     // adding singleton rel_start to this gets the physical
     // address of the singleton
-    heap_start_adjusted: u64,
+    heap_adjustment: u64,
 }
 
 /// Level 2 CPU state.
@@ -85,7 +85,7 @@ impl<'a, 'b, 'c> Cpu3<'a, 'b, 'c> {
         cpu1: &'a mut Cpu1,
         process: &'b mut Process,
         program: &'c ArchivedProgram,
-        heap_start_adjusted: u64,
+        heap_adjustment: u64,
     ) -> Self {
         let cpu2 = Cpu2 {
             cpu1,
@@ -94,7 +94,7 @@ impl<'a, 'b, 'c> Cpu3<'a, 'b, 'c> {
         Self {
             cpu2,
             program,
-            heap_start_adjusted,
+            heap_adjustment,
         }
     }
 }
@@ -103,6 +103,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     type Error = Error;
 
     fn v_enter(&mut self, target: u32) -> Result<(), Self::Error> {
+        trace_call!("v_enter to 0x{target:08x}");
         self.write(reg!(lr), INTERNAL_RETURN_ADDRESS);
         let target_abs = target as u64 + self.proc.main_start();
         self.stack_trace.push_native(target_abs);
@@ -134,6 +135,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     }
 
     fn v_execute_until(&mut self, target: u32) -> Result<(), Self::Error> {
+        trace_call!("v_execute_until 0x{target:08x}");
         let target_abs = target as u64 + self.proc.main_start();
         let has_limit = enabled!("limited-block-iteration");
 
@@ -151,13 +153,12 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     }
 
     fn v_jump(&mut self, target: u32) -> Result<(), Self::Error> {
-        log::debug!("v_jump to 0x{target:08x}");
+        trace_call!("v_jump to 0x{target:08x}");
         self.pc = target as u64 + self.proc.main_start();
         Ok(())
     }
 
     fn v_mem_alloc(&mut self, bytes: u32) -> Result<(), Self::Error> {
-        log::debug!("v_mem_alloc {bytes} bytes");
         let ptr = self.proc.memory_mut().alloc(bytes)?;
         self.write(reg!(x[0]), ptr);
         Ok(())
@@ -188,12 +189,13 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
     }
 
     fn v_singleton_get(&mut self, reg: u8, rel_start: u32) -> Result<(), Self::Error> {
-        let addr = self.heap_start_adjusted + rel_start as u64;
+        let addr = self.heap_adjustment + rel_start as u64;
         self.write(reg!(x[reg]), addr);
         Ok(())
     }
 
     fn v_execute_to_complete(&mut self) -> Result<(), Self::Error> {
+        trace_call!("v_execute_to_complete");
         let target_abs = INTERNAL_RETURN_ADDRESS;
         let has_limit = enabled!("limited-block-iteration");
 

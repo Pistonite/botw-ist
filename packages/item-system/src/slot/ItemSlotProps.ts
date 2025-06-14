@@ -234,7 +234,7 @@ const getCount = (
     if (isEquipment) {
         return undefined;
     }
-    if (canStack || value > 0) {
+    if (canStack || value > 1) {
         return value;
     }
     return undefined;

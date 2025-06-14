@@ -1,0 +1,15 @@
+[package]
+name = "skybook-runtime-tests"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies.blueflame]
+path = "../blueflame"
+features = ["trace-memory"]
+
+[dependencies]
+anyhow.workspace = true
+colog.workspace = true
+log.workspace = true
+oneshot = "0.1.11"
+threadpool = "1.8.1"

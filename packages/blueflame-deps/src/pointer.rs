@@ -34,7 +34,7 @@ macro_rules! Ptr {
 
     (& $ptr:ident [ $index:expr ] $( . $rest:ident)* ) => {{
         let p = blueflame::memory::PtrToArray::ith($ptr, $index);
-        blueflame::memory::Ptr!(& p -> $($rest).*)
+        $crate::Ptr!(& p -> $($rest).*)
     }};
 
     (& $ptr:ident -> $a:ident . $b:ident ) => {{
@@ -52,7 +52,7 @@ macro_rules! Ptr {
         let a = blueflame::memory::PtrToSized::__pointee_layout($ptr).$a.add($ptr.to_raw());
         let b = blueflame::memory::PtrToSized::__pointee_layout(a).$b.add(a.to_raw());
         let c = blueflame::memory::PtrToSized::__pointee_layout(b).$c.add(b.to_raw());
-        blueflame::memory::Ptr!(& c -> $($rest).*)
+        $crate::Ptr!(& c -> $($rest).*)
     }};
 
     (< $t:ty > ( $value: expr )) => {
@@ -75,11 +75,115 @@ macro_rules! Ptr {
         blueflame::memory::PtrToArray::<$t, { <$t as blueflame::memory::MemObject>::SIZE }, $len>
     };
 
-    ($value:expr) => {
-        blueflame::memory::PtrToSized::new_const($value)
+    // for other macros to use
+    ($value:expr) => { $value };
+}
+
+/// Memory operation helper macro
+///
+/// # Example
+/// ```rust,ignore
+/// mem! { memory:
+///     *ptr_ident = owned_value;      // store T
+///     *(ptr_expr) = *borrowed_value; // store &T
+///     ident = *ptr_ident;            // load
+///     let ident = *(ptr_expr);       // load and bind
+///
+///     ptr.safe_store(value);                  // ptr.safe_store(&value, memory)?
+///     let ident = ptr.load_zero_terminated(); // let ident = ptr.load_zero_terminated(memory)?;
+///
+///     (ptr+1).construct();          // (ptr+1).construct(memory)?;
+/// };
+/// ```
+///
+/// Use `*` to store from a borrowed reference
+#[macro_export]
+macro_rules! mem {
+    // load
+    ($mem:ident : $(;)? $local:ident = * $ptr:ident $(;)? ) => {
+         $local = $ptr.load($mem)?;
+    };
+    ($mem:ident : $(;)? $local:ident = * ($($ptr:tt)*) $(;)? ) => {
+         $local = $crate::Ptr!($($ptr)*).load($mem)?;
+    };
+    ($mem:ident : $(;)? let $local:ident = * $ptr:ident $(;)? ) => {
+         let $local = $ptr.load($mem)?;
+    };
+    ($mem:ident : $(;)? let $local:ident = * ($($ptr:tt)*) $(;)? ) => {
+         let $local = $crate::Ptr!($($ptr)*).load($mem)?;
+    };
+    ($mem:ident : $(;)? let mut $local:ident = * $ptr:ident $(;)? ) => {
+         let mut $local = $ptr.load($mem)?;
+    };
+    ($mem:ident : $(;)? let mut $local:ident = * ($($ptr:tt)*) $(;)? ) => {
+         let mut $local = $crate::Ptr!($($ptr)*).load($mem)?;
+    };
+    ($mem:ident : $(;)? $local:ident = * $ptr:ident $( ; $($rest:tt)* )? ) => {
+         $local = $ptr.load($mem)?;
+         $( $crate::mem!($mem : $($rest)*); )?
+    };
+    ($mem:ident : $(;)? $local:ident = * ($($ptr:tt)*) $( ; $($rest:tt)* )? ) => {
+         $local = $crate::Ptr!($($ptr)*).load($mem)?;
+         $( $crate::mem!($mem : $($rest)*); )?
+    };
+    ($mem:ident : $(;)? let $local:ident = * $ptr:ident $( ; $($rest:tt)* )? ) => {
+         let $local = $ptr.load($mem)?;
+         $( $crate::mem!($mem : $($rest)*); )?
+    };
+    ($mem:ident : $(;)? let $local:ident = * ($($ptr:tt)*) $( ; $($rest:tt)* )? ) => {
+         let $local = $crate::Ptr!($($ptr)*).load($mem)?;
+         $( $crate::mem!($mem : $($rest)*); )?
+    };
+    ($mem:ident : $(;)? let mut $local:ident = * $ptr:ident $( ; $($rest:tt)* )? ) => {
+         let mut $local = $ptr.load($mem)?;
+         $( $crate::mem!($mem : $($rest)*); )?
+    };
+    ($mem:ident : $(;)? let mut $local:ident = * ($($ptr:tt)*) $( ; $($rest:tt)* )? ) => {
+         let mut $local = $crate::Ptr!($($ptr)*).load($mem)?;
+         $( $crate::mem!($mem : $($rest)*); )?
     };
 
-    ([] $value:expr) => {
-        blueflame::memory::PtrToArray::new_const($value)
+    // store
+    ($mem:ident : $(;)? * $ptr:ident = * $value:expr $(;)? ) => {
+        $ptr.store($value, $mem)?;
+    };
+    ($mem:ident : $(;)? * $ptr:ident = $value:expr $(;)? ) => {
+         $ptr.store(&($value), $mem)?;
+    };
+    ($mem:ident : $(;)? * ($($ptr:tt)*) = * $value:expr $(;)? ) => {
+        $crate::Ptr!($($ptr)*).store($value, $mem)?;
+    };
+    ($mem:ident : $(;)? * ($($ptr:tt)*) = $value:expr $(;)? ) => {
+         $crate::Ptr!($($ptr)*).store(&($value), $mem)?;
+    };
+    ($mem:ident : $(;)? * $ptr:ident = * $value:expr $(; $($rest:tt)* )? ) => {
+        $ptr.store($value, $mem)?;
+        $( $crate::mem!($mem : $($rest)*); )?
+    };
+    ($mem:ident : $(;)? * $ptr:ident = $value:expr $(; $($rest:tt)* )? ) => {
+         $ptr.store(&($value), $mem)?;
+         $( $crate::mem!($mem : $($rest)*); )?
+    };
+    ($mem:ident : $(;)? * ($($ptr:tt)*) = * $value:expr $(; $($rest:tt)* )? ) => {
+        $crate::Ptr!($($ptr)*).store($value, $mem)?;
+        $( $crate::mem!($mem : $($rest)*); )?
+    };
+    ($mem:ident : $(;)? * ($($ptr:tt)*) = $value:expr $(; $($rest:tt)* )? ) => {
+         $crate::Ptr!($($ptr)*).store(&($value), $mem)?;
+         $( $crate::mem!($mem : $($rest)*); )?
+    };
+    (($mem:expr) : $( $rest:tt )* ) => {
+        let mem = { $mem };
+         $crate::mem!(mem : $($rest)*);
+    };
+}
+
+/// Get offset of a field of the pointee from a pointer
+#[macro_export]
+macro_rules! offsetof {
+    ($ptr:ident, $field:ident) => {
+        blueflame::memory::PtrToSized::__pointee_layout($ptr)
+            .$field
+            .offset()
     };
 }

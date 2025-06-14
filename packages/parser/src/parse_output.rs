@@ -4,7 +4,7 @@ use teleparse::{Parser, Span, ToSpan};
 
 use crate::SemanticToken;
 use crate::cir;
-use crate::error::{Error, ErrorReport};
+use crate::error::{ErrorReport, IntoErrorReport, cir_push_error};
 use crate::search::QuotedItemResolver;
 use crate::syn;
 
@@ -16,6 +16,9 @@ pub struct ParseOutput {
     /// The first element in the pair is the position in the source script
     /// where the command start.
     pub steps: Vec<cir::Step>,
+
+    /// Length of the script
+    pub script_len: usize,
 
     /// [WIP] Indices of the first command in each page
     ///
@@ -57,21 +60,22 @@ pub enum StepDisplay {
 /// Parse the script and get the simulation steps and errors
 pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> ParseOutput {
     let full_span = Span::new(0, script.len());
-    let mut output = ParseOutput::default();
+    let mut output = ParseOutput {
+        script_len: script.len(),
+        ..Default::default()
+    };
     let mut parser = match Parser::new(script) {
         Err(e) => {
-            output
-                .errors
-                .push(Error::Unexpected(e.to_string()).spanned(&full_span));
+            let errors = &mut output.errors;
+            cir_push_error!(errors, &full_span, Unexpected(e.to_string()));
             return output;
         }
         Ok(p) => p,
     };
     let parsed_script = match parser.parse::<syn::Script>() {
         Err(e) => {
-            output
-                .errors
-                .push(Error::Unexpected(e.to_string()).spanned(&full_span));
+            let errors = &mut output.errors;
+            cir_push_error!(errors, &full_span, Unexpected(e.to_string()));
             return output;
         }
         Ok(pt) => pt,
@@ -79,7 +83,7 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
 
     // extract syntax errors
     for error in std::mem::take(&mut parser.info_mut().errors) {
-        output.errors.push(error.into());
+        output.errors.push(error.into_error_report());
     }
 
     let Some(parsed_script) = parsed_script else {

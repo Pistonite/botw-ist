@@ -36,6 +36,7 @@ ParseOutput {
             notes: "",
         },
     ],
+    script_len: 197,
     pages: [],
     display: [],
     errors: [],

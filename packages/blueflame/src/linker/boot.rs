@@ -16,8 +16,6 @@ pub enum Error {
     BadImage(String),
     #[error("PMDM address is impossible to satisfy: 0x{0:016x}")]
     InvalidPmdmAddress(u64),
-    #[error("heap is too small: need at least {0} bytes")]
-    HeapTooSmall(u32),
     #[error("region overlap: {0} and {1}")]
     RegionOverlap(String, String),
     #[error("memory error: {0}")]
@@ -35,8 +33,9 @@ pub fn init_process(
     stack_start: u64,
     stack_size: u32,
     pmdm_address: u64,
-    heap_size: u32,
+    heap_free_size: u32,
 ) -> Result<Process, Error> {
+    log::info!("initializing process");
     let ver = rkyv::deserialize::<GameVer, rancor::Error>(&image.ver)
         .map_err(|e| Error::BadImage(e.to_string()))?;
     let env = Environment::new(ver, dlc_version);
@@ -45,52 +44,45 @@ pub fn init_process(
     // but the relative address of the singleton could be really big
     // (e.g. a few GBs), so we need to adjust the heap start accordingly
     //
-    // 0                              heap_start s1             pmdm            s2
-    //          |<--heap_adjustment-->|
-    //                                |<----pmdm_rel_address--->|
+    // 0                                         s1             pmdm            s2
     //          |<----------pmdm.rel_start--------------------->|
     //          |<----------min_rel_start------->|
-    //          |<---------------------------max_rel_start--------------------->|
     // |<------------------------pmdm_address------------------>|
-    // |<min_hs>|
+    // |<----min_heap_region_start_unaligned---->|
+    // |<---heap_region_start--->|
+    // |<......>|
+    //   ^heap_adjustment
+    //          |<---------------------------max_rel_start--------------------->|
     //
     // for any singleton:
-    // rel_start - heap_adjustment + heap_start = address
-    //
-    // heap_adjustment is positive and guarateed to be less than rel_start
-    // of any singleton
+    // rel_start + heap_adjustment = address
 
     let pmdm_rel_start = singleton::pmdm::rel_start(env);
     if pmdm_rel_start as u64 > pmdm_address {
+        log::error!(
+            "pmdm rel_start is greater than its physical address: 0x{pmdm_rel_start:x} > 0x{pmdm_address:x}"
+        );
         return Err(Error::InvalidPmdmAddress(pmdm_address));
     }
 
-    let min_heap_start = pmdm_address - pmdm_rel_start as u64;
+    let heap_adjustment = pmdm_address - pmdm_rel_start as u64;
     let min_rel_start = singleton::get_min_rel_start(env);
-
-    let max_heap_start = min_heap_start + min_rel_start as u64;
-    let heap_start = align_down!(max_heap_start, REGION_ALIGN);
-    if heap_start < min_heap_start {
-        // somehow align down made it smaller
-        // maybe possible with some pmdm_address
-        return Err(Error::InvalidPmdmAddress(pmdm_address));
-    }
-    let heap_adjustment = heap_start - min_heap_start;
+    let min_heap_region_start_unaligned = heap_adjustment + min_rel_start as u64;
+    let heap_region_start = align_down!(min_heap_region_start_unaligned, REGION_ALIGN);
 
     // calculate how much space will be needed for all the singletons
     let max_rel_start = singleton::get_max_rel_start(env);
-    let heap_end = min_heap_start + max_rel_start as u64;
-    // align up to the next page, and reserve 1 page for some spacing
-    let heap_singletons_end = align_up!(heap_end, PAGE_SIZE as u64) + PAGE_SIZE as u64;
-    let heap_singletons_size = (heap_singletons_end - heap_start) as u32;
+    let heap_singletons_end = heap_adjustment + max_rel_start as u64;
     // make the first alloc look random
     let page_off_alloc_start = 0x428;
-    let heap_min_size = heap_singletons_size + page_off_alloc_start;
-    let heap_size = align_up!(heap_size, PAGE_SIZE);
-
-    if heap_size < heap_min_size {
-        return Err(Error::HeapTooSmall(heap_min_size));
-    }
+    // align up to the next page, and reserve 1 page for some spacing
+    let heap_start_alloc =
+        align_up!(heap_singletons_end, PAGE_SIZE as u64) + PAGE_SIZE as u64 + page_off_alloc_start;
+    let heap_size = align_up!(
+        (heap_start_alloc - heap_region_start) as u32 + heap_free_size,
+        PAGE_SIZE
+    );
+    log::debug!("heap start is 0x{heap_region_start:016x}, size is 0x{heap_size:08x}");
 
     let program_start = image.program_start.into();
     let program_size = image.program_size.into();
@@ -103,13 +95,13 @@ pub fn init_process(
         ));
     }
 
-    if overlaps(program_start, program_size, heap_start, heap_size) {
+    if overlaps(program_start, program_size, heap_region_start, heap_size) {
         return Err(Error::RegionOverlap(
             "program".to_string(),
             "heap".to_string(),
         ));
     }
-    if overlaps(stack_start, stack_size, heap_start, heap_size) {
+    if overlaps(stack_start, stack_size, heap_region_start, heap_size) {
         return Err(Error::RegionOverlap(
             "stack".to_string(),
             "heap".to_string(),
@@ -118,7 +110,7 @@ pub fn init_process(
 
     // construct the memory
     log::debug!("creating memory");
-    let heap = SimpleHeap::new(heap_start, heap_size, heap_min_size as u64 + heap_start);
+    let heap = SimpleHeap::new(heap_region_start, heap_size, heap_start_alloc);
     let mut memory = Memory::new_program_zc(
         env,
         program_start,
@@ -142,8 +134,7 @@ pub fn init_process(
     // create a temporary processor to initialize the singletons
     log::debug!("creating cpu3");
     let mut cpu1 = Cpu1::default();
-    let heap_start_adjusted = heap_start - heap_adjustment;
-    let mut cpu3 = Cpu3::new(&mut cpu1, &mut proc, image, heap_start_adjusted);
+    let mut cpu3 = Cpu3::new(&mut cpu1, &mut proc, image, heap_adjustment);
     cpu3.reset_stack();
     cpu3.with_crash_report(|cpu| {
         log::debug!("initializing pmdm");

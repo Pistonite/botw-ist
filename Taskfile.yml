@@ -12,6 +12,7 @@ includes:
   blueflame-deps: {taskfile: ./packages/blueflame-deps,   dir: ./packages/blueflame-deps,   internal: true}
   blueflame-proc-macros: {taskfile: ./packages/blueflame-proc-macros, dir: ./packages/blueflame-proc-macros, internal: true}
   runtime:        {taskfile: ./packages/runtime,          dir: ./packages/runtime,          internal: true}
+  runtime-tests:  {taskfile: ./packages/runtime-tests,    dir: ./packages/runtime-tests,    internal: true}
   runtime-wasm:   {taskfile: ./packages/runtime-wasm,     dir: ./packages/runtime-wasm,     internal: true}
   runtime-worker: {taskfile: ./packages/runtime-worker,   dir: ./packages/runtime-worker,   internal: true}
   parser:         {taskfile: ./packages/parser,           dir: ./packages/parser,           internal: true}
@@ -90,6 +91,7 @@ tasks:
       - item-system:pull-artifacts-ts
       - parser:pull-artifacts
       - blueflame-deps:pull-artifacts
+      - runtime-tests:pull-artifacts
     cmds:
       - pnpm install --frozen-lockfile
       - task: post-install
@@ -124,6 +126,7 @@ tasks:
       - task: blueflame-deps:check
       - task: blueflame:check
       - task: runtime:check
+      - task: runtime-tests:check
       - task: runtime-wasm:check
 
   test-ci:
@@ -133,6 +136,7 @@ tasks:
       - item-system:pull-artifacts-ts
       - parser:pull-artifacts
       - blueflame-deps:pull-artifacts
+      - runtime-tests:pull-artifacts
     cmds:
       - pnpm install --frozen-lockfile
       - task: post-install
@@ -169,9 +173,10 @@ tasks:
       - task: runtime-wasm:build
 
   build-manual-ci:
+    deps:
+      - parser:pull-artifacts
+      - item-assets:pull-artifacts-ts
     cmds:
-      - task: parser:pull-artifacts
-      - task: item-assets:pull-artifacts-ts
         # this technically isn't needed, but not installing pnpm
         # causes CI to be unreliable due to cache issues
         # (and I couldn't figure out how to optinally enable the setup)
@@ -180,30 +185,35 @@ tasks:
       - task: manual:build
 
   build-app-ci:
-    cmds:
-      - task: localization:pull-artifacts
+    deps:
+      - localization:pull-artifacts
         # large item assets are cached in CI to speed up builds
         # here we just pull the TS artifacts
-      - task: item-assets:pull-artifacts-ts
-      - task: item-system:pull-artifacts
+      - item-assets:pull-artifacts-ts
+      - item-system:pull-artifacts
+    cmds:
       - pnpm install --frozen-lockfile
       - task: parser-legacy:install
       - task: intwc:install
       - task: app:build
 
   build-runtime-ci-pr:
+    deps:
+      - parser:pull-artifacts
+      - blueflame-deps:pull-artifacts
+      - runtime-tests:pull-artifacts
     cmds:
-      - task: parser:pull-artifacts
-      - task: blueflame-deps:pull-artifacts
       - pnpm install --frozen-lockfile
       - task: runtime-wasm:build
       - task: runtime-wasm:clean-dist # so we don't upload non-min bundles
       - task: runtime-wasm:build-dist-min
 
   build-runtime-ci:
+    deps:
+      - parser:pull-artifacts
+      - blueflame-deps:pull-artifacts
+      - runtime-tests:pull-artifacts
     cmds:
-      - task: parser:pull-artifacts
-      - task: blueflame-deps:pull-artifacts
       - pnpm install --frozen-lockfile
       - task: runtime-wasm:build-wasm
       - task: runtime-wasm:build-dist-min

@@ -4,7 +4,10 @@ import { Info20Regular } from "@fluentui/react-icons";
 import { useDark } from "@pistonite/pure-react";
 import { useSwappedWheelScrollDirection } from "@pistonite/shared-controls";
 
-import { useUITranslation } from "skybook-localization";
+import {
+    translateRuntimeViewError,
+    useUITranslation,
+} from "skybook-localization";
 import { GdtItemSlotWithTooltip, ItemTab } from "skybook-item-system";
 
 import {
@@ -57,19 +60,27 @@ const GdtInventoryPanelImpl: React.FC = () => {
         if (!isTabView) {
             return undefined;
         }
-        return getTabNodesForGdt(pouch, gdt);
+        return getTabNodesForGdt(pouch?.val, gdt?.val);
     }, [pouch, gdt, isTabView]);
 
     const itemSlotProps = useItemSlotPropsFromSettings();
 
-    const $ListView = gdt !== undefined && (
+    const $Error = gdt?.err && (
+        <ErrorBar title={t("main.gdt_inventory.view_error")}>
+            {translateRuntimeViewError(gdt.err, t)}
+        </ErrorBar>
+    );
+
+    const $ListView = gdt?.val && (
         <div className={m("flex-1 overflow-y-auto scrollbar-thin")}>
             <div className={m("flex flex-wrap max-h-0 overflow-visible")}>
-                {gdt.items.map((item, i) => (
+                {gdt.val.items.map((item, i) => (
                     <GdtItemSlotWithTooltip
                         item={item}
                         key={i}
-                        isMasterSwordFullPower={!!gdt.masterSword.isTrueForm}
+                        isMasterSwordFullPower={
+                            !!gdt.val.masterSword.isTrueForm
+                        }
                         {...itemSlotProps}
                     />
                 ))}
@@ -78,46 +89,44 @@ const GdtInventoryPanelImpl: React.FC = () => {
     );
 
     const { ref: tabbedScrollHandler } = useSwappedWheelScrollDirection();
-    const $TabView = isTabView &&
-        gdt !== undefined &&
-        tabNodes !== undefined && (
-            <div
-                id="-tabbed-gdt-scroll-"
-                ref={tabbedScrollHandler}
-                onScroll={(e) => {
-                    // sync scroll to the pouch panel
-                    const pouchPanel = document.getElementById(
-                        "-tabbed-pouch-scroll-",
-                    );
-                    if (pouchPanel) {
-                        pouchPanel.scrollLeft = e.currentTarget.scrollLeft;
-                    }
-                }}
-                className={m("flex-1 overflow-auto scrollbar-thin")}
-            >
-                <div className={m("flex max-h-0 overflow-visible")}>
-                    {tabNodes.map((tab, i) => (
-                        <ItemTab
-                            key={i}
-                            category={tab.category}
-                            nodes={tab.items.map(({ slot, item }, i) => ({
-                                slot,
-                                element: (
-                                    <GdtItemSlotWithTooltip
-                                        item={item}
-                                        key={i}
-                                        isMasterSwordFullPower={
-                                            !!gdt.masterSword.isTrueForm
-                                        }
-                                        {...itemSlotProps}
-                                    />
-                                ),
-                            }))}
-                        />
-                    ))}
-                </div>
+    const $TabView = isTabView && gdt?.val && tabNodes !== undefined && (
+        <div
+            id="-tabbed-gdt-scroll-"
+            ref={tabbedScrollHandler}
+            onScroll={(e) => {
+                // sync scroll to the pouch panel
+                const pouchPanel = document.getElementById(
+                    "-tabbed-pouch-scroll-",
+                );
+                if (pouchPanel) {
+                    pouchPanel.scrollLeft = e.currentTarget.scrollLeft;
+                }
+            }}
+            className={m("flex-1 overflow-auto scrollbar-thin")}
+        >
+            <div className={m("flex max-h-0 overflow-visible")}>
+                {tabNodes.map((tab, i) => (
+                    <ItemTab
+                        key={i}
+                        category={tab.category}
+                        nodes={tab.items.map(({ slot, item }, i) => ({
+                            slot,
+                            element: (
+                                <GdtItemSlotWithTooltip
+                                    item={item}
+                                    key={i}
+                                    isMasterSwordFullPower={
+                                        !!gdt.val.masterSword.isTrueForm
+                                    }
+                                    {...itemSlotProps}
+                                />
+                            ),
+                        }))}
+                    />
+                ))}
             </div>
-        );
+        </div>
+    );
 
     return (
         <div className={m("pos-rel wh-100 overflow-hidden")}>
@@ -145,6 +154,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
                     <InventorySpinner show={showSpinner} />
                 </InventoryTitle>
                 <div className={m("flex-col", c.errors)}>
+                    {$Error}
                     {pouchError && <ErrorBar>{pouchError}</ErrorBar>}
                     {gdtError && <ErrorBar>{gdtError}</ErrorBar>}
                 </div>
