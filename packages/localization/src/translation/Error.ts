@@ -1,4 +1,9 @@
-import type { ParserError, RuntimeError, RuntimeViewError, RuntimeWorkerInitError } from "@pistonite/skybook-api";
+import type {
+    ParserError,
+    RuntimeError,
+    RuntimeViewError,
+    RuntimeWorkerInitError,
+} from "@pistonite/skybook-api";
 
 import { type Translator, translateUI } from "../translate.ts";
 
@@ -14,7 +19,6 @@ export const translateGenericError = (
     }
     return translator("error.unknown");
 };
-
 
 export const translateParserError = (
     error: ParserError,
