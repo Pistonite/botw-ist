@@ -84,8 +84,6 @@ tasks:
     
 
   check:
-    env:
-      RUSTFLAGS: "-Zthreads=4"
     cmds:
       - task: build-wasm-types
       - task: cargo:clippy-all

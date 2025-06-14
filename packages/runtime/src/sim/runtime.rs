@@ -1,10 +1,9 @@
-use std::num::NonZeroUsize;
 use std::sync::Mutex;
 
 use blueflame::env::{DlcVer, Environment, GameVer};
 use blueflame::processor::{Cpu1, Process};
 use blueflame::{linker, program};
-use lru::LruCache;
+use hashlink::LruCache;
 use skybook_parser::cir;
 
 use crate::error::RuntimeInitError;
@@ -27,7 +26,7 @@ impl Runtime {
         Self {
             executor,
             initial_process: Mutex::new(None),
-            state_cache: Mutex::new(LruCache::new(NonZeroUsize::new(1024).unwrap())),
+            state_cache: Mutex::new(LruCache::new(1024)),
         }
     }
 
@@ -172,7 +171,7 @@ impl Runtime {
         self.state_cache
             .lock()
             .unwrap()
-            .put(commands.to_vec(), state.clone());
+            .insert(commands.to_vec(), state.clone());
     }
 }
 

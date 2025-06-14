@@ -40,3 +40,4 @@ use impl_wasm as __impl;
 pub type Spawner = __impl::Spawner;
 
 pub type Executor = executor::ExecutorImpl<Spawner>;
+static_assertions::assert_impl_all!(Executor: Send , Sync);

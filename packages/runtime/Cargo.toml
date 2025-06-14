@@ -21,9 +21,10 @@ thiserror.workspace = true
 teleparse.workspace = true
 
 # TS/WASM dependencies
-wasm-bindgen-spawn = { version = "0.0.1", optional = true }
+wasm-bindgen-spawn = { version = "0.0.2", optional = true }
 web-sys = { version = "0.3.77", features = ["console"], optional = true }
-lru = "0.14.0"
+hashlink = "0.10.0"
+static_assertions.workspace = true
 
 [dev-dependencies]
 tokio = { version = "1.45.0", features = ["macros", "rt-multi-thread"] }

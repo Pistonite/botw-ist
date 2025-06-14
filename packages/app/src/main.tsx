@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Void } from "@pistonite/pure/result";
 import { ThemeProvider } from "@pistonite/shared-controls";
 
-
 import { type Translator, initI18n, translateUI } from "skybook-localization";
 import { ItemTooltipProvider } from "skybook-item-system";
 import { extractDirectLoad } from "@pistonite/skybook-api/client";

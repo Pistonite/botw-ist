@@ -9,7 +9,7 @@ import type {
     InvView_Overworld,
     ItemSearchResult,
     MaybeAborted,
-    CustomImageInitParams,
+    RuntimeInitParams,
     RuntimeInitError,
     RuntimeViewError,
 } from "@pistonite/skybook-api";
@@ -54,7 +54,7 @@ export class WasmApi implements NativeApi {
     /** Initialize the runtime and unblock the other API calls */
     public async initRuntime(
         customImage: Uint8Array | undefined,
-        params: CustomImageInitParams | undefined,
+        params: RuntimeInitParams | undefined,
     ): Pwr<Result<wasm_bindgen.RuntimeInitOutput, RuntimeInitError>> {
         const result = await this.exec(() => {
             return wasm_bindgen.init_runtime(customImage, params);

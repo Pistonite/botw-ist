@@ -13,7 +13,10 @@ import {
     OverworldItemSlotWithTooltip,
     PouchItemSlotWithTooltip,
 } from "skybook-item-system";
-import { translateRuntimeViewError, useUITranslation } from "skybook-localization";
+import {
+    translateRuntimeViewError,
+    useUITranslation,
+} from "skybook-localization";
 
 import {
     useGdtInventoryView,

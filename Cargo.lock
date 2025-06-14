@@ -1077,9 +1077,16 @@ version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "84b26c544d002229e640969970a2e74021aadf6e2f96372b9c58eff97de08eb3"
 dependencies = [
- "allocator-api2",
- "equivalent",
  "foldhash",
+]
+
+[[package]]
+name = "hashlink"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7382cf6263419f2d8df38c55d7da83da5c18aef87fc7a7fc1fb1e344edfe14c1"
+dependencies = [
+ "hashbrown 0.15.3",
 ]
 
 [[package]]
@@ -1562,15 +1569,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ebfe8e1a19049ddbfccbd14ac834b215e11b85b90bab0c2dba7c7b92fb5d5cba"
 dependencies = [
  "logos-codegen",
-]
-
-[[package]]
-name = "lru"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f8cc7106155f10bdf99a6f379688f543ad6596a415375b36a59a054ceda1198"
-dependencies = [
- "hashbrown 0.15.3",
 ]
 
 [[package]]
@@ -2553,12 +2551,13 @@ name = "skybook-runtime"
 version = "0.0.0"
 dependencies = [
  "blueflame",
+ "hashlink",
  "log",
- "lru",
  "oneshot",
  "serde",
  "skybook-api",
  "skybook-parser",
+ "static_assertions",
  "teleparse",
  "thiserror 2.0.12",
  "tokio",
@@ -3273,13 +3272,14 @@ dependencies = [
 
 [[package]]
 name = "wasm-bindgen-spawn"
-version = "0.0.1"
+version = "0.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "777ed497f650ae3150d2dd729c3da1504b3b883fb691a4b9ba3c577f0d2afbdf"
+checksum = "a5f531332efe19cd261421b954ae43eb092c8f7142b4c38a44f8f5b403982c32"
 dependencies = [
  "js-sys",
  "oneshot",
- "thiserror 1.0.69",
+ "static_assertions",
+ "thiserror 2.0.12",
  "wasm-bindgen",
  "wasm-bindgen-futures",
 ]

@@ -1,3 +1,5 @@
+use teleparse::Span;
+
 pub use skybook_api::runtime::error::RuntimeError as Error;
 pub use skybook_api::runtime::error::{MaybeAborted, RuntimeInitError, RuntimeViewError};
 pub type ErrorReport = skybook_api::ErrorReport<Error>;
@@ -48,13 +50,6 @@ impl<T> Report<T> {
     }
 }
 
-// mod
-
-// #[derive(Debug, thiserror::Error)]
-// pub enum Error {
-//     #[error("executor error: {0}")]
-//     Executor(#[from] crate::exec::Error),
-// }
 macro_rules! sim_error {
     ($span:expr, $error_type:ident) => {
         $crate::error::ErrorReport::error(
@@ -85,4 +80,3 @@ macro_rules! sim_warning {
     };
 }
 pub(crate) use sim_warning;
-use teleparse::Span;

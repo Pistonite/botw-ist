@@ -12,7 +12,7 @@ impl Spawner {
         wasm_bindgen_js_path: &str,
     ) -> Result<Self, Error> {
         log::info!("creating spawner");
-        let creator = match ThreadCreator::new(wasm_module_path, wasm_bindgen_js_path) {
+        let creator = match ThreadCreator::unready(wasm_module_path, wasm_bindgen_js_path) {
             Err(e) => {
                 log::error!("failed to create spawner!");
                 // we have to use web_sys to log JsValue errors
@@ -20,14 +20,17 @@ impl Spawner {
                 // then we return an opaque error
                 return Err(Error::CreateSpawner);
             }
-            Ok(creator) => creator,
+            Ok(x) => x,
         };
         log::info!("waiting for spawner to be ready");
-        if let Err(e) = creator.ready().await {
-            log::error!("failed to wait for spawner to be ready!");
-            web_sys::console::error_1(&e);
-            return Err(Error::CreateSpawner);
-        }
+        let creator = match creator.ready().await {
+            Err(e) => {
+                log::error!("failed to wait for spawner to be ready!");
+                web_sys::console::error_1(&e);
+                return Err(Error::CreateSpawner);
+            }
+            Ok(x) => x,
+        };
         Ok(Self { creator })
     }
 }

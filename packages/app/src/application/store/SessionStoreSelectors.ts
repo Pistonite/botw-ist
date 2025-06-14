@@ -136,7 +136,8 @@ const useStoreCachedRuntimeData = <T>(
     const stepIndex = useSessionStore((state) => state.stepIndex);
     const bytePos = useSessionStore((state) => state.bytePos);
 
-    const inventory: Result<T, RuntimeViewError> | undefined = cachedViews[stepIndex];
+    const inventory: Result<T, RuntimeViewError> | undefined =
+        cachedViews[stepIndex];
     const cacheIsValid = !!(cacheValidity.includes(stepIndex) && inventory);
 
     const runtime = useRuntime();
@@ -213,7 +214,9 @@ const useStoreCachedRuntimeData = <T>(
     // Create a per-component cache. If the view is not ready when
     // creating new steps, then we can still render the old result,
     // instead of showing empty state (which causes large UI flickering)
-    const inventoryViewCache = useRef<Result<T, RuntimeViewError> | undefined>(undefined);
+    const inventoryViewCache = useRef<Result<T, RuntimeViewError> | undefined>(
+        undefined,
+    );
     useEffect(() => {
         if (inventory) {
             inventoryViewCache.current = inventory;
@@ -223,7 +226,7 @@ const useStoreCachedRuntimeData = <T>(
     return {
         // if state for current step is not ready,
         // display the previous step to avoid flickering
-        data: (inventory || inventoryViewCache.current),
+        data: inventory || inventoryViewCache.current,
         stale: !cacheIsValid,
         loading: inProgress,
         error: errorMessage,

@@ -24,6 +24,7 @@ pub struct Process {
     /// Hooks for this process
     hook: Arc<dyn HookProvider>,
 }
+static_assertions::assert_impl_all!(Process: Send, Sync);
 
 impl std::fmt::Debug for Process {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

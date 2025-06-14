@@ -11,7 +11,7 @@ import type {
     ErrorReport,
     ParserError,
     RuntimeInitError,
-    CustomImageInitParams,
+    RuntimeInitParams,
     RuntimeViewError,
 } from "@pistonite/skybook-api";
 
@@ -29,7 +29,7 @@ export interface NativeApi {
     /** Initialize the runtime with the given image info */
     initRuntime(
         customImage: Uint8Array | undefined,
-        customImageParams: CustomImageInitParams | undefined,
+        customImageParams: RuntimeInitParams | undefined,
     ): Pwr<Result<RuntimeInitOutput, RuntimeInitError>>;
 
     // === item api ===

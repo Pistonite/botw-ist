@@ -41,7 +41,7 @@ pub async fn module_init(wasm_module_path: String, wasm_bindgen_js_path: String)
     let spawner = match Spawner::try_new(&wasm_module_path, &wasm_bindgen_js_path).await {
         Ok(spawner) => spawner,
         Err(e) => {
-            panic!("failed to initialize spawner: {}", e);
+            panic!("failed to initialize spawner: {e}");
         }
     };
 
@@ -68,23 +68,29 @@ pub fn init_runtime(
     params: Option<RuntimeInitParams>,
 ) -> interop::Result<RuntimeInitOutput, RuntimeInitError> {
     RUNTIME.with(|runtime| {
-        let runtime = runtime.get().expect("init_runtime called before module_init");
+        let runtime = runtime
+            .get()
+            .expect("init_runtime called before module_init");
         let threads = 4;
         let result = match custom_image {
             Some(data) => {
                 log::info!("initializing runtime in WASM using custom image");
                 runtime.init(&data.to_vec(), threads, params.as_ref())
-            },
+            }
             None => {
                 log::info!("initializing runtime in WASM using default image");
-                runtime.init(include_bytes!("../../runtime-tests/data/program-mini.bfi"), threads, params.as_ref())
+                runtime.init(
+                    include_bytes!("../../runtime-tests/data/program-mini.bfi"),
+                    threads,
+                    params.as_ref(),
+                )
             }
         };
         let env = match result {
             Err(e) => {
                 return interop::Result::Err(e);
             }
-            Ok(x) => x
+            Ok(x) => x,
         };
         let game_version = match env.game_ver {
             GameVer::X150 => "1.5",
@@ -221,7 +227,10 @@ pub async fn run_parsed(
     let run = sim::Run::new(handle);
     let runtime = RUNTIME.with(|runtime| {
         // unwrap: the worker guarantees it calls init_runtime before this
-        runtime.get().expect("run_parsed called before module_init").clone()
+        runtime
+            .get()
+            .expect("run_parsed called before module_init")
+            .clone()
     });
     let output = run.run_parsed(parse_output, &runtime).await;
 

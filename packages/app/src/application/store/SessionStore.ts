@@ -82,15 +82,24 @@ export type SessionStore = {
     /** Cached Pouch list views. Key is the step index */
     pouchCached: number[];
     pouchViews: Record<number, Result<InvView_PouchList, RuntimeViewError>>;
-    setPouchViewInCache: (step: number, view: Result<InvView_PouchList, RuntimeViewError>) => void;
+    setPouchViewInCache: (
+        step: number,
+        view: Result<InvView_PouchList, RuntimeViewError>,
+    ) => void;
     /** Cached GDT inventory views. Key is the step index */
     gdtCached: number[];
     gdtViews: Record<number, Result<InvView_Gdt, RuntimeViewError>>;
-    setGdtViewInCache: (step: number, view: Result<InvView_Gdt, RuntimeViewError>) => void;
+    setGdtViewInCache: (
+        step: number,
+        view: Result<InvView_Gdt, RuntimeViewError>,
+    ) => void;
     /** Cached Overworld item views. Key is the step index */
     overworldCached: number[];
     overworldViews: Record<number, Result<InvView_Overworld, RuntimeViewError>>;
-    setOverworldViewInCache: (step: number, view: Result<InvView_Overworld, RuntimeViewError>) => void;
+    setOverworldViewInCache: (
+        step: number,
+        view: Result<InvView_Overworld, RuntimeViewError>,
+    ) => void;
 
     /** Invalidate all cached inventory views */
     invalidateInventoryCache: () => void;
