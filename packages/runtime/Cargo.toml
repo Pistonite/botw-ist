@@ -14,17 +14,17 @@ path = "../parser"
 path = "../skybook-api"
 
 [dependencies]
+hashlink = "0.10.0"
 log.workspace = true
 oneshot = "0.1.11"
 serde.workspace = true
 thiserror.workspace = true
 teleparse.workspace = true
+static_assertions.workspace = true
 
 # TS/WASM dependencies
 wasm-bindgen-spawn = { version = "0.0.2", optional = true }
 web-sys = { version = "0.3.77", features = ["console"], optional = true }
-hashlink = "0.10.0"
-static_assertions.workspace = true
 
 [dev-dependencies]
 tokio = { version = "1.45.0", features = ["macros", "rt-multi-thread"] }

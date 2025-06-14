@@ -27,7 +27,6 @@ tasks:
           TARGET_DIR: ../../target
           PACKAGE: skybook_runtime_wasm
           WASM_PACK_ARGS: -t no-modules --no-pack
-          # CARGO_ARGS: --features no-trace
       - $(which mkdir) -p node_modules/.wasm-out-type
       - cp pkg/skybook_runtime_wasm.d.ts node_modules/.wasm-out-type
 

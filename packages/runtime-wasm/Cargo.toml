@@ -17,15 +17,15 @@ path = "../parser"
 features = ["wasm", "cached"]
 
 [dependencies]
-wasm-bindgen = { workspace = true }
-tsify = { workspace = true }
-serde = { workspace = true }
-ts-rs = { workspace = true }
-js-sys = { workspace = true }
-wasm-bindgen-futures = { workspace = true }
+wasm-bindgen.workspace = true
+tsify.workspace = true
+serde.workspace = true
+ts-rs.workspace = true
+js-sys.workspace = true
+wasm-bindgen-futures.workspace = true
 console_error_panic_hook = "0.1.7"
 console_log = { version = "1.0.0", features = ["color"] }
-log = { workspace = true }
+log.workspace = true
 
 [lib]
 crate-type = ["cdylib"]

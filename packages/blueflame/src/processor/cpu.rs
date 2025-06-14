@@ -85,7 +85,7 @@ impl<'a, 'b, 'c> Cpu3<'a, 'b, 'c> {
         cpu1: &'a mut Cpu1,
         process: &'b mut Process,
         program: &'c ArchivedProgram,
-        heap_start_adjusted: u64,
+        heap_adjustment: u64,
     ) -> Self {
         let cpu2 = Cpu2 {
             cpu1,
@@ -94,7 +94,7 @@ impl<'a, 'b, 'c> Cpu3<'a, 'b, 'c> {
         Self {
             cpu2,
             program,
-            heap_adjustment: heap_start_adjusted,
+            heap_adjustment,
         }
     }
 }
