@@ -53,4 +53,9 @@ export interface ExtensionApp {
         start: number,
         end: number,
     ): WxPromise<Uint32Array>;
+
+    /**
+     * Get the diagnostics from running the script
+     */
+    provideRuntimeDiagnostics(script: string): WxPromise<Diagnostic[]>;
 }

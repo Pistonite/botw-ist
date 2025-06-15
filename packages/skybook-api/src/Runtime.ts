@@ -8,6 +8,7 @@ import type {
     InvView_PouchList,
     MaybeAborted,
     ParserError,
+    RuntimeError,
     RuntimeViewError,
 } from "./native";
 import type {
@@ -61,6 +62,15 @@ export interface Runtime {
     abortTask(taskId: string): WxPromise<void>;
 
     /**
+     * Run the script and get diagnostics from the runtime.
+     *
+     * Note that the span in the errors are byte offsets, not character offsets.
+     */
+    getRuntimeDiagnostics(
+        script: string,
+    ): WxPromise<ErrorReport<RuntimeError>[]>;
+
+    /**
      * Execute the script if not up-to-date, and return the pouch inventory list view
      * at the byte offset `pos` in the script.
      *
@@ -95,8 +105,4 @@ export interface Runtime {
         taskId: string,
         pos: number,
     ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>>;
-
-    // getRuntimeDiagnostics(
-    //     script: string,
-    // ): WorkexPromise<{ range: [number, number]; message: string }[]>;
 }
