@@ -6,12 +6,16 @@ import type { MarkerData, TextModel } from "@pistonite/intwc";
 import { MarkerSeverity, spanToRange } from "@pistonite/intwc";
 import type { Diagnostic, ExtensionApp } from "@pistonite/skybook-api";
 
-export const provideParserDiagnostics = async (
+export const provideDiagnostics = async (
     app: ExtensionApp,
     model: TextModel,
+    owner: string,
 ): Promise<MarkerData[]> => {
     const script = model.getValue();
-    const diagnostics = await app.provideParserDiagnostics(script);
+    const diagnostics =
+        owner === "runtime"
+            ? await app.provideRuntimeDiagnostics(script)
+            : await app.provideParserDiagnostics(script);
     if (diagnostics.err) {
         return [];
     }

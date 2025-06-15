@@ -13,6 +13,7 @@ import type {
     RuntimeInitError,
     RuntimeInitParams,
     RuntimeViewError,
+    RuntimeError,
 } from "@pistonite/skybook-api";
 
 import type { Pwr } from "./Error.ts";
@@ -67,12 +68,14 @@ export interface NativeApi {
 
     /** Make a new task handle and returns the ptr to it (that must be freed) */
     makeTaskHandle(): Pwr<number>;
+
     /**
      * Request aborting a task
      *
      * Consumes the task handle ptr.
      */
     abortTask(ptr: number): void;
+
     /**
      * Take the parse output and execute it.
      *
@@ -84,6 +87,10 @@ export interface NativeApi {
         parsedOutputPtr: number,
         taskHandlePtr: number,
     ): Pwr<MaybeAborted<number>>;
+
+    /** Get the errors from the run output. Does not consume the ptr */
+    getRunErrors(ptr: number): Pwr<ErrorReport<RuntimeError>[]>;
+
     /**
      * Get the Pouch inventory view for the given byte position in the script.
      * Does not consume either ptr.
@@ -93,6 +100,7 @@ export interface NativeApi {
         parseOutputPtr: number,
         bytePos: number,
     ): Pwr<Result<InvView_PouchList, RuntimeViewError>>;
+
     /**
      * Get the GDT inventory view for the given byte position in the script.
      * Does not consume either ptr.

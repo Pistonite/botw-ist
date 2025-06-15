@@ -1,10 +1,13 @@
 import type { Result } from "@pistonite/pure/result";
 import type { AsyncErc } from "@pistonite/pure/memory";
+import { v4 as makeUUID } from "uuid";
 
 import type {
+    ErrorReport,
     InvView_Gdt,
     InvView_Overworld,
     InvView_PouchList,
+    RuntimeError,
     RuntimeViewError,
 } from "@pistonite/skybook-api";
 
@@ -44,6 +47,20 @@ export class RunMgr {
         this.lastScript = "";
         this.serial = 0;
         this.cachedErc = makeRunOutputErc(undefined);
+    }
+
+    public getRuntimeDiagnostics(
+        script: string,
+    ): Pwr<ErrorReport<RuntimeError>[]> {
+        // Runs for diagnostics are not abortable for simplicity
+        const taskId = makeUUID();
+        return this.withParseAndRunOutput(
+            script,
+            taskId,
+            (_, runOutputBorrowed) => {
+                return this.napi.getRunErrors(runOutputBorrowed);
+            },
+        );
     }
 
     public getPouchList(

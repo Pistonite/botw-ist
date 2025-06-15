@@ -5,10 +5,16 @@ import {
 import type { Result } from "@pistonite/pure/result";
 import type { WxPromise } from "@pistonite/workex";
 
-import type { Diagnostic, Runtime, ExtensionApp } from "@pistonite/skybook-api";
+import type {
+    Diagnostic,
+    Runtime,
+    ExtensionApp,
+    ErrorReport,
+} from "@pistonite/skybook-api";
 import {
     searchItemLocalized,
     translateParserError,
+    translateRuntimeError,
 } from "skybook-localization";
 import { getActorParam } from "skybook-item-system";
 
@@ -71,17 +77,29 @@ class ExtensionAppHost implements ExtensionApp {
         if (result.err) {
             return result;
         }
-        const bytePosToCharPos = createBytePosToCharPosArray(script);
-        const diagnostics = result.val.map(({ span, error, isWarning }) => {
-            const [start, end] = span;
-            return {
-                message: translateParserError(error),
-                isWarning,
-                start: bytePosToCharPos[start],
-                end: bytePosToCharPos[end],
-            };
-        });
-        return { val: diagnostics };
+        return {
+            val: errorReportsToDiagnostics(
+                script,
+                result.val,
+                translateParserError,
+            ),
+        };
+    }
+
+    public async provideRuntimeDiagnostics(
+        script: string,
+    ): WxPromise<Diagnostic[]> {
+        const result = await this.runtime.getRuntimeDiagnostics(script);
+        if (result.err) {
+            return result;
+        }
+        return {
+            val: errorReportsToDiagnostics(
+                script,
+                result.val,
+                translateRuntimeError,
+            ),
+        };
     }
 
     public async provideSemanticTokens(
@@ -112,3 +130,20 @@ class ExtensionAppHost implements ExtensionApp {
         return { val: tokens.val };
     }
 }
+
+const errorReportsToDiagnostics = <T>(
+    script: string,
+    reports: ErrorReport<T>[],
+    translator: (error: T) => string,
+): Diagnostic[] => {
+    const bytePosToCharPos = createBytePosToCharPosArray(script);
+    return reports.map(({ span, error, isWarning }) => {
+        const [start, end] = span;
+        return {
+            message: translator(error),
+            isWarning,
+            start: bytePosToCharPos[start],
+            end: bytePosToCharPos[end],
+        };
+    });
+};

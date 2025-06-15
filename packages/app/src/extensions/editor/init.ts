@@ -4,7 +4,7 @@ import { once } from "@pistonite/pure/sync";
 import type { ExtensionApp } from "@pistonite/skybook-api";
 
 import { language, configuration } from "./language.ts";
-import { provideParserDiagnostics } from "./marker.ts";
+import { provideDiagnostics } from "./marker.ts";
 import { legend, provideSemanticTokens } from "./semantic.ts";
 
 let theApp: ExtensionApp | undefined;
@@ -34,12 +34,12 @@ const CustomLanguageOptions: LanguageClient = {
     getTokenizer: () => language,
     getConfiguration: () => configuration,
     // the parser and runtime can both produce diagnostics
-    getMarkerOwners: () => ["parser"],
-    provideMarkers: (model) => {
+    getMarkerOwners: () => ["parser", "runtime"],
+    provideMarkers: (model, owner) => {
         if (!theApp) {
             return undefined;
         }
-        return provideParserDiagnostics(theApp, model);
+        return provideDiagnostics(theApp, model, owner);
     },
     getSemanticTokensLegend: () => legend,
     provideDocumentRangeSemanticTokens: (model, range, token) => {
