@@ -41,14 +41,17 @@ export class WasmApi implements NativeApi {
     /** Initialize the WASM module, this is needed to call any WASM function */
     public async initWasmModule() {
         // This is injected by the build process
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        const isMinBuild = (self as any)["__min"] as boolean;
         const wasmModuleBase = (self as any)["__skybook_path_base"] as string;
         const wasmModulePath = wasmModuleBase + ".wasm";
-        const wasmBindgenJSPath = wasmModuleBase + ".js";
+        const wasmBindgenJSPath =
+            wasmModuleBase + (isMinBuild ? ".min.js" : ".js");
         await wasm_bindgen({ module_or_path: wasmModulePath });
         await this.exec(() => {
             return wasm_bindgen.module_init(wasmModulePath, wasmBindgenJSPath);
         }, true);
+        /* eslint-enable @typescript-eslint/no-explicit-any */
     }
 
     /** Initialize the runtime and unblock the other API calls */
