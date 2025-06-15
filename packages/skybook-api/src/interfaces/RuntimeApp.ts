@@ -28,7 +28,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * Signal the application to crash because unrecoverable error occurred in the runtime
      */
     public crashApplication( ): WxPromise<void> {
-        return this.sender.sendVoid(34 /* RuntimeApp.crashApplication */, [ ]);
+        return this.sender.sendVoid(36 /* RuntimeApp.crashApplication */, [ ]);
     }
 
     /**
@@ -43,7 +43,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * in which case the runtime initialization will fail.
      */
     public getCustomBlueFlameImage( ): WxPromise<Uint8Array | undefined> {
-        return this.sender.send<Uint8Array | undefined>(35 /* RuntimeApp.getCustomBlueFlameImage */, [ ]);
+        return this.sender.send<Uint8Array | undefined>(37 /* RuntimeApp.getCustomBlueFlameImage */, [ ]);
     }
 
     /**
@@ -52,14 +52,14 @@ export class _wxSenderImpl implements RuntimeApp {
      * or no match.
      */
     public resolveQuotedItem( query: string ): WxPromise<ItemSearchResult | undefined> {
-        return this.sender.send<ItemSearchResult | undefined>(36 /* RuntimeApp.resolveQuotedItem */, [ query ]);
+        return this.sender.send<ItemSearchResult | undefined>(38 /* RuntimeApp.resolveQuotedItem */, [ query ]);
     }
 
     /**
      * Send latest performance data to the app
      */
     public updatePerfData( data: PerformanceData ): WxPromise<void> {
-        return this.sender.sendVoid(37 /* RuntimeApp.updatePerfData */, [ data ]);
+        return this.sender.sendVoid(39 /* RuntimeApp.updatePerfData */, [ data ]);
     }
 }
 
@@ -68,17 +68,17 @@ export class _wxSenderImpl implements RuntimeApp {
  */
 export const _wxRecverImpl = (handler: RuntimeApp): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 34 /* RuntimeApp.crashApplication */: {
+        case 36 /* RuntimeApp.crashApplication */: {
             return handler.crashApplication();
         }
-        case 35 /* RuntimeApp.getCustomBlueFlameImage */: {
+        case 37 /* RuntimeApp.getCustomBlueFlameImage */: {
             return handler.getCustomBlueFlameImage();
         }
-        case 36 /* RuntimeApp.resolveQuotedItem */: {
+        case 38 /* RuntimeApp.resolveQuotedItem */: {
             const [ a0 ] = args;
             return handler.resolveQuotedItem( a0 );
         }
-        case 37 /* RuntimeApp.updatePerfData */: {
+        case 39 /* RuntimeApp.updatePerfData */: {
             const [ a0 ] = args;
             return handler.updatePerfData( a0 );
         }

@@ -40,6 +40,13 @@ export class _wxSenderImpl implements ExtensionApp {
     }
 
     /**
+     * Get the diagnostics from running the script
+     */
+    public provideRuntimeDiagnostics( script: string ): WxPromise<Diagnostic[]> {
+        return this.sender.send<Diagnostic[]>(22 /* ExtensionApp.provideRuntimeDiagnostics */, [ script ]);
+    }
+
+    /**
      * Get the semantic tokens for the script in the range.
      * 
      * The output is triples of [start, length, tokenType].
@@ -48,7 +55,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * (Note this is different from Runtime.getSemanticTokens)
      */
     public provideSemanticTokens( script: string, start: number, end: number ): WxPromise<Uint32Array> {
-        return this.sender.send<Uint32Array>(22 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
+        return this.sender.send<Uint32Array>(23 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
     }
 
     /**
@@ -61,7 +68,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * even when there is no error, the search result could be empty.
      */
     public resolveItem( query: string, localized: boolean, limit: number ): WxPromise<Result<ItemSearchResult[], string>> {
-        return this.sender.send<Result<ItemSearchResult[], string>>(23 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
+        return this.sender.send<Result<ItemSearchResult[], string>>(24 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
     }
 
     /**
@@ -73,7 +80,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * a character offset (not byte offset) and is 0-based.
      */
     public setScript( script: string, position: number ): WxPromise<void> {
-        return this.sender.sendVoid(24 /* ExtensionApp.setScript */, [ script, position ]);
+        return this.sender.sendVoid(25 /* ExtensionApp.setScript */, [ script, position ]);
     }
 }
 
@@ -89,15 +96,19 @@ export const _wxRecverImpl = (handler: ExtensionApp): WxBusRecvHandler => {
             const [ a0 ] = args;
             return handler.provideParserDiagnostics( a0 );
         }
-        case 22 /* ExtensionApp.provideSemanticTokens */: {
+        case 22 /* ExtensionApp.provideRuntimeDiagnostics */: {
+            const [ a0 ] = args;
+            return handler.provideRuntimeDiagnostics( a0 );
+        }
+        case 23 /* ExtensionApp.provideSemanticTokens */: {
             const [ a0, a1, a2 ] = args;
             return handler.provideSemanticTokens( a0, a1, a2 );
         }
-        case 23 /* ExtensionApp.resolveItem */: {
+        case 24 /* ExtensionApp.resolveItem */: {
             const [ a0, a1, a2 ] = args;
             return handler.resolveItem( a0, a1, a2 );
         }
-        case 24 /* ExtensionApp.setScript */: {
+        case 25 /* ExtensionApp.setScript */: {
             const [ a0, a1 ] = args;
             return handler.setScript( a0, a1 );
         }

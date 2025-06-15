@@ -152,8 +152,7 @@ pub fn parse_script_semantic(script: String, start: usize, end: usize) -> Vec<u3
     output
 }
 
-/// Get the errors from the parse output. Does not take ownership of the parse output. (i.e.
-/// does not free the parse output)
+/// Get the errors from the parse output.
 ///
 /// ## Pointer Ownership
 /// Borrows the ParseOutput pointer.
@@ -241,6 +240,19 @@ pub async fn run_parsed(
         }
         MaybeAborted::Aborted => MaybeAborted::Aborted,
     }
+}
+
+/// Get the errors from the run output.
+///
+/// ## Pointer Ownership
+/// Borrows the RunOutput pointer.
+#[wasm_bindgen]
+pub fn get_run_errors(run_output_ref: *const sim::RunOutput) -> Vec<skybook_runtime::ErrorReport> {
+    if run_output_ref.is_null() {
+        return Vec::new();
+    }
+    let run_output = unsafe { &*run_output_ref };
+    run_output.errors.clone()
 }
 
 /// Get the Pouch inventory view for the given byte position in the script

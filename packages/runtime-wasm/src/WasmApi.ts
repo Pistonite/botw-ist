@@ -12,6 +12,7 @@ import type {
     RuntimeInitParams,
     RuntimeInitError,
     RuntimeViewError,
+    RuntimeError,
 } from "@pistonite/skybook-api";
 import {
     crashApplication,
@@ -77,6 +78,7 @@ export class WasmApi implements NativeApi {
             return wasm_bindgen.resolve_item_ident(query);
         });
     }
+
     public parseScript(
         script: string,
         resolveQuotedItem: QuotedItemResolverFn,
@@ -85,6 +87,7 @@ export class WasmApi implements NativeApi {
             return wasm_bindgen.parse_script(script, resolveQuotedItem);
         });
     }
+
     public parseScriptSemantic(
         script: string,
         start: number,
@@ -94,16 +97,19 @@ export class WasmApi implements NativeApi {
             return wasm_bindgen.parse_script_semantic(script, start, end);
         });
     }
+
     public getParserErrors(ptr: number): Pwr<ErrorReport<ParserError>[]> {
         return this.exec(() => {
             return wasm_bindgen.get_parser_errors(ptr);
         });
     }
+
     public getStepCount(ptr: number): Pwr<number> {
         return this.exec(() => {
             return wasm_bindgen.get_step_count(ptr);
         });
     }
+
     public getStepFromPos(ptr: number, bytePos: number): Pwr<number> {
         return this.exec(() => {
             return wasm_bindgen.get_step_from_pos(ptr, bytePos);
@@ -128,6 +134,12 @@ export class WasmApi implements NativeApi {
     ): Pwr<MaybeAborted<number>> {
         return this.exec(() => {
             return wasm_bindgen.run_parsed(parsedOutputPtr, taskHandlePtr);
+        });
+    }
+
+    public getRunErrors(ptr: number): Pwr<ErrorReport<RuntimeError>[]> {
+        return this.exec(() => {
+            return wasm_bindgen.get_run_errors(ptr);
         });
     }
 

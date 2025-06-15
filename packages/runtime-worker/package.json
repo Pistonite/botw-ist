@@ -8,9 +8,10 @@
     },
     "dependencies": {
         "@pistonite/pure": "catalog:",
-        "@pistonite/workex": "catalog:",
         "@pistonite/skybook-api": "workspace:*",
-        "lru-cache": "^11.0.2"
+        "@pistonite/workex": "catalog:",
+        "lru-cache": "^11.0.2",
+        "uuid": "catalog:"
     },
     "devDependencies": {
         "mono-dev": "workspace:*"

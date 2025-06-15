@@ -51,6 +51,9 @@ catalogs:
     typescript:
       specifier: ^5.8.3
       version: 5.8.3
+    uuid:
+      specifier: ^11.1.0
+      version: 11.1.0
     vite:
       specifier: ^6.3.5
       version: 6.3.5
@@ -134,7 +137,7 @@ importers:
         specifier: workspace:*
         version: link:../parser-legacy
       uuid:
-        specifier: ^11.1.0
+        specifier: 'catalog:'
         version: 11.1.0
       zustand:
         specifier: ^5.0.2
@@ -421,6 +424,9 @@ importers:
         version: 0.1.1
       lru-cache:
         specifier: ^11.0.2
+        version: 11.1.0
+      uuid:
+        specifier: 'catalog:'
         version: 11.1.0
     devDependencies:
       mono-dev:
