@@ -156,6 +156,7 @@ tasks:
       - task: parser:test
       - task: blueflame-deps:test
       - task: blueflame:test
+      - task: runtime-tests:run-mini
 
   test-layer-1:
     deps:

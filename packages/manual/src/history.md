@@ -59,7 +59,11 @@ related to GameData flags (such as champion ability and discovered tabs).
 Even though the remaining edge cases are rarely hit, it was clear that we could
 not keep chasing these cases. If the simulator was to be improved again, it needs
 to fix all these cases entirely. During this time, I had theorized a new version of the simulator that uses the game
-itself to execute the actions. This effort started in Summer 2024.
+itself to execute the actions. In Spring 2024, I submitted a proposal to make
+a POC of this new simulator as a senior project to my college, and we got a student
+team to work on it with me as the advisor. Meanwhile, I started working on the UI
+of the new simulator around December 2024. The project finished successfully
+and it was integrated to the project as the core for the new V4 simulator.
 
 TO BE CONTINUED
 

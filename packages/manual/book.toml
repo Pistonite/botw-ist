@@ -16,6 +16,7 @@ additional-css = [
     "./theme/extra-css/catppuccin.css", 
     "./theme/catppuccin-admonish.css",
     "./theme/extra-css/patch.css", 
+    "./src/special.css", 
 ]
 
 [preprocessor.admonish]

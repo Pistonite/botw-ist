@@ -19,7 +19,7 @@ tasks:
 
   test:
     cmds:
-      - cargo test
+      - cargo test --features data
 
   check:
     cmds:
