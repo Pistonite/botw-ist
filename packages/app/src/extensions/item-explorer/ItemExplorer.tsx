@@ -102,8 +102,8 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
         </Interpolate>
     ) : (
         <Interpolate
-            under_score={<Code>{"_"}</Code>}
-            example={<Code>{"royal_claymore"}</Code>}
+            hyphen={<Code>{"-"}</Code>}
+            example={<Code>{"royal-claymore"}</Code>}
         >
             {t("item_explorer.desc.search_tip_ident")}
         </Interpolate>

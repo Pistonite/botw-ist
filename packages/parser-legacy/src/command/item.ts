@@ -78,9 +78,9 @@ export const WeaponModifier = {
 } as const;
 
 // V3->V4: item search strings are joined with underscores
-// for example `get 1 royal claymore` is `get 1 royal_claymore`
+// for example `get 1 royal claymore` is `get 1 royal-claymore`
 export const joinItemSearchStrings = (ids: string[]) => {
-    return ids.join("_");
+    return ids.join("-").toLowerCase();
 };
 
 export const convertItem = (item: ItemStack): string => {
@@ -89,7 +89,7 @@ export const convertItem = (item: ItemStack): string => {
 
 export const convertItemMeta = (meta: MetaModifyOption | undefined): string => {
     if (meta && Object.keys(meta).length > 0) {
-        const props = [];
+        const props: string[] = [];
         if ("life" in meta) {
             props.push(`life=${meta.life}`);
         }

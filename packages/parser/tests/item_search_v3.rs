@@ -42,20 +42,20 @@ fn test_item_search_v3_alias() {
     test_item_search("rgsword", "Weapon_Sword_047");
     test_item_search("oho", "Weapon_Sword_502");
 
-    test_item_search("trav_claymore", "Weapon_Lsword_001");
-    test_item_search("soldier_claymore", "Weapon_Lsword_002");
-    test_item_search("knight_claymore", "Weapon_Lsword_003");
-    test_item_search("royal_claymore", "Weapon_Lsword_024");
+    test_item_search("trav-claymore", "Weapon_Lsword_001");
+    test_item_search("soldier-claymore", "Weapon_Lsword_002");
+    test_item_search("knight-claymore", "Weapon_Lsword_003");
+    test_item_search("royal-claymore", "Weapon_Lsword_024");
     test_item_search("rgc", "Weapon_Lsword_047");
     test_item_search("eod", "Weapon_Lsword_055");
 
     test_item_search("fdspear", "Weapon_Spear_025");
     test_item_search("rgspear", "Weapon_Spear_047");
 
-    test_item_search("trav_bow", "Weapon_Bow_001");
-    test_item_search("soldier_bow", "Weapon_Bow_002");
-    test_item_search("knight_bow", "Weapon_Bow_035");
-    test_item_search("royal_bow", "Weapon_Bow_036");
+    test_item_search("trav-bow", "Weapon_Bow_001");
+    test_item_search("soldier-bow", "Weapon_Bow_002");
+    test_item_search("knight-bow", "Weapon_Bow_035");
+    test_item_search("royal-bow", "Weapon_Bow_036");
 
     test_item_search("fdb", "Weapon_Bow_013");
     test_item_search("rgb", "Weapon_Bow_033");

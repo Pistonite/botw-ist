@@ -113,7 +113,7 @@ extension.item-explorer.name: "搜索物品"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "使用下划线 {{under_score}} 连接多个词，比如 {{example}}."
+item_explorer.desc.search_tip_ident: "使用 {{hyphen}} 连接多个词，比如 {{example}}."
 item_explorer.desc.search_tip_localized: "必要时可使用语言代码锁定语言，比如 {{code_example}}。在脚本中，可使用带引号({{quote}})文本进行全语言搜索。"
 item_explorer.label.no_results: "无结果"
 item_explorer.label.search_localized: "全语言搜索"

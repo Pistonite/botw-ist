@@ -113,7 +113,7 @@ extension.item-explorer.name: "Itemverkenner"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Gebruik {{under_score}} om meerdere zoektermen te combineren, bijvoorbeeld {{example}}."
+item_explorer.desc.search_tip_ident: "Gebruik {{hyphen}} om meerdere zoektermen te verbinden, bijvoorbeeld {{example}}."
 item_explorer.desc.search_tip_localized: "Je kunt een taal opgeven via de taalcode, zoals {{code_example}} voor Frans. In het script zet je aanhalingstekens {{quote}} om de zoekopdracht om deze modus te gebruiken."
 item_explorer.label.no_results: "Geen resultaten"
 item_explorer.label.search_localized: "Zoek in alle talen"

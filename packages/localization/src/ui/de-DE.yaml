@@ -113,7 +113,7 @@ extension.item-explorer.name: "Gegenstands-Explorer"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Verwenden Sie {{under_score}}, um mehrere Suchbegriffe zu verbinden, z. B. {{example}}."
+item_explorer.desc.search_tip_ident: "Verwenden Sie {{hyphen}}, um mehrere Suchbegriffe zu verbinden, zum Beispiel {{example}}."
 item_explorer.desc.search_tip_localized: "Sie können eine Sprache mit ihrem Code angeben, z. B. {{code_example}} für Französisch. Im Skript setzen Sie den Suchbegriff in Anführungszeichen {{quote}}, um diesen Modus zu nutzen."
 item_explorer.label.no_results: "Keine Ergebnisse"
 item_explorer.label.search_localized: "In allen Sprachen suchen"

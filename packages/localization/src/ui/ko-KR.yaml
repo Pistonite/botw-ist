@@ -113,7 +113,7 @@ extension.item-explorer.name: "아이템 탐색기"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "여러 검색어를 연결하려면 {{under_score}}를 사용하세요. 예: {{example}}"
+item_explorer.desc.search_tip_ident: "여러 검색어를 연결하려면 {{hyphen}}을(를) 사용하세요. 예: {{example}}."
 item_explorer.desc.search_tip_localized: "언어 코드를 사용해 언어를 지정할 수 있습니다. 예: 프랑스어는 {{code_example}}. 스크립트에서는 검색어를 {{quote}}로 감싸 이 검색 모드를 사용할 수 있습니다."
 item_explorer.label.no_results: "결과 없음"
 item_explorer.label.search_localized: "모든 언어에서 검색"

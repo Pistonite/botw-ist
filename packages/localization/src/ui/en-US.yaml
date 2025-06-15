@@ -113,7 +113,7 @@ extension.item-explorer.name: "Item Explorer"
 extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
-item_explorer.desc.search_tip_ident: "Use {{under_score}} to connect multiple search terms, for example {{example}}."
+item_explorer.desc.search_tip_ident: "Use {{hyphen}} to connect multiple search terms, for example {{example}}."
 item_explorer.desc.search_tip_localized: "You can specify a language by its code, like {{code_example}} for French. In the script, put quotes {{quote}} around the search query to use this search mode."
 item_explorer.label.no_results: "No results"
 item_explorer.label.search_localized: "Search in all languages"
