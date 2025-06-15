@@ -302,11 +302,11 @@ pub fn unpack_s32_flags() -> Vec<Flag<i32>> {
 }
 
 #[cfg(test)]
+#[cfg(feature = "data")]
 mod tests {
     use super::*;
 
     #[test]
-    #[cfg(feature = "data")]
     fn test_unpack() {
         unpack_bool_flags();
         unpack_s32_flags();
