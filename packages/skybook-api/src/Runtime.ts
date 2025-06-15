@@ -65,9 +65,12 @@ export interface Runtime {
      * Run the script and get diagnostics from the runtime.
      *
      * Note that the span in the errors are byte offsets, not character offsets.
+     *
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
     getRuntimeDiagnostics(
         script: string,
+        taskId: string,
     ): WxPromise<ErrorReport<RuntimeError>[]>;
 
     /**

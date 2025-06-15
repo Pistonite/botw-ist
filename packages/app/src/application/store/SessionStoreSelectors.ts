@@ -171,7 +171,7 @@ const useStoreCachedRuntimeData = <T>(
             }
             // we only need task id once we request the run
             taskId = makeUUID();
-            console.log(`[rtux] starting task ${taskId} for ${name}`);
+            console.log(`[rtux] starting task ${taskId} for ${name}, bytepos=${bytePos}`);
             const view = await runFn(runtime, taskId, activeScript, bytePos);
             // IPC error
             if (view.err) {

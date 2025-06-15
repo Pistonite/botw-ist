@@ -26,24 +26,34 @@ export class _wxSenderImpl implements ExtensionApp {
     }
 
     /**
+     * Cancel a previous request for runtime diagnostics.
+     */
+    public cancelRuntimeDiagnosticsRequest( taskId: string ): WxPromise<void> {
+        return this.sender.sendVoid(20 /* ExtensionApp.cancelRuntimeDiagnosticsRequest */, [ taskId ]);
+    }
+
+    /**
      * Get the current simulator script.
      */
     public getScript( ): WxPromise<string> {
-        return this.sender.send<string>(20 /* ExtensionApp.getScript */, [ ]);
+        return this.sender.send<string>(21 /* ExtensionApp.getScript */, [ ]);
     }
 
     /**
      * Invoke the parser for the script and get the diagnostics.
      */
     public provideParserDiagnostics( script: string ): WxPromise<Diagnostic[]> {
-        return this.sender.send<Diagnostic[]>(21 /* ExtensionApp.provideParserDiagnostics */, [ script ]);
+        return this.sender.send<Diagnostic[]>(22 /* ExtensionApp.provideParserDiagnostics */, [ script ]);
     }
 
     /**
-     * Get the diagnostics from running the script
+     * Get the diagnostics from running the script.
+     * 
+     * The taskId should be a UUID, which can be used to cancel the diagnostic
+     * request if it's no longer needed to save CPU resource
      */
-    public provideRuntimeDiagnostics( script: string ): WxPromise<Diagnostic[]> {
-        return this.sender.send<Diagnostic[]>(22 /* ExtensionApp.provideRuntimeDiagnostics */, [ script ]);
+    public provideRuntimeDiagnostics( script: string, taskId: string ): WxPromise<Diagnostic[]> {
+        return this.sender.send<Diagnostic[]>(23 /* ExtensionApp.provideRuntimeDiagnostics */, [ script, taskId ]);
     }
 
     /**
@@ -55,7 +65,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * (Note this is different from Runtime.getSemanticTokens)
      */
     public provideSemanticTokens( script: string, start: number, end: number ): WxPromise<Uint32Array> {
-        return this.sender.send<Uint32Array>(23 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
+        return this.sender.send<Uint32Array>(24 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
     }
 
     /**
@@ -68,7 +78,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * even when there is no error, the search result could be empty.
      */
     public resolveItem( query: string, localized: boolean, limit: number ): WxPromise<Result<ItemSearchResult[], string>> {
-        return this.sender.send<Result<ItemSearchResult[], string>>(24 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
+        return this.sender.send<Result<ItemSearchResult[], string>>(25 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
     }
 
     /**
@@ -80,7 +90,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * a character offset (not byte offset) and is 0-based.
      */
     public setScript( script: string, position: number ): WxPromise<void> {
-        return this.sender.sendVoid(25 /* ExtensionApp.setScript */, [ script, position ]);
+        return this.sender.sendVoid(26 /* ExtensionApp.setScript */, [ script, position ]);
     }
 }
 
@@ -89,26 +99,30 @@ export class _wxSenderImpl implements ExtensionApp {
  */
 export const _wxRecverImpl = (handler: ExtensionApp): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 20 /* ExtensionApp.getScript */: {
+        case 20 /* ExtensionApp.cancelRuntimeDiagnosticsRequest */: {
+            const [ a0 ] = args;
+            return handler.cancelRuntimeDiagnosticsRequest( a0 );
+        }
+        case 21 /* ExtensionApp.getScript */: {
             return handler.getScript();
         }
-        case 21 /* ExtensionApp.provideParserDiagnostics */: {
+        case 22 /* ExtensionApp.provideParserDiagnostics */: {
             const [ a0 ] = args;
             return handler.provideParserDiagnostics( a0 );
         }
-        case 22 /* ExtensionApp.provideRuntimeDiagnostics */: {
-            const [ a0 ] = args;
-            return handler.provideRuntimeDiagnostics( a0 );
+        case 23 /* ExtensionApp.provideRuntimeDiagnostics */: {
+            const [ a0, a1 ] = args;
+            return handler.provideRuntimeDiagnostics( a0, a1 );
         }
-        case 23 /* ExtensionApp.provideSemanticTokens */: {
+        case 24 /* ExtensionApp.provideSemanticTokens */: {
             const [ a0, a1, a2 ] = args;
             return handler.provideSemanticTokens( a0, a1, a2 );
         }
-        case 24 /* ExtensionApp.resolveItem */: {
+        case 25 /* ExtensionApp.resolveItem */: {
             const [ a0, a1, a2 ] = args;
             return handler.resolveItem( a0, a1, a2 );
         }
-        case 25 /* ExtensionApp.setScript */: {
+        case 26 /* ExtensionApp.setScript */: {
             const [ a0, a1 ] = args;
             return handler.setScript( a0, a1 );
         }

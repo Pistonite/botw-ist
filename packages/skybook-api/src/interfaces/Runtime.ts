@@ -30,7 +30,7 @@ export class _wxSenderImpl implements Runtime {
      * Abort a task by task id passed into one of the runtime functions that execute the script
      */
     public abortTask( taskId: string ): WxPromise<void> {
-        return this.sender.sendVoid(26 /* Runtime.abortTask */, [ taskId ]);
+        return this.sender.sendVoid(27 /* Runtime.abortTask */, [ taskId ]);
     }
 
     /**
@@ -40,7 +40,7 @@ export class _wxSenderImpl implements Runtime {
      * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
     public getGdtInventory( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
-        return this.sender.send<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>(27 /* Runtime.getGdtInventory */, [ script, taskId, pos ]);
+        return this.sender.send<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>(28 /* Runtime.getGdtInventory */, [ script, taskId, pos ]);
     }
 
     /**
@@ -50,7 +50,7 @@ export class _wxSenderImpl implements Runtime {
      * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
     public getOverworldItems( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>> {
-        return this.sender.send<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>>(28 /* Runtime.getOverworldItems */, [ script, taskId, pos ]);
+        return this.sender.send<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>>(29 /* Runtime.getOverworldItems */, [ script, taskId, pos ]);
     }
 
     /**
@@ -59,7 +59,7 @@ export class _wxSenderImpl implements Runtime {
      * Note that the span in the errors are byte offsets, not character offsets.
      */
     public getParserDiagnostics( script: string ): WxPromise<ErrorReport<ParserError>[]> {
-        return this.sender.send<ErrorReport<ParserError>[]>(29 /* Runtime.getParserDiagnostics */, [ script ]);
+        return this.sender.send<ErrorReport<ParserError>[]>(30 /* Runtime.getParserDiagnostics */, [ script ]);
     }
 
     /**
@@ -69,16 +69,18 @@ export class _wxSenderImpl implements Runtime {
      * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
     public getPouchList( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>> {
-        return this.sender.send<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>>(30 /* Runtime.getPouchList */, [ script, taskId, pos ]);
+        return this.sender.send<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>>(31 /* Runtime.getPouchList */, [ script, taskId, pos ]);
     }
 
     /**
      * Run the script and get diagnostics from the runtime.
      * 
      * Note that the span in the errors are byte offsets, not character offsets.
+     * 
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    public getRuntimeDiagnostics( script: string ): WxPromise<ErrorReport<RuntimeError>[]> {
-        return this.sender.send<ErrorReport<RuntimeError>[]>(31 /* Runtime.getRuntimeDiagnostics */, [ script ]);
+    public getRuntimeDiagnostics( script: string, taskId: string ): WxPromise<ErrorReport<RuntimeError>[]> {
+        return this.sender.send<ErrorReport<RuntimeError>[]>(32 /* Runtime.getRuntimeDiagnostics */, [ script, taskId ]);
     }
 
     /**
@@ -89,21 +91,21 @@ export class _wxSenderImpl implements Runtime {
      * The offsets in both inputs and outputs should be byte offsets, not character offsets.
      */
     public getSemanticTokens( script: string, start: number, end: number ): WxPromise<Uint32Array> {
-        return this.sender.send<Uint32Array>(32 /* Runtime.getSemanticTokens */, [ script, start, end ]);
+        return this.sender.send<Uint32Array>(33 /* Runtime.getSemanticTokens */, [ script, start, end ]);
     }
 
     /**
      * Get index of the step from byte position in the script
      */
     public getStepFromPos( script: string, pos: number ): WxPromise<number> {
-        return this.sender.send<number>(33 /* Runtime.getStepFromPos */, [ script, pos ]);
+        return this.sender.send<number>(34 /* Runtime.getStepFromPos */, [ script, pos ]);
     }
 
     /**
      * Initialize the runtime with the given arguments.
      */
     public initialize( args: RuntimeWorkerInitArgs ): WxPromise<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>> {
-        return this.sender.send<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>>(34 /* Runtime.initialize */, [ args ]);
+        return this.sender.send<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>>(35 /* Runtime.initialize */, [ args ]);
     }
 
     /**
@@ -111,7 +113,7 @@ export class _wxSenderImpl implements Runtime {
      * Returns an empty list if no items are found.
      */
     public resolveItemIdent( query: string ): WxPromise<ItemSearchResult[]> {
-        return this.sender.send<ItemSearchResult[]>(35 /* Runtime.resolveItemIdent */, [ query ]);
+        return this.sender.send<ItemSearchResult[]>(36 /* Runtime.resolveItemIdent */, [ query ]);
     }
 }
 
@@ -120,43 +122,43 @@ export class _wxSenderImpl implements Runtime {
  */
 export const _wxRecverImpl = (handler: Runtime): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 26 /* Runtime.abortTask */: {
+        case 27 /* Runtime.abortTask */: {
             const [ a0 ] = args;
             return handler.abortTask( a0 );
         }
-        case 27 /* Runtime.getGdtInventory */: {
+        case 28 /* Runtime.getGdtInventory */: {
             const [ a0, a1, a2 ] = args;
             return handler.getGdtInventory( a0, a1, a2 );
         }
-        case 28 /* Runtime.getOverworldItems */: {
+        case 29 /* Runtime.getOverworldItems */: {
             const [ a0, a1, a2 ] = args;
             return handler.getOverworldItems( a0, a1, a2 );
         }
-        case 29 /* Runtime.getParserDiagnostics */: {
+        case 30 /* Runtime.getParserDiagnostics */: {
             const [ a0 ] = args;
             return handler.getParserDiagnostics( a0 );
         }
-        case 30 /* Runtime.getPouchList */: {
+        case 31 /* Runtime.getPouchList */: {
             const [ a0, a1, a2 ] = args;
             return handler.getPouchList( a0, a1, a2 );
         }
-        case 31 /* Runtime.getRuntimeDiagnostics */: {
-            const [ a0 ] = args;
-            return handler.getRuntimeDiagnostics( a0 );
+        case 32 /* Runtime.getRuntimeDiagnostics */: {
+            const [ a0, a1 ] = args;
+            return handler.getRuntimeDiagnostics( a0, a1 );
         }
-        case 32 /* Runtime.getSemanticTokens */: {
+        case 33 /* Runtime.getSemanticTokens */: {
             const [ a0, a1, a2 ] = args;
             return handler.getSemanticTokens( a0, a1, a2 );
         }
-        case 33 /* Runtime.getStepFromPos */: {
+        case 34 /* Runtime.getStepFromPos */: {
             const [ a0, a1 ] = args;
             return handler.getStepFromPos( a0, a1 );
         }
-        case 34 /* Runtime.initialize */: {
+        case 35 /* Runtime.initialize */: {
             const [ a0 ] = args;
             return handler.initialize( a0 );
         }
-        case 35 /* Runtime.resolveItemIdent */: {
+        case 36 /* Runtime.resolveItemIdent */: {
             const [ a0 ] = args;
             return handler.resolveItemIdent( a0 );
         }

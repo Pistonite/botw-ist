@@ -50,8 +50,8 @@ export const createRuntimeWorker = (
         abortTask: wxWrapHandler((taskId) => {
             taskMgr.abort(taskId);
         }),
-        getRuntimeDiagnostics: async (script) => {
-            return { val: unwrap(await runMgr.getRuntimeDiagnostics(script)) };
+        getRuntimeDiagnostics: async (script, taskId) => {
+            return { val: unwrap(await runMgr.getRuntimeDiagnostics(script, taskId)) };
         },
         getPouchList: async (script, taskId, pos) => {
             return {

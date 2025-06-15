@@ -1,6 +1,5 @@
 import type { Result } from "@pistonite/pure/result";
 import type { AsyncErc } from "@pistonite/pure/memory";
-import { v4 as makeUUID } from "uuid";
 
 import type {
     ErrorReport,
@@ -13,6 +12,7 @@ import type {
 
 import {
     type NativeApi,
+    type ParseOutput,
     type RunOutput,
     makeRunOutputErc,
 } from "./NativeApi.ts";
@@ -21,6 +21,27 @@ import { type Pwr, type WorkerError, nullptrError } from "./Error.ts";
 import type { TaskMgr } from "./TaskMgr.ts";
 import { sendPerfData } from "./AppCall.ts";
 
+type RunAwaiter = {
+    /** Resolve function to take the output */
+    resolve: (x: Result<AsyncErc<RunOutput>, WorkerError>) => void,
+    /** Task handle id for this run task */
+    taskId: string,
+    /** Byte pos to execute until for this task */
+    executeToBytePos: number,
+};
+
+type RunContext = {
+    awaiters: RunAwaiter[],
+    newNotifyBytePositions: number[],
+    lastNotifyBytePos: number, // -1 means not notified yet
+    lastNotifyOutputErc: AsyncErc<RunOutput>
+};
+const makeRunContext = (): RunContext => {
+    return {awaiters: [], 
+        newNotifyBytePositions: [],
+        lastNotifyBytePos: -1, lastNotifyOutputErc: makeRunOutputErc(undefined)};
+}
+
 /** Manages caching and batching run (execute) calls */
 export class RunMgr {
     private napi: NativeApi;
@@ -28,10 +49,8 @@ export class RunMgr {
     private taskMgr: TaskMgr;
 
     private isRunning: boolean;
-    private runAwaiters: ((
-        x: Result<AsyncErc<RunOutput>, WorkerError>,
-    ) => void)[] = [];
-    private runAwaiterTaskIds: string[] = [];
+    /** Context of the run that is currently running (or a blank context if no run is running) */
+    private runContext: RunContext;
 
     private lastScript: string;
     private serial: number;
@@ -42,8 +61,7 @@ export class RunMgr {
         this.taskMgr = taskMgr;
         this.parseMgr = parseMgr;
         this.isRunning = false;
-        this.runAwaiters = [];
-        this.runAwaiterTaskIds = [];
+        this.runContext = makeRunContext();
         this.lastScript = "";
         this.serial = 0;
         this.cachedErc = makeRunOutputErc(undefined);
@@ -51,12 +69,13 @@ export class RunMgr {
 
     public getRuntimeDiagnostics(
         script: string,
+        taskId: string,
     ): Pwr<ErrorReport<RuntimeError>[]> {
         // Runs for diagnostics are not abortable for simplicity
-        const taskId = makeUUID();
         return this.withParseAndRunOutput(
             script,
             taskId,
+            -1,
             (_, runOutputBorrowed) => {
                 return this.napi.getRunErrors(runOutputBorrowed);
             },
@@ -71,6 +90,7 @@ export class RunMgr {
         return this.withParseAndRunOutput(
             script,
             taskId,
+            bytePos,
             (parseOutputBorrowed, runOutputBorrowed) => {
                 return this.napi.getPouchList(
                     runOutputBorrowed,
@@ -89,6 +109,7 @@ export class RunMgr {
         return this.withParseAndRunOutput(
             script,
             taskId,
+            bytePos,
             (parseOutputBorrowed, runOutputBorrowed) => {
                 return this.napi.getGdtInventory(
                     runOutputBorrowed,
@@ -107,6 +128,7 @@ export class RunMgr {
         return this.withParseAndRunOutput(
             script,
             taskId,
+            bytePos,
             (parseOutputBorrowed, runOutputBorrowed) => {
                 return this.napi.getOverworldItems(
                     runOutputBorrowed,
@@ -124,6 +146,7 @@ export class RunMgr {
     private async withParseAndRunOutput<T>(
         script: string,
         taskId: string,
+        executeToBytePos: number,
         fn: (parseOutputBorrowed: number, runOutputBorrowed: number) => Pwr<T>,
     ): Pwr<T> {
         const parseOutput = await this.parseMgr.parseScript(script);
@@ -138,7 +161,7 @@ export class RunMgr {
                 err: nullptrError("parseScript (in run) returned nullptr"),
             };
         }
-        const runOutput = await this.executeScript(script, taskId);
+        const runOutput = await this.executeScript(script, taskId, executeToBytePos, await parseOutputErc.getStrong());
         if (runOutput.err) {
             await parseOutputErc.free();
             return runOutput;
@@ -158,6 +181,8 @@ export class RunMgr {
     private async executeScript(
         script: string,
         taskId: string,
+        executeToBytePos: number,
+        parseOutputErc: AsyncErc<ParseOutput>
     ): Pwr<AsyncErc<RunOutput>> {
         const isScriptUpToDate = this.lastScript === script;
         if (
@@ -169,12 +194,21 @@ export class RunMgr {
         }
 
         if (this.isRunning && isScriptUpToDate) {
-            // put the resolve in the awaiters synchronously
+            // if the current run is already past the executeToBytePos
+            // then we can just resolve with the latest result in the context
+            if (this.runContext.lastNotifyBytePos >= 0 && this.runContext.lastNotifyBytePos > executeToBytePos) {
+                if (this.runContext.lastNotifyOutputErc.value) {
+                    return { val: await this.runContext.lastNotifyOutputErc.getStrong() };
+                }
+            }
+            // otherwise, add this as an awaiter
             const outputPromise = new Promise<
                 Result<AsyncErc<RunOutput>, WorkerError>
-            >((resolve) => {
-                this.runAwaiters.push(resolve);
-                this.runAwaiterTaskIds.push(taskId);
+                >((resolve) => {
+                    this.runContext.awaiters.push({resolve, taskId, executeToBytePos});
+                    if (executeToBytePos >= 0) {
+                        this.runContext.newNotifyBytePositions.push(executeToBytePos);
+                    }
             });
             // mark task as running, but not holding on to a resource
             this.taskMgr.run(taskId);
@@ -182,72 +216,120 @@ export class RunMgr {
             return output;
         }
 
-        return await this.executeScriptInternal(script, taskId);
+        // trigger a new run
+        return await this.executeScriptTriggeredByTask(script, taskId, executeToBytePos, parseOutputErc);
     }
-
     /** Parse and execute the script through native API. Waits to acquire a native resource handle first. */
-    private async executeScriptInternal(
+    private async executeScriptTriggeredByTask(
         script: string,
         taskId: string,
+        executeToBytePos: number,
+        parseOutputErc: AsyncErc<ParseOutput>,
     ): Pwr<AsyncErc<RunOutput>> {
+        console.log(`[worker] execute script triggered by ${taskId}`);
         this.taskMgr.register(taskId);
         this.isRunning = true;
-        // clear the awaiters. Previous runs still have their awaiters,
-        // but newer awaiters will be added to this run
-        this.runAwaiters = [];
-        this.runAwaiterTaskIds = [];
-        const awaitersForThisRun = this.runAwaiters;
-        const awaiterTaskIdsForThisRun = this.runAwaiterTaskIds;
+        this.lastScript = script;
+        // make a new context for this run
+        const thisContext = makeRunContext();
+
+        // add the task that triggered this run as an awaiter.
+        // this is to ensure the task can finish early without waiting
+        // for the whole run to finish
+        if (executeToBytePos >= 0) {
+            thisContext.newNotifyBytePositions = [executeToBytePos];
+        }
+        const outputPromise = new Promise<
+            Result<AsyncErc<RunOutput>, WorkerError>
+            >((resolve) => {
+                thisContext.awaiters.push({
+                    resolve,
+                    taskId,
+                    executeToBytePos
+                })
+            });
+        this.runContext = thisContext;
+
+        let output: Awaited<Pwr<AsyncErc<RunOutput>>> | undefined = undefined;
+        let fullRunPromise: Promise<void> | undefined = undefined;
+        try {
+            fullRunPromise = this.executeScriptInternal(taskId, parseOutputErc, thisContext);
+            // wait for the task to finish
+            output = await outputPromise;
+        } catch (e) {
+            console.error("Error thrown from executeScriptTriggeredByTask, this should not happen. This catch exists as a fail-safe for memory cleanup.");
+            console.error(e);
+        }
+
+        if (fullRunPromise) {
+            // schedule cleanup of context
+            void fullRunPromise.finally(() => {
+                void thisContext.lastNotifyOutputErc.free()
+            })
+        } else {
+            // no run happened because of error, cleanup now
+            void thisContext.lastNotifyOutputErc.free()
+        }
+
+        if (output) {
+            return output;
+        }
+
+        // if output is not set, it must be because of the throw
+        return { err: { type: "UnexpectedThrow" } };
+    }
+
+    /** 
+     * Parse and execute the script through native API. Waits to acquire a native resource handle first.
+     *
+     * Consumes the ParseOutput
+     */
+    private async executeScriptInternal(
+        // script: string,
+        triggeringTaskId: string,
+        parseOutputErc: AsyncErc<ParseOutput>,
+        thisContext: RunContext,
+    ): Promise<void> {//Pwr<AsyncErc<RunOutput>> {
         const resolveAwaiters = (
             x: Result<AsyncErc<RunOutput>, WorkerError>,
         ) => {
-            for (const taskId of awaiterTaskIdsForThisRun) {
+            for (const { resolve, taskId } of thisContext.awaiters) {
                 this.taskMgr.finish(taskId);
-            }
-            for (const resolve of awaitersForThisRun) {
                 resolve(x);
             }
         };
-        const checkAborted = () => {
-            return (
-                this.taskMgr.isAborted(taskId) &&
-                this.taskMgr.areAllAborted(awaiterTaskIdsForThisRun)
-            );
+        // helper to check if all tasks are aborted
+        const areAllTasksAborted = () => {
+            if (thisContext.awaiters.length === 0 ) {
+                return false;
+            }
+            for (const {taskId} of thisContext.awaiters) {
+                if (!this.taskMgr.isAborted(taskId)) {
+                    return false;
+                } 
+            }
+            return true;
         };
 
         const start = performance.now();
-        console.log(`[worker] task: ${taskId} start executing script`);
 
         this.serial++;
         const serialBefore = this.serial;
-        this.lastScript = script;
-        const parseOutputErc = await this.parseMgr.parseScript(script);
-        if (parseOutputErc.err) {
-            // failed to parse
-            this.taskMgr.finish(taskId);
-            this.handleError(serialBefore);
-            resolveAwaiters(parseOutputErc);
-            return parseOutputErc;
-        }
 
-        // manually manage the parse output pointer
-        const parseOutputRaw = parseOutputErc.val.take();
+        // Take it out of Erc, we will free it manually (by passing it into runParsed)
+        const parseOutputRaw = parseOutputErc.take();
         let outputRaw: number | undefined = undefined;
         // shouldn't be possible, but we will just return nullptr if parseoutput is null
         if (parseOutputRaw) {
             const stepCount = await this.napi.getStepCount(parseOutputRaw);
             if (stepCount.err) {
-                this.taskMgr.finish(taskId);
                 this.handleError(serialBefore);
                 resolveAwaiters(stepCount);
-                return stepCount;
+                return;
             }
 
-            // ready to execute the steps
-            // first check it's not aborted yet
-            if (checkAborted()) {
-                console.warn("aborted???");
-                this.taskMgr.finish(taskId);
+            // ready to execute the steps - first check it's not aborted yet
+            if (areAllTasksAborted()) {
                 this.handleError(serialBefore);
                 const result = {
                     err: {
@@ -255,36 +337,70 @@ export class RunMgr {
                     },
                 } as const;
                 resolveAwaiters(result);
-                return result;
+                return;
             }
 
             // request resource
             const nativeHandle =
-                await this.taskMgr.acquireNativeResourceAndRun(taskId);
+                await this.taskMgr.acquireNativeResourceAndRun(triggeringTaskId);
             if (nativeHandle.err) {
-                this.taskMgr.finish(taskId);
                 this.handleError(serialBefore);
                 resolveAwaiters(nativeHandle);
-                return nativeHandle;
+                return;
             }
 
-            // execute with the native resource handle
+            const initialNotifyPos = thisContext.newNotifyBytePositions;
+            thisContext.newNotifyBytePositions = [];
 
+            // execute with the native resource handle
             // passing in 0 if somehow the handle is null
             // should be fine since the native has redundant null checks
             const outputResult = await this.napi.runParsed(
                 parseOutputRaw,
                 nativeHandle.val.value || 0,
+                initialNotifyPos,
+                async (upToBytePos, outputRaw) => {
+                    const outputErc = makeRunOutputErc(outputRaw);
+                    const awaiters=  thisContext.awaiters;
+                    thisContext.awaiters = [];
+                    for (const x of awaiters) {
+                        const { resolve, taskId, executeToBytePos } = x;
+                        if (executeToBytePos < 0 || upToBytePos <= executeToBytePos) {
+                            thisContext.awaiters.push(x);
+                            continue;
+                        }
+                        this.taskMgr.finish(taskId);
+                        resolve({ val: await outputErc.getStrong()});
+                    }
+                    const newNotifyBytePositions: number[] = [];
+                    const len = thisContext.newNotifyBytePositions.length;
+                    for (let i = 0; i < len; ++i) {
+                        const x = thisContext.newNotifyBytePositions[i];
+                        if (x < 0) {
+                            continue;
+                        }
+                        if (upToBytePos <= x) {
+                            newNotifyBytePositions.push(x);
+                        }
+                    }
+                    thisContext.lastNotifyBytePos = upToBytePos;
+                    thisContext.newNotifyBytePositions = [];
+                    void thisContext.lastNotifyOutputErc.free();
+                    thisContext.lastNotifyOutputErc = outputErc;
+                    if (newNotifyBytePositions.length) {
+                        return new Uint32Array(newNotifyBytePositions);
+                    }
+                    return undefined;
+                }
             );
+
             // if the run failed (or aborted), don't report performance data
             if (outputResult.err) {
-                this.taskMgr.finish(taskId);
                 this.handleError(serialBefore);
                 resolveAwaiters(outputResult);
-                return outputResult;
+                return;
             }
             if (outputResult.val.type === "Aborted") {
-                this.taskMgr.finish(taskId);
                 this.handleError(serialBefore);
                 const result = {
                     err: {
@@ -292,7 +408,7 @@ export class RunMgr {
                     },
                 } as const;
                 resolveAwaiters(result);
-                return result;
+                return;
             }
 
             // TODO: have runtime report the actual instructions count in output
@@ -303,11 +419,7 @@ export class RunMgr {
             void sendPerfData({ ips, sps });
 
             // run is done - not abortable now :)
-            console.log(
-                `[worker] finished tasks:\n  ${taskId}\n  ${awaiterTaskIdsForThisRun.join("\n  ")}`,
-            );
-            this.taskMgr.finish(taskId);
-            for (const taskId of awaiterTaskIdsForThisRun) {
+            for (const {taskId} of thisContext.awaiters) {
                 this.taskMgr.finish(taskId);
             }
             outputRaw = outputResult.val.value;
@@ -322,19 +434,17 @@ export class RunMgr {
         // update cached result if we are the latest run
         if (serialBefore === this.serial) {
             this.isRunning = false;
-            this.runAwaiters = [];
+            this.runContext = makeRunContext();
             await this.cachedErc.assign(outputRaw);
             returnStrongErc = await this.cachedErc.getStrong();
         } else {
             returnStrongErc = makeRunOutputErc(outputRaw);
         }
 
-        // resolve all awaiters - each must get its own strong pointer
-        for (const resolve of awaitersForThisRun) {
+        // resolve remaining awaiters
+        for (const {resolve} of thisContext.awaiters) {
             resolve({ val: await returnStrongErc.getStrong() });
         }
-
-        return { val: returnStrongErc };
     }
 
     private handleError(serialBefore: number) {
@@ -342,7 +452,7 @@ export class RunMgr {
             return;
         }
         this.isRunning = false;
-        this.runAwaiters = [];
+        this.runContext = makeRunContext();
         void this.cachedErc.free();
     }
 }
