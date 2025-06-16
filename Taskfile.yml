@@ -89,9 +89,7 @@ tasks:
       - localization:pull-artifacts
       - item-assets:pull-artifacts-ts
       - item-system:pull-artifacts-ts
-      # - parser:pull-artifacts
-      # - blueflame-deps:pull-artifacts
-      # - runtime-tests:pull-artifacts
+      - parser:pull-artifacts
     cmds:
       - pnpm install --frozen-lockfile
       - task: post-install
@@ -104,8 +102,8 @@ tasks:
       - blueflame-deps:pull-artifacts
       - runtime-tests:pull-artifacts
     cmds:
-      # - pnpm install --frozen-lockfile
-      # - task: post-install
+      - pnpm install --frozen-lockfile
+      - task: post-install
       - task: check-layer-3
 
   check:
