@@ -4,7 +4,7 @@ use blueflame::processor::{self, Cpu1, Cpu2, CrashReport};
 use teleparse::Span;
 
 use crate::error::{Report, sim_error, sim_warning};
-use crate::{exec, sim, ErrorReport};
+use crate::{ErrorReport, exec, sim};
 
 impl sim::State {
     // these are state context helpers that commands depend on
@@ -148,7 +148,11 @@ impl Context<&mut Cpu1> {
     }
 
     /// Execute the closure on the CPU and the game process, with reporting functionality
-    pub fn execute_reporting<F>(self, mut state: sim::GameState, f: F) -> Result<Report<sim::GameState>, CrashReport>
+    pub fn execute_reporting<F>(
+        self,
+        mut state: sim::GameState,
+        f: F,
+    ) -> Result<Report<sim::GameState>, CrashReport>
     where
         F: FnOnce(Context<&mut Cpu2>, &mut Vec<ErrorReport>) -> Result<(), processor::Error>,
     {
@@ -187,7 +191,7 @@ impl IntoGameReport for Result<sim::GameState, CrashReport> {
 impl IntoGameReport for Result<Report<sim::GameState>, CrashReport> {
     fn into_report(self, span: Span) -> Report<sim::Game> {
         match self {
-            Ok(report) => report.map(|x| sim::Game::Running(x)),
+            Ok(report) => report.map(sim::Game::Running),
             Err(crash_report) => {
                 Report::error(sim::Game::Crashed(crash_report), sim_error!(&span, Crash))
             }

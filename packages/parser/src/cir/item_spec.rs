@@ -1,7 +1,7 @@
 use teleparse::{ToSpan, tp};
 
 use crate::cir;
-use crate::error::{cir_push_error, cir_push_warning, ErrorReport};
+use crate::error::{ErrorReport, cir_push_error, cir_push_warning};
 use crate::search::{self, QuotedItemResolver, ResolvedItem};
 use crate::syn;
 use crate::util;
@@ -83,10 +83,15 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
     match list {
         syn::ItemListFinite::Single(item) => {
             if let Some(parsed_item) = parse_item(item, resolver, errors).await {
-                if let Some(m) = &parsed_item.meta && m.position.is_some() {
+                if let Some(m) = &parsed_item.meta
+                    && m.position.is_some()
+                {
                     cir_push_warning!(errors, &item.span(), UnusedItemPosition)
                 }
-                out_item_specs.push(ItemSpec { amount: 1, item: parsed_item });
+                out_item_specs.push(ItemSpec {
+                    amount: 1,
+                    item: parsed_item,
+                });
             }
         }
         syn::ItemListFinite::List(items) => {
@@ -100,10 +105,15 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
                 };
 
                 if let Some(parsed_item) = parse_item(&item.item, resolver, errors).await {
-                    if let Some(m) = &parsed_item.meta && m.position.is_some() {
+                    if let Some(m) = &parsed_item.meta
+                        && m.position.is_some()
+                    {
                         cir_push_warning!(errors, &item.span(), UnusedItemPosition)
                     }
-                    out_item_specs.push(ItemSpec { amount, item: parsed_item });
+                    out_item_specs.push(ItemSpec {
+                        amount,
+                        item: parsed_item,
+                    });
                 }
             }
         }

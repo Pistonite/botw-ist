@@ -56,7 +56,7 @@ impl PartialEq for ItemMeta {
             && self.effect_level.map(|x| x.to_bits()) == other.effect_level.map(|x| x.to_bits())
             && self.ingredients == other.ingredients
             && self.star == other.star
-        && self.position == other.position
+            && self.position == other.position
     }
 }
 impl Eq for ItemMeta {}
@@ -267,22 +267,24 @@ impl MetaParser for &mut ItemMeta {
                     };
                     match self.position.take() {
                         None | Some(ItemPosition::FromSlot(_)) => {
-                            self.position = Some(ItemPosition::TabCategoryAndSlot(cir::CategorySpec {
-                                category,
-                                amount: 1,
-                                row: 1,
-                                col: 1
-                            }))
+                            self.position =
+                                Some(ItemPosition::TabCategoryAndSlot(cir::CategorySpec {
+                                    category,
+                                    amount: 1,
+                                    row: 1,
+                                    col: 1,
+                                }))
                         }
                         Some(ItemPosition::TabIdxAndSlot(tab, slot)) => {
                             let row = 4.min((slot / 5 + 1) as i8);
                             let col = (slot % 5 + 1) as i8;
-                            self.position = Some(ItemPosition::TabCategoryAndSlot(cir::CategorySpec {
-                                category,
-                                amount: tab as i64,
-                                row,
-                                col,
-                            }))
+                            self.position =
+                                Some(ItemPosition::TabCategoryAndSlot(cir::CategorySpec {
+                                    category,
+                                    amount: tab as i64,
+                                    row,
+                                    col,
+                                }))
                         }
                         Some(ItemPosition::TabCategoryAndSlot(mut cat)) => {
                             cat.category = category;
@@ -292,7 +294,7 @@ impl MetaParser for &mut ItemMeta {
                 }
                 Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
                 Err(e) => errors.push(e),
-            }
+            },
             // for simplicity we only allow row/col after category
             // is already specified, for now
             "row" => match cir::parse_optional_meta_value(value.as_ref()) {
@@ -300,7 +302,7 @@ impl MetaParser for &mut ItemMeta {
                     Some(ItemPosition::TabCategoryAndSlot(cat)) => {
                         cat.row = x.clamp(1, 4) as i8;
                     }
-                    _ => cir_push_warning!(errors, &span, UnusedMetaKey(key_str))
+                    _ => cir_push_warning!(errors, &span, UnusedMetaKey(key_str)),
                 },
                 Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
                 Err(e) => errors.push(e),
