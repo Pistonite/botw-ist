@@ -8,7 +8,6 @@ import type { MetaValue } from "./MetaValue";
 export type ParserError =
     | { type: "Unexpected"; data: string }
     | { type: "SyntaxUnexpected" }
-    | { type: "SyntaxUnexpectedExpecting"; data: string }
     | { type: "SyntaxUnexpectedEof" }
     | { type: "InvalidItem"; data: string }
     | { type: "InvalidEmptyItem" }
@@ -21,12 +20,14 @@ export type ParserError =
     | { type: "InvalidCookEffect"; data: string }
     | { type: "TooManyIngredients" }
     | { type: "InvalidArmorStarNum"; data: number }
-    | { type: "InvalidSlotClause"; data: number }
+    | { type: "InvalidSlot"; data: number }
     | { type: "InvalidTimesClause"; data: number }
     | { type: "InvalidTrial"; data: string }
     | { type: "InvalidCategory"; data: Category }
+    | { type: "InvalidCategoryName"; data: string }
     | { type: "InvalidInventoryRow"; data: number }
     | { type: "InvalidInventoryCol"; data: number }
+    | { type: "UnusedItemPosition" }
     | { type: "UnexpectedMetaKeyWithValue"; data: string }
     | { type: "InvalidStringLength"; data: number }
     | { type: "GdtTypeNotSet" }

@@ -4,7 +4,7 @@ use blueflame::processor::{self, Cpu1, Cpu2, CrashReport};
 use teleparse::Span;
 
 use crate::error::{Report, sim_error, sim_warning};
-use crate::{exec, sim};
+use crate::{ErrorReport, exec, sim};
 
 impl sim::State {
     // these are state context helpers that commands depend on
@@ -146,6 +146,31 @@ impl Context<&mut Cpu1> {
         })?;
         Ok(state)
     }
+
+    /// Execute the closure on the CPU and the game process, with reporting functionality
+    pub fn execute_reporting<F>(
+        self,
+        mut state: sim::GameState,
+        f: F,
+    ) -> Result<Report<sim::GameState>, CrashReport>
+    where
+        F: FnOnce(Context<&mut Cpu2>, &mut Vec<ErrorReport>) -> Result<(), processor::Error>,
+    {
+        let span = self.span;
+        let handle = self.handle;
+        let cpu1 = self.inner;
+        let mut cpu2 = Cpu2::new(cpu1, &mut state.process);
+        let mut errors = vec![];
+        cpu2.with_crash_report(|cpu2| {
+            let ctx = Context {
+                span,
+                handle,
+                inner: cpu2,
+            };
+            f(ctx, &mut errors)
+        })?;
+        Ok(Report::with_errors(state, errors))
+    }
 }
 
 pub trait IntoGameReport {
@@ -156,6 +181,17 @@ impl IntoGameReport for Result<sim::GameState, CrashReport> {
     fn into_report(self, span: Span) -> Report<sim::Game> {
         match self {
             Ok(game_state) => Report::new(sim::Game::Running(game_state)),
+            Err(crash_report) => {
+                Report::error(sim::Game::Crashed(crash_report), sim_error!(&span, Crash))
+            }
+        }
+    }
+}
+
+impl IntoGameReport for Result<Report<sim::GameState>, CrashReport> {
+    fn into_report(self, span: Span) -> Report<sim::Game> {
+        match self {
+            Ok(report) => report.map(sim::Game::Running),
             Err(crash_report) => {
                 Report::error(sim::Game::Crashed(crash_report), sim_error!(&span, Crash))
             }

@@ -36,6 +36,9 @@ export const translateParserError = (
             const category = translateCategory(error.data, translator);
             return translator(key, { arg: category });
         }
+        case "InvalidCategoryName": {
+            return translator(key, { arg: error.data });
+        }
         case "InvalidEquipmentSlotNum": {
             const [categoryStr, num] = error.data;
             const category = translateCategory(categoryStr, translator);

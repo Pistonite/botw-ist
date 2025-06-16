@@ -118,8 +118,8 @@ impl GameState {
                 let amount = item.amount;
                 let item = &item.item;
                 let is_cook_item = item.is_cook_item();
+                let meta = item.meta.as_ref();
                 for _ in 0..amount {
-                    let meta = item.meta.as_ref();
                     if is_cook_item {
                         linker::get_cook_item(
                             ctx.inner,

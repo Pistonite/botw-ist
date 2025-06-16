@@ -2,6 +2,8 @@ use derive_more::derive::{Deref, DerefMut};
 use serde::Serialize;
 use teleparse::{derive_lexicon, derive_syntax, tp};
 
+use crate::syn;
+
 /// Token type
 #[derive(Serialize)]
 #[derive_lexicon]
@@ -40,9 +42,6 @@ pub enum TT {
     Number,
 
     #[teleparse(terminal(
-        // KwInit = "init",
-        //         CmdInitGdt = "init-gdt",
-        //
         KwGet = "get",
         KwBuy = "buy",
 
@@ -155,11 +154,8 @@ pub enum TT {
         KwKeyItems = "key-items",
         KwTime = "time",
         KwTimes = "times",
-        KwFrom = "from",
-        KwIn = "in",
         KwSlot = "slot",
         KwSlots = "slots",
-        KwAt = "at",
         KwTo = "to",
     ))]
     Keyword,
@@ -204,6 +200,8 @@ pub struct AngledWord {
 pub enum MetaValueLiteral {
     /// A string literal - could be true/false or a string
     Word(tp::String<tp::Nev<Word>>),
+    /// Category literal as a string
+    Category(tp::String<syn::Category>),
     /// A numeric literal
     #[teleparse(semantic(Number))]
     Number(MetaValueNumber),
@@ -231,37 +229,12 @@ pub enum NumOrAll {
     Number(Number),
 }
 
-// /// A number or the string "infinite"
-// #[derive_syntax]
-// #[derive(Debug)]
-// pub enum NumOrInfinite {
-//     Infinite(KwInfinite),
-//     Number(Number),
-// }
-
 /// Colon or equal as separator
 #[derive_syntax]
 #[derive(Debug)]
 pub enum ColonOrEqual {
     Colon(SymColon),
     Equal(SymEqual),
-}
-
-/// Syntax for specifying a slot (:from slot X, :in slot X, :at slot X)
-#[derive_syntax]
-#[derive(Debug)]
-pub struct SlotClause {
-    pub kw: KwSlotClause,
-    pub kw_slot: KwSlot,
-    pub idx: Number,
-}
-
-#[derive_syntax]
-#[derive(Debug)]
-pub enum KwSlotClause {
-    From(KwFrom),
-    In(KwIn),
-    At(KwAt),
 }
 
 #[derive_syntax]

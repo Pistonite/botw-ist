@@ -17,8 +17,6 @@ pub enum ParserError {
     Unexpected(String),
     #[error("unexpected syntax")]
     SyntaxUnexpected,
-    #[error("unexpected syntax, expecting: {0}")]
-    SyntaxUnexpectedExpecting(String),
     #[error("unexpected end of input")]
     SyntaxUnexpectedEof,
     #[error("failed to resolve item: {0}")]
@@ -43,18 +41,22 @@ pub enum ParserError {
     TooManyIngredients,
     #[error("armor star number must be between 0 and 4, got: {0}")]
     InvalidArmorStarNum(i32),
-    #[error("`{0}` is not a valid item slot specifier (must be at least 1)")]
-    InvalidSlotClause(i32),
-    #[error("`{0}` is not a valid number for times (must be at least 1)")]
+    #[error("`{0}` is not a valid item slot specifier")]
+    InvalidSlot(i32),
+    #[error("`{0}` is not a valid number for times (must be 0-19)")]
     InvalidTimesClause(i32),
     #[error("`{0}` is not a valid trial name")]
     InvalidTrial(String),
     #[error("category `{0:?}` is not allowed in this context")]
     InvalidCategory(cir::Category),
+    #[error("`{0}` is not a valid category")]
+    InvalidCategoryName(String),
     #[error("`{0}` is not a valid row in the inventory, valid values are [1, 2, 3, 4]")]
     InvalidInventoryRow(i32),
     #[error("`{0}` is not a valid column in the inventory, valid values are [1, 2, 3, 4, 5]")]
     InvalidInventoryCol(i32),
+    #[error("Specifying position for the item has no effect in this command")]
+    UnusedItemPosition,
     #[error("The `{0}` key should not have a value when used in this context")]
     UnexpectedMetaKeyWithValue(String),
     #[error("The maximum length allowed for the string is {0} in this context")]

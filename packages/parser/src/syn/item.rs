@@ -45,23 +45,6 @@ pub enum ItemOrCategory {
     Category(syn::Category),
 }
 
-/// Syntax for specifying a single item with a slot
-#[derive_syntax]
-#[derive(Debug)]
-pub struct ItemOrCategoryWithSlot {
-    pub item: ItemOrCategory,
-    pub slot: tp::Option<syn::SlotClause>,
-}
-
-// /// Syntax for an item prefixed with an amount or "infinite"
-// #[derive_syntax]
-// #[derive(Debug)]
-// pub struct NumberedOrInfiniteItem {
-//     #[teleparse(semantic(Amount))]
-//     pub num: NumOrInfinite,
-//     pub item: Item,
-// }
-
 /// Syntax for an item
 ///
 /// # Example
@@ -115,6 +98,7 @@ pub struct ItemMetaKeyValue {
 #[derive(Debug)]
 pub enum ItemMetaKey {
     Time(syn::KwTime),
+    Slot(syn::KwSlot),
     Equip(syn::KwEquip),
     Other(syn::Word),
 }

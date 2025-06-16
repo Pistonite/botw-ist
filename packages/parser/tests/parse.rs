@@ -12,8 +12,8 @@ async fn parse_simple() -> anyhow::Result<()> {
         get 4 arrow;
         unequip arrow;
         get "古代箭"
-        eat axe in slot 3;
-        eat inf in slot 5
+        eat axe[from-slot=3];
+        eat inf[tab=5,slot=6];
         pick-up 1 weapon;
 
         equip ice_arrow
