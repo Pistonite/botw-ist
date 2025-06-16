@@ -55,7 +55,18 @@ export interface ExtensionApp {
     ): WxPromise<Uint32Array>;
 
     /**
-     * Get the diagnostics from running the script
+     * Get the diagnostics from running the script.
+     *
+     * The taskId should be a UUID, which can be used to cancel the diagnostic
+     * request if it's no longer needed to save CPU resource
      */
-    provideRuntimeDiagnostics(script: string): WxPromise<Diagnostic[]>;
+    provideRuntimeDiagnostics(
+        script: string,
+        taskId: string,
+    ): WxPromise<Diagnostic[]>;
+
+    /**
+     * Cancel a previous request for runtime diagnostics.
+     */
+    cancelRuntimeDiagnosticsRequest(taskId: string): WxPromise<void>;
 }

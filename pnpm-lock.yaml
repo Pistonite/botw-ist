@@ -425,9 +425,6 @@ importers:
       lru-cache:
         specifier: ^11.0.2
         version: 11.1.0
-      uuid:
-        specifier: 'catalog:'
-        version: 11.1.0
     devDependencies:
       mono-dev:
         specifier: workspace:*

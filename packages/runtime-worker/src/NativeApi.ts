@@ -86,6 +86,7 @@ export interface NativeApi {
     runParsed(
         parsedOutputPtr: number,
         taskHandlePtr: number,
+        notifyFn: (upToBytePos: number, outputPtr: number) => Promise<void>,
     ): Pwr<MaybeAborted<number>>;
 
     /** Get the errors from the run output. Does not consume the ptr */

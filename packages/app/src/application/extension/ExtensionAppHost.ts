@@ -88,8 +88,9 @@ class ExtensionAppHost implements ExtensionApp {
 
     public async provideRuntimeDiagnostics(
         script: string,
+        taskId: string,
     ): WxPromise<Diagnostic[]> {
-        const result = await this.runtime.getRuntimeDiagnostics(script);
+        const result = await this.runtime.getRuntimeDiagnostics(script, taskId);
         if (result.err) {
             return result;
         }
@@ -100,6 +101,12 @@ class ExtensionAppHost implements ExtensionApp {
                 translateRuntimeError,
             ),
         };
+    }
+
+    public async cancelRuntimeDiagnosticsRequest(
+        taskId: string,
+    ): WxPromise<void> {
+        return await this.runtime.abortTask(taskId);
     }
 
     public async provideSemanticTokens(

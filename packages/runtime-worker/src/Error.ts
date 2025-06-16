@@ -19,6 +19,9 @@ export type WorkerError = {
     | {
           type: "UnexpectedNullptr";
       }
+    | {
+          type: "UnexpectedThrow";
+      }
 );
 
 export type Pwr<T> = Promise<Result<T, WorkerError>>;

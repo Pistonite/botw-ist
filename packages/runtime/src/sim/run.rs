@@ -27,56 +27,101 @@ impl Run {
     /// All errors that happened, including internal (e.g. game crash) or
     /// external are collected in the `RunOutput`.
     pub async fn run_parsed(
-        mut self,
+        self,
         parsed: Arc<ParseOutput>,
         runtime: &sim::Runtime,
     ) -> MaybeAborted<sim::RunOutput> {
-        // let commands = parsed.steps.iter().map(|x| x.command.clone()).collect::<Vec<_>>();
+        self.run_parsed_with_notify(parsed, runtime, |_, _| async {})
+            .await
+    }
+
+    /// See [`run_parsed`](Self::run_parsed). In addition, `notify_fn` will be called
+    /// after each step with the end byte pos of the step and the state after that step.
+    ///
+    /// Use this if you need to use partial output before the whole run is finished.
+    /// Note that if the run is aborted, then the notification will not be sent after the run is aborted.
+    ///
+    /// The notification will not be sent after the last step
+    pub async fn run_parsed_with_notify<TFuture, F>(
+        mut self,
+        parsed: Arc<ParseOutput>,
+        runtime: &sim::Runtime,
+        mut notify_fn: F,
+    ) -> MaybeAborted<sim::RunOutput>
+    where
+        F: FnMut(usize, &sim::RunOutput) -> TFuture,
+        TFuture: std::future::Future,
+    {
         self.output.states.reserve(parsed.steps.len());
 
         let mut state = sim::State::default();
         let mut commands = Vec::with_capacity(parsed.steps.len());
+        let mut ctx = sim::Context::new(self.handle, runtime);
 
         for i in 0..parsed.steps.len() {
             let step = &parsed.steps[i];
-            commands.push(step.command.clone());
+            let percentage = step.pos as f32 / parsed.script_len as f32 * 100.0;
+            log::info!(
+                "running: byte_pos {}/{} ({:.2}%)",
+                step.pos,
+                parsed.script_len,
+                percentage
+            );
 
-            if let Some(cached_state) = runtime.find_cached_state(&commands) {
-                self.output.states.push(cached_state.clone());
-                state = cached_state;
-                continue;
+            // notify only if it's not the first step
+            // this is because the first step may not be byte pos 0,
+            // and may cause the "initial" state to be sent in notification
+            // while actually what we need to send is the state after the first step
+            if i > 0 {
+                notify_fn(step.pos, &self.output).await;
             }
 
-            let span_end = parsed
-                .steps
-                .get(i + 1)
-                .map(|step| step.pos)
-                .unwrap_or(parsed.script_len);
-            let span = Span::new(step.pos, span_end);
+            commands.push(step.command.clone());
 
-            let report = match state.execute_step(span, step, runtime).await {
-                Err(e) => {
-                    log::error!("failed to execute step {i}: {e}");
-                    if self.handle.is_aborted() {
-                        log::warn!("the run is aborted, so the error is ignored");
+            let report = match runtime.find_cached(&commands) {
+                Some(report) => report,
+                None => {
+                    let span_end = parsed
+                        .steps
+                        .get(i + 1)
+                        .map(|step| step.pos)
+                        .unwrap_or(parsed.script_len);
+                    ctx.span = Span::new(step.pos, span_end);
+
+                    let report = match state.execute_step(ctx.clone(), step).await {
+                        Err(e) => {
+                            log::error!("failed to execute step {i}: {e}");
+                            if ctx.is_aborted() {
+                                log::warn!("the run is aborted, so the error is ignored");
+                                return MaybeAborted::Aborted;
+                            }
+                            self.output
+                                .errors
+                                .push(ErrorReport::error(&ctx.span, crate::Error::Executor));
+                            return MaybeAborted::Ok(self.output);
+                        }
+                        Ok(report) => report,
+                    };
+
+                    // update the cache
+                    runtime.set_cache(&commands, &report);
+
+                    // check if the run is aborted
+                    // note we don't check if there is a cache hit -
+                    // which is really fast anyway
+                    if ctx.is_aborted() {
                         return MaybeAborted::Aborted;
                     }
-                    self.output
-                        .errors
-                        .push(ErrorReport::error(&span, crate::Error::Executor));
-                    return MaybeAborted::Ok(self.output);
+
+                    report
                 }
-                Ok(report) => report,
             };
 
             self.output.states.push(report.value.clone());
             self.output.errors.extend(report.errors);
-            if self.handle.is_aborted() {
-                return MaybeAborted::Aborted;
-            }
             state = report.value;
-            runtime.set_state_cache(&commands, &state);
         }
+
         MaybeAborted::Ok(self.output)
     }
 }

@@ -156,16 +156,6 @@ export class TaskMgr {
         return true;
     }
 
-    public areAllAborted(ids: string[]) {
-        for (const id of ids) {
-            const handle = this.tasks.get(id);
-            if (handle && !handle.isAborted()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     /** Mark a task as finished and delete the handle */
     public finish(id: string) {
         const handle = this.tasks.get(id);

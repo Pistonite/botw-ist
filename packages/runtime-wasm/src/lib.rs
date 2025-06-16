@@ -3,7 +3,7 @@
 use std::{cell::OnceCell, sync::Arc};
 
 use blueflame::env::GameVer;
-use js_sys::{Function, Uint8Array};
+use js_sys::{Function, Promise, Uint8Array};
 use serde::{Deserialize, Serialize};
 use skybook_parser::{ParseOutput, search};
 use skybook_runtime::exec::Spawner;
@@ -17,6 +17,7 @@ mod interop;
 
 mod js_item_resolve;
 use js_item_resolve::JsQuotedItemResolver;
+use wasm_bindgen_futures::JsFuture;
 
 thread_local! {
     static RUNTIME: OnceCell<Arc<sim::Runtime>> = const { OnceCell::new() };
@@ -26,12 +27,15 @@ thread_local! {
 extern "C" {
     /// Crash function on the global scope on the JS side
     pub fn __global_crash_handler();
+
+    #[wasm_bindgen(js_namespace = console, js_name = error)]
+    pub fn log_error_in_js(js_error: JsValue);
 }
 
 /// Initialize the WASM module
 #[wasm_bindgen]
 pub async fn module_init(wasm_module_path: String, wasm_bindgen_js_path: String) {
-    let _ = console_log::init_with_level(log::Level::Debug);
+    let _ = console_log::init_with_level(log::Level::Info);
     log::info!("initializing wasm module");
     std::panic::set_hook(Box::new(move |info| {
         console_error_panic_hook::hook(info);
@@ -220,6 +224,7 @@ pub fn abort_task(ptr: *const sim::RunHandle) {
 pub async fn run_parsed(
     parse_output: *const ParseOutput,
     handle: *const sim::RunHandle,
+    notify_fn: Function, // (up_to_byte_pos, Arc<RunOutput> as usize) -> Promise<void>
 ) -> MaybeAborted<usize> {
     let parse_output = unsafe { Arc::from_raw(parse_output) };
     let handle = sim::RunHandle::from_raw(handle);
@@ -231,7 +236,33 @@ pub async fn run_parsed(
             .expect("run_parsed called before module_init")
             .clone()
     });
-    let output = run.run_parsed(parse_output, &runtime).await;
+    let output = run
+        .run_parsed_with_notify(parse_output, &runtime, |up_to_byte_pos, output| {
+            let output_ptr = Arc::into_raw(Arc::new(output.clone())) as usize;
+            let result = notify_fn.call2(
+                &JsValue::undefined(),
+                &up_to_byte_pos.into(),
+                &output_ptr.into(),
+            );
+            async {
+                let promise = match result {
+                    Ok(x) => x,
+                    Err(e) => {
+                        log::error!("error calling notify_fn in run_parsed");
+                        log_error_in_js(e);
+                        return;
+                    }
+                };
+                // await the future if needed
+                if let Ok(x) = promise.dyn_into::<Promise>()
+                    && let Err(e) = JsFuture::from(x).await
+                {
+                    log::error!("error calling notify_fn in run_parsed");
+                    log_error_in_js(e);
+                };
+            }
+        })
+        .await;
 
     match output {
         MaybeAborted::Ok(run_output) => {

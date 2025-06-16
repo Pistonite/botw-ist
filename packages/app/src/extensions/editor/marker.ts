@@ -4,7 +4,13 @@
 
 import type { MarkerData, TextModel } from "@pistonite/intwc";
 import { MarkerSeverity, spanToRange } from "@pistonite/intwc";
+import type { WxPromise } from "@pistonite/workex";
+import { v4 as makeUUID } from "uuid";
+
 import type { Diagnostic, ExtensionApp } from "@pistonite/skybook-api";
+
+let lastRequestDiagnosticScript = "";
+let lastRequestDiagnosticTaskIds: string[] = [];
 
 export const provideDiagnostics = async (
     app: ExtensionApp,
@@ -12,11 +18,31 @@ export const provideDiagnostics = async (
     owner: string,
 ): Promise<MarkerData[]> => {
     const script = model.getValue();
-    const diagnostics =
-        owner === "runtime"
-            ? await app.provideRuntimeDiagnostics(script)
-            : await app.provideParserDiagnostics(script);
+    let diagnostics: Awaited<WxPromise<Diagnostic[]>>;
+    if (owner === "runtime") {
+        const taskId = makeUUID();
+        if (script !== lastRequestDiagnosticScript) {
+            lastRequestDiagnosticScript = script;
+            const newTaskIds = [taskId];
+            const diagnosticsPromise = app.provideRuntimeDiagnostics(
+                script,
+                taskId,
+            );
+            const previousTaskIds = lastRequestDiagnosticTaskIds;
+            lastRequestDiagnosticTaskIds = newTaskIds;
+            previousTaskIds.forEach((id) => {
+                void app.cancelRuntimeDiagnosticsRequest(id);
+            });
+            diagnostics = await diagnosticsPromise;
+        } else {
+            lastRequestDiagnosticTaskIds.push(taskId);
+            diagnostics = await app.provideRuntimeDiagnostics(script, taskId);
+        }
+    } else {
+        diagnostics = await app.provideParserDiagnostics(script);
+    }
     if (diagnostics.err) {
+        // this is expected if it's cancelled, let's just ignore it
         return [];
     }
     // convert to the editor marker format
