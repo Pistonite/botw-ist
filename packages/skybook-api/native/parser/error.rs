@@ -17,8 +17,6 @@ pub enum ParserError {
     Unexpected(String),
     #[error("unexpected syntax")]
     SyntaxUnexpected,
-    // #[error("unexpected syntax, expecting: {0}")]
-    // SyntaxUnexpectedExpecting(String),
     #[error("unexpected end of input")]
     SyntaxUnexpectedEof,
     #[error("failed to resolve item: {0}")]

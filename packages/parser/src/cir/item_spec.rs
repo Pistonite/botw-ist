@@ -126,14 +126,6 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
             };
         }
         syn::ItemListConstrained::List(items) => {
-            // let slot = match parse_slot_clause(items.slot.as_ref()) {
-            //     Ok(slot) => slot,
-            //     Err(e) => {
-            //         errors.push(e);
-            //         return out_item_specs;
-            //     }
-            // };
-
             for item in items.iter() {
                 let (amount, item) = match item {
                     syn::NumberedOrAllItemOrCategory::Numbered(item) => {
@@ -162,25 +154,6 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
 
     out_item_specs
 }
-
-// pub async fn parse_item_or_category_with_slot<R: QuotedItemResolver>(
-//     item: &syn::ItemOrCategoryWithSlot,
-//     resolver: &R,
-//     errors: &mut Vec<ErrorReport>,
-// ) -> Option<ItemSelectSpec> {
-//     let result = parse_item_or_category(&item.item, resolver, errors).await?;
-//     match parse_slot_clause(item.slot.as_ref()) {
-//         Ok(slot) => Some(ItemSelectSpec {
-//             amount: 1,
-//             item: result,
-//             slot,
-//         }),
-//         Err(e) => {
-//             errors.push(e);
-//             None
-//         }
-//     }
-// }
 
 pub async fn parse_item_or_category<R: QuotedItemResolver>(
     item: &syn::ItemOrCategory,
@@ -264,15 +237,3 @@ async fn parse_item_name<R: QuotedItemResolver>(
         }
     }
 }
-
-// /// Parse a SlotClause syntax node
-// fn parse_slot_clause(slot: Option<&syn::SlotClause>) -> Result<i32, ErrorReport> {
-//     let Some(slot) = slot else {
-//         return Ok(0);
-//     };
-//     let slot_num = cir::parse_syn_int_str_i32(&slot.idx, &slot.idx.span())?;
-//     if slot_num < 1 {
-//         cir_error!(slot, InvalidSlotClause(slot_num));
-//     }
-//     Ok(slot_num)
-// }

@@ -293,16 +293,14 @@ impl MetaParser for &mut ItemMeta {
                 Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
                 Err(e) => errors.push(e),
             }
+            // for simplicity we only allow row/col after category
+            // is already specified, for now
             "row" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => match self.position.as_mut() {
                     Some(ItemPosition::TabCategoryAndSlot(cat)) => {
                         cat.row = x.clamp(1, 4) as i8;
                     }
-                    _ => {
-                        // for simplicity we only allow row/col after category
-                        // is already specified, for now
-                        cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
-                    }
+                    _ => cir_push_warning!(errors, &span, UnusedMetaKey(key_str))
                 },
                 Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
                 Err(e) => errors.push(e),
@@ -312,11 +310,7 @@ impl MetaParser for &mut ItemMeta {
                     Some(ItemPosition::TabCategoryAndSlot(cat)) => {
                         cat.col = x.clamp(1, 5) as i8;
                     }
-                    _ => {
-                        // for simplicity we only allow row/col after category
-                        // is already specified, for now
-                        cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
-                    }
+                    _ => cir_push_warning!(errors, &span, UnusedMetaKey(key_str)),
                 },
                 Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
                 Err(e) => errors.push(e),

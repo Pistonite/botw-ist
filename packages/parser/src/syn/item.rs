@@ -45,14 +45,6 @@ pub enum ItemOrCategory {
     Category(syn::Category),
 }
 
-// /// Syntax for specifying a single item with a slot
-// #[derive_syntax]
-// #[derive(Debug)]
-// pub struct ItemOrCategoryWithSlot {
-//     pub item: ItemOrCategory,
-//     pub slot: tp::Option<syn::SlotClause>,
-// }
-
 /// Syntax for an item
 ///
 /// # Example

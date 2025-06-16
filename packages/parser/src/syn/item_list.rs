@@ -27,11 +27,3 @@ pub enum ItemListConstrained {
     /// multiple items with amounts, e.g. `5 apples 3 royal_claymore :from slot 3`
     List(tp::Nev<syn::NumberedOrAllItemOrCategory>),
 }
-
-// /// Syntax for specifying a list of items with a slot
-// #[derive_syntax]
-// #[derive(Debug)]
-// pub struct ItemListWithSlot {
-//     pub items: tp::Nev<NumberedOrAllItemOrCategory>,
-//     pub slot: tp::Option<SlotClause>,
-// }
