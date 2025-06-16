@@ -8,7 +8,6 @@ import type { MetaValue } from "./MetaValue";
 export type ParserError =
     | { type: "Unexpected"; data: string }
     | { type: "SyntaxUnexpected" }
-    | { type: "SyntaxUnexpectedExpecting"; data: string }
     | { type: "SyntaxUnexpectedEof" }
     | { type: "InvalidItem"; data: string }
     | { type: "InvalidEmptyItem" }
