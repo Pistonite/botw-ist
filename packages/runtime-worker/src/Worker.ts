@@ -51,7 +51,9 @@ export const createRuntimeWorker = (
             taskMgr.abort(taskId);
         }),
         getRuntimeDiagnostics: async (script, taskId) => {
-            return { val: unwrap(await runMgr.getRuntimeDiagnostics(script, taskId)) };
+            return {
+                val: unwrap(await runMgr.getRuntimeDiagnostics(script, taskId)),
+            };
         },
         getPouchList: async (script, taskId, pos) => {
             return {

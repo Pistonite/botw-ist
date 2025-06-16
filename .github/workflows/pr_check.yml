@@ -5,7 +5,24 @@ on:
       - main
 
 jobs:
-  check:
+  check-layer-1-2:
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: Pistonight/mono-dev/actions/setup@main
+        with:
+          runner: blacksmith
+          submodules: true
+          ecma-pnpm: true
+          ecma-bun: true
+          rust: nightly
+          tool-cargo-binstall: ripgrep,workex=Pistonite/workex
+      - uses: Pistonight/mono-dev/actions/pistonstor@main
+      - run: task check-ci-layer-1-2 --output group
+
+  check-layer-3:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       contents: read
@@ -20,9 +37,9 @@ jobs:
           rust: nightly
           rust-wasm: true
           rust-src: true
-          tool-cargo-binstall: ripgrep,workex=Pistonite/workex,layered-crate
+          tool-cargo-binstall: ripgrep,layered-crate
       - uses: Pistonight/mono-dev/actions/pistonstor@main
-      - run: task check-ci --output group
+      - run: task check-ci-layer-3 --output group
 
   test:
     name: test

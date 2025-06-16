@@ -31,7 +31,8 @@ impl Run {
         parsed: Arc<ParseOutput>,
         runtime: &sim::Runtime,
     ) -> MaybeAborted<sim::RunOutput> {
-        self.run_parsed_with_notify(parsed, runtime,  |_, _|async {}).await
+        self.run_parsed_with_notify(parsed, runtime, |_, _| async {})
+            .await
     }
 
     /// See [`run_parsed`](Self::run_parsed). In addition, `notify_fn` will be called
@@ -45,10 +46,11 @@ impl Run {
         mut self,
         parsed: Arc<ParseOutput>,
         runtime: &sim::Runtime,
-        mut notify_fn: F
-    ) -> MaybeAborted<sim::RunOutput> 
-    where F: FnMut(usize, &sim::RunOutput) -> TFuture,
-        TFuture: std::future::Future
+        mut notify_fn: F,
+    ) -> MaybeAborted<sim::RunOutput>
+    where
+        F: FnMut(usize, &sim::RunOutput) -> TFuture,
+        TFuture: std::future::Future,
     {
         self.output.states.reserve(parsed.steps.len());
 
@@ -59,7 +61,12 @@ impl Run {
         for i in 0..parsed.steps.len() {
             let step = &parsed.steps[i];
             let percentage = step.pos as f32 / parsed.script_len as f32 * 100.0;
-            log::info!("running: byte_pos {}/{} ({:.2}%)", step.pos, parsed.script_len, percentage);
+            log::info!(
+                "running: byte_pos {}/{} ({:.2}%)",
+                step.pos,
+                parsed.script_len,
+                percentage
+            );
 
             // notify only if it's not the first step
             // this is because the first step may not be byte pos 0,
@@ -100,7 +107,7 @@ impl Run {
                     runtime.set_cache(&commands, &report);
 
                     // check if the run is aborted
-                    // note we don't check if there is a cache hit - 
+                    // note we don't check if there is a cache hit -
                     // which is really fast anyway
                     if ctx.is_aborted() {
                         return MaybeAborted::Aborted;

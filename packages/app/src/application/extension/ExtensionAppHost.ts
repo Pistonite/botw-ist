@@ -103,7 +103,9 @@ class ExtensionAppHost implements ExtensionApp {
         };
     }
 
-    public async cancelRuntimeDiagnosticsRequest(taskId: string): WxPromise<void> {
+    public async cancelRuntimeDiagnosticsRequest(
+        taskId: string,
+    ): WxPromise<void> {
         return await this.runtime.abortTask(taskId);
     }
 

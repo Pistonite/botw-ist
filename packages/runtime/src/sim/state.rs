@@ -35,8 +35,6 @@ pub enum Game {
     Crashed(CrashReport),
 }
 
-
-
 /// The state of the running game in the simulator
 #[derive(Clone)]
 pub struct GameState {
@@ -97,11 +95,10 @@ impl State {
         self.with_game(ctx, async move |game, ctx| {
             let items = items.to_vec();
             ctx.execute(move |ctx| game.cmd_get(ctx, &items)).await
-        }).await
+        })
+        .await
     }
-
 }
-
 
 impl GameState {
     pub fn new(process: Process) -> Self {
@@ -111,7 +108,11 @@ impl GameState {
         }
     }
 
-    pub fn cmd_get(self, ctx: sim::Context<&mut Cpu1>, items: &[cir::ItemSpec]) -> Result<Self, CrashReport> {
+    pub fn cmd_get(
+        self,
+        ctx: sim::Context<&mut Cpu1>,
+        items: &[cir::ItemSpec],
+    ) -> Result<Self, CrashReport> {
         ctx.execute(self, |ctx| {
             'outer: for item in items {
                 let amount = item.amount;

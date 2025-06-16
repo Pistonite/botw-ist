@@ -84,18 +84,29 @@ tasks:
       - parser:pull-artifacts
       - blueflame-deps:pull-artifacts
 
-  check-ci:
+  check-ci-layer-1-2:
     deps:
       - localization:pull-artifacts
       - item-assets:pull-artifacts-ts
       - item-system:pull-artifacts-ts
+      # - parser:pull-artifacts
+      # - blueflame-deps:pull-artifacts
+      # - runtime-tests:pull-artifacts
+    cmds:
+      - pnpm install --frozen-lockfile
+      - task: post-install
+      - task: check-layer-1
+      - task: check-layer-2
+
+  check-ci-layer-3:
+    deps:
       - parser:pull-artifacts
       - blueflame-deps:pull-artifacts
       - runtime-tests:pull-artifacts
     cmds:
-      - pnpm install --frozen-lockfile
-      - task: post-install
-      - task: check
+      # - pnpm install --frozen-lockfile
+      # - task: post-install
+      - task: check-layer-3
 
   check:
     desc: Run ALL of the checks

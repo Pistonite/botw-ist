@@ -3,12 +3,10 @@ use std::sync::Arc;
 use blueflame::processor::{self, Cpu1, Cpu2, CrashReport};
 use teleparse::Span;
 
-
 use crate::error::{Report, sim_error, sim_warning};
 use crate::{exec, sim};
 
 impl sim::State {
-
     // these are state context helpers that commands depend on
 
     /// Ensure the game is already running, or initialize it if not,
@@ -52,7 +50,6 @@ impl sim::State {
             }
         }
     }
-
 }
 
 #[derive(Clone, Default)]
@@ -96,7 +93,7 @@ impl<T> Context<T> {
         Self {
             span: Span::new(0, 0),
             handle,
-            inner
+            inner,
         }
     }
     pub fn is_aborted(&self) -> bool {
@@ -110,15 +107,22 @@ impl Context<&sim::Runtime> {
     }
 
     pub async fn execute<T, F>(self, f: F) -> Result<T, exec::Error>
-    where F: FnOnce(Context<&mut Cpu1>) -> T + Send + 'static,
-    T: Send + 'static
+    where
+        F: FnOnce(Context<&mut Cpu1>) -> T + Send + 'static,
+        T: Send + 'static,
     {
         let span = self.span;
         let handle = self.handle;
-        self.inner.execute(move |cpu| {
-            let ctx = Context { span, handle, inner: cpu };
-            f(ctx)
-        }).await
+        self.inner
+            .execute(move |cpu| {
+                let ctx = Context {
+                    span,
+                    handle,
+                    inner: cpu,
+                };
+                f(ctx)
+            })
+            .await
     }
 }
 
@@ -133,7 +137,11 @@ impl Context<&mut Cpu1> {
         let cpu1 = self.inner;
         let mut cpu2 = Cpu2::new(cpu1, &mut state.process);
         cpu2.with_crash_report(|cpu2| {
-            let ctx = Context { span, handle, inner: cpu2 };
+            let ctx = Context {
+                span,
+                handle,
+                inner: cpu2,
+            };
             f(ctx)
         })?;
         Ok(state)

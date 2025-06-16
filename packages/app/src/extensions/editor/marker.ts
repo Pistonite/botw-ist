@@ -5,7 +5,7 @@
 import type { MarkerData, TextModel } from "@pistonite/intwc";
 import { MarkerSeverity, spanToRange } from "@pistonite/intwc";
 import type { WxPromise } from "@pistonite/workex";
-import { v4 as makeUUID} from "uuid";
+import { v4 as makeUUID } from "uuid";
 
 import type { Diagnostic, ExtensionApp } from "@pistonite/skybook-api";
 
@@ -24,7 +24,10 @@ export const provideDiagnostics = async (
         if (script !== lastRequestDiagnosticScript) {
             lastRequestDiagnosticScript = script;
             const newTaskIds = [taskId];
-            const diagnosticsPromise = app.provideRuntimeDiagnostics(script, taskId);
+            const diagnosticsPromise = app.provideRuntimeDiagnostics(
+                script,
+                taskId,
+            );
             const previousTaskIds = lastRequestDiagnosticTaskIds;
             lastRequestDiagnosticTaskIds = newTaskIds;
             previousTaskIds.forEach((id) => {
@@ -33,7 +36,7 @@ export const provideDiagnostics = async (
             diagnostics = await diagnosticsPromise;
         } else {
             lastRequestDiagnosticTaskIds.push(taskId);
-            diagnostics =await app.provideRuntimeDiagnostics(script, taskId);
+            diagnostics = await app.provideRuntimeDiagnostics(script, taskId);
         }
     } else {
         diagnostics = await app.provideParserDiagnostics(script);

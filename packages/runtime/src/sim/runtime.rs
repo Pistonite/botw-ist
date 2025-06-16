@@ -172,7 +172,11 @@ impl Runtime {
     }
 
     pub fn find_cached(&self, commands: &[cir::Command]) -> Option<Report<sim::State>> {
-        self.state_cache.lock().expect("failed to acquire lock for find_cached").get(commands).cloned()
+        self.state_cache
+            .lock()
+            .expect("failed to acquire lock for find_cached")
+            .get(commands)
+            .cloned()
     }
 
     pub fn set_cache(&self, commands: &[cir::Command], report: &Report<sim::State>) {
