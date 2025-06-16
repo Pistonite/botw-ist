@@ -1,5 +1,5 @@
 use enumset::EnumSet;
-use teleparse::ToSpan;
+use teleparse::{Root, ToSpan};
 
 use crate::cir;
 use crate::error::{ErrorReport, cir_error};
@@ -32,6 +32,11 @@ pub fn parse_category(category: &syn::Category) -> Category {
         syn::Category::Food(_) => Category::Food,
         syn::Category::KeyItem(_) => Category::KeyItem,
     }
+}
+
+pub fn parse_category_from_str(category: &str) -> Option<Category> {
+    let category = syn::Category::parse(category).ok()??;
+    Some(parse_category(&category))
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

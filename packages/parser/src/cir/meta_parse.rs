@@ -60,6 +60,9 @@ pub fn parse_meta_value(value: &syn::MetaValueLiteral) -> Result<cir::MetaValue,
                 _ => Ok(cir::MetaValue::String(s.to_string())),
             }
         }
+        syn::MetaValueLiteral::Category(x) => {
+            Ok(cir::MetaValue::String(x.trim().to_string()))
+        }
         syn::MetaValueLiteral::Number(x) => {
             let int_part = parse_syn_int_str(&x.int_part, &x.span())?;
             let float_part = match &*x.float_part {

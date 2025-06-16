@@ -4,6 +4,7 @@ use crate::syn;
 
 /// Category specifier
 #[derive_syntax]
+#[teleparse(root)]
 #[derive(Debug)]
 pub enum Category {
     Weapon(CatWeapon),

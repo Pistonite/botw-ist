@@ -63,9 +63,9 @@ pub enum Command {
     /// See [`syn::CmdSell`]
     Sell(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdEquip`]
-    Equip(Box<cir::ItemSelectSpec>),
+    Equip(Box<cir::ItemOrCategory>),
     /// See [`syn::CmdUnequip`]
-    Unequip(Box<cir::ItemSelectSpec>, bool),
+    Unequip(Box<cir::ItemOrCategory>, bool),
     /// See [`syn::CmdUse`] and [`crate::syn::CmdShoot`]
     Use(cir::CategorySpec),
     /// See [`syn::CmdRoast`] and [`crate::syn::CmdBake`]
@@ -90,7 +90,7 @@ pub enum Command {
     /// See [`syn::CmdSetGamedata`]
     SetGamedata(Vec<cir::ItemSpec>),
     /// See [`syn::CmdWrite`]
-    Write(Box<cir::ItemMeta>, Box<cir::ItemSelectSpec>),
+    Write(Box<cir::ItemMeta>, Box<cir::ItemOrCategory>),
     /// See [`syn::CmdSwap`] and [`syn::CmdSwapData`]
     ///
     /// If the bool is true, the command is `swap-data`
@@ -188,10 +188,10 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         syn::Command::Equip(cmd) => Some(cir::Command::Equip(Box::new(
-            cir::parse_item_or_category_with_slot(&cmd.item, resolver, errors).await?,
+            cir::parse_item_or_category(&cmd.item, resolver, errors).await?,
         ))),
         syn::Command::Unequip(cmd) => Some(cir::Command::Unequip(
-            Box::new(cir::parse_item_or_category_with_slot(&cmd.item, resolver, errors).await?),
+            Box::new(cir::parse_item_or_category(&cmd.item, resolver, errors).await?),
             cmd.all.is_some(),
         )),
         syn::Command::Use(cmd) => {
@@ -266,7 +266,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
         )),
         syn::Command::Write(cmd) => {
             let meta = cir::ItemMeta::parse_syn(&cmd.props, errors);
-            let item = cir::parse_item_or_category_with_slot(&cmd.item, resolver, errors).await?;
+            let item = cir::parse_item_or_category(&cmd.item, resolver, errors).await?;
             Some(cir::Command::Write(Box::new(meta), Box::new(item)))
         }
         syn::Command::Swap(cmd) => {

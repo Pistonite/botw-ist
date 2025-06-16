@@ -245,7 +245,7 @@ pub struct CmdSell {
 #[derive(Debug)]
 pub struct CmdEquip {
     pub lit: syn::KwEquip,
-    pub item: syn::ItemOrCategoryWithSlot,
+    pub item: syn::ItemOrCategory,
 }
 
 /// `unequip [all] ITEM` - unequip one thing, or (all items) in one category
@@ -254,7 +254,7 @@ pub struct CmdEquip {
 pub struct CmdUnequip {
     pub lit: syn::KwUnequip,
     pub all: tp::Option<syn::KwAll>,
-    pub item: syn::ItemOrCategoryWithSlot,
+    pub item: syn::ItemOrCategory,
 }
 
 /// `use CATEGORY X times` - use the item
@@ -393,7 +393,7 @@ pub struct CmdWrite {
     pub lit: syn::KwWrite,
     pub props: syn::ItemMeta,
     pub kw_to: syn::KwTo,
-    pub item: syn::ItemOrCategoryWithSlot,
+    pub item: syn::ItemOrCategory,
 }
 
 /// `save-as NAME` - save the game to a named slot

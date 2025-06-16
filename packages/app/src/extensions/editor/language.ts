@@ -105,7 +105,7 @@ export const language: LanguageTokenizer = {
         "key-item",
         "key-items",
     ],
-    keywords: ["time", "times", "from", "in", "at", "to", "slot", "slots"],
+    keywords: ["time", "times", "slot", "slots"],
     annotaions: [
         ":test", // TODO
     ],

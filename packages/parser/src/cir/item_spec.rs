@@ -1,7 +1,7 @@
 use teleparse::{ToSpan, tp};
 
 use crate::cir;
-use crate::error::{ErrorReport, cir_error, cir_push_error};
+use crate::error::{cir_push_error, cir_push_warning, ErrorReport};
 use crate::search::{self, QuotedItemResolver, ResolvedItem};
 use crate::syn;
 use crate::util;
@@ -35,9 +35,6 @@ pub struct ItemSelectSpec {
 
     /// The item or category to select from
     pub item: ItemOrCategory,
-
-    /// The slot number to select from, 0 means not specified
-    pub slot: i32,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -85,8 +82,11 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
     let mut out_item_specs = Vec::new();
     match list {
         syn::ItemListFinite::Single(item) => {
-            if let Some(item) = parse_item(item, resolver, errors).await {
-                out_item_specs.push(ItemSpec { amount: 1, item });
+            if let Some(parsed_item) = parse_item(item, resolver, errors).await {
+                if let Some(m) = &parsed_item.meta && m.position.is_some() {
+                    cir_push_warning!(errors, &item.span(), UnusedItemPosition)
+                }
+                out_item_specs.push(ItemSpec { amount: 1, item: parsed_item });
             }
         }
         syn::ItemListFinite::List(items) => {
@@ -99,8 +99,11 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
                     }
                 };
 
-                if let Some(item) = parse_item(&item.item, resolver, errors).await {
-                    out_item_specs.push(ItemSpec { amount, item });
+                if let Some(parsed_item) = parse_item(&item.item, resolver, errors).await {
+                    if let Some(m) = &parsed_item.meta && m.position.is_some() {
+                        cir_push_warning!(errors, &item.span(), UnusedItemPosition)
+                    }
+                    out_item_specs.push(ItemSpec { amount, item: parsed_item });
                 }
             }
         }
@@ -118,20 +121,20 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
 
     match list {
         syn::ItemListConstrained::Single(item) => {
-            if let Some(result) = parse_item_or_category_with_slot(item, resolver, errors).await {
-                out_item_specs.push(result);
+            if let Some(item) = parse_item_or_category(item, resolver, errors).await {
+                out_item_specs.push(ItemSelectSpec { amount: 1, item });
             };
         }
         syn::ItemListConstrained::List(items) => {
-            let slot = match parse_slot_clause(items.slot.as_ref()) {
-                Ok(slot) => slot,
-                Err(e) => {
-                    errors.push(e);
-                    return out_item_specs;
-                }
-            };
+            // let slot = match parse_slot_clause(items.slot.as_ref()) {
+            //     Ok(slot) => slot,
+            //     Err(e) => {
+            //         errors.push(e);
+            //         return out_item_specs;
+            //     }
+            // };
 
-            for item in items.items.iter() {
+            for item in items.iter() {
                 let (amount, item) = match item {
                     syn::NumberedOrAllItemOrCategory::Numbered(item) => {
                         let amount = match cir::parse_syn_int_str(&item.num, &item.num.span()) {
@@ -151,7 +154,7 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
                 out_item_specs.push(ItemSelectSpec {
                     amount,
                     item: result,
-                    slot,
+                    // slot,
                 });
             }
         }
@@ -160,26 +163,26 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
     out_item_specs
 }
 
-pub async fn parse_item_or_category_with_slot<R: QuotedItemResolver>(
-    item: &syn::ItemOrCategoryWithSlot,
-    resolver: &R,
-    errors: &mut Vec<ErrorReport>,
-) -> Option<ItemSelectSpec> {
-    let result = parse_item_or_category(&item.item, resolver, errors).await?;
-    match parse_slot_clause(item.slot.as_ref()) {
-        Ok(slot) => Some(ItemSelectSpec {
-            amount: 1,
-            item: result,
-            slot,
-        }),
-        Err(e) => {
-            errors.push(e);
-            None
-        }
-    }
-}
+// pub async fn parse_item_or_category_with_slot<R: QuotedItemResolver>(
+//     item: &syn::ItemOrCategoryWithSlot,
+//     resolver: &R,
+//     errors: &mut Vec<ErrorReport>,
+// ) -> Option<ItemSelectSpec> {
+//     let result = parse_item_or_category(&item.item, resolver, errors).await?;
+//     match parse_slot_clause(item.slot.as_ref()) {
+//         Ok(slot) => Some(ItemSelectSpec {
+//             amount: 1,
+//             item: result,
+//             slot,
+//         }),
+//         Err(e) => {
+//             errors.push(e);
+//             None
+//         }
+//     }
+// }
 
-async fn parse_item_or_category<R: QuotedItemResolver>(
+pub async fn parse_item_or_category<R: QuotedItemResolver>(
     item: &syn::ItemOrCategory,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
@@ -262,14 +265,14 @@ async fn parse_item_name<R: QuotedItemResolver>(
     }
 }
 
-/// Parse a SlotClause syntax node
-fn parse_slot_clause(slot: Option<&syn::SlotClause>) -> Result<i32, ErrorReport> {
-    let Some(slot) = slot else {
-        return Ok(0);
-    };
-    let slot_num = cir::parse_syn_int_str_i32(&slot.idx, &slot.idx.span())?;
-    if slot_num < 1 {
-        cir_error!(slot, InvalidSlotClause(slot_num));
-    }
-    Ok(slot_num)
-}
+// /// Parse a SlotClause syntax node
+// fn parse_slot_clause(slot: Option<&syn::SlotClause>) -> Result<i32, ErrorReport> {
+//     let Some(slot) = slot else {
+//         return Ok(0);
+//     };
+//     let slot_num = cir::parse_syn_int_str_i32(&slot.idx, &slot.idx.span())?;
+//     if slot_num < 1 {
+//         cir_error!(slot, InvalidSlotClause(slot_num));
+//     }
+//     Ok(slot_num)
+// }
