@@ -1,39 +1,26 @@
 Some(
     Script {
-        stmts: 0..212 => [
+        stmts: 0..220 => [
             Statement {
                 cmd: Eat(
                     CmdEat {
                         lit: token Command(0..3),
                         items: Single(
-                            ItemOrCategoryWithSlot {
-                                item: Item(
-                                    Item {
-                                        name: Word(
-                                            4..7 => "axe",
-                                        ),
-                                        meta: None(
-                                            8,
-                                        ),
-                                    },
-                                ),
-                                slot: Some(
-                                    SlotClause {
-                                        kw: In(
-                                            token Keyword(8..10),
-                                        ),
-                                        kw_slot: token Keyword(11..15),
-                                        idx: Number(
-                                            16..17 => "3",
-                                        ),
-                                    },
-                                ),
-                            },
+                            Item(
+                                Item {
+                                    name: Word(
+                                        4..7 => "axe",
+                                    ),
+                                    meta: None(
+                                        8,
+                                    ),
+                                },
+                            ),
                         ),
                     },
                 ),
-                semi: Some(
-                    token Symbol(17..18),
+                semi: None(
+                    8,
                 ),
             },
             Statement {
@@ -134,21 +121,16 @@ Some(
                         all: None(
                             79,
                         ),
-                        item: ItemOrCategoryWithSlot {
-                            item: Item(
-                                Item {
-                                    name: Word(
-                                        79..84 => "arrow",
-                                    ),
-                                    meta: None(
-                                        84,
-                                    ),
-                                },
-                            ),
-                            slot: None(
-                                84,
-                            ),
-                        },
+                        item: Item(
+                            Item {
+                                name: Word(
+                                    79..84 => "arrow",
+                                ),
+                                meta: None(
+                                    84,
+                                ),
+                            },
+                        ),
                     },
                 ),
                 semi: Some(
@@ -180,197 +162,236 @@ Some(
                     CmdEat {
                         lit: token Command(102..105),
                         items: Single(
-                            ItemOrCategoryWithSlot {
-                                item: Item(
-                                    Item {
-                                        name: Word(
-                                            106..109 => "axe",
-                                        ),
-                                        meta: None(
-                                            110,
-                                        ),
-                                    },
-                                ),
-                                slot: Some(
-                                    SlotClause {
-                                        kw: In(
-                                            token Keyword(110..112),
-                                        ),
-                                        kw_slot: token Keyword(113..117),
-                                        idx: Number(
-                                            118..119 => "3",
-                                        ),
-                                    },
-                                ),
-                            },
+                            Item(
+                                Item {
+                                    name: Word(
+                                        106..109 => "axe",
+                                    ),
+                                    meta: Some(
+                                        ItemMeta {
+                                            open: token Symbol(109..110),
+                                            entries: Punct {
+                                                span: 110..121,
+                                                elems: [
+                                                    ItemMetaKeyValue {
+                                                        key: 110..119 => "from-slot",
+                                                        value: Some(
+                                                            ItemMetaValue {
+                                                                sep: Equal(
+                                                                    token Symbol(119..120),
+                                                                ),
+                                                                value: Number(
+                                                                    MetaValueNumber {
+                                                                        int_part: Number(
+                                                                            120..121 => "3",
+                                                                        ),
+                                                                        float_part: None(
+                                                                            121,
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            },
+                                                        ),
+                                                    },
+                                                ],
+                                                puncts: [],
+                                            },
+                                            close: token Symbol(121..122),
+                                        },
+                                    ),
+                                },
+                            ),
                         ),
                     },
                 ),
                 semi: Some(
-                    token Symbol(119..120),
+                    token Symbol(122..123),
                 ),
             },
             Statement {
                 cmd: Eat(
                     CmdEat {
-                        lit: token Command(121..124),
+                        lit: token Command(124..127),
                         items: Single(
-                            ItemOrCategoryWithSlot {
-                                item: Item(
-                                    Item {
-                                        name: Word(
-                                            125..128 => "inf",
-                                        ),
-                                        meta: None(
-                                            129,
-                                        ),
-                                    },
-                                ),
-                                slot: Some(
-                                    SlotClause {
-                                        kw: In(
-                                            token Keyword(129..131),
-                                        ),
-                                        kw_slot: token Keyword(132..136),
-                                        idx: Number(
-                                            137..138 => "5",
-                                        ),
-                                    },
-                                ),
-                            },
+                            Item(
+                                Item {
+                                    name: Word(
+                                        128..131 => "inf",
+                                    ),
+                                    meta: Some(
+                                        ItemMeta {
+                                            open: token Symbol(131..132),
+                                            entries: Punct {
+                                                span: 132..144,
+                                                elems: [
+                                                    ItemMetaKeyValue {
+                                                        key: 132..135 => "tab",
+                                                        value: Some(
+                                                            ItemMetaValue {
+                                                                sep: Equal(
+                                                                    token Symbol(135..136),
+                                                                ),
+                                                                value: Number(
+                                                                    MetaValueNumber {
+                                                                        int_part: Number(
+                                                                            136..137 => "5",
+                                                                        ),
+                                                                        float_part: None(
+                                                                            137,
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            },
+                                                        ),
+                                                    },
+                                                    ItemMetaKeyValue {
+                                                        key: 138..142 => "slot",
+                                                        value: Some(
+                                                            ItemMetaValue {
+                                                                sep: Equal(
+                                                                    token Symbol(142..143),
+                                                                ),
+                                                                value: Number(
+                                                                    MetaValueNumber {
+                                                                        int_part: Number(
+                                                                            143..144 => "6",
+                                                                        ),
+                                                                        float_part: None(
+                                                                            144,
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            },
+                                                        ),
+                                                    },
+                                                ],
+                                                puncts: [
+                                                    token Symbol(137..138),
+                                                ],
+                                            },
+                                            close: token Symbol(144..145),
+                                        },
+                                    ),
+                                },
+                            ),
                         ),
                     },
                 ),
-                semi: None(
-                    139,
+                semi: Some(
+                    token Symbol(145..146),
                 ),
             },
             Statement {
                 cmd: PickUp(
                     CmdPickUp {
-                        lit: token Command(139..146),
+                        lit: token Command(147..154),
                         items: List(
-                            ItemListWithSlot {
-                                items: 147..155 => [
-                                    Numbered(
-                                        NumberedItemOrCategory {
-                                            num: Number(
-                                                147..148 => "1",
-                                            ),
-                                            item: Category(
-                                                Weapon(
-                                                    Singular(
-                                                        token Keyword(149..155),
-                                                    ),
+                            155..163 => [
+                                Numbered(
+                                    NumberedItemOrCategory {
+                                        num: Number(
+                                            155..156 => "1",
+                                        ),
+                                        item: Category(
+                                            Weapon(
+                                                Singular(
+                                                    token Keyword(157..163),
                                                 ),
                                             ),
-                                        },
-                                    ),
-                                ],
-                                slot: None(
-                                    155,
+                                        ),
+                                    },
                                 ),
-                            },
+                            ],
                         ),
                     },
                 ),
                 semi: Some(
-                    token Symbol(155..156),
+                    token Symbol(163..164),
                 ),
             },
             Statement {
                 cmd: Equip(
                     CmdEquip {
-                        lit: token Command(158..163),
-                        item: ItemOrCategoryWithSlot {
-                            item: Item(
-                                Item {
-                                    name: Word(
-                                        164..173 => "ice_arrow",
-                                    ),
-                                    meta: None(
-                                        174,
-                                    ),
-                                },
-                            ),
-                            slot: None(
-                                174,
-                            ),
-                        },
+                        lit: token Command(166..171),
+                        item: Item(
+                            Item {
+                                name: Word(
+                                    172..181 => "ice_arrow",
+                                ),
+                                meta: None(
+                                    182,
+                                ),
+                            },
+                        ),
                     },
                 ),
                 semi: None(
-                    174,
+                    182,
                 ),
             },
             Statement {
                 cmd: Use(
                     CmdUse {
-                        lit: token Command(174..177),
+                        lit: token Command(182..185),
                         category: Bow(
                             Singular(
-                                token Keyword(178..181),
+                                token Keyword(186..189),
                             ),
                         ),
                         times: None(
-                            181,
+                            189,
                         ),
                     },
                 ),
                 semi: Some(
-                    token Symbol(181..182),
+                    token Symbol(189..190),
                 ),
             },
             Statement {
                 cmd: Freeze(
                     CmdFreeze {
-                        lit: token Command(183..189),
+                        lit: token Command(191..197),
                         items: Single(
-                            ItemOrCategoryWithSlot {
-                                item: Item(
-                                    Item {
-                                        name: Word(
-                                            190..194 => "meat",
-                                        ),
-                                        meta: None(
-                                            196,
-                                        ),
-                                    },
-                                ),
-                                slot: None(
-                                    196,
-                                ),
-                            },
+                            Item(
+                                Item {
+                                    name: Word(
+                                        198..202 => "meat",
+                                    ),
+                                    meta: None(
+                                        204,
+                                    ),
+                                },
+                            ),
                         ),
                     },
                 ),
                 semi: None(
-                    196,
+                    204,
                 ),
             },
             Statement {
                 cmd: Use(
                     CmdUse {
-                        lit: token Command(196..199),
+                        lit: token Command(204..207),
                         category: Food(
                             Singular(
-                                token Keyword(200..204),
+                                token Keyword(208..212),
                             ),
                         ),
                         times: Some(
                             TimesClause {
                                 times: Number(
-                                    205..206 => "3",
+                                    213..214 => "3",
                                 ),
                                 kw: Plural(
-                                    token Keyword(207..212),
+                                    token Keyword(215..220),
                                 ),
                             },
                         ),
                     },
                 ),
                 semi: None(
-                    212,
+                    220,
                 ),
             },
         ],

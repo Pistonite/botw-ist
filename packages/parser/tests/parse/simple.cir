@@ -12,7 +12,6 @@ ParseOutput {
                                 meta: None,
                             },
                         ),
-                        slot: 3,
                     },
                 ],
             ),
@@ -37,6 +36,7 @@ ParseOutput {
                                     effect_level: None,
                                     ingredients: [],
                                     star: None,
+                                    position: None,
                                 },
                             ),
                         },
@@ -63,16 +63,12 @@ ParseOutput {
         Step {
             pos: 71,
             command: Unequip(
-                ItemSelectSpec {
-                    amount: 1,
-                    item: Item(
-                        Item {
-                            actor: "NormalArrow",
-                            meta: None,
-                        },
-                    ),
-                    slot: 0,
-                },
+                Item(
+                    Item {
+                        actor: "NormalArrow",
+                        meta: None,
+                    },
+                ),
                 false,
             ),
             notes: "",
@@ -101,17 +97,33 @@ ParseOutput {
                         item: Item(
                             Item {
                                 actor: "Weapon_Lsword_032",
-                                meta: None,
+                                meta: Some(
+                                    ItemMeta {
+                                        value: None,
+                                        equip: None,
+                                        life_recover: None,
+                                        effect_duration: None,
+                                        sell_price: None,
+                                        effect_id: None,
+                                        effect_level: None,
+                                        ingredients: [],
+                                        star: None,
+                                        position: Some(
+                                            FromSlot(
+                                                3,
+                                            ),
+                                        ),
+                                    },
+                                ),
                             },
                         ),
-                        slot: 3,
                     },
                 ],
             ),
             notes: "",
         },
         Step {
-            pos: 121,
+            pos: 124,
             command: Eat(
                 [
                     ItemSelectSpec {
@@ -119,17 +131,34 @@ ParseOutput {
                         item: Item(
                             Item {
                                 actor: "Item_Enemy_07",
-                                meta: None,
+                                meta: Some(
+                                    ItemMeta {
+                                        value: None,
+                                        equip: None,
+                                        life_recover: None,
+                                        effect_duration: None,
+                                        sell_price: None,
+                                        effect_id: None,
+                                        effect_level: None,
+                                        ingredients: [],
+                                        star: None,
+                                        position: Some(
+                                            TabIdxAndSlot(
+                                                5,
+                                                6,
+                                            ),
+                                        ),
+                                    },
+                                ),
                             },
                         ),
-                        slot: 5,
                     },
                 ],
             ),
             notes: "",
         },
         Step {
-            pos: 139,
+            pos: 147,
             command: PickUp(
                 [
                     ItemSelectSpec {
@@ -137,30 +166,25 @@ ParseOutput {
                         item: Category(
                             Weapon,
                         ),
-                        slot: 0,
                     },
                 ],
             ),
             notes: "",
         },
         Step {
-            pos: 158,
+            pos: 166,
             command: Equip(
-                ItemSelectSpec {
-                    amount: 1,
-                    item: Item(
-                        Item {
-                            actor: "IceArrow",
-                            meta: None,
-                        },
-                    ),
-                    slot: 0,
-                },
+                Item(
+                    Item {
+                        actor: "IceArrow",
+                        meta: None,
+                    },
+                ),
             ),
             notes: "",
         },
         Step {
-            pos: 174,
+            pos: 182,
             command: Use(
                 CategorySpec {
                     category: Bow,
@@ -172,7 +196,7 @@ ParseOutput {
             notes: "",
         },
         Step {
-            pos: 183,
+            pos: 191,
             command: Freeze(
                 [
                     ItemSelectSpec {
@@ -183,17 +207,24 @@ ParseOutput {
                                 meta: None,
                             },
                         ),
-                        slot: 0,
                     },
                 ],
             ),
             notes: "",
         },
     ],
-    script_len: 212,
+    script_len: 220,
     pages: [],
     display: [],
     errors: [
+        ErrorReport {
+            span: (
+                8,
+                18,
+            ),
+            is_warning: false,
+            error: SyntaxUnexpected,
+        },
         ErrorReport {
             span: (
                 36,
@@ -222,8 +253,8 @@ ParseOutput {
         },
         ErrorReport {
             span: (
-                200,
-                204,
+                208,
+                212,
             ),
             is_warning: false,
             error: InvalidCategory(
