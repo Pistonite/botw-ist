@@ -4,10 +4,12 @@ pub use skybook_api::runtime::error::RuntimeError as Error;
 pub use skybook_api::runtime::error::{MaybeAborted, RuntimeInitError, RuntimeViewError};
 pub type ErrorReport = skybook_api::ErrorReport<Error>;
 
+#[derive(Debug, Clone)]
 pub struct Report<T> {
     pub value: T,
     pub errors: Vec<ErrorReport>,
 }
+
 impl<T> Report<T> {
     pub fn new(value: T) -> Self {
         Self {

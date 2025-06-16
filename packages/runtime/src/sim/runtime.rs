@@ -6,19 +6,17 @@ use blueflame::{linker, program};
 use hashlink::LruCache;
 use skybook_parser::cir;
 
-use crate::error::{ErrorReport, RuntimeInitError};
+use crate::error::{Report, RuntimeInitError};
 use crate::exec::{self, Executor, Spawner};
 use crate::sim;
 
 #[doc(inline)]
 pub use skybook_api::runtime::sim::RuntimeInitParams;
 
-pub type RuntimeCacheEntry = (sim::State, Vec<ErrorReport>);
-
 pub struct Runtime {
     executor: Executor,
     initial_process: Mutex<Option<Process>>,
-    state_cache: Mutex<LruCache<Vec<cir::Command>, RuntimeCacheEntry>>,
+    state_cache: Mutex<LruCache<Vec<cir::Command>, Report<sim::State>>>,
 }
 
 impl Runtime {
@@ -173,15 +171,15 @@ impl Runtime {
         self.executor.execute(f).await
     }
 
-    pub fn find_cached(&self, commands: &[cir::Command]) -> Option<RuntimeCacheEntry> {
-        self.state_cache.lock().unwrap().get(commands).cloned()
+    pub fn find_cached(&self, commands: &[cir::Command]) -> Option<Report<sim::State>> {
+        self.state_cache.lock().expect("failed to acquire lock for find_cached").get(commands).cloned()
     }
 
-    pub fn set_cache(&self, commands: &[cir::Command], state: &sim::State, errors: &[ErrorReport]) {
+    pub fn set_cache(&self, commands: &[cir::Command], report: &Report<sim::State>) {
         self.state_cache
             .lock()
-            .unwrap()
-            .insert(commands.to_vec(), (state.clone(), errors.to_vec()));
+            .expect("failed to acquire lock for set_cache")
+            .insert(commands.to_vec(), report.clone());
     }
 }
 

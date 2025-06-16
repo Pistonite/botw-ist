@@ -32,13 +32,11 @@ type RunAwaiter = {
 
 type RunContext = {
     awaiters: RunAwaiter[],
-    newNotifyBytePositions: number[],
     lastNotifyBytePos: number, // -1 means not notified yet
     lastNotifyOutputErc: AsyncErc<RunOutput>
 };
 const makeRunContext = (): RunContext => {
     return {awaiters: [], 
-        newNotifyBytePositions: [],
         lastNotifyBytePos: -1, lastNotifyOutputErc: makeRunOutputErc(undefined)};
 }
 
@@ -206,9 +204,6 @@ export class RunMgr {
                 Result<AsyncErc<RunOutput>, WorkerError>
                 >((resolve) => {
                     this.runContext.awaiters.push({resolve, taskId, executeToBytePos});
-                    if (executeToBytePos >= 0) {
-                        this.runContext.newNotifyBytePositions.push(executeToBytePos);
-                    }
             });
             // mark task as running, but not holding on to a resource
             this.taskMgr.run(taskId);
@@ -236,9 +231,6 @@ export class RunMgr {
         // add the task that triggered this run as an awaiter.
         // this is to ensure the task can finish early without waiting
         // for the whole run to finish
-        if (executeToBytePos >= 0) {
-            thisContext.newNotifyBytePositions = [executeToBytePos];
-        }
         const outputPromise = new Promise<
             Result<AsyncErc<RunOutput>, WorkerError>
             >((resolve) => {
@@ -349,16 +341,12 @@ export class RunMgr {
                 return;
             }
 
-            const initialNotifyPos = thisContext.newNotifyBytePositions;
-            thisContext.newNotifyBytePositions = [];
-
             // execute with the native resource handle
             // passing in 0 if somehow the handle is null
             // should be fine since the native has redundant null checks
             const outputResult = await this.napi.runParsed(
                 parseOutputRaw,
                 nativeHandle.val.value || 0,
-                initialNotifyPos,
                 async (upToBytePos, outputRaw) => {
                     const outputErc = makeRunOutputErc(outputRaw);
                     const awaiters=  thisContext.awaiters;
@@ -372,25 +360,9 @@ export class RunMgr {
                         this.taskMgr.finish(taskId);
                         resolve({ val: await outputErc.getStrong()});
                     }
-                    const newNotifyBytePositions: number[] = [];
-                    const len = thisContext.newNotifyBytePositions.length;
-                    for (let i = 0; i < len; ++i) {
-                        const x = thisContext.newNotifyBytePositions[i];
-                        if (x < 0) {
-                            continue;
-                        }
-                        if (upToBytePos <= x) {
-                            newNotifyBytePositions.push(x);
-                        }
-                    }
                     thisContext.lastNotifyBytePos = upToBytePos;
-                    thisContext.newNotifyBytePositions = [];
                     void thisContext.lastNotifyOutputErc.free();
                     thisContext.lastNotifyOutputErc = outputErc;
-                    if (newNotifyBytePositions.length) {
-                        return new Uint32Array(newNotifyBytePositions);
-                    }
-                    return undefined;
                 }
             );
 

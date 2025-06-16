@@ -3,7 +3,7 @@
 use std::{cell::OnceCell, sync::Arc};
 
 use blueflame::env::GameVer;
-use js_sys::{Function, Promise, Uint32Array, Uint8Array};
+use js_sys::{Function, Promise, Uint8Array};
 use serde::{Deserialize, Serialize};
 use skybook_parser::{ParseOutput, search};
 use skybook_runtime::exec::Spawner;
@@ -224,8 +224,7 @@ pub fn abort_task(ptr: *const sim::RunHandle) {
 pub async fn run_parsed(
     parse_output: *const ParseOutput,
     handle: *const sim::RunHandle,
-    notify_at_byte_pos: Vec<usize>,
-    notify_fn: Function // (up_to_byte_pos, Arc<RunOutput> as usize) -> Promise<Uint32Array>
+    notify_fn: Function // (up_to_byte_pos, Arc<RunOutput> as usize) -> Promise<void>
 ) -> MaybeAborted<usize> {
     let parse_output = unsafe { Arc::from_raw(parse_output) };
     let handle = sim::RunHandle::from_raw(handle);
@@ -240,45 +239,27 @@ pub async fn run_parsed(
     let output = run.run_parsed_with_notify(
         parse_output, 
         &runtime,
-        // &notify_at_byte_pos,
         |up_to_byte_pos, output| {
             let output_ptr = Arc::into_raw(Arc::new(output.clone())) as usize;
-            let result  =notify_fn.call2(
+            let result = notify_fn.call2(
                 &JsValue::undefined(), 
                 &up_to_byte_pos.into(), &output_ptr.into()) ;
             async{
-                let new_positions_js = match result {
+                let promise = match result {
                     Ok(x) => x,
                     Err(e) => {
                         log::error!("error calling notify_fn in run_parsed");
                         log_error_in_js(e);
-                        return vec![];
+                        return;
                     }
                 };
                 // await the future if needed
-                let temp = match new_positions_js.dyn_into::<Promise>() {
-                    Ok(x) => {
-                        match JsFuture::from(x).await {
-                            Ok(x) => x,
-                            Err(e) => {
-                                log::error!("error calling notify_fn in run_parsed");
-                                log_error_in_js(e);
-                                return vec![];
-                            }
-                        }
-                    }
-                    Err(x) => x
-                };
-                let temp = match temp.dyn_into::<Uint32Array>() {
-                    Ok(x) => x,
-                    Err(_) => {
-                        // this is expected - it's better for JS to return undefined
-                        // to skip the to_vec below
-                        return vec![];
+                if let Ok(x) = promise.dyn_into::<Promise>() {
+                    if let Err(e) = JsFuture::from(x).await {
+                        log::error!("error calling notify_fn in run_parsed");
+                        log_error_in_js(e);
                     }
                 };
-                // on wasm32, the map should compile to nop
-                temp.to_vec().into_iter().map(|x| x as usize).collect::<Vec<_>>()
             }
         }
     ).await;

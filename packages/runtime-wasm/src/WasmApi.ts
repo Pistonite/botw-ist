@@ -131,11 +131,10 @@ export class WasmApi implements NativeApi {
     public runParsed(
         parsedOutputPtr: number,
         taskHandlePtr: number,
-        notifyAtBytePos: number[],
-        notifyFn: (upToBytePos: number, outputPtr: number) => Promise<Uint32Array | undefined>
+        notifyFn: (upToBytePos: number, outputPtr: number) => Promise<void>
     ): Pwr<MaybeAborted<number>> {
         return this.exec(() => {
-            return wasm_bindgen.run_parsed(parsedOutputPtr, taskHandlePtr, new Uint32Array(notifyAtBytePos), notifyFn);
+            return wasm_bindgen.run_parsed(parsedOutputPtr, taskHandlePtr, notifyFn);
         });
     }
 
