@@ -14,6 +14,7 @@
     - [Game Scope]()
     - [Inventory Scope]()
     - [Dialog Scope]()
+  - [Command Syntax](./user/syntax.md)
   - [Command Reference](./user/commands.md)
     - [Action: Get Items](./action/get.md)
     - [Action: Hold/Remove Items]()

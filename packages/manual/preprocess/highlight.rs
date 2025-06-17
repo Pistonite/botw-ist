@@ -86,6 +86,7 @@ fn handle_skybook_script_highlighting(content: &mut String) -> anyhow::Result<()
             continue;
         }
         is_in_skybook_block = true;
+        skybook_block_content.clear();
     }
 
     Ok(())

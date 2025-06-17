@@ -170,8 +170,9 @@ impl MetaParser for &mut ItemMeta {
                 }
             }
             "effect" => match cir::parse_optional_meta_value(value.as_ref()) {
-                // integer => set it without checking
+                // number => set it without checking
                 Ok(cir::MetaValue::Int(x)) => self.effect_id = Some(x as i32),
+                Ok(cir::MetaValue::Float(x)) => self.effect_id = Some(x as i32),
                 // string modifier, parse it
                 Ok(cir::MetaValue::String(x)) => match parse_cook_effect(&x) {
                     Some(m) => self.effect_id = Some(m),
@@ -368,7 +369,7 @@ fn parse_cook_effect(value: &str) -> Option<i32> {
         "mighty" | "attack" | "attackup" => Some(10),
         "tough" | "defense" | "defenseup" => Some(11),
         "sneaky" | "quiet" | "stealth" | "stealthup" | "quietness" => Some(12),
-        "speed" | "speedup" | "allspeed" | "movingspeed" => Some(13),
+        "hasty" | "speed" | "speedup" | "allspeed" | "movingspeed" => Some(13),
         "energizing" | "stamina" | "staminaup" | "stam" | "stamup" | "gutsrecover" | "guts" => {
             Some(14)
         }
