@@ -9,7 +9,7 @@ async fn parse_simple() -> anyhow::Result<()> {
     let script = indoc! {r#"
         eat axe in slot 3;
         get 3 apple[life = true, time = false]
-        get 4 arrow;
+        get 100 apple;
         unequip arrow;
         get "古代箭"
         eat axe[from-slot=3];

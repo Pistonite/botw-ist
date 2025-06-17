@@ -50,9 +50,9 @@ ParseOutput {
             command: Get(
                 [
                     ItemSpec {
-                        amount: 4,
+                        amount: 100,
                         item: Item {
-                            actor: "NormalArrow",
+                            actor: "Item_Fruit_A",
                             meta: None,
                         },
                     },
@@ -61,7 +61,7 @@ ParseOutput {
             notes: "",
         },
         Step {
-            pos: 71,
+            pos: 73,
             command: Unequip(
                 Item(
                     Item {
@@ -74,7 +74,7 @@ ParseOutput {
             notes: "",
         },
         Step {
-            pos: 86,
+            pos: 88,
             command: Get(
                 [
                     ItemSpec {
@@ -89,7 +89,7 @@ ParseOutput {
             notes: "",
         },
         Step {
-            pos: 102,
+            pos: 104,
             command: Eat(
                 [
                     ItemSelectSpec {
@@ -123,7 +123,7 @@ ParseOutput {
             notes: "",
         },
         Step {
-            pos: 124,
+            pos: 126,
             command: Eat(
                 [
                     ItemSelectSpec {
@@ -158,7 +158,7 @@ ParseOutput {
             notes: "",
         },
         Step {
-            pos: 147,
+            pos: 149,
             command: PickUp(
                 [
                     ItemSelectSpec {
@@ -172,7 +172,7 @@ ParseOutput {
             notes: "",
         },
         Step {
-            pos: 166,
+            pos: 168,
             command: Equip(
                 Item(
                     Item {
@@ -184,7 +184,7 @@ ParseOutput {
             notes: "",
         },
         Step {
-            pos: 182,
+            pos: 184,
             command: Use(
                 CategorySpec {
                     category: Bow,
@@ -196,7 +196,7 @@ ParseOutput {
             notes: "",
         },
         Step {
-            pos: 191,
+            pos: 193,
             command: Freeze(
                 [
                     ItemSelectSpec {
@@ -213,7 +213,7 @@ ParseOutput {
             notes: "",
         },
     ],
-    script_len: 220,
+    script_len: 222,
     pages: [],
     display: [],
     errors: [
@@ -253,8 +253,8 @@ ParseOutput {
         },
         ErrorReport {
             span: (
-                208,
-                212,
+                210,
+                214,
             ),
             is_warning: false,
             error: InvalidCategory(
