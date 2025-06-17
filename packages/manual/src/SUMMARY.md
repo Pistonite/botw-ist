@@ -15,6 +15,7 @@
     - [Inventory Scope]()
     - [Dialog Scope]()
   - [Command Syntax](./user/syntax.md)
+    - [Comments and Notes](./user/syntax_comment.md)
   - [Command Reference](./user/commands.md)
     - [Action: Get Items](./action/get.md)
     - [Action: Hold/Remove Items]()

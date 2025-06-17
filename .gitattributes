@@ -9,6 +9,5 @@
 *.sem linguist-generated
 *.syn linguist-generated
 
-packages/skybook-api/src/interfaces linguist-generated
-packages/skybook-api/src/parser     linguist-generated
-packages/skybook-api/src/runtime    linguist-generated
+packages/skybook-api/src/interfaces/*.ts linguist-generated
+packages/skybook-api/src/native/*.ts     linguist-generated

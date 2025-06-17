@@ -41,11 +41,15 @@ get    3        pot-lid   [durability=3]
   - *By Identifier*: Multiple english words separated by `-` and `_`, for example
     <skyb> get 1 royal-claymore 1 trav-bow</skyb>.
     The result is an item that contains all the words (for example `trav-bow` results in **trav**eller's **bow**.
+    - Plural forms can be used as well, i.e. `apples` is the same as `apple`
     - There is an internal algorithm that decides what item it is if there are multiple matches.
   - *By Localized Name*: A quoted word like <skyb>get "royal claymore"</skyb>. By default, all languages are searched,
     so you can also do something like `"espadon royal"` or `"王族双手剑"`. The item is fuzzy-searched.
     - If the matched language is not what you want, you can also lock the language, for example `"fr:espadon royal"`
   - *By Actor Name*: An angle-bracketed string like <skyb>get <Weapon_Sword_070></skyb>, to specify the item use its internal actor name directly.
+  - *By Category* (Limited Scenarios Only): In cases where a category can uniquely identify an item, you can use the 
+    category name to specify the item. For example <skyb>unequip shield</skyb> to unequip the currently equipped shield if there is only one shield equipped.
+    Note the behavior might vary based on the command. See [token](https://github.com/Pistonite/botw-ist/blob/d5812037f4909eeb48cb2ba666dccdb672563cc4/packages/parser/src/syn/token.rs#L119) for possible category values
 - `metadata` is extra properties of the item, in the format of `[key1=value1, key2=value2, ...]`, either `=` or `:` can be used as the key/value delimiter
 
 The metadata can be used in 2 scenarios:
@@ -81,9 +85,68 @@ can also use the symbol list on the right side).
 | `durability` | `dura` |(`int`) Sets `value` to 100 times the specified number |
 | `effect` | | (`int` or `string`) Sets the effect ID for cooked-food. See [parse_cook_effect](https://github.com/Pistonite/botw-ist/blob/main/packages/parser/src/cir/item_meta.rs) for possible values |
 | `equipped` |`equip` | (`bool`) If the item is equipped |
+| `ingr` | | (`string`) Set the ingredient of the cooked-food. The string must be an item identifier (see above). The property can be specified multiple times to add multiple ingredients. |
+| `level`| | (`int`) Sets the level of the effect for cooked-food |
 | `life-recover`| `hp`, `modpower` | (`int`) Sets the number of quarter-hearts cooked-food recovers, or value of a weapon modifier |
 | `modifier` | `modtype` | (`int` or `string`) Set weapon modifier. **Cannot be used to set food effect type**. Integer values are the same as `price`. String values set a single modifier. See [`parse_weapon_modifier_bits`](https://github.com/Pistonite/botw-ist/blob/main/packages/parser/src/cir/item_meta.rs) for possible values |
 | `price` | |(`int`) Sets the price of the cooked-food. This can also be used to set multiple weapon modifiers |
+| `star` | | (`int`) Armor star (upgrade) number, valid range is `0-4`, inclusive. |
 | `time` | | (`int`) Sets the duration of the food effect in seconds |
 | `value` | `life` | (`int`) The value of the item, which is the count for stackables or durability multiplied by 100 for equipments. **Note: not to be confused with `life-recover`** |
   
+## Selecting from multiple matches
+When selecting an item slot (for example to <skyb>hold</skyb>), there could be cases
+where there are multiple items that are exactly the same. There are additional meta properties that you can use
+to pick exactly which slot to select.
+
+With `from-slot` property, you can pick the `i`-th matched item. For example,
+if there are 3 Pot Lids, you can use <skyb>drop pot-lid[from-slot=2]</skyb> to drop the second Pot Lid. The number is 1-indexed.
+
+You can also target an item by its position in the inventory directly
+with one of the following methods:
+
+```skybook
+# This is the same as using `from-slot`
+# If there are >=2 slots of apple, this will eat from the second slot
+eat 2 apple[slot=2]
+
+# Eat 2 apples from the material tab, in the first row and second column
+# When using `category`, the indices are 1-indexed
+eat 2 apple[category=material, row=1, col=2]
+
+# Eat 2 apples from the second material tab, in the first row and second column
+eat 2 apple[category=material, tab=2, row=1, col=2]
+
+# Eat 2 apples from the second material tab, in the 0-th slot.
+# The tab is 1-indexed.
+# The slot is the 0-indexed slot in that tab, arranged like this:
+# 00 01 02 03 04
+# 05 06 07 08 09
+# 10 11 12 13 14
+# 15 16 17 18 19
+eat 2 apple[category=material, tab=2, slot=0]
+
+# Eat 2 apples from the 0-th tab, in the 3rd slot
+# The tab index here is the 0-based index in the entire tab array
+# The slot is the 0-indexed slot in that tab, see above
+eat 2 apple[tab=0, slot=3]
+
+```
+
+```admonish note
+- These properties cannot be used when adding items
+- If the slot selected by position has a different item, you will receive an error
+- When using `row` and `col`, they must be specified after `category` or `tab`
+```
+
+## The `all` amount specifier
+`all` is a special keyword that can be used in place of an amount to mean "all of the item"
+
+```skybook
+eat all apples
+drop all shields
+```
+
+The exact action may depend on the command, for example, <skyb>sell all apples</skyb>
+invokes the sell-all option, where as <skyb>eat all apples</skyb> selects the "eat"
+option for all slots that match `apples` repeatly, until no more slots match.
