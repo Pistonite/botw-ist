@@ -31,7 +31,7 @@ pub fn get_item_with_default_value(
         x[1] = modifier_ptr,
     };
 
-    if cpu.proc.is160() {
+    if cpu.proc.env().is160() {
         panic!("1.6.0 not implemented yet");
         // cpu.native_jump_to_main_offset(0x0096f3d0)?;
     } else {
@@ -82,7 +82,7 @@ pub fn get_cook_item(
         x[1] = cook_item,
     };
 
-    if cpu.proc.is160() {
+    if cpu.proc.env().is160() {
         cpu.native_jump_to_main_offset(0x010be740)?;
     } else {
         cpu.native_jump_to_main_offset(0x00970060)?;
@@ -111,7 +111,7 @@ pub fn get_item_with_value(
         x[3] = modifier_ptr,
     };
 
-    if cpu.proc.is160() {
+    if cpu.proc.env().is160() {
         panic!("1.6.0 not implemented yet");
         // cpu.native_jump_to_main_offset(0x0096f3d0)?;
     } else {
@@ -160,7 +160,7 @@ pub fn get_actor_profile(cpu: &mut Cpu2, actor: &str) -> Result<String, processo
         x[2] = name_ptr_cstr,
     };
 
-    if cpu.proc.is160() {
+    if cpu.proc.env().is160() {
         cpu.native_jump_to_main_offset(0x01542270)?;
     } else {
         cpu.native_jump_to_main_offset(0x00d301fc)?;

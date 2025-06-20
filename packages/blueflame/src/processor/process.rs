@@ -1,14 +1,13 @@
 use std::ops::ControlFlow;
-use std::panic::{RefUnwindSafe, UnwindSafe};
 use std::sync::Arc;
 
 use derive_more::derive::Constructor;
 
-use crate::env::{Environment, GameVer};
+use crate::env::Environment;
 use crate::game::Proxies;
 use crate::memory::{Memory, ProxyGuardMut, ProxyList, ProxyObject, access};
-use crate::processor::insn::InsnVec;
-use crate::processor::{Error, Execute};
+use crate::processor::insn::{HookedInsnVec, InsnVec};
+use crate::processor::{Error, Execute, Hook, HookProvider};
 
 /// The Process is the container for everything the core tracks
 /// that is not in the Processor.
@@ -22,7 +21,7 @@ pub struct Process {
     /// Proxy implementation for some game objects
     proxies: Arc<Proxies>,
     /// Hooks for this process
-    hook: Arc<dyn HookProvider>,
+    hook_provider: Arc<dyn HookProvider>,
 }
 static_assertions::assert_impl_all!(Process: Send, Sync);
 
@@ -33,12 +32,9 @@ impl std::fmt::Debug for Process {
 }
 
 impl Process {
-    pub fn is160(&self) -> bool {
-        self.memory.env().is160()
-    }
-    /// Get the game version
-    pub fn game_ver(&self) -> GameVer {
-        self.memory.env().game_ver
+    /// Get the environment configuration
+    pub fn env(&self) -> Environment {
+        self.memory.env()
     }
 
     /// Access the main memory of the process
@@ -51,10 +47,12 @@ impl Process {
         Arc::make_mut(&mut self.memory)
     }
 
+    /// Access proxies. Usually this is easier with the [`proxy`](crate::memory::proxy) macro
     pub fn proxies(&self) -> &Proxies {
         &self.proxies
     }
 
+    /// Access proxies for mutation. Usually this is easier with the [`proxy`](crate::memory::proxy) macro
     pub fn proxies_mut<T: ProxyObject, F: FnOnce(&mut Proxies) -> &mut ProxyList<T>>(
         &mut self,
         f: F,
@@ -69,6 +67,11 @@ impl Process {
     /// Get the physical starting address of the main module
     pub fn main_start(&self) -> u64 {
         self.memory.main_start()
+    }
+
+    /// Get the hook provider
+    pub fn hook_provider_mut(&mut self) -> &mut Arc<dyn HookProvider> {
+        &mut self.hook_provider
     }
 
     /// Fetch a block of code for execution
@@ -90,12 +93,16 @@ impl Process {
             Some(n) => (false, n),
             None => (true, 4), // fetch one instruction
         };
-        if let Some((x, bytes)) = self.hook.fetch(main_offset, self.memory.env())? {
-            if !ignore_hook_size_check && bytes > max_bytes {
-                return Err(Error::TooBigHook(main_offset));
+        let opt_hook_exec = match self.hook_provider.fetch(main_offset, self.memory.env())? {
+            Some(Hook::Replace(hook_exec, bytes)) => {
+                if !ignore_hook_size_check && bytes > max_bytes {
+                    return Err(Error::TooBigHook(main_offset));
+                }
+                return Ok((hook_exec, bytes));
             }
-            return Ok((x, bytes));
-        }
+            Some(Hook::Start(hook_exec)) => Some(hook_exec),
+            None => None,
+        };
 
         // if no hook, fetch the instructions from memory
         let mut reader = self.memory.read(pc, access!(execute))?;
@@ -110,17 +117,9 @@ impl Process {
         }
 
         let size = insns.byte_size();
-        Ok((Box::new(insns), size))
+        match opt_hook_exec {
+            None => Ok((Box::new(insns), size)),
+            Some(hook) => Ok((Box::new(HookedInsnVec::new(hook, insns)), size)),
+        }
     }
-}
-
-pub trait HookProvider: Send + Sync + UnwindSafe + RefUnwindSafe {
-    /// Hook execution at PC. Return the execute function and the byte
-    /// size of the hook
-    #[allow(clippy::type_complexity)]
-    fn fetch(
-        &self,
-        main_offset: u32,
-        env: Environment,
-    ) -> Result<Option<(Box<dyn Execute>, u32)>, Error>;
 }

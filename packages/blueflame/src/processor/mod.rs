@@ -6,15 +6,14 @@ mod process;
 pub use process::*;
 mod register;
 pub use register::*;
-
-pub mod insn;
-
 mod execute;
-
 pub use execute::*;
-
+mod hook;
+pub use hook::*;
 mod stack_trace;
 pub use stack_trace::*;
+
+pub mod insn;
 
 pub const STACK_RESERVATION: u64 = 0x100;
 pub const BLOCK_COUNT_LIMIT: usize = 0x10000;

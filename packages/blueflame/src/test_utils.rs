@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crate::env::{DlcVer, Environment, GameVer};
 use crate::game::Proxies;
 use crate::memory::Memory;
-use crate::processor::{Execute, HookProvider, Process};
+use crate::processor::{Hook, HookProvider, Process};
 
 impl Memory {
     pub fn new_for_test() -> Self {
@@ -14,11 +14,7 @@ impl Memory {
 
 struct EmptyHookProvider;
 impl HookProvider for EmptyHookProvider {
-    fn fetch(
-        &self,
-        _: u32,
-        _: Environment,
-    ) -> Result<Option<(Box<dyn Execute>, u32)>, crate::processor::Error> {
+    fn fetch(&self, _: u32, _: Environment) -> Result<Option<Hook>, crate::processor::Error> {
         Ok(None)
     }
 }
