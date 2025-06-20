@@ -1,18 +1,17 @@
 use super::gdt_hooks;
-use crate::env::{DlcVer, Environment, GameVer};
-use crate::game::{gdt, singleton_instance};
+use crate::env::Environment;
+use crate::game::gdt;
 use crate::memory::{self, Memory, access};
 use crate::processor::insn::paste_insn;
-use crate::processor::{self, Cpu0, Execute, HookProvider, Process, reg};
+use crate::processor::{self, Cpu0, Hook, HookProvider, Process, reg};
 
-macro_rules! fn_table {
+macro_rules! replace_hooks {
     ($main_offset:ident size fn $( $offset:literal $size:literal $function:expr ),* $(,)?) => {
         match $main_offset {
         $(
             #[allow(clippy::zero_prefixed_literal)]
             $offset => {
-                // log::trace!("reached hook function at 0x{:#08x} with size {}: {}", $offset, $size, stringify!($function));
-                return Ok(Some((processor::box_execute($function), $size)));
+                return Ok(Some(Hook::Replace(processor::box_execute($function), $size)));
             }
         )*
         _ => {}
@@ -45,17 +44,13 @@ pub fn patch_memory(memory: &mut Memory, env: Environment) -> Result<(), memory:
 
 pub struct GameHooks;
 impl HookProvider for GameHooks {
-    fn fetch(
-        &self,
-        main_offset: u32,
-        env: Environment,
-    ) -> Result<Option<(Box<dyn Execute>, u32)>, processor::Error> {
+    fn fetch(&self, main_offset: u32, env: Environment) -> Result<Option<Hook>, processor::Error> {
         if env.is160() {
             // TODO --160: hooks for 160
             return Ok(None);
         }
 
-        fn_table! {
+        replace_hooks! {
 
         main_offset size   fn
         0x006669f8  000408 return_void, // uking::act::CreatePlayerEquipActorMgr::doRequestCreateWeapon
@@ -203,42 +198,40 @@ fn get_player(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> {
     reg! { cpu: x[0] = player_ptr, return };
 }
 
-#[allow(dead_code)]
-fn do_request_create_weapon_150(
-    cpu: &mut Cpu0,
-    proc: &mut Process,
-) -> Result<(), processor::Error> {
-    do_request_create_weapon(cpu, proc, Environment::new(GameVer::X150, DlcVer::V300))
-}
-
-#[allow(dead_code)]
-/// uking::act::CreatePlayerEquipActorMgr::doRequestCreateWeapon
-/// (this, i32 slot_idx, sead::SafeString* name, int value, WeaponModifierInfo* modifier, _)
-fn do_request_create_weapon(
-    cpu: &mut Cpu0,
-    proc: &mut Process,
-    _env: Environment,
-) -> Result<(), processor::Error> {
-    let main_start = proc.main_start();
-    let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
-
-    reg! { cpu:
-        x[0] = pmdm_ptr.to_raw(),
-        w[1] => let slot_idx: i32,
-        w[3] => let value: i32,
-        w[1] = value,
-        w[2] = match slot_idx {
-            0 => 0, // sword
-            1 => 3, // shield
-            _ => 1, // bow
-        }
-    };
-
-    // jump to uking::ui::PauseMenuDataMgr::setEquippedWeaponItemValue
-    // directly to update the created weapon value in pouch
-    cpu.pc = main_start + 0x971438;
-    Ok(())
-}
+// fn do_request_create_weapon_150(
+//     cpu: &mut Cpu0,
+//     proc: &mut Process,
+// ) -> Result<(), processor::Error> {
+//     do_request_create_weapon(cpu, proc, Environment::new(GameVer::X150, DlcVer::V300))
+// }
+//
+// /// uking::act::CreatePlayerEquipActorMgr::doRequestCreateWeapon
+// /// (this, i32 slot_idx, sead::SafeString* name, int value, WeaponModifierInfo* modifier, _)
+// fn do_request_create_weapon(
+//     cpu: &mut Cpu0,
+//     proc: &mut Process,
+//     _env: Environment,
+// ) -> Result<(), processor::Error> {
+//     let main_start = proc.main_start();
+//     let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
+//
+//     reg! { cpu:
+//         x[0] = pmdm_ptr.to_raw(),
+//         w[1] => let slot_idx: i32,
+//         w[3] => let value: i32,
+//         w[1] = value,
+//         w[2] = match slot_idx {
+//             0 => 0, // sword
+//             1 => 3, // shield
+//             _ => 1, // bow
+//         }
+//     };
+//
+//     // jump to uking::ui::PauseMenuDataMgr::setEquippedWeaponItemValue
+//     // directly to update the created weapon value in pouch
+//     cpu.pc = main_start + 0x971438;
+//     Ok(())
+// }
 
 /// memcpy(dest, src, size)
 fn memcpy(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {

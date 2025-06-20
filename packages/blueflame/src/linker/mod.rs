@@ -7,3 +7,5 @@ pub use hooks::*;
 mod functions;
 pub use functions::*;
 mod gdt_hooks;
+
+pub mod events;

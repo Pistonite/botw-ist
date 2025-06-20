@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use derive_more::derive::{Deref, DerefMut};
 use enum_map::EnumMap;
 
@@ -7,8 +9,8 @@ use crate::env::{DataId, GameVer, ProxyId, enabled};
 use crate::game::gdt;
 use crate::memory::{MemObject, Ptr};
 use crate::processor::{
-    BLOCK_COUNT_LIMIT, BLOCK_ITERATION_LIMIT, CrashReport, Error, ExecuteCache, Process, Registers,
-    STACK_RESERVATION, StackTrace, reg,
+    BLOCK_COUNT_LIMIT, BLOCK_ITERATION_LIMIT, CrashReport, Error, ExecuteCache, HookChain,
+    HookProvider, Process, Registers, STACK_RESERVATION, StackTrace, reg,
 };
 use crate::program::ArchivedProgram;
 use crate::vm::VirtualMachine;
@@ -272,7 +274,7 @@ impl Cpu2<'_, '_> {
 
     /// Run one block of execution
     pub fn execute_once(&mut self) -> Result<(), Error> {
-        let ver = self.proc.game_ver();
+        let ver = self.proc.env().game_ver;
 
         let (fetch_max_bytes, is_hook) = match self.cpu1.cache[ver].get(self.pc) {
             Ok((exe, step)) => {
@@ -362,6 +364,10 @@ impl Cpu2<'_, '_> {
         CrashReport::new(Box::new(cpu0), main_start, error)
     }
 
+    /// Allocate memory object on the stack
+    ///
+    /// When done, the address should be returned with [`stack_check`](Self::stack_check)
+    /// to check for stack corruption
     pub fn stack_alloc<T: MemObject>(&mut self) -> Result<u64, Error> {
         self.stack_alloc_size(T::SIZE)
     }
@@ -369,7 +375,7 @@ impl Cpu2<'_, '_> {
     /// Reserve `size` bytes on the stack, moving the stack pointer
     /// accordingly.
     ///
-    /// When done, the address should be returned with [`stack_check`](Self::stack_check)
+    /// When done, the address should be returned with [`stack_free_size`](Self::stack_free_size)
     /// to check for stack corruption
     pub fn stack_alloc_size(&mut self, size: u32) -> Result<u64, Error> {
         let sp = self.read::<u64>(reg!(sp));
@@ -390,10 +396,12 @@ impl Cpu2<'_, '_> {
         Ok(addr)
     }
 
+    /// Check if the stack-allocated object is corrupted
     pub fn stack_check<T: MemObject>(&mut self, addr: u64) -> Result<(), Error> {
         self.stack_free_size(addr, T::SIZE)
     }
 
+    /// Check if the stack-allocated object is corrupted
     pub fn stack_free_size(&mut self, addr: u64, size: u32) -> Result<(), Error> {
         if !enabled!("check-stack-corruption") {
             return Ok(());
@@ -412,6 +420,41 @@ impl Cpu2<'_, '_> {
             }
         }
         Ok(())
+    }
+
+    /// Push a new hook provider. The new provider will be used first and fall back to the current
+    /// provider if it doesn't provide a hook. The predicate is used to flush the execution cache
+    /// for the functions that the new hook provider needs to access
+    pub fn push_hooks<F: Fn(GameVer, u32, u32) -> bool>(
+        &mut self,
+        hook_provider: Arc<dyn HookProvider>,
+        predicate: F,
+    ) {
+        let proc_hook_provider = self.proc.hook_provider_mut();
+        *proc_hook_provider = Arc::new(HookChain::new(
+            hook_provider,
+            Arc::clone(proc_hook_provider),
+        ));
+        self.flush_cache_if(predicate);
+    }
+
+    /// Pop the hook provider and flush the cache if popped
+    pub fn pop_hooks<F: Fn(GameVer, u32, u32) -> bool>(&mut self, predicate: F) {
+        let proc_hook_provider = self.proc.hook_provider_mut();
+        let hook_provider = Arc::clone(proc_hook_provider);
+        if let Ok(hook_chain) = Arc::downcast::<HookChain>(hook_provider) {
+            *proc_hook_provider = hook_chain.inner();
+            self.flush_cache_if(predicate);
+        }
+    }
+
+    /// Flush the execution cache with a predicate for which main offsets to flush.
+    /// The predicate arguments are `(gamever, main_offset, size)`.
+    pub fn flush_cache_if<F: Fn(GameVer, u32, u32) -> bool>(&mut self, predicate: F) {
+        let game_ver = self.proc.env().game_ver;
+        let main_start = self.proc.main_start();
+        self.cpu1.cache[game_ver]
+            .flush_if(|start, size| predicate(game_ver, (start - main_start) as u32, size));
     }
 }
 

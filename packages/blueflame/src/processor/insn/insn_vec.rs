@@ -1,5 +1,6 @@
 use std::ops::ControlFlow;
 
+use derive_more::Constructor;
 use disarm64::arm64::InsnOpcode;
 use disarm64::decoder::Opcode;
 
@@ -9,6 +10,22 @@ use crate::processor::{
     insn::{Core, instruction_parse, op},
     {BLOCK_ITERATION_LIMIT, Cpu0, Error, Execute, Process},
 };
+
+#[derive(Constructor)]
+pub struct HookedInsnVec {
+    hook: Box<dyn Execute>,
+    insns: InsnVec,
+}
+
+impl Execute for HookedInsnVec {
+    fn execute_from(&self, cpu: &mut Cpu0, proc: &mut Process, step: u32) -> Result<(), Error> {
+        // execute the hook if starting from beginning
+        if step == 0 {
+            self.hook.execute_from(cpu, proc, 0)?;
+        }
+        self.insns.execute_from(cpu, proc, step)
+    }
+}
 
 #[derive(Default)]
 pub struct InsnVec {

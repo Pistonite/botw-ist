@@ -17,8 +17,9 @@ where
 {
     fn execute_from(&self, cpu: &mut Cpu0, proc: &mut Process, step: u32) -> Result<(), Error> {
         if step != 0 {
-            // TODO --cleanup: core: get main offset
-            return Err(Error::StrictReplacement { main_offset: 0 });
+            return Err(Error::StrictReplacement {
+                main_offset: (cpu.pc - proc.main_start()) as u32,
+            });
         }
         self(cpu, proc)
     }
@@ -64,6 +65,12 @@ impl ExecuteCache {
     /// to be refetched from memory
     pub fn flush(&mut self) {
         self.entries.retain(|e| e.is_permanent);
+    }
+
+    /// Delete cache entries that the predicate returns true for. The args
+    /// for the predicate are `(start, size)`
+    pub fn flush_if<F: Fn(u64, u32) -> bool>(&mut self, predicate: F) {
+        self.entries.retain(|e| !predicate(e.start, e.size))
     }
 
     /// Insert new entry into the cache.
