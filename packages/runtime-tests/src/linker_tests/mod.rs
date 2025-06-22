@@ -5,8 +5,8 @@ use threadpool::ThreadPool;
 
 use crate::util::{self, PanicPayload};
 
-mod pmdm_initialize;
 mod get_tests;
+mod pmdm_initialize;
 
 macro_rules! run {
     ($pool:expr, $process:expr, $test_fn:expr) => {

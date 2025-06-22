@@ -45,7 +45,7 @@ impl std::fmt::Display for GameSnapshot {
             }
             Self::Crashed(report) => {
                 writeln!(f, "game: (Crashed)")?;
-                writeln!(f, "{:?}", report)
+                writeln!(f, "{report:?}")
             }
             Self::Running(state) => {
                 writeln!(f, "game: (Running)")?;
@@ -69,7 +69,7 @@ fn fmt_iv_pouch(
 ) -> std::fmt::Result {
     let pouch = match pouch {
         Err(e) => {
-            writeln!(f, "  pouch_error: ({})", e)?;
+            writeln!(f, "  pouch_error: ({e})")?;
             return Ok(());
         }
         Ok(x) => x,

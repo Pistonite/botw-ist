@@ -3,9 +3,9 @@ use std::cell::Cell;
 use std::sync::Arc;
 
 use anyhow::Context;
-use blueflame::env::{GameVer};
+use blueflame::env::GameVer;
 use blueflame::processor::Process;
-use skybook_runtime::{sim, exec};
+use skybook_runtime::{exec, sim};
 
 pub struct PanicPayload {
     message: String,
@@ -48,7 +48,9 @@ pub fn setup_panic_capture() {
 
 /// Get the last panic payload, only works for panic on the same thread
 pub fn take_last_panic() -> PanicPayload {
-    PANIC_INFO.with(|b| b.take()).expect("no panic payload captured")
+    PANIC_INFO
+        .with(|b| b.take())
+        .expect("no panic payload captured")
 }
 
 pub fn setup_test_process() -> anyhow::Result<Arc<sim::Runtime>> {
@@ -59,14 +61,20 @@ pub fn setup_test_process() -> anyhow::Result<Arc<sim::Runtime>> {
     let image_bytes = std::fs::read(image_file).context("failed to read BFI")?;
 
     let runtime = sim::Runtime::new(exec::Spawner::default());
-    runtime.init(&image_bytes, 4, Some(&sim::RuntimeInitParams {
-        dlc: 3,
-        program_start: "".to_string(),
-        stack_start: "0x0000008888800000".to_string(),
-        stack_size: 0,
-        heap_free_size: 0,
-        pmdm_addr: "0x0000002222200000".to_string(),
-    })).context("failed to initialize runtime")?;
+    runtime
+        .init(
+            &image_bytes,
+            4,
+            Some(&sim::RuntimeInitParams {
+                dlc: 3,
+                program_start: "".to_string(),
+                stack_start: "0x0000008888800000".to_string(),
+                stack_size: 0,
+                heap_free_size: 0,
+                pmdm_addr: "0x0000002222200000".to_string(),
+            }),
+        )
+        .context("failed to initialize runtime")?;
 
     Ok(Arc::new(runtime))
 }

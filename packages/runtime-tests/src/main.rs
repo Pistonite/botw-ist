@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use anyhow::{bail, Context};
+use anyhow::{Context, bail};
 
 mod linker_tests;
 mod script_tests;
@@ -17,7 +17,9 @@ fn main() -> anyhow::Result<()> {
     std::fs::create_dir_all(failures_dir).context("failed to create failures dir")?;
 
     let runtime = util::setup_test_process()?;
-    let process = runtime.initial_process().context("failed to get initial process")?;
+    let process = runtime
+        .initial_process()
+        .context("failed to get initial process")?;
 
     let linker_test_passed = linker_tests::run(&process, failures_dir)?;
     let script_test_passed = script_tests::run(runtime)?;
