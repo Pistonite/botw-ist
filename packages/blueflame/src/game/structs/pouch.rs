@@ -188,7 +188,7 @@ impl PouchItemType {
     pub fn describe(value: i32) -> String {
         match Self::from_value(value) {
             Some(x) => format!("{x:?}"),
-            None => format!("Unknown(0x{:08x})", value as u32)
+            None => format!("Unknown(0x{:08x})", value as u32),
         }
     }
 
@@ -206,7 +206,7 @@ impl PouchItemType {
             8 => Self::Food,
             9 => Self::KeyItem,
             -1 => Self::Invalid,
-            _ => return None
+            _ => return None,
         })
     }
 }
@@ -236,7 +236,7 @@ impl PouchItemUse {
     pub fn describe(value: i32) -> String {
         match Self::from_value(value) {
             Some(x) => format!("{x:?}"),
-            None => format!("Unknown(0x{:08x})", value as u32)
+            None => format!("Unknown(0x{:08x})", value as u32),
         }
     }
 
@@ -255,7 +255,7 @@ impl PouchItemUse {
             9 => Self::ImportantItem,
             10 => Self::CureItem,
             -1 => Self::Invalid,
-            _ => return None
+            _ => return None,
         })
     }
 }
@@ -286,7 +286,7 @@ impl CookEffectId {
     pub fn describe(value: f32) -> String {
         match Self::from_value(value) {
             Some(x) => format!("{x:?}"),
-            None => format!("Unknown(0x{:08x})", value as u32)
+            None => format!("Unknown(0x{:08x})", value as u32),
         }
     }
 
@@ -306,7 +306,7 @@ impl CookEffectId {
             14.0 => Self::GutsRecover,
             15.0 => Self::ExGutsMaxUp,
             16.0 => Self::Fireproof,
-            _ => return None
+            _ => return None,
         })
     }
 }

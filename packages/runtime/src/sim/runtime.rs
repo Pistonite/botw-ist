@@ -64,14 +64,13 @@ impl Runtime {
         };
 
         log::debug!("program start: 0x{:016x}", program.program_start);
-        if let Some(program_start) = params.map(|x| &x.program_start)
-        {
+        if let Some(program_start) = params.map(|x| &x.program_start) {
             if !program_start.is_empty() {
                 match parse_region_addr(program_start) {
                     None => {
                         log::error!(
-                        "cannot parse program_start from the params, assuming we are OK with the default"
-                    );
+                            "cannot parse program_start from the params, assuming we are OK with the default"
+                        );
                     }
                     Some(expected_program_start) => {
                         if expected_program_start != program.program_start {

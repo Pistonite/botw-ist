@@ -84,8 +84,7 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
         syn::ItemListFinite::Single(item) => {
             if let Some(parsed_item) = parse_item(item, resolver, errors).await {
                 if let Some(m) = &parsed_item.meta {
-                if m.position.is_some()
-                    {
+                    if m.position.is_some() {
                         cir_push_warning!(errors, &item.span(), UnusedItemPosition)
                     }
                 }
@@ -106,8 +105,7 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
                 };
 
                 if let Some(parsed_item) = parse_item(&item.item, resolver, errors).await {
-                    if let Some(m) = &parsed_item.meta
-                    {
+                    if let Some(m) = &parsed_item.meta {
                         if m.position.is_some() {
                             cir_push_warning!(errors, &item.span(), UnusedItemPosition)
                         }

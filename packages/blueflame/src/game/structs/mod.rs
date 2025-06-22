@@ -14,7 +14,6 @@ pub use container::*;
 
 use crate::memory::{MemObject, Ptr};
 
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(i32)]
 pub enum PouchCategory {
@@ -99,7 +98,6 @@ pub struct GrabbedItemInfo {
 //         self.mItemLists.get_inactive_item_iter()
 //     }
 // }
-
 
 // pub struct PorchWeaponData {
 //     pub modifier: i32,

@@ -39,7 +39,7 @@ impl From<Error> for RuntimeViewError {
     fn from(value: Error) -> Self {
         match value {
             Error::Memory(_) => Self::Memory,
-            Error::Coherence(_) => Self::Coherence
+            Error::Coherence(_) => Self::Coherence,
         }
     }
 }
