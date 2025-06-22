@@ -34,7 +34,7 @@ jobs:
           submodules: true
           ecma-pnpm: true
           ecma-bun: true
-          rust: nightly
+          rust: stable
           rust-wasm: true
           rust-src: true
           tool-cargo-binstall: ripgrep,layered-crate

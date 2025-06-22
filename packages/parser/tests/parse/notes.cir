@@ -1,37 +1,37 @@
 ParseOutput {
     steps: [
         Step {
-            pos: 26,
+            span: 26..47,
             command: Sync,
             notes: "a",
         },
         Step {
-            pos: 47,
+            span: 47..100,
             command: Sync,
             notes: "",
         },
         Step {
-            pos: 100,
+            span: 100..105,
             command: Sync,
             notes: "text\n\nget  1 apple",
         },
         Step {
-            pos: 105,
+            span: 105..144,
             command: Sync,
             notes: "text\n\nget  1 apple",
         },
         Step {
-            pos: 144,
+            span: 144..150,
             command: Sync,
             notes: "empty line in between",
         },
         Step {
-            pos: 150,
+            span: 150..155,
             command: Sync,
             notes: "",
         },
         Step {
-            pos: 155,
+            span: 155..197,
             command: Sync,
             notes: "",
         },
