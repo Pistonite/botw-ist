@@ -35,11 +35,27 @@ jobs:
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
-          rust-wasm: true
-          rust-src: true
           tool-cargo-binstall: ripgrep,layered-crate
       - uses: Pistonight/mono-dev/actions/pistonstor@main
       - run: task check-ci-layer-3 --output group
+
+  check-layer-4:
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: Pistonight/mono-dev/actions/setup@main
+        with:
+          runner: blacksmith
+          submodules: true
+          ecma-pnpm: true
+          ecma-bun: true
+          rust: nightly
+          rust-wasm: true
+          rust-src: true
+      - uses: Pistonight/mono-dev/actions/pistonstor@main
+      - run: task check-ci-layer-4 --output group
 
   test:
     name: test

@@ -1,5 +1,3 @@
-// #![feature(string_from_utf8_lossy_owned)]
-
 extern crate self as blueflame;
 
 /// Top-level setup implementation for starting and connecting

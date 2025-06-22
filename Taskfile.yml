@@ -106,6 +106,15 @@ tasks:
       - task: post-install
       - task: check-layer-3
 
+  check-ci-layer-4:
+    deps:
+      - parser:pull-artifacts
+      - blueflame-deps:pull-artifacts
+    cmds:
+      - pnpm install --frozen-lockfile
+      - task: post-install
+      - task: check-layer-4
+
   check:
     desc: Run ALL of the checks
     cmds:
@@ -136,6 +145,9 @@ tasks:
       - task: blueflame:check
       - task: runtime:check
       - task: runtime-tests:check
+
+  check-layer-4:
+    cmds:
       - task: runtime-wasm:check
 
   test-ci:

@@ -153,7 +153,7 @@ async fn run_test(
         let span = step.span;
         new_snapshot += "\n";
         let script = &test_script[span.lo..span.hi];
-        new_snapshot += &format!("----- Step[{i}]: {}", script);
+        new_snapshot += &format!("----- Step[{i}]: {script}");
         new_snapshot += "\n";
 
         let state = &output.states[i];
