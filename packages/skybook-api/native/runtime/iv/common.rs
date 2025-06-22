@@ -4,7 +4,7 @@ mod __impl {
     use serde::Serialize;
 
     /// Cook or weapon data in pouch
-    #[derive(Debug, Default, Clone, Serialize)]
+    #[derive(Debug, Clone, Serialize, PartialEq)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -42,6 +42,18 @@ mod __impl {
         ///
         /// This is the y value of CookEffect0 flag in GDT
         pub effect_level: f32,
+    }
+
+    impl Default for InvView_ItemData {
+        fn default() -> Self {
+            Self {
+                effect_value: 0,
+                effect_duration: 0,
+                sell_price: 0,
+                effect_id: -1.0,
+                effect_level: 0.0,
+            }
+        }
     }
 
     /// Weapon modifier info, which is a bitflag for modifier type and a modifier value
