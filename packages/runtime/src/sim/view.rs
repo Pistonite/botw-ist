@@ -5,6 +5,7 @@ use blueflame::memory::{self, Memory, Ptr, proxy};
 use blueflame::processor::Process;
 
 use crate::error::RuntimeViewError;
+use crate::sim;
 use crate::iv;
 
 macro_rules! try_mem {
@@ -57,8 +58,17 @@ struct ItemPtrData {
 /// if ISU happened or the inventory list is corrupted in some way).
 ///
 /// However, tab overflow is allowed and will be indicated in the returned inventory
-pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, Error> {
+pub fn extract_pouch_view(
+    proc: &Process,
+    screen_sys: &sim::ScreenSystem,
+) -> Result<iv::PouchList, Error> {
     log::debug!("extracting pouch view from process");
+
+    // get any inventory temporary state
+    let visually_equipped_items = screen_sys.current_screen().as_inventory().map(|x| x.get_equipped_item_ptrs())
+        .unwrap_or_default();
+
+
     let memory = proc.memory();
 
     let pmdm = try_mem!(
@@ -144,12 +154,13 @@ pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, Error> {
     let mut tab_slot = 0;
     let mut items = Vec::with_capacity(item_ptr_data.len());
     let mut seen_animated_icons = BTreeSet::new();
-    let mut num_bows = 0;
+    let mut num_bows_for_curr_tab = 0;
     for (i, data) in item_ptr_data.into_iter().enumerate() {
         if i as i32 == next_tab_item_idx {
             tab_idx += 1;
             tab_slot = 0;
             next_tab_item_idx = tabs.get(tab_idx + 1).map(|x| x.item_idx).unwrap_or(-1);
+            num_bows_for_curr_tab = 0;
         }
         let item = extract_pouch_item(
             i as i32,
@@ -159,9 +170,10 @@ pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, Error> {
             tab_idx as i32,
             tab_slot,
             bow_slots,
-            &mut num_bows,
+            &mut num_bows_for_curr_tab,
             &mut seen_animated_icons,
             memory,
+            &visually_equipped_items
         )?;
         items.push(item);
         tab_slot += 1;
@@ -174,6 +186,7 @@ pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, Error> {
         are_tabs_valid,
         num_tabs,
         tabs,
+        screen: screen_sys.current_screen().iv_type()
     })
 }
 
@@ -237,9 +250,10 @@ fn extract_pouch_item(
     tab_idx: i32,
     tab_slot: i32,
     bow_slots: i32,
-    num_bows: &mut i32,
+    num_bows_for_curr_tab: &mut i32,
     seen_animated_icons: &mut BTreeSet<String>,
     memory: &Memory,
+    visually_equipped_items: &[u64]
 ) -> Result<iv::PouchItem, Error> {
     let name = try_mem!(
         Ptr!(&item->mName).utf8_lossy(memory),
@@ -252,11 +266,15 @@ fn extract_pouch_item(
         e,
         "failed to load item.value at list1 position {list_index}: {e}"
     );
-    let is_equipped = try_mem!(
+    let mut is_equipped = try_mem!(
         Ptr!(&item->mEquipped).load(memory),
         e,
         "failed to load item.is_equipped at list1 position {list_index}: {e}"
     );
+    if !is_equipped {
+        // check if the item is visually equipped
+        is_equipped = visually_equipped_items.binary_search(&item.to_raw()).is_ok();
+    }
     let common = iv::CommonItem {
         actor_name: name,
         value,
@@ -355,13 +373,12 @@ fn extract_pouch_item(
         "failed to load item.prev at list1 position {list_index}: {e}"
     );
 
-    if item_type == 1 {
-        *num_bows += 1;
-    }
-
     // adjust the slot for arrows using the type
+    if item_type == 1 {
+        *num_bows_for_curr_tab += 1;
+    }
     let tab_slot = if item_type == 2 {
-        tab_slot + bow_slots - *num_bows
+        tab_slot + bow_slots - *num_bows_for_curr_tab
     } else {
         tab_slot
     };

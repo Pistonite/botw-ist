@@ -1,10 +1,11 @@
-use std::backtrace::Backtrace;
+use std::{backtrace::Backtrace, path::Path};
 use std::cell::Cell;
 use std::sync::Arc;
 
 use anyhow::Context;
 use blueflame::env::GameVer;
 use blueflame::processor::Process;
+use sha2::{Digest, Sha256};
 use skybook_runtime::{exec, sim};
 
 pub struct PanicPayload {
@@ -100,6 +101,24 @@ pub fn collect_memory_trace(process: &Process) -> anyhow::Result<()> {
         let rel_start = start - main_start;
         let rel_end = end - main_start;
         read_report += &format!("-r [main]:0x{rel_start:08x}-0x{rel_end:08x}\n")
+    }
+
+    let mut hash = Sha256::new();
+    hash.update(read_report.as_bytes());
+    let new_hash = hash.finalize()
+        .into_iter().map(|x| format!("{x:02x}")).collect::<String>();
+    let mut hash_changed = true;
+    let hash_file = Path::new("trace-hash.txt");
+    if hash_file.exists() {
+        if let Ok(old_hash) = std::fs::read_to_string(hash_file) {
+            if old_hash.trim() == new_hash.trim() {
+                hash_changed = false;
+            }
+        }
+    }
+    std::fs::write(hash_file, new_hash).context("failed to save hash file")?;
+    if hash_changed {
+        log::warn!("the trace hash is generated or changed, please re-generate and push the mini image to artifacts");
     }
 
     std::fs::write("trace.txt", read_report).context("failed to save trace report")?;

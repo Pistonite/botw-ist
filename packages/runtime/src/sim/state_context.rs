@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use blueflame::processor::{self, Cpu1, Cpu2, CrashReport};
+use blueflame::processor::{self, Cpu1, Cpu2, CrashReport, Process};
 use teleparse::Span;
 
 use crate::error::{Report, sim_error, sim_warning};
@@ -101,6 +101,7 @@ impl<T> Context<T> {
     }
 }
 
+// make we type less
 impl Context<&sim::Runtime> {
     pub fn runtime(&self) -> &sim::Runtime {
         self.inner
@@ -170,6 +171,12 @@ impl Context<&mut Cpu1> {
             f(ctx, &mut errors)
         })?;
         Ok(Report::with_errors(state, errors))
+    }
+}
+
+impl Context<&mut Cpu2<'_, '_>> {
+    pub fn process(&self) -> &Process {
+        &self.inner.proc
     }
 }
 

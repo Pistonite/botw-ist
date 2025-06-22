@@ -73,6 +73,10 @@ pub enum RuntimeError {
     PreviousCrash,
     #[error("unexpected executor error")]
     Executor,
+    #[error("you are already on this screen so transitioning has no effect")]
+    UselessScreenTransition,
+    #[error("you cannot do this on this screen")]
+    NotRightScreen,
     #[error(
         "this command or syntax is not implemented yet, please track the development on GitHub"
     )]

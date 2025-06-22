@@ -24,7 +24,7 @@ impl RunOutput {
             sim::Game::Crashed(_) => return Err(RuntimeViewError::Crash),
         };
 
-        Ok(sim::view::extract_pouch_view(&state.process)?)
+        Ok(sim::view::extract_pouch_view(&state.process, &state.screen)?)
     }
 
     /// Get the GDT inventory view for the given step in the script

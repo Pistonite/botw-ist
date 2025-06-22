@@ -41,6 +41,11 @@ pub enum TT {
     )]
     Number,
 
+    /////////////////////////////
+    // When updating keywords, remember to update the TS language
+    // as well (in packages/app/src/extensions/editor)
+    /////////////////////////////
+
     #[teleparse(terminal(
         KwGet = "get",
         KwBuy = "buy",
@@ -70,6 +75,7 @@ pub enum TT {
 
         KwSort = "sort",
         KwEntangle = "entangle",
+        // KwDistangle = "distangle",
         KwSync = "sync",
         KwBreak = "break",
 
@@ -80,7 +86,12 @@ pub enum TT {
         KwNewGame = "new-game",
 
         KwOpenInventory = "open-inventory",
+        KwOpenInv = "open-inv",
+        KwPause = "pause",
         KwCloseInventory = "close-inventory",
+        KwCloseInv = "close-inv",
+        KwUnpause = "unpause",
+
         KwTalkTo = "talk-to",
         KwUntalk = "untalk",
 
@@ -94,6 +105,11 @@ pub enum TT {
         KwGoto = "go-to",
     ))]
     Command,
+
+    /////////////////////////////
+    // When updating keywords, remember to update the TS language
+    // as well (in packages/app/src/extensions/editor)
+    /////////////////////////////
 
     #[teleparse(terminal(
         KwWeaponSlots = "weapon-slots",
@@ -112,6 +128,11 @@ pub enum TT {
         KwSwapData = "!swap-data",
     ))]
     SuperCommand,
+
+    /////////////////////////////
+    // When updating keywords, remember to update the TS language
+    // as well (in packages/app/src/extensions/editor)
+    /////////////////////////////
 
     #[teleparse(terminal(
         KwAll = "all",
@@ -159,6 +180,11 @@ pub enum TT {
         KwTo = "to",
     ))]
     Keyword,
+
+    /////////////////////////////
+    // When updating keywords, remember to update the TS language
+    // as well (in packages/app/src/extensions/editor)
+    /////////////////////////////
 
     #[teleparse(regex(r"[_a-zA-Z][-0-9a-zA-Z_]*"), terminal(Word))]
     Word,
