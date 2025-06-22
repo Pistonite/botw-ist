@@ -1,3 +1,4 @@
+"""Runs uking-relocate to make the mini image based on test results"""
 import subprocess
 
 START = "0x2044400000"

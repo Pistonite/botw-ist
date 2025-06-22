@@ -13,16 +13,34 @@ macro_rules! try_mem {
             Ok(x) => x,
             Err($error) => {
                 log::error!($format);
-                return Err(RuntimeViewError::Memory);
+                return Err(Error::Memory($error));
             }
         }
     };
 }
 
 macro_rules! coherence_error {
-    ($($args:tt)*) => {
-        log::error!($($args)*);
-        return Err(RuntimeViewError::Coherence);
+    ($($args:tt)*) => {{
+        let msg = format!($($args)*);
+        log::error!("{msg}");
+        return Err(Error::Coherence(msg));
+    }}
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
+    #[error("failed to read state from memory")]
+    Memory(blueflame::memory::Error),
+    #[error("coherence check failed when reading state")]
+    Coherence(String),
+}
+
+impl From<Error> for RuntimeViewError {
+    fn from(value: Error) -> Self {
+        match value {
+            Error::Memory(_) => Self::Memory,
+            Error::Coherence(_) => Self::Coherence
+        }
     }
 }
 
@@ -39,7 +57,7 @@ struct ItemPtrData {
 /// if ISU happened or the inventory list is corrupted in some way).
 ///
 /// However, tab overflow is allowed and will be indicated in the returned inventory
-pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, RuntimeViewError> {
+pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, Error> {
     log::debug!("extracting pouch view from process");
     let memory = proc.memory();
 
@@ -108,15 +126,16 @@ pub fn extract_pouch_view(proc: &Process) -> Result<iv::PouchList, RuntimeViewEr
             Some(x) => (true, x),
         };
 
-    let bow_slots: Result<i32, memory::Error> = try {
+    let bow_slots: Result<i32, memory::Error> = (|| {
         let gdt = gdt::trigger_param_ptr(memory)?;
         proxy! { let trigger_param = *gdt as trigger_param in proc };
-        trigger_param
+        let bow_slots = trigger_param
             .by_name::<gdt::fd!(s32)>("BowPorchStockNum")
             .map(|x| x.get())
             .copied()
-            .unwrap_or(0)
-    };
+            .unwrap_or(0);
+        Ok(bow_slots)
+    })();
     let bow_slots = try_mem!(bow_slots, e, "failed to read number of bow slots: {e}");
 
     // build the item list with the ptr data
@@ -221,7 +240,7 @@ fn extract_pouch_item(
     num_bows: &mut i32,
     seen_animated_icons: &mut BTreeSet<String>,
     memory: &Memory,
-) -> Result<iv::PouchItem, RuntimeViewError> {
+) -> Result<iv::PouchItem, Error> {
     let name = try_mem!(
         Ptr!(&item->mName).utf8_lossy(memory),
         e,

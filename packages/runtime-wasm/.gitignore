@@ -5,3 +5,4 @@
 /tsconfig*.json
 /eslint.config.js
 .prettierignore
+rust-toolchain

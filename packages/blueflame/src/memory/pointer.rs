@@ -486,7 +486,11 @@ impl Ptr![u8] {
             Ok(s) => return Ok(s),
             Err(e) => e,
         };
-        let lossy = utf8_error.into_utf8_lossy();
+
+        // FIXME: unstable
+        // let lossy = utf8_error.into_utf8_lossy();
+        let lossy = String::from_utf8_lossy(&utf8_error.into_bytes()).into_owned();
+
         log::warn!(
             "invalid utf-8 read from pointer: {:016x}, lossy value = {lossy}",
             self.to_raw()

@@ -7,9 +7,16 @@ edition = "2024"
 path = "../blueflame"
 features = ["trace-memory"]
 
+[dependencies.skybook-runtime]
+path = "../runtime"
+
+[dependencies.skybook-parser]
+path = "../parser"
+
 [dependencies]
 anyhow.workspace = true
-colog.workspace = true
+env_logger.workspace = true
 log.workspace = true
 oneshot = "0.1.11"
 threadpool = "1.8.1"
+tokio = { workspace = true, features = ["rt"] }

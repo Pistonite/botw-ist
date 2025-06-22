@@ -255,11 +255,12 @@ pub async fn run_parsed(
                 };
                 // await the future if needed
                 if let Ok(x) = promise.dyn_into::<Promise>()
-                    && let Err(e) = JsFuture::from(x).await
                 {
-                    log::error!("error calling notify_fn in run_parsed");
-                    log_error_in_js(e);
-                };
+                    if let Err(e) = JsFuture::from(x).await {
+                        log::error!("error calling notify_fn in run_parsed");
+                        log_error_in_js(e);
+                    }
+                }
             }
         })
         .await;

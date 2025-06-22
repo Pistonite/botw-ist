@@ -36,7 +36,6 @@ bit-set = "0.8.0"
 rkyv = { version = "0.8.10" }
 
 [dev-dependencies]
-colog = { workspace = true }
 anyhow = { workspace = true }
 
 

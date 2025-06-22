@@ -17,7 +17,7 @@ jobs:
           submodules: true
           ecma-pnpm: true
           ecma-bun: true
-          rust: nightly
+          rust: stable
           tool-cargo-binstall: ripgrep,workex=Pistonite/workex
       - uses: Pistonight/mono-dev/actions/pistonstor@main
       - run: task check-ci-layer-1-2 --output group
@@ -54,6 +54,6 @@ jobs:
           submodules: true
           ecma-pnpm: true
           ecma-bun: true
-          rust: nightly
+          rust: stable
       - uses: Pistonight/mono-dev/actions/pistonstor@main
       - run: task test-ci --output group

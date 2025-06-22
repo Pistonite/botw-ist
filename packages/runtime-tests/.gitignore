@@ -1,5 +1,7 @@
 *.blfm
 *.bfi
 /failures
+/snapshots/wip
 /data
 trace.txt
+rust-toolchain

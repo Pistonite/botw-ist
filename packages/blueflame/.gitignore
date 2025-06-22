@@ -1,7 +1,6 @@
 /target
-/res
 /res_old
-/test_files
+rust-toolchain
 
 # image files
 *.blfm
@@ -9,3 +8,4 @@
 
 # trace files sometimes
 out
+

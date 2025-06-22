@@ -32,7 +32,7 @@ tasks:
     cmds:
       - task: cargo-binstall
         vars:
-          PACKAGES: mdbook mdbook-admonish live-server cargo-watch wasm-pack ripgrep layered-crate
+          PACKAGES: mdbook mdbook-admonish live-server cargo-watch wasm-pack ripgrep layered-crate git-delta
       - task: cargo-binstall
         vars:
           PACKAGES: workex --git https://github.com/Pistonite/workex
@@ -43,7 +43,7 @@ tasks:
     desc: Install packages for local development
     aliases: [i]
     cmds:
-      - echo "nightly" > rust-toolchain
+      - echo "nightly" > packages/runtime-wasm/rust-toolchain
       - magoo install
       - pnpm install
       - task: post-install

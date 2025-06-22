@@ -1,19 +1,7 @@
-use blueflame::game::{PauseMenuDataMgr, PouchItem, PouchItemType, gdt, singleton_instance};
+use blueflame::game::{PouchItem, PouchItemType, gdt, singleton_instance};
 use blueflame::linker;
 use blueflame::memory::{Memory, Ptr, proxy};
 use blueflame::processor::{Cpu2, Error};
-
-pub fn pmdm_initialized(cpu: &mut Cpu2) -> Result<(), Error> {
-    let pmdm_actual_addr = singleton_instance!(pmdm(cpu.proc.memory()))?;
-    assert_eq!(pmdm_actual_addr.to_raw(), 0x2222200000);
-
-    let expected_vptr = cpu.proc.main_start() + 0x02476c38;
-    let pmdm_casted: Ptr![PauseMenuDataMgr] = pmdm_actual_addr.reinterpret();
-    let actual_vptr = Ptr!(&pmdm_casted->vtable).load(cpu.proc.memory())?;
-    assert_eq!(actual_vptr, expected_vptr);
-
-    Ok(())
-}
 
 pub fn get_item_basic(cpu: &mut Cpu2) -> Result<(), Error> {
     let pmdm_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;

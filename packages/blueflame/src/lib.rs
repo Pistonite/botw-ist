@@ -1,4 +1,4 @@
-#![feature(string_from_utf8_lossy_owned)]
+// #![feature(string_from_utf8_lossy_owned)]
 
 extern crate self as blueflame;
 

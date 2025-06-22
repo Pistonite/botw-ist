@@ -40,7 +40,7 @@ pub struct ParseOutput {
 impl ParseOutput {
     /// Get the step index by the byte pos in the script
     pub fn step_idx_from_pos(&self, pos: usize) -> Option<usize> {
-        let i = match self.steps.binary_search_by_key(&pos, |x| x.pos) {
+        let i = match self.steps.binary_search_by_key(&pos, |x| x.pos()) {
             Ok(i) => i,
             Err(i) => i.saturating_sub(1),
         };
@@ -108,7 +108,8 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
 
     // parse each command
     for stmt in parsed_script.stmts.iter() {
-        let pos = stmt.span().lo;
+        let span = stmt.span();
+        let pos = span.lo;
         let Some(command) = cir::parse_command(&stmt.cmd, resolver, &mut output.errors).await
         else {
             continue;
@@ -144,7 +145,7 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
                 }
             }
         };
-        let step = cir::Step::new(pos, command, note);
+        let step = cir::Step::new(span, command, note);
         output.steps.push(step);
     }
 

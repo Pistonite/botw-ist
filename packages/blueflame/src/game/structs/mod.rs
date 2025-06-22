@@ -14,57 +14,6 @@ pub use container::*;
 
 use crate::memory::{MemObject, Ptr};
 
-#[derive(Clone, Copy, Debug, PartialEq)]
-#[repr(i32)]
-pub enum PouchItemType {
-    Sword = 0x0,
-    Bow = 0x1,
-    Arrow = 0x2,
-    Shield = 0x3,
-    ArmorHead = 0x4,
-    ArmorUpper = 0x5,
-    ArmorLower = 0x6,
-    Material = 0x7,
-    Food = 0x8,
-    KeyItem = 0x9,
-    Invalid = -1,
-}
-
-impl From<i32> for PouchItemType {
-    fn from(value: i32) -> Self {
-        match value {
-            0x0 => PouchItemType::Sword,
-            0x1 => PouchItemType::Bow,
-            0x2 => PouchItemType::Arrow,
-            0x3 => PouchItemType::Shield,
-            0x4 => PouchItemType::ArmorHead,
-            0x5 => PouchItemType::ArmorUpper,
-            0x6 => PouchItemType::ArmorLower,
-            0x7 => PouchItemType::Material,
-            0x8 => PouchItemType::Food,
-            0x9 => PouchItemType::KeyItem,
-            -1 => PouchItemType::Invalid,
-            _ => PouchItemType::Invalid, // Handle invalid values
-        }
-    }
-}
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-#[repr(i32)]
-pub enum ItemUse {
-    WeaponSmallSword = 0x0,
-    WeaponLargeSword = 0x1,
-    WeaponSpear = 0x2,
-    WeaponBow = 0x3,
-    WeaponShield = 0x4,
-    ArmorHead = 0x5,
-    ArmorUpper = 0x6,
-    ArmorLower = 0x7,
-    Item = 0x8,
-    ImportantItem = 0x9,
-    CureItem = 0xa,
-    Invalid = -1,
-}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(i32)]
@@ -90,117 +39,6 @@ pub struct GrabbedItemInfo {
     #[offset(0x9)]
     _9: bool,
 }
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-#[repr(i32)]
-pub enum CookEffectId {
-    None = -1,
-    LifeRecover = 1,
-    LifeMaxUp = 2,
-    ResistHot = 4,
-    ResistCold = 5,
-    ResistElectric = 6,
-    AttackUp = 10,
-    DefenseUp = 11,
-    Quietness = 12,
-    MovingSpeed = 13,
-    GutsRecover = 14,
-    ExGutsMaxUp = 15,
-    Fireproof = 16,
-}
-
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone, Copy)]
-#[size(0x10)]
-struct PtrArrayImpl {
-    #[offset(0x0)]
-    mPtrNum: i32,
-    #[offset(0x4)]
-    mPtrNumMax: i32,
-    #[offset(0x8)]
-    mPtrs: Ptr![Ptr![FixedSafeString40][5]],
-}
-
-#[derive(MemObject, Clone, Copy)]
-#[size(0x8)]
-struct FreeListNode {
-    #[offset(0x0)]
-    nextFree: Ptr![FreeListNode],
-}
-
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone, Copy)]
-#[size(0x10)]
-struct FreeList {
-    #[offset(0x0)]
-    mFree: FreeListNode,
-    #[offset(0x8)]
-    mWork: Ptr![FixedSafeString40],
-}
-
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone, Copy)]
-#[size(0x20)]
-struct SafeStringArray {
-    #[offset(0x0)]
-    base: PtrArrayImpl,
-    #[offset(0x10)]
-    mFreeList: FreeList,
-}
-
-#[allow(non_snake_case)]
-#[derive(MemObject, Clone, Copy)]
-#[size(0x200)]
-struct FixedSafeStringArray {
-    #[offset(0x0)]
-    base: SafeStringArray,
-    #[offset(0x20)]
-    mWork: [u8; 480],
-}
-
-// impl PouchItem {
-//     pub fn get_name(&self) -> String {
-//         self.mName.to_string()
-//     }
-//
-//     pub fn get_type(&self) -> PouchItemType {
-//         match self.mType {
-//             0x0 => PouchItemType::Sword,
-//             0x1 => PouchItemType::Bow,
-//             0x2 => PouchItemType::Arrow,
-//             0x3 => PouchItemType::Shield,
-//             0x4 => PouchItemType::ArmorHead,
-//             0x5 => PouchItemType::ArmorUpper,
-//             0x6 => PouchItemType::ArmorLower,
-//             0x7 => PouchItemType::Material,
-//             0x8 => PouchItemType::Food,
-//             0x9 => PouchItemType::KeyItem,
-//             -1 => PouchItemType::Invalid,
-//             _ => PouchItemType::Invalid, // Handle invalid values
-//         }
-//     }
-//
-//     pub fn get_use(&self) -> ItemUse {
-//         match self.mItemUse {
-//             0x0 => ItemUse::WeaponSmallSword,
-//             0x1 => ItemUse::WeaponLargeSword,
-//             0x2 => ItemUse::WeaponSpear,
-//             0x3 => ItemUse::WeaponBow,
-//             0x4 => ItemUse::WeaponShield,
-//             0x5 => ItemUse::ArmorHead,
-//             0x6 => ItemUse::ArmorUpper,
-//             0x7 => ItemUse::ArmorLower,
-//             0x8 => ItemUse::Item,
-//             0x9 => ItemUse::ImportantItem,
-//             0xa => ItemUse::CureItem,
-//             _ => ItemUse::Invalid,
-//         }
-//     }
-//
-//     pub fn is_weapon(&self) -> bool {
-//         matches!(self.mItemUse, 0x0..=0x4)
-//     }
-// }
 
 // impl fmt::Display for PouchItem {
 //     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -262,113 +100,59 @@ struct FixedSafeStringArray {
 //     }
 // }
 
-// pub struct OffsetListIter<T> {
-//     _start_end_node: ListNode,
-//     _current_node: Ptr![ListNode],
-//     pub offset: i32,
-//     pub count: i32,
-//     _index: i32,
-//     _marker: PhantomData<T>,
+
+// pub struct PorchWeaponData {
+//     pub modifier: i32,
+//     pub modifier_value: i32,
 // }
 //
-// impl PouchItemOffsetList {
-//     pub fn to_iter(&self) -> OffsetListIter<PouchItem> {
-//         OffsetListIter::<PouchItem>::new(self.mStartEnd, self.mOffset, self.mCount)
+// pub struct PorchCookData {
+//     pub health_recover: i32,
+//     pub effect_duration: i32,
+//     pub sell_price: i32,
+//     pub effect: (f32, f32),
+//     pub ingredients: [String; 5],
+// }
+//
+// pub struct PorchItem {
+//     pub r#type: PouchItemType,
+//     pub value: i32,
+//     pub name: String,
+//     pub cook_data: Option<PorchCookData>,
+//     pub weapon_data: Option<PorchWeaponData>,
+// }
+// impl PorchItem {
+//     #[allow(dead_code)]
+//     fn default(name: String, typ: PouchItemType, value: i32) -> Self {
+//         PorchItem {
+//             name,
+//             value,
+//             r#type: typ,
+//             cook_data: None,
+//             weapon_data: None,
+//         }
 //     }
-// }
-//
-// impl<T> OffsetListIter<T> {
-//     pub fn new(start_end_node: ListNode, offset: i32, count: i32) -> Self {
-//         OffsetListIter::<T> {
-//             _start_end_node: start_end_node,
-//             _current_node: start_end_node.mNext,
-//             _marker: PhantomData,
-//             offset,
-//             count,
-//             _index: 0,
+//     #[allow(dead_code)]
+//     fn weapon(name: String, typ: PouchItemType, value: i32, data: PorchWeaponData) -> Self {
+//         PorchItem {
+//             name,
+//             value,
+//             r#type: typ,
+//             cook_data: None,
+//             weapon_data: Some(data),
+//         }
+//     }
+//     #[allow(dead_code)]
+//     fn food(name: String, typ: PouchItemType, value: i32, data: PorchCookData) -> Self {
+//         PorchItem {
+//             name,
+//             value,
+//             r#type: typ,
+//             cook_data: Some(data),
+//             weapon_data: None,
 //         }
 //     }
 // }
-
-// impl OffsetListIter<PouchItem> {
-//     pub fn get_entry(&self) -> Ptr<PouchItem> {
-//         self.current_node.get_entry_ptr::<PouchItem>(self.offset)
-//     }
-//
-//     pub fn next(&mut self, mem: &Memory) -> Result<Ptr<PouchItem>, Error> {
-//         let return_node = self.get_entry();
-//         self.index += 1;
-//         self.current_node = self.current_node.deref(mem)?.mNext;
-//         Ok(return_node)
-//     }
-//
-//     pub fn has_next(&self) -> bool {
-//         self.index < self.count
-//     }
-// }
-
-// impl Ptr<ListNode> {
-//     pub fn get_entry_ptr<T>(&self, offset: i32) -> Ptr<T> {
-//         Ptr::new(
-//             (self.get_addr() as i64 - (offset as i64))
-//                 .try_into()
-//                 .unwrap(),
-//         )
-//     }
-// }
-
-pub struct PorchWeaponData {
-    pub modifier: i32,
-    pub modifier_value: i32,
-}
-
-pub struct PorchCookData {
-    pub health_recover: i32,
-    pub effect_duration: i32,
-    pub sell_price: i32,
-    pub effect: (f32, f32),
-    pub ingredients: [String; 5],
-}
-
-pub struct PorchItem {
-    pub r#type: PouchItemType,
-    pub value: i32,
-    pub name: String,
-    pub cook_data: Option<PorchCookData>,
-    pub weapon_data: Option<PorchWeaponData>,
-}
-impl PorchItem {
-    #[allow(dead_code)]
-    fn default(name: String, typ: PouchItemType, value: i32) -> Self {
-        PorchItem {
-            name,
-            value,
-            r#type: typ,
-            cook_data: None,
-            weapon_data: None,
-        }
-    }
-    #[allow(dead_code)]
-    fn weapon(name: String, typ: PouchItemType, value: i32, data: PorchWeaponData) -> Self {
-        PorchItem {
-            name,
-            value,
-            r#type: typ,
-            cook_data: None,
-            weapon_data: Some(data),
-        }
-    }
-    #[allow(dead_code)]
-    fn food(name: String, typ: PouchItemType, value: i32, data: PorchCookData) -> Self {
-        PorchItem {
-            name,
-            value,
-            r#type: typ,
-            cook_data: Some(data),
-            weapon_data: None,
-        }
-    }
-}
 
 // pub struct GameDataItemIter<'a,  'y, 'z> {
 //     index: usize,

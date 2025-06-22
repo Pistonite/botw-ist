@@ -65,20 +65,21 @@ impl Runtime {
 
         log::debug!("program start: 0x{:016x}", program.program_start);
         if let Some(program_start) = params.map(|x| &x.program_start)
-            && !program_start.is_empty()
         {
-            match parse_region_addr(program_start) {
-                None => {
-                    log::error!(
+            if !program_start.is_empty() {
+                match parse_region_addr(program_start) {
+                    None => {
+                        log::error!(
                         "cannot parse program_start from the params, assuming we are OK with the default"
                     );
-                }
-                Some(expected_program_start) => {
-                    if expected_program_start != program.program_start {
-                        return Err(RuntimeInitError::ProgramStartMismatch(
-                            format!("0x{:016x}", program.program_start),
-                            format!("0x{expected_program_start:016x}"),
-                        ));
+                    }
+                    Some(expected_program_start) => {
+                        if expected_program_start != program.program_start {
+                            return Err(RuntimeInitError::ProgramStartMismatch(
+                                format!("0x{:016x}", program.program_start),
+                                format!("0x{expected_program_start:016x}"),
+                            ));
+                        }
                     }
                 }
             }
@@ -189,7 +190,7 @@ impl Runtime {
 
 fn parse_hex(s: &str) -> Option<u64> {
     let s = s.strip_prefix("0x")?;
-    s.parse::<u64>().ok()
+    u64::from_str_radix(s, 16).ok()
 }
 
 fn parse_region_addr(s: &str) -> Option<u64> {
