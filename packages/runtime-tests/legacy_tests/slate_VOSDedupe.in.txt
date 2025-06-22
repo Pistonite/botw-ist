@@ -1,3 +1,4 @@
+// Author: Pearfalse
 # prepare SoR autosave
 save as SoR
 init 4 weapon 4 simm 1 slate

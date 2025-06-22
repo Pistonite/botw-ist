@@ -1,3 +1,4 @@
+// Author: Kai
 init 1 boko spear 1 soldiers bow[equip] 5 arrow[equip] 1 potlid[life=100] 1 potlid 4 pepper 3 shroom 3 apple 3 hyrule herb 1 wood 1 seared steak 1 slate 4 orbs 1 paraglider
 #will be the first autosave in Korok forest, make sure to save after you get that autosave so it doesn't get immediately overwritten
 save as hc autosave

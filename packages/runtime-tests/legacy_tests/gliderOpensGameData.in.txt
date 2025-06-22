@@ -1,3 +1,4 @@
+// Author: Pearfalse
 # prepare SoR autosave
 save as NewGame
 get 4 weapon 4 simm 1 glider

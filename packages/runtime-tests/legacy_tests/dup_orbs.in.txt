@@ -1,3 +1,4 @@
+// Author: savage13
 Get 5 Diamond 1 Slate 1 Glider 4 SpiritOrb
 Save
 # Magically break 4 slots

@@ -1,3 +1,4 @@
+// Author: savage13
 Initialize 1 Shield 1 Apple 1 Slate 1 Glider 4 Orb
 Equip Shield
 Break 4 Slots

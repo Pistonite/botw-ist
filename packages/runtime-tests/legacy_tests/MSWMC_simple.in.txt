@@ -1,3 +1,4 @@
+// Author: Piston
 Get 1 axe 1 mastersword 999 seared steak 1 simmer[hp=120, price=13] 1 roasted endura carrot
 write [life=0] to mastersword
 sync gamedata

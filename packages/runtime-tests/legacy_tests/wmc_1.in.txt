@@ -1,3 +1,4 @@
+// Author: El Duende
 # Credit: el duende https://www.youtube.com/watch?v=jzRu9QEFfsU&t=82s
 init 1 royal guard sword[equip] 1 royal guard bow[equip] 1 bomb arrow[equip] 1 aa 1 royal guard shield[equip] 59 apples 4 gourmet meat 1 fairy 2 endura carrot 2 durians 2 acorns 2 night shades 1 ruby 1 slate 1 glider
 save

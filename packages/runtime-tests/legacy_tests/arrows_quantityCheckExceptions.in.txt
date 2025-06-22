@@ -1,3 +1,4 @@
+// Author: Pearfalse
 Init 1 axe 1 bow [life=2200, equip] 5 arrow [equip] 1 slate
 Save
 Break 2 Slots

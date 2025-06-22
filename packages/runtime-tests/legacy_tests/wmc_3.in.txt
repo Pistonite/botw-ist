@@ -1,3 +1,4 @@
+// Author: Minghao
 # This is the first autosave when starting a new game.
 Save as SoR
 Get 1 Slate

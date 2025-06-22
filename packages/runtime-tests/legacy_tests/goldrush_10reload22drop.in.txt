@@ -1,3 +1,4 @@
+// Author: Swiffy22
 Initialize 1 Weapon 1 Bow 1 BombArrow 1 AncientArrow 1 Shield 1 Tail 1 Beetle 1 Core 2 Opal 2 Wood 2 Apple 2 SpicyPepper 2 Rushroom 2 HylianShroom 2 Acorn 2 SilentPrincess 2 HeartyBass 2 EnduraShroom 1 Screw 2 Spring 1 Shaft 2 Lotus 1 FaroshHorn 2 LizalfosTalon 1 Honey 1 LizalfosHorn 1 Slate 1 Glider 8 SpiritOrb
 Equip Weapon
 Equip Bow
