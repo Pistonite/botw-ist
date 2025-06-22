@@ -110,6 +110,7 @@ tasks:
     deps:
       - parser:pull-artifacts
       - blueflame-deps:pull-artifacts
+      - runtime-tests:pull-artifacts
     cmds:
       - pnpm install --frozen-lockfile
       - task: post-install
@@ -121,6 +122,7 @@ tasks:
       - task: check-layer-1
       - task: check-layer-2
       - task: check-layer-3
+      - task: check-layer-4
       - cmd: echo 'All checks passed!'
         silent: true
 
