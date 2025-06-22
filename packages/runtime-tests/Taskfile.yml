@@ -26,11 +26,22 @@ tasks:
     cmds:
       - task: cargo:fmt-fix
 
+  refresh:
+    desc: Refresh test snapshots
+    env:
+      SKYBOOK_RUNTIME_TEST_REFRESH: true
+      SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
+      RUST_BACKTRACE: 1
+      RUST_LOG: info
+    cmds:
+      - cargo run --release
+
   run-full:
     desc: Run the tests with the full image
     env:
       SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
       RUST_BACKTRACE: 1
+      RUST_LOG: info
     cmds:
       - cargo run --release
 
@@ -39,8 +50,14 @@ tasks:
     env:
       SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-mini.bfi
       RUST_BACKTRACE: 1
+      RUST_LOG: info
     cmds:
       - cargo run --release
+
+  diff:
+    desc: Diff script test snapshots
+    cmds:
+      - git diff --no-index snapshots/{{.CLI_ARGS}}.snap.rs snapshots/wip/{{.CLI_ARGS}}.snap.rs | delta --side-by-side
 
   pull-deps:
     desc: Download super secret files

@@ -32,7 +32,7 @@ tasks:
     cmds:
       - task: cargo-binstall
         vars:
-          PACKAGES: mdbook mdbook-admonish live-server cargo-watch wasm-pack ripgrep layered-crate
+          PACKAGES: mdbook mdbook-admonish live-server cargo-watch wasm-pack ripgrep layered-crate git-delta
       - task: cargo-binstall
         vars:
           PACKAGES: workex --git https://github.com/Pistonite/workex
@@ -43,7 +43,7 @@ tasks:
     desc: Install packages for local development
     aliases: [i]
     cmds:
-      - echo "nightly" > rust-toolchain
+      - echo "nightly" > packages/runtime-wasm/rust-toolchain
       - magoo install
       - pnpm install
       - task: post-install
@@ -106,12 +106,23 @@ tasks:
       - task: post-install
       - task: check-layer-3
 
+  check-ci-layer-4:
+    deps:
+      - parser:pull-artifacts
+      - blueflame-deps:pull-artifacts
+      - runtime-tests:pull-artifacts
+    cmds:
+      - pnpm install --frozen-lockfile
+      - task: post-install
+      - task: check-layer-4
+
   check:
     desc: Run ALL of the checks
     cmds:
       - task: check-layer-1
       - task: check-layer-2
       - task: check-layer-3
+      - task: check-layer-4
       - cmd: echo 'All checks passed!'
         silent: true
 
@@ -136,6 +147,9 @@ tasks:
       - task: blueflame:check
       - task: runtime:check
       - task: runtime-tests:check
+
+  check-layer-4:
+    cmds:
       - task: runtime-wasm:check
 
   test-ci:

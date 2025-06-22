@@ -4,6 +4,8 @@
 *.mjs linguist-language=TypeScript
 *.jsx linguist-language=TypeScript
 
+*.snap.rs linguist-detectable=false
+
 *.cir linguist-generated
 *.lex linguist-generated
 *.sem linguist-generated
@@ -11,3 +13,4 @@
 
 packages/skybook-api/src/interfaces/*.ts linguist-generated
 packages/skybook-api/src/native/*.ts     linguist-generated
+packages/runtime-tests/snapshots/*.snap.rs    linguist-generated

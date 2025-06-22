@@ -1,0 +1,82 @@
+// Author: Swiffy22
+Initialize 1 Weapon 1 Bow 1 BombArrow 1 AncientArrow 1 Shield 1 Tail 1 Beetle 1 Core 2 Opal 2 Wood 2 Apple 2 SpicyPepper 2 Rushroom 2 HylianShroom 2 Acorn 2 SilentPrincess 2 HeartyBass 2 EnduraShroom 1 Screw 2 Spring 1 Shaft 2 Lotus 1 FaroshHorn 2 LizalfosTalon 1 Honey 1 LizalfosHorn 1 Slate 1 Glider 8 SpiritOrb
+Equip Weapon
+Equip Bow
+Equip Shield
+Equip BombArrow
+Save
+# Pick up weapons, drop all materials, 2 drops (8 materials)
+Initialize 8 Weapon 1 BombArrow 1 AncientArrow 1 Shield 1 Slate 1 Glider 8 SpiritOrb
+Equip BombArrow
+# Run to center of town for autosave
+Save As Autosave
+Break 13 Slots
+Reload
+Save
+Reload Autosave
+Drop 2 EnduraShroom
+Drop 1 Screw
+Drop 2 Spring
+Drop 1 Shaft
+Drop 2 Lotus
+Drop 1 FaroshHorn
+Drop 2 LizalfosTalon
+Drop 1 Honey
+Drop 1 LizalfosHorn
+#3 Drops (13 Materials), 5 Total
+Reload
+Save
+Reload Autosave
+Drop 2 Spring
+Drop 1 Shaft
+Drop 2 Lotus
+Drop 2 LizalfosTalon
+Drop 1 Honey
+Drop 1 LizalfosHorn
+#2 Drops (9 Materials), 7 Total
+Reload
+Save
+Reload
+D&P 1 Honey
+D&P 1 LizalfosHorn
+#1 Drop (2 Materials), 8 Total
+Cook 1 SpeedFood
+Remove 1 FaroshHorn From Slot 2
+Remove 4 Lotus
+Save
+Reload
+Sell 112 SpiritOrb
+D&P 2 Honey
+D&P 2 LizalfosHorn
+D&P 2 LizalfosTalon
+#2 Drops (6 Materials), 10 Total
+Save
+Reload
+D&P 2 EnduraShroom
+D&P 4 LizalfosTalon
+D&P 4 Honey
+#2 Drops (10 Materials), 12 Total
+Save
+Reload
+Drop 4 LizalfosHorn From Slot 2
+Drop 4 LizalfosHorn From Slot 2
+Pickup 8 LizalfosHorn
+Drop 8 Honey From Slot 2
+Pickup 8 Honey
+Drop 8 LizalfosTalon From Slot 2
+Pickup 8 LizalfosTalon
+Drop 1 Screw From Slot 2
+Drop 1 Screw From Slot 2
+Pickup 2 Screw
+Drop 1 Shaft From Slot 2
+Drop 1 Shaft From Slot 2
+Pickup 2 Shaft
+#6 Drops (28 Materials), 18 Total
+Save
+Reload
+D&P 8 EnduraShroom
+D&P 6 Spring
+D&P 4 HeartyBass
+D&P 2 SilentPrincess
+#4 Drops (20 Materials), 22 Total
+Save

@@ -1,0 +1,39 @@
+
+
+get 2 apple
+get 6 royal_claymore
+get 50 apple
+
+get potlid
+get 1 trav_bow
+get slate
+get apple[value=1000, tab=1]
+destroy apple[tab=1, slot=2]
+get 3 apple
+get aa
+get fire_arrow
+get 2 boko-shield
+get elixir
+get oho[dura=1, price=113, hp=120]
+get 1 orb
+get banana
+get durian
+get diamond
+get amber
+get fairy
+get palm
+get moblin_horn
+get dinraal
+get nay
+get far
+get shard
+get ruby
+get sapphire
+get diamond
+get wood
+get core
+get tail
+get screw
+get shaft
+get rushroom
+get shroom

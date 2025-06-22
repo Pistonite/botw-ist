@@ -219,7 +219,6 @@ dependencies = [
  "bit-set",
  "blueflame-deps",
  "blueflame-proc-macros",
- "colog",
  "crc32fast",
  "derive_more",
  "disarm64-custom",
@@ -433,31 +432,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f46ad14479a25103f283c0f10005961cf086d8dc42205bb44c46ac563475dca6"
 
 [[package]]
-name = "colog"
-version = "1.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c426b7af8d5e0ad79de6713996632ce31f0d68ba84068fb0d654b396e519df0"
-dependencies = [
- "colored",
- "env_logger",
- "log",
-]
-
-[[package]]
 name = "colorchoice"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b63caa9aa9397e2d9480a9b13673856c78d8ac123288526c37d7839f2a86990"
-
-[[package]]
-name = "colored"
-version = "2.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "117725a109d387c937a1533ce01b450cbde6b88abceea8473c4d7a85853cda3c"
-dependencies = [
- "lazy_static",
- "windows-sys 0.59.0",
-]
 
 [[package]]
 name = "console_error_panic_hook"
@@ -2571,10 +2549,13 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "blueflame",
- "colog",
+ "env_logger",
  "log",
  "oneshot",
+ "skybook-parser",
+ "skybook-runtime",
  "threadpool",
+ "tokio",
 ]
 
 [[package]]

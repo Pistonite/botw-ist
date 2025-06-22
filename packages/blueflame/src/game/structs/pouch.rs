@@ -114,6 +114,7 @@ pub struct PtrArrayImpl_FixedSafeString40 {
     mPtrNumMax: i32,
     #[offset(0x8)]
     mPtrs: Ptr![Ptr![FixedSafeString40][5]],
+    // there is a buffer after this, but we don't need it
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, MemObject)]
@@ -160,5 +161,152 @@ impl Ptr![CookItem] {
         let ingredients = Ptr!(&self->ingredients)
             .reinterpret_array::<FixedSafeString40, { FixedSafeString40::SIZE }, 5>();
         ingredients.ith(i)
+    }
+}
+
+/// Enum `uking::ui::PouchItemType`
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
+#[repr(i32)]
+pub enum PouchItemType {
+    Sword = 0,
+    Bow = 1,
+    Arrow = 2,
+    Shield = 3,
+    ArmorHead = 4,
+    ArmorUpper = 5,
+    ArmorLower = 6,
+    Material = 7,
+    Food = 8,
+    KeyItem = 9,
+    #[default]
+    Invalid = -1,
+}
+
+impl PouchItemType {
+    /// Get a string description of the value. If valid, returns the name
+    /// of the type, otherwise returns `Unknown(value in hex)`
+    pub fn describe(value: i32) -> String {
+        match Self::from_value(value) {
+            Some(x) => format!("{x:?}"),
+            None => format!("Unknown(0x{:08x})", value as u32),
+        }
+    }
+
+    /// Convert a raw value into the PouchItemType enum
+    pub fn from_value(value: i32) -> Option<Self> {
+        Some(match value {
+            0 => Self::Sword,
+            1 => Self::Bow,
+            2 => Self::Arrow,
+            3 => Self::Shield,
+            4 => Self::ArmorHead,
+            5 => Self::ArmorUpper,
+            6 => Self::ArmorLower,
+            7 => Self::Material,
+            8 => Self::Food,
+            9 => Self::KeyItem,
+            -1 => Self::Invalid,
+            _ => return None,
+        })
+    }
+}
+
+/// Enum `uking::ui::ItemUse`
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
+#[repr(i32)]
+pub enum PouchItemUse {
+    WeaponSmallSword = 0,
+    WeaponLargeSword = 1,
+    WeaponSpear = 2,
+    WeaponBow = 3,
+    WeaponShield = 4,
+    ArmorHead = 5,
+    ArmorUpper = 6,
+    ArmorLower = 7,
+    Item = 8,
+    ImportantItem = 9,
+    CureItem = 10,
+    #[default]
+    Invalid = -1,
+}
+
+impl PouchItemUse {
+    /// Get a string description of the value. If valid, returns the name
+    /// of the type, otherwise returns `Unknown(value in hex)`
+    pub fn describe(value: i32) -> String {
+        match Self::from_value(value) {
+            Some(x) => format!("{x:?}"),
+            None => format!("Unknown(0x{:08x})", value as u32),
+        }
+    }
+
+    /// Convert a raw value into the PouchItemUse enum
+    pub fn from_value(value: i32) -> Option<Self> {
+        Some(match value {
+            0 => Self::WeaponSmallSword,
+            1 => Self::WeaponLargeSword,
+            2 => Self::WeaponSpear,
+            3 => Self::WeaponBow,
+            4 => Self::WeaponShield,
+            5 => Self::ArmorHead,
+            6 => Self::ArmorUpper,
+            7 => Self::ArmorLower,
+            8 => Self::Item,
+            9 => Self::ImportantItem,
+            10 => Self::CureItem,
+            -1 => Self::Invalid,
+            _ => return None,
+        })
+    }
+}
+
+/// Enum `uking::CookEffectId`
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
+#[repr(i32)]
+pub enum CookEffectId {
+    #[default]
+    None = -1,
+    LifeRecover = 1,
+    LifeMaxUp = 2,
+    ResistHot = 4,
+    ResistCold = 5,
+    ResistElectric = 6,
+    AttackUp = 10,
+    DefenseUp = 11,
+    Quietness = 12,
+    MovingSpeed = 13,
+    GutsRecover = 14,
+    ExGutsMaxUp = 15,
+    Fireproof = 16,
+}
+
+impl CookEffectId {
+    /// Get a string description of the value. If valid, returns the name
+    /// of the type, otherwise returns `Unknown(value in hex)`
+    pub fn describe(value: f32) -> String {
+        match Self::from_value(value) {
+            Some(x) => format!("{x:?}"),
+            None => format!("Unknown(0x{:08x})", value as u32),
+        }
+    }
+
+    /// Convert a raw value into the CookEffectId enum
+    pub fn from_value(value: f32) -> Option<Self> {
+        Some(match value {
+            -1.0 => Self::None,
+            1.0 => Self::LifeRecover,
+            2.0 => Self::LifeMaxUp,
+            4.0 => Self::ResistHot,
+            5.0 => Self::ResistCold,
+            6.0 => Self::ResistElectric,
+            10.0 => Self::AttackUp,
+            11.0 => Self::DefenseUp,
+            12.0 => Self::Quietness,
+            13.0 => Self::MovingSpeed,
+            14.0 => Self::GutsRecover,
+            15.0 => Self::ExGutsMaxUp,
+            16.0 => Self::Fireproof,
+            _ => return None,
+        })
     }
 }

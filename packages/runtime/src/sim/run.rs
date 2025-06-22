@@ -2,7 +2,6 @@ use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
 
 use skybook_parser::ParseOutput;
-use teleparse::Span;
 
 use crate::error::{ErrorReport, MaybeAborted};
 use crate::sim;
@@ -60,10 +59,11 @@ impl Run {
 
         for i in 0..parsed.steps.len() {
             let step = &parsed.steps[i];
-            let percentage = step.pos as f32 / parsed.script_len as f32 * 100.0;
-            log::info!(
+            let pos = step.pos();
+            let percentage = pos as f32 / parsed.script_len as f32 * 100.0;
+            log::debug!(
                 "running: byte_pos {}/{} ({:.2}%)",
-                step.pos,
+                pos,
                 parsed.script_len,
                 percentage
             );
@@ -73,7 +73,7 @@ impl Run {
             // and may cause the "initial" state to be sent in notification
             // while actually what we need to send is the state after the first step
             if i > 0 {
-                notify_fn(step.pos, &self.output).await;
+                notify_fn(pos, &self.output).await;
             }
 
             commands.push(step.command.clone());
@@ -81,12 +81,7 @@ impl Run {
             let report = match runtime.find_cached(&commands) {
                 Some(report) => report,
                 None => {
-                    let span_end = parsed
-                        .steps
-                        .get(i + 1)
-                        .map(|step| step.pos)
-                        .unwrap_or(parsed.script_len);
-                    ctx.span = Span::new(step.pos, span_end);
+                    ctx.span = step.span;
 
                     let report = match state.execute_step(ctx.clone(), step).await {
                         Err(e) => {

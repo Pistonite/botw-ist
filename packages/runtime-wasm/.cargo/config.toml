@@ -1,5 +1,5 @@
 [build]
-rustflags = ["-Z", "threads=4", "-C", "target-feature=+atomics,+bulk-memory,+mutable-globals"]
+rustflags = ["-Z", "threads=4", "-C", "target-feature=+atomics"]
 
 [unstable]
 build-std = ["panic_abort","std"]

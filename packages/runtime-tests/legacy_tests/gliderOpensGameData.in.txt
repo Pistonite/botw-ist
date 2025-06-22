@@ -1,0 +1,13 @@
+// Author: Pearfalse
+# prepare SoR autosave
+save as NewGame
+get 4 weapon 4 simm 1 glider
+break 3 slots
+reload NewGame
+get 1 slate
+eat all simm
+get 2 weapon
+save
+drop all weapon
+reload
+sync gamedata

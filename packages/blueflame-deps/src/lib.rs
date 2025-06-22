@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "data", feature(optimize_attribute))]
-
 mod access;
 mod align;
 mod asserts;

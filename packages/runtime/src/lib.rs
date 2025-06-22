@@ -1,5 +1,3 @@
-#![feature(try_blocks)]
-
 mod error;
 pub use error::{Error, ErrorReport, MaybeAborted, RuntimeInitError, RuntimeViewError};
 /// Inventory View

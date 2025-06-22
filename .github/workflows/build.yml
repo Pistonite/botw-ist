@@ -22,7 +22,7 @@ jobs:
           submodules: true
           ecma-pnpm: true
           ecma-bun: true
-          rust: nightly
+          rust: stable
           tool-mdbook: true
       - uses: Pistonight/mono-dev/actions/pistonstor@main
       - run: task build-manual-ci
@@ -40,7 +40,7 @@ jobs:
           submodules: true
           ecma-pnpm: true
           ecma-bun: true
-          rust: nightly
+          rust: stable
       - uses: Pistonight/mono-dev/actions/pistonstor@main
       - uses: ./.github/steps/item-assets-cache
       - run: task build-app-ci

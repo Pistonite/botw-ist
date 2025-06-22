@@ -12,6 +12,15 @@ pub enum MaybeAborted<T> {
     Aborted,
 }
 
+impl<T> MaybeAborted<T> {
+    pub fn unwrap(self) -> T {
+        match self {
+            Self::Ok(x) => x,
+            Self::Aborted => panic!("unwrap called on MaybeAborted::Aborted"),
+        }
+    }
+}
+
 /// Error type for calling `Runtime::init`
 #[derive(Debug, Clone, thiserror::Error, Serialize)]
 #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]

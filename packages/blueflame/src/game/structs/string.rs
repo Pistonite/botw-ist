@@ -30,7 +30,9 @@ impl Ptr![SafeString] {
     pub fn utf8_lossy(self, memory: &Memory) -> Result<String, memory::Error> {
         let cstr_ptr = self.cstr(memory)?;
         let bytes = cstr_ptr.load_zero_terminated(memory)?;
-        Ok(String::from_utf8_lossy_owned(bytes))
+        // FIXME: unstable
+        // Ok(String::from_utf8_lossy_owned(bytes))
+        Ok(String::from_utf8_lossy(&bytes).into_owned())
     }
 
     /// Get the cstr pointer (does not ensure termination, like the safe string in game)
@@ -93,7 +95,10 @@ impl Ptr![FixedSafeString40] {
     pub fn utf8_lossy(self, memory: &Memory) -> Result<String, memory::Error> {
         let cstr_ptr = self.cstr(memory)?;
         let bytes = cstr_ptr.load_zero_terminated(memory)?;
-        Ok(String::from_utf8_lossy_owned(bytes))
+
+        // FIXME: unstable
+        // Ok(String::from_utf8_lossy_owned(bytes))
+        Ok(String::from_utf8_lossy(&bytes).into_owned())
     }
 }
 
