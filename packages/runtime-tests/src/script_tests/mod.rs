@@ -138,7 +138,7 @@ async fn run_test(runtime: &sim::Runtime, refresh: bool, test_name: &str,
 
     new_snapshot += "\n}\n";
 
-    let snapshot_file_path = PathBuf::from(format!("snapshots/{test_name}.rs"));
+    let snapshot_file_path = PathBuf::from(format!("snapshots/{test_name}.snap.rs"));
     if refresh || !snapshot_file_path.exists() {
         std::fs::write(snapshot_file_path, new_snapshot)
             .context("failed to write snapshot")?;
@@ -155,7 +155,7 @@ async fn run_test(runtime: &sim::Runtime, refresh: bool, test_name: &str,
         if !wip_dir.exists() {
             std::fs::create_dir_all(wip_dir).context("cannot create wip directory")?;
         }
-        std::fs::write(format!("snapshots/wip/{test_name}.rs"), new_snapshot).context("cannot write wip snapshot")?;
+        std::fs::write(format!("snapshots/wip/{test_name}.snap.rs"), new_snapshot).context("cannot write wip snapshot")?;
         return Ok(false);
     }
 
