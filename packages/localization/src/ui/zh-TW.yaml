@@ -196,9 +196,11 @@ runtime_init.UnsupportedVersion: "映像包含目前不支援的遊戲版本。"
 # Error/Diagnostic from Runtime
 runtime_error.Crash: "遊戲在此步驟崩潰。"
 runtime_error.Executor: "執行器發生未預期的錯誤。"
+runtime_error.NotRightScreen: "此指令無法在當前介面使用。您已經使用指令手動打開了某個介面，所以模擬器不能自動切換介面。若要使模擬器自動切換介面，請先使用相應指令返回主世界。"
 runtime_error.PreviousCrash: "遊戲因先前的步驟而崩潰。您需要 `重新載入` (`reload`) 或 `開始新遊戲` (`new-game`) 才能繼續。"
 runtime_error.Unimplemented: "此指令尚未實作 :)。"
 runtime_error.Uninitialized: "未預期的未初始化執行階段。"
+runtime_error.UselessScreenTransition: "您已經打開了此介面。"
 
 # Error from getting view from simulation output
 runtime_view_error.Coherence: "物品欄資料已損毀，無法顯示。"
