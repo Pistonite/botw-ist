@@ -196,9 +196,11 @@ runtime_init.UnsupportedVersion: "The image contains a version of the game that'
 # Error/Diagnostic from Runtime
 runtime_error.Crash: "The game crashed in this step."
 runtime_error.Executor: "Unexpected error from Executor."
+runtime_error.NotRightScreen: "You cannot use this command in the current screen. The simulator will automatically switch screens for you unless you manually opened a screen with a command. Return to the overworld screen with a command will allow the simulator to automatically switch screens again."
 runtime_error.PreviousCrash: "The game has crashed in a previous step. You need to `reload` or `new-game` before continuing."
 runtime_error.Unimplemented: "This command is not implemented yet :)"
 runtime_error.Uninitialized: "Unexpected uninitialized Runtime."
+runtime_error.UselessScreenTransition: "This command has no effect, since you are already on this screen."
 
 # Error from getting view from simulation output
 runtime_view_error.Coherence: "The inventory data is corrupted and cannot be displayed."

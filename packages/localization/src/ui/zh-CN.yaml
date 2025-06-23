@@ -196,9 +196,11 @@ runtime_init.UnsupportedVersion: "镜像包含的游戏版本目前不支持."
 # Error/Diagnostic from Runtime
 runtime_error.Crash: "执行此步骤时游戏崩溃."
 runtime_error.Executor: "执行器出错."
+runtime_error.NotRightScreen: "此指令无法在当前界面使用. 您已经使用指令手动打开了某个界面, 所以模拟器不能自动切换界面. 若要使模拟器自动切换界面, 请先使用相应指令返回主世界."
 runtime_error.PreviousCrash: "因之前的步骤导致游戏崩溃，需要读档(`reload`)或开始新游戏(`new-game`)."
 runtime_error.Unimplemented: "还没做完."
 runtime_error.Uninitialized: "未初始化运行时."
+runtime_error.UselessScreenTransition: "你已经打开了此界面."
 
 # Error from getting view from simulation output
 runtime_view_error.Coherence: "背包数据损坏，无法显示."

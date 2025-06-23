@@ -196,9 +196,11 @@ runtime_init.UnsupportedVersion: "Das Image enthält eine derzeit nicht unterst�
 # Error/Diagnostic from Runtime
 runtime_error.Crash: "Das Spiel ist in diesem Schritt abgestürzt."
 runtime_error.Executor: "Unerwarteter Fehler vom Executor."
+runtime_error.NotRightScreen: "Sie können diesen Befehl auf dem aktuellen Bildschirm nicht verwenden. Der Simulator wechselt automatisch die Bildschirme für Sie, es sei denn, Sie haben einen Bildschirm manuell mit einem Befehl geöffnet. Die Rückkehr zum Oberwelt-Bildschirm mit einem Befehl ermöglicht es dem Simulator, wieder automatisch die Bildschirme zu wechseln."
 runtime_error.PreviousCrash: "Das Spiel ist in einem vorherigen Schritt abgestürzt. Sie müssen `neu laden` (`reload`) oder ein `neues Spiel starten` (`new-game`), bevor Sie fortfahren können."
 runtime_error.Unimplemented: "Dieser Befehl ist noch nicht implementiert :)."
 runtime_error.Uninitialized: "Laufzeitumgebung unerwartet nicht initialisiert."
+runtime_error.UselessScreenTransition: "Dieser Befehl hat keine Auswirkung, da Sie sich bereits auf diesem Bildschirm befinden."
 
 # Error from getting view from simulation output
 runtime_view_error.Coherence: "Die Inventardaten sind beschädigt und können nicht angezeigt werden."

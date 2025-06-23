@@ -196,9 +196,11 @@ runtime_init.UnsupportedVersion: "L'image contient une version du jeu qui n'est 
 # Error/Diagnostic from Runtime
 runtime_error.Crash: "Le jeu a planté à cette étape."
 runtime_error.Executor: "Erreur inattendue de l'Exécuteur."
+runtime_error.NotRightScreen: "Vous ne pouvez pas utiliser cette commande sur l'écran actuel. Le simulateur changera d'écran automatiquement pour vous, sauf si vous avez ouvert un écran manuellement avec une commande. Revenir à l'écran du monde supérieur avec une commande permettra au simulateur de changer d'écran automatiquement à nouveau."
 runtime_error.PreviousCrash: "Le jeu a planté à une étape précédente. Vous devez `recharger` (`reload`) ou commencer une `nouvelle partie` (`new-game`) avant de continuer."
 runtime_error.Unimplemented: "Cette commande n'est pas encore implémentée :)."
 runtime_error.Uninitialized: "Runtime non initialisé de manière inattendue."
+runtime_error.UselessScreenTransition: "Cette commande n'a aucun effet, car vous êtes déjà sur cet écran."
 
 # Error from getting view from simulation output
 runtime_view_error.Coherence: "Les données de l'inventaire sont corrompues et ne peuvent pas être affichées."

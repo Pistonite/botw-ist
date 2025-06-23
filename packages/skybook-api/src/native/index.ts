@@ -12,6 +12,7 @@ export * from "./InvView_OverworldItem.ts";
 export * from "./InvView_PouchItem.ts";
 export * from "./InvView_PouchList.ts";
 export * from "./InvView_PouchTab.ts";
+export * from "./InvView_Screen.ts";
 export * from "./InvView_WeaponModifier.ts";
 export * from "./MaybeAborted.ts";
 export * from "./MetaValue.ts";

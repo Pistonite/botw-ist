@@ -196,9 +196,11 @@ runtime_init.UnsupportedVersion: "De afbeelding bevat een versie van het spel di
 # Error/Diagnostic from Runtime
 runtime_error.Crash: "Het spel is gecrasht tijdens deze stap."
 runtime_error.Executor: "Onverwachte fout van Executor."
+runtime_error.NotRightScreen: "U kunt deze opdracht niet gebruiken in het huidige scherm. De simulator schakelt automatisch schermen voor u, tenzij u handmatig een scherm hebt geopend met een opdracht. Terugkeren naar het overworld-scherm met een opdracht zal de simulator in staat stellen om automatisch weer schermen te wisselen."
 runtime_error.PreviousCrash: "Het spel is gecrasht in een vorige stap. U moet `herladen` (`reload`) of een `nieuw spel` (`new-game`) starten voordat u verder kunt gaan."
 runtime_error.Unimplemented: "Dit commando is nog niet geïmplementeerd :)."
 runtime_error.Uninitialized: "Onverwachte niet-geïnitialiseerde Runtime."
+runtime_error.UselessScreenTransition: "Deze opdracht heeft geen effect, aangezien u al op dit scherm bent."
 
 # Error from getting view from simulation output
 runtime_view_error.Coherence: "De inventarisgegevens zijn beschadigd en kunnen niet worden weergegeven."

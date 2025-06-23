@@ -33,24 +33,30 @@ export const language: LanguageTokenizer = {
     commands: [
         "get",
         "buy",
-        "pick-up",
+
         "hold",
+        "unhold",
         "hold-smuggle",
         "hold-attach",
         "drop",
         "dnp",
+        "pick-up",
         "cook",
+
         "eat",
         "sell",
+
         "equip",
         "unequip",
-        "use",
         "shoot",
+        "use",
+
         "roast",
         "bake",
         "boil",
         "freeze",
         "destroy",
+
         "sort",
         "entangle",
         "sync",
@@ -60,8 +66,14 @@ export const language: LanguageTokenizer = {
         "reload",
         "close-game",
         "new-game",
+
         "open-inventory",
+        "open-inv",
+        "pause",
         "close-inventory",
+        "close-inv",
+        "unpause",
+
         "talk-to",
         "untalk",
         "enter",

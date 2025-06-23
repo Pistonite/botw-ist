@@ -109,8 +109,8 @@ pub enum Command {
     NewGame(syn::KwNewGame),
 
     // ==== scopes ====
-    OpenInventory(syn::KwOpenInventory),
-    CloseInventory(syn::KwCloseInventory),
+    OpenInv(CmdOpenInv),
+    CloseInv(CmdCloseInv),
     TalkTo(CmdTalkTo),
     Untalk(syn::KwUntalk),
 
@@ -402,6 +402,24 @@ pub struct CmdWrite {
 pub struct CmdSaveAs {
     pub lit: syn::KwSaveAs,
     pub name: tp::String<syn::Word>,
+}
+
+/// `open-inventory`
+#[derive_syntax]
+#[derive(Debug)]
+pub enum CmdOpenInv {
+    OpenInventory(syn::KwOpenInventory),
+    OpenInv(syn::KwOpenInv),
+    Pause(syn::KwPause),
+}
+
+/// `close-inventory`
+#[derive_syntax]
+#[derive(Debug)]
+pub enum CmdCloseInv {
+    CloseInventory(syn::KwCloseInventory),
+    CloseInv(syn::KwCloseInv),
+    Unpause(syn::KwUnpause),
 }
 
 /// `reload` - reload the game from manual or named save slot

@@ -196,9 +196,11 @@ runtime_init.UnsupportedVersion: "이미지에 현재 지원되지 않는 게임
 # Error/Diagnostic from Runtime
 runtime_error.Crash: "이 단계에서 게임이 충돌했습니다."
 runtime_error.Executor: "Executor에서 예상치 못한 오류 발생."
+runtime_error.NotRightScreen: "현재 화면에서는 이 명령을 사용할 수 없습니다. 명령으로 화면을 수동으로 열지 않았다면 시뮬레이터가 자동으로 화면을 전환합니다. 명령으로 오버월드 화면으로 돌아가면 시뮬레이터가 다시 자동으로 화면을 전환할 수 있습니다."
 runtime_error.PreviousCrash: "이전 단계에서 게임이 충돌했습니다. 계속하려면 `리로딩` (`reload`)하거나 `새 게임` (`new-game`)을 시작해야 합니다."
 runtime_error.Unimplemented: "이 명령어는 아직 구현되지 않았습니다 :)."
 runtime_error.Uninitialized: "예상치 못한 런타임 초기화되지 않음."
+runtime_error.UselessScreenTransition: "이미 이 화면에 있으므로 이 명령은 효과가 없습니다."
 
 # Error from getting view from simulation output
 runtime_view_error.Coherence: "인벤토리 데이터가 손상되어 표시할 수 없습니다."

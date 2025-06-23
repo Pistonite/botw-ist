@@ -1,13 +1,16 @@
 use std::panic::{RefUnwindSafe, UnwindSafe};
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use crate::env::{Environment, GameVer};
 use crate::game::{SafeString, WeaponModifierInfo};
 use crate::memory::Ptr;
 use crate::processor::{self, Cpu0, Cpu2, Hook, HookProvider, Process, reg};
 
-pub struct RequestCreateWeapon;
-impl GameEvent for RequestCreateWeapon {
+/// Event for creating equipped weapons in the overworld
+///
+/// The args are (CreateEquipmentSlot, Name, Value, WeaponModifier)
+pub struct CreateWeapon;
+impl GameEvent for CreateWeapon {
     type TArgs = (i32, String, i32, Option<WeaponModifierInfo>);
 
     fn get_hook_offset(game_ver: GameVer) -> u32 {
@@ -35,6 +38,32 @@ impl GameEvent for RequestCreateWeapon {
     }
 }
 
+/// Event for creating actors for items being held
+///
+/// The arg is the name of the item
+pub struct CreateHoldingItem;
+impl GameEvent for CreateHoldingItem {
+    type TArgs = String;
+
+    fn get_hook_offset(game_ver: GameVer) -> u32 {
+        match game_ver {
+            GameVer::X150 => 0x0073c5b4,
+            GameVer::X160 => 0x00d23b20,
+        }
+    }
+
+    fn extract_args(cpu: &mut Cpu0, proc: &mut Process) -> Result<Self::TArgs, processor::Error> {
+        reg! { cpu:
+            x[0] => let name_ptr: Ptr![u8],
+        };
+        Ok(name_ptr.load_utf8_lossy(proc.memory())?)
+    }
+}
+
+/// Event-based Hooks
+///
+/// To use an event, call `execute_subscribed` with a state and a function
+/// to execute and a listener to operate on the state
 pub trait GameEvent: Send + Sync + UnwindSafe + RefUnwindSafe + 'static {
     type TArgs;
     fn get_hook_offset(game_ver: GameVer) -> u32;
@@ -42,32 +71,37 @@ pub trait GameEvent: Send + Sync + UnwindSafe + RefUnwindSafe + 'static {
     fn execute_subscribed<T, F>(
         cpu: &mut Cpu2<'_, '_>,
         state: T,
-        listener: fn(&T, Self::TArgs),
+        listener: fn(&mut T, Self::TArgs),
         mut execute: F,
     ) -> Result<T, processor::Error>
     where
         T: Send + Sync + UnwindSafe + RefUnwindSafe + 'static,
-        F: FnMut() -> Result<(), processor::Error>,
+        F: FnMut(&mut Cpu2<'_, '_>) -> Result<(), processor::Error>,
         Self: Sized,
     {
-        let state = Arc::new(state);
+        let state = Arc::new(Mutex::new(state));
         let hook: GameEventHook<T, Self> = GameEventHook {
             state: Arc::clone(&state),
             listener,
         };
         let hook = Arc::new(hook);
         GameEventHook::register(&hook, cpu);
-        let result = execute();
+        let result = execute(cpu);
         hook.unregister(cpu);
         drop(hook); // this should drop down the ref count to 1
 
-        result.map(|_| Arc::into_inner(state).expect("ref count not 1 in execute_subscribed"))
+        result.map(|_| {
+            let mutex = Arc::into_inner(state).expect("ref count not 1 in execute_subscribed");
+            mutex
+                .into_inner()
+                .expect("failed to call mutex.into_inner() in execute_subscribed")
+        })
     }
 }
 
 struct GameEventHook<T, TEvent: GameEvent> {
-    state: Arc<T>,
-    listener: fn(&T, TEvent::TArgs),
+    state: Arc<Mutex<T>>,
+    listener: fn(&mut T, TEvent::TArgs),
 }
 impl<T: Send + Sync + UnwindSafe + RefUnwindSafe + 'static, TEvent: GameEvent> HookProvider
     for GameEventHook<T, TEvent>
@@ -79,7 +113,10 @@ impl<T: Send + Sync + UnwindSafe + RefUnwindSafe + 'static, TEvent: GameEvent> H
             Ok(Some(Hook::Start(processor::box_execute(
                 move |cpu, proc| {
                     let args = TEvent::extract_args(cpu, proc)?;
-                    listener(&state, args);
+                    let mut state = state
+                        .lock()
+                        .expect("GameEventHook failed to acquire lock on event state");
+                    listener(&mut state, args);
                     Ok(())
                 },
             ))))

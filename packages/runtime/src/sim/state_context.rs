@@ -27,7 +27,7 @@ impl sim::State {
             TakeGame::Crashed => Ok(Report::error(self, sim_warning!(&ctx.span, PreviousCrash))),
             TakeGame::Running(game) => {
                 let span = ctx.span;
-                let report = f(game, ctx).await?.into_report(span);
+                let report = f(*game, ctx).await?.into_report(span);
                 Ok(report.map(|game| {
                     self.game = game;
                     self
@@ -58,7 +58,7 @@ pub enum TakeGame {
     #[default]
     Uninit,
     /// Game is running
-    Running(sim::GameState),
+    Running(Box<sim::GameState>),
     /// Game has crashed (must manually reboot)
     Crashed,
 }
@@ -101,6 +101,7 @@ impl<T> Context<T> {
     }
 }
 
+// make we type less
 impl Context<&sim::Runtime> {
     pub fn runtime(&self) -> &sim::Runtime {
         self.inner
@@ -173,6 +174,12 @@ impl Context<&mut Cpu1> {
     }
 }
 
+impl<'a, 'b> Context<&mut Cpu2<'a, 'b>> {
+    pub fn cpu(&mut self) -> &mut Cpu2<'a, 'b> {
+        self.inner
+    }
+}
+
 pub trait IntoGameReport {
     fn into_report(self, span: Span) -> Report<sim::Game>;
 }
@@ -180,7 +187,7 @@ pub trait IntoGameReport {
 impl IntoGameReport for Result<sim::GameState, CrashReport> {
     fn into_report(self, span: Span) -> Report<sim::Game> {
         match self {
-            Ok(game_state) => Report::new(sim::Game::Running(game_state)),
+            Ok(game_state) => Report::new(sim::Game::Running(Box::new(game_state))),
             Err(crash_report) => {
                 Report::error(sim::Game::Crashed(crash_report), sim_error!(&span, Crash))
             }
@@ -191,7 +198,7 @@ impl IntoGameReport for Result<sim::GameState, CrashReport> {
 impl IntoGameReport for Result<Report<sim::GameState>, CrashReport> {
     fn into_report(self, span: Span) -> Report<sim::Game> {
         match self {
-            Ok(report) => report.map(sim::Game::Running),
+            Ok(report) => report.map(|x| sim::Game::Running(Box::new(x))),
             Err(crash_report) => {
                 Report::error(sim::Game::Crashed(crash_report), sim_error!(&span, Crash))
             }

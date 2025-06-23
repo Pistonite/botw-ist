@@ -333,8 +333,8 @@ pub async fn parse_command<R: QuotedItemResolver>(
         },
         syn::Command::CloseGame(_) => Some(cir::Command::CloseGame),
         syn::Command::NewGame(_) => Some(cir::Command::NewGame),
-        syn::Command::OpenInventory(_) => Some(cir::Command::OpenInv),
-        syn::Command::CloseInventory(_) => Some(cir::Command::CloseInv),
+        syn::Command::OpenInv(_) => Some(cir::Command::OpenInv),
+        syn::Command::CloseInv(_) => Some(cir::Command::CloseInv),
         syn::Command::TalkTo(_) => Some(cir::Command::Talk),
         syn::Command::Untalk(_) => Some(cir::Command::Untalk),
         syn::Command::Enter(cmd) => match cir::parse_trial(&cmd.trial, &cmd.trial.span()) {

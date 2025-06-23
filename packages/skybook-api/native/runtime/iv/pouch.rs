@@ -30,6 +30,8 @@ mod __impl {
         /// The actual tabs (mTabs and mTabsType), up to the tab
         /// where both mTabs[i] is nullptr and mTabsType[i] is -1
         pub tabs: Vec<InvView_PouchTab>,
+        /// Type of the screen currently on
+        pub screen: InvView_Screen,
     }
 
     /// Data from mTabs and mTabsType in PMDM
@@ -50,6 +52,23 @@ mod __impl {
         /// The type of the tab (in mTabsType), -1 if invalid
         pub tab_type: i32,
         // TODO: do we need num items in the tab here?
+    }
+
+    /// Type of screen currently being shown. This is technically
+    /// not part of the pouch, but easier to think this way
+    #[derive(Debug, Default, Clone, Copy, serde::Serialize)]
+    #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
+    #[cfg_attr(feature = "__ts-binding", ts(export))]
+    #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
+    #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
+    #[serde(rename_all = "camelCase")]
+    #[allow(non_camel_case_types)]
+    pub enum InvView_Screen {
+        #[default]
+        Overworld,
+        Inventory,
+        Shop,
+        Statue,
     }
 
     /// Info for an item in the PMDM. This struct can represent both
@@ -156,6 +175,7 @@ mod __impl {
 pub use __impl::InvView_PouchItem as PouchItem;
 pub use __impl::InvView_PouchList as PouchList;
 pub use __impl::InvView_PouchTab as PouchTab;
+pub use __impl::InvView_Screen as Screen;
 // not worrying about supporting graph view yet
 
 // #[derive(Debug, Default, Clone, serde::Serialize)]

@@ -55,9 +55,12 @@ impl HookProvider for GameHooks {
         main_offset size   fn
         0x006669f8  000408 return_void, // uking::act::CreatePlayerEquipActorMgr::doRequestCreateWeapon
         0x00666cf8  000688 return_void, // uking::act::CreatePlayerEquipActorMgr::doRequestCreateArmor
+        0x0073c5b4  000732 return_void, // spawnDroppedInventoryItem. This is at 0xD23B20 in 1.6
+                                        // but parameters are optimized out
         0x00849580  003456 return_void, // Player::equipmentStuff
         0x0085456c  000068 get_player,  // ksys::act::PlayerInfo::getPlayer
         0x00d2e950  000348 return_void, // ksys::act::InfoData::logFailure
+        //
 
         // ksys::gdt::TriggerParam
         0x00ddf0f8  000124 gdt_hooks::get_bool, // getBool by idx

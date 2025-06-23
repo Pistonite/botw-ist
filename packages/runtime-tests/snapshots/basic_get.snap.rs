@@ -13,6 +13,7 @@ destroy apple[tab=1, slot=2]
 ----- Step[0]: get 2 apple
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=1, are_tabs_valid=true, num_tabs=1, )
     items: (len=1, )
       [000]: (actor_name=Item_Fruit_A, value=2, is_equipped=false, item_type=Material, item_use=CureItem, tab_idx=0, tab_slot=0, )
@@ -23,6 +24,7 @@ game: (Running)
 ----- Step[1]: get 6 royal_claymore
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=7, are_tabs_valid=true, num_tabs=2, )
     items: (len=7, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -47,6 +49,7 @@ game: (Running)
 
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=7, are_tabs_valid=true, num_tabs=2, )
     items: (len=7, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -70,6 +73,7 @@ game: (Running)
 ----- Step[3]: get potlid
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=8, are_tabs_valid=true, num_tabs=3, )
     items: (len=8, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -96,6 +100,7 @@ game: (Running)
 ----- Step[4]: get 1 trav_bow
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=9, are_tabs_valid=true, num_tabs=4, )
     items: (len=9, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -125,6 +130,7 @@ game: (Running)
 ----- Step[5]: get slate
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=10, are_tabs_valid=true, num_tabs=5, )
     items: (len=10, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -157,6 +163,7 @@ game: (Running)
 ----- Step[6]: get apple[value=1000, tab=1]
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=10, are_tabs_valid=true, num_tabs=5, )
     items: (len=10, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -189,6 +196,7 @@ game: (Running)
 ----- Step[7]: destroy apple[tab=1, slot=2]
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=10, are_tabs_valid=true, num_tabs=5, )
     items: (len=10, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -221,6 +229,7 @@ game: (Running)
 ----- Step[8]: get 3 apple
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=10, are_tabs_valid=true, num_tabs=5, )
     items: (len=10, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -253,6 +262,7 @@ game: (Running)
 ----- Step[9]: get aa
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=11, are_tabs_valid=true, num_tabs=5, )
     items: (len=11, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -287,6 +297,7 @@ game: (Running)
 ----- Step[10]: get fire_arrow
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=12, are_tabs_valid=true, num_tabs=5, )
     items: (len=12, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -323,6 +334,7 @@ game: (Running)
 ----- Step[11]: get 2 boko-shield
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=14, are_tabs_valid=true, num_tabs=5, )
     items: (len=14, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -363,6 +375,7 @@ game: (Running)
 ----- Step[12]: get elixir
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=15, are_tabs_valid=true, num_tabs=6, )
     items: (len=15, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -406,6 +419,7 @@ game: (Running)
 ----- Step[13]: get oho[dura=1, price=113, hp=120]
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=16, are_tabs_valid=true, num_tabs=6, )
     items: (len=16, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -452,6 +466,7 @@ game: (Running)
 ----- Step[14]: get 1 orb
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=17, are_tabs_valid=true, num_tabs=6, )
     items: (len=17, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -500,6 +515,7 @@ game: (Running)
 ----- Step[15]: get banana
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=18, are_tabs_valid=true, num_tabs=6, )
     items: (len=18, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -550,6 +566,7 @@ game: (Running)
 ----- Step[16]: get durian
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=19, are_tabs_valid=true, num_tabs=6, )
     items: (len=19, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -602,6 +619,7 @@ game: (Running)
 ----- Step[17]: get diamond
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=20, are_tabs_valid=true, num_tabs=6, )
     items: (len=20, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -656,6 +674,7 @@ game: (Running)
 ----- Step[18]: get amber
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=21, are_tabs_valid=true, num_tabs=6, )
     items: (len=21, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -712,6 +731,7 @@ game: (Running)
 ----- Step[19]: get fairy
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=22, are_tabs_valid=true, num_tabs=6, )
     items: (len=22, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -770,6 +790,7 @@ game: (Running)
 ----- Step[20]: get palm
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=23, are_tabs_valid=true, num_tabs=6, )
     items: (len=23, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -830,6 +851,7 @@ game: (Running)
 ----- Step[21]: get moblin_horn
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=24, are_tabs_valid=true, num_tabs=6, )
     items: (len=24, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -892,6 +914,7 @@ game: (Running)
 ----- Step[22]: get dinraal
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=25, are_tabs_valid=true, num_tabs=6, )
     items: (len=25, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -956,6 +979,7 @@ game: (Running)
 ----- Step[23]: get nay
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=26, are_tabs_valid=true, num_tabs=6, )
     items: (len=26, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1022,6 +1046,7 @@ game: (Running)
 ----- Step[24]: get far
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=27, are_tabs_valid=true, num_tabs=6, )
     items: (len=27, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1090,6 +1115,7 @@ game: (Running)
 ----- Step[25]: get shard
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=28, are_tabs_valid=true, num_tabs=6, )
     items: (len=28, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1160,6 +1186,7 @@ game: (Running)
 ----- Step[26]: get ruby
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=29, are_tabs_valid=true, num_tabs=6, )
     items: (len=29, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1232,6 +1259,7 @@ game: (Running)
 ----- Step[27]: get sapphire
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=30, are_tabs_valid=true, num_tabs=6, )
     items: (len=30, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1306,6 +1334,7 @@ game: (Running)
 ----- Step[28]: get diamond
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=30, are_tabs_valid=true, num_tabs=6, )
     items: (len=30, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1380,6 +1409,7 @@ game: (Running)
 ----- Step[29]: get wood
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=31, are_tabs_valid=true, num_tabs=6, )
     items: (len=31, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1456,6 +1486,7 @@ game: (Running)
 ----- Step[30]: get core
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=32, are_tabs_valid=true, num_tabs=6, )
     items: (len=32, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1534,6 +1565,7 @@ game: (Running)
 ----- Step[31]: get tail
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=33, are_tabs_valid=true, num_tabs=6, )
     items: (len=33, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1614,6 +1646,7 @@ game: (Running)
 ----- Step[32]: get screw
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=34, are_tabs_valid=true, num_tabs=6, )
     items: (len=34, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1696,6 +1729,7 @@ game: (Running)
 ----- Step[33]: get shaft
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=35, are_tabs_valid=true, num_tabs=6, )
     items: (len=35, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1780,6 +1814,7 @@ game: (Running)
 ----- Step[34]: get rushroom
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=36, are_tabs_valid=true, num_tabs=6, )
     items: (len=36, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
@@ -1866,6 +1901,7 @@ game: (Running)
 ----- Step[35]: get shroom
 
 game: (Running)
+  screen: (Overworld)
   pouch: (count=37, are_tabs_valid=true, num_tabs=7, )
     items: (len=37, )
       [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )

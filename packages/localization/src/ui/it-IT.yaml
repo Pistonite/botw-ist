@@ -196,9 +196,11 @@ runtime_init.UnsupportedVersion: "L'immagine contiene una versione del gioco att
 # Error/Diagnostic from Runtime
 runtime_error.Crash: "Il gioco si è bloccato in questo passaggio."
 runtime_error.Executor: "Errore imprevisto dall'Esecutore."
+runtime_error.NotRightScreen: "Non puoi usare questo comando nella schermata attuale. Il simulatore cambierà schermata automaticamente per te a meno che tu non abbia aperto una schermata manualmente con un comando. Tornare alla schermata dell'overworld con un comando permetterà al simulatore di cambiare schermata automaticamente di nuovo."
 runtime_error.PreviousCrash: "Il gioco si è bloccato in un passaggio precedente. Devi `ricaricare` (`reload`) o iniziare una `nuova partita` (`new-game`) prima di continuare."
 runtime_error.Unimplemented: "Questo comando non è ancora implementato :)."
 runtime_error.Uninitialized: "Runtime imprevisto non inizializzato."
+runtime_error.UselessScreenTransition: "Questo comando non ha alcun effetto, poiché sei già su questa schermata."
 
 # Error from getting view from simulation output
 runtime_view_error.Coherence: "I dati dell'inventario sono corrotti e non possono essere visualizzati."

@@ -2552,6 +2552,7 @@ dependencies = [
  "env_logger",
  "log",
  "oneshot",
+ "sha2",
  "skybook-parser",
  "skybook-runtime",
  "threadpool",

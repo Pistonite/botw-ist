@@ -12,8 +12,6 @@ pub use pouch::*;
 mod container;
 pub use container::*;
 
-use crate::memory::{MemObject, Ptr};
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(i32)]
 pub enum PouchCategory {
@@ -26,55 +24,6 @@ pub enum PouchCategory {
     KeyItem = 0x6,
     Invalid = -1,
 }
-
-#[allow(non_snake_case)]
-#[derive(MemObject, Default, Clone)]
-#[size(0x10)]
-pub struct GrabbedItemInfo {
-    #[offset(0x0)]
-    item: Ptr![PouchItem],
-    #[offset(0x8)]
-    _8: bool,
-    #[offset(0x9)]
-    _9: bool,
-}
-
-// impl fmt::Display for PouchItem {
-//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-//         write!(
-//             f,
-//             "PouchItem {0}:\n -Type: {1:?}\n -Use: {2:?}\n -Value: {3}\n -Equipped: {4}\n -InInventory: {5}",
-//             self.get_name(),
-//             self.get_type(),
-//             self.get_use(),
-//             self.mValue,
-//             self.mEquipped,
-//             self.mInInventory
-//         )
-//     }
-// }
-
-// #[allow(non_snake_case)]
-// #[derive(MemObject, Clone)]
-// #[size(0x44190)]
-// pub struct PauseMenuDataMgrLists {
-//     #[offset(0x0)]
-//     pub list1: PouchItemOffsetList,
-//     #[offset(0x18)]
-//     list2: PouchItemOffsetList,
-//     // #[offset(0x30)]
-//     // buffer: [PouchItem; 420],
-// }
-//
-// impl PauseMenuDataMgrLists {
-//     pub fn get_active_item_iter(&self) -> OffsetListIter<PouchItem> {
-//         self.list1.to_iter()
-//     }
-//
-//     pub fn get_inactive_item_iter(&self) -> OffsetListIter<PouchItem> {
-//         self.list2.to_iter()
-//     }
-// }
 
 // impl PauseMenuDataMgr {
 //     pub fn get_last_item_added_name(&self, mem: &Memory) -> Result<String, Error> {
