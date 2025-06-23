@@ -109,8 +109,8 @@ pub enum Command {
     NewGame(syn::KwNewGame),
 
     // ==== scopes ====
-    OpenInv(syn::KwOpenInv),
-    CloseInv(syn::KwCloseInv),
+    OpenInv(CmdOpenInv),
+    CloseInv(CmdCloseInv),
     TalkTo(CmdTalkTo),
     Untalk(syn::KwUntalk),
 
