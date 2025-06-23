@@ -8,4 +8,6 @@ export type RuntimeError =
     | { type: "Crash" }
     | { type: "PreviousCrash" }
     | { type: "Executor" }
+    | { type: "UselessScreenTransition" }
+    | { type: "NotRightScreen" }
     | { type: "Unimplemented" };

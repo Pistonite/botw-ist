@@ -68,7 +68,7 @@ mod __impl {
         Overworld,
         Inventory,
         Shop,
-        Statue
+        Statue,
     }
 
     /// Info for an item in the PMDM. This struct can represent both
