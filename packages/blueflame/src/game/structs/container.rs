@@ -46,10 +46,15 @@ impl Ptr![OffsetList] {
     }
 }
 
-#[derive(PartialEq)]
 pub struct OffsetListIter {
     offset: i32,
     pub curr: Ptr![ListNode],
+}
+
+impl PartialEq for OffsetListIter {
+    fn eq(&self, other: &Self) -> bool {
+        self.curr == other.curr
+    }
 }
 
 impl OffsetListIter {

@@ -1,8 +1,10 @@
 use std::sync::Arc;
 
 use blueflame::game::{PouchItem, gdt, singleton_instance};
-use blueflame::memory::{self, Ptr, mem, proxy};
-use blueflame::processor::{self, Cpu2, Process};
+use blueflame::linker;
+use blueflame::linker::events::GameEvent as _;
+use blueflame::memory::{Ptr, mem, proxy};
+use blueflame::processor::{self, Cpu2};
 
 use crate::error::{ErrorReport, sim_warning};
 use crate::sim;
@@ -13,6 +15,9 @@ use crate::iv;
 #[derive(Default, Clone)]
 pub struct ScreenSystem {
     screen: Arc<Screen>,
+
+    /// If Menu Overload Glitch is active
+    menu_overload: bool,
 
     /// Flag for controlling whether removal of held items
     /// should happen after the dialog when transitioning
@@ -49,6 +54,13 @@ pub struct InventoryScreen {
     /// this item's prompt will be used when performing
     /// an action on an entangle-reachable slot
     pub active_entangle_slot: Option<(usize, usize)>,
+
+    /// Weapon to spawn if changed on inventory close
+    pub weapon_to_spawn: InventoryScreenActor,
+    /// Bow to spawn if changed on inventory close
+    pub bow_to_spawn: InventoryScreenActor,
+    /// Shield to spawn if changed on inventory close
+    pub shield_to_spawn: InventoryScreenActor,
 }
 
 /// Simulation of temporary inventory item state
@@ -64,10 +76,21 @@ pub struct InventoryScreenItem {
     pub equipped: bool,
 }
 
+/// State of equipment actors in the inventory screen
+#[derive(Default, Clone)]
+pub struct InventoryScreenActor {
+    /// Actor to be spawned in the overworld
+    /// when inventory is closed. None means nothing is equipped
+    /// and to delete the overworld actor
+    actor: Option<sim::OverworldActor>,
+    changed: bool,
+}
+
 impl ScreenSystem {
     pub fn transition_to_inventory(
         &mut self,
         ctx: &mut sim::Context<&mut Cpu2>,
+        overworld: &mut sim::OverworldSystem,
         warn_if_already: bool,
         errors: &mut Vec<ErrorReport>,
     ) -> Result<(), processor::Error> {
@@ -84,7 +107,7 @@ impl ScreenSystem {
             Screen::ShopDialog | Screen::StatueDialog => {
                 let drop_items = self.remove_held_item_after_dialog;
                 self.remove_held_item_after_dialog = false;
-                screen.transition_to_overworld(ctx, drop_items)?;
+                screen.transition_to_overworld(ctx, overworld, self.menu_overload, drop_items)?;
             }
             // unreachable: checked above
             Screen::Inventory(_) => unreachable!(),
@@ -92,7 +115,7 @@ impl ScreenSystem {
         }
 
         // actually open the inventory
-        *screen = Screen::new_inventory(ctx.process())?;
+        *screen = Screen::open_new_inventory(ctx.cpu())?;
 
         Ok(())
     }
@@ -120,15 +143,21 @@ impl Screen {
         }
     }
     /// Create a new screen state and read inventory data
-    fn new_inventory(proc: &Process) -> Result<Self, memory::Error> {
-        let m = proc.memory();
+    fn open_new_inventory(cpu2: &mut Cpu2<'_, '_>) -> Result<Self, processor::Error> {
+        // this is called but it doesn't do anything for us
+        // linker::update_equipped_item_array(cpu2)?;
+
+        let m = cpu2.proc.memory();
         let gdt = gdt::trigger_param_ptr(m)?;
-        proxy! { let trigger_param = *gdt as trigger_param in proc };
-        let bow_slots = trigger_param
-            .by_name::<gdt::fd!(s32)>("BowPorchStockNum")
-            .map(|x| x.get())
-            .copied()
-            .unwrap_or(0) as usize;
+        let bow_slots = {
+            let proc = &cpu2.proc;
+            proxy! { let trigger_param = *gdt as trigger_param in proc };
+            trigger_param
+                .by_name::<gdt::fd!(s32)>("BowPorchStockNum")
+                .map(|x| x.get())
+                .copied()
+                .unwrap_or(0) as usize
+        };
 
         let pmdm = singleton_instance!(pmdm(m))?;
 
@@ -203,7 +232,10 @@ impl Screen {
 
         Ok(Self::Inventory(InventoryScreen{
             tabs,
-            active_entangle_slot: None
+            active_entangle_slot: None,
+            weapon_to_spawn: InventoryScreenActor::default(),
+            bow_to_spawn: InventoryScreenActor::default(),
+            shield_to_spawn: InventoryScreenActor::default(),
         }))
     }
 
@@ -211,27 +243,64 @@ impl Screen {
     fn transition_to_overworld(
         &mut self,
         ctx: &mut sim::Context<&mut Cpu2>,
+        overworld: &mut sim::OverworldSystem,
+        menu_overload: bool,
         drop_items: bool,
     ) -> Result<(), processor::Error> {
         match self {
             Self::Overworld => {
                 log::warn!(
-                    "return_to_overworld_from_dialog called but screen is already overworld"
+                    "transition_to_overworld called but screen is already overworld"
                 );
-                Ok(())
+                return Ok(());
             }
-            Self::Inventory(_) => {
-                todo!()
+            Self::Inventory(inv_screen) => {
+                if !menu_overload {
+                    log::debug!("updating overworld equiments");
+                    if inv_screen.weapon_to_spawn.changed {
+                        overworld.weapon = inv_screen.weapon_to_spawn.actor.take();
+                    }
+                    if inv_screen.bow_to_spawn.changed {
+                        overworld.bow = inv_screen.bow_to_spawn.actor.take();
+                    }
+                    if inv_screen.shield_to_spawn.changed {
+                        overworld.shield = inv_screen.bow_to_spawn.actor.take();
+                    }
+                } else {
+                    log::debug!("not updating overworld equipments because of menu overload");
+                }
+                #[derive(Default)]
+                struct State {
+                    actors: Vec<String>,
+                    menu_overload: bool,
+                }
+                let state = linker::events::CreateHoldingItem::execute_subscribed(
+                    ctx.cpu(),
+                    State { actors: vec![], menu_overload },
+                    |state, name| {
+                        if !state.menu_overload {
+                            state.actors.push(name);
+                        }
+                    },
+                    linker::create_holding_items,
+                )?;
+                log::debug!("spawning overworld holding items: {:?}", state.actors);
+                overworld.spawn_held_items(state.actors);
             }
             Self::ShopDialog | Self::StatueDialog => {
-                if drop_items {
-                    log::debug!("dropping items on non-inventory dialog close");
-                    sim::actions::remove_held_items(ctx)?;
-                }
-                *self = Self::Overworld;
-                Ok(())
             }
         }
+        log::debug!("removing translucent items on returning to overworld");
+        linker::delete_removed_items(ctx.cpu())?;
+
+        if drop_items {
+            log::debug!("dropping held items on returning to overworld");
+            linker::remove_held_items(ctx.cpu())?;
+            overworld.drop_held_items();
+        }
+
+        *self = Self::Overworld;
+        Ok(())
     }
 }
 

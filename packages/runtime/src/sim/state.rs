@@ -2,7 +2,6 @@ use blueflame::processor::{CrashReport, Process};
 use skybook_parser::cir;
 
 use crate::error::{Report, sim_error};
-use crate::sim::ScreenSystem;
 use crate::{exec, sim};
 
 /// The state of the simulator
@@ -20,13 +19,6 @@ pub struct State {
     /// If so, the simulator will not automatically change screen
     /// until the screen returns to overworld
     pub is_screen_manually_changed: bool,
-
-    // /// If inventory/dialog screen is activated manually,
-    // /// so auto-scoping will be disabled until returned to overworld screen
-    // is_manual_scope: bool,
-    //
-    // /// If auto scope is enabled at all
-    // enable_auto_scope: bool,
 }
 
 #[derive(Clone, Default)]
@@ -43,24 +35,12 @@ pub enum Game {
 /// The state of the running game in the simulator
 #[derive(Clone)]
 pub struct GameState {
-    /// Simulation of screens in the game
-    pub screen: sim::ScreenSystem,
     /// Running game's process
     pub process: Process,
-    //
-    // /// Current actors in the overworld
-    // /// TODO: make this copy on write and Arc
-    // ovwd_weapon: Option<ActorState>,
-    // ovwd_shield: Option<ActorState>,
-    // ovwd_bow: Option<ActorState>,
-    // ovwd_armor_head: Option<ActorState>,
-    // ovwd_armor_upper: Option<ActorState>,
-    // ovwd_armor_lower: Option<ActorState>,
-    //
-    // ovwd_dropped_materials: VecDeque<ActorState>,
-    // ovwd_dropped_equipments: VecDeque<ActorState>,
-    //
-    // ovwd_holding_materials: VecDeque<ActorState>,
+    /// Simulation of screens in the game
+    pub screen: sim::ScreenSystem,
+    /// Simulation of the overworld
+    pub overworld: sim::OverworldSystem,
 }
 
 impl State {
@@ -94,8 +74,9 @@ impl State {
 impl GameState {
     pub fn new(process: Process) -> Self {
         Self {
-            screen: ScreenSystem::default(),
             process,
+            screen: sim::ScreenSystem::default(),
+            overworld: sim::OverworldSystem::default(),
         }
     }
 }

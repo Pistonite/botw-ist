@@ -27,8 +27,8 @@ pub struct PauseMenuDataMgr {
     // mLastAddedItemSlot: i32,
     #[offset(0x44498)]
     pub mNumTabs: i32,
-    // #[offset(0x444a0)]
-    // mGrabbedItems: [GrabbedItemInfo; 5],
+    #[offset(0x444a0)]
+    pub mGrabbedItems: [GrabbedItemInfo; 5],
     // #[offset(0x44518)]
     // mRitoSoulItem: Ptr![PouchItem],
     // #[offset(0x44520)]
@@ -41,8 +41,8 @@ pub struct PauseMenuDataMgr {
     // mNewlyAddedItem: PouchItem,
     // #[offset(0x447d8)]
     // mIsPouchForQuest: bool,
-    // #[offset(0x447e0)]
-    // mEquippedWeapons: [Ptr![PouchItem]; 4],
+    #[offset(0x447e0)]
+    pub mEquippedWeapons: [Ptr![PouchItem]; 4],
     // PouchCategory
     // #[offset(0x44800)]
     // pub mCategoryToSort: i32,
@@ -71,6 +71,25 @@ impl Ptr![PauseMenuDataMgr] {
 
         Some((ptr_diff / PouchItem::SIZE) as i32)
     }
+
+    pub fn equipped_weapons(self) -> Ptr![Ptr![PouchItem][4]] {
+        Ptr!(&self->mEquippedWeapons).reinterpret_array()
+    }
+
+    pub fn grabbed_items(self) -> Ptr![Ptr![GrabbedItemInfo][5]] {
+        Ptr!(&self->mGrabbedItems).reinterpret_array()
+    }
+}
+
+#[derive(MemObject, Default, Clone)]
+#[size(0x10)]
+pub struct GrabbedItemInfo {
+    #[offset(0x0)]
+    pub mItem: Ptr![PouchItem],
+    #[offset(0x8)]
+    pub mIsActorSpawned: bool,
+    // #[offset(0x9)]
+    // _9: bool,
 }
 
 #[derive(MemObject, Default, Clone)]

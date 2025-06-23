@@ -174,9 +174,9 @@ impl Context<&mut Cpu1> {
     }
 }
 
-impl Context<&mut Cpu2<'_, '_>> {
-    pub fn process(&self) -> &Process {
-        &self.inner.proc
+impl<'a, 'b> Context<&mut Cpu2<'a, 'b>> {
+    pub fn cpu(&mut self) -> &mut Cpu2<'a, 'b> {
+        &mut self.inner
     }
 }
 

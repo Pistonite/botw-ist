@@ -1,4 +1,5 @@
-use crate::game::{CookItem, FixedSafeString40, WeaponModifierInfo, singleton_instance};
+use crate::env::GameVer;
+use crate::game::{singleton_instance, CookItem, FixedSafeString40, PauseMenuDataMgr, PouchItem, WeaponModifierInfo};
 use crate::memory::{Ptr, mem};
 use crate::processor::{self, Cpu2, reg};
 
@@ -122,6 +123,113 @@ pub fn get_item_with_value(
     Ok(())
 }
 
+/// `uking::ui::PauseMenuDataMgr::updateEquippedItemArray`
+///
+/// This is re-implemented since it's inlined in 1.6 (0x1203fec)
+pub fn update_equipped_item_array(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let pmdm = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    let nullptrs = [0u64.into(); 4];
+    mem! { (cpu.proc.memory_mut()):
+        *(&pmdm->mEquippedWeapons) = nullptrs;
+    };
+
+    let list1 = Ptr!(&pmdm->mList1);
+    let (mut iter, iter_end) = {
+        let m = cpu.proc.memory();
+        (list1.begin(m)?, list1.end(m)?)
+    };
+    while iter != iter_end {
+        let m = cpu.proc.memory();
+        let item_ptr = Ptr!(<PouchItem>(iter.get_tptr()));
+        // no null check
+        mem! { m:
+            let item_type = *(&item_ptr->mType);
+        };
+        // > Shield
+        if item_type > 3 {
+            break;
+        }
+        mem! { m:
+            let is_equipped = *(&item_ptr->mEquipped);
+        };
+        if is_equipped {
+            // safe array
+            let i = if item_type as u32 > 3 {
+                0u64
+            } else {
+                item_type as u64
+            };
+            mem! { (cpu.proc.memory_mut()):
+                *(pmdm.equipped_weapons().ith(i)) = item_ptr;
+            };
+        }
+        iter.next(cpu.proc.memory())?;
+    }
+
+    Ok(())
+}
+
+/// `uking::ui::PauseMenuDataMgr::createHoldingItemActors` (0x97AB34 in 1.5)
+///
+/// This is re-implemented since it's inlined in 1.6
+pub fn create_holding_items(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    reg! { cpu:
+        x[0] => let pmdm: Ptr![PauseMenuDataMgr],
+    };
+    let grabbed_items = pmdm.grabbed_items();
+    for i in 0..5 {
+        mem! {(cpu.proc.memory()):
+            let grabbed_item = *(grabbed_items.ith(i));
+            let info = *grabbed_item;
+        };
+        let item = info.mItem;
+        if item.is_nullptr() || info.mIsActorSpawned {
+            continue;
+        }
+        let name_ptr = Ptr!(&item->mName);
+        helper::assure_termination(cpu, name_ptr.reinterpret())?;
+        let name_str_ptr = name_ptr.cstr(cpu.proc.memory())?;
+        reg! { cpu:
+            x[0] = name_str_ptr,
+            x[1] = 0 // Heap*, we don't actually need this
+        };
+        match cpu.proc.env().game_ver {
+            GameVer::X150 => {
+                cpu.native_jump_to_main_offset(0x0073c5b4)?;
+            },
+            GameVer::X160 => {
+                cpu.native_jump_to_main_offset(0x00d23b20)?;
+            }
+        }
+        mem! {(cpu.proc.memory_mut()):
+            *(&grabbed_item->mIsActorSpawned) = true;
+        };
+    }
+
+    Ok(())
+}
+
+/// Call `uking::ui::PauseMenuDataMgr::deleteRemovedItems` (0x7100977128 in 1.5).
+/// i.e. removes translucent items
+pub fn delete_removed_items(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu: x[0] = this_ptr, };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x00977128)
+}
+
+/// Call `uking::ui::PauseMenuDataMgr::removeGrabbedItems`
+pub fn remove_held_items(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu: x[0] = this_ptr, };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x00971b00)
+}
+
 pub fn call_load_from_game_data(cpu: &mut Cpu2) -> Result<(), processor::Error> {
     cpu.reset_stack();
     let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
@@ -175,6 +283,8 @@ pub fn get_actor_profile(cpu: &mut Cpu2, actor: &str) -> Result<String, processo
 }
 
 mod helper {
+    use crate::game::SafeString;
+
     use super::*;
 
     /// Allocate a FixedSafeString40 on the stack and store the value in it
@@ -204,6 +314,15 @@ mod helper {
             Ok(Ptr!(<WeaponModifierInfo>(0)))
         }
     }
+
+    /// Call the `assureTerminationImpl_` virtual function. will trash registers
+    /// like a normal call
+    pub fn assure_termination(cpu: &mut Cpu2, ptr: Ptr![SafeString]) -> Result<(), processor::Error> {
+        let vtable = Ptr!(&ptr->vtable).load(cpu.proc.memory())?;
+        let func_addr = Ptr!(<u64>(vtable + 18)).load(cpu.proc.memory())?;
+        reg! { cpu: x[0] = ptr };
+        cpu.native_jump(func_addr)
+    }
 }
 
 // impl Cpu2<'_, '_> {
@@ -218,34 +337,6 @@ mod helper {
 //     self.cpu.write_arg(2, tag as u64);
 //     self.call_func_at_addr(0xD2F900)?;
 //     Ok(self.cpu.read_arg(0) != 0)
-// }
-
-// // 0x970060
-// #[allow(clippy::too_many_arguments)]
-// pub fn cook_item_get(
-//     &mut self,
-//     name: &str,
-//     life_recover: f32,
-//     effect_time: i32,
-//     sell_price: i32,
-//     effect_id: CookEffectId,
-//     vitality_boost: f32,
-//     is_crit: bool,
-// ) -> Result<(), ExecutionError> {
-//     let cook_item_addr = self
-//         .alloc_cook_item(
-//             name,
-//             life_recover,
-//             effect_time,
-//             sell_price,
-//             effect_id,
-//             vitality_boost,
-//             is_crit,
-//         )
-//         .map_err(|e| self.to_execution_error(e))?;
-//     self.cpu.write_arg(0, self.mem.get_pmdm_addr());
-//     self.cpu.write_arg(1, cook_item_addr);
-//     self.call_func_at_addr(0x970060)
 // }
 
 // // 0x9704BC
@@ -284,111 +375,6 @@ mod helper {
 // }
 //
 //
-// #[allow(clippy::too_many_arguments)]
-// fn alloc_cook_item(
-//     &mut self,
-//     name: &str,
-//     life_recover: f32,
-//     effect_time: i32,
-//     sell_price: i32,
-//     effect_id: CookEffectId,
-//     vitality_boost: f32,
-//     is_crit: bool,
-// ) -> Result<u64, error::Error> {
-//     self.mem.heap_mut().alloc(0x64)?;
-//     let base_address = self.mem.heap_mut().alloc(0x228)?;
-//
-//     let mut buffer = [0u8; 64];
-//
-//     let bytes = name.as_bytes();
-//     let len = bytes.len().min(buffer.len());
-//
-//     buffer[..len].copy_from_slice(&bytes[..len]);
-//     // actor_name is offset 0 from base
-//     let actor_name = FixedSafeString40 {
-//         safeString: SafeString {
-//             vtable: Self::FIXED_SAFE_STRING40_VTABLE_ADDR + (self.mem.get_main_offset() as u64),
-//             mStringTop: base_address + 0x14,
-//         },
-//         mBufferSize: 64,
-//         mBuffer: buffer,
-//     };
-//
-//     let buffer = [b'A'; 64];
-//
-//     let ingredient1 = FixedSafeString40 {
-//         safeString: SafeString {
-//             vtable: Self::FIXED_SAFE_STRING40_VTABLE_ADDR + (self.mem.get_main_offset() as u64),
-//             mStringTop: base_address + 0x14 + 0x58,
-//         },
-//         mBufferSize: 64,
-//         mBuffer: buffer,
-//     };
-//
-//     let buffer = [b'B'; 64];
-//     let ingredient2 = FixedSafeString40 {
-//         safeString: SafeString {
-//             vtable: Self::FIXED_SAFE_STRING40_VTABLE_ADDR + (self.mem.get_main_offset() as u64),
-//             mStringTop: base_address + 0x14 + 0x58 * 2,
-//         },
-//         mBufferSize: 64,
-//         mBuffer: buffer,
-//     };
-//
-//     let buffer = [b'C'; 64];
-//     let ingredient3 = FixedSafeString40 {
-//         safeString: SafeString {
-//             vtable: Self::FIXED_SAFE_STRING40_VTABLE_ADDR + (self.mem.get_main_offset() as u64),
-//             mStringTop: base_address + 0x14 + 0x58 * 3,
-//         },
-//         mBufferSize: 64,
-//         mBuffer: buffer,
-//     };
-//
-//     let buffer = [b'D'; 64];
-//     let ingredient4 = FixedSafeString40 {
-//         safeString: SafeString {
-//             vtable: Self::FIXED_SAFE_STRING40_VTABLE_ADDR + (self.mem.get_main_offset() as u64),
-//             mStringTop: base_address + 0x14 + 0x58 * 4,
-//         },
-//         mBufferSize: 64,
-//         mBuffer: buffer,
-//     };
-//
-//     let buffer = [b'E'; 64];
-//     let ingredient5 = FixedSafeString40 {
-//         safeString: SafeString {
-//             vtable: Self::FIXED_SAFE_STRING40_VTABLE_ADDR + (self.mem.get_main_offset() as u64),
-//             mStringTop: base_address + 0x14 + 0x58 * 5,
-//         },
-//         mBufferSize: 64,
-//         mBuffer: buffer,
-//     };
-//
-//     let ingredients = [
-//         ingredient1,
-//         ingredient2,
-//         ingredient3,
-//         ingredient4,
-//         ingredient5,
-//     ];
-//
-//     let cook_item = CookItem::new(
-//         actor_name,
-//         ingredients,
-//         life_recover,
-//         effect_time,
-//         sell_price,
-//         effect_id as i32,
-//         vitality_boost,
-//         is_crit,
-//     );
-//
-//     let mut writer = self.mem.write(base_address, None)?;
-//     cook_item.write_to_mem(&mut writer)?;
-//     Ok(base_address)
-// }
-//
 // pub fn get_hash_for_actor(&mut self, name: &str) -> Result<u32, ExecutionError> {
 //     let actor_name_addr = self.alloc_fixed_safe_string40(name)?;
 //     let actor_name: FixedSafeString40 = Ptr::new(actor_name_addr)
@@ -397,17 +383,4 @@ mod helper {
 //     self.cpu.write_arg(0, actor_name.safeString.mStringTop);
 //     self.call_func_at_addr(0xB2170C)?;
 //     Ok(self.cpu.read_arg(0) as u32)
-// }
-//
-// fn alloc_weapon_modifier_info(&mut self, flags: u32, value: i32) -> Result<u64, error::Error> {
-//     let base_address = self.mem.heap_mut().alloc(0x8)?;
-//     self.mem.mem_write_val::<u32>(base_address, flags)?;
-//     self.mem.mem_write_i32(base_address + 0x4, value)?;
-//     Ok(base_address)
-// }
-// pub fn allocate_data(&mut self, data: Vec<u8>) -> Result<u64, crate::memory::Error> {
-//     let start = self.mem.heap_mut().alloc(data.len() as u32)?;
-//     self.mem.mem_write_bytes(start, data)?;
-//     Ok(start)
-// }
 // }

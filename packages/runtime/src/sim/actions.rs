@@ -40,10 +40,3 @@ pub fn get_items(
     }
     Ok(())
 }
-
-/// Remove held items by calling removeGrabbedItems
-pub fn remove_held_items(
-    ctx: &mut sim::Context<&mut Cpu2>,
-) -> Result<(), processor::Error> {
-    todo!()
-}
