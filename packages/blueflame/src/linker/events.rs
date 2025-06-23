@@ -92,7 +92,9 @@ pub trait GameEvent: Send + Sync + UnwindSafe + RefUnwindSafe + 'static {
 
         result.map(|_| {
             let mutex = Arc::into_inner(state).expect("ref count not 1 in execute_subscribed");
-            mutex.into_inner().expect("failed to call mutex.into_inner() in execute_subscribed")
+            mutex
+                .into_inner()
+                .expect("failed to call mutex.into_inner() in execute_subscribed")
         })
     }
 }
@@ -111,7 +113,9 @@ impl<T: Send + Sync + UnwindSafe + RefUnwindSafe + 'static, TEvent: GameEvent> H
             Ok(Some(Hook::Start(processor::box_execute(
                 move |cpu, proc| {
                     let args = TEvent::extract_args(cpu, proc)?;
-                    let mut state = state.lock().expect("GameEventHook failed to acquire lock on event state");
+                    let mut state = state
+                        .lock()
+                        .expect("GameEventHook failed to acquire lock on event state");
                     listener(&mut state, args);
                     Ok(())
                 },

@@ -13,7 +13,6 @@ pub struct State {
     // saves: HashMap<String, Arc<gdt::TriggerParam>>,
     // /// The "manual" or "default" save (what is used if a name is not specified when saving)
     // manual_save: Option<gdt::TriggerParam>,
-    
     /// If the screen was manually changed by a command
     ///
     /// If so, the simulator will not automatically change screen
@@ -27,7 +26,7 @@ pub enum Game {
     #[default]
     Uninit,
     /// Game is running
-    Running(GameState),
+    Running(Box<GameState>),
     /// Game has crashed (must manually reboot)
     Crashed(CrashReport),
 }
@@ -65,7 +64,8 @@ impl State {
             let items = items.to_vec();
             rt.execute(move |cpu| {
                 cpu.execute(game, |mut cpu2| sim::actions::get_items(&mut cpu2, &items))
-            }).await
+            })
+            .await
         })
         .await
     }

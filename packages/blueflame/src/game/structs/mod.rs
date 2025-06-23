@@ -12,7 +12,6 @@ pub use pouch::*;
 mod container;
 pub use container::*;
 
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(i32)]
 pub enum PouchCategory {
@@ -25,7 +24,6 @@ pub enum PouchCategory {
     KeyItem = 0x6,
     Invalid = -1,
 }
-
 
 // impl PauseMenuDataMgr {
 //     pub fn get_last_item_added_name(&self, mem: &Memory) -> Result<String, Error> {

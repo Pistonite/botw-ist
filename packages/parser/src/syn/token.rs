@@ -45,7 +45,6 @@ pub enum TT {
     // When updating keywords, remember to update the TS language
     // as well (in packages/app/src/extensions/editor)
     /////////////////////////////
-
     #[teleparse(terminal(
         KwGet = "get",
         KwBuy = "buy",
@@ -110,7 +109,6 @@ pub enum TT {
     // When updating keywords, remember to update the TS language
     // as well (in packages/app/src/extensions/editor)
     /////////////////////////////
-
     #[teleparse(terminal(
         KwWeaponSlots = "weapon-slots",
         KwShieldSlots = "shield-slots",
@@ -133,7 +131,6 @@ pub enum TT {
     // When updating keywords, remember to update the TS language
     // as well (in packages/app/src/extensions/editor)
     /////////////////////////////
-
     #[teleparse(terminal(
         KwAll = "all",
         KwInfinite = "infinite",
@@ -185,7 +182,6 @@ pub enum TT {
     // When updating keywords, remember to update the TS language
     // as well (in packages/app/src/extensions/editor)
     /////////////////////////////
-
     #[teleparse(regex(r"[_a-zA-Z][-0-9a-zA-Z_]*"), terminal(Word))]
     Word,
 

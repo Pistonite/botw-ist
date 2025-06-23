@@ -76,7 +76,7 @@ fn fmt_iv_pouch(
     };
     {
         let screen = pouch.screen;
-        writeln!(f, "  screen: ({:?})", screen)?;
+        writeln!(f, "  screen: ({screen:?})")?;
         let count = pouch.count;
         let are_tabs_valid = pouch.are_tabs_valid;
         let num_tabs = pouch.num_tabs;

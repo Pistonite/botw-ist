@@ -5,8 +5,8 @@ use blueflame::memory::{self, Memory, Ptr, proxy};
 use blueflame::processor::Process;
 
 use crate::error::RuntimeViewError;
-use crate::sim;
 use crate::iv;
+use crate::sim;
 
 macro_rules! try_mem {
     ($op:expr, $error:ident, $format:literal) => {
@@ -65,9 +65,11 @@ pub fn extract_pouch_view(
     log::debug!("extracting pouch view from process");
 
     // get any inventory temporary state
-    let visually_equipped_items = screen_sys.current_screen().as_inventory().map(|x| x.get_equipped_item_ptrs())
+    let visually_equipped_items = screen_sys
+        .current_screen()
+        .as_inventory()
+        .map(|x| x.get_equipped_item_ptrs())
         .unwrap_or_default();
-
 
     let memory = proc.memory();
 
@@ -173,7 +175,7 @@ pub fn extract_pouch_view(
             &mut num_bows_for_curr_tab,
             &mut seen_animated_icons,
             memory,
-            &visually_equipped_items
+            &visually_equipped_items,
         )?;
         items.push(item);
         tab_slot += 1;
@@ -186,7 +188,7 @@ pub fn extract_pouch_view(
         are_tabs_valid,
         num_tabs,
         tabs,
-        screen: screen_sys.current_screen().iv_type()
+        screen: screen_sys.current_screen().iv_type(),
     })
 }
 
@@ -253,7 +255,7 @@ fn extract_pouch_item(
     num_bows_for_curr_tab: &mut i32,
     seen_animated_icons: &mut BTreeSet<String>,
     memory: &Memory,
-    visually_equipped_items: &[u64]
+    visually_equipped_items: &[u64],
 ) -> Result<iv::PouchItem, Error> {
     let name = try_mem!(
         Ptr!(&item->mName).utf8_lossy(memory),
@@ -273,7 +275,9 @@ fn extract_pouch_item(
     );
     if !is_equipped {
         // check if the item is visually equipped
-        is_equipped = visually_equipped_items.binary_search(&item.to_raw()).is_ok();
+        is_equipped = visually_equipped_items
+            .binary_search(&item.to_raw())
+            .is_ok();
     }
     let common = iv::CommonItem {
         actor_name: name,

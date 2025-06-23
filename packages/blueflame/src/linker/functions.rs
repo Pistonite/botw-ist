@@ -1,5 +1,8 @@
 use crate::env::GameVer;
-use crate::game::{singleton_instance, CookItem, FixedSafeString40, PauseMenuDataMgr, PouchItem, WeaponModifierInfo};
+use crate::game::{
+    CookItem, FixedSafeString40, PauseMenuDataMgr, PouchItem, WeaponModifierInfo,
+    singleton_instance,
+};
 use crate::memory::{Ptr, mem};
 use crate::processor::{self, Cpu2, reg};
 
@@ -198,7 +201,7 @@ pub fn create_holding_items(cpu: &mut Cpu2) -> Result<(), processor::Error> {
         match cpu.proc.env().game_ver {
             GameVer::X150 => {
                 cpu.native_jump_to_main_offset(0x0073c5b4)?;
-            },
+            }
             GameVer::X160 => {
                 cpu.native_jump_to_main_offset(0x00d23b20)?;
             }
@@ -317,7 +320,10 @@ mod helper {
 
     /// Call the `assureTerminationImpl_` virtual function. will trash registers
     /// like a normal call
-    pub fn assure_termination(cpu: &mut Cpu2, ptr: Ptr![SafeString]) -> Result<(), processor::Error> {
+    pub fn assure_termination(
+        cpu: &mut Cpu2,
+        ptr: Ptr![SafeString],
+    ) -> Result<(), processor::Error> {
         let vtable = Ptr!(&ptr->vtable).load(cpu.proc.memory())?;
         let func_addr = Ptr!(<u64>(vtable + 18)).load(cpu.proc.memory())?;
         reg! { cpu: x[0] = ptr };

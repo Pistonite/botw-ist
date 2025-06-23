@@ -7,8 +7,8 @@ use blueflame::memory::{Ptr, mem, proxy};
 use blueflame::processor::{self, Cpu2};
 
 use crate::error::{ErrorReport, sim_warning};
-use crate::sim;
 use crate::iv;
+use crate::sim;
 
 /// Simulation of different screens in the game and transitioning
 /// between them
@@ -139,7 +139,7 @@ impl Screen {
     pub fn as_inventory(&self) -> Option<&InventoryScreen> {
         match self {
             Screen::Inventory(inv) => Some(inv),
-            _ => None
+            _ => None,
         }
     }
     /// Create a new screen state and read inventory data
@@ -169,7 +169,7 @@ impl Screen {
         let mut tabs = Vec::with_capacity(num_tabs);
 
         // if mCount is 0, the inventory shows up as empty
-        mem ! { m:
+        mem! { m:
             let m_count = *(&pmdm->mList1.mCount);
         };
         if m_count != 0 {
@@ -177,12 +177,12 @@ impl Screen {
                 let mut num_bows_in_curr_tab = 0;
                 let mut curr_item_ptr = tab_heads[i];
                 let mut should_break = curr_item_ptr.is_nullptr()
-                || if i == num_tabs - 1 {
-                    true
-                } else {
-                    let next_head = tab_heads[i + 1];
-                    curr_item_ptr == next_head
-                };
+                    || if i == num_tabs - 1 {
+                        true
+                    } else {
+                        let next_head = tab_heads[i + 1];
+                        curr_item_ptr == next_head
+                    };
                 let mut slot_i = 0;
                 let mut tab = [const { None }; 20];
                 while !should_break {
@@ -215,8 +215,8 @@ impl Screen {
                     curr_item_ptr = if next_node_ptr.is_nullptr() {
                         0u64.into()
                     } else {
-                            (next_node_ptr.to_raw() - 8).into()
-                        };
+                        (next_node_ptr.to_raw() - 8).into()
+                    };
                     should_break = curr_item_ptr.is_nullptr()
                         || if i == num_tabs - 1 {
                             true
@@ -229,8 +229,7 @@ impl Screen {
             }
         }
 
-
-        Ok(Self::Inventory(InventoryScreen{
+        Ok(Self::Inventory(InventoryScreen {
             tabs,
             active_entangle_slot: None,
             weapon_to_spawn: InventoryScreenActor::default(),
@@ -238,7 +237,6 @@ impl Screen {
             shield_to_spawn: InventoryScreenActor::default(),
         }))
     }
-
 
     fn transition_to_overworld(
         &mut self,
@@ -249,9 +247,7 @@ impl Screen {
     ) -> Result<(), processor::Error> {
         match self {
             Self::Overworld => {
-                log::warn!(
-                    "transition_to_overworld called but screen is already overworld"
-                );
+                log::warn!("transition_to_overworld called but screen is already overworld");
                 return Ok(());
             }
             Self::Inventory(inv_screen) => {
@@ -276,7 +272,10 @@ impl Screen {
                 }
                 let state = linker::events::CreateHoldingItem::execute_subscribed(
                     ctx.cpu(),
-                    State { actors: vec![], menu_overload },
+                    State {
+                        actors: vec![],
+                        menu_overload,
+                    },
                     |state, name| {
                         if !state.menu_overload {
                             state.actors.push(name);
@@ -287,8 +286,7 @@ impl Screen {
                 log::debug!("spawning overworld holding items: {:?}", state.actors);
                 overworld.spawn_held_items(state.actors);
             }
-            Self::ShopDialog | Self::StatueDialog => {
-            }
+            Self::ShopDialog | Self::StatueDialog => {}
         }
         log::debug!("removing translucent items on returning to overworld");
         linker::delete_removed_items(ctx.cpu())?;
