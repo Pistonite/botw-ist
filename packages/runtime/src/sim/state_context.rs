@@ -155,7 +155,11 @@ impl Context<&mut Cpu1> {
         f: F,
     ) -> Result<Report<sim::GameState>, CrashReport>
     where
-        F: FnOnce(Context<&mut Cpu2>, &mut sim::GameSystems, &mut Vec<ErrorReport>) -> Result<(), processor::Error>,
+        F: FnOnce(
+            Context<&mut Cpu2>,
+            &mut sim::GameSystems,
+            &mut Vec<ErrorReport>,
+        ) -> Result<(), processor::Error>,
     {
         let span = self.span;
         let handle = self.handle;

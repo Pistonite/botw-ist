@@ -86,8 +86,9 @@ impl State {
         self.with_game(rt, async move |game, rt| {
             let items = items.to_vec();
             rt.execute(move |cpu| {
-                cpu.execute_reporting(game, |mut cpu2, sys, errors| sim::actions::hold_items(
-                    &mut cpu2, sys, errors, &items))
+                cpu.execute_reporting(game, |mut cpu2, sys, errors| {
+                    sim::actions::hold_items(&mut cpu2, sys, errors, &items)
+                })
             })
             .await
         })

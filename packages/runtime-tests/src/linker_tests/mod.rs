@@ -17,7 +17,7 @@ macro_rules! run {
 
 pub fn run(process: &Process, failures_dir: &Path) -> anyhow::Result<bool> {
     log::info!("running linker tests");
-    let threads = if cfg!(feature="single-thread") {
+    let threads = if cfg!(feature = "single-thread") {
         1
     } else {
         4

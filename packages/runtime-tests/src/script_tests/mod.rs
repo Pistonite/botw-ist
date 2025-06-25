@@ -33,7 +33,8 @@ pub fn run(runtime: Arc<sim::Runtime>) -> anyhow::Result<bool> {
         log::info!("only testing {only_test}");
         test_names.push(only_test);
     } else {
-        let test_dir = std::fs::read_dir("src/script_tests").context("failed to read script dir")?;
+        let test_dir =
+            std::fs::read_dir("src/script_tests").context("failed to read script dir")?;
         for entry in test_dir {
             let Ok(entry) = entry else {
                 continue;
@@ -50,8 +51,6 @@ pub fn run(runtime: Arc<sim::Runtime>) -> anyhow::Result<bool> {
             test_names.push(test_name);
         }
     }
-
-
 
     let total_count = test_names.len();
     let passed_count = tokio::runtime::Builder::new_current_thread()

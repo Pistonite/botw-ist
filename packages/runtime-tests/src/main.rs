@@ -29,14 +29,15 @@ fn main() -> anyhow::Result<()> {
     if !script_test_passed {
         bail!("script tests failed");
     }
-    if !cfg!(feature="trace-memory") {
-        bail!("The tests always fail when trace-memory is not enabled to ensure it's not accidentally disabled");
-    } 
-    #[cfg(feature="trace-memory")]
+    if !cfg!(feature = "trace-memory") {
+        bail!(
+            "The tests always fail when trace-memory is not enabled to ensure it's not accidentally disabled"
+        );
+    }
+    #[cfg(feature = "trace-memory")]
     {
         util::collect_memory_trace(&process)?;
     }
 
     Ok(())
-
 }

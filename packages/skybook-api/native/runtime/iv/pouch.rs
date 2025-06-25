@@ -42,7 +42,7 @@ mod __impl {
                 are_tabs_valid: true,
                 num_tabs: 0,
                 tabs: vec![],
-                screen: InvView_Screen::default()
+                screen: InvView_Screen::default(),
             }
         }
     }

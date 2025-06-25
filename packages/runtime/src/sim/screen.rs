@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use blueflame::game::{PouchItem, gdt, singleton_instance};
-use blueflame::{linker, memory};
 use blueflame::linker::events::GameEvent as _;
-use blueflame::memory::{mem, proxy, Memory, Ptr};
+use blueflame::memory::{Memory, Ptr, mem, proxy};
 use blueflame::processor::{self, Cpu2};
+use blueflame::{linker, memory};
 use skybook_parser::cir;
 use teleparse::Span;
 
@@ -92,7 +92,6 @@ pub struct InventoryScreenItem {
 
     /// Cached item category, used for selection
     pub category: Option<cir::Category>,
-
 }
 
 /// State of equipment actors in the inventory screen
@@ -254,7 +253,7 @@ impl Screen {
                                 equipped,
                                 ptr: curr_item_ptr,
                                 name: item_name,
-                                category: sim::view::item_type_to_category(item_type)
+                                category: sim::view::item_type_to_category(item_type),
                             }));
                         }
                     }
@@ -263,7 +262,8 @@ impl Screen {
                     mem! { m:
                         let next_node_ptr = *(&curr_item_ptr->mListNode.mNext)
                     };
-                    curr_item_ptr = if next_node_ptr.is_nullptr() || next_node_ptr == head_node_ptr {
+                    curr_item_ptr = if next_node_ptr.is_nullptr() || next_node_ptr == head_node_ptr
+                    {
                         0u64.into()
                     } else {
                         (next_node_ptr.to_raw() - 8).into()
@@ -276,7 +276,10 @@ impl Screen {
                     //         curr_item_ptr == next_head
                     //     };
                 }
-                tabs.push(InventoryScreenTab { items: tab, category: sim::view::item_type_to_category(tab_types[i]) });
+                tabs.push(InventoryScreenTab {
+                    items: tab,
+                    category: sim::view::item_type_to_category(tab_types[i]),
+                });
             }
         }
 
@@ -379,10 +382,8 @@ impl InventoryScreen {
     pub fn get_accessible_item_ptrs(&self) -> Vec<u64> {
         let mut out = vec![];
         for tab in &self.tabs {
-            for item in &tab.items {
-                if let Some(item) = item {
-                    out.push(item.ptr.to_raw());
-                };
+            for item in tab.items.iter().flatten() {
+                out.push(item.ptr.to_raw());
             }
         }
         out.sort();
@@ -392,12 +393,14 @@ impl InventoryScreen {
     /// Select an item in the inventory.
     ///
     /// Returns the tab index and slot index
-    pub fn select(&self, 
-        item: &cir::ItemOrCategory, 
+    pub fn select(
+        &self,
+        item: &cir::ItemOrCategory,
         value_at_least: Option<i32>,
-        memory: &Memory, 
-        span: Span, 
-        errors: &mut Vec<ErrorReport>) -> Result<Option<(usize, usize)>, memory::Error> {
+        memory: &Memory,
+        span: Span,
+        errors: &mut Vec<ErrorReport>,
+    ) -> Result<Option<(usize, usize)>, memory::Error> {
         match item {
             cir::ItemOrCategory::Category(category) => {
                 let category = *category;
@@ -419,14 +422,14 @@ impl InventoryScreen {
                             continue;
                         }
                         // FIXME: we are not checking value_at_least here,
-                        // which should be a rarely-used edge case. If we 
+                        // which should be a rarely-used edge case. If we
                         // want to do this properly, the easiest way
                         // is to make a cir::Item with the actor and position meta
                         // then call select_item()
                         return Ok(Some((tab_i, slot)));
                     }
                 }
-                return Ok(None);
+                Ok(None)
             }
             cir::ItemOrCategory::Item(item) => {
                 self.select_item(item, value_at_least, memory, span, errors)
@@ -437,16 +440,23 @@ impl InventoryScreen {
     /// Select an item in the inventory.
     ///
     /// Returns the tab index and slot index
-    pub fn select_item(&self, item: &cir::Item, 
+    pub fn select_item(
+        &self,
+        item: &cir::Item,
         value_at_least: Option<i32>,
-        memory: &Memory, span: Span, errors: &mut Vec<ErrorReport>) -> Result<Option<(usize, usize)>, memory::Error> {
+        memory: &Memory,
+        span: Span,
+        errors: &mut Vec<ErrorReport>,
+    ) -> Result<Option<(usize, usize)>, memory::Error> {
         let meta = match &item.meta {
-            None => return self.select_item_by_name_meta(&item.actor, None, value_at_least, 0, memory),
-            Some(x) => x
+            None => {
+                return self.select_item_by_name_meta(&item.actor, None, value_at_least, 0, memory);
+            }
+            Some(x) => x,
         };
         enum Selector {
             FromSlot(usize),
-            IdxAndSlot(usize, usize)
+            IdxAndSlot(usize, usize),
         }
         // check if the meta specifies the item's position directly
         let selector = match &meta.position {
@@ -472,7 +482,10 @@ impl InventoryScreen {
                     return Ok(None);
                 };
                 if item2.name != item.actor {
-                    errors.push(sim_warning!(&span, ItemMismatch(item2.name.clone(), item.actor.clone())));
+                    errors.push(sim_warning!(
+                        &span,
+                        ItemMismatch(item2.name.clone(), item.actor.clone())
+                    ));
                 }
                 return Ok(Some((tab_i, slot)));
             }
@@ -480,14 +493,14 @@ impl InventoryScreen {
 
         self.select_item_by_name_meta(&item.actor, Some(meta), value_at_least, from_slot, memory)
     }
-    
+
     /// Select an item in the inventory. Only non-position meta properties are considered
     ///
     /// Returns the tab index and slot index
     pub fn select_item_by_name_meta(
-        &self, 
-        item_name: &str, 
-        meta: Option<&cir::ItemMeta>, 
+        &self,
+        item_name: &str,
+        meta: Option<&cir::ItemMeta>,
         value_at_least: Option<i32>,
         nth: usize,
         memory: &Memory,
@@ -518,22 +531,26 @@ impl InventoryScreen {
                     ($memory: ident, $meta_field:ident, $item_field:ident) => {
                         if let Some(wanted) = meta.and_then(|x| x.$meta_field) {
                             mem! { memory: let actual = *(&item_ptr->$item_field); };
-                            if actual != wanted { continue; }
+                            if actual != wanted {
+                                continue;
+                            }
                         }
                     };
                     ($memory: ident, $meta_field:ident (), $item_field:ident) => {
                         if let Some(wanted) = meta.and_then(|x| x.$meta_field()) {
                             mem! { memory: let actual = *(&item_ptr->$item_field); };
-                            if actual != wanted { continue; }
+                            if actual != wanted {
+                                continue;
+                            }
                         }
-                    }
+                    };
                 }
                 do_match!(memory, equip, mEquipped);
                 do_match!(memory, life_recover, mHealthRecover);
                 do_match!(memory, effect_duration, mEffectDuration);
                 do_match!(memory, sell_price, mSellPrice);
                 do_match!(memory, effect_id_f32(), mEffectId);
-                do_match!(memory, effect_level_f32(), mEffectLevel);
+                do_match!(memory, effect_level, mEffectLevel);
                 if let Some(wanted) = meta.map(|x| &x.ingredients) {
                     if !wanted.is_empty() {
                         mem! {memory:
@@ -560,7 +577,7 @@ impl InventoryScreen {
                 if count == 0 {
                     return Ok(Some((tab_i, slot)));
                 }
-                count-=1;
+                count -= 1;
             }
         }
 
@@ -570,7 +587,10 @@ impl InventoryScreen {
     /// Select an item in the inventory by category and slot position
     ///
     /// Returns the tab index and slot index
-    pub fn select_item_by_category_and_slot(&self, spec: &cir::CategorySpec) -> Option<(usize, usize)> {
+    pub fn select_item_by_category_and_slot(
+        &self,
+        spec: &cir::CategorySpec,
+    ) -> Option<(usize, usize)> {
         let slot = ((spec.row * 5) as usize + spec.col as usize).min(19);
         let mut count = (spec.amount as usize).min(1);
         for (tab_i, tab) in self.tabs.iter().enumerate() {
@@ -590,11 +610,13 @@ impl InventoryScreen {
     /// Update one inventory slot
     ///
     /// Return `Ok(true)` if the slot was changed
-    pub fn update(&mut self, 
-        tab: usize, 
-        slot: usize, 
+    pub fn update(
+        &mut self,
+        tab: usize,
+        slot: usize,
         update_equipped: Option<bool>,
-        memory: &Memory) -> Result<bool, memory::Error> {
+        memory: &Memory,
+    ) -> Result<bool, memory::Error> {
         let Some(tab) = self.tabs.get_mut(tab) else {
             return Ok(false);
         };
@@ -619,7 +641,12 @@ impl InventoryScreen {
         Ok(changed)
     }
 
-    pub fn get_value(&self, tab: usize, slot: usize, memory: &Memory) -> Result<Option<i32>, memory::Error> {
+    pub fn get_value(
+        &self,
+        tab: usize,
+        slot: usize,
+        memory: &Memory,
+    ) -> Result<Option<i32>, memory::Error> {
         let Some(tab) = self.tabs.get(tab) else {
             return Ok(None);
         };

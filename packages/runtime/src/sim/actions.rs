@@ -2,8 +2,8 @@ use blueflame::linker;
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 
+use crate::error::{ErrorReport, sim_error};
 use crate::sim;
-use crate::error::{sim_error, ErrorReport};
 
 use super::util;
 
@@ -46,16 +46,13 @@ pub fn get_items(
 
 /// Hold items in pouch
 pub fn hold_items(
-    ctx: &mut sim::Context<&mut Cpu2>, 
+    ctx: &mut sim::Context<&mut Cpu2>,
     sys: &mut sim::GameSystems,
     errors: &mut Vec<ErrorReport>,
     items: &[cir::ItemSelectSpec],
 ) -> Result<(), processor::Error> {
-    sys.screen.transition_to_inventory(
-        ctx, 
-        &mut sys.overworld, 
-        false, 
-        errors)?;
+    sys.screen
+        .transition_to_inventory(ctx, &mut sys.overworld, false, errors)?;
     let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
     'outer: for item in items {
         // TODO - check if item is material, prompt entanglement, etc
@@ -63,14 +60,16 @@ pub fn hold_items(
 
         let mut position = None;
         for _ in 0..amount {
-            if position == None {
+            if position.is_none() {
                 // try to find this item
                 log::debug!("finding in {:#?}", inventory.tabs);
                 let search_result = inventory.select(
-                    &item.item, 
+                    &item.item,
                     Some(1),
-                    ctx.cpu().proc.memory(), 
-                    item.span, errors);
+                    ctx.cpu().proc.memory(),
+                    item.span,
+                    errors,
+                );
                 log::debug!("result {search_result:?}");
                 position = match search_result {
                     Ok(Some(x)) => Some(x),
@@ -94,9 +93,9 @@ pub fn hold_items(
 
             let memory = ctx.cpu().proc.memory();
             // re-search the item if the item slot is used up
-            if inventory.update(tab, slot, None, memory)? {
-                position = None;
-            } else if inventory.get_value(tab, slot, memory)?.unwrap_or_default() < 1 {
+            if inventory.update(tab, slot, None, memory)?
+                || inventory.get_value(tab, slot, memory)?.unwrap_or_default() < 1
+            {
                 position = None;
             }
         }

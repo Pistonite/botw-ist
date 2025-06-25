@@ -44,7 +44,6 @@ pub struct ItemMeta {
     // If new meta properties are added for matching,
     // they need to be updated in screen.rs!
     //////////////////////////
-
     /// For constrained item list, manually specify the position
     /// of the item to skip look up
     pub position: Option<ItemPosition>,
@@ -116,10 +115,6 @@ impl ItemMeta {
 
     pub fn effect_id_f32(&self) -> Option<f32> {
         self.effect_id.map(|x| x as f32)
-    }
-
-    pub fn effect_level_f32(&self) -> Option<f32> {
-        self.effect_level.map(|x| x as f32)
     }
 }
 

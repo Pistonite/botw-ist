@@ -62,7 +62,7 @@ pub fn setup_test_process() -> anyhow::Result<Arc<sim::Runtime>> {
     let image_bytes = std::fs::read(image_file).context("failed to read BFI")?;
 
     let runtime = sim::Runtime::new(exec::Spawner::default());
-    let threads = if cfg!(feature="single-thread") {
+    let threads = if cfg!(feature = "single-thread") {
         1
     } else {
         4
@@ -85,7 +85,7 @@ pub fn setup_test_process() -> anyhow::Result<Arc<sim::Runtime>> {
     Ok(Arc::new(runtime))
 }
 
-#[cfg(feature="trace-memory")]
+#[cfg(feature = "trace-memory")]
 pub fn collect_memory_trace(process: &Process) -> anyhow::Result<()> {
     log::info!("collecting memory read trace");
     let main_start = process.main_start();
@@ -140,7 +140,9 @@ pub fn collect_memory_trace(process: &Process) -> anyhow::Result<()> {
                 "the trace hash is generated or changed, please re-generate and push the mini image to artifacts"
             );
         } else {
-            log::warn!("the hash file is updated now. Make sure you build and push the mini image later, otherwise the hash will be incorrect!");
+            log::warn!(
+                "the hash file is updated now. Make sure you build and push the mini image later, otherwise the hash will be incorrect!"
+            );
         }
     }
 

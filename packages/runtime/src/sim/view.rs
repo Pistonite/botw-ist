@@ -1,6 +1,8 @@
 use std::collections::BTreeSet;
 
-use blueflame::game::{gdt, singleton_instance, GrabbedItemInfo, ListNode, PauseMenuDataMgr, PouchItem, PouchItemType};
+use blueflame::game::{
+    GrabbedItemInfo, ListNode, PauseMenuDataMgr, PouchItem, PouchItemType, gdt, singleton_instance,
+};
 use blueflame::memory::{self, Memory, Ptr, proxy};
 use blueflame::processor::Process;
 use skybook_parser::cir;
@@ -59,14 +61,12 @@ struct ItemPtrData {
 /// if ISU happened or the inventory list is corrupted in some way).
 ///
 /// However, tab overflow is allowed and will be indicated in the returned inventory
-pub fn extract_pouch_view(
-    proc: &Process,
-    sys: &sim::GameSystems,
-) -> Result<iv::PouchList, Error> {
+pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::PouchList, Error> {
     log::debug!("extracting pouch view from process");
 
     // get any inventory temporary state
-    let visually_equipped_items = sys.screen
+    let visually_equipped_items = sys
+        .screen
         .current_screen()
         .as_inventory()
         .map(|x| x.get_equipped_item_ptrs())
@@ -152,9 +152,14 @@ pub fn extract_pouch_view(
     let bow_slots = try_mem!(bow_slots, e, "failed to read number of bow slots: {e}");
 
     let mut grabbed_items = [GrabbedItemInfo {
-        mItem: 0u64.into(),mIsActorSpawned: false
+        mItem: 0u64.into(),
+        mIsActorSpawned: false,
     }; 5];
-    try_mem!(pmdm.grabbed_items().load_slice(&mut grabbed_items, memory), e, "failed to read grabbed_items: {e}");
+    try_mem!(
+        pmdm.grabbed_items().load_slice(&mut grabbed_items, memory),
+        e,
+        "failed to read grabbed_items: {e}"
+    );
 
     // build the item list with the ptr data
     let mut tab_idx = 0;
@@ -182,7 +187,7 @@ pub fn extract_pouch_view(
             &mut seen_animated_icons,
             memory,
             &visually_equipped_items,
-            &grabbed_items
+            &grabbed_items,
         )?;
         items.push(item);
         tab_slot += 1;

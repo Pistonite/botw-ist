@@ -1,4 +1,3 @@
-
 use blueflame::game::singleton_instance;
 use blueflame::linker;
 use blueflame::memory::mem;
@@ -17,11 +16,11 @@ pub fn hold_material(cpu: &mut Cpu2) -> Result<(), Error> {
         let grabbed_item_ptr = *(&grabbed_item->mItem);
     };
     assert!(!grabbed_item_ptr.is_nullptr());
-    
+
     // should be the last item in the buffer
     let expected_item_ptr = pmdm_ptr.item_buffer().ith(419);
     assert_eq!(grabbed_item_ptr, expected_item_ptr);
-    
+
     mem! { m:
         let grabbed_item_value = *(&grabbed_item_ptr->mValue);
     };

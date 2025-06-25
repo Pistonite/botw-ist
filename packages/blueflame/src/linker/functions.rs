@@ -257,8 +257,8 @@ pub fn can_hold_another_item(cpu: &mut Cpu2) -> Result<bool, processor::Error> {
 pub fn trash_item(cpu: &mut Cpu2, tab_index: i32, slot_index: i32) -> Result<(), processor::Error> {
     cpu.reset_stack();
     let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
-    reg! { cpu: 
-        x[0] = this_ptr, 
+    reg! { cpu:
+        x[0] = this_ptr,
         w[1] = tab_index,
         w[2] = slot_index,
     };
