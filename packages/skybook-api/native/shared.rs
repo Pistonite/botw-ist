@@ -15,7 +15,7 @@ pub struct ErrorReport<T> {
     pub error: T,
 }
 impl<E> ErrorReport<E> {
-    pub fn error<T: ToSpan>(t: &T, error: E) -> Self {
+    pub fn error<T: ToSpan>(t: T, error: E) -> Self {
         let span = t.span();
         Self {
             span: (span.lo, span.hi),
@@ -23,7 +23,7 @@ impl<E> ErrorReport<E> {
             error,
         }
     }
-    pub fn warning<T: ToSpan>(t: &T, error: E) -> Self {
+    pub fn warning<T: ToSpan>(t: T, error: E) -> Self {
         let span = t.span();
         Self {
             span: (span.lo, span.hi),

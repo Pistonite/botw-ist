@@ -24,7 +24,7 @@ impl sim::State {
         TFn: FnOnce(sim::GameState, Context<&'a sim::Runtime>) -> TFuture,
     {
         match self.game.take() {
-            TakeGame::Crashed => Ok(Report::error(self, sim_warning!(&ctx.span, PreviousCrash))),
+            TakeGame::Crashed => Ok(Report::error(self, sim_warning!(ctx.span, PreviousCrash))),
             TakeGame::Running(game) => {
                 let span = ctx.span;
                 let report = f(*game, ctx).await?.into_report(span);
@@ -193,7 +193,7 @@ impl IntoGameReport for Result<sim::GameState, CrashReport> {
         match self {
             Ok(game_state) => Report::new(sim::Game::Running(Box::new(game_state))),
             Err(crash_report) => {
-                Report::error(sim::Game::Crashed(crash_report), sim_error!(&span, Crash))
+                Report::error(sim::Game::Crashed(crash_report), sim_error!(span, Crash))
             }
         }
     }
@@ -204,7 +204,7 @@ impl IntoGameReport for Result<Report<sim::GameState>, CrashReport> {
         match self {
             Ok(report) => report.map(|x| sim::Game::Running(Box::new(x))),
             Err(crash_report) => {
-                Report::error(sim::Game::Crashed(crash_report), sim_error!(&span, Crash))
+                Report::error(sim::Game::Crashed(crash_report), sim_error!(span, Crash))
             }
         }
     }

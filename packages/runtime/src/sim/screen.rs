@@ -114,7 +114,7 @@ impl ScreenSystem {
     ) -> Result<(), processor::Error> {
         if matches!(self.screen.as_ref(), Screen::Inventory(_)) {
             if warn_if_already {
-                errors.push(sim_warning!(&ctx.span, UselessScreenTransition));
+                errors.push(sim_warning!(ctx.span, UselessScreenTransition));
             }
             return Ok(());
         }
@@ -476,7 +476,7 @@ impl InventoryScreen {
                 };
                 if item2.name != item.actor {
                     errors.push(sim_warning!(
-                        &span,
+                        span,
                         ItemMismatch(item2.name.clone(), item.actor.clone())
                     ));
                 }

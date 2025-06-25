@@ -92,7 +92,7 @@ impl Run {
                             }
                             self.output
                                 .errors
-                                .push(ErrorReport::error(&ctx.span, crate::Error::Executor));
+                                .push(ErrorReport::error(ctx.span, crate::Error::Executor));
                             return MaybeAborted::Ok(self.output);
                         }
                         Ok(report) => report,

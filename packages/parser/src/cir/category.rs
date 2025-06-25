@@ -2,7 +2,7 @@ use enumset::EnumSet;
 use teleparse::{Root, ToSpan};
 
 use crate::cir;
-use crate::error::{ErrorReport, cir_error};
+use crate::error::{ErrorReport, cir_fail};
 use crate::syn;
 
 pub use skybook_api::parser::cir::Category;
@@ -14,7 +14,7 @@ pub fn parse_category_in(
     let filter = filter.into();
     let c = parse_category(category);
     if !filter.contains(c) {
-        cir_error!(category, InvalidCategory(c));
+        cir_fail!(category, InvalidCategory(c));
     }
     Ok(c)
 }
@@ -93,7 +93,7 @@ pub fn parse_times_clause(times: Option<&syn::TimesClause>) -> Result<i64, Error
     };
     let t = cir::parse_syn_int_str_i32(&times.times, &times.span())?;
     if t < 1 {
-        cir_error!(times, InvalidTimesClause(t));
+        cir_fail!(times, InvalidTimesClause(t));
     }
     Ok(t as i64)
 }

@@ -1,7 +1,7 @@
 use teleparse::{Span, tp};
 
 use crate::cir;
-use crate::error::{ErrorReport, cir_push_error, cir_push_warning};
+use crate::error::{ErrorReport, cir_error, cir_warning};
 use crate::syn;
 
 use super::MetaParser;
@@ -138,7 +138,7 @@ impl MetaParser for GdtMetaParser<'_> {
                     self.vector_dim = 0;
                 }
                 Ok(mv) => {
-                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
+                    errors.push(cir_error!(value, InvalidMetaValue(key_str, mv)));
                 }
                 Err(e) => {
                     errors.push(e);
@@ -150,12 +150,8 @@ impl MetaParser for GdtMetaParser<'_> {
                     self.has_value = true;
                     self.vector_dim = 0;
                 }
-                Ok(mv) => {
-                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
-                }
-                Err(e) => {
-                    errors.push(e);
-                }
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
+                Err(e) => errors.push(e),
             },
             "s32" | "i32" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
@@ -163,12 +159,8 @@ impl MetaParser for GdtMetaParser<'_> {
                     self.has_value = true;
                     self.vector_dim = 0;
                 }
-                Ok(mv) => {
-                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
-                }
-                Err(e) => {
-                    errors.push(e);
-                }
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
+                Err(e) => errors.push(e),
             },
             "f32" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Float(x)) => {
@@ -176,157 +168,109 @@ impl MetaParser for GdtMetaParser<'_> {
                     self.has_value = true;
                     self.vector_dim = 0;
                 }
-                Ok(mv) => {
-                    cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
-                }
-                Err(e) => {
-                    errors.push(e);
-                }
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
+                Err(e) => errors.push(e),
             },
             "string" | "str" | "string32" | "str32" => {
                 match cir::parse_optional_meta_value(value.as_ref()) {
                     Ok(cir::MetaValue::Bool(x)) if x => {
                         let string_value = self.string_value.unwrap_or("");
                         if string_value.len() >= 32 {
-                            cir_push_error!(errors, value, InvalidStringLength(32));
+                            errors.push(cir_error!(value, InvalidStringLength(32)));
                         } else {
                             self.value = GdtValue::String32(string_value.to_string());
                             self.has_value = true;
                             self.vector_dim = 0;
                         }
                     }
-                    _ => {
-                        cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
-                    }
+                    _ => errors.push(cir_error!(value, UnexpectedMetaKeyWithValue(key_str))),
                 }
             }
             "string64" | "str64" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Bool(x)) if x => {
                     let string_value = self.string_value.unwrap_or("");
                     if string_value.len() >= 64 {
-                        cir_push_error!(errors, value, InvalidStringLength(64));
+                        errors.push(cir_error!(value, InvalidStringLength(64)));
                     } else {
                         self.value = GdtValue::String64(string_value.to_string());
                         self.has_value = true;
                         self.vector_dim = 0;
                     }
                 }
-                _ => {
-                    cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
-                }
+                _ => errors.push(cir_error!(value, UnexpectedMetaKeyWithValue(key_str))),
             },
             "string256" | "str256" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Bool(x)) if x => {
                     let string_value = self.string_value.unwrap_or("");
                     if string_value.len() >= 256 {
-                        cir_push_error!(errors, value, InvalidStringLength(256));
+                        errors.push(cir_error!(value, InvalidStringLength(256)));
                     } else {
                         self.value = GdtValue::String64(string_value.to_string());
                         self.has_value = true;
                         self.vector_dim = 0;
                     }
                 }
-                _ => {
-                    cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
-                }
+                _ => errors.push(cir_error!(value, UnexpectedMetaKeyWithValue(key_str))),
             },
             "vector2f" | "vec2f" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Bool(x)) if x => {
-                    self.vector_dim = 2;
-                }
-                _ => {
-                    cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
-                }
+                Ok(cir::MetaValue::Bool(x)) if x => self.vector_dim = 2,
+                _ => errors.push(cir_error!(value, UnexpectedMetaKeyWithValue(key_str))),
             },
             "vector3f" | "vec3f" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Bool(x)) if x => {
-                    self.vector_dim = 3;
-                }
-                _ => {
-                    cir_push_error!(errors, value, UnexpectedMetaKeyWithValue(key_str));
-                }
+                Ok(cir::MetaValue::Bool(x)) if x => self.vector_dim = 3,
+                _ => errors.push(cir_error!(value, UnexpectedMetaKeyWithValue(key_str))),
             },
             "x" => {
                 if self.vector_dim == 0 {
-                    cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
+                    errors.push(cir_warning!(span, UnusedMetaKey(key_str)));
                 } else {
                     match cir::parse_optional_meta_value(value.as_ref()) {
-                        Ok(cir::MetaValue::Float(x)) => {
-                            self.x = x as f32;
-                        }
-                        Ok(cir::MetaValue::Int(x)) => {
-                            self.x = x as f32;
-                        }
-                        Ok(mv) => {
-                            cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
-                        }
-                        Err(e) => {
-                            errors.push(e);
-                        }
+                        Ok(cir::MetaValue::Float(x)) => self.x = x as f32,
+                        Ok(cir::MetaValue::Int(x)) => self.x = x as f32,
+                        Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
+                        Err(e) => errors.push(e),
                     }
                 }
             }
             "y" => {
                 if self.vector_dim == 0 {
-                    cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
+                    errors.push(cir_warning!(span, UnusedMetaKey(key_str)));
                 } else {
                     match cir::parse_optional_meta_value(value.as_ref()) {
-                        Ok(cir::MetaValue::Float(y)) => {
-                            self.y = y as f32;
-                        }
-                        Ok(cir::MetaValue::Int(y)) => {
-                            self.y = y as f32;
-                        }
-                        Ok(mv) => {
-                            cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
-                        }
-                        Err(e) => {
-                            errors.push(e);
-                        }
+                        Ok(cir::MetaValue::Float(y)) => self.y = y as f32,
+                        Ok(cir::MetaValue::Int(y)) => self.y = y as f32,
+                        Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
+                        Err(e) => errors.push(e),
                     }
                 }
             }
             "z" => {
                 if self.vector_dim < 3 {
-                    cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
+                    errors.push(cir_warning!(span, UnusedMetaKey(key_str)));
                 } else {
                     match cir::parse_optional_meta_value(value.as_ref()) {
-                        Ok(cir::MetaValue::Float(z)) => {
-                            self.z = z as f32;
-                        }
-                        Ok(cir::MetaValue::Int(z)) => {
-                            self.z = z as f32;
-                        }
-                        Ok(mv) => {
-                            cir_push_error!(errors, value, InvalidMetaValue(key_str, mv));
-                        }
-                        Err(e) => {
-                            errors.push(e);
-                        }
+                        Ok(cir::MetaValue::Float(z)) => self.z = z as f32,
+                        Ok(cir::MetaValue::Int(z)) => self.z = z as f32,
+                        Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
+                        Err(e) => errors.push(e),
                     }
                 }
             }
-            _ => {
-                cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
-            }
+            _ => errors.push(cir_warning!(span, UnusedMetaKey(key_str))),
         }
     }
 
     fn visit_end(&mut self, meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) {
         if !self.has_value {
             if self.string_value.is_some() {
-                cir_push_error!(errors, meta, GdtStrTypeNotSet);
+                errors.push(cir_error!(meta, GdtStrTypeNotSet));
             } else {
-                cir_push_error!(errors, meta, GdtTypeNotSet);
+                errors.push(cir_error!(meta, GdtTypeNotSet));
             }
         }
         match self.vector_dim {
-            2 => {
-                self.value = GdtValue::Vec2f(self.x, self.y);
-            }
-            3 => {
-                self.value = GdtValue::Vec3f(self.x, self.y, self.z);
-            }
+            2 => self.value = GdtValue::Vec2f(self.x, self.y),
+            3 => self.value = GdtValue::Vec3f(self.x, self.y, self.z),
             _ => {}
         }
     }

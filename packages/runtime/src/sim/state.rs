@@ -57,7 +57,7 @@ impl State {
         match &step.command {
             cir::Command::Get(items) => self.handle_get(ctx, items).await,
             cir::Command::Hold(items) => self.handle_hold(ctx, items).await,
-            _ => Ok(Report::error(self, sim_error!(&ctx.span, Unimplemented))),
+            _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
         }
     }
 

@@ -4,7 +4,7 @@ use teleparse::{Parser, Span, ToSpan};
 
 use crate::SemanticToken;
 use crate::cir;
-use crate::error::{ErrorReport, IntoErrorReport, cir_push_error};
+use crate::error::{ErrorReport, IntoErrorReport, cir_error};
 use crate::search::QuotedItemResolver;
 use crate::syn;
 
@@ -67,7 +67,7 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
     let mut parser = match Parser::new(script) {
         Err(e) => {
             let errors = &mut output.errors;
-            cir_push_error!(errors, &full_span, Unexpected(e.to_string()));
+            errors.push(cir_error!(full_span, Unexpected(e.to_string())));
             return output;
         }
         Ok(p) => p,
@@ -75,7 +75,7 @@ pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> 
     let parsed_script = match parser.parse::<syn::Script>() {
         Err(e) => {
             let errors = &mut output.errors;
-            cir_push_error!(errors, &full_span, Unexpected(e.to_string()));
+            errors.push(cir_error!(full_span, Unexpected(e.to_string())));
             return output;
         }
         Ok(pt) => pt,

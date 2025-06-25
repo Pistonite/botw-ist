@@ -1,7 +1,7 @@
 use teleparse::{Span, ToSpan, tp};
 
 use crate::cir;
-use crate::error::{ErrorReport, cir_push_error, cir_push_warning};
+use crate::error::{ErrorReport, cir_error, cir_warning};
 use crate::search::{self, QuotedItemResolver, ResolvedItem};
 use crate::syn;
 use crate::util;
@@ -87,7 +87,7 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
             if let Some(parsed_item) = parse_item(item, resolver, errors).await {
                 if let Some(m) = &parsed_item.meta {
                     if m.position.is_some() {
-                        cir_push_warning!(errors, &item.span(), UnusedItemPosition)
+                        errors.push(cir_warning!(&item, UnusedItemPosition));
                     }
                 }
                 out_item_specs.push(ItemSpec {
@@ -109,7 +109,7 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
                 if let Some(parsed_item) = parse_item(&item.item, resolver, errors).await {
                     if let Some(m) = &parsed_item.meta {
                         if m.position.is_some() {
-                            cir_push_warning!(errors, &item.span(), UnusedItemPosition)
+                            errors.push(cir_warning!(&item, UnusedItemPosition));
                         }
                     }
                     out_item_specs.push(ItemSpec {
@@ -226,26 +226,26 @@ async fn parse_item_name<R: QuotedItemResolver>(
         syn::ItemName::Word(word) => {
             let result = search::search_item_by_ident(word);
             if result.is_none() {
-                cir_push_error!(errors, word, InvalidItem(word.to_string()));
+                errors.push(cir_error!(word, InvalidItem(word.to_string())));
             }
             result
         }
         syn::ItemName::Quoted(quoted_word) => {
             let name = quoted_word.as_str().trim_matches('"');
             if name.is_empty() {
-                cir_push_error!(errors, quoted_word, InvalidEmptyItem);
+                errors.push(cir_error!(quoted_word, InvalidEmptyItem));
                 return None;
             }
             let result = resolver.resolve_quoted(name).await;
             if result.is_none() {
-                cir_push_error!(errors, quoted_word, InvalidItem(name.to_string()));
+                errors.push(cir_error!(quoted_word, InvalidItem(name.to_string())));
             }
             result
         }
         syn::ItemName::Angle(angled_word) => {
             let name = &angled_word.name;
             if name.is_empty() {
-                cir_push_error!(errors, angled_word, InvalidEmptyItem);
+                errors.push(cir_error!(angled_word, InvalidEmptyItem));
                 None
             } else {
                 Some(ResolvedItem::new(name.to_string()))
