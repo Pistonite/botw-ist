@@ -24,11 +24,11 @@ impl IntoErrorReport for teleparse::syntax::Error<syn::TT> {
                 Error::Unexpected("no advance in parser loop".to_string())
             }
         };
-        ErrorReport::error(&span, error)
+        ErrorReport::error(span, error)
     }
 }
 
-macro_rules! cir_error {
+macro_rules! cir_fail {
     ($span:expr, $error_type:ident ( $($args:expr),* $(,)? )) => {
         return Err($crate::error::ErrorReport::error(
             $span,
@@ -36,34 +36,34 @@ macro_rules! cir_error {
         ))
     };
 }
+pub(crate) use cir_fail;
+macro_rules! cir_error {
+    ($span:expr, $error_type:ident) => {
+        $crate::error::ErrorReport::error(
+            $span,
+            $crate::error::Error::$error_type,
+        )
+    };
+    ($span:expr, $error_type:ident ( $($args:expr),* $(,)? )) => {
+        $crate::error::ErrorReport::error(
+            $span,
+            $crate::error::Error::$error_type($($args),*),
+        )
+    };
+}
 pub(crate) use cir_error;
-macro_rules! cir_push_error {
-    ($errors:ident, $span:expr, $error_type:ident) => {
-        $errors.push($crate::error::ErrorReport::error(
+macro_rules! cir_warning {
+    ($span:expr, $error_type:ident) => {
+        $crate::error::ErrorReport::warning(
             $span,
             $crate::error::Error::$error_type,
-        ))
+        )
     };
-    ($errors:ident, $span:expr, $error_type:ident ( $($args:expr),* $(,)? )) => {
-        $errors.push($crate::error::ErrorReport::error(
+    ($span:expr, $error_type:ident ( $($args:expr),* $(,)? )) => {
+        $crate::error::ErrorReport::warning(
             $span,
             $crate::error::Error::$error_type($($args),*),
-        ))
+        )
     };
 }
-pub(crate) use cir_push_error;
-macro_rules! cir_push_warning {
-    ($errors:ident, $span:expr, $error_type:ident) => {
-        $errors.push($crate::error::ErrorReport::warning(
-            $span,
-            $crate::error::Error::$error_type,
-        ))
-    };
-    ($errors:ident, $span:expr, $error_type:ident ( $($args:expr),* $(,)? )) => {
-        $errors.push($crate::error::ErrorReport::warning(
-            $span,
-            $crate::error::Error::$error_type($($args),*),
-        ))
-    };
-}
-pub(crate) use cir_push_warning;
+pub(crate) use cir_warning;

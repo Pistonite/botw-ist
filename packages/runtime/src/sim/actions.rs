@@ -74,7 +74,7 @@ pub fn hold_items(
                 position = match search_result {
                     Ok(Some(x)) => Some(x),
                     _ => {
-                        errors.push(sim_error!(&item.span, CannotFindItem));
+                        errors.push(sim_error!(item.span, CannotFindItem));
                         None
                     }
                 };
@@ -85,7 +85,7 @@ pub fn hold_items(
             };
 
             if !linker::can_hold_another_item(ctx.cpu())? {
-                errors.push(sim_error!(&item.span, CannotHoldMore));
+                errors.push(sim_error!(item.span, CannotHoldMore));
                 break 'outer;
             }
 

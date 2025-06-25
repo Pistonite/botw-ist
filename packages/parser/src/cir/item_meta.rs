@@ -1,7 +1,7 @@
 use teleparse::{Span, tp};
 
 use crate::cir;
-use crate::error::{ErrorReport, cir_push_error, cir_push_warning};
+use crate::error::{ErrorReport, cir_error, cir_warning};
 use crate::search;
 use crate::syn;
 
@@ -134,34 +134,34 @@ impl MetaParser for &mut ItemMeta {
         match key_str.trim() {
             "life" | "value" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => self.value = Some(x as i32),
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             "durability" | "dura" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => self.value = Some((x * 100) as i32),
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             "equip" | "equipped" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Bool(x)) => self.equip = Some(x),
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             "life-recover" | "hp" | "modpower" => {
                 match cir::parse_optional_meta_value(value.as_ref()) {
                     Ok(cir::MetaValue::Int(x)) => self.life_recover = Some(x as i32),
-                    Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                    Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                     Err(e) => errors.push(e),
                 }
             }
             "time" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => self.effect_duration = Some(x as i32),
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             "price" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => self.sell_price = Some(x as i32),
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             "modifier" | "modtype" => {
@@ -171,9 +171,9 @@ impl MetaParser for &mut ItemMeta {
                     // string modifier, parse it and add it
                     Ok(cir::MetaValue::String(x)) => match parse_weapon_modifier_bits(&x) {
                         Some(m) => self.sell_price = Some(self.sell_price.unwrap_or_default() | m),
-                        None => cir_push_error!(errors, value, InvalidWeaponModifier(x)),
+                        None => errors.push(cir_error!(value, InvalidWeaponModifier(x))),
                     },
-                    Ok(mv) => cir_push_error!(errors, value, InvalidWeaponModifier(mv.to_string())),
+                    Ok(mv) => errors.push(cir_error!(value, InvalidWeaponModifier(mv.to_string()))),
                     Err(e) => errors.push(e),
                 }
             }
@@ -184,47 +184,47 @@ impl MetaParser for &mut ItemMeta {
                 // string modifier, parse it
                 Ok(cir::MetaValue::String(x)) => match parse_cook_effect(&x) {
                     Some(m) => self.effect_id = Some(m),
-                    None => cir_push_error!(errors, value, InvalidCookEffect(x)),
+                    None => errors.push(cir_error!(value, InvalidCookEffect(x))),
                 },
-                Ok(mv) => cir_push_error!(errors, value, InvalidCookEffect(mv.to_string())),
+                Ok(mv) => errors.push(cir_error!(value, InvalidCookEffect(mv.to_string()))),
                 Err(e) => errors.push(e),
             },
             "level" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => self.effect_level = Some(x as f32),
                 Ok(cir::MetaValue::Float(x)) => self.effect_level = Some(x as f32),
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             "ingr" => {
                 if self.ingredients.len() >= 5 {
-                    cir_push_error!(errors, value, TooManyIngredients);
+                    errors.push(cir_error!(value, TooManyIngredients));
                     return;
                 }
                 match cir::parse_optional_meta_value(value.as_ref()) {
                     Ok(cir::MetaValue::String(x)) => match search::search_item_by_ident(&x) {
                         Some(item) => self.ingredients.push(item.actor),
-                        None => cir_push_error!(errors, value, InvalidItem(x)),
+                        None => errors.push(cir_error!(value, InvalidItem(x))),
                     },
-                    Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                    Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                     Err(e) => errors.push(e),
                 }
             }
             "star" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     if x < 0 || x > 4 {
-                        cir_push_error!(errors, value, InvalidArmorStarNum(x as i32));
+                        errors.push(cir_error!(value, InvalidArmorStarNum(x as i32)));
                         return;
                     }
                     self.star = Some(x as i32);
                 }
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             "from-slot" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::Int(x)) => {
                     self.position = Some(ItemPosition::FromSlot(x as u32));
                 }
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             "tab" => match cir::parse_optional_meta_value(value.as_ref()) {
@@ -240,7 +240,7 @@ impl MetaParser for &mut ItemMeta {
                         self.position = Some(ItemPosition::TabCategoryAndSlot(cat));
                     }
                 },
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             "slot" => match cir::parse_optional_meta_value(value.as_ref()) {
@@ -250,14 +250,14 @@ impl MetaParser for &mut ItemMeta {
                     }
                     Some(ItemPosition::TabIdxAndSlot(tab, _)) => {
                         if x < 0 || x >= 20 {
-                            cir_push_error!(errors, value, InvalidSlot(x as i32));
+                            errors.push(cir_error!(value, InvalidSlot(x as i32)));
                             return;
                         }
                         self.position = Some(ItemPosition::TabIdxAndSlot(tab, x as u32));
                     }
                     Some(ItemPosition::TabCategoryAndSlot(mut cat)) => {
                         if x < 0 || x >= 20 {
-                            cir_push_error!(errors, value, InvalidSlot(x as i32));
+                            errors.push(cir_error!(value, InvalidSlot(x as i32)));
                             return;
                         }
                         cat.row = (x / 5 + 1) as i8;
@@ -265,13 +265,13 @@ impl MetaParser for &mut ItemMeta {
                         self.position = Some(ItemPosition::TabCategoryAndSlot(cat));
                     }
                 },
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             "category" => match cir::parse_optional_meta_value(value.as_ref()) {
                 Ok(cir::MetaValue::String(x)) => {
                     let Some(category) = cir::parse_category_from_str(&x) else {
-                        cir_push_error!(errors, value, InvalidCategoryName(x));
+                        errors.push(cir_error!(value, InvalidCategoryName(x)));
                         return;
                     };
                     match self.position.take() {
@@ -301,7 +301,7 @@ impl MetaParser for &mut ItemMeta {
                         }
                     };
                 }
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             // for simplicity we only allow row/col after category
@@ -311,9 +311,9 @@ impl MetaParser for &mut ItemMeta {
                     Some(ItemPosition::TabCategoryAndSlot(cat)) => {
                         cat.row = x.clamp(1, 4) as i8;
                     }
-                    _ => cir_push_warning!(errors, &span, UnusedMetaKey(key_str)),
+                    _ => errors.push(cir_warning!(span, UnusedMetaKey(key_str))),
                 },
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
             "col" => match cir::parse_optional_meta_value(value.as_ref()) {
@@ -321,14 +321,12 @@ impl MetaParser for &mut ItemMeta {
                     Some(ItemPosition::TabCategoryAndSlot(cat)) => {
                         cat.col = x.clamp(1, 5) as i8;
                     }
-                    _ => cir_push_warning!(errors, &span, UnusedMetaKey(key_str)),
+                    _ => errors.push(cir_warning!(span, UnusedMetaKey(key_str))),
                 },
-                Ok(mv) => cir_push_error!(errors, value, InvalidMetaValue(key_str, mv)),
+                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
                 Err(e) => errors.push(e),
             },
-            _ => {
-                cir_push_warning!(errors, &span, UnusedMetaKey(key_str));
-            }
+            _ => errors.push(cir_warning!(span, UnusedMetaKey(key_str))),
         }
     }
 

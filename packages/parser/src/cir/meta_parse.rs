@@ -1,6 +1,6 @@
 use teleparse::{Span, ToSpan, tp};
 
-use crate::error::{ErrorReport, cir_error};
+use crate::error::{ErrorReport, cir_fail};
 
 use crate::cir;
 use crate::syn;
@@ -77,22 +77,22 @@ pub fn parse_meta_value(value: &syn::MetaValueLiteral) -> Result<cir::MetaValue,
             let decimal_num = match decimal_part.strip_prefix("0x") {
                 Some(_) => {
                     // float part can't be hex
-                    cir_error!(x, FloatFormat(full_str));
+                    cir_fail!(x, FloatFormat(full_str));
                 }
                 None => {
                     let Ok(num) = decimal_part.parse::<i64>() else {
                         // float part can't be non-numeric
-                        cir_error!(x, FloatFormat(full_str));
+                        cir_fail!(x, FloatFormat(full_str));
                     };
                     num
                 }
             };
             // float part can't be negative
             if decimal_num < 0 {
-                cir_error!(x, FloatFormat(full_str));
+                cir_fail!(x, FloatFormat(full_str));
             }
             let Ok(value) = full_str.parse::<f64>() else {
-                cir_error!(x, FloatFormat(full_str));
+                cir_fail!(x, FloatFormat(full_str));
             };
 
             Ok(cir::MetaValue::Float(value))
@@ -104,13 +104,13 @@ pub fn parse_syn_int_str(number: &str, span: &Span) -> Result<i64, ErrorReport> 
     match number.strip_prefix("0x") {
         Some(rest) => {
             let Ok(n) = i64::from_str_radix(rest, 16) else {
-                cir_error!(span, IntFormat(number.to_string()));
+                cir_fail!(span, IntFormat(number.to_string()));
             };
             Ok(n)
         }
         None => {
             let Ok(n) = number.parse() else {
-                cir_error!(span, IntFormat(number.to_string()));
+                cir_fail!(span, IntFormat(number.to_string()));
             };
             Ok(n)
         }
@@ -120,7 +120,7 @@ pub fn parse_syn_int_str(number: &str, span: &Span) -> Result<i64, ErrorReport> 
 pub fn parse_syn_int_str_i32(number: &str, span: &Span) -> Result<i32, ErrorReport> {
     let number = parse_syn_int_str(number, span)?;
     if number > i32::MAX as i64 || number < i32::MIN as i64 {
-        cir_error!(span, IntRange(number.to_string()));
+        cir_fail!(span, IntRange(number.to_string()));
     }
     Ok(number as i32)
 }
