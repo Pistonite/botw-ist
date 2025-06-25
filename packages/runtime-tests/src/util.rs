@@ -62,10 +62,15 @@ pub fn setup_test_process() -> anyhow::Result<Arc<sim::Runtime>> {
     let image_bytes = std::fs::read(image_file).context("failed to read BFI")?;
 
     let runtime = sim::Runtime::new(exec::Spawner::default());
+    let threads = if cfg!(feature="single-thread") {
+        1
+    } else {
+        4
+    };
     runtime
         .init(
             &image_bytes,
-            4,
+            threads,
             Some(&sim::RuntimeInitParams {
                 dlc: 3,
                 program_start: "".to_string(),
@@ -80,6 +85,7 @@ pub fn setup_test_process() -> anyhow::Result<Arc<sim::Runtime>> {
     Ok(Arc::new(runtime))
 }
 
+#[cfg(feature="trace-memory")]
 pub fn collect_memory_trace(process: &Process) -> anyhow::Result<()> {
     log::info!("collecting memory read trace");
     let main_start = process.main_start();
@@ -119,13 +125,23 @@ pub fn collect_memory_trace(process: &Process) -> anyhow::Result<()> {
             }
         }
     }
-    std::fs::write(hash_file, new_hash).context("failed to save hash file")?;
+    let update_hash = !std::env::var("SKYBOOK_RUNTIME_TEST_REFRESH_HASH")
+        .unwrap_or_default()
+        .is_empty();
+    if update_hash {
+        log::info!("updating trace-hash");
+        std::fs::write(hash_file, new_hash).context("failed to save hash file")?;
+    }
     std::fs::write("trace.txt", read_report).context("failed to save trace report")?;
 
     if hash_changed {
-        bail!(
-            "the trace hash is generated or changed, please re-generate and push the mini image to artifacts"
-        );
+        if !update_hash {
+            bail!(
+                "the trace hash is generated or changed, please re-generate and push the mini image to artifacts"
+            );
+        } else {
+            log::warn!("the hash file is updated now. Make sure you build and push the mini image later, otherwise the hash will be incorrect!");
+        }
     }
 
     Ok(())

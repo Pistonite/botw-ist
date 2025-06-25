@@ -183,6 +183,16 @@ impl<T, const ELEM_SIZE: u32, const LEN: usize> PtrToArray<T, ELEM_SIZE, LEN> {
 
 #[rustfmt::skip]
 const _: () = {
+    impl<T, const SIZE: u32> std::fmt::Debug for PtrToSized<T, SIZE> {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "0x{:016x}", self.value)
+        }
+    }
+    impl<T, const SIZE: u32, const LEN: usize> std::fmt::Debug for PtrToArray<T, SIZE, LEN> {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "0x{:016x}", self.value)
+        }
+    }
     // Default
     impl<T, const SIZE: u32> Default for PtrToSized<T, SIZE> { fn default() -> Self { Self::nullptr() } }
     impl<T, const SIZE: u32, const LEN: usize> Default for PtrToArray<T, SIZE, LEN> { fn default() -> Self { Self::nullptr() } }

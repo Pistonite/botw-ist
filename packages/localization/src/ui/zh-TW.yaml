@@ -194,8 +194,11 @@ runtime_init.SaveImage: "儲存自訂映像資料失敗。"
 runtime_init.UnsupportedVersion: "映像包含目前不支援的遊戲版本。"
 
 # Error/Diagnostic from Runtime
+runtime_error.CannotFindItem: "沒有在背包中找到此物品。"
+runtime_error.CannotHoldMore: "無法手持更多物品。"
 runtime_error.Crash: "遊戲在此步驟崩潰。"
 runtime_error.Executor: "執行器發生未預期的錯誤。"
+runtime_error.ItemMismatch: "背包中此位置的物品為 `{{actual_item}}`，而不是指令中的 `{{expected_item}}`。"
 runtime_error.NotRightScreen: "此指令無法在當前介面使用。您已經使用指令手動打開了某個介面，所以模擬器不能自動切換介面。若要使模擬器自動切換介面，請先使用相應指令返回主世界。"
 runtime_error.PreviousCrash: "遊戲因先前的步驟而崩潰。您需要 `重新載入` (`reload`) 或 `開始新遊戲` (`new-game`) 才能繼續。"
 runtime_error.Unimplemented: "此指令尚未實作 :)。"

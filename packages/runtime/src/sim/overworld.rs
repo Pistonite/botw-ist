@@ -1,6 +1,6 @@
 use blueflame::game::WeaponModifierInfo;
 
-#[derive(Default, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct OverworldSystem {
     pub weapon: Option<OverworldActor>,
     pub bow: Option<OverworldActor>,
@@ -11,7 +11,7 @@ pub struct OverworldSystem {
 }
 
 /// Simulates an actor in the overworld
-#[derive(Default, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct OverworldActor {
     /// Name of the actor
     pub name: String,

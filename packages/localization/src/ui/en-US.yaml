@@ -194,8 +194,11 @@ runtime_init.SaveImage: "Failed to store Custom Image data."
 runtime_init.UnsupportedVersion: "The image contains a version of the game that's currently not supported."
 
 # Error/Diagnostic from Runtime
+runtime_error.CannotFindItem: "Cannot find this item in the inventory."
+runtime_error.CannotHoldMore: "Cannot hold more items."
 runtime_error.Crash: "The game crashed in this step."
 runtime_error.Executor: "Unexpected error from Executor."
+runtime_error.ItemMismatch: "The item found in this position in the inventory is `{{actual_item}}`, while the item specified in the command is `{{expected_item}}`."
 runtime_error.NotRightScreen: "You cannot use this command in the current screen. The simulator will automatically switch screens for you unless you manually opened a screen with a command. Return to the overworld screen with a command will allow the simulator to automatically switch screens again."
 runtime_error.PreviousCrash: "The game has crashed in a previous step. You need to `reload` or `new-game` before continuing."
 runtime_error.Unimplemented: "This command is not implemented yet :)"

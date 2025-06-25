@@ -194,8 +194,11 @@ runtime_init.SaveImage: "Impossibile salvare i dati dell'immagine personalizzata
 runtime_init.UnsupportedVersion: "L'immagine contiene una versione del gioco attualmente non supportata."
 
 # Error/Diagnostic from Runtime
+runtime_error.CannotFindItem: "Impossibile trovare questo oggetto nell'inventario."
+runtime_error.CannotHoldMore: "Impossibile tenere più oggetti."
 runtime_error.Crash: "Il gioco si è bloccato in questo passaggio."
 runtime_error.Executor: "Errore imprevisto dall'Esecutore."
+runtime_error.ItemMismatch: "L'oggetto trovato in questa posizione nell'inventario è `{{actual_item}}`, mentre l'oggetto specificato nel comando è `{{expected_item}}`."
 runtime_error.NotRightScreen: "Non puoi usare questo comando nella schermata attuale. Il simulatore cambierà schermata automaticamente per te a meno che tu non abbia aperto una schermata manualmente con un comando. Tornare alla schermata dell'overworld con un comando permetterà al simulatore di cambiare schermata automaticamente di nuovo."
 runtime_error.PreviousCrash: "Il gioco si è bloccato in un passaggio precedente. Devi `ricaricare` (`reload`) o iniziare una `nuova partita` (`new-game`) prima di continuare."
 runtime_error.Unimplemented: "Questo comando non è ancora implementato :)."

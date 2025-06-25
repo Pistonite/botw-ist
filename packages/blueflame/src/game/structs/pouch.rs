@@ -76,12 +76,16 @@ impl Ptr![PauseMenuDataMgr] {
         Ptr!(&self->mEquippedWeapons).reinterpret_array()
     }
 
-    pub fn grabbed_items(self) -> Ptr![Ptr![GrabbedItemInfo][5]] {
+    pub fn grabbed_items(self) -> Ptr![GrabbedItemInfo[5]] {
         Ptr!(&self->mGrabbedItems).reinterpret_array()
+    }
+
+    pub fn item_buffer(self) -> Ptr![PouchItem[5]] {
+        Ptr!(&self->mItemBuffer).reinterpret_array()
     }
 }
 
-#[derive(MemObject, Default, Clone)]
+#[derive(MemObject, Default, Copy, Clone)]
 #[size(0x10)]
 pub struct GrabbedItemInfo {
     #[offset(0x0)]

@@ -6,6 +6,7 @@ use threadpool::ThreadPool;
 use crate::util::{self, PanicPayload};
 
 mod get_tests;
+mod hold_tests;
 mod pmdm_initialize;
 
 macro_rules! run {
@@ -16,7 +17,12 @@ macro_rules! run {
 
 pub fn run(process: &Process, failures_dir: &Path) -> anyhow::Result<bool> {
     log::info!("running linker tests");
-    let pool = ThreadPool::new(4);
+    let threads = if cfg!(feature="single-thread") {
+        1
+    } else {
+        4
+    };
+    let pool = ThreadPool::new(threads);
 
     let handles = vec![
         run!(&pool, process, pmdm_initialize::run),
@@ -30,6 +36,7 @@ pub fn run(process: &Process, failures_dir: &Path) -> anyhow::Result<bool> {
         run!(&pool, process, get_tests::get_food_with_effect),
         run!(&pool, process, get_tests::get_armor),
         run!(&pool, process, get_tests::get_orb),
+        run!(&pool, process, hold_tests::hold_material),
     ];
 
     let total_count = handles.len();

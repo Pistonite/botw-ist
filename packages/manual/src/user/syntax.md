@@ -88,8 +88,8 @@ can also use the symbol list on the right side).
 | `ingr` | | (`string`) Set the ingredient of the cooked-food. The string must be an item identifier (see above). The property can be specified multiple times to add multiple ingredients. |
 | `level`| | (`int`) Sets the level of the effect for cooked-food |
 | `life-recover`| `hp`, `modpower` | (`int`) Sets the number of quarter-hearts cooked-food recovers, or value of a weapon modifier |
-| `modifier` | `modtype` | (`int` or `string`) Set weapon modifier. **Cannot be used to set food effect type**. Integer values are the same as `price`. String values set a single modifier. See [`parse_weapon_modifier_bits`](https://github.com/Pistonite/botw-ist/blob/main/packages/parser/src/cir/item_meta.rs) for possible values |
-| `price` | |(`int`) Sets the price of the cooked-food. This can also be used to set multiple weapon modifiers |
+| `modifier` | `modtype` | (`int` or `string`) Set weapon modifier. **Cannot be used to set food effect type**. <br> Integer values are the same as `price`. String values can be specified multiple times to build up the weapon modifier. See [`parse_weapon_modifier_bits`](https://github.com/Pistonite/botw-ist/blob/main/packages/parser/src/cir/item_meta.rs) for possible values |
+| `price` | |(`int`) Sets the price of the cooked-food. This can also be used to set multiple weapon modifiers as a bit mask |
 | `star` | | (`int`) Armor star (upgrade) number, valid range is `0-4`, inclusive. |
 | `time` | | (`int`) Sets the duration of the food effect in seconds |
 | `value` | `life` | (`int`) The value of the item, which is the count for stackables or durability multiplied by 100 for equipments. **Note: not to be confused with `life-recover`** |

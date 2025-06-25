@@ -10,4 +10,7 @@ export type RuntimeError =
     | { type: "Executor" }
     | { type: "UselessScreenTransition" }
     | { type: "NotRightScreen" }
+    | { type: "ItemMismatch"; data: [string, string] }
+    | { type: "CannotFindItem" }
+    | { type: "CannotHoldMore" }
     | { type: "Unimplemented" };

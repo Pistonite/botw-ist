@@ -22,13 +22,21 @@ fn main() -> anyhow::Result<()> {
         .context("failed to get initial process")?;
 
     let linker_test_passed = linker_tests::run(&process, failures_dir)?;
+    if !linker_test_passed {
+        bail!("linker tests failed, not executing further tests");
+    }
     let script_test_passed = script_tests::run(runtime)?;
-
-    util::collect_memory_trace(&process)?;
-
-    if !linker_test_passed || !script_test_passed {
-        bail!("there are tests failures");
+    if !script_test_passed {
+        bail!("script tests failed");
+    }
+    if !cfg!(feature="trace-memory") {
+        bail!("The tests always fail when trace-memory is not enabled to ensure it's not accidentally disabled");
+    } 
+    #[cfg(feature="trace-memory")]
+    {
+        util::collect_memory_trace(&process)?;
     }
 
     Ok(())
+
 }

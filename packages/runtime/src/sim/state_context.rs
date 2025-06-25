@@ -155,7 +155,7 @@ impl Context<&mut Cpu1> {
         f: F,
     ) -> Result<Report<sim::GameState>, CrashReport>
     where
-        F: FnOnce(Context<&mut Cpu2>, &mut Vec<ErrorReport>) -> Result<(), processor::Error>,
+        F: FnOnce(Context<&mut Cpu2>, &mut sim::GameSystems, &mut Vec<ErrorReport>) -> Result<(), processor::Error>,
     {
         let span = self.span;
         let handle = self.handle;
@@ -168,7 +168,7 @@ impl Context<&mut Cpu1> {
                 handle,
                 inner: cpu2,
             };
-            f(ctx, &mut errors)
+            f(ctx, &mut state.systems, &mut errors)
         })?;
         Ok(Report::with_errors(state, errors))
     }

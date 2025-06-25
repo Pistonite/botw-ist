@@ -75,7 +75,14 @@ export const translateRuntimeError = (
     translator: Translator = translateUI,
 ): string => {
     const key = `runtime_error.${error.type}`;
-    return translator(key);
+    switch (error.type) {
+        case "ItemMismatch": {
+            const [actual_item, expected_item] = error.data;
+            return translator(key, { actual_item, expected_item });
+        }
+        default:
+            return translator(key);
+    }
 };
 
 export const translateRuntimeViewError = (

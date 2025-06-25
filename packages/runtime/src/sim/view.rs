@@ -1,8 +1,9 @@
 use std::collections::BTreeSet;
 
-use blueflame::game::{ListNode, PauseMenuDataMgr, PouchItem, gdt, singleton_instance};
+use blueflame::game::{gdt, singleton_instance, GrabbedItemInfo, ListNode, PauseMenuDataMgr, PouchItem, PouchItemType};
 use blueflame::memory::{self, Memory, Ptr, proxy};
 use blueflame::processor::Process;
+use skybook_parser::cir;
 
 use crate::error::RuntimeViewError;
 use crate::iv;
@@ -60,12 +61,12 @@ struct ItemPtrData {
 /// However, tab overflow is allowed and will be indicated in the returned inventory
 pub fn extract_pouch_view(
     proc: &Process,
-    screen_sys: &sim::ScreenSystem,
+    sys: &sim::GameSystems,
 ) -> Result<iv::PouchList, Error> {
     log::debug!("extracting pouch view from process");
 
     // get any inventory temporary state
-    let visually_equipped_items = screen_sys
+    let visually_equipped_items = sys.screen
         .current_screen()
         .as_inventory()
         .map(|x| x.get_equipped_item_ptrs())
@@ -150,6 +151,11 @@ pub fn extract_pouch_view(
     })();
     let bow_slots = try_mem!(bow_slots, e, "failed to read number of bow slots: {e}");
 
+    let mut grabbed_items = [GrabbedItemInfo {
+        mItem: 0u64.into(),mIsActorSpawned: false
+    }; 5];
+    try_mem!(pmdm.grabbed_items().load_slice(&mut grabbed_items, memory), e, "failed to read grabbed_items: {e}");
+
     // build the item list with the ptr data
     let mut tab_idx = 0;
     let mut next_tab_item_idx = tabs.get(1).map(|x| x.item_idx).unwrap_or(-1);
@@ -176,6 +182,7 @@ pub fn extract_pouch_view(
             &mut seen_animated_icons,
             memory,
             &visually_equipped_items,
+            &grabbed_items
         )?;
         items.push(item);
         tab_slot += 1;
@@ -188,7 +195,7 @@ pub fn extract_pouch_view(
         are_tabs_valid,
         num_tabs,
         tabs,
-        screen: screen_sys.current_screen().iv_type(),
+        screen: sys.screen.current_screen().iv_type(),
     })
 }
 
@@ -256,6 +263,7 @@ fn extract_pouch_item(
     seen_animated_icons: &mut BTreeSet<String>,
     memory: &Memory,
     visually_equipped_items: &[u64],
+    grabbed_items: &[GrabbedItemInfo],
 ) -> Result<iv::PouchItem, Error> {
     let name = try_mem!(
         Ptr!(&item->mName).utf8_lossy(memory),
@@ -387,6 +395,13 @@ fn extract_pouch_item(
         tab_slot
     };
 
+    let mut holding_count = 0;
+    for g in grabbed_items {
+        if g.mItem == item {
+            holding_count += 1;
+        }
+    }
+
     Ok(iv::PouchItem {
         common,
         item_type,
@@ -395,18 +410,18 @@ fn extract_pouch_item(
         is_no_icon,
         data,
         ingredients,
-        holding_count: 0,
-        prompt_entangled: false,
+        holding_count,
+        prompt_entangled: false, // TODO
         node_addr: node_ptr.to_raw().into(),
         node_valid: true,
         node_pos: buffer_idx as i128,
         node_prev: prev.to_raw().into(),
         node_next: next.to_raw().into(),
         allocated_idx: list_index,
-        unallocated_idx: -1,
+        unallocated_idx: -1, // TODO
         tab_idx,
         tab_slot,
-        accessible: true,
+        accessible: true, // TODO
         dpad_accessible: true,
     })
 }
@@ -429,4 +444,20 @@ pub fn is_animated_icon_actor(actor: &str) -> bool {
             | "Obj_DLC_HeroSeal_Rito"
             | "Obj_DLC_HeroSeal_Zora"
     )
+}
+
+pub fn item_type_to_category(item_type: i32) -> Option<cir::Category> {
+    match PouchItemType::from_value(item_type) {
+        Some(PouchItemType::Sword) => Some(cir::Category::Weapon),
+        Some(PouchItemType::Bow) => Some(cir::Category::Bow),
+        Some(PouchItemType::Arrow) => None,
+        Some(PouchItemType::Shield) => Some(cir::Category::Shield),
+        Some(PouchItemType::ArmorHead) => Some(cir::Category::ArmorHead),
+        Some(PouchItemType::ArmorUpper) => Some(cir::Category::ArmorUpper),
+        Some(PouchItemType::ArmorLower) => Some(cir::Category::ArmorLower),
+        Some(PouchItemType::Material) => Some(cir::Category::Material),
+        Some(PouchItemType::Food) => Some(cir::Category::Food),
+        Some(PouchItemType::KeyItem) => Some(cir::Category::KeyItem),
+        _ => None,
+    }
 }
