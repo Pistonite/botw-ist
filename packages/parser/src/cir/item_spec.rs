@@ -163,7 +163,6 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
                     amount,
                     item: result,
                     span: item.span(),
-                    // slot,
                 });
             }
         }

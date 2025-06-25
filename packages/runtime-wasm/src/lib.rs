@@ -35,7 +35,7 @@ extern "C" {
 /// Initialize the WASM module
 #[wasm_bindgen]
 pub async fn module_init(wasm_module_path: String, wasm_bindgen_js_path: String) {
-    let _ = console_log::init_with_level(log::Level::Debug);
+    let _ = console_log::init_with_level(log::Level::Info);
     log::info!("initializing wasm module");
     std::panic::set_hook(Box::new(move |info| {
         console_error_panic_hook::hook(info);
