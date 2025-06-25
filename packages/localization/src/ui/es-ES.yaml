@@ -194,8 +194,11 @@ runtime_init.SaveImage: "No se pudieron guardar los datos de la imagen personali
 runtime_init.UnsupportedVersion: "La imagen contiene una versión del juego que actualmente no es compatible."
 
 # Error/Diagnostic from Runtime
+runtime_error.CannotFindItem: "No se puede encontrar este artículo en el inventario."
+runtime_error.CannotHoldMore: "No se pueden llevar más artículos."
 runtime_error.Crash: "El juego se ha colgado en este paso."
 runtime_error.Executor: "Error inesperado del Ejecutor."
+runtime_error.ItemMismatch: "El artículo encontrado en esta posición del inventario es `{{actual_item}}`, mientras que el artículo especificado en el comando es `{{expected_item}}`."
 runtime_error.NotRightScreen: "No puede usar este comando en la pantalla actual. El simulador cambiará de pantalla automáticamente a menos que haya abierto una pantalla manualmente con un comando. Volver a la pantalla del supramundo con un comando permitirá que el simulador cambie de pantalla automáticamente de nuevo."
 runtime_error.PreviousCrash: "El juego se ha colgado en un paso anterior. Necesitas `recargar` (`reload`) o iniciar una `nueva partida` (`new-game`) antes de continuar."
 runtime_error.Unimplemented: "Este comando aún no está implementado :)."

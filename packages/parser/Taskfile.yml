@@ -24,7 +24,9 @@ tasks:
     cmds:
       - cargo test --test parse
 
-  test-parse-update:
+  update-parse-test:
+    desc: Update parser tests snapshots
+    aliases: [upt]
     env:
       UPDATE_PARSER_SNAPSHOTS: 1
     cmds:

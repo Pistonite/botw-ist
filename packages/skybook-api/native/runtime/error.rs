@@ -78,6 +78,16 @@ pub enum RuntimeError {
     #[error("you cannot do this on this screen")]
     NotRightScreen,
     #[error(
+        "the item in the inventory in this position is `{0}`, which does not match the input `{1}`"
+    )]
+    ItemMismatch(String, String),
+    #[error("cannot find this item in inventory")]
+    CannotFindItem,
+    #[error("cannot hold more items")]
+    CannotHoldMore,
+    // #[error("only materials can be held unless prompt entanglement is in effect")]
+    // CannotHoldNonMaterial,
+    #[error(
         "this command or syntax is not implemented yet, please track the development on GitHub"
     )]
     Unimplemented,

@@ -5,7 +5,6 @@ edition = "2024"
 
 [dependencies.blueflame]
 path = "../blueflame"
-features = ["trace-memory"]
 
 [dependencies.skybook-runtime]
 path = "../runtime"
@@ -21,3 +20,12 @@ oneshot = "0.1.11"
 sha2.workspace = true
 threadpool = "1.8.1"
 tokio = { workspace = true, features = ["rt"] }
+
+[features]
+default = [
+    "trace-memory",
+    # "blueflame/trace-call",
+    # "single-thread"
+]
+trace-memory = ["blueflame/trace-memory"]
+single-thread= []

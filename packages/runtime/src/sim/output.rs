@@ -26,7 +26,7 @@ impl RunOutput {
 
         Ok(sim::view::extract_pouch_view(
             &state.process,
-            &state.screen,
+            &state.systems,
         )?)
     }
 

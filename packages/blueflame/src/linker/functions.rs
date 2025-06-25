@@ -183,8 +183,8 @@ pub fn create_holding_items(cpu: &mut Cpu2) -> Result<(), processor::Error> {
     };
     let grabbed_items = pmdm.grabbed_items();
     for i in 0..5 {
+        let grabbed_item = grabbed_items.ith(i);
         mem! {(cpu.proc.memory()):
-            let grabbed_item = *(grabbed_items.ith(i));
             let info = *grabbed_item;
         };
         let item = info.mItem;
@@ -231,6 +231,39 @@ pub fn remove_held_items(cpu: &mut Cpu2) -> Result<(), processor::Error> {
     reg! { cpu: x[0] = this_ptr, };
     // TODO --160
     cpu.native_jump_to_main_offset(0x00971b00)
+}
+
+/// Call `uking::ui::PauseMenuDataMgr::canGrabAnotherItem`
+///
+/// This is re-implemented since it's so simple and not worth to find
+/// the right function in versions other than 1.5
+pub fn can_hold_another_item(cpu: &mut Cpu2) -> Result<bool, processor::Error> {
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    let grabbed_items = this_ptr.grabbed_items();
+    for i in 0..grabbed_items.len() {
+        let grabbed_item = grabbed_items.ith(i as u64);
+        mem! {(cpu.proc.memory()):
+            let grabbed_item = *(&grabbed_item->mItem);
+        };
+        if grabbed_item.is_nullptr() {
+            return Ok(true);
+        }
+    }
+
+    Ok(false)
+}
+
+/// Call `uking::ui::PauseMenuDataMgr::trashItem`
+pub fn trash_item(cpu: &mut Cpu2, tab_index: i32, slot_index: i32) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+        w[1] = tab_index,
+        w[2] = slot_index,
+    };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x009766d8)
 }
 
 pub fn call_load_from_game_data(cpu: &mut Cpu2) -> Result<(), processor::Error> {

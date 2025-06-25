@@ -194,8 +194,11 @@ runtime_init.SaveImage: "Kan aangepaste afbeeldinggegevens niet opslaan."
 runtime_init.UnsupportedVersion: "De afbeelding bevat een versie van het spel die momenteel niet wordt ondersteund."
 
 # Error/Diagnostic from Runtime
+runtime_error.CannotFindItem: "Dit voorwerp kan niet worden gevonden in de inventaris."
+runtime_error.CannotHoldMore: "Kan niet meer voorwerpen vasthouden."
 runtime_error.Crash: "Het spel is gecrasht tijdens deze stap."
 runtime_error.Executor: "Onverwachte fout van Executor."
+runtime_error.ItemMismatch: "Het voorwerp dat op deze positie in de inventaris is gevonden, is `{{actual_item}}`, terwijl het in de opdracht opgegeven voorwerp `{{expected_item}}` is."
 runtime_error.NotRightScreen: "U kunt deze opdracht niet gebruiken in het huidige scherm. De simulator schakelt automatisch schermen voor u, tenzij u handmatig een scherm hebt geopend met een opdracht. Terugkeren naar het overworld-scherm met een opdracht zal de simulator in staat stellen om automatisch weer schermen te wisselen."
 runtime_error.PreviousCrash: "Het spel is gecrasht in een vorige stap. U moet `herladen` (`reload`) of een `nieuw spel` (`new-game`) starten voordat u verder kunt gaan."
 runtime_error.Unimplemented: "Dit commando is nog niet geïmplementeerd :)."

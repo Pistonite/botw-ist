@@ -36,6 +36,12 @@ pub enum Game {
 pub struct GameState {
     /// Running game's process
     pub process: Process,
+    /// Simulated systems in the game
+    pub systems: GameSystems,
+}
+
+#[derive(Default, Clone)]
+pub struct GameSystems {
     /// Simulation of screens in the game
     pub screen: sim::ScreenSystem,
     /// Simulation of the overworld
@@ -50,6 +56,7 @@ impl State {
     ) -> Result<Report<Self>, exec::Error> {
         match &step.command {
             cir::Command::Get(items) => self.handle_get(ctx, items).await,
+            cir::Command::Hold(items) => self.handle_hold(ctx, items).await,
             _ => Ok(Report::error(self, sim_error!(&ctx.span, Unimplemented))),
         }
     }
@@ -69,14 +76,31 @@ impl State {
         })
         .await
     }
+
+    async fn handle_hold(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSelectSpec],
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("Handling HOLD command");
+        self.with_game(rt, async move |game, rt| {
+            let items = items.to_vec();
+            rt.execute(move |cpu| {
+                cpu.execute_reporting(game, |mut cpu2, sys, errors| {
+                    sim::actions::hold_items(&mut cpu2, sys, errors, &items)
+                })
+            })
+            .await
+        })
+        .await
+    }
 }
 
 impl GameState {
     pub fn new(process: Process) -> Self {
         Self {
             process,
-            screen: sim::ScreenSystem::default(),
-            overworld: sim::OverworldSystem::default(),
+            systems: GameSystems::default(),
         }
     }
 }

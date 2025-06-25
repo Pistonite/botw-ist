@@ -32,7 +32,7 @@ export const getTabNodesFromPouch = (
     pouch: InvView_PouchList | undefined,
 ): TabData<InvView_PouchItem>[] | undefined => {
     if (!pouch) {
-        return undefined;
+        return [];
     }
 
     // TODO: this might still be displayable - can be implemented if needed

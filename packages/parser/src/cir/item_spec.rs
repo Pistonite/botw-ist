@@ -1,4 +1,4 @@
-use teleparse::{ToSpan, tp};
+use teleparse::{Span, ToSpan, tp};
 
 use crate::cir;
 use crate::error::{ErrorReport, cir_push_error, cir_push_warning};
@@ -35,6 +35,8 @@ pub struct ItemSelectSpec {
 
     /// The item or category to select from
     pub item: ItemOrCategory,
+
+    pub span: Span,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -131,8 +133,12 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
 
     match list {
         syn::ItemListConstrained::Single(item) => {
-            if let Some(item) = parse_item_or_category(item, resolver, errors).await {
-                out_item_specs.push(ItemSelectSpec { amount: 1, item });
+            if let Some(result) = parse_item_or_category(item, resolver, errors).await {
+                out_item_specs.push(ItemSelectSpec {
+                    amount: 1,
+                    item: result,
+                    span: item.span(),
+                });
             };
         }
         syn::ItemListConstrained::List(items) => {
@@ -156,7 +162,7 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
                 out_item_specs.push(ItemSelectSpec {
                     amount,
                     item: result,
-                    // slot,
+                    span: item.span(),
                 });
             }
         }

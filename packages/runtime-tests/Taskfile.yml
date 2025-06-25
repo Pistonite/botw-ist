@@ -26,10 +26,21 @@ tasks:
     cmds:
       - task: cargo:fmt-fix
 
-  refresh:
-    desc: Refresh test snapshots
+  update-script-tests:
+    desc: Refresh script test snapshots
+    aliases: [ust]
     env:
       SKYBOOK_RUNTIME_TEST_REFRESH: true
+      SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
+      RUST_BACKTRACE: 1
+      RUST_LOG: info
+    cmds:
+      - cargo run --release
+
+  update-trace-hash:
+    desc: Run tests and update the trace hash file
+    env:
+      SKYBOOK_RUNTIME_TEST_REFRESH_HASH: true
       SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
       RUST_BACKTRACE: 1
       RUST_LOG: info
@@ -42,6 +53,24 @@ tasks:
       SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
       RUST_BACKTRACE: 1
       RUST_LOG: info
+    cmds:
+      - cargo run --release
+
+  run-full-debug:
+    desc: Run the tests with the full image and trace
+    env:
+      SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
+      RUST_BACKTRACE: 1
+      RUST_LOG: debug
+    cmds:
+      - cargo run --release
+
+  run-full-trace:
+    desc: Run the tests with the full image and trace
+    env:
+      SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
+      RUST_BACKTRACE: 1
+      RUST_LOG: trace
     cmds:
       - cargo run --release
 
@@ -78,7 +107,7 @@ tasks:
     desc: Build the image that only contains the needed parts
     cmds:
       - task: build-full
-      - task: run-full
+      - task: update-trace-hash
       - python scripts/relocate.py
       - task: run-mini
 

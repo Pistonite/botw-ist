@@ -25,22 +25,31 @@ pub fn run(runtime: Arc<sim::Runtime>) -> anyhow::Result<bool> {
         log::info!("will refresh snapshot");
     }
 
+    let only_test = std::env::var("SKYBOOK_TEST_ONLY").unwrap_or_default();
+
     let mut test_names = vec![];
-    let test_dir = std::fs::read_dir("src/script_tests").context("failed to read script dir")?;
-    for entry in test_dir {
-        let Ok(entry) = entry else {
-            continue;
-        };
-        let file_name = entry.file_name();
-        let file_name = file_name.to_string_lossy();
-        if !file_name.ends_with(".txt") {
-            continue;
+
+    if !only_test.is_empty() {
+        log::info!("only testing {only_test}");
+        test_names.push(only_test);
+    } else {
+        let test_dir =
+            std::fs::read_dir("src/script_tests").context("failed to read script dir")?;
+        for entry in test_dir {
+            let Ok(entry) = entry else {
+                continue;
+            };
+            let file_name = entry.file_name();
+            let file_name = file_name.to_string_lossy();
+            if !file_name.ends_with(".txt") {
+                continue;
+            }
+            let test_name = file_name
+                .strip_suffix(".txt")
+                .expect("test should end with .txt")
+                .to_string();
+            test_names.push(test_name);
         }
-        let test_name = file_name
-            .strip_suffix(".txt")
-            .expect("test should end with .txt")
-            .to_string();
-        test_names.push(test_name);
     }
 
     let total_count = test_names.len();

@@ -1,0 +1,4 @@
+
+get 2 apple 3 pepper
+hold pepper
+hold 2 apple

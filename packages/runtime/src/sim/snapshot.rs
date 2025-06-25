@@ -206,7 +206,7 @@ impl sim::Game {
 
 impl sim::GameState {
     pub fn to_snapshot(&self) -> GameSnapshotRunning {
-        let pouch = sim::view::extract_pouch_view(&self.process, &self.screen);
+        let pouch = sim::view::extract_pouch_view(&self.process, &self.systems);
         GameSnapshotRunning { pouch }
     }
 }

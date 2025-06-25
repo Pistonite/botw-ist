@@ -10,7 +10,7 @@ mod __impl {
     /// of items. Unallocated items are not included in the view.
     ///
     /// This view can only available if PMDM is not corrupted
-    #[derive(Debug, Default, Clone, Serialize)]
+    #[derive(Debug, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -32,6 +32,19 @@ mod __impl {
         pub tabs: Vec<InvView_PouchTab>,
         /// Type of the screen currently on
         pub screen: InvView_Screen,
+    }
+
+    impl Default for InvView_PouchList {
+        fn default() -> Self {
+            Self {
+                count: 0,
+                items: vec![],
+                are_tabs_valid: true,
+                num_tabs: 0,
+                tabs: vec![],
+                screen: InvView_Screen::default(),
+            }
+        }
     }
 
     /// Data from mTabs and mTabsType in PMDM
