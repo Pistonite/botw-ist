@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use blueflame::game::{PouchItem, gdt, singleton_instance};
+use blueflame::linker;
 use blueflame::linker::events::GameEvent as _;
-use blueflame::memory::{Memory, Ptr, mem, proxy};
+use blueflame::memory::{self, Memory, Ptr, mem, proxy};
 use blueflame::processor::{self, Cpu2};
-use blueflame::{linker, memory};
 use skybook_parser::cir;
 use teleparse::Span;
 
@@ -268,13 +268,6 @@ impl Screen {
                     } else {
                         (next_node_ptr.to_raw() - 8).into()
                     };
-                    // should_break = curr_item_ptr.is_nullptr()
-                    //     || if i == num_tabs - 1 {
-                    //         true
-                    //     } else {
-                    //         let next_head = tab_heads[i + 1];
-                    //         curr_item_ptr == next_head
-                    //     };
                 }
                 tabs.push(InventoryScreenTab {
                     items: tab,
