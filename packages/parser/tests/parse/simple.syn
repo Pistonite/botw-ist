@@ -1,6 +1,6 @@
 Some(
     Script {
-        stmts: 0..222 => [
+        stmts: 0..242 => [
             Statement {
                 cmd: Eat(
                     CmdEat {
@@ -12,69 +12,91 @@ Some(
                                         4..7 => "axe",
                                     ),
                                     meta: None(
-                                        8,
+                                        7,
                                     ),
                                 },
                             ),
                         ),
                     },
                 ),
-                semi: None(
-                    8,
+                semi: Some(
+                    token Symbol(10..11),
+                ),
+            },
+            Statement {
+                cmd: Hold(
+                    CmdHold {
+                        lit: token Command(12..16),
+                        items: Single(
+                            Item(
+                                Item {
+                                    name: Word(
+                                        17..31 => "royal-claymore",
+                                    ),
+                                    meta: None(
+                                        31,
+                                    ),
+                                },
+                            ),
+                        ),
+                    },
+                ),
+                semi: Some(
+                    token Symbol(37..38),
                 ),
             },
             Statement {
                 cmd: Get(
                     CmdGet {
-                        lit: token Command(19..22),
+                        lit: token Command(39..42),
                         items: List(
-                            23..57 => [
+                            43..77 => [
                                 NumberedItem {
                                     num: Number(
-                                        23..24 => "3",
+                                        43..44 => "3",
                                     ),
                                     item: Item {
                                         name: Word(
-                                            25..30 => "apple",
+                                            45..50 => "apple",
                                         ),
                                         meta: Some(
                                             ItemMeta {
-                                                open: token Symbol(30..31),
+                                                open: token Symbol(50..51),
                                                 entries: Punct {
-                                                    span: 31..56,
+                                                    span: 51..76,
                                                     elems: [
                                                         ItemMetaKeyValue {
-                                                            key: 31..35 => "life",
+                                                            key: 51..55 => "life",
                                                             value: Some(
                                                                 ItemMetaValue {
                                                                     sep: Equal(
-                                                                        token Symbol(36..37),
+                                                                        token Symbol(56..57),
                                                                     ),
                                                                     value: Word(
-                                                                        38..42 => "true",
+                                                                        58..62 => "true",
                                                                     ),
                                                                 },
                                                             ),
                                                         },
                                                         ItemMetaKeyValue {
-                                                            key: 44..48 => "time",
+                                                            key: 64..68 => "time",
                                                             value: Some(
                                                                 ItemMetaValue {
                                                                     sep: Equal(
-                                                                        token Symbol(49..50),
+                                                                        token Symbol(69..70),
                                                                     ),
                                                                     value: Word(
-                                                                        51..56 => "false",
+                                                                        71..76 => "false",
                                                                     ),
                                                                 },
                                                             ),
                                                         },
                                                     ],
                                                     puncts: [
-                                                        token Symbol(42..43),
+                                                        token Symbol(62..63),
                                                     ],
                                                 },
-                                                close: token Symbol(56..57),
+                                                close: token Symbol(76..77),
                                             },
                                         ),
                                     },
@@ -84,25 +106,25 @@ Some(
                     },
                 ),
                 semi: None(
-                    58,
+                    77,
                 ),
             },
             Statement {
                 cmd: Get(
                     CmdGet {
-                        lit: token Command(58..61),
+                        lit: token Command(78..81),
                         items: List(
-                            62..71 => [
+                            82..91 => [
                                 NumberedItem {
                                     num: Number(
-                                        62..65 => "100",
+                                        82..85 => "100",
                                     ),
                                     item: Item {
                                         name: Word(
-                                            66..71 => "apple",
+                                            86..91 => "apple",
                                         ),
                                         meta: None(
-                                            71,
+                                            91,
                                         ),
                                     },
                                 },
@@ -111,82 +133,82 @@ Some(
                     },
                 ),
                 semi: Some(
-                    token Symbol(71..72),
+                    token Symbol(91..92),
                 ),
             },
             Statement {
                 cmd: Unequip(
                     CmdUnequip {
-                        lit: token Command(73..80),
+                        lit: token Command(93..100),
                         all: None(
-                            81,
+                            100,
                         ),
                         item: Item(
                             Item {
                                 name: Word(
-                                    81..86 => "arrow",
+                                    101..106 => "arrow",
                                 ),
                                 meta: None(
-                                    86,
+                                    106,
                                 ),
                             },
                         ),
                     },
                 ),
                 semi: Some(
-                    token Symbol(86..87),
+                    token Symbol(106..107),
                 ),
             },
             Statement {
                 cmd: Get(
                     CmdGet {
-                        lit: token Command(88..91),
+                        lit: token Command(108..111),
                         items: Single(
                             Item {
                                 name: Quoted(
-                                    92..103 => "\"古代箭\"",
+                                    112..123 => "\"古代箭\"",
                                 ),
                                 meta: None(
-                                    104,
+                                    123,
                                 ),
                             },
                         ),
                     },
                 ),
                 semi: None(
-                    104,
+                    123,
                 ),
             },
             Statement {
                 cmd: Eat(
                     CmdEat {
-                        lit: token Command(104..107),
+                        lit: token Command(124..127),
                         items: Single(
                             Item(
                                 Item {
                                     name: Word(
-                                        108..111 => "axe",
+                                        128..131 => "axe",
                                     ),
                                     meta: Some(
                                         ItemMeta {
-                                            open: token Symbol(111..112),
+                                            open: token Symbol(131..132),
                                             entries: Punct {
-                                                span: 112..123,
+                                                span: 132..143,
                                                 elems: [
                                                     ItemMetaKeyValue {
-                                                        key: 112..121 => "from-slot",
+                                                        key: 132..141 => "from-slot",
                                                         value: Some(
                                                             ItemMetaValue {
                                                                 sep: Equal(
-                                                                    token Symbol(121..122),
+                                                                    token Symbol(141..142),
                                                                 ),
                                                                 value: Number(
                                                                     MetaValueNumber {
                                                                         int_part: Number(
-                                                                            122..123 => "3",
+                                                                            142..143 => "3",
                                                                         ),
                                                                         float_part: None(
-                                                                            123,
+                                                                            143,
                                                                         ),
                                                                     },
                                                                 ),
@@ -196,7 +218,7 @@ Some(
                                                 ],
                                                 puncts: [],
                                             },
-                                            close: token Symbol(123..124),
+                                            close: token Symbol(143..144),
                                         },
                                     ),
                                 },
@@ -205,39 +227,39 @@ Some(
                     },
                 ),
                 semi: Some(
-                    token Symbol(124..125),
+                    token Symbol(144..145),
                 ),
             },
             Statement {
                 cmd: Eat(
                     CmdEat {
-                        lit: token Command(126..129),
+                        lit: token Command(146..149),
                         items: Single(
                             Item(
                                 Item {
                                     name: Word(
-                                        130..133 => "inf",
+                                        150..153 => "inf",
                                     ),
                                     meta: Some(
                                         ItemMeta {
-                                            open: token Symbol(133..134),
+                                            open: token Symbol(153..154),
                                             entries: Punct {
-                                                span: 134..146,
+                                                span: 154..166,
                                                 elems: [
                                                     ItemMetaKeyValue {
-                                                        key: 134..137 => "tab",
+                                                        key: 154..157 => "tab",
                                                         value: Some(
                                                             ItemMetaValue {
                                                                 sep: Equal(
-                                                                    token Symbol(137..138),
+                                                                    token Symbol(157..158),
                                                                 ),
                                                                 value: Number(
                                                                     MetaValueNumber {
                                                                         int_part: Number(
-                                                                            138..139 => "5",
+                                                                            158..159 => "5",
                                                                         ),
                                                                         float_part: None(
-                                                                            139,
+                                                                            159,
                                                                         ),
                                                                     },
                                                                 ),
@@ -245,19 +267,19 @@ Some(
                                                         ),
                                                     },
                                                     ItemMetaKeyValue {
-                                                        key: 140..144 => "slot",
+                                                        key: 160..164 => "slot",
                                                         value: Some(
                                                             ItemMetaValue {
                                                                 sep: Equal(
-                                                                    token Symbol(144..145),
+                                                                    token Symbol(164..165),
                                                                 ),
                                                                 value: Number(
                                                                     MetaValueNumber {
                                                                         int_part: Number(
-                                                                            145..146 => "6",
+                                                                            165..166 => "6",
                                                                         ),
                                                                         float_part: None(
-                                                                            146,
+                                                                            166,
                                                                         ),
                                                                     },
                                                                 ),
@@ -266,10 +288,10 @@ Some(
                                                     },
                                                 ],
                                                 puncts: [
-                                                    token Symbol(139..140),
+                                                    token Symbol(159..160),
                                                 ],
                                             },
-                                            close: token Symbol(146..147),
+                                            close: token Symbol(166..167),
                                         },
                                     ),
                                 },
@@ -278,24 +300,24 @@ Some(
                     },
                 ),
                 semi: Some(
-                    token Symbol(147..148),
+                    token Symbol(167..168),
                 ),
             },
             Statement {
                 cmd: PickUp(
                     CmdPickUp {
-                        lit: token Command(149..156),
+                        lit: token Command(169..176),
                         items: List(
-                            157..165 => [
+                            177..185 => [
                                 Numbered(
                                     NumberedItemOrCategory {
                                         num: Number(
-                                            157..158 => "1",
+                                            177..178 => "1",
                                         ),
                                         item: Category(
                                             Weapon(
                                                 Singular(
-                                                    token Keyword(159..165),
+                                                    token Keyword(179..185),
                                                 ),
                                             ),
                                         ),
@@ -306,59 +328,59 @@ Some(
                     },
                 ),
                 semi: Some(
-                    token Symbol(165..166),
+                    token Symbol(185..186),
                 ),
             },
             Statement {
                 cmd: Equip(
                     CmdEquip {
-                        lit: token Command(168..173),
+                        lit: token Command(188..193),
                         item: Item(
                             Item {
                                 name: Word(
-                                    174..183 => "ice_arrow",
+                                    194..203 => "ice_arrow",
                                 ),
                                 meta: None(
-                                    184,
+                                    203,
                                 ),
                             },
                         ),
                     },
                 ),
                 semi: None(
-                    184,
+                    203,
                 ),
             },
             Statement {
                 cmd: Use(
                     CmdUse {
-                        lit: token Command(184..187),
+                        lit: token Command(204..207),
                         category: Bow(
                             Singular(
-                                token Keyword(188..191),
+                                token Keyword(208..211),
                             ),
                         ),
                         times: None(
-                            191,
+                            211,
                         ),
                     },
                 ),
                 semi: Some(
-                    token Symbol(191..192),
+                    token Symbol(211..212),
                 ),
             },
             Statement {
                 cmd: Freeze(
                     CmdFreeze {
-                        lit: token Command(193..199),
+                        lit: token Command(213..219),
                         items: Single(
                             Item(
                                 Item {
                                     name: Word(
-                                        200..204 => "meat",
+                                        220..224 => "meat",
                                     ),
                                     meta: None(
-                                        206,
+                                        224,
                                     ),
                                 },
                             ),
@@ -366,32 +388,32 @@ Some(
                     },
                 ),
                 semi: None(
-                    206,
+                    224,
                 ),
             },
             Statement {
                 cmd: Use(
                     CmdUse {
-                        lit: token Command(206..209),
+                        lit: token Command(226..229),
                         category: Food(
                             Singular(
-                                token Keyword(210..214),
+                                token Keyword(230..234),
                             ),
                         ),
                         times: Some(
                             TimesClause {
                                 times: Number(
-                                    215..216 => "3",
+                                    235..236 => "3",
                                 ),
                                 kw: Plural(
-                                    token Keyword(217..222),
+                                    token Keyword(237..242),
                                 ),
                             },
                         ),
                     },
                 ),
                 semi: None(
-                    222,
+                    242,
                 ),
             },
         ],

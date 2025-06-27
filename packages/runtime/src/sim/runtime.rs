@@ -16,7 +16,9 @@ pub use skybook_api::runtime::sim::RuntimeInitParams;
 pub struct Runtime {
     executor: Executor,
     initial_process: Mutex<Option<Process>>,
-    state_cache: Mutex<LruCache<Vec<cir::Command>, Report<sim::State>>>,
+    // note it's important to include the command spans in the keys,
+    // since we cache the diagnostics as well
+    state_cache: Mutex<LruCache<Vec<cir::CommandWithSpan>, Report<sim::State>>>,
 }
 
 impl Runtime {
@@ -26,7 +28,7 @@ impl Runtime {
         Self {
             executor,
             initial_process: Mutex::new(None),
-            state_cache: Mutex::new(LruCache::new(1024)),
+            state_cache: Mutex::new(LruCache::new(512)),
         }
     }
 
@@ -64,21 +66,21 @@ impl Runtime {
         };
 
         log::debug!("program start: 0x{:016x}", program.program_start);
-        if let Some(program_start) = params.map(|x| &x.program_start) {
-            if !program_start.is_empty() {
-                match parse_region_addr(program_start) {
-                    None => {
-                        log::error!(
-                            "cannot parse program_start from the params, assuming we are OK with the default"
-                        );
-                    }
-                    Some(expected_program_start) => {
-                        if expected_program_start != program.program_start {
-                            return Err(RuntimeInitError::ProgramStartMismatch(
-                                format!("0x{:016x}", program.program_start),
-                                format!("0x{expected_program_start:016x}"),
-                            ));
-                        }
+        if let Some(program_start) = params.map(|x| &x.program_start)
+            && !program_start.is_empty()
+        {
+            match parse_region_addr(program_start) {
+                None => {
+                    log::error!(
+                        "cannot parse program_start from the params, assuming we are OK with the default"
+                    );
+                }
+                Some(expected_program_start) => {
+                    if expected_program_start != program.program_start {
+                        return Err(RuntimeInitError::ProgramStartMismatch(
+                            format!("0x{:016x}", program.program_start),
+                            format!("0x{expected_program_start:016x}"),
+                        ));
                     }
                 }
             }
@@ -171,7 +173,7 @@ impl Runtime {
         self.executor.execute(f).await
     }
 
-    pub fn find_cached(&self, commands: &[cir::Command]) -> Option<Report<sim::State>> {
+    pub fn find_cached(&self, commands: &[cir::CommandWithSpan]) -> Option<Report<sim::State>> {
         self.state_cache
             .lock()
             .expect("failed to acquire lock for find_cached")
@@ -179,7 +181,7 @@ impl Runtime {
             .cloned()
     }
 
-    pub fn set_cache(&self, commands: &[cir::Command], report: &Report<sim::State>) {
+    pub fn set_cache(&self, commands: &[cir::CommandWithSpan], report: &Report<sim::State>) {
         self.state_cache
             .lock()
             .expect("failed to acquire lock for set_cache")

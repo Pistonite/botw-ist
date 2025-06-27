@@ -1,103 +1,53 @@
 ParseOutput {
     steps: [
         Step {
-            span: 0..8,
-            command: Eat(
-                [
-                    ItemSelectSpec {
-                        amount: 1,
-                        item: Item(
-                            Item {
-                                actor: "Weapon_Lsword_032",
-                                meta: None,
-                            },
-                        ),
-                        span: 4..8,
-                    },
-                ],
-            ),
-            notes: "",
-        },
-        Step {
-            span: 19..58,
-            command: Get(
-                [
-                    ItemSpec {
-                        amount: 3,
-                        item: Item {
-                            actor: "Item_Fruit_A",
-                            meta: Some(
-                                ItemMeta {
-                                    value: None,
-                                    equip: None,
-                                    life_recover: None,
-                                    effect_duration: None,
-                                    sell_price: None,
-                                    effect_id: None,
-                                    effect_level: None,
-                                    ingredients: [],
-                                    star: None,
-                                    position: None,
+            command: CommandWithSpan {
+                command: Eat(
+                    [
+                        ItemSelectSpec {
+                            amount: 1,
+                            item: Item(
+                                Item {
+                                    actor: "Weapon_Lsword_032",
+                                    meta: None,
                                 },
                             ),
+                            span: 4..7,
                         },
-                    },
-                ],
-            ),
-            notes: "",
-        },
-        Step {
-            span: 58..72,
-            command: Get(
-                [
-                    ItemSpec {
-                        amount: 100,
-                        item: Item {
-                            actor: "Item_Fruit_A",
-                            meta: None,
-                        },
-                    },
-                ],
-            ),
-            notes: "",
-        },
-        Step {
-            span: 73..87,
-            command: Unequip(
-                Item(
-                    Item {
-                        actor: "NormalArrow",
-                        meta: None,
-                    },
+                    ],
                 ),
-                false,
-            ),
+                span: 0..11,
+            },
             notes: "",
         },
         Step {
-            span: 88..104,
-            command: Get(
-                [
-                    ItemSpec {
-                        amount: 1,
-                        item: Item {
-                            actor: "古代箭",
-                            meta: None,
+            command: CommandWithSpan {
+                command: Hold(
+                    [
+                        ItemSelectSpec {
+                            amount: 1,
+                            item: Item(
+                                Item {
+                                    actor: "Weapon_Lsword_024",
+                                    meta: None,
+                                },
+                            ),
+                            span: 17..31,
                         },
-                    },
-                ],
-            ),
+                    ],
+                ),
+                span: 12..38,
+            },
             notes: "",
         },
         Step {
-            span: 104..125,
-            command: Eat(
-                [
-                    ItemSelectSpec {
-                        amount: 1,
-                        item: Item(
-                            Item {
-                                actor: "Weapon_Lsword_032",
+            command: CommandWithSpan {
+                command: Get(
+                    [
+                        ItemSpec {
+                            amount: 3,
+                            item: Item {
+                                actor: "Item_Fruit_A",
                                 meta: Some(
                                     ItemMeta {
                                         value: None,
@@ -109,131 +59,215 @@ ParseOutput {
                                         effect_level: None,
                                         ingredients: [],
                                         star: None,
-                                        position: Some(
-                                            FromSlot(
-                                                3,
-                                            ),
-                                        ),
+                                        position: None,
                                     },
                                 ),
                             },
-                        ),
-                        span: 108..124,
-                    },
-                ],
-            ),
-            notes: "",
-        },
-        Step {
-            span: 126..148,
-            command: Eat(
-                [
-                    ItemSelectSpec {
-                        amount: 1,
-                        item: Item(
-                            Item {
-                                actor: "Item_Enemy_07",
-                                meta: Some(
-                                    ItemMeta {
-                                        value: None,
-                                        equip: None,
-                                        life_recover: None,
-                                        effect_duration: None,
-                                        sell_price: None,
-                                        effect_id: None,
-                                        effect_level: None,
-                                        ingredients: [],
-                                        star: None,
-                                        position: Some(
-                                            TabIdxAndSlot(
-                                                5,
-                                                6,
-                                            ),
-                                        ),
-                                    },
-                                ),
-                            },
-                        ),
-                        span: 130..147,
-                    },
-                ],
-            ),
-            notes: "",
-        },
-        Step {
-            span: 149..166,
-            command: PickUp(
-                [
-                    ItemSelectSpec {
-                        amount: 1,
-                        item: Category(
-                            Weapon,
-                        ),
-                        span: 159..165,
-                    },
-                ],
-            ),
-            notes: "",
-        },
-        Step {
-            span: 168..184,
-            command: Equip(
-                Item(
-                    Item {
-                        actor: "IceArrow",
-                        meta: None,
-                    },
+                        },
+                    ],
                 ),
-            ),
+                span: 39..77,
+            },
             notes: "",
         },
         Step {
-            span: 184..192,
-            command: Use(
-                CategorySpec {
-                    category: Bow,
-                    amount: 1,
-                    row: 0,
-                    col: 0,
-                },
-            ),
-            notes: "",
-        },
-        Step {
-            span: 193..206,
-            command: Freeze(
-                [
-                    ItemSelectSpec {
-                        amount: 1,
-                        item: Item(
-                            Item {
-                                actor: "Item_Meat_01",
+            command: CommandWithSpan {
+                command: Get(
+                    [
+                        ItemSpec {
+                            amount: 100,
+                            item: Item {
+                                actor: "Item_Fruit_A",
                                 meta: None,
                             },
-                        ),
-                        span: 200..206,
+                        },
+                    ],
+                ),
+                span: 78..92,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Unequip(
+                    Item(
+                        Item {
+                            actor: "NormalArrow",
+                            meta: None,
+                        },
+                    ),
+                    false,
+                ),
+                span: 93..107,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Get(
+                    [
+                        ItemSpec {
+                            amount: 1,
+                            item: Item {
+                                actor: "古代箭",
+                                meta: None,
+                            },
+                        },
+                    ],
+                ),
+                span: 108..123,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Eat(
+                    [
+                        ItemSelectSpec {
+                            amount: 1,
+                            item: Item(
+                                Item {
+                                    actor: "Weapon_Lsword_032",
+                                    meta: Some(
+                                        ItemMeta {
+                                            value: None,
+                                            equip: None,
+                                            life_recover: None,
+                                            effect_duration: None,
+                                            sell_price: None,
+                                            effect_id: None,
+                                            effect_level: None,
+                                            ingredients: [],
+                                            star: None,
+                                            position: Some(
+                                                FromSlot(
+                                                    3,
+                                                ),
+                                            ),
+                                        },
+                                    ),
+                                },
+                            ),
+                            span: 128..144,
+                        },
+                    ],
+                ),
+                span: 124..145,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Eat(
+                    [
+                        ItemSelectSpec {
+                            amount: 1,
+                            item: Item(
+                                Item {
+                                    actor: "Item_Enemy_07",
+                                    meta: Some(
+                                        ItemMeta {
+                                            value: None,
+                                            equip: None,
+                                            life_recover: None,
+                                            effect_duration: None,
+                                            sell_price: None,
+                                            effect_id: None,
+                                            effect_level: None,
+                                            ingredients: [],
+                                            star: None,
+                                            position: Some(
+                                                TabIdxAndSlot(
+                                                    5,
+                                                    6,
+                                                ),
+                                            ),
+                                        },
+                                    ),
+                                },
+                            ),
+                            span: 150..167,
+                        },
+                    ],
+                ),
+                span: 146..168,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: PickUp(
+                    [
+                        ItemSelectSpec {
+                            amount: 1,
+                            item: Category(
+                                Weapon,
+                            ),
+                            span: 179..185,
+                        },
+                    ],
+                ),
+                span: 169..186,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Equip(
+                    Item(
+                        Item {
+                            actor: "IceArrow",
+                            meta: None,
+                        },
+                    ),
+                ),
+                span: 188..203,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Use(
+                    CategorySpec {
+                        category: Bow,
+                        amount: 1,
+                        row: 0,
+                        col: 0,
                     },
-                ],
-            ),
+                ),
+                span: 204..212,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Freeze(
+                    [
+                        ItemSelectSpec {
+                            amount: 1,
+                            item: Item(
+                                Item {
+                                    actor: "Item_Meat_01",
+                                    meta: None,
+                                },
+                            ),
+                            span: 220..224,
+                        },
+                    ],
+                ),
+                span: 213..224,
+            },
             notes: "",
         },
     ],
-    script_len: 222,
+    script_len: 242,
     pages: [],
     display: [],
     errors: [
         ErrorReport {
             span: (
-                8,
-                18,
-            ),
-            is_warning: false,
-            error: SyntaxUnexpected,
-        },
-        ErrorReport {
-            span: (
-                36,
-                42,
+                56,
+                62,
             ),
             is_warning: false,
             error: InvalidMetaValue(
@@ -245,8 +279,8 @@ ParseOutput {
         },
         ErrorReport {
             span: (
-                49,
-                56,
+                69,
+                76,
             ),
             is_warning: false,
             error: InvalidMetaValue(
@@ -258,8 +292,8 @@ ParseOutput {
         },
         ErrorReport {
             span: (
-                210,
-                214,
+                230,
+                234,
             ),
             is_warning: false,
             error: InvalidCategory(

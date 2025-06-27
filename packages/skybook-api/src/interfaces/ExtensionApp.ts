@@ -9,6 +9,7 @@ import type { ExtensionApp } from "../ExtensionApp.ts";
 import type { Result } from "@pistonite/pure/result";
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
 import type { Diagnostic, ItemSearchResult } from "../types.ts";
+import type { MaybeAborted } from "../native";
 
 /*
  * These generated implementations are used internally by other generated code.
@@ -26,10 +27,10 @@ export class _wxSenderImpl implements ExtensionApp {
     }
 
     /**
-     * Cancel a previous request for runtime diagnostics.
+     * Cancel a previous request made to the runtime
      */
-    public cancelRuntimeDiagnosticsRequest( taskId: string ): WxPromise<void> {
-        return this.sender.sendVoid(20 /* ExtensionApp.cancelRuntimeDiagnosticsRequest */, [ taskId ]);
+    public cancelRuntimeTask( taskId: string ): WxPromise<void> {
+        return this.sender.sendVoid(20 /* ExtensionApp.cancelRuntimeTask */, [ taskId ]);
     }
 
     /**
@@ -48,12 +49,9 @@ export class _wxSenderImpl implements ExtensionApp {
 
     /**
      * Get the diagnostics from running the script.
-     * 
-     * The taskId should be a UUID, which can be used to cancel the diagnostic
-     * request if it's no longer needed to save CPU resource
      */
-    public provideRuntimeDiagnostics( script: string, taskId: string ): WxPromise<Diagnostic[]> {
-        return this.sender.send<Diagnostic[]>(23 /* ExtensionApp.provideRuntimeDiagnostics */, [ script, taskId ]);
+    public provideRuntimeDiagnostics( script: string, taskId: string ): WxPromise<MaybeAborted<Diagnostic[]>> {
+        return this.sender.send<MaybeAborted<Diagnostic[]>>(23 /* ExtensionApp.provideRuntimeDiagnostics */, [ script, taskId ]);
     }
 
     /**
@@ -99,9 +97,9 @@ export class _wxSenderImpl implements ExtensionApp {
  */
 export const _wxRecverImpl = (handler: ExtensionApp): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 20 /* ExtensionApp.cancelRuntimeDiagnosticsRequest */: {
+        case 20 /* ExtensionApp.cancelRuntimeTask */: {
             const [ a0 ] = args;
-            return handler.cancelRuntimeDiagnosticsRequest( a0 );
+            return handler.cancelRuntimeTask( a0 );
         }
         case 21 /* ExtensionApp.getScript */: {
             return handler.getScript();

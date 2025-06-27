@@ -54,7 +54,7 @@ impl State {
         ctx: sim::Context<&sim::Runtime>,
         step: &cir::Step,
     ) -> Result<Report<Self>, exec::Error> {
-        match &step.command {
+        match step.command() {
             cir::Command::Get(items) => self.handle_get(ctx, items).await,
             cir::Command::Hold(items) => self.handle_hold(ctx, items).await,
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),

@@ -153,17 +153,17 @@ async fn run_test(
         new_snapshot += &format!("  span: {}..{}\n", error.span.0, error.span.1);
         new_snapshot += "-----\n";
         new_snapshot += &test_script[error.span.0..error.span.1];
-        new_snapshot += "-----\n";
+        new_snapshot += "\n-----\n";
     }
 
     new_snapshot += "=====\n";
 
     for (i, step) in parsed_output.steps.iter().enumerate() {
-        let span = step.span;
+        let span = step.span();
         new_snapshot += "\n";
         let script = &test_script[span.lo..span.hi];
         new_snapshot += &format!("----- Step[{i}]: {script}");
-        new_snapshot += "\n";
+        new_snapshot += "\n\n";
 
         let state = &output.states[i];
         let snapshot = state.to_snapshot();

@@ -10,6 +10,7 @@ import type {
     Runtime,
     ExtensionApp,
     ErrorReport,
+    MaybeAborted,
 } from "@pistonite/skybook-api";
 import {
     searchItemLocalized,
@@ -89,23 +90,27 @@ class ExtensionAppHost implements ExtensionApp {
     public async provideRuntimeDiagnostics(
         script: string,
         taskId: string,
-    ): WxPromise<Diagnostic[]> {
+    ): WxPromise<MaybeAborted<Diagnostic[]>> {
         const result = await this.runtime.getRuntimeDiagnostics(script, taskId);
         if (result.err) {
             return result;
         }
+        if (result.val.type === "Aborted") {
+            return { val: { type: "Aborted" } };
+        }
         return {
-            val: errorReportsToDiagnostics(
-                script,
-                result.val,
-                translateRuntimeError,
-            ),
+            val: {
+                type: "Ok",
+                value: errorReportsToDiagnostics(
+                    script,
+                    result.val.value,
+                    translateRuntimeError,
+                ),
+            },
         };
     }
 
-    public async cancelRuntimeDiagnosticsRequest(
-        taskId: string,
-    ): WxPromise<void> {
+    public async cancelRuntimeTask(taskId: string): WxPromise<void> {
         return await this.runtime.abortTask(taskId);
     }
 

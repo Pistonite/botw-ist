@@ -1,38 +1,52 @@
 ParseOutput {
     steps: [
         Step {
-            span: 26..47,
-            command: Sync,
+            command: CommandWithSpan {
+                command: Sync,
+                span: 26..30,
+            },
             notes: "a",
         },
         Step {
-            span: 47..100,
-            command: Sync,
+            command: CommandWithSpan {
+                command: Sync,
+                span: 47..51,
+            },
             notes: "",
         },
         Step {
-            span: 100..105,
-            command: Sync,
+            command: CommandWithSpan {
+                command: Sync,
+                span: 100..104,
+            },
             notes: "text\n\nget  1 apple",
         },
         Step {
-            span: 105..144,
-            command: Sync,
+            command: CommandWithSpan {
+                command: Sync,
+                span: 105..109,
+            },
             notes: "text\n\nget  1 apple",
         },
         Step {
-            span: 144..150,
-            command: Sync,
+            command: CommandWithSpan {
+                command: Sync,
+                span: 144..148,
+            },
             notes: "empty line in between",
         },
         Step {
-            span: 150..155,
-            command: Sync,
+            command: CommandWithSpan {
+                command: Sync,
+                span: 150..154,
+            },
             notes: "",
         },
         Step {
-            span: 155..197,
-            command: Sync,
+            command: CommandWithSpan {
+                command: Sync,
+                span: 155..159,
+            },
             notes: "",
         },
     ],

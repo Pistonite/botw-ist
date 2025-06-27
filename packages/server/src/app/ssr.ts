@@ -155,7 +155,7 @@ export const makeSSR = async (
         }
     } else {
         // use a script to render the logo early
-        const script = ` <script> (function (){
+        const script = `<script> (function (){
 let i = "icon";
 try { if (localStorage.getItem("Skybook.EarlyCI")) { i += "-purple"; } } catch {}
 document.write('<img class="start" src="/static/'+i+'.svg" />');

@@ -2702,9 +2702,9 @@ dependencies = [
 
 [[package]]
 name = "teleparse"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f24da7c24671f983554d07a4f62da33b6fbb8c49cb1cad1f0ebd5a24fcf5bb8e"
+checksum = "a2b0e778659d2027d2475956e472cf36c8a3618cb3c8c88cb9141285b622b256"
 dependencies = [
  "deref-derive",
  "derivative",
@@ -2718,9 +2718,9 @@ dependencies = [
 
 [[package]]
 name = "teleparse-macros"
-version = "0.0.5"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef3618b9de151b5026c7de82b32a4f4445a97fe6c97959d1f274896d7c4e18aa"
+checksum = "22945c274aa9cba70b8aa61e98b28f7112fa1d5bd33f6c928030514b9c9c3035"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",

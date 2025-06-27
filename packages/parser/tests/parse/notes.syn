@@ -1,12 +1,12 @@
 Some(
     Script {
-        stmts: 26..197 => [
+        stmts: 26..159 => [
             Statement {
                 cmd: Sync(
                     token Command(26..30),
                 ),
                 semi: None(
-                    47,
+                    30,
                 ),
             },
             Statement {
@@ -14,7 +14,7 @@ Some(
                     token Command(47..51),
                 ),
                 semi: None(
-                    100,
+                    51,
                 ),
             },
             Statement {
@@ -22,7 +22,7 @@ Some(
                     token Command(100..104),
                 ),
                 semi: None(
-                    105,
+                    104,
                 ),
             },
             Statement {
@@ -30,7 +30,7 @@ Some(
                     token Command(105..109),
                 ),
                 semi: None(
-                    144,
+                    109,
                 ),
             },
             Statement {
@@ -38,7 +38,7 @@ Some(
                     token Command(144..148),
                 ),
                 semi: None(
-                    150,
+                    148,
                 ),
             },
             Statement {
@@ -46,7 +46,7 @@ Some(
                     token Command(150..154),
                 ),
                 semi: None(
-                    155,
+                    154,
                 ),
             },
             Statement {
@@ -54,7 +54,7 @@ Some(
                     token Command(155..159),
                 ),
                 semi: None(
-                    197,
+                    159,
                 ),
             },
         ],

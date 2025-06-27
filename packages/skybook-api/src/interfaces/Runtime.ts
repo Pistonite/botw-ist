@@ -79,8 +79,8 @@ export class _wxSenderImpl implements Runtime {
      * 
      * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    public getRuntimeDiagnostics( script: string, taskId: string ): WxPromise<ErrorReport<RuntimeError>[]> {
-        return this.sender.send<ErrorReport<RuntimeError>[]>(32 /* Runtime.getRuntimeDiagnostics */, [ script, taskId ]);
+    public getRuntimeDiagnostics( script: string, taskId: string ): WxPromise<MaybeAborted<ErrorReport<RuntimeError>[]>> {
+        return this.sender.send<MaybeAborted<ErrorReport<RuntimeError>[]>>(32 /* Runtime.getRuntimeDiagnostics */, [ script, taskId ]);
     }
 
     /**
