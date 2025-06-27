@@ -71,7 +71,7 @@ export interface Runtime {
     getRuntimeDiagnostics(
         script: string,
         taskId: string,
-    ): WxPromise<ErrorReport<RuntimeError>[]>;
+    ): WxPromise<MaybeAborted<ErrorReport<RuntimeError>[]>>;
 
     /**
      * Execute the script if not up-to-date, and return the pouch inventory list view
@@ -108,4 +108,13 @@ export interface Runtime {
         taskId: string,
         pos: number,
     ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>>;
+
+    // /**
+    //  * Execute the script if not up-to-date. If at the byte offset `pos` in the script,
+    //  * the game crashed, return the rendered crash report as a string. Otherwise return
+    //  * empty string.
+    //  *
+    //  * The taskId should be a UUID, and can be passed into abortTask() to abort this run
+    //  */
+    // getCrashInfo(script: string, taskId: string, pos: number): WxPromise<MaybeAborted<string>>;
 }
