@@ -4,7 +4,7 @@
 x!{ SKYBOOK RUNTIME SNAPSHOT V1
 
 error: : this command or syntax is not implemented yet, please track the development on GitHub
-  span: 114..143
+  span: 114..142
 -----
 destroy apple[tab=1, slot=2]
 -----
@@ -46,7 +46,6 @@ game: (Running)
       [01]: (item_idx=6, tab_type=Material, )
 
 ----- Step[2]: get 50 apple
-
 
 game: (Running)
   screen: (Overworld)
