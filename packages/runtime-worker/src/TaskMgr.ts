@@ -70,20 +70,24 @@ export class TaskHandle {
 
     /**
      * Mark the task as running on the native side with a native resource
+     *
+     * Returns true if marked as running successfully, which means the ownership
+     * of the native handle is transferred to this handle
      */
-    public async markRunningWithNativeHandle(nativeHandleRaw: number) {
+    public async markRunningWithNativeHandle(nativeHandleRaw: number): Promise<boolean> {
         if (this.state === TaskState.Aborted) {
             // aborted before the task can even start, which is fine
-            return;
+            return false;
         }
         if (this.state !== TaskState.Created) {
             console.warn(
                 `cannot mark task as running, task is already in state: ${this.state}. This is a bug!`,
             );
-            return;
+            return false;
         }
         await this.nativeHandle.assign(nativeHandleRaw);
         this.state = TaskState.Running;
+        return true;
     }
 
     public markRunning() {
@@ -146,13 +150,8 @@ export class TaskMgr {
         }
     }
 
-    /** Removes and forgets about the handle */
-    public deleteHandle(id: string) {
-        this.tasks.delete(id);
-    }
-
     /** Check if the task is aborted */
-    public isAborted(id: string) {
+    public isAborted(id: string): boolean {
         const handle = this.tasks.get(id);
         if (handle) {
             return handle.isAborted();
@@ -167,12 +166,12 @@ export class TaskMgr {
         if (!handle) {
             return;
         }
+        this.tasks.delete(id);
         const shouldNotify = handle.isUsingResource();
         handle.markFinish();
         if (shouldNotify) {
             this.notifyWaiters();
         }
-        this.tasks.delete(id);
     }
 
     public run(id: string) {
@@ -200,21 +199,30 @@ export class TaskMgr {
             } while (this.countResourceUsage() >= this.nativeConcurrency);
             // make sure task is not aborted while waiting on a resource
             if (handle.isAborted()) {
-                return {
-                    err: {
-                        type: "Aborted",
-                        message: `Task ${id} was aborted while waiting for a native resource`,
-                    },
-                };
+                return getAbortError(id);
             }
         }
         const raw = await this.napi.makeTaskHandle();
         if (raw.err) {
             return raw;
         }
-        await handle.markRunningWithNativeHandle(raw.val);
+
+        // we need to check for abort at every async step here to ensure
+        // we return an error to the caller, otherwise, the abort signal
+        // is not sent to the native side, and it will not abort
+
+        if (!(await handle.markRunningWithNativeHandle(raw.val))) {
+            // since the task cannot start, we must free the native handle here
+            void makeNativeHandleErc(raw.val).free();
+            return getAbortError(id);
+        }
         console.log(`[task] ${id} acquired a native resource`);
-        return { val: await handle.getNativeHandle() };
+        const nativeHandle = await handle.getNativeHandle();
+        if (handle.isAborted()) {
+            await nativeHandle.free();
+            return getAbortError(id);
+        }
+        return { val: nativeHandle };
     }
 
     private notifyWaiters() {
@@ -248,4 +256,11 @@ export class TaskMgr {
         this.tasks.set(id, handle);
         return handle;
     }
+}
+
+const getAbortError = (id: string) => {
+    return {err: {
+        type: "Aborted",
+        message: `Task ${id} was aborted while waiting for a native resource`,
+    }} as const;
 }

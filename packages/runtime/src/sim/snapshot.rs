@@ -18,8 +18,9 @@ impl std::fmt::Display for StateSnapshot {
 
 pub enum GameSnapshot {
     Uninit,
-    Crashed(CrashReport),
     Running(GameSnapshotRunning),
+    Crashed(CrashReport),
+    PreviousCrash,
 }
 
 pub struct GameSnapshotRunning {
@@ -43,13 +44,16 @@ impl std::fmt::Display for GameSnapshot {
             Self::Uninit => {
                 writeln!(f, "game: (Uninit)")
             }
+            Self::Running(state) => {
+                writeln!(f, "game: (Running)")?;
+                state.fmt(f)
+            }
             Self::Crashed(report) => {
                 writeln!(f, "game: (Crashed)")?;
                 writeln!(f, "{report:?}")
             }
-            Self::Running(state) => {
-                writeln!(f, "game: (Running)")?;
-                state.fmt(f)
+            Self::PreviousCrash => {
+                writeln!(f, "game: (PreviousCrash)")
             }
         }
     }
@@ -200,6 +204,7 @@ impl sim::Game {
             sim::Game::Uninit => GameSnapshot::Uninit,
             sim::Game::Running(game_state) => GameSnapshot::Running(game_state.to_snapshot()),
             sim::Game::Crashed(crash_report) => GameSnapshot::Crashed(crash_report.clone()),
+            sim::Game::PreviousCrash => GameSnapshot::PreviousCrash
         }
     }
 }

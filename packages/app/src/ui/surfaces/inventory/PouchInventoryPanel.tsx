@@ -82,20 +82,18 @@ export const PouchInventoryPanelImpl: React.FC = () => {
 
     const {
         data: pouch,
-        stale,
         loading,
         error: pouchError,
     } = usePouchListView();
     const {
         data: overworld,
-        stale: overworldStale,
         loading: overworldLoading,
         error: overworldError,
     } = useOverworldItemsView();
     const { data: gdt, error: gdtError } = useGdtInventoryView();
 
     const showSpinner =
-        loading || stale || !pouch || overworldLoading || overworldStale;
+        loading || !pouch || overworldLoading;
 
     const itemSlotProps = useItemSlotPropsFromSettings();
     const isMasterSwordFullPower = !!gdt?.val?.masterSword?.isTrueForm;
@@ -144,7 +142,6 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                         appearance={isTabView ? "primary" : "transparent"}
                     />
                 </Tooltip>
-                <InventorySpinner show={showSpinner} />
             </div>
         </InventoryTitle>
     );
@@ -292,6 +289,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                 </div>
                 {$OverworldItems}
             </div>
+            <InventorySpinner show={showSpinner}/>
         </div>
     );
 };

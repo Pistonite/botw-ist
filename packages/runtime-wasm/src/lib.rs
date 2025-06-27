@@ -286,6 +286,20 @@ pub fn get_run_errors(run_output_ref: *const sim::RunOutput) -> Vec<skybook_runt
     run_output.errors.clone()
 }
 
+macro_rules! deref_with_step {
+    ($run:ident, $parse:ident, $pos:ident) => {{
+        if $parse.is_null() || $run.is_null() {
+            return Default::default();
+        }
+        let parse_output = unsafe { &*$parse };
+        let step = parse_output.step_idx_from_pos($pos).unwrap_or_default();
+        let run_output = unsafe { &*$run };
+        // safety: the pass in pointers are leaked from Box,
+        // so the reference will always be valid in the function
+        (run_output, step)
+    }};
+}
+
 /// Get the Pouch inventory view for the given byte position in the script
 ///
 /// ## Pointer Ownership
@@ -296,12 +310,7 @@ pub fn get_pouch_list(
     parse_output_ref: *const ParseOutput,
     byte_pos: usize,
 ) -> interop::Result<iv::PouchList, RuntimeViewError> {
-    if parse_output_ref.is_null() || run_output_ref.is_null() {
-        return interop::Result::Ok(Default::default());
-    }
-    let parse_output = unsafe { &*parse_output_ref };
-    let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
-    let run_output = unsafe { &*run_output_ref };
+    let (run_output, step) = deref_with_step!(run_output_ref, parse_output_ref, byte_pos);
     run_output.get_pouch_list(step).into()
 }
 
@@ -315,12 +324,7 @@ pub fn get_gdt_inventory(
     parse_output_ref: *const ParseOutput,
     byte_pos: usize,
 ) -> interop::Result<iv::Gdt, RuntimeViewError> {
-    if parse_output_ref.is_null() || run_output_ref.is_null() {
-        return interop::Result::Ok(Default::default());
-    }
-    let parse_output = unsafe { &*parse_output_ref };
-    let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
-    let run_output = unsafe { &*run_output_ref };
+    let (run_output, step) = deref_with_step!(run_output_ref, parse_output_ref, byte_pos);
     run_output.get_gdt_inventory(step).into()
 }
 
@@ -334,13 +338,25 @@ pub fn get_overworld_items(
     parse_output_ref: *const ParseOutput,
     byte_pos: usize,
 ) -> interop::Result<iv::Overworld, RuntimeViewError> {
-    if parse_output_ref.is_null() || run_output_ref.is_null() {
-        return interop::Result::Ok(Default::default());
-    }
-    let parse_output = unsafe { &*parse_output_ref };
-    let step = parse_output.step_idx_from_pos(byte_pos).unwrap_or_default();
-    let run_output = unsafe { &*run_output_ref };
+    let (run_output, step) = deref_with_step!(run_output_ref, parse_output_ref, byte_pos);
     run_output.get_overworld_items(step).into()
+}
+
+/// Get the crash info at the given byte position, empty if no crash
+///
+/// ## Pointer Ownership
+/// Borrows both the RunOutput and ParseOutput pointers.
+#[wasm_bindgen]
+pub fn get_crash_info(
+    run_output_ref: *const sim::RunOutput,
+    parse_output_ref: *const ParseOutput,
+    byte_pos: usize,
+) -> String {
+    let (run_output, step) = deref_with_step!(run_output_ref, parse_output_ref, byte_pos);
+    run_output
+        .get_crash_report(step)
+        .map(|x| format!("{x:?}"))
+        .unwrap_or_default()
 }
 
 ////////// Ref Counting //////////

@@ -2,7 +2,13 @@ import type { Result } from "@pistonite/pure/result";
 import type { WxPromise } from "@pistonite/workex";
 
 import type { Diagnostic, ItemSearchResult } from "./types.ts";
-import type { MaybeAborted } from "./native";
+import type {
+    InvView_Gdt,
+    InvView_Overworld,
+    InvView_PouchList,
+    MaybeAborted,
+    RuntimeViewError,
+} from "./native";
 
 /**
  * API implemented by the application and called by the extension.
@@ -56,8 +62,13 @@ export interface ExtensionApp {
     ): WxPromise<Uint32Array>;
 
     /**
-     * Cancel a previous request made to the runtime
+     * Generate a new task ID based on the unique Id. The previous
+     * task id returned by this function with the same unique ID will be
+     * aborted automatically
      */
+    requestNewTaskId(uniqueId: string): WxPromise<string>;
+
+    /** Cancel a previous request made to the runtime */
     cancelRuntimeTask(taskId: string): WxPromise<void>;
 
     /**
@@ -68,55 +79,55 @@ export interface ExtensionApp {
         taskId: string,
     ): WxPromise<MaybeAborted<Diagnostic[]>>;
 
-    // /**
-    //  * Get the pouch (visible inventory) state.
-    //  *
-    //  * Pass in `undefined` to use the current state of the application.
-    //  * However, if `script` is not `undefined` and `pos` is `undefined`,
-    //  * pos defaults to 0
-    //  */
-    // getPouchList(
-    //     taskId: string,
-    //     script: string | undefined,
-    //     pos: number | undefined,
-    // ): WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>>;
-    //
-    // /**
-    //  * Get the Game Data inventory state at the byte offset `pos` in the script
-    //  *
-    //  * Pass in `undefined` to use the current state of the application.
-    //  * However, if `script` is not `undefined` and `pos` is `undefined`,
-    //  * pos defaults to 0
-    //  */
-    // getGdtInventory(
-    //     taskId: string,
-    //     script: string | undefined,
-    //     pos: number | undefined,
-    // ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>;
-    //
-    // /**
-    //  * Get the overworld state at the byte offset `pos` in the script
-    //  *
-    //  * Pass in `undefined` to use the current state of the application.
-    //  * However, if `script` is not `undefined` and `pos` is `undefined`,
-    //  * pos defaults to 0
-    //  */
-    // getOverworldItems(
-    //     taskId: string,
-    //     script: string | undefined,
-    //     pos: number | undefined,
-    // ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>>;
-    //
-    // /**
-    //  * Get the rendered crash report at the byte offset `pos` in the script
-    //  *
-    //  * Pass in `undefined` to use the current state of the application.
-    //  * However, if `script` is not `undefined` and `pos` is `undefined`,
-    //  * pos defaults to 0
-    //  */
-    // getCrashInfo(
-    //     taskId: string,
-    //     script: string | undefined,
-    //     pos: number | undefined,
-    // ): WxPromise<MaybeAborted<string>>;
+    /**
+     * Get the pouch (visible inventory) state.
+     *
+     * Pass in `undefined` to use the current state of the application.
+     * However, if `script` is not `undefined` and `pos` is `undefined`,
+     * pos defaults to 0
+     */
+    getPouchList(
+        taskId: string,
+        script: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>>;
+
+    /**
+     * Get the Game Data inventory state at the byte offset `pos` in the script
+     *
+     * Pass in `undefined` to use the current state of the application.
+     * However, if `script` is not `undefined` and `pos` is `undefined`,
+     * pos defaults to 0
+     */
+    getGdtInventory(
+        taskId: string,
+        script: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>;
+
+    /**
+     * Get the overworld state at the byte offset `pos` in the script
+     *
+     * Pass in `undefined` to use the current state of the application.
+     * However, if `script` is not `undefined` and `pos` is `undefined`,
+     * pos defaults to 0
+     */
+    getOverworldItems(
+        taskId: string,
+        script: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>>;
+
+    /**
+     * Get the rendered crash report at the byte offset `pos` in the script
+     *
+     * Pass in `undefined` to use the current state of the application.
+     * However, if `script` is not `undefined` and `pos` is `undefined`,
+     * pos defaults to 0
+     */
+    getCrashInfo(
+        taskId: string,
+        script: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<string>>;
 }

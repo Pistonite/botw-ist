@@ -98,15 +98,18 @@ impl Run {
                         Ok(report) => report,
                     };
 
-                    // update the cache
-                    runtime.set_cache(&commands, &report);
-
                     // check if the run is aborted
                     // note we don't check if there is a cache hit -
                     // which is really fast anyway
                     if ctx.is_aborted() {
                         return MaybeAborted::Aborted;
                     }
+
+                    // update the cache
+                    // note we must only update the cache if the run
+                    // is not aborted, since it could abort
+                    // in the middle of a step (i.e. partially executed)
+                    runtime.set_cache(&commands, &report);
 
                     report
                 }

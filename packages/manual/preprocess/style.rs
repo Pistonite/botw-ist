@@ -59,7 +59,7 @@ pub fn create_light_style_sheet_for_flavor(
     let teal = colors.teal.hex;
     let gray = colors.overlay2.hex;
     let mauve = colors.mauve.hex;
-    let green = colors.green.hex;
+    let green = "#30901b"; // default latte.green has a contrast that's slightly too low
     let red = colors.red.hex;
     let maroon = colors.maroon.hex;
 

@@ -27,8 +27,10 @@ pub enum Game {
     Uninit,
     /// Game is running
     Running(Box<GameState>),
-    /// Game has crashed (must manually reboot)
+    /// Game has crashed in the last step (must manually reboot)
     Crashed(CrashReport),
+    /// Game has crashed in a previous step
+    PreviousCrash,
 }
 
 /// The state of the running game in the simulator
