@@ -27,7 +27,7 @@ impl sim::State {
             TakeGame::Crashed => {
                 self.game = sim::Game::PreviousCrash;
                 Ok(Report::error(self, sim_warning!(ctx.span, PreviousCrash)))
-            },
+            }
             TakeGame::PreviousCrash => Ok(Report::new(self)),
             TakeGame::Running(game) => {
                 let span = ctx.span;
@@ -80,9 +80,9 @@ impl sim::Game {
             sim::Game::PreviousCrash => TakeGame::PreviousCrash,
             x => match std::mem::take(x) {
                 sim::Game::Running(game) => TakeGame::Running(game),
-                _ => unreachable!()
-            }
-        } 
+                _ => unreachable!(),
+            },
+        }
     }
 }
 

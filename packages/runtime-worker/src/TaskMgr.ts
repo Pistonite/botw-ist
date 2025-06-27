@@ -74,7 +74,9 @@ export class TaskHandle {
      * Returns true if marked as running successfully, which means the ownership
      * of the native handle is transferred to this handle
      */
-    public async markRunningWithNativeHandle(nativeHandleRaw: number): Promise<boolean> {
+    public async markRunningWithNativeHandle(
+        nativeHandleRaw: number,
+    ): Promise<boolean> {
         if (this.state === TaskState.Aborted) {
             // aborted before the task can even start, which is fine
             return false;
@@ -259,8 +261,10 @@ export class TaskMgr {
 }
 
 const getAbortError = (id: string) => {
-    return {err: {
-        type: "Aborted",
-        message: `Task ${id} was aborted while waiting for a native resource`,
-    }} as const;
-}
+    return {
+        err: {
+            type: "Aborted",
+            message: `Task ${id} was aborted while waiting for a native resource`,
+        },
+    } as const;
+};

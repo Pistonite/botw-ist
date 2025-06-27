@@ -23,10 +23,7 @@ export const provideDiagnostics = async (
             console.error("failed to get new task id", taskId.err);
             return undefined;
         }
-        const result = await app.provideRuntimeDiagnostics(
-            script,
-            taskId.val,
-        );
+        const result = await app.provideRuntimeDiagnostics(script, taskId.val);
         if (result.val?.type === "Aborted") {
             // don't update the markers if the run was aborted,
             // since the next run will update it

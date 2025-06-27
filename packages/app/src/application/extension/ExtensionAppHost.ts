@@ -153,41 +153,52 @@ class ExtensionAppHost implements ExtensionApp {
     }
 
     public async getPouchList(
-        taskId: string, 
-        inputScript: string | undefined, 
-        charPos: number | undefined): 
-    WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>> {
-        const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
+        taskId: string,
+        inputScript: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>> {
+        const [script, bytePos] = convertScriptAndCharPosArg(
+            inputScript,
+            charPos,
+        );
         return await this.runtime.getPouchList(script, taskId, bytePos);
     }
 
     public async getGdtInventory(
-        taskId: string, 
-        inputScript: string | undefined, 
-        charPos: number | undefined): 
-    WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
-        const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
+        taskId: string,
+        inputScript: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
+        const [script, bytePos] = convertScriptAndCharPosArg(
+            inputScript,
+            charPos,
+        );
         return await this.runtime.getGdtInventory(script, taskId, bytePos);
     }
 
     public async getOverworldItems(
-        taskId: string, 
-        inputScript: string | undefined, 
-        charPos: number | undefined): 
-    WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>> {
-        const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
+        taskId: string,
+        inputScript: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>> {
+        const [script, bytePos] = convertScriptAndCharPosArg(
+            inputScript,
+            charPos,
+        );
         return await this.runtime.getOverworldItems(script, taskId, bytePos);
     }
 
     public async getCrashInfo(
-        taskId: string, 
-        inputScript: string | undefined, 
-        charPos: number | undefined): 
-    WxPromise<MaybeAborted<string>> {
-        const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
+        taskId: string,
+        inputScript: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<string>> {
+        const [script, bytePos] = convertScriptAndCharPosArg(
+            inputScript,
+            charPos,
+        );
         return await this.runtime.getCrashInfo(script, taskId, bytePos);
     }
-
 }
 
 const errorReportsToDiagnostics = <T>(
@@ -207,7 +218,10 @@ const errorReportsToDiagnostics = <T>(
     });
 };
 
-const mapMaybeAbortedResult = <TIn, TOut>(result: Awaited<WxPromise<MaybeAborted<TIn>>>, fn: (t: TIn) => TOut): Awaited<WxPromise<MaybeAborted<TOut>>> => {
+const mapMaybeAbortedResult = <TIn, TOut>(
+    result: Awaited<WxPromise<MaybeAborted<TIn>>>,
+    fn: (t: TIn) => TOut,
+): Awaited<WxPromise<MaybeAborted<TOut>>> => {
     if (result.err) {
         return result;
     }
@@ -217,18 +231,18 @@ const mapMaybeAbortedResult = <TIn, TOut>(result: Awaited<WxPromise<MaybeAborted
     return {
         val: {
             type: "Ok",
-            value: fn(result.val.value)
+            value: fn(result.val.value),
         },
     };
-}
+};
 
-/** 
+/**
  * Convert script and charPos arguments from calls from extensions
  * to script and bytePos
  */
 const convertScriptAndCharPosArg = (
-    script: string | undefined, 
-    charPos: number | undefined
+    script: string | undefined,
+    charPos: number | undefined,
 ): [string, number] => {
     if (script === undefined) {
         script = useSessionStore.getState().activeScript;
@@ -242,4 +256,4 @@ const convertScriptAndCharPosArg = (
         charPos = 0;
     }
     return [script, charPosToBytePos(script, charPos)];
-}
+};

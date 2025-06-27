@@ -45,11 +45,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
         loading: pouchLoading,
         error: pouchError,
     } = usePouchListView();
-    const {
-        data: gdt,
-        loading,
-        error: gdtError,
-    } = useGdtInventoryView();
+    const { data: gdt, loading, error: gdtError } = useGdtInventoryView();
 
     const showSpinner = loading || pouchLoading || !gdt;
     const t = useUITranslation();

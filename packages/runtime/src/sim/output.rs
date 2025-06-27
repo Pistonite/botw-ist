@@ -23,8 +23,9 @@ impl RunOutput {
         let state = match &state.game {
             sim::Game::Uninit => return Ok(Default::default()),
             sim::Game::Running(state) => state,
-            sim::Game::Crashed(_) |
-            sim::Game::PreviousCrash => return Err(RuntimeViewError::Crash),
+            sim::Game::Crashed(_) | sim::Game::PreviousCrash => {
+                return Err(RuntimeViewError::Crash);
+            }
         };
 
         Ok(sim::view::extract_pouch_view(
@@ -119,18 +120,20 @@ impl RunOutput {
         }
         // safety: is_empty() is false so -1 will not underflow
         let mut step = step.min(self.states.len() - 1);
-        
+
         loop {
             let state = self.states.get(step)?;
             match &state.game {
                 sim::Game::Uninit => return None,
                 sim::Game::Running(_) => return None,
                 sim::Game::Crashed(crash_report) => return Some(crash_report),
-                sim::Game::PreviousCrash => if step == 0 {
-                    // should be unreachable
-                    break;
-                } else {
-                    step-=1;
+                sim::Game::PreviousCrash => {
+                    if step == 0 {
+                        // should be unreachable
+                        break;
+                    } else {
+                        step -= 1;
+                    }
                 }
             }
         }

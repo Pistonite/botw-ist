@@ -134,7 +134,9 @@ const useStoreCachedRuntimeData = <T>(
     const stepIndex = useSessionStore((state) => state.stepIndex);
     const bytePos = useSessionStore((state) => state.bytePos);
 
-    const cacheIsValid = !!(cacheValidity.includes(stepIndex) && cachedViews[stepIndex]);
+    const cacheIsValid = !!(
+        cacheValidity.includes(stepIndex) && cachedViews[stepIndex]
+    );
     // only use the inventory from state if the cache is valid
     const inventory = cacheIsValid ? cachedViews[stepIndex] : undefined;
 

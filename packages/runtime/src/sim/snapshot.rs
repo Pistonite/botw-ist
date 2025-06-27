@@ -204,7 +204,7 @@ impl sim::Game {
             sim::Game::Uninit => GameSnapshot::Uninit,
             sim::Game::Running(game_state) => GameSnapshot::Running(game_state.to_snapshot()),
             sim::Game::Crashed(crash_report) => GameSnapshot::Crashed(crash_report.clone()),
-            sim::Game::PreviousCrash => GameSnapshot::PreviousCrash
+            sim::Game::PreviousCrash => GameSnapshot::PreviousCrash,
         }
     }
 }
