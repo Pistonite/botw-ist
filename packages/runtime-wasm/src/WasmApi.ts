@@ -190,6 +190,20 @@ export class WasmApi implements NativeApi {
         });
     }
 
+    public getCrashInfo(
+        runOutputPtr: number,
+        parseOutputPtr: number,
+        bytePos: number,
+    ): Pwr<string> {
+        return this.exec(() => {
+            return wasm_bindgen.get_crash_info(
+                runOutputPtr,
+                parseOutputPtr,
+                bytePos,
+            );
+        });
+    }
+
     public addRefNativeHandle(ptr: number): Promise<number> {
         return this.execAddRef("addRefNativeHandle", () => {
             return wasm_bindgen.add_ref_task_handle(ptr);

@@ -8,7 +8,7 @@ import type { WxPromise } from "@pistonite/workex";
 
 import type { Diagnostic, ExtensionApp } from "@pistonite/skybook-api";
 
-const EDITOR_EXTENSION_TASK_UUID = "b1b45de4-1df7-4832-ae0b-99b516f81df6";
+const EDITOR_EXTENSION_UUID = "b1b45de4-1df7-4832-ae0b-99b516f81df6";
 
 export const provideDiagnostics = async (
     app: ExtensionApp,
@@ -18,10 +18,12 @@ export const provideDiagnostics = async (
     const script = model.getValue();
     let diagnostics: Awaited<WxPromise<Diagnostic[]>>;
     if (owner === "runtime") {
-        const result = await app.provideRuntimeDiagnostics(
-            script,
-            EDITOR_EXTENSION_TASK_UUID,
-        );
+        const taskId = await app.requestNewTaskId(EDITOR_EXTENSION_UUID);
+        if (taskId.err) {
+            console.error("failed to get new task id", taskId.err);
+            return undefined;
+        }
+        const result = await app.provideRuntimeDiagnostics(script, taskId.val);
         if (result.val?.type === "Aborted") {
             // don't update the markers if the run was aborted,
             // since the next run will update it

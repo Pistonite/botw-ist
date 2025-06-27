@@ -23,8 +23,12 @@ impl sim::State {
         TFuture: Future<Output = Result<TOutput, exec::Error>>,
         TFn: FnOnce(sim::GameState, Context<&'a sim::Runtime>) -> TFuture,
     {
-        match self.game.take() {
-            TakeGame::Crashed => Ok(Report::error(self, sim_warning!(ctx.span, PreviousCrash))),
+        match self.game.take_for_execute() {
+            TakeGame::Crashed => {
+                self.game = sim::Game::PreviousCrash;
+                Ok(Report::error(self, sim_warning!(ctx.span, PreviousCrash)))
+            }
+            TakeGame::PreviousCrash => Ok(Report::new(self)),
             TakeGame::Running(game) => {
                 let span = ctx.span;
                 let report = f(*game, ctx).await?.into_report(span);
@@ -52,6 +56,8 @@ impl sim::State {
     }
 }
 
+/// This is to workaround partial borrows when running a step
+#[doc(hidden)]
 #[derive(Clone, Default)]
 pub enum TakeGame {
     /// Game is never started
@@ -59,20 +65,23 @@ pub enum TakeGame {
     Uninit,
     /// Game is running
     Running(Box<sim::GameState>),
-    /// Game has crashed (must manually reboot)
+    /// Game has crashed in the step before (show warning)
     Crashed,
+    /// Game has crashed in some previous step (don't show warning)
+    PreviousCrash,
 }
 
 impl sim::Game {
     /// Take out the game state if it's running
-    pub fn take(&mut self) -> TakeGame {
-        match std::mem::take(self) {
+    pub fn take_for_execute(&mut self) -> TakeGame {
+        match self {
             sim::Game::Uninit => TakeGame::Uninit,
-            sim::Game::Running(game) => TakeGame::Running(game),
-            sim::Game::Crashed(report) => {
-                *self = sim::Game::Crashed(report);
-                TakeGame::Crashed
-            }
+            sim::Game::Crashed(_) => TakeGame::Crashed,
+            sim::Game::PreviousCrash => TakeGame::PreviousCrash,
+            x => match std::mem::take(x) {
+                sim::Game::Running(game) => TakeGame::Running(game),
+                _ => unreachable!(),
+            },
         }
     }
 }

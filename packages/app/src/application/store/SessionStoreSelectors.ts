@@ -30,8 +30,6 @@ export const useDebouncedHasUnsavedChanges = (delay: number) => {
 
 export type CachedRuntimeData<T> = {
     data: Result<T, RuntimeViewError> | undefined;
-    /** If the data is from cache, but not up to date */
-    stale: boolean;
     /** If new data is currently being processed in the runtime */
     loading: boolean;
     /** Error in runtime. Empty strings means no error */
@@ -136,9 +134,11 @@ const useStoreCachedRuntimeData = <T>(
     const stepIndex = useSessionStore((state) => state.stepIndex);
     const bytePos = useSessionStore((state) => state.bytePos);
 
-    const inventory: Result<T, RuntimeViewError> | undefined =
-        cachedViews[stepIndex];
-    const cacheIsValid = !!(cacheValidity.includes(stepIndex) && inventory);
+    const cacheIsValid = !!(
+        cacheValidity.includes(stepIndex) && cachedViews[stepIndex]
+    );
+    // only use the inventory from state if the cache is valid
+    const inventory = cacheIsValid ? cachedViews[stepIndex] : undefined;
 
     const runtime = useRuntime();
 
@@ -227,10 +227,9 @@ const useStoreCachedRuntimeData = <T>(
 
     return {
         // if state for current step is not ready,
-        // display the previous step to avoid flickering
+        // display the per-component cache to avoid flickering
         data: inventory || inventoryViewCache.current,
-        stale: !cacheIsValid,
-        loading: inProgress,
+        loading: !cacheIsValid || inProgress,
         error: errorMessage,
     };
 };

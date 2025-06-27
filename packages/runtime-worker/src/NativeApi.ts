@@ -112,6 +112,7 @@ export interface NativeApi {
         parseOutputPtr: number,
         bytePos: number,
     ): Pwr<Result<InvView_Gdt, RuntimeViewError>>;
+
     /**
      * Get the overworld items for the given byte position in the script
      * Does not consume either ptr.
@@ -121,6 +122,16 @@ export interface NativeApi {
         parseOutputPtr: number,
         bytePos: number,
     ): Pwr<Result<InvView_Overworld, RuntimeViewError>>;
+
+    /**
+     * Get crash info for the given byte position in the script.
+     * Does not consume either ptr. Returns empty string if no crash
+     */
+    getCrashInfo(
+        runOutputPtr: number,
+        parseOutputPtr: number,
+        bytePos: number,
+    ): Pwr<string>;
 
     // === ref counting api ===
 

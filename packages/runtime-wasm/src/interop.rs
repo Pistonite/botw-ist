@@ -11,6 +11,12 @@ mod __impl {
         Err(E),
     }
 
+    impl<T: Default, E> Default for ResultInterop<T, E> {
+        fn default() -> Self {
+            Self::Ok(Default::default())
+        }
+    }
+
     impl<T, E> From<Result<T, E>> for ResultInterop<T, E> {
         fn from(value: Result<T, E>) -> Self {
             match value {

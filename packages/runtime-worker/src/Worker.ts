@@ -78,6 +78,13 @@ export const createRuntimeWorker = (
                 ),
             };
         },
+        getCrashInfo: async (script, taskId, pos) => {
+            return {
+                val: unwrapMaybeAborted(
+                    await runMgr.getCrashInfo(script, taskId, pos),
+                ),
+            };
+        },
     };
 };
 

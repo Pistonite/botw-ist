@@ -139,6 +139,25 @@ export class RunMgr {
         );
     }
 
+    public getCrashInfo(
+        script: string,
+        taskId: string,
+        bytePos: number,
+    ): Pwr<string> {
+        return this.withParseAndRunOutput(
+            script,
+            taskId,
+            bytePos,
+            (parseOutputBorrowed, runOutputBorrowed) => {
+                return this.napi.getCrashInfo(
+                    runOutputBorrowed,
+                    parseOutputBorrowed,
+                    bytePos,
+                );
+            },
+        );
+    }
+
     /**
      * Wrapper to parse and run the script. If successful, run the function with the borrowed (strong) pointers,
      * and free them afterwards
@@ -221,10 +240,6 @@ export class RunMgr {
                     executeToBytePos,
                 });
             });
-            // abort previous task with the same ID (to allow reuse of the
-            // same task ID to automatically cancel previous)
-            this.taskMgr.abort(taskId);
-            this.taskMgr.deleteHandle(taskId);
             // mark task as running, but not holding on to a resource
             this.taskMgr.run(taskId);
 
@@ -247,10 +262,6 @@ export class RunMgr {
         executeToBytePos: number,
         parseOutputErc: AsyncErc<ParseOutput>,
     ): Pwr<AsyncErc<RunOutput>> {
-        // abort previous task with the same ID (to allow reuse of the
-        // same task ID to automatically cancel previous)
-        this.taskMgr.abort(taskId);
-        this.taskMgr.deleteHandle(taskId);
         console.log(`[worker] execute script triggered by ${taskId}`);
         this.taskMgr.register(taskId);
         this.isRunning = true;
@@ -313,12 +324,10 @@ export class RunMgr {
      * Consumes the ParseOutput
      */
     private async executeScriptInternal(
-        // script: string,
         triggeringTaskId: string,
         parseOutputErc: AsyncErc<ParseOutput>,
         thisContext: RunContext,
     ): Promise<void> {
-        //Pwr<AsyncErc<RunOutput>> {
         const resolveAwaiters = (
             x: Result<AsyncErc<RunOutput>, WorkerError>,
         ) => {
@@ -385,7 +394,7 @@ export class RunMgr {
             // should be fine since the native has redundant null checks
             const outputResult = await this.napi.runParsed(
                 parseOutputRaw,
-                nativeHandle.val.value || 0,
+                nativeHandle.val.take() || 0,
                 async (upToBytePos, outputRaw) => {
                     const outputErc = makeRunOutputErc(outputRaw);
                     const awaiters = thisContext.awaiters;

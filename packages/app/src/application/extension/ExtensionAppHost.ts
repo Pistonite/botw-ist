@@ -4,6 +4,7 @@ import {
 } from "@pistonite/intwc";
 import type { Result } from "@pistonite/pure/result";
 import type { WxPromise } from "@pistonite/workex";
+import { v4 as makeUUID } from "uuid";
 
 import type {
     Diagnostic,
@@ -11,6 +12,10 @@ import type {
     ExtensionApp,
     ErrorReport,
     MaybeAborted,
+    RuntimeViewError,
+    InvView_PouchList,
+    InvView_Gdt,
+    InvView_Overworld,
 } from "@pistonite/skybook-api";
 import {
     searchItemLocalized,
@@ -35,7 +40,11 @@ export const getExtensionAppHost = () => {
 };
 
 class ExtensionAppHost implements ExtensionApp {
-    constructor(private runtime: Runtime) {}
+    private taskIdMap: Map<string, string>;
+
+    constructor(private runtime: Runtime) {
+        this.taskIdMap = new Map();
+    }
 
     public async getScript() {
         return { val: useSessionStore.getState().activeScript };
@@ -87,33 +96,6 @@ class ExtensionAppHost implements ExtensionApp {
         };
     }
 
-    public async provideRuntimeDiagnostics(
-        script: string,
-        taskId: string,
-    ): WxPromise<MaybeAborted<Diagnostic[]>> {
-        const result = await this.runtime.getRuntimeDiagnostics(script, taskId);
-        if (result.err) {
-            return result;
-        }
-        if (result.val.type === "Aborted") {
-            return { val: { type: "Aborted" } };
-        }
-        return {
-            val: {
-                type: "Ok",
-                value: errorReportsToDiagnostics(
-                    script,
-                    result.val.value,
-                    translateRuntimeError,
-                ),
-            },
-        };
-    }
-
-    public async cancelRuntimeTask(taskId: string): WxPromise<void> {
-        return await this.runtime.abortTask(taskId);
-    }
-
     public async provideSemanticTokens(
         script: string,
         start: number,
@@ -141,6 +123,82 @@ class ExtensionAppHost implements ExtensionApp {
         }
         return { val: tokens.val };
     }
+
+    public async requestNewTaskId(uniqueId: string): WxPromise<string> {
+        const oldTaskId = this.taskIdMap.get(uniqueId);
+        if (oldTaskId !== undefined) {
+            await this.cancelRuntimeTask(oldTaskId);
+        }
+        const newTaskId = makeUUID();
+        this.taskIdMap.set(uniqueId, newTaskId);
+        return { val: newTaskId };
+    }
+
+    public async cancelRuntimeTask(taskId: string): WxPromise<void> {
+        return await this.runtime.abortTask(taskId);
+    }
+
+    public async provideRuntimeDiagnostics(
+        script: string,
+        taskId: string,
+    ): WxPromise<MaybeAborted<Diagnostic[]>> {
+        const result = await this.runtime.getRuntimeDiagnostics(script, taskId);
+        return mapMaybeAbortedResult(result, (value) => {
+            return errorReportsToDiagnostics(
+                script,
+                value,
+                translateRuntimeError,
+            );
+        });
+    }
+
+    public async getPouchList(
+        taskId: string,
+        inputScript: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>> {
+        const [script, bytePos] = convertScriptAndCharPosArg(
+            inputScript,
+            charPos,
+        );
+        return await this.runtime.getPouchList(script, taskId, bytePos);
+    }
+
+    public async getGdtInventory(
+        taskId: string,
+        inputScript: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
+        const [script, bytePos] = convertScriptAndCharPosArg(
+            inputScript,
+            charPos,
+        );
+        return await this.runtime.getGdtInventory(script, taskId, bytePos);
+    }
+
+    public async getOverworldItems(
+        taskId: string,
+        inputScript: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>> {
+        const [script, bytePos] = convertScriptAndCharPosArg(
+            inputScript,
+            charPos,
+        );
+        return await this.runtime.getOverworldItems(script, taskId, bytePos);
+    }
+
+    public async getCrashInfo(
+        taskId: string,
+        inputScript: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<string>> {
+        const [script, bytePos] = convertScriptAndCharPosArg(
+            inputScript,
+            charPos,
+        );
+        return await this.runtime.getCrashInfo(script, taskId, bytePos);
+    }
 }
 
 const errorReportsToDiagnostics = <T>(
@@ -158,4 +216,44 @@ const errorReportsToDiagnostics = <T>(
             end: bytePosToCharPos[end],
         };
     });
+};
+
+const mapMaybeAbortedResult = <TIn, TOut>(
+    result: Awaited<WxPromise<MaybeAborted<TIn>>>,
+    fn: (t: TIn) => TOut,
+): Awaited<WxPromise<MaybeAborted<TOut>>> => {
+    if (result.err) {
+        return result;
+    }
+    if (result.val.type === "Aborted") {
+        return { val: { type: "Aborted" } };
+    }
+    return {
+        val: {
+            type: "Ok",
+            value: fn(result.val.value),
+        },
+    };
+};
+
+/**
+ * Convert script and charPos arguments from calls from extensions
+ * to script and bytePos
+ */
+const convertScriptAndCharPosArg = (
+    script: string | undefined,
+    charPos: number | undefined,
+): [string, number] => {
+    if (script === undefined) {
+        script = useSessionStore.getState().activeScript;
+        if (charPos === undefined) {
+            const bytePos = useSessionStore.getState().bytePos;
+            return [script, bytePos];
+        }
+        return [script, charPosToBytePos(script, charPos)];
+    }
+    if (charPos === undefined) {
+        charPos = 0;
+    }
+    return [script, charPosToBytePos(script, charPos)];
 };

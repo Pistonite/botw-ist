@@ -1,3 +1,5 @@
+use blueflame::processor::CrashReport;
+
 use crate::error::{ErrorReport, RuntimeViewError};
 use crate::{iv, sim};
 
@@ -21,7 +23,9 @@ impl RunOutput {
         let state = match &state.game {
             sim::Game::Uninit => return Ok(Default::default()),
             sim::Game::Running(state) => state,
-            sim::Game::Crashed(_) => return Err(RuntimeViewError::Crash),
+            sim::Game::Crashed(_) | sim::Game::PreviousCrash => {
+                return Err(RuntimeViewError::Crash);
+            }
         };
 
         Ok(sim::view::extract_pouch_view(
@@ -107,6 +111,34 @@ impl RunOutput {
                 },
             ],
         })
+    }
+
+    /// Get the crash report for a step, if the game has crashed on that step
+    pub fn get_crash_report(&self, step: usize) -> Option<&CrashReport> {
+        if self.states.is_empty() {
+            return None;
+        }
+        // safety: is_empty() is false so -1 will not underflow
+        let mut step = step.min(self.states.len() - 1);
+
+        loop {
+            let state = self.states.get(step)?;
+            match &state.game {
+                sim::Game::Uninit => return None,
+                sim::Game::Running(_) => return None,
+                sim::Game::Crashed(crash_report) => return Some(crash_report),
+                sim::Game::PreviousCrash => {
+                    if step == 0 {
+                        // should be unreachable
+                        break;
+                    } else {
+                        step -= 1;
+                    }
+                }
+            }
+        }
+
+        None
     }
 
     fn get_state_by_step(&self, step: usize) -> Option<&sim::State> {

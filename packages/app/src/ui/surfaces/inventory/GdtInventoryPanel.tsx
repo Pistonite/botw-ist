@@ -45,14 +45,9 @@ const GdtInventoryPanelImpl: React.FC = () => {
         loading: pouchLoading,
         error: pouchError,
     } = usePouchListView();
-    const {
-        data: gdt,
-        stale,
-        loading,
-        error: gdtError,
-    } = useGdtInventoryView();
+    const { data: gdt, loading, error: gdtError } = useGdtInventoryView();
 
-    const showSpinner = loading || pouchLoading || stale || !gdt;
+    const showSpinner = loading || pouchLoading || !gdt;
     const t = useUITranslation();
 
     const isTabView = useUIStore((state) => state.isTabViewEnabled);
@@ -151,7 +146,6 @@ const GdtInventoryPanelImpl: React.FC = () => {
                             appearance="transparent"
                         />
                     </Tooltip>
-                    <InventorySpinner show={showSpinner} />
                 </InventoryTitle>
                 <div className={m("flex-col", c.errors)}>
                     {$Error}
@@ -160,6 +154,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
                 </div>
                 {$TabView || $ListView}
             </div>
+            <InventorySpinner show={showSpinner} />
         </div>
     );
 };
