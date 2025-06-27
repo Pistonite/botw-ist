@@ -81,7 +81,7 @@ impl Run {
             let report = match runtime.find_cached(&commands) {
                 Some(report) => report,
                 None => {
-                    ctx.span = step.span;
+                    ctx.span = step.span();
 
                     let report = match state.execute_step(ctx.clone(), step).await {
                         Err(e) => {

@@ -20,7 +20,16 @@
                 if (dark === null) {
                     dark = matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
                 }
-                document.write(`<style data-inject="pure-pref-dark">:root { color-scheme: ${dark ? "dark" : "light"}; }</style class="-boot-only-"><style>#-root-curtain- { background-color: ${dark? "#1e1e2e" : "#eff1f5"} }</style>`);
+                const themeTagContent = `:root { color-scheme: ${dark ? "dark" : "light"}; }`;
+                const curtainTagContent = `#-root-curtain- { background-color: ${dark? "#1e1e2e" : "#eff1f5"} }`;
+                const themeTag = document.createElement("style");
+                themeTag.setAttribute("data-inject", "pure-pref-dark");
+                themeTag.innerText = themeTagContent;
+                document.head.appendChild(themeTag);
+                const curtainTag = document.createElement("style");
+                curtainTag.classList.add("-boot-only-");
+                curtainTag.innerText = curtainTagContent;
+                document.head.appendChild(curtainTag);
             })()
         </script>
         <style>

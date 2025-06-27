@@ -146,6 +146,11 @@ export class TaskMgr {
         }
     }
 
+    /** Removes and forgets about the handle */
+    public deleteHandle(id: string) {
+        this.tasks.delete(id);
+    }
+
     /** Check if the task is aborted */
     public isAborted(id: string) {
         const handle = this.tasks.get(id);
@@ -171,8 +176,7 @@ export class TaskMgr {
     }
 
     public run(id: string) {
-        const handle = this.getHandle(id);
-        handle.markRunning();
+        this.getHandle(id).markRunning();
     }
 
     /**

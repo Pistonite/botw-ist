@@ -52,7 +52,9 @@ export const createRuntimeWorker = (
         }),
         getRuntimeDiagnostics: async (script, taskId) => {
             return {
-                val: unwrap(await runMgr.getRuntimeDiagnostics(script, taskId)),
+                val: unwrapMaybeAborted(
+                    await runMgr.getRuntimeDiagnostics(script, taskId),
+                ),
             };
         },
         getPouchList: async (script, taskId, pos) => {

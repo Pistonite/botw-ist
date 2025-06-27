@@ -72,7 +72,6 @@ export class RunMgr {
         script: string,
         taskId: string,
     ): Pwr<ErrorReport<RuntimeError>[]> {
-        // Runs for diagnostics are not abortable for simplicity
         return this.withParseAndRunOutput(
             script,
             taskId,
@@ -222,8 +221,13 @@ export class RunMgr {
                     executeToBytePos,
                 });
             });
+            // abort previous task with the same ID (to allow reuse of the
+            // same task ID to automatically cancel previous)
+            this.taskMgr.abort(taskId);
+            this.taskMgr.deleteHandle(taskId);
             // mark task as running, but not holding on to a resource
             this.taskMgr.run(taskId);
+
             const output = await outputPromise;
             return output;
         }
@@ -243,6 +247,10 @@ export class RunMgr {
         executeToBytePos: number,
         parseOutputErc: AsyncErc<ParseOutput>,
     ): Pwr<AsyncErc<RunOutput>> {
+        // abort previous task with the same ID (to allow reuse of the
+        // same task ID to automatically cancel previous)
+        this.taskMgr.abort(taskId);
+        this.taskMgr.deleteHandle(taskId);
         console.log(`[worker] execute script triggered by ${taskId}`);
         this.taskMgr.register(taskId);
         this.isRunning = true;

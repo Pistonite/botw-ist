@@ -544,25 +544,25 @@ impl InventoryScreen {
                 do_match!(memory, sell_price, mSellPrice);
                 do_match!(memory, effect_id_f32(), mEffectId);
                 do_match!(memory, effect_level, mEffectLevel);
-                if let Some(wanted) = meta.map(|x| &x.ingredients) {
-                    if !wanted.is_empty() {
+                if let Some(wanted) = meta.map(|x| &x.ingredients)
+                    && !wanted.is_empty()
+                {
+                    mem! {memory:
+                        let ingredients_ptr = *(&item_ptr->mIngredients.mPtrs);
+                    };
+                    let mut actual_ingrs = vec![];
+                    for i in 0..5 {
                         mem! {memory:
-                            let ingredients_ptr = *(&item_ptr->mIngredients.mPtrs);
+                            let actual_ingr = *(ingredients_ptr.ith(i as u64));
                         };
-                        let mut actual_ingrs = vec![];
-                        for i in 0..5 {
-                            mem! {memory:
-                                let actual_ingr = *(ingredients_ptr.ith(i as u64));
-                            };
-                            let actual_ingr = actual_ingr.cstr(memory)?.load_utf8_lossy(memory)?;
-                            if actual_ingr.is_empty() {
-                                break;
-                            }
-                            actual_ingrs.push(actual_ingr);
+                        let actual_ingr = actual_ingr.cstr(memory)?.load_utf8_lossy(memory)?;
+                        if actual_ingr.is_empty() {
+                            break;
                         }
-                        if wanted != &actual_ingrs {
-                            continue;
-                        }
+                        actual_ingrs.push(actual_ingr);
+                    }
+                    if wanted != &actual_ingrs {
+                        continue;
                     }
                 }
 

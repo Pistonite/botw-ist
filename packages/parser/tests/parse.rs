@@ -7,7 +7,8 @@ use skybook_parser::search::{QuotedItemResolver, ResolvedItem};
 #[tokio::test]
 async fn parse_simple() -> anyhow::Result<()> {
     let script = indoc! {r#"
-        eat axe in slot 3;
+        eat axe   ;
+        hold royal-claymore      ;
         get 3 apple[life = true, time = false]
         get 100 apple;
         unequip arrow;

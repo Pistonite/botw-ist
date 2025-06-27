@@ -85,10 +85,10 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
     match list {
         syn::ItemListFinite::Single(item) => {
             if let Some(parsed_item) = parse_item(item, resolver, errors).await {
-                if let Some(m) = &parsed_item.meta {
-                    if m.position.is_some() {
-                        errors.push(cir_warning!(&item, UnusedItemPosition));
-                    }
+                if let Some(m) = &parsed_item.meta
+                    && m.position.is_some()
+                {
+                    errors.push(cir_warning!(&item, UnusedItemPosition));
                 }
                 out_item_specs.push(ItemSpec {
                     amount: 1,
@@ -107,10 +107,10 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
                 };
 
                 if let Some(parsed_item) = parse_item(&item.item, resolver, errors).await {
-                    if let Some(m) = &parsed_item.meta {
-                        if m.position.is_some() {
-                            errors.push(cir_warning!(&item, UnusedItemPosition));
-                        }
+                    if let Some(m) = &parsed_item.meta
+                        && m.position.is_some()
+                    {
+                        errors.push(cir_warning!(&item, UnusedItemPosition));
                     }
                     out_item_specs.push(ItemSpec {
                         amount,

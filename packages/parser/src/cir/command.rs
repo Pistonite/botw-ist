@@ -10,11 +10,8 @@ use crate::syn;
 /// A simulation step
 #[derive(Debug, Clone)]
 pub struct Step {
-    /// The span of the command in the source script
-    pub span: Span,
-
     /// The command to be executed
-    pub command: cir::Command,
+    pub command: CommandWithSpan,
 
     /// The notes associated with this step
     /// Note many steps can share the same note
@@ -24,16 +21,29 @@ pub struct Step {
 impl Step {
     pub fn new(span: Span, command: cir::Command, notes: Arc<str>) -> Self {
         Self {
-            span,
-            command,
+            command: CommandWithSpan { command, span },
             notes,
         }
     }
 
     /// Get the start byte position of the step in source script
     pub fn pos(&self) -> usize {
-        self.span.lo
+        self.command.span.lo
     }
+
+    pub fn span(&self) -> Span {
+        self.command.span
+    }
+
+    pub fn command(&self) -> &Command {
+        &self.command.command
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct CommandWithSpan {
+    command: Command,
+    span: Span,
 }
 
 /// The command to be executed in the simulator
