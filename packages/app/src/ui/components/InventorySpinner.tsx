@@ -9,7 +9,6 @@ export type InventorySpinnerProps = {
 
 const useStyles = makeStyles({
     container: {
-        // padding: "0 4px",
         backgroundColor: "#00000044",
         zIndex: 100,
     },
@@ -25,12 +24,7 @@ export const InventorySpinner: React.FC<InventorySpinnerProps> = ({ show }) => {
 
     return (
         <div className={m("pos-abs all-sides-0 flex flex-center", c.container)}>
-            <Spinner
-                // className={m("flex-end")}
-                as="span"
-                size="medium"
-                // delay={300}
-            />
+            <Spinner as="span" size="medium" />
         </div>
     );
 };
