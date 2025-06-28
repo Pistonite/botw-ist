@@ -13,19 +13,29 @@ import { BugReportText } from "./BugReportText.tsx";
 export type ErrorBarProps = {
     /** Title for the error. If not specified, use the generic term "Error" */
     title?: string;
+
+    /** Use warning style instead of error style */
+    isWarning?: boolean;
+
+    /** Hide the bug report text */
+    noBugReport?: boolean;
 };
 
 export const ErrorBar: React.FC<PropsWithChildren<ErrorBarProps>> = ({
     title,
+    isWarning,
+    noBugReport,
     children,
 }) => {
     const t = useUITranslation();
     return (
-        <MessageBar intent="error">
+        <MessageBar intent={isWarning ? "warning" : "error"}>
             <MessageBarBody>
-                <MessageBarTitle>{title || t("error")}</MessageBarTitle>
+                {!isWarning && (
+                    <MessageBarTitle>{title || t("error")}</MessageBarTitle>
+                )}
                 <Text>
-                    {children} <BugReportText />
+                    {children} {!noBugReport && <BugReportText />}
                 </Text>
             </MessageBarBody>
         </MessageBar>

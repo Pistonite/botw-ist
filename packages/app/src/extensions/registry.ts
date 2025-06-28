@@ -2,6 +2,7 @@ import { once } from "@pistonite/pure/sync";
 
 import type { FirstPartyExtension } from "./FirstParty.ts";
 import { ItemExplorerExtension } from "./item-explorer/extindex.tsx";
+import { CrashViewerExtension } from "./crash-viewer/extindex.tsx";
 
 const extensionInstances = new Map<
     string,
@@ -9,17 +10,22 @@ const extensionInstances = new Map<
 >();
 
 export type ConnectExtensionFn = (
+    id: string,
     extension: FirstPartyExtension,
 ) => Promise<void> | void;
 
+/**
+ * Get or create an instance of a FirstPartyExtension, and connect it to the app
+ * if newly created
+ */
 export const getExtension = async (
     id: string,
     standalone: boolean,
     connect: ConnectExtensionFn,
 ): Promise<FirstPartyExtension | undefined> => {
-    const existing = extensionInstances.get(id);
+    const existing = await getLoadedExtension(id);
     if (existing) {
-        return await existing();
+        return existing;
     }
     const creator = once({
         fn: async () => {
@@ -27,12 +33,23 @@ export const getExtension = async (
             if (!instance) {
                 return undefined;
             }
-            void (await connect(instance));
+            void (await connect(id, instance));
             return instance;
         },
     });
     extensionInstances.set(id, creator);
     return creator();
+};
+
+/** Get the created instance of a FirstPartyExtension by its id */
+export const getLoadedExtension = async (
+    id: string,
+): Promise<FirstPartyExtension | undefined> => {
+    const existing = extensionInstances.get(id);
+    if (existing) {
+        return await existing();
+    }
+    return undefined;
 };
 
 export const createExtensionInstance = async (
@@ -48,9 +65,8 @@ export const createExtensionInstance = async (
         case "item-explorer": {
             return new ItemExplorerExtension(standalone);
         }
-        case "stub1": {
-            const { Stub1Extension } = await import("./Stub1");
-            return new Stub1Extension();
+        case "crash-viewer": {
+            return new CrashViewerExtension(standalone);
         }
         default: {
             console.error(`unknown extension: ${id}`);

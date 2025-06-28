@@ -4,6 +4,7 @@ import {
     Tooltip,
     ToggleButton,
     Button,
+    Link,
 } from "@fluentui/react-components";
 import { Grid20Regular, Info20Regular } from "@fluentui/react-icons";
 import { useSwappedWheelScrollDirection } from "@pistonite/shared-controls";
@@ -36,6 +37,7 @@ import {
     InventorySpinner,
     ErrorBar,
 } from "self::ui/components";
+import { openExtension } from "self::application/extension";
 
 const useStyles = makeStyles({
     splitContainer: {
@@ -177,9 +179,23 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     );
 
     const $PouchError = pouch?.err && (
-        <ErrorBar title={t("main.visible_inventory.view_error")}>
-            {translateRuntimeViewError(pouch.err, t)}
-        </ErrorBar>
+        <>
+            <ErrorBar title={t("main.visible_inventory.view_error")}>
+                {translateRuntimeViewError(pouch.err, t)}
+            </ErrorBar>
+            {pouch.err.type === "Crash" && (
+                <ErrorBar isWarning noBugReport>
+                    <Link
+                        onClick={() => {
+                            void openExtension("crash-viewer");
+                        }}
+                    >
+                        {t("main.view_crash_report")}
+                    </Link>{" "}
+                    {t("main.view_crash_report.desc")}
+                </ErrorBar>
+            )}
+        </>
     );
 
     const $PouchItems = pouch?.val && !isTabView && (

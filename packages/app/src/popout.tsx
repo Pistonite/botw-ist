@@ -37,6 +37,7 @@ async function boot() {
     }
 
     const connect: ConnectExtensionFn = async (
+        _id: string,
         extension: FirstPartyExtension,
     ) => {
         console.log("[popout] connecting to host window");
