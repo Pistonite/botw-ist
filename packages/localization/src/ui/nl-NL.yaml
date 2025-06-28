@@ -9,6 +9,8 @@ title.info: "Informatie"
 button.allow: "Toestaan"
 button.cancel: "Annuleren"
 button.close: "Sluiten"
+button.copied: "Gekopieerd!"
+button.copy: "Kopiëren"
 button.launch: "Starten"
 button.learn_more: "Meer informatie"
 button.ok: "OK"
@@ -64,17 +66,18 @@ menu.report_issue: "Feedback"
 menu.skybook_manual: "Skybook-handleiding"
 
 # Main inventory display
+main.bug_report: "Meld het op {{github}} als u denkt dat dit een bug in de simulator is."
 main.gdt_inventory.desc: "Voorraaddata opgeslagen in het vlaggensysteem van het spel (GDT). Items worden weergegeven alsof ze in de inventaris zijn geladen, en de slots zijn uitgelijnd met de inventaris op basis van corruptie."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Interne GDT-gegevens kunnen niet worden weergegeven!"
 main.tabbed_inventory.bad_msgbar.body: "Tabbladgegevens zijn beschadigd. Mogelijk door een geheugenbeschadigingsexploit."
 main.tabbed_inventory.bad_msgbar.title: "Kan tabbladen niet weergeven!"
 main.tabbed_inventory.button_tooltip: "Lijst-/tabweergave wisselen"
+main.view_crash_report: "Klik hier om het crashrapport te bekijken."
+main.view_crash_report.desc: "Voeg het crashrapport toe wanneer u een probleem meldt."
 main.visible_inventory.desc: "Items die je ziet wanneer je de inventaris opent"
 main.visible_inventory.title: "Zichtbare Inventaris"
 main.visible_inventory.view_error: "Inventaris kan niet worden weergegeven!"
-
-main.bug_report: "Meld het op {{github}} als u denkt dat dit een bug in de simulator is."
 
 
 category.Armor: "Pantser"
@@ -108,9 +111,9 @@ dialog.custom_extensions.format_desc: "Configureer de extensies hieronder, één
 dialog.custom_extensions.help: "Na het opslaan van de configuratie kun je aangepaste extensies openen als pop-outvensters via \"{{open_button}}\". Reeds geopende extensies blijven actief."
 
 # Extension names
+extension.crash-viewer.name: "Crashrapport"
 extension.editor.name: "Scripteditor"
 extension.item-explorer.name: "Itemverkenner"
-extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Gebruik {{hyphen}} om meerdere zoektermen te verbinden, bijvoorbeeld {{example}}."
@@ -119,6 +122,9 @@ item_explorer.label.no_results: "Geen resultaten"
 item_explorer.label.search_localized: "Zoek in alle talen"
 item_explorer.label.search_placeholder: "Zoeken"
 item_explorer.search_error.unknown_tag: "Onbekend taallabel \"{{tag}}\""
+
+# Crash Viewer Extension
+crash_viewer.no_crash: "Geen crash bij deze stap"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "Niet beschikbaar in het D-pad-menu"

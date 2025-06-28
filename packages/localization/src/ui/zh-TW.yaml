@@ -9,6 +9,8 @@ title.info: "資訊"
 button.allow: "允許"
 button.cancel: "取消"
 button.close: "關閉"
+button.copied: "已複製！"
+button.copy: "複製"
 button.launch: "啟動"
 button.learn_more: "了解更多"
 button.ok: "確定"
@@ -64,17 +66,18 @@ menu.report_issue: "意見回饋"
 menu.skybook_manual: "Skybook 使用手冊"
 
 # Main inventory display
+main.bug_report: "若您認為這是模擬器的錯誤，請至 {{github}} 回報。"
 main.gdt_inventory.desc: "儲存於遊戲 Flag 系統（GDT）中的物品資料。物品狀態以讀取入背包後的形式顯示。背包格讹轉的目標資料格與該背包格對齊顯示。"
 main.gdt_inventory.title: "GDT內部資料"
 main.gdt_inventory.view_error: "無法顯示GDT內部資料！"
 main.tabbed_inventory.bad_msgbar.body: "分頁資料已損壞，可能是因記憶體損壞漏洞所致。"
 main.tabbed_inventory.bad_msgbar.title: "無法顯示分頁！"
 main.tabbed_inventory.button_tooltip: "切換清單/分頁檢視"
+main.view_crash_report: "點擊此處查看崩潰報告。"
+main.view_crash_report.desc: "提交問題時請提供此報告。"
 main.visible_inventory.desc: "當你打開背包時所看到的物品"
 main.visible_inventory.title: "可見背包"
 main.visible_inventory.view_error: "無法顯示物品欄！"
-
-main.bug_report: "若您認為這是模擬器的錯誤，請至 {{github}} 回報。"
 
 
 category.Armor: "防具"
@@ -108,9 +111,9 @@ dialog.custom_extensions.format_desc: "請以下列格式 {{format}} 每行輸�
 dialog.custom_extensions.help: "儲存設定後，您可以透過「{{open_button}}」以彈出視窗方式開啟自訂擴充功能。已開啟的擴充功能不會自動關閉。"
 
 # Extension names
+extension.crash-viewer.name: "崩潰報告"
 extension.editor.name: "腳本編輯器"
 extension.item-explorer.name: "物品搜尋器"
-extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "使用 {{hyphen}} 連接多個詞，例如 {{example}}。"
@@ -119,6 +122,9 @@ item_explorer.label.no_results: "無結果"
 item_explorer.label.search_localized: "在所有語言中搜尋"
 item_explorer.label.search_placeholder: "搜尋"
 item_explorer.search_error.unknown_tag: "未知語言標籤 \"{{tag}}\""
+
+# Crash Viewer Extension
+crash_viewer.no_crash: "此步驟無崩潰"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "不在方向鍵選單中顯示"

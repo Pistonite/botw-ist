@@ -9,6 +9,8 @@ title.info: "Informazioni"
 button.allow: "Permettere"
 button.cancel: "Annulla"
 button.close: "Chiudi"
+button.copied: "Copiato!"
+button.copy: "Copia"
 button.launch: "Avvia"
 button.learn_more: "Scopri di più"
 button.ok: "OK"
@@ -64,17 +66,18 @@ menu.report_issue: "Feedback"
 menu.skybook_manual: "Manuale di Skybook"
 
 # Main inventory display
+main.bug_report: "Segnalalo su {{github}} se pensi che sia un bug del simulatore."
 main.gdt_inventory.desc: "Dati dell'inventario memorizzati nel sistema di flag del gioco (GDT). Gli oggetti vengono visualizzati come se fossero caricati nell'inventario, e gli slot sono allineati all'inventario in base alla corruzione."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Impossibile visualizzare i dati interni GDT!"
 main.tabbed_inventory.bad_msgbar.body: "I dati delle schede sono danneggiati. Possibilmente a causa di un exploit di corruzione della memoria."
 main.tabbed_inventory.bad_msgbar.title: "Impossibile visualizzare le schede!"
 main.tabbed_inventory.button_tooltip: "Attiva/disattiva vista elenco/schede"
+main.view_crash_report: "Clicca qui per visualizzare il rapporto di arresto anomalo."
+main.view_crash_report.desc: "Includere il rapporto di arresto anomalo quando si segnala un problema."
 main.visible_inventory.desc: "Oggetti che vedi quando apri l'inventario"
 main.visible_inventory.title: "Inventario Visibile"
 main.visible_inventory.view_error: "Impossibile visualizzare l'inventario!"
-
-main.bug_report: "Segnalalo su {{github}} se pensi che sia un bug del simulatore."
 
 
 category.Armor: "Armatura"
@@ -108,9 +111,9 @@ dialog.custom_extensions.format_desc: "Configura le estensioni una per riga, nel
 dialog.custom_extensions.help: "Dopo aver salvato la configurazione, puoi aprire le estensioni personalizzate come finestre pop-up tramite \"{{open_button}}\". Le estensioni già aperte non verranno chiuse."
 
 # Extension names
+extension.crash-viewer.name: "Rapporto di arresto anomalo"
 extension.editor.name: "Editor di script"
 extension.item-explorer.name: "Esplora oggetti"
-extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Usa {{hyphen}} per collegare più termini di ricerca, ad esempio {{example}}."
@@ -119,6 +122,9 @@ item_explorer.label.no_results: "Nessun risultato"
 item_explorer.label.search_localized: "Cerca in tutte le lingue"
 item_explorer.label.search_placeholder: "Cerca"
 item_explorer.search_error.unknown_tag: "Tag lingua sconosciuto \"{{tag}}\""
+
+# Crash Viewer Extension
+crash_viewer.no_crash: "Nessun arresto anomalo in questo passaggio"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "Non nel menu del D-Pad"

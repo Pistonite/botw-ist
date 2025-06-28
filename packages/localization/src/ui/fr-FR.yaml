@@ -9,6 +9,8 @@ title.info: "Info"
 button.allow: "Autoriser"
 button.cancel: "Annuler"
 button.close: "Fermer"
+button.copied: "Copié !"
+button.copy: "Copier"
 button.launch: "Lancer"
 button.learn_more: "En savoir plus"
 button.ok: "OK"
@@ -64,17 +66,18 @@ menu.report_issue: "Commentaires"
 menu.skybook_manual: "Manuel de Skybook"
 
 # Main inventory display
+main.bug_report: "Veuillez le signaler sur {{github}} si vous pensez qu'il s'agit d'un bug du simulateur."
 main.gdt_inventory.desc: "Données d'inventaire stockées dans le système de drapeaux du jeu (GDT). Les objets sont affichés comme s'ils étaient chargés dans l'inventaire, et les emplacements sont alignés avec l'inventaire en fonction de la corruption."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Impossible d'afficher les données internes GDT !"
 main.tabbed_inventory.bad_msgbar.body: "Les données des onglets sont corrompues. Cela est peut-être dû à une exploitation de corruption de mémoire."
 main.tabbed_inventory.bad_msgbar.title: "Impossible d'afficher les onglets !"
 main.tabbed_inventory.button_tooltip: "Basculer entre la vue Liste/onglets"
+main.view_crash_report: "Cliquez ici pour afficher le rapport d'incident."
+main.view_crash_report.desc: "Veuillez inclure le rapport d'incident lors de la signalement d'un problème."
 main.visible_inventory.desc: "Objets visibles lors de l'ouverture de l'inventaire"
 main.visible_inventory.title: "Inventaire Visible"
 main.visible_inventory.view_error: "Impossible d'afficher l'inventaire !"
-
-main.bug_report: "Veuillez le signaler sur {{github}} si vous pensez qu'il s'agit d'un bug du simulateur."
 
 
 category.Armor: "Armure"
@@ -108,9 +111,9 @@ dialog.custom_extensions.format_desc: "Configurez les extensions, une par ligne,
 dialog.custom_extensions.help: "Après avoir enregistré la configuration, vous pouvez ouvrir les extensions personnalisées dans des fenêtres pop-up via « {{open_button}} ». Les extensions déjà ouvertes ne seront pas fermées."
 
 # Extension names
+extension.crash-viewer.name: "Rapport d'incident"
 extension.editor.name: "Éditeur de scripts"
 extension.item-explorer.name: "Explorateur d’objets"
-extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Utilisez {{hyphen}} pour relier plusieurs termes de recherche, par exemple {{example}}."
@@ -119,6 +122,9 @@ item_explorer.label.no_results: "Aucun résultat"
 item_explorer.label.search_localized: "Rechercher dans toutes les langues"
 item_explorer.label.search_placeholder: "Rechercher"
 item_explorer.search_error.unknown_tag: "Code de langue inconnu \"{{tag}}\""
+
+# Crash Viewer Extension
+crash_viewer.no_crash: "Aucun incident à cette étape"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "Pas dans le menu de la croix directionnelle"

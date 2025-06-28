@@ -9,6 +9,8 @@ title.info: "Info"
 button.allow: "Erlauben"
 button.cancel: "Abbrechen"
 button.close: "Schließen"
+button.copied: "Kopiert!"
+button.copy: "Kopieren"
 button.launch: "Starten"
 button.learn_more: "Mehr erfahren"
 button.ok: "OK"
@@ -64,17 +66,18 @@ menu.report_issue: "Feedback"
 menu.skybook_manual: "Skybook-Handbuch"
 
 # Main inventory display
+main.bug_report: "Bitte melden Sie es auf {{github}}, wenn Sie denken, dass dies ein Fehler im Simulator ist."
 main.gdt_inventory.desc: "Inventardaten, die im Flaggensystem des Spiels (GDT) gespeichert sind. Gegenstände werden angezeigt, als wären sie im Inventar geladen, und die Slots sind basierend auf Korruption an das Inventar ausgerichtet."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Interne GDT-Daten können nicht angezeigt werden!"
 main.tabbed_inventory.bad_msgbar.body: "Tab-Daten sind beschädigt. Möglicherweise aufgrund eines Speicherbeschädigungs-Exploits."
 main.tabbed_inventory.bad_msgbar.title: "Tabs können nicht angezeigt werden!"
 main.tabbed_inventory.button_tooltip: "Listen-/Tabellenansicht umschalten"
+main.view_crash_report: "Klicken Sie hier, um den Absturzbericht anzuzeigen."
+main.view_crash_report.desc: "Bitte fügen Sie den Absturzbericht bei, wenn Sie ein Problem melden."
 main.visible_inventory.desc: "Gegenstände, die beim Öffnen des Inventars sichtbar sind"
 main.visible_inventory.title: "Sichtbares Inventar"
 main.visible_inventory.view_error: "Inventar kann nicht angezeigt werden!"
-
-main.bug_report: "Bitte melden Sie es auf {{github}}, wenn Sie denken, dass dies ein Fehler im Simulator ist."
 
 
 category.Armor: "Rüstung"
@@ -108,9 +111,9 @@ dialog.custom_extensions.format_desc: "Konfiguriere die Erweiterungen unten, ein
 dialog.custom_extensions.help: "Nach dem Speichern der Konfiguration kannst du benutzerdefinierte Erweiterungen als Pop-up-Fenster über „{{open_button}}“ öffnen. Bereits geöffnete Erweiterungen bleiben aktiv."
 
 # Extension names
+extension.crash-viewer.name: "Absturzbericht"
 extension.editor.name: "Skript-Editor"
 extension.item-explorer.name: "Gegenstands-Explorer"
-extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Verwenden Sie {{hyphen}}, um mehrere Suchbegriffe zu verbinden, zum Beispiel {{example}}."
@@ -119,6 +122,9 @@ item_explorer.label.no_results: "Keine Ergebnisse"
 item_explorer.label.search_localized: "In allen Sprachen suchen"
 item_explorer.label.search_placeholder: "Suchen"
 item_explorer.search_error.unknown_tag: "Unbekannter Sprachcode \"{{tag}}\""
+
+# Crash Viewer Extension
+crash_viewer.no_crash: "Kein Absturz in diesem Schritt"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "Nicht im Steuerkreuz-Menü verfügbar"
