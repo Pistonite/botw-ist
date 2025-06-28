@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { connectExtensionToApp } from "self::application/extension";
+import { connectLocalExtensionToApp } from "self::application/extension";
 import { getExtension } from "self::extensions";
 import { useStyleEngine } from "self::ui/functions";
 
@@ -49,12 +49,13 @@ export const ExtensionWrapper: React.FC<ExtensionWrapperProps> = ({ id }) => {
             const extension = await getExtension(
                 id,
                 false,
-                connectExtensionToApp,
+                connectLocalExtensionToApp,
             );
             return extension?.Component;
         },
     });
     if (isPending || !ExtComp) {
+        // TODO: better loading UI
         return <div>Loading...</div>;
     }
     return <ExtComp />;

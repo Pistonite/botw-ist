@@ -13,15 +13,15 @@ import { persist } from "zustand/middleware";
 export const BuiltinExtensionIds = [
     "editor",
     "item-explorer",
-    "stub1",
+    "crash-viewer",
 ] as const;
 
 const DefaultPrimaryIds: string[] = [
     "editor",
-    "stub1",
 ] satisfies (typeof BuiltinExtensionIds)[number][];
 const DefaultSecondaryIds: string[] = [
     "item-explorer",
+    "crash-viewer",
 ] satisfies (typeof BuiltinExtensionIds)[number][];
 
 export type ExtensionStore = {

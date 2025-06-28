@@ -9,6 +9,8 @@ title.info: "情報"
 button.allow: "許可する"
 button.cancel: "キャンセル"
 button.close: "閉じる"
+button.copied: "コピーしました！"
+button.copy: "コピー"
 button.launch: "起動"
 button.learn_more: "詳細を見る"
 button.ok: "OK"
@@ -64,17 +66,18 @@ menu.report_issue: "フィードバック"
 menu.skybook_manual: "Skybook マニュアル"
 
 # Main inventory display
+main.bug_report: "これがシミュレーターのバグだと思われる場合は、{{github}} に報告してください。"
 main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されたインベントリーデータ。アイテムはインベントリーに読み込まれたかのように表示され、スロットはコラプションに基づいてインベントリーに整列されます。"
 main.gdt_inventory.title: "ゲームデータ"
 main.gdt_inventory.view_error: "GDT内部データを表示できません！"
 main.tabbed_inventory.bad_msgbar.body: "タブのデータが破損しています。メモリ破損のエクスプロイトが原因の可能性があります。"
 main.tabbed_inventory.bad_msgbar.title: "タブを表示できません！"
 main.tabbed_inventory.button_tooltip: "リスト/タブ表示を切り替え"
+main.view_crash_report: "クラッシュレポートを表示するにはここをクリックしてください。"
+main.view_crash_report.desc: "問題を報告する際は、クラッシュレポートを含めてください。"
 main.visible_inventory.desc: "インベントリを開いたときに表示されるアイテム"
 main.visible_inventory.title: "表示インベントリ"
 main.visible_inventory.view_error: "インベントリを表示できません！"
-
-main.bug_report: "これがシミュレーターのバグだと思われる場合は、{{github}} に報告してください。"
 
 
 category.Armor: "防具"
@@ -108,9 +111,9 @@ dialog.custom_extensions.format_desc: "{{format}} の形式で、拡張機能を
 dialog.custom_extensions.help: "設定を保存した後、「{{open_button}}」からカスタム拡張機能をポップアウトウィンドウとして開けます。すでに開いている拡張機能は閉じられません。"
 
 # Extension names
+extension.crash-viewer.name: "クラッシュレポート"
 extension.editor.name: "スクリプトエディター"
 extension.item-explorer.name: "アイテム探索"
-extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "複数の検索語を接続するには {{hyphen}} を使用してください。例: {{example}}。"
@@ -119,6 +122,9 @@ item_explorer.label.no_results: "結果がありません"
 item_explorer.label.search_localized: "すべての言語で検索"
 item_explorer.label.search_placeholder: "検索"
 item_explorer.search_error.unknown_tag: "不明な言語タグ \"{{tag}}\""
+
+# Crash Viewer Extension
+crash_viewer.no_crash: "このステップではクラッシュなし"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "方向パッドメニューでは利用不可"

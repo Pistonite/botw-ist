@@ -9,6 +9,8 @@ title.info: "Info"
 button.allow: "Allow"
 button.cancel: "Cancel"
 button.close: "Close"
+button.copied: "Copied!"
+button.copy: "Copy"
 button.launch: "Launch"
 button.learn_more: "Learn more"
 button.ok: "OK"
@@ -64,17 +66,18 @@ menu.report_issue: "Feedback"
 menu.skybook_manual: "Skybook Manual"
 
 # Main inventory display
+main.bug_report: "Please report it on {{github}} if you think this is a bug"
 main.gdt_inventory.desc: "Inventory data stored in the game's flag system (GDT). Items are displayed as if they are loaded to inventory, and slots are aligned to inventory based on corruption"
 main.gdt_inventory.title: "Game Data"
 main.gdt_inventory.view_error: "Cannot display Game Data!"
 main.tabbed_inventory.bad_msgbar.body: "Tab data is corrupted. This is possibly due to a memory corruption exploit."
 main.tabbed_inventory.bad_msgbar.title: "Cannot display tabs!"
 main.tabbed_inventory.button_tooltip: "Toggle List/Tab View"
+main.view_crash_report: "Click here to view the crash report."
+main.view_crash_report.desc: "Please include the crash report when reporting an issue."
 main.visible_inventory.desc: "Items you see when the inventory is opened"
 main.visible_inventory.title: "Visible Inventory"
 main.visible_inventory.view_error: "Cannot display inventory!"
-
-main.bug_report: "Please report it on {{github}} if you think this is a bug"
 
 
 category.Armor: "Armor"
@@ -108,9 +111,9 @@ dialog.custom_extensions.format_desc: "Configure the extensions one per line bel
 dialog.custom_extensions.help: "After saving the configuration, you can open Custom Extensions as popout windows through \"{{open_button}}\". Custom Extensions that are currently opened will not be closed."
 
 # Extension names
+extension.crash-viewer.name: "Crash Report"
 extension.editor.name: "Script Editor"
 extension.item-explorer.name: "Item Explorer"
-extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Use {{hyphen}} to connect multiple search terms, for example {{example}}."
@@ -119,6 +122,9 @@ item_explorer.label.no_results: "No results"
 item_explorer.label.search_localized: "Search in all languages"
 item_explorer.label.search_placeholder: "Search"
 item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
+
+# Crash Viewer Extension
+crash_viewer.no_crash: "No crash at this step"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "Not in D-Pad Menu"

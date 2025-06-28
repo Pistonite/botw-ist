@@ -9,6 +9,8 @@ title.info: "Información"
 button.allow: "Permitir"
 button.cancel: "Cancelar"
 button.close: "Cerrar"
+button.copied: "¡Copiado!"
+button.copy: "Copiar"
 button.launch: "Lanzar"
 button.learn_more: "Más información"
 button.ok: "Aceptar"
@@ -64,17 +66,18 @@ menu.report_issue: "Comentarios"
 menu.skybook_manual: "Manual de Skybook"
 
 # Main inventory display
+main.bug_report: "Por favor, repórtalo en {{github}} si crees que es un error del simulador."
 main.gdt_inventory.desc: "Datos de inventario almacenados en el sistema de banderas del juego (GDT). Los objetos se muestran como si estuvieran cargados en el inventario, y las ranuras se alinean con el inventario según la corrupción."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "¡No se pueden mostrar los datos internos de GDT!"
 main.tabbed_inventory.bad_msgbar.body: "Los datos de las pestañas están dañados. Posiblemente debido a un exploit de corrupción de memoria."
 main.tabbed_inventory.bad_msgbar.title: "¡No se pueden mostrar las pestañas!"
 main.tabbed_inventory.button_tooltip: "Alternar vista de lista/pestañas"
+main.view_crash_report: "Haz clic aquí para ver el informe de errores."
+main.view_crash_report.desc: "Incluye el informe de errores al reportar un problema."
 main.visible_inventory.desc: "Objetos que ves al abrir el inventario"
 main.visible_inventory.title: "Inventario Visible"
 main.visible_inventory.view_error: "¡No se puede mostrar el inventario!"
-
-main.bug_report: "Por favor, repórtalo en {{github}} si crees que es un error del simulador."
 
 
 category.Armor: "Armadura"
@@ -108,9 +111,9 @@ dialog.custom_extensions.format_desc: "Configura las extensiones, una por línea
 dialog.custom_extensions.help: "Después de guardar la configuración, puedes abrir extensiones personalizadas como ventanas emergentes desde \"{{open_button}}\". Las extensiones que ya estén abiertas no se cerrarán."
 
 # Extension names
+extension.crash-viewer.name: "Informe de errores"
 extension.editor.name: "Editor de Scripts"
 extension.item-explorer.name: "Explorador de Objetos"
-extension.stub1.name: "blaasldkfjasd asdgak sdgfa lskdhgal"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Use {{hyphen}} para conectar múltiples términos de búsqueda, por ejemplo {{example}}."
@@ -119,6 +122,9 @@ item_explorer.label.no_results: "Sin resultados"
 item_explorer.label.search_localized: "Buscar en todos los idiomas"
 item_explorer.label.search_placeholder: "Buscar"
 item_explorer.search_error.unknown_tag: "Etiqueta de idioma desconocida \"{{tag}}\""
+
+# Crash Viewer Extension
+crash_viewer.no_crash: "No hay errores en este paso"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "No está en el menú de la cruceta"

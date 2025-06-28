@@ -23,7 +23,10 @@ export class FirstPartyExtensionAdapter implements ExtensionModule {
         }
         return {};
     }
-    public async onScriptChanged(_script: string): WxPromise<void> {
+    public async onScriptChanged(
+        _script: string,
+        _charPos: number,
+    ): WxPromise<void> {
         return {};
     }
     public async onIconSettingsChanged(
