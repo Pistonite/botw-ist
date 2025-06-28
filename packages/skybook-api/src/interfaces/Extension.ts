@@ -54,8 +54,8 @@ export class _wxSenderImpl implements Extension {
     /**
      * Notify the extension that the script has changed.
      */
-    public onScriptChanged( script: string ): WxPromise<void> {
-        return this.sender.sendVoid(19 /* Extension.onScriptChanged */, [ script ]);
+    public onScriptChanged( script: string, charPos: number ): WxPromise<void> {
+        return this.sender.sendVoid(19 /* Extension.onScriptChanged */, [ script, charPos ]);
     }
 }
 
@@ -77,8 +77,8 @@ export const _wxRecverImpl = (handler: Extension): WxBusRecvHandler => {
             return handler.onLocaleChanged( a0 );
         }
         case 19 /* Extension.onScriptChanged */: {
-            const [ a0 ] = args;
-            return handler.onScriptChanged( a0 );
+            const [ a0, a1 ] = args;
+            return handler.onScriptChanged( a0, a1 );
         }
     } return Promise.resolve({ err: { code: "UnknownFunction" } }); }) as WxBusRecvHandler;
 };

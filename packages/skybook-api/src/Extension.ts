@@ -32,5 +32,5 @@ export interface Extension {
     /**
      * Notify the extension that the script has changed.
      */
-    onScriptChanged(script: string): WxPromise<void>;
+    onScriptChanged(script: string, charPos: number): WxPromise<void>;
 }
