@@ -74,7 +74,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSpec],
-        pause_after: bool
+        pause_after: bool,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling GET command");
         self.with_game(rt, async move |game, rt| {
@@ -82,7 +82,7 @@ impl State {
             rt.execute(move |cpu| {
                 cpu.execute_reporting(game, |mut cpu2, sys, errors| {
                     sim::actions::get_items(&mut cpu2, sys, errors, &items, pause_after)?;
-                        sys.overworld.despawn_items();
+                    sys.overworld.despawn_items();
                     Ok(())
                 })
             })
@@ -125,8 +125,10 @@ impl State {
         })
         .await
     }
-    async fn handle_drop(self, rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSelectSpec]
+    async fn handle_drop(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSelectSpec],
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling HOLD -> DROP command");
         self.with_game(rt, async move |game, rt| {
@@ -142,7 +144,9 @@ impl State {
         .await
     }
 
-    async fn handle_drop_held(self, rt: sim::Context<&sim::Runtime>
+    async fn handle_drop_held(
+        self,
+        rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling DROP command");
         self.with_game(rt, async move |game, rt| {
@@ -156,15 +160,16 @@ impl State {
         .await
     }
 
-    async fn handle_pause(self,
+    async fn handle_pause(
+        self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling PAUSE command");
         self.with_game(rt, async move |game, rt| {
             rt.execute(move |cpu| {
                 cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-    sys.screen
-        .transition_to_inventory(&mut cpu2, &mut sys.overworld, true, errors)
+                    sys.screen
+                        .transition_to_inventory(&mut cpu2, &mut sys.overworld, true, errors)
                 })
             })
             .await
@@ -172,16 +177,21 @@ impl State {
         .await
     }
 
-    async fn handle_unpause(self,
+    async fn handle_unpause(
+        self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling UNPAUSE command");
         self.with_game(rt, async move |game, rt| {
             rt.execute(move |cpu| {
                 cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-    sys.screen
-        .transition_to_overworld(&mut cpu2, &mut sys.overworld, true, errors)?;
-                        sys.overworld.despawn_items();
+                    sys.screen.transition_to_overworld(
+                        &mut cpu2,
+                        &mut sys.overworld,
+                        true,
+                        errors,
+                    )?;
+                    sys.overworld.despawn_items();
                     Ok(())
                 })
             })

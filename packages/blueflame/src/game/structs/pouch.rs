@@ -65,7 +65,7 @@ impl Ptr![PauseMenuDataMgr] {
         }
         let ptr_diff = ptr_diff - offsetof!(self, mItemBuffer);
         // not aligned
-        if ptr_diff % PouchItem::SIZE != 0 {
+        if !ptr_diff.is_multiple_of(PouchItem::SIZE) {
             return None;
         }
 

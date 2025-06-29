@@ -191,7 +191,10 @@ fn fmt_item_data(data: &iv::ItemData, f: &mut std::fmt::Formatter<'_>) -> std::f
     write_snapshot_ln!(f, "data", value, duration, price, id, level)
 }
 
-fn fmt_iv_overworld(overworld: &iv::Overworld, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+fn fmt_iv_overworld(
+    overworld: &iv::Overworld,
+    f: &mut std::fmt::Formatter<'_>,
+) -> std::fmt::Result {
     let len = overworld.items.len();
     if len == 0 {
         // don't bloat the snapshot if overworld is empty
@@ -205,50 +208,36 @@ fn fmt_iv_overworld(overworld: &iv::Overworld, f: &mut std::fmt::Formatter<'_>) 
     Ok(())
 }
 
-fn fmt_iv_overworld_item(item: &iv::OverworldItem, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+fn fmt_iv_overworld_item(
+    item: &iv::OverworldItem,
+    f: &mut std::fmt::Formatter<'_>,
+) -> std::fmt::Result {
     match item {
-        iv::OverworldItem::Equipped { actor, value, modifier } => {
+        iv::OverworldItem::Equipped {
+            actor,
+            value,
+            modifier,
+        } => {
             let typ = "Equipped";
             let modifier = format!("{modifier:?}");
-            write_snapshot_ln!(
-                f,
-                "",
-                typ,
-                actor,
-                value,
-                modifier
-            )?;
-        },
+            write_snapshot_ln!(f, "", typ, actor, value, modifier)?;
+        }
         iv::OverworldItem::Held { actor } => {
             let typ = "Held";
-            write_snapshot_ln!(
-                f,
-                "",
-                typ,
-                actor,
-            )?;
+            write_snapshot_ln!(f, "", typ, actor,)?;
         }
-        iv::OverworldItem::GroundEquipment { actor, value, modifier } => {
+        iv::OverworldItem::GroundEquipment {
+            actor,
+            value,
+            modifier,
+        } => {
             let typ = "GroundEquipment";
             let modifier = format!("{modifier:?}");
-            write_snapshot_ln!(
-                f,
-                "",
-                typ,
-                actor,
-                value,
-                modifier
-            )?;
+            write_snapshot_ln!(f, "", typ, actor, value, modifier)?;
         }
         iv::OverworldItem::GroundItem { actor, despawning } => {
             let typ = "GroundItem";
-            write_snapshot_ln!(
-                f,
-                "",
-                typ,
-                actor,
-                despawning
-            )?;
+            write_snapshot_ln!(f, "", typ, actor, despawning)?;
         }
     }
     Ok(())

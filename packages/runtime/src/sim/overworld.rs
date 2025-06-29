@@ -3,7 +3,7 @@ use std::collections::VecDeque;
 use blueflame::game::WeaponModifierInfo;
 use teleparse::Span;
 
-use crate::error::{sim_error, ErrorReport};
+use crate::error::{ErrorReport, sim_error};
 use crate::iv;
 
 #[derive(Debug, Default, Clone)]
@@ -69,9 +69,7 @@ impl OverworldSystem {
             items.push(item.to_ground_item_iv(true));
         }
 
-        iv::Overworld {
-        items
-        }
+        iv::Overworld { items }
     }
 
     /// Spawn additional items held by the player (does not replacing existing)
@@ -90,11 +88,14 @@ impl OverworldSystem {
         self.is_hold_attached = attached && !self.holding.is_empty();
     }
 
-    /// Check if the player is either currently not holding or the items can be auto-dropped (i.e. 
+    /// Check if the player is either currently not holding or the items can be auto-dropped (i.e.
     /// is in attached state). If so, auto-drop the item before performing an action
     #[must_use = "result needs to be checked for extra clean up"]
-    pub fn predrop_for_action(&mut self, span: Span, errors: &mut Vec<ErrorReport>) 
-    -> OverworldPreDropResult {
+    pub fn predrop_for_action(
+        &mut self,
+        span: Span,
+        errors: &mut Vec<ErrorReport>,
+    ) -> OverworldPreDropResult {
         if self.holding.is_empty() {
             return OverworldPreDropResult::Ok;
         }
@@ -115,12 +116,13 @@ impl OverworldSystem {
     /// Drop items held by the player to the ground
     pub fn drop_held_items(&mut self) {
         self.is_hold_attached = false;
-        self.ground_materials.extend(std::mem::take(&mut self.holding));
+        self.ground_materials
+            .extend(std::mem::take(&mut self.holding));
         while self.ground_materials.len() > 10 {
             // unwrap: length is > 10
             let item = self.ground_materials.pop_front().unwrap();
             self.ground_materials_despawning.push(item);
-        } 
+        }
     }
 
     pub fn is_holding(&self) -> bool {
@@ -138,18 +140,26 @@ impl OverworldActor {
         iv::OverworldItem::Equipped {
             actor: self.name.clone(),
             value: self.value,
-            modifier: self.modifier.map(|x| iv::WeaponModifier {
-                flag: x.flags as i32,value: x.value
-            }).unwrap_or_default()
+            modifier: self
+                .modifier
+                .map(|x| iv::WeaponModifier {
+                    flag: x.flags as i32,
+                    value: x.value,
+                })
+                .unwrap_or_default(),
         }
     }
     pub fn to_ground_weapon_iv(&self) -> iv::OverworldItem {
         iv::OverworldItem::GroundEquipment {
             actor: self.name.clone(),
             value: self.value,
-            modifier: self.modifier.map(|x| iv::WeaponModifier {
-                flag: x.flags as i32,value: x.value
-            }).unwrap_or_default()
+            modifier: self
+                .modifier
+                .map(|x| iv::WeaponModifier {
+                    flag: x.flags as i32,
+                    value: x.value,
+                })
+                .unwrap_or_default(),
         }
     }
     pub fn to_held_iv(&self) -> iv::OverworldItem {
@@ -160,7 +170,7 @@ impl OverworldActor {
     pub fn to_ground_item_iv(&self, is_despawning: bool) -> iv::OverworldItem {
         iv::OverworldItem::GroundItem {
             actor: self.name.clone(),
-            despawning: is_despawning
+            despawning: is_despawning,
         }
     }
 }

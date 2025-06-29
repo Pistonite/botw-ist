@@ -99,7 +99,6 @@ impl RunOutput {
         };
 
         Ok(state.systems.overworld.to_iv())
-
     }
 
     /// Get the crash report for a step, if the game has crashed on that step

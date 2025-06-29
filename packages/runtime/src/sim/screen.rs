@@ -163,7 +163,6 @@ impl ScreenSystem {
 
         Ok(())
     }
-
 }
 
 impl Screen {

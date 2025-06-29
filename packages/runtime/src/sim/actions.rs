@@ -16,13 +16,14 @@ pub fn get_items(
     pause_after: bool,
 ) -> Result<(), processor::Error> {
     // first, must be in the overworld to get items
-    sys.screen.transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
+    sys.screen
+        .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
     // ensure player is not holding items
     let should_drop = match sys.overworld.predrop_for_action(ctx.span, errors) {
         sim::OverworldPreDropResult::Holding => {
             // cannot get while holding, stop
-            return Ok(())
-        },
+            return Ok(());
+        }
         sim::OverworldPreDropResult::AutoDrop => true,
         sim::OverworldPreDropResult::Ok => false,
     };
@@ -58,7 +59,8 @@ pub fn get_items(
 
     if pause_after {
         // open pause menu and delay drop
-        sys.screen.transition_to_inventory(ctx, &mut sys.overworld, false, errors)?;
+        sys.screen
+            .transition_to_inventory(ctx, &mut sys.overworld, false, errors)?;
         if should_drop {
             sys.screen.set_remove_held_after_dialog();
         }
@@ -118,7 +120,11 @@ pub fn hold_items(
                 break 'outer;
             }
 
-            linker::trash_item(ctx.cpu(), tab as i32, inventory.get_corrected_slot(tab, slot))?;
+            linker::trash_item(
+                ctx.cpu(),
+                tab as i32,
+                inventory.get_corrected_slot(tab, slot),
+            )?;
 
             let memory = ctx.cpu().proc.memory();
             // re-search the item if the item slot is used up
@@ -131,7 +137,8 @@ pub fn hold_items(
     }
 
     if attached {
-        sys.screen.transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
+        sys.screen
+            .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
         sys.overworld.set_held_attached(true);
     }
 
@@ -146,7 +153,8 @@ pub fn unhold(
 ) -> Result<(), processor::Error> {
     // can only unhold while in the overworld or in the inventory
     if !sys.screen.current_screen().is_inventory_or_overworld() {
-        sys.screen.transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
+        sys.screen
+            .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
     }
     // we don't check if the player is currently holding anything,
     // as it requires reading PMDM to check if it's holding in the pause menu
@@ -161,7 +169,8 @@ pub fn drop_held(
     sys: &mut sim::GameSystems,
     errors: &mut Vec<ErrorReport>,
 ) -> Result<(), processor::Error> {
-    sys.screen.transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
+    sys.screen
+        .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
     if !sys.overworld.is_holding() {
         errors.push(sim_warning!(ctx.span, NotHolding));
         return Ok(());

@@ -130,7 +130,7 @@ async fn run_test(
     test_script: &str,
     parsed_output: Arc<ParseOutput>,
 ) -> anyhow::Result<bool> {
-    log::debug!("{}", test_script);
+    log::debug!("TESTING\n{test_script}");
     let mut new_snapshot = String::from(
         "// This has RS extension since that usually gives a minimal syntax highlighting.\n//This is not an actual RS file\n\nx!{ SKYBOOK RUNTIME SNAPSHOT V1\n\n",
     );

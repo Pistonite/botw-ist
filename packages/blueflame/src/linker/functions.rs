@@ -1,8 +1,5 @@
 use crate::env::GameVer;
-use crate::game::{
-    CookItem, FixedSafeString40, PouchItem, WeaponModifierInfo,
-    singleton_instance,
-};
+use crate::game::{CookItem, FixedSafeString40, PouchItem, WeaponModifierInfo, singleton_instance};
 use crate::memory::{Ptr, mem};
 use crate::processor::{self, Cpu2, reg};
 

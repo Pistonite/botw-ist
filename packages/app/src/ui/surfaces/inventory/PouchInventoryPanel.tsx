@@ -126,7 +126,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                 <Button icon={<Info20Regular />} appearance="transparent" />
             </Tooltip>
             <div className={m("flex-row flex-1 flex-centera", c.toolbar)}>
-                <ScreenIndicator screen={pouch?.val?.screen}/>
+                <ScreenIndicator screen={pouch?.val?.screen} />
                 <Tooltip
                     relationship="label"
                     content={t("main.tabbed_inventory.button_tooltip")}
