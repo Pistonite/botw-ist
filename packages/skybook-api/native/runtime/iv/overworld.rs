@@ -45,7 +45,7 @@ mod __impl {
             modifier: iv::WeaponModifier,
         },
         /// Other items dropped on the ground
-        GroundItem { actor: String },
+        GroundItem { actor: String, despawning: bool },
     }
 }
 pub use __impl::InvView_Overworld as Overworld;

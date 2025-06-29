@@ -13,4 +13,6 @@ export type RuntimeError =
     | { type: "ItemMismatch"; data: [string, string] }
     | { type: "CannotFindItem" }
     | { type: "CannotHoldMore" }
+    | { type: "CannotDoWhileHolding" }
+    | { type: "NotHolding" }
     | { type: "Unimplemented" };
