@@ -60,7 +60,6 @@ export const language: LanguageTokenizer = {
 
         "sort",
         "entangle",
-        "sync",
         "break",
         "save",
         "save-as",
