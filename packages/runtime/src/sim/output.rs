@@ -86,31 +86,20 @@ impl RunOutput {
         })
     }
 
-    pub fn get_overworld_items(&self, _step: usize) -> Result<iv::Overworld, RuntimeViewError> {
-        // mock data
-        Ok(iv::Overworld {
-            items: vec![
-                iv::OverworldItem::Equipped {
-                    actor: "Weapon_Sword_070".to_string(),
-                    value: 3000,
-                    modifier: Default::default(),
-                },
-                iv::OverworldItem::Held {
-                    actor: "Item_Fruit_A".to_string(),
-                },
-                iv::OverworldItem::GroundEquipment {
-                    actor: "Weapon_Sword_018".to_string(),
-                    value: 2600,
-                    modifier: iv::WeaponModifier {
-                        flag: 0x1,
-                        value: 100,
-                    },
-                },
-                iv::OverworldItem::GroundItem {
-                    actor: "Item_Fruit_A".to_string(),
-                },
-            ],
-        })
+    pub fn get_overworld_items(&self, step: usize) -> Result<iv::Overworld, RuntimeViewError> {
+        let Some(state) = self.get_state_by_step(step) else {
+            return Ok(Default::default());
+        };
+        let state = match &state.game {
+            sim::Game::Uninit => return Ok(Default::default()),
+            sim::Game::Running(state) => state,
+            sim::Game::Crashed(_) | sim::Game::PreviousCrash => {
+                return Err(RuntimeViewError::Crash);
+            }
+        };
+
+        Ok(state.systems.overworld.to_iv())
+
     }
 
     /// Get the crash report for a step, if the game has crashed on that step

@@ -1,4 +1,8 @@
-
 get 2 apple 3 pepper
 hold pepper
 hold 2 apple
+unhold
+hold 1 apple
+drop
+get 2 fire-arrow
+hold fire-arrow

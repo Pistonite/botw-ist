@@ -47,6 +47,7 @@ pub enum TT {
     /////////////////////////////
     #[teleparse(terminal(
         KwGet = "get",
+        KwGetPause = "get-pause",
         KwBuy = "buy",
 
         KwHold = "hold",
@@ -75,7 +76,6 @@ pub enum TT {
         KwSort = "sort",
         KwEntangle = "entangle",
         // KwDistangle = "distangle",
-        KwSync = "sync",
         KwBreak = "break",
 
         KwSave = "save",

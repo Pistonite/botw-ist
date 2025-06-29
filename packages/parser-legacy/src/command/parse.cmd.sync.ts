@@ -4,7 +4,7 @@ import { codeBlockFromRange, type Parser } from "./type";
 
 export class CommandSync extends AbstractProperCommand {
     public override convert(): string {
-        return "sync;";
+        return "pause; unpause;";
     }
 }
 

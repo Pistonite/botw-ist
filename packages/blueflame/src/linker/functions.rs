@@ -1,6 +1,6 @@
 use crate::env::GameVer;
 use crate::game::{
-    CookItem, FixedSafeString40, PauseMenuDataMgr, PouchItem, WeaponModifierInfo,
+    CookItem, FixedSafeString40, PouchItem, WeaponModifierInfo,
     singleton_instance,
 };
 use crate::memory::{Ptr, mem};
@@ -178,9 +178,7 @@ pub fn update_equipped_item_array(cpu: &mut Cpu2) -> Result<(), processor::Error
 /// This is re-implemented since it's inlined in 1.6
 pub fn create_holding_items(cpu: &mut Cpu2) -> Result<(), processor::Error> {
     cpu.reset_stack();
-    reg! { cpu:
-        x[0] => let pmdm: Ptr![PauseMenuDataMgr],
-    };
+    let pmdm = singleton_instance!(pmdm(cpu.proc.memory()))?;
     let grabbed_items = pmdm.grabbed_items();
     for i in 0..5 {
         let grabbed_item = grabbed_items.ith(i);
@@ -264,6 +262,17 @@ pub fn trash_item(cpu: &mut Cpu2, tab_index: i32, slot_index: i32) -> Result<(),
     };
     // TODO --160
     cpu.native_jump_to_main_offset(0x009766d8)
+}
+
+/// Call `uking::ui::PauseMenuDataMgr::unholdGrabbedItems` (0x710097ADFC)
+pub fn unhold_items(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+    };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x0097ADFC)
 }
 
 pub fn call_load_from_game_data(cpu: &mut Cpu2) -> Result<(), processor::Error> {
@@ -358,7 +367,7 @@ mod helper {
         ptr: Ptr![SafeString],
     ) -> Result<(), processor::Error> {
         let vtable = Ptr!(&ptr->vtable).load(cpu.proc.memory())?;
-        let func_addr = Ptr!(<u64>(vtable + 18)).load(cpu.proc.memory())?;
+        let func_addr = Ptr!(<u64>(vtable + 0x18)).load(cpu.proc.memory())?;
         reg! { cpu: x[0] = ptr };
         cpu.native_jump(func_addr)
     }

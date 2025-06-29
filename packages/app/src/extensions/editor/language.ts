@@ -32,6 +32,7 @@ export const language: LanguageTokenizer = {
 
     commands: [
         "get",
+        "get-pause",
         "buy",
 
         "hold",

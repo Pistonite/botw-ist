@@ -3,7 +3,7 @@ use std::sync::atomic::AtomicBool;
 
 use skybook_parser::ParseOutput;
 
-use crate::error::{ErrorReport, MaybeAborted};
+use crate::error::MaybeAborted;
 use crate::sim;
 
 pub struct Run {
@@ -86,14 +86,7 @@ impl Run {
                     let report = match state.execute_step(ctx.clone(), step).await {
                         Err(e) => {
                             log::error!("failed to execute step {i}: {e}");
-                            if ctx.is_aborted() {
-                                log::warn!("the run is aborted, so the error is ignored");
-                                return MaybeAborted::Aborted;
-                            }
-                            self.output
-                                .errors
-                                .push(ErrorReport::error(ctx.span, crate::Error::Executor));
-                            return MaybeAborted::Ok(self.output);
+                            return MaybeAborted::Aborted;
                         }
                         Ok(report) => report,
                     };

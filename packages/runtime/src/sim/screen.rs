@@ -42,8 +42,6 @@ pub enum Screen {
     Inventory(InventoryScreen),
     /// In shop dialog (selling sellable items)
     ShopDialog,
-    /// In statue dialog (selling Orbs)
-    StatueDialog,
 }
 
 /// Simulation of the inventory screen state
@@ -105,39 +103,6 @@ pub struct InventoryScreenActor {
 }
 
 impl ScreenSystem {
-    pub fn transition_to_inventory(
-        &mut self,
-        ctx: &mut sim::Context<&mut Cpu2>,
-        overworld: &mut sim::OverworldSystem,
-        warn_if_already: bool,
-        errors: &mut Vec<ErrorReport>,
-    ) -> Result<(), processor::Error> {
-        if matches!(self.screen.as_ref(), Screen::Inventory(_)) {
-            if warn_if_already {
-                errors.push(sim_warning!(ctx.span, UselessScreenTransition));
-            }
-            return Ok(());
-        }
-        let screen = Arc::make_mut(&mut self.screen);
-        // if the screen cannot be transition directly to inventory
-        // screen, close it first to go back to overworld
-        match screen {
-            Screen::ShopDialog | Screen::StatueDialog => {
-                let drop_items = self.remove_held_item_after_dialog;
-                self.remove_held_item_after_dialog = false;
-                screen.transition_to_overworld(ctx, overworld, self.menu_overload, drop_items)?;
-            }
-            // unreachable: checked above
-            Screen::Inventory(_) => unreachable!(),
-            Screen::Overworld => {}
-        }
-
-        // actually open the inventory
-        *screen = Screen::open_new_inventory(ctx.cpu())?;
-
-        Ok(())
-    }
-
     pub fn current_screen(&self) -> &Screen {
         &self.screen
     }
@@ -145,6 +110,60 @@ impl ScreenSystem {
     pub fn current_screen_mut(&mut self) -> &mut Screen {
         Arc::make_mut(&mut self.screen)
     }
+
+    pub fn set_remove_held_after_dialog(&mut self) {
+        self.remove_held_item_after_dialog = true;
+    }
+
+    pub fn transition_to_inventory(
+        &mut self,
+        ctx: &mut sim::Context<&mut Cpu2>,
+        overworld: &mut sim::OverworldSystem,
+        warn_if_already: bool,
+        errors: &mut Vec<ErrorReport>,
+    ) -> Result<(), processor::Error> {
+        match self.screen.as_ref() {
+            Screen::Inventory(_) => {
+                if warn_if_already {
+                    errors.push(sim_warning!(ctx.span, UselessScreenTransition));
+                }
+                return Ok(());
+            }
+            Screen::Overworld => {}
+            // if the screen cannot be transition directly to inventory
+            // screen, close it first to go back to overworld
+            Screen::ShopDialog => {
+                self.transition_to_overworld(ctx, overworld, false, errors)?;
+            }
+        }
+
+        // actually open the inventory
+        *self.current_screen_mut() = Screen::open_new_inventory(ctx.cpu())?;
+
+        Ok(())
+    }
+
+    pub fn transition_to_overworld(
+        &mut self,
+        ctx: &mut sim::Context<&mut Cpu2>,
+        overworld: &mut sim::OverworldSystem,
+        warn_if_already: bool,
+        errors: &mut Vec<ErrorReport>,
+    ) -> Result<(), processor::Error> {
+        if matches!(self.screen.as_ref(), Screen::Overworld) {
+            if warn_if_already {
+                errors.push(sim_warning!(ctx.span, UselessScreenTransition));
+            }
+            return Ok(());
+        }
+        let screen = Arc::make_mut(&mut self.screen);
+        let drop_items = self.remove_held_item_after_dialog;
+        self.remove_held_item_after_dialog = false;
+        screen.transition_to_overworld(ctx, overworld, self.menu_overload, drop_items)?;
+
+        Ok(())
+    }
+
 }
 
 impl Screen {
@@ -154,8 +173,11 @@ impl Screen {
             Screen::Overworld => iv::Screen::Overworld,
             Screen::Inventory(_) => iv::Screen::Inventory,
             Screen::ShopDialog => iv::Screen::Shop,
-            Screen::StatueDialog => iv::Screen::Statue,
         }
+    }
+
+    pub fn is_inventory_or_overworld(&self) -> bool {
+        matches!(self, Screen::Overworld | Screen::Inventory(_))
     }
 
     pub fn as_inventory(&self) -> Option<&InventoryScreen> {
@@ -333,13 +355,13 @@ impl Screen {
                 log::debug!("spawning overworld holding items: {:?}", state.actors);
                 overworld.spawn_held_items(state.actors);
             }
-            Self::ShopDialog | Self::StatueDialog => {}
+            Self::ShopDialog => {}
         }
         log::debug!("removing translucent items on returning to overworld");
         linker::delete_removed_items(ctx.cpu())?;
 
         if drop_items {
-            log::debug!("dropping held items on returning to overworld");
+            log::debug!("removing held items on returning to overworld");
             linker::remove_held_items(ctx.cpu())?;
             overworld.drop_held_items();
         }
@@ -383,6 +405,26 @@ impl InventoryScreen {
         out
     }
 
+    /// Get the "corrected" item position to use in PMDM function calls
+    ///
+    /// This is because the slot index passed into PMDM function is the real
+    /// position (index), but in our implementation is the visual implementation.
+    /// These two are the same except for the arrow slots, where the number of empty
+    /// bow slots need to be removed
+    pub fn get_corrected_slot(&self, tab: usize, slot: usize) -> i32 {
+        let Some(tab) = self.tabs.get(tab) else {
+            return slot as i32;
+        };
+        let mut real_slot = slot as i32;
+        for item in tab.items.iter().take(slot) {
+            if item.is_none() {
+                real_slot -= 1;
+            }
+        }
+
+        real_slot
+    }
+
     /// Select an item in the inventory.
     ///
     /// Returns the tab index and slot index
@@ -401,7 +443,8 @@ impl InventoryScreen {
                 for (tab_i, tab) in self.tabs.iter().enumerate() {
                     for (slot, item) in tab.items.iter().enumerate() {
                         let Some(item) = item else {
-                            break;
+                            // there could be empty slots in the tab
+                            continue;
                         };
                         let Some(item_category) = item.category else {
                             break;
