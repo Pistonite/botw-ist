@@ -207,11 +207,13 @@ runtime_init.SaveImage: "保存自定义镜像数据失败."
 runtime_init.UnsupportedVersion: "镜像包含的游戏版本目前不支持."
 
 # Error/Diagnostic from Runtime
+runtime_error.CannotDoWhileHolding: "手持物品时无法执行此操作."
 runtime_error.CannotFindItem: "没有在背包中找到此物品."
 runtime_error.CannotHoldMore: "无法手持更多物品."
 runtime_error.Crash: "执行此步骤时游戏崩溃."
 runtime_error.Executor: "执行器出错."
 runtime_error.ItemMismatch: "背包中此位置的物品为 `{{actual_item}}`, 而不是指令中的 `{{expected_item}}`."
+runtime_error.NotHolding: "未手持任何物品."
 runtime_error.NotRightScreen: "此指令无法在当前界面使用. 您已经使用指令手动打开了某个界面, 所以模拟器不能自动切换界面. 若要使模拟器自动切换界面, 请先使用相应指令返回主世界."
 runtime_error.PreviousCrash: "因之前的步骤导致游戏崩溃，需要读档(`reload`)或开始新游戏(`new-game`)."
 runtime_error.Unimplemented: "还没做完."
