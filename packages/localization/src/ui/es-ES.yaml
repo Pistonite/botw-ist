@@ -70,6 +70,14 @@ main.bug_report: "Por favor, repórtalo en {{github}} si crees que es un error d
 main.gdt_inventory.desc: "Datos de inventario almacenados en el sistema de banderas del juego (GDT). Los objetos se muestran como si estuvieran cargados en el inventario, y las ranuras se alinean con el inventario según la corrupción."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "¡No se pueden mostrar los datos internos de GDT!"
+main.screen.inventory: "Inventario"
+main.screen.inventory.desc: "El menú de pausa está actualmente abierto. El jugador puede interactuar con los objetos del inventario."
+main.screen.none: "Ninguna pantalla"
+main.screen.none.desc: "Juego no iniciado"
+main.screen.overworld: "Mundo exterior"
+main.screen.overworld.desc: "No hay ninguna pantalla abierta. El jugador puede moverse libremente en este estado."
+main.screen.shop: "Comprar/Vender"
+main.screen.shop.desc: "Hay un diálogo abierto en una secuencia de eventos de compra/venta. El jugador puede comprar o vender objetos. Tenga en cuenta que el simulador no impone qué objetos se pueden vender o comprar."
 main.tabbed_inventory.bad_msgbar.body: "Los datos de las pestañas están dañados. Posiblemente debido a un exploit de corrupción de memoria."
 main.tabbed_inventory.bad_msgbar.title: "¡No se pueden mostrar las pestañas!"
 main.tabbed_inventory.button_tooltip: "Alternar vista de lista/pestañas"
@@ -78,7 +86,6 @@ main.view_crash_report.desc: "Incluye el informe de errores al reportar un probl
 main.visible_inventory.desc: "Objetos que ves al abrir el inventario"
 main.visible_inventory.title: "Inventario Visible"
 main.visible_inventory.view_error: "¡No se puede mostrar el inventario!"
-
 
 category.Armor: "Armadura"
 category.ArmorHead: "Armadura (Cabeza)"
@@ -200,11 +207,13 @@ runtime_init.SaveImage: "No se pudieron guardar los datos de la imagen personali
 runtime_init.UnsupportedVersion: "La imagen contiene una versión del juego que actualmente no es compatible."
 
 # Error/Diagnostic from Runtime
+runtime_error.CannotDoWhileHolding: "No se puede hacer esto mientras se sostienen objetos."
 runtime_error.CannotFindItem: "No se puede encontrar este artículo en el inventario."
 runtime_error.CannotHoldMore: "No se pueden llevar más artículos."
 runtime_error.Crash: "El juego se ha colgado en este paso."
 runtime_error.Executor: "Error inesperado del Ejecutor."
 runtime_error.ItemMismatch: "El artículo encontrado en esta posición del inventario es `{{actual_item}}`, mientras que el artículo especificado en el comando es `{{expected_item}}`."
+runtime_error.NotHolding: "No se está sosteniendo ningún objeto."
 runtime_error.NotRightScreen: "No puede usar este comando en la pantalla actual. El simulador cambiará de pantalla automáticamente a menos que haya abierto una pantalla manualmente con un comando. Volver a la pantalla del supramundo con un comando permitirá que el simulador cambie de pantalla automáticamente de nuevo."
 runtime_error.PreviousCrash: "El juego se ha colgado en un paso anterior. Necesitas `recargar` (`reload`) o iniciar una `nueva partida` (`new-game`) antes de continuar."
 runtime_error.Unimplemented: "Este comando aún no está implementado :)."

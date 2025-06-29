@@ -85,6 +85,10 @@ pub enum RuntimeError {
     CannotFindItem,
     #[error("cannot hold more items")]
     CannotHoldMore,
+    #[error("cannot do this while holding items in the overworld")]
+    CannotDoWhileHolding,
+    #[error("not holding any items")]
+    NotHolding,
     // #[error("only materials can be held unless prompt entanglement is in effect")]
     // CannotHoldNonMaterial,
     #[error(

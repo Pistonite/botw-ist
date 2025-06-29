@@ -1,60 +1,74 @@
 Some(
     Script {
-        stmts: 26..159 => [
+        stmts: 26..172 => [
             Statement {
-                cmd: Sync(
-                    token Command(26..30),
+                cmd: OpenInv(
+                    Pause(
+                        token Command(26..31),
+                    ),
                 ),
                 semi: None(
-                    30,
+                    31,
                 ),
             },
             Statement {
-                cmd: Sync(
-                    token Command(47..51),
+                cmd: CloseInv(
+                    Unpause(
+                        token Command(48..55),
+                    ),
                 ),
                 semi: None(
-                    51,
+                    55,
                 ),
             },
             Statement {
-                cmd: Sync(
-                    token Command(100..104),
-                ),
-                semi: None(
-                    104,
-                ),
-            },
-            Statement {
-                cmd: Sync(
-                    token Command(105..109),
+                cmd: OpenInv(
+                    Pause(
+                        token Command(104..109),
+                    ),
                 ),
                 semi: None(
                     109,
                 ),
             },
             Statement {
-                cmd: Sync(
-                    token Command(144..148),
+                cmd: CloseInv(
+                    Unpause(
+                        token Command(110..117),
+                    ),
                 ),
                 semi: None(
-                    148,
+                    117,
                 ),
             },
             Statement {
-                cmd: Sync(
-                    token Command(150..154),
+                cmd: OpenInv(
+                    Pause(
+                        token Command(152..157),
+                    ),
                 ),
                 semi: None(
-                    154,
+                    157,
                 ),
             },
             Statement {
-                cmd: Sync(
-                    token Command(155..159),
+                cmd: CloseInv(
+                    Unpause(
+                        token Command(159..166),
+                    ),
                 ),
                 semi: None(
-                    159,
+                    166,
+                ),
+            },
+            Statement {
+                cmd: OpenInv(
+                    Pause(
+                        token Command(167..172),
+                    ),
+                ),
+                semi: None(
+                    172,
                 ),
             },
         ],

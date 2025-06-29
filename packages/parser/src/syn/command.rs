@@ -27,6 +27,8 @@ pub enum Command {
     // ==== adding items ====
     /// `get ITEMS`
     Get(CmdGet),
+    /// `get-pause ITEMS`
+    GetPause(CmdGetPause),
     /// `buy ITEMS`
     Buy(CmdBuy),
     /// `pick-up ITEMS`
@@ -81,8 +83,6 @@ pub enum Command {
     Sort(CmdSort),
     /// `entangle CATEGORY [tab=X, rol=R, col=C]`
     Entangle(CmdEntangle),
-    /// `sync` - sync gamedata
-    Sync(syn::KwSync),
     /// `break X slots`
     Break(CmdBreakSlots),
     /// `!set-inventory ITEMS`
@@ -143,11 +143,19 @@ pub enum Annotation {
     BowSlots(CmdBowSlots),
 }
 
-/// `get ITEMS` - items come from the area
+/// `get ITEMS` - get items, come from the area
 #[derive_syntax]
 #[derive(Debug)]
 pub struct CmdGet {
     pub lit: syn::KwGet,
+    pub items: syn::ItemListFinite,
+}
+
+/// `get-pause ITEMS` - get items, come from the area, pause afterwards (such as a chest)
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdGetPause {
+    pub lit: syn::KwGetPause,
     pub items: syn::ItemListFinite,
 }
 

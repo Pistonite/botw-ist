@@ -254,7 +254,7 @@ impl<T: FlagType> Flag<Box<[T]>> {
 static BOOL_FLAG_PACK: &[u8] = include_bytes!("generated/bool_flag_pack.bin");
 #[cfg(feature = "data")]
 pub fn unpack_bool_flags() -> Vec<Flag<bool>> {
-    if BOOL_FLAG_PACK.len() % 5 != 0 {
+    if !BOOL_FLAG_PACK.len().is_multiple_of(5) {
         panic!("Invalid bool flag pack length");
     }
     let num_flags = BOOL_FLAG_PACK.len() / 5;
@@ -277,7 +277,7 @@ pub fn unpack_bool_flags() -> Vec<Flag<bool>> {
 static S32_FLAG_PACK: &[u8] = include_bytes!("generated/s32_flag_pack.bin");
 #[cfg(feature = "data")]
 pub fn unpack_s32_flags() -> Vec<Flag<i32>> {
-    if S32_FLAG_PACK.len() % 17 != 0 {
+    if !S32_FLAG_PACK.len().is_multiple_of(17) {
         panic!("Invalid s32 flag pack length");
     }
 

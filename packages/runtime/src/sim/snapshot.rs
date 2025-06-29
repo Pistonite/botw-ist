@@ -25,7 +25,7 @@ pub enum GameSnapshot {
 
 pub struct GameSnapshotRunning {
     pub pouch: Result<iv::PouchList, sim::view::Error>,
-    // TODO: more states
+    pub overworld: iv::Overworld,
 }
 
 macro_rules! write_snapshot_ln {
@@ -62,6 +62,7 @@ impl std::fmt::Display for GameSnapshot {
 impl std::fmt::Display for GameSnapshotRunning {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt_iv_pouch(&self.pouch, f)?;
+        fmt_iv_overworld(&self.overworld, f)?;
 
         Ok(())
     }
@@ -190,6 +191,58 @@ fn fmt_item_data(data: &iv::ItemData, f: &mut std::fmt::Formatter<'_>) -> std::f
     write_snapshot_ln!(f, "data", value, duration, price, id, level)
 }
 
+fn fmt_iv_overworld(
+    overworld: &iv::Overworld,
+    f: &mut std::fmt::Formatter<'_>,
+) -> std::fmt::Result {
+    let len = overworld.items.len();
+    if len == 0 {
+        // don't bloat the snapshot if overworld is empty
+        return Ok(());
+    }
+    write_snapshot_ln!(f, "  overworld", len)?;
+    for (i, item) in overworld.items.iter().enumerate() {
+        write!(f, "      [{i:03}]")?;
+        fmt_iv_overworld_item(item, f)?;
+    }
+    Ok(())
+}
+
+fn fmt_iv_overworld_item(
+    item: &iv::OverworldItem,
+    f: &mut std::fmt::Formatter<'_>,
+) -> std::fmt::Result {
+    match item {
+        iv::OverworldItem::Equipped {
+            actor,
+            value,
+            modifier,
+        } => {
+            let typ = "Equipped";
+            let modifier = format!("{modifier:?}");
+            write_snapshot_ln!(f, "", typ, actor, value, modifier)?;
+        }
+        iv::OverworldItem::Held { actor } => {
+            let typ = "Held";
+            write_snapshot_ln!(f, "", typ, actor,)?;
+        }
+        iv::OverworldItem::GroundEquipment {
+            actor,
+            value,
+            modifier,
+        } => {
+            let typ = "GroundEquipment";
+            let modifier = format!("{modifier:?}");
+            write_snapshot_ln!(f, "", typ, actor, value, modifier)?;
+        }
+        iv::OverworldItem::GroundItem { actor, despawning } => {
+            let typ = "GroundItem";
+            write_snapshot_ln!(f, "", typ, actor, despawning)?;
+        }
+    }
+    Ok(())
+}
+
 impl sim::State {
     pub fn to_snapshot(&self) -> StateSnapshot {
         StateSnapshot {
@@ -212,6 +265,7 @@ impl sim::Game {
 impl sim::GameState {
     pub fn to_snapshot(&self) -> GameSnapshotRunning {
         let pouch = sim::view::extract_pouch_view(&self.process, &self.systems);
-        GameSnapshotRunning { pouch }
+        let overworld = self.systems.overworld.to_iv();
+        GameSnapshotRunning { pouch, overworld }
     }
 }

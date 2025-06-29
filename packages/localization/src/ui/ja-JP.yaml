@@ -70,6 +70,14 @@ main.bug_report: "これがシミュレーターのバグだと思われる場�
 main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されたインベントリーデータ。アイテムはインベントリーに読み込まれたかのように表示され、スロットはコラプションに基づいてインベントリーに整列されます。"
 main.gdt_inventory.title: "ゲームデータ"
 main.gdt_inventory.view_error: "GDT内部データを表示できません！"
+main.screen.inventory: "インベントリ"
+main.screen.inventory.desc: "ポーズメニューが現在開いています。プレイヤーはインベントリのアイテムとやり取りできます。"
+main.screen.none: "画面なし"
+main.screen.none.desc: "ゲームが開始されていません"
+main.screen.overworld: "オーバーワールド"
+main.screen.overworld.desc: "画面は開いていません。プレイヤーはこの状態で移動できます。"
+main.screen.shop: "売買"
+main.screen.shop.desc: "売買イベントシーケンスのダイアログが現在開いています。プレイヤーはアイテムを売買できます。シミュレーターは、どのアイテムを売買できるかを強制しないことに注意してください。"
 main.tabbed_inventory.bad_msgbar.body: "タブのデータが破損しています。メモリ破損のエクスプロイトが原因の可能性があります。"
 main.tabbed_inventory.bad_msgbar.title: "タブを表示できません！"
 main.tabbed_inventory.button_tooltip: "リスト/タブ表示を切り替え"
@@ -78,7 +86,6 @@ main.view_crash_report.desc: "問題を報告する際は、クラッシュレ�
 main.visible_inventory.desc: "インベントリを開いたときに表示されるアイテム"
 main.visible_inventory.title: "表示インベントリ"
 main.visible_inventory.view_error: "インベントリを表示できません！"
-
 
 category.Armor: "防具"
 category.ArmorHead: "防具（頭）"
@@ -200,11 +207,13 @@ runtime_init.SaveImage: "カスタムイメージデータの保存に失敗し�
 runtime_init.UnsupportedVersion: "イメージには現在サポートされていないバージョンのゲームが含まれています。"
 
 # Error/Diagnostic from Runtime
+runtime_error.CannotDoWhileHolding: "アイテムを持っている間は、この操作はできません。"
 runtime_error.CannotFindItem: "このアイテムはインベントリに見つかりません。"
 runtime_error.CannotHoldMore: "これ以上アイテムを持てません。"
 runtime_error.Crash: "このステップでゲームがクラッシュしました。"
 runtime_error.Executor: "Executorからの予期せぬエラー。"
 runtime_error.ItemMismatch: "インベントリのこの位置にあるアイテムは `{{actual_item}}` ですが、コマンドで指定されたアイテムは `{{expected_item}}` です。"
+runtime_error.NotHolding: "何も持っていません。"
 runtime_error.NotRightScreen: "このコマンドは現在の画面では使用できません。コマンドで手動で画面を開いていない限り、シミュレーターは自動的に画面を切り替えます。コマンドでオーバーワールド画面に戻ると、シミュレーターが再び自動的に画面を切り替えるようになります。"
 runtime_error.PreviousCrash: "以前のステップでゲームがクラッシュしました。続行する前に`リロード` (`reload`)または`ニューゲーム` (`new-game`)が必要です。"
 runtime_error.Unimplemented: "このコマンドはまだ実装されていません :)。"

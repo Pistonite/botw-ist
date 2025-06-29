@@ -39,6 +39,8 @@ import {
 } from "self::ui/components";
 import { openExtension } from "self::application/extension";
 
+import { ScreenIndicator } from "./ScreenIndicator.tsx";
+
 const useStyles = makeStyles({
     splitContainer: {
         zIndex: 1,
@@ -124,6 +126,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                 <Button icon={<Info20Regular />} appearance="transparent" />
             </Tooltip>
             <div className={m("flex-row flex-1 flex-centera", c.toolbar)}>
+                <ScreenIndicator screen={pouch?.val?.screen} />
                 <Tooltip
                     relationship="label"
                     content={t("main.tabbed_inventory.button_tooltip")}

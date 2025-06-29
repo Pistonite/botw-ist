@@ -25,6 +25,18 @@ where
     }
 }
 
+impl Execute for (Box<dyn Execute>, Box<dyn Execute>) {
+    fn execute_from(&self, cpu: &mut Cpu0, proc: &mut Process, step: u32) -> Result<(), Error> {
+        if step != 0 {
+            return Err(Error::StrictReplacement {
+                main_offset: (cpu.pc - proc.main_start()) as u32,
+            });
+        }
+        self.0.execute_from(cpu, proc, 0)?;
+        self.1.execute_from(cpu, proc, 0)
+    }
+}
+
 pub fn box_execute<F>(f: F) -> Box<dyn Execute>
 where
     F: Fn(&mut Cpu0, &mut Process) -> Result<(), Error>

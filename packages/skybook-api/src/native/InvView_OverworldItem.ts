@@ -18,4 +18,4 @@ export type InvView_OverworldItem =
           value: number;
           modifier: InvView_WeaponModifier;
       }
-    | { type: "ground-item"; actor: string };
+    | { type: "ground-item"; actor: string; despawning: boolean };

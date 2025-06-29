@@ -34,10 +34,10 @@ async fn parse_notes() -> anyhow::Result<()> {
         '''note
         a
         '''
-        sync
+        pause
         '''some-tag
         '''
-        sync
+        unpause
         '''note
         text
         '''
@@ -46,15 +46,15 @@ async fn parse_notes() -> anyhow::Result<()> {
 
         get  1 apple
         '''
-        sync
-        sync
+        pause
+        unpause
         '''note
         empty line in between
         '''
-        sync
+        pause
 
-        sync
-        sync
+        unpause
+        pause
         '''note
         test afterwards
         two lines

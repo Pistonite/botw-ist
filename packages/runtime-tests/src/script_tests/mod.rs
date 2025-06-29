@@ -130,6 +130,7 @@ async fn run_test(
     test_script: &str,
     parsed_output: Arc<ParseOutput>,
 ) -> anyhow::Result<bool> {
+    log::debug!("TESTING\n{test_script}");
     let mut new_snapshot = String::from(
         "// This has RS extension since that usually gives a minimal syntax highlighting.\n//This is not an actual RS file\n\nx!{ SKYBOOK RUNTIME SNAPSHOT V1\n\n",
     );
@@ -142,12 +143,26 @@ async fn run_test(
         .await
         .unwrap();
 
+    log::debug!("{}", output.states.len());
+
     // also write diagnostics into output
+    for error in &parsed_output.errors {
+        let prefix = if error.is_warning {
+            "parse warning: "
+        } else {
+            "parse error: "
+        };
+        new_snapshot += &format!("{}: {}\n", prefix, error.error);
+        new_snapshot += &format!("  span: {}..{}\n", error.span.0, error.span.1);
+        new_snapshot += "-----\n";
+        new_snapshot += &test_script[error.span.0..error.span.1];
+        new_snapshot += "\n-----\n";
+    }
     for error in output.errors {
         let prefix = if error.is_warning {
-            "warning: "
+            "runtime warning: "
         } else {
-            "error: "
+            "runtime error: "
         };
         new_snapshot += &format!("{}: {}\n", prefix, error.error);
         new_snapshot += &format!("  span: {}..{}\n", error.span.0, error.span.1);

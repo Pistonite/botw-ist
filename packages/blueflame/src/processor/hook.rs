@@ -37,6 +37,16 @@ impl HookProvider for HookChain {
     fn fetch(&self, main_offset: u32, env: Environment) -> Result<Option<Hook>, Error> {
         match self.outer.fetch(main_offset, env)? {
             None => self.inner.fetch(main_offset, env),
+            // for start hooks, chain into the inner hook
+            Some(Hook::Start(exec)) => match self.inner.fetch(main_offset, env)? {
+                None => Ok(Some(Hook::Start(exec))),
+                Some(Hook::Start(inner_exec)) => {
+                    Ok(Some(Hook::Start(Box::new((exec, inner_exec)))))
+                }
+                Some(Hook::Replace(inner_exec, bytes)) => {
+                    Ok(Some(Hook::Replace(Box::new((exec, inner_exec)), bytes)))
+                }
+            },
             x => Ok(x),
         }
     }

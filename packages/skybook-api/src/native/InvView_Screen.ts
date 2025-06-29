@@ -4,4 +4,4 @@
  * Type of screen currently being shown. This is technically
  * not part of the pouch, but easier to think this way
  */
-export type InvView_Screen = "overworld" | "inventory" | "shop" | "statue";
+export type InvView_Screen = "overworld" | "inventory" | "shop";

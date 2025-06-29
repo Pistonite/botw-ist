@@ -2,55 +2,55 @@ ParseOutput {
     steps: [
         Step {
             command: CommandWithSpan {
-                command: Sync,
-                span: 26..30,
+                command: OpenInv,
+                span: 26..31,
             },
             notes: "a",
         },
         Step {
             command: CommandWithSpan {
-                command: Sync,
-                span: 47..51,
+                command: CloseInv,
+                span: 48..55,
             },
             notes: "",
         },
         Step {
             command: CommandWithSpan {
-                command: Sync,
-                span: 100..104,
+                command: OpenInv,
+                span: 104..109,
             },
             notes: "text\n\nget  1 apple",
         },
         Step {
             command: CommandWithSpan {
-                command: Sync,
-                span: 105..109,
+                command: CloseInv,
+                span: 110..117,
             },
             notes: "text\n\nget  1 apple",
         },
         Step {
             command: CommandWithSpan {
-                command: Sync,
-                span: 144..148,
+                command: OpenInv,
+                span: 152..157,
             },
             notes: "empty line in between",
         },
         Step {
             command: CommandWithSpan {
-                command: Sync,
-                span: 150..154,
+                command: CloseInv,
+                span: 159..166,
             },
             notes: "",
         },
         Step {
             command: CommandWithSpan {
-                command: Sync,
-                span: 155..159,
+                command: OpenInv,
+                span: 167..172,
             },
             notes: "",
         },
     ],
-    script_len: 197,
+    script_len: 210,
     pages: [],
     display: [],
     errors: [],

@@ -3,10 +3,10 @@
 
 x!{ SKYBOOK RUNTIME SNAPSHOT V1
 
-error: : this command or syntax is not implemented yet, please track the development on GitHub
-  span: 114..142
+parse warning: : Specifying position for the item has no effect in this command
+  span: 87..111
 -----
-destroy apple[tab=1, slot=2]
+apple[value=1000, tab=1]
 -----
 =====
 
@@ -192,7 +192,7 @@ game: (Running)
       [03]: (item_idx=8, tab_type=Material, )
       [04]: (item_idx=9, tab_type=KeyItem, )
 
------ Step[7]: destroy apple[tab=1, slot=2]
+----- Step[7]: get 3 apple
 
 game: (Running)
   screen: (Overworld)
@@ -225,40 +225,7 @@ game: (Running)
       [03]: (item_idx=8, tab_type=Material, )
       [04]: (item_idx=9, tab_type=KeyItem, )
 
------ Step[8]: get 3 apple
-
-game: (Running)
-  screen: (Overworld)
-  pouch: (count=10, are_tabs_valid=true, num_tabs=5, )
-    items: (len=10, )
-      [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
-        node: (valid=true, pos=418, addr=0x0000002222243cd0, prev=0x0000002222200068, next=0x0000002222243a38, )
-      [001]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=1, )
-        node: (valid=true, pos=417, addr=0x0000002222243a38, prev=0x0000002222243cd0, next=0x00000022222437a0, )
-      [002]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=2, )
-        node: (valid=true, pos=416, addr=0x00000022222437a0, prev=0x0000002222243a38, next=0x0000002222243508, )
-      [003]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=3, )
-        node: (valid=true, pos=415, addr=0x0000002222243508, prev=0x00000022222437a0, next=0x0000002222243270, )
-      [004]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=4, )
-        node: (valid=true, pos=414, addr=0x0000002222243270, prev=0x0000002222243508, next=0x0000002222242fd8, )
-      [005]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=5, )
-        node: (valid=true, pos=413, addr=0x0000002222242fd8, prev=0x0000002222243270, next=0x0000002222242aa8, )
-      [006]: (actor_name=Weapon_Bow_001, value=2200, is_equipped=false, item_type=Bow, item_use=WeaponBow, tab_idx=1, tab_slot=0, )
-        node: (valid=true, pos=411, addr=0x0000002222242aa8, prev=0x0000002222242fd8, next=0x0000002222242d40, )
-      [007]: (actor_name=Weapon_Shield_040, value=1000, is_equipped=false, item_type=Shield, item_use=WeaponShield, tab_idx=2, tab_slot=0, )
-        node: (valid=true, pos=412, addr=0x0000002222242d40, prev=0x0000002222242aa8, next=0x0000002222243f68, )
-      [008]: (actor_name=Item_Fruit_A, value=999, is_equipped=false, item_type=Material, item_use=CureItem, tab_idx=3, tab_slot=0, )
-        node: (valid=true, pos=419, addr=0x0000002222243f68, prev=0x0000002222242d40, next=0x0000002222242810, )
-      [009]: (actor_name=Obj_DRStone_Get, value=1, is_equipped=false, item_type=KeyItem, item_use=ImportantItem, tab_idx=4, tab_slot=0, )
-        node: (valid=true, pos=410, addr=0x0000002222242810, prev=0x0000002222243f68, next=0x0000002222200068, )
-    tabs: (len=5, )
-      [00]: (item_idx=0, tab_type=Sword, )
-      [01]: (item_idx=6, tab_type=Bow, )
-      [02]: (item_idx=7, tab_type=Shield, )
-      [03]: (item_idx=8, tab_type=Material, )
-      [04]: (item_idx=9, tab_type=KeyItem, )
-
------ Step[9]: get aa
+----- Step[8]: get aa
 
 game: (Running)
   screen: (Overworld)
@@ -293,7 +260,7 @@ game: (Running)
       [03]: (item_idx=9, tab_type=Material, )
       [04]: (item_idx=10, tab_type=KeyItem, )
 
------ Step[10]: get fire_arrow
+----- Step[9]: get fire_arrow
 
 game: (Running)
   screen: (Overworld)
@@ -330,7 +297,7 @@ game: (Running)
       [03]: (item_idx=10, tab_type=Material, )
       [04]: (item_idx=11, tab_type=KeyItem, )
 
------ Step[11]: get 2 boko-shield
+----- Step[10]: get 2 boko-shield
 
 game: (Running)
   screen: (Overworld)
@@ -371,7 +338,7 @@ game: (Running)
       [03]: (item_idx=12, tab_type=Material, )
       [04]: (item_idx=13, tab_type=KeyItem, )
 
------ Step[12]: get elixir
+----- Step[11]: get elixir
 
 game: (Running)
   screen: (Overworld)
@@ -415,7 +382,7 @@ game: (Running)
       [04]: (item_idx=13, tab_type=Food, )
       [05]: (item_idx=14, tab_type=KeyItem, )
 
------ Step[13]: get oho[dura=1, price=113, hp=120]
+----- Step[12]: get oho[dura=1, price=113, hp=120]
 
 game: (Running)
   screen: (Overworld)
@@ -462,7 +429,7 @@ game: (Running)
       [04]: (item_idx=14, tab_type=Food, )
       [05]: (item_idx=15, tab_type=KeyItem, )
 
------ Step[14]: get 1 orb
+----- Step[13]: get 1 orb
 
 game: (Running)
   screen: (Overworld)
@@ -511,7 +478,7 @@ game: (Running)
       [04]: (item_idx=14, tab_type=Food, )
       [05]: (item_idx=15, tab_type=KeyItem, )
 
------ Step[15]: get banana
+----- Step[14]: get banana
 
 game: (Running)
   screen: (Overworld)
@@ -562,7 +529,7 @@ game: (Running)
       [04]: (item_idx=15, tab_type=Food, )
       [05]: (item_idx=16, tab_type=KeyItem, )
 
------ Step[16]: get durian
+----- Step[15]: get durian
 
 game: (Running)
   screen: (Overworld)
@@ -615,7 +582,7 @@ game: (Running)
       [04]: (item_idx=16, tab_type=Food, )
       [05]: (item_idx=17, tab_type=KeyItem, )
 
------ Step[17]: get diamond
+----- Step[16]: get diamond
 
 game: (Running)
   screen: (Overworld)
@@ -670,7 +637,7 @@ game: (Running)
       [04]: (item_idx=17, tab_type=Food, )
       [05]: (item_idx=18, tab_type=KeyItem, )
 
------ Step[18]: get amber
+----- Step[17]: get amber
 
 game: (Running)
   screen: (Overworld)
@@ -727,7 +694,7 @@ game: (Running)
       [04]: (item_idx=18, tab_type=Food, )
       [05]: (item_idx=19, tab_type=KeyItem, )
 
------ Step[19]: get fairy
+----- Step[18]: get fairy
 
 game: (Running)
   screen: (Overworld)
@@ -786,7 +753,7 @@ game: (Running)
       [04]: (item_idx=19, tab_type=Food, )
       [05]: (item_idx=20, tab_type=KeyItem, )
 
------ Step[20]: get palm
+----- Step[19]: get palm
 
 game: (Running)
   screen: (Overworld)
@@ -847,7 +814,7 @@ game: (Running)
       [04]: (item_idx=20, tab_type=Food, )
       [05]: (item_idx=21, tab_type=KeyItem, )
 
------ Step[21]: get moblin_horn
+----- Step[20]: get moblin_horn
 
 game: (Running)
   screen: (Overworld)
@@ -910,7 +877,7 @@ game: (Running)
       [04]: (item_idx=21, tab_type=Food, )
       [05]: (item_idx=22, tab_type=KeyItem, )
 
------ Step[22]: get dinraal
+----- Step[21]: get dinraal
 
 game: (Running)
   screen: (Overworld)
@@ -975,7 +942,7 @@ game: (Running)
       [04]: (item_idx=22, tab_type=Food, )
       [05]: (item_idx=23, tab_type=KeyItem, )
 
------ Step[23]: get nay
+----- Step[22]: get nay
 
 game: (Running)
   screen: (Overworld)
@@ -1042,7 +1009,7 @@ game: (Running)
       [04]: (item_idx=23, tab_type=Food, )
       [05]: (item_idx=24, tab_type=KeyItem, )
 
------ Step[24]: get far
+----- Step[23]: get far
 
 game: (Running)
   screen: (Overworld)
@@ -1111,7 +1078,7 @@ game: (Running)
       [04]: (item_idx=24, tab_type=Food, )
       [05]: (item_idx=25, tab_type=KeyItem, )
 
------ Step[25]: get shard
+----- Step[24]: get shard
 
 game: (Running)
   screen: (Overworld)
@@ -1182,7 +1149,7 @@ game: (Running)
       [04]: (item_idx=25, tab_type=Food, )
       [05]: (item_idx=26, tab_type=KeyItem, )
 
------ Step[26]: get ruby
+----- Step[25]: get ruby
 
 game: (Running)
   screen: (Overworld)
@@ -1255,7 +1222,7 @@ game: (Running)
       [04]: (item_idx=26, tab_type=Food, )
       [05]: (item_idx=27, tab_type=KeyItem, )
 
------ Step[27]: get sapphire
+----- Step[26]: get sapphire
 
 game: (Running)
   screen: (Overworld)
@@ -1330,7 +1297,7 @@ game: (Running)
       [04]: (item_idx=27, tab_type=Food, )
       [05]: (item_idx=28, tab_type=KeyItem, )
 
------ Step[28]: get diamond
+----- Step[27]: get diamond
 
 game: (Running)
   screen: (Overworld)
@@ -1405,7 +1372,7 @@ game: (Running)
       [04]: (item_idx=27, tab_type=Food, )
       [05]: (item_idx=28, tab_type=KeyItem, )
 
------ Step[29]: get wood
+----- Step[28]: get wood
 
 game: (Running)
   screen: (Overworld)
@@ -1482,7 +1449,7 @@ game: (Running)
       [04]: (item_idx=28, tab_type=Food, )
       [05]: (item_idx=29, tab_type=KeyItem, )
 
------ Step[30]: get core
+----- Step[29]: get core
 
 game: (Running)
   screen: (Overworld)
@@ -1561,7 +1528,7 @@ game: (Running)
       [04]: (item_idx=29, tab_type=Food, )
       [05]: (item_idx=30, tab_type=KeyItem, )
 
------ Step[31]: get tail
+----- Step[30]: get tail
 
 game: (Running)
   screen: (Overworld)
@@ -1642,7 +1609,7 @@ game: (Running)
       [04]: (item_idx=30, tab_type=Food, )
       [05]: (item_idx=31, tab_type=KeyItem, )
 
------ Step[32]: get screw
+----- Step[31]: get screw
 
 game: (Running)
   screen: (Overworld)
@@ -1725,7 +1692,7 @@ game: (Running)
       [04]: (item_idx=31, tab_type=Food, )
       [05]: (item_idx=32, tab_type=KeyItem, )
 
------ Step[33]: get shaft
+----- Step[32]: get shaft
 
 game: (Running)
   screen: (Overworld)
@@ -1810,7 +1777,7 @@ game: (Running)
       [04]: (item_idx=32, tab_type=Food, )
       [05]: (item_idx=33, tab_type=KeyItem, )
 
------ Step[34]: get rushroom
+----- Step[33]: get rushroom
 
 game: (Running)
   screen: (Overworld)
@@ -1897,7 +1864,7 @@ game: (Running)
       [04]: (item_idx=33, tab_type=Food, )
       [05]: (item_idx=34, tab_type=KeyItem, )
 
------ Step[35]: get shroom
+----- Step[34]: get shroom
 
 game: (Running)
   screen: (Overworld)

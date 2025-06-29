@@ -51,6 +51,8 @@ pub struct CommandWithSpan {
 pub enum Command {
     /// See [`syn::CmdGet`]
     Get(Vec<cir::ItemSpec>),
+    /// See [`syn::CmdGetPause`]
+    GetPause(Vec<cir::ItemSpec>),
     /// See [`syn::CmdBuy`]
     Buy(Vec<cir::ItemSpec>),
     /// See [`syn::CmdPickUp`]
@@ -96,8 +98,6 @@ pub enum Command {
     Sort(cir::CategorySpec),
     /// See [`syn::CmdEntangle`]
     Entangle(cir::CategorySpec),
-    /// `sync` - sync gamedata
-    Sync,
     /// See [`syn::CmdBreakSlots`]
     Break(i32),
     /// See [`syn::CmdSetInventory`]
@@ -163,6 +163,9 @@ pub async fn parse_command<R: QuotedItemResolver>(
 ) -> Option<cir::Command> {
     match command {
         syn::Command::Get(cmd) => Some(cir::Command::Get(
+            cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
+        )),
+        syn::Command::GetPause(cmd) => Some(cir::Command::GetPause(
             cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
         )),
         syn::Command::Buy(cmd) => Some(cir::Command::Buy(
@@ -263,7 +266,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cmd.meta.as_ref(),
             errors,
         ))),
-        syn::Command::Sync(_) => Some(cir::Command::Sync),
         syn::Command::Break(cmd) => {
             match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
                 Ok(x) => Some(cir::Command::Break(x)),

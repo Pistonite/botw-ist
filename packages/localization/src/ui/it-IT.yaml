@@ -70,6 +70,14 @@ main.bug_report: "Segnalalo su {{github}} se pensi che sia un bug del simulatore
 main.gdt_inventory.desc: "Dati dell'inventario memorizzati nel sistema di flag del gioco (GDT). Gli oggetti vengono visualizzati come se fossero caricati nell'inventario, e gli slot sono allineati all'inventario in base alla corruzione."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Impossibile visualizzare i dati interni GDT!"
+main.screen.inventory: "Inventario"
+main.screen.inventory.desc: "Il menu di pausa è attualmente aperto. Il giocatore può interagire con gli oggetti dell'inventario."
+main.screen.none: "Nessuna schermata"
+main.screen.none.desc: "Gioco non avviato"
+main.screen.overworld: "Mondo di gioco"
+main.screen.overworld.desc: "Nessuna schermata è aperta. Il giocatore può muoversi in questo stato."
+main.screen.shop: "Compra/Vendi"
+main.screen.shop.desc: "Un dialogo in una sequenza di eventi di acquisto/vendita è attualmente aperto. Il giocatore può comprare o vendere oggetti. Si noti che il simulatore non impone quali oggetti possono essere venduti o comprati."
 main.tabbed_inventory.bad_msgbar.body: "I dati delle schede sono danneggiati. Possibilmente a causa di un exploit di corruzione della memoria."
 main.tabbed_inventory.bad_msgbar.title: "Impossibile visualizzare le schede!"
 main.tabbed_inventory.button_tooltip: "Attiva/disattiva vista elenco/schede"
@@ -78,7 +86,6 @@ main.view_crash_report.desc: "Includere il rapporto di arresto anomalo quando si
 main.visible_inventory.desc: "Oggetti che vedi quando apri l'inventario"
 main.visible_inventory.title: "Inventario Visibile"
 main.visible_inventory.view_error: "Impossibile visualizzare l'inventario!"
-
 
 category.Armor: "Armatura"
 category.ArmorHead: "Armatura (Testa)"
@@ -200,11 +207,13 @@ runtime_init.SaveImage: "Impossibile salvare i dati dell'immagine personalizzata
 runtime_init.UnsupportedVersion: "L'immagine contiene una versione del gioco attualmente non supportata."
 
 # Error/Diagnostic from Runtime
+runtime_error.CannotDoWhileHolding: "Impossibile farlo mentre si tengono oggetti."
 runtime_error.CannotFindItem: "Impossibile trovare questo oggetto nell'inventario."
 runtime_error.CannotHoldMore: "Impossibile tenere più oggetti."
 runtime_error.Crash: "Il gioco si è bloccato in questo passaggio."
 runtime_error.Executor: "Errore imprevisto dall'Esecutore."
 runtime_error.ItemMismatch: "L'oggetto trovato in questa posizione nell'inventario è `{{actual_item}}`, mentre l'oggetto specificato nel comando è `{{expected_item}}`."
+runtime_error.NotHolding: "Nessun oggetto è in mano."
 runtime_error.NotRightScreen: "Non puoi usare questo comando nella schermata attuale. Il simulatore cambierà schermata automaticamente per te a meno che tu non abbia aperto una schermata manualmente con un comando. Tornare alla schermata dell'overworld con un comando permetterà al simulatore di cambiare schermata automaticamente di nuovo."
 runtime_error.PreviousCrash: "Il gioco si è bloccato in un passaggio precedente. Devi `ricaricare` (`reload`) o iniziare una `nuova partita` (`new-game`) prima di continuare."
 runtime_error.Unimplemented: "Questo comando non è ancora implementato :)."

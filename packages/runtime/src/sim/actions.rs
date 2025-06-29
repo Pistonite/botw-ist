@@ -2,7 +2,7 @@ use blueflame::linker;
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 
-use crate::error::{ErrorReport, sim_error};
+use crate::error::{ErrorReport, sim_error, sim_warning};
 use crate::sim;
 
 use super::util;
@@ -10,15 +10,31 @@ use super::util;
 /// Add items to pouch by eventually calling itemGet or cookItemGet
 pub fn get_items(
     ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+    errors: &mut Vec<ErrorReport>,
     items: &[cir::ItemSpec],
+    pause_after: bool,
 ) -> Result<(), processor::Error> {
-    // TODO: cannot get while holding items
+    // first, must be in the overworld to get items
+    sys.screen
+        .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
+    // ensure player is not holding items
+    let should_drop = match sys.overworld.predrop_for_action(ctx.span, errors) {
+        sim::OverworldPreDropResult::Holding => {
+            // cannot get while holding, stop
+            return Ok(());
+        }
+        sim::OverworldPreDropResult::AutoDrop => true,
+        sim::OverworldPreDropResult::Ok => false,
+    };
+
     'outer: for item in items {
         let amount = item.amount;
         let item = &item.item;
         let is_cook_item = item.is_cook_item();
         let meta = item.meta.as_ref();
         for _ in 0..amount {
+            // TODO: cannotGetItem check?
             if is_cook_item {
                 linker::get_cook_item(
                     ctx.inner,
@@ -41,6 +57,19 @@ pub fn get_items(
         }
     }
 
+    if pause_after {
+        // open pause menu and delay drop
+        sys.screen
+            .transition_to_inventory(ctx, &mut sys.overworld, false, errors)?;
+        if should_drop {
+            sys.screen.set_remove_held_after_dialog();
+        }
+    } else if should_drop {
+        log::debug!("removing held items on auto-drop cleanup in get command");
+        linker::remove_held_items(ctx.cpu())?;
+        sys.overworld.drop_held_items();
+    }
+
     Ok(())
 }
 
@@ -50,7 +79,9 @@ pub fn hold_items(
     sys: &mut sim::GameSystems,
     errors: &mut Vec<ErrorReport>,
     items: &[cir::ItemSelectSpec],
+    attached: bool,
 ) -> Result<(), processor::Error> {
+    // must be in inventory to hold items
     sys.screen
         .transition_to_inventory(ctx, &mut sys.overworld, false, errors)?;
     let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
@@ -89,7 +120,11 @@ pub fn hold_items(
                 break 'outer;
             }
 
-            linker::trash_item(ctx.cpu(), tab as i32, slot as i32)?;
+            linker::trash_item(
+                ctx.cpu(),
+                tab as i32,
+                inventory.get_corrected_slot(tab, slot),
+            )?;
 
             let memory = ctx.cpu().proc.memory();
             // re-search the item if the item slot is used up
@@ -100,6 +135,48 @@ pub fn hold_items(
             }
         }
     }
+
+    if attached {
+        sys.screen
+            .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
+        sys.overworld.set_held_attached(true);
+    }
+
+    Ok(())
+}
+
+/// Unhold the items currently being held (i.e. put them back to pouch)
+pub fn unhold(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+    errors: &mut Vec<ErrorReport>,
+) -> Result<(), processor::Error> {
+    // can only unhold while in the overworld or in the inventory
+    if !sys.screen.current_screen().is_inventory_or_overworld() {
+        sys.screen
+            .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
+    }
+    // we don't check if the player is currently holding anything,
+    // as it requires reading PMDM to check if it's holding in the pause menu
+    linker::unhold_items(ctx.cpu())?;
+    sys.overworld.delete_held_items();
+    Ok(())
+}
+
+/// Drop items currently held to the ground
+pub fn drop_held(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+    errors: &mut Vec<ErrorReport>,
+) -> Result<(), processor::Error> {
+    sys.screen
+        .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
+    if !sys.overworld.is_holding() {
+        errors.push(sim_warning!(ctx.span, NotHolding));
+        return Ok(());
+    }
+    linker::remove_held_items(ctx.cpu())?;
+    sys.overworld.drop_held_items();
 
     Ok(())
 }
