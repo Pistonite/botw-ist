@@ -70,6 +70,14 @@ main.bug_report: "これがシミュレーターのバグだと思われる場�
 main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されたインベントリーデータ。アイテムはインベントリーに読み込まれたかのように表示され、スロットはコラプションに基づいてインベントリーに整列されます。"
 main.gdt_inventory.title: "ゲームデータ"
 main.gdt_inventory.view_error: "GDT内部データを表示できません！"
+main.screen.inventory: "インベントリ"
+main.screen.inventory.desc: "ポーズメニューが現在開いています。プレイヤーはインベントリのアイテムとやり取りできます。"
+main.screen.none: "画面なし"
+main.screen.none.desc: "ゲームが開始されていません"
+main.screen.overworld: "オーバーワールド"
+main.screen.overworld.desc: "画面は開いていません。プレイヤーはこの状態で移動できます。"
+main.screen.shop: "売買"
+main.screen.shop.desc: "売買イベントシーケンスのダイアログが現在開いています。プレイヤーはアイテムを売買できます。シミュレーターは、どのアイテムを売買できるかを強制しないことに注意してください。"
 main.tabbed_inventory.bad_msgbar.body: "タブのデータが破損しています。メモリ破損のエクスプロイトが原因の可能性があります。"
 main.tabbed_inventory.bad_msgbar.title: "タブを表示できません！"
 main.tabbed_inventory.button_tooltip: "リスト/タブ表示を切り替え"
@@ -78,7 +86,6 @@ main.view_crash_report.desc: "問題を報告する際は、クラッシュレ�
 main.visible_inventory.desc: "インベントリを開いたときに表示されるアイテム"
 main.visible_inventory.title: "表示インベントリ"
 main.visible_inventory.view_error: "インベントリを表示できません！"
-
 
 category.Armor: "防具"
 category.ArmorHead: "防具（頭）"

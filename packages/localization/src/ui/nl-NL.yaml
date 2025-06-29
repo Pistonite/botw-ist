@@ -70,6 +70,14 @@ main.bug_report: "Meld het op {{github}} als u denkt dat dit een bug in de simul
 main.gdt_inventory.desc: "Voorraaddata opgeslagen in het vlaggensysteem van het spel (GDT). Items worden weergegeven alsof ze in de inventaris zijn geladen, en de slots zijn uitgelijnd met de inventaris op basis van corruptie."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Interne GDT-gegevens kunnen niet worden weergegeven!"
+main.screen.inventory: "Inventaris"
+main.screen.inventory.desc: "Het pauzemenu is momenteel geopend. De speler kan interactie hebben met de inventarisitems."
+main.screen.none: "Geen scherm"
+main.screen.none.desc: "Spel is niet gestart"
+main.screen.overworld: "Wereldkaart"
+main.screen.overworld.desc: "Er is geen scherm geopend. De speler kan zich in deze staat bewegen."
+main.screen.shop: "Kopen/Verkopen"
+main.screen.shop.desc: "Een dialoog in een koop-/verkoopevenementenreeks is momenteel geopend. De speler kan items kopen of verkopen. Merk op dat de simulator niet afdwingt welke items mogen worden verkocht of gekocht."
 main.tabbed_inventory.bad_msgbar.body: "Tabbladgegevens zijn beschadigd. Mogelijk door een geheugenbeschadigingsexploit."
 main.tabbed_inventory.bad_msgbar.title: "Kan tabbladen niet weergeven!"
 main.tabbed_inventory.button_tooltip: "Lijst-/tabweergave wisselen"
@@ -78,7 +86,6 @@ main.view_crash_report.desc: "Voeg het crashrapport toe wanneer u een probleem m
 main.visible_inventory.desc: "Items die je ziet wanneer je de inventaris opent"
 main.visible_inventory.title: "Zichtbare Inventaris"
 main.visible_inventory.view_error: "Inventaris kan niet worden weergegeven!"
-
 
 category.Armor: "Pantser"
 category.ArmorHead: "Pantser (Hoofd)"

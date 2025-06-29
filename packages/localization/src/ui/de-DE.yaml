@@ -70,6 +70,14 @@ main.bug_report: "Bitte melden Sie es auf {{github}}, wenn Sie denken, dass dies
 main.gdt_inventory.desc: "Inventardaten, die im Flaggensystem des Spiels (GDT) gespeichert sind. Gegenstände werden angezeigt, als wären sie im Inventar geladen, und die Slots sind basierend auf Korruption an das Inventar ausgerichtet."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Interne GDT-Daten können nicht angezeigt werden!"
+main.screen.inventory: "Inventar"
+main.screen.inventory.desc: "Das Pausenmenü ist derzeit geöffnet. Der Spieler kann mit den Inventargegenständen interagieren."
+main.screen.none: "Kein Bildschirm"
+main.screen.none.desc: "Spiel ist nicht gestartet"
+main.screen.overworld: "Oberwelt"
+main.screen.overworld.desc: "Es ist kein Bildschirm geöffnet. Der Spieler kann sich in diesem Zustand bewegen."
+main.screen.shop: "Kaufen/Verkaufen"
+main.screen.shop.desc: "Ein Dialog in einer Kauf-/Verkaufsereignissequenz ist derzeit geöffnet. Der Spieler kann Gegenstände kaufen oder verkaufen. Beachten Sie, dass der Simulator nicht vorschreibt, welche Gegenstände verkauft oder gekauft werden dürfen."
 main.tabbed_inventory.bad_msgbar.body: "Tab-Daten sind beschädigt. Möglicherweise aufgrund eines Speicherbeschädigungs-Exploits."
 main.tabbed_inventory.bad_msgbar.title: "Tabs können nicht angezeigt werden!"
 main.tabbed_inventory.button_tooltip: "Listen-/Tabellenansicht umschalten"
@@ -78,7 +86,6 @@ main.view_crash_report.desc: "Bitte fügen Sie den Absturzbericht bei, wenn Sie 
 main.visible_inventory.desc: "Gegenstände, die beim Öffnen des Inventars sichtbar sind"
 main.visible_inventory.title: "Sichtbares Inventar"
 main.visible_inventory.view_error: "Inventar kann nicht angezeigt werden!"
-
 
 category.Armor: "Rüstung"
 category.ArmorHead: "Rüstung (Kopf)"

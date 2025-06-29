@@ -70,6 +70,14 @@ main.bug_report: "이것이 시뮬레이터의 버그라고 생각되면 {{githu
 main.gdt_inventory.desc: "게임의 플래그 시스템(GDT)에 저장된 인벤토리 데이터입니다. 아이템은 인벤토리에 로드된 것처럼 표시되며, 슬롯은 코럽션에 따라 인벤토리에 정렬됩니다."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "GDT 내부 데이터를 표시할 수 없습니다!"
+main.screen.inventory: "인벤토리"
+main.screen.inventory.desc: "현재 일시정지 메뉴가 열려 있습니다. 플레이어는 인벤토리 아이템과 상호 작용할 수 있습니다."
+main.screen.none: "화면 없음"
+main.screen.none.desc: "게임이 시작되지 않았습니다"
+main.screen.overworld: "오버월드"
+main.screen.overworld.desc: "열려 있는 화면이 없습니다. 플레이어는 이 상태에서 이동할 수 있습니다."
+main.screen.shop: "구매/판매"
+main.screen.shop.desc: "구매/판매 이벤트 시퀀스의 대화 상자가 현재 열려 있습니다. 플레이어는 아이템을 구매하거나 판매할 수 있습니다. 시뮬레이터는 어떤 아이템을 판매하거나 구매할 수 있는지 강제하지 않습니다."
 main.tabbed_inventory.bad_msgbar.body: "탭 데이터가 손상되었습니다. 메모리 손상 익스플로잇으로 인해 발생했을 수 있습니다."
 main.tabbed_inventory.bad_msgbar.title: "탭을 표시할 수 없습니다!"
 main.tabbed_inventory.button_tooltip: "목록/탭 보기 전환"
@@ -78,7 +86,6 @@ main.view_crash_report.desc: "문제를 보고할 때 충돌 보고서를 포함
 main.visible_inventory.desc: "인벤토리를 열었을 때 보이는 아이템"
 main.visible_inventory.title: "표시 인벤토리"
 main.visible_inventory.view_error: "인벤토리를 표시할 수 없습니다!"
-
 
 category.Armor: "방어구"
 category.ArmorHead: "방어구 (머리)"

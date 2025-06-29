@@ -70,6 +70,14 @@ main.bug_report: "Veuillez le signaler sur {{github}} si vous pensez qu'il s'agi
 main.gdt_inventory.desc: "Données d'inventaire stockées dans le système de drapeaux du jeu (GDT). Les objets sont affichés comme s'ils étaient chargés dans l'inventaire, et les emplacements sont alignés avec l'inventaire en fonction de la corruption."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Impossible d'afficher les données internes GDT !"
+main.screen.inventory: "Inventaire"
+main.screen.inventory.desc: "Le menu de pause est actuellement ouvert. Le joueur peut interagir avec les objets de l'inventaire."
+main.screen.none: "Aucun écran"
+main.screen.none.desc: "Jeu non démarré"
+main.screen.overworld: "Monde extérieur"
+main.screen.overworld.desc: "Aucun écran n'est ouvert. Le joueur peut se déplacer dans cet état."
+main.screen.shop: "Acheter/Vendre"
+main.screen.shop.desc: "Un dialogue dans une séquence d'événements d'achat/vente est actuellement ouvert. Le joueur peut acheter ou vendre des objets. Notez que le simulateur n'impose pas quels objets sont autorisés à être vendus ou achetés."
 main.tabbed_inventory.bad_msgbar.body: "Les données des onglets sont corrompues. Cela est peut-être dû à une exploitation de corruption de mémoire."
 main.tabbed_inventory.bad_msgbar.title: "Impossible d'afficher les onglets !"
 main.tabbed_inventory.button_tooltip: "Basculer entre la vue Liste/onglets"
@@ -78,7 +86,6 @@ main.view_crash_report.desc: "Veuillez inclure le rapport d'incident lors de la 
 main.visible_inventory.desc: "Objets visibles lors de l'ouverture de l'inventaire"
 main.visible_inventory.title: "Inventaire Visible"
 main.visible_inventory.view_error: "Impossible d'afficher l'inventaire !"
-
 
 category.Armor: "Armure"
 category.ArmorHead: "Armure (Tête)"

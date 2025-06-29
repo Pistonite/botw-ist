@@ -70,6 +70,14 @@ main.bug_report: "Por favor, repórtalo en {{github}} si crees que es un error d
 main.gdt_inventory.desc: "Datos de inventario almacenados en el sistema de banderas del juego (GDT). Los objetos se muestran como si estuvieran cargados en el inventario, y las ranuras se alinean con el inventario según la corrupción."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "¡No se pueden mostrar los datos internos de GDT!"
+main.screen.inventory: "Inventario"
+main.screen.inventory.desc: "El menú de pausa está actualmente abierto. El jugador puede interactuar con los objetos del inventario."
+main.screen.none: "Ninguna pantalla"
+main.screen.none.desc: "Juego no iniciado"
+main.screen.overworld: "Mundo exterior"
+main.screen.overworld.desc: "No hay ninguna pantalla abierta. El jugador puede moverse libremente en este estado."
+main.screen.shop: "Comprar/Vender"
+main.screen.shop.desc: "Hay un diálogo abierto en una secuencia de eventos de compra/venta. El jugador puede comprar o vender objetos. Tenga en cuenta que el simulador no impone qué objetos se pueden vender o comprar."
 main.tabbed_inventory.bad_msgbar.body: "Los datos de las pestañas están dañados. Posiblemente debido a un exploit de corrupción de memoria."
 main.tabbed_inventory.bad_msgbar.title: "¡No se pueden mostrar las pestañas!"
 main.tabbed_inventory.button_tooltip: "Alternar vista de lista/pestañas"
@@ -78,7 +86,6 @@ main.view_crash_report.desc: "Incluye el informe de errores al reportar un probl
 main.visible_inventory.desc: "Objetos que ves al abrir el inventario"
 main.visible_inventory.title: "Inventario Visible"
 main.visible_inventory.view_error: "¡No se puede mostrar el inventario!"
-
 
 category.Armor: "Armadura"
 category.ArmorHead: "Armadura (Cabeza)"
