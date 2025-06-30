@@ -181,7 +181,10 @@ impl Runtime {
             .cloned()
     }
 
-    pub fn set_cache(&self, commands: &[cir::CommandWithSpan], report: &Report<sim::State>) {
+    pub fn set_cache(&self, 
+        commands: &[cir::CommandWithSpan], 
+        report: &Report<sim::State>
+    ) {
         self.state_cache
             .lock()
             .expect("failed to acquire lock for set_cache")

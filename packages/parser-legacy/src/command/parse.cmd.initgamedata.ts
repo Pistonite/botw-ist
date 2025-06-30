@@ -17,7 +17,7 @@ export class CommandInitGameData extends AbstractProperCommand {
     }
 
     public override convert(): string {
-        return `!set-gamedata ${this.stacks.map((s) => s.convert()).join(" ")};`;
+        return `!set-gamedata ${this.stacks.map((s) => s.convert(0)).join(" ")};`;
     }
 }
 

@@ -83,27 +83,32 @@ export const joinItemSearchStrings = (ids: string[]) => {
     return ids.join("-").toLowerCase();
 };
 
-export const convertItem = (item: ItemStack): string => {
-    return item.ident + convertItemMeta(item.meta);
+export const convertItem = (item: ItemStack, slotIndex: number): string => {
+    return item.ident + convertItemMeta(item.meta, slotIndex);
 };
 
-export const convertItemMeta = (meta: MetaModifyOption | undefined): string => {
-    if (meta && Object.keys(meta).length > 0) {
+export const convertItemMeta = (meta: MetaModifyOption | undefined, slotIndex: number): string => {
+    if (slotIndex>1 || (meta && Object.keys(meta).length > 0)) {
         const props: string[] = [];
-        if ("life" in meta) {
-            props.push(`life=${meta.life}`);
+        if (meta) {
+            if ("life" in meta) {
+                props.push(`life=${meta.life}`);
+            }
+            if ("equip" in meta) {
+                props.push(`equip=${meta.equip}`);
+            }
+            if ("price" in meta) {
+                props.push(`price=${meta.price}`);
+            }
+            if ("hp" in meta) {
+                props.push(`hp=${meta.hp}`);
+            }
+            if ("cookEffect" in meta) {
+                props.push(`effect=${meta.cookEffect}`);
+            }
         }
-        if ("equip" in meta) {
-            props.push(`equip=${meta.equip}`);
-        }
-        if ("price" in meta) {
-            props.push(`price=${meta.price}`);
-        }
-        if ("hp" in meta) {
-            props.push(`hp=${meta.hp}`);
-        }
-        if ("cookEffect" in meta) {
-            props.push(`effect=${meta.cookEffect}`);
+        if (slotIndex > 1) {
+            props.push(`from-slot=${slotIndex}`);
         }
         return `[${props.join(", ")}]`;
     }

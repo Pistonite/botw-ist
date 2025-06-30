@@ -1,4 +1,8 @@
+use blueflame::game::singleton_instance;
 use blueflame::linker;
+use blueflame::game;
+use blueflame::memory::mem;
+use blueflame::memory::Ptr;
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 
@@ -16,8 +20,11 @@ pub fn get_items(
     pause_after: bool,
 ) -> Result<(), processor::Error> {
     // first, must be in the overworld to get items
-    sys.screen
-        .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
+    if !sys.screen
+        .transition_to_overworld(ctx, &mut sys.overworld, false, errors)? {
+        log::warn!("failed to auto-switch to overworld for GET");
+        return Ok(());
+    }
     // ensure player is not holding items
     let should_drop = match sys.overworld.predrop_for_action(ctx.span, errors) {
         sim::OverworldPreDropResult::Holding => {
@@ -34,6 +41,9 @@ pub fn get_items(
         let is_cook_item = item.is_cook_item();
         let meta = item.meta.as_ref();
         for _ in 0..amount {
+            if ctx.is_aborted() {
+                break 'outer;
+            }
             // TODO: cannotGetItem check?
             if is_cook_item {
                 linker::get_cook_item(
@@ -51,9 +61,6 @@ pub fn get_items(
             let modifier = util::modifier_from_meta(meta);
             linker::get_item(ctx.inner, &item.actor, meta.and_then(|m| m.value), modifier)?;
 
-            if ctx.is_aborted() {
-                break 'outer;
-            }
         }
     }
 
@@ -82,15 +89,21 @@ pub fn hold_items(
     attached: bool,
 ) -> Result<(), processor::Error> {
     // must be in inventory to hold items
-    sys.screen
-        .transition_to_inventory(ctx, &mut sys.overworld, false, errors)?;
+    if !sys.screen
+        .transition_to_inventory(ctx, &mut sys.overworld, false, errors)? {
+        log::warn!("failed to auto-switch to inventory for HOLD");
+        return Ok(());
+    }
     let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
     'outer: for item in items {
         // TODO - check if item is material, prompt entanglement, etc
-        let amount = item.amount;
+        let amount = if item.amount < 0 { i64::MAX } else { item.amount };
 
         let mut position = None;
         for _ in 0..amount {
+            if ctx.is_aborted() {
+                break 'outer;
+            }
             if position.is_none() {
                 // try to find this item
                 log::debug!("finding in {:#?}", inventory.tabs);
@@ -123,13 +136,14 @@ pub fn hold_items(
             linker::trash_item(
                 ctx.cpu(),
                 tab as i32,
-                inventory.get_corrected_slot(tab, slot),
+                inventory.corrected_slot(tab, slot),
             )?;
+
 
             let memory = ctx.cpu().proc.memory();
             // re-search the item if the item slot is used up
             if inventory.update(tab, slot, None, memory)?
-                || inventory.get_value(tab, slot, memory)?.unwrap_or_default() < 1
+                || inventory.value_at(tab, slot, memory)?.unwrap_or_default() < 1
             {
                 position = None;
             }
@@ -153,8 +167,12 @@ pub fn unhold(
 ) -> Result<(), processor::Error> {
     // can only unhold while in the overworld or in the inventory
     if !sys.screen.current_screen().is_inventory_or_overworld() {
-        sys.screen
-            .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
+        if !sys.screen
+            .transition_to_overworld(ctx, &mut sys.overworld, false, errors)? {
+        log::warn!("failed to auto-switch to overworld for UNHOLD");
+        return Ok(());
+        }
+
     }
     // we don't check if the player is currently holding anything,
     // as it requires reading PMDM to check if it's holding in the pause menu
@@ -169,8 +187,11 @@ pub fn drop_held(
     sys: &mut sim::GameSystems,
     errors: &mut Vec<ErrorReport>,
 ) -> Result<(), processor::Error> {
-    sys.screen
-        .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
+    if !sys.screen
+        .transition_to_overworld(ctx, &mut sys.overworld, false, errors)? {
+        log::warn!("failed to auto-switch to overworld for DROP");
+        return Ok(());
+    }
     if !sys.overworld.is_holding() {
         errors.push(sim_warning!(ctx.span, NotHolding));
         return Ok(());
@@ -178,5 +199,298 @@ pub fn drop_held(
     linker::remove_held_items(ctx.cpu())?;
     sys.overworld.drop_held_items();
 
+    Ok(())
+}
+
+pub fn sell_items(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+    errors: &mut Vec<ErrorReport>,
+    items: &[cir::ItemSelectSpec],
+) -> Result<(), processor::Error> {
+    // must be in shop to sell items
+    if !sys.screen
+        .transition_to_shop_selling(ctx, &mut sys.overworld, false, errors)? {
+        log::warn!("failed to auto-switch to shop for SELL");
+        return Ok(());
+    }
+
+    let shop = sys.screen.current_screen_mut().as_selling_mut().unwrap();
+    'outer: for item in items {
+        let mut remaining_amount = if item.amount < 0 { None } else { Some(item.amount as i32) };
+        // if any item is sold - used to suppress warning when "sell all"
+        let mut sold = false;
+        loop {
+            if ctx.is_aborted() {
+                break 'outer;
+            }
+            if let Some(x) = remaining_amount && x <= 0 {
+                break; // done
+            }
+
+            let m = ctx.cpu().proc.memory();
+
+            // find the item to sell
+            let search_result = shop.select(
+                &item.item,
+                None,
+                m,
+                item.span,
+                errors,
+            );
+
+            let (tab, slot) = match search_result {
+                Ok(Some(x)) => x,
+                _ => {
+                    // cannot find the item
+                    if !sold || remaining_amount.is_some() {
+                        errors.push(sim_error!(item.span, CannotFindSellableItem));
+                    }
+                    break;
+                }
+            };
+
+            let Some(item_ptr) = shop.ptr_at(tab, slot) else {
+                log::warn!("shop.select() succeeded but cannot get the item pointer");
+                errors.push(sim_error!(item.span, CannotFindSellableItem));
+                break;
+            };
+
+            let item_name = Ptr!(&item_ptr->mName).cstr(m)?.load_utf8_lossy(m)?;
+            if !game::can_sell(&item_name) {
+                log::debug!("{item_name} is not sellable, skipping selling this item");
+                errors.push(sim_error!(item.span, CannotFindSellableItem));
+                break;
+            }
+
+            let can_stack = game::can_stack(&item_name);
+            mem!{ m: let item_value = *(&item_ptr->mValue) };
+            let (tab, slot, item_ptr, amount_to_sell) = if can_stack && item_value == 0 {
+                // you cannot sell a stackable with 0 - so we can't sell this stack
+                // we will try to find another stack with at least 1
+                //
+                // it's possible to sell corrupted 0 stack or Armor with value 0,
+                // which is why we must find with no value filter above
+                let search_result = shop.select(
+                    &item.item,
+                    Some(1),
+                    m,
+                    item.span,
+                    errors,
+                );
+                let (tab, slot) = match search_result {
+                    Ok(Some(x)) => x,
+                    _ => {
+                        // cannot find the item
+                        if !sold || remaining_amount.is_some() {
+                            errors.push(sim_error!(item.span, CannotFindSellableItem));
+                        }
+                        break;
+                    }
+                };
+                // re-get the item pointer using the new position
+                let Some(item_ptr) = shop.ptr_at(tab, slot) else {
+                    log::warn!("shop.select() succeeded but cannot get the item pointer");
+                    errors.push(sim_error!(item.span, CannotFindSellableItem));
+                    break;
+                };
+                mem! { m: let value = *(&item_ptr->mValue) };
+                let amount_to_sell = match remaining_amount {
+                    Some(x) => x.min(value),
+                    None => value, // sell all
+                };
+
+                // lower bound to 1 to prevent infinite loop just in case
+                (tab, slot, item_ptr, amount_to_sell.max(1))
+            } else if can_stack {
+                let amount_to_sell = match remaining_amount {
+                    Some(x) => x.min(item_value),
+                    None => item_value, // sell all
+                };
+                // we know neither remaining_amount nor item_value is 0
+                (tab, slot, item_ptr, amount_to_sell)
+            } else {
+                // not stackable, the amount to sell doesn't matter when calling PMDM,
+                // for command handling, we assume user wants to sell X *slots* of this item,
+                // so using 1 as the amount
+                (tab, slot, item_ptr, 1)
+            };
+
+            if let Some(x) = &mut remaining_amount {
+                *x -= amount_to_sell;
+            }
+            sold = true;
+            linker::sell_item(ctx.cpu(), item_ptr, amount_to_sell)?;
+
+            shop.update(tab, slot, None, ctx.cpu().proc.memory())?;
+        }
+
+    }
+
+    Ok(())
+}
+
+/// Forcefully remove items from the inventory, regardless of screen.
+///
+/// This is for backward compatibility with item removal in older versions
+/// of simulator, and for quickly remove items (like `!remove 999 apples`)
+///
+/// This is very similar to `sell_items`, with the exceptions that:
+/// - Items from the entire pouch are removable, including non-sellable items
+/// - decrease value / remove slot depends on the type of the item
+///   instead of CanStack tag. Arrow, Material, Food and KeyItem will be
+///   removed based on value
+/// - translucent slots are deleted and game data is synced
+pub fn force_remove_item(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+    errors: &mut Vec<ErrorReport>,
+    items: &[cir::ItemSelectSpec],
+) -> Result<(), processor::Error> {
+
+    let mut temp_inv = sim::PouchScreen::open(ctx.cpu(), true)?;
+
+    'outer: for item in items {
+        let mut remaining_amount = if item.amount < 0 { None } else { Some(item.amount as i32) };
+
+        loop {
+            if ctx.is_aborted() {
+                break 'outer;
+            }
+            if let Some(x) = remaining_amount && x <= 0 {
+                break; // done
+            }
+            let m = ctx.cpu().proc.memory();
+
+            // find the item
+            let search_result = temp_inv.select(
+                &item.item,
+                None,
+                m,
+                item.span,
+                errors,
+            );
+
+            let (tab, slot) = match search_result {
+                Ok(Some(x)) => x,
+                _ => {
+                    // cannot find the item
+                    if remaining_amount.is_some() {
+                        errors.push(sim_error!(item.span, CannotFindItem));
+                    }
+                    break;
+                }
+            };
+
+            let Some(item_ptr) = temp_inv.ptr_at(tab, slot) else {
+                log::warn!("temporary_inventory.select() succeeded but cannot get the item pointer");
+                errors.push(sim_error!(item.span, CannotFindItem));
+                break;
+            };
+
+            mem!{ m: 
+                let item_type = *(&item_ptr->mType);
+                let item_value = *(&item_ptr->mValue);
+            };
+            let should_decrease_stack_value = matches!(item_type, 7 | 8 | 9);
+
+            let (tab, slot, item_ptr, item_value) = if should_decrease_stack_value && item_value == 0 {
+                // cannot decrease this stack, find another stack with at least 1 value
+                let search_result = temp_inv.select(
+                    &item.item,
+                    Some(1),
+                    m,
+                    item.span,
+                    errors,
+                );
+                let (tab, slot) = match search_result {
+                    Ok(Some(x)) => x,
+                    _ => {
+                        // cannot find the item
+                        if remaining_amount.is_some() {
+                            errors.push(sim_error!(item.span, CannotFindItem));
+                        }
+                        break;
+                    }
+                };
+                // re-get the item pointer using the new position
+                let Some(item_ptr) = temp_inv.ptr_at(tab, slot) else {
+                    log::warn!("temporary_inventory.select() succeeded but cannot get the item pointer");
+                    errors.push(sim_error!(item.span, CannotFindItem));
+                    break;
+                };
+                mem! { m: let value = *(&item_ptr->mValue) };
+
+                (tab, slot, item_ptr, value)
+            } else {
+                (tab, slot, item_ptr, item_value)
+            };
+
+            if should_decrease_stack_value {
+                let amount_to_decrease = match remaining_amount {
+                    Some(x) => x.min(item_value),
+                    None => item_value, // remove all
+                };
+
+                let new_value = item_value - amount_to_decrease.max(1);
+                if new_value <= 0 {
+                    mem! { (ctx.cpu().proc.memory_mut()):
+                        *(&item_ptr->mValue) = 0;
+                        *(&item_ptr->mInInventory) = false;
+                    }
+                } else {
+                    mem! { (ctx.cpu().proc.memory_mut()):
+                        *(&item_ptr->mValue) = new_value;
+                    }
+                }
+                if let Some(x) = &mut remaining_amount {
+                    *x -= amount_to_decrease;
+                }
+            } else {
+                // delete the slot
+                mem! { (ctx.cpu().proc.memory_mut()):
+                    *(&item_ptr->mValue) = 0;
+                    *(&item_ptr->mInInventory) = false;
+                }
+                if let Some(x) = &mut remaining_amount {
+                    *x -= 1;
+                }
+            }
+
+            linker::update_inventory_info(ctx.cpu())?;
+            linker::update_list_heads(ctx.cpu())?;
+            linker::save_to_game_data(ctx.cpu())?;
+
+            temp_inv.update(tab, slot, None, ctx.cpu().proc.memory())?;
+        
+        }
+    }
+
+    linker::delete_removed_items(ctx.cpu())?;
+
+    // since the inventory is changed, if the inventory screen is open,
+    // force a full update
+    if let Some(inv) = sys.screen.current_screen_mut().as_inventory_mut() {
+        inv.update_all_items(ctx.cpu(), false)?;
+    }
+
+    Ok(())
+}
+
+/// Forcefully decrease mCount of list 1 and increase mCount of list 2.
+///
+/// This is for backward compatibility with slot breaking in older versions
+/// of simulator
+pub fn force_break_slot(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    count: i32
+) -> Result<(), processor::Error> {
+    let pmdm = singleton_instance!(pmdm(ctx.cpu().proc.memory()))?;
+    mem! {(ctx.cpu().proc.memory_mut()):
+        let count1 = *(&pmdm->mList1.mCount);
+        let count2 = *(&pmdm->mList2.mCount);
+        *(&pmdm->mList1.mCount) = count1 - count;
+        *(&pmdm->mList2.mCount) = count2 + count;
+    }
     Ok(())
 }

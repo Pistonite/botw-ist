@@ -86,7 +86,7 @@ tasks:
   diff:
     desc: Diff script test snapshots
     cmds:
-      - git diff --no-index snapshots/{{.CLI_ARGS}}.snap.rs snapshots/wip/{{.CLI_ARGS}}.snap.rs | delta --side-by-side
+      - delta snapshots/{{.CLI_ARGS}}.snap.rs snapshots/wip/{{.CLI_ARGS}}.snap.rs --side-by-side
 
   pull-deps:
     desc: Download super secret files

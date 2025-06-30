@@ -30,22 +30,36 @@ export const language: LanguageTokenizer = {
     defaultToken: "invalid",
     tokenPostfix: ".skyb",
 
+    // keep the order in sync with parser tokens
     commands: [
         "get",
         "get-pause",
-        "buy",
+        "pick-up",
 
+        "open-inventory",
+        "open-inv",
+        "pause",
+        "close-inventory",
+        "close-inv",
+        "unpause",
         "hold",
-        "unhold",
-        "hold-smuggle",
         "hold-attach",
+        "unhold",
         "drop",
         "dnp",
-        "pick-up",
         "cook",
 
-        "eat",
+        "talk-to",
+        "untalk",
+        "close-dialog",
+        "buy",
         "sell",
+
+        // BELOW are TODO
+
+
+
+        "eat",
 
         "equip",
         "unequip",
@@ -60,22 +74,14 @@ export const language: LanguageTokenizer = {
 
         "sort",
         "entangle",
-        "break",
         "save",
         "save-as",
         "reload",
         "close-game",
         "new-game",
 
-        "open-inventory",
-        "open-inv",
-        "pause",
-        "close-inventory",
-        "close-inv",
-        "unpause",
 
-        "talk-to",
-        "untalk",
+
         "enter",
         "exit",
         "leave",

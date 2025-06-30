@@ -21,17 +21,13 @@ export class CommandWrite extends AbstractProperCommand {
     ) {
         super(codeBlocks);
         this.itemTarget = item;
-        this.slot = slot - 1; //change to 0 based
+        this.slot = slot;
         this.meta = meta;
     }
 
     public override convert() {
-        const meta = convertItemMeta(this.meta);
-        let slotClause = "";
-        if (this.slot) {
-            slotClause = ` in slot ${this.slot + 1}`;
-        }
-        return `write ${meta} to ${this.itemTarget}${slotClause};`;
+        const meta = convertItemMeta(this.meta, this.slot);
+        return `write ${meta} to ${this.itemTarget}${convertItemMeta(undefined, this.slot)};`;
     }
 }
 

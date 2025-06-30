@@ -88,11 +88,11 @@ can also use the symbol list on the right side).
 | `ingr` | | (`string`) Set the ingredient of the cooked-food. The string must be an item identifier (see above). The property can be specified multiple times to add multiple ingredients. |
 | `level`| | (`int`) Sets the level of the effect for cooked-food |
 | `life-recover`| `hp`, `modpower` | (`int`) Sets the number of quarter-hearts cooked-food recovers, or value of a weapon modifier |
-| `modifier` | `modtype` | (`int` or `string`) Set weapon modifier. **Cannot be used to set food effect type**. <br> Integer values are the same as `price`. String values can be specified multiple times to build up the weapon modifier. See [`parse_weapon_modifier_bits`](https://github.com/Pistonite/botw-ist/blob/main/packages/parser/src/cir/item_meta.rs) for possible values |
+| `modifier` | `modtype` | (`int` or `string`) Set weapon modifier. <br>**Cannot be used to set food effect type**. <br> Integer values are the same as `price`. String values can be specified multiple times to build up the weapon modifier. See [`parse_weapon_modifier_bits`](https://github.com/Pistonite/botw-ist/blob/main/packages/parser/src/cir/item_meta.rs) for possible values |
 | `price` | |(`int`) Sets the price of the cooked-food. This can also be used to set multiple weapon modifiers as a bit mask |
 | `star` | | (`int`) Armor star (upgrade) number, valid range is `0-4`, inclusive. |
 | `time` | | (`int`) Sets the duration of the food effect in seconds |
-| `value` | `life` | (`int`) The value of the item, which is the count for stackables or durability multiplied by 100 for equipments. **Note: not to be confused with `life-recover`** |
+| `value` | `life` | (`int`) The value of the item, which is the count for stackables or durability multiplied by 100 for equipments. <br>**Note: not to be confused with `life-recover`** |
   
 ## Selecting from multiple matches
 When selecting an item slot (for example to <skyb>hold</skyb>), there could be cases
@@ -137,6 +137,16 @@ eat 2 apple[tab=0, slot=3]
 - These properties cannot be used when adding items
 - If the slot selected by position has a different item, you will receive an error
 - When using `row` and `col`, they must be specified after `category` or `tab`
+```
+
+```admonish warning
+The positions are calculated right before the simulator
+tries to find the item to target. This means if the action performed on
+previous items in the same command changes the inventory, the position
+you need to specify to target the correct item could be different from
+what you see in the inventory in the previous step. For this reason,
+it's not recommended to specify position when performing an action on multiple
+items. Separate the position-dependent action to its own command instead.
 ```
 
 ## The `all` amount specifier

@@ -23,7 +23,7 @@ export class CommandBreakSlots extends AbstractProperCommand {
         codeBlocks: CodeBlockTree,
     ) {
         super(codeBlocks);
-        this.slot = slot - 1; // change to 0 based
+        this.slot = slot;
         this.numToBreak = numToBreak;
         this.stacks = stacks;
     }
@@ -31,14 +31,10 @@ export class CommandBreakSlots extends AbstractProperCommand {
     public override convert(): string {
         let s = "";
         if (this.stacks.length > 0) {
-            s += `destroy ${this.stacks.map((s) => s.convert()).join(" ")}`;
-            if (this.slot) {
-                s += ` from slot ${this.slot + 1}`;
-            }
-            s += "; ";
+            s += `!remove ${this.stacks.map((s) => s.convert(this.slot)).join(" ")};`;
         }
         const slotWord = this.numToBreak === 1 ? "slot" : "slots";
-        s += `break ${this.numToBreak} ${slotWord};`;
+        s += `!break ${this.numToBreak} ${slotWord};`;
         return s;
     }
 }
