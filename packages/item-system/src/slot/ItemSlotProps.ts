@@ -209,10 +209,12 @@ export const getSlotPropsFromOverworldItem = (
         status = getDefaultStatusPropsForActor(actorName);
     }
 
+    const isTranslucent = item.type === "ground-item" && item.despawning;
+
     return {
         actor: actorName,
         isEquipped: item.type === "equipped",
-        isTranslucent: false,
+        isTranslucent,
         durability: isEquipment ? item.value / 100 : undefined,
         isInBrokenSlot: false,
         isEntangled: false,
