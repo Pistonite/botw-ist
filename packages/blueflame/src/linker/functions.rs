@@ -1,6 +1,6 @@
 use crate::env::GameVer;
 use crate::game::{CookItem, FixedSafeString40, PouchItem, WeaponModifierInfo, singleton_instance};
-use crate::memory::{mem, Ptr};
+use crate::memory::{Ptr, mem};
 use crate::processor::{self, Cpu2, reg};
 
 /// Get item with the given value or default value.
@@ -273,7 +273,11 @@ pub fn unhold_items(cpu: &mut Cpu2) -> Result<(), processor::Error> {
 }
 
 /// Call `uking::ui::PauseMenuDataMgr::sellItem`
-pub fn sell_item(cpu: &mut Cpu2, item: Ptr![PouchItem], count: i32) -> Result<(), processor::Error> {
+pub fn sell_item(
+    cpu: &mut Cpu2,
+    item: Ptr![PouchItem],
+    count: i32,
+) -> Result<(), processor::Error> {
     cpu.reset_stack();
     let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
     reg! { cpu:
@@ -294,7 +298,7 @@ pub fn update_inventory_info(cpu: &mut Cpu2) -> Result<(), processor::Error> {
         x[0] = this_ptr,
         x[1] = items_list_ptr,
     };
-    // TODO --160 
+    // TODO --160
     cpu.native_jump_to_main_offset(0x0096c954)
 }
 
@@ -307,6 +311,8 @@ pub fn update_list_heads(cpu: &mut Cpu2) -> Result<(), processor::Error> {
         let tab_types = *(&pmdm->mTabsType);
     }
 
+    // consistent with C++ implementation
+    #[allow(clippy::needless_range_loop)]
     for i in 0..50 {
         let category_idx = match tab_types[i] {
             // Sword
@@ -316,14 +322,14 @@ pub fn update_list_heads(cpu: &mut Cpu2) -> Result<(), processor::Error> {
             // Shield
             3 => 2,
             // Armor
-            4 | 5 | 6 => 3,
+            4..=6 => 3,
             // Material
             7 => 4,
             // Food
             8 => 5,
             // Key Item
             9 => 6,
-            _ => continue
+            _ => continue,
         };
         if list_heads[category_idx].is_nullptr() {
             list_heads[category_idx] = pmdm.tabs().ith(i as u64);
@@ -346,7 +352,7 @@ pub fn save_to_game_data(cpu: &mut Cpu2) -> Result<(), processor::Error> {
         x[0] = this_ptr,
         x[1] = items_list_ptr,
     };
-    // TODO --160 
+    // TODO --160
     cpu.native_jump_to_main_offset(0x0096f9bc)
 }
 

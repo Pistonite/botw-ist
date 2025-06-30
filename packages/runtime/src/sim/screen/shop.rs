@@ -1,6 +1,6 @@
-use blueflame::game::{singleton_instance, PouchItem};
+use blueflame::game::{PouchItem, singleton_instance};
 use blueflame::linker;
-use blueflame::memory::{mem, Ptr};
+use blueflame::memory::{Ptr, mem};
 use blueflame::processor::{self, Cpu2};
 
 use crate::sim;
@@ -36,7 +36,7 @@ impl ShopScreen {
         // note that shop screen can be visible even when mCount is 0
 
         for i in 0..num_tabs {
-            if !matches!(tab_types[i], 4 | 5 | 6 | 7 | 8) {
+            if !matches!(tab_types[i], 4..=8) {
                 continue;
             }
             let mut curr_item_ptr = tab_heads[i];
@@ -69,12 +69,11 @@ impl ShopScreen {
                 mem! { m:
                     let next_node_ptr = *(&curr_item_ptr->mListNode.mNext)
                 };
-                curr_item_ptr = if next_node_ptr.is_nullptr() || next_node_ptr == head_node_ptr
-                    {
-                        0u64.into()
-                    } else {
-                        (next_node_ptr.to_raw() - 8).into()
-                    };
+                curr_item_ptr = if next_node_ptr.is_nullptr() || next_node_ptr == head_node_ptr {
+                    0u64.into()
+                } else {
+                    (next_node_ptr.to_raw() - 8).into()
+                };
             }
             tabs.push(sim::ScreenTab {
                 items: tab,
@@ -94,6 +93,4 @@ impl ShopScreen {
         }
         Ok(())
     }
-
-
 }

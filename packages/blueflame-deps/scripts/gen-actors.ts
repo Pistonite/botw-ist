@@ -52,7 +52,7 @@ for (const actor in useMap) {
 lines.push("};");
 
 lines.push("#[rustfmt::skip]");
-lines.push("pub static STACKABLE_ACTORS_SORTED: &[&'static str] = &[");
+lines.push("pub static STACKABLE_ACTORS_SORTED: &[&str] = &[");
 const canStackActorsSorted = [...canStackActors];
 canStackActorsSorted.sort();
 for (const actor of canStackActorsSorted) {
@@ -61,7 +61,7 @@ for (const actor of canStackActorsSorted) {
 lines.push("];")
 
 lines.push("#[rustfmt::skip]");
-lines.push("pub static NON_SELLABLE_ACTORS_SORTED: &[&'static str] = &[");
+lines.push("pub static NON_SELLABLE_ACTORS_SORTED: &[&str] = &[");
 const cannotSellActorsSorted = [...cannotSellActors];
 cannotSellActorsSorted.sort();
 for (const actor of cannotSellActorsSorted) {

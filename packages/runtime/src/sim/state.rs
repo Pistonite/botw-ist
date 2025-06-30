@@ -60,7 +60,6 @@ impl State {
             cir::Command::Get(items) => self.handle_get(ctx, items, false).await,
             cir::Command::GetPause(items) => self.handle_get(ctx, items, true).await,
             // TODO: pickup
-
             cir::Command::OpenInv => self.handle_pause(ctx).await,
             cir::Command::CloseInv => self.handle_unpause(ctx).await,
             cir::Command::Hold(items) => self.handle_hold(ctx, items, false).await,
@@ -70,7 +69,6 @@ impl State {
             cir::Command::SuBreak(count) => self.handle_su_break(ctx, *count).await,
             cir::Command::SuRemove(items) => self.handle_su_remove(ctx, items).await,
 
-
             cir::Command::OpenShop => self.handle_open_shop(ctx).await,
             cir::Command::CloseShop => self.handle_close_shop(ctx).await,
             cir::Command::Sell(items) => self.handle_sell(ctx, items).await,
@@ -78,7 +76,8 @@ impl State {
         }
     }
 
-    #[rustfmt::skip] async fn handle_get(self, rt: sim::Context<&sim::Runtime>, 
+    #[rustfmt::skip]
+    async fn handle_get(self, rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSpec], pause_after: bool,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling GET command");
@@ -92,7 +91,8 @@ impl State {
         }) }) .await }) .await
     }
 
-    #[rustfmt::skip] async fn handle_pause(self, rt: sim::Context<&sim::Runtime>) -> Result<Report<Self>, exec::Error> {
+    #[rustfmt::skip]
+    async fn handle_pause(self, rt: sim::Context<&sim::Runtime>) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling PAUSE command");
         self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
 
@@ -103,7 +103,8 @@ impl State {
         }) }) .await }) .await
     }
 
-    #[rustfmt::skip] async fn handle_unpause(self, rt: sim::Context<&sim::Runtime>,) -> Result<Report<Self>, exec::Error> {
+    #[rustfmt::skip]
+    async fn handle_unpause(self, rt: sim::Context<&sim::Runtime>,) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling UNPAUSE command");
         self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
 
@@ -123,7 +124,8 @@ impl State {
         }) }) .await }) .await
     }
 
-    #[rustfmt::skip] async fn handle_hold(self, rt: sim::Context<&sim::Runtime>,
+    #[rustfmt::skip]
+    async fn handle_hold(self, rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec], attached: bool,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling HOLD command");
@@ -133,14 +135,16 @@ impl State {
         }) }) .await }) .await
     }
 
-    #[rustfmt::skip] async fn handle_unhold(self, rt: sim::Context<&sim::Runtime>) -> Result<Report<Self>, exec::Error> {
+    #[rustfmt::skip]
+    async fn handle_unhold(self, rt: sim::Context<&sim::Runtime>) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling HOLD command");
         self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
             sim::actions::unhold(&mut cpu2, sys, errors)
         }) }) .await }) .await
     }
 
-    #[rustfmt::skip] async fn handle_drop(self, rt: sim::Context<&sim::Runtime>,
+    #[rustfmt::skip]
+    async fn handle_drop(self, rt: sim::Context<&sim::Runtime>,
         items: Option<&[cir::ItemSelectSpec]>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling DROP command");
@@ -154,7 +158,8 @@ impl State {
         }) }) .await }) .await
     }
 
-    #[rustfmt::skip] async fn handle_open_shop(self, rt: sim::Context<&sim::Runtime>,) -> Result<Report<Self>, exec::Error> {
+    #[rustfmt::skip]
+    async fn handle_open_shop(self, rt: sim::Context<&sim::Runtime>,) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling OPEN SHOP command");
         self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
 
@@ -165,7 +170,8 @@ impl State {
         }) }) .await }) .await
     }
 
-    #[rustfmt::skip] async fn handle_close_shop(self, rt: sim::Context<&sim::Runtime>,) -> Result<Report<Self>, exec::Error> {
+    #[rustfmt::skip]
+    async fn handle_close_shop(self, rt: sim::Context<&sim::Runtime>,) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling CLOSE SHOP command");
         self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
 
@@ -185,7 +191,8 @@ impl State {
         }) }) .await }) .await
     }
 
-    #[rustfmt::skip] async fn handle_sell(self, rt: sim::Context<&sim::Runtime>,
+    #[rustfmt::skip]
+    async fn handle_sell(self, rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec],
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling SELL command");
@@ -195,7 +202,8 @@ impl State {
         }) }) .await }) .await
     }
 
-    #[rustfmt::skip] async fn handle_su_break(self, rt: sim::Context<&sim::Runtime>, 
+    #[rustfmt::skip]
+    async fn handle_su_break(self, rt: sim::Context<&sim::Runtime>,
         count: i32
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling !BREAK command");
@@ -204,7 +212,8 @@ impl State {
         }) }) .await }) .await
     }
 
-    #[rustfmt::skip] async fn handle_su_remove(self, rt: sim::Context<&sim::Runtime>,
+    #[rustfmt::skip]
+    async fn handle_su_remove(self, rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec]
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling !REMOVE command");
@@ -213,7 +222,6 @@ impl State {
             sim::actions::force_remove_item(&mut cpu2, sys, errors, &items)
         }) }) .await }) .await
     }
-
 }
 
 impl GameState {

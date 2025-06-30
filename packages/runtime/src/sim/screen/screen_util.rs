@@ -1,12 +1,11 @@
 use blueflame::game::PouchItem;
 use blueflame::memory::Ptr;
 
-
 pub fn should_go_to_next_tab(
     curr_item_ptr: Ptr![PouchItem],
     tab_i: usize,
     num_tabs: usize,
-    tab_heads: &[Ptr![PouchItem]; 50]
+    tab_heads: &[Ptr![PouchItem]; 50],
 ) -> bool {
     if curr_item_ptr.is_nullptr() {
         return true;

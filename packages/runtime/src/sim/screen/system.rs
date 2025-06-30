@@ -89,7 +89,8 @@ impl ScreenSystem {
         Ok(true)
     }
 
-    pub fn transition_to_shop_buying(&mut self,
+    pub fn transition_to_shop_buying(
+        &mut self,
         ctx: &mut sim::Context<&mut Cpu2>,
         overworld: &mut sim::OverworldSystem,
         manual: bool,
@@ -119,7 +120,7 @@ impl ScreenSystem {
                         shop.transition_to_buy(ctx.cpu())?;
                     }
                     // unreachable: outer match
-                    _ => unreachable!()
+                    _ => unreachable!(),
                 }
                 return Ok(true);
             }
@@ -145,7 +146,8 @@ impl ScreenSystem {
         Ok(true)
     }
 
-    pub fn transition_to_shop_selling(&mut self,
+    pub fn transition_to_shop_selling(
+        &mut self,
         ctx: &mut sim::Context<&mut Cpu2>,
         overworld: &mut sim::OverworldSystem,
         manual: bool,
@@ -263,14 +265,14 @@ impl Screen {
     pub fn as_selling(&self) -> Option<&sim::ScreenItems> {
         match self {
             Screen::Shop(sim::ShopScreen::Sell(inv)) => Some(inv),
-            _=> None
+            _ => None,
         }
     }
 
     pub fn as_selling_mut(&mut self) -> Option<&mut sim::ScreenItems> {
         match self {
             Screen::Shop(sim::ShopScreen::Sell(inv)) => Some(inv),
-            _=> None
+            _ => None,
         }
     }
 

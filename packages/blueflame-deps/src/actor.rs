@@ -16,10 +16,14 @@ pub fn get_pouch_item_type(actor: &str) -> i32 {
 
 /// Get if the actor has `CanStack` tag from static data
 pub fn can_stack(actor: &str) -> bool {
-    crate::generated::actor::STACKABLE_ACTORS_SORTED.binary_search(&actor).is_ok()
+    crate::generated::actor::STACKABLE_ACTORS_SORTED
+        .binary_search(&actor)
+        .is_ok()
 }
 
 /// Get if the actor does not have `CannotSell` tag from static data
 pub fn can_sell(actor: &str) -> bool {
-    crate::generated::actor::NON_SELLABLE_ACTORS_SORTED.binary_search(&actor).is_err()
+    crate::generated::actor::NON_SELLABLE_ACTORS_SORTED
+        .binary_search(&actor)
+        .is_err()
 }

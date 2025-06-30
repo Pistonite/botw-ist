@@ -1,10 +1,9 @@
-
 use blueflame::game::PouchItem;
-use blueflame::memory::{self, mem, Memory, Ptr};
+use blueflame::memory::{self, Memory, Ptr, mem};
 use skybook_parser::cir;
 use teleparse::Span;
 
-use crate::error::{sim_warning, ErrorReport};
+use crate::error::{ErrorReport, sim_warning};
 
 /// Items in inventory screen (for pouch and shop)
 #[derive(Debug, Clone)]
@@ -116,11 +115,7 @@ impl ScreenItems {
     }
 
     /// Get the pointer of the item by tab index and slot
-    pub fn ptr_at(
-        &self,
-        tab: usize,
-        slot: usize,
-    ) -> Option<Ptr![PouchItem]> {
+    pub fn ptr_at(&self, tab: usize, slot: usize) -> Option<Ptr![PouchItem]> {
         self.tabs.get(tab)?.items.get(slot)?.as_ref().map(|x| x.ptr)
     }
 
@@ -375,5 +370,4 @@ impl ScreenItems {
 
         Ok(changed)
     }
-
 }

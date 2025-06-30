@@ -57,8 +57,6 @@ export const language: LanguageTokenizer = {
 
         // BELOW are TODO
 
-
-
         "eat",
 
         "equip",
@@ -79,8 +77,6 @@ export const language: LanguageTokenizer = {
         "reload",
         "close-game",
         "new-game",
-
-
 
         "enter",
         "exit",

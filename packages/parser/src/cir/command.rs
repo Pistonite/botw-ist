@@ -131,7 +131,6 @@ pub enum Command {
     /// `new-game` - Start a new game
     NewGame,
 
-
     /// See [`syn::CmdEnter`]
     Enter(cir::Trial),
     /// `exit` - Exit the current trial
@@ -183,12 +182,10 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         syn::Command::Unhold(_) => Some(cir::Command::Unhold),
-        syn::Command::Drop(cmd) => Some(cir::Command::Drop(
-            match cmd.items.as_ref() {
-                Some (items) => Some(cir::parse_item_list_constrained(items, resolver, errors).await),
-                None => None
-            }
-        )),
+        syn::Command::Drop(cmd) => Some(cir::Command::Drop(match cmd.items.as_ref() {
+            Some(items) => Some(cir::parse_item_list_constrained(items, resolver, errors).await),
+            None => None,
+        })),
         syn::Command::Dnp(cmd) => Some(cir::Command::Dnp(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
@@ -198,13 +195,15 @@ pub async fn parse_command<R: QuotedItemResolver>(
                 cir::parse_item_list_constrained(items, resolver, errors).await,
             )),
         },
-        syn::Command::SuBreak(cmd) => match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
-            Ok(x) => Some(cir::Command::SuBreak(x)),
-            Err(e) => {
-                errors.push(e);
-                None
+        syn::Command::SuBreak(cmd) => {
+            match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
+                Ok(x) => Some(cir::Command::SuBreak(x)),
+                Err(e) => {
+                    errors.push(e);
+                    None
+                }
             }
-        },
+        }
         syn::Command::SuRemove(cmd) => Some(cir::Command::SuRemove(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
@@ -218,9 +217,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         //////////////////////////////////////////////////////////////////
-
-
-
         syn::Command::Eat(cmd) => Some(cir::Command::Eat(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),

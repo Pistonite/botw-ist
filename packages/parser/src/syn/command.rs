@@ -118,9 +118,6 @@ pub enum Command {
     /// `new-game`
     NewGame(syn::KwNewGame),
 
-
-
-
     // ==== trials ====
     /// `enter TRIAL`
     Enter(CmdEnter),
@@ -287,7 +284,6 @@ pub struct CmdBuy {
 
 ///////////////////////////////////////////////////////////
 
-
 /// `eat ITEMS` - execute eat prompt on targeted items.
 /// The number is the times to eat the item.
 #[derive_syntax]
@@ -393,7 +389,6 @@ pub struct CmdEntangle {
     pub category: syn::Category,
     pub meta: tp::Option<syn::ItemMeta>,
 }
-
 
 /// `!set-inventory ITEMS` - set the inventory to the given items (same as `init` in old format)
 #[derive_syntax]
