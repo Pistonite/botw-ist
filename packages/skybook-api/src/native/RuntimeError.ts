@@ -10,8 +10,10 @@ export type RuntimeError =
     | { type: "Executor" }
     | { type: "UselessScreenTransition" }
     | { type: "NotRightScreen" }
+    | { type: "CannotAutoSwitchScreen" }
     | { type: "ItemMismatch"; data: [string, string] }
     | { type: "CannotFindItem" }
+    | { type: "CannotFindSellableItem" }
     | { type: "CannotHoldMore" }
     | { type: "CannotDoWhileHolding" }
     | { type: "NotHolding" }
