@@ -207,14 +207,16 @@ runtime_init.SaveImage: "Benutzerdefinierte Image-Daten konnten nicht gespeicher
 runtime_init.UnsupportedVersion: "Das Image enthält eine derzeit nicht unterstützte Version des Spiels."
 
 # Error/Diagnostic from Runtime
+runtime_error.CannotAutoSwitchScreen: "Dieser Befehl kann auf dem aktuellen Bildschirm nicht verwendet werden. Der Simulator kann Bildschirme nicht automatisch wechseln, da der Bildschirm manuell gewechselt wurde. Eine Rückkehr zum Overworld-Bildschirm ermöglicht es dem Simulator, Bildschirme wieder automatisch zu wechseln."
 runtime_error.CannotDoWhileHolding: "Dies kann nicht getan werden, während Gegenstände gehalten werden."
 runtime_error.CannotFindItem: "Dieser Gegenstand kann im Inventar nicht gefunden werden."
+runtime_error.CannotFindSellableItem: "Dieser Artikel kann nicht zum Verkauf gefunden werden oder ist nicht verkäuflich."
 runtime_error.CannotHoldMore: "Es können keine weiteren Gegenstände gehalten werden."
 runtime_error.Crash: "Das Spiel ist in diesem Schritt abgestürzt."
 runtime_error.Executor: "Unerwarteter Fehler vom Executor."
 runtime_error.ItemMismatch: "Der an dieser Position im Inventar gefundene Gegenstand ist `{{actual_item}}`, während der im Befehl angegebene Gegenstand `{{expected_item}}` ist."
 runtime_error.NotHolding: "Es werden keine Gegenstände gehalten."
-runtime_error.NotRightScreen: "Sie können diesen Befehl auf dem aktuellen Bildschirm nicht verwenden. Der Simulator wechselt automatisch die Bildschirme für Sie, es sei denn, Sie haben einen Bildschirm manuell mit einem Befehl geöffnet. Die Rückkehr zum Oberwelt-Bildschirm mit einem Befehl ermöglicht es dem Simulator, wieder automatisch die Bildschirme zu wechseln."
+runtime_error.NotRightScreen: "Dieser Befehl kann auf dem aktuellen Bildschirm nicht verwendet werden."
 runtime_error.PreviousCrash: "Das Spiel ist in einem vorherigen Schritt abgestürzt. Sie müssen `neu laden` (`reload`) oder ein `neues Spiel starten` (`new-game`), bevor Sie fortfahren können."
 runtime_error.Unimplemented: "Dieser Befehl ist noch nicht implementiert :)."
 runtime_error.Uninitialized: "Laufzeitumgebung unerwartet nicht initialisiert."
