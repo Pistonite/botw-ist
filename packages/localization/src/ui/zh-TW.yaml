@@ -152,6 +152,7 @@ tooltip.stamina_recover: "+{{wheels}} 圈"
 tooltip.stamina_recover_ex: "{{wheels}} 圈"
 tooltip.translucent: "虛像格"
 tooltip.value: "數值: {{value}}"
+tooltip.will_despawn: "即將消失"
 
 # Crash Screen
 crash_screen.button.reload: "不更改腳本直接重新載入"

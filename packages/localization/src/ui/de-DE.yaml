@@ -152,6 +152,7 @@ tooltip.stamina_recover: "+{{wheels}} Kreis(e)"
 tooltip.stamina_recover_ex: "{{wheels}} Kreis(e)"
 tooltip.translucent: "Phantomfach"
 tooltip.value: "Wert: {{value}}"
+tooltip.will_despawn: "Wird despawnen"
 
 # Crash Screen
 crash_screen.button.reload: "Ohne Skriptänderung neu laden"

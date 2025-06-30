@@ -152,6 +152,7 @@ tooltip.stamina_recover: "+{{wheels}} círculo(s)"
 tooltip.stamina_recover_ex: "{{wheels}} círculo(s)"
 tooltip.translucent: "Espacio Fantasma"
 tooltip.value: "Valor: {{value}}"
+tooltip.will_despawn: "Desaparecerá"
 
 # Crash Screen
 crash_screen.button.reload: "Recargar sin cambiar el script"

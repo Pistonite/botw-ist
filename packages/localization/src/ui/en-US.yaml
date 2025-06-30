@@ -152,6 +152,7 @@ tooltip.stamina_recover: "+{{wheels}} Wheel(s)"
 tooltip.stamina_recover_ex: "{{wheels}} Wheel(s)"
 tooltip.translucent: "Translucent"
 tooltip.value: "Value: {{value}}"
+tooltip.will_despawn: "Will despawn"
 
 # Crash Screen
 crash_screen.button.reload: "Reload without changing script"
