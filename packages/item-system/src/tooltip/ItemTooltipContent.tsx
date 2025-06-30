@@ -530,7 +530,8 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                         ui("tooltip.equipped_overworld")}
                     {overworldStatus === "held" && ui("tooltip.held_overworld")}
                     {overworldStatus === "ground" && ui("tooltip.ground")}
-                    {!!overworldWillDespawn && " - " + ui("tooltip.will_despawn")}
+                    {!!overworldWillDespawn &&
+                        " - " + ui("tooltip.will_despawn")}
                 </Text>
             )}
             {!!accessibleStatus && (
