@@ -32,28 +32,15 @@ The UI will display the state of the inventory *after* the command the cursor is
 
 To learn more about commands, see [Command Syntax](./syntax.md) and [Command Reference](./commands.md).
 
-## Simulation vs Emulation
-The difference of simulation and emulation, given by AI:
+## Systems in the Simulator
+Skybook aims to be a 100% accurate IST simulator. To achieve that, it *emulates*
+subsystems of the game as much as possible. However, not all subsystems can be emulated,
+especially those that are not reversed-engineered fully or not at all. Some subsystems
+also may not be worth to emulate since a simulation is good enough.
 
-> Simulation models a system's behavior to understand and predict outcomes, while emulation replicates a system's exact functionality to run original software or hardware.
-
-It is important to know that the App is a *simulator*, not an *emulator*. In other words,
-there will be inaccuracies. In some way, this is a good thing since it allows us to sometimes
-to things not possible directly or indirectly in game, to make our lives a bit easier.
-
-The simulator still uses emulation in some areas to achieve maximum accuracy.
-
-The following subsystems are emulated:
-- Inventory (`PauseMenuDataMgr`)
-- GameData (`GdtManager`)
-
-The rest of the subsystems are simulated, including:
+The systems that are involved in the simulator include:
+- Inventory
+- GameData
 - Saves
 - [Screens](./screen_system.md)
-- Overworld
-
-```admonish important
-The app DOES NOT actually run the game, even when emulating a subsystem.
-Emulating the whole game has major performance and legal issues, and is a non-goal
-of this project.
-```
+- [Overworld](./overworld_system.md)

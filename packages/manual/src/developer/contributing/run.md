@@ -1,5 +1,10 @@
 # Build and Run
 
+This applies to development of:
+- The Web App
+- The Manual (this thing you are reading)
+- The Server
+
 ```admonish tip
 For all the commands like this:
    
@@ -15,17 +20,18 @@ You can also `cd` to the package and execute the task:
 
 
 ## Web Application
+```admonish warning
+Running the web app locally requires Secure Origin, which means either running from `localhost`
+or setting up HTTPS, see [here](https://mono.pistonite.dev/standard/setup_https.html)
+```
+
 To run the web application:
 ```
 task exec -- app:dev
 ```
-The app will generally automatically hot-reload as you make changes, except:
-- Manual reload is needed if the `Script Editor` extension or related code is modified
-  to re-enable syntax highlighting
-- Building the Runtime worker and manual reload is needed for changes in the Runtime worker.
-  Run `task exec -- runtime-wasm:build` to rebuild, then refresh the page.
+The UI will automatically reload as you make changes.
 
-Note that DirectLoad will not work when running the application like this since
+Note that DirectLoad will not work when running the application locally since
 it's a server feature.
 
 ## Manual
@@ -36,6 +42,11 @@ task exec -- manual:dev
 The manual will automatically reload when making changes
 
 ## Server
+```admonish warning
+Currently, running the server locally also requires building the runtime as
+part of the assets, which requires a dump of the game to build
+```
+
 To run the server, first build and pull the application assets locally
 ```
 task exec -- server:pull-local

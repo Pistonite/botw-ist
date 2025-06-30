@@ -8,17 +8,10 @@
     <span class="header">The Inventory Slot Transfer Simulator Project</span>
 </h4>
 
-```admonish danger
-You somehow discovered this page :P
-
-This manual is still a work-in-progress. Until it's officially released,
-note that everything here is unstable, for example links can break
-```
-
 ## Getting started
 - [How to use the simulator](./user/index.md)
 - [Brief Overview of Inventory Slot Transfer](./ist/index.md)
-- [Contributing as a non-developer](./developer/contributing/translation.md)
+- [Contributing to Translations](./developer/contributing/translation.md)
 - [Technical details for developers](./developer/index.md)
 
 ## Having an issue?
