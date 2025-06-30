@@ -110,6 +110,7 @@ tasks:
       - task: update-trace-hash
       - python scripts/relocate.py
       - task: run-mini
+      - sha256sum data/program-mini.bfi > hash.txt
 
   push-artifacts:
     desc: Upload built artifacts
@@ -121,3 +122,7 @@ tasks:
     cmds:
       - $(which mkdir) -p data
       - gcloud storage cp gs://ist-private/super-secret/images/program-mini.bfi data
+
+  verify-artifacts:
+    cmds:
+      - sha256sum --check hash.txt
