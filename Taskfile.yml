@@ -226,8 +226,8 @@ tasks:
       - parser:pull-artifacts
       - blueflame-deps:pull-artifacts
       - runtime-tests:pull-artifacts
-      - runtime-tests:verify-artifacts
     cmds:
+      - task: runtime-tests:verify-artifacts
       - pnpm install --frozen-lockfile
       - task: runtime-wasm:build
       - task: runtime-wasm:clean-dist # so we don't upload non-min bundles
@@ -238,8 +238,8 @@ tasks:
       - parser:pull-artifacts
       - blueflame-deps:pull-artifacts
       - runtime-tests:pull-artifacts
-      - runtime-tests:verify-artifacts
     cmds:
+      - task: runtime-tests:verify-artifacts
       - pnpm install --frozen-lockfile
       - task: runtime-wasm:build-wasm
       - task: runtime-wasm:build-dist-min
