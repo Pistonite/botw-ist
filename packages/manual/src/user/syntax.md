@@ -6,9 +6,13 @@ Most commands describe one or more *actions* in game, such as getting an item, d
 The commands can be divided into 3 groups:
 - **Actions**: These correspond to actions you do in game, such as <skyb>get</skyb>, <skyb>pick-up</skyb> and <skyb>hold</skyb>
 - **Annotations**: These commands start with `:` and are used to change the current configuration, such as <skyb>:weapon-slots</skyb>
-- **Supercommands**: These command start with `!` and are lower-level commands that can directly interact with the game's state, such as <skyb>!set-inventory</skyb>, <skyb>!set-gdt-flag</skyb>
+- **Supercommands**: These command start with `!` and are more powerful than the actions.
+  They often interact directly with the game's state in a way that's not possible with a regular action.
 
-A command can be broken into multiple lines, and can have optional trailing `;`.
+Whitespaces are insignificant in the syntax, including new lines.
+This means one command can be broken into multiple lines and more than one command
+can be put on the same line.
+Commands can also have an optional trailing `;`.
 
 ```skybook
 # These 2 commands are equivalent
@@ -18,6 +22,11 @@ get
   1 apple
   1 pot-lid
   1 hammer
+
+# Trailing ; is optional even for multiple commands on the same line
+hold 2 apples drop
+# but it's clearer if you separate them with a ;
+hold 2 apples; drop
 ```
 
 ```admonish note
@@ -36,7 +45,8 @@ get    3        pot-lid   [durability=3]
 
 - `amount` specifies the number of items. For example, the command above gets 3 Pot Lids.
   - When only specifying a single item, the amount can be omitted (<skyb>get pot-lid</skyb> is the same as <skyb>get 1 pot-lid</skyb>).
-    However, the amount is required for each item if there are multiple items in the same command
+  - However, the amount is required for each item if there are multiple items in the same command. For example <skyb>get apple banana</skyb> is invalid, and it must be <skyb>get 1 apple 1 banana</skyb>
+  - You can use `all` in some commands, see [below](#the-all-amount-specifier)
 - `name` is the item to get, which can be one of the following formats:
   - *By Identifier*: Multiple english words separated by `-` and `_`, for example
     <skyb> get 1 royal-claymore 1 trav-bow</skyb>.
@@ -44,15 +54,15 @@ get    3        pot-lid   [durability=3]
     - Plural forms can be used as well, i.e. `apples` is the same as `apple`
     - There is an internal algorithm that decides what item it is if there are multiple matches.
   - *By Localized Name*: A quoted word like <skyb>get "royal claymore"</skyb>. By default, all languages are searched,
-    so you can also do something like `"espadon royal"` or `"王族双手剑"`. The item is fuzzy-searched.
-    - If the matched language is not what you want, you can also lock the language, for example `"fr:espadon royal"`
+    so you can also do something like <skyb>"espadon royal"</skyb> or <skyb>"王族双手剑"</skyb>. The item is fuzzy-searched.
+    - If the matched language is not what you want, you can also lock the language, for example <skyb>"fr:espadon royal"</skyb>
   - *By Actor Name*: An angle-bracketed string like <skyb>get <Weapon_Sword_070></skyb>, to specify the item use its internal actor name directly.
   - *By Category* (Limited Scenarios Only): In cases where a category can uniquely identify an item, you can use the 
     category name to specify the item. For example <skyb>unequip shield</skyb> to unequip the currently equipped shield if there is only one shield equipped.
     Note the behavior might vary based on the command. See [token](https://github.com/Pistonite/botw-ist/blob/d5812037f4909eeb48cb2ba666dccdb672563cc4/packages/parser/src/syn/token.rs#L119) for possible category values
-- `metadata` is extra properties of the item, in the format of `[key1=value1, key2=value2, ...]`, either `=` or `:` can be used as the key/value delimiter
+- `metadata` is extra properties of the item, in the format of <skyb>[key1=value1, key2=value2, ...]</skyb>, either `=` or `:` can be used as the key/value delimiter
 
-The metadata can be used in 2 scenarios:
+The metadata has different meaning in 2 scenarios:
 - When *adding* item, it specifies extra properties on the item being added, for example, durability of equipment, weapon modifier, etc.
   This is also referred to as a *finite item specifier*
 - When *selecting* items, for example, finding which item in the inventory to <skyb>hold</skyb> or <skyb>sell</skyb>.
@@ -90,7 +100,7 @@ can also use the symbol list on the right side).
 | `life-recover`| `hp`, `modpower` | (`int`) Sets the number of quarter-hearts cooked-food recovers, or value of a weapon modifier |
 | `modifier` | `modtype` | (`int` or `string`) Set weapon modifier. <br>**Cannot be used to set food effect type**. <br> Integer values are the same as `price`. String values can be specified multiple times to build up the weapon modifier. See [`parse_weapon_modifier_bits`](https://github.com/Pistonite/botw-ist/blob/main/packages/parser/src/cir/item_meta.rs) for possible values |
 | `price` | |(`int`) Sets the price of the cooked-food. This can also be used to set multiple weapon modifiers as a bit mask |
-| `star` | | (`int`) Armor star (upgrade) number, valid range is `0-4`, inclusive. |
+| `star` | | (`int`) Armor star (upgrade) number, valid range is `0-4`, inclusive. <br>Note that this is syntactic sugar to change the name of the item, as armor with different star numbers are different items. |
 | `time` | | (`int`) Sets the duration of the food effect in seconds |
 | `value` | `life` | (`int`) The value of the item, which is the count for stackables or durability multiplied by 100 for equipments. <br>**Note: not to be confused with `life-recover`** |
   
@@ -158,5 +168,8 @@ drop all shields
 ```
 
 The exact action may depend on the command, for example, <skyb>sell all apples</skyb>
-invokes the sell-all option, where as <skyb>eat all apples</skyb> selects the "eat"
-option for all slots that match `apples` repeatly, until no more slots match.
+invokes the function for selling with the amount equal to the value of the apple stack,
+whereas
+<skyb>eat all apples</skyb> selects the "eat"
+option for all slots that match `apples` repeatly, until no more slots match (since you can
+only eat one at a time).
