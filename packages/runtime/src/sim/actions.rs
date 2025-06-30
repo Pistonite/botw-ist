@@ -1,8 +1,6 @@
-use blueflame::game;
-use blueflame::game::singleton_instance;
+use blueflame::game::{self, singleton_instance};
 use blueflame::linker;
-use blueflame::memory::Ptr;
-use blueflame::memory::mem;
+use blueflame::memory::{Ptr, mem};
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 
