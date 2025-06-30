@@ -226,6 +226,7 @@ tasks:
       - parser:pull-artifacts
       - blueflame-deps:pull-artifacts
       - runtime-tests:pull-artifacts
+      - runtime-tests:verify-artifacts
     cmds:
       - pnpm install --frozen-lockfile
       - task: runtime-wasm:build
@@ -237,6 +238,7 @@ tasks:
       - parser:pull-artifacts
       - blueflame-deps:pull-artifacts
       - runtime-tests:pull-artifacts
+      - runtime-tests:verify-artifacts
     cmds:
       - pnpm install --frozen-lockfile
       - task: runtime-wasm:build-wasm
