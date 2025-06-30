@@ -1,4 +1,3 @@
-#![allow(clippy::too_many_arguments)]
 #![allow(non_snake_case)]
 
 mod gdt;
@@ -11,19 +10,6 @@ mod pouch;
 pub use pouch::*;
 mod container;
 pub use container::*;
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-#[repr(i32)]
-pub enum PouchCategory {
-    Sword = 0x0,
-    Bow = 0x1,
-    Shield = 0x2,
-    Armor = 0x3,
-    Material = 0x4,
-    Food = 0x5,
-    KeyItem = 0x6,
-    Invalid = -1,
-}
 
 // impl PauseMenuDataMgr {
 //     pub fn get_last_item_added_name(&self, mem: &Memory) -> Result<String, Error> {

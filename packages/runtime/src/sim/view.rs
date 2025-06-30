@@ -69,7 +69,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
         .screen
         .current_screen()
         .as_inventory()
-        .map(|x| x.get_equipped_item_ptrs())
+        .map(|x| x.equipped_item_ptrs())
         .unwrap_or_default();
 
     let memory = proc.memory();

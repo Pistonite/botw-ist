@@ -24,39 +24,53 @@ pub enum Command {
     /// :annotations
     Annotation(AnnotationCommand),
 
-    // ==== adding items ====
+    // ==== overworld adding items ====
     /// `get ITEMS`
     Get(CmdGet),
     /// `get-pause ITEMS`
     GetPause(CmdGetPause),
-    /// `buy ITEMS`
-    Buy(CmdBuy),
-    /// `pick-up ITEMS`
+    /// `pick-up ITEMS` ------------ TODO
     PickUp(CmdPickUp),
 
-    // ==== holding items ====
+    // ==== inventory screen & holding ====
+    /// `pause`
+    OpenInv(CmdOpenInv),
+    /// `unpause`
+    CloseInv(CmdCloseInv),
     /// `hold ITEMS`
     Hold(CmdHold),
-    /// `hold-smuggle ITEMS`
-    HoldSmuggle(CmdHoldSmuggle),
     /// `hold-attach ITEMS`
     HoldAttach(CmdHoldAttach),
     /// `unhold`
     Unhold(syn::KwUnhold),
     /// `drop` or `drop ITEMS`
     Drop(CmdDrop),
-    /// `dnp ITEMS`
+    /// `dnp ITEMS` -------- TODO
     Dnp(CmdDnp),
-    /// `cook` or `cook ITEMS`
+    /// `cook` or `cook ITEMS` ---------- TODO
     Cook(CmdCook),
+    /// `!break X slots`
+    SuBreak(CmdSuBreak),
+    /// `!remove ITEMS`
+    SuRemove(CmdSuRemove),
 
-    // ==== removing items ====
-    /// `eat ITEMS`
-    Eat(CmdEat),
+    // ==== shop screen ====
+    /// Open shop
+    OpenShop(CmdOpenShop),
+    /// Close shop
+    CloseShop(CmdCloseShop),
+    /// `buy ITEMS`
+    Buy(CmdBuy),
     /// `sell ITEMS`
     Sell(CmdSell),
 
-    // ==== equipments ====
+    // BELOW ARE NOT IMPLEMENTED YET
+
+    // ==== inventory screen - removing items ====
+    /// `eat ITEMS`
+    Eat(CmdEat),
+
+    // ==== inventory screen - equipments ====
     /// `equip ITEM`
     Equip(CmdEquip),
     /// `unequip ITEM` or `unequip CATEGORY`
@@ -75,16 +89,12 @@ pub enum Command {
     Boil(CmdBoil),
     /// `freeze ITEMS`
     Freeze(CmdFreeze),
-    /// `destroy ITEMS`
-    Destroy(CmdDestroy),
 
     // ==== inventory ====
     /// `sort CATEGORY`
     Sort(CmdSort),
     /// `entangle CATEGORY [tab=X, rol=R, col=C]`
     Entangle(CmdEntangle),
-    /// `break X slots`
-    Break(CmdBreakSlots),
     /// `!set-inventory ITEMS`
     SetInventory(CmdSetInventory),
     /// `!set-gamedata ITEMS`
@@ -107,12 +117,6 @@ pub enum Command {
     CloseGame(syn::KwCloseGame),
     /// `new-game`
     NewGame(syn::KwNewGame),
-
-    // ==== scopes ====
-    OpenInv(CmdOpenInv),
-    CloseInv(CmdCloseInv),
-    TalkTo(CmdTalkTo),
-    Untalk(syn::KwUntalk),
 
     // ==== trials ====
     /// `enter TRIAL`
@@ -159,14 +163,6 @@ pub struct CmdGetPause {
     pub items: syn::ItemListFinite,
 }
 
-/// `buy ITEMS` - items come from shop in the area
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdBuy {
-    pub lit: syn::KwBuy,
-    pub items: syn::ItemListFinite,
-}
-
 /// `pick-up ITEMS` - items come from ground
 #[derive_syntax]
 #[derive(Debug)]
@@ -175,19 +171,31 @@ pub struct CmdPickUp {
     pub items: syn::ItemListConstrained,
 }
 
+///////////////////////////////////////////////////////////
+
+/// `open-inventory`
+#[derive_syntax]
+#[derive(Debug)]
+pub enum CmdOpenInv {
+    OpenInventory(syn::KwOpenInventory),
+    OpenInv(syn::KwOpenInv),
+    Pause(syn::KwPause),
+}
+
+/// `close-inventory`
+#[derive_syntax]
+#[derive(Debug)]
+pub enum CmdCloseInv {
+    CloseInventory(syn::KwCloseInventory),
+    CloseInv(syn::KwCloseInv),
+    Unpause(syn::KwUnpause),
+}
+
 /// `hold ITEMS` - items come from inventory
 #[derive_syntax]
 #[derive(Debug)]
 pub struct CmdHold {
     pub lit: syn::KwHold,
-    pub items: syn::ItemListConstrained,
-}
-
-/// `hold-smuggle ITEMS` - items come from inventory, will not hold in overworld
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdHoldSmuggle {
-    pub lit: syn::KwHoldSmuggle,
     pub items: syn::ItemListConstrained,
 }
 
@@ -230,6 +238,51 @@ pub struct CmdCook {
     pub lit: syn::KwCook,
     pub items: tp::Option<syn::ItemListConstrained>,
 }
+
+/// `!break X slots` - break X slots magically
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuBreak {
+    pub kw_break: syn::KwSuBreak,
+    pub amount: tp::String<syn::Number>,
+    pub kw_slots: syn::Slot,
+}
+
+/// `!remove ITEMS` - force remove items
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuRemove {
+    pub kw_break: syn::KwSuRemove,
+    pub items: syn::ItemListConstrained,
+}
+
+///////////////////////////////////////////////////////////
+
+/// `talk-to NAME` - Enter a shop
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdOpenShop {
+    pub lit: syn::KwTalkTo,
+    pub name: tp::Option<tp::String<syn::Word>>,
+}
+
+/// `untalk` or `close-dialog`
+#[derive_syntax]
+#[derive(Debug)]
+pub enum CmdCloseShop {
+    Untalk(syn::KwUntalk),
+    CloseDialog(syn::KwCloseDialog),
+}
+
+/// `buy ITEMS` - items come from shop in the area
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdBuy {
+    pub lit: syn::KwBuy,
+    pub items: syn::ItemListFinite,
+}
+
+///////////////////////////////////////////////////////////
 
 /// `eat ITEMS` - execute eat prompt on targeted items.
 /// The number is the times to eat the item.
@@ -319,21 +372,6 @@ pub struct CmdFreeze {
     pub items: syn::ItemListConstrained,
 }
 
-/// Destroy items on the ground
-///
-/// This will just delete it from simulation. In the game,
-/// there are various way to do it: throw it into the sea,
-/// throw it into the lava, bomb it, etc.
-///
-/// If not enough items are on the ground, items from the inventory
-/// is used
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdDestroy {
-    pub lit: syn::KwDestroy,
-    pub items: syn::ItemListConstrained,
-}
-
 /// `sort CATEGORY` - sort the category
 #[derive_syntax]
 #[derive(Debug)]
@@ -350,15 +388,6 @@ pub struct CmdEntangle {
     pub lit: syn::KwEntangle,
     pub category: syn::Category,
     pub meta: tp::Option<syn::ItemMeta>,
-}
-
-/// `break X slots` - break X slots magically
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdBreakSlots {
-    pub kw_break: syn::KwBreak,
-    pub amount: tp::String<syn::Number>,
-    pub kw_slots: syn::Slot,
 }
 
 /// `!set-inventory ITEMS` - set the inventory to the given items (same as `init` in old format)
@@ -412,24 +441,6 @@ pub struct CmdSaveAs {
     pub name: tp::String<syn::Word>,
 }
 
-/// `open-inventory`
-#[derive_syntax]
-#[derive(Debug)]
-pub enum CmdOpenInv {
-    OpenInventory(syn::KwOpenInventory),
-    OpenInv(syn::KwOpenInv),
-    Pause(syn::KwPause),
-}
-
-/// `close-inventory`
-#[derive_syntax]
-#[derive(Debug)]
-pub enum CmdCloseInv {
-    CloseInventory(syn::KwCloseInventory),
-    CloseInv(syn::KwCloseInv),
-    Unpause(syn::KwUnpause),
-}
-
 /// `reload` - reload the game from manual or named save slot
 ///
 /// This can also be used to start the game, then reload a save
@@ -437,14 +448,6 @@ pub enum CmdCloseInv {
 #[derive(Debug)]
 pub struct CmdReload {
     pub lit: syn::KwReload,
-    pub name: tp::Option<tp::String<syn::Word>>,
-}
-
-/// `talk-to NAME` - Enter a dialog scope
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdTalkTo {
-    pub lit: syn::KwTalkTo,
     pub name: tp::Option<tp::String<syn::Word>>,
 }
 

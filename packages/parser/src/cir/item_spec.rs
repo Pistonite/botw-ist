@@ -30,7 +30,7 @@ pub struct ItemSpec {
 pub struct ItemSelectSpec {
     /// Amount of the item
     ///
-    /// What this value means depends on the context.
+    /// -1 means "all" or special value in other contexts
     pub amount: i64,
 
     /// The item or category to select from

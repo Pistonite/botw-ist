@@ -53,32 +53,43 @@ pub enum Command {
     Get(Vec<cir::ItemSpec>),
     /// See [`syn::CmdGetPause`]
     GetPause(Vec<cir::ItemSpec>),
-    /// See [`syn::CmdBuy`]
-    Buy(Vec<cir::ItemSpec>),
     /// See [`syn::CmdPickUp`]
     PickUp(Vec<cir::ItemSelectSpec>),
+
+    /// See [`syn::CmdOpenInv`]
+    OpenInv,
+    /// See [`syn::CmdCloseInv`]
+    CloseInv,
     /// See [`syn::CmdHold`]
     Hold(Vec<cir::ItemSelectSpec>),
-    /// See [`syn::CmdHoldSmuggle`]
-    HoldSmuggle(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdHoldAttach`]
     HoldAttach(Vec<cir::ItemSelectSpec>),
     /// `unhold`
     Unhold,
-    /// `drop` - Drop held items. See [`syn::CmdDrop`]
-    DropHeld,
-    /// Hold items and drop them. See [`syn::CmdDrop`]
-    Drop(Vec<cir::ItemSelectSpec>),
+    /// See [`syn::CmdDrop`] - Items are additional items to hold before dropping
+    Drop(Option<Vec<cir::ItemSelectSpec>>),
     /// See [`syn::CmdDnp`]
     Dnp(Vec<cir::ItemSelectSpec>),
     /// `cook` - Cook held items. See [`syn::CmdCook`]
     CookHeld,
     /// Hold items and cook them. See [`syn::CmdCook`]
     Cook(Vec<cir::ItemSelectSpec>),
-    /// See [`syn::CmdEat`]
-    Eat(Vec<cir::ItemSelectSpec>),
+    /// See [`syn::CmdSuBreak`]
+    SuBreak(i32),
+    /// See [`syn::CmdSuRemove`]
+    SuRemove(Vec<cir::ItemSelectSpec>),
+
+    /// See [`syn::CmdOpenShop`]
+    OpenShop,
+    /// See [`syn::CmdCloseShop`]
+    CloseShop,
+    /// See [`syn::CmdBuy`]
+    Buy(Vec<cir::ItemSpec>),
     /// See [`syn::CmdSell`]
     Sell(Vec<cir::ItemSelectSpec>),
+
+    /// See [`syn::CmdEat`]
+    Eat(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdEquip`]
     Equip(Box<cir::ItemOrCategory>),
     /// See [`syn::CmdUnequip`]
@@ -92,14 +103,10 @@ pub enum Command {
     /// See [`syn::CmdFreeze`]
     Freeze(Vec<cir::ItemSelectSpec>),
 
-    /// See [`syn::CmdDestroy`]
-    Destroy(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdUnequip`]
     Sort(cir::CategorySpec),
     /// See [`syn::CmdEntangle`]
     Entangle(cir::CategorySpec),
-    /// See [`syn::CmdBreakSlots`]
-    Break(i32),
     /// See [`syn::CmdSetInventory`]
     SetInventory(Vec<cir::ItemSpec>),
     /// See [`syn::CmdSetGamedata`]
@@ -123,12 +130,6 @@ pub enum Command {
     CloseGame,
     /// `new-game` - Start a new game
     NewGame,
-
-    // ==== scopes ====
-    OpenInv,
-    CloseInv,
-    Talk,
-    Untalk,
 
     /// See [`syn::CmdEnter`]
     Enter(cir::Trial),
@@ -168,28 +169,23 @@ pub async fn parse_command<R: QuotedItemResolver>(
         syn::Command::GetPause(cmd) => Some(cir::Command::GetPause(
             cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
         )),
-        syn::Command::Buy(cmd) => Some(cir::Command::Buy(
-            cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
-        )),
         syn::Command::PickUp(cmd) => Some(cir::Command::PickUp(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
+        //////////////////////////////////////////////////////////////////
+        syn::Command::OpenInv(_) => Some(cir::Command::OpenInv),
+        syn::Command::CloseInv(_) => Some(cir::Command::CloseInv),
         syn::Command::Hold(cmd) => Some(cir::Command::Hold(
-            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
-        )),
-        syn::Command::HoldSmuggle(cmd) => Some(cir::Command::HoldSmuggle(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         syn::Command::HoldAttach(cmd) => Some(cir::Command::HoldAttach(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         syn::Command::Unhold(_) => Some(cir::Command::Unhold),
-        syn::Command::Drop(cmd) => match cmd.items.as_ref() {
-            None => Some(cir::Command::DropHeld),
-            Some(items) => Some(cir::Command::Drop(
-                cir::parse_item_list_constrained(items, resolver, errors).await,
-            )),
-        },
+        syn::Command::Drop(cmd) => Some(cir::Command::Drop(match cmd.items.as_ref() {
+            Some(items) => Some(cir::parse_item_list_constrained(items, resolver, errors).await),
+            None => None,
+        })),
         syn::Command::Dnp(cmd) => Some(cir::Command::Dnp(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
@@ -199,10 +195,29 @@ pub async fn parse_command<R: QuotedItemResolver>(
                 cir::parse_item_list_constrained(items, resolver, errors).await,
             )),
         },
-        syn::Command::Eat(cmd) => Some(cir::Command::Eat(
+        syn::Command::SuBreak(cmd) => {
+            match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
+                Ok(x) => Some(cir::Command::SuBreak(x)),
+                Err(e) => {
+                    errors.push(e);
+                    None
+                }
+            }
+        }
+        syn::Command::SuRemove(cmd) => Some(cir::Command::SuRemove(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
+        //////////////////////////////////////////////////////////////////
+        syn::Command::OpenShop(_) => Some(cir::Command::OpenShop),
+        syn::Command::CloseShop(_) => Some(cir::Command::CloseShop),
+        syn::Command::Buy(cmd) => Some(cir::Command::Buy(
+            cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
+        )),
         syn::Command::Sell(cmd) => Some(cir::Command::Sell(
+            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
+        )),
+        //////////////////////////////////////////////////////////////////
+        syn::Command::Eat(cmd) => Some(cir::Command::Eat(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         syn::Command::Equip(cmd) => Some(cir::Command::Equip(Box::new(
@@ -249,9 +264,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
 
-        syn::Command::Destroy(cmd) => Some(cir::Command::Destroy(
-            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
-        )),
         syn::Command::Sort(cmd) => {
             match cir::parse_category_with_times(&cmd.category, cmd.times.as_ref()) {
                 Ok(spec) => Some(cir::Command::Sort(spec)),
@@ -266,15 +278,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cmd.meta.as_ref(),
             errors,
         ))),
-        syn::Command::Break(cmd) => {
-            match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
-                Ok(x) => Some(cir::Command::Break(x)),
-                Err(e) => {
-                    errors.push(e);
-                    None
-                }
-            }
-        }
         syn::Command::SetInventory(cmd) => Some(cir::Command::SetInventory(
             cir::parse_item_list_finite_optional(&cmd.items, resolver, errors).await,
         )),
@@ -345,10 +348,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
         },
         syn::Command::CloseGame(_) => Some(cir::Command::CloseGame),
         syn::Command::NewGame(_) => Some(cir::Command::NewGame),
-        syn::Command::OpenInv(_) => Some(cir::Command::OpenInv),
-        syn::Command::CloseInv(_) => Some(cir::Command::CloseInv),
-        syn::Command::TalkTo(_) => Some(cir::Command::Talk),
-        syn::Command::Untalk(_) => Some(cir::Command::Untalk),
         syn::Command::Enter(cmd) => match cir::parse_trial(&cmd.trial, &cmd.trial.span()) {
             Ok(trial) => Some(cir::Command::Enter(trial)),
             Err(e) => {

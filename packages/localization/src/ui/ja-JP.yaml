@@ -207,14 +207,16 @@ runtime_init.SaveImage: "カスタムイメージデータの保存に失敗し�
 runtime_init.UnsupportedVersion: "イメージには現在サポートされていないバージョンのゲームが含まれています。"
 
 # Error/Diagnostic from Runtime
+runtime_error.CannotAutoSwitchScreen: "このコマンドは現在の画面では使用できません。画面が手動で切り替えられたため、シミュレーターは自動的に画面を切り替えることができません。オーバーワールド画面に戻ると、シミュレーターは再び自動的に画面を切り替えることができます。"
 runtime_error.CannotDoWhileHolding: "アイテムを持っている間は、この操作はできません。"
 runtime_error.CannotFindItem: "このアイテムはインベントリに見つかりません。"
+runtime_error.CannotFindSellableItem: "このアイテムは販売用に見つからないか、販売できません。"
 runtime_error.CannotHoldMore: "これ以上アイテムを持てません。"
 runtime_error.Crash: "このステップでゲームがクラッシュしました。"
 runtime_error.Executor: "Executorからの予期せぬエラー。"
 runtime_error.ItemMismatch: "インベントリのこの位置にあるアイテムは `{{actual_item}}` ですが、コマンドで指定されたアイテムは `{{expected_item}}` です。"
 runtime_error.NotHolding: "何も持っていません。"
-runtime_error.NotRightScreen: "このコマンドは現在の画面では使用できません。コマンドで手動で画面を開いていない限り、シミュレーターは自動的に画面を切り替えます。コマンドでオーバーワールド画面に戻ると、シミュレーターが再び自動的に画面を切り替えるようになります。"
+runtime_error.NotRightScreen: "現在の画面ではこのコマンドを使用できません。"
 runtime_error.PreviousCrash: "以前のステップでゲームがクラッシュしました。続行する前に`リロード` (`reload`)または`ニューゲーム` (`new-game`)が必要です。"
 runtime_error.Unimplemented: "このコマンドはまだ実装されていません :)。"
 runtime_error.Uninitialized: "予期せぬランタイム未初期化。"

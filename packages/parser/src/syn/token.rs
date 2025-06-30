@@ -44,23 +44,35 @@ pub enum TT {
     /////////////////////////////
     // When updating keywords, remember to update the TS language
     // as well (in packages/app/src/extensions/editor)
+    //
+    // Keep the order in sync with syn and cir Command
     /////////////////////////////
     #[teleparse(terminal(
         KwGet = "get",
         KwGetPause = "get-pause",
-        KwBuy = "buy",
+        KwPickUp = "pick-up",
 
+        KwOpenInventory = "open-inventory",
+        KwOpenInv = "open-inv",
+        KwPause = "pause",
+        KwCloseInventory = "close-inventory",
+        KwCloseInv = "close-inv",
+        KwUnpause = "unpause",
         KwHold = "hold",
-        KwUnhold = "unhold",
-        KwHoldSmuggle = "hold-smuggle",
         KwHoldAttach = "hold-attach",
+        KwUnhold = "unhold",
         KwDrop = "drop",
         KwDnp = "dnp",
-        KwPickUp = "pick-up",
         KwCook = "cook",
 
-        KwEat = "eat",
+        KwTalkTo = "talk-to",
+        KwUntalk = "untalk",
+        KwCloseDialog = "close-dialog",
+        KwBuy = "buy",
         KwSell = "sell",
+
+
+        KwEat = "eat",
 
         KwEquip = "equip",
         KwUnequip = "unequip",
@@ -76,7 +88,6 @@ pub enum TT {
         KwSort = "sort",
         KwEntangle = "entangle",
         // KwDistangle = "distangle",
-        KwBreak = "break",
 
         KwSave = "save",
         KwSaveAs = "save-as",
@@ -84,15 +95,7 @@ pub enum TT {
         KwCloseGame = "close-game",
         KwNewGame = "new-game",
 
-        KwOpenInventory = "open-inventory",
-        KwOpenInv = "open-inv",
-        KwPause = "pause",
-        KwCloseInventory = "close-inventory",
-        KwCloseInv = "close-inv",
-        KwUnpause = "unpause",
 
-        KwTalkTo = "talk-to",
-        KwUntalk = "untalk",
 
         KwEnter = "enter",
         KwExit = "exit",
@@ -117,6 +120,8 @@ pub enum TT {
     Annotation,
 
     #[teleparse(terminal(
+        KwSuBreak = "!break",
+        KwSuRemove = "!remove",
         KwSetGdtFlag = "!set-gdt-flag",
         KwSetGdtFlagStr = "!set-gdt-flag-str",
         KwSetInventory = "!set-inventory",

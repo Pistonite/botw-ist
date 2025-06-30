@@ -23,16 +23,11 @@ export class CommandEquip extends AbstractProperCommand {
     constructor(item: ItemStack, slot: number, codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.item = item;
-        this.slot = slot - 1; // change to 0-based
+        this.slot = slot;
     }
 
     public override convert(): string {
-        let s = `equip ${convertItem(this.item)}`;
-        if (this.slot !== 0) {
-            s += ` in slot ${this.slot + 1}`;
-        }
-        s += ";";
-        return s;
+        return `equip ${convertItem(this.item, this.slot)};`;
     }
 }
 
@@ -42,16 +37,11 @@ export class CommandUnequip extends AbstractProperCommand {
     constructor(item: ItemStack, slot: number, codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.item = item;
-        this.slot = slot - 1; // change to 0-based
+        this.slot = slot;
     }
 
     public override convert(): string {
-        let s = `unequip ${convertItem(this.item)}`;
-        if (this.slot !== 0) {
-            s += ` in slot ${this.slot + 1}`;
-        }
-        s += ";";
-        return s;
+        return `unequip ${convertItem(this.item, this.slot)};`;
     }
 }
 

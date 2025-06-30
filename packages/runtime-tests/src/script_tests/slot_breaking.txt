@@ -1,0 +1,8 @@
+get 5 apples 2 shroom 1 banana 2 pepper
+hold-attach 2 apples
+sell all apples
+close-dialog
+
+!remove all banana 1 pepper
+
+!break 2 slots
