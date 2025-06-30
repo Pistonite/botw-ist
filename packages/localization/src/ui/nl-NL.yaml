@@ -152,6 +152,7 @@ tooltip.stamina_recover: "+{{wheels}} cirkel(s)"
 tooltip.stamina_recover_ex: "{{wheels}} cirkel(s)"
 tooltip.translucent: "Spookvak"
 tooltip.value: "Waarde: {{value}}"
+tooltip.will_despawn: "Zal verdwijnen"
 
 # Crash Screen
 crash_screen.button.reload: "Herladen zonder script te wijzigen"

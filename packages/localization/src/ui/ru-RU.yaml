@@ -152,6 +152,7 @@ tooltip.stamina_recover: "+{{wheels}} круг(ов)"
 tooltip.stamina_recover_ex: "{{wheels}} круг(ов)"
 tooltip.translucent: "Призрачная ячейка"
 tooltip.value: "Значение: {{value}}"
+tooltip.will_despawn: "Исчезнет"
 
 # Crash Screen
 crash_screen.button.reload: "Перезагрузить без изменения скрипта"

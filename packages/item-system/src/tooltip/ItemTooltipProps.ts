@@ -62,6 +62,9 @@ export type ItemTooltipProps = {
     /** Status of the item, if it's in the overworld */
     overworldStatus?: "equipped" | "held" | "ground";
 
+    /** If the overworld item is about to despawn */
+    overworldWillDespawn?: boolean;
+
     /**
      * Accessibility status of the item
      *
@@ -254,6 +257,7 @@ export const getTooltipPropsFromOverworldItem = (
         : [];
 
     let overworldStatus: ItemTooltipProps["overworldStatus"] = "ground";
+    const overworldWillDespawn = item.type === "ground-item" && item.despawning;
     if (item.type === "equipped") {
         overworldStatus = "equipped";
     } else if (item.type === "held") {
@@ -272,6 +276,7 @@ export const getTooltipPropsFromOverworldItem = (
         isInBrokenSlot: false,
         isEntangled: false,
         overworldStatus,
+        overworldWillDespawn,
         profile: getActorParam(actorName, "profile"),
     };
 };

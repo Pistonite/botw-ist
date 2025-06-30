@@ -152,6 +152,7 @@ tooltip.stamina_recover: "+{{wheels}} 周"
 tooltip.stamina_recover_ex: "{{wheels}} 周"
 tooltip.translucent: "幻影スロット"
 tooltip.value: "数値: {{value}}"
+tooltip.will_despawn: "消滅します"
 
 # Crash Screen
 crash_screen.button.reload: "スクリプトを変更せずに再読み込み"

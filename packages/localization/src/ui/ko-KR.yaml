@@ -152,6 +152,7 @@ tooltip.stamina_recover: "+{{wheels}} 바퀴"
 tooltip.stamina_recover_ex: "{{wheels}} 바퀴"
 tooltip.translucent: "환영 슬롯"
 tooltip.value: "값: {{value}}"
+tooltip.will_despawn: "곧 사라집니다"
 
 # Crash Screen
 crash_screen.button.reload: "스크립트 변경 없이 다시 로드"

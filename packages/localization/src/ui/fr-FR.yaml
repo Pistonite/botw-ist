@@ -152,6 +152,7 @@ tooltip.stamina_recover: "+{{wheels}} cercle(s)"
 tooltip.stamina_recover_ex: "{{wheels}} cercle(s)"
 tooltip.translucent: "Emplacement Fantôme"
 tooltip.value: "Valeur: {{value}}"
+tooltip.will_despawn: "Va disparaître"
 
 # Crash Screen
 crash_screen.button.reload: "Recharger sans modifier le script"
