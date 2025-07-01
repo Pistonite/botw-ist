@@ -69,9 +69,8 @@ impl AmountSpec {
         matches!(self, Self::Num(0))
     }
     pub fn sub(&mut self, n: usize) {
-        match self {
-            AmountSpec::Num(self_n) => *self_n -= n,
-            _ => {}
+        if let AmountSpec::Num(self_n) = self {
+            *self_n -= n
         }
     }
 }

@@ -223,7 +223,7 @@ runtime_error.PositionSpecNotAllowed: "这里不能以格子位置选择物品."
 runtime_error.PreviousCrash: "因之前的步骤导致游戏崩溃，需要读档(`reload`)或开始新游戏(`new-game`)."
 runtime_error.Unimplemented: "还没做完."
 runtime_error.Uninitialized: "未初始化运行时."
-runtime_error.UselessItemMatchProp: "此指令会忽略此属性. 请删除此属性.\""
+runtime_error.UselessItemMatchProp: "此指令会忽略此属性. 请删除此属性."
 runtime_error.UselessScreenTransition: "你已经打开了此界面."
 
 # Error from getting view from simulation output
