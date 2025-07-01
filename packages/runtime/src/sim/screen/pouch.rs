@@ -140,7 +140,7 @@ fn do_open(
                             equipped,
                             ptr: curr_item_ptr,
                             name: item_name,
-                            category: sim::view::item_type_to_category(item_type),
+                            category: sim::util::item_type_to_category(item_type),
                         }));
                     }
                 }
@@ -157,7 +157,7 @@ fn do_open(
             }
             tabs.push(sim::ScreenTab {
                 items: tab,
-                category: sim::view::item_type_to_category(tab_types[i]),
+                category: sim::util::item_type_to_category(tab_types[i]),
             });
         }
     }

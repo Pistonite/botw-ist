@@ -33,6 +33,9 @@ const useStyles = makeStyles({
     container: {
         padding: "8px",
     },
+    resultsContainer: {
+        paddingTop: "10px",
+    },
     resultsScroll: {
         marginTop: "8px",
     },
@@ -111,7 +114,12 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
 
     const $Results = hasResults && (
         <div className={m("overflow-y-auto flex-1", c.resultsScroll)}>
-            <div className={m("flex flex-wrap max-h-0 overflow-visible")}>
+            <div
+                className={m(
+                    "flex flex-wrap max-h-0 overflow-visible",
+                    c.resultsContainer,
+                )}
+            >
                 {results.map(({ actor, cookEffect }, i) => (
                     <StandaloneItemSlotWithTooltip
                         key={i}

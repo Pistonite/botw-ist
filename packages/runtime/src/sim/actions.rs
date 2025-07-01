@@ -59,7 +59,7 @@ pub fn get_items(
                 continue;
             };
             let modifier = util::modifier_from_meta(meta);
-            linker::get_item(ctx.inner, &item.actor, meta.and_then(|m| m.value), modifier)?;
+            linker::get_item(ctx.cpu(), &item.actor, meta.and_then(|m| m.value), modifier)?;
         }
     }
 
@@ -71,7 +71,79 @@ pub fn get_items(
             sys.screen.set_remove_held_after_dialog();
         }
     } else if should_drop {
-        log::debug!("removing held items on auto-drop cleanup in get command");
+        log::debug!("removing held items on auto-drop cleanup in GET command");
+        linker::remove_held_items(ctx.cpu())?;
+        sys.overworld.drop_held_items();
+    }
+
+    Ok(())
+}
+
+/// Pick up items from the ground (overworld)
+pub fn pick_up_items(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+    errors: &mut Vec<ErrorReport>,
+    items: &[cir::ItemSelectSpec],
+    pause_after: bool,
+) -> Result<(), processor::Error> {
+    // first, must be in the overworld to get items
+    if !sys
+        .screen
+        .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?
+    {
+        log::warn!("failed to auto-switch to overworld for PICKUP");
+        return Ok(());
+    }
+    // ensure player is not holding items
+    let should_drop = match sys.overworld.predrop_for_action(ctx.span, errors) {
+        sim::OverworldPreDropResult::Holding => {
+            // cannot get while holding, stop
+            return Ok(());
+        }
+        sim::OverworldPreDropResult::AutoDrop => true,
+        sim::OverworldPreDropResult::Ok => false,
+    };
+
+    'outer: for item in items {
+        let mut never_found = true;
+        let mut remaining_amount = item.amount_spec();
+        loop {
+            if ctx.is_aborted() {
+                break 'outer;
+            }
+            if remaining_amount.is_zero() {
+                break;
+            }
+            // find the item on the ground
+            let Some(handle) = sys.overworld.ground_select_mut(
+                &item.item,
+                item.span,
+                errors
+            ) else {
+                if never_found || !remaining_amount.is_zero() {
+                    errors.push(sim_error!(item.span, CannotFindGroundItem));
+                }
+                break;
+            };
+            never_found = false;
+            // TODO: cannotGetItem check?
+            let actor = handle.remove();
+            linker::get_item(ctx.cpu(), &actor.name,
+                Some(actor.value), actor.modifier)?;
+            remaining_amount.sub(1);
+        }
+    }
+
+    if pause_after {
+        // open pause menu and delay drop
+        sys.screen
+            .transition_to_inventory(ctx, &mut sys.overworld, false, errors)?;
+        if should_drop {
+            sys.screen.set_remove_held_after_dialog();
+        }
+    } else if should_drop {
+        log::debug!("removing held items on auto-drop cleanup in PICKUP command");
         linker::remove_held_items(ctx.cpu())?;
         sys.overworld.drop_held_items();
     }

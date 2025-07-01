@@ -31,6 +31,9 @@ const useStyles = makeStyles({
     main: {
         padding: "8px",
     },
+    inventoryItemsContainer: {
+        paddingTop: "10px",
+    },
     errors: {
         gap: "4px",
     },
@@ -68,7 +71,12 @@ const GdtInventoryPanelImpl: React.FC = () => {
 
     const $ListView = gdt?.val && (
         <div className={m("flex-1 overflow-y-auto scrollbar-thin")}>
-            <div className={m("flex flex-wrap max-h-0 overflow-visible")}>
+            <div
+                className={m(
+                    "flex flex-wrap max-h-0 overflow-visible",
+                    c.inventoryItemsContainer,
+                )}
+            >
                 {gdt.val.items.map((item, i) => (
                     <GdtItemSlotWithTooltip
                         item={item}
