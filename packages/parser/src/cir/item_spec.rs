@@ -57,7 +57,7 @@ pub enum AmountSpec {
 impl From<i64> for AmountSpec {
     fn from(value: i64) -> Self {
         match value {
-            ..-1 => Self::AllBut((-value-1) as usize),
+            ..-1 => Self::AllBut((-value - 1) as usize),
             -1 => Self::All,
             n => Self::Num(n as usize),
         }

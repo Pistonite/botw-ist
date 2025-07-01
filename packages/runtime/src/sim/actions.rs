@@ -116,11 +116,10 @@ pub fn pick_up_items(
                 break;
             }
             // find the item on the ground
-            let Some(handle) = sys.overworld.ground_select_mut(
-                &item.item,
-                item.span,
-                errors
-            ) else {
+            let Some(handle) = sys
+                .overworld
+                .ground_select_mut(&item.item, item.span, errors)
+            else {
                 if never_found || !remaining_amount.is_zero() {
                     errors.push(sim_error!(item.span, CannotFindGroundItem));
                 }
@@ -129,8 +128,7 @@ pub fn pick_up_items(
             never_found = false;
             // TODO: cannotGetItem check?
             let actor = handle.remove();
-            linker::get_item(ctx.cpu(), &actor.name,
-                Some(actor.value), actor.modifier)?;
+            linker::get_item(ctx.cpu(), &actor.name, Some(actor.value), actor.modifier)?;
             remaining_amount.sub(1);
         }
     }

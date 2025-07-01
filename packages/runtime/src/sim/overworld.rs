@@ -136,35 +136,42 @@ impl OverworldSystem {
     }
 
     /// Select an item from the ground
-    pub fn ground_select(&self,
+    pub fn ground_select(
+        &self,
         item: &cir::ItemOrCategory,
-        span: Span, errors: &mut Vec<ErrorReport>
+        span: Span,
+        errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<&Self>> {
         let handle = self.do_ground_select(item, span, errors)?;
         Some(handle.bind(self))
     }
 
     /// Select an item from the ground, with the ability to remove it
-    pub fn ground_select_mut(&mut self,
+    pub fn ground_select_mut(
+        &mut self,
         item: &cir::ItemOrCategory,
-        span: Span, errors: &mut Vec<ErrorReport>
+        span: Span,
+        errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<&mut Self>> {
         let handle = self.do_ground_select(item, span, errors)?;
         Some(handle.bind(self))
     }
 
     /// Select an item from the ground
-    fn do_ground_select(&self
-        , item: &cir::ItemOrCategory,
-        span: Span, errors: &mut Vec<ErrorReport>
+    fn do_ground_select(
+        &self,
+        item: &cir::ItemOrCategory,
+        span: Span,
+        errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<()>> {
         match item {
             cir::ItemOrCategory::Category(category) => {
                 let category = *category;
 
                 for (handle, item) in self.iter_ground_items() {
-                    let Some(item_category) = sim::util::item_type_to_category(
-                        game::get_pouch_item_type(&item.name)) else {
+                    let Some(item_category) =
+                        sim::util::item_type_to_category(game::get_pouch_item_type(&item.name))
+                    else {
                         continue;
                     };
                     if item_category == category {
@@ -172,16 +179,17 @@ impl OverworldSystem {
                     }
                 }
 
-                return None;
-            },
-            cir::ItemOrCategory::Item(item) => {
-                self.ground_select_item(item, span, errors)
-            },
+                None
+            }
+            cir::ItemOrCategory::Item(item) => self.ground_select_item(item, span, errors),
         }
     }
 
-    pub fn ground_select_item(&self, item: &cir::Item,
-        span: Span, errors: &mut Vec<ErrorReport>
+    pub fn ground_select_item(
+        &self,
+        item: &cir::Item,
+        span: Span,
+        errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<()>> {
         let meta = match &item.meta {
             None => {
@@ -196,24 +204,26 @@ impl OverworldSystem {
             _ => {
                 // cannot specify by tab for items on the ground
                 errors.push(sim_error!(span, PositionSpecNotAllowed));
-                    return None;
+                return None;
             }
         };
         self.ground_select_item_by_name_meta(&item.actor, Some(meta), from_slot, span, errors)
     }
 
-    pub fn ground_select_item_by_name_meta(&self, item_name: &str,
+    pub fn ground_select_item_by_name_meta(
+        &self,
+        item_name: &str,
         meta: Option<&cir::ItemMeta>,
         nth: usize,
         span: Span,
-        errors: &mut Vec<ErrorReport>
+        errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<()>> {
         if let Some(meta) = meta {
-            if meta.equip.is_some() 
-            || meta.effect_duration.is_some()
-            || meta.effect_id.is_some()
-            || meta.effect_level.is_some()
-            || !meta.ingredients.is_empty()
+            if meta.equip.is_some()
+                || meta.effect_duration.is_some()
+                || meta.effect_id.is_some()
+                || meta.effect_level.is_some()
+                || !meta.ingredients.is_empty()
             {
                 errors.push(sim_warning!(span, UselessItemMatchProp));
             }
@@ -225,20 +235,20 @@ impl OverworldSystem {
             }
             // matching value for overworld actors is mostly
             // used for weapons, since materials can only have value = 1
-            if let Some(wanted_value) = meta.and_then(|x| x.value) {
-                if wanted_value != item.value {
-                    continue;
-                }
+            if let Some(wanted_value) = meta.and_then(|x| x.value)
+                && wanted_value != item.value
+            {
+                continue;
             }
-            if let Some(wanted_flags) = meta.and_then(|x| x.sell_price) {
-                if item.modifier.is_none_or(|m| m.flags != wanted_flags as u32) {
-                    continue;
-                }
+            if let Some(wanted_flags) = meta.and_then(|x| x.sell_price)
+                && item.modifier.is_none_or(|m| m.flags != wanted_flags as u32)
+            {
+                continue;
             }
-            if let Some(wanted_mod_value) = meta.and_then(|x| x.life_recover) {
-                if item.modifier.is_none_or(|m| m.value != wanted_mod_value) {
-                    continue;
-                }
+            if let Some(wanted_mod_value) = meta.and_then(|x| x.life_recover)
+                && item.modifier.is_none_or(|m| m.value != wanted_mod_value)
+            {
+                continue;
             }
             // matched
             if count == 0 {
@@ -249,21 +259,22 @@ impl OverworldSystem {
         None
     }
 
-
-
-    fn iter_ground_items(&self) -> impl Iterator<Item=(GroundItemHandle<()>, &OverworldActor)> {
+    fn iter_ground_items(&self) -> impl Iterator<Item = (GroundItemHandle<()>, &OverworldActor)> {
         self.ground_materials_despawning
-            .iter().enumerate()
+            .iter()
+            .enumerate()
             .map(|(i, item)| (GroundItemHandle::MaterialDespawning((), i), item))
             .chain(
-        self.ground_materials
-            .iter().enumerate()
-            .map(|(i, item)| (GroundItemHandle::Material((), i), item))
+                self.ground_materials
+                    .iter()
+                    .enumerate()
+                    .map(|(i, item)| (GroundItemHandle::Material((), i), item)),
             )
             .chain(
-        self.ground_weapons
-            .iter().enumerate()
-            .map(|(i, item)| (GroundItemHandle::Weapon((), i), item))
+                self.ground_weapons
+                    .iter()
+                    .enumerate()
+                    .map(|(i, item)| (GroundItemHandle::Weapon((), i), item)),
             )
     }
 }
@@ -320,7 +331,7 @@ impl GroundItemHandle<()> {
         match self {
             Self::Weapon(_, i) => GroundItemHandle::Weapon(sys, i),
             Self::Material(_, i) => GroundItemHandle::Material(sys, i),
-            Self::MaterialDespawning(_, i) => GroundItemHandle::MaterialDespawning(sys, i)
+            Self::MaterialDespawning(_, i) => GroundItemHandle::MaterialDespawning(sys, i),
         }
     }
 }
@@ -340,7 +351,7 @@ impl GroundItemHandle<&mut OverworldSystem> {
         match self {
             Self::Weapon(o, i) => o.ground_weapons.remove(i),
             Self::Material(o, i) => o.ground_materials.remove(i).unwrap(),
-            Self::MaterialDespawning(o, i) => o.ground_materials_despawning.remove(i)
+            Self::MaterialDespawning(o, i) => o.ground_materials_despawning.remove(i),
         }
     }
 }

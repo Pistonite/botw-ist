@@ -274,7 +274,8 @@ fn extract_pouch_item(
         e,
         "failed to load item.name at list1 position {list_index}: {e}"
     );
-    let is_no_icon = sim::util::is_animated_icon_actor(&name) && !seen_animated_icons.insert(name.clone());
+    let is_no_icon =
+        sim::util::is_animated_icon_actor(&name) && !seen_animated_icons.insert(name.clone());
     let value = try_mem!(
         Ptr!(&item->mValue).load(memory),
         e,
@@ -429,4 +430,3 @@ fn extract_pouch_item(
         dpad_accessible: true,
     })
 }
-
