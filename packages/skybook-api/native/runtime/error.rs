@@ -87,6 +87,8 @@ pub enum RuntimeError {
     CannotFindItem,
     #[error("cannot find this item to sell or item is not sellable")]
     CannotFindSellableItem,
+    #[error("cannot find this item on the ground")]
+    CannotFindGroundItem,
     #[error("cannot hold more items")]
     CannotHoldMore,
     #[error("cannot do this while holding items in the overworld")]
@@ -95,6 +97,10 @@ pub enum RuntimeError {
     NotHolding,
     // #[error("only materials can be held unless prompt entanglement is in effect")]
     // CannotHoldNonMaterial,
+    #[error("cannot specify item position here")]
+    PositionSpecNotAllowed,
+    #[error("this meta property is ignored while matching")]
+    UselessItemMatchProp,
     #[error(
         "this command or syntax is not implemented yet, please track the development on GitHub"
     )]

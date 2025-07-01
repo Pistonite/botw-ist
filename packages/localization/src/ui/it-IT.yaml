@@ -210,6 +210,7 @@ runtime_init.UnsupportedVersion: "L'immagine contiene una versione del gioco att
 # Error/Diagnostic from Runtime
 runtime_error.CannotAutoSwitchScreen: "Questo comando non può essere usato nella schermata attuale. Il simulatore non può cambiare schermata automaticamente perché la schermata è stata cambiata manualmente. Tornare alla schermata del mondo permetterà al simulatore di cambiare schermata automaticamente di nuovo."
 runtime_error.CannotDoWhileHolding: "Impossibile farlo mentre si tengono oggetti."
+runtime_error.CannotFindGroundItem: "Impossibile trovare questo oggetto a terra. Se intendi ottenere un nuovo oggetto anziché uno precedentemente caduto, usa invece il comando `get`."
 runtime_error.CannotFindItem: "Impossibile trovare questo oggetto nell'inventario."
 runtime_error.CannotFindSellableItem: "Impossibile trovare questo articolo da vendere o l'articolo non è vendibile."
 runtime_error.CannotHoldMore: "Impossibile tenere più oggetti."
@@ -218,9 +219,11 @@ runtime_error.Executor: "Errore imprevisto dall'Esecutore."
 runtime_error.ItemMismatch: "L'oggetto trovato in questa posizione nell'inventario è `{{actual_item}}`, mentre l'oggetto specificato nel comando è `{{expected_item}}`."
 runtime_error.NotHolding: "Nessun oggetto è in mano."
 runtime_error.NotRightScreen: "Non puoi usare questo comando nella schermata attuale."
+runtime_error.PositionSpecNotAllowed: "La specifica dell'oggetto per posizione non è consentita qui."
 runtime_error.PreviousCrash: "Il gioco si è bloccato in un passaggio precedente. Devi `ricaricare` (`reload`) o iniziare una `nuova partita` (`new-game`) prima di continuare."
 runtime_error.Unimplemented: "Questo comando non è ancora implementato :)."
 runtime_error.Uninitialized: "Runtime imprevisto non inizializzato."
+runtime_error.UselessItemMatchProp: "Questa proprietà viene ignorata durante la corrispondenza degli oggetti in questo comando. Rimuovi questa proprietà."
 runtime_error.UselessScreenTransition: "Questo comando non ha alcun effetto, poiché sei già su questa schermata."
 
 # Error from getting view from simulation output

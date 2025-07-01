@@ -39,6 +39,42 @@ pub struct ItemSelectSpec {
     pub span: Span,
 }
 
+impl ItemSelectSpec {
+    /// Get the specifier for amount of this item to select/target
+    pub fn amount_spec(&self) -> AmountSpec {
+        self.amount.into()
+    }
+}
+
+/// Specifier for an amount when selecting items
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum AmountSpec {
+    All,
+    AllBut(usize),
+    Num(usize),
+}
+
+impl From<i64> for AmountSpec {
+    fn from(value: i64) -> Self {
+        match value {
+            ..-1 => Self::AllBut((-value - 1) as usize),
+            -1 => Self::All,
+            n => Self::Num(n as usize),
+        }
+    }
+}
+
+impl AmountSpec {
+    pub fn is_zero(self) -> bool {
+        matches!(self, Self::Num(0))
+    }
+    pub fn sub(&mut self, n: usize) {
+        if let AmountSpec::Num(self_n) = self {
+            *self_n -= n
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ItemOrCategory {
     Item(Item),

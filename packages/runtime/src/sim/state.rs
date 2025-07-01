@@ -59,6 +59,7 @@ impl State {
         match step.command() {
             cir::Command::Get(items) => self.handle_get(ctx, items, false).await,
             cir::Command::GetPause(items) => self.handle_get(ctx, items, true).await,
+            cir::Command::PickUp(items) => self.handle_pick_up(ctx, items, false).await,
             // TODO: pickup
             cir::Command::OpenInv => self.handle_pause(ctx).await,
             cir::Command::CloseInv => self.handle_unpause(ctx).await,
@@ -85,6 +86,21 @@ impl State {
         self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
 
             sim::actions::get_items(&mut cpu2, sys, errors, &items, pause_after)?;
+            sys.overworld.despawn_items();
+            Ok(())
+
+        }) }) .await }) .await
+    }
+
+    #[rustfmt::skip]
+    async fn handle_pick_up(self, rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSelectSpec], pause_after: bool,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("Handling PICKUP command");
+        let items = items.to_vec();
+        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
+
+            sim::actions::pick_up_items(&mut cpu2, sys, errors, &items, pause_after)?;
             sys.overworld.despawn_items();
             Ok(())
 

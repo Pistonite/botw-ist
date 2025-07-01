@@ -49,6 +49,9 @@ const useStyles = makeStyles({
         padding: "8px",
         backgroundColor: "#00000066",
     },
+    inventoryItemsContainer: {
+        paddingTop: "10px",
+    },
     background: {
         // This is to hide the UI elements like health bar, etc
         scale: 1.3,

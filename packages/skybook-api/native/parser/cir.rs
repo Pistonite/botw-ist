@@ -26,21 +26,26 @@ pub enum Category {
 
 impl Category {
     /// Check if this category is an armor category
-    pub const fn is_armor(&self) -> bool {
+    pub const fn is_armor(self) -> bool {
         matches!(
             self,
             Category::Armor | Category::ArmorHead | Category::ArmorUpper | Category::ArmorLower
         )
     }
 
+    /// Check if this category is Weapon (Sword), Bow, or Shield
+    pub const fn is_equipment(self) -> bool {
+        matches!(self, Category::Weapon | Category::Bow | Category::Shield)
+    }
+
     /// Return the armor category if this category is armor (or a subcategory of armor),
     /// otherwise return the category itself
-    pub const fn coerce_armor(&self) -> Self {
+    pub const fn coerce_armor(self) -> Self {
         match self {
             Category::ArmorHead => Category::Armor,
             Category::ArmorUpper => Category::Armor,
             Category::ArmorLower => Category::Armor,
-            other => *other,
+            other => other,
         }
     }
 
