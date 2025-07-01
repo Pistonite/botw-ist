@@ -210,6 +210,7 @@ runtime_init.UnsupportedVersion: "La imagen contiene una versión del juego que 
 # Error/Diagnostic from Runtime
 runtime_error.CannotAutoSwitchScreen: "Este comando no se puede usar en la pantalla actual. El simulador no puede cambiar de pantalla automáticamente porque la pantalla se cambió manualmente. Volver a la pantalla del mundo principal permitirá que el simulador cambie de pantalla automáticamente de nuevo."
 runtime_error.CannotDoWhileHolding: "No se puede hacer esto mientras se sostienen objetos."
+runtime_error.CannotFindGroundItem: "No se puede encontrar este objeto en el suelo. Si se refiere a obtener un objeto nuevo en lugar de uno que se cayó previamente, use el comando `get` en su lugar."
 runtime_error.CannotFindItem: "No se puede encontrar este artículo en el inventario."
 runtime_error.CannotFindSellableItem: "No se puede encontrar este artículo para vender o el artículo no es vendible."
 runtime_error.CannotHoldMore: "No se pueden llevar más artículos."
@@ -218,9 +219,11 @@ runtime_error.Executor: "Error inesperado del Ejecutor."
 runtime_error.ItemMismatch: "El artículo encontrado en esta posición del inventario es `{{actual_item}}`, mientras que el artículo especificado en el comando es `{{expected_item}}`."
 runtime_error.NotHolding: "No se está sosteniendo ningún objeto."
 runtime_error.NotRightScreen: "No puedes usar este comando en la pantalla actual."
+runtime_error.PositionSpecNotAllowed: "No se permite especificar el objeto por posición aquí."
 runtime_error.PreviousCrash: "El juego se ha colgado en un paso anterior. Necesitas `recargar` (`reload`) o iniciar una `nueva partida` (`new-game`) antes de continuar."
 runtime_error.Unimplemented: "Este comando aún no está implementado :)."
 runtime_error.Uninitialized: "Entorno de ejecución inesperadamente no inicializado."
+runtime_error.UselessItemMatchProp: "Esta propiedad se ignora al buscar coincidencias de objetos en este comando. Elimine esta propiedad."
 runtime_error.UselessScreenTransition: "Este comando no tiene ningún efecto, ya que ya se encuentra en esta pantalla."
 
 # Error from getting view from simulation output

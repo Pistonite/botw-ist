@@ -210,6 +210,7 @@ runtime_init.UnsupportedVersion: "Das Image enthält eine derzeit nicht unterst�
 # Error/Diagnostic from Runtime
 runtime_error.CannotAutoSwitchScreen: "Dieser Befehl kann auf dem aktuellen Bildschirm nicht verwendet werden. Der Simulator kann Bildschirme nicht automatisch wechseln, da der Bildschirm manuell gewechselt wurde. Eine Rückkehr zum Overworld-Bildschirm ermöglicht es dem Simulator, Bildschirme wieder automatisch zu wechseln."
 runtime_error.CannotDoWhileHolding: "Dies kann nicht getan werden, während Gegenstände gehalten werden."
+runtime_error.CannotFindGroundItem: "Dieser Gegenstand kann nicht auf dem Boden gefunden werden. Wenn Sie einen neuen Gegenstand statt eines zuvor fallengelassenen Gegenstands meinen, verwenden Sie stattdessen den Befehl `get`."
 runtime_error.CannotFindItem: "Dieser Gegenstand kann im Inventar nicht gefunden werden."
 runtime_error.CannotFindSellableItem: "Dieser Artikel kann nicht zum Verkauf gefunden werden oder ist nicht verkäuflich."
 runtime_error.CannotHoldMore: "Es können keine weiteren Gegenstände gehalten werden."
@@ -218,9 +219,11 @@ runtime_error.Executor: "Unerwarteter Fehler vom Executor."
 runtime_error.ItemMismatch: "Der an dieser Position im Inventar gefundene Gegenstand ist `{{actual_item}}`, während der im Befehl angegebene Gegenstand `{{expected_item}}` ist."
 runtime_error.NotHolding: "Es werden keine Gegenstände gehalten."
 runtime_error.NotRightScreen: "Dieser Befehl kann auf dem aktuellen Bildschirm nicht verwendet werden."
+runtime_error.PositionSpecNotAllowed: "Das Angeben eines Gegenstands nach Position ist hier nicht erlaubt."
 runtime_error.PreviousCrash: "Das Spiel ist in einem vorherigen Schritt abgestürzt. Sie müssen `neu laden` (`reload`) oder ein `neues Spiel starten` (`new-game`), bevor Sie fortfahren können."
 runtime_error.Unimplemented: "Dieser Befehl ist noch nicht implementiert :)."
 runtime_error.Uninitialized: "Laufzeitumgebung unerwartet nicht initialisiert."
+runtime_error.UselessItemMatchProp: "Diese Eigenschaft wird beim Abgleichen von Gegenständen in diesem Befehl ignoriert. Bitte entfernen Sie diese Eigenschaft."
 runtime_error.UselessScreenTransition: "Dieser Befehl hat keine Auswirkung, da Sie sich bereits auf diesem Bildschirm befinden."
 
 # Error from getting view from simulation output
