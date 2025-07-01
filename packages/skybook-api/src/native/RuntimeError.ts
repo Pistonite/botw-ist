@@ -14,7 +14,10 @@ export type RuntimeError =
     | { type: "ItemMismatch"; data: [string, string] }
     | { type: "CannotFindItem" }
     | { type: "CannotFindSellableItem" }
+    | { type: "CannotFindGroundItem" }
     | { type: "CannotHoldMore" }
     | { type: "CannotDoWhileHolding" }
     | { type: "NotHolding" }
+    | { type: "PositionSpecNotAllowed" }
+    | { type: "UselessItemMatchProp" }
     | { type: "Unimplemented" };
