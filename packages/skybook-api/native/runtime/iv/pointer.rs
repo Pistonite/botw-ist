@@ -4,7 +4,7 @@
 /// to force generated bindings to convert the value to bigint
 /// instead of number when sending to JS.
 #[cfg(any(feature = "wasm", feature = "__ts-binding"))]
-#[derive(Debug, Default, Clone, Copy, serde::Serialize)]
+#[derive(Debug, Default, PartialEq, Eq, Clone, Copy, serde::Serialize)]
 #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
 #[cfg_attr(feature = "__ts-binding", ts(export))]
 #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -13,7 +13,7 @@
 pub struct Pointer(u128);
 
 #[cfg(not(any(feature = "wasm", feature = "__ts-binding")))]
-#[derive(Debug, Default, Clone, Copy, serde::Serialize)]
+#[derive(Debug, Default, PartialEq, Eq, Clone, Copy, serde::Serialize)]
 #[repr(transparent)]
 pub struct Pointer(u64);
 

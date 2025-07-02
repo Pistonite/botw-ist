@@ -57,7 +57,7 @@ mod __impl {
     }
 
     /// Weapon modifier info, which is a bitflag for modifier type and a modifier value
-    #[derive(Debug, Default, Clone, Serialize)]
+    #[derive(Debug, Default, PartialEq, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -72,7 +72,7 @@ mod __impl {
     }
 
     /// Common (display) info for an item
-    #[derive(Debug, Default, Clone, Serialize)]
+    #[derive(Debug, Default, PartialEq, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
