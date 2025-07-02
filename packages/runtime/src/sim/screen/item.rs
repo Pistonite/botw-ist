@@ -1,4 +1,4 @@
-use blueflame::game::PouchItem;
+use blueflame::game::{self, PouchItem};
 use blueflame::memory::{self, Memory, Ptr, mem};
 use skybook_parser::cir;
 use teleparse::Span;
@@ -132,34 +132,14 @@ impl ScreenItems {
     ) -> Result<Option<(usize, usize)>, memory::Error> {
         match item {
             cir::ItemOrCategory::Category(category) => {
-                let category = *category;
                 // selecting category selects the first item in a matching category
-                for (tab_i, tab) in self.tabs.iter().enumerate() {
-                    for (slot, item) in tab.items.iter().enumerate() {
-                        let Some(item) = item else {
-                            // there could be empty slots in the tab
-                            continue;
-                        };
-                        let Some(item_category) = item.category else {
-                            break;
-                        };
-                        let matched = if category == cir::Category::Armor {
-                            category == item_category.coerce_armor()
-                        } else {
-                            category == item_category
-                        };
-                        if !matched {
-                            continue;
-                        }
-                        // FIXME: we are not checking value_at_least here,
-                        // which should be a rarely-used edge case. If we
-                        // want to do this properly, the easiest way
-                        // is to make a cir::Item with the actor and position meta
-                        // then call select_item()
-                        return Ok(Some((tab_i, slot)));
-                    }
-                }
-                Ok(None)
+                // FIXME: we are not checking value_at_least here,
+                // which should be a rarely-used edge case. If we
+                // want to do this properly, the easiest way
+                // is to make a cir::Item with the actor and position meta
+                // then call select_item()
+                Ok(self.iter_items_matching_category(*category)
+                    .next().map(|(tab_i, slot, _, _)| (tab_i, slot)))
             }
             cir::ItemOrCategory::Item(item) => {
                 self.select_item(item, value_at_least, memory, span, errors)
@@ -184,26 +164,12 @@ impl ScreenItems {
             }
             Some(x) => x,
         };
-        enum Selector {
-            FromSlot(usize),
-            IdxAndSlot(usize, usize),
-        }
         // check if the meta specifies the item's position directly
-        let selector = match &meta.position {
-            None => Selector::FromSlot(1), // match first slot
-            Some(cir::ItemPosition::FromSlot(n)) => Selector::FromSlot(*n as usize), // match x-th slot, 1 indexed
-            Some(cir::ItemPosition::TabIdxAndSlot(tab_i, slot)) => {
-                Selector::IdxAndSlot(*tab_i as usize, (*slot as usize).min(19))
-            }
-            Some(cir::ItemPosition::TabCategoryAndSlot(spec)) => {
-                let Some((tab, slot)) = self.select_item_by_category_and_slot(spec) else {
-                    return Ok(None);
-                };
-                Selector::IdxAndSlot(tab, slot)
-            }
+        let Some(selector) = self.process_item_position(meta.position.as_ref()) else {
+            return Ok(None);
         };
         let from_slot = match selector {
-            Selector::FromSlot(n) => n.saturating_sub(1),
+            Selector::FromSlot(n) => n,
             Selector::IdxAndSlot(tab_i, slot) => {
                 let Some(tab) = self.tabs.get(tab_i) else {
                     return Ok(None);
@@ -236,82 +202,34 @@ impl ScreenItems {
         memory: &Memory,
     ) -> Result<Option<(usize, usize)>, memory::Error> {
         let mut count = nth;
-        for (tab_i, tab) in self.tabs.iter().enumerate() {
-            for (slot, item) in tab.items.iter().enumerate() {
-                let Some(item) = item else {
-                    continue;
-                };
-                // match name
-                if item.name != item_name {
-                    continue;
-                }
-                let item_ptr = item.ptr;
-                if let Some(wanted_value) = meta.and_then(|x| x.value) {
-                    mem! { memory: let actual_value = *(&item_ptr->mValue); };
-                    if actual_value != wanted_value {
-                        continue;
-                    }
-                } else if let Some(value_at_least) = value_at_least {
-                    mem! { memory: let actual_value = *(&item_ptr->mValue); };
-                    if actual_value < value_at_least {
-                        continue;
-                    }
-                }
-                macro_rules! do_match {
-                    ($memory: ident, $meta_field:ident, $item_field:ident) => {
-                        if let Some(wanted) = meta.and_then(|x| x.$meta_field) {
-                            mem! { memory: let actual = *(&item_ptr->$item_field); };
-                            if actual != wanted {
-                                continue;
-                            }
-                        }
-                    };
-                    ($memory: ident, $meta_field:ident (), $item_field:ident) => {
-                        if let Some(wanted) = meta.and_then(|x| x.$meta_field()) {
-                            mem! { memory: let actual = *(&item_ptr->$item_field); };
-                            if actual != wanted {
-                                continue;
-                            }
-                        }
-                    };
-                }
-                do_match!(memory, equip, mEquipped);
-                do_match!(memory, life_recover, mHealthRecover);
-                do_match!(memory, effect_duration, mEffectDuration);
-                do_match!(memory, sell_price, mSellPrice);
-                do_match!(memory, effect_id_f32(), mEffectId);
-                do_match!(memory, effect_level, mEffectLevel);
-                if let Some(wanted) = meta.map(|x| &x.ingredients)
-                    && !wanted.is_empty()
-                {
-                    mem! {memory:
-                        let ingredients_ptr = *(&item_ptr->mIngredients.mPtrs);
-                    };
-                    let mut actual_ingrs = vec![];
-                    for i in 0..5 {
-                        mem! {memory:
-                            let actual_ingr = *(ingredients_ptr.ith(i as u64));
-                        };
-                        let actual_ingr = actual_ingr.cstr(memory)?.load_utf8_lossy(memory)?;
-                        if actual_ingr.is_empty() {
-                            break;
-                        }
-                        actual_ingrs.push(actual_ingr);
-                    }
-                    if wanted != &actual_ingrs {
-                        continue;
-                    }
-                }
+        for (tab_i, slot, _, item) in self.iter_items() {
+            if !item.matches(item_name, value_at_least, meta, memory)? {
+                continue;
+            }
+            if count == 0 {
+                return Ok(Some((tab_i, slot)));
+            }
+            count -= 1;
+        }
+        Ok(None)
+    }
 
-                // matched
-                if count == 0 {
-                    return Ok(Some((tab_i, slot)));
-                }
-                count -= 1;
+    fn process_item_position(&self, position: Option<&cir::ItemPosition>) -> Option<Selector> {
+        match position {
+            // match first slot
+            None => Some(Selector::FromSlot(0)),
+            // match x-th slot, 1 indexed
+            Some(cir::ItemPosition::FromSlot(n)) => {
+                Some(Selector::FromSlot((*n as usize).saturating_sub(1)))
+            }, 
+            Some(cir::ItemPosition::TabIdxAndSlot(tab_i, slot)) => {
+                Some(Selector::IdxAndSlot(*tab_i as usize, (*slot as usize).min(19)))
+            }
+            Some(cir::ItemPosition::TabCategoryAndSlot(spec)) => {
+                self.select_item_by_category_and_slot(spec)
+                    .map(|(tab, slot)| Selector::IdxAndSlot(tab, slot))
             }
         }
-
-        Ok(None)
     }
 
     /// Select an item in the inventory by category and slot position
@@ -321,7 +239,9 @@ impl ScreenItems {
         &self,
         spec: &cir::CategorySpec,
     ) -> Option<(usize, usize)> {
-        let slot = ((spec.row * 5) as usize + spec.col as usize).min(19);
+        let row = (spec.row as usize).saturating_sub(1);
+        let col = (spec.col as usize).saturating_sub(1);
+        let slot = row * 5 + col;
         let mut count = (spec.amount as usize).min(1);
         for (tab_i, tab) in self.tabs.iter().enumerate() {
             let Some(category) = tab.category else {
@@ -335,6 +255,78 @@ impl ScreenItems {
             }
         }
         None
+    }
+
+    /// Get amount of item that match the input that can be operated on
+    pub fn get_amount(&self, item: &cir::ItemOrCategory, method: ScreenItemCountingMethod, memory: &Memory) -> Result<usize, memory::Error> {
+        match item {
+            cir::ItemOrCategory::Category(category) => {
+                let mut count = 0;
+                for (_, _, _, item) in self.iter_items_matching_category(*category) {
+                    count += item.get_amount(method, memory)?;
+                }
+                Ok(count)
+            }
+            cir::ItemOrCategory::Item(item) => {
+                self.get_item_amount(item, method, memory)
+            }
+        }
+    }
+
+    /// Get amount of item that match the input that can be operated on
+    pub fn get_item_amount(&self, item: &cir::Item, method: ScreenItemCountingMethod, memory: &Memory) -> Result<usize, memory::Error> {
+        let meta = match &item.meta {
+            None => {
+                return self.get_item_amount_by_name_meta(&item.actor, None, method, 0, memory);
+            }
+            Some(x) => x,
+        };
+        // check if the meta specifies the item's position directly
+        let Some(selector) = self.process_item_position(meta.position.as_ref()) else {
+            return Ok(0);
+        };
+        let from_slot = match selector {
+            Selector::FromSlot(n) => n,
+            Selector::IdxAndSlot(tab_i, slot) => {
+                let Some(tab) = self.tabs.get(tab_i) else {
+                    return Ok(0);
+                };
+                let Some(Some(item)) = tab.items.get(slot) else {
+                    return Ok(0);
+                };
+                // we don't check if the actor matches here, since we just need to
+                // grab the amount
+                return item.get_amount(method, memory);
+            }
+        };
+
+        self.get_item_amount_by_name_meta(&item.actor, Some(meta), method, from_slot, memory)
+
+    }
+
+    /// Get amount of item that match the input that can be operated on, without considering
+    /// position meta properties
+    pub fn get_item_amount_by_name_meta(
+        &self,
+        item_name: &str,
+        meta: Option<&cir::ItemMeta>,
+        method: ScreenItemCountingMethod,
+        nth: usize,
+        memory: &Memory,
+    ) -> Result<usize, memory::Error> {
+        let mut skip = nth;
+        let mut count = 0;
+        for (_, _, _, item) in self.iter_items() {
+            if !item.matches(item_name, None, meta, memory)? {
+                continue;
+            }
+            if skip != 0 {
+                skip -= 1;
+                continue;
+            }
+            count += item.get_amount(method, memory)?;
+        }
+        Ok(count)
     }
 
     /// Update one inventory slot
@@ -370,4 +362,139 @@ impl ScreenItems {
 
         Ok(changed)
     }
+
+    /// Iterate all items matching the category by (tab_index, slot_index, tab, item), skipping empty slots and
+    ///
+    /// Armor will match all 3 types of armor
+    #[inline(always)]
+    fn iter_items_matching_category(&self, category: cir::Category) -> impl Iterator<Item=(usize, usize, &ScreenTab, &ScreenItem)> {
+        self.iter_items().filter(move |(_, _, _, item)| 
+            item.category.is_some_and(|x| {
+                if category == cir::Category::Armor {
+                    x.coerce_armor() == category
+                } else {
+                    x == category
+                }
+            })
+        )
+    }
+
+    /// Iterate all items by (tab_index, slot_index, tab, item), skipping empty slots and
+    /// translucent items
+    #[inline(always)]
+    fn iter_items(&self) -> impl Iterator<Item = (usize, usize, &ScreenTab, &ScreenItem)> {
+        self.iter_slots().filter_map(|(tab_i, slot, tab, item)| {
+            item.as_ref().map(|item| (tab_i, slot, tab, item))
+        })
+    }
+
+    /// Iterate all slots by (tab_index, slot_index, tab, item)
+    #[inline(always)]
+    fn iter_slots(&self) -> impl Iterator<Item = (usize, usize, &ScreenTab, &Option<ScreenItem>)> {
+        self.tabs.iter().enumerate().flat_map(|(tab_i, tab)| {
+            tab.items
+                .iter()
+                .enumerate()
+                .map(move |(slot, item)| (tab_i, slot, tab, item))
+        })
+    }
+}
+
+impl ScreenItem {
+    fn matches(&self, actor: &str, value_at_least: Option<i32>, meta: Option<&cir::ItemMeta>, memory: &Memory) -> Result<bool, memory::Error> {
+        if self.name != actor {
+            return Ok(false);
+        }
+        let item_ptr = self.ptr;
+        if let Some(wanted_value) = meta.and_then(|x| x.value) {
+            mem! { memory: let actual_value = *(&item_ptr->mValue); };
+            if actual_value != wanted_value {
+            return Ok(false);
+            }
+        } else if let Some(value_at_least) = value_at_least {
+            mem! { memory: let actual_value = *(&item_ptr->mValue); };
+            if actual_value < value_at_least {
+                return Ok(false);
+            }
+        }
+
+        macro_rules! do_match {
+            ($memory: ident, $meta_field:ident, $item_field:ident) => {
+                if let Some(wanted) = meta.and_then(|x| x.$meta_field) {
+                    mem! { memory: let actual = *(&item_ptr->$item_field); };
+                    if actual != wanted { return Ok(false); }
+                }
+            };
+            ($memory: ident, $meta_field:ident (), $item_field:ident) => {
+                if let Some(wanted) = meta.and_then(|x| x.$meta_field()) {
+                    mem! { memory: let actual = *(&item_ptr->$item_field); };
+                    if actual != wanted { return Ok(false); }
+                }
+            };
+        }
+        do_match!(memory, equip, mEquipped);
+        do_match!(memory, life_recover, mHealthRecover);
+        do_match!(memory, effect_duration, mEffectDuration);
+        do_match!(memory, sell_price, mSellPrice);
+        do_match!(memory, effect_id_f32(), mEffectId);
+        do_match!(memory, effect_level, mEffectLevel);
+        if let Some(wanted) = meta.map(|x| &x.ingredients)
+        && !wanted.is_empty()
+        {
+            mem! {memory:
+                let ingredients_ptr = *(&item_ptr->mIngredients.mPtrs);
+            };
+            let mut actual_ingrs = vec![];
+            for i in 0..5 {
+                mem! {memory:
+                    let actual_ingr = *(ingredients_ptr.ith(i as u64));
+                };
+                let actual_ingr = actual_ingr.cstr(memory)?.load_utf8_lossy(memory)?;
+                if actual_ingr.is_empty() {
+                    break;
+                }
+                actual_ingrs.push(actual_ingr);
+            }
+            if wanted != &actual_ingrs {
+                return Ok(false);
+            }
+        }
+
+        Ok(true)
+    }
+
+    fn get_amount(&self, method: ScreenItemCountingMethod, memory: &Memory) -> Result<usize, memory::Error> {
+        let use_value = match method {
+            ScreenItemCountingMethod::Slot => false,
+            ScreenItemCountingMethod::CanStack => game::can_stack(&self.name),
+            ScreenItemCountingMethod::CanStackOrFood => game::can_stack(&self.name) || self.name.starts_with("Item_Cook"),
+            ScreenItemCountingMethod::Value => true,
+        };
+        if !use_value {
+            return Ok(1);
+        }
+        let ptr = self.ptr;
+        mem! {memory: let value = *(&ptr->mValue); }
+        if value <= 0 {
+            return Ok(0);
+        }
+
+        Ok(value as usize)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum ScreenItemCountingMethod {
+    /// Each slot is 1
+    Slot,
+    /// If the item has the CanStack tag, use its value, otherwise is 1
+    CanStack,
+    /// If the item has the CanStack tag, or is a food, use its value, otherwise is 1
+    CanStackOrFood,
+    /// Use the value for each slot
+    Value,
+}
+enum Selector {
+    FromSlot(usize),
+    IdxAndSlot(usize, usize),
 }

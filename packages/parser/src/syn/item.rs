@@ -28,13 +28,20 @@ pub enum NumberedOrAllItemOrCategory {
     All(AllItemOrCategory),
 }
 
-/// Syntax for an item prefixed with "all"
+/// Syntax for an item prefixed with "all" or "all but"
 #[derive_syntax]
 #[derive(Debug)]
 pub struct AllItemOrCategory {
-    #[teleparse(semantic(Amount))]
     pub all: syn::KwAll,
+    pub but_clause: tp::Option<ButClause>,
     pub item: ItemOrCategory,
+}
+
+#[derive_syntax]
+#[derive(Debug)]
+pub struct ButClause {
+    pub but: syn::KwBut,
+    pub num: syn::Number,
 }
 
 /// Syntax for an item or a category

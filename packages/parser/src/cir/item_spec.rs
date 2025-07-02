@@ -1,7 +1,9 @@
+use std::ops::Deref;
+
 use teleparse::{Span, ToSpan, tp};
 
 use crate::cir;
-use crate::error::{ErrorReport, cir_error, cir_warning};
+use crate::error::{absorb_error, cir_error, cir_warning, ErrorReport};
 use crate::search::{self, QuotedItemResolver, ResolvedItem};
 use crate::syn;
 use crate::util;
@@ -24,13 +26,13 @@ pub struct ItemSpec {
 ///
 /// This is more detailed than [`ItemSpec`], allowing
 /// selecting by category and selecting by slot number
-///
-/// The meaning of the spec depends on the context
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ItemSelectSpec {
     /// Amount of the item
     ///
-    /// -1 means "all" or special value in other contexts
+    /// - Non-negative number means by the amount
+    /// - -1 means `all`
+    /// - -X means `all but (X+1)`
     pub amount: i64,
 
     /// The item or category to select from
@@ -57,7 +59,7 @@ pub enum AmountSpec {
 impl From<i64> for AmountSpec {
     fn from(value: i64) -> Self {
         match value {
-            ..-1 => Self::AllBut((-value - 1) as usize),
+            ..-1 => Self::AllBut(((-value).wrapping_sub(1)) as usize),
             -1 => Self::All,
             n => Self::Num(n as usize),
         }
@@ -70,7 +72,7 @@ impl AmountSpec {
     }
     pub fn sub(&mut self, n: usize) {
         if let AmountSpec::Num(self_n) = self {
-            *self_n -= n
+            *self_n = self_n.saturating_sub(n)
         }
     }
 }
@@ -181,16 +183,29 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
             for item in items.iter() {
                 let (amount, item) = match item {
                     syn::NumberedOrAllItemOrCategory::Numbered(item) => {
-                        let amount = match cir::parse_syn_int_str(&item.num, &item.num.span()) {
-                            Ok(amount) => amount,
-                            Err(e) => {
-                                errors.push(e);
-                                continue;
-                            }
+                        let Some(amount) = absorb_error(errors, 
+                            cir::parse_syn_int_str(&item.num, &item.num.span())
+                        ) else {
+                            continue;
                         };
                         (amount, &item.item)
                     }
-                    syn::NumberedOrAllItemOrCategory::All(item) => (-1, &item.item),
+                    syn::NumberedOrAllItemOrCategory::All(item) => {
+                        let mut amount = match item.but_clause.deref() {
+                            Some(but) => {
+                                let Some(x) = absorb_error(errors, cir::parse_syn_int_str(&but.num, &but.num.span())) else {
+                                    continue;
+                                };
+                                (-x).wrapping_sub(1)
+                            }
+                            None => -1
+                        };
+                        // fix overflow
+                        if amount > 0 {
+                            amount = 0;
+                        }
+                        (amount, &item.item)
+                    }
                 };
                 let Some(result) = parse_item_or_category(item, resolver, errors).await else {
                     continue;

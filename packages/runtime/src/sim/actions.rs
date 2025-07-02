@@ -149,6 +149,12 @@ pub fn pick_up_items(
     Ok(())
 }
 
+pub enum HoldType {
+    Hold,
+    HoldDrop,
+    HoldDropPickup,
+}
+
 /// Hold items in pouch
 pub fn hold_items(
     ctx: &mut sim::Context<&mut Cpu2>,
@@ -156,6 +162,7 @@ pub fn hold_items(
     errors: &mut Vec<ErrorReport>,
     items: &[cir::ItemSelectSpec],
     attached: bool,
+    typ: HoldType
 ) -> Result<(), processor::Error> {
     // must be in inventory to hold items
     if !sys
@@ -168,6 +175,7 @@ pub fn hold_items(
     let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
     'outer: for item in items {
         // TODO - check if item is material, prompt entanglement, etc
+        // let mut remaining = item.amount_spec();
         let amount = if item.amount < 0 {
             i64::MAX
         } else {
