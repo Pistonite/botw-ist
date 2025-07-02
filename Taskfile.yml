@@ -220,6 +220,7 @@ tasks:
       - pnpm install --frozen-lockfile
       - task: parser-legacy:install
       - task: intwc:install
+      - task: app:install
       - task: app:build
 
   build-runtime-ci-pr:
