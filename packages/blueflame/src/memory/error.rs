@@ -1,7 +1,7 @@
 use crate::memory::AccessFlags;
 
 /// Memory errors
-#[derive(Debug, Clone, thiserror::Error)]
+#[derive(Debug, Clone, PartialEq, thiserror::Error)]
 pub enum Error {
     #[error("unable to construct section: {0}")]
     SectionConstruction(String),

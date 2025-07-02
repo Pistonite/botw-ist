@@ -173,6 +173,8 @@ async fn run_test(
 
     new_snapshot += "=====\n";
 
+    let mut previous_snapshot: Option<sim::StateSnapshot> = None;
+
     for (i, step) in parsed_output.steps.iter().enumerate() {
         let span = step.span();
         new_snapshot += "\n";
@@ -182,7 +184,14 @@ async fn run_test(
 
         let state = &output.states[i];
         let snapshot = state.to_snapshot();
-        new_snapshot += &snapshot.to_string();
+        if let Some(previous) = &previous_snapshot
+            && previous == &snapshot
+        {
+            new_snapshot += "<same>";
+        } else {
+            new_snapshot += &snapshot.to_string();
+            previous_snapshot = Some(snapshot);
+        }
     }
 
     new_snapshot += "\n}\n";

@@ -28,6 +28,16 @@ impl IntoErrorReport for teleparse::syntax::Error<syn::TT> {
     }
 }
 
+pub fn absorb_error<T>(errors: &mut Vec<ErrorReport>, result: Result<T, ErrorReport>) -> Option<T> {
+    match result {
+        Ok(x) => Some(x),
+        Err(e) => {
+            errors.push(e);
+            None
+        }
+    }
+}
+
 macro_rules! cir_fail {
     ($span:expr, $error_type:ident ( $($args:expr),* $(,)? )) => {
         return Err($crate::error::ErrorReport::error(

@@ -194,37 +194,7 @@ game: (Running)
 
 ----- Step[7]: get 3 apple
 
-game: (Running)
-  screen: (Overworld)
-  pouch: (count=10, are_tabs_valid=true, num_tabs=5, )
-    items: (len=10, )
-      [000]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
-        node: (valid=true, pos=418, addr=0x0000002222243cd0, prev=0x0000002222200068, next=0x0000002222243a38, )
-      [001]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=1, )
-        node: (valid=true, pos=417, addr=0x0000002222243a38, prev=0x0000002222243cd0, next=0x00000022222437a0, )
-      [002]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=2, )
-        node: (valid=true, pos=416, addr=0x00000022222437a0, prev=0x0000002222243a38, next=0x0000002222243508, )
-      [003]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=3, )
-        node: (valid=true, pos=415, addr=0x0000002222243508, prev=0x00000022222437a0, next=0x0000002222243270, )
-      [004]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=4, )
-        node: (valid=true, pos=414, addr=0x0000002222243270, prev=0x0000002222243508, next=0x0000002222242fd8, )
-      [005]: (actor_name=Weapon_Lsword_024, value=4000, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=5, )
-        node: (valid=true, pos=413, addr=0x0000002222242fd8, prev=0x0000002222243270, next=0x0000002222242aa8, )
-      [006]: (actor_name=Weapon_Bow_001, value=2200, is_equipped=false, item_type=Bow, item_use=WeaponBow, tab_idx=1, tab_slot=0, )
-        node: (valid=true, pos=411, addr=0x0000002222242aa8, prev=0x0000002222242fd8, next=0x0000002222242d40, )
-      [007]: (actor_name=Weapon_Shield_040, value=1000, is_equipped=false, item_type=Shield, item_use=WeaponShield, tab_idx=2, tab_slot=0, )
-        node: (valid=true, pos=412, addr=0x0000002222242d40, prev=0x0000002222242aa8, next=0x0000002222243f68, )
-      [008]: (actor_name=Item_Fruit_A, value=999, is_equipped=false, item_type=Material, item_use=CureItem, tab_idx=3, tab_slot=0, )
-        node: (valid=true, pos=419, addr=0x0000002222243f68, prev=0x0000002222242d40, next=0x0000002222242810, )
-      [009]: (actor_name=Obj_DRStone_Get, value=1, is_equipped=false, item_type=KeyItem, item_use=ImportantItem, tab_idx=4, tab_slot=0, )
-        node: (valid=true, pos=410, addr=0x0000002222242810, prev=0x0000002222243f68, next=0x0000002222200068, )
-    tabs: (len=5, )
-      [00]: (item_idx=0, tab_type=Sword, )
-      [01]: (item_idx=6, tab_type=Bow, )
-      [02]: (item_idx=7, tab_type=Shield, )
-      [03]: (item_idx=8, tab_type=Material, )
-      [04]: (item_idx=9, tab_type=KeyItem, )
-
+<same>
 ----- Step[8]: get aa
 
 game: (Running)

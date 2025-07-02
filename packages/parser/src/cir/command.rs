@@ -3,7 +3,7 @@ use std::sync::Arc;
 use teleparse::{Span, ToSpan};
 
 use crate::cir;
-use crate::error::{ErrorReport, cir_error};
+use crate::error::{ErrorReport, absorb_error, cir_error};
 use crate::search::QuotedItemResolver;
 use crate::syn;
 
@@ -51,19 +51,28 @@ pub struct CommandWithSpan {
 pub enum Command {
     /// See [`syn::CmdGet`]
     Get(Vec<cir::ItemSpec>),
-    /// See [`syn::CmdGetPause`]
-    GetPause(Vec<cir::ItemSpec>),
+    // /// See [`syn::CmdGetPause`]
+    // GetPause(Vec<cir::ItemSpec>),
     /// See [`syn::CmdPickUp`]
     PickUp(Vec<cir::ItemSelectSpec>),
+    /// `:item-box-pause` annotation.
+    ///
+    /// Assumes an item text box will appear for the next command,
+    /// and open the pause menu during such text box
+    CoItemBoxPause,
 
     /// See [`syn::CmdOpenInv`]
     OpenInv,
     /// See [`syn::CmdCloseInv`]
     CloseInv,
+    /// `:smug` annotation.
+    ///
+    /// Perform item smuggle for arrowless offset on next hold
+    CoSmug,
     /// See [`syn::CmdHold`]
     Hold(Vec<cir::ItemSelectSpec>),
-    /// See [`syn::CmdHoldAttach`]
-    HoldAttach(Vec<cir::ItemSelectSpec>),
+    // /// See [`syn::CmdHoldAttach`]
+    // HoldAttach(Vec<cir::ItemSelectSpec>),
     /// `unhold`
     Unhold,
     /// See [`syn::CmdDrop`] - Items are additional items to hold before dropping
@@ -87,6 +96,11 @@ pub enum Command {
     Buy(Vec<cir::ItemSpec>),
     /// See [`syn::CmdSell`]
     Sell(Vec<cir::ItemSelectSpec>),
+    /// `:same-dialog` annotation.
+    ///
+    /// Buy from the same NPC right after selling without
+    /// returning to overworld
+    CoSameDialog,
 
     /// See [`syn::CmdEat`]
     Eat(Vec<cir::ItemSelectSpec>),
@@ -162,58 +176,50 @@ pub async fn parse_command<R: QuotedItemResolver>(
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
 ) -> Option<cir::Command> {
+    use cir::Command as X;
+    use syn::Command as C;
     match command {
-        syn::Command::Get(cmd) => Some(cir::Command::Get(
+        C::Get(cmd) => Some(X::Get(
             cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
         )),
-        syn::Command::GetPause(cmd) => Some(cir::Command::GetPause(
-            cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
-        )),
-        syn::Command::PickUp(cmd) => Some(cir::Command::PickUp(
+        C::PickUp(cmd) => Some(X::PickUp(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         //////////////////////////////////////////////////////////////////
-        syn::Command::OpenInv(_) => Some(cir::Command::OpenInv),
-        syn::Command::CloseInv(_) => Some(cir::Command::CloseInv),
-        syn::Command::Hold(cmd) => Some(cir::Command::Hold(
+        C::OpenInv(_) => Some(X::OpenInv),
+        C::CloseInv(_) => Some(X::CloseInv),
+        C::Hold(cmd) => Some(X::Hold(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
-        syn::Command::HoldAttach(cmd) => Some(cir::Command::HoldAttach(
-            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
-        )),
-        syn::Command::Unhold(_) => Some(cir::Command::Unhold),
-        syn::Command::Drop(cmd) => Some(cir::Command::Drop(match cmd.items.as_ref() {
+        C::Unhold(_) => Some(X::Unhold),
+        C::Drop(cmd) => Some(X::Drop(match cmd.items.as_ref() {
             Some(items) => Some(cir::parse_item_list_constrained(items, resolver, errors).await),
             None => None,
         })),
-        syn::Command::Dnp(cmd) => Some(cir::Command::Dnp(
+        C::Dnp(cmd) => Some(X::Dnp(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
-        syn::Command::Cook(cmd) => match cmd.items.as_ref() {
-            None => Some(cir::Command::CookHeld),
-            Some(items) => Some(cir::Command::Cook(
+        C::Cook(cmd) => match cmd.items.as_ref() {
+            None => Some(X::CookHeld),
+            Some(items) => Some(X::Cook(
                 cir::parse_item_list_constrained(items, resolver, errors).await,
             )),
         },
-        syn::Command::SuBreak(cmd) => {
-            match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
-                Ok(x) => Some(cir::Command::SuBreak(x)),
-                Err(e) => {
-                    errors.push(e);
-                    None
-                }
-            }
-        }
-        syn::Command::SuRemove(cmd) => Some(cir::Command::SuRemove(
+        C::SuBreak(cmd) => absorb_error(
+            errors,
+            cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()),
+        )
+        .map(X::SuBreak),
+        C::SuRemove(cmd) => Some(X::SuRemove(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         //////////////////////////////////////////////////////////////////
-        syn::Command::OpenShop(_) => Some(cir::Command::OpenShop),
-        syn::Command::CloseShop(_) => Some(cir::Command::CloseShop),
-        syn::Command::Buy(cmd) => Some(cir::Command::Buy(
+        C::OpenShop(_) => Some(X::OpenShop),
+        C::CloseShop(_) => Some(X::CloseShop),
+        C::Buy(cmd) => Some(X::Buy(
             cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
         )),
-        syn::Command::Sell(cmd) => Some(cir::Command::Sell(
+        C::Sell(cmd) => Some(X::Sell(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         //////////////////////////////////////////////////////////////////
@@ -370,7 +376,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             Some(cir::Command::SetGdt(flag_name, Box::new(gdt_value)))
         }
 
-        syn::Command::Annotation(cmd) => parse_annotation(&cmd.annotation, errors),
+        C::Annotation(cmd) => parse_annotation(&cmd.annotation, errors),
     }
 }
 
@@ -378,54 +384,53 @@ pub fn parse_annotation(
     annotation: &syn::Annotation,
     errors: &mut Vec<ErrorReport>,
 ) -> Option<cir::Command> {
+    use cir::Command as X;
+    use syn::Annotation as A;
     match annotation {
-        syn::Annotation::WeaponSlots(cmd) => {
-            match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
-                Err(e) => {
-                    errors.push(e);
-                    None
-                }
-                Ok(x) if x < 8 || x > 20 => {
-                    errors.push(cir_error!(
-                        &cmd.amount,
-                        InvalidEquipmentSlotNum(cir::Category::Weapon, x)
-                    ));
-                    None
-                }
-                Ok(x) => Some(cir::Command::set_gdt_s32("WeaponPorchStockNum", x)),
+        A::Smug(_) => Some(X::CoSmug),
+        A::ItemBoxPause(_) => Some(X::CoItemBoxPause),
+        A::SameDialog(_) => Some(X::CoSameDialog),
+        A::WeaponSlots(cmd) => {
+            let slots = absorb_error(
+                errors,
+                cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()),
+            )?;
+            if slots < 8 || slots > 20 {
+                errors.push(cir_error!(
+                    &cmd.amount,
+                    InvalidEquipmentSlotNum(cir::Category::Weapon, slots)
+                ));
+                return None;
             }
+            Some(X::set_gdt_s32("WeaponPorchStockNum", slots))
         }
-        syn::Annotation::BowSlots(cmd) => {
-            match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
-                Err(e) => {
-                    errors.push(e);
-                    None
-                }
-                Ok(x) if x < 5 || x > 14 => {
-                    errors.push(cir_error!(
-                        &cmd.amount,
-                        InvalidEquipmentSlotNum(cir::Category::Bow, x)
-                    ));
-                    None
-                }
-                Ok(x) => Some(cir::Command::set_gdt_s32("BowPorchStockNum", x)),
+        A::BowSlots(cmd) => {
+            let slots = absorb_error(
+                errors,
+                cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()),
+            )?;
+            if slots < 5 || slots > 14 {
+                errors.push(cir_error!(
+                    &cmd.amount,
+                    InvalidEquipmentSlotNum(cir::Category::Bow, slots)
+                ));
+                return None;
             }
+            Some(X::set_gdt_s32("BowPorchStockNum", slots))
         }
-        syn::Annotation::ShieldSlots(cmd) => {
-            match cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()) {
-                Err(e) => {
-                    errors.push(e);
-                    None
-                }
-                Ok(x) if x < 4 || x > 20 => {
-                    errors.push(cir_error!(
-                        &cmd.amount,
-                        InvalidEquipmentSlotNum(cir::Category::Shield, x)
-                    ));
-                    None
-                }
-                Ok(x) => Some(cir::Command::set_gdt_s32("ShieldPorchStockNum", x)),
+        A::ShieldSlots(cmd) => {
+            let slots = absorb_error(
+                errors,
+                cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()),
+            )?;
+            if slots < 4 || slots > 20 {
+                errors.push(cir_error!(
+                    &cmd.amount,
+                    InvalidEquipmentSlotNum(cir::Category::Shield, slots)
+                ));
+                return None;
             }
+            Some(X::set_gdt_s32("ShieldPorchStockNum", slots))
         }
     }
 }
