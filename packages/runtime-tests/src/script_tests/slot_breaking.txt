@@ -1,5 +1,5 @@
 get 5 apples 2 shroom 1 banana 2 pepper
-hold-attach 2 apples
+:smug hold 2 apples
 sell all apples
 close-dialog
 

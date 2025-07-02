@@ -22,7 +22,10 @@ game: (Running)
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
 
------ Step[1]: hold-attach 2 apples
+----- Step[1]: :smug
+
+<same>
+----- Step[2]: hold 2 apples
 
 game: (Running)
   screen: (Overworld)
@@ -43,7 +46,7 @@ game: (Running)
       [000]: (typ=Held, actor=Item_Fruit_A, )
       [001]: (typ=Held, actor=Item_Fruit_A, )
 
------ Step[2]: sell all apples
+----- Step[3]: sell all apples
 
 game: (Running)
   screen: (Shop)
@@ -65,7 +68,7 @@ game: (Running)
       [000]: (typ=Held, actor=Item_Fruit_A, )
       [001]: (typ=Held, actor=Item_Fruit_A, )
 
------ Step[3]: close-dialog
+----- Step[4]: close-dialog
 
 game: (Running)
   screen: (Overworld)
@@ -83,7 +86,7 @@ game: (Running)
       [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
       [001]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
 
------ Step[4]: !remove all banana 1 pepper
+----- Step[5]: !remove all banana 1 pepper
 
 game: (Running)
   screen: (Overworld)
@@ -99,7 +102,7 @@ game: (Running)
       [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
       [001]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
 
------ Step[5]: !break 2 slots
+----- Step[6]: !break 2 slots
 
 game: (Running)
   screen: (Overworld)

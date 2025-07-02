@@ -120,6 +120,9 @@ pub enum TT {
         /////////////////////////////
 
         // @syntax-generator-hint annotations
+        KwSmug = "smug",
+        KwItemBoxPause = "item-box-pause",
+        KwSameDialog = "same-dialog",
         KwWeaponSlots = "weapon-slots",
         KwShieldSlots = "shield-slots",
         KwBowSlots = "bow-slots",

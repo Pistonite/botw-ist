@@ -72,7 +72,7 @@ pub struct Cpu1 {
 /// The bottom level of CPU state. This is what's needed
 /// to execute some instruction (i.e. instructions can read
 /// and write to these)
-#[derive(Debug, Default, Clone, Deref, DerefMut)]
+#[derive(Debug, Default, PartialEq, Clone, Deref, DerefMut)]
 pub struct Cpu0 {
     // See NOTE at top about using Deref/DerefMut
     #[deref]

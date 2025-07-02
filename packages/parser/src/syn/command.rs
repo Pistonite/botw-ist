@@ -27,8 +27,6 @@ pub enum Command {
     // ==== overworld adding items ====
     /// `get ITEMS`
     Get(CmdGet),
-    /// `get-pause ITEMS`
-    GetPause(CmdGetPause),
     /// `pick-up ITEMS` ------------ TODO
     PickUp(CmdPickUp),
 
@@ -39,8 +37,6 @@ pub enum Command {
     CloseInv(CmdCloseInv),
     /// `hold ITEMS`
     Hold(CmdHold),
-    /// `hold-attach ITEMS`
-    HoldAttach(CmdHoldAttach),
     /// `unhold`
     Unhold(syn::KwUnhold),
     /// `drop` or `drop ITEMS`
@@ -142,6 +138,9 @@ pub struct AnnotationCommand {
 #[derive_syntax]
 #[derive(Debug)]
 pub enum Annotation {
+    Smug(syn::KwSmug),
+    ItemBoxPause(syn::KwItemBoxPause),
+    SameDialog(syn::KwSameDialog),
     WeaponSlots(CmdWeaponSlots),
     ShieldSlots(CmdShieldSlots),
     BowSlots(CmdBowSlots),
@@ -152,14 +151,6 @@ pub enum Annotation {
 #[derive(Debug)]
 pub struct CmdGet {
     pub lit: syn::KwGet,
-    pub items: syn::ItemListFinite,
-}
-
-/// `get-pause ITEMS` - get items, come from the area, pause afterwards (such as a chest)
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdGetPause {
-    pub lit: syn::KwGetPause,
     pub items: syn::ItemListFinite,
 }
 
@@ -196,15 +187,6 @@ pub enum CmdCloseInv {
 #[derive(Debug)]
 pub struct CmdHold {
     pub lit: syn::KwHold,
-    pub items: syn::ItemListConstrained,
-}
-
-/// `hold-attach ITEMS` - items come from inventory,
-/// dropping happens after returning to overworld scope
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdHoldAttach {
-    pub lit: syn::KwHoldAttach,
     pub items: syn::ItemListConstrained,
 }
 

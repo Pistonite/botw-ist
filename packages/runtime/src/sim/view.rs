@@ -30,7 +30,7 @@ macro_rules! coherence_error {
     }}
 }
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, PartialEq, thiserror::Error)]
 pub enum Error {
     #[error("failed to read state from memory")]
     Memory(blueflame::memory::Error),

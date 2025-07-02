@@ -10,7 +10,7 @@ mod __impl {
     /// of items. Unallocated items are not included in the view.
     ///
     /// This view can only available if PMDM is not corrupted
-    #[derive(Debug, Clone, Serialize)]
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -50,7 +50,7 @@ mod __impl {
     /// Data from mTabs and mTabsType in PMDM
     ///
     /// Only available if PMDM is not corrupted
-    #[derive(Debug, Default, Clone, Serialize)]
+    #[derive(Debug, Default, PartialEq, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -69,7 +69,7 @@ mod __impl {
 
     /// Type of screen currently being shown. This is technically
     /// not part of the pouch, but easier to think this way
-    #[derive(Debug, Default, Clone, Copy, serde::Serialize)]
+    #[derive(Debug, Default, PartialEq, Eq, Clone, Copy, serde::Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -85,7 +85,7 @@ mod __impl {
 
     /// Info for an item in the PMDM. This struct can represent both
     /// valid item and invalid items (resulting from ISU corruption)
-    #[derive(Debug, Default, Clone, serde::Serialize)]
+    #[derive(Debug, Default, PartialEq, Clone, serde::Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]

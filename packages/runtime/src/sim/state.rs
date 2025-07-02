@@ -9,15 +9,22 @@ use crate::{exec, sim};
 pub struct State {
     /// Current game state
     pub game: Game,
+    pub args: StateArgs,
     // /// named save data
     // saves: HashMap<String, Arc<gdt::TriggerParam>>,
     // /// The "manual" or "default" save (what is used if a name is not specified when saving)
     // manual_save: Option<gdt::TriggerParam>,
-    /// If the screen was manually changed by a command
-    ///
-    /// If so, the simulator will not automatically change screen
-    /// until the screen returns to overworld
-    pub is_screen_manually_changed: bool,
+}
+
+/// State args that could affect execution of the next state
+#[derive(Clone, Default)]
+pub struct StateArgs {
+    /// Perform item smuggle for arrowless offset
+    pub smug: bool,
+    /// Assume next command has an item box, and open the pause menu during that text box
+    pub item_box_pause: bool,
+    /// Perform the next operation in the same dialog
+    pub same_dialog: bool,
 }
 
 #[derive(Clone, Default)]
@@ -50,42 +57,54 @@ pub struct GameSystems {
     pub overworld: sim::OverworldSystem,
 }
 
+macro_rules! set_arg {
+    ($state:ident, $args:ident, $arg:ident) => {{
+        $args.$arg = true;
+        $state.args = $args;
+        return Ok(Report::new($state));
+    }};
+}
+
 impl State {
     pub async fn execute_step(
-        self,
+        mut self,
         ctx: sim::Context<&sim::Runtime>,
         step: &cir::Step,
     ) -> Result<Report<Self>, exec::Error> {
+        use cir::Command as X;
+        let mut args = std::mem::take(&mut self.args);
         match step.command() {
-            cir::Command::Get(items) => self.handle_get(ctx, items, false).await,
-            cir::Command::GetPause(items) => self.handle_get(ctx, items, true).await,
-            cir::Command::PickUp(items) => self.handle_pick_up(ctx, items, false).await,
-            // TODO: pickup
-            cir::Command::OpenInv => self.handle_pause(ctx).await,
-            cir::Command::CloseInv => self.handle_unpause(ctx).await,
-            cir::Command::Hold(items) => self.handle_hold(ctx, items, false).await,
-            cir::Command::HoldAttach(items) => self.handle_hold(ctx, items, true).await,
-            cir::Command::Unhold => self.handle_unhold(ctx).await,
-            cir::Command::Drop(items) => self.handle_drop(ctx, items.as_deref()).await,
-            cir::Command::SuBreak(count) => self.handle_su_break(ctx, *count).await,
-            cir::Command::SuRemove(items) => self.handle_su_remove(ctx, items).await,
+            X::CoSmug => set_arg!(self, args, smug),
+            X::CoItemBoxPause => set_arg!(self, args, item_box_pause),
+            X::CoSameDialog => set_arg!(self, args, same_dialog),
 
-            cir::Command::OpenShop => self.handle_open_shop(ctx).await,
-            cir::Command::CloseShop => self.handle_close_shop(ctx).await,
-            cir::Command::Sell(items) => self.handle_sell(ctx, items).await,
+            X::Get(items) => self.handle_get(ctx, items, &args).await,
+            X::PickUp(items) => self.handle_pick_up(ctx, items, &args).await,
+            X::OpenInv => self.handle_pause(ctx).await,
+            X::CloseInv => self.handle_unpause(ctx).await,
+            X::Hold(items) => self.handle_hold(ctx, items, &args).await,
+            X::Unhold => self.handle_unhold(ctx).await,
+            X::Drop(items) => self.handle_drop(ctx, items.as_deref()).await,
+            X::SuBreak(count) => self.handle_su_break(ctx, *count).await,
+            X::SuRemove(items) => self.handle_su_remove(ctx, items).await,
+
+            X::OpenShop => self.handle_open_shop(ctx).await,
+            X::CloseShop => self.handle_close_shop(ctx).await,
+            X::Sell(items) => self.handle_sell(ctx, items).await,
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
         }
     }
 
     #[rustfmt::skip]
     async fn handle_get(self, rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSpec], pause_after: bool,
+        items: &[cir::ItemSpec], args: &StateArgs,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling GET command");
         let items = items.to_vec();
+        let pause = args.item_box_pause;
         self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
 
-            sim::actions::get_items(&mut cpu2, sys, errors, &items, pause_after)?;
+            sim::actions::get_items(&mut cpu2, sys, errors, &items, pause)?;
             sys.overworld.despawn_items();
             Ok(())
 
@@ -94,13 +113,14 @@ impl State {
 
     #[rustfmt::skip]
     async fn handle_pick_up(self, rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSelectSpec], pause_after: bool,
+        items: &[cir::ItemSelectSpec], args: &StateArgs,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling PICKUP command");
         let items = items.to_vec();
+        let pause = args.item_box_pause;
         self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
 
-            sim::actions::pick_up_items(&mut cpu2, sys, errors, &items, pause_after)?;
+            sim::actions::pick_up_items(&mut cpu2, sys, errors, &items, pause)?;
             sys.overworld.despawn_items();
             Ok(())
 
@@ -142,12 +162,13 @@ impl State {
 
     #[rustfmt::skip]
     async fn handle_hold(self, rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSelectSpec], attached: bool,
+        items: &[cir::ItemSelectSpec], args: &StateArgs,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling HOLD command");
+        let smug = args.smug;
         let items = items.to_vec();
         self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-            sim::actions::hold_items(&mut cpu2, sys, errors, &items, attached)
+            sim::actions::hold_items(&mut cpu2, sys, errors, &items, smug)
         }) }) .await }) .await
     }
 

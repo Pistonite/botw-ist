@@ -152,7 +152,7 @@ impl RegName {
     }
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, PartialEq, Eq, Clone)]
 pub struct Registers {
     // https://developer.arm.com/documentation/dui0801/l/Overview-of-AArch64-state/Registers-in-AArch64-state
     /// 31 general-purpose registers (called X0-X30 in code)
@@ -445,7 +445,7 @@ impl Registers {
     }
 }
 
-#[derive(Default, Debug, Clone, Copy)]
+#[derive(Default, Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Flags {
     // Condition flags
     pub n: bool, // Negative

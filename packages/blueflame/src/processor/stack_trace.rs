@@ -1,7 +1,7 @@
 use crate::env::enabled;
 use crate::processor::{Error, RegName, format_address};
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct StackTrace {
     pub frames: Vec<Frame>,
 }
@@ -70,13 +70,13 @@ impl StackTrace {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Frame {
     pub jump_target: u64,
     pub jump_type: FrameType,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum FrameType {
     /// Branch with BL instruction
     Bl(u64),

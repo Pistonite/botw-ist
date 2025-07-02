@@ -62,7 +62,9 @@ get    3        pot-lid   [durability=3]
     Note the behavior might vary based on the command. See [token](https://github.com/Pistonite/botw-ist/blob/d5812037f4909eeb48cb2ba666dccdb672563cc4/packages/parser/src/syn/token.rs#L119) for possible category values
 - `metadata` is extra properties of the item, in the format of <skyb>[key1=value1, key2=value2, ...]</skyb>, either `=` or `:` can be used as the key/value delimiter
 
-The metadata has different meaning in 2 scenarios:
+
+## Finite vs Constrained Item Specifier
+The item metadata has different meaning in 2 scenarios:
 - When *adding* item, it specifies extra properties on the item being added, for example, durability of equipment, weapon modifier, etc.
   This is also referred to as a *finite item specifier*
 - When *selecting* items, for example, finding which item in the inventory to <skyb>hold</skyb> or <skyb>sell</skyb>.

@@ -6,7 +6,7 @@ mod __impl {
 
     /// View of the items in the overworld (technically not inventory, but convienient to think of
     /// it this way)
-    #[derive(Debug, Default, Clone, Serialize)]
+    #[derive(Debug, Default, PartialEq, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -18,7 +18,7 @@ mod __impl {
     }
 
     /// Item info for something in the overworld
-    #[derive(Debug, Clone, Serialize)]
+    #[derive(Debug, Clone, PartialEq, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]

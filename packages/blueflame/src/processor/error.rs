@@ -4,7 +4,7 @@ use crate::env::DataId;
 use crate::memory;
 use crate::processor::{Cpu0, reg};
 
-#[derive(Debug, Clone, thiserror::Error)]
+#[derive(Debug, Clone, PartialEq, thiserror::Error)]
 pub enum Error {
     #[error("missing required data {0:?}")]
     MissingData(DataId),
@@ -43,7 +43,7 @@ pub enum Error {
     Unexpected(String),
 }
 
-#[derive(Constructor, Clone)]
+#[derive(Constructor, PartialEq, Clone)]
 pub struct CrashReport {
     pub cpu: Box<Cpu0>,
     pub main_start: u64,

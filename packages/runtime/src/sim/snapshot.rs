@@ -5,9 +5,9 @@ use blueflame::{
 
 use crate::{iv, sim};
 
+#[derive(PartialEq)]
 pub struct StateSnapshot {
     pub game: GameSnapshot,
-    // TODO: more states
 }
 
 impl std::fmt::Display for StateSnapshot {
@@ -16,6 +16,7 @@ impl std::fmt::Display for StateSnapshot {
     }
 }
 
+#[derive(PartialEq)]
 pub enum GameSnapshot {
     Uninit,
     Running(GameSnapshotRunning),
@@ -23,6 +24,7 @@ pub enum GameSnapshot {
     PreviousCrash,
 }
 
+#[derive(PartialEq)]
 pub struct GameSnapshotRunning {
     pub pouch: Result<iv::PouchList, sim::view::Error>,
     pub overworld: iv::Overworld,
