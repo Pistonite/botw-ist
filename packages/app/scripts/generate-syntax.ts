@@ -70,7 +70,10 @@ const sourceFileLines = (await Bun.file(SOURCE_FILE).text())
     .filter(Boolean);
 
 /** Create a string containing the code `[prop]: [...words]` */
-const createPropertyString = (prop: string, mapFn?: (x: string) => string): string => {
+const createPropertyString = (
+    prop: string,
+    mapFn?: (x: string) => string,
+): string => {
     mapFn ??= (x) => `"${x}"`;
     const words = parseHintSection(sourceFileLines, prop);
     const array = words.map(mapFn).join(", ");
@@ -81,7 +84,7 @@ const targetFileContent = createExportString([
     createPropertyString("commands"),
     createPropertyString("types"),
     createPropertyString("keywords"),
-    createPropertyString("annotations", x => `":${x}"`),
+    createPropertyString("annotations", (x) => `":${x}"`),
 ]);
 
 console.log("writing target file...");
