@@ -37,6 +37,7 @@ pub fn create_dark_style_sheet_for_flavor(
 .{0} .skybook-tt-Command {{ color: {yellow}; }}
 .{0} .skybook-tt-SuperCommand {{ color: {peach}; }}
 .{0} .skybook-tt-Keyword {{ color: {mauve}; }}
+.{0} .skybook-tt-Annotation {{ color: {mauve}; }}
 .{0} .skybook-tt-Word {{ color: {green}; }}
 .{0} .skybook-tt-QuotedWord {{ color: {red}; }}
 .{0} .skybook-tt-ItemLiteral {{ color: {red}; }}
@@ -73,6 +74,7 @@ pub fn create_light_style_sheet_for_flavor(
 .{0} .skybook-tt-Command {{ color: {mauve}; }}
 .{0} .skybook-tt-SuperCommand {{ color: {maroon}; }}
 .{0} .skybook-tt-Keyword {{ color: {maroon}; }}
+.{0} .skybook-tt-Annotation {{ color: {maroon}; }}
 .{0} .skybook-tt-Word {{ color: {red}; }}
 .{0} .skybook-tt-QuotedWord {{ color: {red}; }}
 .{0} .skybook-tt-ItemLiteral {{ color: {red}; }}

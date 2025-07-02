@@ -9,23 +9,33 @@ When Link is also holding items in the overworld, the held items will be also di
 in the overworld UI with yellow border and a circle.
 
 ## Syntax
-> `hold` [`CONSTRAINED_ITEM_LIST`](../user/syntax.md)<br>
-> `hold-attach` [`CONSTRAINED_ITEM_LIST`](../user/syntax.md) - see [below](#smuggle-state-for-arrowless-offset) <br>
+> `hold` [`CONSTRAINED_ITEM_LIST`](../user/syntax.md#finite-vs-constrained-item-specifier)<br>
 > `unhold`
+
+Annotations: [`:smug`](#smuggle-state-for-arrowless-offset)
 
 Examples
 ```skybook
 hold apple
 hold 2 apple
 hold 1 shroom 1 pepper
-hold-attach 1 shroom 1 pepper
+unhold
+:smug hold 1 shroom 1 pepper
 unhold
 ```
 
 ## Smuggle State for Arrowless Offset
-The <skyb>hold-attach</skyb> action can be used to activate the item smuggle
-state required for `Arrowless Offset`, which is when the held materials are attached
+The <skyb>:smug</skyb> annotation can be used to activate the item smuggle
+state required for `Arrowless Offset` for the next <skyb>hold</skyb> command, which is when the held materials are attached
 to Link's hand instead of being held in front of him.
+
+To do this in the simulator, put <skyb>:smug</skyb> right before the <skyb>hold</skyb> command
+```skybook
+:smug
+hold 2 shrooms
+# Now you are in Overworld, and held items are attached to Link's hand
+```
+You can also put <skyb>:smug hold</skyb> on the same line (which sounds like *smuggled*, hehe).
 
 To do this in the game, you need:
 - A Shield
@@ -50,9 +60,10 @@ generate offsets. In game, you can do this by either:
 <skyb>unhold</skyb> puts the items currently held back to the inventory
 
 ## Detail
-- <skyb>hold</skyb> and <skyb>hold-attach</skyb> require [`Inventory` screen](../user/screen_system.md)
+- <skyb>hold</skyb> requires [`Inventory` screen](../user/screen_system.md)
 - <skyb>unhold</skyb> requires either `Overworld` or `Inventory` screen,
   and will automatically switch to `Overworld` if not satisfied
 - <skyb>hold</skyb> will not work if you are already holding 5 items
-- When holding, the held items will only be spawned in the overworld when the inventory is closed.
+- The held items will only be spawned in the Overworld when the inventory is closed.
+- When unholding, the items in the Overworld despawn immediately.
 
