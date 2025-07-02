@@ -28,6 +28,7 @@ impl IntoErrorReport for teleparse::syntax::Error<syn::TT> {
     }
 }
 
+/// Absort the error in the result into `errors`, turning it into an `Option`
 pub fn absorb_error<T>(errors: &mut Vec<ErrorReport>, result: Result<T, ErrorReport>) -> Option<T> {
     match result {
         Ok(x) => Some(x),

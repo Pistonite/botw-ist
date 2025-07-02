@@ -51,8 +51,6 @@ pub struct CommandWithSpan {
 pub enum Command {
     /// See [`syn::CmdGet`]
     Get(Vec<cir::ItemSpec>),
-    // /// See [`syn::CmdGetPause`]
-    // GetPause(Vec<cir::ItemSpec>),
     /// See [`syn::CmdPickUp`]
     PickUp(Vec<cir::ItemSelectSpec>),
     /// `:item-box-pause` annotation.
@@ -71,8 +69,6 @@ pub enum Command {
     CoSmug,
     /// See [`syn::CmdHold`]
     Hold(Vec<cir::ItemSelectSpec>),
-    // /// See [`syn::CmdHoldAttach`]
-    // HoldAttach(Vec<cir::ItemSelectSpec>),
     /// `unhold`
     Unhold,
     /// See [`syn::CmdDrop`] - Items are additional items to hold before dropping
