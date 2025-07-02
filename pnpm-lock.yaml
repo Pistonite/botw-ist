@@ -29,7 +29,7 @@ catalogs:
       version: 0.1.1
     '@types/bun':
       specifier: ^1.2.13
-      version: 1.2.13
+      version: 1.2.16
     '@types/react':
       specifier: ^18.3.17
       version: 18.3.18
@@ -146,6 +146,9 @@ importers:
       '@pistonite/vite-plugin-intwc':
         specifier: workspace:*
         version: link:../intwc/vite-plugin
+      '@types/bun':
+        specifier: 'catalog:'
+        version: 1.2.16
       '@types/numeral':
         specifier: ^2.0.5
         version: 2.0.5
@@ -314,7 +317,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: 'catalog:'
-        version: 1.2.13
+        version: 1.2.16
       '@types/js-yaml':
         specifier: ^4.0.9
         version: 4.0.9
@@ -444,7 +447,7 @@ importers:
     devDependencies:
       '@types/bun':
         specifier: 'catalog:'
-        version: 1.2.13
+        version: 1.2.16
       mono-dev:
         specifier: workspace:*
         version: link:../mono-dev
@@ -1534,9 +1537,6 @@ packages:
   '@types/babel__traverse@7.20.7':
     resolution: {integrity: sha512-dkO5fhS7+/oos4ciWxyEyjWe48zmG6wbCheo/G2ZnHx4fs3EU6YC6UM8rk56gAjNJ9P3MTH2jo5jb92/K6wbng==}
 
-  '@types/bun@1.2.13':
-    resolution: {integrity: sha512-u6vXep/i9VBxoJl3GjZsl/BFIsvML8DfVDO0RYLEwtSZSp981kEO1V5NwRcO1CPJ7AmvpbnDCiMKo3JvbDEjAg==}
-
   '@types/bun@1.2.16':
     resolution: {integrity: sha512-1aCZJ/6nSiViw339RsaNhkNoEloLaPzZhxMOYEa7OzRzO41IGg5n/7I43/ZIAW/c+Q6cT12Vf7fOZOoVIzb5BQ==}
 
@@ -1800,9 +1800,6 @@ packages:
     resolution: {integrity: sha512-KDi1Ny1gSePi1vm0q4oxSF8b4DR44GF4BbmS2YdhPLOEqd8pDviZOGH/GsmRwoWJ2+5Lr085X7naowMwKHDG1A==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
-
-  bun-types@1.2.13:
-    resolution: {integrity: sha512-rRjA1T6n7wto4gxhAO/ErZEtOXyEZEmnIHQfl0Dt1QQSB4QV0iP6BZ9/YB5fZaHFQ2dwHFrmPaRQ9GGMX01k9Q==}
 
   bun-types@1.2.16:
     resolution: {integrity: sha512-ciXLrHV4PXax9vHvUrkvun9VPVGOVwbbbBF/Ev1cXz12lyEZMoJpIJABOfPcN9gDJRaiKF9MVbSygLg4NXu3/A==}
@@ -4737,10 +4734,6 @@ snapshots:
     dependencies:
       '@babel/types': 7.27.6
 
-  '@types/bun@1.2.13':
-    dependencies:
-      bun-types: 1.2.13
-
   '@types/bun@1.2.16':
     dependencies:
       bun-types: 1.2.16
@@ -5062,10 +5055,6 @@ snapshots:
       electron-to-chromium: 1.5.137
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.24.4)
-
-  bun-types@1.2.13:
-    dependencies:
-      '@types/node': 22.15.18
 
   bun-types@1.2.16:
     dependencies:

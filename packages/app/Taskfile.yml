@@ -6,6 +6,9 @@ includes:
     internal: true
 
 tasks:
+  install:
+    cmds:
+      - bun scripts/generate-syntax.ts
   dev:
     desc: Run frontend app in watch mode
     cmds:

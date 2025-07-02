@@ -6,6 +6,8 @@ import type {
     LanguageTokenizer,
 } from "@pistonite/intwc";
 
+import { GenSyntax } from "./syntax.gen.ts";
+
 export const configuration: LanguageConfiguration = {
     comments: {
         lineComment: "#",
@@ -30,99 +32,10 @@ export const language: LanguageTokenizer = {
     defaultToken: "invalid",
     tokenPostfix: ".skyb",
 
-    // keep the order in sync with parser tokens
-    commands: [
-        "get",
-        "get-pause",
-        "pick-up",
-
-        "open-inventory",
-        "open-inv",
-        "pause",
-        "close-inventory",
-        "close-inv",
-        "unpause",
-        "hold",
-        "hold-attach",
-        "unhold",
-        "drop",
-        "dnp",
-        "cook",
-
-        "talk-to",
-        "untalk",
-        "close-dialog",
-        "buy",
-        "sell",
-
-        // BELOW are TODO
-
-        "eat",
-
-        "equip",
-        "unequip",
-        "shoot",
-        "use",
-
-        "roast",
-        "bake",
-        "boil",
-        "freeze",
-        "destroy",
-
-        "sort",
-        "entangle",
-        "save",
-        "save-as",
-        "reload",
-        "close-game",
-        "new-game",
-
-        "enter",
-        "exit",
-        "leave",
-    ],
-    types: [
-        "weapon",
-        "weapons",
-        "bow",
-        "bows",
-        "shield",
-        "shields",
-        "armor",
-        "armors",
-
-        "armor-head",
-        "head-armor",
-        "head-armors",
-        "armor-body",
-        "body-armor",
-        "body-armors",
-        "armor-chest",
-        "chest-armor",
-        "chest-armors",
-        "armor-upper",
-        "upper-armor",
-        "upper-armors",
-        "armor-leg",
-        "armor-legs",
-        "leg-armor",
-        "leg-armors",
-        "armor-lower",
-        "lower-armor",
-        "lower-armors",
-
-        "material",
-        "materials",
-        "food",
-        "foods",
-        "key-item",
-        "key-items",
-    ],
-    keywords: ["time", "times", "slot", "slots"],
-    annotaions: [
-        ":test", // TODO
-    ],
+    commands: GenSyntax.commands,
+    types: GenSyntax.types,
+    keywords: GenSyntax.keywords,
+    annotaions: GenSyntax.annotations,
 
     word: /[_a-zA-Z][-0-9a-zA-Z_]*/,
 
