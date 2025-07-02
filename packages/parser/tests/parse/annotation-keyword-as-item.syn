@@ -1,0 +1,150 @@
+Some(
+    Script {
+        stmts: 0..88 => [
+            Statement {
+                cmd: Get(
+                    CmdGet {
+                        lit: token Command(0..3),
+                        items: Single(
+                            Item {
+                                name: Word(
+                                    4..16 => "weapon-slots",
+                                ),
+                                meta: None(
+                                    16,
+                                ),
+                            },
+                        ),
+                    },
+                ),
+                semi: None(
+                    16,
+                ),
+            },
+            Statement {
+                cmd: Get(
+                    CmdGet {
+                        lit: token Command(17..20),
+                        items: List(
+                            21..42 => [
+                                NumberedItem {
+                                    num: Number(
+                                        21..22 => "3",
+                                    ),
+                                    item: Item {
+                                        name: Word(
+                                            23..35 => "weapon-slots",
+                                        ),
+                                        meta: Some(
+                                            ItemMeta {
+                                                open: token Symbol(35..36),
+                                                entries: Punct {
+                                                    span: 36..41,
+                                                    elems: [
+                                                        ItemMetaKeyValue {
+                                                            key: 36..41 => "equip",
+                                                            value: None(
+                                                                41,
+                                                            ),
+                                                        },
+                                                    ],
+                                                    puncts: [],
+                                                },
+                                                close: token Symbol(41..42),
+                                            },
+                                        ),
+                                    },
+                                },
+                            ],
+                        ),
+                    },
+                ),
+                semi: Some(
+                    token Symbol(42..43),
+                ),
+            },
+            Statement {
+                cmd: Eat(
+                    CmdEat {
+                        lit: token Command(44..47),
+                        items: Single(
+                            Item(
+                                Item {
+                                    name: Word(
+                                        48..60 => "shield-slots",
+                                    ),
+                                    meta: Some(
+                                        ItemMeta {
+                                            open: token Symbol(60..61),
+                                            entries: Punct {
+                                                span: 61..68,
+                                                elems: [
+                                                    ItemMetaKeyValue {
+                                                        key: 61..66 => "equip",
+                                                        value: Some(
+                                                            ItemMetaValue {
+                                                                sep: Equal(
+                                                                    token Symbol(66..67),
+                                                                ),
+                                                                value: Number(
+                                                                    MetaValueNumber {
+                                                                        int_part: Number(
+                                                                            67..68 => "1",
+                                                                        ),
+                                                                        float_part: None(
+                                                                            68,
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            },
+                                                        ),
+                                                    },
+                                                ],
+                                                puncts: [],
+                                            },
+                                            close: token Symbol(68..69),
+                                        },
+                                    ),
+                                },
+                            ),
+                        ),
+                    },
+                ),
+                semi: None(
+                    69,
+                ),
+            },
+            Statement {
+                cmd: Eat(
+                    CmdEat {
+                        lit: token Command(70..73),
+                        items: List(
+                            74..88 => [
+                                Numbered(
+                                    NumberedItemOrCategory {
+                                        num: Number(
+                                            74..75 => "5",
+                                        ),
+                                        item: Item(
+                                            Item {
+                                                name: Word(
+                                                    76..88 => "shield-slots",
+                                                ),
+                                                meta: None(
+                                                    88,
+                                                ),
+                                            },
+                                        ),
+                                    },
+                                ),
+                            ],
+                        ),
+                    },
+                ),
+                semi: None(
+                    88,
+                ),
+            },
+        ],
+    },
+)

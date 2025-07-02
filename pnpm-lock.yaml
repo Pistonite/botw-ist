@@ -28,7 +28,7 @@ catalogs:
       specifier: ^0.1.1
       version: 0.1.1
     '@types/bun':
-      specifier: ^1.2.13
+      specifier: 1.2.13
       version: 1.2.13
     '@types/react':
       specifier: ^18.3.17
@@ -146,6 +146,9 @@ importers:
       '@pistonite/vite-plugin-intwc':
         specifier: workspace:*
         version: link:../intwc/vite-plugin
+      '@types/bun':
+        specifier: 'catalog:'
+        version: 1.2.13
       '@types/numeral':
         specifier: ^2.0.5
         version: 2.0.5

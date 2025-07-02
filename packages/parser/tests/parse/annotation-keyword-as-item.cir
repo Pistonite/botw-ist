@@ -1,0 +1,85 @@
+ParseOutput {
+    steps: [
+        Step {
+            command: CommandWithSpan {
+                command: Get(
+                    [],
+                ),
+                span: 0..16,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Get(
+                    [],
+                ),
+                span: 17..43,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Eat(
+                    [],
+                ),
+                span: 44..69,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Eat(
+                    [],
+                ),
+                span: 70..88,
+            },
+            notes: "",
+        },
+    ],
+    script_len: 88,
+    pages: [],
+    display: [],
+    errors: [
+        ErrorReport {
+            span: (
+                4,
+                16,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "weapon-slots",
+            ),
+        },
+        ErrorReport {
+            span: (
+                23,
+                35,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "weapon-slots",
+            ),
+        },
+        ErrorReport {
+            span: (
+                48,
+                60,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "shield-slots",
+            ),
+        },
+        ErrorReport {
+            span: (
+                76,
+                88,
+            ),
+            is_warning: false,
+            error: InvalidItem(
+                "shield-slots",
+            ),
+        },
+    ],
+}

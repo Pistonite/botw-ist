@@ -41,13 +41,13 @@ pub enum TT {
     )]
     Number,
 
-    /////////////////////////////
-    // When updating keywords, remember to update the TS language
-    // as well (in packages/app/src/extensions/editor)
-    //
-    // Keep the order in sync with syn and cir Command
-    /////////////////////////////
+    /// Action commands
     #[teleparse(terminal(
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        /////////////////////////////
+
+        // @syntax-generator-hint commands
         KwGet = "get",
         KwGetPause = "get-pause",
         KwPickUp = "pick-up",
@@ -105,21 +105,37 @@ pub enum TT {
         // reserved
 
         KwGoto = "go-to",
+        // @syntax-generator-hint end
+
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        /////////////////////////////
     ))]
     Command,
 
-    /////////////////////////////
-    // When updating keywords, remember to update the TS language
-    // as well (in packages/app/src/extensions/editor)
-    /////////////////////////////
     #[teleparse(terminal(
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        // Also add the annotation to ItemWord
+        /////////////////////////////
+
+        // @syntax-generator-hint annotations
         KwWeaponSlots = "weapon-slots",
         KwShieldSlots = "shield-slots",
         KwBowSlots = "bow-slots",
+        // @syntax-generator-hint end
+
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        // Also add the annotation to ItemWord
+        /////////////////////////////
     ))]
     Annotation,
 
     #[teleparse(terminal(
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        /////////////////////////////
         KwSuBreak = "!break",
         KwSuRemove = "!remove",
         KwSetGdtFlag = "!set-gdt-flag",
@@ -129,16 +145,24 @@ pub enum TT {
         KwWrite = "!write",
         KwSwap = "!swap",
         KwSwapData = "!swap-data",
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        /////////////////////////////
     ))]
     SuperCommand,
 
-    /////////////////////////////
-    // When updating keywords, remember to update the TS language
-    // as well (in packages/app/src/extensions/editor)
-    /////////////////////////////
     #[teleparse(terminal(
         KwAll = "all",
         KwInfinite = "infinite",
+        // @syntax-generator-hint keywords
+        KwTime = "time",
+        KwTimes = "times",
+        KwSlot = "slot",
+        KwSlots = "slots",
+        KwTo = "to",
+        // @syntax-generator-hint end
+
+        // @syntax-generator-hint types
         KwWeapon = "weapon",
         KwWeapons = "weapons",
         KwBow = "bow",
@@ -175,11 +199,7 @@ pub enum TT {
         KwFoods = "foods",
         KwKeyItem = "key-item",
         KwKeyItems = "key-items",
-        KwTime = "time",
-        KwTimes = "times",
-        KwSlot = "slot",
-        KwSlots = "slots",
-        KwTo = "to",
+        // @syntax-generator-hint end
     ))]
     Keyword,
 

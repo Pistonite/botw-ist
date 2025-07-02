@@ -35,9 +35,25 @@ pub static ARMOR_UPGRADE: &[[&str; 5]] = &[
         f.write("];\n")
 
 def generate_item_name():
-    input_path = os.path.join(SELF_DIR, "data", "v3_item_names.yaml")
+    input_path = os.path.join(SELF_DIR, "data", "item-search-terms.yaml")
     with open(input_path, "r", encoding="utf-8") as f:
         item_names = yaml.safe_load(f)
+
+    def parse_item_key(key):
+        if "@" in key:
+            key, tags = key.split("@")
+            tags = tags.split(",")
+        else:
+            tags = []
+        if ":" in key:
+            word, short = key.split(":")
+        else:
+            word = key
+            short = ""
+        is_material = "material" in tags
+        id_len = len(word)
+        item_name = word + short
+        return (item_name, id_len, is_material)
 
     output_path = os.path.join(SELF_DIR, "src", "generated", "item_name.rs")
 
@@ -47,10 +63,9 @@ def generate_item_name():
         f.write(HEADER)
         f.write("use crate::search::SearchName;\n")
         f.write("pub static ITEM_NAMES: &[SearchName] = &[\n")
-        for item_name in sorted(item_names):
-            actor_name = item_names[item_name]["actor"]
-            is_material = item_names[item_name]["is_material"]
-            id_len = item_names[item_name]["id_len"]
+        for item_key in sorted(item_names):
+            actor_name = item_names[item_key]
+            (item_name, id_len, is_material) = parse_item_key(item_key)
             ids_by_search.append(item_name[:id_len])
             f.write(f"SearchName::new(\"{item_name}\", \"{actor_name}\", {"true" if is_material else "false"}, {id_len}),\n")
 

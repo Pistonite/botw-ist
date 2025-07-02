@@ -64,7 +64,7 @@ pub struct Item {
 #[derive(Debug)]
 pub enum ItemName {
     /// Using `-` or `_` separated word to search item by English name
-    Word(tp::String<syn::Word>),
+    Word(tp::String<syn::ItemWord>),
     /// Use quoted value to search by name in any language
     Quoted(tp::String<syn::QuotedWord>),
     /// Use angle brackets to use the literal as the actor name
@@ -100,7 +100,19 @@ pub enum ItemMetaKey {
     Time(syn::KwTime),
     Slot(syn::KwSlot),
     Equip(syn::KwEquip),
-    Other(syn::Word),
+    Other(syn::ItemWord),
+}
+
+/// A word that can be used as item name or property name
+#[derive_syntax]
+#[derive(Debug)]
+pub enum ItemWord {
+    Word(syn::Word),
+    // annotation words are kebab case and can be used as well
+    // this is to avoid possible conflict that an annotation is very generic
+    KwWeaponSlots(syn::KwWeaponSlots),
+    KwShieldSlots(syn::KwShieldSlots),
+    KwBowSlots(syn::KwBowSlots),
 }
 
 /// Value after the key in an item's metadata specifier

@@ -26,3 +26,6 @@ dist-ssr
 /tsconfig*.json
 /eslint.config.js
 .prettierignore
+
+# Generated files
+*.gen.ts

@@ -21,7 +21,7 @@ catalog:
   '@pistonite/pure': ^0.26.3
   '@pistonite/pure-react': ^0.7.9
   '@pistonite/pure-i18next': ^0.4.4
-  '@types/bun': ^1.2.13
+  '@types/bun': 1.2.13
   '@pistonite/workex': ^0.1.1
   '@types/react': ^18.3.17
   '@types/react-dom': ^18.3.5
