@@ -1,4 +1,5 @@
-use blueflame::game::{PouchItemType, WeaponModifierInfo};
+use blueflame::game::{self, PouchItem, PouchItemType, WeaponModifierInfo};
+use blueflame::memory::Ptr;
 use skybook_parser::cir;
 
 /// Get a WeaponModifierInfo struct from item meta
@@ -32,6 +33,56 @@ pub fn is_animated_icon_actor(actor: &str) -> bool {
     )
 }
 
+/// Check if the item name matches the item name spec
+pub fn name_spec_matches(spec: &cir::ItemNameSpec, name: &str) -> bool {
+    match spec {
+        cir::ItemNameSpec::Actor(actor) => actor == name,
+        cir::ItemNameSpec::Category(category) => {
+            let Some(item_category) = item_type_to_category(game::get_pouch_item_type(name)) else {
+                return false;
+            };
+            let category = *category;
+
+            // if "Armor" is used for matching, matches all kinds of armor
+            if category == cir::Category::Armor {
+                return category == item_category.coerce_armor();
+            }
+            category == item_category
+        },
+    }
+}
+
+/// Check if the modifier meta matches
+///
+/// If the item not is Weapon/Bow/Shield category, expected and actual must match exactly,
+/// otherwise:
+/// - If `expected` only has one bit on, returns true if that bit is also on in `actual`,
+/// - Otherwise, must match exactly
+pub fn modifier_meta_matches(item: &cir::ItemNameSpec, expected: i32, actual: i32) -> bool {
+    let is_weapon = match item {
+        cir::ItemNameSpec::Actor(actor) => {
+    matches!(game::get_pouch_item_type(actor), 0 | 1 | 3)
+        },
+        cir::ItemNameSpec::Category(category) => 
+            category.is_equipment()
+    };
+    modifier_meta_matches_by_is_weapon(is_weapon, expected, actual)
+}
+
+/// See [`modifier_meta_matches`]
+pub fn modifier_meta_matches_by_name(item: &str, expected: i32, actual: i32) -> bool {
+    let is_weapon = matches!(game::get_pouch_item_type(item), 0 | 1 | 3);
+    modifier_meta_matches_by_is_weapon(is_weapon, expected, actual)
+}
+
+/// See [`modifier_meta_matches`]
+pub fn modifier_meta_matches_by_is_weapon(is_weapon: bool, expected: i32, actual: i32) -> bool {
+    if is_weapon && expected != 0 && (expected & (expected-1)) == 0{
+        return (expected & actual) != 0;
+    }
+    expected == actual
+}
+
 /// Convert PouchItemType value to a parser Category
 pub fn item_type_to_category(item_type: i32) -> Option<cir::Category> {
     match PouchItemType::from_value(item_type) {
@@ -46,5 +97,49 @@ pub fn item_type_to_category(item_type: i32) -> Option<cir::Category> {
         Some(PouchItemType::Food) => Some(cir::Category::Food),
         Some(PouchItemType::KeyItem) => Some(cir::Category::KeyItem),
         _ => None,
+    }
+}
+
+/// Check if the current item ptr is the start of
+/// the next tab (after tab_i), or the end of inventory
+pub fn should_go_to_next_tab(
+    curr_item_ptr: Ptr![PouchItem],
+    tab_i: usize,
+    num_tabs: usize,
+    tab_heads: &[Ptr![PouchItem]; 50],
+) -> bool {
+    if curr_item_ptr.is_nullptr() {
+        return true;
+    }
+    if tab_i < num_tabs - 1 {
+        let next_head = tab_heads[tab_i + 1];
+        return curr_item_ptr == next_head;
+    }
+    false
+}
+
+/// Method to count how many items are available to operate on
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum CountingMethod {
+    /// Each slot is 1
+    Slot,
+    /// If the item has the CanStack tag, use its value, otherwise is 1
+    CanStack,
+    /// If the item has the CanStack tag, or is a food, use its value, otherwise is 1
+    CanStackOrFood,
+    /// Use the value for each slot
+    Value,
+}
+
+impl CountingMethod {
+    /// Return true if this method should cound this actor using the stack value (return false if
+    /// 1 should be used instead of value)
+    pub fn should_use_value(self, actor: &str) -> bool {
+        match self {
+            Self::Slot => false,
+            Self::CanStack => game::can_stack(&actor),
+            Self::CanStackOrFood => game::can_stack(&actor) || actor.starts_with("Item_Cook"),
+            Self::Value => true,
+        }
     }
 }

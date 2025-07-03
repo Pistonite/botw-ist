@@ -62,7 +62,7 @@ pub fn parse_meta_value(value: &syn::MetaValueLiteral) -> Result<cir::MetaValue,
         }
         syn::MetaValueLiteral::Category(x) => Ok(cir::MetaValue::String(x.trim().to_string())),
         syn::MetaValueLiteral::Number(x) => {
-            let int_part = parse_syn_int_str(&x.int_part, &x.span())?;
+            let int_part = parse_syn_int_str(&x.int_part, x.span())?;
             let float_part = match &*x.float_part {
                 Some(fp) => fp,
                 None => return Ok(cir::MetaValue::Int(int_part)),
@@ -100,7 +100,7 @@ pub fn parse_meta_value(value: &syn::MetaValueLiteral) -> Result<cir::MetaValue,
     }
 }
 
-pub fn parse_syn_int_str(number: &str, span: &Span) -> Result<i64, ErrorReport> {
+pub fn parse_syn_int_str(number: &str, span: Span) -> Result<i64, ErrorReport> {
     match number.strip_prefix("0x") {
         Some(rest) => {
             let Ok(n) = i64::from_str_radix(rest, 16) else {
@@ -117,7 +117,7 @@ pub fn parse_syn_int_str(number: &str, span: &Span) -> Result<i64, ErrorReport> 
     }
 }
 
-pub fn parse_syn_int_str_i32(number: &str, span: &Span) -> Result<i32, ErrorReport> {
+pub fn parse_syn_int_str_i32(number: &str, span: Span) -> Result<i32, ErrorReport> {
     let number = parse_syn_int_str(number, span)?;
     if number > i32::MAX as i64 || number < i32::MIN as i64 {
         cir_fail!(span, IntRange(number.to_string()));

@@ -23,6 +23,8 @@ pub enum ParserError {
     InvalidItem(String),
     #[error("item name cannot be empty")]
     InvalidEmptyItem,
+    #[error("this is not a valid amount for the item")]
+    InvalidItemAmount,
     #[error("invalid integer format: {0}")]
     IntFormat(String),
     #[error("integer `{0}` is out of range")]

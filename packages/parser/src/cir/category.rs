@@ -8,7 +8,7 @@ use crate::syn;
 pub use skybook_api::parser::cir::Category;
 
 pub fn parse_category_in(
-    category: &syn::Category,
+    category: &syn::CategoryName,
     filter: impl Into<EnumSet<Category>>,
 ) -> Result<Category, ErrorReport> {
     let filter = filter.into();
@@ -19,23 +19,23 @@ pub fn parse_category_in(
     Ok(c)
 }
 
-pub fn parse_category(category: &syn::Category) -> Category {
+pub fn parse_category(category: &syn::CategoryName) -> Category {
     match category {
-        syn::Category::Weapon(_) => Category::Weapon,
-        syn::Category::Bow(_) => Category::Bow,
-        syn::Category::Shield(_) => Category::Shield,
-        syn::Category::Armor(_) => Category::Armor,
-        syn::Category::ArmorHead(_) => Category::ArmorHead,
-        syn::Category::ArmorUpper(_) => Category::ArmorUpper,
-        syn::Category::ArmorLower(_) => Category::ArmorLower,
-        syn::Category::Material(_) => Category::Material,
-        syn::Category::Food(_) => Category::Food,
-        syn::Category::KeyItem(_) => Category::KeyItem,
+        syn::CategoryName::Weapon(_) => Category::Weapon,
+        syn::CategoryName::Bow(_) => Category::Bow,
+        syn::CategoryName::Shield(_) => Category::Shield,
+        syn::CategoryName::Armor(_) => Category::Armor,
+        syn::CategoryName::ArmorHead(_) => Category::ArmorHead,
+        syn::CategoryName::ArmorUpper(_) => Category::ArmorUpper,
+        syn::CategoryName::ArmorLower(_) => Category::ArmorLower,
+        syn::CategoryName::Material(_) => Category::Material,
+        syn::CategoryName::Food(_) => Category::Food,
+        syn::CategoryName::KeyItem(_) => Category::KeyItem,
     }
 }
 
 pub fn parse_category_from_str(category: &str) -> Option<Category> {
-    let category = syn::Category::parse(category).ok()??;
+    let category = syn::CategoryName::parse(category).ok()??;
     Some(parse_category(&category))
 }
 
@@ -54,7 +54,7 @@ pub struct CategorySpec {
 }
 /// Parse any category and a times clause into a CategorySpec
 pub fn parse_category_with_times(
-    category: &syn::Category,
+    category: &syn::CategoryName,
     times: Option<&syn::TimesClause>,
 ) -> Result<CategorySpec, ErrorReport> {
     let category = parse_category(category);
@@ -71,7 +71,7 @@ pub fn parse_category_with_times(
 ///
 /// Category must be Weapon, Bow, or Shield
 pub fn parse_use_category_with_times(
-    category: &syn::Category,
+    category: &syn::CategoryName,
     times: Option<&syn::TimesClause>,
 ) -> Result<CategorySpec, ErrorReport> {
     let category = parse_category_in(
@@ -91,7 +91,7 @@ pub fn parse_times_clause(times: Option<&syn::TimesClause>) -> Result<i64, Error
     let Some(times) = times else {
         return Ok(1);
     };
-    let t = cir::parse_syn_int_str_i32(&times.times, &times.span())?;
+    let t = cir::parse_syn_int_str_i32(&times.times, times.span())?;
     if t < 1 {
         cir_fail!(times, InvalidTimesClause(t));
     }

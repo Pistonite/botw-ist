@@ -49,6 +49,8 @@ pub struct CommandWithSpan {
 /// The command to be executed in the simulator
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Command {
+    /// Disable performance optimization that may be inaccurate
+    CoAccuratelySimulate,
     /// See [`syn::CmdGet`]
     Get(Vec<cir::ItemSpec>),
     /// See [`syn::CmdPickUp`]
@@ -101,9 +103,9 @@ pub enum Command {
     /// See [`syn::CmdEat`]
     Eat(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdEquip`]
-    Equip(Box<cir::ItemOrCategory>),
+    Equip(Box<cir::ItemSelectSpec>),
     /// See [`syn::CmdUnequip`]
-    Unequip(Box<cir::ItemOrCategory>, bool),
+    Unequip(Box<cir::ItemSelectSpec>, bool),
     /// See [`syn::CmdUse`] and [`crate::syn::CmdShoot`]
     Use(cir::CategorySpec),
     /// See [`syn::CmdRoast`] and [`crate::syn::CmdBake`]
@@ -122,7 +124,7 @@ pub enum Command {
     /// See [`syn::CmdSetGamedata`]
     SetGamedata(Vec<cir::ItemSpec>),
     /// See [`syn::CmdWrite`]
-    Write(Box<cir::ItemMeta>, Box<cir::ItemOrCategory>),
+    Write(Box<cir::ItemMeta>, Box<cir::ItemSelectSpec>),
     /// See [`syn::CmdSwap`] and [`syn::CmdSwapData`]
     ///
     /// If the bool is true, the command is `swap-data`
@@ -203,7 +205,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
         },
         C::SuBreak(cmd) => absorb_error(
             errors,
-            cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()),
+            cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
         )
         .map(X::SuBreak),
         C::SuRemove(cmd) => Some(X::SuRemove(
@@ -222,13 +224,16 @@ pub async fn parse_command<R: QuotedItemResolver>(
         syn::Command::Eat(cmd) => Some(cir::Command::Eat(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
-        syn::Command::Equip(cmd) => Some(cir::Command::Equip(Box::new(
-            cir::parse_item_or_category(&cmd.item, resolver, errors).await?,
-        ))),
-        syn::Command::Unequip(cmd) => Some(cir::Command::Unequip(
-            Box::new(cir::parse_item_or_category(&cmd.item, resolver, errors).await?),
-            cmd.all.is_some(),
-        )),
+        // TODO
+        syn::Command::Equip(cmd) => None,
+        // Some(cir::Command::Equip(Box::new(
+        //     cir::parse_item_or_category(&cmd.item, resolver, errors).await?,
+        // ))),
+        syn::Command::Unequip(cmd) => None,
+        // Some(cir::Command::Unequip(
+        //     Box::new(cir::parse_item_or_category(&cmd.item, resolver, errors).await?),
+        //     cmd.all.is_some(),
+        // )),
         syn::Command::Use(cmd) => {
             match cir::parse_use_category_with_times(&cmd.category, cmd.times.as_ref()) {
                 Ok(spec) => Some(cir::Command::Use(spec)),
@@ -289,10 +294,12 @@ pub async fn parse_command<R: QuotedItemResolver>(
         syn::Command::Write(cmd) => {
             let meta = cir::ItemMeta::parse_syn(&cmd.props, errors);
             let item = cir::parse_item_or_category(&cmd.item, resolver, errors).await?;
-            Some(cir::Command::Write(Box::new(meta), Box::new(item)))
+            // TODO
+            None
+            // Some(cir::Command::Write(Box::new(meta), Box::new(item)))
         }
         syn::Command::Swap(cmd) => {
-            let i = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
+            let i = match cir::parse_syn_int_str_i32(&cmd.items.0, cmd.items.0.span()) {
                 Ok(i) if i >= 0 => i,
                 Ok(i) => {
                     errors.push(cir_error!(&cmd.items.0, IntRange(i.to_string())));
@@ -303,7 +310,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
                     return None;
                 }
             };
-            let j = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
+            let j = match cir::parse_syn_int_str_i32(&cmd.items.0, cmd.items.0.span()) {
                 Ok(i) if i >= 0 => i,
                 Ok(i) => {
                     errors.push(cir_error!(&cmd.items.0, IntRange(i.to_string())));
@@ -317,7 +324,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             Some(cir::Command::Swap(i as u32, j as u32, false))
         }
         syn::Command::SwapData(cmd) => {
-            let i = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
+            let i = match cir::parse_syn_int_str_i32(&cmd.items.0, cmd.items.0.span()) {
                 Ok(i) if i >= 0 => i,
                 Ok(i) => {
                     errors.push(cir_error!(&cmd.items.0, IntRange(i.to_string())));
@@ -328,7 +335,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
                     return None;
                 }
             };
-            let j = match cir::parse_syn_int_str_i32(&cmd.items.0, &cmd.items.0.span()) {
+            let j = match cir::parse_syn_int_str_i32(&cmd.items.0, cmd.items.0.span()) {
                 Ok(i) if i >= 0 => i,
                 Ok(i) => {
                     errors.push(cir_error!(&cmd.items.0, IntRange(i.to_string())));
@@ -386,10 +393,11 @@ pub fn parse_annotation(
         A::Smug(_) => Some(X::CoSmug),
         A::ItemBoxPause(_) => Some(X::CoItemBoxPause),
         A::SameDialog(_) => Some(X::CoSameDialog),
+        A::AccuratelySimulate(_) => Some(X::CoAccuratelySimulate),
         A::WeaponSlots(cmd) => {
             let slots = absorb_error(
                 errors,
-                cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()),
+                cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
             )?;
             if slots < 8 || slots > 20 {
                 errors.push(cir_error!(
@@ -403,7 +411,7 @@ pub fn parse_annotation(
         A::BowSlots(cmd) => {
             let slots = absorb_error(
                 errors,
-                cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()),
+                cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
             )?;
             if slots < 5 || slots > 14 {
                 errors.push(cir_error!(
@@ -417,7 +425,7 @@ pub fn parse_annotation(
         A::ShieldSlots(cmd) => {
             let slots = absorb_error(
                 errors,
-                cir::parse_syn_int_str_i32(&cmd.amount, &cmd.amount.span()),
+                cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
             )?;
             if slots < 4 || slots > 20 {
                 errors.push(cir_error!(

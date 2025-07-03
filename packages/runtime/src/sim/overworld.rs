@@ -138,66 +138,41 @@ impl OverworldSystem {
     /// Select an item from the ground
     pub fn ground_select(
         &self,
-        item: &cir::ItemOrCategory,
+        item: &cir::ItemNameSpec,
+        meta: Option<&cir::ItemMeta>,
         span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<&Self>> {
-        let handle = self.do_ground_select(item, span, errors)?;
+        let handle = self.do_ground_select(item, meta, span, errors)?;
         Some(handle.bind(self))
     }
 
     /// Select an item from the ground, with the ability to remove it
     pub fn ground_select_mut(
         &mut self,
-        item: &cir::ItemOrCategory,
+        item: &cir::ItemNameSpec,
+        meta: Option<&cir::ItemMeta>,
         span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<&mut Self>> {
-        let handle = self.do_ground_select(item, span, errors)?;
+        let handle = self.do_ground_select(item, meta, span, errors)?;
         Some(handle.bind(self))
     }
 
     /// Select an item from the ground
     fn do_ground_select(
         &self,
-        item: &cir::ItemOrCategory,
+        item: &cir::ItemNameSpec,
+        meta: Option<&cir::ItemMeta>,
         span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<()>> {
-        match item {
-            cir::ItemOrCategory::Category(category) => {
-                let category = *category;
-
-                for (handle, item) in self.iter_ground_items() {
-                    let Some(item_category) =
-                        sim::util::item_type_to_category(game::get_pouch_item_type(&item.name))
-                    else {
-                        continue;
-                    };
-                    if item_category == category {
-                        return Some(handle);
-                    }
-                }
-
-                None
-            }
-            cir::ItemOrCategory::Item(item) => self.ground_select_item(item, span, errors),
-        }
-    }
-
-    pub fn ground_select_item(
-        &self,
-        item: &cir::Item,
-        span: Span,
-        errors: &mut Vec<ErrorReport>,
-    ) -> Option<GroundItemHandle<()>> {
-        let meta = match &item.meta {
+        let meta = match &meta {
             None => {
-                return self.ground_select_item_by_name_meta(&item.actor, None, 0, span, errors);
+                return self.do_ground_select_without_position_nth(item, None, 0, span, errors);
             }
             Some(x) => x,
         };
-        // check if the meta specifies the item's position directly
         let from_slot = match &meta.position {
             None => 0, // match first slot
             Some(cir::ItemPosition::FromSlot(n)) => (*n as usize).saturating_sub(1), // match x-th slot, 1 indexed
@@ -207,12 +182,12 @@ impl OverworldSystem {
                 return None;
             }
         };
-        self.ground_select_item_by_name_meta(&item.actor, Some(meta), from_slot, span, errors)
+        self.do_ground_select_without_position_nth(item, Some(meta), from_slot, span, errors)
     }
 
-    pub fn ground_select_item_by_name_meta(
+    fn do_ground_select_without_position_nth(
         &self,
-        item_name: &str,
+        name: &cir::ItemNameSpec,
         meta: Option<&cir::ItemMeta>,
         nth: usize,
         span: Span,
@@ -230,24 +205,7 @@ impl OverworldSystem {
         }
         let mut count = nth;
         for (handle, item) in self.iter_ground_items() {
-            if item.name != item_name {
-                continue;
-            }
-            // matching value for overworld actors is mostly
-            // used for weapons, since materials can only have value = 1
-            if let Some(wanted_value) = meta.and_then(|x| x.value)
-                && wanted_value != item.value
-            {
-                continue;
-            }
-            if let Some(wanted_flags) = meta.and_then(|x| x.sell_price)
-                && item.modifier.is_none_or(|m| m.flags != wanted_flags as u32)
-            {
-                continue;
-            }
-            if let Some(wanted_mod_value) = meta.and_then(|x| x.life_recover)
-                && item.modifier.is_none_or(|m| m.value != wanted_mod_value)
-            {
+            if !item.matches(name, meta) {
                 continue;
             }
             // matched
@@ -259,7 +217,57 @@ impl OverworldSystem {
         None
     }
 
-    fn iter_ground_items(&self) -> impl Iterator<Item = (GroundItemHandle<()>, &OverworldActor)> {
+    /// Get number of items on the ground that matches the selector
+    pub fn get_ground_amount(&self, item: &cir::ItemNameSpec, meta: Option<&cir::ItemMeta>) -> usize {
+        let meta = match &meta {
+            None => {
+                return self.get_ground_amount_without_position_nth(item, None, 0);
+            }
+            Some(x) => x,
+        };
+        let from_slot = match &meta.position {
+            Some(cir::ItemPosition::FromSlot(n)) => (*n as usize).saturating_sub(1), // match x-th slot, 1 indexed
+            _ => 0,
+        };
+        self.get_ground_amount_without_position_nth(item, Some(meta), from_slot)
+    }
+
+    /// Get number of items on the ground that matches the selector,
+    /// without considering position meta properties
+    pub fn get_ground_amount_without_position_nth(&self, 
+        name: &cir::ItemNameSpec,
+    meta: Option<&cir::ItemMeta>, nth: usize) -> usize {
+        let mut skip = nth;
+        let mut count = 0;
+        for (_, item) in self.iter_ground_items() {
+            if !item.matches(name, meta) {
+                continue;
+            }
+            if skip > 0 {
+                skip -= 1;
+                continue;
+            }
+            count += 1;
+        }
+        count
+    }
+
+    #[inline(always)]
+    fn iter_ground_items_matching_category(&self, category: cir::Category) -> 
+    impl Iterator<Item = (GroundItemHandle<()>, &OverworldActor)> {
+        self.iter_ground_items().filter(move |(_, item)| {
+            let Some(item_category) =
+            sim::util::item_type_to_category(game::get_pouch_item_type(&item.name))
+            else {
+                return false;
+            };
+            item_category == category
+        })
+    }
+
+    #[inline(always)]
+    fn iter_ground_items(&self) -> 
+    impl Iterator<Item = (GroundItemHandle<()>, &OverworldActor)> {
         self.ground_materials_despawning
             .iter()
             .enumerate()
@@ -280,6 +288,34 @@ impl OverworldSystem {
 }
 
 impl OverworldActor {
+    /// Returns if the overworld actor matches the item selector
+    pub fn matches(&self, name: &cir::ItemNameSpec, meta: Option<&cir::ItemMeta>) -> bool {
+        if !sim::util::name_spec_matches(name, &self.name) {
+            return false;
+        }
+        // matching value for overworld actors is mostly
+        // used for weapons, since materials can only have value = 1
+        if let Some(wanted_value) = meta.and_then(|x| x.value)
+        && wanted_value != self.value
+        {
+            return false;
+        }
+        if let Some(wanted_mod_value) = meta.and_then(|x| x.life_recover)
+        && self.modifier.is_none_or(|m| m.value != wanted_mod_value)
+        {
+            return false;
+        }
+
+        if let Some(wanted_flags) = meta.and_then(|x| x.sell_price)
+                && self.modifier.is_none_or(|m| !sim::util::modifier_meta_matches(name, wanted_flags, m.flags as i32))
+            {
+            return false;
+            }
+
+        true
+
+    }
+
     pub fn to_equipped_iv(&self) -> iv::OverworldItem {
         iv::OverworldItem::Equipped {
             actor: self.name.clone(),

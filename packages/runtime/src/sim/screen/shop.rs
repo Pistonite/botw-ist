@@ -43,7 +43,7 @@ impl ShopScreen {
             let mut tab = vec![];
 
             let should_break = |curr_item_ptr: Ptr![PouchItem]| {
-                sim::screen_util::should_go_to_next_tab(curr_item_ptr, i, num_tabs, &tab_heads)
+                sim::util::should_go_to_next_tab(curr_item_ptr, i, num_tabs, &tab_heads)
             };
             while !should_break(curr_item_ptr) {
                 mem! { m:

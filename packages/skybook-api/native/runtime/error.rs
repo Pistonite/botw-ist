@@ -80,15 +80,27 @@ pub enum RuntimeError {
     #[error("cannot auto switch screen because screen was switched manually")]
     CannotAutoSwitchScreen,
     #[error(
-        "the item in the inventory in this position is `{0}`, which does not match the input `{1}`"
+        "the item in the inventory in this position is `{0}`, which does not match the input item `{1}`"
     )]
     ItemMismatch(String, String),
+    #[error(
+        "the item in the inventory in this position is `{0}`, which does not match the input category `{1:?}`"
+    )]
+    ItemMismatchCategory(String, crate::parser::cir::Category),
     #[error("cannot find this item in inventory")]
     CannotFindItem,
-    #[error("cannot find this item to sell or item is not sellable")]
-    CannotFindSellableItem,
+    #[error("cannot find this item in inventory (need `{0}` more)")]
+    CannotFindItemNeedMore(usize),
+    #[error("the item `{0}` is not sellable")]
+    ItemNotSellable(String),
     #[error("cannot find this item on the ground")]
     CannotFindGroundItem,
+    #[error("cannot find this item on the ground (need `{0}` more)")]
+    CannotFindGroundItemNeedMore(usize),
+    #[error("this requires `{0}` items, but only `{1}` items found")]
+    NotEnoughForAllBut(usize, usize),
+    #[error("the `all but` syntax did not achieve the desired result")]
+    InaccurateAllBut,
     #[error("cannot hold more items")]
     CannotHoldMore,
     #[error("cannot do this while holding items in the overworld")]

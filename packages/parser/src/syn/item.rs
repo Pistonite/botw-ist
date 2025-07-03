@@ -11,6 +11,13 @@ pub struct NumberedItem {
     pub num: syn::Number,
     pub item: Item,
 }
+/// Syntax for an item prefixed with an amount or "all"
+#[derive_syntax]
+#[derive(Debug)]
+pub enum NumberedOrAllItemOrCategory {
+    Numbered(NumberedItemOrCategory),
+    All(AllItemOrCategory),
+}
 
 /// Syntax for an item or category prefixed with a numeric amount
 #[derive_syntax]
@@ -20,13 +27,6 @@ pub struct NumberedItemOrCategory {
     pub item: ItemOrCategory,
 }
 
-/// Syntax for an item prefixed with an amount or "all"
-#[derive_syntax]
-#[derive(Debug)]
-pub enum NumberedOrAllItemOrCategory {
-    Numbered(NumberedItemOrCategory),
-    All(AllItemOrCategory),
-}
 
 /// Syntax for an item prefixed with "all" or "all but"
 #[derive_syntax]
@@ -117,6 +117,10 @@ pub enum ItemWord {
     Word(syn::Word),
     // annotation words are kebab case and can be used as well
     // this is to avoid possible conflict that an annotation is very generic
+    KwSmug(syn::KwSmug),
+    KwItemBoxPause(syn::KwItemBoxPause),
+    KwSameDialog(syn::KwSameDialog),
+    KwAccuratelySimulate(syn::KwAccuratelySimulate),
     KwWeaponSlots(syn::KwWeaponSlots),
     KwShieldSlots(syn::KwShieldSlots),
     KwBowSlots(syn::KwBowSlots),

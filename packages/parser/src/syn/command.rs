@@ -141,6 +141,7 @@ pub enum Annotation {
     Smug(syn::KwSmug),
     ItemBoxPause(syn::KwItemBoxPause),
     SameDialog(syn::KwSameDialog),
+    AccuratelySimulate(syn::KwAccuratelySimulate),
     WeaponSlots(CmdWeaponSlots),
     ShieldSlots(CmdShieldSlots),
     BowSlots(CmdBowSlots),
@@ -305,7 +306,7 @@ pub struct CmdUnequip {
 #[derive(Debug)]
 pub struct CmdUse {
     pub lit: syn::KwUse,
-    pub category: syn::Category,
+    pub category: syn::CategoryName,
     pub times: tp::Option<syn::TimesClause>,
 }
 
@@ -359,7 +360,7 @@ pub struct CmdFreeze {
 #[derive(Debug)]
 pub struct CmdSort {
     pub lit: syn::KwSort,
-    pub category: syn::Category,
+    pub category: syn::CategoryName,
     pub times: tp::Option<syn::TimesClause>,
 }
 
@@ -368,7 +369,7 @@ pub struct CmdSort {
 #[derive(Debug)]
 pub struct CmdEntangle {
     pub lit: syn::KwEntangle,
-    pub category: syn::Category,
+    pub category: syn::CategoryName,
     pub meta: tp::Option<syn::ItemMeta>,
 }
 

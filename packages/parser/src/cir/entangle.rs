@@ -7,7 +7,7 @@ use crate::syn;
 use super::MetaParser;
 
 pub fn parse_entangle_meta(
-    category: &syn::Category,
+    category: &syn::CategoryName,
     meta: Option<&syn::ItemMeta>,
     errors: &mut Vec<ErrorReport>,
 ) -> cir::CategorySpec {

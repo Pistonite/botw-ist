@@ -25,6 +25,8 @@ pub struct StateArgs {
     pub item_box_pause: bool,
     /// Perform the next operation in the same dialog
     pub same_dialog: bool,
+    /// Disable optimizations that may affect accuracy
+    pub accurately_simulate: bool,
 }
 
 #[derive(Clone, Default)]
@@ -65,6 +67,14 @@ macro_rules! set_arg {
     }};
 }
 
+macro_rules! in_game {
+    ($self:ident, $rt:ident, $cpu:ident, $sys:ident, $errors:ident => $block:block) => {{
+        $self.with_game($rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut $cpu, $sys, $errors| {
+            $block
+        }) }) .await }) .await
+    }}
+}
+
 impl State {
     pub async fn execute_step(
         mut self,
@@ -77,6 +87,7 @@ impl State {
             X::CoSmug => set_arg!(self, args, smug),
             X::CoItemBoxPause => set_arg!(self, args, item_box_pause),
             X::CoSameDialog => set_arg!(self, args, same_dialog),
+            X::CoAccuratelySimulate => set_arg!(self, args, accurately_simulate),
 
             X::Get(items) => self.handle_get(ctx, items, &args).await,
             X::PickUp(items) => self.handle_pick_up(ctx, items, &args).await,
@@ -95,36 +106,30 @@ impl State {
         }
     }
 
-    #[rustfmt::skip]
-    async fn handle_get(self, rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSpec], args: &StateArgs,
+    async fn handle_get(
+        self, 
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSpec], 
+        args: &StateArgs,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling GET command");
         let items = items.to_vec();
         let pause = args.item_box_pause;
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-
-            sim::actions::get_items(&mut cpu2, sys, errors, &items, pause)?;
-            sys.overworld.despawn_items();
-            Ok(())
-
-        }) }) .await }) .await
+        let accurate = args.accurately_simulate;
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::get_items(&mut cpu, sys, errors, &items, pause, accurate)
+        })
     }
 
-    #[rustfmt::skip]
     async fn handle_pick_up(self, rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec], args: &StateArgs,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling PICKUP command");
         let items = items.to_vec();
         let pause = args.item_box_pause;
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-
-            sim::actions::pick_up_items(&mut cpu2, sys, errors, &items, pause)?;
-            sys.overworld.despawn_items();
-            Ok(())
-
-        }) }) .await }) .await
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::pick_up_items(&mut cpu, sys, errors, &items, pause)
+        })
     }
 
     #[rustfmt::skip]

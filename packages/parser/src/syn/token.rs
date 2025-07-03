@@ -123,6 +123,7 @@ pub enum TT {
         KwSmug = "smug",
         KwItemBoxPause = "item-box-pause",
         KwSameDialog = "same-dialog",
+        KwAccuratelySimulate = "accurately-simulate",
         KwWeaponSlots = "weapon-slots",
         KwShieldSlots = "shield-slots",
         KwBowSlots = "bow-slots",

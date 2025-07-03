@@ -11,6 +11,7 @@
   - [Item Stack Underflow (ISU)]()
 - [Using the Simulator](./user/index.md)
   - [Command Syntax](./user/syntax.md)
+    - [Item Syntax](./user/syntax_item.md)
     - [Comments and Notes](./user/syntax_comment.md)
   - [Screen System](./user/screen_system.md)
   - [Overworld System](./user/overworld_system.md)
