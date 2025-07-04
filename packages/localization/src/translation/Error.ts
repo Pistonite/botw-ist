@@ -7,7 +7,7 @@ import type {
 
 import { type Translator, translateUI } from "../translate.ts";
 
-import { translateCategory } from "./Category.ts";
+import { translateActorOrAsIs, translateCategory } from "./Category.ts";
 
 /** Localize a generic error message */
 export const translateGenericError = (
@@ -76,9 +76,28 @@ export const translateRuntimeError = (
 ): string => {
     const key = `runtime_error.${error.type}`;
     switch (error.type) {
+        case "CannotFindItemNeedMore": 
+        case "CannotFindGroundItemNeedMore": {
+            const more = error.data;
+            return translator(key, { more });
+        }
         case "ItemMismatch": {
-            const [actual_item, expected_item] = error.data;
-            return translator(key, { actual_item, expected_item });
+            const [actual, expected] = error.data;
+            return translator(key, { 
+                actual_item: translateActorOrAsIs(actual), 
+                expected_item: translateActorOrAsIs(expected)
+            });
+        }
+        case "ItemMismatchCategory": {
+            const [actual, expected] = error.data;
+            return translator(key, { 
+                actual_item: translateActorOrAsIs(actual), 
+                expected_category: translateCategory(expected),
+            });
+        }
+        case "NotEnoughForAllBut": {
+            const [need, actual] = error.data;
+            return translator(key, { need, actual });
         }
         default:
             return translator(key);
