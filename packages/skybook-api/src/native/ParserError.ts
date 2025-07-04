@@ -11,6 +11,7 @@ export type ParserError =
     | { type: "SyntaxUnexpectedEof" }
     | { type: "InvalidItem"; data: string }
     | { type: "InvalidEmptyItem" }
+    | { type: "InvalidItemAmount" }
     | { type: "IntFormat"; data: string }
     | { type: "IntRange"; data: string }
     | { type: "FloatFormat"; data: string }
