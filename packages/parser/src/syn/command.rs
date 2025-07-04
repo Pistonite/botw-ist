@@ -385,7 +385,6 @@ pub struct CmdSort {
     pub times: tp::Option<syn::TimesClause>,
 }
 
-
 /// `!set-inventory ITEMS` - set the inventory to the given items (same as `init` in old format)
 #[derive_syntax]
 #[derive(Debug)]

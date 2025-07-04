@@ -3,10 +3,13 @@ use blueflame::memory::mem;
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 
-use crate::error::{sim_error, sim_warning, ErrorReport};
+use crate::error::{ErrorReport, sim_error, sim_warning};
 use crate::sim;
 
-use super::{ItemSelectCheck, convert_amount, drop_held_items, switch_to_inventory_or_stop, switch_to_overworld_or_stop, check_not_holding_in_inventory};
+use super::{
+    ItemSelectCheck, check_not_holding_in_inventory, convert_amount, drop_held_items,
+    switch_to_inventory_or_stop, switch_to_overworld_or_stop,
+};
 
 // /// Different modes for actions that involve holding
 // pub enum HoldAction {
@@ -43,8 +46,7 @@ pub fn hold_items(
         let memory = ctx.cpu().proc.memory();
         let mut remaining = convert_amount(item.amount, item.span, errors, false, || {
             // holding always decrease value instead of using slot
-            inventory.get_amount(
-                name, meta, sim::CountingMethod::Value, memory)
+            inventory.get_amount(name, meta, sim::CountingMethod::Value, memory)
         })?;
 
         let mut check_for_extra_error = true;
@@ -84,14 +86,20 @@ pub fn hold_items(
                     break;
                 }
             }
-            if inventory.is_translucent_or_empty(tab, slot) {
-            }
             // check if we are holding a PE activated slot
-            let (tab, slot) = if let Some(target) = pe_target && inventory.is_pe_activated_slot(tab, slot) {
+            let (tab, slot) = if let Some(target) = pe_target
+                && inventory.is_pe_activated_slot(tab, slot)
+            {
                 // check if the target is allowed by current activated PE
-                let Some((target_tab, target_slot)) = inventory.select(&target.name, target.meta.as_ref(), None,
+                let Some((target_tab, target_slot)) = inventory.select(
+                    &target.name,
+                    target.meta.as_ref(),
+                    None,
                     ctx.cpu().proc.memory(),
-                    target.span, errors)? else {
+                    target.span,
+                    errors,
+                )?
+                else {
                     errors.push(sim_error!(target.span, CannotFindPromptTarget));
                     check_for_extra_error = false;
                     break;
@@ -121,8 +129,7 @@ pub fn hold_items(
         if check_for_extra_error {
             let memory = ctx.cpu().proc.memory();
             match remaining.check(item.span, errors, || {
-                    inventory.get_amount(
-                        name, meta, sim::CountingMethod::Value, memory)
+                inventory.get_amount(name, meta, sim::CountingMethod::Value, memory)
             })? {
                 ItemSelectCheck::NeverFound => {
                     errors.push(sim_error!(item.span, CannotFindItem));
@@ -189,18 +196,29 @@ pub fn drop_items(
         }
         // if holding in the overworld, drop those first
         if sys.overworld.is_holding() {
-            log::debug!("dropping currently held items in DROP command before processing other items");
+            log::debug!(
+                "dropping currently held items in DROP command before processing other items"
+            );
             switch_to_overworld_or_stop!(ctx, sys, errors, "DROP");
             drop_held_items(ctx, sys, "DROP")?;
         }
         // must be in inventory to hold materials
         switch_to_inventory_or_stop!(ctx, sys, errors, "DROP");
         // for items, hold 1 at a time and drop, and we must know
-    // how many there are
+        // how many there are
         let memory = ctx.cpu().proc.memory();
         let inventory = sys.screen.current_screen().as_inventory().unwrap();
-        let count_fn = || inventory.get_amount(&item.name, item.meta.as_ref(),sim::CountingMethod::Value, memory);
-        let amount = convert_amount(item.amount, item.span, errors, true, count_fn)?.count().unwrap_or_default();
+        let count_fn = || {
+            inventory.get_amount(
+                &item.name,
+                item.meta.as_ref(),
+                sim::CountingMethod::Value,
+                memory,
+            )
+        };
+        let amount = convert_amount(item.amount, item.span, errors, true, count_fn)?
+            .count()
+            .unwrap_or_default();
         log::debug!("need to drop {amount}");
         let mut hold_spec = item.clone();
         hold_spec.amount = cir::AmountSpec::Num(1);
@@ -212,7 +230,9 @@ pub fn drop_items(
                 x.position = None;
             }
             Some(x)
-        } else {None};
+        } else {
+            None
+        };
         for _ in 0..amount {
             hold_items(ctx, sys, errors, hold_item, pe_target, false)?;
             // need to be in overworld to drop
@@ -224,10 +244,12 @@ pub fn drop_items(
             }
             drop_held_items(ctx, sys, "DROP")?;
             if let Some(spec) = &pick_up_spec {
-                let Some(handle) = sys
-                    .overworld
-                    .ground_select_mut(&spec.name, spec.meta.as_ref(), item.span, errors)
-                else {
+                let Some(handle) = sys.overworld.ground_select_mut(
+                    &spec.name,
+                    spec.meta.as_ref(),
+                    item.span,
+                    errors,
+                ) else {
                     errors.push(sim_error!(item.span, CannotFindGroundItem));
                     continue;
                 };
@@ -236,7 +258,6 @@ pub fn drop_items(
                 linker::get_item(ctx.cpu(), &actor.name, Some(actor.value), actor.modifier)?;
             }
         }
-        
     }
 
     Ok(())

@@ -64,7 +64,7 @@ impl PouchScreen {
     pub fn deactivate_pe(&mut self) {
         self.active_entangle_slot = None;
     }
-    
+
     /// Check if the item in (tab, slot) is an activated PE slot, meaning
     /// the prompt of this item can be used on the PE target item
     pub fn is_pe_activated_slot(&self, tab: usize, slot: usize) -> bool {
@@ -91,8 +91,14 @@ impl PouchScreen {
     pub fn get_pe_target_slot(&self, tab: usize, slot: usize, allow_translucent: bool) -> usize {
         match self.items.get(tab, slot) {
             sim::ScreenItemState::Empty => 0,
-            sim::ScreenItemState::Translucent(_) => if allow_translucent { slot } else {0},
-            _ => slot
+            sim::ScreenItemState::Translucent(_) => {
+                if allow_translucent {
+                    slot
+                } else {
+                    0
+                }
+            }
+            _ => slot,
         }
     }
 
@@ -159,31 +165,31 @@ fn do_open(
 
                 // If item is not in inventory (i.e. translucent)
                 // it is displayed as empty
-                    let item_name = Ptr!(&curr_item_ptr->mName).cstr(m)?.load_utf8_lossy(m)?;
-                    // adjust the slot for arrows using the type
-                    if item_type == 1 {
-                        num_bows_in_curr_tab += 1;
+                let item_name = Ptr!(&curr_item_ptr->mName).cstr(m)?.load_utf8_lossy(m)?;
+                // adjust the slot for arrows using the type
+                if item_type == 1 {
+                    num_bows_in_curr_tab += 1;
+                }
+                let tab_slot = if item_type == 2 {
+                    slot_i + bow_slots - num_bows_in_curr_tab
+                } else {
+                    slot_i
+                };
+                slot_i += 1;
+                // it could be more than 20 if you have a LOT of arrow slots
+                // (because empty bow slots shift them)
+                if tab_slot < 20 {
+                    while tab.len() < tab_slot {
+                        tab.push(None);
                     }
-                    let tab_slot = if item_type == 2 {
-                        slot_i + bow_slots - num_bows_in_curr_tab
-                    } else {
-                        slot_i
-                    };
-                    slot_i += 1;
-                    // it could be more than 20 if you have a LOT of arrow slots
-                    // (because empty bow slots shift them)
-                    if tab_slot < 20 {
-                        while tab.len() < tab_slot {
-                            tab.push(None);
-                        }
-                        tab.push(Some(sim::ScreenItem {
+                    tab.push(Some(sim::ScreenItem {
                         ptr: curr_item_ptr,
-                            equipped,
+                        equipped,
                         in_inventory,
-                            name: item_name,
-                            category: sim::util::item_type_to_category(item_type),
-                        }));
-                    }
+                        name: item_name,
+                        category: sim::util::item_type_to_category(item_type),
+                    }));
+                }
 
                 // advance to next item
                 mem! { m:

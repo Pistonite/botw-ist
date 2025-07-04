@@ -40,40 +40,39 @@ pub fn name_spec_is_weapon(spec: &cir::ItemNameSpec) -> bool {
                 return false;
             };
             category
-        },
+        }
         cir::ItemNameSpec::Category(category) => *category,
     };
 
-    matches!(category, cir::Category::Weapon | cir::Category::Bow
-    | cir::Category::Shield)
+    matches!(
+        category,
+        cir::Category::Weapon | cir::Category::Bow | cir::Category::Shield
+    )
 }
 
 /// Check if the item can use the drop prompt
 pub fn name_spec_can_drop(spec: &cir::ItemNameSpec) -> bool {
     let category = match spec {
-        cir::ItemNameSpec::Actor(actor) => {
-            match actor.as_str() {
-                "Weapon_Sword_070"
-                |
-                "Weapon_Sword_080"
-                |
-                "Weapon_Sword_081"
-                |
-                "Weapon_Sword_502" |
-                "Weapon_Bow_071" => return false,
-                _ => {
-                    let Some(category) = item_type_to_category(game::get_pouch_item_type(actor)) else {
-                        return false;
-                    };
-                    category
-                }
+        cir::ItemNameSpec::Actor(actor) => match actor.as_str() {
+            "Weapon_Sword_070" | "Weapon_Sword_080" | "Weapon_Sword_081" | "Weapon_Sword_502"
+            | "Weapon_Bow_071" => return false,
+            _ => {
+                let Some(category) = item_type_to_category(game::get_pouch_item_type(actor)) else {
+                    return false;
+                };
+                category
             }
         },
         cir::ItemNameSpec::Category(category) => *category,
     };
 
-    matches!(category, cir::Category::Weapon | cir::Category::Bow
-    | cir::Category::Shield | cir::Category::Material)
+    matches!(
+        category,
+        cir::Category::Weapon
+            | cir::Category::Bow
+            | cir::Category::Shield
+            | cir::Category::Material
+    )
 }
 
 /// Check if items matched by the name could possibly be stackable
@@ -81,10 +80,12 @@ pub fn name_spec_could_stack(spec: &cir::ItemNameSpec) -> bool {
     match spec {
         cir::ItemNameSpec::Actor(name) => game::can_stack(name),
         cir::ItemNameSpec::Category(category) => matches!(
-        category,
-            cir::Category::Armor | cir::Category::Material
-            | cir::Category::Food | cir::Category::KeyItem
-    )
+            category,
+            cir::Category::Armor
+                | cir::Category::Material
+                | cir::Category::Food
+                | cir::Category::KeyItem
+        ),
     }
 }
 
@@ -103,7 +104,7 @@ pub fn name_spec_matches(spec: &cir::ItemNameSpec, name: &str) -> bool {
                 return category == item_category.coerce_armor();
             }
             category == item_category
-        },
+        }
     }
 }
 
@@ -116,10 +117,9 @@ pub fn name_spec_matches(spec: &cir::ItemNameSpec, name: &str) -> bool {
 pub fn modifier_meta_matches(item: &cir::ItemNameSpec, expected: i32, actual: i32) -> bool {
     let is_weapon = match item {
         cir::ItemNameSpec::Actor(actor) => {
-    matches!(game::get_pouch_item_type(actor), 0 | 1 | 3)
-        },
-        cir::ItemNameSpec::Category(category) => 
-            category.is_equipment()
+            matches!(game::get_pouch_item_type(actor), 0 | 1 | 3)
+        }
+        cir::ItemNameSpec::Category(category) => category.is_equipment(),
     };
     modifier_meta_matches_by_is_weapon(is_weapon, expected, actual)
 }
@@ -132,7 +132,7 @@ pub fn modifier_meta_matches_by_name(item: &str, expected: i32, actual: i32) -> 
 
 /// See [`modifier_meta_matches`]
 pub fn modifier_meta_matches_by_is_weapon(is_weapon: bool, expected: i32, actual: i32) -> bool {
-    if is_weapon && expected != 0 && (expected & (expected-1)) == 0{
+    if is_weapon && expected != 0 && (expected & (expected - 1)) == 0 {
         return (expected & actual) != 0;
     }
     expected == actual
@@ -192,8 +192,8 @@ impl CountingMethod {
     pub fn should_use_value(self, actor: &str) -> bool {
         match self {
             Self::Slot => false,
-            Self::CanStack => game::can_stack(&actor),
-            Self::CanStackOrFood => game::can_stack(&actor) || actor.starts_with("Item_Cook"),
+            Self::CanStack => game::can_stack(actor),
+            Self::CanStackOrFood => game::can_stack(actor) || actor.starts_with("Item_Cook"),
             Self::Value => true,
         }
     }

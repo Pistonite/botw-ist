@@ -1,4 +1,4 @@
-use teleparse::{tp, derive_syntax};
+use teleparse::{derive_syntax, tp};
 
 use crate::syn;
 

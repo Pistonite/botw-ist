@@ -6,7 +6,9 @@ use skybook_parser::cir;
 use crate::error::{ErrorReport, sim_error};
 use crate::sim;
 
-use super::{ItemSelectCheck, convert_amount, switch_to_inventory_or_stop, switch_to_overworld_or_stop};
+use super::{
+    ItemSelectCheck, convert_amount, switch_to_inventory_or_stop, switch_to_overworld_or_stop,
+};
 
 /// Forcefully remove items from the inventory
 ///
@@ -41,7 +43,9 @@ pub fn force_remove_item(
             let m = ctx.cpu().proc.memory();
 
             // find the item
-            let Some((mut tab, mut slot)) = inventory.select(name, meta, None, m, item.span, errors)? else {
+            let Some((mut tab, mut slot)) =
+                inventory.select(name, meta, None, m, item.span, errors)?
+            else {
                 break;
             };
             let sim::ScreenItemState::Normal(mut item_ptr) = inventory.get(tab, slot) else {
@@ -54,7 +58,7 @@ pub fn force_remove_item(
             // if the found item is stackable and value is 0
             // we cannot remove from this stack, so find another stack
             // with at least 1 value
-            mem!{ m: let mut value = *(&item_ptr->mValue); }
+            mem! { m: let mut value = *(&item_ptr->mValue); }
             let item_name = Ptr!(&item_ptr->mName).cstr(m)?.load_utf8_lossy(m)?;
             let mut can_stack = game::can_stack(&item_name);
 
@@ -72,7 +76,7 @@ pub fn force_remove_item(
                 let item_name = Ptr!(&item_ptr->mName).cstr(m)?.load_utf8_lossy(m)?;
                 can_stack = game::can_stack(&item_name);
                 if can_stack {
-                    mem!{ m: let value2 = *(&item_ptr->mValue); }
+                    mem! { m: let value2 = *(&item_ptr->mValue); }
                     value = value2;
                 }
             }
@@ -94,8 +98,8 @@ pub fn force_remove_item(
                 };
                 remaining.sub(amount_to_decrease);
                 // max(1) to ensure we are removing something
-                let new_value = value - amount_to_decrease.max(1);
-                if new_value <= 0 {
+                let new_value = value.saturating_sub(amount_to_decrease.max(1));
+                if new_value == 0 {
                     mem! { (ctx.cpu().proc.memory_mut()):
                         *(&item_ptr->mValue) = 0;
                         *(&item_ptr->mInInventory) = false;

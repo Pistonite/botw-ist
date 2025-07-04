@@ -102,7 +102,9 @@ impl State {
             X::CoItemBoxPause => set_arg!(self, args, item_box_pause, true),
             X::CoSameDialog => set_arg!(self, args, same_dialog, true),
             X::CoAccuratelySimulate => set_arg!(self, args, accurately_simulate, true),
-            X::CoTargeting(spec) => set_arg!(self, args, entangle_target, Some(spec.as_ref().clone())),
+            X::CoTargeting(spec) => {
+                set_arg!(self, args, entangle_target, Some(spec.as_ref().clone()))
+            }
 
             X::Get(items) => self.handle_get(ctx, items, args.as_deref()).await,
             X::PickUp(items) => self.handle_pick_up(ctx, items, args.as_deref()).await,
@@ -145,15 +147,16 @@ impl State {
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling PICKUP command");
         let items = items.to_vec();
-        let pause = args
-            .map(|args| args.item_box_pause)
-            .unwrap_or_default();
+        let pause = args.map(|args| args.item_box_pause).unwrap_or_default();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::pick_up_items(&mut cpu, sys, errors, &items, pause)
         })
     }
 
-    async fn handle_pause(self, rt: sim::Context<&sim::Runtime>) -> Result<Report<Self>, exec::Error> {
+    async fn handle_pause(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling PAUSE command");
         in_game!(self, rt, cpu, sys, errors => {
             sys.screen.transition_to_inventory(&mut cpu, &mut sys.overworld, true, errors)?;
@@ -161,7 +164,10 @@ impl State {
         })
     }
 
-    async fn handle_unpause(self, rt: sim::Context<&sim::Runtime>) -> Result<Report<Self>, exec::Error> {
+    async fn handle_unpause(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling UNPAUSE command");
         in_game!(self, rt, cpu, sys, errors => {
             if !sys.screen.current_screen().is_inventory() {
@@ -178,11 +184,15 @@ impl State {
         })
     }
 
-    async fn handle_hold(self, rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSelectSpec], args: Option<&StateArgs>,
+    async fn handle_hold(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSelectSpec],
+        args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling HOLD command");
-        let (smug, pe_target) = args.map(|x| (x.smug, x.entangle_target.as_ref().cloned()))
+        let (smug, pe_target) = args
+            .map(|x| (x.smug, x.entangle_target.as_ref().cloned()))
             .unwrap_or_default();
         let items = items.to_vec();
         in_game!(self, rt, cpu, sys, errors => {
@@ -190,7 +200,10 @@ impl State {
         })
     }
 
-    async fn handle_unhold(self, rt: sim::Context<&sim::Runtime>) -> Result<Report<Self>, exec::Error> {
+    async fn handle_unhold(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling UNHOLD command");
         in_game!(self, rt, cpu, sys, errors => {
             if sys.screen.current_screen().is_overworld() {

@@ -7,9 +7,7 @@ use skybook_parser::cir;
 use crate::error::{ErrorReport, sim_error};
 use crate::sim;
 
-use super::{
-    ItemSelectCheck, convert_amount
-};
+use super::{ItemSelectCheck, convert_amount};
 
 /// Sell items to a shop
 pub fn sell_items(
@@ -47,7 +45,8 @@ pub fn sell_items(
             let m = ctx.cpu().proc.memory();
 
             // find the item to sell
-            let Some((mut tab, mut slot)) = shop.select(name, meta, None, m, item.span, errors)? else {
+            let Some((mut tab, mut slot)) = shop.select(name, meta, None, m, item.span, errors)?
+            else {
                 break;
             };
 
@@ -61,7 +60,7 @@ pub fn sell_items(
             // if the found item is stackable and value is 0, somehow,
             // we cannot sell this stack, so find another stack
             // with at least 1 value
-            mem!{ m: let mut value = *(&item_ptr->mValue); }
+            mem! { m: let mut value = *(&item_ptr->mValue); }
             let mut item_name = Ptr!(&item_ptr->mName).cstr(m)?.load_utf8_lossy(m)?;
             let mut can_stack = game::can_stack(&item_name);
 
@@ -79,7 +78,7 @@ pub fn sell_items(
                 item_name = Ptr!(&item_ptr->mName).cstr(m)?.load_utf8_lossy(m)?;
                 can_stack = game::can_stack(&item_name);
                 if can_stack {
-                    mem!{ m: let value2 = *(&item_ptr->mValue); }
+                    mem! { m: let value2 = *(&item_ptr->mValue); }
                     value = value2;
                 }
             }
@@ -98,7 +97,7 @@ pub fn sell_items(
                 let value = value.max(0) as usize;
                 match remaining.count() {
                     None => value, // sell all
-                    Some(n) => n.min(value)
+                    Some(n) => n.min(value),
                 }
             } else {
                 1

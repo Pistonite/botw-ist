@@ -27,7 +27,6 @@ pub struct NumberedItemOrCategory {
     pub item: ItemOrCategory,
 }
 
-
 /// Syntax for an item prefixed with "all" or "all but"
 #[derive_syntax]
 #[derive(Debug)]

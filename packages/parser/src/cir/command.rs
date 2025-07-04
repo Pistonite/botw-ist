@@ -239,12 +239,22 @@ pub async fn parse_command<R: QuotedItemResolver>(
         //////////////////////////////////////////////////////////////////
         C::Entangle(cmd) => {
             let (name, meta) = cir::parse_item_or_category(&cmd.item, resolver, errors).await?;
-            let item = cir::ItemSelectSpec { name, meta, amount: cir::AmountSpec::Num(1), span: cmd.item.span()};
+            let item = cir::ItemSelectSpec {
+                name,
+                meta,
+                amount: cir::AmountSpec::Num(1),
+                span: cmd.item.span(),
+            };
             Some(X::Entangle(Box::new(item)))
-        },
+        }
         A![Targeting(cmd)] => {
             let (name, meta) = cir::parse_item_or_category(&cmd.item, resolver, errors).await?;
-            let item = cir::ItemSelectSpec { name, meta, amount: cir::AmountSpec::Num(1), span: cmd.item.span()};
+            let item = cir::ItemSelectSpec {
+                name,
+                meta,
+                amount: cir::AmountSpec::Num(1),
+                span: cmd.item.span(),
+            };
             Some(X::CoTargeting(Box::new(item)))
         }
         //////////////////////////////////////////////////////////////////
@@ -445,4 +455,3 @@ pub async fn parse_command<R: QuotedItemResolver>(
         }
     }
 }
-

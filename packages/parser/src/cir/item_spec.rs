@@ -3,7 +3,7 @@ use std::ops::Deref;
 use teleparse::{Span, ToSpan, tp};
 
 use crate::cir;
-use crate::error::{absorb_error, cir_error, cir_warning, ErrorReport};
+use crate::error::{ErrorReport, absorb_error, cir_error, cir_warning};
 use crate::search::{self, QuotedItemResolver, ResolvedItem};
 use crate::syn;
 use crate::util;
@@ -88,7 +88,8 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
             }
             return vec![ItemSpec {
                 amount: 1,
-                name,meta
+                name,
+                meta,
             }];
         }
         syn::ItemListFinite::List(items) => items,
@@ -105,10 +106,7 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
         if meta.as_ref().is_some_and(|m| m.position.is_some()) {
             errors.push(cir_warning!(&item, UnusedItemPosition));
         }
-        out_item_specs.push(ItemSpec {
-            amount,
-            name, meta
-        });
+        out_item_specs.push(ItemSpec { amount, name, meta });
     }
 
     out_item_specs
@@ -164,8 +162,9 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
         };
         out_item_specs.push(ItemSelectSpec {
             amount,
-            name, meta,
-            span: item_span
+            name,
+            meta,
+            span: item_span,
         });
     }
 
@@ -183,7 +182,10 @@ pub async fn parse_item_or_category<R: QuotedItemResolver>(
             Some((ItemNameSpec::Actor(item), meta))
         }
         syn::ItemOrCategory::Category(category) => {
-            let meta = category.meta.as_ref().map(|m| cir::ItemMeta::parse_syn(m, errors));
+            let meta = category
+                .meta
+                .as_ref()
+                .map(|m| cir::ItemMeta::parse_syn(m, errors));
             let category = cir::parse_category(&category.name);
             Some((ItemNameSpec::Category(category), meta))
         }
