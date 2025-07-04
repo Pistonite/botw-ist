@@ -336,6 +336,11 @@ impl Screen {
                 )?;
                 log::debug!("spawning overworld holding items: {:?}", state.actors);
                 overworld.spawn_held_items(state.actors);
+                // TODO: there is a slight inaccuracy here. When closing inventory,
+                // if player started holding inventory but didn't hold any item,
+                // the holding state should end.
+                // Could also be possible this check is done the next time inventory is opened,
+                // but there's no way to know right now
             }
             Self::Shop(_) => {}
         }

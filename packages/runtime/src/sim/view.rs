@@ -200,6 +200,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
         num_tabs,
         tabs,
         screen: sys.screen.current_screen().iv_type(),
+        is_holding_in_inventory: sys.screen.holding_in_inventory,
     })
 }
 
