@@ -378,22 +378,6 @@ impl ScreenItems {
         }
     }
 
-    // /// Iterate all items matching the category by (tab_index, slot_index, tab, item), skipping empty slots and
-    // ///
-    // /// Armor will match all 3 types of armor
-    // #[inline(always)]
-    // fn iter_items_matching_category(&self, category: cir::Category) -> impl Iterator<Item=(usize, usize, &ScreenTab, &ScreenItem)> {
-    //     self.iter_items().filter(move |(_, _, _, item)|
-    //         item.category.is_some_and(|x| {
-    //             if category == cir::Category::Armor {
-    //                 x.coerce_armor() == category
-    //             } else {
-    //                 x == category
-    //             }
-    //         })
-    //     )
-    // }
-
     /// Iterate all items by (tab_index, slot_index, tab, item), skipping empty slots and
     /// translucent items
     #[inline(always)]
@@ -517,7 +501,10 @@ enum Selector {
 }
 
 pub enum ScreenItemState<T> {
-    Empty,          // Slot is Empty (no item is there)
-    Translucent(T), // Slot has a translucent item (in_inventory = false)
-    Normal(T),      // Slot has a normal item (in_inventory = true)
+    /// Slot is Empty (no item is there)
+    Empty,
+    /// Slot has a translucent item (in_inventory = false)
+    Translucent(T),
+    /// Slot has a normal item (in_inventory = true)
+    Normal(T),
 }

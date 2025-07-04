@@ -2,8 +2,6 @@ mod category;
 pub use category::*;
 mod command;
 pub use command::*;
-mod entangle;
-pub use entangle::*;
 mod item_meta;
 pub use item_meta::*;
 mod item_spec;

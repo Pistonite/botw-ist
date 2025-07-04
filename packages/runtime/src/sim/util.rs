@@ -198,24 +198,3 @@ impl CountingMethod {
         }
     }
 }
-
-// pub struct PeTarget {
-//     pub tab: usize,
-//     pub slot: usize,
-//     /// Behavior if the slot is empty
-//     pub empty_behavior: PeBehavior,
-//     /// Behavior if the slot is translucent
-//     pub translucent_behavior: PeBehavior,
-// }
-//
-//
-// /// Behavior of PE when targeting empty or translucent slot
-// #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-// pub enum PeBehavior {
-//     /// doesn't do anything
-//     None,
-//     /// Targets the first slot instead
-//     First,
-//     /// Targets the slot anyway
-//     Force,
-// }
