@@ -315,11 +315,16 @@ Some(
                                             177..178 => "1",
                                         ),
                                         item: Category(
-                                            Weapon(
-                                                Singular(
-                                                    token Keyword(179..185),
+                                            Category {
+                                                name: Weapon(
+                                                    Singular(
+                                                        token Keyword(179..185),
+                                                    ),
                                                 ),
-                                            ),
+                                                meta: None(
+                                                    185,
+                                                ),
+                                            },
                                         ),
                                     },
                                 ),
