@@ -84,6 +84,8 @@ main.tabbed_inventory.button_tooltip: "Lijst-/tabweergave wisselen"
 main.view_crash_report: "Klik hier om het crashrapport te bekijken."
 main.view_crash_report.desc: "Voeg het crashrapport toe wanneer u een probleem meldt."
 main.visible_inventory.desc: "Items die je ziet wanneer je de inventaris opent"
+main.visible_inventory.holding.desc: "U houdt items vast in de inventaris. Bepaalde acties zijn momenteel niet mogelijk."
+main.visible_inventory.mcount.desc: "Het aantal items in de inventaris, opgeslagen in de lijstvariabele."
 main.visible_inventory.title: "Zichtbare Inventaris"
 main.visible_inventory.view_error: "Inventaris kan niet worden weergegeven!"
 

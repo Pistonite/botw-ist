@@ -84,6 +84,8 @@ main.tabbed_inventory.button_tooltip: "Attiva/disattiva vista elenco/schede"
 main.view_crash_report: "Clicca qui per visualizzare il rapporto di arresto anomalo."
 main.view_crash_report.desc: "Includere il rapporto di arresto anomalo quando si segnala un problema."
 main.visible_inventory.desc: "Oggetti che vedi quando apri l'inventario"
+main.visible_inventory.holding.desc: "Si stanno tenendo oggetti nell'inventario. Alcune azioni non sono possibili in questo momento."
+main.visible_inventory.mcount.desc: "Il numero di oggetti nell'inventario memorizzato nella variabile di lista."
 main.visible_inventory.title: "Inventario Visibile"
 main.visible_inventory.view_error: "Impossibile visualizzare l'inventario!"
 

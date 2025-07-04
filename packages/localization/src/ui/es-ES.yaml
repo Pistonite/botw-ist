@@ -84,6 +84,8 @@ main.tabbed_inventory.button_tooltip: "Alternar vista de lista/pestañas"
 main.view_crash_report: "Haz clic aquí para ver el informe de errores."
 main.view_crash_report.desc: "Incluye el informe de errores al reportar un problema."
 main.visible_inventory.desc: "Objetos que ves al abrir el inventario"
+main.visible_inventory.holding.desc: "Se están sosteniendo objetos en el inventario. Ciertas acciones no son posibles en este momento."
+main.visible_inventory.mcount.desc: "El número de objetos en el inventario guardado en la variable de lista."
 main.visible_inventory.title: "Inventario Visible"
 main.visible_inventory.view_error: "¡No se puede mostrar el inventario!"
 

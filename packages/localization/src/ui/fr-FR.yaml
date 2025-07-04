@@ -84,6 +84,8 @@ main.tabbed_inventory.button_tooltip: "Basculer entre la vue Liste/onglets"
 main.view_crash_report: "Cliquez ici pour afficher le rapport d'incident."
 main.view_crash_report.desc: "Veuillez inclure le rapport d'incident lors de la signalement d'un problème."
 main.visible_inventory.desc: "Objets visibles lors de l'ouverture de l'inventaire"
+main.visible_inventory.holding.desc: "Des objets sont tenus dans l'inventaire. Certaines actions ne sont pas possibles actuellement."
+main.visible_inventory.mcount.desc: "Le nombre d'objets dans l'inventaire stocké dans la variable de liste."
 main.visible_inventory.title: "Inventaire Visible"
 main.visible_inventory.view_error: "Impossible d'afficher l'inventaire !"
 
