@@ -21,7 +21,7 @@ impl ExecutableInstruction for InsnMovn {
         Ok(())
     }
 }
-pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error> {
     if d.mnemonic != Mnemonic::movn {
         return Ok(None);
     }

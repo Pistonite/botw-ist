@@ -32,7 +32,7 @@ impl ExecutableInstruction for InsnFsub {
     }
 }
 
-pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error> {
     if d.mnemonic != Mnemonic::fsub {
         return Ok(None);
     }

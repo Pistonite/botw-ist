@@ -15,7 +15,7 @@ pub struct InsnBfm {
     imms: u8,
 }
 
-pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error> {
     if d.mnemonic != Mnemonic::bfm {
         return Ok(None);
     }
