@@ -123,6 +123,8 @@ pub enum TT {
         KwSmug = "smug",
         KwItemBoxPause = "item-box-pause",
         KwSameDialog = "same-dialog",
+        KwAccuratelySimulate = "accurately-simulate",
+        KwTargeting = "targeting",
         KwWeaponSlots = "weapon-slots",
         KwShieldSlots = "shield-slots",
         KwBowSlots = "bow-slots",
@@ -155,9 +157,10 @@ pub enum TT {
     SuperCommand,
 
     #[teleparse(terminal(
-        KwAll = "all",
-        KwInfinite = "infinite",
         // @syntax-generator-hint keywords
+        KwAll = "all",
+        KwBut = "but",
+        KwInfinite = "infinite",
         KwTime = "time",
         KwTimes = "times",
         KwSlot = "slot",
@@ -262,21 +265,6 @@ pub enum MetaValueLiteral {
 pub struct MetaValueNumber {
     pub int_part: Number,
     pub float_part: tp::Option<(SymPeriod, tp::Option<Number>)>,
-}
-
-#[derive_syntax]
-#[derive(Debug)]
-pub struct SymMinus {
-    #[teleparse(literal("-"))]
-    pub minus: Word,
-}
-
-/// A number or the string "all"
-#[derive_syntax]
-#[derive(Debug)]
-pub enum NumOrAll {
-    All(KwAll),
-    Number(Number),
 }
 
 /// Colon or equal as separator

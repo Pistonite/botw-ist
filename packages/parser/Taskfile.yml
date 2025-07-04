@@ -45,6 +45,11 @@ tasks:
     cmds:
       - rm -rf src/generated
 
+  diff:
+    desc: Diff parser snapshots
+    cmds:
+      - delta tests/parse/{{.CLI_ARGS}} tests/parse/wip/{{.CLI_ARGS}}
+
   pull-artifacts-public:
     cmds:
       - $(which mkdir) -p src/generated

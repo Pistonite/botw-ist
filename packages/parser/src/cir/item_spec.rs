@@ -1,7 +1,9 @@
+use std::ops::Deref;
+
 use teleparse::{Span, ToSpan, tp};
 
 use crate::cir;
-use crate::error::{ErrorReport, cir_error, cir_warning};
+use crate::error::{ErrorReport, absorb_error, cir_error, cir_warning};
 use crate::search::{self, QuotedItemResolver, ResolvedItem};
 use crate::syn;
 use crate::util;
@@ -10,40 +12,29 @@ use crate::util;
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ItemSpec {
     /// Amount of the item
-    ///
-    /// What this value means depends on the context.
-    /// For example when adding item, this item will be added
-    /// `amount` times.
-    pub amount: i64,
-
-    /// The item
-    pub item: Item,
+    pub amount: usize,
+    /// The item name
+    pub name: String,
+    /// The item metadata
+    pub meta: Option<cir::ItemMeta>,
 }
 
 /// Specification for selecting an item
 ///
 /// This is more detailed than [`ItemSpec`], allowing
 /// selecting by category and selecting by slot number
-///
-/// The meaning of the spec depends on the context
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ItemSelectSpec {
-    /// Amount of the item
-    ///
-    /// -1 means "all" or special value in other contexts
-    pub amount: i64,
+    /// Amount of the item to target
+    pub amount: AmountSpec,
 
-    /// The item or category to select from
-    pub item: ItemOrCategory,
+    /// The item or category to target
+    pub name: ItemNameSpec,
+
+    /// The optional metadata to be matched, including position
+    pub meta: Option<cir::ItemMeta>,
 
     pub span: Span,
-}
-
-impl ItemSelectSpec {
-    /// Get the specifier for amount of this item to select/target
-    pub fn amount_spec(&self) -> AmountSpec {
-        self.amount.into()
-    }
 }
 
 /// Specifier for an amount when selecting items
@@ -54,51 +45,21 @@ pub enum AmountSpec {
     Num(usize),
 }
 
-impl From<i64> for AmountSpec {
-    fn from(value: i64) -> Self {
-        match value {
-            ..-1 => Self::AllBut((-value - 1) as usize),
-            -1 => Self::All,
-            n => Self::Num(n as usize),
-        }
-    }
-}
-
 impl AmountSpec {
     pub fn is_zero(self) -> bool {
         matches!(self, Self::Num(0))
     }
     pub fn sub(&mut self, n: usize) {
         if let AmountSpec::Num(self_n) = self {
-            *self_n -= n
+            *self_n = self_n.saturating_sub(n)
         }
     }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum ItemOrCategory {
-    Item(Item),
+pub enum ItemNameSpec {
+    Actor(String),
     Category(cir::Category),
-}
-
-/// An item
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct Item {
-    /// The item actor name
-    pub actor: String,
-
-    /// Metadata of the item
-    ///
-    /// The "star" option should always be None, and the actor
-    /// is adjusted to be the actor with the given star num
-    pub meta: Option<cir::ItemMeta>,
-}
-
-impl Item {
-    /// Check if the item is a CookResult (based on actor name)
-    pub fn is_cook_item(&self) -> bool {
-        self.actor.starts_with("Item_Cook_")
-    }
 }
 
 pub async fn parse_item_list_finite_optional<R: QuotedItemResolver>(
@@ -117,91 +78,94 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
 ) -> Vec<ItemSpec> {
-    let mut out_item_specs = Vec::new();
-    match list {
+    let list = match list {
         syn::ItemListFinite::Single(item) => {
-            if let Some(parsed_item) = parse_item(item, resolver, errors).await {
-                if let Some(m) = &parsed_item.meta
-                    && m.position.is_some()
-                {
-                    errors.push(cir_warning!(&item, UnusedItemPosition));
-                }
-                out_item_specs.push(ItemSpec {
-                    amount: 1,
-                    item: parsed_item,
-                });
+            let Some((name, meta)) = parse_item(item, resolver, errors).await else {
+                return vec![];
+            };
+            if meta.as_ref().is_some_and(|m| m.position.is_some()) {
+                errors.push(cir_warning!(&item, UnusedItemPosition));
             }
+            return vec![ItemSpec {
+                amount: 1,
+                name,
+                meta,
+            }];
         }
-        syn::ItemListFinite::List(items) => {
-            for item in items.iter() {
-                let amount = match cir::parse_syn_int_str(&item.num, &item.num.span()) {
-                    Ok(amount) => amount,
-                    Err(e) => {
-                        errors.push(e);
-                        continue;
-                    }
-                };
+        syn::ItemListFinite::List(items) => items,
+    };
+    let mut out_item_specs = Vec::new();
+    for item in list.iter() {
+        let Some(amount) = parse_item_amount(&item.num, errors) else {
+            continue;
+        };
 
-                if let Some(parsed_item) = parse_item(&item.item, resolver, errors).await {
-                    if let Some(m) = &parsed_item.meta
-                        && m.position.is_some()
-                    {
-                        errors.push(cir_warning!(&item, UnusedItemPosition));
-                    }
-                    out_item_specs.push(ItemSpec {
-                        amount,
-                        item: parsed_item,
-                    });
-                }
-            }
+        let Some((name, meta)) = parse_item(&item.item, resolver, errors).await else {
+            continue;
+        };
+        if meta.as_ref().is_some_and(|m| m.position.is_some()) {
+            errors.push(cir_warning!(&item, UnusedItemPosition));
         }
+        out_item_specs.push(ItemSpec { amount, name, meta });
     }
 
     out_item_specs
 }
 
+/// Parse a Contrained Item List
 pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
     list: &syn::ItemListConstrained,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
 ) -> Vec<ItemSelectSpec> {
+    let list = match list {
+        syn::ItemListConstrained::Single(item) => {
+            if let Some((name, meta)) = parse_item_or_category(item, resolver, errors).await {
+                return vec![ItemSelectSpec {
+                    amount: AmountSpec::Num(1),
+                    name,
+                    meta,
+                    span: item.span(),
+                }];
+            };
+            return vec![];
+        }
+        syn::ItemListConstrained::List(items) => items,
+    };
+
     let mut out_item_specs = Vec::new();
 
-    match list {
-        syn::ItemListConstrained::Single(item) => {
-            if let Some(result) = parse_item_or_category(item, resolver, errors).await {
-                out_item_specs.push(ItemSelectSpec {
-                    amount: 1,
-                    item: result,
-                    span: item.span(),
-                });
-            };
-        }
-        syn::ItemListConstrained::List(items) => {
-            for item in items.iter() {
-                let (amount, item) = match item {
-                    syn::NumberedOrAllItemOrCategory::Numbered(item) => {
-                        let amount = match cir::parse_syn_int_str(&item.num, &item.num.span()) {
-                            Ok(amount) => amount,
-                            Err(e) => {
-                                errors.push(e);
-                                continue;
-                            }
-                        };
-                        (amount, &item.item)
-                    }
-                    syn::NumberedOrAllItemOrCategory::All(item) => (-1, &item.item),
-                };
-                let Some(result) = parse_item_or_category(item, resolver, errors).await else {
+    for item in list.iter() {
+        let (amount, item) = match item {
+            syn::NumberedOrAllItemOrCategory::Numbered(item) => {
+                let Some(amount) = parse_item_amount(&item.num, errors) else {
                     continue;
                 };
-                out_item_specs.push(ItemSelectSpec {
-                    amount,
-                    item: result,
-                    span: item.span(),
-                });
+                (AmountSpec::Num(amount), &item.item)
             }
-        }
+            syn::NumberedOrAllItemOrCategory::All(item) => {
+                let amount = match item.but_clause.deref() {
+                    Some(but) => {
+                        let Some(amount) = parse_item_amount(&but.num, errors) else {
+                            continue;
+                        };
+                        AmountSpec::AllBut(amount)
+                    }
+                    None => AmountSpec::All,
+                };
+                (amount, &item.item)
+            }
+        };
+        let item_span = item.span();
+        let Some((name, meta)) = parse_item_or_category(item, resolver, errors).await else {
+            continue;
+        };
+        out_item_specs.push(ItemSelectSpec {
+            amount,
+            name,
+            meta,
+            span: item_span,
+        });
     }
 
     out_item_specs
@@ -211,15 +175,19 @@ pub async fn parse_item_or_category<R: QuotedItemResolver>(
     item: &syn::ItemOrCategory,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
-) -> Option<ItemOrCategory> {
+) -> Option<(ItemNameSpec, Option<cir::ItemMeta>)> {
     match item {
         syn::ItemOrCategory::Item(item) => {
-            let item = parse_item(item, resolver, errors).await?;
-            Some(ItemOrCategory::Item(item))
+            let (item, meta) = parse_item(item, resolver, errors).await?;
+            Some((ItemNameSpec::Actor(item), meta))
         }
         syn::ItemOrCategory::Category(category) => {
-            let category = cir::parse_category(category);
-            Some(ItemOrCategory::Category(category))
+            let meta = category
+                .meta
+                .as_ref()
+                .map(|m| cir::ItemMeta::parse_syn(m, errors));
+            let category = cir::parse_category(&category.name);
+            Some((ItemNameSpec::Category(category), meta))
         }
     }
 }
@@ -229,7 +197,7 @@ async fn parse_item<R: QuotedItemResolver>(
     item: &syn::Item,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
-) -> Option<Item> {
+) -> Option<(String, Option<cir::ItemMeta>)> {
     let resolved_item = parse_item_name(&item.name, resolver, errors).await?;
     let actor = resolved_item.actor;
     // merge the resolved meta and input meta
@@ -249,7 +217,7 @@ async fn parse_item<R: QuotedItemResolver>(
     let star_num = meta.as_mut().and_then(|m| m.star.take()).unwrap_or(0);
     let actor = util::get_armor_with_star(&actor, star_num).to_string();
 
-    Some(Item { actor, meta })
+    Some((actor, meta))
 }
 
 /// Parse an item name syntax node. Use the provided resolver to resolve quoted items.
@@ -288,4 +256,14 @@ async fn parse_item_name<R: QuotedItemResolver>(
             }
         }
     }
+}
+
+fn parse_item_amount(num: &syn::Number, errors: &mut Vec<ErrorReport>) -> Option<usize> {
+    let amount = absorb_error(errors, cir::parse_syn_int_str(num, num.span()))?;
+    if amount < 0 {
+        errors.push(cir_error!(num, InvalidItemAmount));
+        return None;
+    }
+
+    Some(amount as usize)
 }

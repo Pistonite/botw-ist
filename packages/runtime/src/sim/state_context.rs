@@ -140,7 +140,7 @@ impl Context<&mut Cpu1> {
     /// Execute the closure on the CPU and the game process
     pub fn execute<F>(self, mut state: sim::GameState, f: F) -> Result<sim::GameState, CrashReport>
     where
-        F: FnOnce(Context<&mut Cpu2>) -> Result<(), processor::Error>,
+        F: FnOnce(Context<&mut Cpu2>, &mut sim::GameSystems) -> Result<(), processor::Error>,
     {
         let span = self.span;
         let handle = self.handle;
@@ -152,7 +152,7 @@ impl Context<&mut Cpu1> {
                 handle,
                 inner: cpu2,
             };
-            f(ctx)
+            f(ctx, &mut state.systems)
         })?;
         Ok(state)
     }

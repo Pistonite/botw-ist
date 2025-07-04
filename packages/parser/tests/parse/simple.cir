@@ -5,13 +5,13 @@ ParseOutput {
                 command: Eat(
                     [
                         ItemSelectSpec {
-                            amount: 1,
-                            item: Item(
-                                Item {
-                                    actor: "Weapon_Lsword_032",
-                                    meta: None,
-                                },
+                            amount: Num(
+                                1,
                             ),
+                            name: Actor(
+                                "Weapon_Lsword_032",
+                            ),
+                            meta: None,
                             span: 4..7,
                         },
                     ],
@@ -25,13 +25,13 @@ ParseOutput {
                 command: Hold(
                     [
                         ItemSelectSpec {
-                            amount: 1,
-                            item: Item(
-                                Item {
-                                    actor: "Weapon_Lsword_024",
-                                    meta: None,
-                                },
+                            amount: Num(
+                                1,
                             ),
+                            name: Actor(
+                                "Weapon_Lsword_024",
+                            ),
+                            meta: None,
                             span: 17..31,
                         },
                     ],
@@ -46,23 +46,21 @@ ParseOutput {
                     [
                         ItemSpec {
                             amount: 3,
-                            item: Item {
-                                actor: "Item_Fruit_A",
-                                meta: Some(
-                                    ItemMeta {
-                                        value: None,
-                                        equip: None,
-                                        life_recover: None,
-                                        effect_duration: None,
-                                        sell_price: None,
-                                        effect_id: None,
-                                        effect_level: None,
-                                        ingredients: [],
-                                        star: None,
-                                        position: None,
-                                    },
-                                ),
-                            },
+                            name: "Item_Fruit_A",
+                            meta: Some(
+                                ItemMeta {
+                                    value: None,
+                                    equip: None,
+                                    life_recover: None,
+                                    effect_duration: None,
+                                    sell_price: None,
+                                    effect_id: None,
+                                    effect_level: None,
+                                    ingredients: [],
+                                    star: None,
+                                    position: None,
+                                },
+                            ),
                         },
                     ],
                 ),
@@ -76,10 +74,8 @@ ParseOutput {
                     [
                         ItemSpec {
                             amount: 100,
-                            item: Item {
-                                actor: "Item_Fruit_A",
-                                meta: None,
-                            },
+                            name: "Item_Fruit_A",
+                            meta: None,
                         },
                     ],
                 ),
@@ -89,29 +85,12 @@ ParseOutput {
         },
         Step {
             command: CommandWithSpan {
-                command: Unequip(
-                    Item(
-                        Item {
-                            actor: "NormalArrow",
-                            meta: None,
-                        },
-                    ),
-                    false,
-                ),
-                span: 93..107,
-            },
-            notes: "",
-        },
-        Step {
-            command: CommandWithSpan {
                 command: Get(
                     [
                         ItemSpec {
                             amount: 1,
-                            item: Item {
-                                actor: "古代箭",
-                                meta: None,
-                            },
+                            name: "古代箭",
+                            meta: None,
                         },
                     ],
                 ),
@@ -124,27 +103,27 @@ ParseOutput {
                 command: Eat(
                     [
                         ItemSelectSpec {
-                            amount: 1,
-                            item: Item(
-                                Item {
-                                    actor: "Weapon_Lsword_032",
-                                    meta: Some(
-                                        ItemMeta {
-                                            value: None,
-                                            equip: None,
-                                            life_recover: None,
-                                            effect_duration: None,
-                                            sell_price: None,
-                                            effect_id: None,
-                                            effect_level: None,
-                                            ingredients: [],
-                                            star: None,
-                                            position: Some(
-                                                FromSlot(
-                                                    3,
-                                                ),
-                                            ),
-                                        },
+                            amount: Num(
+                                1,
+                            ),
+                            name: Actor(
+                                "Weapon_Lsword_032",
+                            ),
+                            meta: Some(
+                                ItemMeta {
+                                    value: None,
+                                    equip: None,
+                                    life_recover: None,
+                                    effect_duration: None,
+                                    sell_price: None,
+                                    effect_id: None,
+                                    effect_level: None,
+                                    ingredients: [],
+                                    star: None,
+                                    position: Some(
+                                        FromSlot(
+                                            3,
+                                        ),
                                     ),
                                 },
                             ),
@@ -161,28 +140,28 @@ ParseOutput {
                 command: Eat(
                     [
                         ItemSelectSpec {
-                            amount: 1,
-                            item: Item(
-                                Item {
-                                    actor: "Item_Enemy_07",
-                                    meta: Some(
-                                        ItemMeta {
-                                            value: None,
-                                            equip: None,
-                                            life_recover: None,
-                                            effect_duration: None,
-                                            sell_price: None,
-                                            effect_id: None,
-                                            effect_level: None,
-                                            ingredients: [],
-                                            star: None,
-                                            position: Some(
-                                                TabIdxAndSlot(
-                                                    5,
-                                                    6,
-                                                ),
-                                            ),
-                                        },
+                            amount: Num(
+                                1,
+                            ),
+                            name: Actor(
+                                "Item_Enemy_07",
+                            ),
+                            meta: Some(
+                                ItemMeta {
+                                    value: None,
+                                    equip: None,
+                                    life_recover: None,
+                                    effect_duration: None,
+                                    sell_price: None,
+                                    effect_id: None,
+                                    effect_level: None,
+                                    ingredients: [],
+                                    star: None,
+                                    position: Some(
+                                        TabIdxAndSlot(
+                                            5,
+                                            6,
+                                        ),
                                     ),
                                 },
                             ),
@@ -199,29 +178,18 @@ ParseOutput {
                 command: PickUp(
                     [
                         ItemSelectSpec {
-                            amount: 1,
-                            item: Category(
+                            amount: Num(
+                                1,
+                            ),
+                            name: Category(
                                 Weapon,
                             ),
+                            meta: None,
                             span: 179..185,
                         },
                     ],
                 ),
                 span: 169..186,
-            },
-            notes: "",
-        },
-        Step {
-            command: CommandWithSpan {
-                command: Equip(
-                    Item(
-                        Item {
-                            actor: "IceArrow",
-                            meta: None,
-                        },
-                    ),
-                ),
-                span: 188..203,
             },
             notes: "",
         },
@@ -244,13 +212,13 @@ ParseOutput {
                 command: Freeze(
                     [
                         ItemSelectSpec {
-                            amount: 1,
-                            item: Item(
-                                Item {
-                                    actor: "Item_Meat_01",
-                                    meta: None,
-                                },
+                            amount: Num(
+                                1,
                             ),
+                            name: Actor(
+                                "Item_Meat_01",
+                            ),
+                            meta: None,
                             span: 220..224,
                         },
                     ],

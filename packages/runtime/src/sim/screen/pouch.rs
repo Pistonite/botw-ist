@@ -55,6 +55,53 @@ impl PouchScreen {
         })
     }
 
+    /// Activate Prompt Entanglement for the tab and slot, and any slots 3 tabs apart
+    pub fn activate_pe(&mut self, tab: usize, slot: usize) {
+        self.active_entangle_slot = Some((tab % 3, slot));
+    }
+
+    /// Deactivate Prompt Entanglement
+    pub fn deactivate_pe(&mut self) {
+        self.active_entangle_slot = None;
+    }
+
+    /// Check if the item in (tab, slot) is an activated PE slot, meaning
+    /// the prompt of this item can be used on the PE target item
+    pub fn is_pe_activated_slot(&self, tab: usize, slot: usize) -> bool {
+        let Some((active_tab, active_slot)) = self.active_entangle_slot else {
+            // PE is not activated
+            return false;
+        };
+
+        if self.items.is_translucent_or_empty(tab, slot) {
+            // cannot use prompt from a translucent item, since it's usually
+            // not interactable
+            return false;
+        }
+
+        active_tab == tab % 3 && slot == active_slot
+    }
+
+    /// Get the actual slot to use when performing action on the target slot
+    ///
+    /// If the target slot is empty, it will return 0 (i.e. targets the first
+    /// item in the tab). If the target slot is translucent, it will also
+    /// return 0 unless `allow_translucent` is true, in which case it will
+    /// just use that slot
+    pub fn get_pe_target_slot(&self, tab: usize, slot: usize, allow_translucent: bool) -> usize {
+        match self.items.get(tab, slot) {
+            sim::ScreenItemState::Empty => 0,
+            sim::ScreenItemState::Translucent(_) => {
+                if allow_translucent {
+                    slot
+                } else {
+                    0
+                }
+            }
+            _ => slot,
+        }
+    }
+
     /// Refresh the item states in this pouch screen while still maintaining
     /// the other states
     pub fn update_all_items(
@@ -106,7 +153,7 @@ fn do_open(
             let mut tab = vec![];
 
             let should_break = |curr_item_ptr: Ptr![PouchItem]| {
-                sim::screen_util::should_go_to_next_tab(curr_item_ptr, i, num_tabs, &tab_heads)
+                sim::util::should_go_to_next_tab(curr_item_ptr, i, num_tabs, &tab_heads)
             };
 
             while !should_break(curr_item_ptr) {
@@ -118,31 +165,30 @@ fn do_open(
 
                 // If item is not in inventory (i.e. translucent)
                 // it is displayed as empty
-                if in_inventory {
-                    let item_name = Ptr!(&curr_item_ptr->mName).cstr(m)?.load_utf8_lossy(m)?;
-                    // adjust the slot for arrows using the type
-                    if item_type == 1 {
-                        num_bows_in_curr_tab += 1;
+                let item_name = Ptr!(&curr_item_ptr->mName).cstr(m)?.load_utf8_lossy(m)?;
+                // adjust the slot for arrows using the type
+                if item_type == 1 {
+                    num_bows_in_curr_tab += 1;
+                }
+                let tab_slot = if item_type == 2 {
+                    slot_i + bow_slots - num_bows_in_curr_tab
+                } else {
+                    slot_i
+                };
+                slot_i += 1;
+                // it could be more than 20 if you have a LOT of arrow slots
+                // (because empty bow slots shift them)
+                if tab_slot < 20 {
+                    while tab.len() < tab_slot {
+                        tab.push(None);
                     }
-                    let tab_slot = if item_type == 2 {
-                        slot_i + bow_slots - num_bows_in_curr_tab
-                    } else {
-                        slot_i
-                    };
-                    slot_i += 1;
-                    // it could be more than 20 if you have a LOT of arrow slots
-                    // (because empty bow slots shift them)
-                    if tab_slot < 20 {
-                        while tab.len() < tab_slot {
-                            tab.push(None);
-                        }
-                        tab.push(Some(sim::ScreenItem {
-                            equipped,
-                            ptr: curr_item_ptr,
-                            name: item_name,
-                            category: sim::util::item_type_to_category(item_type),
-                        }));
-                    }
+                    tab.push(Some(sim::ScreenItem {
+                        ptr: curr_item_ptr,
+                        equipped,
+                        in_inventory,
+                        name: item_name,
+                        category: sim::util::item_type_to_category(item_type),
+                    }));
                 }
 
                 // advance to next item

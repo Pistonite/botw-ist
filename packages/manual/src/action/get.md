@@ -5,10 +5,10 @@ Adding new items to the inventory.
 See [Shop](./shop.md) for specially buying items from a shop.
 
 ## Syntax
-> `get` [`FINITE_ITEM_LIST`](../user/syntax.md#finite-vs-constrained-item-specifier)<br>
-> `pick-up` [`CONSTRAINED_ITEM_LIST`](../user/syntax.md#finite-vs-constrained-item-specifier)<br>
+> `get` [`FINITE_ITEM_LIST`](../user/syntax_item.md)<br>
+> `pick-up` [`CONSTRAINED_ITEM_LIST`](../user/syntax_item.md#)<br>
 
-Annotations: [`:item-box-pause`](#pause-on-item-text-boxes)
+Annotations: [`:item-box-pause`](#pause-on-item-text-boxes), [`:accurately-simulate`](#performance)
 
 Examples
 ```skybook
@@ -52,6 +52,30 @@ get 2 shrooms
 unpause
 # Now the 2 shrooms will drop to the ground because of how the smuggle works
 ```
+
+## Performance
+The preferred way to simulate getting multiple stackable items, is by invoking the function
+for adding the item to inventory repeatedly. However, when the number of items to get
+is large, this is a very expensive operation and can slow down script execution significantly.
+
+Therefore, when the amount specified is greater than some internally determined amount,
+the implementation switches to a single call of the function with a value. Functionally,
+it turns:
+```skybook
+get 999 apple
+```
+into:
+```skybook
+get apple[value=999]
+```
+Most of the time (if not all), this will not cause inaccuracies. However, if it matters,
+you can use the <skyb>:accurately-simulate</skyb> annotation to force the more accurate implementation.
+
+```skybook
+# This may take 30 seconds or more to execute, depending on your hardware
+:accurately-simulate get 999 apples
+```
+
 
 ## Detail
 - Both <skyb>get</skyb> and <skyb>pick-up</skyb> require [`Overworld`](../user/screen_system.md) screen.

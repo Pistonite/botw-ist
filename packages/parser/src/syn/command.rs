@@ -60,6 +60,10 @@ pub enum Command {
     /// `sell ITEMS`
     Sell(CmdSell),
 
+    // ==== prompt entanglement ====
+    /// `entangle ITEM`
+    Entangle(CmdEntangle),
+
     // BELOW ARE NOT IMPLEMENTED YET
 
     // ==== inventory screen - removing items ====
@@ -89,8 +93,6 @@ pub enum Command {
     // ==== inventory ====
     /// `sort CATEGORY`
     Sort(CmdSort),
-    /// `entangle CATEGORY [tab=X, rol=R, col=C]`
-    Entangle(CmdEntangle),
     /// `!set-inventory ITEMS`
     SetInventory(CmdSetInventory),
     /// `!set-gamedata ITEMS`
@@ -141,6 +143,8 @@ pub enum Annotation {
     Smug(syn::KwSmug),
     ItemBoxPause(syn::KwItemBoxPause),
     SameDialog(syn::KwSameDialog),
+    AccuratelySimulate(syn::KwAccuratelySimulate),
+    Targeting(CmdTargeting),
     WeaponSlots(CmdWeaponSlots),
     ShieldSlots(CmdShieldSlots),
     BowSlots(CmdBowSlots),
@@ -264,6 +268,32 @@ pub struct CmdBuy {
     pub items: syn::ItemListFinite,
 }
 
+/// `sell ITEMS` - sell items to shop in the area.
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSell {
+    pub lit: syn::KwSell,
+    pub items: syn::ItemListConstrained,
+}
+
+///////////////////////////////////////////////////////////
+
+/// `entangle ITEM` - activate Prompt Entanglement
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdEntangle {
+    pub lit: syn::KwEntangle,
+    pub item: syn::ItemOrCategory,
+}
+
+/// `:targeting ITEM` - set the target item to receive the prompt
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdTargeting {
+    pub lit: syn::KwTargeting,
+    pub item: syn::ItemOrCategory,
+}
+
 ///////////////////////////////////////////////////////////
 
 /// `eat ITEMS` - execute eat prompt on targeted items.
@@ -272,14 +302,6 @@ pub struct CmdBuy {
 #[derive(Debug)]
 pub struct CmdEat {
     pub lit: syn::KwEat,
-    pub items: syn::ItemListConstrained,
-}
-
-/// `sell ITEMS` - sell items to shop in the area.
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSell {
-    pub lit: syn::KwSell,
     pub items: syn::ItemListConstrained,
 }
 
@@ -305,7 +327,7 @@ pub struct CmdUnequip {
 #[derive(Debug)]
 pub struct CmdUse {
     pub lit: syn::KwUse,
-    pub category: syn::Category,
+    pub category: syn::CategoryName,
     pub times: tp::Option<syn::TimesClause>,
 }
 
@@ -359,17 +381,8 @@ pub struct CmdFreeze {
 #[derive(Debug)]
 pub struct CmdSort {
     pub lit: syn::KwSort,
-    pub category: syn::Category,
+    pub category: syn::CategoryName,
     pub times: tp::Option<syn::TimesClause>,
-}
-
-/// `entangle CATEGORY [tab=X, row=R, col=C]` - activate prompt entanglement
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdEntangle {
-    pub lit: syn::KwEntangle,
-    pub category: syn::Category,
-    pub meta: tp::Option<syn::ItemMeta>,
 }
 
 /// `!set-inventory ITEMS` - set the inventory to the given items (same as `init` in old format)

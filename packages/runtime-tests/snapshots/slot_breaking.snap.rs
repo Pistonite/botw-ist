@@ -86,7 +86,7 @@ game: (Running)
       [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
       [001]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
 
------ Step[5]: !remove all banana 1 pepper
+----- Step[5]: drop all banana 1 pepper
 
 game: (Running)
   screen: (Overworld)
@@ -98,9 +98,11 @@ game: (Running)
         node: (valid=true, pos=416, addr=0x00000022222437a0, prev=0x0000002222243cd0, next=0x0000002222200068, )
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
-  overworld: (len=2, )
+  overworld: (len=4, )
       [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
       [001]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+      [002]: (typ=GroundItem, actor=Item_Fruit_H, despawning=false, )
+      [003]: (typ=GroundItem, actor=Item_Fruit_I, despawning=false, )
 
 ----- Step[6]: !break 2 slots
 
@@ -114,8 +116,10 @@ game: (Running)
         node: (valid=true, pos=416, addr=0x00000022222437a0, prev=0x0000002222243cd0, next=0x0000002222200068, )
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
-  overworld: (len=2, )
+  overworld: (len=4, )
       [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
       [001]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+      [002]: (typ=GroundItem, actor=Item_Fruit_H, despawning=false, )
+      [003]: (typ=GroundItem, actor=Item_Fruit_I, despawning=false, )
 
 }

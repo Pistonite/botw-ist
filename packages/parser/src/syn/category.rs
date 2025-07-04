@@ -1,12 +1,20 @@
-use teleparse::derive_syntax;
+use teleparse::{derive_syntax, tp};
 
 use crate::syn;
 
-/// Category specifier
+/// Category specifier, which is a name and optional meta properties
+#[derive_syntax]
+#[derive(Debug)]
+pub struct Category {
+    pub name: CategoryName,
+    pub meta: tp::Option<syn::ItemMeta>,
+}
+
+/// Category name specifier
 #[derive_syntax]
 #[teleparse(root)]
 #[derive(Debug)]
-pub enum Category {
+pub enum CategoryName {
     Weapon(CatWeapon),
     Bow(CatBow),
     Shield(CatShield),

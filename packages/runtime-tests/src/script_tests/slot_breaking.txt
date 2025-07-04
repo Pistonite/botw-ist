@@ -3,6 +3,6 @@ get 5 apples 2 shroom 1 banana 2 pepper
 sell all apples
 close-dialog
 
-!remove all banana 1 pepper
+drop all banana 1 pepper
 
 !break 2 slots

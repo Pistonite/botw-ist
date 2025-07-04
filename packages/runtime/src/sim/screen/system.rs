@@ -29,6 +29,12 @@ pub struct ScreenSystem {
     /// you can delay this until the dialog is finished to generate
     /// offsets (i.e broken slots)
     remove_held_item_after_dialog: bool,
+
+    /// If pouch screen is in holding mode. This state persists
+    /// even when menu is closed
+    ///
+    /// While holding, you can only hold and unhold in pouch
+    pub holding_in_inventory: bool,
 }
 
 /// Type of the screen and the data they hold
@@ -221,6 +227,9 @@ impl ScreenSystem {
         let drop_items = self.remove_held_item_after_dialog;
         self.remove_held_item_after_dialog = false;
         screen.transition_to_overworld(ctx, overworld, self.menu_overload, drop_items)?;
+        if drop_items {
+            self.holding_in_inventory = false;
+        }
 
         Ok(true)
     }
@@ -234,6 +243,10 @@ impl Screen {
             Screen::Inventory(_) => iv::Screen::Inventory,
             Screen::Shop(_) => iv::Screen::Shop,
         }
+    }
+
+    pub fn is_overworld(&self) -> bool {
+        matches!(self, Screen::Overworld)
     }
 
     pub fn is_inventory_or_overworld(&self) -> bool {

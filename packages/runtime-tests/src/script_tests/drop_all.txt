@@ -1,0 +1,3 @@
+get 6 apple 7 banana 8 shroom 9 pepper 10 durian
+drop all apple all shroom all durian
+drop all but 1 banana all but 5 pepper

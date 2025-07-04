@@ -60,53 +60,77 @@ pub enum RuntimeInitError {
 #[serde(tag = "type", content = "data")]
 pub enum RuntimeError {
     //////////////////////////////////
-    // DO NOT update the enum names
+    // Keep the error names sorted
     // The translation files needs to be updated accordingly!!!
     //////////////////////////////////
-    #[error("the runtime has not been initialized yet, you need to call `Runtime::init`")]
-    Uninitialized,
+    #[error("cannot auto switch screen because screen was switched manually")]
+    CannotAutoSwitchScreen,
+    #[error("cannot do this while holding items in the inventory screen")]
+    CannotDoWhileHoldingInInventory,
+    #[error("cannot do this while holding items in the overworld")]
+    CannotDoWhileHoldingInOverworld,
+    #[error("cannot find this item on the ground")]
+    CannotFindGroundItem,
+    #[error("cannot find this item on the ground (need `{0}` more)")]
+    CannotFindGroundItemNeedMore(usize),
+    #[error("cannot find this item in inventory")]
+    CannotFindItem,
+    #[error("cannot find this item in inventory (need `{0}` more)")]
+    CannotFindItemNeedMore(usize),
+    #[error("cannot find the target item for prompt entanglement")]
+    CannotFindPromptTarget,
+    #[error("cannot hold more items")]
+    CannotHoldMore,
     #[error("game has crashed in this step")]
     Crash,
+    #[error("unexpected executor error")]
+    Executor,
+    #[error("the `all but` syntax did not achieve the desired result")]
+    InaccurateAllBut,
+    #[error("this action cannot be performed on the selected slot")]
+    InvalidItemTarget,
+    #[error("the target item for prompt entanglement cannot be reached")]
+    InvalidPromptTarget,
+    #[error(
+        "the item in the inventory in this position is `{0}`, which does not match the input item `{1}`"
+    )]
+    ItemMismatch(String, String),
+    #[error(
+        "the item in the inventory in this position is `{0}`, which does not match the input category `{1:?}`"
+    )]
+    ItemMismatchCategory(String, crate::parser::cir::Category),
+    #[error("this item cannot be dropped")]
+    NotDroppable,
+    #[error("this requires `{0}` items, but only `{1}` items found")]
+    NotEnoughForAllBut(usize, usize),
+    #[error("this item cannot be held")]
+    NotHoldable,
+    #[error("not holding any items")]
+    NotHolding,
+    #[error("you cannot do this on this screen")]
+    NotRightScreen,
+    #[error("the item `{0}` is not sellable")]
+    NotSellable(String),
+    #[error("this operation cannot be completed due to previous errors")]
+    OperationNotComplete,
+    #[error("cannot specify item position here")]
+    PositionSpecNotAllowed,
     #[error(
         "game has crashed in a previous step and you need to `reload` or `new-game` to continue"
     )]
     PreviousCrash,
-    #[error("unexpected executor error")]
-    Executor,
-    #[error("you are already on this screen so transitioning has no effect")]
-    UselessScreenTransition,
-    #[error("you cannot do this on this screen")]
-    NotRightScreen,
-    #[error("cannot auto switch screen because screen was switched manually")]
-    CannotAutoSwitchScreen,
-    #[error(
-        "the item in the inventory in this position is `{0}`, which does not match the input `{1}`"
-    )]
-    ItemMismatch(String, String),
-    #[error("cannot find this item in inventory")]
-    CannotFindItem,
-    #[error("cannot find this item to sell or item is not sellable")]
-    CannotFindSellableItem,
-    #[error("cannot find this item on the ground")]
-    CannotFindGroundItem,
-    #[error("cannot hold more items")]
-    CannotHoldMore,
-    #[error("cannot do this while holding items in the overworld")]
-    CannotDoWhileHolding,
-    #[error("not holding any items")]
-    NotHolding,
-    // #[error("only materials can be held unless prompt entanglement is in effect")]
-    // CannotHoldNonMaterial,
-    #[error("cannot specify item position here")]
-    PositionSpecNotAllowed,
-    #[error("this meta property is ignored while matching")]
-    UselessItemMatchProp,
+    #[error("the runtime has not been initialized yet, you need to call `Runtime::init`")]
+    Uninitialized,
     #[error(
         "this command or syntax is not implemented yet, please track the development on GitHub"
     )]
     Unimplemented,
+    #[error("this meta property is ignored while matching")]
+    UselessItemMatchProp,
+    #[error("you are already on this screen so transitioning has no effect")]
+    UselessScreenTransition,
     //////////////////////////////////
-    // Add new errors below
+    // Keep the error names sorted
     // The translation files needs to be updated accordingly!!!
     //////////////////////////////////
 }

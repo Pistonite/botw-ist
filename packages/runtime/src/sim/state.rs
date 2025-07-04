@@ -9,7 +9,7 @@ use crate::{exec, sim};
 pub struct State {
     /// Current game state
     pub game: Game,
-    pub args: StateArgs,
+    pub args: Option<Box<StateArgs>>,
     // /// named save data
     // saves: HashMap<String, Arc<gdt::TriggerParam>>,
     // /// The "manual" or "default" save (what is used if a name is not specified when saving)
@@ -25,6 +25,10 @@ pub struct StateArgs {
     pub item_box_pause: bool,
     /// Perform the next operation in the same dialog
     pub same_dialog: bool,
+    /// Disable optimizations that may affect accuracy
+    pub accurately_simulate: bool,
+    /// Target item for PE (item that receives the prompt)
+    pub entangle_target: Option<cir::ItemSelectSpec>,
 }
 
 #[derive(Clone, Default)]
@@ -58,10 +62,30 @@ pub struct GameSystems {
 }
 
 macro_rules! set_arg {
-    ($state:ident, $args:ident, $arg:ident) => {{
-        $args.$arg = true;
-        $state.args = $args;
+    ($state:ident, $args:ident, $arg:ident, $value:expr) => {{
+        $state.args = Some(match $args {
+            None => {
+                let mut x = StateArgs::default();
+                x.$arg = $value;
+                Box::new(x)
+            }
+            Some(mut x) => {
+                x.$arg = $value;
+                x
+            }
+        });
         return Ok(Report::new($state));
+    }};
+}
+
+macro_rules! in_game {
+    ($self:ident, $rt:ident, $cpu:ident, $sys:ident, $errors:ident => $block:block) => {{
+        $self
+            .with_game($rt, async move |game, rt| {
+                rt.execute(move |cpu| cpu.execute_reporting(game, |mut $cpu, $sys, $errors| $block))
+                    .await
+            })
+            .await
     }};
 }
 
@@ -72,19 +96,23 @@ impl State {
         step: &cir::Step,
     ) -> Result<Report<Self>, exec::Error> {
         use cir::Command as X;
-        let mut args = std::mem::take(&mut self.args);
+        let args = std::mem::take(&mut self.args);
         match step.command() {
-            X::CoSmug => set_arg!(self, args, smug),
-            X::CoItemBoxPause => set_arg!(self, args, item_box_pause),
-            X::CoSameDialog => set_arg!(self, args, same_dialog),
+            X::CoSmug => set_arg!(self, args, smug, true),
+            X::CoItemBoxPause => set_arg!(self, args, item_box_pause, true),
+            X::CoSameDialog => set_arg!(self, args, same_dialog, true),
+            X::CoAccuratelySimulate => set_arg!(self, args, accurately_simulate, true),
+            X::CoTargeting(spec) => {
+                set_arg!(self, args, entangle_target, Some(spec.as_ref().clone()))
+            }
 
-            X::Get(items) => self.handle_get(ctx, items, &args).await,
-            X::PickUp(items) => self.handle_pick_up(ctx, items, &args).await,
+            X::Get(items) => self.handle_get(ctx, items, args.as_deref()).await,
+            X::PickUp(items) => self.handle_pick_up(ctx, items, args.as_deref()).await,
             X::OpenInv => self.handle_pause(ctx).await,
             X::CloseInv => self.handle_unpause(ctx).await,
-            X::Hold(items) => self.handle_hold(ctx, items, &args).await,
+            X::Hold(items) => self.handle_hold(ctx, items, args.as_deref()).await,
             X::Unhold => self.handle_unhold(ctx).await,
-            X::Drop(items) => self.handle_drop(ctx, items.as_deref()).await,
+            X::Drop(items) => self.handle_drop(ctx, items, args.as_deref(), false).await,
             X::SuBreak(count) => self.handle_su_break(ctx, *count).await,
             X::SuRemove(items) => self.handle_su_remove(ctx, items).await,
 
@@ -95,104 +123,109 @@ impl State {
         }
     }
 
-    #[rustfmt::skip]
-    async fn handle_get(self, rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSpec], args: &StateArgs,
+    async fn handle_get(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSpec],
+        args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling GET command");
         let items = items.to_vec();
-        let pause = args.item_box_pause;
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-
-            sim::actions::get_items(&mut cpu2, sys, errors, &items, pause)?;
-            sys.overworld.despawn_items();
-            Ok(())
-
-        }) }) .await }) .await
+        let (pause, accurate) = args
+            .map(|args| (args.item_box_pause, args.accurately_simulate))
+            .unwrap_or_default();
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::get_items(&mut cpu, sys, errors, &items, pause, accurate)
+        })
     }
 
-    #[rustfmt::skip]
-    async fn handle_pick_up(self, rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSelectSpec], args: &StateArgs,
+    async fn handle_pick_up(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSelectSpec],
+        args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling PICKUP command");
         let items = items.to_vec();
-        let pause = args.item_box_pause;
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-
-            sim::actions::pick_up_items(&mut cpu2, sys, errors, &items, pause)?;
-            sys.overworld.despawn_items();
-            Ok(())
-
-        }) }) .await }) .await
+        let pause = args.map(|args| args.item_box_pause).unwrap_or_default();
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::pick_up_items(&mut cpu, sys, errors, &items, pause)
+        })
     }
 
-    #[rustfmt::skip]
-    async fn handle_pause(self, rt: sim::Context<&sim::Runtime>) -> Result<Report<Self>, exec::Error> {
+    async fn handle_pause(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling PAUSE command");
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-
-            let _ = sys.screen
-                .transition_to_inventory(&mut cpu2, &mut sys.overworld, true, errors)?;
+        in_game!(self, rt, cpu, sys, errors => {
+            sys.screen.transition_to_inventory(&mut cpu, &mut sys.overworld, true, errors)?;
             Ok(())
-
-        }) }) .await }) .await
+        })
     }
 
-    #[rustfmt::skip]
-    async fn handle_unpause(self, rt: sim::Context<&sim::Runtime>,) -> Result<Report<Self>, exec::Error> {
+    async fn handle_unpause(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling UNPAUSE command");
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-
+        in_game!(self, rt, cpu, sys, errors => {
             if !sys.screen.current_screen().is_inventory() {
-                errors.push(sim_error!(cpu2.span, NotRightScreen));
+                errors.push(sim_error!(cpu.span, NotRightScreen));
                 return Ok(());
             }
             sys.screen.transition_to_overworld(
-                &mut cpu2,
+                &mut cpu,
                 &mut sys.overworld,
                 true,
                 errors,
             )?;
-            sys.overworld.despawn_items();
             Ok(())
-
-        }) }) .await }) .await
+        })
     }
 
-    #[rustfmt::skip]
-    async fn handle_hold(self, rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSelectSpec], args: &StateArgs,
+    async fn handle_hold(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSelectSpec],
+        args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling HOLD command");
-        let smug = args.smug;
+        let (smug, pe_target) = args
+            .map(|x| (x.smug, x.entangle_target.as_ref().cloned()))
+            .unwrap_or_default();
         let items = items.to_vec();
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-            sim::actions::hold_items(&mut cpu2, sys, errors, &items, smug)
-        }) }) .await }) .await
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::hold_items(&mut cpu, sys, errors, &items, pe_target.as_ref(), smug)
+        })
     }
 
-    #[rustfmt::skip]
-    async fn handle_unhold(self, rt: sim::Context<&sim::Runtime>) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling HOLD command");
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-            sim::actions::unhold(&mut cpu2, sys, errors)
-        }) }) .await }) .await
+    async fn handle_unhold(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("Handling UNHOLD command");
+        in_game!(self, rt, cpu, sys, errors => {
+            if sys.screen.current_screen().is_overworld() {
+                sys.overworld.despawn_items();
+            }
+            sim::actions::unhold(&mut cpu, sys, errors)
+        })
     }
 
     #[rustfmt::skip]
     async fn handle_drop(self, rt: sim::Context<&sim::Runtime>,
-        items: Option<&[cir::ItemSelectSpec]>,
+        items: &[cir::ItemSelectSpec],
+        args: Option<&StateArgs>,
+        pick_up: bool
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling DROP command");
-        let items = items.map(|x| x.to_vec());
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-            if let Some(items) = items {
-                sim::actions::hold_items(&mut cpu2, sys, errors, &items, false)?;
-            }
-            sys.overworld.despawn_items();
-            sim::actions::drop_held(&mut cpu2, sys, errors)
-        }) }) .await }) .await
+        let pe_target = args.map(|x| x.entangle_target.as_ref().cloned())
+            .unwrap_or_default();
+        let items = items.to_vec();
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::drop_items(&mut cpu, sys, errors, &items, pe_target.as_ref(), pick_up, false)
+        })
     }
 
     #[rustfmt::skip]
