@@ -181,6 +181,7 @@ parser.InvalidEquipmentSlotNum: "`{{num}}` n'est pas un nombre de slots valide p
 parser.InvalidInventoryCol: "Le numéro de colonne de l'inventaire doit être compris entre 1 et 5 (inclus), obtenu: {{arg}}"
 parser.InvalidInventoryRow: "Le numéro de ligne de l'inventaire doit être compris entre 1 et 4 (inclus), obtenu: {{arg}}"
 parser.InvalidItem: "Objet invalide: `{{arg}}`"
+parser.InvalidItemAmount: "Ce n'est pas une quantité d'objet valide."
 parser.InvalidMetaValue: "`{{value}}` n'est pas une valeur valide pour la propriété `{{key}}`"
 parser.InvalidSlot: "`{{arg}}` n'est pas un spécificateur de slot d'objet valide"
 parser.InvalidStringLength: "La longueur maximale autorisée pour la chaîne est {0} dans ce contexte"

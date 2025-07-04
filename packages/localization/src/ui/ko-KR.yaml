@@ -181,6 +181,7 @@ parser.InvalidEquipmentSlotNum: "`{{num}}` 은(는) `{{category}}` 카테고리�
 parser.InvalidInventoryCol: "인벤토리 열 번호는 1에서 5(포함) 사이여야 합니다. 입력값: {{arg}}"
 parser.InvalidInventoryRow: "인벤토리 행 번호는 1에서 4(포함) 사이여야 합니다. 입력값: {{arg}}"
 parser.InvalidItem: "유효하지 않은 아이템: `{{arg}}`"
+parser.InvalidItemAmount: "유효한 아이템 수량이 아닙니다."
 parser.InvalidMetaValue: "`{{value}}` 은(는) `{{key}}` 속성의 유효한 값이 아닙니다"
 parser.InvalidSlot: "`{{arg}}` 은(는) 유효한 아이템 슬롯 지정자가 아닙니다"
 parser.InvalidStringLength: "이 컨텍스트에서 문자열의 최대 허용 길이는 {0} 입니다"

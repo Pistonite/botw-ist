@@ -76,22 +76,22 @@ export const translateRuntimeError = (
 ): string => {
     const key = `runtime_error.${error.type}`;
     switch (error.type) {
-        case "CannotFindItemNeedMore": 
+        case "CannotFindItemNeedMore":
         case "CannotFindGroundItemNeedMore": {
             const more = error.data;
             return translator(key, { more });
         }
         case "ItemMismatch": {
             const [actual, expected] = error.data;
-            return translator(key, { 
-                actual_item: translateActorOrAsIs(actual), 
-                expected_item: translateActorOrAsIs(expected)
+            return translator(key, {
+                actual_item: translateActorOrAsIs(actual),
+                expected_item: translateActorOrAsIs(expected),
             });
         }
         case "ItemMismatchCategory": {
             const [actual, expected] = error.data;
-            return translator(key, { 
-                actual_item: translateActorOrAsIs(actual), 
+            return translator(key, {
+                actual_item: translateActorOrAsIs(actual),
                 expected_category: translateCategory(expected),
             });
         }

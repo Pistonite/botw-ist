@@ -181,6 +181,7 @@ parser.InvalidEquipmentSlotNum: "`{{num}}` is not a valid number of slots for ca
 parser.InvalidInventoryCol: "Inventory column number must be between 1 and 5 (inclusive), got: {{arg}}"
 parser.InvalidInventoryRow: "Inventory row number must be between 1 and 4 (inclusive), got: {{arg}}"
 parser.InvalidItem: "Invalid item: `{{arg}}`"
+parser.InvalidItemAmount: "This is not a valid item amount."
 parser.InvalidMetaValue: "`{{value}}` is not a valid value for property `{{key}}`"
 parser.InvalidSlot: "`{{arg}}` is not a valid item slot specifier"
 parser.InvalidStringLength: "The maximum length allowed for the string is {{arg}} in this context"

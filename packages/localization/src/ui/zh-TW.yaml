@@ -181,6 +181,7 @@ parser.InvalidEquipmentSlotNum: "`{{category}}` 類別不能有 `{{num}}` 個格
 parser.InvalidInventoryCol: "欄數必須在1-5之間（包含），輸入的是: {{arg}}"
 parser.InvalidInventoryRow: "列數必須在1-4之間（包含），輸入的是: {{arg}}"
 parser.InvalidItem: "未找到符合 `{{arg}}` 的物品"
+parser.InvalidItemAmount: "無效數量。"
 parser.InvalidMetaValue: "`{{value}}` 不是 `{{key}}` 屬性的有效值"
 parser.InvalidSlot: "`{{arg}}` 不是一個格子序號"
 parser.InvalidStringLength: "這裡字串最長長度為 {0} 位元組"

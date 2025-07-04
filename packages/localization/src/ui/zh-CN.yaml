@@ -181,6 +181,7 @@ parser.InvalidEquipmentSlotNum: "`{{category}}` 类型不能有 `{{num}}` 个格
 parser.InvalidInventoryCol: "列数必须在1-5之间（包含），输入的是: {{arg}}"
 parser.InvalidInventoryRow: "行数必须在1-5之间（包含），输入的是: {{arg}}"
 parser.InvalidItem: "未找到符合 `{{arg}}` 的物品"
+parser.InvalidItemAmount: "无效数量."
 parser.InvalidMetaValue: "`{{value}}` 不是 `{{key}}` 属性的有效值"
 parser.InvalidSlot: "`{{arg}}` 不是一个格子序号"
 parser.InvalidStringLength: "这里字符串最长长度为 {0} 字节"

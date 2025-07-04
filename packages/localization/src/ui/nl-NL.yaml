@@ -181,6 +181,7 @@ parser.InvalidEquipmentSlotNum: "`{{num}}` is geen geldig aantal slots voor cate
 parser.InvalidInventoryCol: "Het inventariskolomnummer moet tussen 1 en 5 (inclusief) liggen, gekregen: {{arg}}"
 parser.InvalidInventoryRow: "Het inventarisrijnummer moet tussen 1 en 4 (inclusief) liggen, gekregen: {{arg}}"
 parser.InvalidItem: "Ongeldig item: `{{arg}}`"
+parser.InvalidItemAmount: "Dit is geen geldige itemhoeveelheid."
 parser.InvalidMetaValue: "`{{value}}` is geen geldige waarde voor eigenschap `{{key}}`"
 parser.InvalidSlot: "`{{arg}}` is geen geldige itemslot-specificatie"
 parser.InvalidStringLength: "De maximaal toegestane lengte voor de string is {0} in deze context"

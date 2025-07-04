@@ -181,6 +181,7 @@ parser.InvalidEquipmentSlotNum: "`{{num}}` はカテゴリ `{{category}}` の有
 parser.InvalidInventoryCol: "インベントリの列番号は1から5（含む）である必要があります。入力値: {{arg}}"
 parser.InvalidInventoryRow: "インベントリの行番号は1から4（含む）である必要があります。入力値: {{arg}}"
 parser.InvalidItem: "無効なアイテム: `{{arg}}`"
+parser.InvalidItemAmount: "アイテムの数量が有効ではありません。"
 parser.InvalidMetaValue: "`{{value}}` はプロパティ `{{key}}` の有効な値ではありません"
 parser.InvalidSlot: "`{{arg}}` は有効なアイテムスロット指定子ではありません"
 parser.InvalidStringLength: "このコンテキストで許可される文字列の最大長は {0} です"
