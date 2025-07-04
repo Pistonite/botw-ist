@@ -38,4 +38,9 @@ export type InvView_PouchList = {
      * Type of the screen currently on
      */
     screen: InvView_Screen;
+    /**
+     * If the player is in holding state in the inventory screen,
+     * note this can be true even if inventory screen is off
+     */
+    isHoldingInInventory: boolean;
 };

@@ -84,6 +84,8 @@ main.tabbed_inventory.button_tooltip: "목록/탭 보기 전환"
 main.view_crash_report: "충돌 보고서를 보려면 여기를 클릭하세요."
 main.view_crash_report.desc: "문제를 보고할 때 충돌 보고서를 포함해 주세요."
 main.visible_inventory.desc: "인벤토리를 열었을 때 보이는 아이템"
+main.visible_inventory.holding.desc: "인벤토리에서 아이템을 들고 있습니다. 특정 작업은 이 시점에서 불가능합니다."
+main.visible_inventory.mcount.desc: "목록 변수에 저장된 인벤토리 아이템의 수입니다."
 main.visible_inventory.title: "표시 인벤토리"
 main.visible_inventory.view_error: "인벤토리를 표시할 수 없습니다!"
 

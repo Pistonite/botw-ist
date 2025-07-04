@@ -53,7 +53,7 @@ export const ScreenIndicator: React.FC<ScreenIndicatorProps> = ({ screen }) => {
                 icon={icon}
                 appearance={
                     screenReal !== "none" && screenReal !== "overworld"
-                        ? "primary"
+                        ? "secondary"
                         : "transparent"
                 }
             />

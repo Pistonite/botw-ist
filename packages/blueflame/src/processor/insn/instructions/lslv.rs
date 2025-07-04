@@ -24,7 +24,7 @@ impl ExecutableInstruction for InsnLslv {
     }
 }
 
-pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error> {
     if d.mnemonic != Mnemonic::lslv {
         return Ok(None);
     }

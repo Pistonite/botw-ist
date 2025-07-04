@@ -87,7 +87,15 @@ fn fmt_iv_pouch(
         let count = pouch.count;
         let are_tabs_valid = pouch.are_tabs_valid;
         let num_tabs = pouch.num_tabs;
-        write_snapshot_ln!(f, "  pouch", count, are_tabs_valid, num_tabs)?;
+        let holding_in_inventory = pouch.is_holding_in_inventory;
+        write_snapshot_ln!(
+            f,
+            "  pouch",
+            count,
+            are_tabs_valid,
+            num_tabs,
+            holding_in_inventory
+        )?;
     }
     {
         let len = pouch.items.len();

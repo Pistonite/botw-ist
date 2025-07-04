@@ -1,12 +1,16 @@
 import { memo, useMemo } from "react";
 import {
     makeStyles,
+    Text,
     Tooltip,
-    ToggleButton,
     Button,
     Link,
 } from "@fluentui/react-components";
-import { Grid20Regular, Info20Regular } from "@fluentui/react-icons";
+import {
+    Grid20Regular,
+    HandMultiple20Regular,
+    Info20Regular,
+} from "@fluentui/react-icons";
 import { useSwappedWheelScrollDirection } from "@pistonite/shared-controls";
 
 import {
@@ -65,6 +69,13 @@ const useStyles = makeStyles({
         gap: "4px",
         backgroundColor: "#00000044",
         borderRadius: "4px",
+    },
+
+    toolbarDivider: {
+        width: "4px",
+        height: "20px",
+        marginRight: "4px",
+        borderRight: "1px solid #888",
     },
 
     overworldScroll: {
@@ -132,19 +143,51 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                 <ScreenIndicator screen={pouch?.val?.screen} />
                 <Tooltip
                     relationship="label"
+                    content={t("main.visible_inventory.mcount.desc")}
+                    withArrow
+                    positioning="below"
+                >
+                    <Button
+                        icon={
+                            <Text font="monospace" size={400}>
+                                {pouch?.val?.count ?? "??"}
+                            </Text>
+                        }
+                        appearance={
+                            (pouch?.val?.count || 0) > 0
+                                ? "secondary"
+                                : "transparent"
+                        }
+                    />
+                </Tooltip>
+                <Tooltip
+                    relationship="label"
                     content={t("main.tabbed_inventory.button_tooltip")}
                     withArrow
                     positioning="below"
                 >
-                    <ToggleButton
-                        checked={isTabView}
+                    <Button
                         onClick={() => {
                             setTabView(!isTabView);
                         }}
                         icon={<Grid20Regular />}
-                        appearance={isTabView ? "primary" : "transparent"}
+                        appearance={isTabView ? "secondary" : "transparent"}
                     />
                 </Tooltip>
+                <div className={c.toolbarDivider} />
+                {pouch?.val?.isHoldingInInventory && (
+                    <Tooltip
+                        relationship="label"
+                        content={t("main.visible_inventory.holding.desc")}
+                        withArrow
+                        positioning="below"
+                    >
+                        <Button
+                            shape="circular"
+                            icon={<HandMultiple20Regular />}
+                        />
+                    </Tooltip>
+                )}
             </div>
         </InventoryTitle>
     );

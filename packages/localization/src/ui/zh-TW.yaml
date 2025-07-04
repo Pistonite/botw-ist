@@ -84,6 +84,8 @@ main.tabbed_inventory.button_tooltip: "切換清單/分頁檢視"
 main.view_crash_report: "點擊此處查看崩潰報告。"
 main.view_crash_report.desc: "提交問題時請提供此報告。"
 main.visible_inventory.desc: "當你打開背包時所看到的物品"
+main.visible_inventory.holding.desc: "正在背包中手持物品。某些操作可能無法執行。"
+main.visible_inventory.mcount.desc: "儲存於列表變數中的物品數量。"
 main.visible_inventory.title: "可見背包"
 main.visible_inventory.view_error: "無法顯示物品欄！"
 

@@ -25,7 +25,7 @@ impl ExecutableInstruction for InsnLdarb {
     }
 }
 
-pub fn parse(d: &Opcode) -> Result<Option<Box<(dyn ExecutableInstruction)>>, Error> {
+pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error> {
     if d.mnemonic != Mnemonic::ldarb {
         return Ok(None);
     }

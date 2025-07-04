@@ -32,6 +32,9 @@ mod __impl {
         pub tabs: Vec<InvView_PouchTab>,
         /// Type of the screen currently on
         pub screen: InvView_Screen,
+        /// If the player is in holding state in the inventory screen,
+        /// note this can be true even if inventory screen is off
+        pub is_holding_in_inventory: bool,
     }
 
     impl Default for InvView_PouchList {
@@ -43,6 +46,7 @@ mod __impl {
                 num_tabs: 0,
                 tabs: vec![],
                 screen: InvView_Screen::default(),
+                is_holding_in_inventory: false,
             }
         }
     }

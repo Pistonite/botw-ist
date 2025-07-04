@@ -84,6 +84,8 @@ main.tabbed_inventory.button_tooltip: "切换列表/页面显示"
 main.view_crash_report: "点击此处查看崩溃报告."
 main.view_crash_report.desc: "提交问题时请提供该报告."
 main.visible_inventory.desc: "当你打开背包时所看见的物品"
+main.visible_inventory.holding.desc: "正在背包中手持物品. 某些操作可能无法执行."
+main.visible_inventory.mcount.desc: "储存于列表变量中的物品数量."
 main.visible_inventory.title: "可视背包"
 main.visible_inventory.view_error: "无法显示背包！"
 
