@@ -124,6 +124,7 @@ pub enum ItemWord {
     KwWeaponSlots(syn::KwWeaponSlots),
     KwShieldSlots(syn::KwShieldSlots),
     KwBowSlots(syn::KwBowSlots),
+    KwTargeting(syn::KwTargeting),
 }
 
 /// Value after the key in an item's metadata specifier

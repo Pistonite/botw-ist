@@ -51,7 +51,12 @@ pub fn get_items(
         let modifier = sim::util::modifier_from_meta(meta);
         let meta_value = meta.and_then(|m| m.value);
 
-        let can_optimize = !accurate && meta_value.is_none() && game::can_stack(name);
+        let can_optimize = !accurate 
+        && meta_value.is_none() 
+        && game::can_stack(name) 
+        // cannot optimize arrow, since it needs to be auto-equipped using the non value get call
+        // (this can be improved if we manually check auto-equip)
+        && game::get_pouch_item_type(name) != 2;
         if can_optimize {
             // optimize into one call with a value
             linker::get_item(ctx.cpu(), name, Some(amount as i32), modifier)?;

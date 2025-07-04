@@ -82,6 +82,10 @@ export const convertCookEffectToSpecialStatus = (
 export const getItemTypeAndUse = (
     actorName: string,
 ): [PouchItemType, PouchItemUse] => {
+    const isArrow = getActorParam(actorName, "isArrow");
+    if (isArrow) {
+        return [PouchItemType.Arrow, PouchItemUse.Item];
+    }
     const profile = getActorParam(actorName, "profile");
     switch (profile) {
         case "WeaponSmallSword":
@@ -100,6 +104,8 @@ export const getItemTypeAndUse = (
             return [PouchItemType.ArmorUpper, PouchItemUse.ArmorUpper];
         case "ArmorLower":
             return [PouchItemType.ArmorLower, PouchItemUse.ArmorLower];
+        case "HouseReins":
+            return [PouchItemType.KeyItem, PouchItemUse.Item];
     }
 
     // port for hasTag(CookResult) and hasTag(RoastItem) since we don't extract

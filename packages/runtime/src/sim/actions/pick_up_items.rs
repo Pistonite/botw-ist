@@ -1,14 +1,14 @@
-
-use blueflame::game::{self, singleton_instance};
 use blueflame::linker;
-use blueflame::memory::{Ptr, mem};
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 
-use crate::error::{ErrorReport, sim_error, sim_warning};
+use crate::error::{ErrorReport, sim_error};
 use crate::sim;
 
-use super::{switch_to_overworld_or_stop, predrop_items, handle_predrop_result, convert_amount, NoLongerFound};
+use super::{
+    ItemSelectCheck, convert_amount, handle_predrop_result, predrop_items,
+    switch_to_overworld_or_stop,
+};
 
 /// Pick up items from the ground (overworld)
 pub fn pick_up_items(
@@ -24,7 +24,9 @@ pub fn pick_up_items(
     'outer: for item in items {
         let name = &item.name;
         let meta = item.meta.as_ref();
-        let mut remaining = convert_amount(item.amount, item.span, errors, || sys.overworld.get_ground_amount(name, meta));
+        let mut remaining = convert_amount(item.amount, item.span, errors, false, || {
+            Ok(sys.overworld.get_ground_amount(name, meta))
+        })?;
         loop {
             if ctx.is_aborted() {
                 break 'outer;
@@ -42,16 +44,18 @@ pub fn pick_up_items(
             // TODO: cannotGetItem check?
             let actor = handle.remove();
             linker::get_item(ctx.cpu(), &actor.name, Some(actor.value), actor.modifier)?;
-            remaining.decrement();
+            remaining.sub(1);
         }
-        match remaining.check(item.span, errors, || sys.overworld.get_ground_amount(name, meta)) {
-            NoLongerFound::NeverFound => {
+        match remaining.check(item.span, errors, || {
+            Ok(sys.overworld.get_ground_amount(name, meta))
+        })? {
+            ItemSelectCheck::NeverFound => {
                 errors.push(sim_error!(item.span, CannotFindGroundItem));
-            },
-            NoLongerFound::NeedMore(n) => {
+            }
+            ItemSelectCheck::NeedMore(n) => {
                 errors.push(sim_error!(item.span, CannotFindGroundItemNeedMore(n)));
-            },
-            _ => {},
+            }
+            _ => {}
         }
     }
     handle_predrop_result(ctx, sys, errors, pause_after, should_drop, "PICKUP")?;

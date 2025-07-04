@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use blueflame::game::{self, WeaponModifierInfo};
+use blueflame::game::WeaponModifierInfo;
 use skybook_parser::cir;
 use teleparse::Span;
 
@@ -101,7 +101,7 @@ impl OverworldSystem {
             return OverworldPreDropResult::Ok;
         }
         if !self.is_hold_attached {
-            errors.push(sim_error!(span, CannotDoWhileHolding));
+            errors.push(sim_error!(span, CannotDoWhileHoldingInOverworld));
             return OverworldPreDropResult::Holding;
         }
         // perform auto-drop
@@ -252,18 +252,18 @@ impl OverworldSystem {
         count
     }
 
-    #[inline(always)]
-    fn iter_ground_items_matching_category(&self, category: cir::Category) -> 
-    impl Iterator<Item = (GroundItemHandle<()>, &OverworldActor)> {
-        self.iter_ground_items().filter(move |(_, item)| {
-            let Some(item_category) =
-            sim::util::item_type_to_category(game::get_pouch_item_type(&item.name))
-            else {
-                return false;
-            };
-            item_category == category
-        })
-    }
+    // #[inline(always)]
+    // fn iter_ground_items_matching_category(&self, category: cir::Category) -> 
+    // impl Iterator<Item = (GroundItemHandle<()>, &OverworldActor)> {
+    //     self.iter_ground_items().filter(move |(_, item)| {
+    //         let Some(item_category) =
+    //         sim::util::item_type_to_category(game::get_pouch_item_type(&item.name))
+    //         else {
+    //             return false;
+    //         };
+    //         item_category == category
+    //     })
+    // }
 
     #[inline(always)]
     fn iter_ground_items(&self) -> 

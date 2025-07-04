@@ -33,6 +33,61 @@ pub fn is_animated_icon_actor(actor: &str) -> bool {
     )
 }
 
+pub fn name_spec_is_weapon(spec: &cir::ItemNameSpec) -> bool {
+    let category = match spec {
+        cir::ItemNameSpec::Actor(actor) => {
+            let Some(category) = item_type_to_category(game::get_pouch_item_type(actor)) else {
+                return false;
+            };
+            category
+        },
+        cir::ItemNameSpec::Category(category) => *category,
+    };
+
+    matches!(category, cir::Category::Weapon | cir::Category::Bow
+    | cir::Category::Shield)
+}
+
+/// Check if the item can use the drop prompt
+pub fn name_spec_can_drop(spec: &cir::ItemNameSpec) -> bool {
+    let category = match spec {
+        cir::ItemNameSpec::Actor(actor) => {
+            match actor.as_str() {
+                "Weapon_Sword_070"
+                |
+                "Weapon_Sword_080"
+                |
+                "Weapon_Sword_081"
+                |
+                "Weapon_Sword_502" |
+                "Weapon_Bow_071" => return false,
+                _ => {
+                    let Some(category) = item_type_to_category(game::get_pouch_item_type(actor)) else {
+                        return false;
+                    };
+                    category
+                }
+            }
+        },
+        cir::ItemNameSpec::Category(category) => *category,
+    };
+
+    matches!(category, cir::Category::Weapon | cir::Category::Bow
+    | cir::Category::Shield | cir::Category::Material)
+}
+
+/// Check if items matched by the name could possibly be stackable
+pub fn name_spec_could_stack(spec: &cir::ItemNameSpec) -> bool {
+    match spec {
+        cir::ItemNameSpec::Actor(name) => game::can_stack(name),
+        cir::ItemNameSpec::Category(category) => matches!(
+        category,
+            cir::Category::Armor | cir::Category::Material
+            | cir::Category::Food | cir::Category::KeyItem
+    )
+    }
+}
+
 /// Check if the item name matches the item name spec
 pub fn name_spec_matches(spec: &cir::ItemNameSpec, name: &str) -> bool {
     match spec {
@@ -143,3 +198,24 @@ impl CountingMethod {
         }
     }
 }
+
+// pub struct PeTarget {
+//     pub tab: usize,
+//     pub slot: usize,
+//     /// Behavior if the slot is empty
+//     pub empty_behavior: PeBehavior,
+//     /// Behavior if the slot is translucent
+//     pub translucent_behavior: PeBehavior,
+// }
+//
+//
+// /// Behavior of PE when targeting empty or translucent slot
+// #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+// pub enum PeBehavior {
+//     /// doesn't do anything
+//     None,
+//     /// Targets the first slot instead
+//     First,
+//     /// Targets the slot anyway
+//     Force,
+// }

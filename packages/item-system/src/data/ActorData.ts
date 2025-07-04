@@ -18,6 +18,9 @@ export const DefaultActorData = {
     /** Whether the item not is sellable (has CannotSell tag) */
     cannotSell: false as boolean,
 
+    /** Whether the item as the Arrow tag */
+    isArrow: false as boolean,
+
     /** Whether the item has the CureItem tag */
     isCureItem: false as boolean,
 

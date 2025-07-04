@@ -52,18 +52,14 @@ impl ShopScreen {
                     let item_type = *(&curr_item_ptr->mType);
                 };
 
-                // If item is not in inventory (i.e. translucent)
-                // it is disabled, and not sellable, so we can
-                // just not include it in the screen
-                if in_inventory {
-                    let item_name = Ptr!(&curr_item_ptr->mName).cstr(m)?.load_utf8_lossy(m)?;
-                    tab.push(Some(sim::ScreenItem {
-                        equipped,
-                        ptr: curr_item_ptr,
-                        name: item_name,
-                        category: sim::util::item_type_to_category(item_type),
-                    }));
-                }
+                let item_name = Ptr!(&curr_item_ptr->mName).cstr(m)?.load_utf8_lossy(m)?;
+                tab.push(Some(sim::ScreenItem {
+                    equipped,
+                    in_inventory,
+                    ptr: curr_item_ptr,
+                    name: item_name,
+                    category: sim::util::item_type_to_category(item_type),
+                }));
 
                 // advance to next item
                 mem! { m:

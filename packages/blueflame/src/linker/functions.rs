@@ -123,6 +123,15 @@ pub fn get_item_with_value(
     Ok(())
 }
 
+/// Call `uking::ui::PauseMenuDataMgr::autoEquipLastAddedItem()`
+pub fn equip_last_added_item(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu: x[0] = this_ptr, };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x00970264)
+}
+
 /// `uking::ui::PauseMenuDataMgr::updateEquippedItemArray`
 ///
 /// This is re-implemented since it's inlined in 1.6 (0x1203fec)

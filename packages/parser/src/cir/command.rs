@@ -74,7 +74,7 @@ pub enum Command {
     /// `unhold`
     Unhold,
     /// See [`syn::CmdDrop`] - Items are additional items to hold before dropping
-    Drop(Option<Vec<cir::ItemSelectSpec>>),
+    Drop(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdDnp`]
     Dnp(Vec<cir::ItemSelectSpec>),
     /// `cook` - Cook held items. See [`syn::CmdCook`]
@@ -100,6 +100,11 @@ pub enum Command {
     /// returning to overworld
     CoSameDialog,
 
+    /// See [`syn::CmdEntangle`]
+    Entangle(Box<cir::ItemSelectSpec>),
+    /// See [`syn::CmdTargeting`]
+    CoTargeting(Box<cir::ItemSelectSpec>),
+
     /// See [`syn::CmdEat`]
     Eat(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdEquip`]
@@ -117,8 +122,6 @@ pub enum Command {
 
     /// See [`syn::CmdUnequip`]
     Sort(cir::CategorySpec),
-    /// See [`syn::CmdEntangle`]
-    Entangle(cir::CategorySpec),
     /// See [`syn::CmdSetInventory`]
     SetInventory(Vec<cir::ItemSpec>),
     /// See [`syn::CmdSetGamedata`]
@@ -169,6 +172,15 @@ impl Command {
     }
 }
 
+macro_rules! A {
+    ($ident:ident (_) ) => {
+        syn::Command::Annotation(syn::AnnotationCommand { annotation: syn::Annotation::$ident(_), .. })
+    };
+    ($ident:ident ($($arg:tt)* ) ) => {
+        syn::Command::Annotation(syn::AnnotationCommand { annotation: syn::Annotation::$ident($($arg)*), .. })
+    };
+}
+
 pub async fn parse_command<R: QuotedItemResolver>(
     command: &syn::Command,
     resolver: &R,
@@ -177,22 +189,25 @@ pub async fn parse_command<R: QuotedItemResolver>(
     use cir::Command as X;
     use syn::Command as C;
     match command {
+        A![AccuratelySimulate(_)] => Some(X::CoAccuratelySimulate),
         C::Get(cmd) => Some(X::Get(
             cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
         )),
         C::PickUp(cmd) => Some(X::PickUp(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
+        A![ItemBoxPause(_)] => Some(X::CoItemBoxPause),
         //////////////////////////////////////////////////////////////////
         C::OpenInv(_) => Some(X::OpenInv),
         C::CloseInv(_) => Some(X::CloseInv),
+        A![Smug(_)] => Some(X::CoSmug),
         C::Hold(cmd) => Some(X::Hold(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         C::Unhold(_) => Some(X::Unhold),
         C::Drop(cmd) => Some(X::Drop(match cmd.items.as_ref() {
-            Some(items) => Some(cir::parse_item_list_constrained(items, resolver, errors).await),
-            None => None,
+            Some(items) => cir::parse_item_list_constrained(items, resolver, errors).await,
+            None => vec![],
         })),
         C::Dnp(cmd) => Some(X::Dnp(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
@@ -220,16 +235,28 @@ pub async fn parse_command<R: QuotedItemResolver>(
         C::Sell(cmd) => Some(X::Sell(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
+        A![SameDialog(_)] => Some(X::CoSameDialog),
+        //////////////////////////////////////////////////////////////////
+        C::Entangle(cmd) => {
+            let (name, meta) = cir::parse_item_or_category(&cmd.item, resolver, errors).await?;
+            let item = cir::ItemSelectSpec { name, meta, amount: cir::AmountSpec::Num(1), span: cmd.item.span()};
+            Some(X::Entangle(Box::new(item)))
+        },
+        A![Targeting(cmd)] => {
+            let (name, meta) = cir::parse_item_or_category(&cmd.item, resolver, errors).await?;
+            let item = cir::ItemSelectSpec { name, meta, amount: cir::AmountSpec::Num(1), span: cmd.item.span()};
+            Some(X::CoTargeting(Box::new(item)))
+        }
         //////////////////////////////////////////////////////////////////
         syn::Command::Eat(cmd) => Some(cir::Command::Eat(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         // TODO
-        syn::Command::Equip(cmd) => None,
+        syn::Command::Equip(_cmd) => None,
         // Some(cir::Command::Equip(Box::new(
         //     cir::parse_item_or_category(&cmd.item, resolver, errors).await?,
         // ))),
-        syn::Command::Unequip(cmd) => None,
+        syn::Command::Unequip(_cmd) => None,
         // Some(cir::Command::Unequip(
         //     Box::new(cir::parse_item_or_category(&cmd.item, resolver, errors).await?),
         //     cmd.all.is_some(),
@@ -280,11 +307,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
                 }
             }
         }
-        syn::Command::Entangle(cmd) => Some(cir::Command::Entangle(cir::parse_entangle_meta(
-            &cmd.category,
-            cmd.meta.as_ref(),
-            errors,
-        ))),
         syn::Command::SetInventory(cmd) => Some(cir::Command::SetInventory(
             cir::parse_item_list_finite_optional(&cmd.items, resolver, errors).await,
         )),
@@ -292,8 +314,8 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cir::parse_item_list_finite_optional(&cmd.items, resolver, errors).await,
         )),
         syn::Command::Write(cmd) => {
-            let meta = cir::ItemMeta::parse_syn(&cmd.props, errors);
-            let item = cir::parse_item_or_category(&cmd.item, resolver, errors).await?;
+            let _meta = cir::ItemMeta::parse_syn(&cmd.props, errors);
+            let _item = cir::parse_item_or_category(&cmd.item, resolver, errors).await?;
             // TODO
             None
             // Some(cir::Command::Write(Box::new(meta), Box::new(item)))
@@ -379,22 +401,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             Some(cir::Command::SetGdt(flag_name, Box::new(gdt_value)))
         }
 
-        C::Annotation(cmd) => parse_annotation(&cmd.annotation, errors),
-    }
-}
-
-pub fn parse_annotation(
-    annotation: &syn::Annotation,
-    errors: &mut Vec<ErrorReport>,
-) -> Option<cir::Command> {
-    use cir::Command as X;
-    use syn::Annotation as A;
-    match annotation {
-        A::Smug(_) => Some(X::CoSmug),
-        A::ItemBoxPause(_) => Some(X::CoItemBoxPause),
-        A::SameDialog(_) => Some(X::CoSameDialog),
-        A::AccuratelySimulate(_) => Some(X::CoAccuratelySimulate),
-        A::WeaponSlots(cmd) => {
+        A![WeaponSlots(cmd)] => {
             let slots = absorb_error(
                 errors,
                 cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
@@ -408,7 +415,7 @@ pub fn parse_annotation(
             }
             Some(X::set_gdt_s32("WeaponPorchStockNum", slots))
         }
-        A::BowSlots(cmd) => {
+        A![BowSlots(cmd)] => {
             let slots = absorb_error(
                 errors,
                 cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
@@ -422,7 +429,7 @@ pub fn parse_annotation(
             }
             Some(X::set_gdt_s32("BowPorchStockNum", slots))
         }
-        A::ShieldSlots(cmd) => {
+        A![ShieldSlots(cmd)] => {
             let slots = absorb_error(
                 errors,
                 cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
@@ -438,3 +445,4 @@ pub fn parse_annotation(
         }
     }
 }
+

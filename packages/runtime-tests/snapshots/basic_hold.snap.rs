@@ -3,6 +3,11 @@
 
 x!{ SKYBOOK RUNTIME SNAPSHOT V1
 
+runtime error: : this item cannot be held
+  span: 93..103
+-----
+fire-arrow
+-----
 =====
 
 ----- Step[0]: get 2 apple 3 pepper
@@ -113,7 +118,7 @@ game: (Running)
   screen: (Inventory)
   pouch: (count=3, are_tabs_valid=true, num_tabs=2, )
     items: (len=3, )
-      [000]: (actor_name=FireArrow, value=1, is_equipped=true, item_type=Arrow, item_use=Item, tab_idx=0, tab_slot=5, )
+      [000]: (actor_name=FireArrow, value=2, is_equipped=true, item_type=Arrow, item_use=Item, tab_idx=0, tab_slot=5, )
         node: (valid=true, pos=417, addr=0x0000002222243a38, prev=0x0000002222200068, next=0x0000002222243f68, )
       [001]: (actor_name=Item_Fruit_A, value=1, is_equipped=false, item_type=Material, item_use=CureItem, tab_idx=1, tab_slot=0, )
         node: (valid=true, pos=419, addr=0x0000002222243f68, prev=0x0000002222243a38, next=0x0000002222243cd0, )

@@ -1,4 +1,4 @@
-use blueflame::linker;
+use blueflame::{linker, memory};
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 use teleparse::Span;
@@ -15,6 +15,27 @@ macro_rules! switch_to_overworld_or_stop {
     };
 }
 pub(crate) use switch_to_overworld_or_stop;
+
+macro_rules! switch_to_inventory_or_stop {
+    ($ctx:ident, $sys:ident, $errors:ident, $command:literal) => {
+        if !$sys.screen.transition_to_inventory($ctx, &mut $sys.overworld, false, $errors)? {
+            log::warn!("failed to auto-switch to inventory for {} command", $command);
+            return Ok(());
+        }
+    };
+}
+pub(crate) use switch_to_inventory_or_stop;
+
+macro_rules! check_not_holding_in_inventory {
+    ($ctx:ident, $sys:ident, $errors:ident, $command:literal) => {
+        if $sys.screen.holding_in_inventory {
+            log::warn!("cannot perform {} command while holding in inventory", $command);
+            $errors.push($crate::error::sim_error!($ctx.span, CannotDoWhileHoldingInInventory));
+            return Ok(());
+        }
+    };
+}
+pub(crate) use check_not_holding_in_inventory;
 
 macro_rules! predrop_items {
     ($ctx:ident, $sys:ident, $errors:ident, $command:literal) => {
@@ -50,42 +71,64 @@ pub fn handle_predrop_result(
         }
     } else if should_drop {
         log::debug!("removing held items on auto-drop cleanup after {} command", command);
-        linker::remove_held_items(ctx.cpu())?;
-        sys.overworld.drop_held_items();
+        drop_held_items(ctx, sys, command)?;
     }
 
     Ok(())
 }
 
+pub fn drop_held_items(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+    command: &str,
+) -> Result<(), processor::Error> {
+    log::debug!("dropping held items for {} command", command);
+    linker::remove_held_items(ctx.cpu())?;
+    sys.overworld.drop_held_items();
+    sys.screen.holding_in_inventory = false;
+    Ok(())
+}
+
 /// Convert `AllBut` variant from the "but" amount to real amount
-pub fn convert_amount<F: Fn() -> usize>(
+pub fn convert_amount<F: Fn() -> Result<usize, memory::Error>>(
     amount: cir::AmountSpec, 
     span: Span,
     errors: &mut Vec<ErrorReport>,
+    count_for_all: bool,
     count_fn: F,
-) -> ItemSelectTracker {
+) -> Result<OperationAmount, memory::Error> {
     match amount {
         cir::AmountSpec::AllBut(n) => {
-            let count = count_fn();
+            let count = count_fn()?;
             if count < n {
                 errors.push(sim_error!(span, NotEnoughForAllBut(n, count)));
-                ItemSelectTracker::all_but(0, n)
+                Ok(OperationAmount::all_but(0, n))
             } else {
-                ItemSelectTracker::all_but(count - n, n)
+                Ok(OperationAmount::all_but(count - n, n))
             }
         },
-        cir::AmountSpec::All => ItemSelectTracker::all(),
-        cir::AmountSpec::Num(n) => ItemSelectTracker::num(n)
+        cir::AmountSpec::All => {
+            if count_for_all {
+                let count = count_fn()?;
+                Ok(OperationAmount::num(count))
+            } else {
+                Ok(OperationAmount::all())
+            }
+        }
+        cir::AmountSpec::Num(n) => Ok(OperationAmount::num(n))
     }
 }
 
-pub struct ItemSelectTracker {
+pub struct OperationAmount {
     remaining_amount_or_all: Option<usize>,
     all_but: Option<usize>,
     was_found: bool
 }
 
-impl ItemSelectTracker {
+impl OperationAmount {
+    pub fn count(&self) -> Option<usize> {
+        self.remaining_amount_or_all
+    }
     pub fn num(n: usize) -> Self {
         Self {
             remaining_amount_or_all: Some(n),all_but: None, was_found: false
@@ -104,9 +147,11 @@ impl ItemSelectTracker {
     pub fn is_done(&self) -> bool {
         matches!(self.remaining_amount_or_all, Some(0))
     }
-    pub fn decrement(&mut self) {
+
+    pub fn sub(&mut self, amount: usize) {
+        self.was_found = true;
         match &mut self.remaining_amount_or_all {
-            Some(n) => *n -= 1,
+            Some(n) => *n = n.saturating_sub(amount),
             _ => {}
         }
     }
@@ -117,29 +162,29 @@ impl ItemSelectTracker {
     /// If `Some(X)` is returned, it means the command is expecting `X` more items, which can
     /// no longer be found
     #[must_use = "result of checking if error should be emitted"]
-    pub fn check<F: Fn() -> usize>(&self, span: Span, errors: &mut Vec<ErrorReport>, count_fn: F) -> NoLongerFound {
+    pub fn check<F: Fn() -> Result<usize, memory::Error>>(&self, span: Span, errors: &mut Vec<ErrorReport>, count_fn: F) -> Result<ItemSelectCheck, memory::Error> {
         match self.remaining_amount_or_all {
             None => {
                 if self.was_found {
-                    NoLongerFound::Done
+                    Ok(ItemSelectCheck::Done)
                 } else {
-                    NoLongerFound::NeverFound
+                    Ok(ItemSelectCheck::NeverFound)
                 }
             }
             Some(remaining) => {
                 match self.all_but {
                     Some(but) => {
-                        if remaining != but || but != count_fn() {
+                        if remaining != 0 || but != count_fn()? {
                             log::warn!("inaccurate all-but detected");
                             errors.push(sim_warning!(span, InaccurateAllBut));
                         }
-                        NoLongerFound::Done
+                        Ok(ItemSelectCheck::Done)
                     }
                     None => {
                         if remaining == 0 {
-                            NoLongerFound::Done
+                            Ok(ItemSelectCheck::Done)
                         } else {
-                            NoLongerFound::NeedMore(remaining)
+                            Ok(ItemSelectCheck::NeedMore(remaining))
                         }
                     }
                 }
@@ -149,7 +194,7 @@ impl ItemSelectTracker {
 }
 
 /// Control flow when item is no longer found
-pub enum NoLongerFound {
+pub enum ItemSelectCheck {
     /// No error, just continue
     Done,
     /// Emit error because this item is never found

@@ -87,12 +87,14 @@ pub enum RuntimeError {
         "the item in the inventory in this position is `{0}`, which does not match the input category `{1:?}`"
     )]
     ItemMismatchCategory(String, crate::parser::cir::Category),
+    #[error("this action cannot be performed on the selected slot")]
+    InvalidItemTarget,
     #[error("cannot find this item in inventory")]
     CannotFindItem,
     #[error("cannot find this item in inventory (need `{0}` more)")]
     CannotFindItemNeedMore(usize),
     #[error("the item `{0}` is not sellable")]
-    ItemNotSellable(String),
+    NotSellable(String),
     #[error("cannot find this item on the ground")]
     CannotFindGroundItem,
     #[error("cannot find this item on the ground (need `{0}` more)")]
@@ -104,15 +106,25 @@ pub enum RuntimeError {
     #[error("cannot hold more items")]
     CannotHoldMore,
     #[error("cannot do this while holding items in the overworld")]
-    CannotDoWhileHolding,
+    CannotDoWhileHoldingInOverworld,
+    #[error("cannot do this while holding items in the inventory screen")]
+    CannotDoWhileHoldingInInventory,
     #[error("not holding any items")]
     NotHolding,
-    // #[error("only materials can be held unless prompt entanglement is in effect")]
-    // CannotHoldNonMaterial,
+    #[error("cannot find the target item for prompt entanglement")]
+    CannotFindPromptTarget,
+    #[error("the target item for prompt entanglement cannot be reached")]
+    InvalidPromptTarget,
+    #[error("this item cannot be held")]
+    NotHoldable,
+    #[error("this item cannot be dropped")]
+    NotDroppable,
     #[error("cannot specify item position here")]
     PositionSpecNotAllowed,
     #[error("this meta property is ignored while matching")]
     UselessItemMatchProp,
+    #[error("this operation cannot be completed due to previous errors")]
+    OperationNotComplete,
     #[error(
         "this command or syntax is not implemented yet, please track the development on GitHub"
     )]

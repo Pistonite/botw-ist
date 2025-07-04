@@ -29,6 +29,9 @@ pub struct ScreenItem {
     /// PouchItem pointer for access actual item data in game
     pub ptr: Ptr![PouchItem],
 
+    /// If the item is in inventory (not translucent)
+    pub in_inventory: bool,
+
     /// If the item is equipped on screen.
     ///
     /// You can have item equipped on screen but not actually
@@ -50,10 +53,8 @@ impl ScreenItems {
         let mut out = vec![];
         for tab in &self.tabs {
             for item in &tab.items {
-                let Some(item) = item else {
-                    continue;
-                };
-                if item.equipped {
+                let Some(item) = item else { continue; };
+                if item.in_inventory && item.equipped {
                     out.push(item.ptr.to_raw());
                 }
             }
@@ -68,9 +69,27 @@ impl ScreenItems {
     pub fn accessible_item_ptrs(&self) -> Vec<u64> {
         let mut out = vec![];
         for tab in &self.tabs {
-            for item in tab.items.iter().flatten() {
+            for item in tab.items.iter().flatten().filter(|x| x.in_inventory) {
                 out.push(item.ptr.to_raw());
             }
+        }
+        out.sort();
+        out
+    }
+
+    /// Get list of items that *may* be reachable with the currently PE activation.
+    ///
+    /// The returned list is sorted so you can binary search
+    pub fn pe_reachable_item_ptrs(&self, active_tab: usize, active_slot: usize) -> Vec<u64> {
+        let mut out = vec![];
+        for (tab_i, tab) in self.tabs.iter().enumerate() {
+            if tab_i % 3 != active_tab % 3 {
+                continue;
+            }
+            let Some(Some(item)) = tab.items.get(active_slot) else {
+                continue;
+            };
+            out.push(item.ptr.to_raw());
         }
         out.sort();
         out
@@ -96,34 +115,73 @@ impl ScreenItems {
         real_slot
     }
 
-    /// Get the value (count) of the item by tab index and slot
-    pub fn value_at(
-        &self,
-        tab: usize,
-        slot: usize,
-        memory: &Memory,
-    ) -> Result<Option<i32>, memory::Error> {
-        let Some(tab) = self.tabs.get(tab) else {
-            return Ok(None);
-        };
-        let Some(Some(item)) = tab.items.get(slot) else {
-            return Ok(None);
-        };
-        let ptr = item.ptr;
-        mem! { memory: let value = *(&ptr->mValue); };
-
-        Ok(Some(value))
+    /// Get the (visual) slot index of the first item in the tab (might be translucent)
+    pub fn first_item(&self, tab: usize) -> Option<usize> {
+        let tab = self.tabs.get(tab)?;
+        let (i, _) = tab.items.iter().enumerate().filter(|(_, x)| x.is_none()).next()?;
+        Some(i)
     }
 
+    // /// Get the value (count) of the item by tab index and slot
+    // pub fn value_at(
+    //     &self,
+    //     tab: usize,
+    //     slot: usize,
+    //     memory: &Memory,
+    // ) -> Result<Option<i32>, memory::Error> {
+    //     let Some(tab) = self.tabs.get(tab) else {
+    //         return Ok(None);
+    //     };
+    //     let Some(Some(item)) = tab.items.get(slot) else {
+    //         return Ok(None);
+    //     };
+    //     let ptr = item.ptr;
+    //     mem! { memory: let value = *(&ptr->mValue); };
+    //
+    //     Ok(Some(value))
+    // }
+
     /// Get the pointer of the item by tab index and slot
-    pub fn ptr_at(&self, tab: usize, slot: usize) -> Option<Ptr![PouchItem]> {
-        self.tabs.get(tab)?.items.get(slot)?.as_ref().map(|x| x.ptr)
+    pub fn get(&self, tab: usize, slot: usize) -> ScreenItemState<Ptr![PouchItem]> {
+        let Some(tab) = self.tabs.get(tab) else {
+            return ScreenItemState::Empty;
+        };
+        let Some(Some(item)) = tab.items.get(slot) else {
+            return ScreenItemState::Empty;
+        };
+        if item.in_inventory {
+            ScreenItemState::Normal(item.ptr)
+        } else {
+            ScreenItemState::Translucent(item.ptr)
+        }
+    }
+
+    /// Check if the position is empty (no item is there) or translucent (not in inventory item)
+    pub fn is_translucent_or_empty(&self, tab: usize, slot: usize) -> bool {
+        self.is_translucent(tab, slot).unwrap_or_default()
+    }
+
+    /// Check if the position is translucent.
+    ///
+    /// Returns `None` is the position is empty.
+    pub fn is_translucent(&self, tab: usize, slot: usize) -> Option<bool> {
+        let Some(tab) = self.tabs.get(tab) else {
+            return None;
+        };
+        let Some(Some(item)) = tab.items.get(slot) else {
+            return None;
+        };
+        
+        Some(!item.in_inventory)
     }
 
     /// Select an item from the screen
     ///
     /// If position meta property is specified, the name spec is not used
-    /// for matching, but will give a warning if it doesn't match
+    /// for matching, but will give a warning if it doesn't match.
+    /// The position may also target an empty or translucent slot, which can
+    /// be queried by the `get` function after selection.
+    /// Without position meta, it will not target translucent or empty slots
     ///
     /// Returns the tab index and slot index
     pub fn select(
@@ -147,14 +205,14 @@ impl ScreenItems {
         let from_slot = match selector {
             Selector::FromSlot(n) => n,
             Selector::IdxAndSlot(tab_i, slot) => {
-                let Some(tab) = self.tabs.get(tab_i) else {
-                    return Ok(None);
-                };
-                let Some(Some(item_in_inv)) = tab.items.get(slot) else {
-                    return Ok(None);
-                };
                 // warn if the item specified by the position does not match
                 // the name in the command
+                let Some(tab) = self.tabs.get(tab_i) else {
+                    return Ok(Some((tab_i, slot)));
+                };
+                let Some(Some(item_in_inv)) = tab.items.get(slot) else {
+                    return Ok(Some((tab_i, slot)));
+                };
                 if !sim::util::name_spec_matches(item, &item_in_inv.name) {
                     match item {
                         cir::ItemNameSpec::Actor(name) => {
@@ -203,8 +261,9 @@ impl ScreenItems {
 
     /// Select an item in the inventory by category and slot position
     ///
-    /// Returns the tab index and slot index
-    pub fn select_by_category_and_slot(
+    /// Returns the tab index and slot index. Returns None if the spec is out of bounds.
+    /// However, does not check if the slot actually has item or not
+    fn select_by_category_and_slot(
         &self,
         spec: &cir::CategorySpec,
     ) -> Option<(usize, usize)> {
@@ -232,7 +291,8 @@ impl ScreenItems {
     /// for matching.
     pub fn get_amount(&self, item: &cir::ItemNameSpec,
         meta: Option<&cir::ItemMeta>,
-        method: sim::CountingMethod, memory: &Memory
+        method: sim::CountingMethod, 
+        memory: &Memory
     ) -> Result<usize, memory::Error> {
         let meta = match &meta {
             None => {
@@ -263,7 +323,9 @@ impl ScreenItems {
     /// Get amount of item that match the input that can be operated on, 
     /// without considering position meta properties.
     ///
-    /// The first `nth` slots will be skipped, regardless of the counting method
+    /// The first `nth` matched slots will be skipped, regardless of the counting method.
+    ///
+    /// If PE target is set, 
     pub fn get_amount_without_position_nth(
         &self,
         name: &cir::ItemNameSpec,
@@ -307,9 +369,9 @@ impl ScreenItems {
         if let Some(x) = item.as_mut() {
             let ptr = x.ptr;
             mem! { memory: let in_inventory = *(&ptr->mInInventory); };
-            if !in_inventory {
-                *item = None;
-                return Ok(true);
+            if x.in_inventory != in_inventory {
+                x.in_inventory = in_inventory;
+                changed = true;
             }
 
             if let Some(new_equip) = update_equipped {
@@ -339,21 +401,21 @@ impl ScreenItems {
         }
     }
 
-    /// Iterate all items matching the category by (tab_index, slot_index, tab, item), skipping empty slots and
-    ///
-    /// Armor will match all 3 types of armor
-    #[inline(always)]
-    fn iter_items_matching_category(&self, category: cir::Category) -> impl Iterator<Item=(usize, usize, &ScreenTab, &ScreenItem)> {
-        self.iter_items().filter(move |(_, _, _, item)| 
-            item.category.is_some_and(|x| {
-                if category == cir::Category::Armor {
-                    x.coerce_armor() == category
-                } else {
-                    x == category
-                }
-            })
-        )
-    }
+    // /// Iterate all items matching the category by (tab_index, slot_index, tab, item), skipping empty slots and
+    // ///
+    // /// Armor will match all 3 types of armor
+    // #[inline(always)]
+    // fn iter_items_matching_category(&self, category: cir::Category) -> impl Iterator<Item=(usize, usize, &ScreenTab, &ScreenItem)> {
+    //     self.iter_items().filter(move |(_, _, _, item)| 
+    //         item.category.is_some_and(|x| {
+    //             if category == cir::Category::Armor {
+    //                 x.coerce_armor() == category
+    //             } else {
+    //                 x == category
+    //             }
+    //         })
+    //     )
+    // }
 
     /// Iterate all items by (tab_index, slot_index, tab, item), skipping empty slots and
     /// translucent items
@@ -461,4 +523,10 @@ impl ScreenItem {
 enum Selector {
     FromSlot(usize),
     IdxAndSlot(usize, usize),
+}
+
+pub enum ScreenItemState<T> {
+    Empty, // Slot is Empty (no item is there)
+    Translucent(T), // Slot has a translucent item (in_inventory = false)
+    Normal(T), // Slot has a normal item (in_inventory = true)
 }
