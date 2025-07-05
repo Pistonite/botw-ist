@@ -34,7 +34,7 @@ game: (Running)
       [000]: (typ=Held, actor=Item_Mushroom_E, )
       [001]: (typ=Held, actor=Item_Mushroom_E, )
 
------ Step[3]: :item-box-pause
+----- Step[3]: :pause-during
 
 <same>
 ----- Step[4]: get apple
@@ -100,7 +100,7 @@ game: (Running)
       [000]: (typ=Held, actor=Item_Mushroom_E, )
       [001]: (typ=Held, actor=Item_Mushroom_E, )
 
------ Step[9]: :item-box-pause
+----- Step[9]: :pause-during
 
 <same>
 ----- Step[10]: get pepper
