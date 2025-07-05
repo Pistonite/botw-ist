@@ -21,8 +21,8 @@ pub struct State {
 pub struct StateArgs {
     /// Perform item smuggle for arrowless offset
     pub smug: bool,
-    /// Assume next command has an item box, and open the pause menu during that text box
-    pub item_box_pause: bool,
+    /// Open the pause menu during the next command (effect may differ depending on the command)
+    pub pause_during: bool,
     /// Perform the next operation in the same dialog
     pub same_dialog: bool,
     /// Disable optimizations that may affect accuracy
@@ -99,7 +99,7 @@ impl State {
         let args = std::mem::take(&mut self.args);
         match step.command() {
             X::CoSmug => set_arg!(self, args, smug, true),
-            X::CoPauseDuring => set_arg!(self, args, item_box_pause, true),
+            X::CoPauseDuring => set_arg!(self, args, pause_during, true),
             X::CoSameDialog => set_arg!(self, args, same_dialog, true),
             X::CoAccuratelySimulate => set_arg!(self, args, accurately_simulate, true),
             X::CoTargeting(spec) => {
@@ -147,7 +147,7 @@ impl State {
         log::debug!("Handling GET command");
         let items = items.to_vec();
         let (pause, accurate) = args
-            .map(|args| (args.item_box_pause, args.accurately_simulate))
+            .map(|args| (args.pause_during, args.accurately_simulate))
             .unwrap_or_default();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::get_items(&mut cpu, sys, errors, &items, pause, accurate)
@@ -162,7 +162,7 @@ impl State {
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling PICKUP command");
         let items = items.to_vec();
-        let pause = args.map(|args| args.item_box_pause).unwrap_or_default();
+        let pause = args.map(|args| args.pause_during).unwrap_or_default();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::pick_up_items(&mut cpu, sys, errors, &items, pause)
         })

@@ -68,26 +68,6 @@ pub fn parse_category_with_times(
     })
 }
 
-// /// Parse a use category with a times clause.
-// ///
-// /// Category must be Weapon, Bow, or Shield
-// pub fn parse_use_category_with_times(
-//     category: &syn::CategoryName,
-//     times: Option<&syn::TimesClause>,
-// ) -> Result<CategorySpec, ErrorReport> {
-//     let category = parse_category_in(
-//         category,
-//         Category::Weapon | Category::Bow | Category::Shield,
-//     )?;
-//     let times = parse_times_clause(times)?;
-//     Ok(CategorySpec {
-//         category,
-//         amount: times,
-//         row: 0,
-//         col: 0,
-//     })
-// }
-
 pub fn parse_times_clause(times: Option<&syn::TimesClause>) -> Result<i64, ErrorReport> {
     let Some(times) = times else {
         return Ok(1);
