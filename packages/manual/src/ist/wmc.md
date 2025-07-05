@@ -16,6 +16,14 @@ During this corruption:
   - See [`actWeapon.h`](https://github.com/zeldaret/botw/blob/master/src/Game/Actor/actWeapon.h)
     for values for each modifier type
 
+```admonish info
+You will see [Prompt Entanglment (PE)](./pe.md) often brought up together with WMC.
+This is because WMC relies on the data from a cooked item, and you can only get
+a very limited subset of possible cook data values by cooking with normal ingredients.
+PE allows cooking with unusual ingredients, which is required to get some modifier value/flag.
+However, WMC and PE are 2 separated glitches, and neither is required to perform the other.
+```
+
 ## Base Mechanism
 WMC is possible because:
 

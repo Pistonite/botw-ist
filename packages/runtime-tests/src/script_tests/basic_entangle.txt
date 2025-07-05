@@ -1,0 +1,8 @@
+get apple
+get 40 elixir
+get roasted-endura-carrot
+entangle elixir[category=food, tab=2, row=1, col=3]
+unpause pause
+entangle apple
+:targeting roasted-endura-carrot
+hold 5 apples

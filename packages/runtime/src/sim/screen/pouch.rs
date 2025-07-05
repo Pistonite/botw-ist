@@ -65,6 +65,16 @@ impl PouchScreen {
         self.active_entangle_slot = None;
     }
 
+    /// Get list of item pointers that are currently activated
+    ///
+    /// The returned list is sorted so you can binary search
+    pub fn pe_activated_items(&self) -> Vec<u64> {
+        match self.active_entangle_slot {
+            None => vec![],
+            Some((tab, slot)) => self.items.pe_reachable_item_ptrs(tab,slot)
+        }
+    }
+
     /// Check if the item in (tab, slot) is an activated PE slot, meaning
     /// the prompt of this item can be used on the PE target item
     pub fn is_pe_activated_slot(&self, tab: usize, slot: usize) -> bool {

@@ -19,7 +19,7 @@ export const translateActorOrAsIs = (
     actor: string,
     translator: Translator = translateGenerated,
 ): string => {
-    const translated  = translator(`actor.${actor}.name`);
+    const translated = translator(`actor.${actor}.name`);
     if (!translated) {
         return actor;
     }

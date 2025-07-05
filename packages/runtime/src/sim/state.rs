@@ -119,6 +119,22 @@ impl State {
             X::OpenShop => self.handle_open_shop(ctx).await,
             X::CloseShop => self.handle_close_shop(ctx).await,
             X::Sell(items) => self.handle_sell(ctx, items).await,
+
+            X::Entangle(item) => {
+                self.args = Some(match args {
+                    None => {
+                        let mut x = StateArgs::default();
+                        x.entangle_target = Some(item.as_ref().clone());
+                        Box::new(x)
+                    }
+                    Some(mut x) => {
+                        x.entangle_target = Some(item.as_ref().clone());
+                        x
+                    }});
+                self.handle_entangle(ctx, item).await
+            }
+
+
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
         }
     }
@@ -213,7 +229,6 @@ impl State {
         })
     }
 
-    #[rustfmt::skip]
     async fn handle_drop(self, rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec],
         args: Option<&StateArgs>,
@@ -228,69 +243,69 @@ impl State {
         })
     }
 
-    #[rustfmt::skip]
     async fn handle_open_shop(self, rt: sim::Context<&sim::Runtime>,) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling OPEN SHOP command");
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-
-            let _ = sys.screen
-                .transition_to_shop_buying(&mut cpu2, &mut sys.overworld, true, errors)?;
+        in_game!(self, rt, cpu, sys, errors => {
+            sys.screen.transition_to_shop_buying(&mut cpu, &mut sys.overworld, true, errors)?;
             Ok(())
-
-        }) }) .await }) .await
+        })
     }
 
-    #[rustfmt::skip]
     async fn handle_close_shop(self, rt: sim::Context<&sim::Runtime>,) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling CLOSE SHOP command");
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-
+        in_game!(self, rt, cpu, sys, errors => {
             if !sys.screen.current_screen().is_shop() {
-                errors.push(sim_error!(cpu2.span, NotRightScreen));
+                errors.push(sim_error!(cpu.span, NotRightScreen));
                 return Ok(());
             }
             sys.screen.transition_to_overworld(
-                &mut cpu2,
+                &mut cpu,
                 &mut sys.overworld,
                 true,
                 errors,
             )?;
             sys.overworld.despawn_items();
             Ok(())
-
-        }) }) .await }) .await
+        })
     }
 
-    #[rustfmt::skip]
     async fn handle_sell(self, rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec],
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling SELL command");
         let items = items.to_vec();
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-            sim::actions::sell_items(&mut cpu2, sys, errors, &items)
-        }) }) .await }) .await
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::sell_items(&mut cpu, sys, errors, &items)
+        })
     }
 
-    #[rustfmt::skip]
     async fn handle_su_break(self, rt: sim::Context<&sim::Runtime>,
         count: i32
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling !BREAK command");
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, _, _| {
-            sim::actions::force_break_slot(&mut cpu2, count)
-        }) }) .await }) .await
+        in_game!(self, rt, cpu, _sys, _errors => {
+            sim::actions::force_break_slot(&mut cpu, count)
+        })
     }
 
-    #[rustfmt::skip]
     async fn handle_su_remove(self, rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec]
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling !REMOVE command");
         let items = items.to_vec();
-        self.with_game(rt, async move |game, rt| { rt.execute(move |cpu| { cpu.execute_reporting(game, |mut cpu2, sys, errors| {
-            sim::actions::force_remove_item(&mut cpu2, sys, errors, &items)
-        }) }) .await }) .await
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::force_remove_item(&mut cpu, sys, errors, &items)
+        })
+    }
+
+    async fn handle_entangle(self, rt: sim::Context<&sim::Runtime>,
+        item: &cir::ItemSelectSpec
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("Handling ENTANGLE command");
+        let item = item.clone();
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::entangle_item(&mut cpu, sys, errors, &item)
+        })
     }
 }
 
