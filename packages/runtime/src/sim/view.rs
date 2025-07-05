@@ -65,16 +65,16 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
 
     // get any inventory temporary state
     let (visually_equipped_items, entangled_items, entangled_tab, entangled_slot) = {
-        match sys.screen
-        .current_screen()
-        .as_inventory() {
+        match sys.screen.current_screen().as_inventory() {
             None => (vec![], vec![], -1, -1),
             Some(inventory) => {
                 let equipped = inventory.equipped_item_ptrs();
                 let entangled = inventory.pe_activated_items();
-                let entangled_pos = inventory.active_entangle_slot
-                .map(|(t, s)| ((t as i32) % 3, s as i32)).unwrap_or((-1, -1));
-    (equipped, entangled, entangled_pos.0, entangled_pos.1)
+                let entangled_pos = inventory
+                    .active_entangle_slot
+                    .map(|(t, s)| ((t as i32) % 3, s as i32))
+                    .unwrap_or((-1, -1));
+                (equipped, entangled, entangled_pos.0, entangled_pos.1)
             }
         }
     };
@@ -441,7 +441,7 @@ fn extract_pouch_item(
         unallocated_idx: -1, // TODO
         tab_idx,
         tab_slot,
-        accessible: true, // TODO
+        accessible: true,      // TODO
         dpad_accessible: true, // TODO
     })
 }

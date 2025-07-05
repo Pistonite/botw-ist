@@ -71,7 +71,7 @@ impl PouchScreen {
     pub fn pe_activated_items(&self) -> Vec<u64> {
         match self.active_entangle_slot {
             None => vec![],
-            Some((tab, slot)) => self.items.pe_reachable_item_ptrs(tab,slot)
+            Some((tab, slot)) => self.items.pe_reachable_item_ptrs(tab, slot),
         }
     }
 

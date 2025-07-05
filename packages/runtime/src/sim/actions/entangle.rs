@@ -1,11 +1,11 @@
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 
-use crate::error::sim_error;
 use crate::error::ErrorReport;
+use crate::error::sim_error;
 use crate::sim;
 
-use super::{switch_to_inventory_or_stop};
+use super::switch_to_inventory_or_stop;
 
 /// Activate PE
 pub fn entangle_item(
@@ -23,8 +23,13 @@ pub fn entangle_item(
     let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
     // find the slot to activate
     let position = inventory.select(
-        &item.name, item.meta.as_ref(), None, ctx.cpu().proc.memory(),
-        item.span, errors)?;
+        &item.name,
+        item.meta.as_ref(),
+        None,
+        ctx.cpu().proc.memory(),
+        item.span,
+        errors,
+    )?;
 
     let Some((tab, slot)) = position else {
         errors.push(sim_error!(item.span, CannotFindItem));

@@ -122,18 +122,17 @@ impl State {
 
             X::Entangle(item) => {
                 self.args = Some(match args {
-                    None => {
-                        let mut x = StateArgs::default();
-                        x.entangle_target = Some(item.as_ref().clone());
-                        Box::new(x)
-                    }
+                    None => Box::new(StateArgs {
+                        entangle_target: Some(item.as_ref().clone()),
+                        ..Default::default()
+                    }),
                     Some(mut x) => {
                         x.entangle_target = Some(item.as_ref().clone());
                         x
-                    }});
+                    }
+                });
                 self.handle_entangle(ctx, item).await
             }
-
 
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
         }
@@ -229,13 +228,16 @@ impl State {
         })
     }
 
-    async fn handle_drop(self, rt: sim::Context<&sim::Runtime>,
+    async fn handle_drop(
+        self,
+        rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec],
         args: Option<&StateArgs>,
-        pick_up: bool
+        pick_up: bool,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling DROP command");
-        let pe_target = args.map(|x| x.entangle_target.as_ref().cloned())
+        let pe_target = args
+            .map(|x| x.entangle_target.as_ref().cloned())
             .unwrap_or_default();
         let items = items.to_vec();
         in_game!(self, rt, cpu, sys, errors => {
@@ -243,7 +245,10 @@ impl State {
         })
     }
 
-    async fn handle_open_shop(self, rt: sim::Context<&sim::Runtime>,) -> Result<Report<Self>, exec::Error> {
+    async fn handle_open_shop(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling OPEN SHOP command");
         in_game!(self, rt, cpu, sys, errors => {
             sys.screen.transition_to_shop_buying(&mut cpu, &mut sys.overworld, true, errors)?;
@@ -251,7 +256,10 @@ impl State {
         })
     }
 
-    async fn handle_close_shop(self, rt: sim::Context<&sim::Runtime>,) -> Result<Report<Self>, exec::Error> {
+    async fn handle_close_shop(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling CLOSE SHOP command");
         in_game!(self, rt, cpu, sys, errors => {
             if !sys.screen.current_screen().is_shop() {
@@ -269,7 +277,9 @@ impl State {
         })
     }
 
-    async fn handle_sell(self, rt: sim::Context<&sim::Runtime>,
+    async fn handle_sell(
+        self,
+        rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec],
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling SELL command");
@@ -279,8 +289,10 @@ impl State {
         })
     }
 
-    async fn handle_su_break(self, rt: sim::Context<&sim::Runtime>,
-        count: i32
+    async fn handle_su_break(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        count: i32,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling !BREAK command");
         in_game!(self, rt, cpu, _sys, _errors => {
@@ -288,8 +300,10 @@ impl State {
         })
     }
 
-    async fn handle_su_remove(self, rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSelectSpec]
+    async fn handle_su_remove(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSelectSpec],
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling !REMOVE command");
         let items = items.to_vec();
@@ -298,8 +312,10 @@ impl State {
         })
     }
 
-    async fn handle_entangle(self, rt: sim::Context<&sim::Runtime>,
-        item: &cir::ItemSelectSpec
+    async fn handle_entangle(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        item: &cir::ItemSelectSpec,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling ENTANGLE command");
         let item = item.clone();

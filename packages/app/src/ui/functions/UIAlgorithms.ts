@@ -84,7 +84,8 @@ export const getTabNodesFromPouch = (
             valid = false;
             return;
         }
-        const isEntangledTab = pouch.entangledSlot !== -1 && (tabIdx % 3) === entangledTab;
+        const isEntangledTab =
+            pouch.entangledSlot !== -1 && tabIdx % 3 === entangledTab;
         let foundEntangledItem = false;
         // get items in this tab
         const items: TabDataItem<InvView_PouchItem>[] = [];
@@ -110,7 +111,7 @@ export const getTabNodesFromPouch = (
                     common: {
                         actorName: "",
                         value: 0,
-                        isEquipped: false
+                        isEquipped: false,
                     },
                     itemType: 0,
                     itemUse: 0,
@@ -121,7 +122,7 @@ export const getTabNodesFromPouch = (
                         effectDuration: 0,
                         sellPrice: 0,
                         effectId: 0,
-                        effectLevel: 0
+                        effectLevel: 0,
                     },
                     ingredients: ["", "", "", "", ""],
                     holdingCount: 0,
@@ -136,10 +137,9 @@ export const getTabNodesFromPouch = (
                     tabIdx: 0,
                     tabSlot: 0,
                     accessible: false,
-                    dpadAccessible: false
-                }
-
-            })
+                    dpadAccessible: false,
+                },
+            });
         }
         tabsOut.push({
             category: getPouchCategoryFromType(tabType),
