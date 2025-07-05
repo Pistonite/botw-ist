@@ -19,5 +19,9 @@ export const translateActorOrAsIs = (
     actor: string,
     translator: Translator = translateGenerated,
 ): string => {
-    return translator(`actor.${actor}.name`) || actor;
+    const translated = translator(`actor.${actor}.name`);
+    if (!translated) {
+        return actor;
+    }
+    return translated.replace("{{effect}}", "");
 };

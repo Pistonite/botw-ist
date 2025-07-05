@@ -237,29 +237,6 @@ impl ScreenItems {
         Ok(None)
     }
 
-    /// Select an item in the inventory by category and slot position
-    ///
-    /// Returns the tab index and slot index. Returns None if the spec is out of bounds.
-    /// However, does not check if the slot actually has item or not
-    fn select_by_category_and_slot(&self, spec: &cir::CategorySpec) -> Option<(usize, usize)> {
-        let row = (spec.row as usize).saturating_sub(1);
-        let col = (spec.col as usize).saturating_sub(1);
-        let slot = row * 5 + col;
-        let mut count = (spec.amount as usize).min(1);
-        for (tab_i, tab) in self.tabs.iter().enumerate() {
-            let Some(category) = tab.category else {
-                continue;
-            };
-            if category.coerce_armor() == spec.category.coerce_armor() {
-                count -= 1;
-                if count == 0 {
-                    return Some((tab_i, slot));
-                }
-            }
-        }
-        None
-    }
-
     /// Get amount of item that match the input name spec and meta
     ///
     /// If position meta property is specified, the name spec is not used
@@ -376,6 +353,30 @@ impl ScreenItems {
                 .select_by_category_and_slot(spec)
                 .map(|(tab, slot)| Selector::IdxAndSlot(tab, slot)),
         }
+    }
+
+    /// Select an item in the inventory by category and slot position
+    ///
+    /// Returns the tab index and slot index. Returns None if the spec is out of bounds.
+    /// However, does not check if the slot actually has item or not
+    fn select_by_category_and_slot(&self, spec: &cir::CategorySpec) -> Option<(usize, usize)> {
+        log::debug!("selecting {spec:?}");
+        let row = (spec.row as usize).saturating_sub(1);
+        let col = (spec.col as usize).saturating_sub(1);
+        let slot = row * 5 + col;
+        let mut count = (spec.amount as usize).max(1);
+        for (tab_i, tab) in self.tabs.iter().enumerate() {
+            let Some(category) = tab.category else {
+                continue;
+            };
+            if category.coerce_armor() == spec.category.coerce_armor() {
+                count -= 1;
+                if count == 0 {
+                    return Some((tab_i, slot));
+                }
+            }
+        }
+        None
     }
 
     /// Iterate all items by (tab_index, slot_index, tab, item), skipping empty slots and

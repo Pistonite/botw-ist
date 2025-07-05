@@ -35,6 +35,20 @@ export type InvView_PouchList = {
      */
     tabs: Array<InvView_PouchTab>;
     /**
+     * Active PE tab index
+     *
+     * -1 means no PE is active, 0, 1, 2 means that tab
+     * and tabs 3-tabs apart are active
+     */
+    entangledTab: number;
+    /**
+     * Active PE slot index
+     *
+     * -1 means no PE is active, 0-19 (inclusive) corresponds
+     * to the slot index
+     */
+    entangledSlot: number;
+    /**
      * Type of the screen currently on
      */
     screen: InvView_Screen;

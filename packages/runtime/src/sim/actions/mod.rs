@@ -9,6 +9,8 @@ mod pick_up_items;
 pub use pick_up_items::*;
 mod sell_items;
 pub use sell_items::*;
+mod entangle;
+pub use entangle::*;
 
 mod break_slot;
 pub use break_slot::*;

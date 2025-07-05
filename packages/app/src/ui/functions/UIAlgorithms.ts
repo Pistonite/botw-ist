@@ -19,6 +19,8 @@ export type TabData<T> = {
 };
 
 export type TabDataItem<T> = {
+    /** Is only visually there for simulator UX */
+    isVisuallyOnly: boolean;
     slot: number;
     item: T;
 };
@@ -56,6 +58,8 @@ export const getTabNodesFromPouch = (
         return undefined;
     }
 
+    const entangledTab = pouch.entangledTab;
+
     let valid = true;
     const tabsOut: TabData<InvView_PouchItem>[] = [];
     pouch.tabs.forEach(({ itemIdx, tabType }, tabIdx) => {
@@ -80,6 +84,9 @@ export const getTabNodesFromPouch = (
             valid = false;
             return;
         }
+        const isEntangledTab =
+            pouch.entangledSlot !== -1 && tabIdx % 3 === entangledTab;
+        let foundEntangledItem = false;
         // get items in this tab
         const items: TabDataItem<InvView_PouchItem>[] = [];
         for (let i = itemIdx; i < pouch.items.length; i++) {
@@ -87,9 +94,51 @@ export const getTabNodesFromPouch = (
             if (item.tabIdx !== tabIdx) {
                 break;
             }
+            if (item.promptEntangled) {
+                foundEntangledItem = true;
+            }
             items.push({
+                isVisuallyOnly: false,
                 slot: item.tabSlot,
                 item,
+            });
+        }
+        if (isEntangledTab && !foundEntangledItem) {
+            items.push({
+                isVisuallyOnly: true,
+                slot: pouch.entangledSlot,
+                item: {
+                    common: {
+                        actorName: "",
+                        value: 0,
+                        isEquipped: false,
+                    },
+                    itemType: 0,
+                    itemUse: 0,
+                    isInInventory: false,
+                    isNoIcon: true,
+                    data: {
+                        effectValue: 0,
+                        effectDuration: 0,
+                        sellPrice: 0,
+                        effectId: 0,
+                        effectLevel: 0,
+                    },
+                    ingredients: ["", "", "", "", ""],
+                    holdingCount: 0,
+                    promptEntangled: true,
+                    nodeAddr: 0n,
+                    nodeValid: false,
+                    nodePos: 0n,
+                    nodePrev: 0n,
+                    nodeNext: 0n,
+                    allocatedIdx: 0,
+                    unallocatedIdx: 0,
+                    tabIdx: 0,
+                    tabSlot: 0,
+                    accessible: false,
+                    dpadAccessible: false,
+                },
             });
         }
         tabsOut.push({
@@ -132,7 +181,11 @@ export const getTabNodesForGdt = (
             i < pouchTab.items.length && gdtIdx < gdt.items.length;
             i++
         ) {
+            if (pouchTab.items[i].isVisuallyOnly) {
+                continue;
+            }
             items.push({
+                isVisuallyOnly: false,
                 slot: pouchTab.items[i].slot,
                 item: gdt.items[gdtIdx],
             });

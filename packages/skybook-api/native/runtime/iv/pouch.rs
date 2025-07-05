@@ -30,6 +30,16 @@ mod __impl {
         /// The actual tabs (mTabs and mTabsType), up to the tab
         /// where both mTabs[i] is nullptr and mTabsType[i] is -1
         pub tabs: Vec<InvView_PouchTab>,
+        /// Active PE tab index
+        ///
+        /// -1 means no PE is active, 0, 1, 2 means that tab
+        /// and tabs 3-tabs apart are active
+        pub entangled_tab: i32,
+        /// Active PE slot index
+        ///
+        /// -1 means no PE is active, 0-19 (inclusive) corresponds
+        /// to the slot index
+        pub entangled_slot: i32,
         /// Type of the screen currently on
         pub screen: InvView_Screen,
         /// If the player is in holding state in the inventory screen,
@@ -45,6 +55,8 @@ mod __impl {
                 are_tabs_valid: true,
                 num_tabs: 0,
                 tabs: vec![],
+                entangled_tab: -1,
+                entangled_slot: -1,
                 screen: InvView_Screen::default(),
                 is_holding_in_inventory: false,
             }

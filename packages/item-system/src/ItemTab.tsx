@@ -16,7 +16,6 @@ export type ItemTabProps = {
     category: PouchCategory;
     /** Show border around the item tab. */
     border?: boolean;
-
     /** Stuff to display in the tab */
     nodes: TabNode[];
 };

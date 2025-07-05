@@ -260,7 +260,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
         </div>
     );
 
-    const $SpriteLayer = (
+    const $SpriteLayer = !!actor && (
         <div
             className={mergeClasses(
                 styles.layer,

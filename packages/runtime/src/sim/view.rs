@@ -64,12 +64,20 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
     log::debug!("extracting pouch view from process");
 
     // get any inventory temporary state
-    let visually_equipped_items = sys
-        .screen
-        .current_screen()
-        .as_inventory()
-        .map(|x| x.equipped_item_ptrs())
-        .unwrap_or_default();
+    let (visually_equipped_items, entangled_items, entangled_tab, entangled_slot) = {
+        match sys.screen.current_screen().as_inventory() {
+            None => (vec![], vec![], -1, -1),
+            Some(inventory) => {
+                let equipped = inventory.equipped_item_ptrs();
+                let entangled = inventory.pe_activated_items();
+                let entangled_pos = inventory
+                    .active_entangle_slot
+                    .map(|(t, s)| ((t as i32) % 3, s as i32))
+                    .unwrap_or((-1, -1));
+                (equipped, entangled, entangled_pos.0, entangled_pos.1)
+            }
+        }
+    };
 
     let memory = proc.memory();
 
@@ -186,6 +194,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
             &mut seen_animated_icons,
             memory,
             &visually_equipped_items,
+            &entangled_items,
             &grabbed_items,
         )?;
         items.push(item);
@@ -199,6 +208,8 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
         are_tabs_valid,
         num_tabs,
         tabs,
+        entangled_tab,
+        entangled_slot,
         screen: sys.screen.current_screen().iv_type(),
         is_holding_in_inventory: sys.screen.holding_in_inventory,
     })
@@ -268,6 +279,7 @@ fn extract_pouch_item(
     seen_animated_icons: &mut BTreeSet<String>,
     memory: &Memory,
     visually_equipped_items: &[u64],
+    entangled_items: &[u64],
     grabbed_items: &[GrabbedItemInfo],
 ) -> Result<iv::PouchItem, Error> {
     let name = try_mem!(
@@ -408,6 +420,8 @@ fn extract_pouch_item(
         }
     }
 
+    let prompt_entangled = entangled_items.binary_search(&item.to_raw()).is_ok();
+
     Ok(iv::PouchItem {
         common,
         item_type,
@@ -417,7 +431,7 @@ fn extract_pouch_item(
         data,
         ingredients,
         holding_count,
-        prompt_entangled: false, // TODO
+        prompt_entangled,
         node_addr: node_ptr.to_raw().into(),
         node_valid: true,
         node_pos: buffer_idx as i128,
@@ -427,7 +441,7 @@ fn extract_pouch_item(
         unallocated_idx: -1, // TODO
         tab_idx,
         tab_slot,
-        accessible: true, // TODO
-        dpad_accessible: true,
+        accessible: true,      // TODO
+        dpad_accessible: true, // TODO
     })
 }
