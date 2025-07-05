@@ -99,7 +99,7 @@ impl State {
         let args = std::mem::take(&mut self.args);
         match step.command() {
             X::CoSmug => set_arg!(self, args, smug, true),
-            X::CoItemBoxPause => set_arg!(self, args, item_box_pause, true),
+            X::CoPauseDuring => set_arg!(self, args, item_box_pause, true),
             X::CoSameDialog => set_arg!(self, args, same_dialog, true),
             X::CoAccuratelySimulate => set_arg!(self, args, accurately_simulate, true),
             X::CoTargeting(spec) => {

@@ -85,6 +85,26 @@ ParseOutput {
         },
         Step {
             command: CommandWithSpan {
+                command: Unequip(
+                    [
+                        ItemSelectSpec {
+                            amount: Num(
+                                1,
+                            ),
+                            name: Actor(
+                                "NormalArrow",
+                            ),
+                            meta: None,
+                            span: 101..106,
+                        },
+                    ],
+                ),
+                span: 93..107,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
                 command: Get(
                     [
                         ItemSpec {
@@ -195,13 +215,31 @@ ParseOutput {
         },
         Step {
             command: CommandWithSpan {
+                command: Equip(
+                    [
+                        ItemSelectSpec {
+                            amount: Num(
+                                1,
+                            ),
+                            name: Actor(
+                                "IceArrow",
+                            ),
+                            meta: None,
+                            span: 194..203,
+                        },
+                    ],
+                ),
+                span: 188..203,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
                 command: Use(
-                    CategorySpec {
-                        category: Bow,
-                        amount: 1,
-                        row: 0,
-                        col: 0,
-                    },
+                    Category(
+                        Bow,
+                    ),
+                    1,
                 ),
                 span: 204..212,
             },
@@ -224,6 +262,18 @@ ParseOutput {
                     ],
                 ),
                 span: 213..224,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Use(
+                    Category(
+                        Food,
+                    ),
+                    3,
+                ),
+                span: 226..242,
             },
             notes: "",
         },
@@ -256,16 +306,6 @@ ParseOutput {
                 Bool(
                     false,
                 ),
-            ),
-        },
-        ErrorReport {
-            span: (
-                230,
-                234,
-            ),
-            is_warning: false,
-            error: InvalidCategory(
-                Food,
             ),
         },
     ],

@@ -50,6 +50,20 @@ pub enum Command {
     /// `!remove ITEMS`
     SuRemove(CmdSuRemove),
 
+    // ==== equipments ====
+    /// `equip ITEM`
+    Equip(CmdEquip),
+    /// `unequip ITEMS`
+    Unequip(CmdUnequip),
+    /// `use CATEGORY [X times]`
+    Use(CmdUse),
+    /// `shoot [X times]`
+    Shoot(CmdShoot),
+    /// `throw weapon`
+    ThrowWeapon((syn::KwThrow, syn::KwWeapon)),
+    /// `display ITEMS`
+    Display(CmdDisplay),
+
     // ==== shop screen ====
     /// Open shop
     OpenShop(CmdOpenShop),
@@ -69,16 +83,6 @@ pub enum Command {
     // ==== inventory screen - removing items ====
     /// `eat ITEMS`
     Eat(CmdEat),
-
-    // ==== inventory screen - equipments ====
-    /// `equip ITEM`
-    Equip(CmdEquip),
-    /// `unequip ITEM` or `unequip CATEGORY`
-    Unequip(CmdUnequip),
-    /// `use CATEGORY X times`
-    Use(CmdUse),
-    /// `shoot X times`
-    Shoot(CmdShoot),
 
     // ==== overworld ====
     /// `roast ITEMS`
@@ -141,10 +145,14 @@ pub struct AnnotationCommand {
 #[derive(Debug)]
 pub enum Annotation {
     Smug(syn::KwSmug),
-    ItemBoxPause(syn::KwItemBoxPause),
+    PauseDuring(syn::KwPauseDuring),
     SameDialog(syn::KwSameDialog),
     AccuratelySimulate(syn::KwAccuratelySimulate),
     Targeting(CmdTargeting),
+    Overworld(syn::KwOverworld),
+    NonBreaking(syn::KwNonBreaking),
+    Breaking(syn::KwBreaking),
+    Dpad(syn::KwDpad),
     WeaponSlots(CmdWeaponSlots),
     ShieldSlots(CmdShieldSlots),
     BowSlots(CmdBowSlots),
@@ -244,6 +252,51 @@ pub struct CmdSuRemove {
 
 ///////////////////////////////////////////////////////////
 
+/// `equip ITEM` - equip one thing
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdEquip {
+    pub lit: syn::KwEquip,
+    pub items: syn::ItemListConstrained,
+}
+
+/// `unequip ITEMS` - unequip one thing, or (all items) in one category
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdUnequip {
+    pub lit: syn::KwUnequip,
+    pub items: syn::ItemListConstrained,
+}
+
+/// `use CATEGORY [X times]` - use the item
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdUse {
+    pub lit: syn::KwUse,
+    pub item: syn::ItemOrCategoryName,
+    pub times: tp::Option<syn::TimesClause>,
+}
+
+/// `shoot [X times]` is shorthand for `use bow X times`
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdShoot {
+    pub lit: syn::KwShoot,
+    pub times: tp::Option<syn::TimesClause>,
+}
+
+/// `display ITEMS` - display items in house
+///
+/// same as `:overworld drop` or `:non-breaking throw`
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdDisplay {
+    pub lit: syn::KwDisplay,
+    pub items: syn::ItemListConstrained,
+}
+
+///////////////////////////////////////////////////////////
+
 /// `talk-to NAME` - Enter a shop
 #[derive_syntax]
 #[derive(Debug)]
@@ -303,40 +356,6 @@ pub struct CmdTargeting {
 pub struct CmdEat {
     pub lit: syn::KwEat,
     pub items: syn::ItemListConstrained,
-}
-
-/// `equip ITEM` - equip one thing
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdEquip {
-    pub lit: syn::KwEquip,
-    pub item: syn::ItemOrCategory,
-}
-
-/// `unequip [all] ITEM` - unequip one thing, or (all items) in one category
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdUnequip {
-    pub lit: syn::KwUnequip,
-    pub all: tp::Option<syn::KwAll>,
-    pub item: syn::ItemOrCategory,
-}
-
-/// `use CATEGORY X times` - use the item
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdUse {
-    pub lit: syn::KwUse,
-    pub category: syn::CategoryName,
-    pub times: tp::Option<syn::TimesClause>,
-}
-
-/// `shoot X times` is shorthand for `use bow X times`
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdShoot {
-    pub lit: syn::KwShoot,
-    pub times: tp::Option<syn::TimesClause>,
 }
 
 /// `roast ITEMS` - roast items on the ground or in inventory
