@@ -51,6 +51,14 @@ pub enum ItemOrCategory {
     Category(syn::Category),
 }
 
+/// Syntax for an item or a category name only, without metadata
+#[derive_syntax]
+#[derive(Debug)]
+pub enum ItemOrCategoryName {
+    Item(ItemName),
+    Category(syn::CategoryName),
+}
+
 /// Syntax for an item
 ///
 /// # Example
@@ -117,13 +125,17 @@ pub enum ItemWord {
     // annotation words are kebab case and can be used as well
     // this is to avoid possible conflict that an annotation is very generic
     KwSmug(syn::KwSmug),
-    KwItemBoxPause(syn::KwItemBoxPause),
+    KwPauseDuring(syn::KwPauseDuring),
     KwSameDialog(syn::KwSameDialog),
     KwAccuratelySimulate(syn::KwAccuratelySimulate),
+    KwTargeting(syn::KwTargeting),
+    KwOverworld(syn::KwOverworld),
+    KwNonBreaking(syn::KwNonBreaking),
+    KwBreaking(syn::KwBreaking),
+    KwDpad(syn::KwDpad),
     KwWeaponSlots(syn::KwWeaponSlots),
     KwShieldSlots(syn::KwShieldSlots),
     KwBowSlots(syn::KwBowSlots),
-    KwTargeting(syn::KwTargeting),
 }
 
 /// Value after the key in an item's metadata specifier

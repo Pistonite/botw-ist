@@ -1,0 +1,73 @@
+ParseOutput {
+    steps: [
+        Step {
+            command: CommandWithSpan {
+                command: Use(
+                    Category(
+                        Weapon,
+                    ),
+                    1,
+                ),
+                span: 0..10,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Use(
+                    Category(
+                        Shield,
+                    ),
+                    2,
+                ),
+                span: 11..29,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Use(
+                    Actor(
+                        "Animal_Insect_F",
+                    ),
+                    3,
+                ),
+                span: 30..47,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Use(
+                    Actor(
+                        "Weapon_Lsword_024",
+                    ),
+                    1,
+                ),
+                span: 48..66,
+            },
+            notes: "",
+        },
+    ],
+    script_len: 77,
+    pages: [],
+    display: [],
+    errors: [
+        ErrorReport {
+            span: (
+                71,
+                72,
+            ),
+            is_warning: false,
+            error: SyntaxUnexpected,
+        },
+        ErrorReport {
+            span: (
+                71,
+                77,
+            ),
+            is_warning: false,
+            error: SyntaxUnexpected,
+        },
+    ],
+}

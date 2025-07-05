@@ -39,6 +39,19 @@ async fn parse_annotation_keyword_as_item() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
+async fn parse_use_command() -> anyhow::Result<()> {
+    let script = indoc! {r#"
+        use weapon
+        use shield 2 times
+        use fairy 3 times
+        use royal-claymore
+        use 5 wood
+    "#};
+
+    test_parser_snapshot("use-command", script).await
+}
+
+#[tokio::test]
 async fn parse_notes() -> anyhow::Result<()> {
     let script = indoc! {r#"
         '''note

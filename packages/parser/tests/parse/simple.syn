@@ -140,18 +140,17 @@ Some(
                 cmd: Unequip(
                     CmdUnequip {
                         lit: token Command(93..100),
-                        all: None(
-                            100,
-                        ),
-                        item: Item(
-                            Item {
-                                name: Word(
-                                    101..106 => "arrow",
-                                ),
-                                meta: None(
-                                    106,
-                                ),
-                            },
+                        items: Single(
+                            Item(
+                                Item {
+                                    name: Word(
+                                        101..106 => "arrow",
+                                    ),
+                                    meta: None(
+                                        106,
+                                    ),
+                                },
+                            ),
                         ),
                     },
                 ),
@@ -340,15 +339,17 @@ Some(
                 cmd: Equip(
                     CmdEquip {
                         lit: token Command(188..193),
-                        item: Item(
-                            Item {
-                                name: Word(
-                                    194..203 => "ice_arrow",
-                                ),
-                                meta: None(
-                                    203,
-                                ),
-                            },
+                        items: Single(
+                            Item(
+                                Item {
+                                    name: Word(
+                                        194..203 => "ice_arrow",
+                                    ),
+                                    meta: None(
+                                        203,
+                                    ),
+                                },
+                            ),
                         ),
                     },
                 ),
@@ -360,9 +361,11 @@ Some(
                 cmd: Use(
                     CmdUse {
                         lit: token Command(204..207),
-                        category: Bow(
-                            Singular(
-                                token Keyword(208..211),
+                        item: Category(
+                            Bow(
+                                Singular(
+                                    token Keyword(208..211),
+                                ),
                             ),
                         ),
                         times: None(
@@ -400,9 +403,11 @@ Some(
                 cmd: Use(
                     CmdUse {
                         lit: token Command(226..229),
-                        category: Food(
-                            Singular(
-                                token Keyword(230..234),
+                        item: Category(
+                            Food(
+                                Singular(
+                                    token Keyword(230..234),
+                                ),
                             ),
                         ),
                         times: Some(

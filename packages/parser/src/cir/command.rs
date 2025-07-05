@@ -55,11 +55,13 @@ pub enum Command {
     Get(Vec<cir::ItemSpec>),
     /// See [`syn::CmdPickUp`]
     PickUp(Vec<cir::ItemSelectSpec>),
-    /// `:item-box-pause` annotation.
+    /// `:pause-during` annotation.
     ///
-    /// Assumes an item text box will appear for the next command,
-    /// and open the pause menu during such text box
-    CoItemBoxPause,
+    /// - Get: Assumes an item text box will appear for the next command,
+    ///   and open the pause menu during such text box
+    /// - Throw/Display/OvDrop: Delay removal of the weapon til after dialog closes
+    ///   (for making translucent items)
+    CoPauseDuring,
 
     /// See [`syn::CmdOpenInv`]
     OpenInv,
@@ -73,6 +75,8 @@ pub enum Command {
     Hold(Vec<cir::ItemSelectSpec>),
     /// `unhold`
     Unhold,
+    /// Specify an option to be done in overworld
+    CoOverworld,
     /// See [`syn::CmdDrop`] - Items are additional items to hold before dropping
     Drop(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdDnp`]
@@ -85,6 +89,25 @@ pub enum Command {
     SuBreak(i32),
     /// See [`syn::CmdSuRemove`]
     SuRemove(Vec<cir::ItemSelectSpec>),
+
+    /// Use DPad Quick Menu
+    CoDpad,
+    /// See [`syn::CmdEquip`]
+    Equip(Vec<cir::ItemSelectSpec>),
+    /// See [`syn::CmdUnequip`]
+    Unequip(Vec<cir::ItemSelectSpec>),
+    /// See [`syn::CmdUse`] and [`crate::syn::CmdShoot`]
+    ///
+    /// Second arg is times
+    Use(Box<cir::ItemNameSpec>, usize),
+    /// Specify the throwing action should not break the weapon
+    CoNonBreaking,
+    /// Specify the throwing action should break the weapon
+    CoBreaking,
+    /// `throw weapon`
+    ThrowWeapon,
+    /// See [`syn::CmdDisplay`]
+    Display(Vec<cir::ItemSelectSpec>),
 
     /// See [`syn::CmdOpenShop`]
     OpenShop,
@@ -107,12 +130,6 @@ pub enum Command {
 
     /// See [`syn::CmdEat`]
     Eat(Vec<cir::ItemSelectSpec>),
-    /// See [`syn::CmdEquip`]
-    Equip(Box<cir::ItemSelectSpec>),
-    /// See [`syn::CmdUnequip`]
-    Unequip(Box<cir::ItemSelectSpec>, bool),
-    /// See [`syn::CmdUse`] and [`crate::syn::CmdShoot`]
-    Use(cir::CategorySpec),
     /// See [`syn::CmdRoast`] and [`crate::syn::CmdBake`]
     Roast(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdBoil`]
@@ -196,7 +213,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
         C::PickUp(cmd) => Some(X::PickUp(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
-        A![ItemBoxPause(_)] => Some(X::CoItemBoxPause),
+        A![PauseDuring(_)] => Some(X::CoPauseDuring),
         //////////////////////////////////////////////////////////////////
         C::OpenInv(_) => Some(X::OpenInv),
         C::CloseInv(_) => Some(X::CloseInv),
@@ -205,6 +222,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         C::Unhold(_) => Some(X::Unhold),
+        A![Overworld(_)] => Some(X::CoOverworld),
         C::Drop(cmd) => Some(X::Drop(match cmd.items.as_ref() {
             Some(items) => cir::parse_item_list_constrained(items, resolver, errors).await,
             None => vec![],
@@ -227,6 +245,32 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         //////////////////////////////////////////////////////////////////
+        A![Dpad(_)] => Some(X::CoDpad),
+        C::Equip(cmd) => Some(X::Equip(
+            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
+        )),
+        C::Unequip(cmd) => Some(X::Unequip(
+            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
+        )),
+        C::Use(cmd) => {
+            let times = absorb_error(errors, cir::parse_times_clause(cmd.times.as_ref()))?;
+            let item = cir::parse_item_or_category_name(&cmd.item, resolver, errors).await?;
+            Some(X::Use(Box::new(item), times as usize))
+        }
+        C::Shoot(cmd) => {
+            let times = absorb_error(errors, cir::parse_times_clause(cmd.times.as_ref()))?;
+            Some(X::Use(
+                Box::new(cir::ItemNameSpec::Category(cir::Category::Bow)),
+                times as usize,
+            ))
+        }
+        A![NonBreaking(_)] => Some(X::CoNonBreaking),
+        A![Breaking(_)] => Some(X::CoBreaking),
+        C::ThrowWeapon(_) => Some(X::ThrowWeapon),
+        C::Display(cmd) => Some(X::Display(
+            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
+        )),
+        //////////////////////////////////////////////////////////////////
         C::OpenShop(_) => Some(X::OpenShop),
         C::CloseShop(_) => Some(X::CloseShop),
         C::Buy(cmd) => Some(X::Buy(
@@ -237,61 +281,16 @@ pub async fn parse_command<R: QuotedItemResolver>(
         )),
         A![SameDialog(_)] => Some(X::CoSameDialog),
         //////////////////////////////////////////////////////////////////
-        C::Entangle(cmd) => {
-            let (name, meta) = cir::parse_item_or_category(&cmd.item, resolver, errors).await?;
-            let item = cir::ItemSelectSpec {
-                name,
-                meta,
-                amount: cir::AmountSpec::Num(1),
-                span: cmd.item.span(),
-            };
-            Some(X::Entangle(Box::new(item)))
-        }
-        A![Targeting(cmd)] => {
-            let (name, meta) = cir::parse_item_or_category(&cmd.item, resolver, errors).await?;
-            let item = cir::ItemSelectSpec {
-                name,
-                meta,
-                amount: cir::AmountSpec::Num(1),
-                span: cmd.item.span(),
-            };
-            Some(X::CoTargeting(Box::new(item)))
-        }
+        C::Entangle(cmd) => Some(X::Entangle(Box::new(
+            cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?,
+        ))),
+        A![Targeting(cmd)] => Some(X::CoTargeting(Box::new(
+            cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?,
+        ))),
         //////////////////////////////////////////////////////////////////
         syn::Command::Eat(cmd) => Some(cir::Command::Eat(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
-        // TODO
-        syn::Command::Equip(_cmd) => None,
-        // Some(cir::Command::Equip(Box::new(
-        //     cir::parse_item_or_category(&cmd.item, resolver, errors).await?,
-        // ))),
-        syn::Command::Unequip(_cmd) => None,
-        // Some(cir::Command::Unequip(
-        //     Box::new(cir::parse_item_or_category(&cmd.item, resolver, errors).await?),
-        //     cmd.all.is_some(),
-        // )),
-        syn::Command::Use(cmd) => {
-            match cir::parse_use_category_with_times(&cmd.category, cmd.times.as_ref()) {
-                Ok(spec) => Some(cir::Command::Use(spec)),
-                Err(e) => {
-                    errors.push(e);
-                    None
-                }
-            }
-        }
-        syn::Command::Shoot(cmd) => match cir::parse_times_clause(cmd.times.as_ref()) {
-            Ok(times) => Some(cir::Command::Use(cir::CategorySpec {
-                category: cir::Category::Bow,
-                amount: times,
-                row: 0,
-                col: 0,
-            })),
-            Err(e) => {
-                errors.push(e);
-                None
-            }
-        },
         syn::Command::Roast(cmd) => Some(cir::Command::Roast(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),

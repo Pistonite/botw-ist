@@ -8,7 +8,7 @@ See [Shop](./shop.md) for specially buying items from a shop.
 > `get` [`FINITE_ITEM_LIST`](../user/syntax_item.md)<br>
 > `pick-up` [`CONSTRAINED_ITEM_LIST`](../user/syntax_item.md#)<br>
 
-Annotations: [`:item-box-pause`](#pause-on-item-text-boxes), [`:accurately-simulate`](#performance)
+Annotations: [`:pause-during`](#pause-on-item-text-boxes), [`:accurately-simulate`](#performance)
 
 Examples
 ```skybook
@@ -30,7 +30,7 @@ instead.
 ## Pause on Item Text Boxes
 When picking up a new item, opening a chest, or getting item from some event (such as a Korok),
 you will get an item text box that allows you to open the pause menu.
-The <skyb>:item-box-pause</skyb> annotation can be used to simulate this action.
+The <skyb>:pause-during</skyb> annotation can be used to simulate this action.
 
 ```admonish warning
 The simulator does NOT check if you are allowed to open the pause menu when you get

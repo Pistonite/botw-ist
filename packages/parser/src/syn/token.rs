@@ -65,6 +65,13 @@ pub enum TT {
         KwDnp = "dnp",
         KwCook = "cook",
 
+        KwEquip = "equip",
+        KwUnequip = "unequip",
+        KwShoot = "shoot",
+        KwUse = "use",
+        KwThrow = "throw",
+        KwDisplay = "display",
+
         KwTalkTo = "talk-to",
         KwUntalk = "untalk",
         KwCloseDialog = "close-dialog",
@@ -74,10 +81,6 @@ pub enum TT {
 
         KwEat = "eat",
 
-        KwEquip = "equip",
-        KwUnequip = "unequip",
-        KwShoot = "shoot",
-        KwUse = "use",
 
         KwRoast = "roast",
         KwBake = "bake",
@@ -121,10 +124,14 @@ pub enum TT {
 
         // @syntax-generator-hint annotations
         KwSmug = "smug",
-        KwItemBoxPause = "item-box-pause",
+        KwPauseDuring = "pause-during",
         KwSameDialog = "same-dialog",
         KwAccuratelySimulate = "accurately-simulate",
         KwTargeting = "targeting",
+        KwOverworld = "overworld",
+        KwNonBreaking = "non-breaking",
+        KwBreaking = "breaking",
+        KwDpad = "dpad",
         KwWeaponSlots = "weapon-slots",
         KwShieldSlots = "shield-slots",
         KwBowSlots = "bow-slots",

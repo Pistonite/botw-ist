@@ -1,9 +1,9 @@
 get 2 shroom
 :smug hold 2 shroom
-:item-box-pause get apple
+:pause-during get apple
 unhold
 unpause // should have nothing dropped
 
 :smug hold 2 shroom
-:item-box-pause get pepper
+:pause-during get pepper
 unpause // shrooms should drop to ground

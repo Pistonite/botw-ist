@@ -112,6 +112,22 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
     out_item_specs
 }
 
+/// Parse one item selector in constrained list
+pub async fn parse_one_item_constrained<R: QuotedItemResolver>(
+    item: &syn::ItemOrCategory,
+    resolver: &R,
+    errors: &mut Vec<ErrorReport>,
+) -> Option<ItemSelectSpec> {
+    let (name, meta) = cir::parse_item_or_category(item, resolver, errors).await?;
+    let item = cir::ItemSelectSpec {
+        name,
+        meta,
+        amount: cir::AmountSpec::Num(1),
+        span: item.span(),
+    };
+    Some(item)
+}
+
 /// Parse a Contrained Item List
 pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
     list: &syn::ItemListConstrained,
@@ -188,6 +204,24 @@ pub async fn parse_item_or_category<R: QuotedItemResolver>(
                 .map(|m| cir::ItemMeta::parse_syn(m, errors));
             let category = cir::parse_category(&category.name);
             Some((ItemNameSpec::Category(category), meta))
+        }
+    }
+}
+
+pub async fn parse_item_or_category_name<R: QuotedItemResolver>(
+    item: &syn::ItemOrCategoryName,
+    resolver: &R,
+    errors: &mut Vec<ErrorReport>,
+) -> Option<ItemNameSpec> {
+    match item {
+        syn::ItemOrCategoryName::Item(item) => {
+            let resolved_item = parse_item_name(item, resolver, errors).await?;
+            let actor = resolved_item.actor;
+            Some(ItemNameSpec::Actor(actor))
+        }
+        syn::ItemOrCategoryName::Category(category) => {
+            let category = cir::parse_category(category);
+            Some(ItemNameSpec::Category(category))
         }
     }
 }

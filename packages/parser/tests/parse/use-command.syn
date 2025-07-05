@@ -1,0 +1,96 @@
+Some(
+    Script {
+        stmts: 0..66 => [
+            Statement {
+                cmd: Use(
+                    CmdUse {
+                        lit: token Command(0..3),
+                        item: Category(
+                            Weapon(
+                                Singular(
+                                    token Keyword(4..10),
+                                ),
+                            ),
+                        ),
+                        times: None(
+                            10,
+                        ),
+                    },
+                ),
+                semi: None(
+                    10,
+                ),
+            },
+            Statement {
+                cmd: Use(
+                    CmdUse {
+                        lit: token Command(11..14),
+                        item: Category(
+                            Shield(
+                                Singular(
+                                    token Keyword(15..21),
+                                ),
+                            ),
+                        ),
+                        times: Some(
+                            TimesClause {
+                                times: Number(
+                                    22..23 => "2",
+                                ),
+                                kw: Plural(
+                                    token Keyword(24..29),
+                                ),
+                            },
+                        ),
+                    },
+                ),
+                semi: None(
+                    29,
+                ),
+            },
+            Statement {
+                cmd: Use(
+                    CmdUse {
+                        lit: token Command(30..33),
+                        item: Item(
+                            Word(
+                                34..39 => "fairy",
+                            ),
+                        ),
+                        times: Some(
+                            TimesClause {
+                                times: Number(
+                                    40..41 => "3",
+                                ),
+                                kw: Plural(
+                                    token Keyword(42..47),
+                                ),
+                            },
+                        ),
+                    },
+                ),
+                semi: None(
+                    47,
+                ),
+            },
+            Statement {
+                cmd: Use(
+                    CmdUse {
+                        lit: token Command(48..51),
+                        item: Item(
+                            Word(
+                                52..66 => "royal-claymore",
+                            ),
+                        ),
+                        times: None(
+                            66,
+                        ),
+                    },
+                ),
+                semi: None(
+                    66,
+                ),
+            },
+        ],
+    },
+)
