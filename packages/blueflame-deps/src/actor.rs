@@ -30,7 +30,5 @@ pub fn can_sell(actor: &str) -> bool {
 
 /// Get the general life if the actor has a profile that starts with "Weapon"
 pub fn get_weapon_general_life(actor: &str) -> Option<i32> {
-    crate::generated::actor::WEAPON_LIFE_MAP
-        .get(actor)
-        .copied()
+    crate::generated::actor::WEAPON_LIFE_MAP.get(actor).copied()
 }
