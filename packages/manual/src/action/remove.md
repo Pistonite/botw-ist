@@ -99,6 +99,8 @@ The <skyb>!remove</skyb> supercommand lets you forcefully delete items from the 
 ```admonish warning
 The implementation of this command is custom and do not correspond to any of the game's code. Using
 this command can lead to inaccurate simulation that's not reproducable in game.
+
+For example, overworld equipments are not synced when removed this way!
 ```
 
 ## Detail
