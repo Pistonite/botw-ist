@@ -219,6 +219,7 @@ runtime_error.CannotFindGroundItemNeedMore: "Impossibile trovare questo oggetto 
 runtime_error.CannotFindItem: "Impossibile trovare questo oggetto nell'inventario."
 runtime_error.CannotFindItemNeedMore: "Impossibile trovare questo oggetto nell'inventario (ne servono altri `{{more}}`)."
 runtime_error.CannotFindPromptTarget: "Impossibile trovare l'oggetto bersaglio di Prompt Entanglement per applicare il prompt."
+runtime_error.CannotGetMore: "Impossibile ottenere più di questo oggetto."
 runtime_error.CannotHoldMore: "Impossibile tenere più oggetti."
 runtime_error.Crash: "Il gioco si è bloccato in questo passaggio."
 runtime_error.Executor: "Errore imprevisto dall'Esecutore."

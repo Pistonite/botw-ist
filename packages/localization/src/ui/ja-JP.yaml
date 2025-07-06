@@ -219,6 +219,7 @@ runtime_error.CannotFindGroundItemNeedMore: "このアイテムは地面に見�
 runtime_error.CannotFindItem: "このアイテムはインベントリに見つかりません。"
 runtime_error.CannotFindItemNeedMore: "このアイテムはインベントリに見つかりません (あと`{{more}}`個必要です)。"
 runtime_error.CannotFindPromptTarget: "プロンプトを適用するためのプロンプトエンタングルメントのターゲットアイテムが見つかりません。"
+runtime_error.CannotGetMore: "これ以上このアイテムは入手できません。"
 runtime_error.CannotHoldMore: "これ以上アイテムを持てません。"
 runtime_error.Crash: "このステップでゲームがクラッシュしました。"
 runtime_error.Executor: "Executorからの予期せぬエラー。"

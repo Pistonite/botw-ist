@@ -219,6 +219,7 @@ runtime_error.CannotFindGroundItemNeedMore: "Kan dit item niet op de grond vinde
 runtime_error.CannotFindItem: "Dit voorwerp kan niet worden gevonden in de inventaris."
 runtime_error.CannotFindItemNeedMore: "Kan dit item niet in de inventaris vinden (nog `{{more}}` nodig)."
 runtime_error.CannotFindPromptTarget: "Kan het Prompt Entanglement-doelitem niet vinden om de prompt toe te passen."
+runtime_error.CannotGetMore: "Kan niet meer van dit voorwerp verkrijgen."
 runtime_error.CannotHoldMore: "Kan niet meer voorwerpen vasthouden."
 runtime_error.Crash: "Het spel is gecrasht tijdens deze stap."
 runtime_error.Executor: "Onverwachte fout van Executor."
