@@ -111,6 +111,10 @@ pub enum RuntimeError {
     NotRightScreen,
     #[error("the item `{0}` is not sellable")]
     NotSellable(String),
+    #[error("the item is not an equipment")]
+    NotEquipment,
+    #[error("the item is not equipped in the overworld")]
+    NotEquippedInOverworld,
     #[error("this operation cannot be completed due to previous errors")]
     OperationNotComplete,
     #[error("cannot specify item position here")]
@@ -125,6 +129,10 @@ pub enum RuntimeError {
         "this command or syntax is not implemented yet, please track the development on GitHub"
     )]
     Unimplemented,
+    #[error("amount can only be 1 when targeting equipped items in the overworld")]
+    UselessAmountForOverworldEquipment,
+    #[error("meta properties are ignored when targeting equipped items in the overworld")]
+    UselessMetaForOverworldEquipment,
     #[error("this meta property is ignored while matching")]
     UselessItemMatchProp,
     #[error("you are already on this screen so transitioning has no effect")]

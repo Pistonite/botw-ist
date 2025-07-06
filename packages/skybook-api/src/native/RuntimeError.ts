@@ -27,10 +27,14 @@ export type RuntimeError =
     | { type: "NotHolding" }
     | { type: "NotRightScreen" }
     | { type: "NotSellable"; data: string }
+    | { type: "NotEquipment" }
+    | { type: "NotEquippedInOverworld" }
     | { type: "OperationNotComplete" }
     | { type: "PositionSpecNotAllowed" }
     | { type: "PreviousCrash" }
     | { type: "Uninitialized" }
     | { type: "Unimplemented" }
+    | { type: "UselessAmountForOverworldEquipment" }
+    | { type: "UselessMetaForOverworldEquipment" }
     | { type: "UselessItemMatchProp" }
     | { type: "UselessScreenTransition" };
