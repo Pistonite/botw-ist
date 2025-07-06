@@ -1,3 +1,5 @@
+use blueflame::linker::events::GameEvent as _;
+use blueflame::memory::Memory;
 use blueflame::processor::{self, Cpu2};
 use blueflame::{linker, memory};
 use skybook_parser::cir;
@@ -69,6 +71,43 @@ macro_rules! predrop_items {
 }
 pub(crate) use predrop_items;
 
+macro_rules! check_remaining {
+    ($result:ident, $errors:ident, $span:expr) => {
+        $crate::sim::actions::common::check_remaining!(
+            $result,
+            $errors,
+            $span,
+            CannotFindItem,
+            CannotFindItemNeedMore
+        )
+    };
+    ($result:ident, $errors:ident, $span:expr, $NotFoundError:ident, $NeedMoreError:ident) => {
+        match $result {
+            $crate::sim::actions::common::ItemSelectCheck::NeverFound => {
+                $errors.push($crate::error::sim_error!($span, $NotFoundError));
+            }
+            $crate::sim::actions::common::ItemSelectCheck::NeedMore(n) => {
+                $errors.push($crate::error::sim_error!($span, $NeedMoreError(n)))
+            }
+            _ => {}
+        }
+    };
+}
+pub(crate) use check_remaining;
+
+macro_rules! check_remaining_ground {
+    ($result:ident, $errors:ident, $span:expr) => {
+        $crate::sim::actions::common::check_remaining!(
+            $result,
+            $errors,
+            $span,
+            CannotFindGroundItem,
+            CannotFindGroundItemNeedMore
+        )
+    };
+}
+pub(crate) use check_remaining_ground;
+
 #[inline]
 pub fn handle_predrop_result(
     ctx: &mut sim::Context<&mut Cpu2>,
@@ -105,6 +144,13 @@ pub fn drop_held_items(
     sys.overworld.drop_held_items();
     sys.screen.holding_in_inventory = false;
     Ok(())
+}
+
+/// Add an error if the item amount is not 1
+pub fn check_overworld_amount(item: &cir::ItemSelectSpec, errors: &mut Vec<ErrorReport>) {
+    if item.amount != cir::AmountSpec::Num(1) {
+        errors.push(sim_warning!(item.span, UselessAmountForOverworldEquipment))
+    }
 }
 
 /// Convert `AllBut` variant from the "but" amount to real amount
@@ -227,4 +273,104 @@ pub enum ItemSelectCheck {
     NeverFound,
     /// Emit error because we need more of this item
     NeedMore(usize),
+}
+
+/// Change the currently targeted tab/slot to the PE target
+///
+/// Returns None if some error occurs
+pub fn change_to_pe_target_if_need(
+    pe_target: Option<&cir::ItemSelectSpec>,
+    inventory: &sim::PouchScreen,
+    memory: &Memory,
+    tab: usize,
+    slot: usize,
+    errors: &mut Vec<ErrorReport>,
+) -> Result<Option<(usize, usize)>, memory::Error> {
+    if !inventory.is_pe_activated_slot(tab, slot) {
+        // use position as-is if PE is not activated
+        return Ok(Some((tab, slot)));
+    }
+    let Some(target) = pe_target else {
+        // use position as-is if no PE target is set
+        return Ok(Some((tab, slot)));
+    };
+    // find the target item
+    let target_pos = inventory.select(
+        &target.name,
+        target.meta.as_ref(),
+        None,
+        memory,
+        target.span,
+        errors,
+    )?;
+    let Some((target_tab, target_slot)) = target_pos else {
+        errors.push(sim_error!(target.span, CannotFindPromptTarget));
+        return Ok(None);
+    };
+    // the target slot must be in a PE activate slot
+    // to be able to use PE
+    if !inventory.is_pe_activated_slot(target_tab, target_slot) {
+        errors.push(sim_error!(target.span, InvalidPromptTarget));
+        return Ok(None);
+    }
+    // adjust the slot index to target the actual
+    // slot if it's translucent/empty
+    let target_slot = inventory.get_pe_target_slot(target_tab, target_slot, false);
+
+    Ok(Some((target_tab, target_slot)))
+}
+
+/// Call trash item with event wrapper
+pub fn trash_item_wrapped(
+    cpu: &mut Cpu2<'_, '_>,
+    sys: &mut sim::GameSystems,
+    tab: i32,
+    slot: i32,
+) -> Result<(), processor::Error> {
+    let menu_overload = sys.screen.menu_overload;
+
+    #[derive(Default)]
+    struct State {
+        pub drop_types: Vec<i32>, // TODO: smallvec?
+        pub weapons_to_spawn: Vec<sim::OverworldActor>,
+        menu_overload: bool,
+    }
+
+    let state = linker::events::TrashEquip::execute_subscribed(
+        cpu,
+        State {
+            menu_overload,
+            ..Default::default()
+        },
+        |state, arg| match arg {
+            linker::events::TrashEquipArgs::Trash(name, value, modifier) => {
+                if !state.menu_overload {
+                    let actor = sim::OverworldActor {
+                        name,
+                        value,
+                        modifier: if modifier.flags == 0 {
+                            None
+                        } else {
+                            Some(modifier)
+                        },
+                    };
+                    state.weapons_to_spawn.push(actor);
+                }
+            }
+            linker::events::TrashEquipArgs::PlayerDrop(x) => state.drop_types.push(x),
+            _ => {}
+        },
+        |cpu| linker::trash_item(cpu, tab, slot),
+    )?;
+
+    for x in state.drop_types {
+        sys.overworld.drop_player_equipment(x);
+    }
+
+    for weapon in state.weapons_to_spawn {
+        sys.overworld.spawn_weapon_later(weapon);
+    }
+    sys.check_weapon_spawn();
+
+    Ok(())
 }

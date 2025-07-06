@@ -229,6 +229,8 @@ runtime_error.ItemMismatch: "The item found in this position in the inventory is
 runtime_error.ItemMismatchCategory: "The item found in this position in the inventory is `{{actual_item}}`, while the item specified in the command should be in the `{{expected_category}}` category."
 runtime_error.NotDroppable: "This item cannot be dropped."
 runtime_error.NotEnoughForAllBut: "Requires `{{need}}` items, but only `{{actual}}` items are found."
+runtime_error.NotEquipment: "This action can only be applied to equipments."
+runtime_error.NotEquippedInOverworld: "Only currently equipped items can be selected by this action."
 runtime_error.NotHoldable: "This item cannot be held."
 runtime_error.NotHolding: "No items are being held."
 runtime_error.NotRightScreen: "You cannot use this command in the current screen."
@@ -238,7 +240,9 @@ runtime_error.PositionSpecNotAllowed: "Specifying item by position is not allowe
 runtime_error.PreviousCrash: "The game has crashed in a previous step. You need to `reload` or `new-game` before continuing."
 runtime_error.Unimplemented: "This command is not implemented yet :)"
 runtime_error.Uninitialized: "Unexpected uninitialized Runtime."
+runtime_error.UselessAmountForOverworldEquipment: "Amount can only be 1 when targeting items equipped in the overworld. Please change the amount to 1 or remove it."
 runtime_error.UselessItemMatchProp: "This property is ignored when matching items in this command. Please remove this property."
+runtime_error.UselessMetaForOverworldEquipment: "Metadata is ignored when targeting items equipped in the overworld. Please remove the metadata."
 runtime_error.UselessScreenTransition: "This command has no effect, since you are already on this screen."
 
 # Error from getting view from simulation output

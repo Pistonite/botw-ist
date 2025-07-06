@@ -1,5 +1,5 @@
 use crate::game::{FixedSafeString40, ListNode, OffsetList};
-use crate::memory::{self, MemObject, Memory, Ptr, offsetof};
+use crate::memory::{self, MemObject, Memory, Ptr, mem, offsetof};
 
 #[derive(MemObject, Clone)]
 #[size(0x44808)]
@@ -131,6 +131,26 @@ pub struct PouchItem {
     pub mIngredients: PtrArrayImpl_FixedSafeString40,
 }
 
+impl Ptr![PouchItem] {
+    /// WeaponModifier constructor from PouchItem, must be non-null
+    pub fn to_modifier_info(self, memory: &Memory) -> Result<WeaponModifierInfo, memory::Error> {
+        mem! { memory:
+            let item_type = *(&self->mType);
+        }
+        if item_type <= 3 {
+            mem! { memory:
+                let value = *(&self->mHealthRecover);
+                let flags = *(&self->mSellPrice);
+            }
+            return Ok(WeaponModifierInfo {
+                flags: flags as u32,
+                value,
+            });
+        }
+        Ok(WeaponModifierInfo::default())
+    }
+}
+
 #[allow(non_camel_case_types)]
 #[derive(MemObject, Default, Clone, Copy)]
 #[size(0x10)]
@@ -144,7 +164,7 @@ pub struct PtrArrayImpl_FixedSafeString40 {
     // there is a buffer after this, but we don't need it
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, MemObject)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, MemObject)]
 #[size(0x8)]
 pub struct WeaponModifierInfo {
     #[offset(0x0)]

@@ -6,8 +6,6 @@ use skybook_parser::cir;
 use crate::error::ErrorReport;
 use crate::sim;
 
-use super::{handle_predrop_result, predrop_items, switch_to_overworld_or_stop};
-
 /// Add items to pouch by eventually calling itemGet or cookItemGet
 pub fn get_items(
     ctx: &mut sim::Context<&mut Cpu2>,
@@ -17,8 +15,8 @@ pub fn get_items(
     pause_after: bool,
     accurate: bool,
 ) -> Result<(), processor::Error> {
-    switch_to_overworld_or_stop!(ctx, sys, errors, "GET");
-    let should_drop = predrop_items!(ctx, sys, errors, "GET");
+    super::switch_to_overworld_or_stop!(ctx, sys, errors, "GET");
+    let should_drop = super::predrop_items!(ctx, sys, errors, "GET");
 
     'outer: for item in items {
         if ctx.is_aborted() {
@@ -70,7 +68,7 @@ pub fn get_items(
         }
     }
 
-    handle_predrop_result(ctx, sys, errors, pause_after, should_drop, "GET")?;
+    super::handle_predrop_result(ctx, sys, errors, pause_after, should_drop, "GET")?;
     sys.overworld.despawn_items();
 
     Ok(())

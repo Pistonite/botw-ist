@@ -8,6 +8,7 @@ use anyhow::Context;
 use skybook_parser::ParseOutput;
 use skybook_parser::search::QuotedItemResolver;
 use skybook_parser::search::ResolvedItem;
+use skybook_runtime::MaybeAborted;
 use skybook_runtime::sim;
 
 pub fn run(runtime: Arc<sim::Runtime>) -> anyhow::Result<bool> {
@@ -138,12 +139,10 @@ async fn run_test(
     let run_handle = sim::RunHandle::new();
     let run = sim::Run::new(Arc::new(run_handle));
     // unwrap: we will never abort the run so it will always be finished
-    let output = run
-        .run_parsed(Arc::clone(&parsed_output), runtime)
-        .await
-        .unwrap();
-
-    log::debug!("{}", output.states.len());
+    let MaybeAborted::Ok(output) = run.run_parsed(Arc::clone(&parsed_output), runtime).await else {
+        log::error!("CANCEL {test_name}");
+        return Ok(false);
+    };
 
     // also write diagnostics into output
     for error in &parsed_output.errors {

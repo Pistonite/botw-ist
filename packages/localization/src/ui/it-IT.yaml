@@ -229,6 +229,8 @@ runtime_error.ItemMismatch: "L'oggetto trovato in questa posizione nell'inventar
 runtime_error.ItemMismatchCategory: "L'oggetto trovato in questa posizione nell'inventario è `{{actual_item}}`, mentre l'oggetto specificato nel comando dovrebbe appartenere alla categoria `{{expected_category}}`."
 runtime_error.NotDroppable: "Questo oggetto non può essere lasciato cadere."
 runtime_error.NotEnoughForAllBut: "Richiede `{{need}}` oggetti, ma sono stati trovati solo `{{actual}}` oggetti."
+runtime_error.NotEquipment: "Questa azione può essere applicata solo all'equipaggiamento."
+runtime_error.NotEquippedInOverworld: "Solo gli oggetti attualmente equipaggiati possono essere selezionati con questa azione."
 runtime_error.NotHoldable: "Questo oggetto non può essere tenuto."
 runtime_error.NotHolding: "Nessun oggetto è in mano."
 runtime_error.NotRightScreen: "Non puoi usare questo comando nella schermata attuale."
@@ -238,7 +240,9 @@ runtime_error.PositionSpecNotAllowed: "La specifica dell'oggetto per posizione n
 runtime_error.PreviousCrash: "Il gioco si è bloccato in un passaggio precedente. Devi `ricaricare` (`reload`) o iniziare una `nuova partita` (`new-game`) prima di continuare."
 runtime_error.Unimplemented: "Questo comando non è ancora implementato :)."
 runtime_error.Uninitialized: "Runtime imprevisto non inizializzato."
+runtime_error.UselessAmountForOverworldEquipment: "La quantità può essere solo 1 quando si selezionano oggetti equipaggiati nell'overworld. Si prega di cambiare la quantità a 1 o di rimuoverla."
 runtime_error.UselessItemMatchProp: "Questa proprietà viene ignorata durante la corrispondenza degli oggetti in questo comando. Rimuovi questa proprietà."
+runtime_error.UselessMetaForOverworldEquipment: "I metadati vengono ignorati quando si selezionano oggetti equipaggiati nell'overworld. Si prega di rimuovere i metadati."
 runtime_error.UselessScreenTransition: "Questo comando non ha alcun effetto, poiché sei già su questa schermata."
 
 # Error from getting view from simulation output

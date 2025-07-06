@@ -89,6 +89,7 @@ impl Process {
     ) -> Result<(Box<dyn Execute>, u32), Error> {
         // find execute hook at this location
         let main_offset: u32 = (pc - self.main_start()) as u32;
+
         let (ignore_hook_size_check, max_bytes) = match max_bytes {
             Some(n) => (false, n),
             None => (true, 4), // fetch one instruction

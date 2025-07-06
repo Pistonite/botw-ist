@@ -1,6 +1,7 @@
 use blueflame::game::{PouchItem, gdt, singleton_instance};
 use blueflame::memory::{self, Ptr, mem, proxy};
 use blueflame::processor::Cpu2;
+use blueflame::{linker, processor};
 use derive_more::{Deref, DerefMut};
 
 use crate::sim;
@@ -16,24 +17,25 @@ pub struct PouchScreen {
     /// The current active slot for Prompt Entanglement. i.e.
     /// this item's prompt will be used when performing
     /// an action on an entangle-reachable slot
-    pub active_entangle_slot: Option<(usize, usize)>,
+    active_entangle_slot: Option<(usize, usize)>,
 
-    /// Weapon to spawn if changed on inventory close
-    pub weapon_to_spawn: PouchScreenActor,
-    /// Bow to spawn if changed on inventory close
-    pub bow_to_spawn: PouchScreenActor,
-    /// Shield to spawn if changed on inventory close
-    pub shield_to_spawn: PouchScreenActor,
+    /// Weapon state to change on inventory close
+    pub weapon_state: PouchScreenEquipState,
+    /// Bow state to change on inventory close
+    pub bow_state: PouchScreenEquipState,
+    /// Shield state to change on inventory close
+    pub shield_state: PouchScreenEquipState,
 }
 
 /// State of equipment actors in the inventory screen
 #[derive(Debug, Default, Clone)]
-pub struct PouchScreenActor {
-    /// Actor to be spawned in the overworld
-    /// when inventory is closed. None means nothing is equipped
-    /// and to delete the overworld actor
-    pub actor: Option<sim::OverworldActor>,
-    pub changed: bool,
+pub struct PouchScreenEquipState {
+    /// Item to be spawned in the overworld on the player
+    /// when inventory is closed. Nullptr means don't create anything
+    pub item: Ptr![PouchItem],
+    /// If true, delete the item on the player instead of creating
+    /// or do nothing.
+    pub to_delete: bool,
 }
 
 impl PouchScreen {
@@ -41,17 +43,19 @@ impl PouchScreen {
     ///
     /// If `force_accessible` is true, the inventory will be accessible even
     /// when mCount is 0
-    pub fn open(cpu2: &mut Cpu2<'_, '_>, force_accessible: bool) -> Result<Self, memory::Error> {
+    pub fn open(cpu2: &mut Cpu2<'_, '_>, force_accessible: bool) -> Result<Self, processor::Error> {
         log::debug!("opening new inventory screen");
-        // this is called but it doesn't do anything for us
-        // linker::update_equipped_item_array(cpu2)?;
+        // this is needed for "drop" to know if the dropped weapon
+        // should be dropped from player, or created by CreatePlayerTrashActorMgr.
+        linker::update_equipped_item_array(cpu2)?;
+        log::debug!("equipment array updated");
 
         Ok(Self {
             items: do_open(cpu2, force_accessible)?,
             active_entangle_slot: None,
-            weapon_to_spawn: Default::default(),
-            bow_to_spawn: Default::default(),
-            shield_to_spawn: Default::default(),
+            weapon_state: Default::default(),
+            bow_state: Default::default(),
+            shield_state: Default::default(),
         })
     }
 
@@ -63,6 +67,10 @@ impl PouchScreen {
     /// Deactivate Prompt Entanglement
     pub fn deactivate_pe(&mut self) {
         self.active_entangle_slot = None;
+    }
+
+    pub fn active_pe_slot(&self) -> Option<(usize, usize)> {
+        self.active_entangle_slot
     }
 
     /// Get list of item pointers that are currently activated
@@ -112,6 +120,15 @@ impl PouchScreen {
         }
     }
 
+    /// Get the equipment state tracked by pouch screen based on the item type
+    pub fn equipment_state_mut(&mut self, pouch_item_type: i32) -> &mut PouchScreenEquipState {
+        match pouch_item_type {
+            1 => &mut self.bow_state,
+            3 => &mut self.shield_state,
+            _ => &mut self.weapon_state,
+        }
+    }
+
     /// Refresh the item states in this pouch screen while still maintaining
     /// the other states
     pub fn update_all_items(
@@ -121,6 +138,19 @@ impl PouchScreen {
     ) -> Result<(), memory::Error> {
         self.items = do_open(cpu2, force_accessible)?;
         Ok(())
+    }
+}
+
+impl PouchScreenEquipState {
+    /// Set the state to be unequip (after an unequip action)
+    pub fn set_unequip(&mut self) {
+        self.item = 0u64.into();
+        self.to_delete = true;
+    }
+    /// Set the state to be equipped (after an equip action)
+    pub fn set_equip(&mut self, item: Ptr![PouchItem]) {
+        self.item = item;
+        self.to_delete = false;
     }
 }
 

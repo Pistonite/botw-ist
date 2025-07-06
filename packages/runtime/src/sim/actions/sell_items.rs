@@ -7,8 +7,6 @@ use skybook_parser::cir;
 use crate::error::{ErrorReport, sim_error};
 use crate::sim;
 
-use super::{ItemSelectCheck, convert_amount};
-
 /// Sell items to a shop
 pub fn sell_items(
     ctx: &mut sim::Context<&mut Cpu2>,
@@ -30,7 +28,7 @@ pub fn sell_items(
         let name = &item.name;
         let meta = item.meta.as_ref();
         let memory = ctx.cpu().proc.memory();
-        let mut remaining = convert_amount(item.amount, item.span, errors, false, || {
+        let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
             shop.get_amount(name, meta, sim::CountingMethod::CanStack, memory)
         })?;
         let mut check_for_extra_error = true;
@@ -109,17 +107,10 @@ pub fn sell_items(
         }
         if check_for_extra_error {
             let memory = ctx.cpu().proc.memory();
-            match remaining.check(item.span, errors, || {
+            let result = remaining.check(item.span, errors, || {
                 shop.get_amount(name, meta, sim::CountingMethod::CanStack, memory)
-            })? {
-                ItemSelectCheck::NeverFound => {
-                    errors.push(sim_error!(item.span, CannotFindItem));
-                }
-                ItemSelectCheck::NeedMore(n) => {
-                    errors.push(sim_error!(item.span, CannotFindItemNeedMore(n)));
-                }
-                _ => {}
-            }
+            })?;
+            super::check_remaining!(result, errors, item.span);
         }
     }
 

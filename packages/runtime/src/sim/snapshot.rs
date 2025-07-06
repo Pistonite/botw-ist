@@ -229,7 +229,11 @@ fn fmt_iv_overworld_item(
             modifier,
         } => {
             let typ = "Equipped";
-            let modifier = format!("{modifier:?}");
+            let modifier = if modifier.flag == 0 && modifier.value == 0 {
+                "none".to_string()
+            } else {
+                format!("(flag={:08x}, value={})", modifier.flag, modifier.value)
+            };
             write_snapshot_ln!(f, "", typ, actor, value, modifier)?;
         }
         iv::OverworldItem::Held { actor } => {
@@ -242,7 +246,11 @@ fn fmt_iv_overworld_item(
             modifier,
         } => {
             let typ = "GroundEquipment";
-            let modifier = format!("{modifier:?}");
+            let modifier = if modifier.flag == 0 && modifier.value == 0 {
+                "none".to_string()
+            } else {
+                format!("(flag={:08x}, value={})", modifier.flag, modifier.value)
+            };
             write_snapshot_ln!(f, "", typ, actor, value, modifier)?;
         }
         iv::OverworldItem::GroundItem { actor, despawning } => {

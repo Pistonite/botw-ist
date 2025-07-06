@@ -229,6 +229,8 @@ runtime_error.ItemMismatch: "Het item dat op deze positie in de inventaris is ge
 runtime_error.ItemMismatchCategory: "Het item dat op deze positie in de inventaris is gevonden, is `{{actual_item}}`, terwijl het in het commando gespecificeerde item tot de categorie `{{expected_category}}` zou moeten behoren."
 runtime_error.NotDroppable: "Dit item kan niet worden gedropt."
 runtime_error.NotEnoughForAllBut: "Vereist `{{need}}` items, maar er zijn slechts `{{actual}}` items gevonden."
+runtime_error.NotEquipment: "Deze actie kan alleen op uitrusting worden toegepast."
+runtime_error.NotEquippedInOverworld: "Alleen momenteel uitgeruste items kunnen met deze actie worden geselecteerd."
 runtime_error.NotHoldable: "Dit item kan niet worden vastgehouden."
 runtime_error.NotHolding: "Er worden geen items vastgehouden."
 runtime_error.NotRightScreen: "U kunt deze opdracht niet gebruiken in het huidige scherm."
@@ -238,7 +240,9 @@ runtime_error.PositionSpecNotAllowed: "Het specificeren van een item op positie 
 runtime_error.PreviousCrash: "Het spel is gecrasht in een vorige stap. U moet `herladen` (`reload`) of een `nieuw spel` (`new-game`) starten voordat u verder kunt gaan."
 runtime_error.Unimplemented: "Dit commando is nog niet geïmplementeerd :)."
 runtime_error.Uninitialized: "Onverwachte niet-geïnitialiseerde Runtime."
+runtime_error.UselessAmountForOverworldEquipment: "De hoeveelheid kan alleen 1 zijn bij het richten op items die in de bovenwereld zijn uitgerust. Verander de hoeveelheid naar 1 of verwijder deze."
 runtime_error.UselessItemMatchProp: "Deze eigenschap wordt genegeerd bij het matchen van items in dit commando. Verwijder deze eigenschap."
+runtime_error.UselessMetaForOverworldEquipment: "Metadata worden genegeerd bij het richten op items die in de bovenwereld zijn uitgerust. Verwijder de metadata."
 runtime_error.UselessScreenTransition: "Deze opdracht heeft geen effect, aangezien u al op dit scherm bent."
 
 # Error from getting view from simulation output

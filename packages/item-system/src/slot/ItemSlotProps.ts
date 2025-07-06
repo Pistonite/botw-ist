@@ -125,14 +125,18 @@ export const getSlotPropsFromPouchItem = (
         isEquipped: !isAbility && isEquipped,
         isTranslucent: !item.isInInventory,
         count: getCount(isEquipment, value, canStack),
-        durability: getDurability(isEquipment, value),
+        // don't show durability for translucent items
+        durability: item.isInInventory
+            ? getDurability(isEquipment, value)
+            : undefined,
         isInBrokenSlot: item.allocatedIdx >= list1Count,
         isEntangled: item.promptEntangled,
         holdingCount: item.holdingCount,
         ...status,
         blank: item.isNoIcon,
         deactive: getDeactive(isAbility, isEquipped, actorName, value),
-        badlyDamaged: isEquipment && value <= 300,
+        // don't show badly damaged effect for translucent items (since the value is likely 0)
+        badlyDamaged: item.isInInventory && isEquipment && value <= 300,
         isMasterSwordFullPower,
         accessibleStatus,
     };

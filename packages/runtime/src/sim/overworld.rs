@@ -1,6 +1,7 @@
 use std::collections::VecDeque;
 
-use blueflame::game::WeaponModifierInfo;
+use blueflame::game::{PouchItem, WeaponModifierInfo};
+use blueflame::memory::{self, Memory, Ptr, mem};
 use skybook_parser::cir;
 use teleparse::Span;
 
@@ -13,9 +14,15 @@ pub struct OverworldSystem {
     pub bow: Option<OverworldActor>,
     pub shield: Option<OverworldActor>,
 
+    /// Ground weapons that are scheduled to spawn
+    spawning_ground_weapons: Vec<OverworldActor>,
+    /// Weapons already on the ground
     ground_weapons: Vec<OverworldActor>,
+    /// Materials already on the ground
     ground_materials: VecDeque<OverworldActor>,
+    /// Materials on the ground that are despawning
     ground_materials_despawning: Vec<OverworldActor>,
+    /// Items held by player in the overworld
     holding: Vec<OverworldActor>,
     /// If currently in the "hold attached" state
     /// used for arrowless offset
@@ -84,6 +91,27 @@ impl OverworldSystem {
         }
     }
 
+    /// Add an actor to the queue to spawn when inventory is closed
+    pub fn spawn_weapon_later(&mut self, actor: OverworldActor) {
+        log::debug!("adding ground equipments to spawn: {}", actor.name);
+        self.spawning_ground_weapons.push(actor)
+    }
+
+    /// Spawn items that are previous dropped
+    pub fn spawn_ground_weapons(&mut self) {
+        log::debug!(
+            "spawning ground equipments: {:?}",
+            self.spawning_ground_weapons
+        );
+        self.ground_weapons
+            .extend(std::mem::take(&mut self.spawning_ground_weapons))
+    }
+
+    /// Clear the weapons that are about to spawn (as if spawning failed)
+    pub fn clear_spawning_weapons(&mut self) {
+        self.spawning_ground_weapons.clear()
+    }
+
     /// Set the overworld holding state, only possible if there are held items
     pub fn set_held_attached(&mut self, attached: bool) {
         self.is_hold_attached = attached && !self.holding.is_empty();
@@ -133,6 +161,63 @@ impl OverworldSystem {
     /// Despawn items that are over the limit
     pub fn despawn_items(&mut self) {
         self.ground_materials_despawning.clear();
+    }
+
+    /// Change the player equipment if the item is not null. Do nothing if null
+    pub fn change_player_equipment(
+        &mut self,
+        item: Ptr![PouchItem],
+        memory: &Memory,
+    ) -> Result<(), memory::Error> {
+        if item.is_nullptr() {
+            return Ok(());
+        }
+        mem! { memory:
+            let item_type = *(&item->mType);
+            let value = *(&item->mValue);
+            let modifier_flags = *(&item->mSellPrice);
+            let modifier_value = *(&item->mHealthRecover);
+        }
+
+        // get equipment slot based on pouch item type
+        // see uking::ui::getCreateEquipmentSlot
+        let slot = match item_type {
+            0 => &mut self.weapon,
+            1 => &mut self.bow,
+            3 => &mut self.shield,
+            _ => return Ok(()),
+        };
+
+        let modifier = if modifier_flags == 0 {
+            None
+        } else {
+            Some(WeaponModifierInfo {
+                flags: modifier_flags as u32,
+                value: modifier_value,
+            })
+        };
+
+        let name = Ptr!(&item->mName).cstr(memory)?.load_utf8_lossy(memory)?;
+        *slot = Some(OverworldActor {
+            name,
+            value,
+            modifier,
+        });
+
+        Ok(())
+    }
+
+    /// Drop the currently equipped weapon on the player
+    pub fn drop_player_equipment(&mut self, item_type: i32) {
+        let actor = match item_type {
+            0 => self.weapon.take(),
+            1 => self.bow.take(),
+            3 => self.shield.take(),
+            _ => return,
+        };
+        if let Some(actor) = actor {
+            self.spawn_weapon_later(actor);
+        }
     }
 
     /// Select an item from the ground
@@ -278,6 +363,84 @@ impl OverworldSystem {
                     .map(|(i, item)| (GroundItemHandle::Weapon((), i), item)),
             )
     }
+
+    /// Select an item from equipped items
+    ///
+    /// meta is ignored, and will emit a warning if is not None
+    pub fn equipped_select(
+        &self,
+        item: &cir::ItemNameSpec,
+        meta: Option<&cir::ItemMeta>,
+        span: Span,
+        errors: &mut Vec<ErrorReport>,
+    ) -> Option<EquippedItemHandle<&Self>> {
+        Some(
+            self.do_equipped_select(item, meta, span, errors)?
+                .bind(self),
+        )
+    }
+
+    /// Select an item from equipped items
+    ///
+    /// meta is ignored, and will emit a warning if is not None
+    pub fn equipped_select_mut(
+        &mut self,
+        item: &cir::ItemNameSpec,
+        meta: Option<&cir::ItemMeta>,
+        span: Span,
+        errors: &mut Vec<ErrorReport>,
+    ) -> Option<EquippedItemHandle<&mut Self>> {
+        Some(
+            self.do_equipped_select(item, meta, span, errors)?
+                .bind(self),
+        )
+    }
+
+    /// Select an item from equipped items
+    fn do_equipped_select(
+        &self,
+        item: &cir::ItemNameSpec,
+        meta: Option<&cir::ItemMeta>,
+        span: Span,
+        errors: &mut Vec<ErrorReport>,
+    ) -> Option<EquippedItemHandle<()>> {
+        if meta.is_some() {
+            errors.push(sim_warning!(span, UselessMetaForOverworldEquipment));
+        }
+        match item {
+            cir::ItemNameSpec::Actor(actor) => {
+                if self.weapon.as_ref().is_some_and(|x| &x.name == actor) {
+                    return Some(EquippedItemHandle::Weapon(()));
+                }
+                if self.bow.as_ref().is_some_and(|x| &x.name == actor) {
+                    return Some(EquippedItemHandle::Bow(()));
+                }
+                if self.shield.as_ref().is_some_and(|x| &x.name == actor) {
+                    return Some(EquippedItemHandle::Shield(()));
+                }
+            }
+            cir::ItemNameSpec::Category(category) => match category {
+                cir::Category::Weapon => {
+                    if self.weapon.is_some() {
+                        return Some(EquippedItemHandle::Weapon(()));
+                    }
+                }
+                cir::Category::Bow => {
+                    if self.bow.is_some() {
+                        return Some(EquippedItemHandle::Weapon(()));
+                    }
+                }
+                cir::Category::Shield => {
+                    if self.shield.is_some() {
+                        return Some(EquippedItemHandle::Weapon(()));
+                    }
+                }
+                _ => {}
+            },
+        }
+        errors.push(sim_error!(span, NotEquippedInOverworld));
+        None
+    }
 }
 
 impl OverworldActor {
@@ -393,6 +556,44 @@ impl GroundItemHandle<&OverworldSystem> {
             Self::Weapon(o, i) => &o.ground_weapons[*i],
             Self::Material(o, i) => &o.ground_materials[*i],
             Self::MaterialDespawning(o, i) => &o.ground_materials_despawning[*i],
+        }
+    }
+}
+
+/// Handle representing an item equipped in the overworld
+#[derive(Debug, Clone, Copy)]
+pub enum EquippedItemHandle<TSys> {
+    Weapon(TSys),
+    Bow(TSys),
+    Shield(TSys),
+}
+
+impl EquippedItemHandle<()> {
+    pub fn bind<TSys>(self, sys: TSys) -> EquippedItemHandle<TSys> {
+        match self {
+            Self::Weapon(_) => EquippedItemHandle::Weapon(sys),
+            Self::Bow(_) => EquippedItemHandle::Bow(sys),
+            Self::Shield(_) => EquippedItemHandle::Shield(sys),
+        }
+    }
+}
+
+impl EquippedItemHandle<&mut OverworldSystem> {
+    /// Get reference to the actor
+    pub fn actor(&self) -> &OverworldActor {
+        match self {
+            Self::Weapon(o) => o.weapon.as_ref().unwrap(),
+            Self::Bow(o) => o.bow.as_ref().unwrap(),
+            Self::Shield(o) => o.shield.as_ref().unwrap(),
+        }
+    }
+
+    /// Remove the item
+    pub fn remove(self) -> OverworldActor {
+        match self {
+            Self::Weapon(o) => std::mem::take(&mut o.weapon).unwrap(),
+            Self::Bow(o) => std::mem::take(&mut o.bow).unwrap(),
+            Self::Shield(o) => std::mem::take(&mut o.shield).unwrap(),
         }
     }
 }

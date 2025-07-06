@@ -229,6 +229,8 @@ runtime_error.ItemMismatch: "背包中此位置的物品為 `{{actual_item}}`，
 runtime_error.ItemMismatchCategory: "背包中此位置的物品為 `{{actual_item}}`，並不是指令中的 `{{expected_category}}` 類型。"
 runtime_error.NotDroppable: "此物品無法丟棄。"
 runtime_error.NotEnoughForAllBut: "需要 `{{need}}` 個物品，但只有 `{{actual}}` 個。"
+runtime_error.NotEquipment: "此操作只能針對裝備類物品執行。"
+runtime_error.NotEquippedInOverworld: "此操作只能針對目前在主世界中裝備的物品。"
 runtime_error.NotHoldable: "此物品無法手持。"
 runtime_error.NotHolding: "未手持任何物品。"
 runtime_error.NotRightScreen: "目前畫面無法執行此操作。"
@@ -238,7 +240,9 @@ runtime_error.PositionSpecNotAllowed: "這裡不能以格子位置選擇物品."
 runtime_error.PreviousCrash: "遊戲因先前的步驟而崩潰。您需要 `重新載入` (`reload`) 或 `開始新遊戲` (`new-game`) 才能繼續。"
 runtime_error.Unimplemented: "此指令尚未實作 :)。"
 runtime_error.Uninitialized: "未預期的未初始化執行階段。"
+runtime_error.UselessAmountForOverworldEquipment: "針對主世界中裝備的物品時，數量只能為1。請將數量改為1或刪除數量。"
 runtime_error.UselessItemMatchProp: "此指令會忽略此屬性. 請刪除此屬性."
+runtime_error.UselessMetaForOverworldEquipment: "物品資料在針對主世界中裝備的物品時無效。請刪除額外資料。"
 runtime_error.UselessScreenTransition: "您已經打開了此介面。"
 
 # Error from getting view from simulation output

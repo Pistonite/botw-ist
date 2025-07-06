@@ -3,8 +3,10 @@ use common::*;
 
 mod get_items;
 pub use get_items::*;
-mod hold;
-pub use hold::*;
+mod drop_items;
+pub use drop_items::*;
+mod hold_items;
+pub use hold_items::*;
 mod pick_up_items;
 pub use pick_up_items::*;
 mod sell_items;

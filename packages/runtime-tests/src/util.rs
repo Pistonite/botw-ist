@@ -43,7 +43,9 @@ pub fn setup_panic_capture() {
         } else {
             message += "unknown panic info"
         }
-        PANIC_INFO.with(|b| b.set(Some(PanicPayload { message, backtrace })))
+        let payload = PanicPayload { message, backtrace };
+        log::error!("panic: {payload}");
+        PANIC_INFO.with(|b| b.set(Some(payload)))
     }));
 }
 

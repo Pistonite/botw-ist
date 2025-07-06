@@ -229,6 +229,8 @@ runtime_error.ItemMismatch: "Предмет, найденный на этой п
 runtime_error.ItemMismatchCategory: "Предмет, найденный на этой позиции в инвентаре, — это `{{actual_item}}`, тогда как предмет, указанный в команде, должен принадлежать к категории `{{expected_category}}`."
 runtime_error.NotDroppable: "Этот предмет нельзя выбросить."
 runtime_error.NotEnoughForAllBut: "Требуется `{{need}}` предметов, но найдено только `{{actual}}`."
+runtime_error.NotEquipment: "Это действие применимо только к предметам снаряжения."
+runtime_error.NotEquippedInOverworld: "Только надетые предметы могут быть выбраны этим действием."
 runtime_error.NotHoldable: "Этот предмет нельзя держать."
 runtime_error.NotHolding: "Предметы не удерживаются."
 runtime_error.NotRightScreen: "Вы не можете использовать эту команду на текущем экране."
@@ -238,7 +240,9 @@ runtime_error.PositionSpecNotAllowed: "Указание предмета по п
 runtime_error.PreviousCrash: "Игра аварийно завершилась на предыдущем шаге. Вам необходимо `перезагрузить` (`reload`) или начать `новую игру` (`new-game`) для продолжения."
 runtime_error.Unimplemented: "Эта команда еще не реализована :)."
 runtime_error.Uninitialized: "Неожиданная неинициализированная среда выполнения."
+runtime_error.UselessAmountForOverworldEquipment: "Количество может быть только 1 при выборе предметов, надетых в игровом мире. Пожалуйста, измените количество на 1 или удалите его."
 runtime_error.UselessItemMatchProp: "Это свойство игнорируется при сопоставлении предметов в этой команде. Удалите это свойство."
+runtime_error.UselessMetaForOverworldEquipment: "Метаданные игнорируются при выборе предметов, надетых в игровом мире. Пожалуйста, удалите метаданные."
 runtime_error.UselessScreenTransition: "Эта команда не имеет эффекта, так как вы уже находитесь на этом экране."
 
 # Error from getting view from simulation output

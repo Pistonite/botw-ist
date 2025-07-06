@@ -489,7 +489,10 @@ impl Flags {
             "cs" => self.check_cs(),
             "cc" => self.check_lo(), // carry clear
             // TODO --cleanup: change condition code to enum
-            _ => panic!("Unhandled condition code: {cond}",),
+            _ => {
+                log::error!("Unhandled condition code: {cond}");
+                panic!("Unhandled condition code: {cond}",)
+            }
         }
     }
 
