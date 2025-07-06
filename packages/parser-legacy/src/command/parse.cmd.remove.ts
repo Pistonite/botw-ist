@@ -19,10 +19,12 @@ import {
     type ParserItem,
     type ParserSafe,
 } from "./type";
+import { getParsingCommand } from "./parsev2.ts";
 
 // Remove, Sell, With, Drop
 export class CommandRemove extends AbstractProperCommand {
     private stacks: ItemStackArg[];
+    private verb: string;
     private slot: number;
     constructor(
         stacks: ItemStackArg[],
@@ -32,9 +34,14 @@ export class CommandRemove extends AbstractProperCommand {
         super(codeBlocks);
         this.stacks = stacks;
         this.slot = slot;
+        this.verb = "!remove";
+    }
+    public setVerb(x: string): CommandRemove {
+        this.verb = x;
+        return this;
     }
     public override convert(): string {
-        return `!remove ${this.stacks.map((s) => s.convert(this.slot)).join(" ")};`;
+        return `${this.verb} ${this.stacks.map((s) => s.convert(this.slot)).join(" ")};`;
     }
 }
 
@@ -59,46 +66,52 @@ export class CommandEat extends AbstractProperCommand {
 // Remove all type
 export class CommandRemoveAll extends AbstractProperCommand {
     private types: ItemType[];
+    private verb: string;
     constructor(types: ItemType[], codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.types = types;
+        this.verb = "!remove";
+    }
+    public setVerb(x: string): CommandRemoveAll {
+        this.verb = x;
+        return this;
     }
     public override convert(): string {
         let s = "";
         if (this.types.includes(ItemType.Weapon)) {
-            s += "!remove all weapons;";
+            s += `${this.verb} all weapons;`;
         }
         if (this.types.includes(ItemType.Bow)) {
-            s += "!remove all bows;";
+            s += `${this.verb} all bows;`;
         }
         if (this.types.includes(ItemType.Shield)) {
-            s += "!remove all shields;";
+            s += `${this.verb} all shields;`;
         }
         // V3->V4: the types in V3 are named wrong
         const hasArmorHead = this.types.includes(ItemType.ArmorUpper);
         const hasArmorUpper = this.types.includes(ItemType.ArmorMiddle);
         const hasArmorLower = this.types.includes(ItemType.ArmorLower);
         if (hasArmorHead && hasArmorUpper && hasArmorLower) {
-            s += "!remove all armors;";
+            s += `${this.verb} all armors;`;
         } else {
             if (hasArmorHead) {
-                s += "!remove all head-armors;";
+                s += `${this.verb} all head-armors;`;
             }
             if (hasArmorUpper) {
-                s += "!remove all upper-armors;";
+                s += `${this.verb} all upper-armors;`;
             }
             if (hasArmorLower) {
-                s += "!remove all lower-armors;";
+                s += `${this.verb} all lower-armors;`;
             }
         }
         if (this.types.includes(ItemType.Material)) {
-            s += "!remove all materials;";
+            s += `${this.verb} all materials;`;
         }
         if (this.types.includes(ItemType.Food)) {
-            s += "!remove all foods;";
+            s += `${this.verb} all foods;`;
         }
         if (this.types.includes(ItemType.Key)) {
-            s += "!remove all key-items;";
+            s += `${this.verb} all key-items;`;
         }
         return s;
     }
@@ -126,12 +139,21 @@ export const parseASTCommandRemove: ParserItem<
     CommandRemove
 > = (ast, search) => {
     const codeBlocks: CodeBlockTree = [];
+    const range = ast.mLiteralRemove0.range;
+    const script = getParsingCommand().substring(range[0], range[1]);
+    const isSell = script.toLowerCase() === "sell";
     codeBlocks.push(codeBlockFromRange(ast.mLiteralRemove0, "keyword.command"));
     return delegateParseItem(
         ast.mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1,
         search,
         parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot,
-        (i, c) => new CommandRemove(...i, c),
+        (i, c) => {
+            const x = new CommandRemove(...i, c);
+            if (isSell) {
+                return x.setVerb("sell");
+            }
+            return x;
+        },
         codeBlocks,
     );
 };
@@ -146,7 +168,7 @@ export const parseASTCommandDrop: ParserItem<ASTCommandDrop, CommandRemove> = (
         ast.mArgumentOneOrMoreItemsAllowAllMaybeFromSlot1,
         search,
         parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot,
-        (i, c) => new CommandRemove(...i, c),
+        (i, c) => new CommandRemove(...i, c).setVerb("drop"),
         codeBlocks,
     );
 };
@@ -170,9 +192,17 @@ export const parseASTCommandRemoveAll: ParserSafe<
     ASTCommandRemoveAll,
     CommandRemoveAll
 > = (ast) => {
-    const literal0 = isLiteralDrop(ast.mLiteralRemoveOrDrop0)
+    const isDrop = isLiteralDrop(ast.mLiteralRemoveOrDrop0);
+    const literal0 = isDrop
         ? ast.mLiteralRemoveOrDrop0.literal0
         : ast.mLiteralRemoveOrDrop0;
+    const literal0Range = isDrop
+        ? ast.mLiteralRemoveOrDrop0.literal0
+        : ast.mLiteralRemoveOrDrop0.range;
+    const script = getParsingCommand();
+    const isSell =
+        script.substring(literal0Range[0], literal0Range[1]).toLowerCase() ===
+        "sell";
     const codeBlocks: CodeBlockTree = [
         codeBlockFromRange(literal0, "keyword.command"),
         codeBlockFromRange(ast.literal1, "item.type"),
@@ -180,7 +210,16 @@ export const parseASTCommandRemoveAll: ParserSafe<
     return delegateParseSafe(
         ast.mLiteralItemType2,
         parseASTItemType,
-        (itemTypes, c) => new CommandRemoveAll(itemTypes, c),
+        (itemTypes, c) => {
+            const x = new CommandRemoveAll(itemTypes, c);
+            if (isSell) {
+                return x.setVerb("sell");
+            }
+            if (isDrop) {
+                return x.setVerb("drop");
+            }
+            return x;
+        },
         codeBlocks,
     );
 };

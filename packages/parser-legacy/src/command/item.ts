@@ -87,8 +87,11 @@ export const convertItem = (item: ItemStack, slotIndex: number): string => {
     return item.ident + convertItemMeta(item.meta, slotIndex);
 };
 
-export const convertItemMeta = (meta: MetaModifyOption | undefined, slotIndex: number): string => {
-    if (slotIndex>1 || (meta && Object.keys(meta).length > 0)) {
+export const convertItemMeta = (
+    meta: MetaModifyOption | undefined,
+    slotIndex: number,
+): string => {
+    if (slotIndex > 1 || (meta && Object.keys(meta).length > 0)) {
         const props: string[] = [];
         if (meta) {
             if ("life" in meta) {
