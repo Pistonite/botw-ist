@@ -219,6 +219,7 @@ runtime_error.CannotFindGroundItemNeedMore: "No se puede encontrar este objeto e
 runtime_error.CannotFindItem: "No se puede encontrar este artículo en el inventario."
 runtime_error.CannotFindItemNeedMore: "No se puede encontrar este objeto en el inventario (faltan `{{more}}`)."
 runtime_error.CannotFindPromptTarget: "No se puede encontrar el objeto objetivo de Enmarañamiento de Mensaje para aplicar el mensaje."
+runtime_error.CannotGetMore: "No se puede obtener más de este objeto."
 runtime_error.CannotHoldMore: "No se pueden llevar más artículos."
 runtime_error.Crash: "El juego se ha colgado en este paso."
 runtime_error.Executor: "Error inesperado del Ejecutor."

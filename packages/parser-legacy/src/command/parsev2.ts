@@ -69,10 +69,17 @@ import {
     withNoError,
 } from "./type";
 
+// a bit of a hack to have a context for what
+// the current command being parsed is, which is required
+// to semi-accurately convert some of the commands to new format
+let parsingCommand = "";
+export const getParsingCommand = () => parsingCommand;
+
 export const parseCommand = (
     cmdString: string,
     searchFunc: (word: string) => ItemStack | undefined,
 ): Command => {
+    parsingCommand = cmdString;
     if (!cmdString) {
         return staticCommand("");
     }

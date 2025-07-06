@@ -219,6 +219,7 @@ runtime_error.CannotFindGroundItemNeedMore: "지상에서 이 아이템을 찾�
 runtime_error.CannotFindItem: "인벤토리에서 이 아이템을 찾을 수 없습니다."
 runtime_error.CannotFindItemNeedMore: "인벤토리에서 이 아이템을 찾을 수 없습니다 (`{{more}}`개 더 필요합니다)."
 runtime_error.CannotFindPromptTarget: "프롬프트 적용을 위한 프롬프트 엔탱글먼트 대상 아이템을 찾을 수 없습니다."
+runtime_error.CannotGetMore: "이 아이템을 더 이상 얻을 수 없습니다."
 runtime_error.CannotHoldMore: "더 이상 아이템을 소지할 수 없습니다."
 runtime_error.Crash: "이 단계에서 게임이 충돌했습니다."
 runtime_error.Executor: "Executor에서 예상치 못한 오류 발생."

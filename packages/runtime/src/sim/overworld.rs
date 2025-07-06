@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use blueflame::game::{PouchItem, WeaponModifierInfo};
+use blueflame::game::{self, PouchItem, WeaponModifierInfo};
 use blueflame::memory::{self, Memory, Ptr, mem};
 use skybook_parser::cir;
 use teleparse::Span;
@@ -205,6 +205,32 @@ impl OverworldSystem {
         });
 
         Ok(())
+    }
+
+    /// Try auto equip an actor on the player as it's picked up or obtained
+    pub fn try_auto_equip(
+        &mut self,
+        name: &str,
+        value: i32,
+        modifier: Option<&WeaponModifierInfo>,
+    ) -> bool {
+        let item_type = game::get_pouch_item_type(name);
+        let slot = match item_type {
+            0 => &mut self.weapon,
+            1 => &mut self.bow,
+            3 => &mut self.shield,
+            _ => return false,
+        };
+        if slot.is_some() {
+            // already equipped something there
+            return false;
+        }
+        *slot = Some(OverworldActor {
+            name: name.to_string(),
+            value,
+            modifier: modifier.cloned(),
+        });
+        true
     }
 
     /// Drop the currently equipped weapon on the player

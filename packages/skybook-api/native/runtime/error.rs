@@ -79,6 +79,8 @@ pub enum RuntimeError {
     CannotFindItemNeedMore(usize),
     #[error("cannot find the target item for prompt entanglement")]
     CannotFindPromptTarget,
+    #[error("cannot get more of this")]
+    CannotGetMore,
     #[error("cannot hold more items")]
     CannotHoldMore,
     #[error("game has crashed in this step")]

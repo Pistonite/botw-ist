@@ -219,6 +219,7 @@ runtime_error.CannotFindGroundItemNeedMore: "Dieses Item ist nicht auf dem Boden
 runtime_error.CannotFindItem: "Dieser Gegenstand kann im Inventar nicht gefunden werden."
 runtime_error.CannotFindItemNeedMore: "Dieses Item ist nicht im Inventar zu finden (benötige noch `{{more}}`)."
 runtime_error.CannotFindPromptTarget: "Das Zielobjekt für die Prompt-Verflechtung zum Anwenden des Prompts kann nicht gefunden werden."
+runtime_error.CannotGetMore: "Es kann nicht mehr von diesem Gegenstand erhalten werden."
 runtime_error.CannotHoldMore: "Es können keine weiteren Gegenstände gehalten werden."
 runtime_error.Crash: "Das Spiel ist in diesem Schritt abgestürzt."
 runtime_error.Executor: "Unerwarteter Fehler vom Executor."

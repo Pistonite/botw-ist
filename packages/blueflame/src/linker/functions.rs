@@ -257,6 +257,27 @@ pub fn can_hold_another_item(cpu: &mut Cpu2) -> Result<bool, processor::Error> {
     Ok(false)
 }
 
+/// Call `uking::ui::PauseMenuDataMgr::cannotGetItem`
+///
+/// Count should be 1 for unstackable, and value for stackable
+pub fn cannot_get_item(cpu: &mut Cpu2, name: &str, count: i32) -> Result<bool, processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    let name_ptr = helper::stack_alloc_string40(cpu, name)?;
+    reg! { cpu:
+        x[0] = this_ptr,
+        x[1] = name_ptr,
+        w[2] = count,
+    };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x0096d72c)?;
+
+    reg! { cpu: x[0] => let ret_val: bool };
+
+    cpu.stack_check::<FixedSafeString40>(name_ptr.to_raw())?;
+    Ok(ret_val)
+}
+
 /// Call `uking::ui::PauseMenuDataMgr::trashItem` (holds or drops item)
 pub fn trash_item(cpu: &mut Cpu2, tab_index: i32, slot_index: i32) -> Result<(), processor::Error> {
     cpu.reset_stack();

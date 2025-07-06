@@ -17,6 +17,8 @@ pub struct ItemSpec {
     pub name: String,
     /// The item metadata
     pub meta: Option<cir::ItemMeta>,
+
+    pub span: Span,
 }
 
 /// Specification for selecting an item
@@ -90,6 +92,7 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
                 amount: 1,
                 name,
                 meta,
+                span: item.span(),
             }];
         }
         syn::ItemListFinite::List(items) => items,
@@ -106,7 +109,12 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
         if meta.as_ref().is_some_and(|m| m.position.is_some()) {
             errors.push(cir_warning!(&item, UnusedItemPosition));
         }
-        out_item_specs.push(ItemSpec { amount, name, meta });
+        out_item_specs.push(ItemSpec {
+            amount,
+            name,
+            meta,
+            span: item.span(),
+        });
     }
 
     out_item_specs

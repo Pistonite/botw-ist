@@ -219,6 +219,7 @@ runtime_error.CannotFindGroundItemNeedMore: "Не удается найти эт
 runtime_error.CannotFindItem: "Невозможно найти этот предмет в инвентаре."
 runtime_error.CannotFindItemNeedMore: "Не удается найти этот предмет в инвентаре (нужно еще `{{more}}`)."
 runtime_error.CannotFindPromptTarget: "Не удается найти целевой предмет «Спутывание подсказок» для применения подсказки."
+runtime_error.CannotGetMore: "Невозможно получить больше этого предмета."
 runtime_error.CannotHoldMore: "Невозможно вместить больше предметов."
 runtime_error.Crash: "Игра аварийно завершилась на этом шаге."
 runtime_error.Executor: "Неожиданная ошибка от Executor."

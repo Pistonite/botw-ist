@@ -2,7 +2,7 @@ use blueflame::linker;
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 
-use crate::error::ErrorReport;
+use crate::error::{ErrorReport, sim_error};
 use crate::sim;
 
 /// Pick up items from the ground (overworld)
@@ -54,9 +54,19 @@ pub fn pick_up_item_internal(
         else {
             break;
         };
-        // TODO: cannotGetItem check?
+        if linker::cannot_get_item(ctx.cpu(), &handle.actor().name, 1)? {
+            errors.push(sim_error!(item.span, CannotGetMore));
+            continue;
+        }
         let actor = handle.remove();
-        linker::get_item(ctx.cpu(), &actor.name, Some(actor.value), actor.modifier)?;
+        super::get_item_with_auto_equip(
+            ctx.cpu(),
+            sys,
+            true,
+            &actor.name,
+            Some(actor.value),
+            actor.modifier,
+        )?;
         remaining.sub(1);
     }
     let result = remaining.check(item.span, errors, || {

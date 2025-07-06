@@ -219,6 +219,7 @@ runtime_error.CannotFindGroundItemNeedMore: "在地上找不到此物品 (還需
 runtime_error.CannotFindItem: "在背包中找不到此物品。"
 runtime_error.CannotFindItemNeedMore: "在背包中找不到此物品 (還需要`{{more}}`個)。"
 runtime_error.CannotFindPromptTarget: "找不到選項糾纏目標物品。"
+runtime_error.CannotGetMore: "拿不下這個物品了。"
 runtime_error.CannotHoldMore: "無法手持更多物品。"
 runtime_error.Crash: "遊戲在此步驟崩潰。"
 runtime_error.Executor: "執行器發生未預期的錯誤。"
