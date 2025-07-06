@@ -63,7 +63,6 @@ impl GameEvent for TrashEquip {
     }
 
     fn extract_args(cpu: &mut Cpu0, proc: &mut Process) -> Result<Self::TArgs, processor::Error> {
-        log::debug!("TrashEquipArgs event called");
         // this hook is inserted at the middle of PauseMenuDataMgr::trashItem
         let (item_reg, equipped_item_idx_reg) = match proc.env().game_ver {
             GameVer::X150 => (22, 8),

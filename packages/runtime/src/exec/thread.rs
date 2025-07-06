@@ -23,29 +23,7 @@ impl Thread {
             match self.recv.recv() {
                 Ok(f) => {
                     log::debug!("processor thread {} got job", self.slot);
-
                     f(&mut self.cpu);
-
-                    // since mut references are not UnwindSafe, we must
-                    // take it out, give it to the closure, then back
-                    // let cpu = std::mem::take(&mut self.cpu);
-                    // let result = std::panic::catch_unwind(move || {
-                    //     f(cpu)
-                    // });
-                    // match result {
-                    //     Ok(cpu) => self.cpu = cpu,
-                    //     Err(e) => {
-                    //         let msg = if let Some(e) = e.downcast_ref::<&str>() {
-                    //             *e
-                    //         } else if let Some(e) = e.downcast_ref::<String>() {
-                    //             e.as_str()
-                    //         } else {
-                    //             "unknown panic payload"
-                    //         };
-                    //         log::error!("executor thread panicked: {msg}");
-                    //         panic!("executor thread panicked: {msg}");
-                    //     }
-                    // }
                 }
                 Err(e) => {
                     log::debug!(

@@ -223,7 +223,6 @@ pub mod glue {
             }
             (RegisterType::QReg(idx), RegisterValue::QReg(lo, hi)) => {
                 cpu.write(reg!(q[*idx]), (*lo, *hi));
-                // self.s[*idx] = (((v[0] as u128) << 64) | (v[1] as u128)) as f32;
             }
             (RegisterType::XZR, _) => {}
             (RegisterType::WZR, _) => {}
