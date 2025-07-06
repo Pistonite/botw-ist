@@ -39,9 +39,8 @@ impl GameEvent for CreateEquip {
     }
 }
 
-/// Event for any weapon created by creature ("Raw Life").
-/// This is called for example, when dropping equipments from inventory.
-///
+/// Event for creating overworld equipments when using the
+/// "drop" prompt in the inventory.
 pub struct TrashEquip;
 pub enum TrashEquipArgs {
     /// Create a trash weapon with (Name, Value, WeaponModifier)
@@ -49,7 +48,7 @@ pub enum TrashEquipArgs {
     /// Drop the weapon currently equipped by player in the overworld (PouchItemType)
     PlayerDrop(i32),
     /// Don't do anything - event is reached but nothing happened
-    Nop,
+    NullItem,
 }
 impl GameEvent for TrashEquip {
     type TArgs = TrashEquipArgs;
@@ -87,7 +86,7 @@ impl GameEvent for TrashEquip {
             return Ok(TrashEquipArgs::PlayerDrop(item_type));
         }
         if selected_item.is_nullptr() {
-            return Ok(TrashEquipArgs::Nop);
+            return Ok(TrashEquipArgs::NullItem);
         }
         let modifier = selected_item.to_modifier_info(m)?;
         mem! { m: let value = *(&selected_item->mValue); }
@@ -165,7 +164,7 @@ impl<T: Send + Sync + UnwindSafe + RefUnwindSafe + 'static, TEvent: GameEvent> H
     for GameEventHook<T, TEvent>
 {
     fn fetch(&self, main_offset: u32, env: Environment) -> Result<Option<Hook>, processor::Error> {
-        if self.contains_hook_offset(env.game_ver, main_offset, 1) {
+        if self.is_hook_offset(env.game_ver, main_offset) {
             let state = Arc::clone(&self.state);
             let listener = self.listener;
             Ok(Some(Hook::Start(processor::box_execute(
@@ -200,5 +199,8 @@ impl<T: Send + Sync + UnwindSafe + RefUnwindSafe + 'static, TEvent: GameEvent>
     pub fn contains_hook_offset(&self, game_ver: GameVer, main_offset: u32, size: u32) -> bool {
         let offset = TEvent::get_hook_offset(game_ver);
         offset >= main_offset && (offset - main_offset) < size
+    }
+    pub fn is_hook_offset(&self, game_ver: GameVer, main_offset: u32) -> bool {
+        main_offset == TEvent::get_hook_offset(game_ver)
     }
 }
