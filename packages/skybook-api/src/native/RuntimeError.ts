@@ -13,6 +13,7 @@ export type RuntimeError =
     | { type: "CannotFindItem" }
     | { type: "CannotFindItemNeedMore"; data: number }
     | { type: "CannotFindPromptTarget" }
+    | { type: "CannotGetMore" }
     | { type: "CannotHoldMore" }
     | { type: "Crash" }
     | { type: "Executor" }
