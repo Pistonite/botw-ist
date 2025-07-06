@@ -229,6 +229,8 @@ runtime_error.ItemMismatch: "L'objet trouvé à cet emplacement dans l'inventair
 runtime_error.ItemMismatchCategory: "L'objet trouvé à cet emplacement dans l'inventaire est `{{actual_item}}`, alors que l'objet spécifié dans la commande devrait appartenir à la catégorie `{{expected_category}}`."
 runtime_error.NotDroppable: "Cet objet ne peut pas être lâché."
 runtime_error.NotEnoughForAllBut: "Requiert `{{need}}` objets, mais seulement `{{actual}}` objets ont été trouvés."
+runtime_error.NotEquipment: "Cette action ne peut être appliquée qu'à l'équipement."
+runtime_error.NotEquippedInOverworld: "Seuls les objets actuellement équipés peuvent être sélectionnés par cette action."
 runtime_error.NotHoldable: "Cet objet ne peut pas être tenu."
 runtime_error.NotHolding: "Aucun objet n'est tenu."
 runtime_error.NotRightScreen: "Vous ne pouvez pas utiliser cette commande sur l'écran actuel."
@@ -238,7 +240,9 @@ runtime_error.PositionSpecNotAllowed: "La spécification d'un objet par position
 runtime_error.PreviousCrash: "Le jeu a planté à une étape précédente. Vous devez `recharger` (`reload`) ou commencer une `nouvelle partie` (`new-game`) avant de continuer."
 runtime_error.Unimplemented: "Cette commande n'est pas encore implémentée :)."
 runtime_error.Uninitialized: "Runtime non initialisé de manière inattendue."
+runtime_error.UselessAmountForOverworldEquipment: "La quantité ne peut être que de 1 lorsque vous ciblez des objets équipés dans le monde. Veuillez changer la quantité à 1 ou la supprimer."
 runtime_error.UselessItemMatchProp: "Cette propriété est ignorée lors de la correspondance des objets dans cette commande. Veuillez supprimer cette propriété."
+runtime_error.UselessMetaForOverworldEquipment: "Les métadonnées sont ignorées lorsque vous ciblez des objets équipés dans le monde. Veuillez supprimer les métadonnées."
 runtime_error.UselessScreenTransition: "Cette commande n'a aucun effet, car vous êtes déjà sur cet écran."
 
 # Error from getting view from simulation output

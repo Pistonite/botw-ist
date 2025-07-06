@@ -229,6 +229,8 @@ runtime_error.ItemMismatch: "Das an dieser Position im Inventar gefundene Item i
 runtime_error.ItemMismatchCategory: "Das an dieser Position im Inventar gefundene Item ist `{{actual_item}}`, während das im Befehl angegebene Item zur Kategorie `{{expected_category}}` gehören sollte."
 runtime_error.NotDroppable: "Dieses Item kann nicht fallengelassen werden."
 runtime_error.NotEnoughForAllBut: "Benötigt `{{need}}` Items, aber es wurden nur `{{actual}}` Items gefunden."
+runtime_error.NotEquipment: "Diese Aktion kann nur auf Ausrüstungsgegenstände angewendet werden."
+runtime_error.NotEquippedInOverworld: "Nur aktuell ausgerüstete Gegenstände können mit dieser Aktion ausgewählt werden."
 runtime_error.NotHoldable: "Dieses Item kann nicht gehalten werden."
 runtime_error.NotHolding: "Es werden keine Gegenstände gehalten."
 runtime_error.NotRightScreen: "Dieser Befehl kann auf dem aktuellen Bildschirm nicht verwendet werden."
@@ -238,7 +240,9 @@ runtime_error.PositionSpecNotAllowed: "Das Angeben eines Gegenstands nach Positi
 runtime_error.PreviousCrash: "Das Spiel ist in einem vorherigen Schritt abgestürzt. Sie müssen `neu laden` (`reload`) oder ein `neues Spiel starten` (`new-game`), bevor Sie fortfahren können."
 runtime_error.Unimplemented: "Dieser Befehl ist noch nicht implementiert :)."
 runtime_error.Uninitialized: "Laufzeitumgebung unerwartet nicht initialisiert."
+runtime_error.UselessAmountForOverworldEquipment: "Die Menge kann nur 1 sein, wenn Gegenstände im Überland ausgerüstet sind. Bitte ändern Sie die Menge auf 1 oder entfernen Sie sie."
 runtime_error.UselessItemMatchProp: "Diese Eigenschaft wird beim Abgleichen von Gegenständen in diesem Befehl ignoriert. Bitte entfernen Sie diese Eigenschaft."
+runtime_error.UselessMetaForOverworldEquipment: "Metadaten werden ignoriert, wenn Gegenstände im Überland ausgerüstet sind. Bitte entfernen Sie die Metadaten."
 runtime_error.UselessScreenTransition: "Dieser Befehl hat keine Auswirkung, da Sie sich bereits auf diesem Bildschirm befinden."
 
 # Error from getting view from simulation output

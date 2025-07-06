@@ -229,6 +229,8 @@ runtime_error.ItemMismatch: "El objeto encontrado en esta posición del inventar
 runtime_error.ItemMismatchCategory: "El objeto encontrado en esta posición del inventario es `{{actual_item}}`, mientras que el objeto especificado en el comando debería pertenecer a la categoría `{{expected_category}}`."
 runtime_error.NotDroppable: "Este objeto no se puede soltar."
 runtime_error.NotEnoughForAllBut: "Se requieren `{{need}}` objetos, pero solo se encontraron `{{actual}}` objetos."
+runtime_error.NotEquipment: "Esta acción solo se puede aplicar a equipamiento."
+runtime_error.NotEquippedInOverworld: "Solo los objetos equipados actualmente pueden ser seleccionados con esta acción."
 runtime_error.NotHoldable: "Este objeto no se puede sostener."
 runtime_error.NotHolding: "No se está sosteniendo ningún objeto."
 runtime_error.NotRightScreen: "No puedes usar este comando en la pantalla actual."
@@ -238,7 +240,9 @@ runtime_error.PositionSpecNotAllowed: "No se permite especificar el objeto por p
 runtime_error.PreviousCrash: "El juego se ha colgado en un paso anterior. Necesitas `recargar` (`reload`) o iniciar una `nueva partida` (`new-game`) antes de continuar."
 runtime_error.Unimplemented: "Este comando aún no está implementado :)."
 runtime_error.Uninitialized: "Entorno de ejecución inesperadamente no inicializado."
+runtime_error.UselessAmountForOverworldEquipment: "La cantidad solo puede ser 1 cuando se apunta a objetos equipados en el supramundo. Por favor, cambie la cantidad a 1 o elimínela."
 runtime_error.UselessItemMatchProp: "Esta propiedad se ignora al buscar coincidencias de objetos en este comando. Elimine esta propiedad."
+runtime_error.UselessMetaForOverworldEquipment: "Los metadatos se ignoran cuando se apunta a objetos equipados en el supramundo. Por favor, elimine los metadatos."
 runtime_error.UselessScreenTransition: "Este comando no tiene ningún efecto, ya que ya se encuentra en esta pantalla."
 
 # Error from getting view from simulation output
