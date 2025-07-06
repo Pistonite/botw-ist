@@ -2,8 +2,14 @@ use std::thread::JoinHandle;
 
 use crate::exec::{self, Error, JobSender, Join, Spawn};
 
-#[derive(Default)]
 pub struct Spawner;
+
+impl Spawner {
+    /// Create a new spawner
+    pub fn new() -> Result<Self, Error> {
+        Ok(Self)
+    }
+}
 
 impl Spawn for Spawner {
     type Joiner = JoinHandle<()>;

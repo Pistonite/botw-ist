@@ -63,11 +63,12 @@ pub fn setup_test_process() -> anyhow::Result<Arc<sim::Runtime>> {
 
     let image_bytes = std::fs::read(image_file).context("failed to read BFI")?;
 
-    let runtime = sim::Runtime::new(exec::Spawner::default());
+    let runtime = sim::Runtime::new(exec::Spawner::new()?);
     let threads = if cfg!(feature = "single-thread") {
         1
     } else {
-        4
+        // leave 1 thread for tokio runtime
+        num_cpus::get().clamp(2, 9) - 1
     };
     runtime
         .init(

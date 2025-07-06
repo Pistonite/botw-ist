@@ -5,7 +5,15 @@ use crate::exec::{self, Error, JobSender, Join, Spawn};
 pub struct Spawner {
     creator: ThreadCreator,
 }
+
 impl Spawner {
+    /// **THIS DOES NOT WORK**. See [`try_new`](Self::try_new)
+    ///
+    /// This only exists to make the implementation the same on all platforms
+    pub fn new() -> Result<Self, Error> {
+        log::error!("Cannot call Spawner::new on WASM platform");
+        Err(Error::CreateSpawner)
+    }
     /// Create new spawner using WASM shared-memory-based WebWorker threads
     pub async fn try_new(
         wasm_module_path: &str,
