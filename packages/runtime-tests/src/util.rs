@@ -43,15 +43,21 @@ pub fn setup_panic_capture() {
         } else {
             message += "unknown panic info"
         }
-        PANIC_INFO.with(|b| b.set(Some(PanicPayload { message, backtrace })))
+        let payload = PanicPayload { message, backtrace };
+        log::error!("panic: {payload}");
+        PANIC_INFO.with(|b| b.set(Some(payload)))
     }));
 }
 
 /// Get the last panic payload, only works for panic on the same thread
 pub fn take_last_panic() -> PanicPayload {
+    take_last_panic_maybe()
+        .expect("no panic payload captured")
+}
+
+pub fn take_last_panic_maybe() -> Option<PanicPayload> {
     PANIC_INFO
         .with(|b| b.take())
-        .expect("no panic payload captured")
 }
 
 pub fn setup_test_process() -> anyhow::Result<Arc<sim::Runtime>> {

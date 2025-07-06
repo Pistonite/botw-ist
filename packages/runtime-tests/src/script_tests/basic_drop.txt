@@ -1,0 +1,6 @@
+get 1 master-sword 2 trav-bow 3 pot-lid 5 royal-claymore 7 apple 
+drop master-sword
+drop all bow
+drop 2 apple 2 shield 5 apple
+drop all royal-claymore
+unpause

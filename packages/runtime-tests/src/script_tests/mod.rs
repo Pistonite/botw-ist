@@ -9,6 +9,9 @@ use skybook_parser::ParseOutput;
 use skybook_parser::search::QuotedItemResolver;
 use skybook_parser::search::ResolvedItem;
 use skybook_runtime::sim;
+use skybook_runtime::MaybeAborted;
+
+use crate::util;
 
 pub fn run(runtime: Arc<sim::Runtime>) -> anyhow::Result<bool> {
     log::info!("running script tests");
@@ -138,10 +141,17 @@ async fn run_test(
     let run_handle = sim::RunHandle::new();
     let run = sim::Run::new(Arc::new(run_handle));
     // unwrap: we will never abort the run so it will always be finished
-    let output = run
+    let MaybeAborted::Ok(output) = run
         .run_parsed(Arc::clone(&parsed_output), runtime)
-        .await
-        .unwrap();
+        .await else {
+        log::error!("CANCEL {test_name}");
+
+        if let Some(info) = util::take_last_panic_maybe() {
+            log::error!("{info}");
+        }
+
+        return Ok(false);
+};
 
     log::debug!("{}", output.states.len());
 

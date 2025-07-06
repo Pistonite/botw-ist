@@ -34,10 +34,10 @@ pub fn patch_memory(memory: &mut Memory, env: Environment) -> Result<(), memory:
     // skip the check for if CreatePlayerEquipActorMgr is null
     memory
         .write(main_start + 0x971540, f)?
-        .write_u32(paste_insn!(1F 20 03 D5))?;
+        .write_u32(paste_insn!(1F 20 03 D5))?; // nop
     memory
         .write(main_start + 0xaa81ec, f)?
-        .write_u32(paste_insn!(1F 20 03 D5))?;
+        .write_u32(paste_insn!(1F 20 03 D5))?; // nop
 
     Ok(())
 }
@@ -58,6 +58,7 @@ impl HookProvider for GameHooks {
         0x0073c5b4  000732 return_void, // spawnDroppedInventoryItem. This is at 0xD23B20 in 1.6
                                         // but parameters are optimized out
         0x00849580  003456 return_void, // Player::equipmentStuff
+        0x0084a300  000624 return_void, // Player::dropOverworldEquip
         0x0085456c  000068 get_player,  // ksys::act::PlayerInfo::getPlayer
         0x00d2e950  000348 return_void, // ksys::act::InfoData::logFailure
         //
@@ -200,41 +201,6 @@ fn get_player(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> {
     let player_ptr: u64 = 0xDEAD_AAAA_0001_CCCC; // some value easy to spot in the debugger
     reg! { cpu: x[0] = player_ptr, return };
 }
-
-// fn do_request_create_weapon_150(
-//     cpu: &mut Cpu0,
-//     proc: &mut Process,
-// ) -> Result<(), processor::Error> {
-//     do_request_create_weapon(cpu, proc, Environment::new(GameVer::X150, DlcVer::V300))
-// }
-//
-// /// uking::act::CreatePlayerEquipActorMgr::doRequestCreateWeapon
-// /// (this, i32 slot_idx, sead::SafeString* name, int value, WeaponModifierInfo* modifier, _)
-// fn do_request_create_weapon(
-//     cpu: &mut Cpu0,
-//     proc: &mut Process,
-//     _env: Environment,
-// ) -> Result<(), processor::Error> {
-//     let main_start = proc.main_start();
-//     let pmdm_ptr = singleton_instance!(pmdm(proc.memory()))?;
-//
-//     reg! { cpu:
-//         x[0] = pmdm_ptr.to_raw(),
-//         w[1] => let slot_idx: i32,
-//         w[3] => let value: i32,
-//         w[1] = value,
-//         w[2] = match slot_idx {
-//             0 => 0, // sword
-//             1 => 3, // shield
-//             _ => 1, // bow
-//         }
-//     };
-//
-//     // jump to uking::ui::PauseMenuDataMgr::setEquippedWeaponItemValue
-//     // directly to update the created weapon value in pouch
-//     cpu.pc = main_start + 0x971438;
-//     Ok(())
-// }
 
 /// memcpy(dest, src, size)
 fn memcpy(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {

@@ -9,7 +9,9 @@ mod thread;
 pub use thread::*;
 
 pub type JobSender = mpsc::Sender<Job>;
+
 pub type Job = Box<dyn FnOnce(&mut Cpu1) + Send + 'static>;
+// pub type Job = Box<dyn FnOnce(Cpu1) -> Cpu1 + Send + std::panic::UnwindSafe + 'static>;
 
 /// Trait for platform-specific thread implementation to provide
 /// method to spawn and join threads

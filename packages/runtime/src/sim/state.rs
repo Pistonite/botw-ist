@@ -29,6 +29,16 @@ pub struct StateArgs {
     pub accurately_simulate: bool,
     /// Target item for PE (item that receives the prompt)
     pub entangle_target: Option<cir::ItemSelectSpec>,
+    /// Specify the action should be done in overworld, if possible in both overworld and another
+    /// screen
+    pub overworld: bool,
+    /// Specify the action should be done in dpad quick menu,
+    /// if possible in both dpad and pause menu
+    pub dpad: bool,
+    /// Specify weapon throw to not break the weapon
+    pub non_breaking: bool,
+    /// Specify weapon throw to break the weapon
+    pub breaking: bool,
 }
 
 #[derive(Clone, Default)]
@@ -59,6 +69,19 @@ pub struct GameSystems {
     pub screen: sim::ScreenSystem,
     /// Simulation of the overworld
     pub overworld: sim::OverworldSystem,
+}
+
+impl GameSystems {
+    /// Process weapon spawning if in overworld
+    pub fn check_weapon_spawn(&mut self) {
+        if self.screen.current_screen().is_overworld() {
+            if !self.screen.menu_overload {
+                self.overworld.spawn_ground_weapons()
+            } else {
+                self.overworld.clear_spawning_weapons()
+            }
+        }
+    }
 }
 
 macro_rules! set_arg {
@@ -105,6 +128,10 @@ impl State {
             X::CoTargeting(spec) => {
                 set_arg!(self, args, entangle_target, Some(spec.as_ref().clone()))
             }
+            X::CoOverworld => set_arg!(self, args, overworld, true),
+            X::CoDpad => set_arg!(self, args, dpad, true),
+            X::CoNonBreaking => set_arg!(self, args, non_breaking, true),
+            X::CoBreaking => set_arg!(self, args, breaking, true),
 
             X::Get(items) => self.handle_get(ctx, items, args.as_deref()).await,
             X::PickUp(items) => self.handle_pick_up(ctx, items, args.as_deref()).await,
@@ -236,12 +263,19 @@ impl State {
         pick_up: bool,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling DROP command");
-        let pe_target = args
-            .map(|x| x.entangle_target.as_ref().cloned())
+        let (pe_target, overworld, pause_during) = args
+            .map(|x| {
+                (
+                    x.entangle_target.as_ref().cloned(),
+                    x.overworld,
+                    x.pause_during,
+                )
+            })
             .unwrap_or_default();
         let items = items.to_vec();
         in_game!(self, rt, cpu, sys, errors => {
-            sim::actions::drop_items(&mut cpu, sys, errors, &items, pe_target.as_ref(), pick_up, false)
+            sim::actions::drop_items(&mut cpu,
+                sys, errors, &items, pe_target.as_ref(), pick_up, overworld, pause_during)
         })
     }
 

@@ -78,6 +78,10 @@ fn stp_core(
             let xt_val = glue::read_float_reg(core.cpu, &xt1);
             Ptr!(<f32>(address)).store(&(xt_val as f32), core.proc.memory_mut())?;
         }
+        RegisterType::DReg(_) => {
+            let xt_val = glue::read_float_reg(core.cpu, &xt1);
+            Ptr!(<f64>(address)).store(&xt_val, core.proc.memory_mut())?;
+        }
         RegisterType::QReg(i) => {
             let (lo, hi) = core.cpu.read::<(u64, u64)>(reg!(q[i]));
             Ptr!(<u64>(address)).store(&lo, core.proc.memory_mut())?;
@@ -102,6 +106,10 @@ fn stp_core(
         RegisterType::SReg(_) => {
             let xt_val = glue::read_float_reg(core.cpu, &xt2);
             Ptr!(<f32>(address + 4)).store(&(xt_val as f32), core.proc.memory_mut())?;
+        }
+        RegisterType::DReg(_) => {
+            let xt_val = glue::read_float_reg(core.cpu, &xt2);
+            Ptr!(<f64>(address + 8)).store(&xt_val, core.proc.memory_mut())?;
         }
         RegisterType::QReg(i) => {
             let (lo, hi) = core.cpu.read::<(u64, u64)>(reg!(q[i]));

@@ -229,6 +229,11 @@ impl ScreenItems {
             if !item.matches(name, value_at_least, meta, memory)? {
                 continue;
             }
+            // by default, does not target translucent items.
+            // still targetable by using position directly
+            if !item.in_inventory {
+                continue;
+            }
             if count == 0 {
                 return Ok(Some((tab_i, slot)));
             }

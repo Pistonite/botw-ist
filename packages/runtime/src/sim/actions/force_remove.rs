@@ -3,12 +3,8 @@ use blueflame::memory::{Ptr, mem};
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 
-use crate::error::{ErrorReport, sim_error};
+use crate::error::ErrorReport;
 use crate::sim;
-
-use super::{
-    ItemSelectCheck, convert_amount, switch_to_inventory_or_stop, switch_to_overworld_or_stop,
-};
 
 /// Forcefully remove items from the inventory
 ///
@@ -20,7 +16,7 @@ pub fn force_remove_item(
     errors: &mut Vec<ErrorReport>,
     items: &[cir::ItemSelectSpec],
 ) -> Result<(), processor::Error> {
-    switch_to_inventory_or_stop!(ctx, sys, errors, "REMOVE");
+    super::switch_to_inventory_or_stop!(ctx, sys, errors, "REMOVE");
     // open a temporary inventory that allows access to items
     // even when mCount = 0 (since it was allowed in the old version)
     let mut inventory = sim::PouchScreen::open(ctx.cpu(), true)?;
@@ -30,7 +26,7 @@ pub fn force_remove_item(
         let meta = item.meta.as_ref();
         let memory = ctx.cpu().proc.memory();
         // remove food by stack value instead of slot (like old version)
-        let mut remaining = convert_amount(item.amount, item.span, errors, false, || {
+        let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
             inventory.get_amount(name, meta, sim::CountingMethod::CanStackOrFood, memory)
         })?;
         loop {
@@ -121,22 +117,15 @@ pub fn force_remove_item(
             inventory.update(tab, slot, None, ctx.cpu().proc.memory())?;
         }
         let memory = ctx.cpu().proc.memory();
-        match remaining.check(item.span, errors, || {
+        let result = remaining.check(item.span, errors, || {
             inventory.get_amount(name, meta, sim::CountingMethod::CanStackOrFood, memory)
-        })? {
-            ItemSelectCheck::NeverFound => {
-                errors.push(sim_error!(item.span, CannotFindItem));
-            }
-            ItemSelectCheck::NeedMore(n) => {
-                errors.push(sim_error!(item.span, CannotFindItemNeedMore(n)));
-            }
-            _ => {}
-        }
+        })?;
+        super::check_remaining!(result, errors, item.span);
     }
 
     // close and reopen inventory to ensure consistency
-    switch_to_overworld_or_stop!(ctx, sys, errors, "REMOVE");
-    switch_to_inventory_or_stop!(ctx, sys, errors, "REMOVE");
+    super::switch_to_overworld_or_stop!(ctx, sys, errors, "REMOVE");
+    super::switch_to_inventory_or_stop!(ctx, sys, errors, "REMOVE");
 
     Ok(())
 }

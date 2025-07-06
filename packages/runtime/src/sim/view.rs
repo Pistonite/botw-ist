@@ -71,7 +71,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
                 let equipped = inventory.equipped_item_ptrs();
                 let entangled = inventory.pe_activated_items();
                 let entangled_pos = inventory
-                    .active_entangle_slot
+                    .active_pe_slot()
                     .map(|(t, s)| ((t as i32) % 3, s as i32))
                     .unwrap_or((-1, -1));
                 (equipped, entangled, entangled_pos.0, entangled_pos.1)

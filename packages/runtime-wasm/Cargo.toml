@@ -31,4 +31,5 @@ log.workspace = true
 crate-type = ["cdylib"]
 
 [features]
+# default = ["log/release_max_level_info"]
 no-trace = ["log/release_max_level_warn"]

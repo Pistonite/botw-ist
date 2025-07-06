@@ -89,6 +89,15 @@ impl Process {
     ) -> Result<(Box<dyn Execute>, u32), Error> {
         // find execute hook at this location
         let main_offset: u32 = (pc - self.main_start()) as u32;
+
+        if main_offset == 0x976920 {
+            log::debug!("fetching at 976920");
+        }
+        if main_offset == 0x9766d8 {
+            log::debug!("fetching at 9766d8");
+        }
+
+
         let (ignore_hook_size_check, max_bytes) = match max_bytes {
             Some(n) => (false, n),
             None => (true, 4), // fetch one instruction
@@ -117,6 +126,10 @@ impl Process {
         }
 
         let size = insns.byte_size();
+        if size > max_bytes {
+            log::error!("instruction cache size greater than max, this is a bug. fetching at pc=0x{pc:016x}, size={size}, max_bytes={max_bytes}");
+            return Err(Error::TooBigHook(main_offset));
+        }
         match opt_hook_exec {
             None => Ok((Box::new(insns), size)),
             Some(hook) => Ok((Box::new(HookedInsnVec::new(hook, insns)), size)),

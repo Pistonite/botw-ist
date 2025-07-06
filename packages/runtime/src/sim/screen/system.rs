@@ -18,7 +18,7 @@ pub struct ScreenSystem {
     is_manually_switched: bool,
 
     /// If Menu Overload Glitch is active
-    menu_overload: bool,
+    pub menu_overload: bool,
 
     /// Flag for controlling whether removal of held items
     /// should happen after the dialog when transitioning
@@ -29,6 +29,15 @@ pub struct ScreenSystem {
     /// you can delay this until the dialog is finished to generate
     /// offsets (i.e broken slots)
     remove_held_item_after_dialog: bool,
+
+    /// Stores removing equipped items from inventory until
+    /// after it's closed. When removing, these will be called
+    /// before deleteRemovedItems()
+    ///
+    /// This can be used to make translucent slots, by injecting
+    /// item removal between inventory close and deleteRemovedItems(),
+    /// so deleteRemovedItems() fails to remove the translucent slots.
+    equipped_items_to_remove_after_dialog: Vec<String>,
 
     /// If pouch screen is in holding mode. This state persists
     /// even when menu is closed
@@ -62,6 +71,11 @@ impl ScreenSystem {
         self.remove_held_item_after_dialog = true;
     }
 
+    pub fn set_remove_equipment_after_dialog(&mut self, name: &str) {
+        self.equipped_items_to_remove_after_dialog
+            .push(name.to_string())
+    }
+
     pub fn transition_to_inventory(
         &mut self,
         ctx: &mut sim::Context<&mut Cpu2>,
@@ -91,6 +105,7 @@ impl ScreenSystem {
         }
 
         *self.current_screen_mut() = Screen::Inventory(sim::PouchScreen::open(ctx.cpu(), false)?);
+        log::debug!("inventory screen opened successfully");
 
         Ok(true)
     }
@@ -226,7 +241,14 @@ impl ScreenSystem {
         let screen = Arc::make_mut(&mut self.screen);
         let drop_items = self.remove_held_item_after_dialog;
         self.remove_held_item_after_dialog = false;
-        screen.transition_to_overworld(ctx, overworld, self.menu_overload, drop_items)?;
+        let remove_equipments = std::mem::take(&mut self.equipped_items_to_remove_after_dialog);
+        screen.transition_to_overworld(
+            ctx,
+            overworld,
+            self.menu_overload,
+            drop_items,
+            &remove_equipments,
+        )?;
         if drop_items {
             self.holding_in_inventory = false;
         }
@@ -295,6 +317,7 @@ impl Screen {
         overworld: &mut sim::OverworldSystem,
         menu_overload: bool,
         drop_items: bool,
+        remove_equipments: &[String],
     ) -> Result<(), processor::Error> {
         match self {
             Self::Overworld => {
@@ -304,14 +327,29 @@ impl Screen {
             Self::Inventory(inv_screen) => {
                 if !menu_overload {
                     log::debug!("updating overworld equiments");
-                    if inv_screen.weapon_to_spawn.changed {
-                        overworld.weapon = inv_screen.weapon_to_spawn.actor.take();
+                    if inv_screen.weapon_state.to_delete {
+                        overworld.weapon = None;
+                    } else {
+                        overworld.change_player_equipment(
+                            inv_screen.weapon_state.item,
+                            ctx.cpu().proc.memory(),
+                        )?;
                     }
-                    if inv_screen.bow_to_spawn.changed {
-                        overworld.bow = inv_screen.bow_to_spawn.actor.take();
+                    if inv_screen.bow_state.to_delete {
+                        overworld.bow = None;
+                    } else {
+                        overworld.change_player_equipment(
+                            inv_screen.bow_state.item,
+                            ctx.cpu().proc.memory(),
+                        )?;
                     }
-                    if inv_screen.shield_to_spawn.changed {
-                        overworld.shield = inv_screen.bow_to_spawn.actor.take();
+                    if inv_screen.shield_state.to_delete {
+                        overworld.shield = None;
+                    } else {
+                        overworld.change_player_equipment(
+                            inv_screen.shield_state.item,
+                            ctx.cpu().proc.memory(),
+                        )?;
                     }
                 } else {
                     log::debug!("not updating overworld equipments because of menu overload");
@@ -324,8 +362,8 @@ impl Screen {
                 let state = linker::events::CreateHoldingItem::execute_subscribed(
                     ctx.cpu(),
                     State {
-                        actors: vec![],
                         menu_overload,
+                        ..Default::default()
                     },
                     |state, name| {
                         if !state.menu_overload {
@@ -344,8 +382,18 @@ impl Screen {
             }
             Self::Shop(_) => {}
         }
+        for x in remove_equipments {
+            log::debug!("removing {x} on returning to overworld");
+            linker::remove_weapon_if_equipped(ctx.cpu(), x)?;
+        }
         log::debug!("removing translucent items on returning to overworld");
         linker::delete_removed_items(ctx.cpu())?;
+
+        if !menu_overload {
+            overworld.spawn_ground_weapons();
+        } else {
+            overworld.clear_spawning_weapons();
+        }
 
         if drop_items {
             log::debug!("removing held items on returning to overworld");

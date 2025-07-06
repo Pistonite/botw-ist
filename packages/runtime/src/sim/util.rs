@@ -159,17 +159,25 @@ pub fn item_type_to_category(item_type: i32) -> Option<cir::Category> {
 /// the next tab (after tab_i), or the end of inventory
 pub fn should_go_to_next_tab(
     curr_item_ptr: Ptr![PouchItem],
-    tab_i: usize,
+    mut tab_i: usize,
     num_tabs: usize,
     tab_heads: &[Ptr![PouchItem]; 50],
 ) -> bool {
     if curr_item_ptr.is_nullptr() {
         return true;
     }
-    if tab_i < num_tabs - 1 {
+    // we must skip empty tabs and check
+    // heads of all tabs after
+    while tab_i < num_tabs - 1 {
         let next_head = tab_heads[tab_i + 1];
+        if next_head.is_nullptr() {
+            tab_i += 1;
+            continue;
+        }
         return curr_item_ptr == next_head;
     }
+    // if we are at last tab, or if all tabs after us
+    // are empty, don't stop, item is in this tab still
     false
 }
 
