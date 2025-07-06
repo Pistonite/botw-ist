@@ -33,6 +33,7 @@ pub fn is_animated_icon_actor(actor: &str) -> bool {
     )
 }
 
+/// Check if the item name spec is a Sword/Bow/Shield
 pub fn name_spec_is_weapon(spec: &cir::ItemNameSpec) -> bool {
     let category = match spec {
         cir::ItemNameSpec::Actor(actor) => {
@@ -48,6 +49,11 @@ pub fn name_spec_is_weapon(spec: &cir::ItemNameSpec) -> bool {
         category,
         cir::Category::Weapon | cir::Category::Bow | cir::Category::Shield
     )
+}
+
+/// Check if the actor is a Sword/Bow/Shield
+pub fn name_is_weapon(name: &str) -> bool {
+    matches!(game::get_pouch_item_type(name), 0 | 1 | 3)
 }
 
 /// Check if the item can use the drop prompt

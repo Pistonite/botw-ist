@@ -1,3 +1,4 @@
+use blueflame::game::{self, WeaponModifierInfo};
 use blueflame::linker::events::GameEvent as _;
 use blueflame::memory::Memory;
 use blueflame::processor::{self, Cpu2};
@@ -371,6 +372,37 @@ pub fn trash_item_wrapped(
         sys.overworld.spawn_weapon_later(weapon);
     }
     sys.check_weapon_spawn();
+
+    Ok(())
+}
+
+pub fn get_item_with_auto_equip(
+    cpu: &mut Cpu2<'_, '_>,
+    sys: &mut sim::GameSystems,
+    is_weapon: bool,
+    name: &str,
+    value: Option<i32>,
+    modifier: Option<WeaponModifierInfo>,
+) -> Result<(), processor::Error> {
+    linker::get_item(cpu, name, value, modifier)?;
+    if !is_weapon {
+        return Ok(());
+    }
+    let value = match value {
+        Some(x) => x,
+        // since we use the game code to get the default value
+        // if not present, it's not easy to get it here.
+        // we could use some hook to get the result, but it's simpler
+        // to include as data in the deps
+        //
+        // use 10 as some dummy value, as it should always succeed
+        None => game::get_weapon_general_life(name).unwrap_or(10) * 100,
+    };
+
+    if sys.overworld.try_auto_equip(name, value, modifier.as_ref()) {
+        log::debug!("auto-equipping {name}");
+        linker::equip_last_added_item(cpu)?;
+    }
 
     Ok(())
 }
