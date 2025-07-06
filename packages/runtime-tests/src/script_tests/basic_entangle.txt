@@ -1,3 +1,4 @@
+# hold food with material
 get apple
 get 40 elixir
 get roasted-endura-carrot
@@ -6,3 +7,20 @@ unpause pause
 entangle apple
 :targeting roasted-endura-carrot
 hold 5 apples
+unhold
+unpause
+!remove all food
+
+get 1 master-sword 10 arrow 1 pot-lid 5 royal-claymore 3 banana
+
+# drop hold equipment
+entangle banana
+drop royal-claymore
+unpause
+pause
+unhold
+
+# hold material drop equipment
+entangle master-sword
+hold apple
+unpause

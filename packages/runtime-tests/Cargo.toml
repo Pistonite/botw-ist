@@ -16,6 +16,7 @@ path = "../parser"
 anyhow.workspace = true
 env_logger.workspace = true
 log.workspace = true
+num_cpus = "1.17.0"
 oneshot = "0.1.11"
 sha2.workspace = true
 threadpool = "1.8.1"
