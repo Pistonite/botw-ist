@@ -23,9 +23,9 @@ impl Thread {
             match self.recv.recv() {
                 Ok(f) => {
                     log::debug!("processor thread {} got job", self.slot);
-                    
+
                     f(&mut self.cpu);
-                    
+
                     // since mut references are not UnwindSafe, we must
                     // take it out, give it to the closure, then back
                     // let cpu = std::mem::take(&mut self.cpu);
@@ -46,7 +46,6 @@ impl Thread {
                     //         panic!("executor thread panicked: {msg}");
                     //     }
                     // }
-
                 }
                 Err(e) => {
                     log::debug!(

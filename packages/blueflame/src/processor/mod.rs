@@ -48,7 +48,7 @@ pub mod glue {
                 RegisterType::BReg(_) => {
                     log::error!("cannot convert b reg to reg name");
                     panic!("cannot convert b reg to reg name")
-                },
+                }
                 RegisterType::HReg(_) => {
                     log::error!("cannot convert h reg to reg name");
                     panic!("cannot convert h reg to reg name")
@@ -76,10 +76,10 @@ pub mod glue {
         let (reg_type, idx) = reg.split_at(1);
         let (idx, vector) = if let Some(i) = idx.find('.') {
             let v = match &idx[i..] {
-                ".16b"| ".8h" | ".4s" | ".2d" | ".1q" => 128,
-                ".8b" | ".4h" | ".2s" | ".1d"  => 64,
+                ".16b" | ".8h" | ".4s" | ".2d" | ".1q" => 128,
+                ".8b" | ".4h" | ".2s" | ".1d" => 64,
                 ".4b" | ".2h" | ".1s" => 32,
-                _ => 0
+                _ => 0,
             };
             (&idx[..i], v)
         } else {
@@ -97,17 +97,15 @@ pub mod glue {
             "s" => RegisterType::SReg(reg_num),
             "d" => RegisterType::DReg(reg_num),
             "q" => RegisterType::QReg(reg_num),
-            "v" => {
-                match vector {
-                    32 => RegisterType::SReg(reg_num),
-                    64 => RegisterType::DReg(reg_num),
-                    128 => RegisterType::QReg(reg_num),
-                    _ => {
-                        log::error!("Failed to parse vector register: {reg}");
-                        panic!("Unknown register type: {reg}");
-                    }
+            "v" => match vector {
+                32 => RegisterType::SReg(reg_num),
+                64 => RegisterType::DReg(reg_num),
+                128 => RegisterType::QReg(reg_num),
+                _ => {
+                    log::error!("Failed to parse vector register: {reg}");
+                    panic!("Unknown register type: {reg}");
                 }
-            }
+            },
             _ => {
                 log::error!("Failed to parse register: {reg}");
                 panic!("Unknown register type: {reg}");
@@ -134,11 +132,17 @@ pub mod glue {
             RegisterValue::DReg(v) => i64::from_le_bytes(v.to_le_bytes()),
             RegisterValue::QReg(lo, hi) => {
                 if hi != 0 {
-                    log::error!("QReg read with upper bits non-zero, this is not implemented. pc=0x{:016x}", cpu.pc);
-                    panic!("QReg read with upper bits non-zero, this is not implemented. pc=0x{:016x}", cpu.pc);
+                    log::error!(
+                        "QReg read with upper bits non-zero, this is not implemented. pc=0x{:016x}",
+                        cpu.pc
+                    );
+                    panic!(
+                        "QReg read with upper bits non-zero, this is not implemented. pc=0x{:016x}",
+                        cpu.pc
+                    );
                 }
                 lo as i64
-            },
+            }
             _ => {
                 log::error!("Invalid register read for general register: {reg:?}");
                 panic!("Invalid register read for general register: {reg:?}");
@@ -189,7 +193,9 @@ pub mod glue {
             RegisterType::WZR => {}
             RegisterType::XZR => {}
             _ => {
-                log::error!("Invalid register write for general register: {reg:?} with value {val}");
+                log::error!(
+                    "Invalid register write for general register: {reg:?} with value {val}"
+                );
                 panic!("Invalid register write for general register: {reg:?} with value {val}");
             }
         }
@@ -217,8 +223,8 @@ pub mod glue {
             }
             (RegisterType::QReg(idx), RegisterValue::QReg(lo, hi)) => {
                 cpu.write(reg!(q[*idx]), (*lo, *hi));
-                 // self.s[*idx] = (((v[0] as u128) << 64) | (v[1] as u128)) as f32;
-            },
+                // self.s[*idx] = (((v[0] as u128) << 64) | (v[1] as u128)) as f32;
+            }
             (RegisterType::XZR, _) => {}
             (RegisterType::WZR, _) => {}
             (RegisterType::SP, RegisterValue::XReg(v)) => {
@@ -319,7 +325,8 @@ pub mod glue {
                         _ => {
                             log::error!(
                                 "unhandled extra op: {}, shift={}",
-                                extra_op.operation, extra_op.shift_val
+                                extra_op.operation,
+                                extra_op.shift_val
                             );
                             panic!(
                                 "unhandled extra op: {}, shift={}",
@@ -376,7 +383,11 @@ pub mod glue {
                         }
                         //the distinct signed/unsigned extend behavior between uxtw and lsl (technically sxtw)
                         _ => {
-                            log::error!("unhandled extra op {}, shift={}", extra_op.operation, extra_op.shift_val);
+                            log::error!(
+                                "unhandled extra op {}, shift={}",
+                                extra_op.operation,
+                                extra_op.shift_val
+                            );
                             panic!(
                                 "unhandled extra op: {}, shift={}",
                                 extra_op.operation, extra_op.shift_val

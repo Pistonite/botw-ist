@@ -99,7 +99,10 @@ impl OverworldSystem {
 
     /// Spawn items that are previous dropped
     pub fn spawn_ground_weapons(&mut self) {
-        log::debug!("spawning ground equipments: {:?}", self.spawning_ground_weapons);
+        log::debug!(
+            "spawning ground equipments: {:?}",
+            self.spawning_ground_weapons
+        );
         self.ground_weapons
             .extend(std::mem::take(&mut self.spawning_ground_weapons))
     }

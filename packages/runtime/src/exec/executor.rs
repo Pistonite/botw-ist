@@ -85,13 +85,11 @@ impl<S: Spawn> ExecutorImpl<S> {
             // };
             handles[i]
                 .1
-                .send(
-                Box::new(|p| {
+                .send(Box::new(|p| {
                     let t = f(p);
                     let _ = send.send(t);
                     // p
-                })
-                )
+                }))
                 .map_err(|e| Error::SendJob(e.to_string()))?;
 
             i

@@ -126,7 +126,9 @@ export const getSlotPropsFromPouchItem = (
         isTranslucent: !item.isInInventory,
         count: getCount(isEquipment, value, canStack),
         // don't show durability for translucent items
-        durability: item.isInInventory ? getDurability(isEquipment, value) : undefined,
+        durability: item.isInInventory
+            ? getDurability(isEquipment, value)
+            : undefined,
         isInBrokenSlot: item.allocatedIdx >= list1Count,
         isEntangled: item.promptEntangled,
         holdingCount: item.holdingCount,
