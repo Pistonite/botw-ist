@@ -1,10 +1,10 @@
-import { initCodeEditor, type LanguageClient } from "@pistonite/intwc";
+import { type DiagnosticProvider, initCodeEditor, type LanguageClient } from "@pistonite/intwc";
 import { once } from "@pistonite/pure/sync";
 
 import type { ExtensionApp } from "@pistonite/skybook-api";
 
 import { language, configuration } from "./language.ts";
-import { provideDiagnostics } from "./marker.ts";
+import { provideParserDiagnostics, provideRuntimeDiagnostics } from "./marker.ts";
 import { legend, provideSemanticTokens } from "./semantic.ts";
 
 let theApp: ExtensionApp | undefined;
@@ -33,14 +33,15 @@ const CustomLanguageOptions: LanguageClient = {
     getExtensions: () => [".skyb"],
     getTokenizer: () => language,
     getConfiguration: () => configuration,
-    // the parser and runtime can both produce diagnostics
-    getMarkerOwners: () => ["parser", "runtime"],
-    provideMarkers: (model, owner) => {
-        if (!theApp) {
-            return undefined;
-        }
-        return provideDiagnostics(theApp, model, owner);
-    },
+    // // the parser and runtime can both produce diagnostics
+    // getMarkerOwners: () => ["parser", "runtime"],
+    // provideMarkers: (model, owner) => {
+    //     if (!theApp) {
+    //         return undefined;
+    //     }
+    //     return provideDiagnostics(theApp, model, owner);
+    // },
+    getDiagnosticProviders: () => [ParserDiagnosticProvider, RuntimeDiagnosticProvider],
     getSemanticTokensLegend: () => legend,
     provideDocumentRangeSemanticTokens: (model, range, token) => {
         if (!theApp) {
@@ -48,6 +49,26 @@ const CustomLanguageOptions: LanguageClient = {
         }
         return provideSemanticTokens(theApp, model, range, token);
     },
+};
+
+export const ParserDiagnosticProvider: DiagnosticProvider = {
+    ownerId: "parser",
+    onNewRequest: async (_filename, model, script) => {
+        if (!theApp) {
+            return [];
+        }
+        return await provideParserDiagnostics(theApp, model, script);
+    }
+};
+
+export const RuntimeDiagnosticProvider: DiagnosticProvider = {
+    ownerId: "runtime",
+    onNewRequest: async (_filename, model, script, charPos) => {
+        if (!theApp) {
+            return [];
+        }
+        return await provideRuntimeDiagnostics(theApp, model, script, charPos);
+    }
 };
 
 /** Token colors for special tokens in skybook script */

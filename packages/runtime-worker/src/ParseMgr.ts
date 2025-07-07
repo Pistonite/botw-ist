@@ -47,6 +47,12 @@ export class ParseMgr {
         });
     }
 
+    public getStepBytePositions(script: string): Pwr<Uint32Array> {
+        return this.withParseOutput(script, (ptr) => {
+            return this.napi.getStepBytePositions(ptr);
+        });
+    }
+
     /** Wrapper to call parseScript and use the result pointer, and free it afterwards */
     private async withParseOutput<T>(
         script: string,

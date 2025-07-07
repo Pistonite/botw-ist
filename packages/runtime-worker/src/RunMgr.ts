@@ -71,11 +71,12 @@ export class RunMgr {
     public getRuntimeDiagnostics(
         script: string,
         taskId: string,
+        bytePos: number,
     ): Pwr<ErrorReport<RuntimeError>[]> {
         return this.withParseAndRunOutput(
             script,
             taskId,
-            -1,
+            bytePos,
             (_, runOutputBorrowed) => {
                 return this.napi.getRunErrors(runOutputBorrowed);
             },

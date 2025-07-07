@@ -116,6 +116,12 @@ export class WasmApi implements NativeApi {
         });
     }
 
+    public getStepBytePositions(ptr: number): Pwr<Uint32Array> {
+        return this.exec(() => {
+            return wasm_bindgen.get_step_byte_positions(ptr);
+        });
+    }
+
     public makeTaskHandle(): Pwr<number> {
         return this.exec(() => {
             return wasm_bindgen.make_task_handle();

@@ -47,13 +47,16 @@ export const createRuntimeWorker = (
         getStepFromPos: async (script, pos) => {
             return { val: unwrap(await parseMgr.getStepFromPos(script, pos)) };
         },
+        getStepBytePositions: async (script) => {
+            return { val: unwrap(await parseMgr.getStepBytePositions(script)) };
+        },
         abortTask: wxWrapHandler((taskId) => {
             taskMgr.abort(taskId);
         }),
-        getRuntimeDiagnostics: async (script, taskId) => {
+        getRuntimeDiagnostics: async (script, taskId, bytePos) => {
             return {
                 val: unwrapMaybeAborted(
-                    await runMgr.getRuntimeDiagnostics(script, taskId),
+                    await runMgr.getRuntimeDiagnostics(script, taskId, bytePos),
                 ),
             };
         },

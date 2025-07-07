@@ -58,11 +58,15 @@ export interface Runtime {
     /** Get index of the step from byte position in the script */
     getStepFromPos(script: string, pos: number): WxPromise<number>;
 
+    /** Get the starting byte positions for each step */
+    getStepBytePositions(script: string): WxPromise<Uint32Array>;
+
     /** Abort a task by task id passed into one of the runtime functions that execute the script */
     abortTask(taskId: string): WxPromise<void>;
 
     /**
-     * Run the script and get diagnostics from the runtime.
+     * Run the script and get diagnostics from the runtime, up to and including
+     * the step containing the bytePos
      *
      * Note that the span in the errors are byte offsets, not character offsets.
      *
@@ -71,6 +75,7 @@ export interface Runtime {
     getRuntimeDiagnostics(
         script: string,
         taskId: string,
+        bytePos: number,
     ): WxPromise<MaybeAborted<ErrorReport<RuntimeError>[]>>;
 
     /**

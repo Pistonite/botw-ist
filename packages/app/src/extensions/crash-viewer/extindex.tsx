@@ -31,22 +31,22 @@ export class CrashViewerExtension
                 if (!app) {
                     return;
                 }
-                const taskId = await app.requestNewTaskId(CRASH_VIEWER_UUID);
-                if (taskId.err) {
-                    return;
-                }
-                const result = await app.getCrashInfo(
-                    taskId.val,
-                    undefined,
-                    undefined,
-                );
-                if (result.err) {
-                    return;
-                }
-                if (result.val.type === "Aborted") {
-                    return;
-                }
-                this.crashInfo.set(result.val.value);
+                // const taskId = await app.requestNewTaskId(CRASH_VIEWER_UUID);
+                // if (taskId.err) {
+                //     return;
+                // }
+                // const result = await app.getCrashInfo(
+                //     taskId.val,
+                //     undefined,
+                //     undefined,
+                // );
+                // if (result.err) {
+                //     return;
+                // }
+                // if (result.val.type === "Aborted") {
+                //     return;
+                // }
+                // this.crashInfo.set(result.val.value);
             },
             interval: 100,
         });
