@@ -239,16 +239,18 @@ impl OverworldSystem {
 
     /// Update the overworld equipment value to PMDM, which happens as part
     /// of weapon actor update in the overworld
-    pub fn update_equipment_value_to_pmdm(&self, cpu: &mut Cpu2<'_, '_>, item_type: i32) -> Result<(), processor::Error> {
+    pub fn update_equipment_value_to_pmdm(
+        &self,
+        cpu: &mut Cpu2<'_, '_>,
+        item_type: i32,
+    ) -> Result<(), processor::Error> {
         let slot = match item_type {
             0 => &self.weapon,
             1 => &self.bow,
             3 => &self.shield,
             _ => return Ok(()),
         };
-        let Some(actor) = slot else {
-            return Ok(())
-        };
+        let Some(actor) = slot else { return Ok(()) };
         let value = actor.value;
         linker::set_equipped_weapon_value(cpu, value, item_type)
     }

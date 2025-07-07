@@ -114,12 +114,16 @@ export const getSlotPropsFromPouchItem = (
     let accessibleStatus = item.accessible
         ? item.dpadAccessible
             ? undefined
-            : "dpad-none" as const
+            : ("dpad-none" as const)
         : item.dpadAccessible
-          ? "dpad-only" as const
-          : "none" as const;
+          ? ("dpad-only" as const)
+          : ("none" as const);
 
-    if (actorName === "Weapon_Sword_070" && value === 0 && accessibleStatus === "dpad-none") {
+    if (
+        actorName === "Weapon_Sword_070" &&
+        value === 0 &&
+        accessibleStatus === "dpad-none"
+    ) {
         // since MS with 0 dura is always not accessible in dpad, there's nothing special
         // about it, and we just don't display the accessibleStatus
         accessibleStatus = undefined;

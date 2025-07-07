@@ -68,14 +68,15 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
         match sys.screen.current_screen().as_inventory() {
             None => {
                 // open an inventory menu temporarily to get the status
-                let inv = 
-                try_mem!(
-                sim::PouchScreen::open_no_exec(proc, false)
-    , e, "failed to open temporary inventory");
+                let inv = try_mem!(
+                    sim::PouchScreen::open_no_exec(proc, false),
+                    e,
+                    "failed to open temporary inventory"
+                );
 
                 let accessible = inv.accessible_item_ptrs();
                 (vec![], accessible, vec![], -1, -1)
-            },
+            }
             Some(inventory) => {
                 let equipped = inventory.equipped_item_ptrs();
                 let accessible = inventory.accessible_item_ptrs();
@@ -189,7 +190,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
 
     // build the item list with the ptr data
     let mut tab_idx = get_next_tab_head(&tabs, 0).0;
-    let (mut next_tab_idx ,mut next_tab_item_idx) = get_next_tab_head(&tabs, tab_idx + 1);
+    let (mut next_tab_idx, mut next_tab_item_idx) = get_next_tab_head(&tabs, tab_idx + 1);
     let mut tab_slot = 0;
     let mut items = Vec::with_capacity(item_ptr_data.len());
     let mut seen_animated_icons = BTreeSet::new();
@@ -573,12 +574,12 @@ fn extract_dpad_menu(
                 false
             }
         } else {
-                false
-            };
+            false
+        };
         if !should_skip {
             out.push(item_ptr);
         }
-        i+=1;
+        i += 1;
         try_mem!(
             list_iter.next(memory),
             e,

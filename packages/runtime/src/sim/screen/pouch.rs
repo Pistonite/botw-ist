@@ -1,5 +1,5 @@
 use blueflame::game::{PouchItem, PouchItemType, gdt, singleton_instance};
-use blueflame::memory::{self, mem, proxy, Ptr};
+use blueflame::memory::{self, Ptr, mem, proxy};
 use blueflame::processor::{Cpu2, Process};
 use blueflame::{linker, processor};
 use derive_more::{Deref, DerefMut};
@@ -159,10 +159,7 @@ impl PouchScreenEquipState {
     }
 }
 
-fn do_open(
-    proc: &Process,
-    force_accessible: bool,
-) -> Result<sim::ScreenItems, memory::Error> {
+fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, memory::Error> {
     let m = proc.memory();
     let gdt = gdt::trigger_param_ptr(m)?;
     let (weapon_slots, bow_slots, shield_slots) = {

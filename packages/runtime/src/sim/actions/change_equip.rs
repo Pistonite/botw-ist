@@ -42,7 +42,9 @@ pub fn change_equip_inventory(
     'outer: for item in items {
         let name = &item.name;
         let item_type = sim::util::name_spec_to_item_type(name);
-        if item_type > PouchItemType::ArmorLower as i32 && item_type != PouchItemType::KeyItem as i32{
+        if item_type > PouchItemType::ArmorLower as i32
+            && item_type != PouchItemType::KeyItem as i32
+        {
             errors.push(sim_error!(item.span, NotEquipment));
             continue;
         }
@@ -66,9 +68,10 @@ pub fn change_equip_inventory(
         let memory = ctx.cpu().proc.memory();
         // we want to expand the "all" amount if it's equip, to avoid getting stuck
         // to try to equip everything (since equipping something would unequip the rest)
-        let mut remaining = super::convert_amount(item.amount, item.span, errors, is_equip, || {
-            Ok(inventory.get_amount(name, meta_ref, sim::CountingMethod::Slot, memory)?)
-        })?;
+        let mut remaining =
+            super::convert_amount(item.amount, item.span, errors, is_equip, || {
+                Ok(inventory.get_amount(name, meta_ref, sim::CountingMethod::Slot, memory)?)
+            })?;
         let mut check_for_extra_error = true;
 
         loop {
@@ -87,7 +90,7 @@ pub fn change_equip_inventory(
             // check if the item has the equip/unequip prompt
             let (original_item, is_arrow, is_weapon, item_type) = match inventory.get(tab, slot) {
                 sim::ScreenItemState::Normal(item_ptr) => {
-                    mem! { memory: 
+                    mem! { memory:
                         let t = *(&item_ptr->mType);
                         let equipped = *(&item_ptr->mEquipped);
                     };
@@ -270,7 +273,8 @@ pub fn change_equip_dpad(
             // on close dpad
             linker::delete_removed_items(ctx.cpu())?;
             if need_sync_to_pmdm {
-                sys.overworld.update_equipment_value_to_pmdm(ctx.cpu(), item_type)?;
+                sys.overworld
+                    .update_equipment_value_to_pmdm(ctx.cpu(), item_type)?;
             }
             remaining.sub(1);
         }
