@@ -24,6 +24,8 @@ export type RuntimeError =
     | { type: "InvalidDpadType" }
     | { type: "InvalidItemTarget" }
     | { type: "InvalidPromptTarget" }
+    | { type: "ItemAlreadyEquipped" }
+    | { type: "ItemAlreadyUnequipped" }
     | { type: "ItemMismatch"; data: [string, string] }
     | { type: "ItemMismatchCategory"; data: [string, Category] }
     | { type: "NotDroppable" }

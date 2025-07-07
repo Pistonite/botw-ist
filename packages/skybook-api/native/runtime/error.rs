@@ -101,6 +101,10 @@ pub enum RuntimeError {
     InvalidItemTarget,
     #[error("the target item for prompt entanglement cannot be reached")]
     InvalidPromptTarget,
+    #[error("the item is already equipped")]
+    ItemAlreadyEquipped,
+    #[error("the item is already unequipped")]
+    ItemAlreadyUnequipped,
     #[error(
         "the item in the inventory in this position is `{0}`, which does not match the input item `{1}`"
     )]
