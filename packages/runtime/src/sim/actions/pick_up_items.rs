@@ -44,7 +44,7 @@ pub fn pick_up_item_internal(
         if ctx.is_aborted() {
             return Ok(());
         }
-        if remaining.is_done() {
+        if remaining.is_done(item.span, errors, "PICKUP") {
             break;
         }
         // find the item on the ground

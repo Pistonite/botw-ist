@@ -27,13 +27,13 @@ pub fn force_remove_item(
         let memory = ctx.cpu().proc.memory();
         // remove food by stack value instead of slot (like old version)
         let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
-            inventory.get_amount(name, meta, sim::CountingMethod::CanStackOrFood, memory)
+            Ok(inventory.get_amount(name, meta, sim::CountingMethod::CanStackOrFood, memory)?)
         })?;
         loop {
             if ctx.is_aborted() {
                 break 'outer;
             }
-            if remaining.is_done() {
+            if remaining.is_done(item.span, errors, "REMOVE") {
                 break;
             }
             let m = ctx.cpu().proc.memory();

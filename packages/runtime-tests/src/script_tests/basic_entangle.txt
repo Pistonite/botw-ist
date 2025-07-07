@@ -1,5 +1,13 @@
-# hold food with material
+get 1 apple 10 arrows 1 pot-lid
+# unequip arrow with champion ability
+get gale
+entangle arrow[category=bow, slot=0]
+unequip gale
+
+drop all apple
 get apple
+
+# hold food with material
 get 40 elixir
 get roasted-endura-carrot
 entangle elixir[category=food, tab=2, row=1, col=3]
@@ -11,7 +19,7 @@ unhold
 unpause
 !remove all food
 
-get 1 master-sword 10 arrow 1 pot-lid 5 royal-claymore 3 banana
+get 1 master-sword 5 royal-claymore 3 banana
 
 # drop hold equipment
 entangle banana
@@ -24,3 +32,15 @@ unhold
 entangle master-sword
 hold apple
 unpause
+
+pick-up master-sword
+!remove all royal-claymore
+unhold
+get rgc
+
+# equip dura transfer
+:dpad equip rgc
+entangle apple
+equip master-sword
+unpause
+pause

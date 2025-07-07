@@ -55,13 +55,13 @@ pub fn drop_items(
             } else {
                 // to drop items in the inventory, if you are holding,
                 // then you are locked to holding items and cannot drop
-                super::check_not_holding_in_inventory!(ctx, sys, errors, "DROP");
+                super::check_not_holding_in_inventory!(ctx, sys, errors, "DROP-INVW");
                 drop_inventory_weapon(ctx, sys, errors, item, pe_target)?;
             }
         } else {
             // to drop items in the inventory, if you are holding,
             // then you are locked to holding items and cannot drop
-            super::check_not_holding_in_inventory!(ctx, sys, errors, "DROP");
+            super::check_not_holding_in_inventory!(ctx, sys, errors, "DROP-INVM");
             drop_inventory_material(ctx, sys, errors, item, pe_target)?;
         }
     }
@@ -86,18 +86,18 @@ fn drop_inventory_material(
     // if holding in the overworld, drop those first
     if sys.overworld.is_holding() {
         log::debug!("dropping currently held items in DROP command before processing other items");
-        super::switch_to_overworld_or_stop!(ctx, sys, errors, "DROP");
-        super::drop_held_items(ctx, sys, "DROP")?;
+        super::switch_to_overworld_or_stop!(ctx, sys, errors, "DROP-INVM");
+        super::drop_held_items(ctx, sys, "DROP-INVM")?;
     }
     // must be in inventory to hold materials
-    super::switch_to_inventory_or_stop!(ctx, sys, errors, "DROP");
+    super::switch_to_inventory_or_stop!(ctx, sys, errors, "DROP-INVM");
     let name = &item.name;
     let meta = item.meta.as_ref();
     // for items, hold 1 at a time and drop, and we must know
     // exactly how many there are
     let memory = ctx.cpu().proc.memory();
     let inventory = sys.screen.current_screen().as_inventory().unwrap();
-    let count_fn = || inventory.get_amount(name, meta, sim::CountingMethod::Value, memory);
+    let count_fn = || Ok(inventory.get_amount(name, meta, sim::CountingMethod::Value, memory)?);
     let mut amount = super::convert_amount(item.amount, item.span, errors, true, count_fn)?
         .count()
         .unwrap_or_default();
@@ -106,18 +106,18 @@ fn drop_inventory_material(
         if ctx.is_aborted() {
             return Ok(());
         }
-        super::switch_to_inventory_or_stop!(ctx, sys, errors, "DROP");
+        super::switch_to_inventory_or_stop!(ctx, sys, errors, "DROP-INVM");
         let hold_amount = amount.min(5);
         hold_spec.amount = cir::AmountSpec::Num(hold_amount);
         super::hold_item_internal(ctx, sys, errors, &hold_spec, pe_target)?;
         // need to be in overworld to drop
-        super::switch_to_overworld_or_stop!(ctx, sys, errors, "DROP");
+        super::switch_to_overworld_or_stop!(ctx, sys, errors, "DROP-INVM");
         if !sys.overworld.is_holding() {
             log::debug!("failed to hold, stopping");
             errors.push(sim_error!(item.span, OperationNotComplete));
             break;
         }
-        super::drop_held_items(ctx, sys, "DROP")?;
+        super::drop_held_items(ctx, sys, "DROP-INVM")?;
         amount -= hold_amount;
     }
 
@@ -135,20 +135,20 @@ fn drop_inventory_weapon(
     pe_target: Option<&cir::ItemSelectSpec>,
 ) -> Result<(), processor::Error> {
     // must be in inventory to drop from inventory
-    super::switch_to_inventory_or_stop!(ctx, sys, errors, "DROP");
+    super::switch_to_inventory_or_stop!(ctx, sys, errors, "DROP-INVW");
     let name = &item.name;
     let meta = item.meta.as_ref();
     let memory = ctx.cpu().proc.memory();
     let inventory = sys.screen.current_screen().as_inventory().unwrap();
     let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
-        inventory.get_amount(name, meta, sim::CountingMethod::Slot, memory)
+        Ok(inventory.get_amount(name, meta, sim::CountingMethod::Slot, memory)?)
     })?;
     let mut check_for_extra_error = true;
     loop {
         if ctx.is_aborted() {
             return Ok(());
         }
-        if remaining.is_done() {
+        if remaining.is_done(item.span, errors, "DROP-INVW") {
             break;
         }
         let memory = ctx.cpu().proc.memory();
@@ -158,7 +158,6 @@ fn drop_inventory_weapon(
         let Some((tab, slot)) = position else {
             break;
         };
-        log::debug!("dropping inventory weapon at tab={tab}, slot={slot}");
         let original_item = match inventory.get(tab, slot) {
             sim::ScreenItemState::Normal(item_ptr) => {
                 // the item to drop must be a weapon/bow/shield
@@ -226,7 +225,7 @@ fn drop_overworld_weapon(
     pause_during: bool,
 ) -> Result<(), processor::Error> {
     // must be in overworld to drop from inventory
-    super::switch_to_overworld_or_stop!(ctx, sys, errors, "DROP");
+    super::switch_to_overworld_or_stop!(ctx, sys, errors, "DROP-OVWW");
     super::check_overworld_amount(item, errors);
     let name = &item.name;
     let meta = item.meta.as_ref();

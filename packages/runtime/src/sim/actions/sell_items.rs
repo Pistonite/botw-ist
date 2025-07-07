@@ -29,14 +29,14 @@ pub fn sell_items(
         let meta = item.meta.as_ref();
         let memory = ctx.cpu().proc.memory();
         let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
-            shop.get_amount(name, meta, sim::CountingMethod::CanStack, memory)
+            Ok(shop.get_amount(name, meta, sim::CountingMethod::CanStack, memory)?)
         })?;
         let mut check_for_extra_error = true;
         loop {
             if ctx.is_aborted() {
                 break 'outer;
             }
-            if remaining.is_done() {
+            if remaining.is_done(item.span, errors, "SELL") {
                 break;
             }
 

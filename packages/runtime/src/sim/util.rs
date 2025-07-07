@@ -18,7 +18,18 @@ pub fn is_animated_icon_actor(actor: &str) -> bool {
         actor,
         "Obj_DungeonClearSeal"
             | "Obj_WarpDLC"
-            | "Obj_HeroSoul_Gerudo"
+            | "Obj_DLC_HeroSeal_Gerudo"
+            | "Obj_DLC_HeroSeal_Goron"
+            | "Obj_DLC_HeroSeal_Rito"
+            | "Obj_DLC_HeroSeal_Zora"
+    ) || is_hero_soul(actor)
+}
+
+/// Check if the actor has the HeroSoul tag
+pub fn is_hero_soul(actor: &str) -> bool {
+    matches!(
+        actor,
+        "Obj_HeroSoul_Gerudo"
             | "Obj_HeroSoul_Goron"
             | "Obj_HeroSoul_Rito"
             | "Obj_HeroSoul_Zora"
@@ -26,10 +37,6 @@ pub fn is_animated_icon_actor(actor: &str) -> bool {
             | "Obj_DLC_HeroSoul_Goron"
             | "Obj_DLC_HeroSoul_Rito"
             | "Obj_DLC_HeroSoul_Zora"
-            | "Obj_DLC_HeroSeal_Gerudo"
-            | "Obj_DLC_HeroSeal_Goron"
-            | "Obj_DLC_HeroSeal_Rito"
-            | "Obj_DLC_HeroSeal_Zora"
     )
 }
 
@@ -54,6 +61,10 @@ pub fn name_spec_is_weapon(spec: &cir::ItemNameSpec) -> bool {
 /// Check if the actor is a Sword/Bow/Shield
 pub fn name_is_weapon(name: &str) -> bool {
     matches!(game::get_pouch_item_type(name), 0 | 1 | 3)
+}
+
+pub fn name_is_arrow(name: &str) -> bool {
+    game::get_pouch_item_type(name) == PouchItemType::Arrow as i32
 }
 
 /// Check if the item can use the drop prompt
@@ -114,6 +125,13 @@ pub fn name_spec_matches(spec: &cir::ItemNameSpec, name: &str) -> bool {
     }
 }
 
+pub fn name_spec_to_item_type(spec: &cir::ItemNameSpec) -> i32 {
+    match spec {
+        cir::ItemNameSpec::Actor(actor) => game::get_pouch_item_type(actor),
+        cir::ItemNameSpec::Category(category) => category_to_item_type(*category),
+    }
+}
+
 /// Check if the modifier meta matches
 ///
 /// If the item not is Weapon/Bow/Shield category, expected and actual must match exactly,
@@ -158,6 +176,22 @@ pub fn item_type_to_category(item_type: i32) -> Option<cir::Category> {
         Some(PouchItemType::Food) => Some(cir::Category::Food),
         Some(PouchItemType::KeyItem) => Some(cir::Category::KeyItem),
         _ => None,
+    }
+}
+
+/// Convert parser category to PouchItemType value
+pub fn category_to_item_type(category: cir::Category) -> i32 {
+    match category {
+        cir::Category::Weapon => 0,
+        cir::Category::Bow => 1,
+        cir::Category::Shield => 3,
+        cir::Category::Armor => 4,
+        cir::Category::ArmorHead => 4,
+        cir::Category::ArmorUpper => 5,
+        cir::Category::ArmorLower => 6,
+        cir::Category::Material => 7,
+        cir::Category::Food => 8,
+        cir::Category::KeyItem => 9,
     }
 }
 

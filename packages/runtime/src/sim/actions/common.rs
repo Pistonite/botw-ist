@@ -155,13 +155,13 @@ pub fn check_overworld_amount(item: &cir::ItemSelectSpec, errors: &mut Vec<Error
 }
 
 /// Convert `AllBut` variant from the "but" amount to real amount
-pub fn convert_amount<F: Fn() -> Result<usize, memory::Error>>(
+pub fn convert_amount<F: FnMut() -> Result<usize, processor::Error>>(
     amount: cir::AmountSpec,
     span: Span,
     errors: &mut Vec<ErrorReport>,
     count_for_all: bool,
-    count_fn: F,
-) -> Result<OperationAmount, memory::Error> {
+    mut count_fn: F,
+) -> Result<OperationAmount, processor::Error> {
     match amount {
         cir::AmountSpec::AllBut(n) => {
             let count = count_fn()?;
@@ -188,6 +188,7 @@ pub struct OperationAmount {
     remaining_amount_or_all: Option<usize>,
     all_but: Option<usize>,
     was_found: bool,
+    is_done_check_count: usize,
 }
 
 impl OperationAmount {
@@ -199,6 +200,7 @@ impl OperationAmount {
             remaining_amount_or_all: Some(n),
             all_but: None,
             was_found: false,
+            is_done_check_count: 0,
         }
     }
     pub fn all() -> Self {
@@ -206,6 +208,7 @@ impl OperationAmount {
             remaining_amount_or_all: None,
             all_but: None,
             was_found: false,
+            is_done_check_count: 0,
         }
     }
     pub fn all_but(remaining: usize, all_but: usize) -> Self {
@@ -213,9 +216,16 @@ impl OperationAmount {
             remaining_amount_or_all: Some(remaining),
             all_but: Some(all_but),
             was_found: false,
+            is_done_check_count: 0,
         }
     }
-    pub fn is_done(&self) -> bool {
+    pub fn is_done(&mut self, span: Span, errors: &mut Vec<ErrorReport>, operation: &str) -> bool {
+        self.is_done_check_count += 1;
+        if self.is_done_check_count > 3000 {
+            log::error!("iteration limit reached: {operation}");
+            errors.push(sim_error!(span, TooManyIterations));
+            return true;
+        }
         matches!(self.remaining_amount_or_all, Some(0))
     }
 

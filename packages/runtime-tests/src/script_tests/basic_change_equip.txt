@@ -1,0 +1,25 @@
+get 1 lynel-sword 1 master-sword 1 trav-sword 1 royal-sword 1 rgc
+get 1 trav-bow 1 knights-bow 1 royal-bow 1 geb
+get 1 pot-lid 1 lynel-shield 2 hylian-shield
+equip master-sword
+equip trav-sword
+equip rgc
+:dpad equip royal-sword
+:dpad unequip trav-sword
+:dpad unequip weapon
+unequip weapon
+
+equip knights-bow
+equip geb
+unequip bow
+unpause
+:dpad equip geb
+:dpad unequip bow
+
+equip hylian-shield
+equip hylian-shield[slot=2]
+unpause
+unequip shield
+unpause
+:dpad equip hylian-shield[slot=2]
+:dpad unequip hylian-shield

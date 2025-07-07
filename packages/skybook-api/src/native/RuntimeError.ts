@@ -11,15 +11,21 @@ export type RuntimeError =
     | { type: "CannotFindGroundItem" }
     | { type: "CannotFindGroundItemNeedMore"; data: number }
     | { type: "CannotFindItem" }
+    | { type: "CannotFindItemDpadEquip" }
+    | { type: "CannotFindItemDpadUnequip" }
     | { type: "CannotFindItemNeedMore"; data: number }
     | { type: "CannotFindPromptTarget" }
     | { type: "CannotGetMore" }
     | { type: "CannotHoldMore" }
+    | { type: "CannotUnequipArrow" }
     | { type: "Crash" }
     | { type: "Executor" }
     | { type: "InaccurateAllBut" }
+    | { type: "InvalidDpadType" }
     | { type: "InvalidItemTarget" }
     | { type: "InvalidPromptTarget" }
+    | { type: "ItemAlreadyEquipped" }
+    | { type: "ItemAlreadyUnequipped" }
     | { type: "ItemMismatch"; data: [string, string] }
     | { type: "ItemMismatchCategory"; data: [string, Category] }
     | { type: "NotDroppable" }
@@ -33,6 +39,7 @@ export type RuntimeError =
     | { type: "OperationNotComplete" }
     | { type: "PositionSpecNotAllowed" }
     | { type: "PreviousCrash" }
+    | { type: "TooManyIterations" }
     | { type: "Uninitialized" }
     | { type: "Unimplemented" }
     | { type: "UselessAmountForOverworldEquipment" }

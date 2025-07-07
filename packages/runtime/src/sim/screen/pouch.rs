@@ -1,6 +1,6 @@
-use blueflame::game::{PouchItem, gdt, singleton_instance};
+use blueflame::game::{PouchItem, PouchItemType, gdt, singleton_instance};
 use blueflame::memory::{self, Ptr, mem, proxy};
-use blueflame::processor::Cpu2;
+use blueflame::processor::{Cpu2, Process};
 use blueflame::{linker, processor};
 use derive_more::{Deref, DerefMut};
 
@@ -50,8 +50,13 @@ impl PouchScreen {
         linker::update_equipped_item_array(cpu2)?;
         log::debug!("equipment array updated");
 
+        Ok(Self::open_no_exec(cpu2.proc, force_accessible)?)
+    }
+
+    /// Create a new pouch screen state without execution
+    pub fn open_no_exec(proc: &Process, force_accessible: bool) -> Result<Self, memory::Error> {
         Ok(Self {
-            items: do_open(cpu2, force_accessible)?,
+            items: do_open(proc, force_accessible)?,
             active_entangle_slot: None,
             weapon_state: Default::default(),
             bow_state: Default::default(),
@@ -136,7 +141,7 @@ impl PouchScreen {
         cpu2: &mut Cpu2<'_, '_>,
         force_accessible: bool,
     ) -> Result<(), memory::Error> {
-        self.items = do_open(cpu2, force_accessible)?;
+        self.items = do_open(cpu2.proc, force_accessible)?;
         Ok(())
     }
 }
@@ -154,20 +159,27 @@ impl PouchScreenEquipState {
     }
 }
 
-fn do_open(
-    cpu2: &mut Cpu2<'_, '_>,
-    force_accessible: bool,
-) -> Result<sim::ScreenItems, memory::Error> {
-    let m = cpu2.proc.memory();
+fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, memory::Error> {
+    let m = proc.memory();
     let gdt = gdt::trigger_param_ptr(m)?;
-    let bow_slots = {
-        let proc = &cpu2.proc;
+    let (weapon_slots, bow_slots, shield_slots) = {
         proxy! { let trigger_param = *gdt as trigger_param in proc };
-        trigger_param
+        let weapon = trigger_param
+            .by_name::<gdt::fd!(s32)>("WeaponPorchStockNum")
+            .map(|x| x.get())
+            .copied()
+            .unwrap_or(0) as usize;
+        let bow = trigger_param
             .by_name::<gdt::fd!(s32)>("BowPorchStockNum")
             .map(|x| x.get())
             .copied()
-            .unwrap_or(0) as usize
+            .unwrap_or(0) as usize;
+        let shield = trigger_param
+            .by_name::<gdt::fd!(s32)>("ShieldPorchStockNum")
+            .map(|x| x.get())
+            .copied()
+            .unwrap_or(0) as usize;
+        (weapon, bow, shield)
     };
 
     let pmdm = singleton_instance!(pmdm(m))?;
@@ -186,11 +198,19 @@ fn do_open(
         let m_count = *(&pmdm->mList1.mCount);
     };
     if m_count != 0 || force_accessible {
+        // FIXME: right now, we don't fully know how arrow slots
+        // are displayed (especially when bow num exceeds bow slot num,
+        // or when arrow slots are not displayed in the bow tab)
+        //
+        // it's not worth to fix those cases right now, but definitely
+        // need to fix in the future
         for i in 0..num_tabs {
             let mut num_bows_in_curr_tab = 0;
             let mut curr_item_ptr = tab_heads[i];
             let mut slot_i = 0;
             let mut tab = vec![];
+
+            let tab_ty = tab_types[i];
 
             let should_break = |curr_item_ptr: Ptr![PouchItem]| {
                 sim::util::should_go_to_next_tab(curr_item_ptr, i, num_tabs, &tab_heads)
@@ -216,6 +236,15 @@ fn do_open(
                     slot_i
                 };
                 slot_i += 1;
+
+                // FIXME: need more testing with how this works for bows
+                // see FIXME above
+                if tab_ty == PouchItemType::Sword as i32 && tab_slot >= weapon_slots {
+                    continue;
+                }
+                if tab_ty == PouchItemType::Shield as i32 && tab_slot >= shield_slots {
+                    continue;
+                }
                 // it could be more than 20 if you have a LOT of arrow slots
                 // (because empty bow slots shift them)
                 if tab_slot < 20 {
@@ -243,7 +272,7 @@ fn do_open(
             }
             tabs.push(sim::ScreenTab {
                 items: tab,
-                category: sim::util::item_type_to_category(tab_types[i]),
+                category: sim::util::item_type_to_category(tab_ty),
             });
         }
     }
