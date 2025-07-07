@@ -84,7 +84,16 @@ export const joinItemSearchStrings = (ids: string[]) => {
 };
 
 export const convertItem = (item: ItemStack, slotIndex: number): string => {
-    return item.ident + convertItemMeta(item.meta, slotIndex);
+    return convertItemName(item.ident) + convertItemMeta(item.meta, slotIndex);
+};
+
+const convertItemName = (name: string): string => {
+    // In V3, "korok" is Korok Leaf, but in V4 it is Korok Seed
+    // Update "korok" in V3 to "korok-leaf"
+    if (name.toLowerCase().trim() === "korok") {
+        return "korok-leaf";
+    }
+    return name;
 };
 
 export const convertItemMeta = (
