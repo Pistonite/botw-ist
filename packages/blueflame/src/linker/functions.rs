@@ -432,7 +432,11 @@ pub fn get_weapons_for_dpad(
 }
 
 /// Call `uking::ui::PauseMenuDataMgr::setEquippedWeaponItemValue`
-pub fn set_equipped_weapon_value(cpu: &mut Cpu2, value: i32, item_type: i32) -> Result<(), processor::Error> {
+pub fn set_equipped_weapon_value(
+    cpu: &mut Cpu2,
+    value: i32,
+    item_type: i32,
+) -> Result<(), processor::Error> {
     cpu.reset_stack();
     let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
     reg! { cpu:
