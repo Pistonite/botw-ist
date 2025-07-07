@@ -11,6 +11,14 @@ fn test_item_search_v4_alias() {
     test_item_search("ice-cream", "Item_Cook_C_17");
 }
 
+/// Test changes in V4
+#[test]
+fn test_item_search_v4() {
+    test_item_search("korok", "Obj_KorokNuts");
+    test_item_search("korok-seed", "Obj_KorokNuts");
+    test_item_search("korok-leaf", "Weapon_Lsword_056");
+}
+
 #[test]
 fn test_item_search_v4_effect() {
     for (effect_name, effect_id) in COOK_EFFECT_NAMES {

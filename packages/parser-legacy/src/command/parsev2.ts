@@ -81,17 +81,20 @@ export const parseCommand = (
 ): Command => {
     parsingCommand = cmdString;
     if (!cmdString) {
+        parsingCommand = "";
         return staticCommand("");
     }
     // special cases
     // 1. comment starts with # and we don't care about the rest
     // V3->V4: also support starting with // for comments, why not
     if (cmdString.startsWith("#") || cmdString.startsWith("//")) {
+        parsingCommand = "";
         return staticCommand(cmdString);
     }
 
     const ast = createASTFromString(cmdString);
     if (!ast) {
+        parsingCommand = "";
         // V3->V4: all the guessing stuff are removed
         return staticCommand(`### Failed to create AST: ${cmdString}`);
     }
@@ -100,13 +103,16 @@ export const parseCommand = (
     try {
         const [command, _codeblocks, _error] = parseASTTarget(data, searchFunc);
         if (!command) {
+            parsingCommand = "";
             return staticCommand(`### Failed to parse: ${cmdString}`);
         }
         if (extra) {
+            parsingCommand = "";
             return staticCommand(`### Failed to parse: ${cmdString}`);
         }
         return command;
     } catch {
+        parsingCommand = "";
         return staticCommand(`### Failed to parse: ${cmdString}`);
     }
 };

@@ -54,7 +54,8 @@ impl SearchName {
             | "normalarrow"
             | "potlid"
             | "hylianshroom"
-            | "energeticrhinobeetle" => 1,
+            | "energeticrhinobeetle"
+            | "korokseed" => 1,
             _ => 2,
         }
     }
