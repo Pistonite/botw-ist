@@ -42,7 +42,7 @@ pub fn change_equip_inventory(
     'outer: for item in items {
         let name = &item.name;
         let item_type = sim::util::name_spec_to_item_type(name);
-        if item_type > PouchItemType::ArmorLower as i32 {
+        if item_type > PouchItemType::ArmorLower as i32 && item_type != PouchItemType::KeyItem as i32{
             errors.push(sim_error!(item.span, NotEquipment));
             continue;
         }
@@ -53,14 +53,20 @@ pub fn change_equip_inventory(
             errors.push(sim_error!(item.span, CannotUnequipArrow));
             continue;
         }
-        let meta = item.meta.as_ref().cloned().map(|mut x| {
-            // only target equipped/unequipped items if the command is unequip/equip
-            x.equip = Some(!is_equip);
-            x
-        });
+
+        // only target equipped items if the command is unequip
+        let mut meta = item.meta.as_ref().cloned().unwrap_or_default();
+        if is_equip {
+            meta.equip = None;
+        } else {
+            meta.equip = Some(true);
+        }
+        let meta = Some(meta);
         let meta_ref = meta.as_ref();
         let memory = ctx.cpu().proc.memory();
-        let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
+        // we want to expand the "all" amount if it's equip, to avoid getting stuck
+        // to try to equip everything (since equipping something would unequip the rest)
+        let mut remaining = super::convert_amount(item.amount, item.span, errors, is_equip, || {
             Ok(inventory.get_amount(name, meta_ref, sim::CountingMethod::Slot, memory)?)
         })?;
         let mut check_for_extra_error = true;
@@ -81,7 +87,19 @@ pub fn change_equip_inventory(
             // check if the item has the equip/unequip prompt
             let (original_item, is_arrow, is_weapon, item_type) = match inventory.get(tab, slot) {
                 sim::ScreenItemState::Normal(item_ptr) => {
-                    mem! { memory: let t = *(&item_ptr->mType); };
+                    mem! { memory: 
+                        let t = *(&item_ptr->mType);
+                        let equipped = *(&item_ptr->mEquipped);
+                    };
+                    if is_equip == equipped {
+                        if is_equip {
+                            errors.push(sim_error!(item.span, ItemAlreadyEquipped));
+                        } else {
+                            errors.push(sim_error!(item.span, ItemAlreadyUnequipped));
+                        }
+                        check_for_extra_error = false;
+                        break;
+                    }
                     let o_item_name = Ptr!(&item_ptr->mName)
                         .cstr(memory)?
                         .load_utf8_lossy(memory)?;
@@ -118,6 +136,7 @@ pub fn change_equip_inventory(
                 // this should be checked already
                 linker::equip_from_tab_slot(ctx.cpu(), tab as i32, correct_slot)?;
                 // update visual equipped status
+                inventory.update_all_items(ctx.cpu(), false)?;
                 inventory.update(tab, slot, Some(true), ctx.cpu().proc.memory())?;
             } else {
                 if is_equip {
@@ -125,12 +144,18 @@ pub fn change_equip_inventory(
                 } else {
                     linker::unequip_from_tab_slot(ctx.cpu(), tab as i32, correct_slot)?;
                 }
+                // make sure to update items as unequipped
+                inventory.update_all_items(ctx.cpu(), false)?;
                 // update visual equipped status
                 inventory.update(tab, slot, Some(is_equip), ctx.cpu().proc.memory())?;
                 if is_weapon {
                     // update inventory equip status
                     let state = inventory.equipment_state_mut(item_type);
-                    state.set_equip(original_item);
+                    if is_equip {
+                        state.set_equip(original_item);
+                    } else {
+                        state.set_unequip();
+                    }
                 }
             }
 
@@ -218,6 +243,7 @@ pub fn change_equip_dpad(
                 }
                 break;
             };
+            let mut need_sync_to_pmdm = false;
             if is_equip {
                 if selected_item != dpad_get_first_equipped(&dpad_items, ctx.cpu().proc.memory())? {
                     // mark equip in pmdm
@@ -226,7 +252,8 @@ pub fn change_equip_dpad(
                         // update equipment in overworld
                         let memory = ctx.cpu().proc.memory();
                         sys.overworld
-                            .change_player_equipment(selected_item, memory)?
+                            .change_player_equipment(selected_item, memory)?;
+                        need_sync_to_pmdm = true;
                     }
                 }
             } else {
@@ -242,6 +269,9 @@ pub fn change_equip_dpad(
             }
             // on close dpad
             linker::delete_removed_items(ctx.cpu())?;
+            if need_sync_to_pmdm {
+                sys.overworld.update_equipment_value_to_pmdm(ctx.cpu(), item_type)?;
+            }
             remaining.sub(1);
         }
         // currently we don't do remaining count checks for dpad equip/uneauip

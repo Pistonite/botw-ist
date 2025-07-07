@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use blueflame::game::PouchItemType;
 use blueflame::linker;
 use blueflame::linker::events::GameEvent as _;
 use blueflame::processor::{self, Cpu2};
@@ -319,6 +320,9 @@ impl Screen {
         drop_items: bool,
         remove_equipments: &[String],
     ) -> Result<(), processor::Error> {
+        let mut need_update_weapon = false;
+        let mut need_update_bow = false;
+        let mut need_update_shield = false;
         match self {
             Self::Overworld => {
                 log::warn!("transition_to_overworld called but screen is already overworld");
@@ -328,25 +332,25 @@ impl Screen {
                 if !menu_overload {
                     log::debug!("updating overworld equiments");
                     if inv_screen.weapon_state.to_delete {
-                        overworld.weapon = None;
+                        overworld.delete_player_equipment(PouchItemType::Sword as i32);
                     } else {
-                        overworld.change_player_equipment(
+                        need_update_weapon = overworld.change_player_equipment(
                             inv_screen.weapon_state.item,
                             ctx.cpu().proc.memory(),
                         )?;
                     }
                     if inv_screen.bow_state.to_delete {
-                        overworld.bow = None;
+                        overworld.delete_player_equipment(PouchItemType::Bow as i32);
                     } else {
-                        overworld.change_player_equipment(
+                        need_update_bow = overworld.change_player_equipment(
                             inv_screen.bow_state.item,
                             ctx.cpu().proc.memory(),
                         )?;
                     }
                     if inv_screen.shield_state.to_delete {
-                        overworld.shield = None;
+                        overworld.delete_player_equipment(PouchItemType::Shield as i32);
                     } else {
-                        overworld.change_player_equipment(
+                        need_update_shield = overworld.change_player_equipment(
                             inv_screen.shield_state.item,
                             ctx.cpu().proc.memory(),
                         )?;
@@ -395,10 +399,23 @@ impl Screen {
             overworld.clear_spawning_weapons();
         }
 
+        // I am not sure if equipment update or drop items happens first,
+        // or maybe it's a race condition
+
         if drop_items {
             log::debug!("removing held items on returning to overworld");
             linker::remove_held_items(ctx.cpu())?;
             overworld.drop_held_items();
+        }
+
+        if need_update_weapon {
+            overworld.update_equipment_value_to_pmdm(ctx.cpu(), PouchItemType::Sword as i32)?;
+        }
+        if need_update_bow {
+            overworld.update_equipment_value_to_pmdm(ctx.cpu(), PouchItemType::Bow as i32)?;
+        }
+        if need_update_shield {
+            overworld.update_equipment_value_to_pmdm(ctx.cpu(), PouchItemType::Shield as i32)?;
         }
 
         *self = Self::Overworld;

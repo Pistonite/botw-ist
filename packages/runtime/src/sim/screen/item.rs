@@ -71,7 +71,7 @@ impl ScreenItems {
     pub fn accessible_item_ptrs(&self) -> Vec<u64> {
         let mut out = vec![];
         for tab in &self.tabs {
-            for item in tab.items.iter().flatten().filter(|x| x.in_inventory) {
+            for item in tab.items.iter().flatten() {
                 out.push(item.ptr.to_raw());
             }
         }

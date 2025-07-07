@@ -66,7 +66,16 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
     // get any inventory temporary state
     let (visually_equipped_items, accessible_items, entangled_items, entangled_tab, entangled_slot) = {
         match sys.screen.current_screen().as_inventory() {
-            None => (vec![], vec![], vec![], -1, -1),
+            None => {
+                // open an inventory menu temporarily to get the status
+                let inv = 
+                try_mem!(
+                sim::PouchScreen::open_no_exec(proc, false)
+    , e, "failed to open temporary inventory");
+
+                let accessible = inv.accessible_item_ptrs();
+                (vec![], accessible, vec![], -1, -1)
+            },
             Some(inventory) => {
                 let equipped = inventory.equipped_item_ptrs();
                 let accessible = inventory.accessible_item_ptrs();
@@ -100,6 +109,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
     );
 
     let dpad_menu_items = extract_dpad_accessible_items(pmdm, count, memory)?;
+    log::debug!("{} dpad menu items", dpad_menu_items.len());
 
     let mut item_ptr_data = vec![];
     let mut list_index = 0;
@@ -178,17 +188,19 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
     );
 
     // build the item list with the ptr data
-    let mut tab_idx = 0;
-    let mut next_tab_item_idx = tabs.get(1).map(|x| x.item_idx).unwrap_or(-1);
+    let mut tab_idx = get_next_tab_head(&tabs, 0).0;
+    let (mut next_tab_idx ,mut next_tab_item_idx) = get_next_tab_head(&tabs, tab_idx + 1);
     let mut tab_slot = 0;
     let mut items = Vec::with_capacity(item_ptr_data.len());
     let mut seen_animated_icons = BTreeSet::new();
     let mut num_bows_for_curr_tab = 0;
     for (i, data) in item_ptr_data.into_iter().enumerate() {
         if i as i32 == next_tab_item_idx {
-            tab_idx += 1;
+            tab_idx = next_tab_idx;
             tab_slot = 0;
-            next_tab_item_idx = tabs.get(tab_idx + 1).map(|x| x.item_idx).unwrap_or(-1);
+            let next = get_next_tab_head(&tabs, tab_idx + 1);
+            next_tab_idx = next.0;
+            next_tab_item_idx = next.1;
             num_bows_for_curr_tab = 0;
         }
         let item_ptr = data.item;
@@ -228,6 +240,18 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
         screen: sys.screen.current_screen().iv_type(),
         is_holding_in_inventory: sys.screen.holding_in_inventory,
     })
+}
+
+/// Get the next tab index and the first item of that tab, skipping
+/// empty tabs. Returns (0, -1) if no more items
+fn get_next_tab_head(tabs: &[iv::PouchTab], next_tab_idx: usize) -> (usize, i32) {
+    for (i, tab) in tabs.iter().skip(next_tab_idx).enumerate() {
+        if tab.item_idx == -1 {
+            continue;
+        }
+        return (next_tab_idx + i, tab.item_idx);
+    }
+    (0, -1)
 }
 
 /// Extract tab data into the tabs vec. Return mNumTabs if tabs are valid
@@ -439,6 +463,8 @@ fn extract_pouch_item(
 
     let prompt_entangled = entangled_items.binary_search(&item.to_raw()).is_ok();
 
+    let dpad_accessible = dpad_accessible || item_type > PouchItemType::Shield as i32;
+
     Ok(iv::PouchItem {
         common,
         item_type,
@@ -468,6 +494,7 @@ fn extract_dpad_accessible_items(
     count: i32,
     memory: &Memory,
 ) -> Result<Vec<u64>, Error> {
+    log::debug!("extracting dpad menus");
     let mut out = vec![];
     for t in [
         PouchItemType::Sword,
@@ -507,6 +534,7 @@ fn extract_dpad_menu(
         "failed to get pouch list1 end: {e}"
     );
     let mut out = Vec::with_capacity(20); // TODO: optimize: can avoid heap alloc here
+    let mut i = 0;
     while list_iter != iter_end && out.len() < 20 {
         let item_ptr: Ptr![PouchItem] = list_iter.get_tptr().into();
         if item_ptr.is_nullptr() {
@@ -520,10 +548,9 @@ fn extract_dpad_menu(
         if item_type > PouchItemType::Shield as i32 {
             break;
         }
-        if item_type != pouch_type as i32 {
-            continue;
-        }
-        if pouch_type != PouchItemType::Arrow {
+        let should_skip = if item_type != pouch_type as i32 {
+            true
+        } else if pouch_type != PouchItemType::Arrow {
             // do not include MS with 0 dura (but do include other 0 dura)
             let value = try_mem!(
                 Ptr!(&item_ptr->mValue).load(memory),
@@ -541,17 +568,21 @@ fn extract_dpad_menu(
                     e,
                     "failed to get pouch item name: {e}"
                 );
-                if name == "Weapon_Sword_070" {
-                    continue;
-                }
+                name == "Weapon_Sword_070"
+            } else {
+                false
             }
+        } else {
+                false
+            };
+        if !should_skip {
+            out.push(item_ptr);
         }
-        out.push(item_ptr);
-        let l = out.len();
+        i+=1;
         try_mem!(
             list_iter.next(memory),
             e,
-            "failed to advance to list1 position {l}: {e}"
+            "failed to advance to list1 position {i}: {e}"
         );
     }
 

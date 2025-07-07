@@ -431,6 +431,19 @@ pub fn get_weapons_for_dpad(
     Ok(out_vec)
 }
 
+/// Call `uking::ui::PauseMenuDataMgr::setEquippedWeaponItemValue`
+pub fn set_equipped_weapon_value(cpu: &mut Cpu2, value: i32, item_type: i32) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+        w[1] = value,
+        w[2] = item_type
+    };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x00971438)
+}
+
 /// Call `uking::ui::PauseMenuDataMgr::updateInventoryInfo`
 pub fn update_inventory_info(cpu: &mut Cpu2) -> Result<(), processor::Error> {
     cpu.reset_stack();

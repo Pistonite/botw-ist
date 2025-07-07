@@ -1,6 +1,6 @@
 use blueflame::game::{PouchItem, PouchItemType, gdt, singleton_instance};
-use blueflame::memory::{self, Ptr, mem, proxy};
-use blueflame::processor::Cpu2;
+use blueflame::memory::{self, mem, proxy, Ptr};
+use blueflame::processor::{Cpu2, Process};
 use blueflame::{linker, processor};
 use derive_more::{Deref, DerefMut};
 
@@ -50,8 +50,13 @@ impl PouchScreen {
         linker::update_equipped_item_array(cpu2)?;
         log::debug!("equipment array updated");
 
+        Ok(Self::open_no_exec(cpu2.proc, force_accessible)?)
+    }
+
+    /// Create a new pouch screen state without execution
+    pub fn open_no_exec(proc: &Process, force_accessible: bool) -> Result<Self, memory::Error> {
         Ok(Self {
-            items: do_open(cpu2, force_accessible)?,
+            items: do_open(proc, force_accessible)?,
             active_entangle_slot: None,
             weapon_state: Default::default(),
             bow_state: Default::default(),
@@ -136,7 +141,7 @@ impl PouchScreen {
         cpu2: &mut Cpu2<'_, '_>,
         force_accessible: bool,
     ) -> Result<(), memory::Error> {
-        self.items = do_open(cpu2, force_accessible)?;
+        self.items = do_open(cpu2.proc, force_accessible)?;
         Ok(())
     }
 }
@@ -155,13 +160,12 @@ impl PouchScreenEquipState {
 }
 
 fn do_open(
-    cpu2: &mut Cpu2<'_, '_>,
+    proc: &Process,
     force_accessible: bool,
 ) -> Result<sim::ScreenItems, memory::Error> {
-    let m = cpu2.proc.memory();
+    let m = proc.memory();
     let gdt = gdt::trigger_param_ptr(m)?;
     let (weapon_slots, bow_slots, shield_slots) = {
-        let proc = &cpu2.proc;
         proxy! { let trigger_param = *gdt as trigger_param in proc };
         let weapon = trigger_param
             .by_name::<gdt::fd!(s32)>("WeaponPorchStockNum")

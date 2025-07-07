@@ -1,7 +1,9 @@
 use std::collections::VecDeque;
 
 use blueflame::game::{self, PouchItem, WeaponModifierInfo};
+use blueflame::linker;
 use blueflame::memory::{self, Memory, Ptr, mem};
+use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 use teleparse::Span;
 
@@ -10,9 +12,9 @@ use crate::{iv, sim};
 
 #[derive(Debug, Default, Clone)]
 pub struct OverworldSystem {
-    pub weapon: Option<OverworldActor>,
-    pub bow: Option<OverworldActor>,
-    pub shield: Option<OverworldActor>,
+    weapon: Option<OverworldActor>,
+    bow: Option<OverworldActor>,
+    shield: Option<OverworldActor>,
 
     /// Ground weapons that are scheduled to spawn
     spawning_ground_weapons: Vec<OverworldActor>,
@@ -164,13 +166,15 @@ impl OverworldSystem {
     }
 
     /// Change the player equipment if the item is not null. Do nothing if null
+    ///
+    /// Return if the equipment is updated
     pub fn change_player_equipment(
         &mut self,
         item: Ptr![PouchItem],
         memory: &Memory,
-    ) -> Result<(), memory::Error> {
+    ) -> Result<bool, memory::Error> {
         if item.is_nullptr() {
-            return Ok(());
+            return Ok(false);
         }
         mem! { memory:
             let item_type = *(&item->mType);
@@ -185,7 +189,7 @@ impl OverworldSystem {
             0 => &mut self.weapon,
             1 => &mut self.bow,
             3 => &mut self.shield,
-            _ => return Ok(()),
+            _ => return Ok(false),
         };
 
         let modifier = if modifier_flags == 0 {
@@ -204,7 +208,7 @@ impl OverworldSystem {
             modifier,
         });
 
-        Ok(())
+        Ok(true)
     }
 
     /// Try auto equip an actor on the player as it's picked up or obtained
@@ -231,6 +235,22 @@ impl OverworldSystem {
             modifier: modifier.cloned(),
         });
         true
+    }
+
+    /// Update the overworld equipment value to PMDM, which happens as part
+    /// of weapon actor update in the overworld
+    pub fn update_equipment_value_to_pmdm(&self, cpu: &mut Cpu2<'_, '_>, item_type: i32) -> Result<(), processor::Error> {
+        let slot = match item_type {
+            0 => &self.weapon,
+            1 => &self.bow,
+            3 => &self.shield,
+            _ => return Ok(()),
+        };
+        let Some(actor) = slot else {
+            return Ok(())
+        };
+        let value = actor.value;
+        linker::set_equipped_weapon_value(cpu, value, item_type)
     }
 
     /// Drop the currently equipped weapon on the player
