@@ -235,14 +235,18 @@ impl OverworldSystem {
 
     /// Drop the currently equipped weapon on the player
     pub fn drop_player_equipment(&mut self, item_type: i32) {
-        let actor = match item_type {
+        if let Some(actor) = self.delete_player_equipment(item_type) {
+            self.spawn_weapon_later(actor);
+        }
+    }
+
+    /// Delete the currently equipped weapon on the player
+    pub fn delete_player_equipment(&mut self, item_type: i32) -> Option<OverworldActor> {
+        match item_type {
             0 => self.weapon.take(),
             1 => self.bow.take(),
             3 => self.shield.take(),
-            _ => return,
-        };
-        if let Some(actor) = actor {
-            self.spawn_weapon_later(actor);
+            _ => None,
         }
     }
 
@@ -278,11 +282,8 @@ impl OverworldSystem {
         span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<()>> {
-        let meta = match &meta {
-            None => {
-                return self.do_ground_select_without_position_nth(item, None, 0, span, errors);
-            }
-            Some(x) => x,
+        let Some(meta) = meta else {
+            return self.do_ground_select_without_position_nth(item, None, 0, span, errors);
         };
         let from_slot = match &meta.position {
             None => 0, // match first slot
@@ -334,11 +335,8 @@ impl OverworldSystem {
         item: &cir::ItemNameSpec,
         meta: Option<&cir::ItemMeta>,
     ) -> usize {
-        let meta = match &meta {
-            None => {
-                return self.get_ground_amount_without_position_nth(item, None, 0);
-            }
-            Some(x) => x,
+        let Some(meta) = meta else {
+            return self.get_ground_amount_without_position_nth(item, None, 0);
         };
         let from_slot = match &meta.position {
             Some(cir::ItemPosition::FromSlot(n)) => (*n as usize).saturating_sub(1), // match x-th slot, 1 indexed

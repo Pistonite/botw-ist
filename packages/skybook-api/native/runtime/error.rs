@@ -75,6 +75,10 @@ pub enum RuntimeError {
     CannotFindGroundItemNeedMore(usize),
     #[error("cannot find this item in inventory")]
     CannotFindItem,
+    #[error("cannot find this item to equip from quick menu")]
+    CannotFindItemDpadEquip,
+    #[error("cannot find this item to unequip from quick menu")]
+    CannotFindItemDpadUnequip,
     #[error("cannot find this item in inventory (need `{0}` more)")]
     CannotFindItemNeedMore(usize),
     #[error("cannot find the target item for prompt entanglement")]
@@ -83,12 +87,16 @@ pub enum RuntimeError {
     CannotGetMore,
     #[error("cannot hold more items")]
     CannotHoldMore,
+    #[error("cannot unequip arrows")]
+    CannotUnequipArrow,
     #[error("game has crashed in this step")]
     Crash,
     #[error("unexpected executor error")]
     Executor,
     #[error("the `all but` syntax did not achieve the desired result")]
     InaccurateAllBut,
+    #[error("this type of item is not accessible through quick menu")]
+    InvalidDpadType,
     #[error("this action cannot be performed on the selected slot")]
     InvalidItemTarget,
     #[error("the target item for prompt entanglement cannot be reached")]
@@ -125,6 +133,8 @@ pub enum RuntimeError {
         "game has crashed in a previous step and you need to `reload` or `new-game` to continue"
     )]
     PreviousCrash,
+    #[error("the runtime iteration limit is reached")]
+    TooManyIterations,
     #[error("the runtime has not been initialized yet, you need to call `Runtime::init`")]
     Uninitialized,
     #[error(

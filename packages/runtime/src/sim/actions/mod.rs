@@ -1,6 +1,8 @@
 mod common;
 use common::*;
 
+mod change_equip;
+pub use change_equip::*;
 mod get_items;
 pub use get_items::*;
 mod drop_items;

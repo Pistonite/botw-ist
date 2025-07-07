@@ -171,11 +171,8 @@ impl ScreenItems {
         span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Result<Option<(usize, usize)>, memory::Error> {
-        let meta = match &meta {
-            None => {
-                return self.select_without_position_nth(item, None, value_at_least, 0, memory);
-            }
-            Some(x) => x,
+        let Some(meta) = meta else {
+            return self.select_without_position_nth(item, None, value_at_least, 0, memory);
         };
         let Some(selector) = self.process_position_meta(meta.position.as_ref()) else {
             return Ok(None);
@@ -253,11 +250,8 @@ impl ScreenItems {
         method: sim::CountingMethod,
         memory: &Memory,
     ) -> Result<usize, memory::Error> {
-        let meta = match &meta {
-            None => {
-                return self.get_amount_without_position_nth(item, None, method, 0, memory);
-            }
-            Some(x) => x,
+        let Some(meta) = meta else {
+            return self.get_amount_without_position_nth(item, None, method, 0, memory);
         };
         let Some(selector) = self.process_position_meta(meta.position.as_ref()) else {
             return Ok(0);

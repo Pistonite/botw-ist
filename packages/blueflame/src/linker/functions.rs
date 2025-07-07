@@ -368,6 +368,69 @@ pub fn remove_weapon_if_equipped(cpu: &mut Cpu2, name: &str) -> Result<(), proce
     Ok(())
 }
 
+/// Call `uking::ui::PauseMenuDataMgr::equipWeapon`, which equips an item by pointer
+pub fn equip_weapon(cpu: &mut Cpu2, item: Ptr![PouchItem]) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+        x[1] = item,
+    };
+    // TODO --160 (probably inlined)
+    cpu.native_jump_to_main_offset(0x0097a944)
+}
+
+/// Unequip weapon by pointer. This is effectively the same as
+/// `uking::ui::PauseMenuDataMgr::unequip`
+pub fn unequip(cpu: &mut Cpu2, item: Ptr![PouchItem]) -> Result<(), processor::Error> {
+    if item.is_nullptr() {
+        return Ok(());
+    }
+    mem! { (cpu.proc.memory_mut()): *(&item->mEquipped) = false; }
+    save_to_game_data(cpu)
+}
+
+/// Wrapper that calls `uking::ui::PauseMenuDataMgr::getWeaponsForDpad`
+///
+/// The returned Vec has at most 20 elements, and is guaranteed to not have nullptrs
+pub fn get_weapons_for_dpad(
+    cpu: &mut Cpu2,
+    target_type: i32,
+) -> Result<Vec<Ptr![PouchItem]>, processor::Error> {
+    cpu.reset_stack();
+    let out_safe_array = cpu.stack_alloc::<[Ptr![PouchItem]; 20]>()?;
+    let out_safe_array = Ptr!(<[Ptr![PouchItem] ;20]>(out_safe_array));
+
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+        x[1] = out_safe_array,
+        w[2] = target_type
+    };
+    // TODO --160 (probably inlined)
+    cpu.native_jump_to_main_offset(0x0097a7cc)?;
+    reg! { cpu: w[0] => let count: i32 };
+    if count < 0 || count > 20 {
+        log::warn!("get_weapons_for_dpad returned invalid count: {count}");
+        return Ok(vec![]);
+    }
+
+    let len = count as usize;
+    let mut out_vec = Vec::with_capacity(len);
+    mem! { (cpu.proc.memory()): let items = *out_safe_array; }
+    for item in items.into_iter().take(len) {
+        if item.is_nullptr() {
+            log::warn!("get_weapons_for_dpad has nullptr in return result");
+            continue;
+        }
+        out_vec.push(item);
+    }
+
+    cpu.stack_check::<[Ptr![PouchItem]; 20]>(out_safe_array.to_raw())?;
+
+    Ok(out_vec)
+}
+
 /// Call `uking::ui::PauseMenuDataMgr::updateInventoryInfo`
 pub fn update_inventory_info(cpu: &mut Cpu2) -> Result<(), processor::Error> {
     cpu.reset_stack();

@@ -143,6 +143,15 @@ impl State {
             X::SuBreak(count) => self.handle_su_break(ctx, *count).await,
             X::SuRemove(items) => self.handle_su_remove(ctx, items).await,
 
+            X::Equip(items) => {
+                self.handle_change_equip(ctx, items, args.as_deref(), true)
+                    .await
+            }
+            X::Unequip(items) => {
+                self.handle_change_equip(ctx, items, args.as_deref(), false)
+                    .await
+            }
+
             X::OpenShop => self.handle_open_shop(ctx).await,
             X::CloseShop => self.handle_close_shop(ctx).await,
             X::Sell(items) => self.handle_sell(ctx, items).await,
@@ -279,6 +288,47 @@ impl State {
         })
     }
 
+    async fn handle_su_break(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        count: i32,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("Handling !BREAK command");
+        in_game!(self, rt, cpu, _sys, _errors => {
+            sim::actions::force_break_slot(&mut cpu, count)
+        })
+    }
+
+    async fn handle_su_remove(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSelectSpec],
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("Handling !REMOVE command");
+        let items = items.to_vec();
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::force_remove_item(&mut cpu, sys, errors, &items)
+        })
+    }
+
+    async fn handle_change_equip(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSelectSpec],
+        args: Option<&StateArgs>,
+        is_equip: bool,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("Handling CHGEQUIP command");
+        let (pe_target, is_dpad) = args
+            .map(|x| (x.entangle_target.as_ref().cloned(), x.dpad))
+            .unwrap_or_default();
+        let items = items.to_vec();
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::change_equip(&mut cpu,
+                sys, errors, &items, pe_target.as_ref(), is_equip, is_dpad)
+        })
+    }
+
     async fn handle_open_shop(
         self,
         rt: sim::Context<&sim::Runtime>,
@@ -320,29 +370,6 @@ impl State {
         let items = items.to_vec();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::sell_items(&mut cpu, sys, errors, &items)
-        })
-    }
-
-    async fn handle_su_break(
-        self,
-        rt: sim::Context<&sim::Runtime>,
-        count: i32,
-    ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling !BREAK command");
-        in_game!(self, rt, cpu, _sys, _errors => {
-            sim::actions::force_break_slot(&mut cpu, count)
-        })
-    }
-
-    async fn handle_su_remove(
-        self,
-        rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSelectSpec],
-    ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling !REMOVE command");
-        let items = items.to_vec();
-        in_game!(self, rt, cpu, sys, errors => {
-            sim::actions::force_remove_item(&mut cpu, sys, errors, &items)
         })
     }
 

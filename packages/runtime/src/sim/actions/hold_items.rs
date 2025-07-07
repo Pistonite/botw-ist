@@ -51,7 +51,7 @@ pub fn hold_item_internal(
     let inventory = sys.screen.current_screen().as_inventory().unwrap();
     let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
         // holding always decrease value instead of using slot
-        inventory.get_amount(name, meta, sim::CountingMethod::Value, memory)
+        Ok(inventory.get_amount(name, meta, sim::CountingMethod::Value, memory)?)
     })?;
 
     let mut check_for_extra_error = true;
@@ -59,7 +59,7 @@ pub fn hold_item_internal(
         if ctx.is_aborted() {
             return Ok(());
         }
-        if remaining.is_done() {
+        if remaining.is_done(item.span, errors, "HOLD") {
             break;
         }
         let inventory = sys.screen.current_screen().as_inventory().unwrap();
