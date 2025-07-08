@@ -4,7 +4,7 @@ import { once } from "@pistonite/pure/sync";
 import type { ExtensionApp } from "@pistonite/skybook-api";
 
 import { language, configuration } from "./language.ts";
-import { provideParserDiagnostics, provideRuntimeDiagnostics } from "./marker.ts";
+import { mergeData, mergeDataByReplace, provideParserDiagnostics, Provider, provideRuntimeDiagnostics } from "./marker.ts";
 import { legend, provideSemanticTokens } from "./semantic.ts";
 
 let theApp: ExtensionApp | undefined;
@@ -51,24 +51,26 @@ const CustomLanguageOptions: LanguageClient = {
     },
 };
 
-export const ParserDiagnosticProvider: DiagnosticProvider = {
+export const ParserDiagnosticProvider: Provider = {
     ownerId: "parser",
-    onNewRequest: async (_filename, model, script) => {
+    newRequest: async (_filename, _model, script) => {
         if (!theApp) {
             return [];
         }
-        return await provideParserDiagnostics(theApp, model, script);
-    }
+        return await provideParserDiagnostics(theApp, script);
+    },
+    mergeData: mergeDataByReplace,
 };
 
-export const RuntimeDiagnosticProvider: DiagnosticProvider = {
+export const RuntimeDiagnosticProvider: Provider = {
     ownerId: "runtime",
-    onNewRequest: async (_filename, model, script, charPos) => {
+    newRequest: async (_filename, _model, script, charPos) => {
         if (!theApp) {
             return [];
         }
-        return await provideRuntimeDiagnostics(theApp, model, script, charPos);
-    }
+        return await provideRuntimeDiagnostics(theApp, script, charPos);
+    },
+    mergeData: mergeDataByReplace,
 };
 
 /** Token colors for special tokens in skybook script */

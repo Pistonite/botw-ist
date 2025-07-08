@@ -1,9 +1,9 @@
 import { wxWorker, wxWrapHandler } from "@pistonite/workex";
 import { serial } from "@pistonite/pure/sync";
+import { v4 as makeUUID } from "uuid";
 
 import type {
     ItemSearchResult,
-    PerformanceData,
     RuntimeApp,
 } from "@pistonite/skybook-api";
 import { skybookRuntime } from "@pistonite/skybook-api/interfaces/Runtime.bus";
@@ -42,36 +42,55 @@ export async function createRuntime() {
     const runtime = result.val.protocols.runtime;
 
     // create a serial event for triggering simulation when state change
-    const triggerSimulation = serial({
-        fn: (checkCancel) => async (scriptChanged: boolean) => {
+    const triggerSimulationAndUpdateState = serial({
+        fn: (checkTaskCancel) => async (scriptChanged: boolean) => {
             const {
                 invalidateInventoryCache,
-                setExecutionInProgress,
+                inProgressTaskId,
+                setInProgressTaskId,
                 activeScript,
                 bytePos,
                 setStepIndex,
             } = useSessionStore.getState();
-            setExecutionInProgress(true);
+
             if (scriptChanged) {
                 invalidateInventoryCache();
             }
+            const checkCancel = () => {
+                checkTaskCancel();
+                const { activeScript: activeScriptNow } = useSessionStore.getState();
+                if (activeScriptNow !== activeScript) {
+                    // script changed while waiting for result
+                    throw new Error("cancelled");
+                }
+            };
+            // this only requires parsing, and should be fast
             const stepIndex = await runtime.getStepFromPos(
                 activeScript,
                 bytePos,
             );
             checkCancel();
-            const { activeScript: activeScriptNow } =
-                useSessionStore.getState();
-            if (activeScriptNow !== activeScript) {
-                // script changed while waiting for result
-                return;
-            }
-            setExecutionInProgress(false);
             if (stepIndex.err) {
                 console.error("failed to get step index:", stepIndex.err);
                 return;
             }
             setStepIndex(stepIndex.val);
+            if (!scriptChanged) {
+                return;
+            }
+            // trigger a run to keep the script execution in the background
+            // even if all other tasks are finished
+            if (inProgressTaskId) {
+                // abort previous run
+                await runtime.abortTask(inProgressTaskId);
+            }
+            checkCancel();
+            const taskId = makeUUID();
+            setInProgressTaskId(taskId);
+
+            await runtime.executeScript(activeScript, taskId);
+            checkCancel();
+            setInProgressTaskId("");
         },
     });
 
@@ -79,10 +98,11 @@ export async function createRuntime() {
         const scriptChanged = curr.activeScript !== prev.activeScript;
         if (
             !curr.initiallyExecuted ||
-            scriptChanged ||
+            scriptChanged
+                ||
             curr.bytePos !== prev.bytePos
         ) {
-            void triggerSimulation(scriptChanged);
+            void triggerSimulationAndUpdateState(scriptChanged);
         }
     });
 
@@ -107,10 +127,10 @@ const createRuntimeAppHost = (): RuntimeApp => {
             return customImage;
         }),
 
-        updatePerfData: wxWrapHandler((data: PerformanceData) => {
-            const { setPerfData } = useSessionStore.getState();
-            setPerfData(data.ips, data.sps);
-        }),
+        // updatePerfData: wxWrapHandler((data: PerformanceData) => {
+        //     const { setPerfData } = useSessionStore.getState();
+        //     setPerfData(data.ips, data.sps);
+        // }),
 
         crashApplication: wxWrapHandler(() => {
             crashApp();

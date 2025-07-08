@@ -1,6 +1,6 @@
 import type { WxPromise } from "@pistonite/workex";
 
-import type { ItemSearchResult, PerformanceData } from "./types.ts";
+import type { ItemSearchResult } from "./types.ts";
 
 /**
  * API provided by the simulator app that the runtime needs to call
@@ -25,9 +25,6 @@ export interface RuntimeApp {
      * in which case the runtime initialization will fail.
      */
     getCustomBlueFlameImage(): WxPromise<Uint8Array | undefined>;
-
-    /** Send latest performance data to the app */
-    updatePerfData(data: PerformanceData): WxPromise<void>;
 
     /** Signal the application to crash because unrecoverable error occurred in the runtime */
     crashApplication(): WxPromise<void>;

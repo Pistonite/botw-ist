@@ -58,6 +58,9 @@ impl Run {
         let mut ctx = sim::Context::new(self.handle, runtime);
 
         for i in 0..parsed.steps.len() {
+            if ctx.is_aborted() {
+                return MaybeAborted::Aborted;
+            }
             let step = &parsed.steps[i];
             let pos = step.pos();
             let percentage = pos as f32 / parsed.script_len as f32 * 100.0;
@@ -90,10 +93,7 @@ impl Run {
                         }
                         Ok(report) => report,
                     };
-
                     // check if the run is aborted
-                    // note we don't check if there is a cache hit -
-                    // which is really fast anyway
                     if ctx.is_aborted() {
                         return MaybeAborted::Aborted;
                     }

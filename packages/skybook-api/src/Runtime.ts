@@ -65,6 +65,15 @@ export interface Runtime {
     abortTask(taskId: string): WxPromise<void>;
 
     /**
+     * Trigger a script execution
+     *
+     * This isn't normally needed, if you just need to execute the script AND get output
+     * at some step. This is used by the app to make sure the script keeps running
+     * in the background if it didn't change.
+     */
+    executeScript(script: string, taskId: string): WxPromise<void>;
+
+    /**
      * Run the script and get diagnostics from the runtime, up to and including
      * the step containing the bytePos
      *

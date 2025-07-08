@@ -12,7 +12,7 @@ import type {
 
 import type { ParseMgr } from "./ParseMgr.ts";
 import type { NativeApi } from "./NativeApi.ts";
-import type { TaskMgr } from "./TaskMgr.ts";
+import type { TaskMgr } from "./task_mgr.ts";
 import type { RunMgr } from "./RunMgr.ts";
 import type { ImageMgr } from "./ImageMgr.ts";
 import { unwrap, type Pwr, unwrapMaybeAborted } from "./Error.ts";
@@ -50,8 +50,11 @@ export const createRuntimeWorker = (
         getStepBytePositions: async (script) => {
             return { val: unwrap(await parseMgr.getStepBytePositions(script)) };
         },
-        abortTask: wxWrapHandler((taskId) => {
-            taskMgr.abort(taskId);
+        abortTask: wxWrapHandler(async (taskId) => {
+            await taskMgr.abortTask(taskId);
+        }),
+        executeScript: wxWrapHandler(async (script, taskId) => {
+            await runMgr.triggerFullExecution(script, taskId);
         }),
         getRuntimeDiagnostics: async (script, taskId, bytePos) => {
             return {
