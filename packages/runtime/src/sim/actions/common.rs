@@ -267,8 +267,10 @@ impl OperationAmount {
                 None => {
                     if remaining == 0 {
                         Ok(ItemSelectCheck::Done)
-                    } else {
+                    } else if self.was_found {
                         Ok(ItemSelectCheck::NeedMore(remaining))
+                    } else {
+                        Ok(ItemSelectCheck::NeverFound)
                     }
                 }
             },

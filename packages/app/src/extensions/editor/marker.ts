@@ -4,14 +4,13 @@
 
 import type { MarkerData, TextModel, DiagnosticProvider, DiagnosticTask , DiagnosticMergeResult} from "@pistonite/intwc";
 import { charPosToBytePos, MarkerSeverity, spanToRange } from "@pistonite/intwc";
-import type { WxPromise } from "@pistonite/workex";
 import { logger } from "@pistonite/pure/log";
 
 import type { Diagnostic, ExtensionApp } from "@pistonite/skybook-api";
 
 const EDITOR_EXTENSION_UUID = "b1b45de4-1df7-4832-ae0b-99b516f81df6";
 
-const log = logger("diagnostics", "#02648B").debug();
+const log = logger("diagnostics", "#02648B").default();
 
 export type CustomMarkerData = MarkerData & {
     charPos: [number, number];
@@ -105,7 +104,8 @@ export const provideParserDiagnostics = async (app: ExtensionApp, script: string
         data: (async () => {
             const diagnostics = await app.provideParserDiagnostics(script);
             if (diagnostics.err) {
-                console.error("failed to get parser diagnostics", diagnostics.err);
+                log.error("failed to get parser diagnostics");
+                log.error(diagnostics.err);
                 return undefined;
             }
             return diagnostics.val;
@@ -113,13 +113,10 @@ export const provideParserDiagnostics = async (app: ExtensionApp, script: string
     }];
 }
 
-let previousRuntimeDiagnosticScriptUsed = "";
-let isFirstTimeRuntimeDiagnostic = true;
-
 export const provideRuntimeDiagnostics = async (app: ExtensionApp, script: string, charPos: number): Promise<Task[]> => {
     const bytePositions = await app.getStepBytePositions(script);
     if (bytePositions.err) {
-        console.error("failed to get byte positions for runtime diagnostics");
+        log.error("failed to get byte positions for runtime diagnostics");
         return [];
     }
     // the steps should all be cached before the current position,
@@ -134,21 +131,16 @@ export const provideRuntimeDiagnostics = async (app: ExtensionApp, script: strin
     }
     const len = positions.length;
 
-    console.log(`requesting runtime diagnostics for ${len} steps`);
+    log.info(`requesting runtime diagnostics for ${len} steps`);
     const taskIdResult = await app.requestNewTaskIds(EDITOR_EXTENSION_UUID, len);
     if (taskIdResult.err) {
-        console.error("failed to get taskIds for runtime diagnostics");
+        log.error("failed to get taskIds for runtime diagnostics");
         return [];
     }
     const [newIds, oldIds] = taskIdResult.val;
-    if (script !== previousRuntimeDiagnosticScriptUsed) {
-        previousRuntimeDiagnosticScriptUsed = script;
-        if (oldIds.length) {
-            // console.log("trying to abort", oldIds);
-            await app.cancelRuntimeTasks(oldIds);
-        }
+    if (oldIds.length) {
+        void app.cancelRuntimeTasks(oldIds);
     }
-    // console.log("newIds", newIds);
     const outTasks: Task[] = [];
     for (let i = 0; i<len;i++) {
         const i2 = i;
@@ -158,17 +150,16 @@ export const provideRuntimeDiagnostics = async (app: ExtensionApp, script: strin
                 const taskId = newIds[i2];
                 log.debug(`${taskId}\ndiagnostic step ${i2} starting`);
                 const result = await app.providePartialRuntimeDiagnostics(script, newIds[i2], positions[i2]);
+                log.debug(`${taskId}\ndiagnostic step ${i2} finished`);
                 if (result.val?.type === "Aborted") {
                     // don't update the markers if the run was aborted,
                     // since the next run will update it
                     return undefined;
                 }
                 if (result.err) {
-                    console.error("failed to get runtime diagnostics", result.err);
+                    log.error("failed to get runtime diagnostics");
+                    log.error(result.err);
                     return undefined;
-                }
-                if (i2 === len - 1) {
-                    isFirstTimeRuntimeDiagnostic = false;
                 }
                 return result.val.value;
             })()

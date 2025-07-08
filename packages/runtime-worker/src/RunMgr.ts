@@ -25,6 +25,7 @@ import {
 } from "./Error.ts";
 import type { TaskMgr } from "./task_mgr.ts";
 import { log } from "./util.ts";
+import { crashApplication } from "./AppCall.ts";
 
 type RunAwaiter = {
     /** Resolve function to take the output */
@@ -48,12 +49,17 @@ class RunContext {
         this.lastNotifyOutputErc = makeRunOutputErc(undefined);
     }
 
+    /** Returns false if the underlying native task was already disposed */
     startAwaitingTask(
         taskMgr: TaskMgr,
         taskId: string,
         bytePos: number,
-    ): Pwr<AsyncErc<RunOutput>> {
+    ): Pwr<AsyncErc<RunOutput>> | undefined {
         taskMgr.registerTask(taskId);
+        if (!taskMgr.addNativeHandleDependency(taskId, this.nativeHandleId)) {
+            taskMgr.unregisterTask(taskId);
+            return undefined;
+        }
         const outputPromise = new Promise<
             Result<AsyncErc<RunOutput>, WorkerError>
         >((resolve) => {
@@ -63,7 +69,6 @@ class RunContext {
                 executeToBytePos: bytePos,
             });
         });
-        taskMgr.addNativeHandleDependency(taskId, this.nativeHandleId);
         return outputPromise;
     }
 
@@ -92,7 +97,6 @@ export class RunMgr {
     private parseMgr: ParseMgr;
     private taskMgr: TaskMgr;
 
-    // private isRunning: boolean;
     /**
      * Context of the run that is currently running
      * (or undefined if no run is running)
@@ -107,7 +111,6 @@ export class RunMgr {
         this.napi = napi;
         this.taskMgr = taskMgr;
         this.parseMgr = parseMgr;
-        // this.isRunning = false;
         this.runContext = undefined;
         this.lastScript = "";
         this.serial = 1;
@@ -193,11 +196,16 @@ export class RunMgr {
             }
             // otherwise, add this as an awaiter
             log.debug(`${taskId}\nawaiting on current run`);
-            return await currContext.startAwaitingTask(
+            const outputPromise = await currContext.startAwaitingTask(
                 this.taskMgr,
                 taskId,
                 executeToBytePos,
             );
+            if (outputPromise) {
+                return outputPromise;
+            }
+            // fall through to trigger a new run if the current run 
+            // is no longer available
         }
 
         // trigger a new run
@@ -215,7 +223,7 @@ export class RunMgr {
         executeToBytePos: number,
         parseOutputErc: AsyncErc<ParseOutput>,
     ): Pwr<AsyncErc<RunOutput>> {
-        log.info(`${taskId}\ntriggering script execution`);
+        log.debug(`${taskId}\ntriggering script execution`);
         // this.isRunning = true;
         this.lastScript = script;
         // make a new context for this run
@@ -232,6 +240,11 @@ export class RunMgr {
             taskId,
             executeToBytePos,
         );
+        if (!outputPromise) {
+            log.error(`${taskId}\nfailed to schedule await - did native handle creation fail?`);
+            await crashApplication();
+            return { err: { type: "UnexpectedThrow" } };
+        }
         this.runContext = thisContext;
 
         let output: Awaited<Pwr<AsyncErc<RunOutput>>> | undefined = undefined;
@@ -283,7 +296,7 @@ export class RunMgr {
     ): Promise<void> {
         this.serial++;
         const thisSerial = this.serial;
-        const PREFIX = `${triggeringTaskId} #${thisSerial}`;
+        const PREFIX = `${triggeringTaskId} #${thisSerial} NA#${thisContext.nativeHandleId}`;
         log.info(`${PREFIX}\nstarting script execution run`);
 
         const resolveAwaiters = (x: Err<WorkerError>) => {
@@ -309,7 +322,7 @@ export class RunMgr {
 
             // ready to execute the steps - first check it's not aborted yet
             if (await thisContext.areAllTasksAborted(this.taskMgr)) {
-                log.info(`${PREFIX}\nrun aborted`);
+                log.debug(`${PREFIX}\nrun aborted`);
                 this.handleError(thisSerial);
                 resolveAwaiters(abortedError());
                 return;
@@ -355,22 +368,24 @@ export class RunMgr {
                 return;
             }
             if (outputResult.val.type === "Aborted") {
-                log.info(`${PREFIX}\nrun aborted`);
+                log.debug(`${PREFIX}\nrun aborted`);
                 this.handleError(thisSerial);
                 resolveAwaiters(abortedError());
                 return;
             }
 
+            const msElapsed = performance.now() - start;
             if (
                 thisContext.awaiters.length &&
                 (await thisContext.areAllTasksAborted(this.taskMgr))
             ) {
-                log.warn(
+                // only warn if the run took very long
+                const emit = msElapsed > 10000 ? log.warn.bind(log) : log.debug.bind(log);
+                emit(
                     `${PREFIX}\nall tasks are aborted, but the run didn't abort successfully!`,
                 );
             }
 
-            const msElapsed = performance.now() - start;
             log.info(
                 `${PREFIX}\nscript execution finished in ${Math.round(msElapsed)}ms`,
             );
@@ -405,8 +420,7 @@ export class RunMgr {
         if (thisSerial !== this.serial) {
             return;
         }
-        // this.isRunning = false;
-        this.runContext = undefined; //makeRunContext();
+        this.runContext = undefined;
         void this.cachedErc.free();
     }
 
