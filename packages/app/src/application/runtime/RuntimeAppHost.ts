@@ -2,10 +2,7 @@ import { wxWorker, wxWrapHandler } from "@pistonite/workex";
 import { serial } from "@pistonite/pure/sync";
 import { v4 as makeUUID } from "uuid";
 
-import type {
-    ItemSearchResult,
-    RuntimeApp,
-} from "@pistonite/skybook-api";
+import type { ItemSearchResult, RuntimeApp } from "@pistonite/skybook-api";
 import { skybookRuntime } from "@pistonite/skybook-api/interfaces/Runtime.bus";
 import { searchItemLocalized } from "skybook-localization";
 
@@ -51,14 +48,18 @@ export async function createRuntime() {
                 activeScript,
                 bytePos,
                 setStepIndex,
+                // setInitiallyExecuted,
             } = useSessionStore.getState();
+            // setInitiallyExecuted();
+            console.log("triggering background execution");
 
             if (scriptChanged) {
                 invalidateInventoryCache();
             }
             const checkCancel = () => {
                 checkTaskCancel();
-                const { activeScript: activeScriptNow } = useSessionStore.getState();
+                const { activeScript: activeScriptNow } =
+                    useSessionStore.getState();
                 if (activeScriptNow !== activeScript) {
                     // script changed while waiting for result
                     throw new Error("cancelled");
@@ -86,20 +87,32 @@ export async function createRuntime() {
             }
             checkCancel();
             const taskId = makeUUID();
+            console.log(taskId);
             setInProgressTaskId(taskId);
 
             await runtime.executeScript(activeScript, taskId);
-            checkCancel();
-            setInProgressTaskId("");
+            if (useSessionStore.getState().inProgressTaskId === taskId) {
+                setInProgressTaskId("");
+            }
         },
+    });
+
+    // register a subscriber to reliably trigger the script execution
+    // for the first time, then unregisters itself
+    const unsubcribeInitialExecution = useSessionStore.subscribe((curr) => {
+        if (curr.activeScript) {
+            console.log("triggering script execution for the first time");
+            unsubcribeInitialExecution();
+            setTimeout(() => void triggerSimulationAndUpdateState(true), 0);
+        }
     });
 
     useSessionStore.subscribe((curr, prev) => {
         const scriptChanged = curr.activeScript !== prev.activeScript;
+        // console.log(curr.initiallyExecuted);
         if (
-            !curr.initiallyExecuted ||
-            scriptChanged
-                ||
+            // !curr.initiallyExecuted ||
+            scriptChanged ||
             curr.bytePos !== prev.bytePos
         ) {
             void triggerSimulationAndUpdateState(scriptChanged);

@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
-import { debounce } from "@pistonite/pure/sync";
-import type { WxPromise } from "@pistonite/workex";
+import { serial } from "@pistonite/pure/sync";
 import { cell, type Cell } from "@pistonite/pure/memory";
+import type { WxPromise } from "@pistonite/workex";
 
 import {
     type FirstPartyExtension,
@@ -16,7 +16,7 @@ export class CrashViewerExtension
     extends FirstPartyExtensionAdapter
     implements FirstPartyExtension
 {
-    public updateCrashInfo: () => Promise<void>;
+    public updateCrashInfo: () => Promise<unknown>;
     private crashInfo: Cell<string>;
     private component: React.FC;
 
@@ -25,30 +25,34 @@ export class CrashViewerExtension
         this.crashInfo = cell({
             initial: "",
         });
-        this.updateCrashInfo = debounce({
-            fn: async (): Promise<void> => {
+        this.updateCrashInfo = serial({
+            fn: (checkCancel) => async (): Promise<void> => {
                 const app = this.app;
                 if (!app) {
                     return;
                 }
-                // const taskId = await app.requestNewTaskId(CRASH_VIEWER_UUID);
-                // if (taskId.err) {
-                //     return;
-                // }
-                // const result = await app.getCrashInfo(
-                //     taskId.val,
-                //     undefined,
-                //     undefined,
-                // );
-                // if (result.err) {
-                //     return;
-                // }
-                // if (result.val.type === "Aborted") {
-                //     return;
-                // }
-                // this.crashInfo.set(result.val.value);
+                const taskId = await app.requestNewTaskIds(
+                    CRASH_VIEWER_UUID,
+                    1,
+                );
+                checkCancel();
+                if (taskId.err) {
+                    return;
+                }
+                const result = await app.getCrashInfo(
+                    taskId.val[0],
+                    undefined,
+                    undefined,
+                );
+                checkCancel();
+                if (result.err) {
+                    return;
+                }
+                if (result.val.type === "Aborted") {
+                    return;
+                }
+                this.crashInfo.set(result.val.value);
             },
-            interval: 100,
         });
         const subscribe = (cb: (x: string) => void) => {
             return this.crashInfo.subscribe(cb);

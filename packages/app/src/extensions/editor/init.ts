@@ -1,10 +1,14 @@
-import { type DiagnosticProvider, initCodeEditor, type LanguageClient } from "@pistonite/intwc";
-import { once } from "@pistonite/pure/sync";
+import { initCodeEditor, type LanguageClient } from "@pistonite/intwc";
 
 import type { ExtensionApp } from "@pistonite/skybook-api";
 
 import { language, configuration } from "./language.ts";
-import { mergeData, mergeDataByReplace, provideParserDiagnostics, Provider, provideRuntimeDiagnostics } from "./marker.ts";
+import {
+    mergeDataByReplace,
+    provideParserDiagnostics,
+    type Provider,
+    provideRuntimeDiagnostics,
+} from "./marker.ts";
 import { legend, provideSemanticTokens } from "./semantic.ts";
 
 let theApp: ExtensionApp | undefined;
@@ -33,21 +37,20 @@ const CustomLanguageOptions: LanguageClient = {
     getExtensions: () => [".skyb"],
     getTokenizer: () => language,
     getConfiguration: () => configuration,
-    // // the parser and runtime can both produce diagnostics
-    // getMarkerOwners: () => ["parser", "runtime"],
-    // provideMarkers: (model, owner) => {
-    //     if (!theApp) {
-    //         return undefined;
-    //     }
-    //     return provideDiagnostics(theApp, model, owner);
-    // },
-    getDiagnosticProviders: () => [ParserDiagnosticProvider, RuntimeDiagnosticProvider],
-    getSemanticTokensLegend: () => legend,
-    provideDocumentRangeSemanticTokens: (model, range, token) => {
-        if (!theApp) {
-            return undefined;
-        }
-        return provideSemanticTokens(theApp, model, range, token);
+    getDiagnosticProviders: () => [
+        ParserDiagnosticProvider,
+        RuntimeDiagnosticProvider,
+    ],
+    getSemanticTokensProvider: () => {
+        return {
+            legend,
+            provideDocumentRangeSemanticTokens: (model, range, token) => {
+                if (!theApp) {
+                    return undefined;
+                }
+                return provideSemanticTokens(theApp, model, range, token);
+            },
+        };
     },
 };
 
@@ -94,15 +97,13 @@ const CustomTokenColors = [
 ];
 
 /** Initialize the code editor framework for this window */
-export const init = once({
-    fn: () => {
-        initCodeEditor({
-            language: {
-                custom: [CustomLanguageOptions],
-            },
-            theme: {
-                customTokenColors: CustomTokenColors,
-            },
-        });
-    },
-});
+export const init = () => {
+    return initCodeEditor({
+        language: {
+            custom: [CustomLanguageOptions],
+        },
+        theme: {
+            customTokenColors: CustomTokenColors,
+        },
+    });
+};

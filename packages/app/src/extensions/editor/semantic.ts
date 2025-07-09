@@ -7,6 +7,7 @@ import type {
     SemanticTokens,
 } from "@pistonite/intwc";
 import { debounce } from "@pistonite/pure/sync";
+
 import type { ExtensionApp } from "@pistonite/skybook-api";
 
 // need to be kept in sync with skybook_parser::SemanticToken

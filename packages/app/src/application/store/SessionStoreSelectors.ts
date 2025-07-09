@@ -133,7 +133,6 @@ const useStoreCachedRuntimeData = <T>(
         useSessionStore((state) => state.activeScript),
         100,
     );
-    const inProgress = useSessionStore((state) => !!state.inProgressTaskId);
     const stepIndex = useSessionStore((state) => state.stepIndex);
     const bytePos = useSessionStore((state) => state.bytePos);
 
@@ -225,7 +224,7 @@ const useStoreCachedRuntimeData = <T>(
         // if state for current step is not ready,
         // display the per-component cache to avoid flickering
         data: inventory || inventoryViewCache.current,
-        loading: !cacheIsValid || inProgress,
+        loading: !cacheIsValid,
         error: errorMessage,
     };
 };

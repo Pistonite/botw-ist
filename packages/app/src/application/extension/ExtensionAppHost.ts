@@ -136,17 +136,23 @@ class ExtensionAppHost implements ExtensionApp {
         const array = bytePositions.val;
         const len = array.length;
         const bytePosToCharPos = createBytePosToCharPosArray(script);
-        for (let i = 0; i < len; i ++) {
+        for (let i = 0; i < len; i++) {
             array[i] = bytePosToCharPos[array[i]];
         }
         return { val: array };
     }
 
-    public async requestNewTaskIds(uniqueId: string, count: number): WxPromise<[string[], string[]]> {
-        const oldTaskIds = this.taskIdMap.get(uniqueId) || [];
+    public async requestNewTaskIds(
+        uniqueId: string,
+        count: number,
+    ): WxPromise<string[]> {
+        const oldTaskIds = this.taskIdMap.get(uniqueId);
         const newTaskIds = Array.from({ length: count }).map(() => makeUUID());
         this.taskIdMap.set(uniqueId, newTaskIds);
-        return { val: [newTaskIds, oldTaskIds] };
+        if (oldTaskIds?.length) {
+            void this.cancelRuntimeTasks(oldTaskIds);
+        }
+        return { val: newTaskIds };
     }
 
     public async cancelRuntimeTasks(taskId: string[]): WxPromise<void> {
@@ -166,9 +172,13 @@ class ExtensionAppHost implements ExtensionApp {
     public async providePartialRuntimeDiagnostics(
         script: string,
         taskId: string,
-        bytePos: number
+        bytePos: number,
     ): WxPromise<MaybeAborted<Diagnostic[]>> {
-        const result = await this.runtime.getRuntimeDiagnostics(script, taskId, bytePos);
+        const result = await this.runtime.getRuntimeDiagnostics(
+            script,
+            taskId,
+            bytePos,
+        );
         return mapMaybeAbortedResult(result, (value) => {
             return errorReportsToDiagnostics(
                 script,
