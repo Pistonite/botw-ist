@@ -1,4 +1,4 @@
-import { wxMakePromise } from "@pistonite/workex";
+import { makePromise } from "@pistonite/pure/sync";
 import type { Result } from "@pistonite/pure/result";
 
 import type {
@@ -16,18 +16,20 @@ import type {
 } from "@pistonite/skybook-api";
 import {
     crashApplication,
+    createNativeErcFactory,
     type Pwr,
     type NativeApi,
     type QuotedItemResolverFn,
+    type NativeErcFactory,
 } from "skybook-runtime-worker";
 
-export class WasmApi implements NativeApi {
+export class WasmApi implements NativeApi<number> {
     private panicked: boolean;
     private runtimeInitPromise: Promise<undefined>;
     private resolveRuntimeInitPromise: (x: undefined) => void;
     constructor() {
         this.panicked = false;
-        const { promise, resolve } = wxMakePromise<undefined>();
+        const { promise, resolve } = makePromise<undefined>();
         this.runtimeInitPromise = promise;
         this.resolveRuntimeInitPromise = resolve;
         // This is a hack to make WASM able to invoke crash directly
@@ -37,7 +39,16 @@ export class WasmApi implements NativeApi {
             this.panicked = true;
             void crashApplication();
         };
+
+        const factory = createNativeErcFactory(0, this);
+        this.makeNativeHandleErc = factory.makeNativeHandleErc;
+        this.makeRunOutputErc = factory.makeRunOutputErc;
+        this.makeParseOutputErc = factory.makeParseOutputErc;
     }
+    public readonly nullptr = 0;
+    public readonly makeNativeHandleErc: NativeErcFactory<number>["makeNativeHandleErc"];
+    public readonly makeRunOutputErc: NativeErcFactory<number>["makeRunOutputErc"];
+    public readonly makeParseOutputErc: NativeErcFactory<number>["makeParseOutputErc"];
 
     /** Initialize the WASM module, this is needed to call any WASM function */
     public async initWasmModule() {
