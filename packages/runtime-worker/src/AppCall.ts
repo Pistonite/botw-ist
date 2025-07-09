@@ -6,6 +6,7 @@ import { wxMakePromise } from "@pistonite/workex";
 import type { ItemSearchResult, RuntimeApp } from "@pistonite/skybook-api";
 
 import type { QuotedItemResolverFn } from "./NativeApi.ts";
+import { log } from "./util.ts";
 
 const { promise: appPromise, resolve: resolveApp } =
     wxMakePromise<RuntimeApp>();
@@ -16,7 +17,7 @@ export const resolveAppPromise = resolveApp;
 // every time.
 // using `false` to represent "not found"
 const quotedItemCache = new LRUCache<string, ItemSearchResult | false>({
-    max: 5120,
+    max: 256,
 });
 export const resolveQuotedItem: QuotedItemResolverFn = async (query) => {
     const cachedResult = quotedItemCache.get(query);
@@ -47,6 +48,7 @@ export const crashApplication = async () => {
     try {
         return (await appPromise).crashApplication();
     } catch (e) {
-        console.error("Failed to signal the application to crash", e);
+        log.error("failed to signal the application to crash");
+        log.error(e);
     }
 };
