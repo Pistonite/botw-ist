@@ -161,15 +161,16 @@ export class TaskMgr {
         return await container.getHandle();
     }
 
-    public addNativeHandleDependency(taskId: string, nativeHandleId: number): boolean {
+    public addNativeHandleDependency(
+        taskId: string,
+        nativeHandleId: number,
+    ): boolean {
         log.debug(
             `${taskId} NA#${nativeHandleId}\nadding to native handle container`,
         );
         const taskContainer = this.tasks.get(taskId);
         if (!taskContainer) {
-            log.error(
-                `${taskId}\nis not registered`,
-            );
+            log.error(`${taskId}\nis not registered`);
             return false;
         }
         const container = this.nativeHandles.get(nativeHandleId);
@@ -204,9 +205,9 @@ export class TaskMgr {
         }
         void container.scheduleAbortNativeTask().then((isAborted) => {
             if (isAborted) {
-                this.unregisterNativeHandle(nativeHandleId)
+                this.unregisterNativeHandle(nativeHandleId);
             }
-        })
+        });
     }
 
     private unregisterNativeHandle(nativeHandleId: number) {
@@ -275,7 +276,7 @@ class NativeHandleContainer {
         return !this.owningTaskIds.length;
     }
 
-    /** 
+    /**
      * Abort the native task, if no more tasks are coming in after a grace period
      * Return true after the native task is aborted, or false if no abort
      */
@@ -285,16 +286,16 @@ class NativeHandleContainer {
         }
         const WAIT_LIMIT = 3;
         this.isAbortingNativeTaskScheduled = true;
-        await new Promise(r => setTimeout(r, WAIT_LIMIT * 1000));
+        await new Promise((r) => setTimeout(r, WAIT_LIMIT * 1000));
         this.isAbortingNativeTaskScheduled = false;
         if (this.owningTaskIds.length) {
-            log.debug(`NA#${this.id}\nnot aborting native handle container - tasks were added`);
+            log.debug(
+                `NA#${this.id}\nnot aborting native handle container - tasks were added`,
+            );
             this.isAbortingNativeTaskScheduled = false;
             return false;
         }
-        log.debug(
-            `NA#${this.id}\naborting native handle`,
-        );
+        log.debug(`NA#${this.id}\naborting native handle`);
         const ptr = this.handle.take();
         if (ptr) {
             this.napi.abortTask(ptr);

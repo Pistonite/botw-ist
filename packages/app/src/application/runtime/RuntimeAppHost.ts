@@ -48,9 +48,7 @@ export async function createRuntime() {
                 activeScript,
                 bytePos,
                 setStepIndex,
-                // setInitiallyExecuted,
             } = useSessionStore.getState();
-            // setInitiallyExecuted();
             console.log("triggering background execution");
 
             if (scriptChanged) {
@@ -109,12 +107,7 @@ export async function createRuntime() {
 
     useSessionStore.subscribe((curr, prev) => {
         const scriptChanged = curr.activeScript !== prev.activeScript;
-        // console.log(curr.initiallyExecuted);
-        if (
-            // !curr.initiallyExecuted ||
-            scriptChanged ||
-            curr.bytePos !== prev.bytePos
-        ) {
+        if (scriptChanged || curr.bytePos !== prev.bytePos) {
             void triggerSimulationAndUpdateState(scriptChanged);
         }
     });
@@ -139,11 +132,6 @@ const createRuntimeAppHost = (): RuntimeApp => {
         getCustomBlueFlameImage: wxWrapHandler(() => {
             return customImage;
         }),
-
-        // updatePerfData: wxWrapHandler((data: PerformanceData) => {
-        //     const { setPerfData } = useSessionStore.getState();
-        //     setPerfData(data.ips, data.sps);
-        // }),
 
         crashApplication: wxWrapHandler(() => {
             crashApp();

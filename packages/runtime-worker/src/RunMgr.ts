@@ -204,7 +204,7 @@ export class RunMgr {
             if (outputPromise) {
                 return outputPromise;
             }
-            // fall through to trigger a new run if the current run 
+            // fall through to trigger a new run if the current run
             // is no longer available
         }
 
@@ -224,7 +224,6 @@ export class RunMgr {
         parseOutputErc: AsyncErc<ParseOutput>,
     ): Pwr<AsyncErc<RunOutput>> {
         log.debug(`${taskId}\ntriggering script execution`);
-        // this.isRunning = true;
         this.lastScript = script;
         // make a new context for this run
         const contextResult = await this.makeNewRunContext(taskId);
@@ -241,7 +240,9 @@ export class RunMgr {
             executeToBytePos,
         );
         if (!outputPromise) {
-            log.error(`${taskId}\nfailed to schedule await - did native handle creation fail?`);
+            log.error(
+                `${taskId}\nfailed to schedule await - did native handle creation fail?`,
+            );
             await crashApplication();
             return { err: { type: "UnexpectedThrow" } };
         }
@@ -380,7 +381,10 @@ export class RunMgr {
                 (await thisContext.areAllTasksAborted(this.taskMgr))
             ) {
                 // only warn if the run took very long
-                const emit = msElapsed > 10000 ? log.warn.bind(log) : log.debug.bind(log);
+                const emit =
+                    msElapsed > 10000
+                        ? log.warn.bind(log)
+                        : log.debug.bind(log);
                 emit(
                     `${PREFIX}\nall tasks are aborted, but the run didn't abort successfully!`,
                 );
@@ -402,8 +406,7 @@ export class RunMgr {
         // update cached result if we are the latest run
         if (thisSerial === this.serial) {
             log.info(`${PREFIX}\nsaving execution result to cache`);
-            // this.isRunning = false;
-            this.runContext = undefined; //makeRunContext();
+            this.runContext = undefined;
             await this.cachedErc.assign(outputRaw);
             returnStrongErc = await this.cachedErc.getStrong();
         } else {

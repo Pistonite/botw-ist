@@ -71,8 +71,11 @@ export type SessionStore = {
     /** Current step index of the active selection */
     stepIndex: number;
     setStepIndex: (stepIndex: number) => void;
-    initiallyExecuted: boolean;
-    setInitiallyExecuted: () => void;
+    /**
+     * Currently active background script execution ID
+     * usually, non-empty means a run is being executed
+     * in the background
+     */
     inProgressTaskId: string;
     setInProgressTaskId: (id: string) => void;
 
@@ -248,16 +251,9 @@ export const useSessionStore = create<SessionStore>()((set) => {
             set({ stepIndex });
         },
 
-        initiallyExecuted: false,
-        setInitiallyExecuted: () => set({ initiallyExecuted: true }),
         inProgressTaskId: "",
         setInProgressTaskId: (id) => {
-            if (id) {
-                console.log("setting id", id, "initially executed");
-                set({ inProgressTaskId: id, initiallyExecuted: true });
-            } else {
-                set({ inProgressTaskId: id });
-            }
+            set({ inProgressTaskId: id });
         },
 
         pouchCached: [],
