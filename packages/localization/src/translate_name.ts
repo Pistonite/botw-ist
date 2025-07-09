@@ -4,7 +4,7 @@ import {
     type Translator,
     translateGenerated,
     translateUI,
-} from "../translate.ts";
+} from "./translate.ts";
 
 /** Translate item category string enum */
 export const translateCategory = (
@@ -23,5 +23,7 @@ export const translateActorOrAsIs = (
     if (!translated) {
         return actor;
     }
+    // since we don't know what the effect is, just return
+    // the base actor name
     return translated.replace("{{effect}}", "");
 };

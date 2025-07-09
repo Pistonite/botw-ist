@@ -5,9 +5,8 @@ import type {
     RuntimeWorkerInitError,
 } from "@pistonite/skybook-api";
 
-import { type Translator, translateUI } from "../translate.ts";
-
-import { translateActorOrAsIs, translateCategory } from "./Category.ts";
+import { type Translator, translateUI } from "./translate.ts";
+import { translateActorOrAsIs, translateCategory } from "./translate_name.ts";
 
 /** Localize a generic error message */
 export const translateGenericError = (
