@@ -5,7 +5,7 @@ import { wxMakePromise } from "@pistonite/workex";
 
 import type { ItemSearchResult, RuntimeApp } from "@pistonite/skybook-api";
 
-import type { QuotedItemResolverFn } from "./NativeApi.ts";
+import type { QuotedItemResolverFn } from "./native_api.ts";
 import { log } from "./util.ts";
 
 const { promise: appPromise, resolve: resolveApp } =

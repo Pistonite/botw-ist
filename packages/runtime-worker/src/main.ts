@@ -10,19 +10,19 @@ import type {
     RuntimeWorkerInitError,
 } from "@pistonite/skybook-api";
 
-import type { ParseMgr } from "./ParseMgr.ts";
-import type { NativeApi } from "./NativeApi.ts";
+import type { ParseMgr } from "./parse_mgr.ts";
+import type { NativeApi } from "./native_api.ts";
 import type { TaskMgr } from "./task_mgr.ts";
-import type { RunMgr } from "./RunMgr.ts";
-import type { ImageMgr } from "./ImageMgr.ts";
-import { unwrap, type Pwr, unwrapMaybeAborted } from "./Error.ts";
-import { getCustomBlueFlameImage } from "./AppCall.ts";
+import type { RunMgr } from "./run_mgr.ts";
+import type { ImageMgr } from "./image_mgr.ts";
+import { unwrap, type Pwr, unwrapMaybeAborted } from "./error.ts";
+import { getCustomBlueFlameImage } from "./app_call.ts";
 
-export const createRuntimeWorker = (
-    napi: NativeApi,
-    taskMgr: TaskMgr,
-    parseMgr: ParseMgr,
-    runMgr: RunMgr,
+export const createRuntimeWorker = <TPtr>(
+    napi: NativeApi<TPtr>,
+    taskMgr: TaskMgr<TPtr>,
+    parseMgr: ParseMgr<TPtr>,
+    runMgr: RunMgr<TPtr>,
     imageMgr: ImageMgr,
 ): Runtime => {
     return {
@@ -94,8 +94,8 @@ export const createRuntimeWorker = (
     };
 };
 
-const initializeRuntimeWorker = async (
-    napi: NativeApi,
+const initializeRuntimeWorker = async <TPtr>(
+    napi: NativeApi<TPtr>,
     imageMgr: ImageMgr,
     args: RuntimeWorkerInitArgs,
 ): Pwr<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>> => {
@@ -131,8 +131,8 @@ const initializeRuntimeWorker = async (
     };
 };
 
-const initializeRuntimeWorkerWithCustomImage = async (
-    napi: NativeApi,
+const initializeRuntimeWorkerWithCustomImage = async <TPtr>(
+    napi: NativeApi<TPtr>,
     imageMgr: ImageMgr,
     params: RuntimeInitParams,
     alwaysAskApp: boolean,

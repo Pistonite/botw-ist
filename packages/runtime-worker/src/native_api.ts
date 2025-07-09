@@ -1,6 +1,5 @@
 import type { Result } from "@pistonite/pure/result";
-import { type AsyncErc, makeAsyncErcType } from "@pistonite/pure/memory";
-import { once } from "@pistonite/pure/sync";
+import { makeAsyncErcType } from "@pistonite/pure/memory";
 
 import type {
     InvView_Gdt,
@@ -16,7 +15,7 @@ import type {
     RuntimeError,
 } from "@pistonite/skybook-api";
 
-import type { Pwr } from "./Error.ts";
+import type { Pwr } from "./error.ts";
 
 export type QuotedItemResolverFn = (
     query: string,
@@ -26,7 +25,13 @@ export type RuntimeInitOutput = {
     gameVersion: string;
 };
 
-export interface NativeApi {
+/** API bindings for calls into native runtime, plus mixin functions used by the worker */
+export interface NativeApi<TPtr>
+    extends NativeApiFunctions<TPtr>,
+        NativeErcFactory<TPtr> {}
+
+/** API bindings for calls into native runtime */
+export interface NativeApiFunctions<TPtr> {
     /** Initialize the runtime with the given image info */
     initRuntime(
         customImage: Uint8Array | undefined,
@@ -42,7 +47,7 @@ export interface NativeApi {
     parseScript(
         script: string,
         resolveQuotedItem: QuotedItemResolverFn,
-    ): Pwr<number>;
+    ): Pwr<TPtr>;
     /**
      * Parse the semantics of the script in the given range
      *
@@ -54,30 +59,30 @@ export interface NativeApi {
         end: number,
     ): Pwr<Uint32Array>;
     /** Get the errors from the parse output. Does not consume the ptr */
-    getParserErrors(ptr: number): Pwr<ErrorReport<ParserError>[]>;
+    getParserErrors(ptr: TPtr): Pwr<ErrorReport<ParserError>[]>;
     /** Get number of steps in the parse output. Does not consume the ptr */
-    getStepCount(ptr: number): Pwr<number>;
+    getStepCount(ptr: TPtr): Pwr<number>;
     /**
      * Get the step index from the byte position in the script in the parse output.
      *
      * Returns 0 if the steps are empty. Does not consume the ptr.
      */
-    getStepFromPos(ptr: number, bytePos: number): Pwr<number>;
+    getStepFromPos(ptr: TPtr, bytePos: number): Pwr<number>;
 
     /** Get the start byte positions for each step, does not consume the ptr */
-    getStepBytePositions(ptr: number): Pwr<Uint32Array>;
+    getStepBytePositions(ptr: TPtr): Pwr<Uint32Array>;
 
     // === run/task api ===
 
     /** Make a new task handle and returns the ptr to it (that must be freed) */
-    makeTaskHandle(): Pwr<number>;
+    makeTaskHandle(): Pwr<TPtr>;
 
     /**
      * Request aborting a task
      *
      * Consumes the task handle ptr.
      */
-    abortTask(ptr: number): void;
+    abortTask(ptr: TPtr): void;
 
     /**
      * Take the parse output and execute it.
@@ -87,21 +92,21 @@ export interface NativeApi {
      * Consumes both pointers. Returns a ptr to the run output (that must be freed)
      */
     runParsed(
-        parsedOutputPtr: number,
-        taskHandlePtr: number,
-        notifyFn: (upToBytePos: number, outputPtr: number) => Promise<void>,
-    ): Pwr<MaybeAborted<number>>;
+        parsedOutputPtr: TPtr,
+        taskHandlePtr: TPtr,
+        notifyFn: (upToBytePos: number, outputPtr: TPtr) => Promise<void>,
+    ): Pwr<MaybeAborted<TPtr>>;
 
     /** Get the errors from the run output. Does not consume the ptr */
-    getRunErrors(ptr: number): Pwr<ErrorReport<RuntimeError>[]>;
+    getRunErrors(ptr: TPtr): Pwr<ErrorReport<RuntimeError>[]>;
 
     /**
      * Get the Pouch inventory view for the given byte position in the script.
      * Does not consume either ptr.
      */
     getPouchList(
-        runOutputPtr: number,
-        parseOutputPtr: number,
+        runOutputPtr: TPtr,
+        parseOutputPtr: TPtr,
         bytePos: number,
     ): Pwr<Result<InvView_PouchList, RuntimeViewError>>;
 
@@ -111,8 +116,8 @@ export interface NativeApi {
      * TODO: error type
      */
     getGdtInventory(
-        runOutputPtr: number,
-        parseOutputPtr: number,
+        runOutputPtr: TPtr,
+        parseOutputPtr: TPtr,
         bytePos: number,
     ): Pwr<Result<InvView_Gdt, RuntimeViewError>>;
 
@@ -121,8 +126,8 @@ export interface NativeApi {
      * Does not consume either ptr.
      */
     getOverworldItems(
-        runOutputPtr: number,
-        parseOutputPtr: number,
+        runOutputPtr: TPtr,
+        parseOutputPtr: TPtr,
         bytePos: number,
     ): Pwr<Result<InvView_Overworld, RuntimeViewError>>;
 
@@ -131,72 +136,63 @@ export interface NativeApi {
      * Does not consume either ptr. Returns empty string if no crash
      */
     getCrashInfo(
-        runOutputPtr: number,
-        parseOutputPtr: number,
+        runOutputPtr: TPtr,
+        parseOutputPtr: TPtr,
         bytePos: number,
     ): Pwr<string>;
 
     // === ref counting api ===
 
-    addRefNativeHandle(ptr: number): Promise<number>;
-    freeNativeHandle(ptr: number): Promise<void>;
-    addRefParseOutput(ptr: number): Promise<number>;
-    freeParseOutput(ptr: number): Promise<void>;
-    addRefRunOutput(ptr: number): Promise<number>;
-    freeRunOutput(ptr: number): Promise<void>;
+    addRefNativeHandle(ptr: TPtr): Promise<TPtr>;
+    freeNativeHandle(ptr: TPtr): Promise<void>;
+    addRefParseOutput(ptr: TPtr): Promise<TPtr>;
+    freeParseOutput(ptr: TPtr): Promise<void>;
+    addRefRunOutput(ptr: TPtr): Promise<TPtr>;
+    freeRunOutput(ptr: TPtr): Promise<void>;
 }
 
 const NativeHandle = Symbol("NativeHandle");
 export type NativeHandle = typeof NativeHandle;
-let makeNativeHandleErcImpl: (
-    ptr: number | undefined,
-) => AsyncErc<NativeHandle>;
-
 const RunOutput = Symbol("RunOutput");
 export type RunOutput = typeof RunOutput;
-let makeRunOutputErcImpl: (ptr: number | undefined) => AsyncErc<RunOutput>;
-
 const ParseOutput = Symbol("ParseOutput");
 export type ParseOutput = typeof ParseOutput;
-let makeParseOutputErcImpl: (ptr: number | undefined) => AsyncErc<ParseOutput>;
 
-export const initExternalRefCountTypes = once({
-    fn: (api: NativeApi) => {
-        makeNativeHandleErcImpl = makeAsyncErcType<NativeHandle, number>({
+/** Factory type to create Erc (Externally-RefCounted) pointers */
+export type NativeErcFactory<TPtr> = {
+    readonly nullptr: TPtr; // get the nullptr value to pass into native function as fallback when Erc has undefined value
+    readonly makeNativeHandleErc: ReturnType<
+        typeof makeAsyncErcType<NativeHandle, TPtr>
+    >;
+    readonly makeRunOutputErc: ReturnType<
+        typeof makeAsyncErcType<RunOutput, TPtr>
+    >;
+    readonly makeParseOutputErc: ReturnType<
+        typeof makeAsyncErcType<ParseOutput, TPtr>
+    >;
+};
+
+/** Bind the ref counting API to a Erc factory */
+export const createNativeErcFactory = <TPtr>(
+    nullptr: TPtr,
+    napi: NativeApiFunctions<TPtr>,
+): NativeErcFactory<TPtr> => {
+    return {
+        nullptr,
+        makeNativeHandleErc: makeAsyncErcType<NativeHandle, TPtr>({
             marker: NativeHandle,
-            free: (ptr: number) => api.freeNativeHandle(ptr),
-            addRef: (ptr: number) => api.addRefNativeHandle(ptr),
-        });
-        makeParseOutputErcImpl = makeAsyncErcType<ParseOutput, number>({
-            marker: ParseOutput,
-            free: (ptr: number) => api.freeParseOutput(ptr),
-            addRef: (ptr: number) => api.addRefParseOutput(ptr),
-        });
-        makeRunOutputErcImpl = makeAsyncErcType<RunOutput, number>({
+            free: (ptr: TPtr) => napi.freeNativeHandle(ptr),
+            addRef: (ptr: TPtr) => napi.addRefNativeHandle(ptr),
+        }),
+        makeRunOutputErc: makeAsyncErcType<RunOutput, TPtr>({
             marker: RunOutput,
-            free: (ptr: number) => api.freeRunOutput(ptr),
-            addRef: (ptr: number) => api.addRefRunOutput(ptr),
-        });
-    },
-});
-
-export const makeNativeHandleErc = (ptr: number | undefined) => {
-    if (!makeNativeHandleErcImpl) {
-        throw new Error("Erc types not initialized");
-    }
-    return makeNativeHandleErcImpl(ptr);
-};
-
-export const makeParseOutputErc = (ptr: number | undefined) => {
-    if (!makeParseOutputErcImpl) {
-        throw new Error("Erc types not initialized");
-    }
-    return makeParseOutputErcImpl(ptr);
-};
-
-export const makeRunOutputErc = (ptr: number | undefined) => {
-    if (!makeRunOutputErcImpl) {
-        throw new Error("Erc types not initialized");
-    }
-    return makeRunOutputErcImpl(ptr);
+            free: (ptr: TPtr) => napi.freeRunOutput(ptr),
+            addRef: (ptr: TPtr) => napi.addRefRunOutput(ptr),
+        }),
+        makeParseOutputErc: makeAsyncErcType<ParseOutput, TPtr>({
+            marker: ParseOutput,
+            free: (ptr: TPtr) => napi.freeParseOutput(ptr),
+            addRef: (ptr: TPtr) => napi.addRefParseOutput(ptr),
+        }),
+    };
 };

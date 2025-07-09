@@ -14,54 +14,53 @@ import {
     type NativeApi,
     type ParseOutput,
     type RunOutput,
-    makeRunOutputErc,
-} from "./NativeApi.ts";
-import type { ParseMgr } from "./ParseMgr.ts";
+} from "./native_api.ts";
+import type { ParseMgr } from "./parse_mgr.ts";
 import {
     type Pwr,
     type WorkerError,
     abortedError,
     nullptrError,
-} from "./Error.ts";
+} from "./error.ts";
 import type { TaskMgr } from "./task_mgr.ts";
 import { log } from "./util.ts";
-import { crashApplication } from "./AppCall.ts";
+import { crashApplication } from "./app_call.ts";
 
-type RunAwaiter = {
+type RunAwaiter<TPtr> = {
     /** Resolve function to take the output */
-    resolve: (x: Result<AsyncErc<RunOutput>, WorkerError>) => void;
+    resolve: (x: Result<AsyncErc<RunOutput, TPtr>, WorkerError>) => void;
     /** Task handle id for this run task */
     taskId: string;
     /** Byte pos to execute until for this task */
     executeToBytePos: number;
 };
 
-class RunContext {
-    awaiters: RunAwaiter[];
+class RunContext<TPtr> {
+    awaiters: RunAwaiter<TPtr>[];
     nativeHandleId: number;
     lastNotifyBytePos: number; // -1 means not notified yet
-    lastNotifyOutputErc: AsyncErc<RunOutput>;
+    lastNotifyOutputErc: AsyncErc<RunOutput, TPtr>;
 
-    constructor(nativeHandleId: number) {
+    constructor(napi: NativeApi<TPtr>, nativeHandleId: number) {
         this.awaiters = [];
         this.nativeHandleId = nativeHandleId;
         this.lastNotifyBytePos = -1;
-        this.lastNotifyOutputErc = makeRunOutputErc(undefined);
+        this.lastNotifyOutputErc = napi.makeRunOutputErc(undefined);
     }
 
     /** Returns false if the underlying native task was already disposed */
     startAwaitingTask(
-        taskMgr: TaskMgr,
+        taskMgr: TaskMgr<TPtr>,
         taskId: string,
         bytePos: number,
-    ): Pwr<AsyncErc<RunOutput>> | undefined {
+    ): Pwr<AsyncErc<RunOutput, TPtr>> | undefined {
         taskMgr.registerTask(taskId);
         if (!taskMgr.addNativeHandleDependency(taskId, this.nativeHandleId)) {
             taskMgr.unregisterTask(taskId);
             return undefined;
         }
         const outputPromise = new Promise<
-            Result<AsyncErc<RunOutput>, WorkerError>
+            Result<AsyncErc<RunOutput, TPtr>, WorkerError>
         >((resolve) => {
             this.awaiters.push({
                 resolve,
@@ -72,7 +71,7 @@ class RunContext {
         return outputPromise;
     }
 
-    async areAllTasksAborted(taskMgr: TaskMgr): Promise<boolean> {
+    async areAllTasksAborted(taskMgr: TaskMgr<TPtr>): Promise<boolean> {
         if (this.awaiters.length === 0) {
             // awaiters should never be 0
             // since the triggering task is added as an awaiter
@@ -92,29 +91,33 @@ class RunContext {
 }
 
 /** Manages caching and batching run (execute) calls */
-export class RunMgr {
-    private napi: NativeApi;
-    private parseMgr: ParseMgr;
-    private taskMgr: TaskMgr;
+export class RunMgr<TPtr> {
+    private napi: NativeApi<TPtr>;
+    private parseMgr: ParseMgr<TPtr>;
+    private taskMgr: TaskMgr<TPtr>;
 
     /**
      * Context of the run that is currently running
      * (or undefined if no run is running)
      */
-    private runContext: RunContext | undefined;
+    private runContext: RunContext<TPtr> | undefined;
 
     private lastScript: string;
     private serial: number;
-    private cachedErc: AsyncErc<RunOutput>;
+    private cachedErc: AsyncErc<RunOutput, TPtr>;
 
-    constructor(napi: NativeApi, parseMgr: ParseMgr, taskMgr: TaskMgr) {
+    constructor(
+        napi: NativeApi<TPtr>,
+        parseMgr: ParseMgr<TPtr>,
+        taskMgr: TaskMgr<TPtr>,
+    ) {
         this.napi = napi;
         this.taskMgr = taskMgr;
         this.parseMgr = parseMgr;
         this.runContext = undefined;
         this.lastScript = "";
         this.serial = 1;
-        this.cachedErc = makeRunOutputErc(undefined);
+        this.cachedErc = napi.makeRunOutputErc(undefined);
     }
 
     /**
@@ -125,7 +128,7 @@ export class RunMgr {
         script: string,
         taskId: string,
         executeToBytePos: number,
-        fn: (parseOutputBorrowed: number, runOutputBorrowed: number) => Pwr<T>,
+        fn: (parseOutputBorrowed: TPtr, runOutputBorrowed: TPtr) => Pwr<T>,
     ): Pwr<T> {
         const parseOutput = await this.parseMgr.parseScript(script);
         if (parseOutput.err) {
@@ -165,8 +168,8 @@ export class RunMgr {
         script: string,
         taskId: string,
         executeToBytePos: number,
-        parseOutputErc: AsyncErc<ParseOutput>,
-    ): Pwr<AsyncErc<RunOutput>> {
+        parseOutputErc: AsyncErc<ParseOutput, TPtr>,
+    ): Pwr<AsyncErc<RunOutput, TPtr>> {
         const isScriptUpToDate = this.lastScript === script;
         if (
             this.cachedErc.value !== undefined &&
@@ -221,8 +224,8 @@ export class RunMgr {
         script: string,
         taskId: string,
         executeToBytePos: number,
-        parseOutputErc: AsyncErc<ParseOutput>,
-    ): Pwr<AsyncErc<RunOutput>> {
+        parseOutputErc: AsyncErc<ParseOutput, TPtr>,
+    ): Pwr<AsyncErc<RunOutput, TPtr>> {
         log.debug(`${taskId}\ntriggering script execution`);
         this.lastScript = script;
         // make a new context for this run
@@ -248,7 +251,8 @@ export class RunMgr {
         }
         this.runContext = thisContext;
 
-        let output: Awaited<Pwr<AsyncErc<RunOutput>>> | undefined = undefined;
+        let output: Awaited<Pwr<AsyncErc<RunOutput, TPtr>>> | undefined =
+            undefined;
         let fullRunPromise: Promise<void> | undefined = undefined;
         try {
             fullRunPromise = this.executeScriptInternal(
@@ -292,8 +296,8 @@ export class RunMgr {
      */
     private async executeScriptInternal(
         triggeringTaskId: string,
-        parseOutputErc: AsyncErc<ParseOutput>,
-        thisContext: RunContext,
+        parseOutputErc: AsyncErc<ParseOutput, TPtr>,
+        thisContext: RunContext<TPtr>,
     ): Promise<void> {
         this.serial++;
         const thisSerial = this.serial;
@@ -309,7 +313,7 @@ export class RunMgr {
 
         // Take it out of Erc, we will free it manually (by passing it into runParsed)
         const parseOutputRaw = parseOutputErc.take();
-        let outputRaw: number | undefined = undefined;
+        let outputRaw: TPtr | undefined = undefined;
         // shouldn't be possible, but we will just return nullptr if parseoutput is null
         if (parseOutputRaw) {
             const stepCount = await this.napi.getStepCount(parseOutputRaw);
@@ -338,9 +342,9 @@ export class RunMgr {
             // should be fine since the native has redundant null checks
             const outputResult = await this.napi.runParsed(
                 parseOutputRaw,
-                nativeHandleErc.take() || 0,
+                nativeHandleErc.take() || this.napi.nullptr,
                 async (upToBytePos, outputRaw) => {
-                    const outputErc = makeRunOutputErc(outputRaw);
+                    const outputErc = this.napi.makeRunOutputErc(outputRaw);
                     const awaiters = thisContext.awaiters;
                     thisContext.awaiters = [];
                     for (const x of awaiters) {
@@ -402,7 +406,7 @@ export class RunMgr {
             log.warn(`${PREFIX}\nparser output is empty, not executing`);
         }
 
-        let returnStrongErc: AsyncErc<RunOutput>;
+        let returnStrongErc: AsyncErc<RunOutput, TPtr>;
         // update cached result if we are the latest run
         if (thisSerial === this.serial) {
             log.info(`${PREFIX}\nsaving execution result to cache`);
@@ -410,7 +414,7 @@ export class RunMgr {
             await this.cachedErc.assign(outputRaw);
             returnStrongErc = await this.cachedErc.getStrong();
         } else {
-            returnStrongErc = makeRunOutputErc(outputRaw);
+            returnStrongErc = this.napi.makeRunOutputErc(outputRaw);
         }
 
         // resolve remaining awaiters
@@ -427,13 +431,15 @@ export class RunMgr {
         void this.cachedErc.free();
     }
 
-    private async makeNewRunContext(requestingTaskId: string): Pwr<RunContext> {
+    private async makeNewRunContext(
+        requestingTaskId: string,
+    ): Pwr<RunContext<TPtr>> {
         const nativeHandleId =
             await this.taskMgr.registerNativeHandle(requestingTaskId);
         if (nativeHandleId.err) {
             return nativeHandleId;
         }
-        return { val: new RunContext(nativeHandleId.val) };
+        return { val: new RunContext(this.napi, nativeHandleId.val) };
     }
 
     /* === below are bindings for runtime API === */

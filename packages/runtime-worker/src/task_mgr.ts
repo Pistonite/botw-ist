@@ -1,12 +1,8 @@
 import type { AsyncErc } from "@pistonite/pure/memory";
 import { idgen } from "@pistonite/pure/memory";
 
-import {
-    makeNativeHandleErc,
-    type NativeApi,
-    type NativeHandle,
-} from "./NativeApi.ts";
-import type { Pwr } from "./Error.ts";
+import type { NativeApi, NativeHandle } from "./native_api.ts";
+import type { Pwr } from "./error.ts";
 import { log } from "./util.ts";
 
 const getNextNativeHandleId = idgen();
@@ -33,13 +29,13 @@ const getNextNativeHandleId = idgen();
  * for the native task to abort. This is to accommodate messaging delay
  * from the app.
  */
-export class TaskMgr {
-    private napi: NativeApi;
+export class TaskMgr<TPtr> {
+    private napi: NativeApi<TPtr>;
     private tasks: Map<string, TaskContainer>;
     /** Map from ID to native handle */
-    private nativeHandles: Map<number, NativeHandleContainer>;
+    private nativeHandles: Map<number, NativeHandleContainer<TPtr>>;
 
-    constructor(napi: NativeApi) {
+    constructor(napi: NativeApi<TPtr>) {
         this.napi = napi;
         this.tasks = new Map();
         this.nativeHandles = new Map();
@@ -62,7 +58,7 @@ export class TaskMgr {
         const container = new NativeHandleContainer(
             this.napi,
             id,
-            makeNativeHandleErc(raw.val),
+            this.napi.makeNativeHandleErc(raw.val),
         );
         this.nativeHandles.set(id, container);
         return { val: id };
@@ -153,10 +149,10 @@ export class TaskMgr {
     /** Get a strong reference to native handle by its id */
     public async getNativeHandle(
         nativeHandleId: number,
-    ): Promise<AsyncErc<NativeHandle>> {
+    ): Promise<AsyncErc<NativeHandle, TPtr>> {
         const container = this.nativeHandles.get(nativeHandleId);
         if (!container) {
-            return makeNativeHandleErc(undefined);
+            return this.napi.makeNativeHandleErc(undefined);
         }
         return await container.getHandle();
     }
@@ -227,17 +223,21 @@ type TaskContainer = {
     nativeHandleId: number | undefined;
 };
 
-class NativeHandleContainer {
-    private napi: NativeApi;
+class NativeHandleContainer<TPtr> {
+    private napi: NativeApi<TPtr>;
     /** Id of this native handle */
     private id: number;
     /** The handle used to abort task running in native code */
-    private handle: AsyncErc<NativeHandle>;
+    private handle: AsyncErc<NativeHandle, TPtr>;
     /** The tasks that currently depend on the native task */
     private owningTaskIds: string[];
     private isAbortingNativeTaskScheduled: boolean;
 
-    constructor(napi: NativeApi, id: number, handle: AsyncErc<NativeHandle>) {
+    constructor(
+        napi: NativeApi<TPtr>,
+        id: number,
+        handle: AsyncErc<NativeHandle, TPtr>,
+    ) {
         this.napi = napi;
         this.id = id;
         this.handle = handle;
@@ -260,7 +260,7 @@ class NativeHandleContainer {
         this.owningTaskIds.push(id);
     }
 
-    public getHandle(): Promise<AsyncErc<NativeHandle>> {
+    public getHandle(): Promise<AsyncErc<NativeHandle, TPtr>> {
         return this.handle.getStrong();
     }
 
