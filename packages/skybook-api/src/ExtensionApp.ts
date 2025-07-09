@@ -79,10 +79,7 @@ export interface ExtensionApp {
      * In case of scheduling issues, make sure the new task starts running
      * before canceling the previous one
      */
-    requestNewTaskIds(
-        uniqueId: string,
-        count: number,
-    ): WxPromise<[string[], string[]]>;
+    requestNewTaskIds(uniqueId: string, count: number): WxPromise<string[]>;
 
     /** Cancel previous requests made to the runtime */
     cancelRuntimeTasks(taskId: string[]): WxPromise<void>;

@@ -141,8 +141,8 @@ export class _wxSenderImpl implements ExtensionApp {
      * In case of scheduling issues, make sure the new task starts running
      * before canceling the previous one
      */
-    public requestNewTaskIds( uniqueId: string, count: number ): WxPromise<[string[], string[]]> {
-        return this.sender.send<[string[], string[]]>(32 /* ExtensionApp.requestNewTaskIds */, [ uniqueId, count ]);
+    public requestNewTaskIds( uniqueId: string, count: number ): WxPromise<string[]> {
+        return this.sender.send<string[]>(32 /* ExtensionApp.requestNewTaskIds */, [ uniqueId, count ]);
     }
 
     /**
