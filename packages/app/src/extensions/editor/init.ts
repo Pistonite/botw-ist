@@ -1,10 +1,14 @@
 import { initCodeEditor, type LanguageClient } from "@pistonite/intwc";
-import { once } from "@pistonite/pure/sync";
 
 import type { ExtensionApp } from "@pistonite/skybook-api";
 
 import { language, configuration } from "./language.ts";
-import { provideDiagnostics } from "./marker.ts";
+import {
+    mergeDataByReplace,
+    provideParserDiagnostics,
+    type Provider,
+    provideRuntimeDiagnostics,
+} from "./marker.ts";
 import { legend, provideSemanticTokens } from "./semantic.ts";
 
 let theApp: ExtensionApp | undefined;
@@ -33,21 +37,43 @@ const CustomLanguageOptions: LanguageClient = {
     getExtensions: () => [".skyb"],
     getTokenizer: () => language,
     getConfiguration: () => configuration,
-    // the parser and runtime can both produce diagnostics
-    getMarkerOwners: () => ["parser", "runtime"],
-    provideMarkers: (model, owner) => {
-        if (!theApp) {
-            return undefined;
-        }
-        return provideDiagnostics(theApp, model, owner);
+    getDiagnosticProviders: () => [
+        ParserDiagnosticProvider,
+        RuntimeDiagnosticProvider,
+    ],
+    getSemanticTokensProvider: () => {
+        return {
+            legend,
+            provideDocumentRangeSemanticTokens: (model, range, token) => {
+                if (!theApp) {
+                    return undefined;
+                }
+                return provideSemanticTokens(theApp, model, range, token);
+            },
+        };
     },
-    getSemanticTokensLegend: () => legend,
-    provideDocumentRangeSemanticTokens: (model, range, token) => {
+};
+
+export const ParserDiagnosticProvider: Provider = {
+    ownerId: "parser",
+    newRequest: async (_filename, _model, script) => {
         if (!theApp) {
-            return undefined;
+            return [];
         }
-        return provideSemanticTokens(theApp, model, range, token);
+        return await provideParserDiagnostics(theApp, script);
     },
+    mergeData: mergeDataByReplace,
+};
+
+export const RuntimeDiagnosticProvider: Provider = {
+    ownerId: "runtime",
+    newRequest: async (_filename, _model, script, charPos) => {
+        if (!theApp) {
+            return [];
+        }
+        return await provideRuntimeDiagnostics(theApp, script, charPos);
+    },
+    mergeData: mergeDataByReplace,
 };
 
 /** Token colors for special tokens in skybook script */
@@ -71,15 +97,13 @@ const CustomTokenColors = [
 ];
 
 /** Initialize the code editor framework for this window */
-export const init = once({
-    fn: () => {
-        initCodeEditor({
-            language: {
-                custom: [CustomLanguageOptions],
-            },
-            theme: {
-                customTokenColors: CustomTokenColors,
-            },
-        });
-    },
-});
+export const init = () => {
+    return initCodeEditor({
+        language: {
+            custom: [CustomLanguageOptions],
+        },
+        theme: {
+            customTokenColors: CustomTokenColors,
+        },
+    });
+};

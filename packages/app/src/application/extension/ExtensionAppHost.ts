@@ -40,7 +40,7 @@ export const getExtensionAppHost = () => {
 };
 
 class ExtensionAppHost implements ExtensionApp {
-    private taskIdMap: Map<string, string>;
+    private taskIdMap: Map<string, string[]>;
 
     constructor(private runtime: Runtime) {
         this.taskIdMap = new Map();
@@ -124,25 +124,61 @@ class ExtensionAppHost implements ExtensionApp {
         return { val: tokens.val };
     }
 
-    public async requestNewTaskId(uniqueId: string): WxPromise<string> {
-        const oldTaskId = this.taskIdMap.get(uniqueId);
-        if (oldTaskId !== undefined) {
-            await this.cancelRuntimeTask(oldTaskId);
-        }
-        const newTaskId = makeUUID();
-        this.taskIdMap.set(uniqueId, newTaskId);
-        return { val: newTaskId };
+    public async getStepBytePositions(script: string): WxPromise<Uint32Array> {
+        return await this.runtime.getStepBytePositions(script);
     }
 
-    public async cancelRuntimeTask(taskId: string): WxPromise<void> {
-        return await this.runtime.abortTask(taskId);
+    public async getStepCharPositions(script: string): WxPromise<Uint32Array> {
+        const bytePositions = await this.runtime.getStepBytePositions(script);
+        if (bytePositions.err) {
+            return bytePositions;
+        }
+        const array = bytePositions.val;
+        const len = array.length;
+        const bytePosToCharPos = createBytePosToCharPosArray(script);
+        for (let i = 0; i < len; i++) {
+            array[i] = bytePosToCharPos[array[i]];
+        }
+        return { val: array };
+    }
+
+    public async requestNewTaskIds(
+        uniqueId: string,
+        count: number,
+    ): WxPromise<string[]> {
+        const oldTaskIds = this.taskIdMap.get(uniqueId);
+        const newTaskIds = Array.from({ length: count }).map(() => makeUUID());
+        this.taskIdMap.set(uniqueId, newTaskIds);
+        if (oldTaskIds?.length) {
+            void this.cancelRuntimeTasks(oldTaskIds);
+        }
+        return { val: newTaskIds };
+    }
+
+    public async cancelRuntimeTasks(taskId: string[]): WxPromise<void> {
+        const promises = taskId.map((x) => this.runtime.abortTask(x));
+        // eat all the errors
+        await Promise.all(promises);
+        return {};
     }
 
     public async provideRuntimeDiagnostics(
         script: string,
         taskId: string,
     ): WxPromise<MaybeAborted<Diagnostic[]>> {
-        const result = await this.runtime.getRuntimeDiagnostics(script, taskId);
+        return await this.providePartialRuntimeDiagnostics(script, taskId, -1);
+    }
+
+    public async providePartialRuntimeDiagnostics(
+        script: string,
+        taskId: string,
+        bytePos: number,
+    ): WxPromise<MaybeAborted<Diagnostic[]>> {
+        const result = await this.runtime.getRuntimeDiagnostics(
+            script,
+            taskId,
+            bytePos,
+        );
         return mapMaybeAbortedResult(result, (value) => {
             return errorReportsToDiagnostics(
                 script,

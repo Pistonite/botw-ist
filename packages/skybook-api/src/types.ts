@@ -72,10 +72,3 @@ export type RuntimeWorkerInitError =
           type: "SaveImage";
       }
     | RuntimeInitError;
-
-export type PerformanceData = {
-    /** Instructions per second */
-    ips: number;
-    /** Steps per second */
-    sps: number;
-};

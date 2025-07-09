@@ -17,7 +17,7 @@ async function boot() {
     const wapi = new WasmApi();
     await wapi.initWasmModule();
     await initExternalRefCountTypes(wapi);
-    const taskMgr = new TaskMgr(wapi, 2); // 2 threads for now
+    const taskMgr = new TaskMgr(wapi);
     const parseMgr = new ParseMgr(wapi);
     const runMgr = new RunMgr(wapi, parseMgr, taskMgr);
 

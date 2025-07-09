@@ -198,6 +198,19 @@ pub fn get_step_from_pos(parse_output_ref: *const ParseOutput, pos: usize) -> us
     parse_output.step_idx_from_pos(pos).unwrap_or_default()
 }
 
+/// Get the starting index for each step
+///
+/// ## Pointer Ownership
+/// Borrows the ParseOutput pointer.
+#[wasm_bindgen]
+pub fn get_step_byte_positions(parse_output_ref: *const ParseOutput) -> Vec<u32> {
+    if parse_output_ref.is_null() {
+        return vec![];
+    }
+    let parse_output = unsafe { &*parse_output_ref };
+    parse_output.steps.iter().map(|x| x.pos() as u32).collect()
+}
+
 ////////// Runtime //////////
 
 /// Make a run handle that you can pass back into run_parsed
@@ -238,6 +251,7 @@ pub async fn run_parsed(
     });
     let output = run
         .run_parsed_with_notify(parse_output, &runtime, |up_to_byte_pos, output| {
+            // this pointer is leaked to the JS side to be externally managed
             let output_ptr = Arc::into_raw(Arc::new(output.clone())) as usize;
             let result = notify_fn.call2(
                 &JsValue::undefined(),

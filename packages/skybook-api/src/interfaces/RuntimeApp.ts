@@ -7,7 +7,7 @@
 import type { RuntimeApp } from "../RuntimeApp.ts";
 
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
-import type { ItemSearchResult, PerformanceData } from "../types.ts";
+import type { ItemSearchResult } from "../types.ts";
 
 /*
  * These generated implementations are used internally by other generated code.
@@ -28,7 +28,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * Signal the application to crash because unrecoverable error occurred in the runtime
      */
     public crashApplication( ): WxPromise<void> {
-        return this.sender.sendVoid(43 /* RuntimeApp.crashApplication */, [ ]);
+        return this.sender.sendVoid(48 /* RuntimeApp.crashApplication */, [ ]);
     }
 
     /**
@@ -43,7 +43,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * in which case the runtime initialization will fail.
      */
     public getCustomBlueFlameImage( ): WxPromise<Uint8Array | undefined> {
-        return this.sender.send<Uint8Array | undefined>(44 /* RuntimeApp.getCustomBlueFlameImage */, [ ]);
+        return this.sender.send<Uint8Array | undefined>(49 /* RuntimeApp.getCustomBlueFlameImage */, [ ]);
     }
 
     /**
@@ -52,14 +52,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * or no match.
      */
     public resolveQuotedItem( query: string ): WxPromise<ItemSearchResult | undefined> {
-        return this.sender.send<ItemSearchResult | undefined>(45 /* RuntimeApp.resolveQuotedItem */, [ query ]);
-    }
-
-    /**
-     * Send latest performance data to the app
-     */
-    public updatePerfData( data: PerformanceData ): WxPromise<void> {
-        return this.sender.sendVoid(46 /* RuntimeApp.updatePerfData */, [ data ]);
+        return this.sender.send<ItemSearchResult | undefined>(50 /* RuntimeApp.resolveQuotedItem */, [ query ]);
     }
 }
 
@@ -68,19 +61,15 @@ export class _wxSenderImpl implements RuntimeApp {
  */
 export const _wxRecverImpl = (handler: RuntimeApp): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 43 /* RuntimeApp.crashApplication */: {
+        case 48 /* RuntimeApp.crashApplication */: {
             return handler.crashApplication();
         }
-        case 44 /* RuntimeApp.getCustomBlueFlameImage */: {
+        case 49 /* RuntimeApp.getCustomBlueFlameImage */: {
             return handler.getCustomBlueFlameImage();
         }
-        case 45 /* RuntimeApp.resolveQuotedItem */: {
+        case 50 /* RuntimeApp.resolveQuotedItem */: {
             const [ a0 ] = args;
             return handler.resolveQuotedItem( a0 );
-        }
-        case 46 /* RuntimeApp.updatePerfData */: {
-            const [ a0 ] = args;
-            return handler.updatePerfData( a0 );
         }
     } return Promise.resolve({ err: { code: "UnknownFunction" } }); }) as WxBusRecvHandler;
 };

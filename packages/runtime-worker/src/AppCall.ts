@@ -3,11 +3,7 @@
 import { LRUCache } from "lru-cache";
 import { wxMakePromise } from "@pistonite/workex";
 
-import type {
-    ItemSearchResult,
-    PerformanceData,
-    RuntimeApp,
-} from "@pistonite/skybook-api";
+import type { ItemSearchResult, RuntimeApp } from "@pistonite/skybook-api";
 
 import type { QuotedItemResolverFn } from "./NativeApi.ts";
 
@@ -45,10 +41,6 @@ export const resolveQuotedItem: QuotedItemResolverFn = async (query) => {
 
 export const getCustomBlueFlameImage = async () => {
     return (await appPromise).getCustomBlueFlameImage();
-};
-
-export const sendPerfData = async (data: PerformanceData) => {
-    return (await appPromise).updatePerfData(data);
 };
 
 export const crashApplication = async () => {

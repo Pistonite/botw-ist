@@ -64,6 +64,9 @@ export interface NativeApi {
      */
     getStepFromPos(ptr: number, bytePos: number): Pwr<number>;
 
+    /** Get the start byte positions for each step, does not consume the ptr */
+    getStepBytePositions(ptr: number): Pwr<Uint32Array>;
+
     // === run/task api ===
 
     /** Make a new task handle and returns the ptr to it (that must be freed) */

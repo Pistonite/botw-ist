@@ -71,9 +71,13 @@ export type SessionStore = {
     /** Current step index of the active selection */
     stepIndex: number;
     setStepIndex: (stepIndex: number) => void;
-    initiallyExecuted: boolean;
-    executionInProgress: boolean;
-    setExecutionInProgress: (inProgress: boolean) => void;
+    /**
+     * Currently active background script execution ID
+     * usually, non-empty means a run is being executed
+     * in the background
+     */
+    inProgressTaskId: string;
+    setInProgressTaskId: (id: string) => void;
 
     // The inventory view errors (RuntimeViewError) is not an error in the app
     // It's expected if the simulation corrupted the game in some way
@@ -247,14 +251,9 @@ export const useSessionStore = create<SessionStore>()((set) => {
             set({ stepIndex });
         },
 
-        initiallyExecuted: false,
-        executionInProgress: false,
-        setExecutionInProgress: (inProgress) => {
-            if (inProgress) {
-                set({ executionInProgress: true, initiallyExecuted: true });
-            } else {
-                set({ executionInProgress: false });
-            }
+        inProgressTaskId: "",
+        setInProgressTaskId: (id) => {
+            set({ inProgressTaskId: id });
         },
 
         pouchCached: [],

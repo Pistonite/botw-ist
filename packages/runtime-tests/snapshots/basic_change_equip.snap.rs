@@ -8,7 +8,7 @@ runtime error: : cannot find this item to unequip from quick menu
 -----
 trav-sword
 -----
-runtime error: : cannot find this item in inventory (need `1` more)
+runtime error: : cannot find this item in inventory
   span: 282..288
 -----
 weapon

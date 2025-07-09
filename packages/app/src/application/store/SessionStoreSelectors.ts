@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import type { WxPromise } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";
+import { logger } from "@pistonite/pure/log";
 import { v4 as makeUUID } from "uuid";
 
 import type {
@@ -17,6 +18,8 @@ import { translateGenericError } from "skybook-localization";
 import { useRuntime } from "self::application/runtime";
 
 import { useSessionStore } from "./SessionStore.ts";
+
+const log = logger("app-rtux", "#8B5902").default();
 
 /**
  * Get the debounced value of hasUnsavedChanges of the session
@@ -130,7 +133,6 @@ const useStoreCachedRuntimeData = <T>(
         useSessionStore((state) => state.activeScript),
         100,
     );
-    const inProgress = useSessionStore((state) => state.executionInProgress);
     const stepIndex = useSessionStore((state) => state.stepIndex);
     const bytePos = useSessionStore((state) => state.bytePos);
 
@@ -159,10 +161,8 @@ const useStoreCachedRuntimeData = <T>(
                 bytePos,
             );
             if (stepIndex.err) {
-                console.error(
-                    `[rtux] ${name} failed. cannot get step index.`,
-                    stepIndex.err,
-                );
+                log.error(`${name}\nfailed because cannot get step index`);
+                log.error(stepIndex.err);
                 setErrorMessage(translateGenericError(stepIndex.err.message));
                 return;
             }
@@ -171,29 +171,24 @@ const useStoreCachedRuntimeData = <T>(
             }
             // we only need task id once we request the run
             taskId = makeUUID();
-            console.log(
-                `[rtux] starting task ${taskId} for ${name}, bytepos=${bytePos}`,
-            );
+            const PREFIX = `${taskId} ${name}`;
+            log.info(`${PREFIX}\nstarting for bytepos=${bytePos}`);
             const view = await runFn(runtime, taskId, activeScript, bytePos);
             // IPC error
             if (view.err) {
-                console.error(
-                    `[rtux] task ${taskId} for ${name} failed. IPC error.`,
-                    view.err,
-                );
+                log.error(`${name}\nfailed because of IPC error`);
+                log.error(view.err);
                 setErrorMessage(translateGenericError(view.err.message));
                 return;
             }
             if (view.val.type === "Aborted") {
-                console.warn(`[rtux] task ${taskId} for ${name} aborted`);
+                log.info(`${PREFIX}\naborted`);
                 return;
             }
             if (!isCurrent()) {
                 return;
             }
-            // TODO: when getting certain view, the runtime may return error
-            // if cannot get that view
-            console.log(`[rtux] task ${taskId} for ${name} succeeded`);
+            log.info(`${PREFIX}\nsucceeded`);
             const viewVal = view.val.value;
             setFn(stepIndex.val, viewVal);
         };
@@ -229,7 +224,7 @@ const useStoreCachedRuntimeData = <T>(
         // if state for current step is not ready,
         // display the per-component cache to avoid flickering
         data: inventory || inventoryViewCache.current,
-        loading: !cacheIsValid || inProgress,
+        loading: !cacheIsValid,
         error: errorMessage,
     };
 };

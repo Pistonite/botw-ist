@@ -1,4 +1,4 @@
-import type { Result } from "@pistonite/pure/result";
+import type { Result, Void } from "@pistonite/pure/result";
 
 import type { MaybeAborted } from "@pistonite/skybook-api";
 
@@ -25,11 +25,20 @@ export type WorkerError = {
 );
 
 export type Pwr<T> = Promise<Result<T, WorkerError>>;
+export type Pwv = Promise<Void<WorkerError>>;
 
 export const nullptrError = (message: string): WorkerError => ({
     type: "UnexpectedNullptr",
     message,
 });
+
+export const abortedError = () => {
+    return {
+        err: {
+            type: "Aborted",
+        } satisfies WorkerError,
+    } as const;
+};
 
 export const unwrap = <T>(result: Result<T, WorkerError>): T => {
     if (result.err) {

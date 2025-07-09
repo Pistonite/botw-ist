@@ -58,11 +58,24 @@ export interface Runtime {
     /** Get index of the step from byte position in the script */
     getStepFromPos(script: string, pos: number): WxPromise<number>;
 
+    /** Get the starting byte positions for each step */
+    getStepBytePositions(script: string): WxPromise<Uint32Array>;
+
     /** Abort a task by task id passed into one of the runtime functions that execute the script */
     abortTask(taskId: string): WxPromise<void>;
 
     /**
-     * Run the script and get diagnostics from the runtime.
+     * Trigger a script execution
+     *
+     * This isn't normally needed, if you just need to execute the script AND get output
+     * at some step. This is used by the app to make sure the script keeps running
+     * in the background if it didn't change.
+     */
+    executeScript(script: string, taskId: string): WxPromise<void>;
+
+    /**
+     * Run the script and get diagnostics from the runtime, up to and including
+     * the step containing the bytePos
      *
      * Note that the span in the errors are byte offsets, not character offsets.
      *
@@ -71,6 +84,7 @@ export interface Runtime {
     getRuntimeDiagnostics(
         script: string,
         taskId: string,
+        bytePos: number,
     ): WxPromise<MaybeAborted<ErrorReport<RuntimeError>[]>>;
 
     /**
