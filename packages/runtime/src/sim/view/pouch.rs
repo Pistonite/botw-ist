@@ -6,46 +6,10 @@ use blueflame::game::{
 use blueflame::memory::{self, Memory, Ptr, proxy};
 use blueflame::processor::Process;
 
-use crate::error::RuntimeViewError;
 use crate::iv;
 use crate::sim;
 
-macro_rules! try_mem {
-    ($op:expr, $error:ident, $format:literal) => {
-        match $op {
-            Ok(x) => x,
-            Err($error) => {
-                log::error!($format);
-                return Err(Error::Memory($error));
-            }
-        }
-    };
-}
-
-macro_rules! coherence_error {
-    ($($args:tt)*) => {{
-        let msg = format!($($args)*);
-        log::error!("{msg}");
-        return Err(Error::Coherence(msg));
-    }}
-}
-
-#[derive(Debug, PartialEq, thiserror::Error)]
-pub enum Error {
-    #[error("failed to read state from memory")]
-    Memory(blueflame::memory::Error),
-    #[error("coherence check failed when reading state")]
-    Coherence(String),
-}
-
-impl From<Error> for RuntimeViewError {
-    fn from(value: Error) -> Self {
-        match value {
-            Error::Memory(_) => Self::Memory,
-            Error::Coherence(_) => Self::Coherence,
-        }
-    }
-}
+use super::{Error, coherence_error, try_mem};
 
 /// Temporary helper struct to help us reason the coherence of PMDM
 struct ItemPtrData {

@@ -1,4 +1,4 @@
-use crate::game::{FixedSafeString40, ListNode, OffsetList};
+use crate::game::{FixedSafeString40, ListNode, OffsetList, gdt};
 use crate::memory::{self, MemObject, Memory, Ptr, mem, offsetof};
 
 #[derive(MemObject, Clone)]
@@ -369,4 +369,13 @@ pub enum PouchCategory {
     Food = 0x5,
     KeyItem = 0x6,
     Invalid = -1,
+}
+
+impl gdt::FlagIndex for PouchCategory {
+    fn to_index(self) -> Option<usize> {
+        match self {
+            Self::Invalid => None,
+            _ => Some(self as usize),
+        }
+    }
 }
