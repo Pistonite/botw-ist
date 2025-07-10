@@ -41,7 +41,7 @@ pmdm-addr = 0x34500000
 `),
         ).toEqual({
             lines: [2, 9],
-            image: "1.5",
+            image: "1.5.0",
             params: {
                 dlc: 3,
                 programStart: "0x0000000034500000",
