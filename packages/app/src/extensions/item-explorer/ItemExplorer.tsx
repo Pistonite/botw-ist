@@ -20,7 +20,7 @@ import {
 } from "skybook-item-system";
 
 import { Code, Interpolate } from "self::ui/components";
-import { useStyleEngine } from "self::ui/functions";
+import { useStyleEngine } from "self::util";
 
 export type Searcher = {
     search(

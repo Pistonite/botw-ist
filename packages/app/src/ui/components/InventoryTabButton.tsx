@@ -3,7 +3,7 @@ import { makeStyles } from "@fluentui/react-components";
 import { ModifierSprite } from "botw-item-assets";
 import { type PouchCategory, PouchCategoryNames } from "skybook-item-system";
 
-import { useStyleEngine } from "self::ui/functions";
+import { useStyleEngine } from "self::util";
 
 export type InventoryTabButtonProps = {
     category: PouchCategory;

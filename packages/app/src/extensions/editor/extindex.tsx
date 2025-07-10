@@ -10,7 +10,7 @@ import type { ExtensionApp } from "@pistonite/skybook-api";
 import {
     FirstPartyExtensionAdapter,
     type FirstPartyExtension,
-} from "../FirstParty.ts";
+} from "self::util";
 
 import { init, setApp, updateScriptInApp } from "./init.ts";
 

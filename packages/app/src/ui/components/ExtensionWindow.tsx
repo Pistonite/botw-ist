@@ -1,8 +1,9 @@
+import { Spinner } from "@fluentui/react-components";
 import { useQuery } from "@tanstack/react-query";
 
-import { connectLocalExtensionToApp } from "self::application/extension";
+import { connectLocalExtensionToApp } from "self::application";
 import { getExtension } from "self::extensions";
-import { useStyleEngine } from "self::ui/functions";
+import { useStyleEngine } from "self::util";
 
 export type ExtensionWindowProps = {
     /** Ids of the extensions loaded in this window */
@@ -54,9 +55,13 @@ export const ExtensionWrapper: React.FC<ExtensionWrapperProps> = ({ id }) => {
             return extension?.Component;
         },
     });
+    const m = useStyleEngine();
     if (isPending || !ExtComp) {
-        // TODO: better loading UI
-        return <div>Loading...</div>;
+        return (
+            <div className={m("flex wh-100 flex-centerj")}>
+                <Spinner />
+            </div>
+        );
     }
     return <ExtComp />;
 };

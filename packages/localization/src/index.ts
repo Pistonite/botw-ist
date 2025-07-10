@@ -1,4 +1,5 @@
 export * from "./init.ts";
 export * from "./translate.ts";
-export * from "./localizedItemSearch.ts";
-export * from "./translation";
+export * from "./translate_name.ts";
+export * from "./translate_error.ts";
+export * from "./localized_search.ts";

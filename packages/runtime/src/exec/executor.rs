@@ -31,7 +31,7 @@ impl<S: Spawn> ExecutorImpl<S> {
         let mut handles = self.handles.lock().map_err(|_| Error::Lock)?;
         let mut spawner = self.spawner.lock().map_err(|_| Error::Lock)?;
         if handles.len() >= size {
-            log::info!(
+            log::debug!(
                 "already have {} threads, not creating new threads",
                 handles.len()
             );
@@ -41,7 +41,7 @@ impl<S: Spawn> ExecutorImpl<S> {
         handles.reserve(to_create);
         log::info!("creating {size} threads");
         for i in 0..to_create {
-            log::info!("spawning processor thread {i}");
+            log::debug!("spawning processor thread {i}");
             let handle = spawner.spawn(i)?;
             handles.push(handle);
         }

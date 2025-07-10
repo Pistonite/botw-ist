@@ -4,7 +4,7 @@
  * Please visit https://workex.pistonite.dev for more information
  */
 
-import type { Extension } from "../Extension.ts";
+import type { Extension } from "../extension_api.ts";
 
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
 

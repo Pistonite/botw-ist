@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 
 import { useUITranslation } from "skybook-localization";
 
+import { log } from "self::util";
+
 export type CopyButtonProps = {
     textToCopy: string;
 };
@@ -29,8 +31,8 @@ export const CopyButton: React.FC<CopyButtonProps> = ({ textToCopy }) => {
                         setIsCopied(false);
                     }, 2000);
                 } catch (e) {
-                    console.error("failed to copy text to clipboard");
-                    console.error(e);
+                    log.error("failed to copy text to clipboard");
+                    log.error(e);
                 }
             }}
         >

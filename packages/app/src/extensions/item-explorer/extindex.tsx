@@ -13,7 +13,7 @@ import {
 import {
     FirstPartyExtensionAdapter,
     type FirstPartyExtension,
-} from "../FirstParty.ts";
+} from "self::util";
 
 import { ItemExplorer, type Searcher } from "./ItemExplorer.tsx";
 

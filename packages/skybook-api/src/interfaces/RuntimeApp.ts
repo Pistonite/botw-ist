@@ -4,7 +4,7 @@
  * Please visit https://workex.pistonite.dev for more information
  */
 
-import type { RuntimeApp } from "../RuntimeApp.ts";
+import type { RuntimeApp } from "../runtime_app.ts";
 
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
 import type { ItemSearchResult } from "../types.ts";
