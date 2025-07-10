@@ -1,5 +1,7 @@
 import type { WxPromise } from "@pistonite/workex";
 
+import type { SessionMode } from "./types.ts";
+
 /**
  * API implemented by the extension and called by the application.
  */
@@ -22,6 +24,13 @@ export interface Extension {
     onLocaleChanged(locale: string): WxPromise<void>;
 
     /**
+     * Notify the extension that the app mode has changed.
+     *
+     * See https://skybook.pistonite/dev/user/index.html#modes
+     */
+    onAppModeChanged(mode: SessionMode): WxPromise<void>;
+
+    /**
      * Notify the extension that the icon rendering preference has changed
      */
     onIconSettingsChanged(
@@ -31,6 +40,9 @@ export interface Extension {
 
     /**
      * Notify the extension that the script has changed.
+     *
+     * First party extensions that aren't visible in the app will not get this update.
+     * Popouts will always get this update.
      */
     onScriptChanged(script: string, charPos: number): WxPromise<void>;
 }

@@ -72,3 +72,12 @@ export type RuntimeWorkerInitError =
           type: "SaveImage";
       }
     | RuntimeInitError;
+
+/**
+ * Mode of the current session
+ *
+ * - local: edits are saved to local storage immediately
+ * - edit-only: edits are only in-memory
+ * - read-only: edits not allowed
+ */
+export type SessionMode = "local" | "edit-only" | "read-only";
