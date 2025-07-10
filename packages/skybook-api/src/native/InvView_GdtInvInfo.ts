@@ -5,15 +5,15 @@
  */
 export type InvView_GdtInvInfo = {
     /**
-     * Number of weapon slots available per tab
+     * Number of weapon slots available per tab (WeaponPorchStockNum)
      */
     numWeaponSlots: number;
     /**
-     * Number of bow slots available per tab
+     * Number of bow slots available per tab (BowPorchStockNum)
      */
     numBowSlots: number;
     /**
-     * Number of shields slots available per tab
+     * Number of shields slots available per tab (ShieldPorchStockNum)
      */
     numShieldSlots: number;
     swordTabDiscovered: boolean;
