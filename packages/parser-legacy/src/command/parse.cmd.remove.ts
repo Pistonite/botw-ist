@@ -41,7 +41,7 @@ export class CommandRemove extends AbstractProperCommand {
         return this;
     }
     public override convert(): string {
-        return `${this.verb} ${this.stacks.map((s) => s.convert(this.slot)).join(" ")};`;
+        return `${this.verb} ${this.stacks.map((s) => s.convert(this.slot, false)).join(" ")};`;
     }
 }
 
@@ -59,7 +59,7 @@ export class CommandEat extends AbstractProperCommand {
         this.slot = slot;
     }
     public override convert(): string {
-        return `eat ${this.stacks.map((s) => s.convert(this.slot)).join(" ")};`;
+        return `eat ${this.stacks.map((s) => s.convert(this.slot, false)).join(" ")};`;
     }
 }
 
@@ -130,7 +130,7 @@ export class CommandDnp extends AbstractProperCommand {
         this.slot = slot;
     }
     public override convert(): string {
-        return `dnp ${this.stacks.map((s) => s.convert(this.slot)).join(" ")};`;
+        return `dnp ${this.stacks.map((s) => s.convert(this.slot, false)).join(" ")};`;
     }
 }
 

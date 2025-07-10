@@ -25,22 +25,38 @@ drop apple
 reload
 ```
 
+To learn more about commands, see [Command Syntax](./syntax.md) and [Command Reference](./commands.md).
+
 In the simulator UI, you can edit the script in the **Script Editor**.
 Whenever the script changes, the simulation will automatically rerun in the background.
 You can navigate different steps of the simulation by moving your cursor in the editor.
 The UI will display the state of the inventory *after* the command the cursor is on.
 
-To learn more about commands, see [Command Syntax](./syntax.md) and [Command Reference](./commands.md).
+## Modes
+The simulator app has 3 editing modes:
+- `Auto Saved`: This is the default mode. Any change you make to the script will be saved locally in your browser,
+  so the same script will be there when you open the app the next time.
+- `Not Saving`: When editing script in this mode, the changes won't be saved to your browser.
+- `View Only`: This is the default mode when you open a URL that directly loads a script.
+  The script is read-only in this mode. You can switch to `Not Saving` to enable editing.
+  Note that errors will NOT show in the editor in this mode.
 
-## Systems in the Simulator
-Skybook aims to be a 100% accurate IST simulator. To achieve that, it *emulates*
-subsystems of the game as much as possible. However, not all subsystems can be emulated,
-especially those that are not reversed-engineered fully or not at all. Some subsystems
-also may not be worth to emulate since a simulation is good enough.
+You can switch the mode anytime in the top-left corner of the app.
 
-The systems that are involved in the simulator include:
-- Inventory
-- GameData
-- Saves
-- [Screens](./screen_system.md)
-- [Overworld](./overworld_system.md)
+```admonish warning
+When switching to `Auto Saved`, your locally saved script will be overwritten with whatever
+script that's currently in the script editor!
+
+If you accidentally overwrite your local script and you need it, you can still recover it
+by open the devtool console (F12) and type in the following:
+
+<pre>
+<code class="language-typescript hljs">console.log(localStorage.getItem("Skybook.AutoBackupScript"))</code>
+</pre>
+
+
+Press enter, and copy the output.
+
+This entry is updated whenever you switch to `Auto Saved` from the other modes. If the backup is
+lost, your script will be lost forever.
+```

@@ -7,6 +7,7 @@
 import type { Extension } from "../extension_api.ts";
 
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
+import type { SessionMode } from "../types.ts";
 
 /*
  * These generated implementations are used internally by other generated code.
@@ -24,19 +25,28 @@ export class _wxSenderImpl implements Extension {
     }
 
     /**
+     * Notify the extension that the app mode has changed.
+     * 
+     * See https://skybook.pistonite/dev/user/index.html#modes
+     */
+    public onAppModeChanged( mode: SessionMode ): WxPromise<void> {
+        return this.sender.sendVoid(16 /* Extension.onAppModeChanged */, [ mode ]);
+    }
+
+    /**
      * Notify the extension that the dark mode preference has changed.
      * 
      * The extension can update the theme based on this event
      */
     public onDarkModeChanged( dark: boolean ): WxPromise<void> {
-        return this.sender.sendVoid(16 /* Extension.onDarkModeChanged */, [ dark ]);
+        return this.sender.sendVoid(17 /* Extension.onDarkModeChanged */, [ dark ]);
     }
 
     /**
      * Notify the extension that the icon rendering preference has changed
      */
     public onIconSettingsChanged( enableHighQualityIcons: boolean, enableAnimations: boolean ): WxPromise<void> {
-        return this.sender.sendVoid(17 /* Extension.onIconSettingsChanged */, [ enableHighQualityIcons, enableAnimations ]);
+        return this.sender.sendVoid(18 /* Extension.onIconSettingsChanged */, [ enableHighQualityIcons, enableAnimations ]);
     }
 
     /**
@@ -48,14 +58,17 @@ export class _wxSenderImpl implements Extension {
      * The extension can update the UI strings based on this event.
      */
     public onLocaleChanged( locale: string ): WxPromise<void> {
-        return this.sender.sendVoid(18 /* Extension.onLocaleChanged */, [ locale ]);
+        return this.sender.sendVoid(19 /* Extension.onLocaleChanged */, [ locale ]);
     }
 
     /**
      * Notify the extension that the script has changed.
+     * 
+     * First party extensions that aren't visible in the app will not get this update.
+     * Popouts will always get this update.
      */
     public onScriptChanged( script: string, charPos: number ): WxPromise<void> {
-        return this.sender.sendVoid(19 /* Extension.onScriptChanged */, [ script, charPos ]);
+        return this.sender.sendVoid(20 /* Extension.onScriptChanged */, [ script, charPos ]);
     }
 }
 
@@ -64,19 +77,23 @@ export class _wxSenderImpl implements Extension {
  */
 export const _wxRecverImpl = (handler: Extension): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 16 /* Extension.onDarkModeChanged */: {
+        case 16 /* Extension.onAppModeChanged */: {
+            const [ a0 ] = args;
+            return handler.onAppModeChanged( a0 );
+        }
+        case 17 /* Extension.onDarkModeChanged */: {
             const [ a0 ] = args;
             return handler.onDarkModeChanged( a0 );
         }
-        case 17 /* Extension.onIconSettingsChanged */: {
+        case 18 /* Extension.onIconSettingsChanged */: {
             const [ a0, a1 ] = args;
             return handler.onIconSettingsChanged( a0, a1 );
         }
-        case 18 /* Extension.onLocaleChanged */: {
+        case 19 /* Extension.onLocaleChanged */: {
             const [ a0 ] = args;
             return handler.onLocaleChanged( a0 );
         }
-        case 19 /* Extension.onScriptChanged */: {
+        case 20 /* Extension.onScriptChanged */: {
             const [ a0, a1 ] = args;
             return handler.onScriptChanged( a0, a1 );
         }

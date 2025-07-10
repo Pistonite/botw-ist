@@ -11,6 +11,7 @@ import iconPurple from "./icon-purple.svg";
 import { SettingsMenu } from "./settings.tsx";
 import { PerfMonitor } from "./debugger.tsx";
 import { MiscMenu } from "./three_dot.tsx";
+import { ModeSwitcher } from "./switch_mode.tsx";
 
 const useStyles = makeStyles({
     container: {
@@ -37,6 +38,7 @@ const HeaderImpl: React.FC = () => {
                     height="32px"
                 />
             </div>
+            <ModeSwitcher />
             <SettingsMenu />
             {
                 // Custom extensions are limited to PC platform only
