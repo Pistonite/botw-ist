@@ -133,8 +133,7 @@ const ModeSwitcherImpl: React.FC = () => {
                 <MenuList>
                     <MenuGroup>
                         <MenuGroupHeader>
-                            {" "}
-                            {t("menu.header.mode")}{" "}
+                            {t("menu.header.mode")}
                         </MenuGroupHeader>
                         {(["local", "edit-only", "read-only"] as const).map(
                             (m) => (
@@ -214,7 +213,6 @@ const ModeIcon: React.FC<{ mode: SessionMode; isHeader?: boolean }> = ({
     return (
         <span className={m("pos-rel")}>
             <BeakerEdit20Filled />
-
             {hasUnsavedChanges && (
                 <span className={m("pos-abs", c.editonlyUnsaved)}>*</span>
             )}
