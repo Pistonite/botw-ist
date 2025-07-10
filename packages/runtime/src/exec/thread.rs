@@ -18,7 +18,7 @@ impl Thread {
     /// Execute the main loop of the processor thread, which waits for jobs
     /// to be sent from the main thread and executes them
     pub fn main_loop(mut self) {
-        log::info!("processor thread {} started", self.slot);
+        log::debug!("processor thread {} started", self.slot);
         loop {
             match self.recv.recv() {
                 Ok(f) => {
@@ -35,7 +35,7 @@ impl Thread {
                 }
             }
         }
-        log::info!("processor thread {} exiting", self.slot);
+        log::debug!("processor thread {} exiting", self.slot);
     }
 }
 
