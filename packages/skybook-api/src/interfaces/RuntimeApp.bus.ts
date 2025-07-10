@@ -5,8 +5,8 @@
  */
 
 import type { WxProtocolBindConfig } from "@pistonite/workex";
-import type { RuntimeApp } from "../RuntimeApp.ts";
-import type { Runtime } from "../Runtime.ts";
+import type { RuntimeApp } from "../runtime_app.ts";
+import type { Runtime } from "../runtime_api.ts";
 import { _wxRecverImpl } from "./Runtime.ts";
 import { _wxSenderImpl } from "./RuntimeApp.ts";
 

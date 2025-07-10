@@ -1,5 +1,5 @@
-import type { Extension } from "../Extension.ts";
-import type { ExtensionApp } from "../ExtensionApp.ts";
+import type { Extension } from "../extension_api.ts";
+import type { ExtensionApp } from "../extension_app.ts";
 
 /**
  * Extension extended with local APIs for setting up the extension

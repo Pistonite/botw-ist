@@ -4,7 +4,7 @@
  * @module
  */
 
-import type { ScriptEnvImage } from "./envParser.ts";
+import type { ScriptEnvImage } from "./env_parser.ts";
 import type { RuntimeInitParams, RuntimeInitError } from "./native";
 
 /**

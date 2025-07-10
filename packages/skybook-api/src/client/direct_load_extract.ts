@@ -1,4 +1,4 @@
-import type { DirectLoad } from "../directLoad.ts";
+import type { DirectLoad } from "../direct_load.ts";
 
 /** Extract the DirectLoad payload from the page, if exists */
 export const extractDirectLoad = (): DirectLoad | undefined => {

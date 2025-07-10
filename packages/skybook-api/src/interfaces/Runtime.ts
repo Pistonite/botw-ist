@@ -4,7 +4,7 @@
  * Please visit https://workex.pistonite.dev for more information
  */
 
-import type { Runtime } from "../Runtime.ts";
+import type { Runtime } from "../runtime_api.ts";
 
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
 import type { Result } from "@pistonite/pure/result";

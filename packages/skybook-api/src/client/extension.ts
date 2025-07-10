@@ -4,7 +4,7 @@
 
 import { wxWindowOwner } from "@pistonite/workex";
 
-import type { ExtensionModule } from "./ExtensionTypes.ts";
+import type { ExtensionModule } from "./extension_types.ts";
 import { skybookExtensionApp } from "../interfaces/ExtensionApp.bus.ts";
 
 /**

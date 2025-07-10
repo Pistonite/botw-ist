@@ -1,3 +1,3 @@
-export * from "./extractDirectLoad.ts";
+export * from "./direct_load_extract.ts";
 export * from "./extension.ts";
-export * from "./ExtensionTypes.ts";
+export * from "./extension_types.ts";

@@ -5,8 +5,8 @@
  */
 
 import type { WxProtocolBindConfig } from "@pistonite/workex";
-import type { ExtensionApp } from "../ExtensionApp.ts";
-import type { Extension } from "../Extension.ts";
+import type { ExtensionApp } from "../extension_app.ts";
+import type { Extension } from "../extension_api.ts";
 import { _wxRecverImpl } from "./Extension.ts";
 import { _wxSenderImpl } from "./ExtensionApp.ts";
 

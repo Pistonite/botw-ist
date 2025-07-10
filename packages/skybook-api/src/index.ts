@@ -2,12 +2,12 @@
 export * from "./native";
 
 // worker bindings
-export * from "./Extension.ts";
-export * from "./ExtensionApp.ts";
-export * from "./Runtime.ts";
-export * from "./RuntimeApp.ts";
+export * from "./extension_api.ts";
+export * from "./extension_app.ts";
+export * from "./runtime_api.ts";
+export * from "./runtime_app.ts";
 
 // other shared types/utils
 export * from "./types.ts";
-export * from "./directLoad.ts";
-export * from "./envParser.ts";
+export * from "./direct_load.ts";
+export * from "./env_parser.ts";

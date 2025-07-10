@@ -6,7 +6,7 @@ import {
     parseEnvImage,
     parseRegionSize,
     parseEnvDlcVersion,
-} from "./envParser.ts";
+} from "./env_parser.ts";
 
 describe("parseEnvFromScript", () => {
     it.each([

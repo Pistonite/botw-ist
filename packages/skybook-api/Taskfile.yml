@@ -22,10 +22,10 @@ tasks:
       - > 
           workex -p skyb-api-{{.VERSION}} --prefix skybook --no-gitignore
           -l Extension,ExtensionApp -l Runtime,RuntimeApp
-          src/Extension.ts 
-          src/ExtensionApp.ts 
-          src/Runtime.ts
-          src/RuntimeApp.ts
+          src/extension_api.ts 
+          src/extension_app.ts 
+          src/runtime_api.ts
+          src/runtime_app.ts
       - task: fix
 
   build-ts-binding:
