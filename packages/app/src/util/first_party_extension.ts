@@ -1,7 +1,7 @@
 import { setDark, setLocale } from "@pistonite/pure/pref";
 import type { WxPromise } from "@pistonite/workex";
 
-import type { ExtensionApp } from "@pistonite/skybook-api";
+import type { ExtensionApp, SessionMode } from "@pistonite/skybook-api";
 import type { ExtensionModule } from "@pistonite/skybook-api/client";
 
 /**
@@ -24,6 +24,9 @@ export class FirstPartyExtensionAdapter implements ExtensionModule {
         if (this.standalone) {
             setLocale(locale);
         }
+        return {};
+    }
+    public async onAppModeChanged(_mode: SessionMode): WxPromise<void> {
         return {};
     }
     public async onScriptChanged(

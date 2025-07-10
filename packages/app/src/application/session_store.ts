@@ -14,10 +14,12 @@ import type {
     InvView_PouchList,
     RuntimeViewError,
     ScriptEnvImage,
+    SessionMode,
 } from "@pistonite/skybook-api";
 import { translateUI } from "skybook-localization";
 
 import { usePersistStore } from "./persist_store.ts";
+import { log } from "self::util";
 
 /** State of the current session. This is not persisted */
 export type SessionStore = {
@@ -41,8 +43,9 @@ export type SessionStore = {
     /**
      * Set the session mode to edit-only
      *
-     * Both activeScript and initialScript will be set to the given script,
-     * use undefined to use the current activeScript
+     * initialScript will be set to the given script,
+     * use undefined to use the current activeScript.
+     * Current activeScript will not be changed
      */
     setModeToEditOnly: (initialScript: string | undefined) => void;
 
@@ -114,15 +117,6 @@ export type SessionStore = {
     invalidateInventoryCache: () => void;
 };
 
-/**
- * Mode of the current session
- *
- * - local: edits are saved to local storage immediately
- * - edit-only: edits are only in-memory
- * - read-only: edits not allowed
- */
-export type SessionMode = "local" | "edit-only" | "read-only";
-
 export const useSessionStore = create<SessionStore>()((set) => {
     const { savedScript } = usePersistStore.getState();
 
@@ -159,9 +153,14 @@ export const useSessionStore = create<SessionStore>()((set) => {
         mode: "local",
         initialScript: "",
         setModeToLocal: () => {
+            log.info("changing app mode to local");
             set(({ activeScript }) => {
-                const { setSavedScript } = usePersistStore.getState();
+                const { savedScript, setSavedScript } =
+                    usePersistStore.getState();
                 setSavedScript(activeScript);
+                // save backup if user needs
+                localStorage.setItem("Skybook.AutoBackupScript", savedScript);
+                // clears the embbeded script in the URL
                 window.history.pushState({}, "", "/");
                 return {
                     mode: "local",
@@ -170,25 +169,24 @@ export const useSessionStore = create<SessionStore>()((set) => {
             });
         },
         setModeToEditOnly: (initialScript) => {
-            if (initialScript === undefined) {
-                set(({ activeScript }) => {
+            log.info("changing app mode to edit-only");
+            set(({ activeScript }) => {
+                if (initialScript === undefined) {
                     return {
                         mode: "edit-only",
                         initialScript: activeScript,
                         hasUnsavedChanges: false,
                     };
-                });
-                return;
-            }
-            set(({ activeScript }) => {
+                }
                 return {
                     mode: "edit-only",
                     initialScript,
-                    hasUnsavedChanges: activeScript !== initialScript,
+                    hasUnsavedChanges: initialScript !== activeScript,
                 };
             });
         },
         setModeToReadOnly: (script) => {
+            log.info("changing app mode to read-only");
             if (script !== undefined) {
                 set({
                     mode: "read-only",
@@ -326,9 +324,9 @@ const getSetActiveScriptPayload = (
 /**
  * Get the debounced value of hasUnsavedChanges of the session
  */
-export const useDebouncedHasUnsavedChanges = (delay: number) => {
+export const useDebouncedHasUnsavedChanges = () => {
     const hasUnsavedChanges = useSessionStore(
         (state) => state.hasUnsavedChanges,
     );
-    return useDebounce(hasUnsavedChanges, delay);
+    return useDebounce(hasUnsavedChanges, 50);
 };

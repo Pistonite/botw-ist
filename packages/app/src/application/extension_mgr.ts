@@ -72,7 +72,13 @@ export const initExtensionManager = () => {
                 );
             }
         }
+        if (prev.mode !== curr.mode) {
+            instances.forEach(({ instance }) => {
+                void instance.onAppModeChanged(curr.mode);
+            });
+        }
     });
+    // send updates to non-popout extension when switching extensions
     useExtensionStore.subscribe((curr, prev) => {
         if (
             curr.currentPrimary !== prev.currentPrimary &&
@@ -144,7 +150,8 @@ const sendEventsToExtension = (extension: Extension) => {
         enableHighQualityIcons,
         enableAnimations,
     );
-    const { activeScript, bytePos } = useSessionStore.getState();
+    const { activeScript, bytePos, mode } = useSessionStore.getState();
+    void extension.onAppModeChanged(mode);
     const charPos = bytePosToCharPos(activeScript, bytePos);
     void extension.onScriptChanged(activeScript, charPos);
 };

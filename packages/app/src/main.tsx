@@ -169,8 +169,10 @@ const bootWithDirectLoad = async (
     bootLog.info("found direct load payload");
     const { setModeToEditOnly, setModeToReadOnly } = useSessionStore.getState();
     if (payload.edit) {
+        bootLog.info("setting mode to edit-only");
         setModeToEditOnly(payload.content);
     } else {
+        bootLog.info("setting mode to read-only");
         setModeToReadOnly(payload.content);
     }
     // for boot purpose, we ignore errors during parsing the env

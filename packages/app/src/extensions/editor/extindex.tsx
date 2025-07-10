@@ -5,7 +5,7 @@ import {
 } from "@pistonite/intwc";
 import type { WxPromise } from "@pistonite/workex";
 
-import type { ExtensionApp } from "@pistonite/skybook-api";
+import type { ExtensionApp, SessionMode } from "@pistonite/skybook-api";
 
 import {
     FirstPartyExtensionAdapter,
@@ -25,6 +25,7 @@ export class EditorExtension
     private editor: CodeEditorApi | undefined;
     private scriptChangedBeforeEditorReady: string | undefined;
     private detachEditor: (() => void) | undefined;
+    private isReadonly = false;
 
     private component: React.FC;
 
@@ -52,11 +53,19 @@ export class EditorExtension
         setApp(app);
     }
 
+    public override async onAppModeChanged(mode: SessionMode): WxPromise<void> {
+        const isReadonly = mode === "read-only";
+        this.isReadonly = isReadonly;
+        this.editor?.setReadonly(isReadonly);
+        return {};
+    }
+
     /**
      * Attach the extension instance to an editor.
      * Automatically detaches other previously attached editor
      */
     public async attachEditor(editor: CodeEditorApi): Promise<() => void> {
+        editor.setReadonly(this.isReadonly);
         if (this.editor === editor) {
             return this.detachEditor || (() => {});
         }
