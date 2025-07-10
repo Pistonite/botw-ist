@@ -27,7 +27,7 @@ export class CommandEquip extends AbstractProperCommand {
     }
 
     public override convert(): string {
-        return `equip ${convertItem(this.item, this.slot)};`;
+        return `equip ${convertItem(this.item, this.slot, false)};`;
     }
 }
 
@@ -41,7 +41,7 @@ export class CommandUnequip extends AbstractProperCommand {
     }
 
     public override convert(): string {
-        return `unequip ${convertItem(this.item, this.slot)};`;
+        return `unequip ${convertItem(this.item, this.slot, false)};`;
     }
 }
 

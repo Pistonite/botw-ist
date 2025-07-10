@@ -9,7 +9,7 @@ export class ItemStackArg {
         this.number = number;
     }
 
-    public convert(slotIndex: number): string {
-        return `${this.number.toString().toLocaleLowerCase()} ${convertItem(this.stack, slotIndex)}`;
+    public convert(slotIndex: number, replacePlaceholder: boolean): string {
+        return `${this.number.toString().toLocaleLowerCase()} ${convertItem(this.stack, slotIndex, replacePlaceholder)}`;
     }
 }

@@ -83,14 +83,29 @@ export const joinItemSearchStrings = (ids: string[]) => {
     return ids.join("-").toLowerCase();
 };
 
-export const convertItem = (item: ItemStack, slotIndex: number): string => {
-    return convertItemName(item.ident) + convertItemMeta(item.meta, slotIndex);
+export const convertItem = (item: ItemStack, slotIndex: number, replacePlaceholder: boolean): string => {
+    return convertItemName(item.ident, replacePlaceholder) + convertItemMeta(item.meta, slotIndex);
 };
 
-const convertItemName = (name: string): string => {
+const convertItemName = (name: string, replacePlaceholder: boolean): string => {
+    const matchName = name.toLowerCase().trim();
+    if (replacePlaceholder) {
+        // In V3, "bow", "weapon", "shield" are placeholder items.
+        // These were removed in V4, since the system and syntax is much better
+        if (matchName === "bow" || matchName === "bows" || matchName === "bowes") {
+            return "traveller-bow";
+        }
+        if (matchName === "weapon" || matchName === "weapons" || matchName === "weapones") {
+            return "axe";
+        }
+        if (matchName === "shield" || matchName === "shields" || matchName === "shieldes") {
+            return "pot-lid";
+        }
+    }
+
     // In V3, "korok" is Korok Leaf, but in V4 it is Korok Seed
     // Update "korok" in V3 to "korok-leaf"
-    if (name.toLowerCase().trim() === "korok") {
+    if (matchName === "korok") {
         return "korok-leaf";
     }
     return name;

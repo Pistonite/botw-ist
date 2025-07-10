@@ -59,7 +59,7 @@ export class SuperCommandAddSlot extends AbstractProperCommand {
         // this._slot = slot - 1; //change to 0 based
     }
     public override convert() {
-        return `### "!add-slot" is no longer supported!!!\n### !add-slot ${this.stacks.map((s) => s.convert(0)).join(" ")};`;
+        return `### "!add-slot" is no longer supported!!!\n### !add-slot ${this.stacks.map((s) => s.convert(0, false)).join(" ")};`;
     }
 }
 
