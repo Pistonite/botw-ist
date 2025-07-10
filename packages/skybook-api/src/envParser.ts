@@ -180,14 +180,14 @@ export type ScriptEnv = {
     params: RuntimeInitParams;
 };
 
-export type ScriptEnvImage = "1.5" | "1.6";
+export type ScriptEnvImage = "1.5.0" | "1.6.0";
 
 export const parseEnvImage = (image: string): ScriptEnvImage | undefined => {
     if (image.includes("1.5")) {
-        return "1.5";
+        return "1.5.0";
     }
     if (image.includes("1.6")) {
-        return "1.6";
+        return "1.6.0";
     }
     return undefined;
 };

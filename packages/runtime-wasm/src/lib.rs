@@ -60,7 +60,7 @@ pub async fn module_init(wasm_module_path: String, wasm_bindgen_js_path: String)
 #[tsify(into_wasm_abi)]
 #[serde(rename_all = "camelCase")]
 pub struct RuntimeInitOutput {
-    /// "1.5" or "1.6"
+    /// X.X.X (e.g. 1.5.0)
     pub game_version: String,
 }
 
@@ -97,8 +97,8 @@ pub fn init_runtime(
             Ok(x) => x,
         };
         let game_version = match env.game_ver {
-            GameVer::X150 => "1.5",
-            GameVer::X160 => "1.6",
+            GameVer::X150 => "1.5.0",
+            GameVer::X160 => "1.6.0",
         };
         interop::Result::Ok(RuntimeInitOutput {
             game_version: game_version.to_string(),

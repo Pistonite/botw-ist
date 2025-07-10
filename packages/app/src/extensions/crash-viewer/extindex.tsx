@@ -6,9 +6,9 @@ import type { WxPromise } from "@pistonite/workex";
 import {
     type FirstPartyExtension,
     FirstPartyExtensionAdapter,
-} from "../FirstParty.ts";
+} from "self::util";
 
-import { CrashViewer } from "./CrashViewer.tsx";
+import { CrashViewer } from "./crash_viewer.tsx";
 
 const CRASH_VIEWER_UUID = "630c655a-2547-4e40-9b95-5f07a048ed38";
 

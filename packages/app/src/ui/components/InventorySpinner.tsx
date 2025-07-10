@@ -1,7 +1,7 @@
 import { makeStyles, Spinner } from "@fluentui/react-components";
 import { useDebounce } from "@uidotdev/usehooks";
 
-import { useStyleEngine } from "self::ui/functions";
+import { useStyleEngine } from "self::util";
 
 export type InventorySpinnerProps = {
     show?: boolean;

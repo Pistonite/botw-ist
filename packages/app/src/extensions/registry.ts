@@ -1,8 +1,9 @@
 import { once } from "@pistonite/pure/sync";
 
-import type { FirstPartyExtension } from "./FirstParty.ts";
 import { ItemExplorerExtension } from "./item-explorer/extindex.tsx";
 import { CrashViewerExtension } from "./crash-viewer/extindex.tsx";
+
+import { extLog, type FirstPartyExtension } from "self::util";
 
 const extensionInstances = new Map<
     string,
@@ -56,7 +57,7 @@ export const createExtensionInstance = async (
     id: string,
     standalone: boolean,
 ): Promise<FirstPartyExtension | undefined> => {
-    console.log(`creating extension instance: ${id}`);
+    extLog.info(`creating extension instance: ${id}`);
     switch (id) {
         case "editor": {
             const { EditorExtension } = await import("./editor/extindex.tsx");
@@ -69,7 +70,7 @@ export const createExtensionInstance = async (
             return new CrashViewerExtension(standalone);
         }
         default: {
-            console.error(`unknown extension: ${id}`);
+            extLog.error(`unknown extension: ${id}`);
             return undefined;
         }
     }

@@ -6,14 +6,13 @@ import {
     webLightTheme,
 } from "@fluentui/react-components";
 
-import { useStyleEngine } from "self::ui/functions";
+import { useStyleEngine } from "self::util";
 
 import { GlowyText } from "./GlowyText.tsx";
 
 const useStyles = makeStyles({
     title: {
         margin: "0 4px",
-        gap: "2px",
     },
     titleColorDark: {
         color: "#b7f1ff",
@@ -23,7 +22,6 @@ const useStyles = makeStyles({
     },
     container: {
         padding: "4px 0px 8px 0px",
-        gap: "4px",
     },
     noBackground: {
         backgroundColor: "transparent",
@@ -48,12 +46,12 @@ export const InventoryTitle: React.FC<
             className={c.noBackground}
             theme={dark ? webDarkTheme : webLightTheme}
         >
-            <div className={m("flex-row flex-centera", c.container)}>
+            <div className={m("flex-row flex-centera gap-2", c.container)}>
                 <span
-                    className={m("flex", [
-                        c.title,
+                    className={m(
+                        "flex gap-2",
                         dark ? c.titleColorDark : c.titleColorLight,
-                    ])}
+                    )}
                 >
                     <GlowyText size={500} weight="bold" dark={dark}>
                         {title}

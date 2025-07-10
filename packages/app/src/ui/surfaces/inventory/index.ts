@@ -1,2 +1,2 @@
-export * from "./GdtInventoryPanel.tsx";
-export * from "./PouchInventoryPanel.tsx";
+export * from "./gdt.tsx";
+export * from "./pouch.tsx";

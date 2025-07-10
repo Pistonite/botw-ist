@@ -11,15 +11,13 @@ import {
     connectPopoutExtensionWindow,
 } from "@pistonite/skybook-api/client";
 
+import { type ConnectExtensionFn, getExtension } from "self::extensions";
 import {
-    type ConnectExtensionFn,
-    getExtension,
-    type FirstPartyExtension,
-} from "self::extensions";
-import {
+    extLog,
     getSheikaBackgroundUrl,
     probeAndRegisterAssetLocation,
-} from "self::ui/functions";
+    type FirstPartyExtension,
+} from "self::util";
 
 async function boot() {
     // Initialize preferences, but do not persist settings
@@ -32,7 +30,7 @@ async function boot() {
     const properties = readExtensionProperties();
     if (!properties.extensionId) {
         // should not happen, just error and bail
-        console.error("[popout] no extension ID!");
+        extLog.error("no extension ID!");
         return;
     }
 
@@ -40,15 +38,15 @@ async function boot() {
         _id: string,
         extension: FirstPartyExtension,
     ) => {
-        console.log("[popout] connecting to host window");
+        extLog.error("connecting to host window");
         await connectPopoutExtensionWindow(extension, properties);
-        console.log("[popout] connected");
+        extLog.info("connected");
     };
 
     const extension = await getExtension(properties.extensionId, true, connect);
     if (!extension) {
-        console.error(
-            `[popout] extension with ID '${properties.extensionId}' not found!`,
+        extLog.error(
+            `extension with ID '${properties.extensionId}' not found!`,
         );
         return;
     }

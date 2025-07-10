@@ -61,7 +61,7 @@ describe("parseEnvImage", () => {
         expect(parseEnvImage("def")).toBe(undefined);
         expect(parseEnvImage("default")).toBe(undefined);
     });
-    it.each(["1.5", "1.6"])("parses specific version", (version) => {
+    it.each(["1.5.0", "1.6.0"])("parses specific version", (version) => {
         expect(parseEnvImage(version)).toBe(version);
         expect(parseEnvImage("ver" + version)).toBe(version);
         expect(parseEnvImage("v" + version)).toBe(version);

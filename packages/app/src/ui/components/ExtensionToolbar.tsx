@@ -10,7 +10,7 @@ import type { PropsWithChildren } from "react";
 
 import { useUITranslation } from "skybook-localization";
 
-import { useStyleEngine } from "self::ui/functions";
+import { useStyleEngine } from "self::util";
 
 export type ExtensionToolbarProps = {
     /** Id of the current opened extension */
@@ -47,9 +47,6 @@ export type ExtensionToolbarProps = {
 };
 
 const useStyles = makeStyles({
-    container: {
-        gap: "4px",
-    },
     selectorButton: {
         // truncate text
         overflowX: "hidden",
@@ -69,7 +66,7 @@ export const ExtensionToolbar: React.FC<
     const t = useUITranslation();
     const c = useStyles();
     return (
-        <div className={m("flex-row", c.container)}>
+        <div className={m("flex-row gap-4")}>
             <Dropdown
                 className={m("flex-1")}
                 appearance="filled-darker"

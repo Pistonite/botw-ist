@@ -4,6 +4,7 @@ import Fuse from "fuse.js";
 import { LRUCache } from "lru-cache";
 
 import { translateUI } from "./translate.ts";
+import { logger } from "@pistonite/pure/log";
 
 /** Localized item search result */
 export type SearchResult = {
@@ -27,6 +28,8 @@ export type SearchResultNoScore = Omit<SearchResult, "score">;
 const cache = new LRUCache<string, SearchResultNoScore[]>({
     max: 512, // probably good enough
 });
+
+const log = logger("item-search", "#3D0985").info();
 
 /**
  * Perform localized search for an item.
@@ -238,7 +241,7 @@ function createSearchFnFromTranslation(
     threshold: number,
     translation: Record<string, string>[],
 ) {
-    console.log(`initializing localized searcher for "${tag}"`);
+    log.info(`initializing localized searcher for "${tag}"`);
     const searchableActors = getSearchableActors(Object.keys(translation[0]));
 
     const cookEffectTranslations: Record<
@@ -329,7 +332,7 @@ function createSearchFnFromTranslation(
         }
     });
 
-    console.log(`initialized ${entries.length} search entries for "${tag}"`);
+    log.info(`initialized ${entries.length} search entries for "${tag}"`);
 
     const fuse = new Fuse(entries, {
         threshold,
@@ -369,7 +372,7 @@ const getSearchableActors = (keys: string[]) => {
             })
             .filter((x) => x !== undefined) as string[];
         SearchableActors = Array.from(new Set(actors));
-        console.log(`initialized ${SearchableActors.length} searchable actors`);
+        log.info(`initialized ${SearchableActors.length} searchable actors`);
     }
     return SearchableActors;
 };

@@ -22,6 +22,7 @@ export type QuotedItemResolverFn = (
 ) => Promise<ItemSearchResult | undefined | null>;
 
 export type RuntimeInitOutput = {
+    /** Custom image version initialized, should be in the form of "X.X.X" */
     gameVersion: string;
 };
 
