@@ -76,7 +76,7 @@ menu.skybook_manual: "天书"
 
 # Main inventory display
 main.bug_report: "如果您认为这是模拟器的BUG，请提交反馈到{{github}}。"
-main.gdt_inventory.desc: "储存与游戏Flag系统（GDT）内的物品数据。物品状态以数据读取入背包后的形式显示。背包格讹转的目标数据格与该背包格对齐显示。"
+main.gdt_inventory.desc: "储存于游戏Flag系统（GDT）内的物品数据。物品状态以数据正确读取入背包后的形式显示。背包格讹转的目标数据格与该背包格对齐显示。"
 main.gdt_inventory.title: "GDT内部数据"
 main.gdt_inventory.view_error: "无法显示GDT内部数据！"
 main.screen.inventory: "背包"

@@ -76,7 +76,7 @@ menu.skybook_manual: "Skybook-handleiding"
 
 # Main inventory display
 main.bug_report: "Meld het op {{github}} als u denkt dat dit een bug in de simulator is."
-main.gdt_inventory.desc: "Voorraaddata opgeslagen in het vlaggensysteem van het spel (GDT). Items worden weergegeven alsof ze in de inventaris zijn geladen, en de slots zijn uitgelijnd met de inventaris op basis van corruptie."
+main.gdt_inventory.desc: "Inventarisgegevens opgeslagen in het vlaggsysteem (GDT) van het spel. Items worden weergegeven alsof ze correct in de inventaris zijn geladen, en slots zijn uitgelijnd met de inventaris op basis van corruptie."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Interne GDT-gegevens kunnen niet worden weergegeven!"
 main.screen.inventory: "Inventaris"

@@ -76,7 +76,7 @@ menu.skybook_manual: "Manual de Skybook"
 
 # Main inventory display
 main.bug_report: "Por favor, repórtalo en {{github}} si crees que es un error del simulador."
-main.gdt_inventory.desc: "Datos de inventario almacenados en el sistema de banderas del juego (GDT). Los objetos se muestran como si estuvieran cargados en el inventario, y las ranuras se alinean con el inventario según la corrupción."
+main.gdt_inventory.desc: "Datos de inventario almacenados en el sistema de banderas (GDT) del juego. Los objetos se muestran como si estuvieran correctamente cargados en el inventario, y las ranuras se alinean con el inventario según la corrupción."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "¡No se pueden mostrar los datos internos de GDT!"
 main.screen.inventory: "Inventario"

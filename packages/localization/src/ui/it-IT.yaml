@@ -76,7 +76,7 @@ menu.skybook_manual: "Manuale di Skybook"
 
 # Main inventory display
 main.bug_report: "Segnalalo su {{github}} se pensi che sia un bug del simulatore."
-main.gdt_inventory.desc: "Dati dell'inventario memorizzati nel sistema di flag del gioco (GDT). Gli oggetti vengono visualizzati come se fossero caricati nell'inventario, e gli slot sono allineati all'inventario in base alla corruzione."
+main.gdt_inventory.desc: "Dati dell'inventario memorizzati nel sistema di flag (GDT) del gioco. Gli oggetti vengono visualizzati come se fossero stati caricati correttamente nell'inventario, e gli slot sono allineati all'inventario in base alla corruzione."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Impossibile visualizzare i dati interni GDT!"
 main.screen.inventory: "Inventario"

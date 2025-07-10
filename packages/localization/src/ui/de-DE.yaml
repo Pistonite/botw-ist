@@ -76,7 +76,7 @@ menu.skybook_manual: "Skybook-Handbuch"
 
 # Main inventory display
 main.bug_report: "Bitte melden Sie es auf {{github}}, wenn Sie denken, dass dies ein Fehler im Simulator ist."
-main.gdt_inventory.desc: "Inventardaten, die im Flaggensystem des Spiels (GDT) gespeichert sind. Gegenstände werden angezeigt, als wären sie im Inventar geladen, und die Slots sind basierend auf Korruption an das Inventar ausgerichtet."
+main.gdt_inventory.desc: "Inventardaten, die im Flag-System (GDT) des Spiels gespeichert sind. Gegenstände werden so angezeigt, als wären sie korrekt ins Inventar geladen, und Slots sind basierend auf Korruption am Inventar ausgerichtet."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Interne GDT-Daten können nicht angezeigt werden!"
 main.screen.inventory: "Inventar"
