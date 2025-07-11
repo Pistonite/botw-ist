@@ -76,7 +76,7 @@ menu.skybook_manual: "Skybook Manual"
 
 # Main inventory display
 main.bug_report: "Please report it on {{github}} if you think this is a bug"
-main.gdt_inventory.desc: "Inventory data stored in the game's flag system (GDT). Items are displayed as if they are loaded to inventory, and slots are aligned to inventory based on corruption"
+main.gdt_inventory.desc: "Inventory data stored in the game's flag system (GDT). Items are displayed as if they are correctly loaded to inventory, and slots are aligned to inventory based on corruption"
 main.gdt_inventory.title: "Game Data"
 main.gdt_inventory.view_error: "Cannot display Game Data!"
 main.screen.inventory: "Inventory"

@@ -76,7 +76,7 @@ menu.skybook_manual: "Skybook 使用手冊"
 
 # Main inventory display
 main.bug_report: "若您認為這是模擬器的錯誤，請至 {{github}} 回報。"
-main.gdt_inventory.desc: "儲存於遊戲 Flag 系統（GDT）中的物品資料。物品狀態以讀取入背包後的形式顯示。背包格讹轉的目標資料格與該背包格對齊顯示。"
+main.gdt_inventory.desc: "儲存於遊戲旗標系統（GDT）內的物品資料。物品狀態以資料正確讀取入背包後的形式顯示。背包格訛轉的目標資料格與該背包格對齊顯示。"
 main.gdt_inventory.title: "GDT內部資料"
 main.gdt_inventory.view_error: "無法顯示GDT內部資料！"
 main.screen.inventory: "背包"

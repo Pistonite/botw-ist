@@ -15,7 +15,7 @@ import {
     type FirstPartyExtension,
 } from "self::util";
 
-import { ItemExplorer, type Searcher } from "./ItemExplorer.tsx";
+import { ItemExplorer, type Searcher } from "./item_explorer.tsx";
 
 export class ItemExplorerExtension
     extends FirstPartyExtensionAdapter

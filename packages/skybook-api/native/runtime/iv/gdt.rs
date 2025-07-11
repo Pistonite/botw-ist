@@ -50,11 +50,11 @@ mod __impl {
     #[serde(rename_all = "camelCase")]
     #[allow(non_camel_case_types)]
     pub struct InvView_GdtInvInfo {
-        /// Number of weapon slots available per tab
+        /// Number of weapon slots available per tab (WeaponPorchStockNum)
         pub num_weapon_slots: i32,
-        /// Number of bow slots available per tab
+        /// Number of bow slots available per tab (BowPorchStockNum)
         pub num_bow_slots: i32,
-        /// Number of shields slots available per tab
+        /// Number of shields slots available per tab (ShieldPorchStockNum)
         pub num_shield_slots: i32,
 
         // discovered flags

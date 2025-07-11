@@ -139,7 +139,7 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
             {$LocalizedCheckbox}
             <Body1 block>{$SearchTip}</Body1>
             {$Results}
-            {!hasResults && (
+            {!hasResults && !!value && (
                 <div className={m("flex flex-1 flex-center")}>
                     <Body1>{t("item_explorer.label.no_results")}</Body1>
                 </div>

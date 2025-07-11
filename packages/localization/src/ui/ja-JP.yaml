@@ -76,7 +76,7 @@ menu.skybook_manual: "Skybook マニュアル"
 
 # Main inventory display
 main.bug_report: "これがシミュレーターのバグだと思われる場合は、{{github}} に報告してください。"
-main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されたインベントリーデータ。アイテムはインベントリーに読み込まれたかのように表示され、スロットはコラプションに基づいてインベントリーに整列されます。"
+main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されているインベントリデータ。アイテムはインベントリに正しくロードされたかのように表示され、スロットは破損状況に基づいてインベントリに合わせられます。"
 main.gdt_inventory.title: "ゲームデータ"
 main.gdt_inventory.view_error: "GDT内部データを表示できません！"
 main.screen.inventory: "インベントリ"

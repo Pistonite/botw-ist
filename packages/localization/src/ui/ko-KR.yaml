@@ -76,7 +76,7 @@ menu.skybook_manual: "Skybook 매뉴얼"
 
 # Main inventory display
 main.bug_report: "이것이 시뮬레이터의 버그라고 생각되면 {{github}}에 보고해 주세요."
-main.gdt_inventory.desc: "게임의 플래그 시스템(GDT)에 저장된 인벤토리 데이터입니다. 아이템은 인벤토리에 로드된 것처럼 표시되며, 슬롯은 코럽션에 따라 인벤토리에 정렬됩니다."
+main.gdt_inventory.desc: "게임의 플래그 시스템(GDT)에 저장된 인벤토리 데이터. 아이템은 인벤토리에 올바르게 로드된 것처럼 표시되며, 슬롯은 손상도에 따라 인벤토리에 정렬됩니다."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "GDT 내부 데이터를 표시할 수 없습니다!"
 main.screen.inventory: "인벤토리"
