@@ -253,6 +253,7 @@ runtime_error.NotRightScreen: "You cannot use this command in the current screen
 runtime_error.NotSellable: "This item cannot be sold."
 runtime_error.OperationNotComplete: "The command cannot continue due to another error."
 runtime_error.PositionSpecNotAllowed: "Specifying item by position is not allowed here."
+runtime_error.PreviousClosed: "The game was closed. You need to `reload` or `new-game` before continuing."
 runtime_error.PreviousCrash: "The game has crashed in a previous step. You need to `reload` or `new-game` before continuing."
 runtime_error.TooManyIterations: "Too many loop iterations. The command has been forcefully stopped. This might be a bug."
 runtime_error.Unimplemented: "This command is not implemented yet :)"
@@ -263,6 +264,7 @@ runtime_error.UselessMetaForOverworldEquipment: "Metadata is ignored when target
 runtime_error.UselessScreenTransition: "This command has no effect, since you are already on this screen."
 
 # Error from getting view from simulation output
+runtime_view_error.Closed: "The game is not running."
 runtime_view_error.Coherence: "The inventory data is corrupted and cannot be displayed."
 runtime_view_error.Crash: "The game has crashed at or before this step and the inventory cannot be displayed."
 runtime_view_error.Memory: "An error occured while reading game memory and the inventory cannot be displayed."

@@ -4,11 +4,12 @@ use skybook_parser::cir;
 use crate::error::{Report, sim_error};
 use crate::{exec, sim};
 
-/// The state of the simulator
+/// The state of one step in the simulation.
 #[derive(Clone, Default)]
 pub struct State {
     /// Current game state
     pub game: Game,
+    /// Current args
     pub args: Option<Box<StateArgs>>,
     // /// named save data
     // saves: HashMap<String, Arc<gdt::TriggerParam>>,
@@ -44,14 +45,21 @@ pub struct StateArgs {
 #[derive(Clone, Default)]
 pub enum Game {
     /// Game is never started
+    ///
+    /// This is the only state that the simulator will allow
+    /// auto-starting a new game
     #[default]
     Uninit,
     /// Game is running
     Running(Box<GameState>),
-    /// Game has crashed in the last step (must manually reboot)
+    /// Game has crashed in the last step
     Crashed(CrashReport),
     /// Game has crashed in a previous step
     PreviousCrash,
+    /// Game was manually closed in the last step
+    Closed,
+    /// Game was manually closed in a previous step
+    PreviousClosed,
 }
 
 /// The state of the running game in the simulator

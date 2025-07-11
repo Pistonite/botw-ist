@@ -253,6 +253,7 @@ runtime_error.NotRightScreen: "現在の画面ではこのコマンドを使用�
 runtime_error.NotSellable: "このアイテムは売却できません。"
 runtime_error.OperationNotComplete: "別のエラーのため、コマンドを続行できません。"
 runtime_error.PositionSpecNotAllowed: "ここでは位置によるアイテムの指定は許可されていません。"
+runtime_error.PreviousClosed: "ゲームが閉じられました。続行するには、`リロード` (`reload`) または`ニューゲーム` (`new-game`) を行う必要があります。"
 runtime_error.PreviousCrash: "以前のステップでゲームがクラッシュしました。続行する前に`リロード` (`reload`)または`ニューゲーム` (`new-game`)が必要です。"
 runtime_error.TooManyIterations: "ループの繰り返しが多すぎます。コマンドは強制的に停止されました。これはバグの可能性があります。"
 runtime_error.Unimplemented: "このコマンドはまだ実装されていません :)。"
@@ -263,6 +264,7 @@ runtime_error.UselessMetaForOverworldEquipment: "オーバーワールドで装�
 runtime_error.UselessScreenTransition: "既にこの画面にいるため、このコマンドは効果がありません。"
 
 # Error from getting view from simulation output
+runtime_view_error.Closed: "ゲームが実行されていません。"
 runtime_view_error.Coherence: "インベントリデータが破損しているため、表示できません。"
 runtime_view_error.Crash: "このステップまたはそれ以前にゲームがクラッシュしたため、インベントリを表示できません。"
 runtime_view_error.Memory: "ゲームメモリの読み取り中にエラーが発生したため、インベントリを表示できません。"

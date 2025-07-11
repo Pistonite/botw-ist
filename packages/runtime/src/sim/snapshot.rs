@@ -22,12 +22,15 @@ pub enum GameSnapshot {
     Running(GameSnapshotRunning),
     Crashed(CrashReport),
     PreviousCrash,
+    Closed,
+    PreviousClosed,
 }
 
 #[derive(PartialEq)]
 pub struct GameSnapshotRunning {
     pub pouch: Result<iv::PouchList, sim::view::Error>,
     pub overworld: iv::Overworld,
+    pub gdt: Result<iv::Gdt, sim::view::Error>,
 }
 
 macro_rules! write_snapshot_ln {
@@ -43,9 +46,7 @@ macro_rules! write_snapshot_ln {
 impl std::fmt::Display for GameSnapshot {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Uninit => {
-                writeln!(f, "game: (Uninit)")
-            }
+            Self::Uninit => writeln!(f, "game: (Uninit)"),
             Self::Running(state) => {
                 writeln!(f, "game: (Running)")?;
                 state.fmt(f)
@@ -54,9 +55,9 @@ impl std::fmt::Display for GameSnapshot {
                 writeln!(f, "game: (Crashed)")?;
                 writeln!(f, "{report:?}")
             }
-            Self::PreviousCrash => {
-                writeln!(f, "game: (PreviousCrash)")
-            }
+            Self::PreviousCrash => writeln!(f, "game: (PreviousCrash)"),
+            Self::Closed => writeln!(f, "game: (Closed)"),
+            Self::PreviousClosed => writeln!(f, "game: (PreviousClosed)"),
         }
     }
 }
@@ -65,6 +66,7 @@ impl std::fmt::Display for GameSnapshotRunning {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         fmt_iv_pouch(&self.pouch, f)?;
         fmt_iv_overworld(&self.overworld, f)?;
+        fmt_iv_gdt(&self.gdt, f)?;
 
         Ok(())
     }
@@ -212,7 +214,7 @@ fn fmt_iv_overworld(
     }
     write_snapshot_ln!(f, "  overworld", len)?;
     for (i, item) in overworld.items.iter().enumerate() {
-        write!(f, "      [{i:03}]")?;
+        write!(f, "    [{i:03}]")?;
         fmt_iv_overworld_item(item, f)?;
     }
     Ok(())
@@ -261,6 +263,116 @@ fn fmt_iv_overworld_item(
     Ok(())
 }
 
+fn fmt_iv_gdt(
+    gdt: &Result<iv::Gdt, sim::view::Error>,
+    f: &mut std::fmt::Formatter<'_>,
+) -> std::fmt::Result {
+    let gdt = match gdt {
+        Err(e) => {
+            writeln!(f, "  gdt_error: ({e})")?;
+            return Ok(());
+        }
+        Ok(x) => x,
+    };
+    {
+        let info = &gdt.info;
+        let weapons = info.num_weapon_slots;
+        let bows = info.num_bow_slots;
+        let shields = info.num_shield_slots;
+        write_snapshot_ln!(f, "  gdt", weapons, bows, shields)?;
+        let mut discovered_tabs = String::new();
+        if info.sword_tab_discovered {
+            discovered_tabs += "Sw,"
+        } else {
+            discovered_tabs += "__,"
+        }
+        if info.bow_tab_discovered {
+            discovered_tabs += "Bo,"
+        } else {
+            discovered_tabs += "__,"
+        }
+        if info.shield_tab_discovered {
+            discovered_tabs += "Sh,"
+        } else {
+            discovered_tabs += "__,"
+        }
+        if info.armor_tab_discovered {
+            discovered_tabs += "Ar,"
+        } else {
+            discovered_tabs += "__,"
+        }
+        if info.material_tab_discovered {
+            discovered_tabs += "Ma,"
+        } else {
+            discovered_tabs += "__,"
+        }
+        if info.food_tab_discovered {
+            discovered_tabs += "Fo,"
+        } else {
+            discovered_tabs += "__,"
+        }
+        if info.key_item_tab_discovered {
+            discovered_tabs += "Ki"
+        } else {
+            discovered_tabs += "__"
+        }
+        writeln!(f, "    discovered_tabs: {discovered_tabs}")?;
+
+        // no use displaying info.master_sword right now
+
+        let len = gdt.items.len();
+        write_snapshot_ln!(f, "    items", len,)?;
+    }
+    for (i, item) in gdt.items.iter().enumerate() {
+        write!(f, "      [{i:03}]")?;
+        fmt_iv_gdt_item(item, f)?;
+    }
+
+    Ok(())
+}
+
+fn fmt_iv_gdt_item(item: &iv::GdtItem, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    let idx = item.idx;
+    let actor = &item.common.actor_name;
+    let value = item.common.value;
+    let is_equipped = item.common.is_equipped;
+    write_snapshot_ln!(f, "", idx, actor, value, is_equipped)?;
+
+    match &item.data {
+        iv::GdtItemData::None => {}
+        iv::GdtItemData::Sword { idx, info }
+        | iv::GdtItemData::Bow { idx, info }
+        | iv::GdtItemData::Shield { idx, info } => {
+            let modifier = if info.flag == 0 && info.value == 0 {
+                "none".to_string()
+            } else {
+                format!("(flag={:08x}, value={})", info.flag, info.value)
+            };
+            write_snapshot_ln!(f, "        weapon", idx, modifier)?;
+        }
+        iv::GdtItemData::Food { idx, info, .. } => {
+            let life_recover = info.effect_value;
+            let duration = info.effect_duration;
+            let price = info.sell_price;
+            let effect_id = info.effect_id;
+            let effect_level = info.effect_level;
+            // no ROI writing ingredients now
+            write_snapshot_ln!(
+                f,
+                "        food",
+                idx,
+                life_recover,
+                duration,
+                price,
+                effect_id,
+                effect_level
+            )?;
+        }
+    }
+
+    Ok(())
+}
+
 impl sim::State {
     pub fn to_snapshot(&self) -> StateSnapshot {
         StateSnapshot {
@@ -276,6 +388,8 @@ impl sim::Game {
             sim::Game::Running(game_state) => GameSnapshot::Running(game_state.to_snapshot()),
             sim::Game::Crashed(crash_report) => GameSnapshot::Crashed(crash_report.clone()),
             sim::Game::PreviousCrash => GameSnapshot::PreviousCrash,
+            sim::Game::Closed => GameSnapshot::Closed,
+            sim::Game::PreviousClosed => GameSnapshot::Closed,
         }
     }
 }
@@ -284,6 +398,11 @@ impl sim::GameState {
     pub fn to_snapshot(&self) -> GameSnapshotRunning {
         let pouch = sim::view::extract_pouch_view(&self.process, &self.systems);
         let overworld = self.systems.overworld.to_iv();
-        GameSnapshotRunning { pouch, overworld }
+        let gdt = sim::view::extract_gdt_view(&self.process);
+        GameSnapshotRunning {
+            pouch,
+            overworld,
+            gdt,
+        }
     }
 }

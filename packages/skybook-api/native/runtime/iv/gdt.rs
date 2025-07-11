@@ -7,7 +7,7 @@ mod __impl {
     /// Inventory data stored in GameData (GDT)
     ///
     /// This contains the list of items in GDT as well as other useful flags
-    #[derive(Debug, Default, Clone, Serialize)]
+    #[derive(Debug, Default, PartialEq, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -19,11 +19,11 @@ mod __impl {
         /// Master Sword flags
         pub master_sword: InvView_GdtMasterSword,
         /// Other inventory flags
-        pub info: InvView_GdtInvInfo,
+        pub info: InvView_GdtInfo,
     }
 
     /// Master Sword GDT flags
-    #[derive(Debug, Default, Clone, Serialize)]
+    #[derive(Debug, Default, PartialEq, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -41,34 +41,43 @@ mod __impl {
         pub recover_time: f32,
     }
 
-    /// Other inventory GDT flags
-    #[derive(Debug, Default, Clone, Serialize)]
+    /// Other GDT flags
+    #[derive(Debug, Default, PartialEq, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
     #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
     #[serde(rename_all = "camelCase")]
     #[allow(non_camel_case_types)]
-    pub struct InvView_GdtInvInfo {
+    pub struct InvView_GdtInfo {
         /// Number of weapon slots available per tab (WeaponPorchStockNum)
         pub num_weapon_slots: i32,
         /// Number of bow slots available per tab (BowPorchStockNum)
         pub num_bow_slots: i32,
         /// Number of shields slots available per tab (ShieldPorchStockNum)
         pub num_shield_slots: i32,
-
-        // discovered flags
+        /// If the Sword tab is discovered
         pub sword_tab_discovered: bool,
+        /// If the Bow tab is discovered
         pub bow_tab_discovered: bool,
+        /// If the Shield tab is discovered
         pub shield_tab_discovered: bool,
+        /// If the Armor tab is discovered
         pub armor_tab_discovered: bool,
+        /// If the Material tab is discovered
         pub material_tab_discovered: bool,
+        /// If the Food tab is discovered
         pub food_tab_discovered: bool,
+        /// If the Key Items tab is discovered
         pub key_item_tab_discovered: bool,
+        /// If the Sheika Slate was picked up
+        pub is_sheika_slate_obtained: bool,
+        /// If the Paraglider was picker up
+        pub is_paraglider_obtained: bool,
     }
 
     /// One item in GDT
-    #[derive(Debug, Default, Clone, Serialize)]
+    #[derive(Debug, Default, PartialEq, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -85,7 +94,7 @@ mod __impl {
     }
 
     /// Extra flags to load for GDT items
-    #[derive(Debug, Default, Clone, Serialize)]
+    #[derive(Debug, Default, PartialEq, Clone, Serialize)]
     #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]
     #[cfg_attr(feature = "__ts-binding", ts(export))]
     #[cfg_attr(feature = "wasm", derive(tsify::Tsify))]
@@ -131,7 +140,7 @@ mod __impl {
     }
 }
 pub use __impl::InvView_Gdt as Gdt;
-pub use __impl::InvView_GdtInvInfo as GdtInvInfo;
+pub use __impl::InvView_GdtInfo as GdtInfo;
 pub use __impl::InvView_GdtItem as GdtItem;
 pub use __impl::InvView_GdtItemData as GdtItemData;
 pub use __impl::InvView_GdtMasterSword as GdtMasterSword;
