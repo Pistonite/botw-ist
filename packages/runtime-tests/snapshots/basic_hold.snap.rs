@@ -22,6 +22,11 @@ game: (Running)
         node: (valid=true, pos=418, addr=0x0000002222243cd0, prev=0x0000002222243f68, next=0x0000002222200068, )
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=2, )
+      [000]: (idx=0, actor=Item_Fruit_A, value=2, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Fruit_I, value=3, is_equipped=false, )
 
 ----- Step[1]: hold pepper
 
@@ -36,6 +41,11 @@ game: (Running)
         holding: 1
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=2, )
+      [000]: (idx=0, actor=Item_Fruit_A, value=2, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Fruit_I, value=3, is_equipped=false, )
 
 ----- Step[2]: hold 2 apple
 
@@ -51,6 +61,11 @@ game: (Running)
         holding: 1
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=2, )
+      [000]: (idx=0, actor=Item_Fruit_A, value=2, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Fruit_I, value=3, is_equipped=false, )
 
 ----- Step[3]: unhold
 
@@ -64,6 +79,11 @@ game: (Running)
         node: (valid=true, pos=418, addr=0x0000002222243cd0, prev=0x0000002222243f68, next=0x0000002222200068, )
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=2, )
+      [000]: (idx=0, actor=Item_Fruit_A, value=2, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Fruit_I, value=3, is_equipped=false, )
 
 ----- Step[4]: hold 1 apple
 
@@ -78,6 +98,11 @@ game: (Running)
         node: (valid=true, pos=418, addr=0x0000002222243cd0, prev=0x0000002222243f68, next=0x0000002222200068, )
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=2, )
+      [000]: (idx=0, actor=Item_Fruit_A, value=2, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Fruit_I, value=3, is_equipped=false, )
 
 ----- Step[5]: drop
 
@@ -92,7 +117,12 @@ game: (Running)
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
   overworld: (len=1, )
-      [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+    [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=2, )
+      [000]: (idx=0, actor=Item_Fruit_A, value=1, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Fruit_I, value=3, is_equipped=false, )
 
 ----- Step[6]: get 2 fire-arrow
 
@@ -110,7 +140,13 @@ game: (Running)
       [00]: (item_idx=0, tab_type=Bow, )
       [01]: (item_idx=1, tab_type=Material, )
   overworld: (len=1, )
-      [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+    [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,Bo,__,__,Ma,__,__
+    items: (len=3, )
+      [000]: (idx=0, actor=FireArrow, value=2, is_equipped=true, )
+      [001]: (idx=1, actor=Item_Fruit_A, value=1, is_equipped=false, )
+      [002]: (idx=2, actor=Item_Fruit_I, value=3, is_equipped=false, )
 
 ----- Step[7]: hold fire-arrow
 
@@ -128,6 +164,12 @@ game: (Running)
       [00]: (item_idx=0, tab_type=Bow, )
       [01]: (item_idx=1, tab_type=Material, )
   overworld: (len=1, )
-      [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+    [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,Bo,__,__,Ma,__,__
+    items: (len=3, )
+      [000]: (idx=0, actor=FireArrow, value=2, is_equipped=true, )
+      [001]: (idx=1, actor=Item_Fruit_A, value=1, is_equipped=false, )
+      [002]: (idx=2, actor=Item_Fruit_I, value=3, is_equipped=false, )
 
 }

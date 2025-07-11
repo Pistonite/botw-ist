@@ -15,6 +15,10 @@ game: (Running)
         node: (valid=true, pos=419, addr=0x0000002222243f68, prev=0x0000002222200068, next=0x0000002222200068, )
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=KeyItem, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,__,__,Ki
+    items: (len=1, )
+      [000]: (idx=0, actor=Obj_HeroSoul_Gerudo, value=1, is_equipped=true, )
 
 ----- Step[1]: get gale
 
@@ -28,6 +32,11 @@ game: (Running)
         node: (valid=true, pos=418, addr=0x0000002222243cd0, prev=0x0000002222243f68, next=0x0000002222200068, )
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=KeyItem, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,__,__,Ki
+    items: (len=2, )
+      [000]: (idx=0, actor=Obj_HeroSoul_Gerudo, value=1, is_equipped=true, )
+      [001]: (idx=1, actor=Obj_HeroSoul_Rito, value=1, is_equipped=true, )
 
 ----- Step[2]: get grace
 
@@ -43,6 +52,12 @@ game: (Running)
         node: (valid=true, pos=417, addr=0x0000002222243a38, prev=0x0000002222243cd0, next=0x0000002222200068, )
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=KeyItem, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,__,__,Ki
+    items: (len=3, )
+      [000]: (idx=0, actor=Obj_HeroSoul_Gerudo, value=1, is_equipped=true, )
+      [001]: (idx=1, actor=Obj_HeroSoul_Rito, value=1, is_equipped=true, )
+      [002]: (idx=2, actor=Obj_HeroSoul_Zora, value=1, is_equipped=true, )
 
 ----- Step[3]: get daruk
 
@@ -60,5 +75,12 @@ game: (Running)
         node: (valid=true, pos=416, addr=0x00000022222437a0, prev=0x0000002222243a38, next=0x0000002222200068, )
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=KeyItem, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,__,__,Ki
+    items: (len=4, )
+      [000]: (idx=0, actor=Obj_HeroSoul_Gerudo, value=1, is_equipped=true, )
+      [001]: (idx=1, actor=Obj_HeroSoul_Rito, value=1, is_equipped=true, )
+      [002]: (idx=2, actor=Obj_HeroSoul_Zora, value=1, is_equipped=true, )
+      [003]: (idx=3, actor=Obj_HeroSoul_Goron, value=1, is_equipped=true, )
 
 }

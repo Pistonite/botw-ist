@@ -21,6 +21,13 @@ game: (Running)
         node: (valid=true, pos=416, addr=0x00000022222437a0, prev=0x0000002222243a38, next=0x0000002222200068, )
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=4, )
+      [000]: (idx=0, actor=Item_Fruit_A, value=5, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Mushroom_E, value=2, is_equipped=false, )
+      [002]: (idx=2, actor=Item_Fruit_H, value=1, is_equipped=false, )
+      [003]: (idx=3, actor=Item_Fruit_I, value=2, is_equipped=false, )
 
 ----- Step[1]: :smug
 
@@ -43,8 +50,15 @@ game: (Running)
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
   overworld: (len=2, )
-      [000]: (typ=Held, actor=Item_Fruit_A, )
-      [001]: (typ=Held, actor=Item_Fruit_A, )
+    [000]: (typ=Held, actor=Item_Fruit_A, )
+    [001]: (typ=Held, actor=Item_Fruit_A, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=4, )
+      [000]: (idx=0, actor=Item_Fruit_A, value=5, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Mushroom_E, value=2, is_equipped=false, )
+      [002]: (idx=2, actor=Item_Fruit_H, value=1, is_equipped=false, )
+      [003]: (idx=3, actor=Item_Fruit_I, value=2, is_equipped=false, )
 
 ----- Step[3]: sell all apples
 
@@ -65,8 +79,15 @@ game: (Running)
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
   overworld: (len=2, )
-      [000]: (typ=Held, actor=Item_Fruit_A, )
-      [001]: (typ=Held, actor=Item_Fruit_A, )
+    [000]: (typ=Held, actor=Item_Fruit_A, )
+    [001]: (typ=Held, actor=Item_Fruit_A, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=4, )
+      [000]: (idx=0, actor=Item_Fruit_A, value=5, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Mushroom_E, value=2, is_equipped=false, )
+      [002]: (idx=2, actor=Item_Fruit_H, value=1, is_equipped=false, )
+      [003]: (idx=3, actor=Item_Fruit_I, value=2, is_equipped=false, )
 
 ----- Step[4]: close-dialog
 
@@ -83,8 +104,14 @@ game: (Running)
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
   overworld: (len=2, )
-      [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
-      [001]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+    [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+    [001]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=3, )
+      [000]: (idx=0, actor=Item_Mushroom_E, value=2, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Fruit_H, value=1, is_equipped=false, )
+      [002]: (idx=2, actor=Item_Fruit_I, value=2, is_equipped=false, )
 
 ----- Step[5]: drop all banana 1 pepper
 
@@ -99,10 +126,15 @@ game: (Running)
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
   overworld: (len=4, )
-      [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
-      [001]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
-      [002]: (typ=GroundItem, actor=Item_Fruit_H, despawning=false, )
-      [003]: (typ=GroundItem, actor=Item_Fruit_I, despawning=false, )
+    [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+    [001]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+    [002]: (typ=GroundItem, actor=Item_Fruit_H, despawning=false, )
+    [003]: (typ=GroundItem, actor=Item_Fruit_I, despawning=false, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=2, )
+      [000]: (idx=0, actor=Item_Mushroom_E, value=2, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Fruit_I, value=1, is_equipped=false, )
 
 ----- Step[6]: !break 2 slots
 
@@ -117,9 +149,14 @@ game: (Running)
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
   overworld: (len=4, )
-      [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
-      [001]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
-      [002]: (typ=GroundItem, actor=Item_Fruit_H, despawning=false, )
-      [003]: (typ=GroundItem, actor=Item_Fruit_I, despawning=false, )
+    [000]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+    [001]: (typ=GroundItem, actor=Item_Fruit_A, despawning=false, )
+    [002]: (typ=GroundItem, actor=Item_Fruit_H, despawning=false, )
+    [003]: (typ=GroundItem, actor=Item_Fruit_I, despawning=false, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: __,__,__,__,Ma,__,__
+    items: (len=2, )
+      [000]: (idx=0, actor=Item_Mushroom_E, value=2, is_equipped=false, )
+      [001]: (idx=1, actor=Item_Fruit_I, value=1, is_equipped=false, )
 
 }
