@@ -28,7 +28,11 @@ impl sim::State {
                 self.game = sim::Game::PreviousCrash;
                 Ok(Report::error(self, sim_warning!(ctx.span, PreviousCrash)))
             }
-            TakeGame::PreviousCrash => Ok(Report::new(self)),
+            TakeGame::PreviousCrash | TakeGame::PreviousClosed => Ok(Report::new(self)),
+            TakeGame::Closed => {
+                self.game = sim::Game::PreviousClosed;
+                Ok(Report::error(self, sim_warning!(ctx.span, PreviousClosed)))
+            }
             TakeGame::Running(game) => {
                 let span = ctx.span;
                 let report = f(*game, ctx).await?.into_report(span);
@@ -60,15 +64,13 @@ impl sim::State {
 #[doc(hidden)]
 #[derive(Clone, Default)]
 pub enum TakeGame {
-    /// Game is never started
     #[default]
     Uninit,
-    /// Game is running
     Running(Box<sim::GameState>),
-    /// Game has crashed in the step before (show warning)
     Crashed,
-    /// Game has crashed in some previous step (don't show warning)
     PreviousCrash,
+    Closed,
+    PreviousClosed,
 }
 
 impl sim::Game {
@@ -78,7 +80,9 @@ impl sim::Game {
             sim::Game::Uninit => TakeGame::Uninit,
             sim::Game::Crashed(_) => TakeGame::Crashed,
             sim::Game::PreviousCrash => TakeGame::PreviousCrash,
-            x => match std::mem::take(x) {
+            sim::Game::Closed => TakeGame::Closed,
+            sim::Game::PreviousClosed => TakeGame::PreviousClosed,
+            sim::Game::Running(_) => match std::mem::take(self) {
                 sim::Game::Running(game) => TakeGame::Running(game),
                 _ => unreachable!(),
             },

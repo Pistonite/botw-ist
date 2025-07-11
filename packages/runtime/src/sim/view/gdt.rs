@@ -23,43 +23,43 @@ pub fn extract_gdt_view(proc: &Process) -> Result<iv::Gdt, Error> {
     extract_from_trigger_param(gdt)
 }
 
+macro_rules! get_flag {
+    ($gdt:ident . ($($fd:tt)*) $name:literal) => {{
+        let Some(x) = $gdt.by_name::<gdt::fd!($($fd)*)>($name) else {
+        coherence_error!("cannot read {} flag", $name);
+        };
+        x
+        }}
+}
+macro_rules! get_flag_value {
+    ($gdt:ident . ($($fd:tt)*) $name:literal) => {{
+        *{get_flag!($gdt . ($($fd)*) $name)}.get()
+    }}
+}
 /// Extract items stored in a TriggerParam instance (could be in memory or in save)
 ///
 /// The implementation is similar to `uking::ui::PauseMenuDataMgr::doLoadFromGameData`.
 /// However, the implementation is "correct", i.e. it will associate `i`th Weapon/Sword/Shield/Food
 /// with the actual `i`th item of that type.
 fn extract_from_trigger_param(gdt: &gdt::TriggerParam) -> Result<iv::Gdt, Error> {
-    macro_rules! get_flag {
-        (($($fd:tt)*) $name:literal) => {{
-            let Some(x) = gdt.by_name::<gdt::fd!($($fd)*)>($name) else {
-                coherence_error!("cannot read {} flag", $name);
-            };
-            x
-        }}
-    }
-    macro_rules! get_flag_value {
-        (($($fd:tt)*) $name:literal) => {{
-            *{get_flag!(($($fd)*) $name)}.get()
-        }}
-    }
     const ITEM_MAX: usize = 420;
-    let porchitem = get_flag!((str64[]) "PorchItem");
-    let porchitem_equipflag = get_flag!((bool[]) "PorchItem_EquipFlag");
-    let porchitem_value1 = get_flag!((s32[]) "PorchItem_Value1");
-    let porchsword_flagsp = get_flag!((s32[]) "PorchSword_FlagSp");
-    let porchsword_valuesp = get_flag!((s32[]) "PorchSword_ValueSp");
-    let porchbow_flagsp = get_flag!((s32[]) "PorchBow_FlagSp");
-    let porchbow_valuesp = get_flag!((s32[]) "PorchBow_ValueSp");
-    let porchshield_flagsp = get_flag!((s32[]) "PorchShield_FlagSp");
-    let porchshield_valuesp = get_flag!((s32[]) "PorchShield_ValueSp");
-    let stamina_recover = get_flag!((vec2f[]) "StaminaRecover");
-    let cook_effect0 = get_flag!((vec2f[]) "CookEffect0");
-    let cook_effect1 = get_flag!((vec2f[]) "CookEffect1");
-    let cook_material0 = get_flag!((str64[]) "CookMaterialName0");
-    let cook_material1 = get_flag!((str64[]) "CookMaterialName1");
-    let cook_material2 = get_flag!((str64[]) "CookMaterialName2");
-    let cook_material3 = get_flag!((str64[]) "CookMaterialName3");
-    let cook_material4 = get_flag!((str64[]) "CookMaterialName4");
+    let porchitem = get_flag!(gdt.(str64[]) "PorchItem");
+    let porchitem_equipflag = get_flag!(gdt.(bool[]) "PorchItem_EquipFlag");
+    let porchitem_value1 = get_flag!(gdt.(s32[]) "PorchItem_Value1");
+    let porchsword_flagsp = get_flag!(gdt.(s32[]) "PorchSword_FlagSp");
+    let porchsword_valuesp = get_flag!(gdt.(s32[]) "PorchSword_ValueSp");
+    let porchbow_flagsp = get_flag!(gdt.(s32[]) "PorchBow_FlagSp");
+    let porchbow_valuesp = get_flag!(gdt.(s32[]) "PorchBow_ValueSp");
+    let porchshield_flagsp = get_flag!(gdt.(s32[]) "PorchShield_FlagSp");
+    let porchshield_valuesp = get_flag!(gdt.(s32[]) "PorchShield_ValueSp");
+    let stamina_recover = get_flag!(gdt.(vec2f[]) "StaminaRecover");
+    let cook_effect0 = get_flag!(gdt.(vec2f[]) "CookEffect0");
+    let cook_effect1 = get_flag!(gdt.(vec2f[]) "CookEffect1");
+    let cook_material0 = get_flag!(gdt.(str64[]) "CookMaterialName0");
+    let cook_material1 = get_flag!(gdt.(str64[]) "CookMaterialName1");
+    let cook_material2 = get_flag!(gdt.(str64[]) "CookMaterialName2");
+    let cook_material3 = get_flag!(gdt.(str64[]) "CookMaterialName3");
+    let cook_material4 = get_flag!(gdt.(str64[]) "CookMaterialName4");
 
     let mut items = vec![];
     for i in 0..ITEM_MAX {
@@ -213,16 +213,26 @@ fn extract_from_trigger_param(gdt: &gdt::TriggerParam) -> Result<iv::Gdt, Error>
 
     // MISC other flags
     let master_sword = iv::GdtMasterSword {
-        is_true_form: get_flag_value!((bool) "Open_MasterSword_FullPower"),
-        add_power: get_flag_value!((s32) "MasterSword_Add_Power"),
-        add_beam_power: get_flag_value!((s32) "MasterSword_Add_BeamPower"),
-        recover_time: get_flag_value!((f32) "MasterSwordRecoverTime"),
+        is_true_form: get_flag_value!(gdt.(bool) "Open_MasterSword_FullPower"),
+        add_power: get_flag_value!(gdt.(s32) "MasterSword_Add_Power"),
+        add_beam_power: get_flag_value!(gdt.(s32) "MasterSword_Add_BeamPower"),
+        recover_time: get_flag_value!(gdt.(f32) "MasterSwordRecoverTime"),
     };
-    let is_open_item_category = get_flag!((bool[]) "IsOpenItemCategory");
-    let info = iv::GdtInvInfo {
-        num_weapon_slots: get_flag_value!((s32) "WeaponPorchStockNum"),
-        num_bow_slots: get_flag_value!((s32) "BowPorchStockNum"),
-        num_shield_slots: get_flag_value!((s32) "ShieldPorchStockNum"),
+    let info = extract_gdt_info_from_trigger_param(gdt)?;
+
+    Ok(iv::Gdt {
+        items,
+        master_sword,
+        info,
+    })
+}
+
+pub fn extract_gdt_info_from_trigger_param(gdt: &gdt::TriggerParam) -> Result<iv::GdtInfo, Error> {
+    let is_open_item_category = get_flag!(gdt.(bool[]) "IsOpenItemCategory");
+    let info = iv::GdtInfo {
+        num_weapon_slots: get_flag_value!(gdt.(s32) "WeaponPorchStockNum"),
+        num_bow_slots: get_flag_value!(gdt.(s32) "BowPorchStockNum"),
+        num_shield_slots: get_flag_value!(gdt.(s32) "ShieldPorchStockNum"),
         sword_tab_discovered: is_open_item_category
             .get_at(PouchCategory::Sword)
             .copied()
@@ -251,11 +261,9 @@ fn extract_from_trigger_param(gdt: &gdt::TriggerParam) -> Result<iv::Gdt, Error>
             .get_at(PouchCategory::KeyItem)
             .copied()
             .unwrap_or_default(),
+        is_sheika_slate_obtained: get_flag_value!(gdt.(bool) "IsGet_Obj_DRStone_Get")
+            || get_flag_value!(gdt.(bool) "IsGet_Obj_DRStone_A_01"),
+        is_paraglider_obtained: get_flag_value!(gdt.(bool) "IsGet_PlayerStole2"),
     };
-
-    Ok(iv::Gdt {
-        items,
-        master_sword,
-        info,
-    })
+    Ok(info)
 }

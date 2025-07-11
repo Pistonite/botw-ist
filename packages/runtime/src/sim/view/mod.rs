@@ -41,3 +41,19 @@ macro_rules! coherence_error {
     }}
 }
 pub(crate) use coherence_error;
+
+macro_rules! view_game_state {
+    ($state:ident) => {{
+        match &$state.game {
+            $crate::sim::Game::Uninit => return Ok(Default::default()),
+            $crate::sim::Game::Running(state) => state,
+            $crate::sim::Game::Crashed(_) | sim::Game::PreviousCrash => {
+                return Err(RuntimeViewError::Crash);
+            }
+            $crate::sim::Game::Closed | sim::Game::PreviousClosed => {
+                return Err(RuntimeViewError::Closed);
+            }
+        }
+    }};
+}
+pub(crate) use view_game_state;

@@ -20,13 +20,7 @@ impl RunOutput {
         let Some(state) = self.get_state_by_step(step) else {
             return Ok(Default::default());
         };
-        let state = match &state.game {
-            sim::Game::Uninit => return Ok(Default::default()),
-            sim::Game::Running(state) => state,
-            sim::Game::Crashed(_) | sim::Game::PreviousCrash => {
-                return Err(RuntimeViewError::Crash);
-            }
-        };
+        let state = sim::view::view_game_state!(state);
 
         Ok(sim::view::extract_pouch_view(
             &state.process,
@@ -41,13 +35,7 @@ impl RunOutput {
         let Some(state) = self.get_state_by_step(step) else {
             return Ok(Default::default());
         };
-        let state = match &state.game {
-            sim::Game::Uninit => return Ok(Default::default()),
-            sim::Game::Running(state) => state,
-            sim::Game::Crashed(_) | sim::Game::PreviousCrash => {
-                return Err(RuntimeViewError::Crash);
-            }
-        };
+        let state = sim::view::view_game_state!(state);
 
         Ok(sim::view::extract_gdt_view(&state.process)?)
     }
@@ -57,13 +45,7 @@ impl RunOutput {
         let Some(state) = self.get_state_by_step(step) else {
             return Ok(Default::default());
         };
-        let state = match &state.game {
-            sim::Game::Uninit => return Ok(Default::default()),
-            sim::Game::Running(state) => state,
-            sim::Game::Crashed(_) | sim::Game::PreviousCrash => {
-                return Err(RuntimeViewError::Crash);
-            }
-        };
+        let state = sim::view::view_game_state!(state);
 
         Ok(state.systems.overworld.to_iv())
     }
@@ -79,8 +61,10 @@ impl RunOutput {
         loop {
             let state = self.states.get(step)?;
             match &state.game {
-                sim::Game::Uninit => return None,
-                sim::Game::Running(_) => return None,
+                sim::Game::Uninit
+                | sim::Game::Running(_)
+                | sim::Game::Closed
+                | sim::Game::PreviousClosed => return None,
                 sim::Game::Crashed(crash_report) => return Some(crash_report),
                 sim::Game::PreviousCrash => {
                     if step == 0 {

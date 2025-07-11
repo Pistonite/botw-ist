@@ -161,20 +161,21 @@ impl PouchScreenEquipState {
 
 fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, memory::Error> {
     let m = proc.memory();
-    let gdt = gdt::trigger_param_ptr(m)?;
+    let gdt_ptr = gdt::trigger_param_ptr(m)?;
     let (weapon_slots, bow_slots, shield_slots) = {
-        proxy! { let trigger_param = *gdt as trigger_param in proc };
-        let weapon = trigger_param
+        proxy! { let gdt = *gdt_ptr as trigger_param in proc };
+
+        let weapon = gdt
             .by_name::<gdt::fd!(s32)>("WeaponPorchStockNum")
             .map(|x| x.get())
             .copied()
             .unwrap_or(0) as usize;
-        let bow = trigger_param
+        let bow = gdt
             .by_name::<gdt::fd!(s32)>("BowPorchStockNum")
             .map(|x| x.get())
             .copied()
             .unwrap_or(0) as usize;
-        let shield = trigger_param
+        let shield = gdt
             .by_name::<gdt::fd!(s32)>("ShieldPorchStockNum")
             .map(|x| x.get())
             .copied()
