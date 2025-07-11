@@ -60,8 +60,12 @@ const GdtInventoryPanelImpl: React.FC = () => {
 
     const itemSlotProps = useItemSlotPropsFromSettings();
 
+    const noShowMaybeBugMsg = gdt?.err?.type === "Closed";
     const $Error = gdt?.err && (
-        <ErrorBar title={t("main.gdt_inventory.view_error")}>
+        <ErrorBar
+            title={t("main.gdt_inventory.view_error")}
+            noBugReport={noShowMaybeBugMsg}
+        >
             {translateRuntimeViewError(gdt.err, t)}
         </ErrorBar>
     );

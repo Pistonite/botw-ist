@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import type { BackgroundName } from "self::util";
+
 /** Ids of all dialogs that can be opened */
 export type DialogId = "extension-launch" | "custom-extension";
 
@@ -24,6 +26,9 @@ export type UIStore = {
     /** If the inventory should be displayed by item tabs */
     isTabViewEnabled: boolean;
     setIsTabViewEnabled: (enabled: boolean) => void;
+
+    background: BackgroundName;
+    setBackgroundName: (name: BackgroundName) => void;
 };
 
 /**
@@ -62,10 +67,15 @@ export const useUIStore = create<UIStore>()(
             setIsTabViewEnabled: (enabled) => {
                 set({ isTabViewEnabled: enabled });
             },
+
+            background: "hateno",
+            setBackgroundName: (background) => {
+                set({ background });
+            },
         }),
         {
             name: "Skybook.UI",
-            version: 1,
+            version: 2,
             partialize: (state) => {
                 return Object.fromEntries(
                     Object.entries(state).filter(([key]) => {

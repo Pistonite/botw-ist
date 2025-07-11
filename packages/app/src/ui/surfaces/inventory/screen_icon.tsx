@@ -9,11 +9,18 @@ import {
 import type { InvView_Screen } from "@pistonite/skybook-api";
 import { useUITranslation } from "skybook-localization";
 
+import { useUIStore } from "self::application";
+import { getRandomBackgroundName } from "self::util";
+
 export type ScreenIndicatorProps = {
     screen?: InvView_Screen;
+    hasGlider: boolean;
 };
 
-export const ScreenIndicator: React.FC<ScreenIndicatorProps> = ({ screen }) => {
+export const ScreenIndicator: React.FC<ScreenIndicatorProps> = ({
+    screen,
+    hasGlider,
+}) => {
     const screenReal = screen || "none";
     let icon;
     switch (screenReal) {
@@ -33,6 +40,8 @@ export const ScreenIndicator: React.FC<ScreenIndicatorProps> = ({ screen }) => {
             icon = <DesktopOff20Regular />;
         }
     }
+    const background = useUIStore((state) => state.background);
+    const setBackground = useUIStore((state) => state.setBackgroundName);
 
     const t = useUITranslation();
     return (
@@ -56,6 +65,16 @@ export const ScreenIndicator: React.FC<ScreenIndicatorProps> = ({ screen }) => {
                         ? "secondary"
                         : "transparent"
                 }
+                onClick={() => {
+                    if (screen !== "overworld") {
+                        return;
+                    }
+                    const newBg = getRandomBackgroundName(
+                        background,
+                        hasGlider,
+                    );
+                    setBackground(newBg);
+                }}
             />
         </Tooltip>
     );
