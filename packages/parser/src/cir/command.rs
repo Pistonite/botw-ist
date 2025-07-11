@@ -128,6 +128,15 @@ pub enum Command {
     /// See [`syn::CmdTargeting`]
     CoTargeting(Box<cir::ItemSelectSpec>),
 
+    /// `save` - make a manual save or named save, see [`syn::CmdSaveAs`]
+    Save(Option<String>),
+    /// `reload` - Load manual save or named save, see [`syn::CmdReload`]
+    Reload(Option<String>),
+    /// `close-game` - Close the game
+    CloseGame,
+    /// `new-game` - Start a new game
+    NewGame,
+
     /// See [`syn::CmdEat`]
     Eat(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdRoast`] and [`crate::syn::CmdBake`]
@@ -149,19 +158,6 @@ pub enum Command {
     ///
     /// If the bool is true, the command is `swap-data`
     Swap(u32, u32, bool),
-
-    /// `save` - make a manual save
-    Save,
-    /// `save-as`. See [`syn::CmdSaveAs`]
-    SaveAs(String),
-    /// `reload` - Load manual save
-    Reload,
-    /// `reload FILE`. See [`syn::CmdReload`]
-    ReloadFrom(String),
-    /// `close-game` - Close the game
-    CloseGame,
-    /// `new-game` - Start a new game
-    NewGame,
 
     /// See [`syn::CmdEnter`]
     Enter(cir::Trial),
@@ -288,6 +284,12 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?,
         ))),
         //////////////////////////////////////////////////////////////////
+        C::Save(_) => Some(X::Save(None)),
+        C::SaveAs(cmd) => Some(X::Save(Some(cmd.name.to_string()))),
+        C::Reload(cmd) => Some(X::Reload(cmd.name.as_ref().map(|x| x.to_string()))),
+        C::CloseGame(_) => Some(X::CloseGame),
+        C::NewGame(_) => Some(X::NewGame),
+        //////////////////////////////////////////////////////////////////
         syn::Command::Eat(cmd) => Some(cir::Command::Eat(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
@@ -380,14 +382,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
             Some(cir::Command::Swap(i as u32, j as u32, true))
         }
 
-        syn::Command::Save(_) => Some(cir::Command::Save),
-        syn::Command::SaveAs(cmd) => Some(cir::Command::SaveAs(cmd.name.to_string())),
-        syn::Command::Reload(cmd) => match cmd.name.as_ref() {
-            None => Some(cir::Command::Reload),
-            Some(name) => Some(cir::Command::ReloadFrom(name.to_string())),
-        },
-        syn::Command::CloseGame(_) => Some(cir::Command::CloseGame),
-        syn::Command::NewGame(_) => Some(cir::Command::NewGame),
         syn::Command::Enter(cmd) => match cir::parse_trial(&cmd.trial, &cmd.trial.span()) {
             Ok(trial) => Some(cir::Command::Enter(trial)),
             Err(e) => {

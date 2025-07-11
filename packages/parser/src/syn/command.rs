@@ -74,6 +74,18 @@ pub enum Command {
     /// `sell ITEMS`
     Sell(CmdSell),
 
+    // ==== saves/game state ====
+    /// `save`
+    Save(syn::KwSave),
+    /// `save-as NAME`
+    SaveAs(CmdSaveAs),
+    /// `reload` or `reload NAME`
+    Reload(CmdReload),
+    /// `close-game`
+    CloseGame(syn::KwCloseGame),
+    /// `new-game`
+    NewGame(syn::KwNewGame),
+
     // ==== prompt entanglement ====
     /// `entangle ITEM`
     Entangle(CmdEntangle),
@@ -94,7 +106,7 @@ pub enum Command {
     /// `freeze ITEMS`
     Freeze(CmdFreeze),
 
-    // ==== inventory ====
+    // ==== advanced inventory operations ====
     /// `sort CATEGORY`
     Sort(CmdSort),
     /// `!set-inventory ITEMS`
@@ -107,18 +119,6 @@ pub enum Command {
     Swap(CmdSwap),
     /// `!swap-data X Y`
     SwapData(CmdSwapData),
-
-    // ==== saves ====
-    /// `save`
-    Save(syn::KwSave),
-    /// `save-as NAME`
-    SaveAs(CmdSaveAs),
-    /// `reload` or `reload NAME`
-    Reload(CmdReload),
-    /// `close-game`
-    CloseGame(syn::KwCloseGame),
-    /// `new-game`
-    NewGame(syn::KwNewGame),
 
     // ==== trials ====
     /// `enter TRIAL`

@@ -106,6 +106,10 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     const itemSlotProps = useItemSlotPropsFromSettings();
     const isMasterSwordFullPower = !!gdt?.val?.masterSword?.isTrueForm;
 
+    const backgroundName = useUIStore((state) => state.background);
+    const hasGlider = !!gdt?.val?.info?.isParagliderObtained;
+    const backgroundUrl = getOverworldBackgroundUrl(backgroundName);
+
     const isTabView = useUIStore((state) => state.isTabViewEnabled);
     const setTabView = useUIStore((state) => state.setIsTabViewEnabled);
     const tabNodes = useMemo(() => {
@@ -115,11 +119,13 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         return getTabNodesFromPouch(pouch?.val);
     }, [pouch, isTabView]);
 
+    const isGameClosed = pouch?.err?.type === "Closed";
+
     const $Background = (
         <div
             className={m("pos-abs all-sides-0", c.background)}
             style={{
-                backgroundImage: `url(${getOverworldBackgroundUrl()})`,
+                backgroundImage: `url(${backgroundUrl})`,
             }}
         />
     );
@@ -134,8 +140,11 @@ export const PouchInventoryPanelImpl: React.FC = () => {
             >
                 <Button icon={<Info20Regular />} appearance="transparent" />
             </Tooltip>
-            <div className={m("flex-row flex-1 flex-centera gap-4")}>
-                <ScreenIndicator screen={pouch?.val?.screen} />
+            <div className={m("flex-row flex-1 flex-centera gap-4", c.toolbar)}>
+                <ScreenIndicator
+                    screen={pouch?.val?.screen}
+                    hasGlider={hasGlider}
+                />
                 <Tooltip
                     relationship="label"
                     content={t("main.visible_inventory.mcount.desc")}
@@ -145,7 +154,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                     <Button
                         icon={
                             <Text font="monospace" size={400}>
-                                {pouch?.val?.count ?? "??"}
+                                {pouch?.val?.count ?? "--"}
                             </Text>
                         }
                         appearance={
@@ -222,9 +231,13 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         </ErrorBar>
     );
 
+    // don't show "If you think this is a bug" if the message is "game is closed"
     const $PouchError = pouch?.err && (
         <>
-            <ErrorBar title={t("main.visible_inventory.view_error")}>
+            <ErrorBar
+                title={t("main.visible_inventory.view_error")}
+                noBugReport={isGameClosed}
+            >
                 {translateRuntimeViewError(pouch.err, t)}
             </ErrorBar>
             {pouch.err.type === "Crash" && (

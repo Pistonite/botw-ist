@@ -178,6 +178,12 @@ impl State {
                 self.handle_entangle(ctx, item).await
             }
 
+            X::CloseGame => {
+                log::debug!("handling CLOSE-GAME");
+                self.game = Game::Closed;
+                Ok(Report::new(self))
+            }
+
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
         }
     }
@@ -188,7 +194,7 @@ impl State {
         items: &[cir::ItemSpec],
         args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling GET command");
+        log::debug!("handling GET");
         let items = items.to_vec();
         let (pause, accurate) = args
             .map(|args| (args.pause_during, args.accurately_simulate))
@@ -204,7 +210,7 @@ impl State {
         items: &[cir::ItemSelectSpec],
         args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling PICKUP command");
+        log::debug!("handling PICKUP");
         let items = items.to_vec();
         let pause = args.map(|args| args.pause_during).unwrap_or_default();
         in_game!(self, rt, cpu, sys, errors => {
@@ -216,7 +222,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling PAUSE command");
+        log::debug!("handling PAUSE");
         in_game!(self, rt, cpu, sys, errors => {
             sys.screen.transition_to_inventory(&mut cpu, &mut sys.overworld, true, errors)?;
             Ok(())
@@ -227,7 +233,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling UNPAUSE command");
+        log::debug!("handling UNPAUSE");
         in_game!(self, rt, cpu, sys, errors => {
             if !sys.screen.current_screen().is_inventory() {
                 errors.push(sim_error!(cpu.span, NotRightScreen));
@@ -249,7 +255,7 @@ impl State {
         items: &[cir::ItemSelectSpec],
         args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling HOLD command");
+        log::debug!("handling HOLD");
         let (smug, pe_target) = args
             .map(|x| (x.smug, x.entangle_target.as_ref().cloned()))
             .unwrap_or_default();
@@ -263,7 +269,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling UNHOLD command");
+        log::debug!("handling UNHOLD");
         in_game!(self, rt, cpu, sys, errors => {
             if sys.screen.current_screen().is_overworld() {
                 sys.overworld.despawn_items();
@@ -279,7 +285,7 @@ impl State {
         args: Option<&StateArgs>,
         pick_up: bool,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling DROP command");
+        log::debug!("handling DROP");
         let (pe_target, overworld, pause_during) = args
             .map(|x| {
                 (
@@ -301,7 +307,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         count: i32,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling !BREAK command");
+        log::debug!("handling !BREAK");
         in_game!(self, rt, cpu, _sys, _errors => {
             sim::actions::force_break_slot(&mut cpu, count)
         })
@@ -312,7 +318,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec],
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling !REMOVE command");
+        log::debug!("handling !REMOVE");
         let items = items.to_vec();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::force_remove_item(&mut cpu, sys, errors, &items)
@@ -326,7 +332,7 @@ impl State {
         args: Option<&StateArgs>,
         is_equip: bool,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling CHGEQUIP command");
+        log::debug!("handling CHGEQUIP");
         let (pe_target, is_dpad) = args
             .map(|x| (x.entangle_target.as_ref().cloned(), x.dpad))
             .unwrap_or_default();
@@ -341,7 +347,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling OPEN SHOP command");
+        log::debug!("handling OPEN-SHOP");
         in_game!(self, rt, cpu, sys, errors => {
             sys.screen.transition_to_shop_buying(&mut cpu, &mut sys.overworld, true, errors)?;
             Ok(())
@@ -352,7 +358,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling CLOSE SHOP command");
+        log::debug!("handling CLOSE-SHOP");
         in_game!(self, rt, cpu, sys, errors => {
             if !sys.screen.current_screen().is_shop() {
                 errors.push(sim_error!(cpu.span, NotRightScreen));
@@ -374,7 +380,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec],
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling SELL command");
+        log::debug!("handling SELL");
         let items = items.to_vec();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::sell_items(&mut cpu, sys, errors, &items)
@@ -386,7 +392,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         item: &cir::ItemSelectSpec,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling ENTANGLE command");
+        log::debug!("handling ENTANGLE");
         let item = item.clone();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::entangle_item(&mut cpu, sys, errors, &item)
