@@ -20,7 +20,7 @@ pub fn extract_gdt_view(proc: &Process) -> Result<iv::Gdt, Error> {
         "failed to load gdt trigger param: {e}"
     );
 
-    extract_from_trigger_param(gdt)
+    extract_gdt_from_trigger_param(gdt)
 }
 
 macro_rules! get_flag {
@@ -41,7 +41,7 @@ macro_rules! get_flag_value {
 /// The implementation is similar to `uking::ui::PauseMenuDataMgr::doLoadFromGameData`.
 /// However, the implementation is "correct", i.e. it will associate `i`th Weapon/Sword/Shield/Food
 /// with the actual `i`th item of that type.
-fn extract_from_trigger_param(gdt: &gdt::TriggerParam) -> Result<iv::Gdt, Error> {
+pub fn extract_gdt_from_trigger_param(gdt: &gdt::TriggerParam) -> Result<iv::Gdt, Error> {
     const ITEM_MAX: usize = 420;
     let porchitem = get_flag!(gdt.(str64[]) "PorchItem");
     let porchitem_equipflag = get_flag!(gdt.(bool[]) "PorchItem_EquipFlag");

@@ -107,6 +107,26 @@ export class _wxSenderImpl implements Runtime {
     }
 
     /**
+     * Execute the script if not up-to-date, and return the save inventory for the manual
+     * or named save at the byte offset `pos` in the script (use undefined to refer to the manual save)
+     * 
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
+     */
+    public getSaveInventory( script: string, taskId: string, pos: number, name: string | undefined ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
+        return this.sender.send<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>(44 /* Runtime.getSaveInventory */, [ script, taskId, pos, name ]);
+    }
+
+    /**
+     * Execute the script if not up-to-date, and return the list of save names at the
+     * byte offset `pos` in the script. The list does not include the manual save.
+     * 
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
+     */
+    public getSaveNames( script: string, taskId: string, pos: number ): WxPromise<MaybeAborted<string[]>> {
+        return this.sender.send<MaybeAborted<string[]>>(45 /* Runtime.getSaveNames */, [ script, taskId, pos ]);
+    }
+
+    /**
      * Parse the script and get semantic tokens in the range from the parser.
      * 
      * The output is triples of [start, length, tokenType]
@@ -114,28 +134,28 @@ export class _wxSenderImpl implements Runtime {
      * The offsets in both inputs and outputs should be byte offsets, not character offsets.
      */
     public getSemanticTokens( script: string, start: number, end: number ): WxPromise<Uint32Array> {
-        return this.sender.send<Uint32Array>(44 /* Runtime.getSemanticTokens */, [ script, start, end ]);
+        return this.sender.send<Uint32Array>(46 /* Runtime.getSemanticTokens */, [ script, start, end ]);
     }
 
     /**
      * Get the starting byte positions for each step
      */
     public getStepBytePositions( script: string ): WxPromise<Uint32Array> {
-        return this.sender.send<Uint32Array>(45 /* Runtime.getStepBytePositions */, [ script ]);
+        return this.sender.send<Uint32Array>(47 /* Runtime.getStepBytePositions */, [ script ]);
     }
 
     /**
      * Get index of the step from byte position in the script
      */
     public getStepFromPos( script: string, pos: number ): WxPromise<number> {
-        return this.sender.send<number>(46 /* Runtime.getStepFromPos */, [ script, pos ]);
+        return this.sender.send<number>(48 /* Runtime.getStepFromPos */, [ script, pos ]);
     }
 
     /**
      * Initialize the runtime with the given arguments.
      */
     public initialize( args: RuntimeWorkerInitArgs ): WxPromise<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>> {
-        return this.sender.send<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>>(47 /* Runtime.initialize */, [ args ]);
+        return this.sender.send<Result<RuntimeWorkerInitOutput, RuntimeWorkerInitError>>(49 /* Runtime.initialize */, [ args ]);
     }
 
     /**
@@ -143,7 +163,7 @@ export class _wxSenderImpl implements Runtime {
      * Returns an empty list if no items are found.
      */
     public resolveItemIdent( query: string ): WxPromise<ItemSearchResult[]> {
-        return this.sender.send<ItemSearchResult[]>(48 /* Runtime.resolveItemIdent */, [ query ]);
+        return this.sender.send<ItemSearchResult[]>(50 /* Runtime.resolveItemIdent */, [ query ]);
     }
 }
 
@@ -184,23 +204,31 @@ export const _wxRecverImpl = (handler: Runtime): WxBusRecvHandler => {
             const [ a0, a1, a2 ] = args;
             return handler.getRuntimeDiagnostics( a0, a1, a2 );
         }
-        case 44 /* Runtime.getSemanticTokens */: {
+        case 44 /* Runtime.getSaveInventory */: {
+            const [ a0, a1, a2, a3 ] = args;
+            return handler.getSaveInventory( a0, a1, a2, a3 );
+        }
+        case 45 /* Runtime.getSaveNames */: {
+            const [ a0, a1, a2 ] = args;
+            return handler.getSaveNames( a0, a1, a2 );
+        }
+        case 46 /* Runtime.getSemanticTokens */: {
             const [ a0, a1, a2 ] = args;
             return handler.getSemanticTokens( a0, a1, a2 );
         }
-        case 45 /* Runtime.getStepBytePositions */: {
+        case 47 /* Runtime.getStepBytePositions */: {
             const [ a0 ] = args;
             return handler.getStepBytePositions( a0 );
         }
-        case 46 /* Runtime.getStepFromPos */: {
+        case 48 /* Runtime.getStepFromPos */: {
             const [ a0, a1 ] = args;
             return handler.getStepFromPos( a0, a1 );
         }
-        case 47 /* Runtime.initialize */: {
+        case 49 /* Runtime.initialize */: {
             const [ a0 ] = args;
             return handler.initialize( a0 );
         }
-        case 48 /* Runtime.resolveItemIdent */: {
+        case 50 /* Runtime.resolveItemIdent */: {
             const [ a0 ] = args;
             return handler.resolveItemIdent( a0 );
         }

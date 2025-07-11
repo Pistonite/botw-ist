@@ -137,8 +137,6 @@ pub struct Flag<T: FlagType> {
     value: T,
     initial_value: T::StaticType,
     hash: i32,
-    // #[cfg(feature = "flag-name")]
-    // name: String, // Even if not required to run, useful for debugging purposes
     min: T::ValueType,
     max: T::ValueType,
     properties: u8,
@@ -147,7 +145,7 @@ pub struct Flag<T: FlagType> {
 enum PropertyFlag {
     IsProgramReadable = 0x1,
     IsProgramWritable = 0x2,
-    // IsSave = 0x4,
+    IsSave = 0x4,
     // IsOneTrigger = 0x8,
     // IsEventAssociated = 0x10,
 }
@@ -212,6 +210,10 @@ impl<T: FlagType> Flag<T> {
 
     pub fn writable(&self) -> bool {
         self.properties & (PropertyFlag::IsProgramWritable as u8) != 0
+    }
+
+    pub fn savable(&self) -> bool {
+        self.properties & (PropertyFlag::IsSave as u8) != 0
     }
 }
 

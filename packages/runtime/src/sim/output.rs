@@ -80,6 +80,33 @@ impl RunOutput {
         None
     }
 
+    /// Get the save names at the given step. Does not include the manual save (which doesn't have
+    /// a name)
+    pub fn get_save_names(&self, step: usize) -> Vec<String> {
+        let Some(state) = self.get_state_by_step(step) else {
+            return vec![];
+        };
+        state.named_saves().keys().cloned().collect()
+    }
+
+    /// Get the GDT inventory view for the save in the given step in the script
+    ///
+    /// If name is `None`, it uses the manual save.
+    /// If the named save doesn't exist, it will give an empty GDT
+    pub fn get_save_inventory(
+        &self,
+        step: usize,
+        name: Option<&str>,
+    ) -> Result<iv::Gdt, RuntimeViewError> {
+        match self
+            .get_state_by_step(step)
+            .and_then(|x| x.save_by_name(name))
+        {
+            None => Ok(Default::default()),
+            Some(save) => Ok(sim::view::extract_gdt_from_trigger_param(&save)?),
+        }
+    }
+
     fn get_state_by_step(&self, step: usize) -> Option<&sim::State> {
         if self.states.is_empty() {
             return None;

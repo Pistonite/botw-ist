@@ -540,4 +540,45 @@ export class RunMgr<TPtr> {
             },
         );
     }
+
+    public getSaveNames(
+        script: string,
+        taskId: string,
+        bytePos: number,
+    ): Pwr<string[]> {
+        return this.withParseAndRunOutput(
+            script,
+            taskId,
+            bytePos,
+            (parseOutputBorrowed, runOutputBorrowed) => {
+                return this.napi.getSaveNames(
+                    runOutputBorrowed,
+                    parseOutputBorrowed,
+                    bytePos,
+                );
+            },
+        );
+    }
+
+    public getSaveInventory(
+        script: string,
+        taskId: string,
+        bytePos: number,
+        name: string | undefined,
+    ): Pwr<Result<InvView_Gdt, RuntimeViewError>> {
+        return this.withParseAndRunOutput(
+            script,
+            taskId,
+            bytePos,
+            (parseOutputBorrowed, runOutputBorrowed) => {
+                return this.napi.getSaveInventory(
+                    runOutputBorrowed,
+                    parseOutputBorrowed,
+                    bytePos,
+                    name
+                );
+            },
+        );
+    }
+
 }

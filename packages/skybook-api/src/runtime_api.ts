@@ -135,4 +135,29 @@ export interface Runtime {
         taskId: string,
         pos: number,
     ): WxPromise<MaybeAborted<string>>;
+
+    /**
+     * Execute the script if not up-to-date, and return the list of save names at the
+     * byte offset `pos` in the script. The list does not include the manual save.
+     *
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
+     */
+    getSaveNames(
+        script: string,
+        taskId: string,
+        pos: number,
+    ): WxPromise<MaybeAborted<string[]>>;
+
+    /**
+     * Execute the script if not up-to-date, and return the save inventory for the manual
+     * or named save at the byte offset `pos` in the script (use undefined to refer to the manual save)
+     *
+     * The taskId should be a UUID, and can be passed into abortTask() to abort this run
+     */
+    getSaveInventory(
+        script: string,
+        taskId: string,
+        pos: number,
+        name: string | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>;
 }
