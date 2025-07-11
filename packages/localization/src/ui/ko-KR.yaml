@@ -253,6 +253,7 @@ runtime_error.NotRightScreen: "현재 화면에서는 이 명령을 사용할 �
 runtime_error.NotSellable: "이 아이템은 판매할 수 없습니다."
 runtime_error.OperationNotComplete: "다른 오류로 인해 명령을 계속할 수 없습니다."
 runtime_error.PositionSpecNotAllowed: "여기서는 위치로 아이템을 지정할 수 없습니다."
+runtime_error.PreviousClosed: "게임이 종료되었습니다. 계속하려면 `다시 로드` (`reload`)하거나 `새 게임` (`new-game`)을 시작해야 합니다."
 runtime_error.PreviousCrash: "이전 단계에서 게임이 충돌했습니다. 계속하려면 `리로딩` (`reload`)하거나 `새 게임` (`new-game`)을 시작해야 합니다."
 runtime_error.TooManyIterations: "반복 횟수가 너무 많습니다. 명령이 강제로 중지되었습니다. 버그일 수 있습니다."
 runtime_error.Unimplemented: "이 명령어는 아직 구현되지 않았습니다 :)."
@@ -263,6 +264,7 @@ runtime_error.UselessMetaForOverworldEquipment: "오버월드에 장착된 아�
 runtime_error.UselessScreenTransition: "이미 이 화면에 있으므로 이 명령은 효과가 없습니다."
 
 # Error from getting view from simulation output
+runtime_view_error.Closed: "게임이 실행 중이 아닙니다."
 runtime_view_error.Coherence: "인벤토리 데이터가 손상되어 표시할 수 없습니다."
 runtime_view_error.Crash: "이 단계 또는 이전 단계에서 게임이 충돌하여 인벤토리를 표시할 수 없습니다."
 runtime_view_error.Memory: "게임 메모리를 읽는 중 오류가 발생하여 인벤토리를 표시할 수 없습니다."

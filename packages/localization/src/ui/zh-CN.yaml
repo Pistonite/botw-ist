@@ -253,6 +253,7 @@ runtime_error.NotRightScreen: "当前界面无法执行此操作."
 runtime_error.NotSellable: "此物品无法出售."
 runtime_error.OperationNotComplete: "由于前置指令错误, 此操作无法完成."
 runtime_error.PositionSpecNotAllowed: "这里不能以格子位置选择物品."
+runtime_error.PreviousClosed: "游戏已关闭. 需要读档(`reload`)或开始新游戏(`new-game`)."
 runtime_error.PreviousCrash: "因之前的步骤导致游戏崩溃，需要读档(`reload`)或开始新游戏(`new-game`)."
 runtime_error.TooManyIterations: "循环次数过多, 已强制中止指令执行. 这可能是一个Bug."
 runtime_error.Unimplemented: "还没做完."
@@ -263,6 +264,7 @@ runtime_error.UselessMetaForOverworldEquipment: "物品数据在针对主世界�
 runtime_error.UselessScreenTransition: "你已经打开了此界面."
 
 # Error from getting view from simulation output
+runtime_view_error.Closed: "游戏未启动."
 runtime_view_error.Coherence: "背包数据损坏，无法显示."
 runtime_view_error.Crash: "游戏崩溃了，无法读取背包."
 runtime_view_error.Memory: "读取内存失败，无法显示背包."

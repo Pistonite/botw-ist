@@ -253,6 +253,7 @@ runtime_error.NotRightScreen: "Dieser Befehl kann auf dem aktuellen Bildschirm n
 runtime_error.NotSellable: "Dieses Item kann nicht verkauft werden."
 runtime_error.OperationNotComplete: "Der Befehl kann aufgrund eines anderen Fehlers nicht fortgesetzt werden."
 runtime_error.PositionSpecNotAllowed: "Das Angeben eines Gegenstands nach Position ist hier nicht erlaubt."
+runtime_error.PreviousClosed: "Das Spiel wurde geschlossen. Sie müssen neu laden (`reload`) oder ein neues Spiel starten (`new-game`), bevor Sie fortfahren."
 runtime_error.PreviousCrash: "Das Spiel ist in einem vorherigen Schritt abgestürzt. Sie müssen `neu laden` (`reload`) oder ein `neues Spiel starten` (`new-game`), bevor Sie fortfahren können."
 runtime_error.TooManyIterations: "Zu viele Schleifendurchläufe. Der Befehl wurde zwangsweise gestoppt. Dies könnte ein Bug sein."
 runtime_error.Unimplemented: "Dieser Befehl ist noch nicht implementiert :)."
@@ -263,6 +264,7 @@ runtime_error.UselessMetaForOverworldEquipment: "Metadaten werden ignoriert, wen
 runtime_error.UselessScreenTransition: "Dieser Befehl hat keine Auswirkung, da Sie sich bereits auf diesem Bildschirm befinden."
 
 # Error from getting view from simulation output
+runtime_view_error.Closed: "Das Spiel läuft nicht."
 runtime_view_error.Coherence: "Die Inventardaten sind beschädigt und können nicht angezeigt werden."
 runtime_view_error.Crash: "Das Spiel ist bei oder vor diesem Schritt abgestürzt und das Inventar kann nicht angezeigt werden."
 runtime_view_error.Memory: "Beim Lesen des Spielspeichers ist ein Fehler aufgetreten und das Inventar kann nicht angezeigt werden."

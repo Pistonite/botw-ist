@@ -253,6 +253,7 @@ runtime_error.NotRightScreen: "No puedes usar este comando en la pantalla actual
 runtime_error.NotSellable: "Este objeto no se puede vender."
 runtime_error.OperationNotComplete: "El comando no puede continuar debido a otro error."
 runtime_error.PositionSpecNotAllowed: "No se permite especificar el objeto por posición aquí."
+runtime_error.PreviousClosed: "El juego se cerró. Debe `recargar` (`reload`) o iniciar una `nueva partida` (`new-game`) antes de continuar."
 runtime_error.PreviousCrash: "El juego se ha colgado en un paso anterior. Necesitas `recargar` (`reload`) o iniciar una `nueva partida` (`new-game`) antes de continuar."
 runtime_error.TooManyIterations: "Demasiadas iteraciones de bucle. El comando ha sido detenido forzosamente. Esto podría ser un error."
 runtime_error.Unimplemented: "Este comando aún no está implementado :)."
@@ -263,6 +264,7 @@ runtime_error.UselessMetaForOverworldEquipment: "Los metadatos se ignoran cuando
 runtime_error.UselessScreenTransition: "Este comando no tiene ningún efecto, ya que ya se encuentra en esta pantalla."
 
 # Error from getting view from simulation output
+runtime_view_error.Closed: "El juego no está en ejecución."
 runtime_view_error.Coherence: "Los datos del inventario están corruptos y no se pueden mostrar."
 runtime_view_error.Crash: "El juego se ha colgado en este paso o antes y el inventario no se puede mostrar."
 runtime_view_error.Memory: "Ocurrió un error al leer la memoria del juego y el inventario no se puede mostrar."
