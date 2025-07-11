@@ -38,6 +38,7 @@ export type RuntimeError =
     | { type: "NotEquippedInOverworld" }
     | { type: "OperationNotComplete" }
     | { type: "PositionSpecNotAllowed" }
+    | { type: "PreviousClosed" }
     | { type: "PreviousCrash" }
     | { type: "TooManyIterations" }
     | { type: "Uninitialized" }

@@ -134,6 +134,10 @@ pub enum RuntimeError {
     #[error("cannot specify item position here")]
     PositionSpecNotAllowed,
     #[error(
+        "game has is closed in a previous step and you need to `reload` or `new-game` to continue"
+    )]
+    PreviousClosed,
+    #[error(
         "game has crashed in a previous step and you need to `reload` or `new-game` to continue"
     )]
     PreviousCrash,
@@ -168,11 +172,12 @@ pub enum RuntimeError {
 #[serde(tag = "type", content = "data")]
 pub enum RuntimeViewError {
     //////////////////////////////////
-    // DO NOT update the enum names
     // The translation files needs to be updated accordingly!!!
     //////////////////////////////////
     #[error("game has crashed at or before this step")]
     Crash,
+    #[error("game is not running")]
+    Closed,
     #[error("failed to read state from memory")]
     Memory,
     #[error("coherence check failed when reading state")]

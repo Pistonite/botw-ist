@@ -2,7 +2,7 @@ export * from "./Category.ts";
 export * from "./ErrorReport.ts";
 export * from "./InvView_CommonItem.ts";
 export * from "./InvView_Gdt.ts";
-export * from "./InvView_GdtInvInfo.ts";
+export * from "./InvView_GdtInfo.ts";
 export * from "./InvView_GdtItem.ts";
 export * from "./InvView_GdtItemData.ts";
 export * from "./InvView_GdtMasterSword.ts";

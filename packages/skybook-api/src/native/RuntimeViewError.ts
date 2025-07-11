@@ -5,5 +5,6 @@
  */
 export type RuntimeViewError =
     | { type: "Crash" }
+    | { type: "Closed" }
     | { type: "Memory" }
     | { type: "Coherence" };
