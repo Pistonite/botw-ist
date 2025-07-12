@@ -20,6 +20,7 @@ export type RuntimeError =
     | { type: "CannotUnequipArrow" }
     | { type: "Crash" }
     | { type: "Executor" }
+    | { type: "ReloadFail" }
     | { type: "InaccurateAllBut" }
     | { type: "InvalidDpadType" }
     | { type: "InvalidItemTarget" }
@@ -28,6 +29,7 @@ export type RuntimeError =
     | { type: "ItemAlreadyUnequipped" }
     | { type: "ItemMismatch"; data: [string, string] }
     | { type: "ItemMismatchCategory"; data: [string, Category] }
+    | { type: "NoManualSave" }
     | { type: "NotDroppable" }
     | { type: "NotEnoughForAllBut"; data: [number, number] }
     | { type: "NotHoldable" }
@@ -40,6 +42,7 @@ export type RuntimeError =
     | { type: "PositionSpecNotAllowed" }
     | { type: "PreviousClosed" }
     | { type: "PreviousCrash" }
+    | { type: "SaveNotFound"; data: string }
     | { type: "TooManyIterations" }
     | { type: "Uninitialized" }
     | { type: "Unimplemented" }
