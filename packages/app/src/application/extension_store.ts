@@ -19,15 +19,16 @@ export const BuiltinExtensionIds = [
     "save-viewer",
 ] as const;
 
-export const DefaultPrimaryIds: string[] = [
+const DefaultPrimaryIds: string[] = [
     "editor",
 ] satisfies (typeof BuiltinExtensionIds)[number][];
-export const DefaultSecondaryIds: string[] = [
+const DefaultSecondaryIds: string[] = [
     "item-explorer",
     "crash-viewer",
     "save-viewer",
 ] satisfies (typeof BuiltinExtensionIds)[number][];
 
+/** Stores the current state of extension. Persisted to localStorage */
 export type ExtensionStore = {
     /** Built-in Ids stored locally to track store version */
     builtinIds: string[];
