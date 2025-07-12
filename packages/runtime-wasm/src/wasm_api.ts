@@ -221,6 +221,36 @@ export class WasmApi implements NativeApi<number> {
         });
     }
 
+    public getSaveNames(
+        runOutputPtr: number,
+        parseOutputPtr: number,
+        bytePos: number,
+    ): Pwr<string[]> {
+        return this.exec(() => {
+            return wasm_bindgen.get_save_names(
+                runOutputPtr,
+                parseOutputPtr,
+                bytePos,
+            );
+        });
+    }
+
+    public getSaveInventory(
+        runOutputPtr: number,
+        parseOutputPtr: number,
+        bytePos: number,
+        name: string | undefined,
+    ): Pwr<Result<InvView_Gdt, RuntimeViewError>> {
+        return this.exec(() => {
+            return wasm_bindgen.get_save_inventory(
+                runOutputPtr,
+                parseOutputPtr,
+                bytePos,
+                name,
+            );
+        });
+    }
+
     public addRefNativeHandle(ptr: number): Promise<number> {
         return this.execAddRef("addRefNativeHandle", () => {
             return wasm_bindgen.add_ref_task_handle(ptr);

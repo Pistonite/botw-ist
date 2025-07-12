@@ -14,22 +14,22 @@ packages:
   - packages/skybook-api
 
 catalog:
-  '@griffel/react': ^1.5.30
   '@fluentui/react-components': ^9.66.6
   '@fluentui/react-icons': ^2.0.305
+  '@griffel/react': ^1.5.30
   '@modyfi/vite-plugin-yaml': ^1.1.1
   '@pistonite/pure': ^0.26.8
-  '@pistonite/pure-react': ^0.7.11
   '@pistonite/pure-i18next': ^0.4.7
-  '@types/bun': ^1.2.18
+  '@pistonite/pure-react': ^0.7.11
   '@pistonite/workex': ^0.1.2
+  '@types/bun': ^1.2.18
   '@types/react': ^18.3.17
   '@types/react-dom': ^18.3.5
   '@vitejs/plugin-react': ^4.4.0
   i18next: ^25.3.2
-  react-i18next: ^15.6.0
   react: ^18.3.1
   react-dom: ^18.3.1
+  react-i18next: ^15.6.0
   typescript: ^5.8.3
   uuid: ^11.1.0
   vite: ^6.3.5

@@ -1,3 +1,5 @@
+/// <reference types="vitest" />
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { spawnSync } from "child_process";
@@ -54,6 +56,7 @@ export default defineConfig(({ command }) => {
         define: {
             "import.meta.env.COMMIT": JSON.stringify(commit),
             "import.meta.env.VERSION": JSON.stringify(version),
+            "import.meta.vitest": "undefined",
         },
         plugins: [
             intwc({ basicLanguages: [] }),
@@ -117,6 +120,10 @@ export default defineConfig(({ command }) => {
                     },
                 },
             },
+        },
+        test: {
+            includeSource: ["src/**/*.{js,ts}"],
+            environment: "jsdom",
         },
     });
 });

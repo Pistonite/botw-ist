@@ -16,6 +16,7 @@ export const BuiltinExtensionIds = [
     "editor",
     "item-explorer",
     "crash-viewer",
+    "save-viewer",
 ] as const;
 
 const DefaultPrimaryIds: string[] = [
@@ -24,8 +25,10 @@ const DefaultPrimaryIds: string[] = [
 const DefaultSecondaryIds: string[] = [
     "item-explorer",
     "crash-viewer",
+    "save-viewer",
 ] satisfies (typeof BuiltinExtensionIds)[number][];
 
+/** Stores the current state of extension. Persisted to localStorage */
 export type ExtensionStore = {
     /** Built-in Ids stored locally to track store version */
     builtinIds: string[];
@@ -321,3 +324,15 @@ const filterInvalidCustomIds = (
         return !id.startsWith("custom-") || customIds.includes(id);
     });
 };
+
+if (import.meta.vitest) {
+    const { expect, test } = import.meta.vitest;
+    test("default ids should cover all built in ids", () => {
+        const defaults = new Set([
+            ...DefaultPrimaryIds,
+            ...DefaultSecondaryIds,
+        ]);
+        const builtin = new Set(BuiltinExtensionIds);
+        expect(defaults).toEqual(builtin);
+    });
+}

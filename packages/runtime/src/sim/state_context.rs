@@ -58,6 +58,44 @@ impl sim::State {
             }
         }
     }
+
+    /// Ensure the game is already running, or initialize it if not,
+    /// then execute the provided function without access to the runtime
+    pub fn with_game_no_exec<
+        TOutput,
+        TFn: FnOnce(&mut sim::GameState, Span, &mut Vec<ErrorReport>) -> TOutput,
+    >(
+        &mut self,
+        ctx: Context<&'_ sim::Runtime>,
+        f: TFn,
+    ) -> Report<Option<TOutput>> {
+        if let sim::Game::Uninit = &self.game {
+            let process = match ctx.runtime().initial_process() {
+                Ok(process) => process,
+                Err(e) => {
+                    return Report::spanned(None, &ctx.span, e);
+                }
+            };
+            self.game = sim::Game::Running(Box::new(sim::GameState::new(process)));
+        }
+        match &mut self.game {
+            sim::Game::Crashed(_) => {
+                self.game = sim::Game::PreviousCrash;
+                Report::error(None, sim_warning!(ctx.span, PreviousCrash))
+            }
+            sim::Game::PreviousCrash | sim::Game::PreviousClosed => Report::new(None),
+            sim::Game::Closed => {
+                self.game = sim::Game::PreviousClosed;
+                Report::error(None, sim_warning!(ctx.span, PreviousClosed))
+            }
+            sim::Game::Running(game) => {
+                let mut errors = vec![];
+                let output = f(game.as_mut(), ctx.span, &mut errors);
+                Report::with_errors(Some(output), errors)
+            }
+            sim::Game::Uninit => unreachable!(),
+        }
+    }
 }
 
 /// This is to workaround partial borrows when running a step

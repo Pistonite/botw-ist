@@ -1,7 +1,7 @@
 # Screen System
 
 The `Screen` system simulates different dialogs and pause menus in the game.
-For example, when pausing to access the inventory or sell items by talking
+For example, when pausing to access the inventory, or when selling items by talking
 to a shop keeper.
 
 Most of the time, the simulator can switch between screens automatically
@@ -20,10 +20,10 @@ to indicate which screen you are currently on
 While not technically a screen, the *Game* itself can also have 2 different states:
 `Running` and, well, not `Running` (closed).
 
-The "initial state" of the simulator is similar to the state of a new game.
-When executing most commands, the game will keep running, unless:
+The initial state of the simulation is similar to a new game. When executing most commands,
+the game will keep running, unless:
 - You manually closed the game with the <skyb>close-game</skyb> command.
-- The game crashed when executing some command.
+- The game crashes.
 
 ```admonish note
 When you encounter a game crash, note that it's also possible it's a bug in the simulator. 
@@ -41,7 +41,7 @@ restart. You have to use either of the commands below:
   - `SAVE_NAME` is the name of the save, see Reload (link TODO)
 
 ## Screen Types
-While in game, there are 3 screens that are simulated:
+While in game, there are 4 screens that are simulated:
 
 - `Overworld`:
   - The default state when you start a game.
@@ -49,13 +49,13 @@ While in game, there are 3 screens that are simulated:
   - You can get/drop items
   - ... all the other things you can do in the overworld
 - `Inventory`:
-  - When pause the game with the `+` button or DPad
+  - When pause the game with the `+` button
   - Player can interact with items in the inventory
 - `Shop Selling`:
   - When talking to a shop owner to sell items
   - Player can select items in the inventory to sell
 - `Shop Buying`:
-  - When talking to a shop owner to buy items
+  - When talking to Beedle or some other NPC to buy items
   - Player can select from a list of items to buy
 
 The `Screen` system works like a state machine, when an action needs a certain
@@ -80,10 +80,6 @@ For example, if you are in the inventory menu and need to talk to a shop owner t
 
 That all happens in a single <skyb>sell</skyb> command!
 
-Some commands, like <skyb>get-pause</skyb>, also explicitly performs screen switching.
-Note that these case do not count as manually switching screens (see below), and the simulator
-will still automatically switch screens afterwards.
-
 ## Manually switching screens
 The following actions count as *manually* switching the screen.
 If the screen has been manually switched, the simulator will prevent
@@ -99,6 +95,10 @@ certain automatic screen switches.
     - When returned to overworld, screen can be automatically switched again to all types
   - <skyb>untalk</skyb> or <skyb>close-dialog</skyb> to return to overworld
 
+Note that annotations for screen switching like <skyb>:pause-during get</skyb> do
+not count as manually switching screens, and the simulator
+will still automatically switch screens afterward.
+
 ```admonish note
 Note about buying: The <skyb>buy</skyb> command performs buying from items in `Overworld`,
 and it will trigger automatic switch to `Overworld` if possible.
@@ -108,10 +108,5 @@ it will not matter. When it does matter, it's recommended you always use manual 
 actions to indicate to other people if they should buy from the same screen, or close the dialog
 and talk again to buy. You can use the <skyb>:same-dialog</skyb> annotation
 so the next <skyb>buy</skyb> command switches to the buy screen instead of returning
-to overworld
+to overworld TODO - move to buy
 ```
-
-
-
-
-

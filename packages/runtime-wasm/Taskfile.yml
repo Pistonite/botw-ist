@@ -89,6 +89,9 @@ tasks:
       - task: cargo:fmt-check
       - task: ecma:mono-check
 
+  check-ts:
+      - task: ecma:mono-check
+
   fix:
     cmds:
       - task: cargo:fmt-fix

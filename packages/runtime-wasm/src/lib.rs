@@ -373,6 +373,38 @@ pub fn get_crash_info(
         .unwrap_or_default()
 }
 
+/// Get the list of save names for the given byte position in the script.
+/// Does not include the manual save in the output
+///
+/// ## Pointer Ownership
+/// Borrows both the RunOutput and ParseOutput pointers.
+#[wasm_bindgen]
+pub fn get_save_names(
+    run_output_ref: *const sim::RunOutput,
+    parse_output_ref: *const ParseOutput,
+    byte_pos: usize,
+) -> Vec<String> {
+    let (run_output, step) = deref_with_step!(run_output_ref, parse_output_ref, byte_pos);
+    run_output.get_save_names(step)
+}
+
+/// Get the save inventory for the given byte position in the script.
+/// If name is `None`, it uses the manual save. If the given save
+/// is not found, an empty inventory is returned.
+///
+/// ## Pointer Ownership
+/// Borrows both the RunOutput and ParseOutput pointers.
+#[wasm_bindgen]
+pub fn get_save_inventory(
+    run_output_ref: *const sim::RunOutput,
+    parse_output_ref: *const ParseOutput,
+    byte_pos: usize,
+    name: Option<String>,
+) -> interop::Result<iv::Gdt, RuntimeViewError> {
+    let (run_output, step) = deref_with_step!(run_output_ref, parse_output_ref, byte_pos);
+    run_output.get_save_inventory(step, name.as_deref()).into()
+}
+
 ////////// Ref Counting //////////
 #[wasm_bindgen]
 pub fn free_parse_output(ptr: *const ParseOutput) {

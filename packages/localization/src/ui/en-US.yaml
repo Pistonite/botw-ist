@@ -132,6 +132,7 @@ dialog.custom_extensions.help: "After saving the configuration, you can open Cus
 extension.crash-viewer.name: "Crash Report"
 extension.editor.name: "Script Editor"
 extension.item-explorer.name: "Item Explorer"
+extension.save-viewer.name: "Save Files"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Use {{hyphen}} to connect multiple search terms, for example {{example}}."
@@ -143,6 +144,9 @@ item_explorer.search_error.unknown_tag: "Unknown language tag \"{{tag}}\""
 
 # Crash Viewer Extension
 crash_viewer.no_crash: "No crash at this step"
+
+# Save Viewer Extension
+save_viewer.manual_save: "Manual Save"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "Not in D-Pad Menu"

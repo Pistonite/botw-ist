@@ -28,7 +28,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * Signal the application to crash because unrecoverable error occurred in the runtime
      */
     public crashApplication( ): WxPromise<void> {
-        return this.sender.sendVoid(49 /* RuntimeApp.crashApplication */, [ ]);
+        return this.sender.sendVoid(54 /* RuntimeApp.crashApplication */, [ ]);
     }
 
     /**
@@ -43,7 +43,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * in which case the runtime initialization will fail.
      */
     public getCustomBlueFlameImage( ): WxPromise<Uint8Array | undefined> {
-        return this.sender.send<Uint8Array | undefined>(50 /* RuntimeApp.getCustomBlueFlameImage */, [ ]);
+        return this.sender.send<Uint8Array | undefined>(55 /* RuntimeApp.getCustomBlueFlameImage */, [ ]);
     }
 
     /**
@@ -52,7 +52,7 @@ export class _wxSenderImpl implements RuntimeApp {
      * or no match.
      */
     public resolveQuotedItem( query: string ): WxPromise<ItemSearchResult | undefined> {
-        return this.sender.send<ItemSearchResult | undefined>(51 /* RuntimeApp.resolveQuotedItem */, [ query ]);
+        return this.sender.send<ItemSearchResult | undefined>(56 /* RuntimeApp.resolveQuotedItem */, [ query ]);
     }
 }
 
@@ -61,13 +61,13 @@ export class _wxSenderImpl implements RuntimeApp {
  */
 export const _wxRecverImpl = (handler: RuntimeApp): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 49 /* RuntimeApp.crashApplication */: {
+        case 54 /* RuntimeApp.crashApplication */: {
             return handler.crashApplication();
         }
-        case 50 /* RuntimeApp.getCustomBlueFlameImage */: {
+        case 55 /* RuntimeApp.getCustomBlueFlameImage */: {
             return handler.getCustomBlueFlameImage();
         }
-        case 51 /* RuntimeApp.resolveQuotedItem */: {
+        case 56 /* RuntimeApp.resolveQuotedItem */: {
             const [ a0 ] = args;
             return handler.resolveQuotedItem( a0 );
         }

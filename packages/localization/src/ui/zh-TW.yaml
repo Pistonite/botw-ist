@@ -132,6 +132,7 @@ dialog.custom_extensions.help: "儲存設定後，您可以透過「{{open_butto
 extension.crash-viewer.name: "崩潰報告"
 extension.editor.name: "腳本編輯器"
 extension.item-explorer.name: "物品搜尋器"
+extension.save-viewer.name: "存檔"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "使用 {{hyphen}} 連接多個詞，例如 {{example}}。"
@@ -143,6 +144,9 @@ item_explorer.search_error.unknown_tag: "未知語言標籤 \"{{tag}}\""
 
 # Crash Viewer Extension
 crash_viewer.no_crash: "此步驟無崩潰"
+
+# Save Viewer Extension
+save_viewer.manual_save: "手動存檔"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "不在方向鍵選單中顯示"

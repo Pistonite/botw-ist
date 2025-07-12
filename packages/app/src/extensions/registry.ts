@@ -69,6 +69,12 @@ export const createExtensionInstance = async (
         case "crash-viewer": {
             return new CrashViewerExtension(standalone);
         }
+        case "save-viewer": {
+            const { SaveViewerExtension } = await import(
+                "./save-viewer/extindex.tsx"
+            );
+            return new SaveViewerExtension(standalone);
+        }
         default: {
             extLog.error(`unknown extension: ${id}`);
             return undefined;

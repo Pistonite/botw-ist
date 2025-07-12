@@ -132,6 +132,7 @@ dialog.custom_extensions.help: "Na het opslaan van de configuratie kun je aangep
 extension.crash-viewer.name: "Crashrapport"
 extension.editor.name: "Scripteditor"
 extension.item-explorer.name: "Itemverkenner"
+extension.save-viewer.name: "Opgeslagen bestanden"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Gebruik {{hyphen}} om meerdere zoektermen te verbinden, bijvoorbeeld {{example}}."
@@ -143,6 +144,9 @@ item_explorer.search_error.unknown_tag: "Onbekend taallabel \"{{tag}}\""
 
 # Crash Viewer Extension
 crash_viewer.no_crash: "Geen crash bij deze stap"
+
+# Save Viewer Extension
+save_viewer.manual_save: "Handmatig opslaan"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "Niet beschikbaar in het D-pad-menu"

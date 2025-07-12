@@ -114,7 +114,6 @@ export interface NativeApiFunctions<TPtr> {
     /**
      * Get the GDT inventory view for the given byte position in the script.
      * Does not consume either ptr.
-     * TODO: error type
      */
     getGdtInventory(
         runOutputPtr: TPtr,
@@ -141,6 +140,21 @@ export interface NativeApiFunctions<TPtr> {
         parseOutputPtr: TPtr,
         bytePos: number,
     ): Pwr<string>;
+
+    /** Get list of saves. Does not consume either ptr. */
+    getSaveNames(
+        runOutputPtr: TPtr,
+        parseOutputPtr: TPtr,
+        bytePos: number,
+    ): Pwr<string[]>;
+
+    /** Get the save inventory. Does not consume either ptr. Use undefined for manual save */
+    getSaveInventory(
+        runOutputPtr: TPtr,
+        parseOutputPtr: TPtr,
+        bytePos: number,
+        name: string | undefined,
+    ): Pwr<Result<InvView_Gdt, RuntimeViewError>>;
 
     // === ref counting api ===
 

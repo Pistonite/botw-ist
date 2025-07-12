@@ -132,6 +132,7 @@ dialog.custom_extensions.help: "Nach dem Speichern der Konfiguration kannst du b
 extension.crash-viewer.name: "Absturzbericht"
 extension.editor.name: "Skript-Editor"
 extension.item-explorer.name: "Gegenstands-Explorer"
+extension.save-viewer.name: "Speicherstände"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Verwenden Sie {{hyphen}}, um mehrere Suchbegriffe zu verbinden, zum Beispiel {{example}}."
@@ -143,6 +144,9 @@ item_explorer.search_error.unknown_tag: "Unbekannter Sprachcode \"{{tag}}\""
 
 # Crash Viewer Extension
 crash_viewer.no_crash: "Kein Absturz in diesem Schritt"
+
+# Save Viewer Extension
+save_viewer.manual_save: "Manuelle Speicherung"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "Nicht im Steuerkreuz-Menü verfügbar"

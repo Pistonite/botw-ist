@@ -62,6 +62,18 @@ export interface ExtensionApp {
     ): WxPromise<Uint32Array>;
 
     /**
+     * Get the step index from character position
+     *
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
+     */
+    getStepFromCharPos(
+        script: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<number>;
+
+    /**
      * Get the starting byte positions for each step in the script
      *
      * Note that the positions are in bytes. Use getStepCharPositions
@@ -105,9 +117,9 @@ export interface ExtensionApp {
     /**
      * Get the pouch (visible inventory) state.
      *
-     * Pass in `undefined` to use the current state of the application.
-     * However, if `script` is not `undefined` and `pos` is `undefined`,
-     * pos defaults to 0
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
      */
     getPouchList(
         taskId: string,
@@ -116,11 +128,11 @@ export interface ExtensionApp {
     ): WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>>;
 
     /**
-     * Get the Game Data inventory state at the byte offset `pos` in the script
+     * Get the Game Data inventory state at the character position `charPos` in the script
      *
-     * Pass in `undefined` to use the current state of the application.
-     * However, if `script` is not `undefined` and `pos` is `undefined`,
-     * pos defaults to 0
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
      */
     getGdtInventory(
         taskId: string,
@@ -129,11 +141,11 @@ export interface ExtensionApp {
     ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>;
 
     /**
-     * Get the overworld state at the byte offset `pos` in the script
+     * Get the overworld state at the character position `charPos` in the script
      *
-     * Pass in `undefined` to use the current state of the application.
-     * However, if `script` is not `undefined` and `pos` is `undefined`,
-     * pos defaults to 0
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
      */
     getOverworldItems(
         taskId: string,
@@ -142,15 +154,44 @@ export interface ExtensionApp {
     ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>>;
 
     /**
-     * Get the rendered crash report at the byte offset `pos` in the script
+     * Get the rendered crash report at the character position `charPos` in the script
      *
-     * Pass in `undefined` to use the current state of the application.
-     * However, if `script` is not `undefined` and `pos` is `undefined`,
-     * pos defaults to 0
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
      */
     getCrashInfo(
         taskId: string,
         script: string | undefined,
         charPos: number | undefined,
     ): WxPromise<MaybeAborted<string>>;
+
+    /**
+     * Get the list of save names at the character position `charPos` in the script.
+     * Manual save is not included in the list.
+     *
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
+     */
+    getSaveNames(
+        taskId: string,
+        script: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<string[]>>;
+
+    /**
+     * Get the GDT inventory of a named or manual save at the character position `charPos` in the script.
+     * Use `undefined` as the name for manual save.
+     *
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
+     */
+    getSaveInventory(
+        taskId: string,
+        script: string | undefined,
+        charPos: number | undefined,
+        name: string | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>;
 }

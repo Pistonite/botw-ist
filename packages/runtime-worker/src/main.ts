@@ -91,6 +91,20 @@ export const createRuntimeWorker = <TPtr>(
                 ),
             };
         },
+        getSaveNames: async (script, taskId, pos) => {
+            return {
+                val: unwrapMaybeAborted(
+                    await runMgr.getSaveNames(script, taskId, pos),
+                ),
+            };
+        },
+        getSaveInventory: async (script, taskId, pos, name) => {
+            return {
+                val: unwrapMaybeAborted(
+                    await runMgr.getSaveInventory(script, taskId, pos, name),
+                ),
+            };
+        },
     };
 };
 

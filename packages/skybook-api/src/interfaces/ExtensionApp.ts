@@ -34,33 +34,33 @@ export class _wxSenderImpl implements ExtensionApp {
     }
 
     /**
-     * Get the rendered crash report at the byte offset `pos` in the script
+     * Get the rendered crash report at the character position `charPos` in the script
      * 
-     * Pass in `undefined` to use the current state of the application.
-     * However, if `script` is not `undefined` and `pos` is `undefined`,
-     * pos defaults to 0
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
      */
     public getCrashInfo( taskId: string, script: string | undefined, charPos: number | undefined ): WxPromise<MaybeAborted<string>> {
         return this.sender.send<MaybeAborted<string>>(22 /* ExtensionApp.getCrashInfo */, [ taskId, script, charPos ]);
     }
 
     /**
-     * Get the Game Data inventory state at the byte offset `pos` in the script
+     * Get the Game Data inventory state at the character position `charPos` in the script
      * 
-     * Pass in `undefined` to use the current state of the application.
-     * However, if `script` is not `undefined` and `pos` is `undefined`,
-     * pos defaults to 0
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
      */
     public getGdtInventory( taskId: string, script: string | undefined, charPos: number | undefined ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
         return this.sender.send<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>(23 /* ExtensionApp.getGdtInventory */, [ taskId, script, charPos ]);
     }
 
     /**
-     * Get the overworld state at the byte offset `pos` in the script
+     * Get the overworld state at the character position `charPos` in the script
      * 
-     * Pass in `undefined` to use the current state of the application.
-     * However, if `script` is not `undefined` and `pos` is `undefined`,
-     * pos defaults to 0
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
      */
     public getOverworldItems( taskId: string, script: string | undefined, charPos: number | undefined ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>> {
         return this.sender.send<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>>(24 /* ExtensionApp.getOverworldItems */, [ taskId, script, charPos ]);
@@ -69,19 +69,43 @@ export class _wxSenderImpl implements ExtensionApp {
     /**
      * Get the pouch (visible inventory) state.
      * 
-     * Pass in `undefined` to use the current state of the application.
-     * However, if `script` is not `undefined` and `pos` is `undefined`,
-     * pos defaults to 0
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
      */
     public getPouchList( taskId: string, script: string | undefined, charPos: number | undefined ): WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>> {
         return this.sender.send<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>>(25 /* ExtensionApp.getPouchList */, [ taskId, script, charPos ]);
     }
 
     /**
+     * Get the GDT inventory of a named or manual save at the character position `charPos` in the script.
+     * Use `undefined` as the name for manual save.
+     * 
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
+     */
+    public getSaveInventory( taskId: string, script: string | undefined, charPos: number | undefined, name: string | undefined ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
+        return this.sender.send<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>(26 /* ExtensionApp.getSaveInventory */, [ taskId, script, charPos, name ]);
+    }
+
+    /**
+     * Get the list of save names at the character position `charPos` in the script.
+     * Manual save is not included in the list.
+     * 
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
+     */
+    public getSaveNames( taskId: string, script: string | undefined, charPos: number | undefined ): WxPromise<MaybeAborted<string[]>> {
+        return this.sender.send<MaybeAborted<string[]>>(27 /* ExtensionApp.getSaveNames */, [ taskId, script, charPos ]);
+    }
+
+    /**
      * Get the current simulator script.
      */
     public getScript( ): WxPromise<string> {
-        return this.sender.send<string>(26 /* ExtensionApp.getScript */, [ ]);
+        return this.sender.send<string>(28 /* ExtensionApp.getScript */, [ ]);
     }
 
     /**
@@ -91,18 +115,29 @@ export class _wxSenderImpl implements ExtensionApp {
      * if you need the character positions.
      */
     public getStepBytePositions( script: string ): WxPromise<Uint32Array> {
-        return this.sender.send<Uint32Array>(27 /* ExtensionApp.getStepBytePositions */, [ script ]);
+        return this.sender.send<Uint32Array>(29 /* ExtensionApp.getStepBytePositions */, [ script ]);
     }
 
     public getStepCharPositions( script: string ): WxPromise<Uint32Array> {
-        return this.sender.send<Uint32Array>(28 /* ExtensionApp.getStepCharPositions */, [ script ]);
+        return this.sender.send<Uint32Array>(30 /* ExtensionApp.getStepCharPositions */, [ script ]);
+    }
+
+    /**
+     * Get the step index from character position
+     * 
+     * Pass in `undefined` for `script` and/or `charPos` to use the current state of the application.
+     * However, if `script` is not `undefined` and `charPos` is `undefined`,
+     * `charPos` defaults to 0
+     */
+    public getStepFromCharPos( script: string | undefined, charPos: number | undefined ): WxPromise<number> {
+        return this.sender.send<number>(31 /* ExtensionApp.getStepFromCharPos */, [ script, charPos ]);
     }
 
     /**
      * Invoke the parser for the script and get the diagnostics.
      */
     public provideParserDiagnostics( script: string ): WxPromise<Diagnostic[]> {
-        return this.sender.send<Diagnostic[]>(29 /* ExtensionApp.provideParserDiagnostics */, [ script ]);
+        return this.sender.send<Diagnostic[]>(32 /* ExtensionApp.provideParserDiagnostics */, [ script ]);
     }
 
     /**
@@ -110,14 +145,14 @@ export class _wxSenderImpl implements ExtensionApp {
      * the step that contains the bytePos.
      */
     public providePartialRuntimeDiagnostics( script: string, taskId: string, bytePos: number ): WxPromise<MaybeAborted<Diagnostic[]>> {
-        return this.sender.send<MaybeAborted<Diagnostic[]>>(30 /* ExtensionApp.providePartialRuntimeDiagnostics */, [ script, taskId, bytePos ]);
+        return this.sender.send<MaybeAborted<Diagnostic[]>>(33 /* ExtensionApp.providePartialRuntimeDiagnostics */, [ script, taskId, bytePos ]);
     }
 
     /**
      * Get the diagnostics from running the script.
      */
     public provideRuntimeDiagnostics( script: string, taskId: string ): WxPromise<MaybeAborted<Diagnostic[]>> {
-        return this.sender.send<MaybeAborted<Diagnostic[]>>(31 /* ExtensionApp.provideRuntimeDiagnostics */, [ script, taskId ]);
+        return this.sender.send<MaybeAborted<Diagnostic[]>>(34 /* ExtensionApp.provideRuntimeDiagnostics */, [ script, taskId ]);
     }
 
     /**
@@ -129,7 +164,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * (Note this is different from Runtime.getSemanticTokens)
      */
     public provideSemanticTokens( script: string, start: number, end: number ): WxPromise<Uint32Array> {
-        return this.sender.send<Uint32Array>(32 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
+        return this.sender.send<Uint32Array>(35 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
     }
 
     /**
@@ -142,7 +177,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * before canceling the previous one
      */
     public requestNewTaskIds( uniqueId: string, count: number ): WxPromise<string[]> {
-        return this.sender.send<string[]>(33 /* ExtensionApp.requestNewTaskIds */, [ uniqueId, count ]);
+        return this.sender.send<string[]>(36 /* ExtensionApp.requestNewTaskIds */, [ uniqueId, count ]);
     }
 
     /**
@@ -155,7 +190,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * even when there is no error, the search result could be empty.
      */
     public resolveItem( query: string, localized: boolean, limit: number ): WxPromise<Result<ItemSearchResult[], string>> {
-        return this.sender.send<Result<ItemSearchResult[], string>>(34 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
+        return this.sender.send<Result<ItemSearchResult[], string>>(37 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
     }
 
     /**
@@ -167,7 +202,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * a character offset (not byte offset) and is 0-based.
      */
     public setScript( script: string, position: number ): WxPromise<void> {
-        return this.sender.sendVoid(35 /* ExtensionApp.setScript */, [ script, position ]);
+        return this.sender.sendVoid(38 /* ExtensionApp.setScript */, [ script, position ]);
     }
 }
 
@@ -196,42 +231,54 @@ export const _wxRecverImpl = (handler: ExtensionApp): WxBusRecvHandler => {
             const [ a0, a1, a2 ] = args;
             return handler.getPouchList( a0, a1, a2 );
         }
-        case 26 /* ExtensionApp.getScript */: {
+        case 26 /* ExtensionApp.getSaveInventory */: {
+            const [ a0, a1, a2, a3 ] = args;
+            return handler.getSaveInventory( a0, a1, a2, a3 );
+        }
+        case 27 /* ExtensionApp.getSaveNames */: {
+            const [ a0, a1, a2 ] = args;
+            return handler.getSaveNames( a0, a1, a2 );
+        }
+        case 28 /* ExtensionApp.getScript */: {
             return handler.getScript();
         }
-        case 27 /* ExtensionApp.getStepBytePositions */: {
+        case 29 /* ExtensionApp.getStepBytePositions */: {
             const [ a0 ] = args;
             return handler.getStepBytePositions( a0 );
         }
-        case 28 /* ExtensionApp.getStepCharPositions */: {
+        case 30 /* ExtensionApp.getStepCharPositions */: {
             const [ a0 ] = args;
             return handler.getStepCharPositions( a0 );
         }
-        case 29 /* ExtensionApp.provideParserDiagnostics */: {
+        case 31 /* ExtensionApp.getStepFromCharPos */: {
+            const [ a0, a1 ] = args;
+            return handler.getStepFromCharPos( a0, a1 );
+        }
+        case 32 /* ExtensionApp.provideParserDiagnostics */: {
             const [ a0 ] = args;
             return handler.provideParserDiagnostics( a0 );
         }
-        case 30 /* ExtensionApp.providePartialRuntimeDiagnostics */: {
+        case 33 /* ExtensionApp.providePartialRuntimeDiagnostics */: {
             const [ a0, a1, a2 ] = args;
             return handler.providePartialRuntimeDiagnostics( a0, a1, a2 );
         }
-        case 31 /* ExtensionApp.provideRuntimeDiagnostics */: {
+        case 34 /* ExtensionApp.provideRuntimeDiagnostics */: {
             const [ a0, a1 ] = args;
             return handler.provideRuntimeDiagnostics( a0, a1 );
         }
-        case 32 /* ExtensionApp.provideSemanticTokens */: {
+        case 35 /* ExtensionApp.provideSemanticTokens */: {
             const [ a0, a1, a2 ] = args;
             return handler.provideSemanticTokens( a0, a1, a2 );
         }
-        case 33 /* ExtensionApp.requestNewTaskIds */: {
+        case 36 /* ExtensionApp.requestNewTaskIds */: {
             const [ a0, a1 ] = args;
             return handler.requestNewTaskIds( a0, a1 );
         }
-        case 34 /* ExtensionApp.resolveItem */: {
+        case 37 /* ExtensionApp.resolveItem */: {
             const [ a0, a1, a2 ] = args;
             return handler.resolveItem( a0, a1, a2 );
         }
-        case 35 /* ExtensionApp.setScript */: {
+        case 38 /* ExtensionApp.setScript */: {
             const [ a0, a1 ] = args;
             return handler.setScript( a0, a1 );
         }

@@ -127,6 +127,17 @@ class ExtensionAppHost implements ExtensionApp {
         return { val: tokens.val };
     }
 
+    public async getStepFromCharPos(
+        inputScript: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<number> {
+        const [script, bytePos] = convertScriptAndCharPosArg(
+            inputScript,
+            charPos,
+        );
+        return await this.runtime.getStepFromPos(script, bytePos);
+    }
+
     public async getStepBytePositions(script: string): WxPromise<Uint32Array> {
         return await this.runtime.getStepBytePositions(script);
     }
@@ -237,6 +248,36 @@ class ExtensionAppHost implements ExtensionApp {
             charPos,
         );
         return await this.runtime.getCrashInfo(script, taskId, bytePos);
+    }
+
+    public async getSaveNames(
+        taskId: string,
+        inputScript: string | undefined,
+        charPos: number | undefined,
+    ): WxPromise<MaybeAborted<string[]>> {
+        const [script, bytePos] = convertScriptAndCharPosArg(
+            inputScript,
+            charPos,
+        );
+        return await this.runtime.getSaveNames(script, taskId, bytePos);
+    }
+
+    public async getSaveInventory(
+        taskId: string,
+        inputScript: string | undefined,
+        charPos: number | undefined,
+        name: string | undefined,
+    ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
+        const [script, bytePos] = convertScriptAndCharPosArg(
+            inputScript,
+            charPos,
+        );
+        return await this.runtime.getSaveInventory(
+            script,
+            taskId,
+            bytePos,
+            name,
+        );
     }
 }
 

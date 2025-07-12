@@ -132,6 +132,7 @@ dialog.custom_extensions.help: "Dopo aver salvato la configurazione, puoi aprire
 extension.crash-viewer.name: "Rapporto di arresto anomalo"
 extension.editor.name: "Editor di script"
 extension.item-explorer.name: "Esplora oggetti"
+extension.save-viewer.name: "File di salvataggio"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Usa {{hyphen}} per collegare più termini di ricerca, ad esempio {{example}}."
@@ -143,6 +144,9 @@ item_explorer.search_error.unknown_tag: "Tag lingua sconosciuto \"{{tag}}\""
 
 # Crash Viewer Extension
 crash_viewer.no_crash: "Nessun arresto anomalo in questo passaggio"
+
+# Save Viewer Extension
+save_viewer.manual_save: "Salvataggio manuale"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "Non nel menu del D-Pad"
