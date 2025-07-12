@@ -134,6 +134,14 @@ pub fn unhold(
     if !sys.screen.current_screen().is_inventory_or_overworld() {
         super::switch_to_overworld_or_stop!(ctx, sys, errors, "UNHOLD");
     }
+    unhold_internal(ctx, sys)
+}
+
+/// Unhold without screen checks
+pub fn unhold_internal(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+) -> Result<(), processor::Error> {
     // we don't check if the player is currently holding anything,
     // as it requires reading PMDM to check if it's holding in the pause menu
     linker::unhold_items(ctx.cpu())?;

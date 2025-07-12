@@ -7,6 +7,6 @@ also may not be worth to emulate since a simulation is good enough.
 The systems that are involved in the simulator include:
 - Inventory
 - GameData
-- Saves
+- [Saves](../action/save.md)
 - [Screens](./screen_system.md)
 - [Overworld](./overworld_system.md)

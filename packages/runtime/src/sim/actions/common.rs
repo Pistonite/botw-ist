@@ -11,6 +11,9 @@ use crate::sim;
 
 macro_rules! switch_to_overworld_or_stop {
     ($ctx:ident, $sys:ident, $errors:ident, $command:literal) => {
+        $crate::sim::actions::common::switch_to_overworld_or_stop!($ctx, $sys, $errors, $command, {})
+    };
+    ($ctx:ident, $sys:ident, $errors:ident, $command:literal, $block:block) => {
         if !$sys
             .screen
             .transition_to_overworld($ctx, &mut $sys.overworld, false, $errors)?
@@ -19,6 +22,7 @@ macro_rules! switch_to_overworld_or_stop {
                 "failed to auto-switch to overworld for {} command",
                 $command
             );
+            $block
             return Ok(());
         }
     };
@@ -27,6 +31,9 @@ pub(crate) use switch_to_overworld_or_stop;
 
 macro_rules! switch_to_inventory_or_stop {
     ($ctx:ident, $sys:ident, $errors:ident, $command:literal) => {
+        $crate::sim::actions::common::switch_to_inventory_or_stop!($ctx, $sys, $errors, $command, {})
+    };
+    ($ctx:ident, $sys:ident, $errors:ident, $command:literal, $block:block) => {
         if !$sys
             .screen
             .transition_to_inventory($ctx, &mut $sys.overworld, false, $errors)?
@@ -35,6 +42,7 @@ macro_rules! switch_to_inventory_or_stop {
                 "failed to auto-switch to inventory for {} command",
                 $command
             );
+            $block
             return Ok(());
         }
     };
