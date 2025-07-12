@@ -93,6 +93,8 @@ pub enum RuntimeError {
     Crash,
     #[error("unexpected executor error")]
     Executor,
+    #[error("failed to reload gdt for save. This is a bug")]
+    ReloadFail,
     #[error("the `all but` syntax did not achieve the desired result")]
     InaccurateAllBut,
     #[error("this type of item is not accessible through quick menu")]
@@ -113,6 +115,8 @@ pub enum RuntimeError {
         "the item in the inventory in this position is `{0}`, which does not match the input category `{1:?}`"
     )]
     ItemMismatchCategory(String, crate::parser::cir::Category),
+    #[error("no manual save has been made")]
+    NoManualSave,
     #[error("this item cannot be dropped")]
     NotDroppable,
     #[error("this requires `{0}` items, but only `{1}` items found")]
@@ -141,6 +145,8 @@ pub enum RuntimeError {
         "game has crashed in a previous step and you need to `reload` or `new-game` to continue"
     )]
     PreviousCrash,
+    #[error("cannot find the named save `{0}`")]
+    SaveNotFound(String),
     #[error("the runtime iteration limit is reached")]
     TooManyIterations,
     #[error("the runtime has not been initialized yet, you need to call `Runtime::init`")]

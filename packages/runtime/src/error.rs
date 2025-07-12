@@ -36,7 +36,7 @@ impl<T> Report<T> {
         }
     }
 
-    pub fn spanned(value: T, span: &Span, error: Error) -> Self {
+    pub fn spanned(value: T, span: Span, error: Error) -> Self {
         Self {
             value,
             errors: vec![ErrorReport::error(span, error)],

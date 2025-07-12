@@ -256,6 +256,15 @@ impl ScreenSystem {
 
         Ok(true)
     }
+
+    /// Force reset to overworld
+    pub fn reset_to_overworld(&mut self) {
+        self.is_manually_switched = false;
+        self.remove_held_item_after_dialog = false;
+        self.equipped_items_to_remove_after_dialog.clear();
+        self.holding_in_inventory = false;
+        self.screen = Arc::new(Screen::Overworld);
+    }
 }
 
 impl Screen {

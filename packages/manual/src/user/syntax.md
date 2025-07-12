@@ -29,6 +29,10 @@ hold 2 apples drop
 hold 2 apples; drop
 ```
 
+In general, the syntax is case sensitive. Although some features like item search is case-insensitive,
+it's recommended to keep everything lower-case, unless upper-case is needed (for example
+when specifying actor name or GDT flag name).
+
 ```admonish note
 In the simulator, the inventory displayed are the state after executing the command
 the cursor is on.

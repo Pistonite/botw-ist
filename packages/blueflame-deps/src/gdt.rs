@@ -57,7 +57,7 @@ const _: () = {
 };
 
 /// Trait for flag types that can be used in TriggerParam
-pub trait FlagType {
+pub trait FlagType: Clone {
     type StaticType: Copy + PartialEq + 'static;
     type ValueType: Copy + PartialEq + 'static;
 

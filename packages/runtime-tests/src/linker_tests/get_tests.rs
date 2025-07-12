@@ -15,7 +15,7 @@ pub fn get_item_basic(cpu: &mut Cpu2) -> Result<(), Error> {
         -1,
     )?;
 
-    linker::call_load_from_game_data(cpu)?;
+    linker::load_from_game_data(cpu)?;
 
     linker::get_item_with_value(cpu, "Obj_KorokNuts", 100, None)?;
     linker::get_item_with_value(cpu, "Obj_KorokNuts", 100, None)?;
