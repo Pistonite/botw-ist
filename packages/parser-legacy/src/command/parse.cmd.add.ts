@@ -24,7 +24,7 @@ export class CommandAdd extends AbstractProperCommand {
     }
 
     public override convert(): string {
-        return `${this.verb} ${this.stacks.map((s) => s.convert(0, true)).join(" ")};`;
+        return `${this.verb} ${this.stacks.map((s) => s.convert(0, true)).join(" ")}`;
     }
 }
 

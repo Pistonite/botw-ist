@@ -194,6 +194,9 @@ impl TriggerParam {
                 );
                 return false;
             }
+            if !s.savable() {
+                continue;
+            }
             s.set(o.get().clone())
         }
 

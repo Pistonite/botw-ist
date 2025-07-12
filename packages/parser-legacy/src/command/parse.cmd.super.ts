@@ -26,7 +26,7 @@ export class SuperCommandSwap extends AbstractProperCommand {
     }
 
     public override convert(): string {
-        return `!swap ${this.i} ${this.j};`;
+        return `### !swap by index is no longer supported. Please use !swap ITEM1 and ITEM2\n# !swap ${this.i} ${this.j}`;
     }
 }
 
@@ -59,7 +59,7 @@ export class SuperCommandAddSlot extends AbstractProperCommand {
         // this._slot = slot - 1; //change to 0 based
     }
     public override convert() {
-        return `### "!add-slot" is no longer supported!!!\n### !add-slot ${this.stacks.map((s) => s.convert(0, false)).join(" ")};`;
+        return `!add-slot ${this.stacks.map((s) => s.convert(0, false)).join(" ")}`;
     }
 }
 
@@ -85,7 +85,7 @@ export const parseASTSuperCommandAddSlot: ParserItem<
 
 export class SuperCommandSortMaterial extends AbstractProperCommand {
     public override convert(): string {
-        return `sort materials;`;
+        return `sort materials`;
     }
 }
 

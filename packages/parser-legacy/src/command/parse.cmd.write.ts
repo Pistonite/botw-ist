@@ -27,7 +27,7 @@ export class CommandWrite extends AbstractProperCommand {
 
     public override convert() {
         const meta = convertItemMeta(this.meta, this.slot);
-        return `write ${meta} to ${this.itemTarget}${convertItemMeta(undefined, this.slot)};`;
+        return `write ${meta} to ${this.itemTarget}${convertItemMeta(undefined, this.slot)}`;
     }
 }
 

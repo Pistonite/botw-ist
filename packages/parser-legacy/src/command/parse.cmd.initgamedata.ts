@@ -17,7 +17,8 @@ export class CommandInitGameData extends AbstractProperCommand {
     }
 
     public override convert(): string {
-        return `!set-gamedata ${this.stacks.map((s) => s.convert(0, true)).join(" ")};`;
+        // FIXME: no longer supported
+        return `!set-gamedata ${this.stacks.map((s) => s.convert(0, true)).join(" ")}`;
     }
 }
 
