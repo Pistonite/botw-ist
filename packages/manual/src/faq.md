@@ -59,12 +59,15 @@ Please refer to the [contributing guide](./developer/contributing.md) for more i
 
 ```admonish note
 If you goal is to add extra functionality, you might be able to do that through
-an extension, See [TODO add link here]
+an extension, See [Extensions](./developer/extensions.md)
 ```
 ```admonish note
 If you are not familiar with programming, you can still contribute to the test suite
 by providing your (complicated) scripts as test cases. These test cases help ensure
-future updates to the simulator don't introduce bugs. See [TODO add link here]
+future updates to the simulator don't introduce bugs. See [Snapshot Testing](./developer/contributing/testing.md#snapshot-tests).
+
+If you are not able to generate the snapshot locally, simply make sure the output for every step
+is correct in the App, then open a PR with just the new `.txt` script file
 ```
 
 

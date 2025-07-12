@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::BTreeMap;
 
 use blueflame::game::{
     GrabbedItemInfo, ListNode, PauseMenuDataMgr, PouchItem, PouchItemType, gdt, singleton_instance,
@@ -157,7 +157,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
     let (mut next_tab_idx, mut next_tab_item_idx) = get_next_tab_head(&tabs, tab_idx + 1);
     let mut tab_slot = 0;
     let mut items = Vec::with_capacity(item_ptr_data.len());
-    let mut seen_animated_icons = BTreeSet::new();
+    let mut animated_icons_to_node = BTreeMap::new();
     let mut num_bows_for_curr_tab = 0;
     for (i, data) in item_ptr_data.into_iter().enumerate() {
         if i as i32 == next_tab_item_idx {
@@ -181,7 +181,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
             tab_slot,
             bow_slots,
             &mut num_bows_for_curr_tab,
-            &mut seen_animated_icons,
+            &mut animated_icons_to_node,
             memory,
             &visually_equipped_items,
             &entangled_items,
@@ -191,6 +191,15 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
         )?;
         items.push(item);
         tab_slot += 1;
+    }
+
+    // update the no_icon property
+    for item in items.iter_mut() {
+        if let Some(icon_node_ptr) = animated_icons_to_node.get(&item.common.actor_name) {
+            if item.node_addr != (*icon_node_ptr).into() {
+                item.is_no_icon = true;
+            }
+        }
     }
 
     log::debug!("pouch view extracted successfully");
@@ -280,7 +289,7 @@ fn extract_pouch_item(
     tab_slot: i32,
     bow_slots: i32,
     num_bows_for_curr_tab: &mut i32,
-    seen_animated_icons: &mut BTreeSet<String>,
+    animated_icons_to_node: &mut BTreeMap<String, u64>,
     memory: &Memory,
     visually_equipped_items: &[u64],
     entangled_items: &[u64],
@@ -293,8 +302,11 @@ fn extract_pouch_item(
         e,
         "failed to load item.name at list1 position {list_index}: {e}"
     );
-    let is_no_icon =
-        sim::util::is_animated_icon_actor(&name) && !seen_animated_icons.insert(name.clone());
+    // only the last icon is animated
+    if sim::util::is_animated_icon_actor(&name) {
+        animated_icons_to_node.insert(name.to_string(), node_ptr.to_raw());
+    }
+
     let value = try_mem!(
         Ptr!(&item->mValue).load(memory),
         e,
@@ -435,7 +447,7 @@ fn extract_pouch_item(
         item_type,
         item_use,
         is_in_inventory,
-        is_no_icon,
+        is_no_icon: false, // will update in a later step
         data,
         ingredients,
         holding_count,

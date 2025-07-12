@@ -1,0 +1,6 @@
+get apple
+close-game
+new-game
+get 1 banana 1 shroom
+!break 1 slot
+new-game

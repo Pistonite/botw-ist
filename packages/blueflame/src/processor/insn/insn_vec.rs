@@ -33,6 +33,7 @@ pub struct InsnVec {
 }
 
 enum Entry {
+    Nop,
     CannotDecode(u32),
     LegacyParse(Opcode, Option<Box<dyn ExecutableInstruction>>),
 }
@@ -50,6 +51,10 @@ impl InsnVec {
     /// Returns Break if we should stop disassembling further instructions,
     /// either because there is a jump or an error occurred.
     pub fn disassemble(&mut self, bits: u32) -> ControlFlow<()> {
+        if bits == 0xd503201f {
+            self.insns.push(Entry::Nop);
+            return ControlFlow::Continue(());
+        }
         let Some(opcode) = disarm64::decoder::decode(bits) else {
             log::warn!("failed to decode instruction 0x{bits:08x}");
             self.insns.push(Entry::CannotDecode(bits));
@@ -86,6 +91,10 @@ impl Execute for InsnVec {
                 return Err(Error::BlockIterationLimitReached);
             }
             let (opcode, legacy_insn) = match x {
+                Entry::Nop => {
+                    cpu.inc_pc();
+                    continue;
+                }
                 Entry::CannotDecode(bits) => return Err(Error::BadInstruction(*bits)),
                 Entry::LegacyParse(opcode, legacy_insn) => (opcode, legacy_insn.as_ref()),
             };

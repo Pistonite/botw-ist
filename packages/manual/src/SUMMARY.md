@@ -36,4 +36,4 @@
   - [Building the Runtime](./developer/contributing/runtime.md)
   - [Checking and Testing](./developer/contributing/testing.md)
   - [Translations](./developer/contributing/translation.md)
-  - [Extensions](./developer/extensions/temp.md)
+  - [Extensions](./developer/extensions.md)

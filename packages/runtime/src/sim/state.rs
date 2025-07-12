@@ -33,13 +33,13 @@ impl State {
             .collect()
     }
     /// Get a manual save (if name is `None`) or a named save
-    pub fn save_by_name(&self, name: Option<&str>) -> Option<&gdt::TriggerParam> {
+    pub fn save_by_name(&self, name: Option<&str>) -> Option<Arc<gdt::TriggerParam>> {
         match name {
-            None => self.manual_save.as_deref(),
+            None => self.manual_save.as_ref().map(Arc::clone),
             Some(name) => {
                 for (save_name, save) in self.saves.as_ref() {
                     if save_name == name {
-                        return Some(save.as_ref());
+                        return Some(Arc::clone(save));
                     }
                 }
                 None
@@ -226,12 +226,14 @@ impl State {
                 self.handle_entangle(ctx, item).await
             }
 
+            X::Save(name) => self.handle_save(ctx, name.as_deref()).await,
+            X::Reload(name) => self.handle_reload(ctx, name.as_deref(), false).await,
             X::CloseGame => {
                 log::debug!("handling CLOSE-GAME");
                 self.game = Game::Closed;
                 Ok(Report::new(self))
             }
-            X::Save(name) => self.handle_save(ctx, name.as_deref()).await,
+            X::NewGame => self.handle_reload(ctx, None, true).await,
 
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
         }
@@ -482,6 +484,51 @@ impl State {
             }
             state
         }))
+    }
+
+    async fn handle_reload(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        name: Option<&str>,
+        new_game: bool,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling RELOAD command");
+        // find the save
+        let save = if new_game {
+            // use the GDT from "new game"
+            let proc = match rt.runtime().initial_process() {
+                Ok(x) => x,
+                Err(e) => {
+                    return Ok(Report::spanned(self, rt.span, e));
+                }
+            };
+            let gdt = match sim::actions::get_save(&proc) {
+                Ok(x) => x,
+                Err(e) => {
+                    log::error!("failed to load new-game save: {e}");
+                    return Ok(Report::error(self, sim_error!(rt.span, Executor)));
+                }
+            };
+            Arc::new(gdt)
+        } else {
+            let Some(save) = self.save_by_name(name) else {
+                let error = match name {
+                    Some(name) => sim_error!(rt.span, SaveNotFound(name.to_string())),
+                    None => sim_error!(rt.span, NoManualSave),
+                };
+                return Ok(Report::error(self, error));
+            };
+            save
+        };
+        self.with_game_or_start(rt, async move |game, rt| {
+            rt.execute(move |cpu| {
+                cpu.execute_reporting(game, |mut cpu, sys, errors| {
+                    sim::actions::reload(&mut cpu, sys, errors, save.as_ref())
+                })
+            })
+            .await
+        })
+        .await
     }
 }
 

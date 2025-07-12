@@ -13,8 +13,9 @@ impl sim::State {
     /// then execute the provided function with the game state.
     ///
     /// If the game has crashed previously, it will return an error
+    #[inline]
     pub async fn with_game<'a, TOutput, TFuture, TFn>(
-        mut self,
+        self,
         ctx: Context<&'a sim::Runtime>,
         f: TFn,
     ) -> Result<Report<Self>, exec::Error>
@@ -23,7 +24,39 @@ impl sim::State {
         TFuture: Future<Output = Result<TOutput, exec::Error>>,
         TFn: FnOnce(sim::GameState, Context<&'a sim::Runtime>) -> TFuture,
     {
-        match self.game.take_for_execute() {
+        self.with_game_exec_internal(ctx, f, false).await
+    }
+
+    /// Ensure the game is already running, or initialize it if not,
+    /// then execute the provided function with the game state.
+    ///
+    /// Will initialize the game no matter how it was closed
+    #[inline]
+    pub async fn with_game_or_start<'a, TOutput, TFuture, TFn>(
+        self,
+        ctx: Context<&'a sim::Runtime>,
+        f: TFn,
+    ) -> Result<Report<Self>, exec::Error>
+    where
+        TOutput: IntoGameReport,
+        TFuture: Future<Output = Result<TOutput, exec::Error>>,
+        TFn: FnOnce(sim::GameState, Context<&'a sim::Runtime>) -> TFuture,
+    {
+        self.with_game_exec_internal(ctx, f, true).await
+    }
+
+    async fn with_game_exec_internal<'a, TOutput, TFuture, TFn>(
+        mut self,
+        ctx: Context<&'a sim::Runtime>,
+        f: TFn,
+        start_if_closed: bool,
+    ) -> Result<Report<Self>, exec::Error>
+    where
+        TOutput: IntoGameReport,
+        TFuture: Future<Output = Result<TOutput, exec::Error>>,
+        TFn: FnOnce(sim::GameState, Context<&'a sim::Runtime>) -> TFuture,
+    {
+        match self.game.take_for_execute(start_if_closed) {
             TakeGame::Crashed => {
                 self.game = sim::Game::PreviousCrash;
                 Ok(Report::error(self, sim_warning!(ctx.span, PreviousCrash)))
@@ -45,7 +78,7 @@ impl sim::State {
                 let process = match ctx.runtime().initial_process() {
                     Ok(process) => process,
                     Err(e) => {
-                        return Ok(Report::spanned(self, &ctx.span, e));
+                        return Ok(Report::spanned(self, ctx.span, e));
                     }
                 };
                 let span = ctx.span;
@@ -73,7 +106,7 @@ impl sim::State {
             let process = match ctx.runtime().initial_process() {
                 Ok(process) => process,
                 Err(e) => {
-                    return Report::spanned(None, &ctx.span, e);
+                    return Report::spanned(None, ctx.span, e);
                 }
             };
             self.game = sim::Game::Running(Box::new(sim::GameState::new(process)));
@@ -113,13 +146,25 @@ pub enum TakeGame {
 
 impl sim::Game {
     /// Take out the game state if it's running
-    pub fn take_for_execute(&mut self) -> TakeGame {
+    ///
+    /// If `uninit_if_not_running` is true, it will return Uninit
+    /// if the game is not running for any reason
+    pub fn take_for_execute(&mut self, uninit_if_not_running: bool) -> TakeGame {
+        macro_rules! init_if_can_or {
+            ($x:ident) => {
+                if uninit_if_not_running {
+                    TakeGame::Uninit
+                } else {
+                    TakeGame::$x
+                }
+            };
+        }
         match self {
             sim::Game::Uninit => TakeGame::Uninit,
-            sim::Game::Crashed(_) => TakeGame::Crashed,
-            sim::Game::PreviousCrash => TakeGame::PreviousCrash,
-            sim::Game::Closed => TakeGame::Closed,
-            sim::Game::PreviousClosed => TakeGame::PreviousClosed,
+            sim::Game::Crashed(_) => init_if_can_or!(Crashed),
+            sim::Game::PreviousCrash => init_if_can_or!(PreviousCrash),
+            sim::Game::Closed => init_if_can_or!(Closed),
+            sim::Game::PreviousClosed => init_if_can_or!(PreviousClosed),
             sim::Game::Running(_) => match std::mem::take(self) {
                 sim::Game::Running(game) => TakeGame::Running(game),
                 _ => unreachable!(),

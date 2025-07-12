@@ -102,7 +102,7 @@ impl RunOutput {
             .and_then(|x| x.save_by_name(name))
         {
             None => Ok(Default::default()),
-            Some(save) => Ok(sim::view::extract_gdt_from_trigger_param(save)?),
+            Some(save) => Ok(sim::view::extract_gdt_from_trigger_param(save.as_ref())?),
         }
     }
 

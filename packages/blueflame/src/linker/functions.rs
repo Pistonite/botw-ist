@@ -515,7 +515,8 @@ pub fn save_to_game_data(cpu: &mut Cpu2) -> Result<(), processor::Error> {
     cpu.native_jump_to_main_offset(0x0096f9bc)
 }
 
-pub fn call_load_from_game_data(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+/// Call `uking::ui::PauseMenuDataMgr::loadFromGameData`
+pub fn load_from_game_data(cpu: &mut Cpu2) -> Result<(), processor::Error> {
     cpu.reset_stack();
     let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
     reg! { cpu:
@@ -523,6 +524,17 @@ pub fn call_load_from_game_data(cpu: &mut Cpu2) -> Result<(), processor::Error> 
     };
     // TODO --160
     cpu.native_jump_to_main_offset(0x0096be24)
+}
+
+/// Call `uking::ui::PauseMenuDataMgr::createPlayerEquipment`
+pub fn create_player_equipment(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+    };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x00971504)
 }
 
 pub fn is_weapon_profile(cpu: &mut Cpu2, actor: &str) -> Result<bool, processor::Error> {
@@ -612,63 +624,3 @@ mod helper {
         cpu.native_jump(func_addr)
     }
 }
-
-// impl Cpu2<'_, '_> {
-
-// pub fn has_tag(&mut self, actor: &str, tag: u32) -> Result<bool, ExecutionError> {
-//     self.cpu.write_arg(0, 61472768);
-//     let addr: Ptr<FixedSafeString40> = Ptr::new(self.alloc_fixed_safe_string40(actor)?);
-//     let m_top = addr
-//         .deref(self.mem)
-//         .map_err(|e| self.to_execution_error(e))?;
-//     self.cpu.write_arg(1, m_top.safeString.mStringTop);
-//     self.cpu.write_arg(2, tag as u64);
-//     self.call_func_at_addr(0xD2F900)?;
-//     Ok(self.cpu.read_arg(0) != 0)
-// }
-
-// // 0x9704BC
-// pub fn remove_item(&mut self, actor: &str) -> Result<(), ExecutionError> {
-//     let actor_name_addr = self.alloc_fixed_safe_string40(actor)?;
-//     self.cpu.write_arg(0, self.mem.get_pmdm_addr());
-//     self.cpu.write_arg(1, actor_name_addr);
-//     self.call_func_at_addr(0x9704BC)
-// }
-//
-// // 0x97A944
-// pub fn equip_weapon(&mut self, item_addr: u64) -> Result<(), ExecutionError> {
-//     self.cpu.write_arg(0, self.mem.get_pmdm_addr());
-//     self.cpu.write_arg(1, item_addr);
-//     self.call_func_at_addr(0x97A944)
-// }
-
-// // 0x97A9FC
-// pub fn unequip(&mut self, item_addr: u64) -> Result<(), ExecutionError> {
-//     self.cpu.write_arg(0, self.mem.get_pmdm_addr());
-//     self.cpu.write_arg(1, item_addr);
-//     self.call_func_at_addr(0x97A9FC)
-// }
-
-// pub fn info_data_get_type(&mut self, name: &str) -> Result<PouchItemType, ExecutionError> {
-//     let actor_name_addr = self.alloc_fixed_safe_string40(name)?;
-//     self.cpu.write_arg(0, actor_name_addr);
-//     self.cpu.write_arg(1, 0);
-//     self.call_func_at_addr(0x96DC34)?;
-//     Ok(PouchItemType::from(self.cpu.read_arg(0) as i32))
-// }
-//
-// pub fn create_player_equipment(&mut self) -> Result<(), ExecutionError> {
-//     self.cpu.write_arg(0, self.mem.get_pmdm_addr());
-//     self.call_func_at_addr(0x971504)
-// }
-//
-//
-// pub fn get_hash_for_actor(&mut self, name: &str) -> Result<u32, ExecutionError> {
-//     let actor_name_addr = self.alloc_fixed_safe_string40(name)?;
-//     let actor_name: FixedSafeString40 = Ptr::new(actor_name_addr)
-//         .deref(self.mem)
-//         .map_err(|e| self.to_execution_error(e))?;
-//     self.cpu.write_arg(0, actor_name.safeString.mStringTop);
-//     self.call_func_at_addr(0xB2170C)?;
-//     Ok(self.cpu.read_arg(0) as u32)
-// }

@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use blueflame::game::{self, PouchItem, WeaponModifierInfo};
+use blueflame::game::{self, PouchItem, PouchItemType, WeaponModifierInfo};
 use blueflame::linker;
 use blueflame::memory::{self, Memory, Ptr, mem};
 use blueflame::processor::{self, Cpu2};
@@ -54,6 +54,19 @@ pub struct OverworldActor {
 }
 
 impl OverworldSystem {
+    /// Destroy all actors in the overworld
+    pub fn destroy_all(&mut self) {
+        self.weapon = None;
+        self.bow = None;
+        self.shield = None;
+        self.spawning_ground_weapons.clear();
+        self.ground_weapons.clear();
+        self.ground_materials.clear();
+        self.ground_materials_despawning.clear();
+        self.holding.clear();
+        self.is_hold_attached = false;
+    }
+
     pub fn to_iv(&self) -> iv::Overworld {
         let mut items = vec![];
 
@@ -235,6 +248,31 @@ impl OverworldSystem {
             modifier: modifier.cloned(),
         });
         true
+    }
+
+    /// Reset the equipments on gen stage
+    pub fn reset_equipments_on_genstage(
+        &mut self,
+        cpu: &mut Cpu2<'_, '_>,
+        weapon: Option<sim::OverworldActor>,
+        bow: Option<sim::OverworldActor>,
+        shield: Option<sim::OverworldActor>,
+    ) -> Result<(), processor::Error> {
+        self.weapon = weapon;
+        self.bow = bow;
+        self.shield = shield;
+
+        if self.weapon.is_some() {
+            self.update_equipment_value_to_pmdm(cpu, PouchItemType::Sword as i32)?;
+        }
+        if self.bow.is_some() {
+            self.update_equipment_value_to_pmdm(cpu, PouchItemType::Bow as i32)?;
+        }
+        if self.shield.is_some() {
+            self.update_equipment_value_to_pmdm(cpu, PouchItemType::Shield as i32)?;
+        }
+
+        Ok(())
     }
 
     /// Update the overworld equipment value to PMDM, which happens as part

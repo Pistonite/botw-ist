@@ -1,0 +1,9 @@
+// Migrated from legacy: dup_orbs
+// Author: savage13
+get 5 diamond 1 slate 1 glider 4 spiritorb;
+save;
+# Magically break 4 slots
+!break 4 slots;
+reload;
+save;
+reload;
