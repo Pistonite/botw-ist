@@ -153,22 +153,22 @@ impl TriggerParam {
     /// Only flags with the IsSave bit will be loaded. The other will be kept the same
     #[must_use = "returns false if failed"]
     pub fn load_save(&mut self, other: &Self) -> bool {
-        self.load_save_for::<gdt::fd!(bool)>(other)&&
-        self.load_save_for::<gdt::fd!(s32)>(other)&&
-        self.load_save_for::<gdt::fd!(f32)>(other)&&
-        self.load_save_for::<gdt::fd!(str32)>(other)&&
-        self.load_save_for::<gdt::fd!(str64)>(other)&&
-        self.load_save_for::<gdt::fd!(str256)>(other)&&
-        self.load_save_for::<gdt::fd!(vec2f)>(other)&&
-        self.load_save_for::<gdt::fd!(vec3f)>(other)&&
-        self.load_save_for::<gdt::fd!(vec4f)>(other)&&
-        self.load_save_for::<gdt::fd!(bool[])>(other)&&
-        self.load_save_for::<gdt::fd!(s32[])>(other)&&
-        self.load_save_for::<gdt::fd!(f32[])>(other)&&
-        self.load_save_for::<gdt::fd!(str64[])>(other)&&
-        self.load_save_for::<gdt::fd!(str256[])>(other)&&
-        self.load_save_for::<gdt::fd!(vec2f[])>(other)&&
-        self.load_save_for::<gdt::fd!(vec3f[])>(other)
+        self.load_save_for::<gdt::fd!(bool)>(other)
+            && self.load_save_for::<gdt::fd!(s32)>(other)
+            && self.load_save_for::<gdt::fd!(f32)>(other)
+            && self.load_save_for::<gdt::fd!(str32)>(other)
+            && self.load_save_for::<gdt::fd!(str64)>(other)
+            && self.load_save_for::<gdt::fd!(str256)>(other)
+            && self.load_save_for::<gdt::fd!(vec2f)>(other)
+            && self.load_save_for::<gdt::fd!(vec3f)>(other)
+            && self.load_save_for::<gdt::fd!(vec4f)>(other)
+            && self.load_save_for::<gdt::fd!(bool[])>(other)
+            && self.load_save_for::<gdt::fd!(s32[])>(other)
+            && self.load_save_for::<gdt::fd!(f32[])>(other)
+            && self.load_save_for::<gdt::fd!(str64[])>(other)
+            && self.load_save_for::<gdt::fd!(str256[])>(other)
+            && self.load_save_for::<gdt::fd!(vec2f[])>(other)
+            && self.load_save_for::<gdt::fd!(vec3f[])>(other)
     }
 
     #[must_use = "returns false if failed"]
@@ -186,12 +186,12 @@ impl TriggerParam {
         }
         for (s, o) in std::iter::zip(self_list.iter_mut(), other_list.iter()) {
             if s.hash() != o.hash() {
-            log::error!(
-                "fail to load save: hash mismatch, self={}, other={}, descriptor={}",
-                s.hash(),
-                o.hash(),
-                std::any::type_name::<Fd>()
-            );
+                log::error!(
+                    "fail to load save: hash mismatch, self={}, other={}, descriptor={}",
+                    s.hash(),
+                    o.hash(),
+                    std::any::type_name::<Fd>()
+                );
                 return false;
             }
             s.set(o.get().clone())

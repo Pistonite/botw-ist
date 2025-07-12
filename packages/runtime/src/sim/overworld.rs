@@ -251,10 +251,12 @@ impl OverworldSystem {
     }
 
     /// Reset the equipments on gen stage
-    pub fn reset_equipments_on_genstage(&mut self, 
+    pub fn reset_equipments_on_genstage(
+        &mut self,
         cpu: &mut Cpu2<'_, '_>,
-        weapon: Option<sim::OverworldActor>, bow: Option<sim::OverworldActor>,
-        shield: Option<sim::OverworldActor>
+        weapon: Option<sim::OverworldActor>,
+        bow: Option<sim::OverworldActor>,
+        shield: Option<sim::OverworldActor>,
     ) -> Result<(), processor::Error> {
         self.weapon = weapon;
         self.bow = bow;

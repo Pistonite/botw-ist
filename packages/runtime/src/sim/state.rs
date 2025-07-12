@@ -514,15 +514,21 @@ impl State {
             let Some(save) = self.save_by_name(name) else {
                 let error = match name {
                     Some(name) => sim_error!(rt.span, SaveNotFound(name.to_string())),
-                    None => sim_error!(rt.span, NoManualSave)
+                    None => sim_error!(rt.span, NoManualSave),
                 };
                 return Ok(Report::error(self, error));
             };
             save
         };
-        self.with_game_or_start(rt, async move |game, rt| { rt.execute(move |cpu| cpu.execute_reporting(game, |mut cpu, sys, errors| {
-            sim::actions::reload(&mut cpu, sys, errors, save.as_ref())
-        })) .await }) .await
+        self.with_game_or_start(rt, async move |game, rt| {
+            rt.execute(move |cpu| {
+                cpu.execute_reporting(game, |mut cpu, sys, errors| {
+                    sim::actions::reload(&mut cpu, sys, errors, save.as_ref())
+                })
+            })
+            .await
+        })
+        .await
     }
 }
 

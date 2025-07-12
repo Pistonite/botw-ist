@@ -8,7 +8,7 @@ use crate::{ErrorReport, exec, sim};
 
 impl sim::State {
     // these are state context helpers that commands depend on
-    
+
     /// Ensure the game is already running, or initialize it if not,
     /// then execute the provided function with the game state.
     ///
@@ -49,7 +49,7 @@ impl sim::State {
         mut self,
         ctx: Context<&'a sim::Runtime>,
         f: TFn,
-        start_if_closed: bool
+        start_if_closed: bool,
     ) -> Result<Report<Self>, exec::Error>
     where
         TOutput: IntoGameReport,
@@ -157,7 +157,7 @@ impl sim::Game {
                 } else {
                     TakeGame::$x
                 }
-            }
+            };
         }
         match self {
             sim::Game::Uninit => TakeGame::Uninit,

@@ -53,7 +53,7 @@ impl InsnVec {
     pub fn disassemble(&mut self, bits: u32) -> ControlFlow<()> {
         if bits == 0xd503201f {
             self.insns.push(Entry::Nop);
-            return ControlFlow::Continue(())
+            return ControlFlow::Continue(());
         }
         let Some(opcode) = disarm64::decoder::decode(bits) else {
             log::warn!("failed to decode instruction 0x{bits:08x}");
@@ -94,7 +94,7 @@ impl Execute for InsnVec {
                 Entry::Nop => {
                     cpu.inc_pc();
                     continue;
-                },
+                }
                 Entry::CannotDecode(bits) => return Err(Error::BadInstruction(*bits)),
                 Entry::LegacyParse(opcode, legacy_insn) => (opcode, legacy_insn.as_ref()),
             };

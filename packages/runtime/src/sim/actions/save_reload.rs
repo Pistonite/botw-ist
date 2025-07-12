@@ -6,9 +6,8 @@ use blueflame::linker::events::GameEvent;
 use blueflame::memory::{self, proxy};
 use blueflame::processor::{self, Cpu2, Process};
 
-use crate::error::{sim_error, ErrorReport};
+use crate::error::{ErrorReport, sim_error};
 use crate::sim;
-
 
 /// Save the game
 ///
@@ -53,7 +52,7 @@ pub fn save(
 /// Extract save GDT from process memory
 pub fn get_save(proc: &Process) -> Result<gdt::TriggerParam, memory::Error> {
     let gdt_ptr = gdt::trigger_param_ptr(proc.memory())?;
-    proxy!{ let gdt = *gdt_ptr as trigger_param in proc };
+    proxy! { let gdt = *gdt_ptr as trigger_param in proc };
     Ok(gdt.clone())
 }
 
@@ -75,7 +74,7 @@ pub fn regen_stage(
     ctx: &mut sim::Context<&mut Cpu2>,
     sys: &mut sim::GameSystems,
     errors: &mut Vec<ErrorReport>,
-    load_gdt: Option<&gdt::TriggerParam>
+    load_gdt: Option<&gdt::TriggerParam>,
 ) -> Result<(), processor::Error> {
     // 1. BaseProcMgr deletes all actors
     sys.overworld.destroy_all();
@@ -85,7 +84,7 @@ pub fn regen_stage(
         let span = ctx.span;
         let proc = &mut ctx.cpu().proc;
         let gdt_ptr = gdt::trigger_param_ptr(proc.memory())?;
-        proxy!{ let mut gdt = *gdt_ptr as trigger_param in proc };
+        proxy! { let mut gdt = *gdt_ptr as trigger_param in proc };
         if !gdt.load_save(save_gdt) {
             log::error!("unexpected load_save fail");
             errors.push(sim_error!(span, ReloadFail));
@@ -108,11 +107,14 @@ pub fn regen_stage(
     }
 
     let state = linker::events::CreateEquip::execute_subscribed(
-    ctx.cpu(),
-    State::default(),
-    |state, (slot, name, value, modifier)| {
-            let actor = 
-            sim::OverworldActor { name, value, modifier };
+        ctx.cpu(),
+        State::default(),
+        |state, (slot, name, value, modifier)| {
+            let actor = sim::OverworldActor {
+                name,
+                value,
+                modifier,
+            };
             match slot {
                 0 => state.weapon = Some(actor),
                 1 => state.shield = Some(actor),
@@ -120,10 +122,12 @@ pub fn regen_stage(
                 _ => {}
             }
         },
-    linker::create_player_equipment)?;
+        linker::create_player_equipment,
+    )?;
 
-    // 4. Equipments update their value 
-    sys.overworld.reset_equipments_on_genstage(ctx.cpu(), state.weapon, state.bow, state.shield)?;
+    // 4. Equipments update their value
+    sys.overworld
+        .reset_equipments_on_genstage(ctx.cpu(), state.weapon, state.bow, state.shield)?;
 
     Ok(())
 }
