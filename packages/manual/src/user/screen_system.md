@@ -38,7 +38,7 @@ Whenever the game is closed in the middle of a simulation (either closed manuall
 restart. You have to use either of the commands below:
 - <skyb>new-game</skyb> to start a new game
 - <skyb>reload</skyb> or <skyb>reload SAVE_NAME</skyb> to start the game and reload a save
-  - `SAVE_NAME` is the name of the save, see Reload (link TODO)
+  - `SAVE_NAME` is the name of the save, see [Save Files](../action/save.md)
 
 ## Screen Types
 While in game, there are 4 screens that are simulated:
