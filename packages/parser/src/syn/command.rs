@@ -45,10 +45,6 @@ pub enum Command {
     Dnp(CmdDnp),
     /// `cook` or `cook ITEMS` ---------- TODO
     Cook(CmdCook),
-    /// `!break X slots`
-    SuBreak(CmdSuBreak),
-    /// `!remove ITEMS`
-    SuRemove(CmdSuRemove),
 
     // ==== equipments ====
     /// `equip ITEM`
@@ -74,6 +70,10 @@ pub enum Command {
     /// `sell ITEMS`
     Sell(CmdSell),
 
+    // ==== prompt entanglement ====
+    /// `entangle ITEM`
+    Entangle(CmdEntangle),
+
     // ==== saves/game state ====
     /// `save`
     Save(syn::KwSave),
@@ -86,9 +86,33 @@ pub enum Command {
     /// `new-game`
     NewGame(syn::KwNewGame),
 
-    // ==== prompt entanglement ====
-    /// `entangle ITEM`
-    Entangle(CmdEntangle),
+    // ==== memory editing ===
+    /// `!break X slots`
+    SuBreak(CmdSuBreak),
+    /// `!init ITEMS`
+    SuInit(CmdSuInit),
+    /// `!add-slot ITEMS`
+    SuAddSlot(CmdSuAddSlot),
+    /// `!swap ITEM1 and ITEM2`
+    SuSwap(CmdSuSwap),
+    /// `!write [META] to ITEM`
+    SuWrite(CmdSuWrite),
+    /// `!write-name <NAME> to ITEM`
+    SuWriteName(CmdSuWriteName),
+    /// `!remove ITEMS`
+    SuRemove(CmdSuRemove),
+    /// `!reload-gdt SAVE`
+    SuReloadGdt(CmdSuReloadGdt),
+    /// `!reset-ground`
+    SuResetGround(syn::KwSuResetGround),
+    /// `!reset-overworld`
+    SuResetOverworld(syn::KwSuResetOverworld),
+    /// `!loading-screen`
+    SuLoadingScreen(syn::KwSuLoadingScreen),
+    /// `!set-gdt`
+    SuSetGdt(CmdSuSetGdt),
+    /// `!set-gdt-str`
+    SuSetGdtStr(CmdSuSetGdtStr),
 
     // BELOW ARE NOT IMPLEMENTED YET
 
@@ -109,16 +133,6 @@ pub enum Command {
     // ==== advanced inventory operations ====
     /// `sort CATEGORY`
     Sort(CmdSort),
-    /// `!set-inventory ITEMS`
-    SetInventory(CmdSetInventory),
-    /// `!set-gamedata ITEMS`
-    SetGamedata(CmdSetGamedata),
-    /// `!write [META] to ITEM`
-    Write(CmdWrite),
-    /// `!swap X Y`
-    Swap(CmdSwap),
-    /// `!swap-data X Y`
-    SwapData(CmdSwapData),
 
     // ==== trials ====
     /// `enter TRIAL`
@@ -127,10 +141,7 @@ pub enum Command {
     Exit(syn::KwExit),
     /// `leave` - leave current trial without clearing it
     Leave(syn::KwLeave),
-
     // === gamedata ===
-    SetGdtFlag(CmdSetGdtFlag),
-    SetGdtFlagStr(CmdSetGdtFlagStr),
 }
 
 #[derive_syntax]
@@ -157,6 +168,8 @@ pub enum Annotation {
     ShieldSlots(CmdShieldSlots),
     BowSlots(CmdBowSlots),
 }
+
+///////////////////////////////////////////////////////////
 
 /// `get ITEMS` - get items, come from the area
 #[derive_syntax]
@@ -231,23 +244,6 @@ pub struct CmdDnp {
 pub struct CmdCook {
     pub lit: syn::KwCook,
     pub items: tp::Option<syn::ItemListConstrained>,
-}
-
-/// `!break X slots` - break X slots magically
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSuBreak {
-    pub kw_break: syn::KwSuBreak,
-    pub amount: tp::String<syn::Number>,
-    pub kw_slots: syn::Slot,
-}
-
-/// `!remove ITEMS` - force remove items
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSuRemove {
-    pub kw_break: syn::KwSuRemove,
-    pub items: syn::ItemListConstrained,
 }
 
 ///////////////////////////////////////////////////////////
@@ -349,6 +345,119 @@ pub struct CmdTargeting {
 
 ///////////////////////////////////////////////////////////
 
+/// `save-as NAME` - save the game to a named slot
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSaveAs {
+    pub lit: syn::KwSaveAs,
+    pub name: tp::String<syn::Word>,
+}
+
+/// `reload` - reload the game from manual or named save slot
+///
+/// This can also be used to start the game, then reload a save
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdReload {
+    pub lit: syn::KwReload,
+    pub name: tp::Option<tp::String<syn::Word>>,
+}
+
+///////////////////////////////////////////////////////////
+
+/// `!break X slots` - break X slots magically
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuBreak {
+    pub kw_break: syn::KwSuBreak,
+    pub amount: tp::String<syn::Number>,
+    pub kw_slots: syn::Slot,
+}
+
+/// `!init ITEMS` - set the inventory to the given items directly
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuInit {
+    pub lit: syn::KwSuInit,
+    pub items: tp::Option<syn::ItemListFinite>,
+}
+
+/// `!add-slot ITEMS` - add the items as slots directly
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuAddSlot {
+    pub lit: syn::KwSuAddSlot,
+    pub items: tp::Option<syn::ItemListFinite>,
+}
+
+/// `!swap ITEM1 and ITEM2` - Target ITEM1 and ITEM2, and swap the item data (without changing
+/// nodes)
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuSwap {
+    pub lit: syn::KwSuSwap,
+    pub item1: syn::ItemOrCategory,
+    pub kw_and: syn::KwAnd,
+    pub item2: syn::ItemOrCategory,
+}
+
+/// `!write [META] to ITEM`
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuWrite {
+    pub lit: syn::KwSuWrite,
+    pub props: syn::ItemMeta,
+    pub kw_to: syn::KwTo,
+    pub item: syn::ItemOrCategory,
+}
+
+/// `!write-name <NAME> to ITEM`
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuWriteName {
+    pub lit: syn::KwSuWriteName,
+    pub name: syn::AngledWord,
+    pub kw_to: syn::KwTo,
+    pub item: syn::ItemOrCategory,
+}
+
+/// `!remove ITEMS` - force remove items
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuRemove {
+    pub kw_break: syn::KwSuRemove,
+    pub items: syn::ItemListConstrained,
+}
+
+/// `!reload-gdt` - like `reload`, but only copies GDT from save to memory
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuReloadGdt {
+    pub lit: syn::KwSuReloadGdt,
+    pub name: tp::Option<tp::String<syn::Word>>,
+}
+
+/// `!set-gdt <FLAG> [properties]` - set a gamedata flag (bool, s32, f32, vec2f, vec3f)
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuSetGdt {
+    pub lit: syn::KwSuSetGdt,
+    pub flag_name: syn::AngledWord,
+    pub props: syn::ItemMeta,
+}
+
+/// `!set-gdt-str <FLAG> [properties] "VALUE"` - set a gamedata string flag
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuSetGdtStr {
+    pub lit: syn::KwSuSetGdtStr,
+    pub flag_name: syn::AngledWord,
+    pub props: syn::ItemMeta,
+    pub value: tp::String<syn::QuotedWord>,
+}
+
+///////////////////////////////////////////////////////////
+
 /// `eat ITEMS` - execute eat prompt on targeted items.
 /// The number is the times to eat the item.
 #[derive_syntax]
@@ -404,67 +513,6 @@ pub struct CmdSort {
     pub times: tp::Option<syn::TimesClause>,
 }
 
-/// `!set-inventory ITEMS` - set the inventory to the given items (same as `init` in old format)
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSetInventory {
-    pub lit: syn::KwSetInventory,
-    pub items: tp::Option<syn::ItemListFinite>,
-}
-
-/// `!set-gamedata ITEMS` - set the gamedata to the given items (same as `init gamedata` in old format)
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSetGamedata {
-    pub lit: syn::KwSetGamedata,
-    pub items: tp::Option<syn::ItemListFinite>,
-}
-
-/// `!swap X Y` - Swap the list items X and Y. X and Y are 0-indexed list positions
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSwap {
-    pub lit: syn::KwSwap,
-    pub items: (syn::Number, syn::Number),
-}
-
-/// `!swap-data X Y` - Swap the data of the items X and Y. X and Y are 0-indexed array position
-/// (max 419)
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSwapData {
-    pub lit: syn::KwSwapData,
-    pub items: (syn::Number, syn::Number),
-}
-
-/// `!write [META] to ITEM`
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdWrite {
-    pub lit: syn::KwWrite,
-    pub props: syn::ItemMeta,
-    pub kw_to: syn::KwTo,
-    pub item: syn::ItemOrCategory,
-}
-
-/// `save-as NAME` - save the game to a named slot
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSaveAs {
-    pub lit: syn::KwSaveAs,
-    pub name: tp::String<syn::Word>,
-}
-
-/// `reload` - reload the game from manual or named save slot
-///
-/// This can also be used to start the game, then reload a save
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdReload {
-    pub lit: syn::KwReload,
-    pub name: tp::Option<tp::String<syn::Word>>,
-}
-
 /// `enter TRIAL` - enter a trial
 ///
 /// # Trials:
@@ -483,25 +531,6 @@ pub struct CmdReload {
 pub struct CmdEnter {
     pub lit: syn::KwEnter,
     pub trial: tp::String<syn::Word>,
-}
-
-/// `!set-gdt-flag FLAG [properties]` - set a gamedata flag (bool, s32, f32, vec2f, vec3f)
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSetGdtFlag {
-    pub lit: syn::KwSetGdtFlag,
-    pub flag_name: tp::String<syn::Word>,
-    pub props: syn::ItemMeta,
-}
-
-/// `!set-gdt-flag-str FLAG [properties] VALUE` - set a gamedata string flag
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSetGdtFlagStr {
-    pub lit: syn::KwSetGdtFlagStr,
-    pub flag_name: tp::String<syn::Word>,
-    pub props: syn::ItemMeta,
-    pub value: tp::String<syn::QuotedWord>,
 }
 
 /// `:weapon-slots X` - set the number of weapon slots

@@ -86,18 +86,20 @@ impl GdtMeta {
     }
 }
 
-/// Parse the metadata for !set-gdt-flag command
+/// Parse the metadata for !set-gdt command
 pub fn parse_gdt_meta(meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) -> Option<GdtMeta> {
     let parser = GdtMetaParser::default();
     cir::parse_meta(meta, parser, errors)
 }
 
-/// Parse the metadata for !set-gdt-flag-str command
+/// Parse the metadata for !set-gdt-str command
 pub fn parse_gdt_meta_str(
     meta: &syn::ItemMeta,
     errors: &mut Vec<ErrorReport>,
-    value: &str,
+    quoted_value: &str,
 ) -> Option<GdtMeta> {
+    let value = quoted_value.strip_prefix('"').unwrap_or(quoted_value);
+    let value = value.strip_suffix('"').unwrap_or(value);
     let parser = GdtMetaParser {
         string_value: Some(value),
         ..Default::default()
