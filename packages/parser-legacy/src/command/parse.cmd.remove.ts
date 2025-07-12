@@ -41,7 +41,7 @@ export class CommandRemove extends AbstractProperCommand {
         return this;
     }
     public override convert(): string {
-        return `${this.verb} ${this.stacks.map((s) => s.convert(this.slot, false)).join(" ")};`;
+        return `${this.verb} ${this.stacks.map((s) => s.convert(this.slot, false)).join(" ")}`;
     }
 }
 
@@ -59,7 +59,7 @@ export class CommandEat extends AbstractProperCommand {
         this.slot = slot;
     }
     public override convert(): string {
-        return `eat ${this.stacks.map((s) => s.convert(this.slot, false)).join(" ")};`;
+        return `eat ${this.stacks.map((s) => s.convert(this.slot, false)).join(" ")}`;
     }
 }
 
@@ -78,40 +78,43 @@ export class CommandRemoveAll extends AbstractProperCommand {
     }
     public override convert(): string {
         let s = "";
+        // equipments are not sellable in V4
+        const equipmentRemoveVerb =
+            this.verb === "sell" ? "!remove" : this.verb;
         if (this.types.includes(ItemType.Weapon)) {
-            s += `${this.verb} all weapons;`;
+            s += `${equipmentRemoveVerb} all weapons`;
         }
         if (this.types.includes(ItemType.Bow)) {
-            s += `${this.verb} all bows;`;
+            s += `${equipmentRemoveVerb} all bows`;
         }
         if (this.types.includes(ItemType.Shield)) {
-            s += `${this.verb} all shields;`;
+            s += `${equipmentRemoveVerb} all shields`;
         }
         // V3->V4: the types in V3 are named wrong
         const hasArmorHead = this.types.includes(ItemType.ArmorUpper);
         const hasArmorUpper = this.types.includes(ItemType.ArmorMiddle);
         const hasArmorLower = this.types.includes(ItemType.ArmorLower);
         if (hasArmorHead && hasArmorUpper && hasArmorLower) {
-            s += `${this.verb} all armors;`;
+            s += `${this.verb} all armors`;
         } else {
             if (hasArmorHead) {
-                s += `${this.verb} all head-armors;`;
+                s += `${this.verb} all head-armors`;
             }
             if (hasArmorUpper) {
-                s += `${this.verb} all upper-armors;`;
+                s += `${this.verb} all upper-armors`;
             }
             if (hasArmorLower) {
-                s += `${this.verb} all lower-armors;`;
+                s += `${this.verb} all lower-armors`;
             }
         }
         if (this.types.includes(ItemType.Material)) {
-            s += `${this.verb} all materials;`;
+            s += `${this.verb} all materials`;
         }
         if (this.types.includes(ItemType.Food)) {
-            s += `${this.verb} all foods;`;
+            s += `${this.verb} all foods`;
         }
         if (this.types.includes(ItemType.Key)) {
-            s += `${this.verb} all key-items;`;
+            s += `${this.verb} all key-items`;
         }
         return s;
     }
@@ -130,7 +133,7 @@ export class CommandDnp extends AbstractProperCommand {
         this.slot = slot;
     }
     public override convert(): string {
-        return `dnp ${this.stacks.map((s) => s.convert(this.slot, false)).join(" ")};`;
+        return `dnp ${this.stacks.map((s) => s.convert(this.slot, false)).join(" ")}`;
     }
 }
 

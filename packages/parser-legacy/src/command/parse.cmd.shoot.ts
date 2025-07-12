@@ -20,7 +20,7 @@ export class CommandShootArrow extends AbstractProperCommand {
             return "### `Shoot All` is no longer supported. Please specify number of times!\n### shoot X times;";
         }
         const timeWord = this.count === 1 ? "time" : "times";
-        return `shoot ${this.count} ${timeWord};`;
+        return `shoot ${this.count} ${timeWord}`;
     }
 }
 

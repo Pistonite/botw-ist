@@ -33,11 +33,11 @@ export class CommandHas extends AbstractProperCommand {
     public override convert(): string {
         switch (this.key) {
             case "weaponSlots":
-                return `:weapon-slots ${this.value};`;
+                return `:weapon-slots ${this.value}`;
             case "bowSlots":
-                return `:bow-slots ${this.value};`;
+                return `:bow-slots ${this.value}`;
             case "shieldSlots":
-                return `:shield-slots ${this.value};`;
+                return `:shield-slots ${this.value}`;
         }
     }
 }

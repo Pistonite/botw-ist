@@ -31,10 +31,10 @@ export class CommandBreakSlots extends AbstractProperCommand {
     public override convert(): string {
         let s = "";
         if (this.stacks.length > 0) {
-            s += `!remove ${this.stacks.map((s) => s.convert(this.slot, false)).join(" ")};`;
+            s += `!remove ${this.stacks.map((s) => s.convert(this.slot, false)).join(" ")}`;
         }
         const slotWord = this.numToBreak === 1 ? "slot" : "slots";
-        s += `!break ${this.numToBreak} ${slotWord};`;
+        s += `!break ${this.numToBreak} ${slotWord}`;
         return s;
     }
 }
