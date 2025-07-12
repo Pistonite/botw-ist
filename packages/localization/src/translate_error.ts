@@ -98,6 +98,10 @@ export const translateRuntimeError = (
             const [need, actual] = error.data;
             return translator(key, { need, actual });
         }
+        case "SaveNotFound": {
+            const name = error.data;
+            return translator(key, { name });
+        }
         default:
             return translator(key);
     }
