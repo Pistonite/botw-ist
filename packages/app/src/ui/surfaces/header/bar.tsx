@@ -38,7 +38,6 @@ const HeaderImpl: React.FC = () => {
                     height="32px"
                 />
             </div>
-            <ModeSwitcher />
             <SettingsMenu />
             {
                 // Custom extensions are limited to PC platform only
@@ -49,6 +48,7 @@ const HeaderImpl: React.FC = () => {
             }
             <MiscMenu />
             <div className={m("flex-row flex-1 flex-end")}>
+                <ModeSwitcher />
                 <PerfMonitor />
             </div>
         </div>

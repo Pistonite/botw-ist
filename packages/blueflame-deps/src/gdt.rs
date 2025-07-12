@@ -143,11 +143,11 @@ pub struct Flag<T: FlagType> {
 }
 
 enum PropertyFlag {
-    IsProgramReadable = 0x1,
-    IsProgramWritable = 0x2,
-    IsSave = 0x4,
-    // IsOneTrigger = 0x8,
-    // IsEventAssociated = 0x10,
+    ProgramReadable = 0x1,
+    ProgramWritable = 0x2,
+    Save = 0x4,
+    // OneTrigger = 0x8,
+    // EventAssociated = 0x10,
 }
 
 impl<T: FlagType> Flag<T> {
@@ -205,15 +205,15 @@ impl<T: FlagType> Flag<T> {
     }
 
     pub fn readable(&self) -> bool {
-        self.properties & (PropertyFlag::IsProgramReadable as u8) != 0
+        self.properties & (PropertyFlag::ProgramReadable as u8) != 0
     }
 
     pub fn writable(&self) -> bool {
-        self.properties & (PropertyFlag::IsProgramWritable as u8) != 0
+        self.properties & (PropertyFlag::ProgramWritable as u8) != 0
     }
 
     pub fn savable(&self) -> bool {
-        self.properties & (PropertyFlag::IsSave as u8) != 0
+        self.properties & (PropertyFlag::Save as u8) != 0
     }
 }
 

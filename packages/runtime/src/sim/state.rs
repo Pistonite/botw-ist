@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::sync::Arc;
 
 use blueflame::game::gdt;
@@ -17,21 +16,35 @@ pub struct State {
     /// Current args
     pub args: Option<Box<StateArgs>>,
     /// Named save data (clone on write)
-    saves: Arc<HashMap<String, Arc<gdt::TriggerParam>>>,
+    ///
+    /// This needs to be kept in insertion order so the order
+    /// doesn't feel random to users
+    saves: Arc<Vec<(String, Arc<gdt::TriggerParam>)>>,
     /// The "manual" or "default" save (what is used if a name is not specified when saving)
     pub manual_save: Option<Arc<gdt::TriggerParam>>,
 }
 
 impl State {
-    /// Get all named saves
-    pub fn named_saves(&self) -> &HashMap<String, Arc<gdt::TriggerParam>> {
-        &self.saves
+    /// Get names of all saves
+    pub fn save_names(&self) -> Vec<String> {
+        self.saves
+            .as_ref()
+            .iter()
+            .map(|(n, _)| n.to_string())
+            .collect()
     }
     /// Get a manual save (if name is `None`) or a named save
     pub fn save_by_name(&self, name: Option<&str>) -> Option<&gdt::TriggerParam> {
         match name {
             None => self.manual_save.as_deref(),
-            Some(name) => self.saves.get(name).map(|x| x.as_ref())
+            Some(name) => {
+                for (save_name, save) in self.saves.as_ref() {
+                    if save_name == name {
+                        return Some(save.as_ref());
+                    }
+                }
+                None
+            }
         }
     }
 
@@ -40,8 +53,14 @@ impl State {
         match name {
             None => self.manual_save = Some(data),
             Some(name) => {
-                let saves = Arc::make_mut(&mut self.saves);
-                saves.insert(name.to_string(), data);
+                let saves: &mut Vec<_> = Arc::make_mut(&mut self.saves);
+                for (save_name, save) in saves.iter_mut() {
+                    if save_name == name {
+                        *save = data;
+                        return;
+                    }
+                }
+                saves.push((name.to_string(), data));
             }
         }
     }
@@ -433,8 +452,8 @@ impl State {
     async fn handle_save(
         self,
         rt: sim::Context<&sim::Runtime>,
-        name: Option<&str>
-    ) -> Result<Report<Self>, exec::Error>{
+        name: Option<&str>,
+    ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling SAVE command");
 
         // we will have the context start the game if needed,
@@ -443,7 +462,7 @@ impl State {
         // to handle it without runtime, but this is way easier
         let (send, recv) = oneshot::channel();
 
-        let new_state = in_game!(self, rt, ctx, _sys, _errors => { 
+        let new_state = in_game!(self, rt, ctx, _sys, _errors => {
             let gdt_ptr = gdt::trigger_param_ptr(ctx.cpu().proc.memory())?;
             let proc = &ctx.cpu().proc;
             proxy!{ let gdt = *gdt_ptr as trigger_param in proc };
@@ -452,7 +471,9 @@ impl State {
             }
             Ok(())
         })?;
-        let data = recv.recv().map_err(|x| exec::Error::RecvResult(x.to_string()))?;
+        let data = recv
+            .recv()
+            .map_err(|x| exec::Error::RecvResult(x.to_string()))?;
         Ok(new_state.map(|mut state| {
             state.set_save_by_name(name, data);
             state

@@ -186,7 +186,7 @@ tasks:
     deps:
       - item-system:test
       - skybook-api:test
-
+      - app:test
 
   build:
     desc: Check that components can build without failure

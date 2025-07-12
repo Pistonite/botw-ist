@@ -61,11 +61,14 @@ impl sim::State {
 
     /// Ensure the game is already running, or initialize it if not,
     /// then execute the provided function without access to the runtime
-    pub fn with_game_no_exec<'a, TOutput, TFn: FnOnce(&mut sim::GameState, Span, &mut Vec<ErrorReport>) -> TOutput>(
-        &mut self, 
-        ctx: Context<&'a sim::Runtime>,
-        f: TFn)
-        -> Report<Option<TOutput>> {
+    pub fn with_game_no_exec<
+        TOutput,
+        TFn: FnOnce(&mut sim::GameState, Span, &mut Vec<ErrorReport>) -> TOutput,
+    >(
+        &mut self,
+        ctx: Context<&'_ sim::Runtime>,
+        f: TFn,
+    ) -> Report<Option<TOutput>> {
         if let sim::Game::Uninit = &self.game {
             let process = match ctx.runtime().initial_process() {
                 Ok(process) => process,
@@ -79,7 +82,7 @@ impl sim::State {
             sim::Game::Crashed(_) => {
                 self.game = sim::Game::PreviousCrash;
                 Report::error(None, sim_warning!(ctx.span, PreviousCrash))
-            },
+            }
             sim::Game::PreviousCrash | sim::Game::PreviousClosed => Report::new(None),
             sim::Game::Closed => {
                 self.game = sim::Game::PreviousClosed;
@@ -89,8 +92,8 @@ impl sim::State {
                 let mut errors = vec![];
                 let output = f(game.as_mut(), ctx.span, &mut errors);
                 Report::with_errors(Some(output), errors)
-            },
-            sim::Game::Uninit => unreachable!()
+            }
+            sim::Game::Uninit => unreachable!(),
         }
     }
 }

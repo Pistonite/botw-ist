@@ -29,7 +29,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({ textToCopy }) => {
                     setIsCopied(true);
                     timeoutRef.current = setTimeout(() => {
                         setIsCopied(false);
-                    }, 2000);
+                    }, 2000) as unknown as number;
                 } catch (e) {
                     log.error("failed to copy text to clipboard");
                     log.error(e);

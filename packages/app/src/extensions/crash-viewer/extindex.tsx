@@ -10,13 +10,12 @@ import {
 
 import { CrashViewer } from "./crash_viewer.tsx";
 
-const CRASH_VIEWER_UUID = "630c655a-2547-4e40-9b95-5f07a048ed38";
+const UUID = "630c655a-2547-4e40-9b95-5f07a048ed38";
 
 export class CrashViewerExtension
     extends FirstPartyExtensionAdapter
     implements FirstPartyExtension
 {
-    public updateCrashInfo: () => Promise<unknown>;
     private crashInfo: Cell<string>;
     private component: React.FC;
 
@@ -24,35 +23,6 @@ export class CrashViewerExtension
         super(standalone);
         this.crashInfo = cell({
             initial: "",
-        });
-        this.updateCrashInfo = serial({
-            fn: (checkCancel) => async (): Promise<void> => {
-                const app = this.app;
-                if (!app) {
-                    return;
-                }
-                const taskId = await app.requestNewTaskIds(
-                    CRASH_VIEWER_UUID,
-                    1,
-                );
-                checkCancel();
-                if (taskId.err) {
-                    return;
-                }
-                const result = await app.getCrashInfo(
-                    taskId.val[0],
-                    undefined,
-                    undefined,
-                );
-                checkCancel();
-                if (result.err) {
-                    return;
-                }
-                if (result.val.type === "Aborted") {
-                    return;
-                }
-                this.crashInfo.set(result.val.value);
-            },
         });
         const subscribe = (cb: (x: string) => void) => {
             return this.crashInfo.subscribe(cb);
@@ -74,4 +44,31 @@ export class CrashViewerExtension
         void this.updateCrashInfo();
         return {};
     }
+
+    private updateCrashInfo = serial({
+        fn: (checkCancel) => async (): Promise<void> => {
+            const app = this.app;
+            if (!app) {
+                return;
+            }
+            const taskId = await app.requestNewTaskIds(UUID, 1);
+            checkCancel();
+            if (taskId.err) {
+                return;
+            }
+            const result = await app.getCrashInfo(
+                taskId.val[0],
+                undefined,
+                undefined,
+            );
+            checkCancel();
+            if (result.err) {
+                return;
+            }
+            if (result.val.type === "Aborted") {
+                return;
+            }
+            this.crashInfo.set(result.val.value);
+        },
+    });
 }
