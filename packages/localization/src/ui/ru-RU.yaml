@@ -132,6 +132,7 @@ dialog.custom_extensions.help: "После сохранения конфигур
 extension.crash-viewer.name: "Отчет о сбое"
 extension.editor.name: "Редактор скриптов"
 extension.item-explorer.name: "Обозреватель предметов"
+extension.save-viewer.name: "Файлы сохранения"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Используйте {{hyphen}} для соединения нескольких поисковых запросов, например {{example}}."
@@ -143,6 +144,9 @@ item_explorer.search_error.unknown_tag: "Неизвестная языковая
 
 # Crash Viewer Extension
 crash_viewer.no_crash: "Нет сбоя на этом шаге"
+
+# Save Viewer Extension
+save_viewer.manual_save: "Ручное сохранение"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "Недоступно в меню крестовины"

@@ -132,6 +132,7 @@ dialog.custom_extensions.help: "Después de guardar la configuración, puedes ab
 extension.crash-viewer.name: "Informe de errores"
 extension.editor.name: "Editor de Scripts"
 extension.item-explorer.name: "Explorador de Objetos"
+extension.save-viewer.name: "Archivos guardados"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Use {{hyphen}} para conectar múltiples términos de búsqueda, por ejemplo {{example}}."
@@ -143,6 +144,9 @@ item_explorer.search_error.unknown_tag: "Etiqueta de idioma desconocida \"{{tag}
 
 # Crash Viewer Extension
 crash_viewer.no_crash: "No hay errores en este paso"
+
+# Save Viewer Extension
+save_viewer.manual_save: "Guardado manual"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "No está en el menú de la cruceta"

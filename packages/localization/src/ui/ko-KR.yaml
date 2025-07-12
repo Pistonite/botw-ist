@@ -132,6 +132,7 @@ dialog.custom_extensions.help: "구성을 저장한 후에는 \"{{open_button}}\
 extension.crash-viewer.name: "충돌 보고서"
 extension.editor.name: "스크립트 편집기"
 extension.item-explorer.name: "아이템 탐색기"
+extension.save-viewer.name: "저장 파일"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "여러 검색어를 연결하려면 {{hyphen}}을(를) 사용하세요. 예: {{example}}."
@@ -143,6 +144,9 @@ item_explorer.search_error.unknown_tag: "알 수 없는 언어 태그 \"{{tag}}\
 
 # Crash Viewer Extension
 crash_viewer.no_crash: "이 단계에서 충돌 없음"
+
+# Save Viewer Extension
+save_viewer.manual_save: "수동 저장"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "방향 패드 메뉴에서 사용 불가"

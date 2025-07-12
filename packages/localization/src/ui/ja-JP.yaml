@@ -132,6 +132,7 @@ dialog.custom_extensions.help: "設定を保存した後、「{{open_button}}」
 extension.crash-viewer.name: "クラッシュレポート"
 extension.editor.name: "スクリプトエディター"
 extension.item-explorer.name: "アイテム探索"
+extension.save-viewer.name: "セーブファイル"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "複数の検索語を接続するには {{hyphen}} を使用してください。例: {{example}}。"
@@ -143,6 +144,9 @@ item_explorer.search_error.unknown_tag: "不明な言語タグ \"{{tag}}\""
 
 # Crash Viewer Extension
 crash_viewer.no_crash: "このステップではクラッシュなし"
+
+# Save Viewer Extension
+save_viewer.manual_save: "手動セーブ"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "方向パッドメニューでは利用不可"

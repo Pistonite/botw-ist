@@ -132,6 +132,7 @@ dialog.custom_extensions.help: "保存配置后，第三方扩展可以通过\"{
 extension.crash-viewer.name: "崩溃报告"
 extension.editor.name: "脚本编辑器"
 extension.item-explorer.name: "搜索物品"
+extension.save-viewer.name: "存档"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "使用 {{hyphen}} 连接多个词，比如 {{example}}."
@@ -143,6 +144,9 @@ item_explorer.search_error.unknown_tag: "未知语言标签 \"{{tag}}\""
 
 # Crash Viewer Extension
 crash_viewer.no_crash: "此步骤无崩溃"
+
+# Save Viewer Extension
+save_viewer.manual_save: "手动存档"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "不在十字键界面显示"

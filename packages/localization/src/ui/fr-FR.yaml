@@ -132,6 +132,7 @@ dialog.custom_extensions.help: "Après avoir enregistré la configuration, vous 
 extension.crash-viewer.name: "Rapport d'incident"
 extension.editor.name: "Éditeur de scripts"
 extension.item-explorer.name: "Explorateur d’objets"
+extension.save-viewer.name: "Fichiers de sauvegarde"
 
 # Item Explorer Extension
 item_explorer.desc.search_tip_ident: "Utilisez {{hyphen}} pour relier plusieurs termes de recherche, par exemple {{example}}."
@@ -143,6 +144,9 @@ item_explorer.search_error.unknown_tag: "Code de langue inconnu \"{{tag}}\""
 
 # Crash Viewer Extension
 crash_viewer.no_crash: "Aucun incident à cette étape"
+
+# Save Viewer Extension
+save_viewer.manual_save: "Sauvegarde manuelle"
 
 # Item Slot Tooltip
 tooltip.accessible_dpad_none: "Pas dans le menu de la croix directionnelle"
