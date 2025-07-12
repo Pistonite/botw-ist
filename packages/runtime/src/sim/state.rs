@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use blueflame::game::gdt;
-use blueflame::memory::proxy;
 use blueflame::processor::{CrashReport, Process};
 use skybook_parser::cir;
 
@@ -456,26 +455,31 @@ impl State {
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling SAVE command");
 
-        // we will have the context start the game if needed,
-        // and send the save data to us
-        // it's technically possible (and probably more efficient)
-        // to handle it without runtime, but this is way easier
         let (send, recv) = oneshot::channel();
+        // allow overworld for auto saves
+        let allow_overworld = name.is_some();
 
-        let new_state = in_game!(self, rt, ctx, _sys, _errors => {
-            let gdt_ptr = gdt::trigger_param_ptr(ctx.cpu().proc.memory())?;
-            let proc = &ctx.cpu().proc;
-            proxy!{ let gdt = *gdt_ptr as trigger_param in proc };
-            if send.send(Arc::new(gdt.clone())).is_err() {
-                log::error!("failed to send save data to main thread");
-            }
-            Ok(())
+        let new_state = in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::save(&mut cpu, sys, errors, allow_overworld, send)
         })?;
         let data = recv
             .recv()
-            .map_err(|x| exec::Error::RecvResult(x.to_string()))?;
+            .map_err(|x| exec::Error::RecvResult(x.to_string()));
+        let data = match data {
+            Ok(x) => x,
+            Err(e) => {
+                log::error!("fail to receive save data: {e}");
+                return Err(e);
+            }
+        };
         Ok(new_state.map(|mut state| {
-            state.set_save_by_name(name, data);
+            match data {
+                Some(data) => state.set_save_by_name(name, data),
+                // if data is not sent, that means save cannot be executed,
+                // which is fine, and the error should be contained
+                // in the report
+                None => log::warn!("did not get save data from executor thread"),
+            }
             state
         }))
     }

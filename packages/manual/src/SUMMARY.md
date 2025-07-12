@@ -24,7 +24,7 @@
     - [Shop](./action/shop.md)
     - [Break Slots](./action/break_slots.md)
     - [Entangle](./action/entangle.md)
-    - [Action: Handling Saves]()
+    - [Save Files](./action/save.md)
     - [Action: Overworld Transform]()
     - [Action: Trials]()
     - [Action: Other]()
