@@ -153,7 +153,7 @@ export interface NativeApiFunctions<TPtr> {
         runOutputPtr: TPtr,
         parseOutputPtr: TPtr,
         bytePos: number,
-        name: string | undefined
+        name: string | undefined,
     ): Pwr<Result<InvView_Gdt, RuntimeViewError>>;
 
     // === ref counting api ===

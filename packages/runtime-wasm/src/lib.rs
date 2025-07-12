@@ -399,7 +399,7 @@ pub fn get_save_inventory(
     run_output_ref: *const sim::RunOutput,
     parse_output_ref: *const ParseOutput,
     byte_pos: usize,
-    name: Option<String>
+    name: Option<String>,
 ) -> interop::Result<iv::Gdt, RuntimeViewError> {
     let (run_output, step) = deref_with_step!(run_output_ref, parse_output_ref, byte_pos);
     run_output.get_save_inventory(step, name.as_deref()).into()

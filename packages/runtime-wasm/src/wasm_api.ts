@@ -221,7 +221,11 @@ export class WasmApi implements NativeApi<number> {
         });
     }
 
-    public getSaveNames(runOutputPtr: number, parseOutputPtr: number, bytePos: number): Pwr<string[]> {
+    public getSaveNames(
+        runOutputPtr: number,
+        parseOutputPtr: number,
+        bytePos: number,
+    ): Pwr<string[]> {
         return this.exec(() => {
             return wasm_bindgen.get_save_names(
                 runOutputPtr,
@@ -235,14 +239,14 @@ export class WasmApi implements NativeApi<number> {
         runOutputPtr: number,
         parseOutputPtr: number,
         bytePos: number,
-        name: string | undefined
+        name: string | undefined,
     ): Pwr<Result<InvView_Gdt, RuntimeViewError>> {
         return this.exec(() => {
             return wasm_bindgen.get_save_inventory(
                 runOutputPtr,
                 parseOutputPtr,
                 bytePos,
-                name
+                name,
             );
         });
     }
