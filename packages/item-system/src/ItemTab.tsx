@@ -3,6 +3,7 @@ import { makeStyles, mergeClasses } from "@fluentui/react-components";
 import { ModifierSprite } from "botw-item-assets";
 
 import { PouchCategory, PouchCategoryNames } from "./data";
+import { PresenceBlocked24Regular } from "@fluentui/react-icons";
 
 export type TabNode = {
     /** The slot number of the item in the tab, corresponding to where it will be displayed */
@@ -18,6 +19,8 @@ export type ItemTabProps = {
     border?: boolean;
     /** Stuff to display in the tab */
     nodes: TabNode[];
+    /** Whether the tab is undiscovered (not accessible in game UI) */
+    undiscovered?: boolean;
 };
 
 const useStyles = makeStyles({
@@ -35,9 +38,21 @@ const useStyles = makeStyles({
         margin: "0 16px",
         boxSizing: "border-box",
     },
+    categoryIconInner: {
+        position: "relative",
+    },
+    blockIcon: {
+        position: "absolute",
+        top: "4px",
+        left: "4px",
+        right: "4px",
+        bottom: "4px",
+        color: "red",
+    },
     iconHeight: {
         height: "32px",
     },
+
     borderVisible: {
         borderBottom: "1px solid #ccc",
     },
@@ -54,14 +69,22 @@ export const ItemTab: React.FC<ItemTabProps> = ({
     category,
     border,
     nodes,
+    undiscovered,
 }) => {
     const styles = useStyles();
 
     const $CategoryIcon = category !== PouchCategory.Invalid && (
-        <ModifierSprite
-            status={`Category${PouchCategoryNames[category]}`}
-            size={32}
-        />
+        <span className={styles.categoryIconInner}>
+            <ModifierSprite
+                status={`Category${PouchCategoryNames[category]}`}
+                size={32}
+            />
+            {undiscovered && (
+                <span className={styles.blockIcon}>
+                    <PresenceBlocked24Regular />
+                </span>
+            )}
+        </span>
     );
     let height = 0;
     const $Nodes = nodes.map(({ slot, element }) => {

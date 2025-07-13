@@ -34,3 +34,4 @@ get screw
 get shaft
 get rushroom
 get shroom
+get hylian-hood

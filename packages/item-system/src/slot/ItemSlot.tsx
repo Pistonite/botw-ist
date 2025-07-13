@@ -1,10 +1,6 @@
 import type { PropsWithChildren } from "react";
 import { Text, makeStyles, mergeClasses } from "@fluentui/react-components";
-import {
-    Games32Regular,
-    Link32Regular,
-    PresenceBlocked24Regular,
-} from "@fluentui/react-icons";
+import { Link32Regular, PresenceBlocked24Regular } from "@fluentui/react-icons";
 
 import {
     ActorSprite,
@@ -139,10 +135,11 @@ const useStyles = makeStyles({
         top: "0px",
         right: "0px",
         left: "0px",
+        scale: 1.8,
     },
     accessibleStatusDpadOnly: {
-        color: "#b7f1ff",
-        filter: "drop-shadow(0 0 5px #3aa0ff)",
+        fill: "#b7f1ff",
+        filter: "drop-shadow(0 0 3px #3aa0ff)",
     },
     accessibleStatusBlockIcon: {
         bottom: "0px",
@@ -157,7 +154,10 @@ const useStyles = makeStyles({
     },
     accessibleStatusDpadNone: {
         color: "#ffffb5",
-        filter: "drop-shadow(0 0 5px #f0673a)",
+        fill: "#ffffb5",
+        filter: "drop-shadow(0 0 3px #f0673a)",
+        // fill: "#ff3535",
+        // filter: "drop-shadow(0 0 3px #f0373a)",
     },
     entangle: {
         color: "#b7f1ff",
@@ -357,7 +357,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
     );
 
     const $EntangleLayer = isEntangled && (
-        <Layer4x>
+        <LayerX times={4}>
             <span
                 className={mergeClasses(
                     styles.entangle,
@@ -367,11 +367,11 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
             >
                 <Link32Regular />
             </span>
-        </Layer4x>
+        </LayerX>
     );
 
     const $DpadIconLayer = accessibleStatus?.startsWith("dpad") && (
-        <Layer4x>
+        <LayerX times={3}>
             <span
                 className={mergeClasses(
                     styles.bigStatusIcon,
@@ -381,9 +381,24 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
                         : styles.accessibleStatusDpadOnly,
                 )}
             >
-                <Games32Regular />
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                >
+                    <path d="m7.788 2.34-.799 1.278A.25.25 0 0 0 7.201 4h1.598a.25.25 0 0 0 .212-.382l-.799-1.279a.25.25 0 0 0-.424 0Zm0 11.32-.799-1.277A.25.25 0 0 1 7.201 12h1.598a.25.25 0 0 1 .212.383l-.799 1.278a.25.25 0 0 1-.424 0ZM3.617 9.01 2.34 8.213a.25.25 0 0 1 0-.424l1.278-.799A.25.25 0 0 1 4 7.201V8.8a.25.25 0 0 1-.383.212Zm10.043-.798-1.277.799A.25.25 0 0 1 12 8.799V7.2a.25.25 0 0 1 .383-.212l1.278.799a.25.25 0 0 1 0 .424Z" />
+                    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v3a.5.5 0 0 1-.5.5h-3A1.5 1.5 0 0 0 0 6.5v3A1.5 1.5 0 0 0 1.5 11h3a.5.5 0 0 1 .5.5v3A1.5 1.5 0 0 0 6.5 16h3a1.5 1.5 0 0 0 1.5-1.5v-3a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 0 16 9.5v-3A1.5 1.5 0 0 0 14.5 5h-3a.5.5 0 0 1-.5-.5v-3A1.5 1.5 0 0 0 9.5 0zM6 1.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3A1.5 1.5 0 0 0 11.5 6h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a1.5 1.5 0 0 0-1.5 1.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-3A1.5 1.5 0 0 0 4.5 10h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 0 6 4.5z" />
+                    {accessibleStatus === "dpad-none" && (
+                        <path
+                            d="m0 0L16 16"
+                            strokeWidth="1.2"
+                            stroke="#ffffb5"
+                        />
+                    )}
+                </svg>
             </span>
-        </Layer4x>
+        </LayerX>
     );
 
     const $BlockedIconLayer = accessibleStatus === "none" && (
@@ -423,12 +438,15 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
     );
 };
 
-/** Display a layer 4 times to enhance the effect */
-const Layer4x: React.FC<PropsWithChildren> = ({ children }) => {
+/** Display a layer X times to enhance the effect */
+const LayerX: React.FC<PropsWithChildren<{ times: number }>> = ({
+    times,
+    children,
+}) => {
     const styles = useStyles();
     return (
         <>
-            {Array.from({ length: 4 }).map((_, i) => (
+            {Array.from({ length: times }).map((_, i) => (
                 <div key={i} className={mergeClasses(styles.layer)}>
                     {children}
                 </div>
