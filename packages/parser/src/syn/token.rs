@@ -149,14 +149,18 @@ pub enum TT {
         // When updating syntax, Keep the order in sync with syn and cir Command
         /////////////////////////////
         KwSuBreak = "!break",
+        KwSuInit = "!init",
+        KwSuAddSlot = "!add-slot",
+        KwSuSwap = "!swap",
+        KwSuWrite = "!write",
+        KwSuWriteName = "!write-name",
         KwSuRemove = "!remove",
-        KwSetGdtFlag = "!set-gdt-flag",
-        KwSetGdtFlagStr = "!set-gdt-flag-str",
-        KwSetInventory = "!set-inventory",
-        KwSetGamedata = "!set-gamedata",
-        KwWrite = "!write",
-        KwSwap = "!swap",
-        KwSwapData = "!swap-data",
+        KwSuReloadGdt = "!reload-gdt",
+        KwSuResetGround = "!reset-ground",
+        KwSuResetOverworld = "!reset-overworld",
+        KwSuLoadingScreen = "!loading-screen",
+        KwSuSetGdt = "!set-gdt",
+        KwSuSetGdtStr = "!set-gdt-str",
         /////////////////////////////
         // When updating syntax, Keep the order in sync with syn and cir Command
         /////////////////////////////
@@ -173,6 +177,7 @@ pub enum TT {
         KwSlot = "slot",
         KwSlots = "slots",
         KwTo = "to",
+        KwAnd = "and",
         // @syntax-generator-hint end
 
         // @syntax-generator-hint types

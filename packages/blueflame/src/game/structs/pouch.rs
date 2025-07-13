@@ -80,7 +80,7 @@ impl Ptr![PauseMenuDataMgr] {
         Ptr!(&self->mGrabbedItems).reinterpret_array()
     }
 
-    pub fn item_buffer(self) -> Ptr![PouchItem[5]] {
+    pub fn item_buffer(self) -> Ptr![PouchItem[420]] {
         Ptr!(&self->mItemBuffer).reinterpret_array()
     }
 
@@ -103,6 +103,8 @@ pub struct GrabbedItemInfo {
 #[derive(MemObject, Default, Clone)]
 #[size(0x298)]
 pub struct PouchItem {
+    #[offset(0x0)]
+    pub vtable: u64,
     #[offset(0x8)]
     pub mListNode: ListNode,
     #[offset(0x18)]
@@ -128,10 +130,58 @@ pub struct PouchItem {
     #[offset(0x90)]
     pub mEffectLevel: f32,
     #[offset(0x98)]
-    pub mIngredients: PtrArrayImpl_FixedSafeString40,
+    pub mIngredients: FixedObjArray5_FixedSafeString40,
+}
+
+impl PouchItem {
+    const VTABLE_OFFSET_150: u32 = 0x02476C90;
 }
 
 impl Ptr![PouchItem] {
+    /// PouchItem constructor
+    pub fn construct(self, memory: &mut Memory) -> Result<(), memory::Error> {
+        // TODO --160
+        let vptr = memory.main_start() + PouchItem::VTABLE_OFFSET_150 as u64;
+
+        // we can take a shortcut to construct the ingr array,
+        // rather than construct and emplace 5 elements
+        let ingr_ptr_buffer_ptr = Ptr!(&self->mIngredients.mPtrBuffer).to_raw();
+        let ingr_ptr_buffer: [Ptr![FixedSafeString40]; 5] = [
+            Ptr!(&self->mIngredients.mStringOrNode_0),
+            Ptr!(&self->mIngredients.mStringOrNode_1),
+            Ptr!(&self->mIngredients.mStringOrNode_2),
+            Ptr!(&self->mIngredients.mStringOrNode_3),
+            Ptr!(&self->mIngredients.mStringOrNode_4),
+        ];
+        let ingr_ptr_first = Ptr!(&self->mIngredients.mStringOrNode_0).to_raw();
+        mem! { memory:
+            *(&self->vtable) = vptr;
+            *(&self->mListNode) = ListNode::default();
+            *(&self->mType) = -1;
+            *(&self->mItemUse) = -1;
+            *(&self->mValue) = 0;
+            *(&self->mEquipped) = false;
+            *(&self->mInInventory) = true;
+            *(&self->mHealthRecover) = 0;
+            *(&self->mEffectDuration) = 0;
+            *(&self->mSellPrice) = 0;
+            *(&self->mEffectId) = -1f32;
+            *(&self->mEffectLevel) = 0f32;
+            *(&self->mIngredients.mPtrNum) = 5;
+            *(&self->mIngredients.mPtrNumMax) = 5;
+            *(&self->mIngredients.mPtrs) = ingr_ptr_buffer_ptr.into();
+            *(&self->mIngredients.mNextFree) = 0;
+            *(&self->mIngredients.mFirst) = ingr_ptr_first;
+            *(&self->mIngredients.mPtrBuffer) = ingr_ptr_buffer;
+        }
+        Ptr!(&self->mName).construct(memory)?;
+        Ptr!(&self->mIngredients.mStringOrNode_0).construct(memory)?;
+        Ptr!(&self->mIngredients.mStringOrNode_1).construct(memory)?;
+        Ptr!(&self->mIngredients.mStringOrNode_2).construct(memory)?;
+        Ptr!(&self->mIngredients.mStringOrNode_3).construct(memory)?;
+        Ptr!(&self->mIngredients.mStringOrNode_4).construct(memory)?;
+        Ok(())
+    }
     /// WeaponModifier constructor from PouchItem, must be non-null
     pub fn to_modifier_info(self, memory: &Memory) -> Result<WeaponModifierInfo, memory::Error> {
         mem! { memory:
@@ -149,19 +199,46 @@ impl Ptr![PouchItem] {
         }
         Ok(WeaponModifierInfo::default())
     }
+
+    pub fn ith_ingredient(
+        self,
+        i: u64,
+        memory: &Memory,
+    ) -> Result<Ptr![FixedSafeString40], memory::Error> {
+        mem! { memory:
+            let ingredients = *(&self->mIngredients.mPtrs);
+            let ingredients_i = *(ingredients.ith(i));
+        }
+        Ok(ingredients_i)
+    }
 }
 
 #[allow(non_camel_case_types)]
-#[derive(MemObject, Default, Clone, Copy)]
-#[size(0x10)]
-pub struct PtrArrayImpl_FixedSafeString40 {
+#[derive(MemObject, Default, Clone)]
+#[size(0x200)]
+pub struct FixedObjArray5_FixedSafeString40 {
     #[offset(0x0)]
-    mPtrNum: i32,
+    mPtrNum: i32, // PouchItem constructor sets this to 5
     #[offset(0x4)]
-    mPtrNumMax: i32,
+    mPtrNumMax: i32, // 5
     #[offset(0x8)]
-    mPtrs: Ptr![Ptr![FixedSafeString40][5]],
-    // there is a buffer after this, but we don't need it
+    mPtrs: Ptr![Ptr![FixedSafeString40][5]], // points to mPtrBuffer
+    #[offset(0x10)]
+    mNextFree: u64,
+    #[offset(0x18)]
+    mFirst: u64,
+    #[offset(0x20)]
+    mStringOrNode_0: FixedSafeString40, // union of Node* and FixedSafeString40
+    #[offset(0x78)]
+    mStringOrNode_1: FixedSafeString40,
+    #[offset(0xD0)]
+    mStringOrNode_2: FixedSafeString40,
+    #[offset(0x128)]
+    mStringOrNode_3: FixedSafeString40,
+    #[offset(0x180)]
+    mStringOrNode_4: FixedSafeString40,
+    #[offset(0x1d8)]
+    mPtrBuffer: [Ptr![FixedSafeString40]; 5],
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, MemObject)]
@@ -255,6 +332,21 @@ impl PouchItemType {
             -1 => Self::Invalid,
             _ => return None,
         })
+    }
+
+    pub fn to_category(self) -> PouchCategory {
+        match self {
+            PouchItemType::Sword => PouchCategory::Sword,
+            PouchItemType::Bow | PouchItemType::Arrow => PouchCategory::Bow,
+            PouchItemType::Shield => PouchCategory::Shield,
+            PouchItemType::ArmorHead | PouchItemType::ArmorUpper | PouchItemType::ArmorLower => {
+                PouchCategory::Armor
+            }
+            PouchItemType::Material => PouchCategory::Material,
+            PouchItemType::Food => PouchCategory::Food,
+            PouchItemType::KeyItem => PouchCategory::KeyItem,
+            PouchItemType::Invalid => PouchCategory::Invalid,
+        }
     }
 }
 

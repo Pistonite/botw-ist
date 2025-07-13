@@ -1,0 +1,12 @@
+// Migrated from legacy: apple_999
+// Author: savage13
+!init 1 pot-lid 1 apple 1 slate 1 glider
+equip shield
+!break 3 slots
+save
+unequip all shields
+drop 1 apple
+reload
+save
+drop 1 apple
+reload

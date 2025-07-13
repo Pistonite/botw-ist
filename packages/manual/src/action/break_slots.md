@@ -6,9 +6,6 @@ to enable IST. See [Inventory Slot Transfer](../ist/index.md) for more info.
 You can either break slots by simulating actions, like what you do in the game,
 or use the <skyb>!break</skyb> supercommand to directly edit the memory
 
-## Syntax
-> `!break X slots`
-
 ## Arrowless Offset
 
 ```admonish info
@@ -48,13 +45,4 @@ drop
 ```
 
 ## By Magic
-For backward compatibility, you can still use <skyb>!break</skyb>
-to generate offsets by directly editing the memory of the inventory.
-This shouldn't cause any inaccuracies in normal circumstances, but
-it's recommended to only use this command for prototyping, and use
-the actual actions in the final script.
-
-Example:
-```skybook
-!break 20 slots
-```
+See [Low Level Operations](./low_level.md#generate-broken-slots)

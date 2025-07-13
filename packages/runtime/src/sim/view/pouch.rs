@@ -440,7 +440,11 @@ fn extract_pouch_item(
 
     let prompt_entangled = entangled_items.binary_search(&item.to_raw()).is_ok();
 
-    let dpad_accessible = dpad_accessible || item_type > PouchItemType::Shield as i32;
+    let dpad_accessible = if item_type > PouchItemType::Shield as i32 {
+        accessible
+    } else {
+        dpad_accessible
+    };
 
     Ok(iv::PouchItem {
         common,

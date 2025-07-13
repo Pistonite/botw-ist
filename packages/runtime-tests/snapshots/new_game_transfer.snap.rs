@@ -80,6 +80,7 @@ game: (Running)
       [000]: (actor_name=Item_Mushroom_E, value=1, is_equipped=false, item_type=Material, item_use=CureItem, tab_idx=0, tab_slot=0, )
         node: (valid=true, pos=418, addr=0x0000002222243cd0, prev=0x0000002222200068, next=0x0000002222200068, )
         accessible: false
+        dpad_accessible: false
     tabs: (len=1, )
       [00]: (item_idx=0, tab_type=Material, )
   gdt: (weapons=8, bows=5, shields=4, )

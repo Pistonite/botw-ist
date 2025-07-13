@@ -12,6 +12,17 @@ mod instructions;
 
 pub use blueflame_proc_macros::paste_insn;
 
+#[allow(unused)] // used only in tests
+macro_rules! decode {
+    ($($x:tt)*) => {
+        disarm64::decoder::decode(
+            $crate::processor::insn::paste_insn!($($x)*)
+        ).expect(concat!("failed to decode ", stringify!($($x)*)))
+    };
+}
+#[allow(unused)] // used only in tests
+pub(crate) use decode;
+
 // TODO --cleanup: remove this
 #[derive(derive_more::derive::Constructor)]
 pub struct Core<'a, 'b> {
