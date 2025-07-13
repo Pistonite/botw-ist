@@ -1,4 +1,0 @@
-save as SoR
-init 1 slate
-break 1 slot
-init gamedata

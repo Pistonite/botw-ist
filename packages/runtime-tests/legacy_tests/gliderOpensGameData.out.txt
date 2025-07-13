@@ -1,5 +1,0 @@
-save as NewGame
-init 1 glider 1 slate 1 weapon [equip] 1 weapon
-save
-init 1 weapon [equip] 1 weapon 1 glider 1 slate 1 glider
-break 3 slots

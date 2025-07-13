@@ -1,5 +1,0 @@
-init 59 food 1 food[modifier=speed, price=100]
-save
-init 1 food[modifier=speed, price=100] 58 food 1 food[modifier=speed, price=100]
-break 1 slot
-init gamedata 59 food 1 food[modifier=speed, price=100]
