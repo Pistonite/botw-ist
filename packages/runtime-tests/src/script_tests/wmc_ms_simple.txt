@@ -1,0 +1,8 @@
+// Migrated from legacy: MSWMC_simple
+// Author: Piston
+get 1 axe 1 mastersword[dura=1] 999 seared-steak 1 simmer[price=13, hp=120] 1 roasted-endura-carrot
+equip master-sword
+use weapon
+save
+!break 4 slots
+reload

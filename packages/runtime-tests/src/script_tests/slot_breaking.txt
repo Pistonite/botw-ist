@@ -6,3 +6,9 @@ close-dialog
 drop all banana 1 pepper
 
 !break 2 slots
+
+get 5 trav-sword
+get 2 fairy
+hold fairy
+use fairy
+drop

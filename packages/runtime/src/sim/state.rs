@@ -88,6 +88,8 @@ pub struct StateArgs {
     pub non_breaking: bool,
     /// Specify weapon throw to break the weapon
     pub breaking: bool,
+    /// Specify how much value is decreases per use
+    pub per_use: Option<i32>,
 }
 
 #[derive(Clone, Default)]
@@ -188,6 +190,7 @@ impl State {
             X::CoDpad => set_arg!(self, args, dpad, true),
             X::CoNonBreaking => set_arg!(self, args, non_breaking, true),
             X::CoBreaking => set_arg!(self, args, breaking, true),
+            X::CoPerUse(x) => set_arg!(self, args, per_use, Some(*x)),
 
             X::Get(items) => self.handle_get(ctx, items, args.as_deref()).await,
             X::PickUp(items) => self.handle_pick_up(ctx, items, args.as_deref()).await,
@@ -220,6 +223,7 @@ impl State {
                 self.handle_change_equip(ctx, items, args.as_deref(), false)
                     .await
             }
+            X::Use(item, times) => self.handle_use(ctx, item, *times, args.as_deref()).await,
 
             X::OpenShop => self.handle_open_shop(ctx).await,
             X::CloseShop => self.handle_close_shop(ctx).await,
@@ -400,6 +404,21 @@ impl State {
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::change_equip(&mut cpu,
                 sys, errors, &items, pe_target.as_ref(), is_equip, is_dpad)
+        })
+    }
+
+    async fn handle_use(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        item: &cir::ItemNameSpec,
+        times: usize,
+        args: Option<&StateArgs>,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling USE");
+        let per_use = args.and_then(|x| x.per_use);
+        let item = item.clone();
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::use_items(&mut cpu, sys, errors, &item, times, per_use)
         })
     }
 

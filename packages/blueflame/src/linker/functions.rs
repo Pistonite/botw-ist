@@ -556,6 +556,65 @@ pub fn use_item(
     cpu.native_jump_to_main_offset(0x00976cc4)
 }
 
+/// Call `uking::ui::PauseMenuDataMgr::getEquippedItem`
+pub fn get_equipped_item(
+    cpu: &mut Cpu2,
+    item_type: i32,
+) -> Result<Ptr![PouchItem], processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+        w[1] = item_type,
+    };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x009792f4)?;
+    reg! { cpu: x[0] => let item: Ptr![PouchItem] };
+    Ok(item)
+}
+
+/// Call `uking::ui::PauseMenuDataMgr::breakMasterSword`
+pub fn break_master_sword(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu: x[0] = this_ptr, };
+    // TODO --160  (probably inlined)
+    cpu.native_jump_to_main_offset(0x00972608)
+}
+
+/// Call `uking::ui::PauseMenuDataMgr::removeArrow`
+pub fn remove_arrow(cpu: &mut Cpu2, arrow_name: &str, count: i32) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let arrow_name_ptr = helper::stack_alloc_string40(cpu, arrow_name)?;
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+        x[1] = arrow_name_ptr,
+        x[2] = count,
+    };
+    // TODO --160  (probably inlined)
+    cpu.native_jump_to_main_offset(0x00970d84)?;
+    cpu.stack_check::<FixedSafeString40>(arrow_name_ptr.to_raw())?;
+    Ok(())
+}
+
+/// Call `uking::ui::PauseMenuDataMgr::removeItem`. Only removes 1.
+///
+/// In game, this is only used to remove fairy
+pub fn remove_item_by_name(cpu: &mut Cpu2, name: &str) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let name_ptr = helper::stack_alloc_string40(cpu, name)?;
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+        x[1] = name_ptr,
+    };
+    // TODO --160  (probably inlined)
+    cpu.native_jump_to_main_offset(0x009704bc)?;
+    cpu.stack_check::<FixedSafeString40>(name_ptr.to_raw())?;
+    Ok(())
+}
+
 pub fn is_weapon_profile(cpu: &mut Cpu2, actor: &str) -> Result<bool, processor::Error> {
     let profile = get_actor_profile(cpu, actor)?;
     Ok(profile.starts_with("Weapon"))

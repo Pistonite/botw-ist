@@ -1,0 +1,20 @@
+// Credit: ???
+get 1 slate 4 spiritorb 1 glider
+get 1 bokospear 1 bokoclub 1 claymore 1 royalbow 10 normalarrow 3 ancientarrow 1 potlid[life=300]
+get 1 ruby 3 pepper 3 hylianshroom 2 fairy 3 thistle
+equip claymore
+save
+drop 1 pepper 1 hylianshroom 1 thistle
+:smug hold 1 shroom 1 pepper 1 fairy 1 thistle 1 ruby
+sell all hylianshroom all pepper all fairy all thistle
+pick-up 2 pepper 2 hylianshroom 2 thistle 1 ruby
+:smug hold 1 ruby 1 pepper 1 hylianshroom 1 thistle
+sell all pepper all shroom all thistle
+drop 1 potlid 1 royalbow
+dnp 3 weapons
+# Unequip whichever weapon is equipped
+unequip weapon
+reload
+shoot 1 time
+save
+reload
