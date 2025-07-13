@@ -1,8 +1,3 @@
-get 1 branch 1 pot-lid 1 trav-bow
-save
-reload
-
-
 // Migrated from legacy: apple_999
 // Author: savage13
 !init 1 pot-lid 1 apple 1 slate 1 glider

@@ -99,7 +99,7 @@ pub fn regen_stage(
     linker::load_from_game_data(ctx.cpu())?;
 
     // 4. Create player equipments
-    #[derive(Default, Debug)]
+    #[derive(Default)]
     struct State {
         pub weapon: Option<sim::OverworldActor>,
         pub bow: Option<sim::OverworldActor>,
@@ -110,7 +110,6 @@ pub fn regen_stage(
         ctx.cpu(),
         State::default(),
         |state, (slot, name, value, modifier)| {
-            log::debug!("create_equip called: {slot}, {name}, {value}, {modifier:?}");
             let actor = sim::OverworldActor {
                 name,
                 value,
@@ -125,7 +124,6 @@ pub fn regen_stage(
         },
         linker::create_player_equipment,
     )?;
-    log::debug!("create_equip state: {state:?}");
 
     // 4. Equipments update their value
     sys.overworld
