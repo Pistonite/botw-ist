@@ -243,9 +243,11 @@ game: (Running)
       [001]: (actor_name=Obj_DRStone_Get, value=1, is_equipped=false, item_type=KeyItem, item_use=ImportantItem, tab_idx=4, tab_slot=0, )
         node: (valid=true, pos=417, addr=0x0000002222243a38, prev=0x0000002222243f68, next=0x00000022222437a0, )
         accessible: false
+        dpad_accessible: false
       [002]: (actor_name=PlayerStole2, value=1, is_equipped=false, item_type=KeyItem, item_use=ImportantItem, tab_idx=4, tab_slot=1, )
         node: (valid=true, pos=416, addr=0x00000022222437a0, prev=0x0000002222243a38, next=0x0000002222200068, )
         accessible: false
+        dpad_accessible: false
     tabs: (len=5, )
       [00]: (item_idx=-1, tab_type=Sword, )
       [01]: (item_idx=-1, tab_type=Bow, )

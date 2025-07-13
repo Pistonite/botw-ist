@@ -150,7 +150,7 @@ const useStyles = makeStyles({
         right: "0px",
         left: "0px",
         scale: 2,
-        opacity: 0.5
+        opacity: 0.5,
     },
     accessibleStatusNone: {
         color: "#ff0000",
