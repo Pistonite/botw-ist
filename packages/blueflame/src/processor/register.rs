@@ -96,6 +96,10 @@ impl RegName {
         Self(0b00011111)
     }
     #[inline(always)]
+    pub const fn w_or_x(idx: u8, one_is_x: u8) -> Self {
+        Self((one_is_x << 5) | (idx & 0b11111))
+    }
+    #[inline(always)]
     pub const fn w(idx: u8) -> Self {
         #[allow(clippy::identity_op)]
         Self(0b00000000 | (idx & 0b11111))

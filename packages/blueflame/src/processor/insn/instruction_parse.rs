@@ -4,8 +4,8 @@ use crate::processor::{Error, insn::Core, insn::instructions as xxx};
 
 type ParseFn = fn(&Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error>;
 static PARSE_LIST: &[ParseFn] = &[
-    xxx::movz::parse,
-    xxx::movn::parse,
+    // xxx::movz::parse,
+    // xxx::movn::parse,
     xxx::sbfm::parse,
     xxx::bfm::parse,
     xxx::lslv::parse,
@@ -141,7 +141,6 @@ fn parse_instruction(opcode: &str, args: &str) -> Option<Box<dyn ExecutableInstr
         "lsr" => xxx::lsr::parse(args),
         "madd" => xxx::madd::parse(args),
         "mov" => xxx::mov::parse(args),
-        "movk" => xxx::movk::parse(args),
         "msub" => xxx::msub::parse(args),
         "mul" => xxx::mul::parse(args),
         "mvn" => xxx::mvn::parse(args),
@@ -167,6 +166,7 @@ fn parse_instruction(opcode: &str, args: &str) -> Option<Box<dyn ExecutableInstr
         "tbz" => xxx::tbz::parse(args),
         "tst" => xxx::tst::parse(args),
         "ubfm" => xxx::ubfm::parse(args),
+        "movk" => None,
         _ => {
             log::error!("unknown opcode when parsing instruction as string: {opcode}");
             None

@@ -32,9 +32,11 @@ pub struct InsnVec {
     insns: Vec<Entry>,
 }
 
+// the entry will just be a Opcode when fully implemented
 enum Entry {
     Nop,
     CannotDecode(u32),
+    Opcode(Opcode),
     LegacyParse(Opcode, Option<Box<dyn ExecutableInstruction>>),
 }
 // ensure the size doesn't unexpectedly change
@@ -63,10 +65,15 @@ impl InsnVec {
 
         let should_continue = !op::is_branch(opcode);
 
-        // decode using the legacy (string-based) decoder
-        // and cache the result
-        let legacy_insn = instruction_parse::opcode_to_inst(opcode);
-        self.insns.push(Entry::LegacyParse(opcode, legacy_insn));
+        if op::is_implemented(opcode) {
+            self.insns.push(Entry::Opcode(opcode));
+        } else {
+            // decode using the legacy (string-based) decoder
+            // and cache the result
+            let legacy_insn = instruction_parse::opcode_to_inst(opcode);
+            self.insns.push(Entry::LegacyParse(opcode, legacy_insn));
+        }
+
         if should_continue {
             ControlFlow::Continue(())
         } else {
@@ -96,10 +103,11 @@ impl Execute for InsnVec {
                     continue;
                 }
                 Entry::CannotDecode(bits) => return Err(Error::BadInstruction(*bits)),
+                Entry::Opcode(opcode) => (opcode, None),
                 Entry::LegacyParse(opcode, legacy_insn) => (opcode, legacy_insn.as_ref()),
             };
 
-            match op::execute_opcode(cpu, proc, *opcode) {
+            match op::execute(cpu, proc, *opcode) {
                 op::ExecResult::Handled => {
                     cpu.inc_pc();
                     continue;

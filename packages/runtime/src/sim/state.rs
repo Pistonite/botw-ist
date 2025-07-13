@@ -196,8 +196,6 @@ impl State {
             X::Hold(items) => self.handle_hold(ctx, items, args.as_deref()).await,
             X::Unhold => self.handle_unhold(ctx).await,
             X::Drop(items) => self.handle_drop(ctx, items, args.as_deref(), false).await,
-            X::SuBreak(count) => self.handle_su_break(ctx, *count).await,
-            X::SuRemove(items) => self.handle_su_remove(ctx, items).await,
 
             X::Equip(items) => {
                 self.handle_change_equip(ctx, items, args.as_deref(), true)
@@ -234,6 +232,11 @@ impl State {
                 Ok(Report::new(self))
             }
             X::NewGame => self.handle_reload(ctx, None, true).await,
+
+            X::SuBreak(count) => self.handle_su_break(ctx, *count).await,
+            X::SuInit(items) => self.handle_su_add_slot(ctx, items, true).await,
+            X::SuAddSlot(items) => self.handle_su_add_slot(ctx, items, false).await,
+            X::SuRemove(items) => self.handle_su_remove(ctx, items).await,
 
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
         }
@@ -350,29 +353,6 @@ impl State {
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::drop_items(&mut cpu,
                 sys, errors, &items, pe_target.as_ref(), pick_up, overworld, pause_during)
-        })
-    }
-
-    async fn handle_su_break(
-        self,
-        rt: sim::Context<&sim::Runtime>,
-        count: i32,
-    ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !BREAK");
-        in_game!(self, rt, cpu, _sys, _errors => {
-            sim::actions::force_break_slot(&mut cpu, count)
-        })
-    }
-
-    async fn handle_su_remove(
-        self,
-        rt: sim::Context<&sim::Runtime>,
-        items: &[cir::ItemSelectSpec],
-    ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !REMOVE");
-        let items = items.to_vec();
-        in_game!(self, rt, cpu, sys, errors => {
-            sim::actions::force_remove_item(&mut cpu, sys, errors, &items)
         })
     }
 
@@ -529,6 +509,42 @@ impl State {
             .await
         })
         .await
+    }
+
+    async fn handle_su_break(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        count: i32,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling !BREAK");
+        in_game!(self, rt, cpu, _sys, _errors => {
+            sim::actions::low_level::break_slot(&mut cpu, count)
+        })
+    }
+
+    async fn handle_su_add_slot(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSpec],
+        init: bool,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling !ADDSLOT");
+        let items = items.to_vec();
+        in_game!(self, rt, cpu, _sys, errors => {
+            sim::actions::low_level::add_slots(&mut cpu, errors, &items, init)
+        })
+    }
+
+    async fn handle_su_remove(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSelectSpec],
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling !REMOVE");
+        let items = items.to_vec();
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::force_remove_item(&mut cpu, sys, errors, &items)
+        })
     }
 }
 

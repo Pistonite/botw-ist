@@ -21,7 +21,6 @@ Examples
 hold 5 apples
 drop
 drop 15 apples
-!remove all cores
 ```
 
 ## Hold and Drop
@@ -89,18 +88,6 @@ The <skyb>use</skyb> command is also used for [using equipments in the overworld
 ```admonish warning
 Since the game can only remove items in this way by the item name, it's not possible
 to specify extra properties, including food effects.
-```
-
-## Forcefully remove items
-The <skyb>!remove</skyb> supercommand lets you forcefully delete items from the inventory:
-- For Arrows, Materials, Foods, and Key Items, the value of the slot will decrease by the amount
-- For the rest, the amount in the command corresponds to how many slots of this item you want to remove.
-
-```admonish warning
-The implementation of this command is custom and do not correspond to any of the game's code. Using
-this command can lead to inaccurate simulation that's not reproducable in game.
-
-For example, overworld equipments are not synced when removed this way!
 ```
 
 ## Detail

@@ -20,6 +20,7 @@ impl SafeString {
 impl Ptr![SafeString] {
     /// Call SafeString constructor
     pub fn construct(self, m: &mut Memory) -> Result<(), memory::Error> {
+        // TODO --160
         let vptr = m.main_start() + SafeString::VTABLE_OFFSET as u64;
         Ptr!(&self->vtable).store(&vptr, m)?;
         // set to empty
@@ -62,6 +63,7 @@ impl FixedSafeString40 {
 
 impl Ptr![FixedSafeString40] {
     pub fn construct(self, m: &mut Memory) -> Result<(), memory::Error> {
+        // TODO --160
         let vptr = m.main_start() + FixedSafeString40::VTABLE_OFFSET as u64;
         Ptr!(&self->base.vtable).store(&vptr, m)?;
         Ptr!(&self->mBufferSize).store(&0x40, m)?;

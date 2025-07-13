@@ -1,0 +1,4 @@
+!add-slot
+!init
+!init 1 slate 1 glider 5 apples
+!add-slot master-sword[equip]
