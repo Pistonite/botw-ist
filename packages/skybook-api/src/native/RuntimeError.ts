@@ -18,6 +18,8 @@ export type RuntimeError =
     | { type: "CannotGetMore" }
     | { type: "CannotHoldMore" }
     | { type: "CannotUnequipArrow" }
+    | { type: "CannotUseCategory" }
+    | { type: "CannotUseMore"; data: number }
     | { type: "Crash" }
     | { type: "Executor" }
     | { type: "ReloadFail" }
@@ -29,6 +31,7 @@ export type RuntimeError =
     | { type: "ItemAlreadyUnequipped" }
     | { type: "ItemMismatch"; data: [string, string] }
     | { type: "ItemMismatchCategory"; data: [string, Category] }
+    | { type: "NoArrowsToShoot" }
     | { type: "NoManualSave" }
     | { type: "NotDroppable" }
     | { type: "NotEatable" }
@@ -50,4 +53,5 @@ export type RuntimeError =
     | { type: "UselessAmountForOverworldEquipment" }
     | { type: "UselessMetaForOverworldEquipment" }
     | { type: "UselessItemMatchProp" }
+    | { type: "UselessPerUseAmount" }
     | { type: "UselessScreenTransition" };
