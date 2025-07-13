@@ -16,7 +16,8 @@ export class CommandReload extends AbstractProperCommand {
     }
     public override convert(): string {
         if (this.name) {
-            return `reload ${this.name}`;
+            const saveName = this.name.replace(/ /g, "-").toLowerCase();
+            return `reload ${saveName}`;
         } else {
             return "reload";
         }

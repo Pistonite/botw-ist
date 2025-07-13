@@ -197,6 +197,20 @@ impl State {
             X::Unhold => self.handle_unhold(ctx).await,
             X::Drop(items) => self.handle_drop(ctx, items, args.as_deref(), false).await,
             X::Dnp(items) => self.handle_drop(ctx, items, args.as_deref(), true).await,
+            X::Eat(items) => self.handle_eat(ctx, items, args.as_deref()).await,
+            X::Entangle(item) => {
+                self.args = Some(match args {
+                    None => Box::new(StateArgs {
+                        entangle_target: Some(item.as_ref().clone()),
+                        ..Default::default()
+                    }),
+                    Some(mut x) => {
+                        x.entangle_target = Some(item.as_ref().clone());
+                        x
+                    }
+                });
+                self.handle_entangle(ctx, item).await
+            }
 
             X::Equip(items) => {
                 self.handle_change_equip(ctx, items, args.as_deref(), true)
@@ -211,19 +225,6 @@ impl State {
             X::CloseShop => self.handle_close_shop(ctx).await,
             X::Sell(items) => self.handle_sell(ctx, items).await,
 
-            X::Entangle(item) => {
-                self.args = Some(match args {
-                    None => Box::new(StateArgs {
-                        entangle_target: Some(item.as_ref().clone()),
-                        ..Default::default()
-                    }),
-                    Some(mut x) => {
-                        x.entangle_target = Some(item.as_ref().clone());
-                        x
-                    }
-                });
-                self.handle_entangle(ctx, item).await
-            }
 
             X::Save(name) => self.handle_save(ctx, name.as_deref()).await,
             X::Reload(name) => self.handle_reload(ctx, name.as_deref(), false).await,
@@ -357,6 +358,36 @@ impl State {
         })
     }
 
+    async fn handle_eat(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSelectSpec],
+        args: Option<&StateArgs>,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling DROP");
+        let pe_target = args
+            .map(|x| {
+                    x.entangle_target.as_ref().cloned()
+            })
+            .unwrap_or_default();
+        let items = items.to_vec();
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::eat_items(&mut cpu, sys, errors, &items, pe_target.as_ref())
+        })
+    }
+
+    async fn handle_entangle(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        item: &cir::ItemSelectSpec,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling ENTANGLE");
+        let item = item.clone();
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::entangle_item(&mut cpu, sys, errors, &item)
+        })
+    }
+
     async fn handle_change_equip(
         self,
         rt: sim::Context<&sim::Runtime>,
@@ -416,18 +447,6 @@ impl State {
         let items = items.to_vec();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::sell_items(&mut cpu, sys, errors, &items)
-        })
-    }
-
-    async fn handle_entangle(
-        self,
-        rt: sim::Context<&sim::Runtime>,
-        item: &cir::ItemSelectSpec,
-    ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling ENTANGLE");
-        let item = item.clone();
-        in_game!(self, rt, cpu, sys, errors => {
-            sim::actions::entangle_item(&mut cpu, sys, errors, &item)
         })
     }
 

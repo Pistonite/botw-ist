@@ -73,21 +73,21 @@ export const StandaloneItemSlotWithTooltip: React.FC<
 export type PouchItemSlotProps = {
     /** Item data extracted from PMDM */
     item: InvView_PouchItem;
-    /** Count of list1 (allocated list), used to show items in "broken slots" */
-    list1Count: number;
+    /** If the item is in "broken slot", i.e. will not be removed on reload */
+    inBrokenSlot: boolean;
     /** If true, show the master sword as full power */
     isMasterSwordFullPower: boolean;
 } & ItemSlotContextProps;
 
 const PouchItemSlotImpl: React.FC<PouchItemSlotProps> = ({
     item,
-    list1Count,
+    inBrokenSlot,
     isMasterSwordFullPower,
     ...props
 }) => {
     const slotProps = getSlotPropsFromPouchItem(
         item,
-        list1Count,
+        inBrokenSlot,
         isMasterSwordFullPower,
     );
     return <ItemSlot {...slotProps} {...props} />;
@@ -96,16 +96,16 @@ export const PouchItemSlot = memo(PouchItemSlotImpl);
 
 const PouchItemSlotWithTooltipImpl: React.FC<PouchItemSlotProps> = ({
     item,
-    list1Count,
+    inBrokenSlot,
     isMasterSwordFullPower,
     ...props
 }) => {
     const slotProps = getSlotPropsFromPouchItem(
         item,
-        list1Count,
+        inBrokenSlot,
         isMasterSwordFullPower,
     );
-    const tooltipProps = getTooltipPropsFromPouchItem(item, list1Count);
+    const tooltipProps = getTooltipPropsFromPouchItem(item, inBrokenSlot);
     return (
         <ItemTooltip {...tooltipProps} {...props}>
             <ItemSlot {...slotProps} {...props} />

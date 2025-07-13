@@ -94,7 +94,7 @@ export const getSlotPropsFromActor = (
 
 export const getSlotPropsFromPouchItem = (
     item: InvView_PouchItem,
-    list1Count: number,
+    isInBrokenSlot: boolean,
     isMasterSwordFullPower: boolean,
 ): ItemSlotProps => {
     const { actorName, value, isEquipped } = item.common;
@@ -139,7 +139,7 @@ export const getSlotPropsFromPouchItem = (
         durability: item.isInInventory
             ? getDurability(isEquipment, value)
             : undefined,
-        isInBrokenSlot: item.allocatedIdx >= list1Count,
+        isInBrokenSlot,
         isEntangled: item.promptEntangled,
         holdingCount: item.holdingCount,
         ...status,

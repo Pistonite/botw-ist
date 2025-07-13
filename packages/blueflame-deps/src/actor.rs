@@ -37,5 +37,5 @@ pub fn can_sell(actor: &str) -> bool {
 pub fn can_use(actor: &str) -> bool {
     crate::generated::actor::EATABLE_ACTORS_SORTED
         .binary_search(&actor)
-        .is_err()
+        .is_ok()
 }

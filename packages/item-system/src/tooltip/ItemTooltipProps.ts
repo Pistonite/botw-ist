@@ -134,7 +134,7 @@ export const getTooltipPropsFromActor = (
 
 export const getTooltipPropsFromPouchItem = (
     item: InvView_PouchItem,
-    list1Count: number,
+    isInBrokenSlot: boolean,
 ): ItemTooltipProps => {
     const { actorName, value, isEquipped } = item.common;
 
@@ -184,7 +184,7 @@ export const getTooltipPropsFromPouchItem = (
             allocatedIndex: item.allocatedIdx,
             unallocatedIndex: item.unallocatedIdx,
         },
-        isInBrokenSlot: item.allocatedIdx >= list1Count,
+        isInBrokenSlot,
         isEntangled: item.promptEntangled,
         accessibleStatus,
         profile: getActorParam(actorName, "profile"),

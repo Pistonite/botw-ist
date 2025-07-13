@@ -292,7 +292,7 @@ const App: React.FC = () => {
                         <PouchItemSlotWithTooltip
                             key={index}
                             item={item}
-                            list1Count={1}
+                            inBrokenSlot={false}
                             isMasterSwordFullPower={false}
                         />
                     );

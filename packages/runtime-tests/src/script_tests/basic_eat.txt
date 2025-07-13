@@ -1,0 +1,6 @@
+get 5 apple 5 shroom 5 endurafood 2 ice-cream
+eat 1 apple 2 shroom 3 endurafood
+unpause pause
+eat all materials
+unpause pause
+eat all food

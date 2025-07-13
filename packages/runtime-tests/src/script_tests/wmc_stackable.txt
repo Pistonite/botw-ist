@@ -1,0 +1,42 @@
+// Migrated from legacy: wmc_1
+// Author: El Duende
+# Credit: el duende https://www.youtube.com/watch?v=jzRu9QEFfsU&t=82s
+!init 1 royal-guard-sword[equip=true] 1 royal-guard-bow[equip=true]
+  1 bomb-arrow[equip=true] 1 aa 1 royal-guard-shield[equip=true] 59 apples 4 gourmet-meat
+  1 fairy 2 endura-carrot 2 durians 2 acorns 2 night-shades 1 ruby 1 slate 1 glider
+save
+!remove 57 apples
+get 57 simmered-fruits
+!remove 1 apple
+get 1 baked-apple
+!remove 1 apple
+get 1 simmered-fruit
+!remove 4 gourmet-meat 1 fairy
+get 1 meat-skewer[price=400, hp=120]
+save-as autosave-with-food
+!break 4 slots
+!remove all materials
+reload autosave-with-food
+reload
+!remove 58 apples 4 gourmet-meat 1 simmered-fruit
+!remove 1 apple
+get 1 simmered-fruit
+!remove all endura-carrot all durian all acorn all nightshades all ruby!break 5 slots
+dnp 1 royal-guard-sword 1 royal-guard-bow
+save-as autosave
+drop all weapons
+drop all bows
+drop all shields
+eat 1 baked-apple
+get 6 apples
+!remove 6 apples
+get 6 simmered-fruit
+eat 1 fairy
+reload autosave
+save-as autosave
+eat 1 baked-apple
+reload autosave
+get 3 pot-lid
+eat all fairy all simmered-fruit
+save-as autosave-with-corruption
+reload autosave-with-corruption

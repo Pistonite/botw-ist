@@ -1,0 +1,7 @@
+// Migrated from legacy: wmc_4
+!init 58 dubious-food 1 hasty-elixir 1 baked-apple
+!break 1 slot
+save
+eat 1 baked-apple
+reload
+pause; unpause
