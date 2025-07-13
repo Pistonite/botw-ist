@@ -34,6 +34,7 @@ import {
 import {
     getOverworldBackgroundUrl,
     getTabNodesFromPouch,
+    getUndiscoveredTabMap,
     useStyleEngine,
 } from "self::util";
 import {
@@ -118,6 +119,12 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         }
         return getTabNodesFromPouch(pouch?.val);
     }, [pouch, isTabView]);
+    const undiscoveredTabs = useMemo(() => {
+        if (!isTabView) {
+            return {};
+        }
+        return getUndiscoveredTabMap(gdt?.val);
+    }, [gdt, isTabView]);
 
     const isGameClosed = pouch?.err?.type === "Closed";
 
@@ -289,6 +296,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                     <div id={`-pouch-tab-${i}-`} key={i}>
                         <ItemTab
                             category={tab.category}
+                            undiscovered={undiscoveredTabs[tab.category]}
                             border
                             nodes={tab.items.map(({ slot, item }, i) => ({
                                 slot,

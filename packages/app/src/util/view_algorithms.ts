@@ -95,7 +95,11 @@ export const getTabNodesFromPouch = (
             if (item.tabIdx !== tabIdx) {
                 break;
             }
-            if (item.promptEntangled) {
+            // we need to also check pouch.entangledSlot here,
+            // because if the entangled item is in an undiscovered tab,
+            // then it's not interactable, but we don't want to add
+            // the visually only item either
+            if (item.promptEntangled || item.tabSlot === pouch.entangledSlot) {
                 foundEntangledItem = true;
             }
             items.push({
@@ -199,4 +203,35 @@ export const getTabNodesForGdt = (
     }
 
     return tabsOut;
+};
+
+export const getUndiscoveredTabMap = (
+    gdt: InvView_Gdt | undefined,
+): Partial<Record<PouchCategory, boolean>> => {
+    if (!gdt) {
+        return {};
+    }
+    const out: Partial<Record<PouchCategory, boolean>> = {};
+    if (!gdt.info.swordTabDiscovered) {
+        out[PouchCategory.Sword] = true;
+    }
+    if (!gdt.info.bowTabDiscovered) {
+        out[PouchCategory.Bow] = true;
+    }
+    if (!gdt.info.shieldTabDiscovered) {
+        out[PouchCategory.Shield] = true;
+    }
+    if (!gdt.info.armorTabDiscovered) {
+        out[PouchCategory.Armor] = true;
+    }
+    if (!gdt.info.materialTabDiscovered) {
+        out[PouchCategory.Material] = true;
+    }
+    if (!gdt.info.foodTabDiscovered) {
+        out[PouchCategory.Food] = true;
+    }
+    if (!gdt.info.keyItemTabDiscovered) {
+        out[PouchCategory.KeyItem] = true;
+    }
+    return out;
 };

@@ -149,8 +149,8 @@ crash_viewer.no_crash: "Нет сбоя на этом шаге"
 save_viewer.manual_save: "Ручное сохранение"
 
 # Item Slot Tooltip
-tooltip.accessible_dpad_none: "Недоступно в меню крестовины"
-tooltip.accessible_dpad_only: "Доступно только в меню крестовины"
+tooltip.accessible_dpad_none: "Не отображается в меню крестовины"
+tooltip.accessible_dpad_only: "Отображается только в меню крестовины"
 tooltip.accessible_none: "Недоступно для взаимодействия"
 tooltip.bad_cook_data: "Данные приготовления не дают эффекта"
 tooltip.broken_slot: "Будет перенесено"

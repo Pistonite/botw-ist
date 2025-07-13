@@ -149,8 +149,8 @@ crash_viewer.no_crash: "No crash at this step"
 save_viewer.manual_save: "Manual Save"
 
 # Item Slot Tooltip
-tooltip.accessible_dpad_none: "Not in D-Pad Menu"
-tooltip.accessible_dpad_only: "Only in D-Pad Menu"
+tooltip.accessible_dpad_none: "Not visible in DPad Menu"
+tooltip.accessible_dpad_only: "Only visible in DPad Menu"
 tooltip.accessible_none: "Non-interactable"
 tooltip.bad_cook_data: "Cook data has no effect"
 tooltip.broken_slot: "Will be transferred"

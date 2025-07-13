@@ -1,4 +1,4 @@
-use blueflame::game::{PouchItem, PouchItemType, gdt, singleton_instance};
+use blueflame::game::{PouchCategory, PouchItem, PouchItemType, gdt, singleton_instance};
 use blueflame::memory::{self, Ptr, mem, proxy};
 use blueflame::processor::{Cpu2, Process};
 use blueflame::{linker, processor};
@@ -162,26 +162,13 @@ impl PouchScreenEquipState {
 fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, memory::Error> {
     let m = proc.memory();
     let gdt_ptr = gdt::trigger_param_ptr(m)?;
-    let (weapon_slots, bow_slots, shield_slots) = {
+    let info = {
         proxy! { let gdt = *gdt_ptr as trigger_param in proc };
-
-        let weapon = gdt
-            .by_name::<gdt::fd!(s32)>("WeaponPorchStockNum")
-            .map(|x| x.get())
-            .copied()
-            .unwrap_or(0) as usize;
-        let bow = gdt
-            .by_name::<gdt::fd!(s32)>("BowPorchStockNum")
-            .map(|x| x.get())
-            .copied()
-            .unwrap_or(0) as usize;
-        let shield = gdt
-            .by_name::<gdt::fd!(s32)>("ShieldPorchStockNum")
-            .map(|x| x.get())
-            .copied()
-            .unwrap_or(0) as usize;
-        (weapon, bow, shield)
+        sim::view::extract_gdt_info_from_trigger_param(gdt).unwrap_or_default()
     };
+    let weapon_slots = info.num_weapon_slots as usize;
+    let bow_slots = info.num_bow_slots as usize;
+    let shield_slots = info.num_shield_slots as usize;
 
     let pmdm = singleton_instance!(pmdm(m))?;
     let head_node_ptr = Ptr!(&pmdm->mList1.mStartEnd);
@@ -212,6 +199,21 @@ fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, m
             let mut tab = vec![];
 
             let tab_ty = tab_types[i];
+            // if the tab is undiscovered, then all items in it are not accessible
+            let tab_accessible = force_accessible
+                || match PouchItemType::from_value(tab_ty).map(PouchItemType::to_category) {
+                    Some(category) => match category {
+                        PouchCategory::Sword => info.sword_tab_discovered,
+                        PouchCategory::Bow => info.bow_tab_discovered,
+                        PouchCategory::Shield => info.shield_tab_discovered,
+                        PouchCategory::Armor => info.armor_tab_discovered,
+                        PouchCategory::Material => info.material_tab_discovered,
+                        PouchCategory::Food => info.food_tab_discovered,
+                        PouchCategory::KeyItem => info.key_item_tab_discovered,
+                        PouchCategory::Invalid => false,
+                    },
+                    None => false,
+                };
 
             let should_break = |curr_item_ptr: Ptr![PouchItem]| {
                 sim::util::should_go_to_next_tab(curr_item_ptr, i, num_tabs, &tab_heads)
@@ -238,27 +240,39 @@ fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, m
                 };
                 slot_i += 1;
 
-                // FIXME: need more testing with how this works for bows
-                // see FIXME above
-                if tab_ty == PouchItemType::Sword as i32 && tab_slot >= weapon_slots {
-                    continue;
+                let mut accessible = tab_accessible;
+                if accessible {
+                    // FIXME: need more testing with how this works for bows
+                    // see FIXME above
+                    const SWORD: i32 = PouchItemType::Sword as i32;
+                    const SHIELD: i32 = PouchItemType::Shield as i32;
+                    let max = match tab_ty {
+                        SWORD => weapon_slots,
+                        SHIELD => shield_slots,
+                        _ => 20,
+                    };
+                    if tab_slot >= max {
+                        accessible = false;
+                    }
                 }
-                if tab_ty == PouchItemType::Shield as i32 && tab_slot >= shield_slots {
-                    continue;
-                }
+
                 // it could be more than 20 if you have a LOT of arrow slots
                 // (because empty bow slots shift them)
                 if tab_slot < 20 {
                     while tab.len() < tab_slot {
                         tab.push(None);
                     }
-                    tab.push(Some(sim::ScreenItem {
-                        ptr: curr_item_ptr,
-                        equipped,
-                        in_inventory,
-                        name: item_name,
-                        category: sim::util::item_type_to_category(item_type),
-                    }));
+                    if accessible {
+                        tab.push(Some(sim::ScreenItem {
+                            ptr: curr_item_ptr,
+                            equipped,
+                            in_inventory,
+                            name: item_name,
+                            category: sim::util::item_type_to_category(item_type),
+                        }));
+                    } else {
+                        tab.push(None);
+                    }
                 }
 
                 // advance to next item
