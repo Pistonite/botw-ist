@@ -119,8 +119,14 @@ pub enum RuntimeError {
     NoManualSave,
     #[error("this item cannot be dropped")]
     NotDroppable,
+    #[error("this item cannot be eaten")]
+    NotEatable,
     #[error("this requires `{0}` items, but only `{1}` items found")]
     NotEnoughForAllBut(usize, usize),
+    #[error("the item is not an equipment")]
+    NotEquipment,
+    #[error("the item is not equipped in the overworld")]
+    NotEquippedInOverworld,
     #[error("this item cannot be held")]
     NotHoldable,
     #[error("not holding any items")]
@@ -129,10 +135,6 @@ pub enum RuntimeError {
     NotRightScreen,
     #[error("the item `{0}` is not sellable")]
     NotSellable(String),
-    #[error("the item is not an equipment")]
-    NotEquipment,
-    #[error("the item is not equipped in the overworld")]
-    NotEquippedInOverworld,
     #[error("this operation cannot be completed due to previous errors")]
     OperationNotComplete,
     #[error("cannot specify item position here")]
