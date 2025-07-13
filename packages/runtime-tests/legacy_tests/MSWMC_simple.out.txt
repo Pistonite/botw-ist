@@ -1,5 +1,0 @@
-init 1 axe[equip] 1 mastersword[life=0] 999 seared steak 1 simmer[hp=120, price=13] 1 roasted endura carrot
-save
-init 1 mastersword[life=0] 1 axe[equip] 999 seared steak 1 simmer[price=13, hp=120] 1 roasted endura ca 1 simmer 1 roasted endura ca[hp=120, price=13]
-init gamedata 1 axe[equip] 1 mastersword[life=4700] 999 seared steak 1 simmer[price=13, hp=120] 1 roasted endura ca
-break 4 slots

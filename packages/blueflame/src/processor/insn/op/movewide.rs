@@ -24,20 +24,12 @@ impl super::OpExec for MOVEWIDE {
             MOVEWIDE::MOVK_Rd_HALF(x) => {
                 // move keep
                 let x: XXX = unsafe { std::mem::transmute(x) };
-                let hw = x.hw();
-                let imm = x.imm16().wrapping_shl(hw << 4);
-                let upper_mask = if hw == 3 {
-                    0
-                } else {
-                    0xffff_ffff_ffff_ffffu64.overflowing_shl((hw + 1) << 4).0
-                };
-                let lower_mask = 0xffff_ffff_ffff_ffffu64
-                    .checked_shr((4 - hw) << 4)
-                    .unwrap_or(0);
+                let shift = x.hw() << 4;
                 let reg = RegName::w_or_x(x.rd(), x.sf());
                 let v: u64 = cpu.read(reg);
-                let mask = upper_mask | lower_mask;
-                let v = imm | (mask & v);
+                let imm = x.imm16().wrapping_shl(shift);
+                let mask = 0xffffu64.wrapping_shl(shift);
+                let v = imm | (v & !mask);
                 cpu.write(reg, v);
             }
             MOVEWIDE::MOVN_Rd_HALF(x) => {
