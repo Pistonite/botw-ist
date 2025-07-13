@@ -249,6 +249,7 @@ runtime_error.ItemMismatch: "背包中此位置的物品為 `{{actual_item}}`，
 runtime_error.ItemMismatchCategory: "背包中此位置的物品為 `{{actual_item}}`，並不是指令中的 `{{expected_category}}` 類型。"
 runtime_error.NoManualSave: "目前無手動存檔資料。"
 runtime_error.NotDroppable: "此物品無法丟棄。"
+runtime_error.NotEatable: "這個物品不可食用。"
 runtime_error.NotEnoughForAllBut: "需要 `{{need}}` 個物品，但只有 `{{actual}}` 個。"
 runtime_error.NotEquipment: "此操作只能針對裝備類物品執行。"
 runtime_error.NotEquippedInOverworld: "此操作只能針對目前在主世界中裝備的物品。"

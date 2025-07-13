@@ -249,6 +249,7 @@ runtime_error.ItemMismatch: "El objeto encontrado en esta posición del inventar
 runtime_error.ItemMismatchCategory: "El objeto encontrado en esta posición del inventario es `{{actual_item}}`, mientras que el objeto especificado en el comando debería pertenecer a la categoría `{{expected_category}}`."
 runtime_error.NoManualSave: "No se ha realizado ninguna partida guardada manualmente."
 runtime_error.NotDroppable: "Este objeto no se puede soltar."
+runtime_error.NotEatable: "Este objeto no se puede comer."
 runtime_error.NotEnoughForAllBut: "Se requieren `{{need}}` objetos, pero solo se encontraron `{{actual}}` objetos."
 runtime_error.NotEquipment: "Esta acción solo se puede aplicar a equipamiento."
 runtime_error.NotEquippedInOverworld: "Solo los objetos equipados actualmente pueden ser seleccionados con esta acción."

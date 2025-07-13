@@ -249,6 +249,7 @@ runtime_error.ItemMismatch: "Предмет, найденный на этой п
 runtime_error.ItemMismatchCategory: "Предмет, найденный на этой позиции в инвентаре, — это `{{actual_item}}`, тогда как предмет, указанный в команде, должен принадлежать к категории `{{expected_category}}`."
 runtime_error.NoManualSave: "Ручное сохранение не было сделано."
 runtime_error.NotDroppable: "Этот предмет нельзя выбросить."
+runtime_error.NotEatable: "Этот предмет нельзя съесть."
 runtime_error.NotEnoughForAllBut: "Требуется `{{need}}` предметов, но найдено только `{{actual}}`."
 runtime_error.NotEquipment: "Это действие применимо только к предметам снаряжения."
 runtime_error.NotEquippedInOverworld: "Только надетые предметы могут быть выбраны этим действием."

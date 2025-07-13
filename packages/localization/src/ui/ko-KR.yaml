@@ -249,6 +249,7 @@ runtime_error.ItemMismatch: "인벤토리의 이 위치에 있는 아이템은 `
 runtime_error.ItemMismatchCategory: "인벤토리의 이 위치에 있는 아이템은 `{{actual_item}}`이지만, 명령어에 지정된 아이템은 `{{expected_category}}` 카테고리에 속해야 합니다."
 runtime_error.NoManualSave: "수동 저장이 이루어지지 않았습니다."
 runtime_error.NotDroppable: "이 아이템은 버릴 수 없습니다."
+runtime_error.NotEatable: "이 아이템은 먹을 수 없습니다."
 runtime_error.NotEnoughForAllBut: "`{{need}}`개의 아이템이 필요하지만, `{{actual}}`개만 발견되었습니다."
 runtime_error.NotEquipment: "이 작업은 장비에만 적용할 수 있습니다."
 runtime_error.NotEquippedInOverworld: "이 작업으로는 현재 오버월드에 장착된 아이템만 선택할 수 있습니다."

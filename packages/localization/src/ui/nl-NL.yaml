@@ -249,6 +249,7 @@ runtime_error.ItemMismatch: "Het item dat op deze positie in de inventaris is ge
 runtime_error.ItemMismatchCategory: "Het item dat op deze positie in de inventaris is gevonden, is `{{actual_item}}`, terwijl het in het commando gespecificeerde item tot de categorie `{{expected_category}}` zou moeten behoren."
 runtime_error.NoManualSave: "Er is geen handmatige opslag gemaakt."
 runtime_error.NotDroppable: "Dit item kan niet worden gedropt."
+runtime_error.NotEatable: "Dit item kan niet gegeten worden."
 runtime_error.NotEnoughForAllBut: "Vereist `{{need}}` items, maar er zijn slechts `{{actual}}` items gevonden."
 runtime_error.NotEquipment: "Deze actie kan alleen op uitrusting worden toegepast."
 runtime_error.NotEquippedInOverworld: "Alleen momenteel uitgeruste items kunnen met deze actie worden geselecteerd."

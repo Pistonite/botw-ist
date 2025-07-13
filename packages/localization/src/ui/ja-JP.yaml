@@ -249,6 +249,7 @@ runtime_error.ItemMismatch: "インベントリのこの位置にあるアイテ
 runtime_error.ItemMismatchCategory: "インベントリのこの位置にあるアイテムは`{{actual_item}}`ですが、コマンドで指定されたアイテムは`{{expected_category}}`カテゴリに属しているはずです。"
 runtime_error.NoManualSave: "手動セーブが作成されていません。"
 runtime_error.NotDroppable: "このアイテムはドロップできません。"
+runtime_error.NotEatable: "このアイテムは食べられません。"
 runtime_error.NotEnoughForAllBut: "`{{need}}`個のアイテムが必要ですが、`{{actual}}`個しか見つかりませんでした。"
 runtime_error.NotEquipment: "このアクションは装備品にのみ適用できます。"
 runtime_error.NotEquippedInOverworld: "このアクションでは、現在オーバーワールドで装備されているアイテムのみが選択可能です。"
