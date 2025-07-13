@@ -1,7 +1,6 @@
-
-use blueflame::{game, linker};
 use blueflame::memory::Ptr;
 use blueflame::processor::{self, Cpu2};
+use blueflame::{game, linker};
 use skybook_parser::cir;
 
 use crate::error::{ErrorReport, sim_error};

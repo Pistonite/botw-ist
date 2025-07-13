@@ -225,7 +225,6 @@ impl State {
             X::CloseShop => self.handle_close_shop(ctx).await,
             X::Sell(items) => self.handle_sell(ctx, items).await,
 
-
             X::Save(name) => self.handle_save(ctx, name.as_deref()).await,
             X::Reload(name) => self.handle_reload(ctx, name.as_deref(), false).await,
             X::CloseGame => {
@@ -366,9 +365,7 @@ impl State {
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling DROP");
         let pe_target = args
-            .map(|x| {
-                    x.entangle_target.as_ref().cloned()
-            })
+            .map(|x| x.entangle_target.as_ref().cloned())
             .unwrap_or_default();
         let items = items.to_vec();
         in_game!(self, rt, cpu, sys, errors => {

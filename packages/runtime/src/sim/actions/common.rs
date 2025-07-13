@@ -232,7 +232,13 @@ impl OperationAmount {
         self.is_done_allowing_iterations(span, errors, operation, 3000)
     }
 
-    pub fn is_done_allowing_iterations(&mut self, span: Span, errors: &mut Vec<ErrorReport>, operation: &str, max: usize) -> bool {
+    pub fn is_done_allowing_iterations(
+        &mut self,
+        span: Span,
+        errors: &mut Vec<ErrorReport>,
+        operation: &str,
+        max: usize,
+    ) -> bool {
         self.is_done_check_count += 1;
         if self.is_done_check_count > max {
             log::error!("iteration limit reached: {operation}, max is {max}");
