@@ -169,26 +169,6 @@ fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, m
     let weapon_slots = info.num_weapon_slots as usize;
     let bow_slots = info.num_bow_slots as usize;
     let shield_slots = info.num_shield_slots as usize;
-    // let (weapon_slots, bow_slots, shield_slots) = {
-    //     proxy! { let gdt = *gdt_ptr as trigger_param in proc };
-    //
-    //     let weapon = gdt
-    //         .by_name::<gdt::fd!(s32)>("WeaponPorchStockNum")
-    //         .map(|x| x.get())
-    //         .copied()
-    //         .unwrap_or(0) as usize;
-    //     let bow = gdt
-    //         .by_name::<gdt::fd!(s32)>("BowPorchStockNum")
-    //         .map(|x| x.get())
-    //         .copied()
-    //         .unwrap_or(0) as usize;
-    //     let shield = gdt
-    //         .by_name::<gdt::fd!(s32)>("ShieldPorchStockNum")
-    //         .map(|x| x.get())
-    //         .copied()
-    //         .unwrap_or(0) as usize;
-    //     (weapon, bow, shield)
-    // };
 
     let pmdm = singleton_instance!(pmdm(m))?;
     let head_node_ptr = Ptr!(&pmdm->mList1.mStartEnd);
