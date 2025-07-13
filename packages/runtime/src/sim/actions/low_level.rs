@@ -38,17 +38,12 @@ pub fn add_slots(
         let m = ctx.cpu().proc.memory_mut();
         Ptr!(&pmdm->mList1).construct_with_offset(8, m)?;
         Ptr!(&pmdm->mList2).construct_with_offset(8, m)?;
-        // initialize item buffer
-        let item_0 = pmdm.item_buffer().ith(0);
-        item_0.construct(m)?;
-        // read out the item, so we can just memset instead of constructing it multiple times
-        mem! { m: let item = *item_0; }
-        let list2 = Ptr!(&pmdm->mList2);
-        list2.push_front(Ptr!(&item_0->mListNode), m)?;
 
-        for i in 1..420 {
+        let list2 = Ptr!(&pmdm->mList2);
+        // re-construct each item, and push it to list2
+        for i in 0..420 {
             let item_ptr = pmdm.item_buffer().ith(i);
-            mem! { m: *item_ptr = item; }
+            item_ptr.construct(m)?;
             list2.push_front(Ptr!(&item_ptr->mListNode), m)?;
         }
     }

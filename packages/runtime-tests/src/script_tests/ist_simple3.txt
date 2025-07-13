@@ -1,0 +1,20 @@
+// Migrated from legacy: apples_orbs
+// Author: savage13
+!init 1 pot-lid 1 apple 1 slate 1 glider 4 orb
+equip shield
+!break 4 slots
+save
+unequip all shields
+drop 1 apple
+reload
+save
+drop 1 apple
+reload
+dnp 1 apple
+save
+reload
+dnp 1 apple
+save
+reload
+dnp 1 apple
+save

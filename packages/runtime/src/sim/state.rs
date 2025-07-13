@@ -196,6 +196,7 @@ impl State {
             X::Hold(items) => self.handle_hold(ctx, items, args.as_deref()).await,
             X::Unhold => self.handle_unhold(ctx).await,
             X::Drop(items) => self.handle_drop(ctx, items, args.as_deref(), false).await,
+            X::Dnp(items) => self.handle_drop(ctx, items, args.as_deref(), true).await,
 
             X::Equip(items) => {
                 self.handle_change_equip(ctx, items, args.as_deref(), true)
