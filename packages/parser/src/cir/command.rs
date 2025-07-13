@@ -98,10 +98,10 @@ pub enum Command {
     Equip(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdUnequip`]
     Unequip(Vec<cir::ItemSelectSpec>),
-    /// See [`syn::CmdUse`] and [`crate::syn::CmdShoot`]
-    ///
-    /// Second arg is times
+    /// See [`syn::CmdUse`] and [`crate::syn::CmdShoot`], second arg is times
     Use(Box<cir::ItemNameSpec>, usize),
+    /// See [`syn::CmdPerUse`]
+    CoPerUse(i32),
     /// Specify the throwing action should not break the weapon
     CoNonBreaking,
     /// Specify the throwing action should break the weapon
@@ -269,6 +269,13 @@ pub async fn parse_command<R: QuotedItemResolver>(
                 Box::new(cir::ItemNameSpec::Category(cir::Category::Bow)),
                 times as usize,
             ))
+        }
+        A![PerUse(cmd)] => {
+            let amount = absorb_error(
+                errors,
+                cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
+            )?;
+            Some(X::CoPerUse(amount))
         }
         A![NonBreaking(_)] => Some(X::CoNonBreaking),
         A![Breaking(_)] => Some(X::CoBreaking),

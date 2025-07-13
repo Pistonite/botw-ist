@@ -53,15 +53,9 @@ pub fn drop_items(
             if overworld {
                 drop_overworld_weapon(ctx, sys, errors, item, pause_during)?;
             } else {
-                // to drop items in the inventory, if you are holding,
-                // then you are locked to holding items and cannot drop
-                super::check_not_holding_in_inventory!(ctx, sys, errors, "DROP-INVW");
                 drop_inventory_weapon(ctx, sys, errors, item, pe_target)?;
             }
         } else {
-            // to drop items in the inventory, if you are holding,
-            // then you are locked to holding items and cannot drop
-            super::check_not_holding_in_inventory!(ctx, sys, errors, "DROP-INVM");
             drop_inventory_material(ctx, sys, errors, item, pe_target)?;
         }
     }
@@ -91,6 +85,9 @@ fn drop_inventory_material(
     }
     // must be in inventory to hold materials
     super::switch_to_inventory_or_stop!(ctx, sys, errors, "DROP-INVM");
+    // to drop items in the inventory, if you are holding,
+    // then you are locked to holding items and cannot drop
+    super::check_not_holding_in_inventory!(ctx, sys, errors, "DROP-INVM");
     let name = &item.name;
     let meta = item.meta.as_ref();
     // for items, hold 1 at a time and drop, and we must know
@@ -136,6 +133,9 @@ fn drop_inventory_weapon(
 ) -> Result<(), processor::Error> {
     // must be in inventory to drop from inventory
     super::switch_to_inventory_or_stop!(ctx, sys, errors, "DROP-INVW");
+    // to drop items in the inventory, if you are holding,
+    // then you are locked to holding items and cannot drop
+    super::check_not_holding_in_inventory!(ctx, sys, errors, "DROP-INVW");
     let name = &item.name;
     let meta = item.meta.as_ref();
     let memory = ctx.cpu().proc.memory();

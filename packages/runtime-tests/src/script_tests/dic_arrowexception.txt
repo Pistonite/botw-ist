@@ -1,0 +1,29 @@
+// Migrated from legacy: arrows_quantityCheckExceptions
+// Author: Pearfalse
+!init 1 axe 1 traveller-bow[life=2200, equip=true] 5 arrow[equip=true] 1 slate
+# ensure material tab is discovered
+get 1 apple
+eat all apples
+save
+!break 2 slots
+drop 1 bow
+dnp 1 axe
+unequip axe
+reload
+save
+shoot 5 times
+save-as a1
+get 1 apple
+reload
+drop 1 bow
+drop 1 axe
+save
+eat 1 apple
+reload
+pause; unpause
+save
+reload a1
+eat 1 apple
+shoot
+reload
+pause; unpause

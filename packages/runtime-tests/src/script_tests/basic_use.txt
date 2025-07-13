@@ -1,0 +1,11 @@
+get 1 royal-claymore
+use weapon 5 times
+get hylian-shield
+drop weapon
+:per-use 1234 use shield
+get 1 fairy 2 apples
+!add-slot 1 fairy
+use fairy 2 times
+get trav-bow
+get 5 arrows
+shoot 3 times

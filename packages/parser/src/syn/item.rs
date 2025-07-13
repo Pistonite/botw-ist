@@ -133,6 +133,7 @@ pub enum ItemWord {
     KwNonBreaking(syn::KwNonBreaking),
     KwBreaking(syn::KwBreaking),
     KwDpad(syn::KwDpad),
+    KwPerUse(syn::KwPerUse),
     KwWeaponSlots(syn::KwWeaponSlots),
     KwShieldSlots(syn::KwShieldSlots),
     KwBowSlots(syn::KwBowSlots),

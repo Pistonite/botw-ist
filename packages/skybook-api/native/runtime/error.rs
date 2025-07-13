@@ -89,6 +89,10 @@ pub enum RuntimeError {
     CannotHoldMore,
     #[error("cannot unequip arrows")]
     CannotUnequipArrow,
+    #[error("invalid category to use (you need to specify the item name)")]
+    CannotUseCategory,
+    #[error("cannot use this item anymore (need `{0}` more times)")]
+    CannotUseMore(usize),
     #[error("game has crashed in this step")]
     Crash,
     #[error("unexpected executor error")]
@@ -115,6 +119,8 @@ pub enum RuntimeError {
         "the item in the inventory in this position is `{0}`, which does not match the input category `{1:?}`"
     )]
     ItemMismatchCategory(String, crate::parser::cir::Category),
+    #[error("cannot find arrow to shoot")]
+    NoArrowsToShoot,
     #[error("no manual save has been made")]
     NoManualSave,
     #[error("this item cannot be dropped")]
@@ -163,6 +169,8 @@ pub enum RuntimeError {
     UselessMetaForOverworldEquipment,
     #[error("this meta property is ignored while matching")]
     UselessItemMatchProp,
+    #[error("specifying per-use here has no effect")]
+    UselessPerUseAmount,
     #[error("you are already on this screen so transitioning has no effect")]
     UselessScreenTransition,
     //////////////////////////////////

@@ -160,6 +160,7 @@ pub enum Annotation {
     NonBreaking(syn::KwNonBreaking),
     Breaking(syn::KwBreaking),
     Dpad(syn::KwDpad),
+    PerUse(CmdPerUse),
     WeaponSlots(CmdWeaponSlots),
     ShieldSlots(CmdShieldSlots),
     BowSlots(CmdBowSlots),
@@ -300,6 +301,14 @@ pub struct CmdUse {
 pub struct CmdShoot {
     pub lit: syn::KwShoot,
     pub times: tp::Option<syn::TimesClause>,
+}
+
+/// `:per-use X` - decrease durability by X at a time
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdPerUse {
+    pub lit: syn::KwPerUse,
+    pub amount: syn::Number,
 }
 
 /// `display ITEMS` - display items in house

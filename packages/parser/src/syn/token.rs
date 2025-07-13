@@ -127,6 +127,7 @@ pub enum TT {
         KwNonBreaking = "non-breaking",
         KwBreaking = "breaking",
         KwDpad = "dpad",
+        KwPerUse = "per-use",
         KwWeaponSlots = "weapon-slots",
         KwShieldSlots = "shield-slots",
         KwBowSlots = "bow-slots",

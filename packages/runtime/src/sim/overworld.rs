@@ -1,8 +1,8 @@
 use std::collections::VecDeque;
 
-use blueflame::game::{self, PouchItem, PouchItemType, WeaponModifierInfo};
+use blueflame::game::{self, PouchItem, PouchItemType, WeaponModifierInfo, gdt};
 use blueflame::linker;
-use blueflame::memory::{self, Memory, Ptr, mem};
+use blueflame::memory::{self, Memory, Ptr, mem, proxy};
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 use teleparse::Span;
@@ -118,8 +118,14 @@ impl OverworldSystem {
             "spawning ground equipments: {:?}",
             self.spawning_ground_weapons
         );
-        self.ground_weapons
-            .extend(std::mem::take(&mut self.spawning_ground_weapons))
+        for weapon in std::mem::take(&mut self.spawning_ground_weapons) {
+            // spawning a broken weapon will just make it break on the spot
+            if weapon.value > 0 {
+                self.ground_weapons.push(weapon);
+            } else {
+                log::debug!("weapon broke on spawn: {}", weapon.name);
+            }
+        }
     }
 
     /// Clear the weapons that are about to spawn (as if spawning failed)
@@ -171,6 +177,10 @@ impl OverworldSystem {
 
     pub fn is_holding(&self) -> bool {
         !self.holding.is_empty()
+    }
+
+    pub fn is_holding_attached(&self) -> bool {
+        self.is_holding() && self.is_hold_attached
     }
 
     /// Despawn items that are over the limit
@@ -275,6 +285,111 @@ impl OverworldSystem {
         Ok(())
     }
 
+    /// Damage equipped item by amount, True Form MS is handled within this function
+    ///
+    /// Returns if the slot no longer has equipment after use
+    pub fn damage_equipment(
+        &mut self,
+        cpu: &mut Cpu2<'_, '_>,
+        item_type: i32,
+        mut amount: i32,
+    ) -> Result<bool, processor::Error> {
+        let slot = match item_type {
+            0 => &mut self.weapon,
+            1 => &mut self.bow,
+            3 => &mut self.shield,
+            _ => return Ok(true),
+        };
+        let Some(actor) = slot else {
+            return Ok(true);
+        };
+        // this is technically a gparamlist check
+        // for masterSwordIsMasterSword = true
+        let is_master_sword = item_type == 0 && &actor.name == "Weapon_Sword_070";
+
+        // True Form MS decrease dura by 0.2x
+        // we don't really know where this check takes place,
+        // but here it seems convienient
+        if is_master_sword && actor.value > 300 {
+            let p = &cpu.proc;
+            let m = p.memory();
+            let gdt_ptr = gdt::trigger_param_ptr(m)?;
+            proxy! { let gdt = *gdt_ptr as trigger_param in p };
+            let is_ms_true_form = gdt
+                .by_name::<gdt::fd!(bool)>("Open_MasterSword_FullPower")
+                .map(|x| *x.get())
+                .unwrap_or_default();
+            if is_ms_true_form {
+                amount /= 5;
+            }
+        }
+
+        // value is capped at 0. we can tell with the update value in pmdm call
+        actor.value -= amount;
+        if actor.value < 0 {
+            actor.value = 0;
+        }
+
+        let actor_name = actor.name.to_string();
+        let actor_value = actor.value;
+
+        // we know update value is called even when the actor breaks,
+        // by desyncing inventory equipped item
+        self.update_equipment_value_to_pmdm(cpu, item_type)?;
+        if actor_value <= 0 {
+            // break the overworld actor
+            match item_type {
+                0 => self.weapon = None,
+                1 => self.bow = None,
+                3 => self.shield = None,
+                _ => {}
+            }
+            // break the inventory actor
+            if is_master_sword {
+                linker::break_master_sword(cpu)?;
+            } else {
+                linker::remove_weapon_if_equipped(cpu, &actor_name)?;
+            }
+            return Ok(true);
+        }
+
+        Ok(false)
+    }
+
+    /// Check if the item equipped in the overworld matches the spec
+    pub fn equipped_item_matches(&self, item_type: i32, spec: &cir::ItemNameSpec) -> bool {
+        match item_type {
+            0 => {
+                let Some(weapon) = self.weapon.as_ref() else {
+                    return false;
+                };
+                match spec {
+                    cir::ItemNameSpec::Actor(name) => name == &weapon.name,
+                    cir::ItemNameSpec::Category(category) => *category == cir::Category::Weapon,
+                }
+            }
+            1 => {
+                let Some(bow) = self.bow.as_ref() else {
+                    return false;
+                };
+                match spec {
+                    cir::ItemNameSpec::Actor(name) => name == &bow.name,
+                    cir::ItemNameSpec::Category(category) => *category == cir::Category::Bow,
+                }
+            }
+            3 => {
+                let Some(shield) = self.shield.as_ref() else {
+                    return false;
+                };
+                match spec {
+                    cir::ItemNameSpec::Actor(name) => name == &shield.name,
+                    cir::ItemNameSpec::Category(category) => *category == cir::Category::Shield,
+                }
+            }
+            _ => false,
+        }
+    }
+
     /// Update the overworld equipment value to PMDM, which happens as part
     /// of weapon actor update in the overworld
     pub fn update_equipment_value_to_pmdm(
@@ -291,6 +406,15 @@ impl OverworldSystem {
         let Some(actor) = slot else { return Ok(()) };
         let value = actor.value;
         linker::set_equipped_weapon_value(cpu, value, item_type)
+    }
+
+    pub fn get_equiped_item(&self, item_type: i32) -> Option<&OverworldActor> {
+        match item_type {
+            0 => self.weapon.as_ref(),
+            1 => self.bow.as_ref(),
+            3 => self.shield.as_ref(),
+            _ => None,
+        }
     }
 
     /// Drop the currently equipped weapon on the player
