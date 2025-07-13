@@ -1,0 +1,7 @@
+// Migrated from legacy: apples_999_twice
+// Author: Pearfalse
+!init 999 apple 1 slate 1 glider
+save
+!break 3 slots
+reload
+pause; unpause

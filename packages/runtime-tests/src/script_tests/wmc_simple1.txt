@@ -1,0 +1,5 @@
+// Migrated from legacy: effectTransfer
+!init 59 dubious-food 1 dubious-food[price=100, effect=Hasty]
+!break 1 slot
+save
+reload

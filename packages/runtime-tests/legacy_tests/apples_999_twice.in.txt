@@ -1,6 +1,0 @@
-// Author: Pearfalse
-Init 999 Apple 1 Slate 1 Glider
-Save
-Break 3 Slots
-Reload
-Sync GameData

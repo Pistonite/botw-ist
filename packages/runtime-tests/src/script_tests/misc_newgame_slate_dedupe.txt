@@ -1,11 +1,12 @@
+// Migrated from legacy: slate_VOSDedupe
 // Author: Pearfalse
 # prepare SoR autosave
-save as SoR
-init 4 weapon 4 simm 1 slate
-break 1 slot
+save-as sor
+!init 4 axe 4 simm 1 slate
+!break 1 slot
 # activate VOS
-reload SoR
-get 1 weapon
-drop weapon
+reload sor
+get 1 axe
+drop 1 weapon
 # walk along edge of cliff to hit slate pickup failsafe trigger
 get 1 slate

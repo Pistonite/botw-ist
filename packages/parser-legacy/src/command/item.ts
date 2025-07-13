@@ -80,7 +80,7 @@ export const WeaponModifier = {
 // V3->V4: item search strings are joined with underscores
 // for example `get 1 royal claymore` is `get 1 royal-claymore`
 export const joinItemSearchStrings = (ids: string[]) => {
-    return ids.join("-").toLowerCase();
+    return ids.join("-").toLowerCase().replaceAll("*", "-");
 };
 
 export const convertItem = (
@@ -120,6 +120,15 @@ const convertItemName = (name: string, replacePlaceholder: boolean): string => {
         ) {
             return "pot-lid";
         }
+        if (
+            matchName === "food" ||
+            matchName === "foodes"
+        ) {
+            return "dubious-food";
+        }
+        if (matchName === "foods") {
+            return "seafood-skewer";
+        }
     }
 
     // In V3, "korok" is Korok Leaf, but in V4 it is Korok Seed
@@ -149,8 +158,8 @@ export const convertItemMeta = (
             if ("hp" in meta) {
                 props.push(`hp=${meta.hp}`);
             }
-            if ("cookEffect" in meta) {
-                props.push(`effect=${meta.cookEffect}`);
+            if ("cookEffect" in meta && meta.cookEffect) {
+                props.push(`effect=${CookEffect[meta.cookEffect]}`);
             }
         }
         if (slotIndex > 1) {
