@@ -15,6 +15,11 @@ export const DefaultActorData = {
      */
     canStack: false as boolean,
 
+    /**
+     * Whether the item is usable (i.e. eat-able) (has CanUse tag)
+     */
+    canUse: false as boolean,
+
     /** Whether the item not is sellable (has CannotSell tag) */
     cannotSell: false as boolean,
 

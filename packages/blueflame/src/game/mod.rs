@@ -9,5 +9,5 @@ mod proxy;
 pub use proxy::*;
 
 pub use blueflame_deps::actor::{
-    can_sell, can_stack, get_pouch_item_type, get_pouch_item_use, get_weapon_general_life,
+    can_sell, can_stack, can_use, get_pouch_item_type, get_pouch_item_use, get_weapon_general_life,
 };
