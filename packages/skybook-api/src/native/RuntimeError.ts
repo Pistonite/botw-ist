@@ -31,13 +31,14 @@ export type RuntimeError =
     | { type: "ItemMismatchCategory"; data: [string, Category] }
     | { type: "NoManualSave" }
     | { type: "NotDroppable" }
+    | { type: "NotEatable" }
     | { type: "NotEnoughForAllBut"; data: [number, number] }
+    | { type: "NotEquipment" }
+    | { type: "NotEquippedInOverworld" }
     | { type: "NotHoldable" }
     | { type: "NotHolding" }
     | { type: "NotRightScreen" }
     | { type: "NotSellable"; data: string }
-    | { type: "NotEquipment" }
-    | { type: "NotEquippedInOverworld" }
     | { type: "OperationNotComplete" }
     | { type: "PositionSpecNotAllowed" }
     | { type: "PreviousClosed" }

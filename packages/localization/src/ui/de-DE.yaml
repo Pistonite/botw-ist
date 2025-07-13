@@ -249,6 +249,7 @@ runtime_error.ItemMismatch: "Das an dieser Position im Inventar gefundene Item i
 runtime_error.ItemMismatchCategory: "Das an dieser Position im Inventar gefundene Item ist `{{actual_item}}`, während das im Befehl angegebene Item zur Kategorie `{{expected_category}}` gehören sollte."
 runtime_error.NoManualSave: "Es wurde kein manueller Spielstand erstellt."
 runtime_error.NotDroppable: "Dieses Item kann nicht fallengelassen werden."
+runtime_error.NotEatable: "Dieses Item kann nicht gegessen werden."
 runtime_error.NotEnoughForAllBut: "Benötigt `{{need}}` Items, aber es wurden nur `{{actual}}` Items gefunden."
 runtime_error.NotEquipment: "Diese Aktion kann nur auf Ausrüstungsgegenstände angewendet werden."
 runtime_error.NotEquippedInOverworld: "Nur aktuell ausgerüstete Gegenstände können mit dieser Aktion ausgewählt werden."

@@ -63,7 +63,9 @@ pub enum TT {
         KwUnhold = "unhold",
         KwDrop = "drop",
         KwDnp = "dnp",
+        KwEat = "eat",
         KwCook = "cook",
+        KwEntangle = "entangle",
 
         KwEquip = "equip",
         KwUnequip = "unequip",
@@ -78,20 +80,6 @@ pub enum TT {
         KwBuy = "buy",
         KwSell = "sell",
 
-
-        KwEat = "eat",
-
-
-        KwRoast = "roast",
-        KwBake = "bake",
-        KwBoil = "boil",
-        KwFreeze = "freeze",
-        KwDestroy = "destroy",
-
-        KwSort = "sort",
-        KwEntangle = "entangle",
-        // KwDistangle = "distangle",
-
         KwSave = "save",
         KwSaveAs = "save-as",
         KwReload = "reload",
@@ -99,7 +87,14 @@ pub enum TT {
         KwNewGame = "new-game",
 
 
+        // == below are WIP ==
 
+        KwRoast = "roast",
+        KwBake = "bake",
+        KwBoil = "boil",
+        KwFreeze = "freeze",
+        KwDestroy = "destroy",
+        KwSort = "sort",
         KwEnter = "enter",
         KwExit = "exit",
         KwLeave = "leave",

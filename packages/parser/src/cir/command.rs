@@ -81,10 +81,16 @@ pub enum Command {
     Drop(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdDnp`]
     Dnp(Vec<cir::ItemSelectSpec>),
+    /// See [`syn::CmdEat`]
+    Eat(Vec<cir::ItemSelectSpec>),
     /// `cook` - Cook held items. See [`syn::CmdCook`]
     CookHeld,
     /// Hold items and cook them. See [`syn::CmdCook`]
     Cook(Vec<cir::ItemSelectSpec>),
+    /// See [`syn::CmdEntangle`]
+    Entangle(Box<cir::ItemSelectSpec>),
+    /// See [`syn::CmdTargeting`]
+    CoTargeting(Box<cir::ItemSelectSpec>),
 
     /// Use DPad Quick Menu
     CoDpad,
@@ -118,11 +124,6 @@ pub enum Command {
     /// Buy from the same NPC right after selling without
     /// returning to overworld
     CoSameDialog,
-
-    /// See [`syn::CmdEntangle`]
-    Entangle(Box<cir::ItemSelectSpec>),
-    /// See [`syn::CmdTargeting`]
-    CoTargeting(Box<cir::ItemSelectSpec>),
 
     /// `save` - make a manual save or named save, see [`syn::CmdSaveAs`]
     Save(Option<String>),
@@ -160,8 +161,6 @@ pub enum Command {
     /// First arg is flag name
     SuSetGdt(String, Box<cir::GdtMeta>),
 
-    /// See [`syn::CmdEat`]
-    Eat(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdRoast`] and [`crate::syn::CmdBake`]
     Roast(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdBoil`]
@@ -236,12 +235,21 @@ pub async fn parse_command<R: QuotedItemResolver>(
         C::Dnp(cmd) => Some(X::Dnp(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
+        C::Eat(cmd) => Some(X::Eat(
+            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
+        )),
         C::Cook(cmd) => match cmd.items.as_ref() {
             None => Some(X::CookHeld),
             Some(items) => Some(X::Cook(
                 cir::parse_item_list_constrained(items, resolver, errors).await,
             )),
         },
+        C::Entangle(cmd) => Some(X::Entangle(Box::new(
+            cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?,
+        ))),
+        A![Targeting(cmd)] => Some(X::CoTargeting(Box::new(
+            cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?,
+        ))),
         //////////////////////////////////////////////////////////////////
         A![Dpad(_)] => Some(X::CoDpad),
         C::Equip(cmd) => Some(X::Equip(
@@ -278,13 +286,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
         A![SameDialog(_)] => Some(X::CoSameDialog),
-        //////////////////////////////////////////////////////////////////
-        C::Entangle(cmd) => Some(X::Entangle(Box::new(
-            cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?,
-        ))),
-        A![Targeting(cmd)] => Some(X::CoTargeting(Box::new(
-            cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?,
-        ))),
         //////////////////////////////////////////////////////////////////
         C::Save(_) => Some(X::Save(None)),
         C::SaveAs(cmd) => Some(X::Save(Some(cmd.name.to_string()))),
@@ -337,9 +338,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
         }
 
         //////////////////////////////////////////////////////////////////
-        syn::Command::Eat(cmd) => Some(cir::Command::Eat(
-            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
-        )),
         syn::Command::Roast(cmd) => Some(cir::Command::Roast(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),

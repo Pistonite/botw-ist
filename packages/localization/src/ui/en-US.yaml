@@ -249,6 +249,7 @@ runtime_error.ItemMismatch: "The item found in this position in the inventory is
 runtime_error.ItemMismatchCategory: "The item found in this position in the inventory is `{{actual_item}}`, while the item specified in the command should be in the `{{expected_category}}` category."
 runtime_error.NoManualSave: "No manual save has been made."
 runtime_error.NotDroppable: "This item cannot be dropped."
+runtime_error.NotEatable: "Cannot eat this item."
 runtime_error.NotEnoughForAllBut: "Requires `{{need}}` items, but only `{{actual}}` items are found."
 runtime_error.NotEquipment: "This action can only be applied to equipments."
 runtime_error.NotEquippedInOverworld: "Only currently equipped items can be selected by this action."

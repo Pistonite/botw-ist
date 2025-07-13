@@ -32,6 +32,7 @@ import {
     openExtension,
 } from "self::application";
 import {
+    getInBrokenSlotArray,
     getOverworldBackgroundUrl,
     getTabNodesFromPouch,
     getUndiscoveredTabMap,
@@ -113,6 +114,10 @@ export const PouchInventoryPanelImpl: React.FC = () => {
 
     const isTabView = useUIStore((state) => state.isTabViewEnabled);
     const setTabView = useUIStore((state) => state.setIsTabViewEnabled);
+    const isInBrokenSlotArray = useMemo(
+        () => getInBrokenSlotArray(pouch?.val),
+        [pouch],
+    );
     const tabNodes = useMemo(() => {
         if (!isTabView) {
             return undefined;
@@ -269,7 +274,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                     <PouchItemSlotWithTooltip
                         item={item}
                         key={i}
-                        list1Count={pouch.val.count}
+                        inBrokenSlot={isInBrokenSlotArray[i]}
                         isMasterSwordFullPower={isMasterSwordFullPower}
                         {...itemSlotProps}
                     />
@@ -304,7 +309,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                                     <PouchItemSlotWithTooltip
                                         item={item}
                                         key={i}
-                                        list1Count={pouch.val.count}
+                                        inBrokenSlot={isInBrokenSlotArray[i]}
                                         isMasterSwordFullPower={
                                             isMasterSwordFullPower
                                         }

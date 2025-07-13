@@ -537,6 +537,25 @@ pub fn create_player_equipment(cpu: &mut Cpu2) -> Result<(), processor::Error> {
     cpu.native_jump_to_main_offset(0x00971504)
 }
 
+/// Call `uking::ui::PauseMenuDataMgr::useItem`
+pub fn use_item(
+    cpu: &mut Cpu2,
+    tab_index: i32,
+    slot_index: i32,
+    quantity: i32,
+) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+        w[1] = tab_index,
+        w[2] = slot_index,
+        w[3] = quantity,
+    };
+    // TODO --160 (probably inlined)
+    cpu.native_jump_to_main_offset(0x00976cc4)
+}
+
 pub fn is_weapon_profile(cpu: &mut Cpu2, actor: &str) -> Result<bool, processor::Error> {
     let profile = get_actor_profile(cpu, actor)?;
     Ok(profile.starts_with("Weapon"))

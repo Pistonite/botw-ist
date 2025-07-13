@@ -235,3 +235,40 @@ export const getUndiscoveredTabMap = (
     }
     return out;
 };
+
+/**
+ * Given a list of items, return an array that if item[i] is in broken slot, array[i] is true
+ *
+ * With translucent items, it's not as simple as "the last X items" are in broken slots.
+ *
+ * Since reload removes translucent items, it should be the last X translucent items.
+ * However, translucent items can't be removed when mCount = 0, so they can actually
+ * be transferred
+ */
+export const getInBrokenSlotArray = (
+    pouch: InvView_PouchList | undefined,
+): boolean[] => {
+    if (!pouch) {
+        return [];
+    }
+    const length = pouch.items.length;
+    if (pouch.count === 0) {
+        return Array.from({ length }).map(() => true);
+    }
+    const numBrokenSlots = length - pouch.count;
+    // last X non-translucent items will be transferred
+    // only count non translucent items
+    // note that we are assuming items in pouch is listed in allocatedIdx order,
+    // which might not be true in ISU cases
+    const output = Array.from({ length }).map(() => false);
+    let remaining = numBrokenSlots;
+    let i = length - 1;
+    while (i >= 0 && remaining > 0) {
+        if (pouch.items[i].isInInventory) {
+            output[i] = true;
+            remaining--;
+        }
+        i--;
+    }
+    return output;
+};

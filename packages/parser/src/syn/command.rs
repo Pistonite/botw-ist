@@ -43,8 +43,12 @@ pub enum Command {
     Drop(CmdDrop),
     /// `dnp ITEMS` -------- TODO
     Dnp(CmdDnp),
+    /// `eat ITEMS`
+    Eat(CmdEat),
     /// `cook` or `cook ITEMS` ---------- TODO
     Cook(CmdCook),
+    /// `entangle ITEM`
+    Entangle(CmdEntangle),
 
     // ==== equipments ====
     /// `equip ITEM`
@@ -69,10 +73,6 @@ pub enum Command {
     Buy(CmdBuy),
     /// `sell ITEMS`
     Sell(CmdSell),
-
-    // ==== prompt entanglement ====
-    /// `entangle ITEM`
-    Entangle(CmdEntangle),
 
     // ==== saves/game state ====
     /// `save`
@@ -115,10 +115,6 @@ pub enum Command {
     SuSetGdtStr(CmdSuSetGdtStr),
 
     // BELOW ARE NOT IMPLEMENTED YET
-
-    // ==== inventory screen - removing items ====
-    /// `eat ITEMS`
-    Eat(CmdEat),
 
     // ==== overworld ====
     /// `roast ITEMS`
@@ -236,6 +232,15 @@ pub struct CmdDnp {
     pub items: syn::ItemListConstrained,
 }
 
+/// `eat ITEMS` - execute eat prompt on targeted items.
+/// The number is the times to eat the item.
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdEat {
+    pub lit: syn::KwEat,
+    pub items: syn::ItemListConstrained,
+}
+
 /// `cook` or `cook ITEMS` - cook items in inventory
 ///
 /// `cook ITEMS` is a shorthand, which holds the items, then cook them.
@@ -244,6 +249,22 @@ pub struct CmdDnp {
 pub struct CmdCook {
     pub lit: syn::KwCook,
     pub items: tp::Option<syn::ItemListConstrained>,
+}
+
+/// `entangle ITEM` - activate Prompt Entanglement
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdEntangle {
+    pub lit: syn::KwEntangle,
+    pub item: syn::ItemOrCategory,
+}
+
+/// `:targeting ITEM` - set the target item to receive the prompt
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdTargeting {
+    pub lit: syn::KwTargeting,
+    pub item: syn::ItemOrCategory,
 }
 
 ///////////////////////////////////////////////////////////
@@ -323,24 +344,6 @@ pub struct CmdBuy {
 pub struct CmdSell {
     pub lit: syn::KwSell,
     pub items: syn::ItemListConstrained,
-}
-
-///////////////////////////////////////////////////////////
-
-/// `entangle ITEM` - activate Prompt Entanglement
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdEntangle {
-    pub lit: syn::KwEntangle,
-    pub item: syn::ItemOrCategory,
-}
-
-/// `:targeting ITEM` - set the target item to receive the prompt
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdTargeting {
-    pub lit: syn::KwTargeting,
-    pub item: syn::ItemOrCategory,
 }
 
 ///////////////////////////////////////////////////////////
@@ -457,15 +460,6 @@ pub struct CmdSuSetGdtStr {
 }
 
 ///////////////////////////////////////////////////////////
-
-/// `eat ITEMS` - execute eat prompt on targeted items.
-/// The number is the times to eat the item.
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdEat {
-    pub lit: syn::KwEat,
-    pub items: syn::ItemListConstrained,
-}
 
 /// `roast ITEMS` - roast items on the ground or in inventory
 ///

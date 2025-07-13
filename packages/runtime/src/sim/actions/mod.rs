@@ -7,6 +7,8 @@ mod get_items;
 pub use get_items::*;
 mod drop_items;
 pub use drop_items::*;
+mod eat_items;
+pub use eat_items::*;
 mod hold_items;
 pub use hold_items::*;
 mod pick_up_items;
