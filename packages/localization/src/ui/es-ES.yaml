@@ -237,6 +237,8 @@ runtime_error.CannotFindPromptTarget: "No se puede encontrar el objeto objetivo 
 runtime_error.CannotGetMore: "No se puede obtener más de este objeto."
 runtime_error.CannotHoldMore: "No se pueden llevar más artículos."
 runtime_error.CannotUnequipArrow: "No se puede desequipar la flecha."
+runtime_error.CannotUseCategory: "No se puede usar este objeto por categoría. Por favor, especifique el nombre del objeto directamente."
+runtime_error.CannotUseMore: "No se puede usar más este objeto. Necesita usarlo `{{time}}` vez(veces) más."
 runtime_error.Crash: "El juego se ha colgado en este paso."
 runtime_error.Executor: "Error inesperado del Ejecutor."
 runtime_error.InaccurateAllBut: "La sintaxis `all but` no logró el resultado deseado. Esto probablemente se deba a condiciones especiales en el inventario."
@@ -247,6 +249,7 @@ runtime_error.ItemAlreadyEquipped: "Este objeto ya está equipado. Podría falta
 runtime_error.ItemAlreadyUnequipped: "Este objeto ya está desequipado."
 runtime_error.ItemMismatch: "El objeto encontrado en esta posición del inventario es `{{actual_item}}`, mientras que el objeto especificado en el comando es `{{expected_item}}`."
 runtime_error.ItemMismatchCategory: "El objeto encontrado en esta posición del inventario es `{{actual_item}}`, mientras que el objeto especificado en el comando debería pertenecer a la categoría `{{expected_category}}`."
+runtime_error.NoArrowsToShoot: "No se puede disparar si no tienes flechas equipadas o si no te quedan flechas."
 runtime_error.NoManualSave: "No se ha realizado ninguna partida guardada manualmente."
 runtime_error.NotDroppable: "Este objeto no se puede soltar."
 runtime_error.NotEatable: "Este objeto no se puede comer."
@@ -269,6 +272,7 @@ runtime_error.Uninitialized: "Entorno de ejecución inesperadamente no inicializ
 runtime_error.UselessAmountForOverworldEquipment: "La cantidad solo puede ser 1 cuando se apunta a objetos equipados en el supramundo. Por favor, cambie la cantidad a 1 o elimínela."
 runtime_error.UselessItemMatchProp: "Esta propiedad se ignora al buscar coincidencias de objetos en este comando. Elimine esta propiedad."
 runtime_error.UselessMetaForOverworldEquipment: "Los metadatos se ignoran cuando se apunta a objetos equipados en el supramundo. Por favor, elimine los metadatos."
+runtime_error.UselessPerUseAmount: "La anotación 'por uso' no tiene efecto para este tipo de objeto, por favor, elimínela."
 runtime_error.UselessScreenTransition: "Este comando no tiene ningún efecto, ya que ya se encuentra en esta pantalla."
 
 # Error from getting view from simulation output

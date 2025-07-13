@@ -102,6 +102,10 @@ export const translateRuntimeError = (
             const name = error.data;
             return translator(key, { name });
         }
+        case "CannotUseMore": {
+            const time = error.data;
+            return translator(key, { time });
+        }
         default:
             return translator(key);
     }
