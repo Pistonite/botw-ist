@@ -1,0 +1,6 @@
+// Migrated from legacy: inventoryNuking1
+!init 1 apple 2 hylianshroom 3 slate
+!break 5 slots
+get slate
+pause; unpause
+save

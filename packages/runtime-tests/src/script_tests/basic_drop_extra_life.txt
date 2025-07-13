@@ -1,0 +1,4 @@
+// Migrated from legacy: dropWithExtraLife
+// Author: jordanbtucker
+get 1 axe[life=80000] 2 traveller-bow[life=80000] 1 pot-lid 1 pot-lid[life=80000]
+drop 1 weapon 2 bow 2 shield

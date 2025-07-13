@@ -1,4 +1,0 @@
-initialize 1 apple 2 hylianshroom 3 slate
-break 5 slots
-sync gamedata
-save

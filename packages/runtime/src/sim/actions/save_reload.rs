@@ -65,7 +65,6 @@ pub fn reload(
 ) -> Result<(), processor::Error> {
     // can only reload from inventory (System tab)
     super::switch_to_inventory_or_stop!(ctx, sys, errors, "RELOAD");
-    // regenerate the stage
     regen_stage(ctx, sys, errors, Some(load_gdt))
 }
 
@@ -76,6 +75,9 @@ pub fn regen_stage(
     errors: &mut Vec<ErrorReport>,
     load_gdt: Option<&gdt::TriggerParam>,
 ) -> Result<(), processor::Error> {
+    // 0. Translucent items are removed
+    linker::delete_removed_items(ctx.cpu())?;
+
     // 1. BaseProcMgr deletes all actors
     sys.overworld.destroy_all();
 

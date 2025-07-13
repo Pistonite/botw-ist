@@ -1,0 +1,9 @@
+// Migrated from legacy: inventoryNukingCounterExample
+!init 1 apple 2 hylianshroom 1 slate 1 glider
+save
+!break 7 slots
+reload
+# inventory not nuked because gamedata not empty
+save
+close-game
+reload

@@ -1,0 +1,14 @@
+// Migrated from legacy: gliderOpensGameData
+// Author: Pearfalse
+# prepare SoR autosave
+save-as newgame
+get 4 axe 4 simm 1 glider
+!break 3 slots
+reload newgame
+get 1 slate
+!remove all simm
+get 2 axe
+save
+drop all weapons
+reload
+pause; unpause
