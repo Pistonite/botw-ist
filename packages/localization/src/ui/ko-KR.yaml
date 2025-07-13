@@ -149,8 +149,8 @@ crash_viewer.no_crash: "이 단계에서 충돌 없음"
 save_viewer.manual_save: "수동 저장"
 
 # Item Slot Tooltip
-tooltip.accessible_dpad_none: "방향 패드 메뉴에서 사용 불가"
-tooltip.accessible_dpad_only: "방향 패드 메뉴에서만 사용 가능"
+tooltip.accessible_dpad_none: "십자 패드 메뉴에서 보이지 않음"
+tooltip.accessible_dpad_only: "십자 패드 메뉴에서만 보임"
 tooltip.accessible_none: "상호작용 불가"
 tooltip.bad_cook_data: "요리 데이터에 효과가 없습니다"
 tooltip.broken_slot: "전송 예정"

@@ -149,8 +149,8 @@ crash_viewer.no_crash: "No hay errores en este paso"
 save_viewer.manual_save: "Guardado manual"
 
 # Item Slot Tooltip
-tooltip.accessible_dpad_none: "No está en el menú de la cruceta"
-tooltip.accessible_dpad_only: "Solo en el menú de la cruceta"
+tooltip.accessible_dpad_none: "No visible en el menú del D-Pad"
+tooltip.accessible_dpad_only: "Solo visible en el menú del D-Pad"
 tooltip.accessible_none: "No interactuable"
 tooltip.bad_cook_data: "Los datos de cocina no tienen efecto"
 tooltip.broken_slot: "Se transferirá"

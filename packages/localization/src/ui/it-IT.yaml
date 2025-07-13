@@ -149,8 +149,8 @@ crash_viewer.no_crash: "Nessun arresto anomalo in questo passaggio"
 save_viewer.manual_save: "Salvataggio manuale"
 
 # Item Slot Tooltip
-tooltip.accessible_dpad_none: "Non nel menu del D-Pad"
-tooltip.accessible_dpad_only: "Solo nel menu del D-Pad"
+tooltip.accessible_dpad_none: "Non visibile nel menu D-Pad"
+tooltip.accessible_dpad_only: "Visibile solo nel menu D-Pad"
 tooltip.accessible_none: "Non interattivo"
 tooltip.bad_cook_data: "I dati di cottura non hanno effetto"
 tooltip.broken_slot: "Sarà trasferito"

@@ -149,8 +149,8 @@ crash_viewer.no_crash: "此步驟無崩潰"
 save_viewer.manual_save: "手動存檔"
 
 # Item Slot Tooltip
-tooltip.accessible_dpad_none: "不在方向鍵選單中顯示"
-tooltip.accessible_dpad_only: "僅在方向鍵選單中顯示"
+tooltip.accessible_dpad_none: "不在十字鍵介面顯示"
+tooltip.accessible_dpad_only: "僅在十字鍵介面顯示"
 tooltip.accessible_none: "無法互動"
 tooltip.bad_cook_data: "料理資料無實際效果"
 tooltip.broken_slot: "轉存格"

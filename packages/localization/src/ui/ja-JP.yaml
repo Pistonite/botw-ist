@@ -149,8 +149,8 @@ crash_viewer.no_crash: "このステップではクラッシュなし"
 save_viewer.manual_save: "手動セーブ"
 
 # Item Slot Tooltip
-tooltip.accessible_dpad_none: "方向パッドメニューでは利用不可"
-tooltip.accessible_dpad_only: "方向パッドメニューのみで利用可能"
+tooltip.accessible_dpad_none: "方向キーメニューに表示されません"
+tooltip.accessible_dpad_only: "方向キーメニューでのみ表示"
 tooltip.accessible_none: "操作不可"
 tooltip.bad_cook_data: "料理データに効果がありません"
 tooltip.broken_slot: "転送予定"

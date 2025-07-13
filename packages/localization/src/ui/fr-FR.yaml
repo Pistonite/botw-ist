@@ -149,8 +149,8 @@ crash_viewer.no_crash: "Aucun incident à cette étape"
 save_viewer.manual_save: "Sauvegarde manuelle"
 
 # Item Slot Tooltip
-tooltip.accessible_dpad_none: "Pas dans le menu de la croix directionnelle"
-tooltip.accessible_dpad_only: "Uniquement dans le menu de la croix directionnelle"
+tooltip.accessible_dpad_none: "Non visible dans le menu de la croix directionnelle"
+tooltip.accessible_dpad_only: "Uniquement visible dans le menu de la croix directionnelle"
 tooltip.accessible_none: "Non interactif"
 tooltip.bad_cook_data: "Les données de cuisson n'ont aucun effet"
 tooltip.broken_slot: "Sera transféré"
