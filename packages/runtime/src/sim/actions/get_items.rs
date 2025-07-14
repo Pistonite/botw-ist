@@ -3,7 +3,7 @@ use blueflame::linker;
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 
-use crate::error::{sim_error, ErrorReport};
+use crate::error::{ErrorReport, sim_error};
 use crate::sim;
 
 /// Add items to pouch by eventually calling itemGet or cookItemGet
@@ -33,10 +33,10 @@ pub fn get_items(
 
 /// Buying items from shop
 ///
-/// This is very similar to `get`, the only difference being 
+/// This is very similar to `get`, the only difference being
 /// handling the screen.
 ///
-/// Overworld screen is requred unless `:same-dialog` - 
+/// Overworld screen is requred unless `:same-dialog` -
 /// in which case it will try to auto switch to Shop Buying screen.
 pub fn buy_items(
     ctx: &mut sim::Context<&mut Cpu2>,
@@ -45,7 +45,7 @@ pub fn buy_items(
     items: &[cir::ItemSpec],
     pause_after: bool,
     accurate: bool,
-    same_dialog: bool
+    same_dialog: bool,
 ) -> Result<(), processor::Error> {
     // same-dialog option is only allowed if you are currently in
     // a shop screen
@@ -54,7 +54,10 @@ pub fn buy_items(
             errors.push(sim_error!(ctx.span, NotRightScreen));
             return Ok(());
         }
-        if !sys.screen.transition_to_shop_buying(ctx, &mut sys.overworld, false, errors)? {
+        if !sys
+            .screen
+            .transition_to_shop_buying(ctx, &mut sys.overworld, false, errors)?
+        {
             log::error!("failed to transition to buying screen for BUY");
             return Ok(());
         }
@@ -76,11 +79,12 @@ pub fn buy_items(
             break;
         }
     }
-   
+
     if sys.screen.current_screen().is_shop_buying() {
         if pause_after {
             // forcefully open inventory screen directly
-            *sys.screen.current_screen_mut() = sim::Screen::Inventory(sim::PouchScreen::open(ctx.cpu(), false)?);
+            *sys.screen.current_screen_mut() =
+                sim::Screen::Inventory(sim::PouchScreen::open(ctx.cpu(), false)?);
             log::debug!("inventory screen opened forcefully");
         }
         if should_drop {
@@ -100,7 +104,7 @@ fn get_item_internal(
     sys: &mut sim::GameSystems,
     item: &cir::ItemSpec,
     errors: &mut Vec<ErrorReport>,
-    accurate: bool
+    accurate: bool,
 ) -> Result<(), processor::Error> {
     let amount = item.amount;
     let name = &item.name;

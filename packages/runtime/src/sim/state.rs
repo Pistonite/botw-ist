@@ -476,7 +476,13 @@ impl State {
         log::debug!("handling BUY");
         let items = items.to_vec();
         let (pause, accurate, same_dialog) = args
-            .map(|args| (args.pause_during, args.accurately_simulate, args.same_dialog))
+            .map(|args| {
+                (
+                    args.pause_during,
+                    args.accurately_simulate,
+                    args.same_dialog,
+                )
+            })
             .unwrap_or_default();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::buy_items(&mut cpu, sys, errors, &items, pause, accurate, same_dialog)
