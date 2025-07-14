@@ -96,13 +96,19 @@ impl PouchScreen {
             return false;
         };
 
-        if self.items.is_translucent_or_empty(tab, slot) {
-            // cannot use prompt from a translucent item, since it's usually
-            // not interactable
+        // FIXME: in inventory edge where tabs wrap, it's possible
+        // even when it's not %3
+        if active_tab != tab % 3 || slot != active_slot {
             return false;
         }
 
-        active_tab == tab % 3 && slot == active_slot
+        if self.items.is_translucent_or_empty(tab, slot) {
+            // cannot use prompt from a translucent item, since it's usually
+            // not interactable, unless it's also the first slot
+            return slot == 0;
+        }
+
+        true
     }
 
     /// Get the actual slot to use when performing action on the target slot

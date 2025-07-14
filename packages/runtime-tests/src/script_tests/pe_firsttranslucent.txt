@@ -1,0 +1,7 @@
+!init 1 lotus 1 carrot 1 roasted-radish 1 slate 4 orb 1 banana
+entangle banana
+:targeting lotus
+eat banana
+entangle banana
+:targeting lotus[category=material, tab=1,row=1,col=1]
+hold banana
