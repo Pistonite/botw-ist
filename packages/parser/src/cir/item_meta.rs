@@ -344,6 +344,7 @@ fn parse_weapon_modifier_bits(value: &str) -> Option<i32> {
         .replace(" ", "")
         .to_ascii_lowercase();
     match value.trim() {
+        "none" => Some(0),
         "attack" | "attackup" | "addpower" => Some(0x1),
         "addpowerplus" => Some(0x80000001u32 as i32),
         "durability" | "durabilityup" | "addlife" => Some(0x2),
@@ -368,6 +369,7 @@ fn parse_cook_effect(value: &str) -> Option<i32> {
         .replace(" ", "")
         .to_ascii_lowercase();
     match value.trim() {
+        "none" => Some(-1),
         "hearty" | "lifemaxup" => Some(2),
         "chilly" | "chill" | "resisthot" => Some(4),
         "spicy" | "resistcold" => Some(5),
