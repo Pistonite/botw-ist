@@ -1,23 +1,20 @@
-# Equipments
+# Equipment Operations
 
-Change or use equipments
+Operations on equipments in inventory.
+
+- <skyb>equip</skyb> and <skyb>unequip</skyb> changes the equipped status.
+- <skyb>drop</skyb> drops the equipment from the inventory
 
 ## Syntax
 
 > `equip` [`CONTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
 > `unequip` [`CONTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
-> `use <weapon|bow|shield> [X times]` <br>
-> `shoot [X times]` <br>
-> `throw weapon` <br>
-> `display` [`CONTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
+> `drop` [`CONTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
 
-Annotations: [`:non-breaking`](#throwing-the-weapon), [`:breaking`](#throwing-the-weapon)
-[`:dpad`](#change-equipments)
+Annotations:
+  - [`:dpad`](#change-equipments) - Use the DPad menu instead of inventory menu to change equipments
 
 ## Change equipments
-The <skyb>equip</skyb> and <skyb>unequip</skyb> actions are used
-to change the equipped status on equipments.
-
 Example
 ```skybook
 # Equip the first weapon
@@ -83,29 +80,15 @@ Note that <skyb>:dpad unequip</skyb> can only be used to unequip the first equip
 and cannot be used to unequip arrows.
 ```
 
-## Using the equipment
-You can use the equipment in the overworld with the <skyb>use</skyb> action,
-which can be used to simulate actions that consumes durability:
-- Hit object with weapon
-- Block attack with shield
-- Shield surf
-- Shooting arrows (The <skyb>shoot</skyb> command is equivalent to <skyb>use bow</skyb>)
+
+## Dropping Equipments from Inventory
+Use the <skyb>drop</skyb> command to drop equipments, which deletes the item in inventory,
+and spawn the item in overworld when the inventory is closed.
+
+The game has a limitation on how many weapons can be dropped, but this is not implemented in the simulator.
 
 Examples
 ```skybook
-# Attack or hit something with weapon
-use weapon
-# Block a bomb with shield
-use shield 30 times
-# Shoot 5 arrows
-use bow 5 times
-shoot 5 times
+drop all shields
+drop all but 1 axe
 ```
-
-## Throwing the weapon
-
-## Details
-- <skyb>equip</skyb> and <skyb>unequip</skyb> require [`Inventory`](../user/screen_ssytem.md) screen
-  - If <skyb>:dpad</skyb> is used, `Overworld` screen is required.
-- <skyb>use</skyb>, <skyb>throw</skyb> and <skyb>display</skyb> require `Overworld` screen.
-

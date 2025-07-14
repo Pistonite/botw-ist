@@ -98,15 +98,3 @@ certain automatic screen switches.
 Note that annotations for screen switching like <skyb>:pause-during get</skyb> do
 not count as manually switching screens, and the simulator
 will still automatically switch screens afterward.
-
-```admonish note
-Note about buying: The <skyb>buy</skyb> command performs buying from items in `Overworld`,
-and it will trigger automatic switch to `Overworld` if possible.
-This is because when buying from a shop, you get a dialog, but it returns to overworld
-after that. The only exceptions are wondering merchants and Beedle. Most of the time,
-it will not matter. When it does matter, it's recommended you always use manual screen switch
-actions to indicate to other people if they should buy from the same screen, or close the dialog
-and talk again to buy. You can use the <skyb>:same-dialog</skyb> annotation
-so the next <skyb>buy</skyb> command switches to the buy screen instead of returning
-to overworld TODO - move to buy
-```

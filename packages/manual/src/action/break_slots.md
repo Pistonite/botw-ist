@@ -10,14 +10,14 @@ or use the <skyb>!break</skyb> supercommand to directly edit the memory
 
 ```admonish info
 References for commands used for Arrowless Offset:
-- [`hold-attach`](./hold.md)
-- [`sell`](./shop.md)
+- [`:smug hold`](./material.md#smuggle-state-for-arrowless-offset)
+- [`sell`](./sell.md)
 ```
 
 The most commonly used method of breaking slots is known as `Arrowless Offset`.
 which requires a shield, a one-handed weapon and a shop keeper and can break up to 5 slots at once:
 
-- Enter the [`Smuggle State`](./hold.md#smuggle-state-for-arrowless-offset)
+- Enter the [`Smuggle State`](./material.md#smuggle-state-for-arrowless-offset)
 - Talk to a shop keeper (by pressing `Dpad Down > A` or `ZR > A` quickly)
 - Sell all the items from slots that are being held
 - Close the dialog
@@ -31,17 +31,18 @@ close-dialog
 ```
 
 ## Hold Smuggle Offset
-TODO
 
-(something like:
+```admonish todo
+Menu Overload functionality is WIP
+```
+
+## Fairy Offset
+You can use fairies to break slots by using the last fairy while holding one.
+
 ```skybook
-get 2 shroom 2 pepper 1 banana
-overload
-hold 1 shroom 1 pepper
-sell all shroom all pepper
-stop-overload
-hold banana
-drop
+hold all but 1 fairy;
+use fairy; # by bombing yourself, or stand on fire, etc...
+drop; # drop the held fairy
 ```
 
 ## By Magic

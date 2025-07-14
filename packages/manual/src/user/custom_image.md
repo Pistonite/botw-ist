@@ -1,5 +1,9 @@
 # Custom Image
 
+```admonish todo
+Custom Image functionality is WIP. Please reach out to me if you want to play with it
+```
+
 When running into code outside the normal inventory logic using glitches
 like [Item Stack Underflow](../ist/isu.md), the simulator will probably crash
 because it does not contain the full game to be able to execute setups

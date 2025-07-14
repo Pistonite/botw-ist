@@ -60,3 +60,17 @@ Press enter, and copy the output.
 This entry is updated whenever you switch to `Auto Saved` from the other modes. If the backup is
 lost, your script will be lost forever.
 ```
+
+## Migration from V3
+
+URLs with a V3 script embedded (one that starts with `https://ist.itntpiston.app`)
+can be migrated automatically to V4, by simply replacing `itntpiston` with `pistonite`
+in the URL. 
+
+However, note that due to the difference in simulation systems,
+you may need to adjust the script to make it work again. Notable differences are:
+- Migrated commands in V3 may not sync the overworld correctly, such as <skyb>!init</skyb>
+- <skyb>pick-up</skyb> now only targets items in the Overworld. Change to <skyb>get</skyb> if needed.
+
+Sometimes, it might be easier to rewrite the script from the ground up, following
+the new syntax, since you might have to "workaround the workarounds" of the old simulator.

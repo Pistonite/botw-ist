@@ -2,24 +2,33 @@
 
 Adding new items to the inventory.
 
-See [Shop](./shop.md) for specially buying items from a shop.
+- <skyb>get</skyb> command adds new items from an unspecified source (makes
+the item from thin air). 
+- <skyb>pick-up</skyb> can only be used to get items
+previously dropped on the ground. 
+- <skyb>buy</skyb> is similar to <skyb>get</skyb>, but has additionally
+  functionality to simulate buying from an NPC in the same dialog as selling.
 
 ## Syntax
 > `get` [`FINITE_ITEM_LIST`](../user/syntax_item.md)<br>
+> `buy` [`FINITE_ITEM_LIST`](../user/syntax_item.md#)<br>
 > `pick-up` [`CONSTRAINED_ITEM_LIST`](../user/syntax_item.md#)<br>
 
-Annotations: [`:pause-during`](#pause-on-item-text-boxes), [`:accurately-simulate`](#performance)
+Annotations:
+  - [`:same-dialog`](#buying-from-npc)
+  - [`:pause-during`](#pause-on-item-text-boxes)
+  - [`:accurately-simulate`](#performance)
 
 Examples
 ```skybook
 get diamond             # 1 Diamond
 get 2 apple 2 banana    # 1 Diamond, 2 Apples, 2 Bananas
 drop all apples         # 1 Diamond, 2 Bananas. 2 Apples on the ground
-pick-up all apples      # 1 Diamond, 2 Bananas, 2 Apples
+pick-up all materials   # 1 Diamond, 2 Bananas, 2 Apples
+buy 5 eggs
 ```
 
 ## Picking up previously dropped Items
-
 The only difference between <skyb>get</skyb> and <skyb>pick-up</skyb>
 is that <skyb>pick-up</skyb> is used to target items previously [dropped](./remove.md)
 on the [ground](../user/overworld_system.md).
@@ -27,9 +36,36 @@ on the [ground](../user/overworld_system.md).
 You cannot <skyb>pick-up</skyb> items that aren't on the ground. Use <skyb>get</skyb>
 instead.
 
+## Buying from NPC
+Normally, you buy items in this game by talking to the item directly in the overworld.
+Certain NPCs are exceptions, such as Beedle, Travelling Merchants, and Kilton.
+For these NPCs, you need to talk to them, and buy from a separate dialog.
+
+By default, <skyb>buy</skyb> will ALWAYS assume you are buying from overworld, unless
+you tell it to not do so.
+
+To talk to an NPC and buy, use the <skyb>talk-to</skyb> command.
+```skybook
+talk-to beedle    # Opens Shop Buying screen
+buy 5 arrows
+shoot             # Automatically closes the screen and shoot arrow
+                  # To manually close the screen, use `untalk` or `close-dialog`
+```
+
+To sell, them buy within the same dialog sequence, use the <skyb>:same-dialog</skyb>
+annotation
+```skybook
+sell ruby                 # Opens Shop Selling screen
+:same-dialog buy 5 arrows # Without exiting dialog, opens Shop Buying screen
+close-dialog
+```
+
+Also see [Selling](./sell.md).
+
 ## Pause on Item Text Boxes
-When picking up a new item, opening a chest, or getting item from some event (such as a Korok),
-you will get an item text box that allows you to open the pause menu.
+During <skyb>get</skyb>, <skyb>pick-up</skyb>, or <skyb>buy</skyb>, you may
+encounter a "New Item" text box that allows you to open the inventory.
+
 The <skyb>:pause-during</skyb> annotation can be used to simulate this action.
 
 ```admonish warning
@@ -47,10 +83,15 @@ then get an item text box (similar to performing [Arrowless Offset](./break_slot
 get 2 shrooms
 :smug hold 2 shrooms
 # Open a chest, for example
-:item-box-pause get lynel-shield 
+:pause-during get lynel-shield 
 # Here, you are in pause screen while holding 2 shrooms
 unpause
 # Now the 2 shrooms will drop to the ground because of how the smuggle works
+```
+
+You can also use this feature to explicity annotate optimizations for speedruns
+```skybook
+:pause-during get zora-armor; equip zora-armor
 ```
 
 ## Performance
@@ -78,6 +119,6 @@ you can use the <skyb>:accurately-simulate</skyb> annotation to force the more a
 
 
 ## Detail
-- Both <skyb>get</skyb> and <skyb>pick-up</skyb> require [`Overworld`](../user/screen_system.md) screen.
+- <skyb>get</skyb>, <skyb>pick-up</skyb> and <skyb>buy</skyb> all require [`Overworld`](../user/screen_system.md) screen.
 - You cannot get new items while holding items in the overworld
   - with <skyb>:smug</skyb>, the held items will be dropped after getting the item
