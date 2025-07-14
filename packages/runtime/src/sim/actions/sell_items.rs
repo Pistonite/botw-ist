@@ -82,8 +82,13 @@ pub fn sell_items(
             }
 
             // check if the selected item is sellable
-            // (needs to be after the reselect check above
-            if !game::can_sell(&item_name) {
+            // (needs to be after the reselect check above)
+            // note that we allow orbs and koroks to be traded
+            // with the sell command
+            if !game::can_sell(&item_name)
+                && item_name != "Obj_KorokNuts"
+                && item_name != "Obj_DungeonClearSeal"
+            {
                 errors.push(sim_error!(item.span, NotSellable(item_name)));
                 check_for_extra_error = false;
                 break;

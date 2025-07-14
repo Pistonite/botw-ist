@@ -228,6 +228,7 @@ impl State {
             X::OpenShop => self.handle_open_shop(ctx).await,
             X::CloseShop => self.handle_close_shop(ctx).await,
             X::Sell(items) => self.handle_sell(ctx, items).await,
+            X::Buy(items) => self.handle_buy(ctx, items, args.as_deref()).await,
 
             X::Save(name) => self.handle_save(ctx, name.as_deref()).await,
             X::Reload(name) => self.handle_reload(ctx, name.as_deref(), false).await,
@@ -463,6 +464,28 @@ impl State {
         let items = items.to_vec();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::sell_items(&mut cpu, sys, errors, &items)
+        })
+    }
+
+    async fn handle_buy(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSpec],
+        args: Option<&StateArgs>,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling BUY");
+        let items = items.to_vec();
+        let (pause, accurate, same_dialog) = args
+            .map(|args| {
+                (
+                    args.pause_during,
+                    args.accurately_simulate,
+                    args.same_dialog,
+                )
+            })
+            .unwrap_or_default();
+        in_game!(self, rt, cpu, sys, errors => {
+            sim::actions::buy_items(&mut cpu, sys, errors, &items, pause, accurate, same_dialog)
         })
     }
 

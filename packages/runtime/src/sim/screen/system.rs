@@ -60,6 +60,9 @@ pub enum Screen {
 }
 
 impl ScreenSystem {
+    pub fn manually_switched(&self) -> bool {
+        self.is_manually_switched
+    }
     pub fn current_screen(&self) -> &Screen {
         &self.screen
     }
@@ -291,6 +294,14 @@ impl Screen {
 
     pub fn is_shop(&self) -> bool {
         matches!(self, Screen::Shop(_))
+    }
+
+    pub fn is_shop_buying(&self) -> bool {
+        matches!(self, Screen::Shop(sim::ShopScreen::Buy))
+    }
+
+    pub fn is_shop_selling(&self) -> bool {
+        matches!(self, Screen::Shop(sim::ShopScreen::Sell(_)))
     }
 
     pub fn as_inventory(&self) -> Option<&sim::PouchScreen> {
