@@ -28,7 +28,7 @@ impl Runtime {
         Self {
             executor,
             initial_process: Mutex::new(None),
-            state_cache: Mutex::new(LruCache::new(512)),
+            state_cache: Mutex::new(LruCache::new(256)),
         }
     }
 

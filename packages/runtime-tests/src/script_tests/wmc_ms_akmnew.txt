@@ -1,0 +1,105 @@
+// This has a lot of hacks/inconsistencies
+// Since it was migrated from old script
+get 1 boko-spear[dura=1]
+  1 axe 1 trav-bow 1 phrenic
+  1 arrow 1 bomb-arrow 1 pot-lid
+  1 dweller-shield 1 flint 2 shroom 2 fairy
+  2 bluenight 2 endura-carrot 2 princess 1 wood
+  1 slate 4 orb 1 glider
+equip bombarrow
+drop 1 wood 1 flint
+get master-sword
+sell 4 orbs
+save
+
+# 1. Activate Prompt Entanglement
+:smug hold 
+  1 shroom 1 fairy 1 shade 1 endura-carrot 1 princess
+sell all materials
+pick-up 1 shroom 1 fairy 1 endura-carrot
+drop 1 shroom
+get 1 toasty-hylian-shroom
+reload
+
+# 2. Preparing Inventory for Corruption
+:smug hold
+  1 fairy[slot=2] 1 shroom 1 nightshade 2 princess
+sell all shroom 1 fairy[slot=2] all nightshade
+pick-up fairy
+equip master-sword
+# Clip 1
+entangle slate drop pot-lid; drop
+unequip pot-lid
+entangle glider drop pot-lid; drop
+drop all shields all bows
+# Clip 2
+entangle fairy
+equip boko-spear
+unpause; use weapon; drop boko-spear
+drop 1 endura-carrot # roast
+!remove 2 endura-carrot
+get fried-wild-greens[effect=endur]
+pick-up 1 nightshade
+get roasted-endura-carrot
+# Clip 3
+entangle roasted-endura-carrot
+hold 2 fairies
+drop
+pick-up roasted-endura-carrot
+# Clip 4
+entangle roasted-endura-carrot
+hold 3 fairies
+unpause pause
+hold 1 fairy 1 nightshade
+unpause drop # cook
+get wild-greens[hp=112, price=311, effect=sneaky]
+# Clip 5
+pick-up phrenic
+entangle toasty-hylian-shroom
+:targeting <empty-space>[category=bow]
+eat toasty-hylian-shroom
+equip axe
+pick-up 1 roasted-endura-carrot
+save
+
+# 3. Corruption 1
+pick-up all shields
+unequip shield
+drop bow
+unequip weapon
+eat all materials all food
+reload
+save
+
+# 4. Corruption 2
+drop bow; unpause
+entangle <empty-space>[category=bow]
+eat toasty-hylian-shroom; unpause
+entangle <empty-space>[category=bow]
+eat toasty-hylian-shroom
+pick-up bow
+unequip weapon
+equip dweller-shield
+eat all materials all food
+reload
+shoot
+save
+drop all axe all bow
+eat 2 wild-green 1 roasted-endura-carrot
+reload
+drop 1 axe 1 bow
+eat wild-green
+reload
+eat toasty-hylian-shroom
+eat wild-green[effect=-1]
+sell wild-green
+save
+get bow-of-light
+reload
+# sort bows... todo
+drop bow[slot=2] # workaround...
+pick-up bow
+drop all shield
+save
+pick-up 3 shield
+reload
