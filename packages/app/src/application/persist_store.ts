@@ -7,6 +7,8 @@ import {
 } from "@pistonite/skybook-api";
 import type { ActorSpriteProps } from "botw-item-assets";
 
+import { STARTER_SCRIPT } from "self::util";
+
 /** Persistent state for the application, like settings and locally saved script */
 export type PersistStore = {
     /**
@@ -44,7 +46,7 @@ export const usePersistStore = create<PersistStore>()(
     persist(
         (set) => {
             return {
-                savedScript: "",
+                savedScript: STARTER_SCRIPT,
                 setSavedScript: (savedScript) => {
                     set({ savedScript });
                     const env = parseEnvFromScript(savedScript);
