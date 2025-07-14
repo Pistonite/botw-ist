@@ -7,7 +7,8 @@ the actual implementation in the game.
 ```
 
 ```admonish todo
-If you can help improve this page,
+This section is WIP and may contain inaccurate information. If you see any issues,
+or want to improve this section,
 please edit [this file](https://github.com/Pistonite/botw-ist/tree/main/packages/manual/src/ist/pe.md)
 and open a Pull Request
 ```

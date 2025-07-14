@@ -3,6 +3,13 @@
 Activate [Prompt Entanglement](../ist/pe.md) and perform actions on a slot using prompts
 from another.
 
+- <skyb>entangle</skyb> activates PE and sets the target item
+- <skyb>:targeting</skyb> changes the target item, or allow you to target empty slots
+
+```admonish warning
+PE is not 100% accurate
+```
+
 ## Syntax
 > `entangle` [`ITEM`](../user/syntax_item.md)<br>
 > `:targeting` [`ITEM`](../user/syntax_item.md)<br>

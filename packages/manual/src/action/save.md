@@ -1,10 +1,14 @@
 # Save Files
 
-In the game, you can manually save from the System menu, or the game can trigger
-auto-saves at various times. In the simulator, we simulate multiple save slots
-by having a *manual save* slot, and many *named save* slots. The idea
-is you will give a save file a name, so you can refer to the name when you need
-to reload it, just like you can remember which save slot in the game is the file you want to reload.
+Handling game's running and closed state, and simulation of save files
+
+- <skyb>save</skyb> command saves to the *manual save* slot
+- <skyb>save-as file-name</skyb> command saves to a *named save* slot.
+    You can later reload this save by its name. This is used to simulate auto-saves,
+    but you can have unlimited number of them.
+- <skyb>reload</skyb> command reloads a manual or named save
+- <skyb>new-game</skyb> reloads an imaginary save with the state of a new game
+- <skyb>close-game</skyb> closes the game
 
 ## Syntax
 

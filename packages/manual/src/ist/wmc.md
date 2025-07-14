@@ -183,6 +183,12 @@ The whole setup would be:
 4. Continue the Stackable Food Limit setup
 
 ## Travel Medallion (TMWMC)
+
+```admonish todo
+This section is WIP and may contain inaccurate information. If you see any issues,
+or want to improve this section, please create a Pull Request
+```
+
 The Travel Medallion is added in the Master Trials DLC. Unlike any other DLC items, it gets removed
 if you uninstall the DLC.
 
@@ -201,6 +207,11 @@ Unlike MSWMC, Travel Medallion does not set last added item to `nullptr`, so it 
 
 
 ## Zelda Notes (ZNWMC)
+```admonish todo
+This section is WIP and may contain inaccurate information. If you see any issues,
+or want to improve this section, please create a Pull Request
+```
+
 ```admonish warning
 This method has not be verified. It is only theorized based on reverse engineering of version 1.8.0 of the Switch 1 Edition
 ```

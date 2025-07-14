@@ -1,9 +1,10 @@
 # Direct Inventory Corruption (DIC)
 
 *Inventory Corruption* is a form of *Durability Transfer*.
+
 In the game, durability is stored as a *fixed-point* integer,
-with 1 being 0.01. For example, a weapon with durability 10 has the internal
-value of 1000. In the case of corruption, the durability is transferred
+with `1` being `0.015`. For example, a weapon with durability `10` has the internal
+value of `1000`. In the case of corruption, the durability is transferred
 from an equipment not to another equipment, but to an item. The value
 then becomes the count of items. This is very useful, since
 you can get a LOT of items from an equipment with relatively low durability
@@ -100,20 +101,21 @@ For example, transferring 1 Bow, 1 Arrow, 1 Shield, will:
 - Push Shields by 3 slots
 ```
 
-## Unsorted Inventory and Forward Corruption
-Note that GameData desynced in this way can only push the items *back*, not *forward*.
+## Unsorted Inventory and Leftward Corruption
+Note that GameData desynced in this way can only push the items *to the right*, not *left*.
 For example, Weapons can corrupt everything, but Bows cannot corrupt Weapons, and Shields cannot corrupt Weapons,
 Bows, or Arrows. 
 
-Corrupting items that are not possible to corrupt in normal inventory order is known as `Forward Corruption`,
-and is done by making the inventory into a order that is not normal. For example, to transfer
+Corrupting items that are not possible to corrupt in normal inventory order is known as `Leftward Corruption`,
+or sometimes `Forward Corruption`.
+This is done by making the inventory into an order that is not normal. For example, to transfer
 durability from a Shield to a Sword, the Sword must be put after the Shield. This state is typically known
 as `Unsorted Inventory` and opens up a whole different glitch category.
 
 Achieving `Unsorted Inventory` is relatively easy. All we need to look at is how the game
 put (sort) the item into the correct category when you get something:
 
-1. The game always add the item to the end of the inventory
+1. The game always adds the item to the end of the inventory
 2. The game then sorts the inventory with the following rules:
    - Two items should not change their relative order (if A is before B, A must also be before B after sorting)
    - Two items that have the same category are considered equal
@@ -121,7 +123,7 @@ put (sort) the item into the correct category when you get something:
    - The list is sorted from lowest value to highest
 
 ```admonish info
-This type of sort is referred to as a *stable sort* using a *predicate* that compares the category of the items
+This type of sort is referred to as a *stable sort* using a *predicate* that only compares the category of the items
 ```
 
 The sorting itself cannot achieve the unsorted state, but *absence of sort* can.
