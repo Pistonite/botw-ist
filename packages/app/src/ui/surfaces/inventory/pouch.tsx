@@ -303,20 +303,25 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                             category={tab.category}
                             undiscovered={undiscoveredTabs[tab.category]}
                             border
-                            nodes={tab.items.map(({ slot, item }, i) => ({
-                                slot,
-                                element: (
-                                    <PouchItemSlotWithTooltip
-                                        item={item}
-                                        key={i}
-                                        inBrokenSlot={isInBrokenSlotArray[i]}
-                                        isMasterSwordFullPower={
-                                            isMasterSwordFullPower
-                                        }
-                                        {...itemSlotProps}
-                                    />
-                                ),
-                            }))}
+                            nodes={tab.items.map(
+                                ({ slot, item, itemIndex }, i) => ({
+                                    slot,
+                                    element: (
+                                        <PouchItemSlotWithTooltip
+                                            item={item}
+                                            key={i}
+                                            inBrokenSlot={
+                                                itemIndex >= 0 &&
+                                                isInBrokenSlotArray[itemIndex]
+                                            }
+                                            isMasterSwordFullPower={
+                                                isMasterSwordFullPower
+                                            }
+                                            {...itemSlotProps}
+                                        />
+                                    ),
+                                }),
+                            )}
                         />
                     </div>
                 ))}
