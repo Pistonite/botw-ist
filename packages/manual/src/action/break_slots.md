@@ -25,7 +25,7 @@ which requires a shield, a one-handed weapon and a shop keeper and can break up 
 Example script for Arrowless Offset in the simulator
 ```skybook
 get 2 shroom 2 pepper 1 banana
-hold-attach 1 shroom 1 pepper
+:smug hold 1 shroom 1 pepper
 sell all shroom all pepper
 close-dialog
 ```
