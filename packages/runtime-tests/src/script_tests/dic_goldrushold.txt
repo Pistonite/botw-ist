@@ -1,0 +1,84 @@
+// Migrated from legacy: goldrush_10reload22drop
+// Author: Bloom
+!init 1 axe 1 traveller-bow 1 bombarrow 1 ancientarrow 1 pot-lid 1 tail 1 beetle 1 core 2 opal 2 wood 2 apple 2 spicypepper 2 rushroom 2 hylianshroom 2 acorn 2 silentprincess 2 heartybass 2 endurashroom 1 screw 2 spring 1 shaft 2 lotus 1 faroshhorn 2 lizalfostalon 1 honey 1 lizalfoshorn 1 slate 1 glider 8 spiritorb
+equip weapon
+equip bow
+equip shield
+equip bombarrow
+save
+unpause
+# Pick up weapons, drop all materials, 2 drops (8 materials)
+!init 8 axe 1 bombarrow 1 ancientarrow 1 pot-lid 1 slate 1 glider 8 spiritorb
+equip bombarrow
+# Run to center of town for autosave
+save-as autosave
+!break 13 slots
+reload
+save
+reload autosave
+drop 2 endurashroom
+drop 1 screw
+drop 2 spring
+drop 1 shaft
+drop 2 lotus
+drop 1 faroshhorn
+drop 2 lizalfostalon
+drop 1 honey
+drop 1 lizalfoshorn
+#3 Drops (13 Materials), 5 Total
+reload
+save
+reload autosave
+drop 2 spring
+drop 1 shaft
+drop 2 lotus
+drop 2 lizalfostalon
+drop 1 honey
+drop 1 lizalfoshorn
+#2 Drops (9 Materials), 7 Total
+reload
+save
+reload
+dnp 1 honey
+dnp 1 lizalfoshorn
+#1 Drop (2 Materials), 8 Total
+get 1 speedfood
+!remove 1 faroshhorn[from-slot=2]
+!remove 4 lotus
+save
+reload
+sell 112 orb
+dnp 2 honey
+dnp 2 lizalfoshorn
+dnp 2 lizalfostalon
+#2 Drops (6 Materials), 10 Total
+save
+reload
+dnp 2 endurashroom
+dnp 4 lizalfostalon
+dnp 4 honey
+#2 Drops (10 Materials), 12 Total
+save
+reload
+drop 4 lizalfoshorn[from-slot=2]
+drop 4 lizalfoshorn[from-slot=2]
+pick-up 8 lizalfoshorn
+drop 8 honey[from-slot=2]
+pick-up 8 honey
+drop 8 lizalfostalon[from-slot=2]
+pick-up 8 lizalfostalon
+drop 1 screw[from-slot=2]
+drop 1 screw[from-slot=2]
+pick-up 2 screw
+drop 1 shaft[from-slot=2]
+drop 1 shaft[from-slot=2]
+pick-up 2 shaft
+#6 Drops (28 Materials), 18 Total
+save
+reload
+dnp 8 endurashroom
+dnp 6 spring
+dnp 4 heartybass
+dnp 2 silentprincess
+#4 Drops (20 Materials), 22 Total
+save

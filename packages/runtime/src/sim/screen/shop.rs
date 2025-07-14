@@ -36,7 +36,9 @@ impl ShopScreen {
         // note that shop screen can be visible even when mCount is 0
 
         for i in 0..num_tabs {
-            if !matches!(tab_types[i], 4..=8) {
+            // we allow KeyItem screen as well, since
+            // we are using sell command for orbs and koroks
+            if !matches!(tab_types[i], 4..=9) {
                 continue;
             }
             let mut curr_item_ptr = tab_heads[i];
