@@ -25,6 +25,8 @@ export type TabDataItem<T> = {
     isVisuallyOnly: boolean;
     slot: number;
     item: T;
+    /** Original index in pouch.items */
+    itemIndex: number;
 };
 
 /**
@@ -106,6 +108,7 @@ export const getTabNodesFromPouch = (
                 isVisuallyOnly: false,
                 slot: item.tabSlot,
                 item,
+                itemIndex: i,
             });
         }
         if (isEntangledTab && !foundEntangledItem) {
@@ -144,6 +147,7 @@ export const getTabNodesFromPouch = (
                     accessible: false,
                     dpadAccessible: false,
                 },
+                itemIndex: -1,
             });
         }
         tabsOut.push({
@@ -193,6 +197,7 @@ export const getTabNodesForGdt = (
                 isVisuallyOnly: false,
                 slot: pouchTab.items[i].slot,
                 item: gdt.items[gdtIdx],
+                itemIndex: pouchTab.items[i].itemIndex,
             });
             gdtIdx++;
         }
