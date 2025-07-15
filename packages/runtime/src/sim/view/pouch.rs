@@ -242,6 +242,10 @@ fn extract_pouch_tabs(
         }
         Ok(x) => x,
     };
+    if num_tabs < 0 || num_tabs > 50 {
+        // FIXME: figure out how tabs are displayed when tabs are overflow
+        return None;
+    }
     let tabs = match Ptr!(&pmdm->mTabs).load(memory) {
         Err(e) => {
             log::error!("failed to read tabs: {e}");

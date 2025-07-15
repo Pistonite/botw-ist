@@ -208,7 +208,7 @@ pub fn should_go_to_next_tab(
     }
     // we must skip empty tabs and check
     // heads of all tabs after
-    while tab_i < num_tabs - 1 {
+    while tab_i < num_tabs - 2 {
         let next_head = tab_heads[tab_i + 1];
         if next_head.is_nullptr() {
             tab_i += 1;

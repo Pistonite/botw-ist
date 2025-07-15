@@ -184,7 +184,9 @@ fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, m
         let tab_heads = *(&pmdm->mTabs);
         let tab_types = *(&pmdm->mTabsType);
     };
-    let num_tabs = num_tabs.max(0) as usize;
+
+    // FIXME: need to figure out how to display tabs when tabs are overflown
+    let num_tabs = num_tabs.clamp(0, 50) as usize;
     let mut tabs = Vec::with_capacity(num_tabs);
 
     // if mCount is 0, the inventory shows up as empty
