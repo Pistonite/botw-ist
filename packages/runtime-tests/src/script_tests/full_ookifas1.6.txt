@@ -1,0 +1,75 @@
+# OOKIFAS 1.6
+get 1 slate 
+  1 branch 1 hammer 1 trav-bow 5 arrow
+  6 pepper 1 seared 5 shroom 1 ruby 1 wood 
+  1 potlid[life=100] 4 orb 1 glider
+get fairy
+eat 2 shroom # WB in shrine
+# Kaya Wan
+sell ruby :same-dialog buy 3 hot-frog
+get axe
+# Daka Tuss
+use fairy
+
+# fairy fountain
+eat seared # for WB
+get 1 fairy 3 endura-carrot 3 princess
+eat all but 3 pepper
+buy 5 carrot 1 boko-gut
+
+# prep
+# cook
+!remove 1 boko-gut 1 carrot 3 hot-frog
+get hasty-elixir[
+  ingr=boko-gut,
+  ingr=carrot,
+  ingr=hot-frog,ingr=hot-frog,ingr=hot-frog
+]
+!remove carrot get wildgreen[effect=speed]
+!remove 3 endura-carrot get wildgreen[effect=endur]
+
+drop 1 princess 1 pepper 1 shroom 1 carrot
+:smug hold
+  1 princess 1 pepper 1 shroom 1 carrot
+  1 wood # for check
+sell 1 princess 1 pepper 1 shroom 1 carrot
+pick-up all material
+:smug hold
+  1 princess 1 pepper 1 shroom 1 carrot
+  1 wood # for check
+sell 1 princess 1 pepper 1 shroom 1 carrot
+pick-up wood
+buy fire-arrow
+
+# either before entering shrine, or drop right
+# after entering shrine
+drop potlid
+
+# corruption
+drop 1 branch 1 axe
+equip hammer
+get mind-eye-shield # Chest
+# make sure to hold before autosave happens,
+# or manually save
+hold all material
+unpause
+save-as autosave
+# drop after auto save happens
+drop
+eat all food
+drop shield
+
+drop 1 weapon 1 bow
+pick-up all weapon all bow
+unequip 1 weapon 1 bow
+
+reload autosave
+shoot
+save
+drop all material
+unequip shield
+eat all food
+reload
+save
+eat wild-green[effect=speed]
+reload
