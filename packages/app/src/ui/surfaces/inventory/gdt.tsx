@@ -1,5 +1,5 @@
 import { memo, useMemo } from "react";
-import { Button, Tooltip, makeStyles } from "@fluentui/react-components";
+import { Button, Tooltip } from "@fluentui/react-components";
 import { Info20Regular } from "@fluentui/react-icons";
 import { useDark } from "@pistonite/pure-react";
 import { useSwappedWheelScrollDirection } from "@pistonite/shared-controls";
@@ -27,18 +27,8 @@ import {
     ErrorBar,
 } from "self::ui/components";
 
-const useStyles = makeStyles({
-    main: {
-        padding: "8px",
-    },
-    inventoryItemsContainer: {
-        paddingTop: "10px",
-    },
-});
-
 const GdtInventoryPanelImpl: React.FC = () => {
     const m = useStyleEngine();
-    const c = useStyles();
     const dark = useDark();
     const {
         data: pouch,
@@ -74,8 +64,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
         <div className={m("flex-1 overflow-y-auto scrollbar-thin")}>
             <div
                 className={m(
-                    "flex flex-wrap max-h-0 overflow-visible",
-                    c.inventoryItemsContainer,
+                    "flex flex-wrap max-h-0 overflow-visible pad-itemtop",
                 )}
             >
                 {gdt.val.items.map((item, i) => (
@@ -138,7 +127,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
                 style={{
                     backgroundImage: `url(${useThemedSheikaBackgroundUrl()})`,
                 }}
-                className={m("pos-abs all-sides-0 flex-col", c.main)}
+                className={m("pos-abs all-sides-0 flex-col pad-8")}
             >
                 <InventoryTitle
                     title={t("main.gdt_inventory.title")}

@@ -2,6 +2,7 @@ import { once } from "@pistonite/pure/sync";
 
 import { ItemExplorerExtension } from "./item-explorer/extindex.tsx";
 import { CrashViewerExtension } from "./crash-viewer/extindex.tsx";
+import { ExporterExtension } from "./exporter/extindex.tsx";
 
 import { extLog, type FirstPartyExtension } from "self::util";
 
@@ -74,6 +75,9 @@ export const createExtensionInstance = async (
                 "./save-viewer/extindex.tsx"
             );
             return new SaveViewerExtension(standalone);
+        }
+        case "exporter": {
+            return new ExporterExtension(standalone);
         }
         default: {
             extLog.error(`unknown extension: ${id}`);

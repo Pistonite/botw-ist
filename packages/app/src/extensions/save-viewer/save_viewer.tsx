@@ -19,12 +19,6 @@ export type SaveViewerProps = {
 };
 
 const useStyles = makeStyles({
-    inventoryItemsContainer: {
-        paddingTop: "10px",
-    },
-    itemContainer: {
-        padding: "8px",
-    },
     saveTab: {
         "& span": {
             textOverflow: "ellipsis",
@@ -54,8 +48,7 @@ export const SaveViewer: React.FC<SaveViewerProps> = ({ useStore }) => {
         <div className={m("flex-1 h-100 overflow-y-auto scrollbar-thin")}>
             <div
                 className={m(
-                    "flex flex-wrap max-h-0 overflow-visible",
-                    c.inventoryItemsContainer,
+                    "flex flex-wrap max-h-0 overflow-visible pad-itemtop",
                 )}
             >
                 {data.val.items.map((item, i) => (
@@ -93,7 +86,7 @@ export const SaveViewer: React.FC<SaveViewerProps> = ({ useStore }) => {
                     }}
                 >
                     <Tab className={m("overflow-hidden", c.saveTab)} value="">
-                        Manual Save
+                        {t("save_viewer.manual_save")}
                     </Tab>
                     {saveNames.map((name) => (
                         <Tab
@@ -107,7 +100,7 @@ export const SaveViewer: React.FC<SaveViewerProps> = ({ useStore }) => {
                 </TabList>
             </div>
             <div
-                className={m("min-w-0 h-100", c.itemContainer)}
+                className={m("min-w-0 h-100 pad-8")}
                 style={{ background: `url(${useThemedSheikaBackgroundUrl()})` }}
             >
                 {$Error}

@@ -30,12 +30,6 @@ export type Searcher = {
 };
 
 const useStyles = makeStyles({
-    container: {
-        padding: "8px",
-    },
-    resultsContainer: {
-        paddingTop: "10px",
-    },
     resultsScroll: {
         marginTop: "8px",
     },
@@ -116,8 +110,7 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
         <div className={m("overflow-y-auto flex-1", c.resultsScroll)}>
             <div
                 className={m(
-                    "flex flex-wrap max-h-0 overflow-visible",
-                    c.resultsContainer,
+                    "flex flex-wrap max-h-0 overflow-visible pad-itemtop",
                 )}
             >
                 {results.map(({ actor, cookEffect }, i) => (
@@ -134,7 +127,7 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
     );
 
     return (
-        <div className={m("flex-col h-100 border-box", c.container)}>
+        <div className={m("flex-col h-100 border-box pad-8")}>
             {$SearchBox}
             {$LocalizedCheckbox}
             <Body1 block>{$SearchTip}</Body1>

@@ -52,11 +52,7 @@ const useStyles = makeStyles({
         zIndex: 1,
     },
     inventoryContainer: {
-        padding: "8px",
         backgroundColor: "#00000066",
-    },
-    inventoryItemsContainer: {
-        paddingTop: "10px",
     },
     background: {
         // This is to hide the UI elements like health bar, etc
@@ -67,7 +63,6 @@ const useStyles = makeStyles({
     },
 
     toolbar: {
-        padding: "4px",
         backgroundColor: "#00000044",
         borderRadius: "4px",
     },
@@ -80,7 +75,6 @@ const useStyles = makeStyles({
     },
 
     overworldScroll: {
-        padding: "8px",
         maxHeight: "72px",
     },
 
@@ -152,7 +146,12 @@ export const PouchInventoryPanelImpl: React.FC = () => {
             >
                 <Button icon={<Info20Regular />} appearance="transparent" />
             </Tooltip>
-            <div className={m("flex-row flex-1 flex-centera gap-4", c.toolbar)}>
+            <div
+                className={m(
+                    "flex-row flex-1 flex-centera gap-4 pad-4",
+                    c.toolbar,
+                )}
+            >
                 <ScreenIndicator
                     screen={pouch?.val?.screen}
                     hasGlider={hasGlider}
@@ -269,7 +268,11 @@ export const PouchInventoryPanelImpl: React.FC = () => {
 
     const $PouchItems = pouch?.val && !isTabView && (
         <div className={m("flex-1 overflow-y-auto scrollbar-thin")}>
-            <div className={m("flex flex-wrap max-h-0 overflow-visible")}>
+            <div
+                className={m(
+                    "flex flex-wrap max-h-0 overflow-visible pad-itemtop",
+                )}
+            >
                 {pouch.val.items.map((item, i) => (
                     <PouchItemSlotWithTooltip
                         item={item}
@@ -334,7 +337,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         overworld.val.items.length > 0 && (
             <div
                 className={m(
-                    "pos-rel overflow-x-auto overflow-y-hidden scrollbar-thin",
+                    "pos-rel overflow-x-auto overflow-y-hidden scrollbar-thin pad-8",
                     c.overworldScroll,
                 )}
                 ref={overworldScrollHandler}
@@ -358,7 +361,9 @@ export const PouchInventoryPanelImpl: React.FC = () => {
             <div
                 className={m("pos-abs all-sides-0 flex-col", c.splitContainer)}
             >
-                <div className={m("flex-col flex-1", c.inventoryContainer)}>
+                <div
+                    className={m("flex-col flex-1 pad-8", c.inventoryContainer)}
+                >
                     {$Title}
                     <div className={m("flex-col gap-4")}>
                         {$TabsWarning}

@@ -17,10 +17,12 @@ export const BuiltinExtensionIds = [
     "item-explorer",
     "crash-viewer",
     "save-viewer",
+    "exporter",
 ] as const;
 
 const DefaultPrimaryIds: string[] = [
     "editor",
+    "exporter",
 ] satisfies (typeof BuiltinExtensionIds)[number][];
 const DefaultSecondaryIds: string[] = [
     "item-explorer",
