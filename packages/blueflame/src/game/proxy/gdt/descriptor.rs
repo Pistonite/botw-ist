@@ -50,7 +50,7 @@ macro_rules! make_descriptor {
             }
             #[inline(always)]
             fn list_mut(trigger_param: &mut gdt::TriggerParam) -> &mut gdt::FlagList<Self::T> {
-                &mut trigger_param.$field
+                std::sync::Arc::make_mut(&mut trigger_param.$field)
             }
         }
     };
@@ -68,7 +68,7 @@ macro_rules! make_descriptor {
             fn list_mut(
                 trigger_param: &mut gdt::TriggerParam,
             ) -> &mut gdt::FlagList<Box<[Self::ElemT]>> {
-                &mut trigger_param.$field
+                std::sync::Arc::make_mut(&mut trigger_param.$field)
             }
         }
     };

@@ -1,27 +1,8 @@
+use std::sync::Arc;
+
 use crate::game::{gdt, singleton_instance};
 use crate::memory::{self, Memory, ProxyObject, Ptr};
 
-// TODO --cleanup: remove if not needed
-// pub enum FlagType {
-//     Bool = 0,
-//     S32 = 1,
-//     F32 = 2,
-//     String = 3,
-//     String64 = 4,
-//     String256 = 5,
-//     Vector2f = 6,
-//     Vector3f = 7,
-//     Vector4f = 8,
-//     BoolArray = 9,
-//     S32Array = 10,
-//     F32Array = 11,
-//     StringArray = 12,
-//     String64Array = 13,
-//     String256Array = 14,
-//     Vector2fArray = 15,
-//     Vector3fArray = 16,
-//     Vector4fArray = 17,
-// }
 pub fn get_hash(name: &str) -> i32 {
     crc32fast::hash(name.as_bytes()) as i32
 }
@@ -39,24 +20,24 @@ pub fn trigger_param_ptr(memory: &Memory) -> Result<u64, memory::Error> {
 #[derive(Debug, Clone, Default)]
 pub struct TriggerParam {
     // these are pub(crate) for the flag descriptors to access them
-    pub(crate) bool_flags: gdt::FlagList<bool>,
-    pub(crate) s32_flags: gdt::FlagList<i32>,
-    pub(crate) f32_flags: gdt::FlagList<f32>,
-    pub(crate) string32_flags: gdt::FlagList<String>,
-    pub(crate) string64_flags: gdt::FlagList<String>,
-    pub(crate) string256_flags: gdt::FlagList<String>,
-    pub(crate) vector2f_flags: gdt::FlagList<(f32, f32)>,
-    pub(crate) vector3f_flags: gdt::FlagList<(f32, f32, f32)>,
-    pub(crate) vector4f_flags: gdt::FlagList<(f32, f32, f32, f32)>,
+    pub(crate) bool_flags: Arc<gdt::FlagList<bool>>,
+    pub(crate) s32_flags: Arc<gdt::FlagList<i32>>,
+    pub(crate) f32_flags: Arc<gdt::FlagList<f32>>,
+    pub(crate) string32_flags: Arc<gdt::FlagList<String>>,
+    pub(crate) string64_flags: Arc<gdt::FlagList<String>>,
+    pub(crate) string256_flags: Arc<gdt::FlagList<String>>,
+    pub(crate) vector2f_flags: Arc<gdt::FlagList<(f32, f32)>>,
+    pub(crate) vector3f_flags: Arc<gdt::FlagList<(f32, f32, f32)>>,
+    pub(crate) vector4f_flags: Arc<gdt::FlagList<(f32, f32, f32, f32)>>,
 
-    pub(crate) bool_array_flags: gdt::FlagList<Box<[bool]>>,
-    pub(crate) s32_array_flags: gdt::FlagList<Box<[i32]>>,
-    pub(crate) f32_array_flags: gdt::FlagList<Box<[f32]>>,
+    pub(crate) bool_array_flags: Arc<gdt::FlagList<Box<[bool]>>>,
+    pub(crate) s32_array_flags: Arc<gdt::FlagList<Box<[i32]>>>,
+    pub(crate) f32_array_flags: Arc<gdt::FlagList<Box<[f32]>>>,
     // no str32[] in the game
-    pub(crate) string64_array_flags: gdt::FlagList<Box<[String]>>,
-    pub(crate) string256_array_flags: gdt::FlagList<Box<[String]>>,
-    pub(crate) vector2f_array_flags: gdt::FlagList<Box<[(f32, f32)]>>,
-    pub(crate) vector3f_array_flags: gdt::FlagList<Box<[(f32, f32, f32)]>>,
+    pub(crate) string64_array_flags: Arc<gdt::FlagList<Box<[String]>>>,
+    pub(crate) string256_array_flags: Arc<gdt::FlagList<Box<[String]>>>,
+    pub(crate) vector2f_array_flags: Arc<gdt::FlagList<Box<[(f32, f32)]>>>,
+    pub(crate) vector3f_array_flags: Arc<gdt::FlagList<Box<[(f32, f32, f32)]>>>,
 }
 
 impl TriggerParam {
@@ -214,26 +195,24 @@ struct Builder;
 impl Builder {
     fn build(self) -> gdt::TriggerParam {
         TriggerParam {
-            bool_flags: blueflame_deps::gdt::unpack_bool_flags(),
-            s32_flags: blueflame_deps::gdt::unpack_s32_flags(),
-            f32_flags: blueflame_deps::generated::gdt::generate_F32_yaml_flags(),
-            string32_flags: blueflame_deps::generated::gdt::generate_String32_yaml_flags(),
-            string64_flags: blueflame_deps::generated::gdt::generate_String64_yaml_flags(),
-            string256_flags: blueflame_deps::generated::gdt::generate_String256_yaml_flags(),
-            vector2f_flags: blueflame_deps::generated::gdt::generate_Vector2f_yaml_flags(),
-            vector3f_flags: blueflame_deps::generated::gdt::generate_Vector3f_yaml_flags(),
-            vector4f_flags: blueflame_deps::generated::gdt::generate_Vector4f_yaml_flags(),
-            bool_array_flags: blueflame_deps::generated::gdt::generate_ArrayBool_yaml_flags(),
-            s32_array_flags: blueflame_deps::generated::gdt::generate_ArrayS32_yaml_flags(),
-            f32_array_flags: blueflame_deps::generated::gdt::generate_ArrayF32_yaml_flags(),
-            string64_array_flags: blueflame_deps::generated::gdt::generate_ArrayString64_yaml_flags(
-            ),
+            bool_flags: Arc::new(blueflame_deps::gdt::unpack_bool_flags()),
+            s32_flags: Arc::new(blueflame_deps::gdt::unpack_s32_flags()),
+            f32_flags: Arc::new(blueflame_deps::generated::gdt::generate_F32_yaml_flags()),
+            string32_flags: Arc::new(blueflame_deps::generated::gdt::generate_String32_yaml_flags()),
+            string64_flags: Arc::new(blueflame_deps::generated::gdt::generate_String64_yaml_flags()),
+            string256_flags: Arc::new(blueflame_deps::generated::gdt::generate_String256_yaml_flags()),
+            vector2f_flags: Arc::new(blueflame_deps::generated::gdt::generate_Vector2f_yaml_flags()),
+            vector3f_flags: Arc::new(blueflame_deps::generated::gdt::generate_Vector3f_yaml_flags()),
+            vector4f_flags: Arc::new(blueflame_deps::generated::gdt::generate_Vector4f_yaml_flags()),
+            bool_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayBool_yaml_flags()),
+            s32_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayS32_yaml_flags()),
+            f32_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayF32_yaml_flags()),
+            string64_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayString64_yaml_flags(
+            )),
             string256_array_flags:
-                blueflame_deps::generated::gdt::generate_ArrayString256_yaml_flags(),
-            vector2f_array_flags: blueflame_deps::generated::gdt::generate_ArrayVector2f_yaml_flags(
-            ),
-            vector3f_array_flags: blueflame_deps::generated::gdt::generate_ArrayVector3f_yaml_flags(
-            ),
+                Arc::new(blueflame_deps::generated::gdt::generate_ArrayString256_yaml_flags()),
+            vector2f_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayVector2f_yaml_flags()),
+            vector3f_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayVector3f_yaml_flags()),
         }
     }
 }
@@ -245,54 +224,32 @@ mod tests {
     fn test_sorted_bool() {
         let params = TriggerParam::loaded();
 
-        let mut vec = params.bool_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.bool_flags);
-        let mut vec = params.s32_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.s32_flags);
-        let mut vec = params.f32_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.f32_flags);
-        let mut vec = params.string32_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.string32_flags);
-        let mut vec = params.string64_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.string64_flags);
-        let mut vec = params.string256_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.string256_flags);
-        let mut vec = params.vector2f_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.vector2f_flags);
-        let mut vec = params.vector3f_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.vector3f_flags);
-        let mut vec = params.vector4f_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.vector4f_flags);
-        let mut vec = params.bool_array_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.bool_array_flags);
-        let mut vec = params.s32_array_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.s32_array_flags);
-        let mut vec = params.f32_array_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.f32_array_flags);
-        let mut vec = params.string64_array_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.string64_array_flags);
-        let mut vec = params.string256_array_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.string256_array_flags);
-        let mut vec = params.vector2f_array_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.vector2f_array_flags);
-        let mut vec = params.vector3f_array_flags.clone();
-        vec.sort_by_key(|flag| flag.hash());
-        assert_eq!(vec, params.vector3f_array_flags);
+        macro_rules! verify_flag_order {
+            ($field:ident) => {{
+                let mut vec = params.$field.clone();
+                let vec_ref = Arc::make_mut(&mut vec);
+                vec_ref.sort_by_key(|flag| flag.hash());
+                assert_eq!(vec_ref, params.$field.as_ref());
+            }}
+        }
+
+        verify_flag_order!(bool_flags);
+        verify_flag_order!(s32_flags);
+        verify_flag_order!(f32_flags);
+        verify_flag_order!(string32_flags);
+        verify_flag_order!(string64_flags);
+        verify_flag_order!(string256_flags);
+        verify_flag_order!(vector2f_flags);
+        verify_flag_order!(vector3f_flags);
+        verify_flag_order!(vector4f_flags);
+        verify_flag_order!(bool_array_flags);
+        verify_flag_order!(s32_array_flags);
+        verify_flag_order!(f32_array_flags);
+        verify_flag_order!(string64_array_flags);
+        verify_flag_order!(string256_array_flags);
+        verify_flag_order!(vector2f_array_flags);
+        verify_flag_order!(vector3f_array_flags);
+
     }
     #[test]
     fn test_init() -> anyhow::Result<()> {
