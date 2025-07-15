@@ -3,16 +3,7 @@ import { errstr, type Result } from "@pistonite/pure/result";
 import type { DirectLoad } from "@pistonite/skybook-api";
 import { convertLegacyScript } from "skybook-parser-legacy";
 
-const decodeCompressedParam = (param: string): Result<string, string> => {
-    try {
-        const compressedBytes = Buffer.from(param, "base64");
-        const uncompressedBytes = Bun.gunzipSync(compressedBytes);
-        return { val: new TextDecoder().decode(uncompressedBytes) };
-    } catch (e) {
-        console.error("error decoding compressed param: ", e);
-        return { val: errstr(e) };
-    }
-};
+import { decodeCompressedParam } from "self::util";
 
 /** Handle DirectLoad from the home page (/) */
 export const useDirectLoadFromHome = (url: URL): DirectLoad | undefined => {

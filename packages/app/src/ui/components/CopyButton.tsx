@@ -7,7 +7,7 @@ import { useUITranslation } from "skybook-localization";
 import { log } from "self::util";
 
 export type CopyButtonProps = {
-    textToCopy: string;
+    textToCopy: string | (() => Promise<string | undefined>);
 };
 
 export const CopyButton: React.FC<CopyButtonProps> = ({ textToCopy }) => {
@@ -18,14 +18,22 @@ export const CopyButton: React.FC<CopyButtonProps> = ({ textToCopy }) => {
         <Button
             appearance="primary"
             icon={isCopied ? <Checkmark20Regular /> : <Copy20Regular />}
-            onClick={() => {
+            onClick={async () => {
                 if (timeoutRef.current) {
                     clearTimeout(timeoutRef.current);
                 }
                 try {
-                    void navigator.clipboard.writeText(
-                        "```\n" + textToCopy + "```",
-                    );
+                    let text: string;
+                    if (typeof textToCopy === "function") {
+                        const text2 = await textToCopy();
+                        if (text2 === undefined) {
+                            return;
+                        }
+                        text = text2;
+                    } else {
+                        text = textToCopy;
+                    }
+                    void navigator.clipboard.writeText("```\n" + text + "```");
                     setIsCopied(true);
                     timeoutRef.current = setTimeout(() => {
                         setIsCopied(false);

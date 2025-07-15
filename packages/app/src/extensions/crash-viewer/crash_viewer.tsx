@@ -11,15 +11,6 @@ export type CrashViewerProps = {
 };
 
 const useStyles = makeStyles({
-    head: {
-        padding: "4px",
-    },
-    body: {
-        padding: "4px",
-        "& pre": {
-            margin: 0,
-        },
-    },
     dark: {
         backgroundColor: "#292c3c",
         color: "#ef9f76",
@@ -46,7 +37,7 @@ export const CrashViewer: React.FC<CrashViewerProps> = ({ crashInfo }) => {
     }
     return (
         <div className={m("flex-col h-100 border-box")}>
-            <div className={c.head}>
+            <div className={m("pad-4")}>
                 <Field>
                     <CopyButton textToCopy={crashInfo} />
                 </Field>
@@ -54,8 +45,8 @@ export const CrashViewer: React.FC<CrashViewerProps> = ({ crashInfo }) => {
             <div
                 className={m("overflow-y-auto flex-1", dark ? c.dark : c.light)}
             >
-                <div className={m("max-h-0 overflow-visible", c.body)}>
-                    <pre>{crashInfo}</pre>
+                <div className={m("max-h-0 overflow-visible pad-4")}>
+                    <pre className={m("margin-0")}>{crashInfo}</pre>
                 </div>
             </div>
         </div>

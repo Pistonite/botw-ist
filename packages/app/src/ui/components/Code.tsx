@@ -1,5 +1,10 @@
 import type { PropsWithChildren } from "react";
-import { Text, makeStyles, mergeClasses } from "@fluentui/react-components";
+import {
+    Text,
+    type TextProps,
+    makeStyles,
+    mergeClasses,
+} from "@fluentui/react-components";
 import { useDark } from "@pistonite/pure-react";
 
 const useStyles = makeStyles({
@@ -17,13 +22,17 @@ const useStyles = makeStyles({
 });
 
 /** Inline code text */
-export const Code: React.FC<PropsWithChildren> = ({ children }) => {
+export const Code: React.FC<PropsWithChildren<TextProps>> = ({
+    children,
+    ...rest
+}) => {
     const c = useStyles();
     const dark = useDark();
     return (
         <Text
             className={mergeClasses(c.base, dark ? c.dark : c.light)}
             font="monospace"
+            {...rest}
         >
             {children}
         </Text>
