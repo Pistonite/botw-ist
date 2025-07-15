@@ -368,7 +368,7 @@ impl State {
         items: &[cir::ItemSelectSpec],
         args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling DROP");
+        log::debug!("handling EAT");
         let pe_target = args
             .map(|x| x.entangle_target.as_ref().cloned())
             .unwrap_or_default();

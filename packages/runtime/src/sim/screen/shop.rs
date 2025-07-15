@@ -30,7 +30,8 @@ impl ShopScreen {
             let tab_heads = *(&pmdm->mTabs);
             let tab_types = *(&pmdm->mTabsType);
         };
-        let num_tabs = num_tabs.max(0) as usize;
+        // FIXME: need to figure out how to display tabs when tabs are overflown
+        let num_tabs = num_tabs.clamp(0, 50) as usize;
         let mut tabs = Vec::with_capacity(num_tabs);
 
         // note that shop screen can be visible even when mCount is 0

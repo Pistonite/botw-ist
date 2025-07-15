@@ -35,7 +35,7 @@ pub enum Feature {
     /// Limit the total number of blocks that can be executed
     /// by one frame of the Core. This helps prevent infinite
     /// calls
-    #[on] limited_block_count,
+    limited_block_count,
 
     /// Limit the total number of instructions that can be executed
     /// by one block. This helps prevent infinite loops

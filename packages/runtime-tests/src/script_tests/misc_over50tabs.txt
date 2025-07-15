@@ -1,0 +1,22 @@
+// Credit: MuffinCup
+get 1 torch 1 travelers 1 pot 1 hylian-hood 1 apple 1 baked-apple 1 sheikah-slate
+!break 25 slots
+pause; unpause;
+
+get
+ 1 torch
+ 1 elixir
+ 1 torch
+ 1 elixir
+ 1 torch
+ 1 elixir
+ 1 torch
+ 1 elixir
+ 1 torch
+ 1 elixir
+ 1 torch
+ 1 elixir
+ 1 torch
+ 1 elixir
+ 1 torch
+ 1 elixir
