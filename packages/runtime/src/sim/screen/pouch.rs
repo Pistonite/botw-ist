@@ -186,6 +186,7 @@ fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, m
     };
 
     // FIXME: need to figure out how to display tabs when tabs are overflown
+    log::debug!("num_tabs is {num_tabs} before clamp");
     let num_tabs = num_tabs.clamp(0, 50) as usize;
     let mut tabs = Vec::with_capacity(num_tabs);
 
