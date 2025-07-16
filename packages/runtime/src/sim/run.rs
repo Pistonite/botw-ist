@@ -27,7 +27,7 @@ impl Run {
     /// external are collected in the `RunOutput`.
     pub async fn run_parsed(
         self,
-        parsed: Arc<ParseOutput>,
+        parsed: &ParseOutput,
         runtime: &sim::Runtime,
     ) -> MaybeAborted<sim::RunOutput> {
         self.run_parsed_with_notify(parsed, runtime, |_, _| async {})
@@ -43,7 +43,7 @@ impl Run {
     /// The notification will not be sent after the last step
     pub async fn run_parsed_with_notify<TFuture, F>(
         mut self,
-        parsed: Arc<ParseOutput>,
+        parsed: &ParseOutput,
         runtime: &sim::Runtime,
         mut notify_fn: F,
     ) -> MaybeAborted<sim::RunOutput>
@@ -138,18 +138,30 @@ impl RunHandle {
             .store(true, std::sync::atomic::Ordering::Relaxed);
     }
     /// Convert the handle into a raw pointer to interface with external code
-    pub fn into_raw(s: Arc<Self>) -> *const Self {
+    #[cfg(feature = "unsafe-leak")]
+    pub fn leak(s: Arc<Self>) -> *const Self {
         Arc::into_raw(s)
     }
     /// Convert the handle from a raw pointer back into rust object.
     ///
-    /// The pointer must be one that's previously [`into_raw`](Self::into_raw)-ed
-    #[allow(clippy::not_unsafe_ptr_arg_deref)]
-    pub fn from_raw(ptr: *const Self) -> Arc<Self> {
+    /// If add_ref is true, it will leak the pointer again, not consuming the Arc
+    ///
+    /// # Safety
+    ///
+    /// The pointer must be one previously leaked with [`leak`](Self::leak)
+    #[cfg(feature = "unsafe-leak")]
+    pub unsafe fn from_raw(ptr: *const Self, add_ref: bool) -> Arc<Self> {
         if ptr.is_null() {
             // make sure it's safe
             return Arc::new(Self::new());
         }
-        unsafe { Arc::from_raw(ptr) }
+        let x = unsafe { Arc::from_raw(ptr) };
+        if add_ref {
+            let x2 = Arc::clone(&x);
+            let x_old = Arc::into_raw(x);
+            assert!(std::ptr::eq(ptr, x_old), "re-leaked pointer must be equal to prevent losing memory");
+            return x2;
+        }
+        x
     }
 }

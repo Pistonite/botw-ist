@@ -134,7 +134,7 @@ impl Runtime {
         let heap_free_size = params
             .map(|x| x.heap_free_size)
             .take_if(|x| *x != 0)
-            .unwrap_or(20480000);
+            .unwrap_or(10240000);
         if heap_free_size > 40960000 {
             return Err(RuntimeInitError::HeapTooBig);
         }

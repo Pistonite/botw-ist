@@ -4,6 +4,7 @@ import { idgen } from "@pistonite/pure/memory";
 import type { NativeApi, NativeHandle } from "./native_api.ts";
 import type { Pwr } from "./error.ts";
 import { log } from "./util.ts";
+import { Emp, holdStrongRefs } from "./emp_contrib.ts";
 
 const getNextNativeHandleId = idgen();
 
@@ -58,7 +59,7 @@ export class TaskMgr<TPtr> {
         const container = new NativeHandleContainer(
             this.napi,
             id,
-            this.napi.makeNativeHandleErc(raw.val),
+            this.napi.makeNativeHandleEmp(raw.val),
         );
         this.nativeHandles.set(id, container);
         return { val: id };
@@ -146,15 +147,15 @@ export class TaskMgr<TPtr> {
         return taskContainer;
     }
 
-    /** Get a strong reference to native handle by its id */
-    public async getNativeHandle(
+    /** Get a reference to native handle by its id */
+    public getNativeHandle(
         nativeHandleId: number,
-    ): Promise<AsyncErc<NativeHandle, TPtr>> {
+    ): Emp<NativeHandle, TPtr> | undefined {
         const container = this.nativeHandles.get(nativeHandleId);
         if (!container) {
-            return this.napi.makeNativeHandleErc(undefined);
+            return undefined;
         }
-        return await container.getHandle();
+        return container.getHandle();
     }
 
     public addNativeHandleDependency(
@@ -207,6 +208,12 @@ export class TaskMgr<TPtr> {
     }
 
     private unregisterNativeHandle(nativeHandleId: number) {
+        // const handle = this.nativeHandles.get(nativeHandleId);
+        // if (handle) {
+        //     if (!handle?.isDisposed()) {
+        //         log.warn(`NA#${nativeHandleId}\nleaked!`);
+        //     }
+        // }
         this.nativeHandles.delete(nativeHandleId);
         const remaining = this.nativeHandles.size;
         log.debug(
@@ -228,7 +235,7 @@ class NativeHandleContainer<TPtr> {
     /** Id of this native handle */
     private id: number;
     /** The handle used to abort task running in native code */
-    private handle: AsyncErc<NativeHandle, TPtr>;
+    private handle: Emp<NativeHandle, TPtr>;
     /** The tasks that currently depend on the native task */
     private owningTaskIds: string[];
     private isAbortingNativeTaskScheduled: boolean;
@@ -236,7 +243,7 @@ class NativeHandleContainer<TPtr> {
     constructor(
         napi: NativeApi<TPtr>,
         id: number,
-        handle: AsyncErc<NativeHandle, TPtr>,
+        handle: Emp<NativeHandle, TPtr>,
     ) {
         this.napi = napi;
         this.id = id;
@@ -245,23 +252,23 @@ class NativeHandleContainer<TPtr> {
         this.isAbortingNativeTaskScheduled = false;
     }
 
-    /** Check if this native handle is no longer used */
-    public isDisposed(): boolean {
-        return this.owningTaskIds.length === 0 && !this.handle.value;
-    }
+    // /** Check if this native handle is no longer used */
+    // public isDisposed(): boolean {
+    //     return this.owningTaskIds.length === 0 && !this.handle.value;
+    // }
 
     /** Add task dependency on this native task */
     public addTask(id: string) {
-        if (!this.handle.value) {
-            log.warn(
-                `NA#${this.id}\ncalling addTask on a container that does not own a native handle pointer`,
-            );
-        }
+        // if (!this.handle.value) {
+        //     log.warn(
+        //         `NA#${this.id}\ncalling addTask on a container that does not own a native handle pointer`,
+        //     );
+        // }
         this.owningTaskIds.push(id);
     }
 
-    public getHandle(): Promise<AsyncErc<NativeHandle, TPtr>> {
-        return this.handle.getStrong();
+    public getHandle(): Emp<NativeHandle, TPtr> {
+        return this.handle;
     }
 
     /**
@@ -296,14 +303,13 @@ class NativeHandleContainer<TPtr> {
             return false;
         }
         log.debug(`NA#${this.id}\naborting native handle`);
-        const ptr = this.handle.take();
-        if (ptr) {
-            this.napi.abortTask(ptr);
-        } else {
-            log.warn(
-                `NA#${this.id}\ncannot abort because container does not own a pointer`,
-            );
-        }
+        // "this" is holding a strong ref to handle, so the call is safe
+            this.napi.abortTask(this.handle.value);
+        // } else {
+        //     log.warn(
+        //         `NA#${this.id}\ncannot abort because container does not own a pointer`,
+        //     );
+        // }
         return true;
     }
 }

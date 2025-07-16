@@ -1,5 +1,26 @@
 use crate::memory::{Error, PAGE_SIZE, REGION_ALIGN, Section, align_down, align_up, perm, region};
 
+#[cfg(feature = "trace-memory")]
+static MAX_ALLOC_SIZE: std::sync::LazyLock<std::sync::Arc<std::sync::atomic::AtomicU64>>
+= std::sync::LazyLock::new(|| std::sync::Arc::new(std::sync::atomic::AtomicU64::new(0)));
+
+#[inline(always)]
+#[cfg(feature = "trace-memory")]
+fn record_max_alloc(new_max_size: u64) {
+    let n = std::sync::LazyLock::force(&MAX_ALLOC_SIZE);
+    // there's race condition here but we don't need to know the exact
+    let old = n.load(std::sync::atomic::Ordering::SeqCst);
+    if new_max_size > old {
+        n.store(new_max_size, std::sync::atomic::Ordering::SeqCst);
+    }
+}
+
+#[cfg(feature = "trace-memory")]
+pub fn get_max_heap_alloc() -> u64 {
+    let n = std::sync::LazyLock::force(&MAX_ALLOC_SIZE);
+    n.load(std::sync::atomic::Ordering::SeqCst)
+}
+
 /// A simple heap region implementation
 ///
 /// Since the simulator doesn't make much heap allocation (usually),
@@ -74,6 +95,10 @@ impl SimpleHeap {
             return Err(Error::HeapOutOfMemory);
         }
         self.next_alloc = end;
+        #[cfg(feature = "trace-memory")]
+        {
+            record_max_alloc(self.next_alloc - self.start)
+        }
         Ok(start)
     }
 

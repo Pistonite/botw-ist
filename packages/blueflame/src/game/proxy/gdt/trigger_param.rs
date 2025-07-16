@@ -23,21 +23,21 @@ pub struct TriggerParam {
     pub(crate) bool_flags: Arc<gdt::FlagList<bool>>,
     pub(crate) s32_flags: Arc<gdt::FlagList<i32>>,
     pub(crate) f32_flags: Arc<gdt::FlagList<f32>>,
-    pub(crate) string32_flags: Arc<gdt::FlagList<String>>,
-    pub(crate) string64_flags: Arc<gdt::FlagList<String>>,
-    pub(crate) string256_flags: Arc<gdt::FlagList<String>>,
+    pub(crate) string32_flags: Arc<gdt::FlagList<gdt::StringFlagType>>,
+    pub(crate) string64_flags: Arc<gdt::FlagList<gdt::StringFlagType>>,
+    pub(crate) string256_flags: Arc<gdt::FlagList<gdt::StringFlagType>>,
     pub(crate) vector2f_flags: Arc<gdt::FlagList<(f32, f32)>>,
     pub(crate) vector3f_flags: Arc<gdt::FlagList<(f32, f32, f32)>>,
     pub(crate) vector4f_flags: Arc<gdt::FlagList<(f32, f32, f32, f32)>>,
 
-    pub(crate) bool_array_flags: Arc<gdt::FlagList<Box<[bool]>>>,
-    pub(crate) s32_array_flags: Arc<gdt::FlagList<Box<[i32]>>>,
-    pub(crate) f32_array_flags: Arc<gdt::FlagList<Box<[f32]>>>,
+    pub(crate) bool_array_flags: Arc<gdt::FlagList<gdt::ArrayFlagType<bool>>>,
+    pub(crate) s32_array_flags: Arc<gdt::FlagList<gdt::ArrayFlagType<i32>>>,
+    pub(crate) f32_array_flags: Arc<gdt::FlagList<gdt::ArrayFlagType<f32>>>,
     // no str32[] in the game
-    pub(crate) string64_array_flags: Arc<gdt::FlagList<Box<[String]>>>,
-    pub(crate) string256_array_flags: Arc<gdt::FlagList<Box<[String]>>>,
-    pub(crate) vector2f_array_flags: Arc<gdt::FlagList<Box<[(f32, f32)]>>>,
-    pub(crate) vector3f_array_flags: Arc<gdt::FlagList<Box<[(f32, f32, f32)]>>>,
+    pub(crate) string64_array_flags: Arc<gdt::FlagList<gdt::ArrayFlagType<gdt::StringFlagType>>>,
+    pub(crate) string256_array_flags: Arc<gdt::FlagList<gdt::ArrayFlagType<gdt::StringFlagType>>>,
+    pub(crate) vector2f_array_flags: Arc<gdt::FlagList<gdt::ArrayFlagType<(f32, f32)>>>,
+    pub(crate) vector3f_array_flags: Arc<gdt::FlagList<gdt::ArrayFlagType<(f32, f32, f32)>>>,
 }
 
 impl TriggerParam {
@@ -264,7 +264,7 @@ mod tests {
             .by_hash::<gdt::fd!(bool[])>(-1649503087)
             .expect("flag not found");
         assert_eq!(
-            &Box::from([false, false, false, false, false, false, false, false]),
+            &Arc::from([false, false, false, false, false, false, false, false]),
             flag2.get()
         );
         // assert_eq!("dummy_bool_array", flag2.name());

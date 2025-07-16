@@ -26,3 +26,7 @@ tokio = { workspace = true, features = ["full"] }
 wasm = ["skybook-api/wasm"]
 cached = ["dep:cached"]
 
+# This enables the `leak` and `from_raw` functions
+# For passing ParseOutput objects to external code
+unsafe-leak = []
+

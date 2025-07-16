@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 /// Make a `gdt::FlagDescriptor` from shorthand
 #[macro_export]
 #[rustfmt::skip]
@@ -57,11 +59,19 @@ const _: () = {
 };
 
 /// Trait for flag types that can be used in TriggerParam
-pub trait FlagType: Clone {
-    type StaticType: Copy + PartialEq + 'static;
+pub trait FlagType: Clone + PartialEq {
+    /// The shared storage type of the flag - each flag stores a shared value for the initial value
+    type SharedType: Clone + PartialEq + 'static;
+    /// The static storage type of the flag - used for initializing the flag value
+    type StaticType: Clone + PartialEq + 'static;
+    /// The value of the flag for array elements, used for minmax clamping and comparison
     type ValueType: Copy + PartialEq + 'static;
 
-    fn from_static(value: Self::StaticType) -> Self;
+    fn from_shared(value: &Self::SharedType) -> Self;
+    fn from_static(value: Self::StaticType) -> Self {
+        Self::from_shared(&Self::static_to_shared(value))
+    }
+    fn static_to_shared(value: Self::StaticType) -> Self::SharedType;
     /// Clamps the value to the given min and max, used for bounds checking
     /// when setting values in TriggerParam.
     fn clamp(value: Self, min: Self::ValueType, max: Self::ValueType) -> Self;
@@ -70,60 +80,72 @@ pub trait FlagType: Clone {
     fn stub() -> Self::ValueType;
 }
 
+pub type StringFlagType = Arc<str>;
+pub type ArrayFlagType<T> = Arc<[T]>;
+
 #[rustfmt::skip]
 const _: () = {
+    macro_rules! scalar_impl {
+        () => {
+        type SharedType = Self; type StaticType = Self; type ValueType = Self;
+        #[inline(always)] fn from_shared(value: &Self) -> Self { *value }
+        #[inline(always)] fn static_to_shared(value: Self) -> Self { value }
+        }
+    }
     impl FlagType for bool {
-        type StaticType = bool; type ValueType = bool;
-        #[inline(always)] fn from_static(value: Self::StaticType) -> Self { value }
-        #[inline(always)] fn clamp(value: Self, _: Self::ValueType, _: Self::ValueType) -> Self { value }
-        #[inline(always)] fn stub() -> Self::StaticType { false }
+        scalar_impl!();
+        #[inline(always)] fn clamp(value: Self, _: Self, _: Self) -> Self { value }
+        #[inline(always)] fn stub() -> Self { false }
     }
     impl FlagType for i32 {
-        type StaticType = i32; type ValueType = i32;
-        #[inline(always)] fn from_static(value: Self::StaticType) -> Self { value }
-        #[inline(always)] fn clamp(value: Self, min: Self::ValueType, max: Self::ValueType) -> Self { value.clamp(min, max) }
-        #[inline(always)] fn stub() -> Self::StaticType { 0 }
+        scalar_impl!();
+        #[inline(always)] fn clamp(value: Self, min: Self, max: Self) -> Self { value.clamp(min, max) }
+        #[inline(always)] fn stub() -> Self { 0 }
     }
     impl FlagType for f32 {
-        type StaticType = f32; type ValueType = f32;
-        #[inline(always)] fn from_static(value: Self::StaticType) -> Self { value }
-        #[inline(always)] fn clamp(value: Self, min: Self::StaticType, max: Self::StaticType) -> Self { value.clamp(min, max) }
-        #[inline(always)] fn stub() -> Self::StaticType { 0f32 }
+        scalar_impl!();
+        #[inline(always)] fn clamp(value: Self, min: Self, max: Self) -> Self { value.clamp(min, max) }
+        #[inline(always)] fn stub() -> Self { 0f32 }
     }
-    impl FlagType for String {
-        type StaticType = &'static str; type ValueType = &'static str;
-        #[inline(always)] fn from_static(value: Self::StaticType) -> Self { value.to_owned() }
+    impl FlagType for StringFlagType {
+        type SharedType = Self; type StaticType = &'static str; type ValueType = &'static str;
+        #[inline(always)] fn from_shared(value: &Self::SharedType) -> Self { Arc::clone(value) }
+        #[inline(always)] fn from_static(value: Self::StaticType) -> Self { Arc::from(value) }
+        #[inline(always)] fn static_to_shared(value: Self::StaticType) -> Self { Arc::from(value) }
         #[inline(always)] fn clamp(value: Self, _: Self::StaticType, _: Self::StaticType) -> Self { value }
         #[inline(always)] fn stub() -> Self::StaticType { "" }
     }
     impl FlagType for (f32, f32) {
-        type StaticType = (f32, f32); type ValueType = (f32, f32);
-        #[inline(always)] fn from_static(value: Self::StaticType) -> Self { value }
+        scalar_impl!();
         #[inline(always)] fn clamp(value: Self, min: Self::StaticType, max: Self::StaticType) -> Self { 
             (value.0.clamp(min.0, max.0), value.1.clamp(min.1, max.1))
         }
         #[inline(always)] fn stub() -> Self::StaticType { (0f32, 0f32) }
     }
     impl FlagType for (f32, f32, f32) {
-        type StaticType = (f32, f32, f32); type ValueType = (f32, f32, f32);
-        #[inline(always)] fn from_static(value: Self::StaticType) -> Self { value }
+        scalar_impl!();
         #[inline(always)] fn clamp(value: Self, min: Self::StaticType, max: Self::StaticType) -> Self { 
             (value.0.clamp(min.0, max.0), value.1.clamp(min.1, max.1), value.2.clamp(min.2, max.2))
         }
         #[inline(always)] fn stub() -> Self::StaticType { (0f32, 0f32, 0f32) }
     }
     impl FlagType for (f32, f32, f32, f32) {
-        type StaticType = (f32, f32, f32, f32); type ValueType = (f32, f32, f32, f32);
-        #[inline(always)] fn from_static(value: Self::StaticType) -> Self { value }
+        scalar_impl!();
         #[inline(always)] fn clamp(value: Self, min: Self::StaticType, max: Self::StaticType) -> Self { 
             (value.0.clamp(min.0, max.0), value.1.clamp(min.1, max.1), value.2.clamp(min.2, max.2), value.3.clamp(min.3, max.3))
         }
         #[inline(always)] fn stub() -> Self::StaticType { (0f32, 0f32, 0f32, 0f32) }
     }
-    impl<T: FlagType> FlagType for Box<[T]> {
-        type StaticType = &'static [T::StaticType]; type ValueType = T::ValueType;
-        #[inline(always)] fn from_static(value: Self::StaticType) -> Self {
-            value.iter().map(|x| T::from_static(*x)).collect::<Vec<_>>().into_boxed_slice()
+    impl<T: FlagType + 'static> FlagType for ArrayFlagType<T> {
+        type SharedType = ArrayFlagType<T>;
+        type StaticType = &'static [T::StaticType]; 
+        type ValueType = T::ValueType;
+        #[inline(always)] fn from_shared(value: &Self::SharedType) -> Self {
+            Self::clone(value)
+        }
+        #[inline(always)] fn static_to_shared(value: Self::StaticType) -> Self {
+            let v = value.iter().map(|x| T::from_static(x.clone())).collect::<Vec<_>>();
+            Self::from(v.as_slice())
         }
         #[inline(always)] fn clamp(value: Self, _: Self::ValueType, _: Self::ValueType) -> Self { value }
         #[inline(always)] fn stub() -> Self::ValueType { T::stub() }
@@ -135,7 +157,7 @@ pub type FlagList<T> = Vec<Flag<T>>;
 #[derive(Debug, PartialEq, Clone)]
 pub struct Flag<T: FlagType> {
     value: T,
-    initial_value: T::StaticType,
+    initial_value: T::SharedType,
     hash: i32,
     min: T::ValueType,
     max: T::ValueType,
@@ -158,8 +180,8 @@ impl<T: FlagType> Flag<T> {
         properties: u8,
     ) -> Self {
         Self {
-            value: T::from_static(initial_value),
-            initial_value,
+            value: T::from_static(initial_value.clone()),
+            initial_value: T::static_to_shared(initial_value),
             hash,
             // name,
             min: T::stub(),
@@ -176,8 +198,8 @@ impl<T: FlagType> Flag<T> {
         max: T::ValueType,
     ) -> Self {
         Self {
-            value: T::from_static(initial_value),
-            initial_value,
+            value: T::from_static(initial_value.clone()),
+            initial_value: T::static_to_shared(initial_value),
             hash,
             // name,
             min,
@@ -193,7 +215,7 @@ impl<T: FlagType> Flag<T> {
         self.value = T::clamp(value, self.min, self.max);
     }
     pub fn reset(&mut self) {
-        self.value = T::from_static(self.initial_value);
+        self.value = T::from_shared(&self.initial_value);
     }
 
     pub fn hash(&self) -> i32 {
@@ -217,7 +239,7 @@ impl<T: FlagType> Flag<T> {
     }
 }
 
-impl<T: FlagType> Flag<Box<[T]>> {
+impl<T: FlagType + 'static> Flag<ArrayFlagType<T>> {
     #[allow(clippy::len_without_is_empty)]
     pub fn len(&self) -> usize {
         self.value.len()
@@ -233,10 +255,10 @@ impl<T: FlagType> Flag<Box<[T]>> {
         let Some(init_value) = self.initial_value.get(i) else {
             return false;
         };
-        let Some(x) = self.value.get_mut(i) else {
+        let Some(x) = Arc::make_mut(&mut self.value).get_mut(i) else {
             return false;
         };
-        *x = T::from_static(*init_value);
+        *x = init_value.clone();
         true
     }
     #[must_use = "game implementation checks if the array index is valid"]
@@ -244,7 +266,7 @@ impl<T: FlagType> Flag<Box<[T]>> {
         let Some(i) = idx.to_index() else {
             return false;
         };
-        let Some(x) = self.value.get_mut(i) else {
+        let Some(x) = Arc::make_mut(&mut self.value).get_mut(i) else {
             return false;
         };
         *x = value;

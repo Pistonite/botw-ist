@@ -45,6 +45,9 @@ fn main_internal() -> anyhow::Result<()> {
     #[cfg(feature = "trace-memory")]
     {
         util::collect_memory_trace(&process)?;
+        // this is the emulated game heap, not the actual host memory
+        let max_heap = blueflame::memory::get_max_heap_alloc();
+        log::info!("max game heap alloc: {max_heap} bytes")
     }
 
     Ok(())

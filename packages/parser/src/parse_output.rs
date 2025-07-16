@@ -38,6 +38,34 @@ pub struct ParseOutput {
 }
 
 impl ParseOutput {
+    /// Leak self as an Arc for external code to operate on it
+    #[cfg(feature = "unsafe-leak")]
+    #[inline]
+    pub fn leak(s: std::sync::Arc<Self>) -> *const Self {
+        std::sync::Arc::into_raw(s)
+    }
+
+    /// Reclaim an Arc previously leaked via [`leak`](Self::leak)
+    ///
+    /// If `add_ref`, it will not invalidate the pointer.
+    ///
+    /// ## Safety
+    /// If the pointer is null, it will panic. If the pointer is not
+    /// one that's previously leaked by `ParseOutput::leak`, BAD THING will happen.
+    #[cfg(feature = "unsafe-leak")]
+    pub unsafe fn from_raw(ptr: *const Self, add_ref: bool) -> Arc<Self> {
+        if ptr.is_null() {
+            panic!("nullptr passed into ParseOutput::from_raw");
+        }
+        let x = unsafe { Arc::from_raw(ptr) };
+        if add_ref {
+            let x2 = Arc::clone(&x);
+            let x_old = Arc::into_raw(x);
+            assert!(std::ptr::eq(ptr, x_old), "re-leaked pointer is different, memory will be lost");
+            return x2;
+        }
+        x
+    }
     /// Get the step index by the byte pos in the script
     pub fn step_idx_from_pos(&self, pos: usize) -> Option<usize> {
         let i = match self.steps.binary_search_by_key(&pos, |x| x.pos()) {

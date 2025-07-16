@@ -3,4 +3,4 @@ pub use descriptor::*;
 mod trigger_param;
 pub use trigger_param::*;
 
-pub use blueflame_deps::gdt::{Flag, FlagIndex, FlagList, FlagType};
+pub use blueflame_deps::gdt::{Flag, FlagIndex, FlagList, FlagType, StringFlagType, ArrayFlagType};

@@ -10,11 +10,11 @@ path = "../blueflame"
 
 [dependencies.skybook-runtime]
 path = "../runtime"
-features = ["wasm"]
+features = ["wasm", "unsafe-leak"]
 
 [dependencies.skybook-parser]
 path = "../parser"
-features = ["wasm", "cached"]
+features = ["wasm", "cached", "unsafe-leak"]
 
 [dependencies]
 wasm-bindgen.workspace = true
@@ -31,5 +31,9 @@ log.workspace = true
 crate-type = ["cdylib"]
 
 [features]
-# default = ["log/release_max_level_info"]
+default = [
+    "trace-alloc"
+]
+trace-alloc = [] # used to debug memory leak when passing ownership externally
+
 no-trace = ["log/release_max_level_warn"]

@@ -1,5 +1,6 @@
 import type { Result } from "@pistonite/pure/result";
-import { makeAsyncErcType } from "@pistonite/pure/memory";
+
+import { Emp, makeEmpType } from "./emp_contrib.ts";
 
 import type {
     InvView_Gdt,
@@ -29,7 +30,7 @@ export type RuntimeInitOutput = {
 /** API bindings for calls into native runtime, plus mixin functions used by the worker */
 export interface NativeApi<TPtr>
     extends NativeApiFunctions<TPtr>,
-        NativeErcFactory<TPtr> {}
+        NativeEmpFactory<TPtr> {}
 
 /** API bindings for calls into native runtime */
 export interface NativeApiFunctions<TPtr> {
@@ -94,7 +95,7 @@ export interface NativeApiFunctions<TPtr> {
      */
     runParsed(
         parsedOutputPtr: TPtr,
-        taskHandlePtr: TPtr,
+        taskHandlePtr: TPtr | undefined,
         notifyFn: (upToBytePos: number, outputPtr: TPtr) => Promise<void>,
     ): Pwr<MaybeAborted<TPtr>>;
 
@@ -158,11 +159,11 @@ export interface NativeApiFunctions<TPtr> {
 
     // === ref counting api ===
 
-    addRefNativeHandle(ptr: TPtr): Promise<TPtr>;
+    // addRefNativeHandle(ptr: TPtr): Promise<TPtr>;
     freeNativeHandle(ptr: TPtr): Promise<void>;
-    addRefParseOutput(ptr: TPtr): Promise<TPtr>;
+    // addRefParseOutput(ptr: TPtr): Promise<TPtr>;
     freeParseOutput(ptr: TPtr): Promise<void>;
-    addRefRunOutput(ptr: TPtr): Promise<TPtr>;
+    // addRefRunOutput(ptr: TPtr): Promise<TPtr>;
     freeRunOutput(ptr: TPtr): Promise<void>;
 }
 
@@ -174,40 +175,40 @@ const ParseOutput = Symbol("ParseOutput");
 export type ParseOutput = typeof ParseOutput;
 
 /** Factory type to create Erc (Externally-RefCounted) pointers */
-export type NativeErcFactory<TPtr> = {
+export type NativeEmpFactory<TPtr> = {
     readonly nullptr: TPtr; // get the nullptr value to pass into native function as fallback when Erc has undefined value
-    readonly makeNativeHandleErc: ReturnType<
-        typeof makeAsyncErcType<NativeHandle, TPtr>
+    readonly makeNativeHandleEmp: ReturnType<
+        typeof makeEmpType<NativeHandle, TPtr>
     >;
-    readonly makeRunOutputErc: ReturnType<
-        typeof makeAsyncErcType<RunOutput, TPtr>
+    readonly makeRunOutputEmp: ReturnType<
+        typeof makeEmpType<RunOutput, TPtr>
     >;
-    readonly makeParseOutputErc: ReturnType<
-        typeof makeAsyncErcType<ParseOutput, TPtr>
+    readonly makeParseOutputEmp: ReturnType<
+        typeof makeEmpType<ParseOutput, TPtr>
     >;
 };
 
-/** Bind the ref counting API to a Erc factory */
-export const createNativeErcFactory = <TPtr>(
+/** Bind the ref counting API to a Emp factory */
+export const createNativeEmpFactory = <TPtr>(
     nullptr: TPtr,
     napi: NativeApiFunctions<TPtr>,
-): NativeErcFactory<TPtr> => {
+): NativeEmpFactory<TPtr> => {
     return {
         nullptr,
-        makeNativeHandleErc: makeAsyncErcType<NativeHandle, TPtr>({
+        makeNativeHandleEmp: makeEmpType<NativeHandle, TPtr>({
             marker: NativeHandle,
-            free: (ptr: TPtr) => napi.freeNativeHandle(ptr),
-            addRef: (ptr: TPtr) => napi.addRefNativeHandle(ptr),
+            free: (ptr: TPtr) => void napi.freeNativeHandle(ptr),
+            // addRef: (ptr: TPtr) => napi.addRefNativeHandle(ptr),
         }),
-        makeRunOutputErc: makeAsyncErcType<RunOutput, TPtr>({
+        makeRunOutputEmp: makeEmpType<RunOutput, TPtr>({
             marker: RunOutput,
-            free: (ptr: TPtr) => napi.freeRunOutput(ptr),
-            addRef: (ptr: TPtr) => napi.addRefRunOutput(ptr),
+            free: (ptr: TPtr) => void napi.freeRunOutput(ptr),
+            // addRef: (ptr: TPtr) => napi.addRefRunOutput(ptr),
         }),
-        makeParseOutputErc: makeAsyncErcType<ParseOutput, TPtr>({
+        makeParseOutputEmp: makeEmpType<ParseOutput, TPtr>({
             marker: ParseOutput,
-            free: (ptr: TPtr) => napi.freeParseOutput(ptr),
-            addRef: (ptr: TPtr) => napi.addRefParseOutput(ptr),
+            free: (ptr: TPtr) => void napi.freeParseOutput(ptr),
+            // addRef: (ptr: TPtr) => napi.addRefParseOutput(ptr),
         }),
     };
 };

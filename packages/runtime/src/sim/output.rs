@@ -11,6 +11,29 @@ pub struct RunOutput {
 }
 
 impl RunOutput {
+    /// Leak self into a raw pointer to pass to external code
+    ///
+    /// - To later borrow it: `unsafe { &*ptr }`
+    /// - To free it: `unsafe { RunOutput::from_raw(ptr) }`
+    #[inline]
+    #[cfg(feature = "unsafe-leak")]
+    pub fn leak(s: Box<Self>) -> *mut Self {
+        Box::leak(s)
+    }
+
+    /// Reclaim ownership of previously leaked self
+    ///
+    /// # Safety
+    ///
+    /// The pointer must be one previously leaked with [`leak`](Self::leak)
+    #[inline]
+    #[cfg(feature = "unsafe-leak")]
+    pub unsafe fn from_raw(ptr: *mut Self) -> Box<Self> {
+        if ptr.is_null() {
+            panic!("nullptr passed into RunOutput::from_raw");
+        }
+        unsafe { Box::from_raw(ptr) }
+    }
     /// Get the pouch inventory view for the given step in the script
     ///
     /// If there are no steps in the script, an empty pouch list is returned. Otherwise,

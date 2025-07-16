@@ -14,11 +14,9 @@ static READS: std::sync::LazyLock<
 #[inline(always)]
 #[cfg(feature = "trace-memory")]
 fn record_read(addr: u64) {
-    {
-        let page = addr / (PAGE_SIZE as u64);
-        let mut set = std::sync::LazyLock::force(&READS).lock().unwrap();
-        set.insert(page);
-    }
+    let page = addr / (PAGE_SIZE as u64);
+    let mut set = std::sync::LazyLock::force(&READS).lock().unwrap();
+    set.insert(page);
 }
 
 /// Get the recorded reads across all memory instances

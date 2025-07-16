@@ -16,11 +16,11 @@ import type {
 } from "@pistonite/skybook-api";
 import {
     crashApplication,
-    createNativeErcFactory,
+    createNativeEmpFactory,
     type Pwr,
     type NativeApi,
     type QuotedItemResolverFn,
-    type NativeErcFactory,
+    type NativeEmpFactory,
 } from "skybook-runtime-worker";
 
 export class WasmApi implements NativeApi<number> {
@@ -40,15 +40,15 @@ export class WasmApi implements NativeApi<number> {
             void crashApplication();
         };
 
-        const factory = createNativeErcFactory(0, this);
-        this.makeNativeHandleErc = factory.makeNativeHandleErc;
-        this.makeRunOutputErc = factory.makeRunOutputErc;
-        this.makeParseOutputErc = factory.makeParseOutputErc;
+        const factory = createNativeEmpFactory(0, this);
+        this.makeNativeHandleEmp = factory.makeNativeHandleEmp;
+        this.makeRunOutputEmp = factory.makeRunOutputEmp;
+        this.makeParseOutputEmp = factory.makeParseOutputEmp;
     }
     public readonly nullptr = 0;
-    public readonly makeNativeHandleErc: NativeErcFactory<number>["makeNativeHandleErc"];
-    public readonly makeRunOutputErc: NativeErcFactory<number>["makeRunOutputErc"];
-    public readonly makeParseOutputErc: NativeErcFactory<number>["makeParseOutputErc"];
+    public readonly makeNativeHandleEmp: NativeEmpFactory<number>["makeNativeHandleEmp"];
+    public readonly makeRunOutputEmp: NativeEmpFactory<number>["makeRunOutputEmp"];
+    public readonly makeParseOutputEmp: NativeEmpFactory<number>["makeParseOutputEmp"];
 
     /** Initialize the WASM module, this is needed to call any WASM function */
     public async initWasmModule() {
@@ -251,11 +251,11 @@ export class WasmApi implements NativeApi<number> {
         });
     }
 
-    public addRefNativeHandle(ptr: number): Promise<number> {
-        return this.execAddRef("addRefNativeHandle", () => {
-            return wasm_bindgen.add_ref_task_handle(ptr);
-        });
-    }
+    // public addRefNativeHandle(ptr: number): Promise<number> {
+    //     return this.execAddRef("addRefNativeHandle", () => {
+    //         return wasm_bindgen.add_ref_task_handle(ptr);
+    //     });
+    // }
 
     public async freeNativeHandle(ptr: number): Promise<void> {
         await this.exec(() => {
@@ -263,11 +263,11 @@ export class WasmApi implements NativeApi<number> {
         });
     }
 
-    public addRefParseOutput(ptr: number): Promise<number> {
-        return this.execAddRef("addRefParseOutput", () => {
-            return wasm_bindgen.add_ref_parse_output(ptr);
-        });
-    }
+    // public addRefParseOutput(ptr: number): Promise<number> {
+    //     return this.execAddRef("addRefParseOutput", () => {
+    //         return wasm_bindgen.add_ref_parse_output(ptr);
+    //     });
+    // }
 
     public async freeParseOutput(ptr: number): Promise<void> {
         await this.exec(() => {
@@ -275,11 +275,11 @@ export class WasmApi implements NativeApi<number> {
         });
     }
 
-    public addRefRunOutput(ptr: number): Promise<number> {
-        return this.execAddRef("addRefRunOutput", () => {
-            return wasm_bindgen.add_ref_run_output(ptr);
-        });
-    }
+    // public addRefRunOutput(ptr: number): Promise<number> {
+    //     return this.execAddRef("addRefRunOutput", () => {
+    //         return wasm_bindgen.add_ref_run_output(ptr);
+    //     });
+    // }
 
     public async freeRunOutput(ptr: number): Promise<void> {
         await this.exec(() => {
@@ -287,24 +287,24 @@ export class WasmApi implements NativeApi<number> {
         });
     }
 
-    private nullptrCrash(message: string) {
-        console.error(`nullptr crash: ${message}`);
-        this.panicked = true;
-        void crashApplication();
-    }
+    // private nullptrCrash(message: string) {
+    //     console.error(`nullptr crash: ${message}`);
+    //     this.panicked = true;
+    //     void crashApplication();
+    // }
 
-    private async execAddRef(
-        marker: string,
-        fn: () => number,
-    ): Promise<number> {
-        const result = await this.exec(fn);
-        if (result.err) {
-            console.error(result.err);
-            this.nullptrCrash(`${marker} failed`);
-            return 0;
-        }
-        return result.val;
-    }
+    // private async execAddRef(
+    //     marker: string,
+    //     fn: () => number,
+    // ): Promise<number> {
+    //     const result = await this.exec(fn);
+    //     if (result.err) {
+    //         console.error(result.err);
+    //         this.nullptrCrash(`${marker} failed`);
+    //         return 0;
+    //     }
+    //     return result.val;
+    // }
 
     /** Execute the closure if WASM did not previously panic */
     private async exec<T>(

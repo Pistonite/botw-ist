@@ -159,36 +159,31 @@ pub fn extract_gdt_from_trigger_param(gdt: &gdt::TriggerParam) -> Result<iv::Gdt
                 // the first material technically falls back to the item_name on stack,
                 // but this is just the view, so it's probably fine we don't simulate that
                 // (there's no known exploit for it either)
-                let mut name_ref = "";
+                let mut name_last = String::new();
                 let ingr0 = cook_material0
                     .get_at(food_idx)
-                    .map(|x| x.as_str())
-                    .unwrap_or(name_ref)
-                    .to_string();
-                name_ref = &ingr0;
+                    .map(|x| x.to_string())
+                    .unwrap_or(name_last.clone());
+                name_last = ingr0.clone();
                 let ingr1 = cook_material1
                     .get_at(food_idx)
-                    .map(|x| x.as_str())
-                    .unwrap_or(name_ref)
-                    .to_string();
-                name_ref = &ingr1;
+                    .map(|x| x.to_string())
+                    .unwrap_or(name_last.clone());
+                name_last = ingr1.clone();
                 let ingr2 = cook_material2
                     .get_at(food_idx)
-                    .map(|x| x.as_str())
-                    .unwrap_or(name_ref)
-                    .to_string();
-                name_ref = &ingr2;
+                    .map(|x| x.to_string())
+                    .unwrap_or(name_last.clone());
+                name_last = ingr2.clone();
                 let ingr3 = cook_material3
                     .get_at(food_idx)
-                    .map(|x| x.as_str())
-                    .unwrap_or(name_ref)
-                    .to_string();
-                name_ref = &ingr3;
+                    .map(|x| x.to_string())
+                    .unwrap_or(name_last.clone());
+                name_last = ingr3.clone();
                 let ingr4 = cook_material4
                     .get_at(food_idx)
-                    .map(|x| x.as_str())
-                    .unwrap_or(name_ref)
-                    .to_string();
+                    .map(|x| x.to_string())
+                    .unwrap_or(name_last.clone());
 
                 item.data = iv::GdtItemData::Food {
                     idx: food_idx,

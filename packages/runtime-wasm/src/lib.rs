@@ -1,5 +1,6 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
+use std::sync::atomic::AtomicUsize;
 use std::{cell::OnceCell, sync::Arc};
 
 use blueflame::env::GameVer;
@@ -7,9 +8,9 @@ use js_sys::{Function, Promise, Uint8Array};
 use serde::{Deserialize, Serialize};
 use skybook_parser::{ParseOutput, search};
 use skybook_runtime::exec::Spawner;
+use skybook_runtime::iv;
 use skybook_runtime::sim::{self, RuntimeInitParams};
 use skybook_runtime::{MaybeAborted, RuntimeInitError, RuntimeViewError};
-use skybook_runtime::{erc, iv};
 use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
@@ -52,6 +53,13 @@ pub async fn module_init(wasm_module_path: String, wasm_bindgen_js_path: String)
     RUNTIME.with(|runtime| {
         let _ = runtime.set(Arc::new(sim::Runtime::new(spawner)));
     });
+
+    #[cfg(feature = "trace-alloc")]
+    {
+        ALLOC_STAT.with(|x| {
+            let _ = x.set(Default::default());
+        });
+    }
 
     log::info!("wasm module initialized successfully");
 }
@@ -133,12 +141,21 @@ pub fn resolve_item_ident(query: String) -> Vec<ItemSearchResult> {
 /// Parse the script
 ///
 /// ## Pointer Ownership
-/// Returns ownership of the ParseOutput pointer.
+/// The ParseOutput object is leaked into the caller. call [`free_parse_output`] to reclaim
 #[wasm_bindgen]
 pub async fn parse_script(script: String, resolve_quoted_item: Function) -> *const ParseOutput {
     let resolver = JsQuotedItemResolver::new(resolve_quoted_item);
     let parse_output = skybook_parser::parse(&resolver, &script).await;
-    Arc::into_raw(Arc::new(parse_output))
+    log_parse_output_alloc();
+    ParseOutput::leak(Arc::new(parse_output))
+}
+
+#[wasm_bindgen]
+pub fn free_parse_output(ptr: *const ParseOutput) {
+    log_parse_output_free();
+    unsafe {
+        ParseOutput::from_raw(ptr, false);
+    }
 }
 
 /// Parse the semantics of the script in the given range
@@ -156,46 +173,37 @@ pub fn parse_script_semantic(script: String, start: usize, end: usize) -> Vec<u3
     output
 }
 
+// only safe if not async
+macro_rules! unsafe_deref_parse_output {
+    ($parse:ident) => {{
+        if $parse.is_null() {
+            return Default::default();
+        }
+        unsafe { &*$parse }
+    }};
+}
+
 /// Get the errors from the parse output.
-///
-/// ## Pointer Ownership
-/// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
 pub fn get_parser_errors(parse_output_ref: *const ParseOutput) -> Vec<skybook_parser::ErrorReport> {
-    if parse_output_ref.is_null() {
-        return Vec::new();
-    }
-    let parse_output = unsafe { &*parse_output_ref };
-    parse_output.errors.clone()
+    unsafe_deref_parse_output!(parse_output_ref).errors.clone()
 }
 
 /// Get the number of steps in the parse output (The actual number of steps/commands,
 /// not number of steps displayed)
-///
-/// ## Pointer Ownership
-/// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
 pub fn get_step_count(parse_output_ref: *const ParseOutput) -> usize {
-    if parse_output_ref.is_null() {
-        return 0;
-    }
-    let parse_output = unsafe { &*parse_output_ref };
-    parse_output.steps.len()
+    unsafe_deref_parse_output!(parse_output_ref).steps.len()
 }
 
 /// Get index of the step from byte position in script
 ///
 /// 0 is returned if steps are empty
-///
-/// ## Pointer Ownership
-/// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
 pub fn get_step_from_pos(parse_output_ref: *const ParseOutput, pos: usize) -> usize {
-    if parse_output_ref.is_null() {
-        return 0;
-    }
-    let parse_output = unsafe { &*parse_output_ref };
-    parse_output.step_idx_from_pos(pos).unwrap_or_default()
+    unsafe_deref_parse_output!(parse_output_ref)
+        .step_idx_from_pos(pos)
+        .unwrap_or_default()
 }
 
 /// Get the starting index for each step
@@ -204,11 +212,11 @@ pub fn get_step_from_pos(parse_output_ref: *const ParseOutput, pos: usize) -> us
 /// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
 pub fn get_step_byte_positions(parse_output_ref: *const ParseOutput) -> Vec<u32> {
-    if parse_output_ref.is_null() {
-        return vec![];
-    }
-    let parse_output = unsafe { &*parse_output_ref };
-    parse_output.steps.iter().map(|x| x.pos() as u32).collect()
+    unsafe_deref_parse_output!(parse_output_ref)
+        .steps
+        .iter()
+        .map(|x| x.pos() as u32)
+        .collect()
 }
 
 ////////// Runtime //////////
@@ -217,30 +225,37 @@ pub fn get_step_byte_positions(parse_output_ref: *const ParseOutput) -> Vec<u32>
 /// to be able to abort the run
 #[wasm_bindgen]
 pub fn make_task_handle() -> *const sim::RunHandle {
+    log_task_handle_alloc();
     let handle = Arc::new(sim::RunHandle::new());
-    sim::RunHandle::into_raw(handle)
+    sim::RunHandle::leak(handle)
 }
 
-/// Abort the task using the handle. Frees the handle
+/// Abort the task using the handle.
 #[wasm_bindgen]
 pub fn abort_task(ptr: *const sim::RunHandle) {
-    let handle = sim::RunHandle::from_raw(ptr);
+    let handle = unsafe { sim::RunHandle::from_raw(ptr, true) };
     handle.abort();
+}
+
+#[wasm_bindgen]
+pub fn free_task_handle(ptr: *const sim::RunHandle) {
+    log_task_handle_free();
+    unsafe {
+        sim::RunHandle::from_raw(ptr, false);
+    }
 }
 
 /// Run simulation using the ParseOutput
 ///
-/// ## Pointer Ownership
-/// Takes ownership of the ParseOutput pointer. Returns
-/// ownership of the RunOutput pointer.
+/// Returns a leaked RunOutput on success
 #[wasm_bindgen]
 pub async fn run_parsed(
     parse_output: *const ParseOutput,
     handle: *const sim::RunHandle,
-    notify_fn: Function, // (up_to_byte_pos, Arc<RunOutput> as usize) -> Promise<void>
+    notify_fn: Function, // (up_to_byte_pos, Emp<RunOutput> as usize) -> Promise<void>
 ) -> MaybeAborted<usize> {
-    let parse_output = unsafe { Arc::from_raw(parse_output) };
-    let handle = sim::RunHandle::from_raw(handle);
+    let handle = unsafe { sim::RunHandle::from_raw(handle, true) };
+    let parse_output = unsafe { ParseOutput::from_raw(parse_output, true) };
     let run = sim::Run::new(handle);
     let runtime = RUNTIME.with(|runtime| {
         // unwrap: the worker guarantees it calls init_runtime before this
@@ -250,9 +265,12 @@ pub async fn run_parsed(
             .clone()
     });
     let output = run
-        .run_parsed_with_notify(parse_output, &runtime, |up_to_byte_pos, output| {
-            // this pointer is leaked to the JS side to be externally managed
-            let output_ptr = Arc::into_raw(Arc::new(output.clone())) as usize;
+        .run_parsed_with_notify(&parse_output, &runtime, |up_to_byte_pos, output| {
+            log_run_output_alloc();
+
+            // this pointer ownership is leaked to the JS side
+            // so we DO NOT free it here
+            let output_ptr = sim::RunOutput::leak(Box::new(output.clone())) as usize;
             let result = notify_fn.call2(
                 &JsValue::undefined(),
                 &up_to_byte_pos.into(),
@@ -280,10 +298,20 @@ pub async fn run_parsed(
 
     match output {
         MaybeAborted::Ok(run_output) => {
-            let run_output_ptr = Arc::into_raw(Arc::new(run_output));
+            log_run_output_alloc();
+            log_alloc_trace();
+            let run_output_ptr = sim::RunOutput::leak(Box::new(run_output));
             MaybeAborted::Ok(run_output_ptr as usize)
         }
         MaybeAborted::Aborted => MaybeAborted::Aborted,
+    }
+}
+
+#[wasm_bindgen]
+pub fn free_run_output(ptr: *mut sim::RunOutput) {
+    log_run_output_free();
+    unsafe {
+        sim::RunOutput::from_raw(ptr);
     }
 }
 
@@ -405,28 +433,133 @@ pub fn get_save_inventory(
     run_output.get_save_inventory(step, name.as_deref()).into()
 }
 
-////////// Ref Counting //////////
-#[wasm_bindgen]
-pub fn free_parse_output(ptr: *const ParseOutput) {
-    erc::free(ptr);
+////////// Memory Management //////////
+// #[wasm_bindgen]
+// pub fn add_ref_parse_output(ptr: *const ParseOutput) -> *const ParseOutput {
+//     log_parse_output_alloc();
+//     erc::add_ref(ptr)
+// }
+// #[wasm_bindgen]
+// pub fn free_task_handle(ptr: *const sim::RunHandle) {
+//     log_task_handle_free();
+//     erc::free(ptr);
+// }
+// #[wasm_bindgen]
+// pub fn add_ref_task_handle(ptr: *const sim::RunHandle) -> *const sim::RunHandle {
+//     log_task_handle_alloc();
+//     erc::add_ref(ptr)
+// }
+// #[wasm_bindgen]
+// pub fn add_ref_run_output(ptr: *const sim::RunOutput) -> *const sim::RunOutput {
+//     log_run_output_alloc();
+//     erc::add_ref(ptr)
+// }
+
+thread_local! {
+    static ALLOC_STAT: OnceCell<AllocStat> = const { OnceCell::new() };
 }
-#[wasm_bindgen]
-pub fn add_ref_parse_output(ptr: *const ParseOutput) -> *const ParseOutput {
-    erc::add_ref(ptr)
+#[derive(Default)]
+struct AllocStat {
+    parse_output_alloc: AtomicUsize,
+    parse_output_free: AtomicUsize,
+    task_handle_alloc: AtomicUsize,
+    task_handle_free: AtomicUsize,
+    run_output_alloc: AtomicUsize,
+    run_output_free: AtomicUsize,
 }
-#[wasm_bindgen]
-pub fn free_task_handle(ptr: *const sim::RunHandle) {
-    erc::free(ptr);
+#[inline(always)]
+fn log_parse_output_alloc() {
+    #[cfg(feature = "trace-alloc")]
+    {
+        ALLOC_STAT.with(|x| {
+            x.get()
+                .unwrap()
+                .parse_output_alloc
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        })
+    }
 }
-#[wasm_bindgen]
-pub fn add_ref_task_handle(ptr: *const sim::RunHandle) -> *const sim::RunHandle {
-    erc::add_ref(ptr)
+#[inline(always)]
+fn log_task_handle_alloc() {
+    #[cfg(feature = "trace-alloc")]
+    {
+        ALLOC_STAT.with(|x| {
+            x.get()
+                .unwrap()
+                .task_handle_alloc
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        })
+    }
 }
-#[wasm_bindgen]
-pub fn free_run_output(ptr: *const sim::RunOutput) {
-    erc::free(ptr);
+#[inline(always)]
+fn log_run_output_alloc() {
+    #[cfg(feature = "trace-alloc")]
+    {
+        ALLOC_STAT.with(|x| {
+            x.get()
+                .unwrap()
+                .run_output_alloc
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        })
+    }
 }
-#[wasm_bindgen]
-pub fn add_ref_run_output(ptr: *const sim::RunOutput) -> *const sim::RunOutput {
-    erc::add_ref(ptr)
+#[inline(always)]
+fn log_parse_output_free() {
+    #[cfg(feature = "trace-alloc")]
+    {
+        ALLOC_STAT.with(|x| {
+            x.get()
+                .unwrap()
+                .parse_output_free
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        })
+    }
+}
+#[inline(always)]
+fn log_task_handle_free() {
+    #[cfg(feature = "trace-alloc")]
+    {
+        ALLOC_STAT.with(|x| {
+            x.get()
+                .unwrap()
+                .task_handle_free
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        })
+    }
+}
+#[inline(always)]
+fn log_run_output_free() {
+    #[cfg(feature = "trace-alloc")]
+    {
+        ALLOC_STAT.with(|x| {
+            x.get()
+                .unwrap()
+                .run_output_free
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        })
+    }
+}
+
+fn log_alloc_trace() {
+    #[cfg(feature = "trace-alloc")]
+    {
+        ALLOC_STAT.with(|x| {
+            let x = x.get().unwrap();
+            let parse_output_alloc = x
+                .parse_output_alloc
+                .load(std::sync::atomic::Ordering::SeqCst);
+            let parse_output_free = x
+                .parse_output_free
+                .load(std::sync::atomic::Ordering::SeqCst);
+            log::info!("parse_output: {parse_output_alloc} alloc, {parse_output_free} free");
+            let task_handle_alloc = x
+                .task_handle_alloc
+                .load(std::sync::atomic::Ordering::SeqCst);
+            let task_handle_free = x.task_handle_free.load(std::sync::atomic::Ordering::SeqCst);
+            log::info!("task_handle: {task_handle_alloc} alloc, {task_handle_free} free");
+            let run_output_alloc = x.run_output_alloc.load(std::sync::atomic::Ordering::SeqCst);
+            let run_output_free = x.run_output_free.load(std::sync::atomic::Ordering::SeqCst);
+            log::info!("run_output: {run_output_alloc} alloc, {run_output_free} free");
+        })
+    }
 }
