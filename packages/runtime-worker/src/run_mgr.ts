@@ -1,5 +1,6 @@
 import type { Emp } from "@pistonite/pure/memory";
 import type { Err, Result } from "@pistonite/pure/result";
+import { scopedCapture } from "@pistonite/pure/sync";
 
 import type {
     ErrorReport,
@@ -25,7 +26,6 @@ import {
 import type { TaskMgr } from "./task_mgr.ts";
 import { log } from "./util.ts";
 import { crashApplication } from "./app_call.ts";
-import { scopedCapture } from "@pistonite/pure/sync";
 
 type RunAwaiter<TPtr> = {
     /** Resolve function to take the output */
@@ -42,7 +42,7 @@ class RunContext<TPtr> {
     lastNotifyBytePos: number; // -1 means not notified yet
     lastNotifyOutputEmp: Emp<RunOutput, TPtr> | undefined;
 
-    constructor(/*napi: NativeApi<TPtr>, */ nativeHandleId: number) {
+    constructor(nativeHandleId: number) {
         this.awaiters = [];
         this.nativeHandleId = nativeHandleId;
         this.lastNotifyBytePos = -1;
@@ -143,21 +143,17 @@ export class RunMgr<TPtr> {
                 err: nullptrError("parseScript (in run) returned nullptr"),
             };
         }
-        // const parseOutputErcForRun = await parseOutputErc.getStrong();
         const runOutput = await this.executeScript(
             script,
             taskId,
             executeToBytePos,
             parseOutputEmp,
         );
-        // await parseOutputErcForRun.free();
         if (runOutput.err) {
-            // await parseOutputErc.free();
             return runOutput;
         }
         const runOutputEmp = runOutput.val;
         if (!runOutputEmp.value) {
-            // await parseOutputErc.free();
             return { err: nullptrError("executeScript returned nullptr") };
         }
         return await scopedCapture(
@@ -257,11 +253,8 @@ export class RunMgr<TPtr> {
         }
         this.runContext = thisContext;
 
-        // let output: Awaited<Pwr<Emp<RunOutput, TPtr>>> | undefined =
-        //     undefined;
-        // let fullRunPromise: Promise<void> | undefined = undefined;
         try {
-            /*fullRunPromise = */ void this.executeScriptInternal(
+            void this.executeScriptInternal(
                 taskId,
                 parseOutputEmp,
                 thisContext,
@@ -275,25 +268,6 @@ export class RunMgr<TPtr> {
             log.error(e);
             return { err: { type: "UnexpectedThrow" } };
         }
-
-        // if (fullRunPromise) {
-        //     // schedule cleanup of context
-        //     void fullRunPromise.finally(() => {
-        //         log.debug(`${taskId}\ncleaning up resources`);
-        //         void thisContext.lastNotifyOutputErc.free();
-        //     });
-        // } else {
-        //     log.debug(`${taskId}\ncleaning up resources`);
-        //     // no run happened because of error, cleanup now
-        //     await thisContext.lastNotifyOutputErc.free();
-        // }
-
-        // if (output) {
-        //     return output;
-        // }
-        //
-        // // if output is not set, it must be because of the throw
-        // return { err: { type: "UnexpectedThrow" } };
     }
 
     /**
@@ -321,7 +295,6 @@ export class RunMgr<TPtr> {
         // Take it out of Erc, we will free it manually (by passing it into runParsed)
         let outputRaw: TPtr | undefined = undefined;
         // shouldn't be possible, but we will just return nullptr if parseoutput is null
-        // if (parseOutputErc.value) {
         const stepCount = await this.napi.getStepCount(parseOutputEmp.value);
         if (stepCount.err) {
             log.error(`${PREFIX}\nrun failed`);
@@ -370,7 +343,6 @@ export class RunMgr<TPtr> {
                         resolve({ val: outputEmp });
                     }
                     thisContext.lastNotifyBytePos = upToBytePos;
-                    // void thisContext.lastNotifyOutputErc.free();
                     thisContext.lastNotifyOutputEmp = outputEmp;
                 },
             );
@@ -411,9 +383,6 @@ export class RunMgr<TPtr> {
             this.taskMgr.unregisterTask(taskId);
         }
         outputRaw = outputResult.val.value;
-        // } else {
-        //     log.warn(`${PREFIX}\nparser output is empty, not executing`);
-        // }
 
         const returnEmp: Emp<RunOutput, TPtr> =
             this.napi.makeRunOutputEmp(outputRaw);
@@ -422,19 +391,12 @@ export class RunMgr<TPtr> {
             log.info(`${PREFIX}\nsaving execution result to cache`);
             this.runContext = undefined;
             this.cachedEmp = returnEmp;
-            // await this.cachedErc.assign(outputRaw);
-            // returnStrongErc = await this.cachedErc.getStrong();
         }
-        // else {
-        // returnStrongErc = this.napi.makeRunOutputErc(outputRaw);
-        // }
 
         // resolve remaining awaiters
         for (const { resolve } of thisContext.awaiters) {
             resolve({ val: returnEmp });
         }
-
-        // await thisContext.lastNotifyOutputErc.free();
     }
 
     private handleError(thisSerial: number) {
@@ -442,7 +404,6 @@ export class RunMgr<TPtr> {
             return;
         }
         this.runContext = undefined;
-        // void this.cachedErc.free();
         this.cachedEmp = undefined;
     }
 

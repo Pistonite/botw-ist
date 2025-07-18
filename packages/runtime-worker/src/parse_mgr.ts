@@ -1,5 +1,6 @@
 import type { Result } from "@pistonite/pure/result";
 import type { Emp } from "@pistonite/pure/memory";
+import { scopedCapture } from "@pistonite/pure/sync";
 
 import type { ErrorReport, ParserError } from "@pistonite/skybook-api";
 
@@ -7,7 +8,6 @@ import { resolveQuotedItem } from "./app_call.ts";
 import type { NativeApi, ParseOutput } from "./native_api.ts";
 import { type Pwr, type WorkerError, nullptrError } from "./error.ts";
 import { log } from "./util.ts";
-import { scopedCapture } from "@pistonite/pure/sync";
 
 /** Manages caching and batching parse calls */
 export class ParseMgr<TPtr> {

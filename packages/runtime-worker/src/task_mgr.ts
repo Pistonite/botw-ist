@@ -206,12 +206,6 @@ export class TaskMgr<TPtr> {
     }
 
     private unregisterNativeHandle(nativeHandleId: number) {
-        // const handle = this.nativeHandles.get(nativeHandleId);
-        // if (handle) {
-        //     if (!handle?.isDisposed()) {
-        //         log.warn(`NA#${nativeHandleId}\nleaked!`);
-        //     }
-        // }
         this.nativeHandles.delete(nativeHandleId);
         const remaining = this.nativeHandles.size;
         log.debug(
@@ -250,18 +244,8 @@ class NativeHandleContainer<TPtr> {
         this.isAbortingNativeTaskScheduled = false;
     }
 
-    // /** Check if this native handle is no longer used */
-    // public isDisposed(): boolean {
-    //     return this.owningTaskIds.length === 0 && !this.handle.value;
-    // }
-
     /** Add task dependency on this native task */
     public addTask(id: string) {
-        // if (!this.handle.value) {
-        //     log.warn(
-        //         `NA#${this.id}\ncalling addTask on a container that does not own a native handle pointer`,
-        //     );
-        // }
         this.owningTaskIds.push(id);
     }
 
@@ -303,11 +287,6 @@ class NativeHandleContainer<TPtr> {
         log.debug(`NA#${this.id}\naborting native handle`);
         // "this" is holding a strong ref to handle, so the call is safe
         this.napi.abortTask(this.handle.value);
-        // } else {
-        //     log.warn(
-        //         `NA#${this.id}\ncannot abort because container does not own a pointer`,
-        //     );
-        // }
         return true;
     }
 }

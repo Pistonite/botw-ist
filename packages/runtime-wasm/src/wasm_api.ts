@@ -251,23 +251,11 @@ export class WasmApi implements NativeApi<number> {
         });
     }
 
-    // public addRefNativeHandle(ptr: number): Promise<number> {
-    //     return this.execAddRef("addRefNativeHandle", () => {
-    //         return wasm_bindgen.add_ref_task_handle(ptr);
-    //     });
-    // }
-
     public async freeNativeHandle(ptr: number): Promise<void> {
         await this.exec(() => {
             return wasm_bindgen.free_task_handle(ptr);
         });
     }
-
-    // public addRefParseOutput(ptr: number): Promise<number> {
-    //     return this.execAddRef("addRefParseOutput", () => {
-    //         return wasm_bindgen.add_ref_parse_output(ptr);
-    //     });
-    // }
 
     public async freeParseOutput(ptr: number): Promise<void> {
         await this.exec(() => {
@@ -275,36 +263,11 @@ export class WasmApi implements NativeApi<number> {
         });
     }
 
-    // public addRefRunOutput(ptr: number): Promise<number> {
-    //     return this.execAddRef("addRefRunOutput", () => {
-    //         return wasm_bindgen.add_ref_run_output(ptr);
-    //     });
-    // }
-
     public async freeRunOutput(ptr: number): Promise<void> {
         await this.exec(() => {
             return wasm_bindgen.free_run_output(ptr);
         });
     }
-
-    // private nullptrCrash(message: string) {
-    //     console.error(`nullptr crash: ${message}`);
-    //     this.panicked = true;
-    //     void crashApplication();
-    // }
-
-    // private async execAddRef(
-    //     marker: string,
-    //     fn: () => number,
-    // ): Promise<number> {
-    //     const result = await this.exec(fn);
-    //     if (result.err) {
-    //         console.error(result.err);
-    //         this.nullptrCrash(`${marker} failed`);
-    //         return 0;
-    //     }
-    //     return result.val;
-    // }
 
     /** Execute the closure if WASM did not previously panic */
     private async exec<T>(
