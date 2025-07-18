@@ -33,7 +33,7 @@ export const CopyButton: React.FC<CopyButtonProps> = ({ textToCopy }) => {
                     } else {
                         text = textToCopy;
                     }
-                    void navigator.clipboard.writeText("```\n" + text + "```");
+                    void navigator.clipboard.writeText(text);
                     setIsCopied(true);
                     timeoutRef.current = setTimeout(() => {
                         setIsCopied(false);

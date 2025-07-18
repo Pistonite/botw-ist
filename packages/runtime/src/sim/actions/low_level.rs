@@ -119,7 +119,7 @@ pub fn add_slots_internal(
     for _ in 0..amount {
         let item_ptr = push_new_item(ctx)?;
         if item_ptr.is_nullptr() {
-            errors.push(sim_error!(ctx.span, CannotGetMore));
+            errors.push(sim_error!(item.span, CannotGetMore));
             break;
         }
         added = true;

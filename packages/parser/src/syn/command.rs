@@ -362,7 +362,7 @@ pub struct CmdSell {
 #[derive(Debug)]
 pub struct CmdSaveAs {
     pub lit: syn::KwSaveAs,
-    pub name: tp::String<syn::Word>,
+    pub name: syn::ItemName,
 }
 
 /// `reload` - reload the game from manual or named save slot
@@ -372,7 +372,7 @@ pub struct CmdSaveAs {
 #[derive(Debug)]
 pub struct CmdReload {
     pub lit: syn::KwReload,
-    pub name: tp::Option<tp::String<syn::Word>>,
+    pub name: tp::Option<syn::ItemName>,
 }
 
 ///////////////////////////////////////////////////////////

@@ -29,7 +29,7 @@ const useStyles = makeStyles({
 
 export const SaveViewer: React.FC<SaveViewerProps> = ({ useStore }) => {
     const saveNames = useStore((state) => state.saveNames);
-    const selectedSave = useStore((state) => state.selectedSave);
+    const displayedSave = useStore((state) => state.displayedSave);
     const data = useStore((state) => state.displayedData);
     const cheap = useStore((state) => state.cheap);
     const disableAnimation = useStore((state) => state.disableAnimation);
@@ -76,7 +76,7 @@ export const SaveViewer: React.FC<SaveViewerProps> = ({ useStore }) => {
             <div className={m("min-w-0")}>
                 <TabList
                     vertical
-                    selectedValue={selectedSave || ""}
+                    selectedValue={displayedSave || ""}
                     onTabSelect={(_, { value }) => {
                         if (saveNames.includes(value as string)) {
                             setSelectedSave(value as string);

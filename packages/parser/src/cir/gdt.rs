@@ -98,8 +98,7 @@ pub fn parse_gdt_meta_str(
     errors: &mut Vec<ErrorReport>,
     quoted_value: &str,
 ) -> Option<GdtMeta> {
-    let value = quoted_value.strip_prefix('"').unwrap_or(quoted_value);
-    let value = value.strip_suffix('"').unwrap_or(value);
+    let value = quoted_value.trim_matches('"');
     let parser = GdtMetaParser {
         string_value: Some(value),
         ..Default::default()

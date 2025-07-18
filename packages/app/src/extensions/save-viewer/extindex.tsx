@@ -27,9 +27,9 @@ export class SaveViewerExtension
         store.subscribe((curr, prev) => {
             if (
                 curr.saveNames !== prev.saveNames ||
-                curr.selectedSave !== prev.selectedSave
+                curr.displayedSave !== prev.displayedSave
             ) {
-                void this.update(curr.selectedSave);
+                void this.update(curr.displayedSave);
             }
         });
         this.store = store;
@@ -51,7 +51,7 @@ export class SaveViewerExtension
     }
 
     public override async onScriptChanged(): WxPromise<void> {
-        void this.update(this.store.getState().selectedSave);
+        void this.update(this.store.getState().displayedSave);
         return {};
     }
 

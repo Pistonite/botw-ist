@@ -295,8 +295,8 @@ pub async fn parse_command<R: QuotedItemResolver>(
         A![SameDialog(_)] => Some(X::CoSameDialog),
         //////////////////////////////////////////////////////////////////
         C::Save(_) => Some(X::Save(None)),
-        C::SaveAs(cmd) => Some(X::Save(Some(cmd.name.to_string()))),
-        C::Reload(cmd) => Some(X::Reload(cmd.name.as_ref().map(|x| x.to_string()))),
+        C::SaveAs(cmd) => Some(X::Save(Some(parse_save_name(&cmd.name)))),
+        C::Reload(cmd) => Some(X::Reload(cmd.name.as_ref().map(parse_save_name))),
         C::CloseGame(_) => Some(X::CloseGame),
         C::NewGame(_) => Some(X::NewGame),
         //////////////////////////////////////////////////////////////////
@@ -423,5 +423,15 @@ pub async fn parse_command<R: QuotedItemResolver>(
             }
             Some(X::set_gdt_s32("ShieldPorchStockNum", slots))
         }
+    }
+}
+
+/// Parse a save name. Note that "empty string" is allowed
+/// and is different from the manual save
+fn parse_save_name(name: &syn::ItemName) -> String {
+    match name {
+        syn::ItemName::Word(word) => word.to_string(),
+        syn::ItemName::Quoted(quoted) => quoted.as_str().trim_matches('"').to_string(),
+        syn::ItemName::Angle(word) => word.name.to_string(),
     }
 }

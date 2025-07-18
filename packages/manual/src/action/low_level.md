@@ -56,11 +56,16 @@ Example
 !init 1 slate 1 glider 5 apples
 # adding items not addable (doesn't have CanGetPouch flag)
 !add-slot <DgnObj_EntanceElevator_A_01>
+# when adding stackable items with [value=...], the "amount" becomes
+# how many slots to add. e.g. the command below will add 5 slots of 300x arrows
+!add-slot 5 arrow[value=300]
 ```
 
+```admonish note
 The inventory state and GameData will be synced. This will also
 set the corresponding `IsGet` flag for the item, and the `IsOpenItemCategory`
 for the corresponding category.
+```
 
 
 ## Forcefully remove items

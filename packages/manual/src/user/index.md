@@ -70,7 +70,8 @@ in the URL.
 However, note that due to the difference in simulation systems,
 you may need to adjust the script to make it work again. Notable differences are:
 - Migrated commands in V3 may not sync the overworld correctly, such as <skyb>!init</skyb>
-- <skyb>pick-up</skyb> now only targets items in the Overworld. Change to <skyb>get</skyb> if needed.
+- `pick up` in V3 is translated to <skyb>get</skyb> in V4, since
+  <skyb>pick-up</skyb> in V4 only targets items on the Ground.
 
 Sometimes, it might be easier to rewrite the script from the ground up, following
 the new syntax, since you might have to "workaround the workarounds" of the old simulator.

@@ -39,7 +39,7 @@ export const CrashViewer: React.FC<CrashViewerProps> = ({ crashInfo }) => {
         <div className={m("flex-col h-100 border-box")}>
             <div className={m("pad-4")}>
                 <Field>
-                    <CopyButton textToCopy={crashInfo} />
+                    <CopyButton textToCopy={"```\n" + crashInfo + "```"} />
                 </Field>
             </div>
             <div

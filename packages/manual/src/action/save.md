@@ -19,6 +19,10 @@ Handling game's running and closed state, and simulation of save files
 > `close-game` <br>
 > `new-game` <br>
 
+`FILE-NAME` can either be the same format as item identifier (<skyb>like-this</skyb>, or with `_`
+instead of `-`), or a quoted string. Spaces and non-alphabetical characters are also
+allowed in quoted names, like <skyb>"Outside of Shrine"</skyb> or <skyb>"神庙外"</skyb>.
+
 Example
 ```skybook
 # Save to the manual save slot

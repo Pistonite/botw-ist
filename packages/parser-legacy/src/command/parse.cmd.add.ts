@@ -67,7 +67,9 @@ export const parseASTCommandPickup: ParserItem<ASTCommandPickUp, CommandAdd> = (
         ast.mOneOrMoreItems1,
         search,
         parseASTItems,
-        (i, c) => new CommandAdd(i, c).setVerb("pick-up"),
+        // convert pick up to get, since in V4, pick-up means picking up from
+        // ground, but people have been using it to pick up new items in V3
+        (i, c) => new CommandAdd(i, c),
         codeBlocks,
     );
 };
