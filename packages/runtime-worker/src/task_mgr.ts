@@ -1,10 +1,8 @@
-import type { AsyncErc } from "@pistonite/pure/memory";
-import { idgen } from "@pistonite/pure/memory";
+import { type Emp, idgen } from "@pistonite/pure/memory";
 
 import type { NativeApi, NativeHandle } from "./native_api.ts";
 import type { Pwr } from "./error.ts";
 import { log } from "./util.ts";
-import { Emp, holdStrongRefs } from "./emp_contrib.ts";
 
 const getNextNativeHandleId = idgen();
 
@@ -304,7 +302,7 @@ class NativeHandleContainer<TPtr> {
         }
         log.debug(`NA#${this.id}\naborting native handle`);
         // "this" is holding a strong ref to handle, so the call is safe
-            this.napi.abortTask(this.handle.value);
+        this.napi.abortTask(this.handle.value);
         // } else {
         //     log.warn(
         //         `NA#${this.id}\ncannot abort because container does not own a pointer`,

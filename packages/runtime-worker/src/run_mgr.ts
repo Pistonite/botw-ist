@@ -1,5 +1,5 @@
+import type { Emp } from "@pistonite/pure/memory";
 import type { Err, Result } from "@pistonite/pure/result";
-import type { AsyncErc } from "@pistonite/pure/memory";
 
 import type {
     ErrorReport,
@@ -25,7 +25,7 @@ import {
 import type { TaskMgr } from "./task_mgr.ts";
 import { log } from "./util.ts";
 import { crashApplication } from "./app_call.ts";
-import { Emp, holdStrongRefs } from "./emp_contrib.ts";
+import { scopedCapture } from "@pistonite/pure/sync";
 
 type RunAwaiter<TPtr> = {
     /** Resolve function to take the output */
@@ -42,7 +42,7 @@ class RunContext<TPtr> {
     lastNotifyBytePos: number; // -1 means not notified yet
     lastNotifyOutputEmp: Emp<RunOutput, TPtr> | undefined;
 
-    constructor(/*napi: NativeApi<TPtr>, */nativeHandleId: number) {
+    constructor(/*napi: NativeApi<TPtr>, */ nativeHandleId: number) {
         this.awaiters = [];
         this.nativeHandleId = nativeHandleId;
         this.lastNotifyBytePos = -1;
@@ -122,7 +122,7 @@ export class RunMgr<TPtr> {
     }
 
     /**
-     * Wrapper to parse and run the script. If successful, run the function 
+     * Wrapper to parse and run the script. If successful, run the function
      * and ensure the references are alive
      */
     private async withParseAndRunOutput<T>(
@@ -148,7 +148,7 @@ export class RunMgr<TPtr> {
             script,
             taskId,
             executeToBytePos,
-            parseOutputEmp
+            parseOutputEmp,
         );
         // await parseOutputErcForRun.free();
         if (runOutput.err) {
@@ -160,10 +160,13 @@ export class RunMgr<TPtr> {
             // await parseOutputErc.free();
             return { err: nullptrError("executeScript returned nullptr") };
         }
-        return await holdStrongRefs([parseOutputEmp, runOutputEmp], () => { return fn(parseOutputEmp.value, runOutputEmp.value) });
+        return await scopedCapture(
+            () => fn(parseOutputEmp.value, runOutputEmp.value),
+            [parseOutputEmp, runOutputEmp],
+        );
     }
 
-    /** 
+    /**
      * Parse and execute the script through native API with caching and batching
      *
      * Takes ownership of the parse output
@@ -258,7 +261,7 @@ export class RunMgr<TPtr> {
         //     undefined;
         // let fullRunPromise: Promise<void> | undefined = undefined;
         try {
-            /*fullRunPromise = */void this.executeScriptInternal(
+            /*fullRunPromise = */ void this.executeScriptInternal(
                 taskId,
                 parseOutputEmp,
                 thisContext,
@@ -328,92 +331,92 @@ export class RunMgr<TPtr> {
             return;
         }
 
-            // ready to execute the steps - first check it's not aborted yet
-            if (await thisContext.areAllTasksAborted(this.taskMgr)) {
-                log.debug(`${PREFIX}\nrun aborted`);
-                this.handleError(thisSerial);
-                resolveAwaiters(abortedError());
-                return;
-            }
-            const start = performance.now();
+        // ready to execute the steps - first check it's not aborted yet
+        if (await thisContext.areAllTasksAborted(this.taskMgr)) {
+            log.debug(`${PREFIX}\nrun aborted`);
+            this.handleError(thisSerial);
+            resolveAwaiters(abortedError());
+            return;
+        }
+        const start = performance.now();
 
-            const nativeHandleEmp = this.taskMgr.getNativeHandle(
-                thisContext.nativeHandleId,
-            );
+        const nativeHandleEmp = this.taskMgr.getNativeHandle(
+            thisContext.nativeHandleId,
+        );
         if (!nativeHandleEmp) {
-            log.warn(`${PREFIX}\nnative handle is null so the run will not be abortable`);
+            log.warn(
+                `${PREFIX}\nnative handle is null so the run will not be abortable`,
+            );
         }
 
-        
-            const outputResult = await holdStrongRefs([parseOutputEmp, nativeHandleEmp], () => {
-                return this.napi.runParsed(
-                    parseOutputEmp.value,
-                    nativeHandleEmp?.value,
-                    async (upToBytePos, outputRaw) => {
-                        const outputEmp = this.napi.makeRunOutputEmp(outputRaw);
-                        const awaiters = thisContext.awaiters;
-                        thisContext.awaiters = [];
-                        for (const x of awaiters) {
-                            const { resolve, taskId, executeToBytePos } = x;
-                            if (
-                                executeToBytePos < 0 ||
-                                    upToBytePos <= executeToBytePos
-                            ) {
-                                thisContext.awaiters.push(x);
-                                continue;
-                            }
-                            this.taskMgr.unregisterTask(taskId);
-                            resolve({ val: outputEmp });
+        const outputResult = await scopedCapture(() => {
+            return this.napi.runParsed(
+                parseOutputEmp.value,
+                nativeHandleEmp?.value,
+                async (upToBytePos, outputRaw) => {
+                    const outputEmp = this.napi.makeRunOutputEmp(outputRaw);
+                    const awaiters = thisContext.awaiters;
+                    thisContext.awaiters = [];
+                    for (const x of awaiters) {
+                        const { resolve, taskId, executeToBytePos } = x;
+                        if (
+                            executeToBytePos < 0 ||
+                            upToBytePos <= executeToBytePos
+                        ) {
+                            thisContext.awaiters.push(x);
+                            continue;
                         }
-                        thisContext.lastNotifyBytePos = upToBytePos;
-                        // void thisContext.lastNotifyOutputErc.free();
-                        thisContext.lastNotifyOutputEmp = outputEmp;
-                    },
-                );
-            })
-
-            if (outputResult.err) {
-                log.error(`${PREFIX}\nrun failed`);
-                log.error(outputResult.err);
-                this.handleError(thisSerial);
-                resolveAwaiters(outputResult);
-                return;
-            }
-            if (outputResult.val.type === "Aborted") {
-                log.debug(`${PREFIX}\nrun aborted`);
-                this.handleError(thisSerial);
-                resolveAwaiters(abortedError());
-                return;
-            }
-
-            const msElapsed = performance.now() - start;
-            if (
-                thisContext.awaiters.length &&
-                (await thisContext.areAllTasksAborted(this.taskMgr))
-            ) {
-                // only warn if the run took very long
-                const emit =
-                    msElapsed > 10000
-                        ? log.warn.bind(log)
-                        : log.debug.bind(log);
-                emit(
-                    `${PREFIX}\nall tasks are aborted, but the run didn't abort successfully!`,
-                );
-            }
-
-            log.info(
-                `${PREFIX}\nscript execution finished in ${Math.round(msElapsed)}ms`,
+                        this.taskMgr.unregisterTask(taskId);
+                        resolve({ val: outputEmp });
+                    }
+                    thisContext.lastNotifyBytePos = upToBytePos;
+                    // void thisContext.lastNotifyOutputErc.free();
+                    thisContext.lastNotifyOutputEmp = outputEmp;
+                },
             );
+        }, [parseOutputEmp, nativeHandleEmp]);
 
-            for (const { taskId } of thisContext.awaiters) {
-                this.taskMgr.unregisterTask(taskId);
-            }
-            outputRaw = outputResult.val.value;
+        if (outputResult.err) {
+            log.error(`${PREFIX}\nrun failed`);
+            log.error(outputResult.err);
+            this.handleError(thisSerial);
+            resolveAwaiters(outputResult);
+            return;
+        }
+        if (outputResult.val.type === "Aborted") {
+            log.debug(`${PREFIX}\nrun aborted`);
+            this.handleError(thisSerial);
+            resolveAwaiters(abortedError());
+            return;
+        }
+
+        const msElapsed = performance.now() - start;
+        if (
+            thisContext.awaiters.length &&
+            (await thisContext.areAllTasksAborted(this.taskMgr))
+        ) {
+            // only warn if the run took very long
+            const emit =
+                msElapsed > 10000 ? log.warn.bind(log) : log.debug.bind(log);
+            emit(
+                `${PREFIX}\nall tasks are aborted, but the run didn't abort successfully!`,
+            );
+        }
+
+        log.info(
+            `${PREFIX}\nscript execution finished in ${Math.round(msElapsed)}ms`,
+        );
+
+        for (const { taskId } of thisContext.awaiters) {
+            this.taskMgr.unregisterTask(taskId);
+        }
+        outputRaw = outputResult.val.value;
         // } else {
         //     log.warn(`${PREFIX}\nparser output is empty, not executing`);
         // }
 
-        const returnEmp: Emp<RunOutput, TPtr> = this.napi.makeRunOutputEmp(outputRaw);
+        const returnEmp: Emp<RunOutput, TPtr> =
+            this.napi.makeRunOutputEmp(outputRaw);
         // update cached result if we are the latest run
         if (thisSerial === this.serial) {
             log.info(`${PREFIX}\nsaving execution result to cache`);
@@ -423,7 +426,7 @@ export class RunMgr<TPtr> {
             // returnStrongErc = await this.cachedErc.getStrong();
         }
         // else {
-            // returnStrongErc = this.napi.makeRunOutputErc(outputRaw);
+        // returnStrongErc = this.napi.makeRunOutputErc(outputRaw);
         // }
 
         // resolve remaining awaiters

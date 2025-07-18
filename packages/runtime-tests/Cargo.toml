@@ -26,7 +26,7 @@ tokio = { workspace = true, features = ["rt"] }
 default = [
     "trace-memory",
     # "blueflame/trace-call",
-    # "single-thread"
+    "single-thread" # scheduling issue, way faster with just 1 thread
 ]
 trace-memory = ["blueflame/trace-memory"]
 single-thread= []

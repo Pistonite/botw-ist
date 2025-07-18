@@ -28,12 +28,7 @@ impl Runtime {
         Self {
             executor,
             initial_process: Mutex::new(None),
-            // FIXME: currently, GDT is very expensive to copy and
-            // consumes a large amount of RAM, so having too many
-            // cached state results in OOM crashes. Temporarily
-            // lowering the cache to make it more reliable
-            // until it gets addressed
-            state_cache: Mutex::new(LruCache::new(128)),
+            state_cache: Mutex::new(LruCache::new(256)),
         }
     }
 

@@ -93,7 +93,6 @@ export class ParseMgr<TPtr> {
             if (serialBefore === this.serial) {
                 this.isRunning = false;
                 this.runAwaiters = [];
-                // await this.cachedErc.free();
                 this.cachedOutput = undefined;
             }
             for (const resolve of awaitersForThisRun) {
@@ -102,7 +101,9 @@ export class ParseMgr<TPtr> {
             return outputRaw;
         }
 
-        const returnEmp: Emp<ParseOutput, TPtr> = this.napi.makeParseOutputEmp(outputRaw.val);
+        const returnEmp: Emp<ParseOutput, TPtr> = this.napi.makeParseOutputEmp(
+            outputRaw.val,
+        );
         // update cached result
         if (serialBefore === this.serial) {
             this.isRunning = false;

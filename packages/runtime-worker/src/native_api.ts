@@ -176,9 +176,7 @@ export type NativeEmpFactory<TPtr> = {
     readonly makeNativeHandleEmp: ReturnType<
         typeof makeEmpType<NativeHandle, TPtr>
     >;
-    readonly makeRunOutputEmp: ReturnType<
-        typeof makeEmpType<RunOutput, TPtr>
-    >;
+    readonly makeRunOutputEmp: ReturnType<typeof makeEmpType<RunOutput, TPtr>>;
     readonly makeParseOutputEmp: ReturnType<
         typeof makeEmpType<ParseOutput, TPtr>
     >;

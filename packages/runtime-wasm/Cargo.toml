@@ -31,9 +31,5 @@ log.workspace = true
 crate-type = ["cdylib"]
 
 [features]
-default = [
-    "trace-alloc"
-]
-trace-alloc = [] # used to debug memory leak when passing ownership externally
-
+# default = []
 no-trace = ["log/release_max_level_warn"]
