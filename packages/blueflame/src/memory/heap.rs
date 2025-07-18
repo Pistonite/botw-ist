@@ -1,8 +1,8 @@
 use crate::memory::{Error, PAGE_SIZE, REGION_ALIGN, Section, align_down, align_up, perm, region};
 
 #[cfg(feature = "trace-memory")]
-static MAX_ALLOC_SIZE: std::sync::LazyLock<std::sync::Arc<std::sync::atomic::AtomicU64>>
-= std::sync::LazyLock::new(|| std::sync::Arc::new(std::sync::atomic::AtomicU64::new(0)));
+static MAX_ALLOC_SIZE: std::sync::LazyLock<std::sync::Arc<std::sync::atomic::AtomicU64>> =
+    std::sync::LazyLock::new(|| std::sync::Arc::new(std::sync::atomic::AtomicU64::new(0)));
 
 #[inline(always)]
 #[cfg(feature = "trace-memory")]

@@ -61,7 +61,10 @@ impl ParseOutput {
         if add_ref {
             let x2 = Arc::clone(&x);
             let x_old = Arc::into_raw(x);
-            assert!(std::ptr::eq(ptr, x_old), "re-leaked pointer is different, memory will be lost");
+            assert!(
+                std::ptr::eq(ptr, x_old),
+                "re-leaked pointer is different, memory will be lost"
+            );
             return x2;
         }
         x

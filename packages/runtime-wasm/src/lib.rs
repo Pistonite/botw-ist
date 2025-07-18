@@ -255,7 +255,6 @@ pub async fn run_parsed(
     });
     let output = run
         .run_parsed_with_notify(&parse_output, &runtime, |up_to_byte_pos, output| {
-
             // this pointer ownership is leaked to the JS side
             // so we DO NOT free it here
             let output_ptr = sim::RunOutput::leak(Box::new(output.clone())) as usize;

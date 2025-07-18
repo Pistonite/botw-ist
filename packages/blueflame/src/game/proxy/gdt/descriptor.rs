@@ -19,7 +19,9 @@ pub trait ArrayFlagDescriptor {
     type ElemT: gdt::FlagType + 'static;
 
     fn list(trigger_param: &gdt::TriggerParam) -> &gdt::FlagList<gdt::ArrayFlagType<Self::ElemT>>;
-    fn list_mut(trigger_param: &mut gdt::TriggerParam) -> &mut gdt::FlagList<gdt::ArrayFlagType<Self::ElemT>>;
+    fn list_mut(
+        trigger_param: &mut gdt::TriggerParam,
+    ) -> &mut gdt::FlagList<gdt::ArrayFlagType<Self::ElemT>>;
 }
 
 impl<T: ArrayFlagDescriptor + 'static> FlagDescriptor for T {
@@ -61,7 +63,9 @@ macro_rules! make_descriptor {
         impl ArrayFlagDescriptor for $name {
             type ElemT = $type;
             #[inline(always)]
-            fn list(trigger_param: &gdt::TriggerParam) -> &gdt::FlagList<gdt::ArrayFlagType<Self::ElemT>> {
+            fn list(
+                trigger_param: &gdt::TriggerParam,
+            ) -> &gdt::FlagList<gdt::ArrayFlagType<Self::ElemT>> {
                 &trigger_param.$field
             }
             #[inline(always)]
@@ -85,8 +89,18 @@ make_descriptor!(FdVector4f, (f32, f32, f32, f32), vector4f_flags);
 make_descriptor!(array, FdBoolArray, bool, bool_array_flags);
 make_descriptor!(array, FdS32Array, i32, s32_array_flags);
 make_descriptor!(array, FdF32Array, f32, f32_array_flags);
-make_descriptor!(array, FdString64Array, gdt::StringFlagType, string64_array_flags);
-make_descriptor!(array, FdString256Array, gdt::StringFlagType, string256_array_flags);
+make_descriptor!(
+    array,
+    FdString64Array,
+    gdt::StringFlagType,
+    string64_array_flags
+);
+make_descriptor!(
+    array,
+    FdString256Array,
+    gdt::StringFlagType,
+    string256_array_flags
+);
 make_descriptor!(array, FdVector2fArray, (f32, f32), vector2f_array_flags);
 make_descriptor!(
     array,

@@ -198,21 +198,45 @@ impl Builder {
             bool_flags: Arc::new(blueflame_deps::gdt::unpack_bool_flags()),
             s32_flags: Arc::new(blueflame_deps::gdt::unpack_s32_flags()),
             f32_flags: Arc::new(blueflame_deps::generated::gdt::generate_F32_yaml_flags()),
-            string32_flags: Arc::new(blueflame_deps::generated::gdt::generate_String32_yaml_flags()),
-            string64_flags: Arc::new(blueflame_deps::generated::gdt::generate_String64_yaml_flags()),
-            string256_flags: Arc::new(blueflame_deps::generated::gdt::generate_String256_yaml_flags()),
-            vector2f_flags: Arc::new(blueflame_deps::generated::gdt::generate_Vector2f_yaml_flags()),
-            vector3f_flags: Arc::new(blueflame_deps::generated::gdt::generate_Vector3f_yaml_flags()),
-            vector4f_flags: Arc::new(blueflame_deps::generated::gdt::generate_Vector4f_yaml_flags()),
-            bool_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayBool_yaml_flags()),
-            s32_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayS32_yaml_flags()),
-            f32_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayF32_yaml_flags()),
-            string64_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayString64_yaml_flags(
-            )),
-            string256_array_flags:
-                Arc::new(blueflame_deps::generated::gdt::generate_ArrayString256_yaml_flags()),
-            vector2f_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayVector2f_yaml_flags()),
-            vector3f_array_flags: Arc::new(blueflame_deps::generated::gdt::generate_ArrayVector3f_yaml_flags()),
+            string32_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_String32_yaml_flags(),
+            ),
+            string64_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_String64_yaml_flags(),
+            ),
+            string256_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_String256_yaml_flags(),
+            ),
+            vector2f_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_Vector2f_yaml_flags(),
+            ),
+            vector3f_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_Vector3f_yaml_flags(),
+            ),
+            vector4f_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_Vector4f_yaml_flags(),
+            ),
+            bool_array_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_ArrayBool_yaml_flags(),
+            ),
+            s32_array_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_ArrayS32_yaml_flags(),
+            ),
+            f32_array_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_ArrayF32_yaml_flags(),
+            ),
+            string64_array_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_ArrayString64_yaml_flags(),
+            ),
+            string256_array_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_ArrayString256_yaml_flags(),
+            ),
+            vector2f_array_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_ArrayVector2f_yaml_flags(),
+            ),
+            vector3f_array_flags: Arc::new(
+                blueflame_deps::generated::gdt::generate_ArrayVector3f_yaml_flags(),
+            ),
         }
     }
 }
@@ -230,7 +254,7 @@ mod tests {
                 let vec_ref = Arc::make_mut(&mut vec);
                 vec_ref.sort_by_key(|flag| flag.hash());
                 assert_eq!(vec_ref, params.$field.as_ref());
-            }}
+            }};
         }
 
         verify_flag_order!(bool_flags);
@@ -249,7 +273,6 @@ mod tests {
         verify_flag_order!(string256_array_flags);
         verify_flag_order!(vector2f_array_flags);
         verify_flag_order!(vector3f_array_flags);
-
     }
     #[test]
     fn test_init() -> anyhow::Result<()> {

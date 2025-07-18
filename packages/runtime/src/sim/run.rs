@@ -159,7 +159,10 @@ impl RunHandle {
         if add_ref {
             let x2 = Arc::clone(&x);
             let x_old = Arc::into_raw(x);
-            assert!(std::ptr::eq(ptr, x_old), "re-leaked pointer must be equal to prevent losing memory");
+            assert!(
+                std::ptr::eq(ptr, x_old),
+                "re-leaked pointer must be equal to prevent losing memory"
+            );
             return x2;
         }
         x
