@@ -1,6 +1,5 @@
+import { makeEmpType } from "@pistonite/pure/memory";
 import type { Result } from "@pistonite/pure/result";
-
-import { Emp, makeEmpType } from "./emp_contrib.ts";
 
 import type {
     InvView_Gdt,
@@ -159,11 +158,8 @@ export interface NativeApiFunctions<TPtr> {
 
     // === ref counting api ===
 
-    // addRefNativeHandle(ptr: TPtr): Promise<TPtr>;
     freeNativeHandle(ptr: TPtr): Promise<void>;
-    // addRefParseOutput(ptr: TPtr): Promise<TPtr>;
     freeParseOutput(ptr: TPtr): Promise<void>;
-    // addRefRunOutput(ptr: TPtr): Promise<TPtr>;
     freeRunOutput(ptr: TPtr): Promise<void>;
 }
 
@@ -198,17 +194,14 @@ export const createNativeEmpFactory = <TPtr>(
         makeNativeHandleEmp: makeEmpType<NativeHandle, TPtr>({
             marker: NativeHandle,
             free: (ptr: TPtr) => void napi.freeNativeHandle(ptr),
-            // addRef: (ptr: TPtr) => napi.addRefNativeHandle(ptr),
         }),
         makeRunOutputEmp: makeEmpType<RunOutput, TPtr>({
             marker: RunOutput,
             free: (ptr: TPtr) => void napi.freeRunOutput(ptr),
-            // addRef: (ptr: TPtr) => napi.addRefRunOutput(ptr),
         }),
         makeParseOutputEmp: makeEmpType<ParseOutput, TPtr>({
             marker: ParseOutput,
             free: (ptr: TPtr) => void napi.freeParseOutput(ptr),
-            // addRef: (ptr: TPtr) => napi.addRefParseOutput(ptr),
         }),
     };
 };

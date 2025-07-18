@@ -139,7 +139,7 @@ async fn run_test(
     let run_handle = sim::RunHandle::new();
     let run = sim::Run::new(Arc::new(run_handle));
     // unwrap: we will never abort the run so it will always be finished
-    let MaybeAborted::Ok(output) = run.run_parsed(Arc::clone(&parsed_output), runtime).await else {
+    let MaybeAborted::Ok(output) = run.run_parsed(&parsed_output, runtime).await else {
         log::error!("CANCEL {test_name}");
         return Ok(false);
     };

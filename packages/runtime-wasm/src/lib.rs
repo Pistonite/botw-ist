@@ -433,28 +433,6 @@ pub fn get_save_inventory(
     run_output.get_save_inventory(step, name.as_deref()).into()
 }
 
-////////// Memory Management //////////
-// #[wasm_bindgen]
-// pub fn add_ref_parse_output(ptr: *const ParseOutput) -> *const ParseOutput {
-//     log_parse_output_alloc();
-//     erc::add_ref(ptr)
-// }
-// #[wasm_bindgen]
-// pub fn free_task_handle(ptr: *const sim::RunHandle) {
-//     log_task_handle_free();
-//     erc::free(ptr);
-// }
-// #[wasm_bindgen]
-// pub fn add_ref_task_handle(ptr: *const sim::RunHandle) -> *const sim::RunHandle {
-//     log_task_handle_alloc();
-//     erc::add_ref(ptr)
-// }
-// #[wasm_bindgen]
-// pub fn add_ref_run_output(ptr: *const sim::RunOutput) -> *const sim::RunOutput {
-//     log_run_output_alloc();
-//     erc::add_ref(ptr)
-// }
-
 thread_local! {
     static ALLOC_STAT: OnceCell<AllocStat> = const { OnceCell::new() };
 }

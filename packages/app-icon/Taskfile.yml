@@ -17,7 +17,7 @@ tasks:
       - cp normal.png ../app/public/static/icon.png
       - cp purple.svg ../app/public/static/icon-purple.svg
       - cp purple.png ../app/public/static/icon-purple.png
-      - cp normal-no-ring.svg ../app/src/ui/icon.svg
-      - cp purple-no-ring.svg ../app/src/ui/icon-purple.svg
+      - cp normal-no-ring.svg ../app/src/ui/surfaces/header/icon.svg
+      - cp purple-no-ring.svg ../app/src/ui/surfaces/header/icon-purple.svg
       - cp normal.svg ../manual/src/icon.svg
       - cp normal.png ../manual/src/icon.png
