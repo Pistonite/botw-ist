@@ -18,10 +18,10 @@ catalog:
   '@fluentui/react-icons': ^2.0.305
   '@griffel/react': ^1.5.30
   '@modyfi/vite-plugin-yaml': ^1.1.1
-  '@pistonite/pure': ^0.26.8
+  '@pistonite/pure': ^0.27.0
   '@pistonite/pure-i18next': ^0.4.7
-  '@pistonite/pure-react': ^0.7.11
-  '@pistonite/workex': ^0.1.2
+  '@pistonite/pure-react': ^0.7.12
+  '@pistonite/workex': ^0.1.3
   '@types/bun': ^1.2.18
   '@types/react': ^18.3.17
   '@types/react-dom': ^18.3.5

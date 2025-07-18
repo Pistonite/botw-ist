@@ -37,3 +37,4 @@ wasm = [
     "dep:wasm-bindgen-spawn",
     "dep:web-sys",
 ]
+unsafe-leak = []

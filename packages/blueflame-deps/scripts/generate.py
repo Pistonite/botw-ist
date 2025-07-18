@@ -65,7 +65,7 @@ def main():
 
 def generate_flag_function(file: str, lines: list[str], max_lengths):
     is_array = file.startswith("Array")
-    flag_type = "String"
+    flag_type = "gdt::StringFlagType"
     flag_name = file.replace(".", "_")
     if file.endswith("Bool.yaml"):
         flag_type = "bool"
@@ -80,10 +80,10 @@ def generate_flag_function(file: str, lines: list[str], max_lengths):
     elif file.endswith("Vector4f.yaml"):
         flag_type = "(f32, f32, f32, f32)"
     flag_static_type = flag_type
-    if flag_static_type == "String":
+    if flag_static_type == "gdt::StringFlagType":
         flag_static_type = "&str"
     if is_array:
-        flag_type = f"Box<[{flag_type}]>"
+        flag_type = f"gdt::ArrayFlagType<{flag_type}>"
 
     with open(os.path.join(RESEARCH_SCRIPTS_DIR, "output", "GameData", file), "r", encoding="utf-8") as f:
         entries = yaml.safe_load(f)

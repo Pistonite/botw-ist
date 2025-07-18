@@ -1,15 +1,16 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
-use std::{cell::OnceCell, sync::Arc};
+use std::cell::OnceCell;
+use std::sync::Arc;
 
 use blueflame::env::GameVer;
 use js_sys::{Function, Promise, Uint8Array};
 use serde::{Deserialize, Serialize};
 use skybook_parser::{ParseOutput, search};
 use skybook_runtime::exec::Spawner;
+use skybook_runtime::iv;
 use skybook_runtime::sim::{self, RuntimeInitParams};
 use skybook_runtime::{MaybeAborted, RuntimeInitError, RuntimeViewError};
-use skybook_runtime::{erc, iv};
 use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
@@ -133,12 +134,19 @@ pub fn resolve_item_ident(query: String) -> Vec<ItemSearchResult> {
 /// Parse the script
 ///
 /// ## Pointer Ownership
-/// Returns ownership of the ParseOutput pointer.
+/// The ParseOutput object is leaked into the caller. call [`free_parse_output`] to reclaim
 #[wasm_bindgen]
 pub async fn parse_script(script: String, resolve_quoted_item: Function) -> *const ParseOutput {
     let resolver = JsQuotedItemResolver::new(resolve_quoted_item);
     let parse_output = skybook_parser::parse(&resolver, &script).await;
-    Arc::into_raw(Arc::new(parse_output))
+    ParseOutput::leak(Arc::new(parse_output))
+}
+
+#[wasm_bindgen]
+pub fn free_parse_output(ptr: *const ParseOutput) {
+    unsafe {
+        ParseOutput::from_raw(ptr, false);
+    }
 }
 
 /// Parse the semantics of the script in the given range
@@ -156,46 +164,37 @@ pub fn parse_script_semantic(script: String, start: usize, end: usize) -> Vec<u3
     output
 }
 
+// only safe if not async
+macro_rules! unsafe_deref_parse_output {
+    ($parse:ident) => {{
+        if $parse.is_null() {
+            return Default::default();
+        }
+        unsafe { &*$parse }
+    }};
+}
+
 /// Get the errors from the parse output.
-///
-/// ## Pointer Ownership
-/// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
 pub fn get_parser_errors(parse_output_ref: *const ParseOutput) -> Vec<skybook_parser::ErrorReport> {
-    if parse_output_ref.is_null() {
-        return Vec::new();
-    }
-    let parse_output = unsafe { &*parse_output_ref };
-    parse_output.errors.clone()
+    unsafe_deref_parse_output!(parse_output_ref).errors.clone()
 }
 
 /// Get the number of steps in the parse output (The actual number of steps/commands,
 /// not number of steps displayed)
-///
-/// ## Pointer Ownership
-/// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
 pub fn get_step_count(parse_output_ref: *const ParseOutput) -> usize {
-    if parse_output_ref.is_null() {
-        return 0;
-    }
-    let parse_output = unsafe { &*parse_output_ref };
-    parse_output.steps.len()
+    unsafe_deref_parse_output!(parse_output_ref).steps.len()
 }
 
 /// Get index of the step from byte position in script
 ///
 /// 0 is returned if steps are empty
-///
-/// ## Pointer Ownership
-/// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
 pub fn get_step_from_pos(parse_output_ref: *const ParseOutput, pos: usize) -> usize {
-    if parse_output_ref.is_null() {
-        return 0;
-    }
-    let parse_output = unsafe { &*parse_output_ref };
-    parse_output.step_idx_from_pos(pos).unwrap_or_default()
+    unsafe_deref_parse_output!(parse_output_ref)
+        .step_idx_from_pos(pos)
+        .unwrap_or_default()
 }
 
 /// Get the starting index for each step
@@ -204,11 +203,11 @@ pub fn get_step_from_pos(parse_output_ref: *const ParseOutput, pos: usize) -> us
 /// Borrows the ParseOutput pointer.
 #[wasm_bindgen]
 pub fn get_step_byte_positions(parse_output_ref: *const ParseOutput) -> Vec<u32> {
-    if parse_output_ref.is_null() {
-        return vec![];
-    }
-    let parse_output = unsafe { &*parse_output_ref };
-    parse_output.steps.iter().map(|x| x.pos() as u32).collect()
+    unsafe_deref_parse_output!(parse_output_ref)
+        .steps
+        .iter()
+        .map(|x| x.pos() as u32)
+        .collect()
 }
 
 ////////// Runtime //////////
@@ -218,29 +217,34 @@ pub fn get_step_byte_positions(parse_output_ref: *const ParseOutput) -> Vec<u32>
 #[wasm_bindgen]
 pub fn make_task_handle() -> *const sim::RunHandle {
     let handle = Arc::new(sim::RunHandle::new());
-    sim::RunHandle::into_raw(handle)
+    sim::RunHandle::leak(handle)
 }
 
-/// Abort the task using the handle. Frees the handle
+/// Abort the task using the handle.
 #[wasm_bindgen]
 pub fn abort_task(ptr: *const sim::RunHandle) {
-    let handle = sim::RunHandle::from_raw(ptr);
+    let handle = unsafe { sim::RunHandle::from_raw(ptr, true) };
     handle.abort();
+}
+
+#[wasm_bindgen]
+pub fn free_task_handle(ptr: *const sim::RunHandle) {
+    unsafe {
+        sim::RunHandle::from_raw(ptr, false);
+    }
 }
 
 /// Run simulation using the ParseOutput
 ///
-/// ## Pointer Ownership
-/// Takes ownership of the ParseOutput pointer. Returns
-/// ownership of the RunOutput pointer.
+/// Returns a leaked RunOutput on success
 #[wasm_bindgen]
 pub async fn run_parsed(
     parse_output: *const ParseOutput,
     handle: *const sim::RunHandle,
-    notify_fn: Function, // (up_to_byte_pos, Arc<RunOutput> as usize) -> Promise<void>
+    notify_fn: Function, // (up_to_byte_pos, Emp<RunOutput> as usize) -> Promise<void>
 ) -> MaybeAborted<usize> {
-    let parse_output = unsafe { Arc::from_raw(parse_output) };
-    let handle = sim::RunHandle::from_raw(handle);
+    let handle = unsafe { sim::RunHandle::from_raw(handle, true) };
+    let parse_output = unsafe { ParseOutput::from_raw(parse_output, true) };
     let run = sim::Run::new(handle);
     let runtime = RUNTIME.with(|runtime| {
         // unwrap: the worker guarantees it calls init_runtime before this
@@ -250,9 +254,10 @@ pub async fn run_parsed(
             .clone()
     });
     let output = run
-        .run_parsed_with_notify(parse_output, &runtime, |up_to_byte_pos, output| {
-            // this pointer is leaked to the JS side to be externally managed
-            let output_ptr = Arc::into_raw(Arc::new(output.clone())) as usize;
+        .run_parsed_with_notify(&parse_output, &runtime, |up_to_byte_pos, output| {
+            // this pointer ownership is leaked to the JS side
+            // so we DO NOT free it here
+            let output_ptr = sim::RunOutput::leak(Box::new(output.clone())) as usize;
             let result = notify_fn.call2(
                 &JsValue::undefined(),
                 &up_to_byte_pos.into(),
@@ -280,10 +285,17 @@ pub async fn run_parsed(
 
     match output {
         MaybeAborted::Ok(run_output) => {
-            let run_output_ptr = Arc::into_raw(Arc::new(run_output));
+            let run_output_ptr = sim::RunOutput::leak(Box::new(run_output));
             MaybeAborted::Ok(run_output_ptr as usize)
         }
         MaybeAborted::Aborted => MaybeAborted::Aborted,
+    }
+}
+
+#[wasm_bindgen]
+pub fn free_run_output(ptr: *mut sim::RunOutput) {
+    unsafe {
+        sim::RunOutput::from_raw(ptr);
     }
 }
 
@@ -403,30 +415,4 @@ pub fn get_save_inventory(
 ) -> interop::Result<iv::Gdt, RuntimeViewError> {
     let (run_output, step) = deref_with_step!(run_output_ref, parse_output_ref, byte_pos);
     run_output.get_save_inventory(step, name.as_deref()).into()
-}
-
-////////// Ref Counting //////////
-#[wasm_bindgen]
-pub fn free_parse_output(ptr: *const ParseOutput) {
-    erc::free(ptr);
-}
-#[wasm_bindgen]
-pub fn add_ref_parse_output(ptr: *const ParseOutput) -> *const ParseOutput {
-    erc::add_ref(ptr)
-}
-#[wasm_bindgen]
-pub fn free_task_handle(ptr: *const sim::RunHandle) {
-    erc::free(ptr);
-}
-#[wasm_bindgen]
-pub fn add_ref_task_handle(ptr: *const sim::RunHandle) -> *const sim::RunHandle {
-    erc::add_ref(ptr)
-}
-#[wasm_bindgen]
-pub fn free_run_output(ptr: *const sim::RunOutput) {
-    erc::free(ptr);
-}
-#[wasm_bindgen]
-pub fn add_ref_run_output(ptr: *const sim::RunOutput) -> *const sim::RunOutput {
-    erc::add_ref(ptr)
 }

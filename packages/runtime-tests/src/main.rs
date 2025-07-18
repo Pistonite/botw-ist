@@ -1,4 +1,5 @@
 use std::path::Path;
+use std::time::Instant;
 
 use anyhow::{Context, bail};
 
@@ -7,6 +8,14 @@ mod script_tests;
 mod util;
 
 fn main() -> anyhow::Result<()> {
+    let start = Instant::now();
+    let result = main_internal();
+    let elapsed = start.elapsed().as_secs_f32();
+    log::info!("finished in {elapsed:02}s");
+    result
+}
+
+fn main_internal() -> anyhow::Result<()> {
     env_logger::init();
     util::setup_panic_capture();
 
@@ -37,6 +46,9 @@ fn main() -> anyhow::Result<()> {
     #[cfg(feature = "trace-memory")]
     {
         util::collect_memory_trace(&process)?;
+        // this is the emulated game heap, not the actual host memory
+        let max_heap = blueflame::memory::get_max_heap_alloc();
+        log::info!("max game heap alloc: {max_heap} bytes")
     }
 
     Ok(())

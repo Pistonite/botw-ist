@@ -16,17 +16,17 @@ catalogs:
       specifier: ^1.5.30
       version: 1.5.30
     '@pistonite/pure':
-      specifier: ^0.26.8
-      version: 0.26.8
+      specifier: ^0.27.0
+      version: 0.27.0
     '@pistonite/pure-i18next':
       specifier: ^0.4.7
       version: 0.4.7
     '@pistonite/pure-react':
-      specifier: ^0.7.11
-      version: 0.7.11
+      specifier: ^0.7.12
+      version: 0.7.12
     '@pistonite/workex':
-      specifier: ^0.1.2
-      version: 0.1.2
+      specifier: ^0.1.3
+      version: 0.1.3
     '@types/bun':
       specifier: ^1.2.18
       version: 1.2.18
@@ -71,8 +71,8 @@ importers:
   .:
     devDependencies:
       eslint:
-        specifier: ^9.30.1
-        version: 9.30.1
+        specifier: ^9.31.0
+        version: 9.31.0
 
   packages/app:
     dependencies:
@@ -90,10 +90,10 @@ importers:
         version: link:../intwc
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.8
+        version: 0.27.0
       '@pistonite/pure-react':
         specifier: 'catalog:'
-        version: 0.7.11(react@18.3.1)
+        version: 0.7.12(react@18.3.1)
       '@pistonite/shared-controls':
         specifier: workspace:*
         version: link:../shared-controls
@@ -102,7 +102,7 @@ importers:
         version: link:../skybook-api
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 0.1.3
       '@tanstack/react-query':
         specifier: ^5.62.11
         version: 5.76.1(react@18.3.1)
@@ -187,7 +187,7 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.8
+        version: 0.27.0
       monaco-editor:
         specifier: 0.52.2
         version: 0.52.2(patch_hash=789e917d911899942d0d30033e21cd0f6720af75845df5b971a6594d398e368e)
@@ -227,7 +227,7 @@ importers:
         version: 1.5.30(react@18.3.1)
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.8
+        version: 0.27.0
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -292,7 +292,7 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.8
+        version: 0.27.0
       '@pistonite/pure-i18next':
         specifier: 'catalog:'
         version: 0.4.7(react@18.3.1)(typescript@5.8.3)
@@ -347,7 +347,7 @@ importers:
     dependencies:
       '@eslint/js':
         specifier: ^9.29.0
-        version: 9.30.1
+        version: 9.31.0
       '@modyfi/vite-plugin-yaml':
         specifier: ^1.1.1
         version: 1.1.1(rollup@4.40.2)(vite@6.3.5(@types/node@22.15.18))
@@ -362,16 +362,16 @@ importers:
         version: 4.5.2(vite@6.3.5(@types/node@22.15.18))
       eslint:
         specifier: ^9.29.0
-        version: 9.30.1
+        version: 9.31.0
       eslint-plugin-react:
         specifier: ^7.37.5
-        version: 7.37.5(eslint@9.30.1)
+        version: 7.37.5(eslint@9.31.0)
       eslint-plugin-react-hooks:
         specifier: ^5.2.0
-        version: 5.2.0(eslint@9.30.1)
+        version: 5.2.0(eslint@9.31.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.20
-        version: 0.4.20(eslint@9.30.1)
+        version: 0.4.20(eslint@9.31.0)
       globals:
         specifier: ^16.2.0
         version: 16.2.0
@@ -383,7 +383,7 @@ importers:
         version: 5.8.3
       typescript-eslint:
         specifier: ^8.34.0
-        version: 8.34.0(eslint@9.30.1)(typescript@5.8.3)
+        version: 8.34.0(eslint@9.31.0)(typescript@5.8.3)
       vite-plugin-wasm:
         specifier: ^3.4.1
         version: 3.4.1(vite@6.3.5(@types/node@22.15.18))
@@ -405,13 +405,13 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.8
+        version: 0.27.0
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 0.1.3
       skybook-runtime-worker:
         specifier: workspace:*
         version: link:../runtime-worker
@@ -424,13 +424,13 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.8
+        version: 0.27.0
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 0.1.3
       lru-cache:
         specifier: ^11.0.2
         version: 11.1.0
@@ -443,7 +443,7 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.8
+        version: 0.27.0
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
@@ -468,10 +468,10 @@ importers:
         version: 2.0.305(react@18.3.1)
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.8
+        version: 0.27.0
       '@pistonite/pure-react':
         specifier: 'catalog:'
-        version: 0.7.11(react@18.3.1)
+        version: 0.7.12(react@18.3.1)
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -499,10 +499,10 @@ importers:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.26.8
+        version: 0.27.0
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.1.2
+        version: 0.1.3
     devDependencies:
       mono-dev:
         specifier: workspace:*
@@ -809,10 +809,6 @@ packages:
     resolution: {integrity: sha512-ViuymvFmcJi04qdZeDc2whTHryouGcDlaxPqarTD0ZE10ISpxGUVZGZDx4w01upyIynL3iu6IXH2bS1NhclQMw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@eslint/core@0.14.0':
-    resolution: {integrity: sha512-qIbV0/JZr7iSDjqAc60IqbLdsj9GDt16xQtWD+B78d/HAlvysGdZZ6rpJHGAc2T0FQx1X6thsSPdnoiGKdNtdg==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
   '@eslint/core@0.15.1':
     resolution: {integrity: sha512-bkOp+iumZCCbt1K1CmWf0R9pM5yKpDv+ZXtvSyQpudrI9kuFLp+bM2WOPXImuD/ceQuaa8f5pj93Y7zyECIGNA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -821,8 +817,8 @@ packages:
     resolution: {integrity: sha512-gtF186CXhIl1p4pJNGZw8Yc6RlshoePRvE0X91oPGb3vZ8pM3qOS9W9NGPat9LziaBV7XrJWGylNQXkGcnM3IQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@eslint/js@9.30.1':
-    resolution: {integrity: sha512-zXhuECFlyep42KZUhWjfvsmXGX39W8K8LFb8AWXM9gSV9dQB+MrJGLKvW6Zw0Ggnbpw0VHTtrhFXYe3Gym18jg==}
+  '@eslint/js@9.31.0':
+    resolution: {integrity: sha512-LOm5OVt7D4qiKCqoiPbA7LWmI+tbw1VbTUowBcUMgQSuM6poJufkFkYDcQpo5KfgD39TnNySV26QjOh7VFpSyw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/object-schema@2.1.6':
@@ -1434,22 +1430,19 @@ packages:
     peerDependencies:
       react: ^18
 
-  '@pistonite/pure-react@0.7.11':
-    resolution: {integrity: sha512-LcKKLU71ZuI0B7rQD/HABW5YwWFefZAq8F8hEULaZChGfVlg6q/ZND6Dtwwl/9uIa/L7DHOdisF3VPf93xc4lw==}
+  '@pistonite/pure-react@0.7.12':
+    resolution: {integrity: sha512-HvA4YVXnYRRqanQUQt/QQg4QHAAOuMk3xBfQnbg5yyuTpsAazzpm6Xct3slv4NgrH3BoBg9uy4rPsbwWj1Wy8Q==}
     peerDependencies:
       react: ^18
-
-  '@pistonite/pure@0.26.6':
-    resolution: {integrity: sha512-Whd/qdCTkaxGgLRn9/SQlh6c8qjdHH77L2R4XUzH999J1be1BeTfrzUDjMvWFFG5YQ6sqiqKPmkc2yLMvi5tSA==}
 
   '@pistonite/pure@0.26.7':
     resolution: {integrity: sha512-9+IZx0Z/awwVhVEh13YwzouDKSIXtyiJani5bJKAONZpFm2PupA93N9SqAla/NVMYwCQ6WXp9KM7v3yb8/KyvQ==}
 
-  '@pistonite/pure@0.26.8':
-    resolution: {integrity: sha512-xf8UMVeFB3rKHAEt+QwdocEIbiI9B0rxKRLCkp7yGksu8qAzEfcSmhiAvOAxCxV+BhDfpID04EuyF4QvSs6kpg==}
+  '@pistonite/pure@0.27.0':
+    resolution: {integrity: sha512-eeJggvdTv5pJVvao72aL0pJS0/M9A70VYWMH9m9ng/kiP7QHrmqJ6uswqT2Hb4SEE8tXFtcn5ozz0CAOgiwldA==}
 
-  '@pistonite/workex@0.1.2':
-    resolution: {integrity: sha512-A/6xVfBA9YGIbeiH8J9MXPlcha2ywDcHppcZMqaih3WTHYRey3zmM8LfjpT7IF+FIftROOiCrwXO8OSBcpORTA==}
+  '@pistonite/workex@0.1.3':
+    resolution: {integrity: sha512-xdT86s/AHR4aQcAM3Xj2XKHoH0hHofsn3u9gCr74/crf2M/Zx5o5rO53ehp3Vfym0s6hrsMt9q3vKZITbrXPgQ==}
 
   '@prettier/cli@0.9.0':
     resolution: {integrity: sha512-KjPMLZwikhe5rqpAa3EEX56vJoPK02peeptjw6kDTCFhryaXONiRNGCxdtrrWSWAeAF5DcO1U2e8cWeMLkhGMQ==}
@@ -2099,8 +2092,8 @@ packages:
     resolution: {integrity: sha512-Uhdk5sfqcee/9H/rCOJikYz67o0a2Tw2hGRPOG2Y1R2dg7brRe1uG0yaNQDHu+TO/uQPF/5eCapvYSmHUjt7JQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  eslint@9.30.1:
-    resolution: {integrity: sha512-zmxXPNMOXmwm9E0yQLi5uqXHs7uq2UIiqEKo3Gq+3fwo1XrJ+hijAZImyF7hclW3E6oHz43Yk3RP8at6OTKflQ==}
+  eslint@9.31.0:
+    resolution: {integrity: sha512-QldCVh/ztyKJJZLr4jXNUByx3gR+TDYZCRXEktiZoUR3PGy4qCmSbkxcIle8GEwGpb5JBZazlaJ/CxLidXdEbQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     hasBin: true
     peerDependencies:
@@ -3570,9 +3563,9 @@ snapshots:
   '@esbuild/win32-x64@0.25.0':
     optional: true
 
-  '@eslint-community/eslint-utils@4.7.0(eslint@9.30.1)':
+  '@eslint-community/eslint-utils@4.7.0(eslint@9.31.0)':
     dependencies:
-      eslint: 9.30.1
+      eslint: 9.31.0
       eslint-visitor-keys: 3.4.3
 
   '@eslint-community/regexpp@4.12.1': {}
@@ -3586,10 +3579,6 @@ snapshots:
       - supports-color
 
   '@eslint/config-helpers@0.3.0': {}
-
-  '@eslint/core@0.14.0':
-    dependencies:
-      '@types/json-schema': 7.0.15
 
   '@eslint/core@0.15.1':
     dependencies:
@@ -3609,7 +3598,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint/js@9.30.1': {}
+  '@eslint/js@9.31.0': {}
 
   '@eslint/object-schema@2.1.6': {}
 
@@ -4859,26 +4848,22 @@ snapshots:
       - react-native
       - typescript
 
-  '@pistonite/pure-react@0.7.11(react@18.3.1)':
+  '@pistonite/pure-react@0.7.12(react@18.3.1)':
     dependencies:
-      '@pistonite/pure': 0.26.6
+      '@pistonite/pure': 0.27.0
       react: 18.3.1
-
-  '@pistonite/pure@0.26.6':
-    dependencies:
-      denque: 2.1.0
 
   '@pistonite/pure@0.26.7':
     dependencies:
       denque: 2.1.0
 
-  '@pistonite/pure@0.26.8':
+  '@pistonite/pure@0.27.0':
     dependencies:
       denque: 2.1.0
 
-  '@pistonite/workex@0.1.2':
+  '@pistonite/workex@0.1.3':
     dependencies:
-      '@pistonite/pure': 0.26.8
+      '@pistonite/pure': 0.27.0
 
   '@prettier/cli@0.9.0(prettier@3.4.2)':
     dependencies:
@@ -5049,15 +5034,15 @@ snapshots:
       '@types/prop-types': 15.7.14
       csstype: 3.1.3
 
-  '@typescript-eslint/eslint-plugin@8.34.0(@typescript-eslint/parser@8.34.0(eslint@9.30.1)(typescript@5.8.3))(eslint@9.30.1)(typescript@5.8.3)':
+  '@typescript-eslint/eslint-plugin@8.34.0(@typescript-eslint/parser@8.34.0(eslint@9.31.0)(typescript@5.8.3))(eslint@9.31.0)(typescript@5.8.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.1
-      '@typescript-eslint/parser': 8.34.0(eslint@9.30.1)(typescript@5.8.3)
+      '@typescript-eslint/parser': 8.34.0(eslint@9.31.0)(typescript@5.8.3)
       '@typescript-eslint/scope-manager': 8.34.0
-      '@typescript-eslint/type-utils': 8.34.0(eslint@9.30.1)(typescript@5.8.3)
-      '@typescript-eslint/utils': 8.34.0(eslint@9.30.1)(typescript@5.8.3)
+      '@typescript-eslint/type-utils': 8.34.0(eslint@9.31.0)(typescript@5.8.3)
+      '@typescript-eslint/utils': 8.34.0(eslint@9.31.0)(typescript@5.8.3)
       '@typescript-eslint/visitor-keys': 8.34.0
-      eslint: 9.30.1
+      eslint: 9.31.0
       graphemer: 1.4.0
       ignore: 7.0.4
       natural-compare: 1.4.0
@@ -5066,14 +5051,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@8.34.0(eslint@9.30.1)(typescript@5.8.3)':
+  '@typescript-eslint/parser@8.34.0(eslint@9.31.0)(typescript@5.8.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 8.34.0
       '@typescript-eslint/types': 8.34.0
       '@typescript-eslint/typescript-estree': 8.34.0(typescript@5.8.3)
       '@typescript-eslint/visitor-keys': 8.34.0
       debug: 4.4.1
-      eslint: 9.30.1
+      eslint: 9.31.0
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
@@ -5096,12 +5081,12 @@ snapshots:
     dependencies:
       typescript: 5.8.3
 
-  '@typescript-eslint/type-utils@8.34.0(eslint@9.30.1)(typescript@5.8.3)':
+  '@typescript-eslint/type-utils@8.34.0(eslint@9.31.0)(typescript@5.8.3)':
     dependencies:
       '@typescript-eslint/typescript-estree': 8.34.0(typescript@5.8.3)
-      '@typescript-eslint/utils': 8.34.0(eslint@9.30.1)(typescript@5.8.3)
+      '@typescript-eslint/utils': 8.34.0(eslint@9.31.0)(typescript@5.8.3)
       debug: 4.4.1
-      eslint: 9.30.1
+      eslint: 9.31.0
       ts-api-utils: 2.1.0(typescript@5.8.3)
       typescript: 5.8.3
     transitivePeerDependencies:
@@ -5125,13 +5110,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@8.34.0(eslint@9.30.1)(typescript@5.8.3)':
+  '@typescript-eslint/utils@8.34.0(eslint@9.31.0)(typescript@5.8.3)':
     dependencies:
-      '@eslint-community/eslint-utils': 4.7.0(eslint@9.30.1)
+      '@eslint-community/eslint-utils': 4.7.0(eslint@9.31.0)
       '@typescript-eslint/scope-manager': 8.34.0
       '@typescript-eslint/types': 8.34.0
       '@typescript-eslint/typescript-estree': 8.34.0(typescript@5.8.3)
-      eslint: 9.30.1
+      eslint: 9.31.0
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
@@ -5629,15 +5614,15 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-plugin-react-hooks@5.2.0(eslint@9.30.1):
+  eslint-plugin-react-hooks@5.2.0(eslint@9.31.0):
     dependencies:
-      eslint: 9.30.1
+      eslint: 9.31.0
 
-  eslint-plugin-react-refresh@0.4.20(eslint@9.30.1):
+  eslint-plugin-react-refresh@0.4.20(eslint@9.31.0):
     dependencies:
-      eslint: 9.30.1
+      eslint: 9.31.0
 
-  eslint-plugin-react@7.37.5(eslint@9.30.1):
+  eslint-plugin-react@7.37.5(eslint@9.31.0):
     dependencies:
       array-includes: 3.1.8
       array.prototype.findlast: 1.2.5
@@ -5645,7 +5630,7 @@ snapshots:
       array.prototype.tosorted: 1.1.4
       doctrine: 2.1.0
       es-iterator-helpers: 1.2.1
-      eslint: 9.30.1
+      eslint: 9.31.0
       estraverse: 5.3.0
       hasown: 2.0.2
       jsx-ast-utils: 3.3.5
@@ -5668,15 +5653,15 @@ snapshots:
 
   eslint-visitor-keys@4.2.1: {}
 
-  eslint@9.30.1:
+  eslint@9.31.0:
     dependencies:
-      '@eslint-community/eslint-utils': 4.7.0(eslint@9.30.1)
+      '@eslint-community/eslint-utils': 4.7.0(eslint@9.31.0)
       '@eslint-community/regexpp': 4.12.1
       '@eslint/config-array': 0.21.0
       '@eslint/config-helpers': 0.3.0
-      '@eslint/core': 0.14.0
+      '@eslint/core': 0.15.1
       '@eslint/eslintrc': 3.3.1
-      '@eslint/js': 9.30.1
+      '@eslint/js': 9.31.0
       '@eslint/plugin-kit': 0.3.3
       '@humanfs/node': 0.16.6
       '@humanwhocodes/module-importer': 1.0.1
@@ -6750,12 +6735,12 @@ snapshots:
       possible-typed-array-names: 1.0.0
       reflect.getprototypeof: 1.0.10
 
-  typescript-eslint@8.34.0(eslint@9.30.1)(typescript@5.8.3):
+  typescript-eslint@8.34.0(eslint@9.31.0)(typescript@5.8.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.34.0(@typescript-eslint/parser@8.34.0(eslint@9.30.1)(typescript@5.8.3))(eslint@9.30.1)(typescript@5.8.3)
-      '@typescript-eslint/parser': 8.34.0(eslint@9.30.1)(typescript@5.8.3)
-      '@typescript-eslint/utils': 8.34.0(eslint@9.30.1)(typescript@5.8.3)
-      eslint: 9.30.1
+      '@typescript-eslint/eslint-plugin': 8.34.0(@typescript-eslint/parser@8.34.0(eslint@9.31.0)(typescript@5.8.3))(eslint@9.31.0)(typescript@5.8.3)
+      '@typescript-eslint/parser': 8.34.0(eslint@9.31.0)(typescript@5.8.3)
+      '@typescript-eslint/utils': 8.34.0(eslint@9.31.0)(typescript@5.8.3)
+      eslint: 9.31.0
       typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color

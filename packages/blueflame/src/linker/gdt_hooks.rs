@@ -58,19 +58,19 @@ mod __impl_get {
     pub fn get_s32_array_by_name(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { get_flag_impl!(array by_name cpu, proc, type = i32, flag = s32[]) }
     pub fn get_f32_array_by_name(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { get_flag_impl!(array by_name cpu, proc, type = f32, flag = f32[]) }
     // TODO --optimize: we can probably avoid having to alloc new string every time here
-    pub fn get_str<Fd: gdt::FlagDescriptor<T=String>>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+    pub fn get_str<Fd: gdt::FlagDescriptor<T=gdt::StringFlagType>>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
         get_flag_impl::<Vec<u8>, Fd, _, _>(cpu, proc, get_str_extractor, get_str_storer)
     }
-    pub fn get_str_by_name<Fd: gdt::FlagDescriptor<T=String>>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+    pub fn get_str_by_name<Fd: gdt::FlagDescriptor<T=gdt::StringFlagType>>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
         get_flag_by_name_impl::<Vec<u8>, Fd, _, _>( cpu, proc, get_str_extractor, get_str_storer,)
     }
-    pub fn get_str_array<Fd: gdt::ArrayFlagDescriptor<ElemT=String>>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+    pub fn get_str_array<Fd: gdt::ArrayFlagDescriptor<ElemT=gdt::StringFlagType> + 'static>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
         get_flag_array_by_index_impl::<Vec<u8>, Fd, _, _>( cpu, proc, get_str_extractor, get_str_storer)
     }
-    pub fn get_str_array_by_name<Fd: gdt::ArrayFlagDescriptor<ElemT=String>>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+    pub fn get_str_array_by_name<Fd: gdt::ArrayFlagDescriptor<ElemT=gdt::StringFlagType> + 'static>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
         get_flag_array_by_name_impl::<Vec<u8>, Fd, _, _>( cpu, proc, get_str_extractor, get_str_storer,)
     }
-    fn get_str_extractor(s: &String) -> Result<Vec<u8>, processor::Error> {
+    fn get_str_extractor(s: &gdt::StringFlagType) -> Result<Vec<u8>, processor::Error> {
         let mut v = s.as_bytes().to_vec();
         v.push(0); // null-terminate
         Ok(v)
@@ -89,23 +89,23 @@ mod __impl_set {
     pub fn set_bool(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_index_impl::<gdt::fd!(bool), _>(cpu, proc, false, read_set_bool_reg_arg) }
     pub fn set_s32(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_index_impl::<gdt::fd!(s32), _>(cpu, proc, false, read_set_s32_reg_arg) }
     pub fn set_f32(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_index_impl::<gdt::fd!(f32), _>(cpu, proc, true, read_set_f32_reg_arg) }
-    pub fn set_str<Fd: gdt::FlagDescriptor<T=String>>( cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_index_impl::<Fd, _>( cpu, proc, false, read_set_str_reg_arg) }
+    pub fn set_str<Fd: gdt::FlagDescriptor<T=gdt::StringFlagType>>( cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_index_impl::<Fd, _>( cpu, proc, false, read_set_str_reg_arg) }
     pub fn set_vec3f(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_index_impl::<gdt::fd!(vec3f), _>(cpu, proc, false, read_set_vec3f_reg_arg) }
     pub fn set_bool_by_name(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_name_impl::<gdt::fd!(bool), _>(cpu, proc, false, read_set_bool_reg_arg) }
     pub fn set_s32_by_name(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_name_impl::<gdt::fd!(s32), _>(cpu, proc, false, read_set_s32_reg_arg) }
     pub fn set_f32_by_name(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_name_impl::<gdt::fd!(f32), _>(cpu, proc, true, read_set_f32_reg_arg) }
-    pub fn set_str_by_name<Fd: gdt::FlagDescriptor<T=String>>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_name_impl::<Fd, _>( cpu, proc, false, read_set_str_reg_arg) }
+    pub fn set_str_by_name<Fd: gdt::FlagDescriptor<T=gdt::StringFlagType>>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_name_impl::<Fd, _>( cpu, proc, false, read_set_str_reg_arg) }
     pub fn set_vec3f_by_name(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_by_name_impl::<gdt::fd!(vec3f), _>(cpu, proc, false, read_set_vec3f_reg_arg) }
     pub fn set_bool_array(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_index_impl::<gdt::fd!(bool[]), _>(cpu, proc, false, read_set_bool_reg_arg) }
     pub fn set_s32_array(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_index_impl::<gdt::fd!(s32[]), _>(cpu, proc, false, read_set_s32_reg_arg) }
     pub fn set_f32_array(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_index_impl::<gdt::fd!(f32[]), _>(cpu, proc, true, read_set_f32_reg_arg) }
-    pub fn set_str_array<Fd: gdt::ArrayFlagDescriptor<ElemT=String>>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_index_impl::<Fd, _>(cpu, proc, false, read_set_str_reg_arg) }
+    pub fn set_str_array<Fd: gdt::ArrayFlagDescriptor<ElemT=gdt::StringFlagType> + 'static>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_index_impl::<Fd, _>(cpu, proc, false, read_set_str_reg_arg) }
     pub fn set_vec2f_array(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_index_impl::<gdt::fd!(vec2f[]), _>(cpu, proc, false, read_set_vec2f_reg_arg) }
     pub fn set_vec3f_array(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_index_impl::<gdt::fd!(vec3f[]), _>(cpu, proc, false, read_set_vec3f_reg_arg) }
     pub fn set_bool_array_by_name(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_name_impl::<gdt::fd!(bool[]), _>(cpu, proc, false, read_set_bool_reg_arg) }
     pub fn set_s32_array_by_name(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_name_impl::<gdt::fd!(s32[]), _>(cpu, proc, false, read_set_s32_reg_arg) }
     pub fn set_f32_array_by_name(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_name_impl::<gdt::fd!(f32[]), _>(cpu, proc, true, read_set_f32_reg_arg) }
-    pub fn set_str_array_by_name<Fd: gdt::ArrayFlagDescriptor<ElemT=String>>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_name_impl::<Fd, _>(cpu, proc, false, read_set_str_reg_arg) }
+    pub fn set_str_array_by_name<Fd: gdt::ArrayFlagDescriptor<ElemT=gdt::StringFlagType> + 'static>(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> { set_flag_array_by_name_impl::<Fd, _>(cpu, proc, false, read_set_str_reg_arg) }
     fn read_set_bool_reg_arg(cpu: &mut Cpu0, _: &mut Process) -> Result<bool, processor::Error> {
         Ok(cpu.read(reg!(w[1])))
     }
@@ -115,11 +115,11 @@ mod __impl_set {
     fn read_set_f32_reg_arg(cpu: &mut Cpu0, _: &mut Process) -> Result<f32, processor::Error> {
         Ok(cpu.read(reg!(s[0])))
     }
-    fn read_set_str_reg_arg(cpu: &mut Cpu0, proc: &mut Process) -> Result<String, processor::Error> {
+    fn read_set_str_reg_arg(cpu: &mut Cpu0, proc: &mut Process) -> Result<gdt::StringFlagType, processor::Error> {
         reg! { cpu: 
             x[1] => let ptr: Ptr![u8]
         };
-        Ok(ptr.load_utf8_lossy(proc.memory())?)
+        Ok(std::sync::Arc::from(ptr.load_utf8_lossy(proc.memory())?))
     }
     fn read_set_vec2f_reg_arg(cpu: &mut Cpu0, proc: &mut Process) -> Result<(f32, f32), processor::Error> {
         reg! { cpu:
@@ -218,7 +218,7 @@ fn get_flag_by_name_impl<
 /// Args: (this, T* out, i32 idx, i32 array_idx, bool check_perms)
 fn get_flag_array_by_index_impl<
     T,
-    Fd: gdt::ArrayFlagDescriptor,
+    Fd: gdt::ArrayFlagDescriptor + 'static,
     Ex: FnOnce(&Fd::ElemT) -> Result<T, processor::Error>,
     St: FnOnce(T, u64, &mut Memory) -> Result<(), processor::Error>,
 >(
@@ -257,7 +257,7 @@ fn get_flag_array_by_index_impl<
 /// Args: (this, T* out, sead::SafeString* name, i32 array_idx, bool check_perms)
 fn get_flag_array_by_name_impl<
     T,
-    Fd: gdt::ArrayFlagDescriptor,
+    Fd: gdt::ArrayFlagDescriptor + 'static,
     Ex: FnOnce(&Fd::ElemT) -> Result<T, processor::Error>,
     St: FnOnce(T, u64, &mut Memory) -> Result<(), processor::Error>,
 >(
@@ -295,7 +295,7 @@ fn get_flag_array_by_name_impl<
 }
 
 /// Implements getXXXArraySize
-pub fn get_array_size<Fd: gdt::ArrayFlagDescriptor>(
+pub fn get_array_size<Fd: gdt::ArrayFlagDescriptor + 'static>(
     cpu: &mut Cpu0,
     proc: &mut Process,
 ) -> Result<(), processor::Error> {
@@ -315,7 +315,7 @@ pub fn get_array_size<Fd: gdt::ArrayFlagDescriptor>(
 }
 
 /// Implements getXXXArraySizeByHash
-pub fn get_array_size_by_hash<Fd: gdt::ArrayFlagDescriptor>(
+pub fn get_array_size_by_hash<Fd: gdt::ArrayFlagDescriptor + 'static>(
     cpu: &mut Cpu0,
     proc: &mut Process,
 ) -> Result<(), processor::Error> {
@@ -417,7 +417,7 @@ fn set_flag_by_name_impl<
 /// since T-in is by value, if it's a float, it uses s0 and the rest of the register
 /// shifts
 fn set_flag_array_by_index_impl<
-    Fd: gdt::ArrayFlagDescriptor,
+    Fd: gdt::ArrayFlagDescriptor + 'static,
     Rd: FnOnce(&mut Cpu0, &mut Process) -> Result<Fd::ElemT, processor::Error>,
 >(
     cpu: &mut Cpu0,
@@ -452,7 +452,7 @@ fn set_flag_array_by_index_impl<
 /// since T-in is by value, if it's a float, it uses s0 and the rest of the register
 /// shifts
 fn set_flag_array_by_name_impl<
-    Fd: gdt::ArrayFlagDescriptor,
+    Fd: gdt::ArrayFlagDescriptor + 'static,
     Rd: FnOnce(&mut Cpu0, &mut Process) -> Result<Fd::ElemT, processor::Error>,
 >(
     cpu: &mut Cpu0,
@@ -539,7 +539,7 @@ pub fn reset_by_name<Fd: gdt::FlagDescriptor>(
 }
 
 /// Implements resetXXX array
-pub fn reset_array<Fd: gdt::ArrayFlagDescriptor>(
+pub fn reset_array<Fd: gdt::ArrayFlagDescriptor + 'static>(
     cpu: &mut Cpu0,
     proc: &mut Process,
 ) -> Result<(), processor::Error> {
