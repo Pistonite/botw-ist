@@ -1,11 +1,21 @@
-//! These are non-keyword "enum" names that can be matched
-//! by commands in the right context
+//! # Constant Values
+//! These are non-keyword constants that can be matched
+//! by commands in the right context.
+//!
+//! When parsing, `-`, `-`, and spaces (` `) are ignored.
+//! So for example `resist-cold` is the same as `resistcold`
 
 /// Parse cook effect name for the `effect` meta property for items
 #[rustfmt::skip]
 pub fn parse_cook_effect(value: &str) -> Option<i32> {
     match clean_ident(value).as_str() {
         // @manual-generator-hint cook-effects
+        // # Cook Effects
+        // These values can be used for the `effect`
+        // [item meta property](../user/syntax_item.md#metadata)
+        // to specify cook effect for a food
+        //
+        // @manual-generator-hint values
         // No cook effect
         "none"
         => Some(-1),
@@ -50,8 +60,9 @@ pub fn parse_cook_effect(value: &str) -> Option<i32> {
 /// Parse weapon modifier bit flag for the `modifier` meta property for items
 #[rustfmt::skip]
 pub fn parse_weapon_modifier_bits(value: &str) -> Option<i32> {
+    // @manual-generator-hint weapon-modifiers
+    // These values can be used as weapon
     match clean_ident(value).as_str() {
-        // @manual-generator-hint weapon-modifiers
         // No modifier
         "none"
         => Some(0),
