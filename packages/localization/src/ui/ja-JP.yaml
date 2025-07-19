@@ -78,6 +78,7 @@ menu.skybook_manual: "Skybook マニュアル"
 # Main inventory display
 main.bug_report: "これがシミュレーターのバグだと思われる場合は、{{github}} に報告してください。"
 main.gdt_inventory.desc: "ゲームのフラグシステム（GDT）に保存されているインベントリデータ。アイテムはインベントリに正しくロードされたかのように表示され、スロットは破損状況に基づいてインベントリに合わせられます。"
+main.gdt_inventory.missing_items_tabbed: "GDTのアイテム数が可視インベントリのアイテム数より多いです。一部のアイテムはタブ表示では表示されません。"
 main.gdt_inventory.title: "ゲームデータ"
 main.gdt_inventory.view_error: "GDT内部データを表示できません！"
 main.screen.inventory: "インベントリ"
@@ -243,6 +244,7 @@ runtime_init.UnsupportedVersion: "イメージには現在サポートされて�
 runtime_error.CannotAutoSwitchScreen: "このコマンドは現在の画面では使用できません。画面が手動で切り替えられたため、シミュレーターは自動的に画面を切り替えることができません。オーバーワールド画面に戻ると、シミュレーターは再び自動的に画面を切り替えることができます。"
 runtime_error.CannotDoWhileHoldingInInventory: "インベントリ画面でアイテムを持っている間は、これを実行できません。"
 runtime_error.CannotDoWhileHoldingInOverworld: "オーバーワールドでアイテムを持っている間は、これを実行できません。"
+runtime_error.CannotFindGdtFlag: "タイプ`{{type}}`のフラグ`{{flag}}`が見つかりません。"
 runtime_error.CannotFindGroundItem: "このアイテムは地面で見つかりません。以前にドロップしたアイテムではなく新しいアイテムを取得したい場合は、代わりに`get`コマンドを使用してください。"
 runtime_error.CannotFindGroundItemNeedMore: "このアイテムは地面に見つかりません (あと`{{more}}`個必要です)。以前にドロップしたアイテムを拾うのではなく、新しいアイテムを入手したい場合は、代わりに`get`コマンドを使用してください。"
 runtime_error.CannotFindItem: "このアイテムはインベントリに見つかりません。"
@@ -259,6 +261,7 @@ runtime_error.Crash: "このステップでゲームがクラッシュしまし�
 runtime_error.Executor: "Executorからの予期せぬエラー。"
 runtime_error.InaccurateAllBut: "`all but`構文では、目的の結果が得られませんでした。これはおそらく、インベントリの特殊な条件によるものです。"
 runtime_error.InvalidDpadType: "この種類のアイテムはD-Padクイックメニューからアクセスできません。"
+runtime_error.InvalidGdtArrayIndex: "`{{index}}`は、タイプ`{{type}}`のフラグ`{{flag}}`に対する有効な配列インデックスではありません。"
 runtime_error.InvalidItemTarget: "このアクションはこのスロットでは実行できません。"
 runtime_error.InvalidPromptTarget: "プロンプトエンタングルメントのターゲットアイテムは、現在のPEアクティベーションには無効です。ターゲットが最初のスロットへのデフォルト設定の結果である場合、代わりに空の/半透明のスロットをターゲットにしてください。"
 runtime_error.ItemAlreadyEquipped: "このアイテムは既に装備されています。位置指定子が不足している可能性があります。"
@@ -290,6 +293,7 @@ runtime_error.UselessItemMatchProp: "このプロパティはこのコマンド�
 runtime_error.UselessMetaForOverworldEquipment: "オーバーワールドで装備されているアイテムを対象とする場合、メタデータは無視されます。メタデータを削除してください。"
 runtime_error.UselessPerUseAmount: "「per-use」の注釈はこの種類のアイテムには効果がありません。削除してください。"
 runtime_error.UselessScreenTransition: "既にこの画面にいるため、このコマンドは効果がありません。"
+
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "ゲームが実行されていません。"

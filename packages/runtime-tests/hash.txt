@@ -1,1 +1,1 @@
-f663b10601ad74d17f6b1bcf452316ed3d72c806a98d0767ffba22ad7e6bdbd1  data/program-mini.bfi
+37a4b71e8e8ec56c8a1cc7faa1170cda35ea1916878077c2ef31f0277c6d7225  data/program-mini.bfi

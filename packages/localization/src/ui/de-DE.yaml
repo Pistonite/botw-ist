@@ -78,6 +78,7 @@ menu.skybook_manual: "Skybook-Handbuch"
 # Main inventory display
 main.bug_report: "Bitte melden Sie es auf {{github}}, wenn Sie denken, dass dies ein Fehler im Simulator ist."
 main.gdt_inventory.desc: "Inventardaten, die im Flag-System (GDT) des Spiels gespeichert sind. Gegenstände werden so angezeigt, als wären sie korrekt ins Inventar geladen, und Slots sind basierend auf Korruption am Inventar ausgerichtet."
+main.gdt_inventory.missing_items_tabbed: "GDT enthält mehr Gegenstände als das sichtbare Inventar. Einige Gegenstände werden in der Tab-Ansicht nicht angezeigt."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Interne GDT-Daten können nicht angezeigt werden!"
 main.screen.inventory: "Inventar"
@@ -243,6 +244,7 @@ runtime_init.UnsupportedVersion: "Das Image enthält eine derzeit nicht unterst�
 runtime_error.CannotAutoSwitchScreen: "Dieser Befehl kann auf dem aktuellen Bildschirm nicht verwendet werden. Der Simulator kann Bildschirme nicht automatisch wechseln, da der Bildschirm manuell gewechselt wurde. Eine Rückkehr zum Overworld-Bildschirm ermöglicht es dem Simulator, Bildschirme wieder automatisch zu wechseln."
 runtime_error.CannotDoWhileHoldingInInventory: "Dies kann nicht getan werden, während Gegenstände im Inventarbildschirm gehalten werden."
 runtime_error.CannotDoWhileHoldingInOverworld: "Dies kann nicht getan werden, während Gegenstände in der Oberwelt gehalten werden."
+runtime_error.CannotFindGdtFlag: "Das Flag `{{flag}}` vom Typ `{{type}}` konnte nicht gefunden werden."
 runtime_error.CannotFindGroundItem: "Dieser Gegenstand kann nicht auf dem Boden gefunden werden. Wenn Sie einen neuen Gegenstand statt eines zuvor fallengelassenen Gegenstands meinen, verwenden Sie stattdessen den Befehl `get`."
 runtime_error.CannotFindGroundItemNeedMore: "Dieses Item ist nicht auf dem Boden zu finden (benötige noch `{{more}}`). Wenn Sie ein neues Item erhalten möchten, anstatt eines zuvor fallengelassenen, verwenden Sie stattdessen den Befehl `get`."
 runtime_error.CannotFindItem: "Dieser Gegenstand kann im Inventar nicht gefunden werden."
@@ -259,6 +261,7 @@ runtime_error.Crash: "Das Spiel ist in diesem Schritt abgestürzt."
 runtime_error.Executor: "Unerwarteter Fehler vom Executor."
 runtime_error.InaccurateAllBut: "Die Syntax `all but` hat nicht das gewünschte Ergebnis erzielt. Dies liegt wahrscheinlich an speziellen Bedingungen im Inventar."
 runtime_error.InvalidDpadType: "Dieser Gegenstandstyp ist nicht über das D-Pad-Schnellmenü zugänglich."
+runtime_error.InvalidGdtArrayIndex: "`{{index}}` ist kein gültiger Array-Index für das Flag `{{flag}}` vom Typ `{{type}}`."
 runtime_error.InvalidItemTarget: "Diese Aktion kann in diesem Inventarplatz nicht ausgeführt werden."
 runtime_error.InvalidPromptTarget: "Das Zielobjekt für die Prompt-Verflechtung ist für die aktuelle PE-Aktivierung nicht gültig. Wenn das Zielobjekt durch die Standardeinstellung auf den ersten Platz (First Slot) ausgewählt wurde, zielen Sie stattdessen auf den leeren/durchscheinenden Platz."
 runtime_error.ItemAlreadyEquipped: "Dieser Gegenstand ist bereits ausgerüstet. Möglicherweise fehlt eine Positionsspezifikation."
@@ -290,6 +293,7 @@ runtime_error.UselessItemMatchProp: "Diese Eigenschaft wird beim Abgleichen von 
 runtime_error.UselessMetaForOverworldEquipment: "Metadaten werden ignoriert, wenn Gegenstände im Überland ausgerüstet sind. Bitte entfernen Sie die Metadaten."
 runtime_error.UselessPerUseAmount: "Die 'per-use'-Anmerkung hat keine Auswirkung auf diesen Item-Typ, bitte entfernen Sie diese."
 runtime_error.UselessScreenTransition: "Dieser Befehl hat keine Auswirkung, da Sie sich bereits auf diesem Bildschirm befinden."
+
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "Das Spiel läuft nicht."

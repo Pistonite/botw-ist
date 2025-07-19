@@ -78,6 +78,7 @@ menu.skybook_manual: "Manuale di Skybook"
 # Main inventory display
 main.bug_report: "Segnalalo su {{github}} se pensi che sia un bug del simulatore."
 main.gdt_inventory.desc: "Dati dell'inventario memorizzati nel sistema di flag (GDT) del gioco. Gli oggetti vengono visualizzati come se fossero stati caricati correttamente nell'inventario, e gli slot sono allineati all'inventario in base alla corruzione."
+main.gdt_inventory.missing_items_tabbed: "GDT ha più oggetti rispetto all'Inventario Visibile. Alcuni oggetti non vengono visualizzati nella vista a schede."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Impossibile visualizzare i dati interni GDT!"
 main.screen.inventory: "Inventario"
@@ -243,6 +244,7 @@ runtime_init.UnsupportedVersion: "L'immagine contiene una versione del gioco att
 runtime_error.CannotAutoSwitchScreen: "Questo comando non può essere usato nella schermata attuale. Il simulatore non può cambiare schermata automaticamente perché la schermata è stata cambiata manualmente. Tornare alla schermata del mondo permetterà al simulatore di cambiare schermata automaticamente di nuovo."
 runtime_error.CannotDoWhileHoldingInInventory: "Impossibile farlo mentre si tengono oggetti nella schermata dell'inventario."
 runtime_error.CannotDoWhileHoldingInOverworld: "Impossibile farlo mentre si tengono oggetti nell'overworld."
+runtime_error.CannotFindGdtFlag: "Impossibile trovare il flag `{{flag}}` di tipo `{{type}}`."
 runtime_error.CannotFindGroundItem: "Impossibile trovare questo oggetto a terra. Se intendi ottenere un nuovo oggetto anziché uno precedentemente caduto, usa invece il comando `get`."
 runtime_error.CannotFindGroundItemNeedMore: "Impossibile trovare questo oggetto a terra (ne servono altri `{{more}}`). Se intendi ottenere un nuovo oggetto invece di uno precedentemente lasciato cadere, usa il comando `get`."
 runtime_error.CannotFindItem: "Impossibile trovare questo oggetto nell'inventario."
@@ -259,6 +261,7 @@ runtime_error.Crash: "Il gioco si è bloccato in questo passaggio."
 runtime_error.Executor: "Errore imprevisto dall'Esecutore."
 runtime_error.InaccurateAllBut: "La sintassi `all but` non ha raggiunto il risultato desiderato. Ciò è probabilmente dovuto a condizioni speciali nell'inventario."
 runtime_error.InvalidDpadType: "Questo tipo di oggetto non è accessibile dal menu rapido D-Pad."
+runtime_error.InvalidGdtArrayIndex: "`{{index}}` non è un indice di array valido per il flag `{{flag}}` di tipo `{{type}}`."
 runtime_error.InvalidItemTarget: "Questa azione non può essere eseguita su questo slot."
 runtime_error.InvalidPromptTarget: "L'oggetto bersaglio per il Prompt Entanglement non è valido per l'attuale attivazione di PE. Se il bersaglio è il risultato del reindirizzamento al primo slot (First Slot), prendi di mira lo slot vuoto/traslucido."
 runtime_error.ItemAlreadyEquipped: "Questo oggetto è già equipaggiato. Potrebbe mancare uno specificatore di posizione."
@@ -290,6 +293,7 @@ runtime_error.UselessItemMatchProp: "Questa proprietà viene ignorata durante la
 runtime_error.UselessMetaForOverworldEquipment: "I metadati vengono ignorati quando si selezionano oggetti equipaggiati nell'overworld. Si prega di rimuovere i metadati."
 runtime_error.UselessPerUseAmount: "L'annotazione 'per uso' non ha alcun effetto per questo tipo di oggetto, si prega di rimuoverla."
 runtime_error.UselessScreenTransition: "Questo comando non ha alcun effetto, poiché sei già su questa schermata."
+
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "Il gioco non è in esecuzione."

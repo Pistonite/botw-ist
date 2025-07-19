@@ -1,0 +1,148 @@
+
+# Plateau 
+# note: don't damage the axe at all since it will be
+# transfered to RGC
+get 1 slate
+  // bombs split
+  1 tree-branch 1 flint 1 axe 1 spear 1 potlid 6 pepper 3 shroom 1 traveler-bow 5 arrow 
+  // mag
+  1 amber
+  // other
+  4 orb 1 glider
+
+# Satori
+get 2 razorshroom 5 lotus 4 rushroom 1 forest-dweller-bow 4 endura-carrot 10 durian 3 wood 1 orb
+
+# Castle
+# note: Royal claymore dura is tight so don't damage it
+# (except the initial sneakstrike)
+get 
+  1 royal-claymore[dura=39]
+  1 royal-guard-claymore 1 razorshroom
+  1 naydra-fang 3 ancient-arrow 1 steel-shield
+get 1 korok
+equip royal-guard-claymore
+# cook speed food and eat
+!remove 3 lotus 2 rushroom
+
+# Guardians
+equip aa
+# Drop materials to make him load
+hold 1 amber 3 wood 1 naydra-fang; drop
+shoot # kill the guardian
+hold 3 razorshroom 2 rushroom; drop
+# You must pick things up in this order
+get 1 shaft
+pick-up 1 wood 1 naydra-fang 1 rushroom 1 amber
+pick-up all materials
+get 1 spring
+# If you don't have 5 arrows, pick up 2 screws to sell in hateno
+# Wetland, Kak, Hateno
+get 1 knights-sword 1 core 1 fairy 3 orb
+sell korok; :slots [weapons=9]
+
+# After Myahm
+eat all pepper all shroom 
+  all but 3 durian
+  all but 3 endura-carrot
+equip axe
+drop traveler-bow
+equip bow
+equip normal-arrow
+drop potlid
+equip shield
+dnp 
+  # cycle everything between flint and shaft
+  all lotus all endura-carrot all durian
+  # cycle the core as well
+  # - technically only needed if you got the rng core from guardian
+  1 core
+# Go to shop
+# if you don't have 5 arrows, sell something, buy 5 arrows, then save
+save
+# no check items, unfortunately
+drop 1 durian 1 wood 1 endura-carrot 1 razorshroom
+:smug hold
+   1 durian 1 wood 1 endura-carrot 1 razorshroom
+   1 lotus
+sell 1 durian 1 wood 1 endura-carrot 1 razorshroom
+   1 lotus
+pick-up all materials
+:smug hold
+   1 durian 1 wood 1 endura-carrot 1 razorshroom
+   1 rushroom
+sell
+   1 durian 1 wood 1 endura-carrot 1 razorshroom
+   1 rushroom
+# drop everything except core
+drop 1 flint 1 amber 1 naydra-fang 1 shaft 1 spring 1 fairy 1 lotus
+drop all shields
+unequip bow
+unequip weapon
+reload
+shoot 1 time
+save
+dnp 1 core 1 shaft all razorshroom
+reload
+drop 5 flint 5 amber
+sell all flint all amber
+pick-up 5 flint 5 amber
+# WB to statue
+# Trade 6 STAM
+sell all orb
+# Light cooking pot with arrow
+shoot
+# Cook speed food first, other any order
+!remove 4 lotus 1 naydra-fang
+get 1 simmered-fruit[effect=Hasty]
+# 3 and 3
+!remove 6 endura-carrot
+get 2 wild-green[effect=Enduring]
+!remove 5 razorshroom
+get 1 mushroom-skewer[effect=Mighty]
+dnp all core all shaft
+# use durian for food
+# wb to lab
+equip spear
+eat razorshroom
+eat all durian
+# drop wood and rushroom down to 1
+drop all but 1 wood all but 1 rushroom
+# get stasis and bombs upgrade
+sell 3 core 3 shaft
+drop all shaft all spring
+pick-up 
+  all shaft
+  # PICK UP SPRING LAST
+  all spring 
+# Outside of lab
+equip royal-guard-claymore
+drop 1 tree-branch 1 axe 1 knights-sword
+save
+pick-up all weapons
+drop all materials
+drop bows
+# go to different pile
+eat all foods
+drop shield drop all weapons
+# order doesn't matter
+pick-up 1 shield all weapons
+unequip weapon
+unequip shield
+reload
+save
+# drop all but shaft
+drop 1 wood 1 rushroom 1 fairy 1 spring
+drop 5 flints
+drop 5 amber
+eat all foods
+drop all shields
+unequip weapon
+unequip bow
+reload
+save
+drop 2 shaft 1 spring
+pick-up 1 shaft
+reload
+# merge stacks during joloo nah quest
+

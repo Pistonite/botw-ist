@@ -5,7 +5,7 @@ Most commands describe one or more *actions* in game, such as getting an item, d
 
 The commands can be divided into 3 groups:
 - **Actions**: These correspond to actions you do in game, such as <skyb>get</skyb>, <skyb>pick-up</skyb> and <skyb>hold</skyb>
-- **Annotations**: These commands start with `:` and are used to change the current configuration, such as <skyb>:weapon-slots</skyb>
+- **Annotations**: These commands start with `:` and are used to change the current configuration, such as <skyb>:slots</skyb>
 - **Supercommands**: These command start with `!` and are more powerful than the actions.
   They often interact directly with the game's state in a way that's not possible with a regular action.
 

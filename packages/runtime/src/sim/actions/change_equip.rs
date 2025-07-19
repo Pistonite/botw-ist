@@ -96,9 +96,9 @@ pub fn change_equip_inventory(
                     };
                     if is_equip == equipped {
                         if is_equip {
-                            errors.push(sim_error!(item.span, ItemAlreadyEquipped));
+                            errors.push(sim_warning!(item.span, ItemAlreadyEquipped));
                         } else {
-                            errors.push(sim_error!(item.span, ItemAlreadyUnequipped));
+                            errors.push(sim_warning!(item.span, ItemAlreadyUnequipped));
                         }
                         check_for_extra_error = false;
                         break;

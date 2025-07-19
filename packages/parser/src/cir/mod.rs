@@ -13,5 +13,7 @@ pub use gdt::*;
 mod meta;
 pub use meta::*;
 mod enum_name;
+mod inventory_meta;
+pub use inventory_meta::*;
 
 pub use skybook_api::parser::cir::*;

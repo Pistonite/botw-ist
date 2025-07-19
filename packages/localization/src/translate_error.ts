@@ -110,6 +110,14 @@ export const translateRuntimeError = (
             const time = error.data;
             return translator(key, { time });
         }
+        case "CannotFindGdtFlag": {
+            const [flag, type] = error.data;
+            return translator(key, { flag, type });
+        }
+        case "InvalidGdtArrayIndex": {
+            const [flag, type, index] = error.data;
+            return translator(key, { flag, type, index });
+        }
         default:
             return translator(key);
     }
