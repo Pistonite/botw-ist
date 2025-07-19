@@ -1,4 +1,4 @@
-# ![icon](./packages/manual/src/icon.png) botw-ist
+# <img src="https://github.com/Pistonite/botw-ist/blob/main/packages/manual/src/icon.png?raw=true" width="32px" /> botw-ist
 
 Simulator for Inventory Slot Transfer in BOTW
 

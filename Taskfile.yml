@@ -153,7 +153,7 @@ tasks:
   check-layer-4:
     cmds:
       - cmd: >
-          if stat packages/runtime-tests/data/program-mini-bfi;
+          if stat packages/runtime-tests/data/program-mini.bfi;
           then
             {{.TASK_EXE}} exec -- runtime-wasm:check;
           else
