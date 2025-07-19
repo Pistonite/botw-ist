@@ -197,7 +197,9 @@ error.unknown: "알 수 없는 내부 오류"
 
 # Parser error messages
 parser.FloatFormat: "`{{arg}}` 은(는) 유효한 부동 소수점 숫자가 아닙니다"
-parser.GdtStrTypeNotSet: "GDT 문자열의 유형을 설정하려면 다음 속성 중 하나를 포함해야 합니다: str32, str64, str256"
+parser.GdtInvalidIndex: "유효하지 않은 GDT 배열 인덱스: `{{index}}`."
+parser.GdtMissingVecComp: "벡터 구성 요소가 지정되지 않았습니다."
+parser.GdtTypeConflict: "여러 GDT 타입 키가 지정되었습니다. 정확히 하나의 타입만 지정했는지 확인하십시오."
 parser.GdtTypeNotSet: "GDT의 유형을 설정하려면 다음 속성 중 하나를 포함해야 합니다: bool, s32, f32, vec2f, vec3f"
 parser.IntFormat: "`{{arg}}` 은(는) 유효한 정수가 아닙니다"
 parser.IntRange: "정수 `{{arg}}` 은(는) 범위를 벗어났습니다"
@@ -217,10 +219,10 @@ parser.InvalidStringLength: "이 컨텍스트에서 문자열의 최대 허용 �
 parser.InvalidTimesClause: "`{{arg}}` 은(는) 횟수에 대한 유효한 숫자가 아닙니다"
 parser.InvalidTrial: "`{{arg}}` 은(는) 유효한 시련 이름이 아닙니다"
 parser.InvalidWeaponModifier: "`{{arg}}` 은(는) 유효한 무기 수정자가 아닙니다"
+parser.RequiredMetaValue: "이 메타 속성에 값이 필요합니다."
 parser.SyntaxUnexpected: "예기치 않은 구문"
 parser.SyntaxUnexpectedEof: "예기치 않은 파일 끝"
 parser.TooManyIngredients: "아이템은 최대 5개의 재료를 가질 수 있습니다"
-parser.UnexpectedMetaKeyWithValue: "`{{arg}}` 속성은 이 컨텍스트에서 값을 가져서는 안 됩니다"
 parser.UnusedItemPosition: "이 명령에서는 아이템 위치 지정이 효과가 없습니다. 관련 속성을 제거하십시오"
 parser.UnusedMetaKey: "`{{arg}}` 속성이 사용되지 않습니다"
 

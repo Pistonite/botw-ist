@@ -197,7 +197,9 @@ error.unknown: "不明な内部エラー"
 
 # Parser error messages
 parser.FloatFormat: "`{{arg}}` は有効な浮動小数点数ではありません"
-parser.GdtStrTypeNotSet: "GDT文字列の型を設定するには、これらのプロパティのいずれかを含める必要があります: str32, str64, str256"
+parser.GdtInvalidIndex: "無効なGDT配列インデックス: `{{index}}`。"
+parser.GdtMissingVecComp: "ベクトルコンポーネントが指定されていません。"
+parser.GdtTypeConflict: "複数のGDT型キーが指定されています。正確に1つの型のみを持つようにしてください。"
 parser.GdtTypeNotSet: "GDTの型を設定するには、これらのプロパティのいずれかを含める必要があります: bool, s32, f32, vec2f, vec3f"
 parser.IntFormat: "`{{arg}}` は有効な整数ではありません"
 parser.IntRange: "整数 `{{arg}}` は範囲外です"
@@ -217,10 +219,10 @@ parser.InvalidStringLength: "このコンテキストで許可される文字列
 parser.InvalidTimesClause: "`{{arg}}` は回数として有効な数値ではありません"
 parser.InvalidTrial: "`{{arg}}` は有効な試練名ではありません"
 parser.InvalidWeaponModifier: "`{{arg}}` は有効な武器修飾子ではありません"
+parser.RequiredMetaValue: "このメタプロパティには値が必要です。"
 parser.SyntaxUnexpected: "予期しない構文"
 parser.SyntaxUnexpectedEof: "予期しないファイルの終端"
 parser.TooManyIngredients: "アイテムは最大5つの材料を持つことができます"
-parser.UnexpectedMetaKeyWithValue: "プロパティ `{{arg}}` はこのコンテキストで値を持つべきではありません"
 parser.UnusedItemPosition: "このコマンドでは、アイテムの位置指定は効果がありません。関連するプロパティを削除してください"
 parser.UnusedMetaKey: "プロパティ `{{arg}}` は使用されていません"
 

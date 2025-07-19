@@ -197,7 +197,9 @@ error.unknown: "Onbekende interne fout"
 
 # Parser error messages
 parser.FloatFormat: "`{{arg}}` is geen geldig drijvende-kommagetal"
-parser.GdtStrTypeNotSet: "Moet een van deze eigenschappen bevatten om het type van de GDT-string in te stellen: str32, str64, str256"
+parser.GdtInvalidIndex: "Geen geldige GDT-array-index: `{{index}}`."
+parser.GdtMissingVecComp: "Geen vectorcomponent gespecificeerd."
+parser.GdtTypeConflict: "Meerdere GDT-type sleutels zijn gespecificeerd. Zorg ervoor dat u precies één type hebt."
 parser.GdtTypeNotSet: "Moet een van deze eigenschappen bevatten om het type van de GDT in te stellen: bool, s32, f32, vec2f, vec3f"
 parser.IntFormat: "`{{arg}}` is geen geldig geheel getal"
 parser.IntRange: "Geheel getal `{{arg}}` ligt buiten bereik"
@@ -217,10 +219,10 @@ parser.InvalidStringLength: "De maximaal toegestane lengte voor de string is {0}
 parser.InvalidTimesClause: "`{{arg}}` is geen geldig getal voor 'keer'"
 parser.InvalidTrial: "`{{arg}}` is geen geldige proefnaam"
 parser.InvalidWeaponModifier: "`{{arg}}` is geen geldige wapenmodificator"
+parser.RequiredMetaValue: "Een waarde is vereist voor deze meta-eigenschap."
 parser.SyntaxUnexpected: "Onverwachte syntax"
 parser.SyntaxUnexpectedEof: "Onverwacht einde van bestand"
 parser.TooManyIngredients: "Een item kan maximaal 5 ingrediënten hebben"
-parser.UnexpectedMetaKeyWithValue: "De eigenschap `{{arg}}` mag geen waarde hebben in deze context"
 parser.UnusedItemPosition: "Het specificeren van de positie voor het item heeft geen effect voor dit commando. Verwijder de relevante eigenschappen"
 parser.UnusedMetaKey: "Eigenschap `{{arg}}` wordt niet gebruikt"
 

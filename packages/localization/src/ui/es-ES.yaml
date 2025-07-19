@@ -197,7 +197,9 @@ error.unknown: "Error interno desconocido"
 
 # Parser error messages
 parser.FloatFormat: "`{{arg}}` no es un número de coma flotante válido"
-parser.GdtStrTypeNotSet: "Debe incluir una de estas propiedades para establecer el tipo de la cadena GDT: str32, str64, str256"
+parser.GdtInvalidIndex: "Índice de array GDT no válido: `{{index}}`."
+parser.GdtMissingVecComp: "No se especificó ningún componente vectorial."
+parser.GdtTypeConflict: "Se especificaron múltiples claves de tipo GDT. Asegúrese de tener solo un tipo."
 parser.GdtTypeNotSet: "Debe incluir una de estas propiedades para establecer el tipo de GDT: bool, s32, f32, vec2f, vec3f"
 parser.IntFormat: "`{{arg}}` no es un número entero válido"
 parser.IntRange: "El número entero `{{arg}}` está fuera de rango"
@@ -217,10 +219,10 @@ parser.InvalidStringLength: "La longitud máxima permitida para la cadena es {0}
 parser.InvalidTimesClause: "`{{arg}}` no es un número válido para las veces"
 parser.InvalidTrial: "`{{arg}}` no es un nombre de prueba válido"
 parser.InvalidWeaponModifier: "`{{arg}}` no es un modificador de arma válido"
+parser.RequiredMetaValue: "Se requiere un valor para esta propiedad meta."
 parser.SyntaxUnexpected: "Sintaxis inesperada"
 parser.SyntaxUnexpectedEof: "Fin de archivo inesperado"
 parser.TooManyIngredients: "Un artículo puede tener como máximo 5 ingredientes"
-parser.UnexpectedMetaKeyWithValue: "La propiedad `{{arg}}` no debería tener un valor en este contexto"
 parser.UnusedItemPosition: "Especificar la posición del artículo no tiene efecto para este comando. Por favor, elimine las propiedades relevantes"
 parser.UnusedMetaKey: "La propiedad `{{arg}}` no se utiliza"
 

@@ -197,7 +197,9 @@ error.unknown: "Errore interno sconosciuto"
 
 # Parser error messages
 parser.FloatFormat: "`{{arg}}` non è un numero in virgola mobile valido"
-parser.GdtStrTypeNotSet: "Deve includere una di queste proprietà per impostare il tipo della stringa GDT: str32, str64, str256"
+parser.GdtInvalidIndex: "Indice di array GDT non valido: `{{index}}`."
+parser.GdtMissingVecComp: "Nessun componente vettore specificato."
+parser.GdtTypeConflict: "Sono specificate più chiavi di tipo GDT. Assicurati di avere esattamente un solo tipo."
 parser.GdtTypeNotSet: "Deve includere una di queste proprietà per impostare il tipo del GDT: bool, s32, f32, vec2f, vec3f"
 parser.IntFormat: "`{{arg}}` non è un numero intero valido"
 parser.IntRange: "L'intero `{{arg}}` è fuori intervallo"
@@ -217,10 +219,10 @@ parser.InvalidStringLength: "La lunghezza massima consentita per la stringa è {
 parser.InvalidTimesClause: "`{{arg}}` non è un numero valido per le volte"
 parser.InvalidTrial: "`{{arg}}` non è un nome di prova valido"
 parser.InvalidWeaponModifier: "`{{arg}}` non è un modificatore di arma valido"
+parser.RequiredMetaValue: "È richiesto un valore per questa proprietà meta."
 parser.SyntaxUnexpected: "Sintassi inattesa"
 parser.SyntaxUnexpectedEof: "Fine del file inattesa"
 parser.TooManyIngredients: "Un elemento può avere al massimo 5 ingredienti"
-parser.UnexpectedMetaKeyWithValue: "La proprietà `{{arg}}` non dovrebbe avere un valore in questo contesto"
 parser.UnusedItemPosition: "Specificare la posizione per l'elemento non ha effetto per questo comando. Si prega di rimuovere le proprietà pertinenti"
 parser.UnusedMetaKey: "La proprietà `{{arg}}` non è utilizzata"
 
