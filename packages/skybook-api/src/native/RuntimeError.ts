@@ -15,6 +15,7 @@ export type RuntimeError =
     | { type: "CannotFindItemDpadUnequip" }
     | { type: "CannotFindItemNeedMore"; data: number }
     | { type: "CannotFindPromptTarget" }
+    | { type: "CannotFindGdtFlag"; data: [string, string] }
     | { type: "CannotGetMore" }
     | { type: "CannotHoldMore" }
     | { type: "CannotUnequipArrow" }
@@ -22,9 +23,9 @@ export type RuntimeError =
     | { type: "CannotUseMore"; data: number }
     | { type: "Crash" }
     | { type: "Executor" }
-    | { type: "ReloadFail" }
     | { type: "InaccurateAllBut" }
     | { type: "InvalidDpadType" }
+    | { type: "InvalidGdtArrayIndex"; data: [string, string, number] }
     | { type: "InvalidItemTarget" }
     | { type: "InvalidPromptTarget" }
     | { type: "ItemAlreadyEquipped" }
@@ -46,6 +47,7 @@ export type RuntimeError =
     | { type: "PositionSpecNotAllowed" }
     | { type: "PreviousClosed" }
     | { type: "PreviousCrash" }
+    | { type: "ReloadFail" }
     | { type: "SaveNotFound"; data: string }
     | { type: "TooManyIterations" }
     | { type: "Uninitialized" }
