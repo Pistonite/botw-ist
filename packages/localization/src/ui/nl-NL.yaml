@@ -78,6 +78,7 @@ menu.skybook_manual: "Skybook-handleiding"
 # Main inventory display
 main.bug_report: "Meld het op {{github}} als u denkt dat dit een bug in de simulator is."
 main.gdt_inventory.desc: "Inventarisgegevens opgeslagen in het vlaggsysteem (GDT) van het spel. Items worden weergegeven alsof ze correct in de inventaris zijn geladen, en slots zijn uitgelijnd met de inventaris op basis van corruptie."
+main.gdt_inventory.missing_items_tabbed: "GDT heeft meer items dan de Zichtbare Inventaris. Sommige items worden niet weergegeven in de tabbladweergave."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "Interne GDT-gegevens kunnen niet worden weergegeven!"
 main.screen.inventory: "Inventaris"
@@ -243,6 +244,7 @@ runtime_init.UnsupportedVersion: "De afbeelding bevat een versie van het spel di
 runtime_error.CannotAutoSwitchScreen: "Deze opdracht kan niet worden gebruikt in het huidige scherm. De simulator kan schermen niet automatisch wisselen omdat het scherm handmatig is gewisseld. Terugkeren naar het overworld-scherm stelt de simulator in staat om schermen weer automatisch te wisselen."
 runtime_error.CannotDoWhileHoldingInInventory: "Kan dit niet doen terwijl u items in het inventarisscherm vasthoudt."
 runtime_error.CannotDoWhileHoldingInOverworld: "Kan dit niet doen terwijl u items in de overwereld vasthoudt."
+runtime_error.CannotFindGdtFlag: "Kan de vlag `{{flag}}` van het type `{{type}}` niet vinden."
 runtime_error.CannotFindGroundItem: "Kan dit item niet op de grond vinden. Als u een nieuw item bedoelt in plaats van een eerder gedropt item, gebruik dan de `get` opdracht."
 runtime_error.CannotFindGroundItemNeedMore: "Kan dit item niet op de grond vinden (nog `{{more}}` nodig). Als u een nieuw item wilt verkrijgen in plaats van een eerder gevallen item, gebruik dan het `get`-commando."
 runtime_error.CannotFindItem: "Dit voorwerp kan niet worden gevonden in de inventaris."
@@ -259,6 +261,7 @@ runtime_error.Crash: "Het spel is gecrasht tijdens deze stap."
 runtime_error.Executor: "Onverwachte fout van Executor."
 runtime_error.InaccurateAllBut: "De `all but`-syntaxis heeft niet het gewenste resultaat opgeleverd. Dit komt waarschijnlijk door speciale omstandigheden in de inventaris."
 runtime_error.InvalidDpadType: "Dit type voorwerp is niet toegankelijk via het D-Pad Snelmenu."
+runtime_error.InvalidGdtArrayIndex: "`{{index}}` is geen geldige array-index voor de vlag `{{flag}}` van het type `{{type}}`."
 runtime_error.InvalidItemTarget: "Deze actie kan niet worden uitgevoerd op dit slot."
 runtime_error.InvalidPromptTarget: "Het doelitem voor Prompt Entanglement is niet geldig voor de huidige PE-activering. Als het doel het resultaat is van het standaard instellen op de eerste sleuf (First Slot), richt dan in plaats daarvan op de lege/doorzichtige sleuf."
 runtime_error.ItemAlreadyEquipped: "Dit voorwerp is al uitgerust. Er mist mogelijk een positionele aanduiding."
@@ -290,6 +293,7 @@ runtime_error.UselessItemMatchProp: "Deze eigenschap wordt genegeerd bij het mat
 runtime_error.UselessMetaForOverworldEquipment: "Metadata worden genegeerd bij het richten op items die in de bovenwereld zijn uitgerust. Verwijder de metadata."
 runtime_error.UselessPerUseAmount: "De 'per-use'-aantekening heeft geen effect voor dit type item, gelieve deze te verwijderen."
 runtime_error.UselessScreenTransition: "Deze opdracht heeft geen effect, aangezien u al op dit scherm bent."
+
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "Het spel is niet actief."

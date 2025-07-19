@@ -78,6 +78,7 @@ menu.skybook_manual: "Skybook 매뉴얼"
 # Main inventory display
 main.bug_report: "이것이 시뮬레이터의 버그라고 생각되면 {{github}}에 보고해 주세요."
 main.gdt_inventory.desc: "게임의 플래그 시스템(GDT)에 저장된 인벤토리 데이터. 아이템은 인벤토리에 올바르게 로드된 것처럼 표시되며, 슬롯은 손상도에 따라 인벤토리에 정렬됩니다."
+main.gdt_inventory.missing_items_tabbed: "GDT에 보이는 인벤토리보다 더 많은 아이템이 있습니다. 일부 아이템은 탭 보기에서 표시되지 않습니다."
 main.gdt_inventory.title: "GameData"
 main.gdt_inventory.view_error: "GDT 내부 데이터를 표시할 수 없습니다!"
 main.screen.inventory: "인벤토리"
@@ -243,6 +244,7 @@ runtime_init.UnsupportedVersion: "이미지에 현재 지원되지 않는 게임
 runtime_error.CannotAutoSwitchScreen: "현재 화면에서는 이 명령을 사용할 수 없습니다. 화면이 수동으로 전환되었기 때문에 시뮬레이터가 자동으로 화면을 전환할 수 없습니다. 오버월드 화면으로 돌아가면 시뮬레이터가 다시 자동으로 화면을 전환할 수 있습니다."
 runtime_error.CannotDoWhileHoldingInInventory: "인벤토리 화면에서 아이템을 들고 있는 동안에는 이 작업을 수행할 수 없습니다."
 runtime_error.CannotDoWhileHoldingInOverworld: "오버월드에서 아이템을 들고 있는 동안에는 이 작업을 수행할 수 없습니다."
+runtime_error.CannotFindGdtFlag: "타입 `{{type}}`의 플래그 `{{flag}}`를 찾을 수 없습니다."
 runtime_error.CannotFindGroundItem: "바닥에서 이 아이템을 찾을 수 없습니다. 이전에 떨어뜨린 아이템 대신 새 아이템을 얻으려면 `get` 명령을 사용하십시오."
 runtime_error.CannotFindGroundItemNeedMore: "지상에서 이 아이템을 찾을 수 없습니다 (`{{more}}`개 더 필요합니다). 이전에 떨어진 아이템을 줍는 대신 새 아이템을 얻으려면 `get` 명령을 사용하십시오."
 runtime_error.CannotFindItem: "인벤토리에서 이 아이템을 찾을 수 없습니다."
@@ -259,6 +261,7 @@ runtime_error.Crash: "이 단계에서 게임이 충돌했습니다."
 runtime_error.Executor: "Executor에서 예상치 못한 오류 발생."
 runtime_error.InaccurateAllBut: "`all but` 구문이 원하는 결과를 얻지 못했습니다. 이는 아마도 인벤토리의 특별한 조건 때문일 수 있습니다."
 runtime_error.InvalidDpadType: "이 종류의 아이템은 D-Pad 퀵 메뉴에서 접근할 수 없습니다."
+runtime_error.InvalidGdtArrayIndex: "`{{index}}`는 타입 `{{type}}`의 플래그 `{{flag}}`에 대한 유효한 배열 인덱스가 아닙니다."
 runtime_error.InvalidItemTarget: "이 슬롯에서는 이 작업을 수행할 수 없습니다."
 runtime_error.InvalidPromptTarget: "프롬프트 엔탱글먼트 대상 아이템이 현재 PE 활성화에 유효하지 않습니다. 대상이 첫 번째 슬롯(First Slot)으로 기본 설정된 결과인 경우, 대신 비어 있거나 반투명한 슬롯을 대상으로 지정하십시오."
 runtime_error.ItemAlreadyEquipped: "이 아이템은 이미 장착되었습니다. 위치 지정자가 누락되었을 수 있습니다."
@@ -290,6 +293,7 @@ runtime_error.UselessItemMatchProp: "이 속성은 이 명령에서 아이템을
 runtime_error.UselessMetaForOverworldEquipment: "오버월드에 장착된 아이템을 대상으로 할 때는 메타데이터가 무시됩니다. 메타데이터를 제거하십시오."
 runtime_error.UselessPerUseAmount: "`per-use` 주석은 이 아이템 유형에 영향을 미치지 않습니다. 제거해 주십시오."
 runtime_error.UselessScreenTransition: "이미 이 화면에 있으므로 이 명령은 효과가 없습니다."
+
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "게임이 실행 중이 아닙니다."
