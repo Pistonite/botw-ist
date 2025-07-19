@@ -2516,6 +2516,7 @@ dependencies = [
  "derive_more",
  "enumset",
  "indoc",
+ "log",
  "serde",
  "skybook-api",
  "static_assertions",

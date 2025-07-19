@@ -3,7 +3,7 @@ use std::sync::Arc;
 use teleparse::{Span, ToSpan};
 
 use crate::cir;
-use crate::error::{ErrorReport, absorb_error, cir_error};
+use crate::error::{ErrorReport, absorb_error};
 use crate::search::QuotedItemResolver;
 use crate::syn;
 
@@ -89,7 +89,7 @@ pub enum Command {
     Cook(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdEntangle`]
     Entangle(Box<cir::ItemSelectSpec>),
-    /// See [`syn::CmdTargeting`]
+    /// See [`syn::CmdCoTargeting`]
     CoTargeting(Box<cir::ItemSelectSpec>),
 
     /// Use DPad Quick Menu
@@ -100,7 +100,7 @@ pub enum Command {
     Unequip(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdUse`] and [`crate::syn::CmdShoot`], second arg is times
     Use(Box<cir::ItemNameSpec>, usize),
-    /// See [`syn::CmdPerUse`]
+    /// See [`syn::CmdCoPerUse`]
     CoPerUse(i32),
     /// Specify the throwing action should not break the weapon
     CoNonBreaking,
@@ -156,7 +156,7 @@ pub enum Command {
     SuResetOverworld,
     /// `!loading-screen`
     SuLoadingScreen,
-    /// See [`syn::CmdSuSetGdt`] and [`syn::CmdSuSetGdtStr`]
+    /// See [`syn::CmdSuSetGdt`]
     ///
     /// First arg is flag name
     SuSetGdt(String, Box<cir::GdtMeta>),
@@ -189,7 +189,7 @@ impl Command {
     pub fn set_gdt_s32(flag_name: &str, value: i32) -> Self {
         Self::SuSetGdt(
             flag_name.to_string(),
-            Box::new(cir::GdtMeta::new(cir::GdtValue::S32(value), None)),
+            Box::new(cir::GdtMeta::new(cir::GdtValueSpec::S32(value), None)),
         )
     }
 }
@@ -338,11 +338,9 @@ pub async fn parse_command<R: QuotedItemResolver>(
             let flag_name = cmd.flag_name.name.to_string();
             Some(X::SuSetGdt(flag_name, Box::new(gdt_value)))
         }
-        C::SuSetGdtStr(cmd) => {
-            let gdt_value = cir::parse_gdt_meta_str(&cmd.props, errors, &cmd.value)?;
-            let flag_name = cmd.flag_name.name.to_string();
-            Some(X::SuSetGdt(flag_name, Box::new(gdt_value)))
-        }
+        //////////////////////////////////////////////////////////////////
+        A![Slots(_)] => None,      // TODO
+        A![Discovered(_)] => None, // TODO
 
         //////////////////////////////////////////////////////////////////
         syn::Command::Roast(cmd) => Some(cir::Command::Roast(
@@ -380,49 +378,48 @@ pub async fn parse_command<R: QuotedItemResolver>(
         },
         syn::Command::Exit(_) => Some(cir::Command::Exit),
         syn::Command::Leave(_) => Some(cir::Command::Leave),
-
-        A![WeaponSlots(cmd)] => {
-            let slots = absorb_error(
-                errors,
-                cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
-            )?;
-            if slots < 8 || slots > 20 {
-                errors.push(cir_error!(
-                    &cmd.amount,
-                    InvalidEquipmentSlotNum(cir::Category::Weapon, slots)
-                ));
-                return None;
-            }
-            Some(X::set_gdt_s32("WeaponPorchStockNum", slots))
-        }
-        A![BowSlots(cmd)] => {
-            let slots = absorb_error(
-                errors,
-                cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
-            )?;
-            if slots < 5 || slots > 14 {
-                errors.push(cir_error!(
-                    &cmd.amount,
-                    InvalidEquipmentSlotNum(cir::Category::Bow, slots)
-                ));
-                return None;
-            }
-            Some(X::set_gdt_s32("BowPorchStockNum", slots))
-        }
-        A![ShieldSlots(cmd)] => {
-            let slots = absorb_error(
-                errors,
-                cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
-            )?;
-            if slots < 4 || slots > 20 {
-                errors.push(cir_error!(
-                    &cmd.amount,
-                    InvalidEquipmentSlotNum(cir::Category::Shield, slots)
-                ));
-                return None;
-            }
-            Some(X::set_gdt_s32("ShieldPorchStockNum", slots))
-        }
+        // A![WeaponSlots(cmd)] => {
+        //     let slots = absorb_error(
+        //         errors,
+        //         cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
+        //     )?;
+        //     if slots < 8 || slots > 20 {
+        //         errors.push(cir_error!(
+        //             &cmd.amount,
+        //             InvalidEquipmentSlotNum(cir::Category::Weapon, slots)
+        //         ));
+        //         return None;
+        //     }
+        //     Some(X::set_gdt_s32("WeaponPorchStockNum", slots))
+        // }
+        // A![BowSlots(cmd)] => {
+        //     let slots = absorb_error(
+        //         errors,
+        //         cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
+        //     )?;
+        //     if slots < 5 || slots > 14 {
+        //         errors.push(cir_error!(
+        //             &cmd.amount,
+        //             InvalidEquipmentSlotNum(cir::Category::Bow, slots)
+        //         ));
+        //         return None;
+        //     }
+        //     Some(X::set_gdt_s32("BowPorchStockNum", slots))
+        // }
+        // A![ShieldSlots(cmd)] => {
+        //     let slots = absorb_error(
+        //         errors,
+        //         cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
+        //     )?;
+        //     if slots < 4 || slots > 20 {
+        //         errors.push(cir_error!(
+        //             &cmd.amount,
+        //             InvalidEquipmentSlotNum(cir::Category::Shield, slots)
+        //         ));
+        //         return None;
+        //     }
+        //     Some(X::set_gdt_s32("ShieldPorchStockNum", slots))
+        // }
     }
 }
 

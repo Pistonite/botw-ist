@@ -5,7 +5,7 @@ ParseOutput {
                 command: Get(
                     [],
                 ),
-                span: 0..16,
+                span: 0..8,
             },
             notes: "",
         },
@@ -14,7 +14,7 @@ ParseOutput {
                 command: Get(
                     [],
                 ),
-                span: 17..43,
+                span: 9..32,
             },
             notes: "",
         },
@@ -23,7 +23,7 @@ ParseOutput {
                 command: Eat(
                     [],
                 ),
-                span: 44..69,
+                span: 33..50,
             },
             notes: "",
         },
@@ -32,53 +32,53 @@ ParseOutput {
                 command: Eat(
                     [],
                 ),
-                span: 70..88,
+                span: 51..67,
             },
             notes: "",
         },
     ],
-    script_len: 88,
+    script_len: 67,
     pages: [],
     display: [],
     errors: [
         ErrorReport {
             span: (
                 4,
-                16,
+                8,
             ),
             is_warning: false,
             error: InvalidItem(
-                "weapon-slots",
+                "smug",
             ),
         },
         ErrorReport {
             span: (
-                23,
-                35,
+                15,
+                24,
             ),
             is_warning: false,
             error: InvalidItem(
-                "weapon-slots",
+                "targeting",
             ),
         },
         ErrorReport {
             span: (
-                48,
-                60,
+                37,
+                41,
             ),
             is_warning: false,
             error: InvalidItem(
-                "shield-slots",
+                "dpad",
             ),
         },
         ErrorReport {
             span: (
-                76,
-                88,
+                57,
+                67,
             ),
             is_warning: false,
             error: InvalidItem(
-                "shield-slots",
+                "discovered",
             ),
         },
     ],

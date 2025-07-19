@@ -7,7 +7,7 @@ use crate::syn;
 #[derive(Debug)]
 pub struct Category {
     pub name: CategoryName,
-    pub meta: tp::Option<syn::ItemMeta>,
+    pub meta: tp::Option<syn::Meta>,
 }
 
 /// Category name specifier
@@ -15,15 +15,25 @@ pub struct Category {
 #[teleparse(root)]
 #[derive(Debug)]
 pub enum CategoryName {
+    #[teleparse(semantic(Type))]
     Weapon(CatWeapon),
+    #[teleparse(semantic(Type))]
     Bow(CatBow),
+    #[teleparse(semantic(Type))]
     Shield(CatShield),
+    #[teleparse(semantic(Type))]
     Armor(CatArmor),
+    #[teleparse(semantic(Type))]
     ArmorHead(CatArmorHead),
+    #[teleparse(semantic(Type))]
     ArmorUpper(CatArmorUpper),
+    #[teleparse(semantic(Type))]
     ArmorLower(CatArmorLower),
+    #[teleparse(semantic(Type))]
     Material(CatMaterial),
+    #[teleparse(semantic(Type))]
     Food(CatFood),
+    #[teleparse(semantic(Type))]
     KeyItem(CatKeyItem),
 }
 

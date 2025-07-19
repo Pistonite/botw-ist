@@ -71,10 +71,18 @@ impl Category {
 #[cfg_attr(feature = "wasm", tsify(into_wasm_abi))]
 #[serde(untagged)]
 pub enum MetaValue {
+    /// A boolean value, or no value (which gets translated to `true`)
     Bool(bool),
+    /// An integer value
     Int(i64),
+    /// A floating point value
     Float(f64),
-    String(String),
+    /// Many item identifier values
+    Words(String),
+    /// A quoted string value - the value does not contain surrounding quotes
+    Quoted(String),
+    /// An angle-bracketed string value - the value does not contain surrounding brackets
+    Angled(String),
 }
 
 impl std::fmt::Display for MetaValue {
@@ -83,7 +91,9 @@ impl std::fmt::Display for MetaValue {
             Self::Bool(b) => write!(f, "{b}"),
             Self::Int(i) => write!(f, "{i}"),
             Self::Float(fl) => write!(f, "{fl}"),
-            Self::String(s) => write!(f, "{s}"),
+            Self::Words(s) => write!(f, "{s}"),
+            Self::Quoted(s) => write!(f, "\"{s}\""),
+            Self::Angled(s) => write!(f, "<{s}>"),
         }
     }
 }

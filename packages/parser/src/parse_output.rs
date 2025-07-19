@@ -231,17 +231,6 @@ pub fn parse_tokens(script: &str) -> Vec<(Span, syn::TT)> {
                 _ => {}
             }
         }
-        if token.ty == syn::TT::Keyword {
-            match script[token.span.lo..token.span.hi].to_lowercase().as_str() {
-                "weapon" | "weapons" | "bow" | "bows" | "shield" | "shields" | "armor"
-                | "armors" | "material" | "materials" | "food" | "foods" | "key-item"
-                | "key-items" => {
-                    output_tokens.push((token.span, syn::TT::Type));
-                    continue;
-                }
-                _ => {}
-            }
-        }
         // if the token has semantic info, use that. Otherwise, use the token type
         match SemanticToken::from_set_full(token.semantics()) {
             Some(semantic) => {

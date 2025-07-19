@@ -27,7 +27,7 @@
     - [Save Files](./action/save.md)
     - [Overworld Transform]()
     - [Trials]()
-    - [Other]()
+    - [Game Flags](./action/flags.md)
     - [Low Level Operations](./action/low_level.md)
   - [Custom Image](./user/custom_image.md)
 - [Developer](./developer/index.md)

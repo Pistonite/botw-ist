@@ -15,6 +15,7 @@ Clicking on a command will take you to the corresponding documentation page.
 | <skyb>close-inv</skyb> | Alias for <skyb>unpause</skyb> |
 | <skyb>close-inventory</skyb> | Alias for <skyb>unpause</skyb> |
 | [<skyb>close-game</skyb>](../action/save.md) | Close the game |
+| [<skyb>:discovered</skyb>](../action/flags.md#discovered-tabs) | Change whether a tab is discovered |
 | <skyb>dnp</skyb> | Drop material or equipment, then pick them up |
 | [<skyb>:dpad</skyb>](../action/equip.md) | Specify change equipment should be done using DPad menu |
 | <skyb>drop</skyb> | Drop material or equipment |
@@ -37,6 +38,9 @@ Clicking on a command will take you to the corresponding documentation page.
 | [<skyb>:same-dialog</skyb>](../action/get.md) | Specify the next buy should be in the same dialog sequence |
 | [<skyb>save</skyb>](../action/save.md) | Make a manual save |
 | [<skyb>save-as</skyb>](../action/save.md) | Make a named save |
+| [<skyb>!set-gdt</skyb>](../action/flags.md#any-flag) | Set any GDT flag |
+| [<skyb>:slot</skyb>](../action/flags.md#number-of-slots-ie-hestu-upgrade) | Alias for <skyb>:slots</skyb> |
+| [<skyb>:slots</skyb>](../action/flags.md#number-of-slots-ie-hestu-upgrade) | Change number of equipment slots |
 | [<skyb>:smug</skyb>](../action/material.md) | Perform Arrowless Offset Smuggling |
 | <skyb>talk-to</skyb> | Talk to an NPC for buying or selling |
 | [<skyb>:targeting</skyb>](../action/entangle.md) | Changes the target for Prompt Entanglement |

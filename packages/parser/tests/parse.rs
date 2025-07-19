@@ -29,10 +29,10 @@ async fn parse_simple() -> anyhow::Result<()> {
 #[tokio::test]
 async fn parse_annotation_keyword_as_item() -> anyhow::Result<()> {
     let script = indoc! {r#"
-        get weapon-slots
-        get 3 weapon-slots[equip];
-        eat shield-slots[equip=1]
-        eat 5 shield-slots
+        get smug
+        get 3 targeting[equip];
+        eat dpad[equip=1]
+        eat 5 discovered
     "#};
 
     test_parser_snapshot("annotation-keyword-as-item", script).await

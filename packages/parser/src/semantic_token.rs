@@ -29,11 +29,12 @@ impl SemanticToken {
         if value.contains(syn::TT::Word) {
             return Some(SemanticToken::Item);
         }
+        if value.contains(syn::TT::Type) {
+            // types are covered by syntax
+            return None;
+        }
         if value.contains(syn::TT::Variable) {
             return Some(SemanticToken::Variable);
-        }
-        if value.contains(syn::TT::Type) {
-            return Some(SemanticToken::Type);
         }
         if value.contains(syn::TT::Amount) || value.contains(syn::TT::Number) {
             return Some(SemanticToken::Amount);
@@ -48,6 +49,9 @@ impl SemanticToken {
     pub fn from_set_full(value: LexSet<syn::TT>) -> Option<Self> {
         if let Some(token) = Self::from_set(value) {
             return Some(token);
+        }
+        if value.contains(syn::TT::Type) {
+            return Some(SemanticToken::Type);
         }
         if value.contains(syn::TT::ItemLiteral) {
             return Some(SemanticToken::ItemLiteral);
