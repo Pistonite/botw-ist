@@ -17,6 +17,7 @@ export type ParserError =
     | { type: "FloatFormat"; data: string }
     | { type: "UnusedMetaKey"; data: string }
     | { type: "InvalidMetaValue"; data: [string, MetaValue] }
+    | { type: "RequiredMetaValue"; data: string }
     | { type: "InvalidWeaponModifier"; data: string }
     | { type: "InvalidCookEffect"; data: string }
     | { type: "TooManyIngredients" }
@@ -29,8 +30,9 @@ export type ParserError =
     | { type: "InvalidInventoryRow"; data: number }
     | { type: "InvalidInventoryCol"; data: number }
     | { type: "UnusedItemPosition" }
-    | { type: "UnexpectedMetaKeyWithValue"; data: string }
     | { type: "InvalidStringLength"; data: number }
     | { type: "GdtTypeNotSet" }
-    | { type: "GdtStrTypeNotSet" }
+    | { type: "GdtTypeConflict" }
+    | { type: "GdtInvalidIndex"; data: number }
+    | { type: "GdtMissingVecComp" }
     | { type: "InvalidEquipmentSlotNum"; data: [Category, number] };

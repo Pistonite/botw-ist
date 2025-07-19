@@ -40,3 +40,33 @@ the cursor is on.
 The simulator parses the commands by span, not by line. You can view the state
 for each command even if multiple of them are on the same line.
 ```
+
+## Item Syntax
+Item syntax is used to specify items for commands like <skyb>get</skyb> or <skyb>drop</skyb>.
+See [Item Syntax](./syntax_item.md).
+
+## Meta Syntax
+The meta syntax is a versatile syntax used to specify additional contextual metadata,
+in the form of ordered key-value pairs, the syntax is:
+
+```skybook
+[key1=value1, key2=value2, ...]
+# `:` and `=` are interchangeable
+[key1:value1, key2:value2, ...]
+```
+
+Generally, `key`s are `kebab-case` words, and `value`s can be one of:
+- `bool` - either the keyword `true` or `false`.
+  - `true` can be omitted, i.e. <skyb>[equip]</skyb> is the same as <skyb>[equip=true]</skyb>
+- `integer` - an integer in decimal, or hex prefixed with `0x`, like `10` or `0xa`.
+- `float` - a floating point number in decimal, like `1.2` (scientific notation not supported).
+- `words` - one or more words consisted of alphabetical characters, `-` and `_`, with spaces allowed in between,
+  like `hello my-world`
+- `quoted` - a quoted string where any character is allowed `"你好世界"`.
+- `angled` - like `words`, but surrounded by `<` and `>` and no spaces are allowed,
+  like `<Foo>`.
+
+```admonish tip
+Generally, the 3 string formats are all accept and can be interchangeable.
+In some cases however, the formats can have different meanings.
+```

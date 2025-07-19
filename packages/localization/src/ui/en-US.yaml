@@ -197,7 +197,9 @@ error.unknown: "Unknown internal error"
 
 # Parser error messages
 parser.FloatFormat: "`{{arg}}` is not a valid floating-point number"
-parser.GdtStrTypeNotSet: "Must include one of these properties to set the type of the GDT string: str32, str64, str256"
+parser.GdtInvalidIndex: "Not a valid GDT array index: `{{index}}`"
+parser.GdtMissingVecComp: "No vector component specified."
+parser.GdtTypeConflict: "Multiple GDT type keys are specified. Make sure you only have exactly one type."
 parser.GdtTypeNotSet: "Must include one of these properties to set the type of the GDT: bool, s32, f32, vec2f, vec3f"
 parser.IntFormat: "`{{arg}}` is not a valid integer"
 parser.IntRange: "Integer `{{arg}}` is out of range"
@@ -217,10 +219,10 @@ parser.InvalidStringLength: "The maximum length allowed for the string is {{arg}
 parser.InvalidTimesClause: "`{{arg}}` is not a valid number for times"
 parser.InvalidTrial: "`{{arg}}` is not a valid trial name"
 parser.InvalidWeaponModifier: "`{{arg}}` is not a valid weapon modifier"
+parser.RequiredMetaValue: "A value is required for this meta property."
 parser.SyntaxUnexpected: "Unexpected syntax"
 parser.SyntaxUnexpectedEof: "Unexpected end of file"
 parser.TooManyIngredients: "An item can have at most 5 ingredients"
-parser.UnexpectedMetaKeyWithValue: "The `{{arg}}` property should not have a value in this context"
 parser.UnusedItemPosition: "Specifying position for the item has no effect for this command"
 parser.UnusedMetaKey: "Property `{{arg}}` is unused"
 

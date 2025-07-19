@@ -84,6 +84,7 @@ tasks:
       - item-system:pull-artifacts
       - parser:pull-artifacts
       - blueflame-deps:pull-artifacts
+      - runtime-tests:pull-artifacts
 
   check-ci-layer-1-2:
     deps:
@@ -151,7 +152,14 @@ tasks:
 
   check-layer-4:
     cmds:
-      - task: runtime-wasm:check
+      - cmd: >
+          if stat packages/runtime-tests/data/program-mini.bfi;
+          then
+            {{.TASK_EXE}} exec -- runtime-wasm:check;
+          else
+            echo "skipping checking runtime-wasm since no local image is found.";
+          fi
+        silent: true
 
   test-ci:
     deps:

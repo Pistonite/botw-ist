@@ -27,7 +27,7 @@ pub enum Command {
     // ==== overworld adding items ====
     /// `get ITEMS`
     Get(CmdGet),
-    /// `pick-up ITEMS` ------------ TODO
+    /// `pick-up ITEMS`
     PickUp(CmdPickUp),
 
     // ==== inventory screen & holding ====
@@ -41,7 +41,7 @@ pub enum Command {
     Unhold(syn::KwUnhold),
     /// `drop` or `drop ITEMS`
     Drop(CmdDrop),
-    /// `dnp ITEMS` -------- TODO
+    /// `dnp ITEMS`
     Dnp(CmdDnp),
     /// `eat ITEMS`
     Eat(CmdEat),
@@ -111,8 +111,6 @@ pub enum Command {
     SuLoadingScreen(syn::KwSuLoadingScreen),
     /// `!set-gdt`
     SuSetGdt(CmdSuSetGdt),
-    /// `!set-gdt-str`
-    SuSetGdtStr(CmdSuSetGdtStr),
 
     // BELOW ARE NOT IMPLEMENTED YET
 
@@ -137,7 +135,6 @@ pub enum Command {
     Exit(syn::KwExit),
     /// `leave` - leave current trial without clearing it
     Leave(syn::KwLeave),
-    // === gamedata ===
 }
 
 #[derive_syntax]
@@ -155,15 +152,14 @@ pub enum Annotation {
     PauseDuring(syn::KwPauseDuring),
     SameDialog(syn::KwSameDialog),
     AccuratelySimulate(syn::KwAccuratelySimulate),
-    Targeting(CmdTargeting),
+    Targeting(CmdCoTargeting),
     Overworld(syn::KwOverworld),
     NonBreaking(syn::KwNonBreaking),
     Breaking(syn::KwBreaking),
     Dpad(syn::KwDpad),
-    PerUse(CmdPerUse),
-    WeaponSlots(CmdWeaponSlots),
-    ShieldSlots(CmdShieldSlots),
-    BowSlots(CmdBowSlots),
+    PerUse(CmdCoPerUse),
+    Slots(CmdCoSlots),
+    Discovered(CmdCoDiscovered),
 }
 
 ///////////////////////////////////////////////////////////
@@ -263,7 +259,7 @@ pub struct CmdEntangle {
 /// `:targeting ITEM` - set the target item to receive the prompt
 #[derive_syntax]
 #[derive(Debug)]
-pub struct CmdTargeting {
+pub struct CmdCoTargeting {
     pub lit: syn::KwTargeting,
     pub item: syn::ItemOrCategory,
 }
@@ -306,7 +302,7 @@ pub struct CmdShoot {
 /// `:per-use X` - decrease durability by X at a time
 #[derive_syntax]
 #[derive(Debug)]
-pub struct CmdPerUse {
+pub struct CmdCoPerUse {
     pub lit: syn::KwPerUse,
     pub amount: syn::Number,
 }
@@ -418,7 +414,7 @@ pub struct CmdSuSwap {
 #[derive(Debug)]
 pub struct CmdSuWrite {
     pub lit: syn::KwSuWrite,
-    pub props: syn::ItemMeta,
+    pub props: syn::Meta,
     pub kw_to: syn::KwTo,
     pub item: syn::ItemOrCategory,
 }
@@ -455,17 +451,25 @@ pub struct CmdSuReloadGdt {
 pub struct CmdSuSetGdt {
     pub lit: syn::KwSuSetGdt,
     pub flag_name: syn::AngledWord,
-    pub props: syn::ItemMeta,
+    pub props: syn::Meta,
 }
 
-/// `!set-gdt-str <FLAG> [properties] "VALUE"` - set a gamedata string flag
+///////////////////////////////////////////////////////////
+
+/// `:slots [weapon=X, shield=X, bow=X]` - Set number of weapon/bow/shield slots
 #[derive_syntax]
 #[derive(Debug)]
-pub struct CmdSuSetGdtStr {
-    pub lit: syn::KwSuSetGdtStr,
-    pub flag_name: syn::AngledWord,
-    pub props: syn::ItemMeta,
-    pub value: tp::String<syn::QuotedWord>,
+pub struct CmdCoSlots {
+    pub lit: syn::Slot,
+    pub meta: syn::Meta,
+}
+
+/// `:discovered [CATEGORY=true|false, ...]` - Set if a tab is discovered
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdCoDiscovered {
+    pub lit: syn::KwDiscovered,
+    pub meta: syn::Meta,
 }
 
 ///////////////////////////////////////////////////////////
@@ -534,28 +538,4 @@ pub struct CmdSort {
 pub struct CmdEnter {
     pub lit: syn::KwEnter,
     pub trial: tp::String<syn::Word>,
-}
-
-/// `:weapon-slots X` - set the number of weapon slots
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdWeaponSlots {
-    pub lit: syn::KwWeaponSlots,
-    pub amount: tp::String<syn::Number>,
-}
-
-/// `:shield-slots X` - set the number of shield slots
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdShieldSlots {
-    pub lit: syn::KwShieldSlots,
-    pub amount: tp::String<syn::Number>,
-}
-
-/// `:bow-slots X` - set the number of bow slots
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdBowSlots {
-    pub lit: syn::KwBowSlots,
-    pub amount: tp::String<syn::Number>,
 }

@@ -43,6 +43,10 @@ export const translateParserError = (
             const category = translateCategory(categoryStr, translator);
             return translator(key, { category, num });
         }
+        case "GdtInvalidIndex": {
+            const index = error.data;
+            return translator(key, { index });
+        }
         default: {
             if ("data" in error) {
                 return translator(key, { arg: error.data });

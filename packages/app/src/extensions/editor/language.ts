@@ -35,7 +35,12 @@ export const language: LanguageTokenizer = {
     commands: GenSyntax.commands,
     types: GenSyntax.types,
     keywords: GenSyntax.keywords,
-    annotaions: GenSyntax.annotations,
+    // some keywords are also used as annotation keywords
+    // so we just allow all of them to be highlighted as annotation
+    annotaions: [
+        ...GenSyntax.annotations,
+        ...GenSyntax.keywords.map((x) => `:${x}`),
+    ],
 
     word: /[_a-zA-Z][-0-9a-zA-Z_]*/,
 

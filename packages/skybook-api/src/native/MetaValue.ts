@@ -3,4 +3,4 @@
 /**
  * MetaValue in parser CIR
  */
-export type MetaValue = boolean | bigint | number | string;
+export type MetaValue = boolean | bigint | number | string | string | string;

@@ -35,6 +35,8 @@ pub enum ParserError {
     UnusedMetaKey(String),
     #[error("key `{0}` has invalid value: {1}")]
     InvalidMetaValue(String, cir::MetaValue),
+    #[error("key `{0}` requires a meta value")]
+    RequiredMetaValue(String),
     #[error("invalid weapon modifier: {0}")]
     InvalidWeaponModifier(String),
     #[error("invalid cook effect: {0}")]
@@ -59,18 +61,20 @@ pub enum ParserError {
     InvalidInventoryCol(i32),
     #[error("Specifying position for the item has no effect in this command")]
     UnusedItemPosition,
-    #[error("The `{0}` key should not have a value when used in this context")]
-    UnexpectedMetaKeyWithValue(String),
-    #[error("The maximum length allowed for the string is {0} in this context")]
+    #[error("The maximum length allowed here for the string is {0}")]
     InvalidStringLength(u32),
     #[error(
-        "GDT meta must include one of the following properties: bool, s32, f32, vec2f or vec3f"
+        "GDT meta must include exactly one of the following properties: bool, s32, f32, str32, str64, str256, vec2f or vec3f"
     )]
     GdtTypeNotSet,
     #[error(
-        "GDT string meta must include one of the following properties: str32, str64, or str256"
+        "GDT meta must include exactly one of the following properties: bool, s32, f32, str32, str64, str256, vec2f or vec3f"
     )]
-    GdtStrTypeNotSet,
+    GdtTypeConflict,
+    #[error("`{0}` is not a valid index for a GDT array")]
+    GdtInvalidIndex(i32),
+    #[error("missing properties for GDT vector components")]
+    GdtMissingVecComp,
     #[error("`{1}` is not a valid number of slots for category `{0:?}`")]
     InvalidEquipmentSlotNum(cir::Category, i32),
     //////////////////////////////////

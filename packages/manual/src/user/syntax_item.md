@@ -99,37 +99,24 @@ You can specify the name of the item in 4 ways:
 ```
 
 ## Metadata
-Metadata specifies extra properties of the item, in the format of 
-<skyb>[key1=value1, key2=value2, ...]</skyb>, either `=` or `:` can be used as the key/value delimiter
+The [Meta Syntax](./syntax.md#meta-syntax) is used to specify additional properties for the item:
 
 - In `FINITE_ITEM_LIST`, it is used to specify extra data on the item to be added
   - For example, <skyb>get pot-lid[durability=1]</skyb> gets a new <skyb>pot-lid</skyb> with `1` durability
 - In `CONSTRAINED_ITEM_LIST`, it is used to specify extra data used to match the item to operate on.
   - For example, if you are multiple `pot-lids`, <skyb>drop pot-lid[durability=1]</skyb> targets the one with exactly `1` durability.
 
-The metadata value can be one of the following types:
-- `string` - english words separated by `-` or `_` 
-- `int` - an integer in decimal or hex (prefixed with `0x`)
-- `float` - a floating point number with 2 integers separated by `.` (the whole number part and the decimal part, both needs to be in decimal).
-- `bool` - `true` or `false`. The value can be omitted to indicate `true`, for example, <skyb>drop pot-lid[equipped]</skyb> is the same as <skyb>drop pot-lid[equipped=true]</skyb>
-
-Full list of item metadata properties:
-
-```admonish tip
-For links below for possible values, since GitHub does not allow linking
-to a symbol, you need to click the link, then search for the symbol in your browser (signed-in user
-can also use the symbol list on the right side).
-```
+Available metadata properties:
 
 | Property | Aliases | Description |
 |-|-|-|
 | `durability` | `dura` |(`int`) Sets `value` to 100 times the specified number |
-| `effect` | | (`int` or `string`) Sets the effect ID for cooked-food. See [parse_cook_effect](https://github.com/Pistonite/botw-ist/blob/main/packages/parser/src/cir/item_meta.rs) for possible values |
+| `effect` | | (`int` or `string`) Sets the effect ID for cooked-food. Integer values are used directly (even when invalid), and string values are converted. See [Cook Effects](../generated/constants.md#cook-effects) for possible values |
 | `equipped` |`equip` | (`bool`) If the item is equipped |
 | `ingr` | | (`string`) Set the ingredient of the cooked-food. The string must be an item identifier (see above). The property can be specified multiple times to add multiple ingredients. |
 | `level`| | (`int`) Sets the level of the effect for cooked-food |
 | `life-recover`| `hp`, `modpower` | (`int`) Sets the number of quarter-hearts cooked-food recovers, or value of a weapon modifier |
-| `modifier` | `modtype` | (`int` or `string`) Set weapon modifier. <br><br>**Cannot be used to set food effect type**. <br><br> Integer values are the same as `price`. String values can be specified multiple times to build up the weapon modifier. <br><br> When used for matching, if only one modifier is specified, it will match any modifier flags that includes the specified one (i.e. other modifiers are allowed), if more than one bit is specified, the modifier flag must match exactly.<br> See [`parse_weapon_modifier_bits`](https://github.com/Pistonite/botw-ist/blob/main/packages/parser/src/cir/item_meta.rs) for possible values |
+| `modifier` | `modtype` | (`int` or `string`) Set weapon modifier. <br><br>**Cannot be used to set food effect type**. <br><br> Integer values are the same as `price`. String values can be specified multiple times to build up the weapon modifier. <br><br> When used for matching, if only one modifier is specified, it will match any modifier flags that includes the specified one (i.e. other modifiers are allowed), if more than one bit is specified, the modifier flag must match exactly.<br> See [Weapon Modifiers](../generated/constants.md#weapon-modifiers) for possible values |
 | `price` | |(`int`) Sets the price of the cooked-food. This can also be used to set multiple weapon modifiers as a bit mask |
 | `star` | | (`int`) Armor star (upgrade) number, valid range is `0-4`, inclusive. <br>Note that this is syntactic sugar to change the name of the item, as armor with different star numbers are different items. |
 | `time` | | (`int`) Sets the duration of the food effect in seconds |

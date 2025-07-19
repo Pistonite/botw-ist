@@ -2,8 +2,6 @@ use derive_more::derive::{Deref, DerefMut};
 use serde::Serialize;
 use teleparse::{derive_lexicon, derive_syntax, tp};
 
-use crate::syn;
-
 /// Token type
 #[derive(Serialize)]
 #[derive_lexicon]
@@ -128,9 +126,7 @@ pub enum TT {
         KwBreaking = "breaking",
         KwDpad = "dpad",
         KwPerUse = "per-use",
-        KwWeaponSlots = "weapon-slots",
-        KwShieldSlots = "shield-slots",
-        KwBowSlots = "bow-slots",
+        KwDiscovered = "discovered",
         // @syntax-generator-hint end
 
         /////////////////////////////
@@ -156,7 +152,6 @@ pub enum TT {
         KwSuResetOverworld = "!reset-overworld",
         KwSuLoadingScreen = "!loading-screen",
         KwSuSetGdt = "!set-gdt",
-        KwSuSetGdtStr = "!set-gdt-str",
         /////////////////////////////
         // When updating syntax, Keep the order in sync with syn and cir Command
         /////////////////////////////
@@ -254,25 +249,6 @@ pub struct AngledWord {
     /// The closing angle bracket
     #[teleparse(semantic(ItemLiteral))]
     pub close: SymRAngle,
-}
-
-#[derive_syntax]
-#[derive(Debug)]
-pub enum MetaValueLiteral {
-    /// A string literal - could be true/false or a string
-    Word(tp::String<tp::Nev<Word>>),
-    /// Category literal as a string
-    Category(tp::String<syn::Category>),
-    /// A numeric literal
-    #[teleparse(semantic(Number))]
-    Number(MetaValueNumber),
-}
-
-#[derive_syntax]
-#[derive(Debug)]
-pub struct MetaValueNumber {
-    pub int_part: Number,
-    pub float_part: tp::Option<(SymPeriod, tp::Option<Number>)>,
 }
 
 /// Colon or equal as separator

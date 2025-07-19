@@ -197,7 +197,9 @@ error.unknown: "Erreur interne inconnue"
 
 # Parser error messages
 parser.FloatFormat: "`{{arg}}` n'est pas un nombre à virgule flottante valide"
-parser.GdtStrTypeNotSet: "Doit inclure l'une de ces propriétés pour définir le type de la chaîne GDT: str32, str64, str256"
+parser.GdtInvalidIndex: "Index de tableau GDT non valide : `{{index}}`."
+parser.GdtMissingVecComp: "Aucun composant vectoriel spécifié."
+parser.GdtTypeConflict: "Plusieurs clés de type GDT sont spécifiées. Assurez-vous d'avoir exactement un seul type."
 parser.GdtTypeNotSet: "Doit inclure l'une de ces propriétés pour définir le type du GDT: bool, s32, f32, vec2f, vec3f"
 parser.IntFormat: "`{{arg}}` n'est pas un entier valide"
 parser.IntRange: "L'entier `{{arg}}` est hors de portée"
@@ -217,10 +219,10 @@ parser.InvalidStringLength: "La longueur maximale autorisée pour la chaîne est
 parser.InvalidTimesClause: "`{{arg}}` n'est pas un nombre valide pour les fois"
 parser.InvalidTrial: "`{{arg}}` n'est pas un nom d'épreuve valide"
 parser.InvalidWeaponModifier: "`{{arg}}` n'est pas un modificateur d'arme valide"
+parser.RequiredMetaValue: "Une valeur est requise pour cette propriété méta."
 parser.SyntaxUnexpected: "Syntaxe inattendue"
 parser.SyntaxUnexpectedEof: "Fin de fichier inattendue"
 parser.TooManyIngredients: "Un objet peut avoir au maximum 5 ingrédients"
-parser.UnexpectedMetaKeyWithValue: "La propriété `{{arg}}` ne devrait pas avoir de valeur dans ce contexte"
 parser.UnusedItemPosition: "La spécification de la position de l'objet n'a aucun effet pour cette commande. Veuillez supprimer les propriétés pertinentes"
 parser.UnusedMetaKey: "La propriété `{{arg}}` est inutilisée"
 

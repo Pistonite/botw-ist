@@ -197,7 +197,9 @@ error.unknown: "Unbekannter interner Fehler"
 
 # Parser error messages
 parser.FloatFormat: "`{{arg}}` ist keine gültige Gleitkommazahl"
-parser.GdtStrTypeNotSet: "Muss eine dieser Eigenschaften enthalten, um den Typ der GDT-Zeichenfolge festzulegen: str32, str64, str256"
+parser.GdtInvalidIndex: "Ungültiger GDT-Array-Index: `{{index}}`."
+parser.GdtMissingVecComp: "Keine Vektor-Komponente angegeben."
+parser.GdtTypeConflict: "Es wurden mehrere GDT-Typ-Schlüssel angegeben. Stellen Sie sicher, dass Sie genau einen Typ haben."
 parser.GdtTypeNotSet: "Muss eine dieser Eigenschaften enthalten, um den Typ des GDT festzulegen: bool, s32, f32, vec2f, vec3f"
 parser.IntFormat: "`{{arg}}` ist keine gültige Ganzzahl"
 parser.IntRange: "Ganzzahl `{{arg}}` liegt außerhalb des Bereichs"
@@ -217,10 +219,10 @@ parser.InvalidStringLength: "Die maximal zulässige Länge für die Zeichenfolge
 parser.InvalidTimesClause: "`{{arg}}` ist keine gültige Zahl für 'mal'"
 parser.InvalidTrial: "`{{arg}}` ist kein gültiger Prüfungsname"
 parser.InvalidWeaponModifier: "`{{arg}}` ist kein gültiger Waffenmodifikator"
+parser.RequiredMetaValue: "Für diese Meta-Eigenschaft ist ein Wert erforderlich."
 parser.SyntaxUnexpected: "Unerwartete Syntax"
 parser.SyntaxUnexpectedEof: "Unerwartetes Dateiende"
 parser.TooManyIngredients: "Ein Gegenstand kann höchstens 5 Zutaten haben"
-parser.UnexpectedMetaKeyWithValue: "Die Eigenschaft `{{arg}}` sollte in diesem Kontext keinen Wert haben"
 parser.UnusedItemPosition: "Das Angeben der Position für den Gegenstand hat für diesen Befehl keine Auswirkung. Bitte entfernen Sie die relevanten Eigenschaften"
 parser.UnusedMetaKey: "Eigenschaft `{{arg}}` wird nicht verwendet"
 

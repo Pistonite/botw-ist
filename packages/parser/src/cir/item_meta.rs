@@ -5,7 +5,7 @@ use crate::error::{ErrorReport, cir_error, cir_warning};
 use crate::search;
 use crate::syn;
 
-use super::MetaParser;
+use super::{MetaParser, enum_name};
 
 /// Item metadata used to select or specify item
 #[derive(Debug, Clone, Default)]
@@ -99,13 +99,13 @@ pub enum ItemPosition {
 }
 
 impl ItemMeta {
-    pub fn parse_syn(meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) -> Self {
+    pub fn parse_syn(meta: &syn::Meta, errors: &mut Vec<ErrorReport>) -> Self {
         let mut parser = ItemMeta::default();
         parser.parse(meta, errors);
         parser
     }
 
-    pub fn parse(&mut self, meta: &syn::ItemMeta, errors: &mut Vec<ErrorReport>) {
+    pub fn parse(&mut self, meta: &syn::Meta, errors: &mut Vec<ErrorReport>) {
         cir::parse_meta(meta, self, errors);
     }
 
@@ -116,119 +116,107 @@ impl ItemMeta {
     pub fn effect_id_f32(&self) -> Option<f32> {
         self.effect_id.map(|x| x as f32)
     }
+
+    fn check_add_more_ingr(&self, span: Span, errors: &mut Vec<ErrorReport>) -> bool {
+        let ret = self.ingredients.len() < 5;
+        if !ret {
+            errors.push(cir_error!(span, TooManyIngredients));
+        }
+        ret
+    }
+
+    fn check_slot_idx(&self, slot: i32, span: Span, errors: &mut Vec<ErrorReport>) -> bool {
+        let ret = slot >= 0 && slot < 20;
+        if !ret {
+            errors.push(cir_error!(span, InvalidSlot(slot)));
+        }
+        ret
+    }
 }
 
 impl MetaParser for &mut ItemMeta {
     type Output = Self;
 
-    fn visit_start(&mut self, _meta: &syn::ItemMeta, _errors: &mut Vec<ErrorReport>) {}
-
     fn visit_entry(
         &mut self,
-        span: Span,
-        key: &tp::String<syn::ItemMetaKey>,
-        value: &tp::Option<syn::ItemMetaValue>,
+        key: &tp::String<syn::MetaKey>,
+        value: Option<&syn::MetaValue>,
+        v_span: Span,
         errors: &mut Vec<ErrorReport>,
     ) {
-        let key_str = key.to_ascii_lowercase();
-        match key_str.trim() {
-            "life" | "value" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Int(x)) => self.value = Some(x as i32),
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
+        super::cir_match_meta_key_value! { (key, key_str, value, v_span, errors):
+            "life" | "value" => required {
+                int(x) => self.value = Some(x as i32),
             },
-            "durability" | "dura" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Int(x)) => self.value = Some((x * 100) as i32),
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
+            "durability" | "dura" => required {
+                int(x) => self.value = Some((x * 100) as i32),
             },
-            "equip" | "equipped" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Bool(x)) => self.equip = Some(x),
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
+            "equip" | "equipped" => optional {
+                bool(x) => self.equip = Some(x),
             },
-            "life-recover" | "hp" | "modpower" => {
-                match cir::parse_optional_meta_value(value.as_ref()) {
-                    Ok(cir::MetaValue::Int(x)) => self.life_recover = Some(x as i32),
-                    Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                    Err(e) => errors.push(e),
-                }
-            }
-            "time" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Int(x)) => self.effect_duration = Some(x as i32),
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
+            "life-recover" | "hp" | "modpower" => required {
+                int(x) => self.life_recover = Some(x as i32),
             },
-            "price" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Int(x)) => self.sell_price = Some(x as i32),
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
+            "time" => required {
+                int(x) => self.effect_duration = Some(x as i32),
             },
-            "modifier" | "modtype" => {
-                match cir::parse_optional_meta_value(value.as_ref()) {
-                    // integer => same as price
-                    Ok(cir::MetaValue::Int(x)) => self.sell_price = Some(x as i32),
-                    // string modifier, parse it and add it
-                    Ok(cir::MetaValue::String(x)) => match parse_weapon_modifier_bits(&x) {
-                        Some(m) => self.sell_price = Some(self.sell_price.unwrap_or_default() | m),
-                        None => errors.push(cir_error!(value, InvalidWeaponModifier(x))),
-                    },
-                    Ok(mv) => errors.push(cir_error!(value, InvalidWeaponModifier(mv.to_string()))),
-                    Err(e) => errors.push(e),
-                }
-            }
-            "effect" => match cir::parse_optional_meta_value(value.as_ref()) {
-                // number => set it without checking
-                Ok(cir::MetaValue::Int(x)) => self.effect_id = Some(x as i32),
-                Ok(cir::MetaValue::Float(x)) => self.effect_id = Some(x as i32),
-                // string modifier, parse it
-                Ok(cir::MetaValue::String(x)) => match parse_cook_effect(&x) {
-                    Some(m) => self.effect_id = Some(m),
-                    None => errors.push(cir_error!(value, InvalidCookEffect(x))),
+            "price" => required {
+                int(x) => self.sell_price = Some(x as i32),
+            },
+            "modifier" | "modtype" => required {
+                // integer => same as price
+                int(x) => self.sell_price = Some(x as i32),
+                // string modifier, parse it and add it
+                string(x) => match enum_name::parse_weapon_modifier_bits(&x) {
+                    Some(m) => self.sell_price = Some(self.sell_price.unwrap_or_default() | m),
+                    None => errors.push(cir_error!(v_span, InvalidWeaponModifier(x))),
                 },
-                Ok(mv) => errors.push(cir_error!(value, InvalidCookEffect(mv.to_string()))),
-                Err(e) => errors.push(e),
             },
-            "level" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Int(x)) => self.effect_level = Some(x as f32),
-                Ok(cir::MetaValue::Float(x)) => self.effect_level = Some(x as f32),
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
+            "effect" => required {
+                // number => set it without checking
+                int(x) => self.effect_id = Some(x as i32),
+                float(x) => self.effect_id = Some(x as i32),
+                // string modifier, parse it
+                string(x) => match enum_name::parse_cook_effect(&x) {
+                    Some(m) => self.effect_id = Some(m),
+                    None => errors.push(cir_error!(v_span, InvalidCookEffect(x))),
+                },
             },
-            "ingr" => {
-                if self.ingredients.len() >= 5 {
-                    errors.push(cir_error!(value, TooManyIngredients));
-                    return;
-                }
-                match cir::parse_optional_meta_value(value.as_ref()) {
-                    Ok(cir::MetaValue::String(x)) => match search::search_item_by_ident(&x) {
+            "level" => required {
+                int(x) => self.effect_level = Some(x as f32),
+                float(x) => self.effect_level = Some(x as f32),
+            },
+            "ingr" => required {
+                words(x) => {
+                    if !self.check_add_more_ingr(v_span, errors) {
+                        return;
+                    }
+                    match search::search_item_by_ident(&x) {
                         Some(item) => self.ingredients.push(item.actor),
-                        None => errors.push(cir_error!(value, InvalidItem(x))),
-                    },
-                    Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                    Err(e) => errors.push(e),
-                }
-            }
-            "star" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Int(x)) => {
+                        None => errors.push(cir_error!(v_span, InvalidItem(x))),
+                    }
+                },
+                angled(x) => {
+                    if !self.check_add_more_ingr(v_span, errors) {
+                        return;
+                    }
+                    self.ingredients.push(x)
+                },
+            },
+            "star" => required {
+                int(x) => {
                     if x < 0 || x > 4 {
-                        errors.push(cir_error!(value, InvalidArmorStarNum(x as i32)));
+                        errors.push(cir_error!(v_span, InvalidArmorStarNum(x as i32)));
                         return;
                     }
                     self.star = Some(x as i32);
                 }
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
             },
-            "from-slot" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Int(x)) => {
-                    self.position = Some(ItemPosition::FromSlot(x as u32));
-                }
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
+            "from-slot" => required {
+                int(x) => self.position = Some(ItemPosition::FromSlot(x as u32)),
             },
-            "tab" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Int(x)) => match self.position.take() {
+            "tab" => required {
+                int(x) => match self.position.take() {
                     None | Some(ItemPosition::FromSlot(_)) => {
                         self.position = Some(ItemPosition::TabIdxAndSlot(x as u32, 0))
                     }
@@ -240,24 +228,20 @@ impl MetaParser for &mut ItemMeta {
                         self.position = Some(ItemPosition::TabCategoryAndSlot(cat));
                     }
                 },
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
             },
-            "slot" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Int(x)) => match self.position.take() {
+            "slot" => required {
+                int(x) => match self.position.take() {
                     None | Some(ItemPosition::FromSlot(_)) => {
                         self.position = Some(ItemPosition::FromSlot(x as u32))
                     }
                     Some(ItemPosition::TabIdxAndSlot(tab, _)) => {
-                        if x < 0 || x >= 20 {
-                            errors.push(cir_error!(value, InvalidSlot(x as i32)));
+                        if !self.check_slot_idx(x as i32, v_span, errors) {
                             return;
                         }
                         self.position = Some(ItemPosition::TabIdxAndSlot(tab, x as u32));
                     }
                     Some(ItemPosition::TabCategoryAndSlot(mut cat)) => {
-                        if x < 0 || x >= 20 {
-                            errors.push(cir_error!(value, InvalidSlot(x as i32)));
+                        if !self.check_slot_idx(x as i32, v_span, errors) {
                             return;
                         }
                         cat.row = (x / 5 + 1) as i8;
@@ -265,13 +249,11 @@ impl MetaParser for &mut ItemMeta {
                         self.position = Some(ItemPosition::TabCategoryAndSlot(cat));
                     }
                 },
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
             },
-            "category" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::String(x)) => {
+            "category" => required {
+                words(x) => {
                     let Some(category) = cir::parse_category_from_str(&x) else {
-                        errors.push(cir_error!(value, InvalidCategoryName(x)));
+                        errors.push(cir_error!(v_span, InvalidCategoryName(x)));
                         return;
                     };
                     match self.position.take() {
@@ -301,88 +283,29 @@ impl MetaParser for &mut ItemMeta {
                         }
                     };
                 }
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
             },
             // for simplicity we only allow row/col after category
             // is already specified, for now
-            "row" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Int(x)) => match self.position.as_mut() {
+            "row" => required {
+                int(x) => match self.position.as_mut() {
                     Some(ItemPosition::TabCategoryAndSlot(cat)) => {
                         cat.row = x.clamp(1, 4) as i8;
                     }
-                    _ => errors.push(cir_warning!(span, UnusedMetaKey(key_str))),
+                    _ => errors.push(cir_warning!(key, UnusedMetaKey(key_str))),
                 },
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
             },
-            "col" => match cir::parse_optional_meta_value(value.as_ref()) {
-                Ok(cir::MetaValue::Int(x)) => match self.position.as_mut() {
+            "col" => required {
+                int(x) => match self.position.as_mut() {
                     Some(ItemPosition::TabCategoryAndSlot(cat)) => {
                         cat.col = x.clamp(1, 5) as i8;
                     }
-                    _ => errors.push(cir_warning!(span, UnusedMetaKey(key_str))),
+                    _ => errors.push(cir_warning!(key, UnusedMetaKey(key_str))),
                 },
-                Ok(mv) => errors.push(cir_error!(value, InvalidMetaValue(key_str, mv))),
-                Err(e) => errors.push(e),
             },
-            _ => errors.push(cir_warning!(span, UnusedMetaKey(key_str))),
         }
     }
 
-    fn visit_end(&mut self, _meta: &syn::ItemMeta, _errors: &mut Vec<ErrorReport>) {}
-
-    fn finish(self) -> Self::Output {
+    fn visit_end(self, _meta: &syn::Meta, _errors: &mut Vec<ErrorReport>) -> Self {
         self
-    }
-}
-
-fn parse_weapon_modifier_bits(value: &str) -> Option<i32> {
-    let value = value
-        .replace("_", "")
-        .replace("-", "")
-        .replace(" ", "")
-        .to_ascii_lowercase();
-    match value.trim() {
-        "none" => Some(0),
-        "attack" | "attackup" | "addpower" => Some(0x1),
-        "addpowerplus" => Some(0x80000001u32 as i32),
-        "durability" | "durabilityup" | "addlife" => Some(0x2),
-        "addlifeplus" => Some(0x80000002u32 as i32),
-        "critical" | "criticalhit" => Some(0x4),
-        "longthrow" | "throw" => Some(0x8),
-        "multishot" | "spreadfire" => Some(0x10),
-        "zoom" => Some(0x20),
-        "quickshot" | "rapidfire" => Some(0x40),
-        "surfmaster" | "surf" | "shieldsurf" | "shieldsurfup" | "surfup" => Some(0x80),
-        "guard" | "guardup" | "addguard" => Some(0x100),
-        "addguardplus" => Some(0x80000100u32 as i32),
-        "plus" | "yellow" => Some(0x80000000u32 as i32),
-        _ => None,
-    }
-}
-
-fn parse_cook_effect(value: &str) -> Option<i32> {
-    let value = value
-        .replace("_", "")
-        .replace("-", "")
-        .replace(" ", "")
-        .to_ascii_lowercase();
-    match value.trim() {
-        "none" => Some(-1),
-        "hearty" | "lifemaxup" => Some(2),
-        "chilly" | "chill" | "resisthot" => Some(4),
-        "spicy" | "resistcold" => Some(5),
-        "electro" | "resistelectric" => Some(6),
-        "mighty" | "attack" | "attackup" => Some(10),
-        "tough" | "defense" | "defenseup" => Some(11),
-        "sneaky" | "quiet" | "stealth" | "stealthup" | "quietness" => Some(12),
-        "hasty" | "speed" | "speedup" | "allspeed" | "movingspeed" => Some(13),
-        "energizing" | "stamina" | "staminaup" | "stam" | "stamup" | "gutsrecover" | "guts" => {
-            Some(14)
-        }
-        "enduring" | "endura" | "endur" | "exgutsmaxup" | "exguts" => Some(15),
-        "fire" | "fireproof" | "resistflame" | "resistfire" => Some(16),
-        _ => None,
     }
 }

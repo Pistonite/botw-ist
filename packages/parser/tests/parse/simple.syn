@@ -60,15 +60,15 @@ Some(
                                             45..50 => "apple",
                                         ),
                                         meta: Some(
-                                            ItemMeta {
+                                            Meta {
                                                 open: token Symbol(50..51),
                                                 entries: Punct {
                                                     span: 51..76,
                                                     elems: [
-                                                        ItemMetaKeyValue {
+                                                        MetaKvPair {
                                                             key: 51..55 => "life",
                                                             value: Some(
-                                                                ItemMetaValue {
+                                                                MetaValueSyntax {
                                                                     sep: Equal(
                                                                         token Symbol(56..57),
                                                                     ),
@@ -78,10 +78,10 @@ Some(
                                                                 },
                                                             ),
                                                         },
-                                                        ItemMetaKeyValue {
+                                                        MetaKvPair {
                                                             key: 64..68 => "time",
                                                             value: Some(
-                                                                ItemMetaValue {
+                                                                MetaValueSyntax {
                                                                     sep: Equal(
                                                                         token Symbol(69..70),
                                                                     ),
@@ -189,15 +189,15 @@ Some(
                                         128..131 => "axe",
                                     ),
                                     meta: Some(
-                                        ItemMeta {
+                                        Meta {
                                             open: token Symbol(131..132),
                                             entries: Punct {
                                                 span: 132..143,
                                                 elems: [
-                                                    ItemMetaKeyValue {
+                                                    MetaKvPair {
                                                         key: 132..141 => "from-slot",
                                                         value: Some(
-                                                            ItemMetaValue {
+                                                            MetaValueSyntax {
                                                                 sep: Equal(
                                                                     token Symbol(141..142),
                                                                 ),
@@ -240,15 +240,15 @@ Some(
                                         150..153 => "inf",
                                     ),
                                     meta: Some(
-                                        ItemMeta {
+                                        Meta {
                                             open: token Symbol(153..154),
                                             entries: Punct {
                                                 span: 154..166,
                                                 elems: [
-                                                    ItemMetaKeyValue {
+                                                    MetaKvPair {
                                                         key: 154..157 => "tab",
                                                         value: Some(
-                                                            ItemMetaValue {
+                                                            MetaValueSyntax {
                                                                 sep: Equal(
                                                                     token Symbol(157..158),
                                                                 ),
@@ -265,10 +265,10 @@ Some(
                                                             },
                                                         ),
                                                     },
-                                                    ItemMetaKeyValue {
+                                                    MetaKvPair {
                                                         key: 160..164 => "slot",
                                                         value: Some(
-                                                            ItemMetaValue {
+                                                            MetaValueSyntax {
                                                                 sep: Equal(
                                                                     token Symbol(164..165),
                                                                 ),
