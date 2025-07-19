@@ -107,20 +107,6 @@ pub fn parse_gdt_meta(meta: &syn::Meta, errors: &mut Vec<ErrorReport>) -> Option
     cir::parse_meta(meta, parser, errors)
 }
 
-// /// Parse the metadata for !set-gdt-str command
-// pub fn parse_gdt_meta_str(
-//     meta: &syn::ItemMeta,
-//     errors: &mut Vec<ErrorReport>,
-//     quoted_value: &str,
-// ) -> Option<GdtMeta> {
-//     let value = quoted_value.trim_matches('"');
-//     let parser = GdtMetaParser {
-//         string_value: Some(value),
-//         ..Default::default()
-//     };
-//     cir::parse_meta(meta, parser, errors)
-// }
-
 #[derive(Debug, Clone, Default, PartialEq)]
 struct GdtMetaParser {
     value: Option<GdtValueSpec>,

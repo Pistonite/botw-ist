@@ -61,8 +61,6 @@ pub enum ParserError {
     InvalidInventoryCol(i32),
     #[error("Specifying position for the item has no effect in this command")]
     UnusedItemPosition,
-    // #[error("The `{0}` key should not have a value when used in this context")]
-    // UnexpectedMetaKeyWithValue(String),
     #[error("The maximum length allowed here for the string is {0}")]
     InvalidStringLength(u32),
     #[error(
@@ -77,10 +75,6 @@ pub enum ParserError {
     GdtInvalidIndex(i32),
     #[error("missing properties for GDT vector components")]
     GdtMissingVecComp,
-    // #[error(
-    //     "GDT string meta must include one of the following properties: str32, str64, or str256"
-    // )]
-    // GdtStrTypeNotSet,
     #[error("`{1}` is not a valid number of slots for category `{0:?}`")]
     InvalidEquipmentSlotNum(cir::Category, i32),
     //////////////////////////////////

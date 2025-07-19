@@ -111,8 +111,6 @@ pub enum Command {
     SuLoadingScreen(syn::KwSuLoadingScreen),
     /// `!set-gdt`
     SuSetGdt(CmdSuSetGdt),
-    // /// `!set-gdt-str`
-    // SuSetGdtStr(CmdSuSetGdtStr),
 
     // BELOW ARE NOT IMPLEMENTED YET
 
@@ -137,7 +135,6 @@ pub enum Command {
     Exit(syn::KwExit),
     /// `leave` - leave current trial without clearing it
     Leave(syn::KwLeave),
-    // === gamedata ===
 }
 
 #[derive_syntax]
@@ -456,16 +453,6 @@ pub struct CmdSuSetGdt {
     pub flag_name: syn::AngledWord,
     pub props: syn::Meta,
 }
-
-// /// `!set-gdt-str <FLAG> [properties] "VALUE"` - set a gamedata string flag
-// #[derive_syntax]
-// #[derive(Debug)]
-// pub struct CmdSuSetGdtStr {
-//     pub lit: syn::KwSuSetGdtStr,
-//     pub flag_name: syn::AngledWord,
-//     pub props: syn::Meta,
-//     pub value: tp::String<syn::QuotedWord>,
-// }
 
 ///////////////////////////////////////////////////////////
 
