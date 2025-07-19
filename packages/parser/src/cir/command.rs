@@ -49,6 +49,10 @@ pub struct CommandWithSpan {
 /// The command to be executed in the simulator
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Command {
+    /// Multiple commands acting as one
+    Multi(Vec<cir::Command>),
+
+
     /// Disable performance optimization that may be inaccurate
     CoAccuratelySimulate,
     /// See [`syn::CmdGet`]
@@ -190,6 +194,13 @@ impl Command {
         Self::SuSetGdt(
             flag_name.to_string(),
             Box::new(cir::GdtMeta::new(cir::GdtValueSpec::S32(value), None)),
+        )
+    }
+    #[inline]
+    pub fn set_gdt_bool_array(flag_name: &str, value: bool, idx: usize) -> Self {
+        Self::SuSetGdt(
+            flag_name.to_string(),
+            Box::new(cir::GdtMeta::new(cir::GdtValueSpec::Bool(value), Some(idx))),
         )
     }
 }
@@ -339,8 +350,30 @@ pub async fn parse_command<R: QuotedItemResolver>(
             Some(X::SuSetGdt(flag_name, Box::new(gdt_value)))
         }
         //////////////////////////////////////////////////////////////////
-        A![Slots(_)] => None,      // TODO
-        A![Discovered(_)] => None, // TODO
+        A![Slots(cmd)] => {
+            let meta = cir::parse_slots_meta(&cmd.meta, errors);
+            let mut cmds = Vec::with_capacity(3);
+            if let Some(x) = meta.weapon {
+                cmds.push(X::set_gdt_s32("WeaponPorchStockNum", x));
+            }
+            if let Some(x) = meta.bow {
+                cmds.push(X::set_gdt_s32("BowPorchStockNum", x));
+            }
+            if let Some(x) = meta.shield {
+                cmds.push(X::set_gdt_s32("ShieldPorchStockNum", x));
+            }
+            Some(X::Multi(cmds))
+        },
+        A![Discovered(cmd)] => {
+            let meta = cir::parse_discover_meta(&cmd.meta, errors);
+            let mut cmds = Vec::with_capacity(7);
+            for (i, x) in meta.categories.into_iter().enumerate() {
+                if let Some(x) = x {
+                    cmds.push(X::set_gdt_bool_array("IsOpenItemCategory", x, i));
+                }
+            }
+            Some(X::Multi(cmds))
+        },
 
         //////////////////////////////////////////////////////////////////
         syn::Command::Roast(cmd) => Some(cir::Command::Roast(
@@ -378,48 +411,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
         },
         syn::Command::Exit(_) => Some(cir::Command::Exit),
         syn::Command::Leave(_) => Some(cir::Command::Leave),
-        // A![WeaponSlots(cmd)] => {
-        //     let slots = absorb_error(
-        //         errors,
-        //         cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
-        //     )?;
-        //     if slots < 8 || slots > 20 {
-        //         errors.push(cir_error!(
-        //             &cmd.amount,
-        //             InvalidEquipmentSlotNum(cir::Category::Weapon, slots)
-        //         ));
-        //         return None;
-        //     }
-        //     Some(X::set_gdt_s32("WeaponPorchStockNum", slots))
-        // }
-        // A![BowSlots(cmd)] => {
-        //     let slots = absorb_error(
-        //         errors,
-        //         cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
-        //     )?;
-        //     if slots < 5 || slots > 14 {
-        //         errors.push(cir_error!(
-        //             &cmd.amount,
-        //             InvalidEquipmentSlotNum(cir::Category::Bow, slots)
-        //         ));
-        //         return None;
-        //     }
-        //     Some(X::set_gdt_s32("BowPorchStockNum", slots))
-        // }
-        // A![ShieldSlots(cmd)] => {
-        //     let slots = absorb_error(
-        //         errors,
-        //         cir::parse_syn_int_str_i32(&cmd.amount, cmd.amount.span()),
-        //     )?;
-        //     if slots < 4 || slots > 20 {
-        //         errors.push(cir_error!(
-        //             &cmd.amount,
-        //             InvalidEquipmentSlotNum(cir::Category::Shield, slots)
-        //         ));
-        //         return None;
-        //     }
-        //     Some(X::set_gdt_s32("ShieldPorchStockNum", slots))
-        // }
     }
 }
 

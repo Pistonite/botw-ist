@@ -37,11 +37,10 @@ Examples:
 
 ## Discovered Tabs
 <skyb>discovered</skyb> edits the `IsOpenItemCategory` flag array.
-The category is parsed in the same way an item category is coerced to the
-tab type (`uking::ui::PouchCategory`):
-- `Bow` and `Arrow` becomes `Bow (0x1)`
-- `ArmorUpper`, `ArmorLower`, and `ArmorHead` becomes `Armor (0x3)`
-- Others are 1-to-1 converted 
+The category is parsed in the same way as [item categories](../user/syntax_item.md#name).
+With a few minor differences:
+- `arrow` and `arrows` are allowed, and they are the same as `bow`/`bows`
+- Specific armor subtype (Upper/Lower/Head) is not allowed, use `armor`/`armors` instead
 
 You can turn a tab to discovered with `true` and to undiscovered with `false`,
 unspecified tabs are unchanged.
@@ -52,6 +51,11 @@ Examples
 :discovered [weapon, bow, shield]
 # Undiscover the armor tab
 :discovered [armor=false]
+```
+
+```admonish note
+When changing a tab from undiscovered to discovered, the inventory will not automatically
+update until it is changed (i.e. when `updateInventoryInfo()` is called again)
 ```
 
 ## Any Flag

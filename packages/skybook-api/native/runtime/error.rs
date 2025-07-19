@@ -83,6 +83,8 @@ pub enum RuntimeError {
     CannotFindItemNeedMore(usize),
     #[error("cannot find the target item for prompt entanglement")]
     CannotFindPromptTarget,
+    #[error("cannot find the flag `{0}` with type `{1}`")]
+    CannotFindGdtFlag(String, String),
     #[error("cannot get more of this")]
     CannotGetMore,
     #[error("cannot hold more items")]
@@ -97,12 +99,12 @@ pub enum RuntimeError {
     Crash,
     #[error("unexpected executor error")]
     Executor,
-    #[error("failed to reload gdt for save. This is a bug")]
-    ReloadFail,
     #[error("the `all but` syntax did not achieve the desired result")]
     InaccurateAllBut,
     #[error("this type of item is not accessible through quick menu")]
     InvalidDpadType,
+    #[error("array index `{2}` for the flag `{0}` with type `{1}` might be invalid")]
+    InvalidGdtArrayIndex(String, String, usize),
     #[error("this action cannot be performed on the selected slot")]
     InvalidItemTarget,
     #[error("the target item for prompt entanglement cannot be reached")]
@@ -153,6 +155,8 @@ pub enum RuntimeError {
         "game has crashed in a previous step and you need to `reload` or `new-game` to continue"
     )]
     PreviousCrash,
+    #[error("failed to reload gdt for save. This is a bug")]
+    ReloadFail,
     #[error("cannot find the named save `{0}`")]
     SaveNotFound(String),
     #[error("the runtime iteration limit is reached")]

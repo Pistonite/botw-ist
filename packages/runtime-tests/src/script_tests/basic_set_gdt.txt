@@ -1,0 +1,21 @@
+get 8 claymore 5 trav-bow 4 hylian-shield
+get claymore
+:slots [weapon=9]
+get claymore
+get claymore
+:slots [bow=7, shield=8]
+get 2 trav-bow 4 pot-lid
+
+:slots [weapon=10]
+get master-sword
+
+!set-gdt <PorchItem>[i=4, str64=Item_Fruit_A]
+!set-gdt <PorchSword_FlagSp>[i=4, s32=0xfff]
+!set-gdt <Open_MasterSword_FullPower>[bool=true]
+!set-gdt <Clear_RemainsWind>[bool=true]
+!set-gdt <Clear_RemainsFire>[bool=true]
+!set-gdt <Clear_RemainsWater>[bool=true]
+!set-gdt <Clear_RemainsElectric>[bool=true]
+
+save
+reload

@@ -38,6 +38,11 @@ fn main_internal() -> anyhow::Result<()> {
     if !script_test_passed {
         bail!("script tests failed");
     }
+    let only_test = std::env::var("SKYBOOK_TEST_ONLY").unwrap_or_default();
+    if !only_test.is_empty() {
+        log::info!("not collecting extra info since SKYBOOK_TEST_ONLY was specified");
+        return Ok(());
+    }
     if !cfg!(feature = "trace-memory") {
         bail!(
             "The tests always fail when trace-memory is not enabled to ensure it's not accidentally disabled"

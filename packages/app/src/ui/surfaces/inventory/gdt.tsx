@@ -41,11 +41,13 @@ const GdtInventoryPanelImpl: React.FC = () => {
     const t = useUITranslation();
 
     const isTabView = useUIStore((state) => state.isTabViewEnabled);
-    const tabNodes = useMemo(() => {
+    const [tabNodes, missingItemsInTabbedGdt] = useMemo(() => {
         if (!isTabView) {
-            return undefined;
+            return [undefined, false];
         }
-        return getTabNodesForGdt(pouch?.val, gdt?.val);
+        const tabNodes = getTabNodesForGdt(pouch?.val, gdt?.val);
+        const missingItemsInTabbedGdt = (pouch?.val?.items?.length || 0) < (gdt?.val?.items?.length || 0);
+        return [tabNodes, missingItemsInTabbedGdt];
     }, [pouch, gdt, isTabView]);
 
     const itemSlotProps = useItemSlotPropsFromSettings();
@@ -57,6 +59,14 @@ const GdtInventoryPanelImpl: React.FC = () => {
             noBugReport={noShowMaybeBugMsg}
         >
             {translateRuntimeViewError(gdt.err, t)}
+        </ErrorBar>
+    );
+    const $MissingItemInTabbedError = missingItemsInTabbedGdt && (
+        <ErrorBar
+            isWarning
+            noBugReport
+        >
+            {t("main.gdt_inventory.missing_items_tabbed")}
         </ErrorBar>
     );
 
@@ -147,6 +157,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
                 </InventoryTitle>
                 <div className={m("flex-col gap-4")}>
                     {$Error}
+                    {$MissingItemInTabbedError}
                     {pouchError && <ErrorBar>{pouchError}</ErrorBar>}
                     {gdtError && <ErrorBar>{gdtError}</ErrorBar>}
                 </div>

@@ -179,6 +179,17 @@ impl State {
         use cir::Command as X;
         let args = std::mem::take(&mut self.args);
         match step.command() {
+            X::Multi(cmds) => {
+                let mut errors = vec![];
+                let mut state = self;
+                for x in cmds {
+                    // the args handling is a bit wacky
+                    let result = state.handle_command(ctx.clone(), args.clone(), x).await?;
+                    errors.extend(result.errors);
+                    state = result.value;
+                }
+                Ok(Report::with_errors(state, errors))
+            },
             X::CoSmug => set_arg!(self, args, smug, true),
             X::CoPauseDuring => set_arg!(self, args, pause_during, true),
             X::CoSameDialog => set_arg!(self, args, same_dialog, true),
@@ -192,6 +203,18 @@ impl State {
             X::CoBreaking => set_arg!(self, args, breaking, true),
             X::CoPerUse(x) => set_arg!(self, args, per_use, Some(*x)),
 
+            command => self.handle_command(ctx, args, command).await
+
+        }
+    }
+    async fn handle_command(
+        mut self,
+        ctx: sim::Context<&sim::Runtime>,
+        args: Option<Box<StateArgs>>,
+        command: &cir::Command,
+    ) -> Result<Report<Self>, exec::Error> {
+        use cir::Command as X;
+        match command {
             X::Get(items) => self.handle_get(ctx, items, args.as_deref()).await,
             X::PickUp(items) => self.handle_pick_up(ctx, items, args.as_deref()).await,
             X::OpenInv => self.handle_pause(ctx).await,
@@ -243,6 +266,7 @@ impl State {
             X::SuInit(items) => self.handle_su_add_slot(ctx, items, true).await,
             X::SuAddSlot(items) => self.handle_su_add_slot(ctx, items, false).await,
             X::SuRemove(items) => self.handle_su_remove(ctx, items).await,
+            X::SuSetGdt(name, meta) => self.handle_su_set_gdt(ctx, name, meta).await,
 
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
         }
@@ -603,6 +627,20 @@ impl State {
         let items = items.to_vec();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::force_remove_item(&mut cpu, sys, errors, &items)
+        })
+    }
+
+    async fn handle_su_set_gdt(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        name: &str,
+        meta: &cir::GdtMeta,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling !SETGDT");
+        let name = name.to_string();
+        let meta = meta.clone();
+        in_game!(self, rt, cpu, _sys, errors => {
+            Ok(sim::actions::low_level::set_gdt(&mut cpu, &name, &meta, errors)?)
         })
     }
 }
