@@ -1,9 +1,12 @@
-const TARGET_PATH = "src/generated";
+const TARGET_FILE = "src/generated/constants.md";
 const SOURCE_FILE = "../parser/src/cir/enum_name.rs";
 const HINT = "// @manual-generator-hint";
 
-/** Parse a section starting with the hint and ending with the "end" hint */
-const parseHintSection = (lines: string[], hint: string): string[] => {
+/** 
+ * Parse a section starting with the hint and ending with the "end" hint
+ * into a markdown section
+ */
+const parseHintSection = (lines: string[], hint: string): string => {
     console.log(`processing: ${hint}`);
     const output: string[] = [];
     const len = lines.length;
@@ -36,10 +39,11 @@ const parseHintSection = (lines: string[], hint: string): string[] => {
         }
         output.push(x);
     }
-    output.push("| Constant | Description | Internal Value |");
-    output.push("|-|-|-|");
+    output.push(`<div class="skybook--wide-table">\n`);
+    output.push("| Constant | Description |");
+    output.push("|-|-|");
     // parse each section (row of the table)
-    const sections: string[] = [];
+    const tableRowByName: Record<string, string> = {};
     for (; i < len; i++) {
         // each section starts with comments
         const comments: string[] = [];
@@ -83,18 +87,40 @@ const parseHintSection = (lines: string[], hint: string): string[] => {
             console.error("did not find the => line!");
             process.exit(1);
         }
-        const value = l.substring(2).trim();
+        let value = l.substring(2).trim();
+        if (value.endsWith(",")) {
+            value = value.substring(0, value.length - 1);
+        }
+        const description = comments.map((x) =>{
+            x = x.trim();
+            if (x.startsWith("//")) {
+                x = x.substring(2).trim();
+            }
+            return x
+        }).join("<br>");
 
-        // table: Name, Description, Value
-        //
+        const vLen = variants.length;
+        const first = variants[0];
+        const firstLine = "| `"+first+"` | " + description + "<br><br>Internal Value: `"+value+"`";
+        tableRowByName[first] = firstLine;
+
+        // The first one is the main one, the rest
+        // are aliases to it
+        for (let i = 1;i<vLen;i++) {
+            const v = variants[i];
+            const line = "| `"+v+"` | Alias for `"+first+"` |";
+            tableRowByName[v] = line;
+        }
     }
-    console.log(`done. found ${output.length} words`);
-    return output;
-};
 
-const createExportString = (propStrings: string[]): string => {
-    const middleLines = propStrings.join("\n");
-    return `export const GenSyntax = {\n${middleLines}\n} as const;`;
+    const keys = Object.keys(tableRowByName);
+    keys.sort();
+    for (const k of keys) {
+        output.push(tableRowByName[k]);
+    }
+
+    output.push("\n</div>");
+    return "\n" + output.join("\n") + "\n";
 };
 
 console.log("parsing source file...");
@@ -107,23 +133,11 @@ const header = sourceFileLines
     .filter((x) => x.startsWith("//!"))
     .map((x) => x.substring(3).trim());
 
-/** Create a string containing the code `[prop]: [...words]` */
-const createPropertyString = (
-    prop: string,
-    mapFn?: (x: string) => string,
-): string => {
-    mapFn ??= (x) => `"${x}"`;
-    const words = parseHintSection(sourceFileLines, prop);
-    const array = words.map(mapFn).join(", ");
-    return `${prop}: [${array}],`;
-};
+const targetFileContent = 
+    header.join("\n") + 
+    parseHintSection(sourceFileLines, "cook-effects") +
+    parseHintSection(sourceFileLines, "weapon-modifiers");
 
-const targetFileContent = header.join("\n") + "\n" + createExportString([
-    createPropertyString("commands"),
-    createPropertyString("types"),
-    createPropertyString("keywords"),
-    createPropertyString("annotations", (x) => `":${x}"`),
-]);
 
 console.log("writing target file...");
 await Bun.file(TARGET_FILE).write(targetFileContent);

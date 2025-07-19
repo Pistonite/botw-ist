@@ -25,7 +25,7 @@ tasks:
       - cp src/icon.png theme/favicon.png
       - bun preprocess/inject-meta.ts pre
       - $(which mkdir) -p src/generated
-      - bun preprocess/generate.ts
+      - bun preprocess/generate-constants.ts
   dev:
     desc: Start mdbook in watch mode
     cmds:

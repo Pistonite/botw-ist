@@ -3,7 +3,7 @@
 This is the full list of commands sorted in alphabetical order.
 Clicking on a command will take you to the corresponding documentation page.
 
-<div id="skybook--command-table">
+<div class="skybook--wide-table">
 
 | Command | Description |
 |-|-|

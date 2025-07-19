@@ -10,10 +10,10 @@
 pub fn parse_cook_effect(value: &str) -> Option<i32> {
     match clean_ident(value).as_str() {
         // @manual-generator-hint cook-effects
-        // # Cook Effects
+        // ## Cook Effects
         // These values can be used for the `effect`
         // [item meta property](../user/syntax_item.md#metadata)
-        // to specify cook effect for a food
+        // to specify cook effect for a food.
         //
         // @manual-generator-hint values
         // No cook effect
@@ -60,9 +60,14 @@ pub fn parse_cook_effect(value: &str) -> Option<i32> {
 /// Parse weapon modifier bit flag for the `modifier` meta property for items
 #[rustfmt::skip]
 pub fn parse_weapon_modifier_bits(value: &str) -> Option<i32> {
-    // @manual-generator-hint weapon-modifiers
-    // These values can be used as weapon
     match clean_ident(value).as_str() {
+        // @manual-generator-hint weapon-modifiers
+        // ## Weapon Modifiers
+        // These values can be used for the `modifier`/`modtype`
+        // [item meta property](../user/syntax_item.md#metadata)
+        // to specify modifier for an equipment.
+        //
+        // @manual-generator-hint values
         // No modifier
         "none"
         => Some(0),
@@ -88,7 +93,8 @@ pub fn parse_weapon_modifier_bits(value: &str) -> Option<i32> {
         "multishot" | "spreadfire" 
         => Some(0x10),
         // Bow Zoom
-        "zoom" => Some(0x20),
+        "zoom"
+        => Some(0x20),
         // Bow Quickshot
         "quickshot" | "rapidfire" 
         => Some(0x40),

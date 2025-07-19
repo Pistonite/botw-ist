@@ -29,6 +29,7 @@
     - [Trials]()
     - [Game Flags](./action/flags.md)
     - [Low Level Operations](./action/low_level.md)
+    - [Constants](./generated/constants.md)
   - [Custom Image](./user/custom_image.md)
 - [Developer](./developer/index.md)
   - [Architecture](./developer/arch/index.md)
