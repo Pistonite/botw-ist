@@ -46,7 +46,8 @@ const GdtInventoryPanelImpl: React.FC = () => {
             return [undefined, false];
         }
         const tabNodes = getTabNodesForGdt(pouch?.val, gdt?.val);
-        const missingItemsInTabbedGdt = (pouch?.val?.items?.length || 0) < (gdt?.val?.items?.length || 0);
+        const missingItemsInTabbedGdt =
+            (pouch?.val?.items?.length || 0) < (gdt?.val?.items?.length || 0);
         return [tabNodes, missingItemsInTabbedGdt];
     }, [pouch, gdt, isTabView]);
 
@@ -62,10 +63,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
         </ErrorBar>
     );
     const $MissingItemInTabbedError = missingItemsInTabbedGdt && (
-        <ErrorBar
-            isWarning
-            noBugReport
-        >
+        <ErrorBar isWarning noBugReport>
             {t("main.gdt_inventory.missing_items_tabbed")}
         </ErrorBar>
     );

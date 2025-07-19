@@ -52,7 +52,6 @@ pub enum Command {
     /// Multiple commands acting as one
     Multi(Vec<cir::Command>),
 
-
     /// Disable performance optimization that may be inaccurate
     CoAccuratelySimulate,
     /// See [`syn::CmdGet`]
@@ -363,7 +362,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
                 cmds.push(X::set_gdt_s32("ShieldPorchStockNum", x));
             }
             Some(X::Multi(cmds))
-        },
+        }
         A![Discovered(cmd)] => {
             let meta = cir::parse_discover_meta(&cmd.meta, errors);
             let mut cmds = Vec::with_capacity(7);
@@ -373,7 +372,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
                 }
             }
             Some(X::Multi(cmds))
-        },
+        }
 
         //////////////////////////////////////////////////////////////////
         syn::Command::Roast(cmd) => Some(cir::Command::Roast(

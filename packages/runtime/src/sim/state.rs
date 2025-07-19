@@ -189,7 +189,7 @@ impl State {
                     state = result.value;
                 }
                 Ok(Report::with_errors(state, errors))
-            },
+            }
             X::CoSmug => set_arg!(self, args, smug, true),
             X::CoPauseDuring => set_arg!(self, args, pause_during, true),
             X::CoSameDialog => set_arg!(self, args, same_dialog, true),
@@ -203,8 +203,7 @@ impl State {
             X::CoBreaking => set_arg!(self, args, breaking, true),
             X::CoPerUse(x) => set_arg!(self, args, per_use, Some(*x)),
 
-            command => self.handle_command(ctx, args, command).await
-
+            command => self.handle_command(ctx, args, command).await,
         }
     }
     async fn handle_command(

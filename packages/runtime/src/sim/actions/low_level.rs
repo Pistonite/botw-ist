@@ -367,8 +367,10 @@ pub fn set_gdt(
                             let Some(v) = flag.get_at(i) else {
                                 invalid_index!(i, "vec3f[]");
                             };
-                            ((*x).unwrap_or(v.0), (*y).unwrap_or(v.1),
-                            (*z).unwrap_or(v.2),
+                            (
+                                (*x).unwrap_or(v.0),
+                                (*y).unwrap_or(v.1),
+                                (*z).unwrap_or(v.2),
                             )
                         }
                     };
@@ -384,7 +386,11 @@ pub fn set_gdt(
                         (Some(x), Some(y), Some(z)) => (*x, *y, *z),
                         (x, y, z) => {
                             let v = flag.get();
-                            ((*x).unwrap_or(v.0), (*y).unwrap_or(v.1), (*z).unwrap_or(v.2))
+                            (
+                                (*x).unwrap_or(v.0),
+                                (*y).unwrap_or(v.1),
+                                (*z).unwrap_or(v.2),
+                            )
                         }
                     };
                     flag.set((x, y, z));
