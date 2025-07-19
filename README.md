@@ -1,18 +1,15 @@
-# botw-ist
+# ![icon](./packages/manual/src/icon.png) botw-ist
+
 Simulator for Inventory Slot Transfer in BOTW
-???
 
+You can use it as a [web app](https://ist.pistonite.app),
+please refer to the [manual](https://skybook.pistonite.dev).
 
-**Simulator v4 is under active development!** Meanwhile, you can continue
-using the V3 app: https://ist.itntpiston.app
+The legacy app is still available at https://ist.itntpiston.app ,
+but it will start to be deprecated once V4 achieves feature parity.
 
 ## License
-All code in this repo are under MIT License:
-- BlueFlame (packages/blueflame*): See [LICENSE](./packages/blueflame/LICENSE)
-- All other non-git-submodules: See [LICENSE](./LICENSE)
-- For git submodules, see the `LICENSE` file of the corresponding submodule
-
-There are some generated code that are not licensed. Those are not in the repo.
+All code in this repo are under MIT License. BlueFlame has additional contributors. See [LICENSE](./packages/blueflame/LICENSE).
 
 This repo does not contain any copyrighted assets or code from BOTW!
 This project cannot be used to play BOTW!
