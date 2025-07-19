@@ -52,15 +52,21 @@ task install
 
 That's it!
 
-## 
+## Building Runtime
 
 The setup above will let you build and run the web app without building
-the Runtime locally. To build the Runtime, you need to set up a [BlueFlame image](../../user/custom_image.md)
-in addition to the steps above.
+the Runtime locally.
+To build the Runtime, you need to either:
+- Set up [uking-relocate](https://github.com/Pistonight/symbotw/tree/main/packages/uking-relocate),
+  and put the game files in `packages/runtime-tests/data/botw150`.
+  - Then, run `task exec -- runtime-tests:build-mini` to build the mini image.
+- Set up a [BlueFlame image](../../user/custom_image.md),
+  and put the image file at `packages/runtime-tests/data/program-mini.bfi`.
+  This will use whatever image you provide as the default runtime image.
 
-Rename your image `program.blfm` and put it under `/packages/runtime/`, then run:
+Now, you can build the runtime WASM module
 ```
 task exec runtime-wasm:build
 ```
 
-Now the local build of the app will use the locally built Runtime.
+After that, the local build of the app will use the locally built Runtime.
