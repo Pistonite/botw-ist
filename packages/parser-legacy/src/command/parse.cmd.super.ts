@@ -26,7 +26,7 @@ export class SuperCommandSwap extends AbstractProperCommand {
     }
 
     public override convert(): string {
-        return `### !swap by index is no longer supported. Please use !swap ITEM1 and ITEM2\n# !swap ${this.i} ${this.j}`;
+        return `### !swap by index is no longer supported. Please use !swap ITEM1 and ITEM2\n### See https://skybook.pistonite.dev/action/low_level.html#change-item-data\n# !swap ${this.i} ${this.j}`;
     }
 }
 

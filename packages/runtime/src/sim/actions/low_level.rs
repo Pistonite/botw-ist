@@ -184,7 +184,7 @@ pub fn add_slots_internal(
 /// Simulates `uking::ui::PauseMenuDataMgr::Lists::pushNewItem`
 ///
 /// Returns nullptr if list2.mCount is 0
-pub fn push_new_item(ctx: &mut sim::Context<&mut Cpu2>) -> Result<Ptr![PouchItem], memory::Error> {
+fn push_new_item(ctx: &mut sim::Context<&mut Cpu2>) -> Result<Ptr![PouchItem], memory::Error> {
     let m = ctx.cpu().proc.memory();
     let pmdm = singleton_instance!(pmdm(m))?;
 
@@ -204,6 +204,135 @@ pub fn push_new_item(ctx: &mut sim::Context<&mut Cpu2>) -> Result<Ptr![PouchItem
     let list1 = Ptr!(&pmdm->mList1);
     list1.push_back(item_node, m)?;
     Ok(item_ptr)
+}
+
+/// Handle the `!write [META] to item[TARGET_META]` supercommand
+pub fn write_meta(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    errors: &mut Vec<ErrorReport>,
+    write_meta: &cir::ItemMeta,
+    item: &cir::ItemSelectSpec,
+) -> Result<(), processor::Error> {
+    // find the item
+    let Some(item_ptr) = find_single_item_target(ctx, errors, item)? else {
+        errors.push(sim_error!(item.span, CannotFindItem));
+        return Ok(());
+    };
+
+    // if the item spec has a name, also write the name
+    let name = match &item.name {
+        cir::ItemNameSpec::Actor(x) => Some(x.as_str()),
+        cir::ItemNameSpec::Category(_) => None,
+    };
+
+    write_meta_internal(ctx, write_meta, name, item_ptr)?;
+    fix_inventory_state_and_gamedata(ctx)
+}
+
+/// Handle the `!swap ITEM1 and ITEM2` supercommand
+pub fn swap_items(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    errors: &mut Vec<ErrorReport>,
+    item1: &cir::ItemSelectSpec,
+    item2: &cir::ItemSelectSpec,
+) -> Result<(), processor::Error> {
+    // find the items
+    let Some(item1_ptr) = find_single_item_target(ctx, errors, item1)? else {
+        errors.push(sim_error!(item1.span, CannotFindItem));
+        return Ok(());
+    };
+    let Some(item2_ptr) = find_single_item_target(ctx, errors, item2)? else {
+        errors.push(sim_error!(item2.span, CannotFindItem));
+        return Ok(());
+    };
+    swap_item_internal(ctx, item1_ptr, item2_ptr)?;
+    fix_inventory_state_and_gamedata(ctx)
+}
+
+/// Use a "forced pouch screen" to find item in the pouch
+fn find_single_item_target(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    errors: &mut Vec<ErrorReport>,
+    spec: &cir::ItemSelectSpec,
+) -> Result<Option<Ptr![PouchItem]>, memory::Error> {
+    // open a temporary inventory that allows access to items
+    let inventory = sim::PouchScreen::open_no_exec(ctx.cpu().proc, true)?;
+
+    let mut new_errors = vec![];
+    let Some((tab, slot)) = inventory.select(
+        &spec.name,
+        spec.meta.as_ref(),
+        None,
+        ctx.cpu().proc.memory(),
+        spec.span,
+        &mut new_errors,
+    )?
+    else {
+        errors.extend(new_errors);
+        return Ok(None);
+    };
+    // we eat all the error/warnings if the position is found successfully
+    // and let the command add their own errors when they check the returned
+    // Option here
+    let item = inventory.get(tab, slot).as_ref().copied();
+    Ok(item)
+}
+
+/// Write meta data and optionally name to the item
+fn write_meta_internal(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    meta: &cir::ItemMeta,
+    name: Option<&str>,
+    item_ptr: Ptr![PouchItem],
+) -> Result<(), memory::Error> {
+    let m = ctx.cpu().proc.memory_mut();
+    if let Some(x) = meta.value {
+        mem! { m: *(&item_ptr->mValue) = x }
+    }
+    if let Some(x) = meta.equip {
+        mem! { m: *(&item_ptr->mEquipped) = x }
+    }
+    if let Some(x) = meta.life_recover {
+        mem! { m: *(&item_ptr->mHealthRecover) = x }
+    }
+    if let Some(x) = meta.effect_duration {
+        mem! { m: *(&item_ptr->mEffectDuration) = x }
+    }
+    if let Some(x) = meta.sell_price {
+        mem! { m: *(&item_ptr->mSellPrice) = x }
+    }
+    if let Some(x) = meta.effect_id_f32() {
+        mem! { m: *(&item_ptr->mEffectId) = x }
+    }
+    // currently don't support ingredients (as we can't tell
+    // ingredients not specified vs specifying no ingredients yet)
+
+    if let Some(x) = name {
+        // get type and use from item name
+        let item_type = game::get_pouch_item_type(x);
+        let item_use = game::get_pouch_item_use(x);
+        Ptr!(&item_ptr->mName).safe_store(x, m)?;
+        mem! { m:
+            *(&item_ptr->mType) = item_type;
+            *(&item_ptr->mItemUse) = item_use;
+        }
+    }
+
+    Ok(())
+}
+
+/// Swap 2 item nodes
+fn swap_item_internal(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    item1: Ptr![PouchItem],
+    item2: Ptr![PouchItem],
+) -> Result<(), memory::Error> {
+    let m = ctx.cpu().proc.memory_mut();
+    let item1_node = Ptr!(&item1->mListNode);
+    let item2_node = Ptr!(&item2->mListNode);
+    item1_node.swap(item2_node, m)?;
+
+    Ok(())
 }
 
 pub fn fix_inventory_state_and_gamedata(

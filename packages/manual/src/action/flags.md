@@ -36,7 +36,7 @@ Examples:
 ```
 
 ## Discovered Tabs
-<skyb>discovered</skyb> edits the `IsOpenItemCategory` flag array.
+<skyb>:discovered</skyb> edits the `IsOpenItemCategory` flag array.
 The category is parsed in the same way as [item categories](../user/syntax_item.md#name).
 With a few minor differences:
 - `arrow` and `arrows` are allowed, and they are the same as `bow`/`bows`

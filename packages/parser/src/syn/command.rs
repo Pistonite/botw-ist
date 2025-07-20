@@ -97,8 +97,6 @@ pub enum Command {
     SuSwap(CmdSuSwap),
     /// `!write [META] to ITEM`
     SuWrite(CmdSuWrite),
-    /// `!write-name <NAME> to ITEM`
-    SuWriteName(CmdSuWriteName),
     /// `!remove ITEMS`
     SuRemove(CmdSuRemove),
     /// `!reload-gdt SAVE`
@@ -398,8 +396,7 @@ pub struct CmdSuAddSlot {
     pub items: tp::Option<syn::ItemListFinite>,
 }
 
-/// `!swap ITEM1 and ITEM2` - Target ITEM1 and ITEM2, and swap the item data (without changing
-/// nodes)
+/// `!swap ITEM1 and ITEM2` - Target ITEM1 and ITEM2, and swap the item nodes
 #[derive_syntax]
 #[derive(Debug)]
 pub struct CmdSuSwap {
@@ -415,16 +412,6 @@ pub struct CmdSuSwap {
 pub struct CmdSuWrite {
     pub lit: syn::KwSuWrite,
     pub props: syn::Meta,
-    pub kw_to: syn::KwTo,
-    pub item: syn::ItemOrCategory,
-}
-
-/// `!write-name <NAME> to ITEM`
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSuWriteName {
-    pub lit: syn::KwSuWriteName,
-    pub name: syn::AngledWord,
     pub kw_to: syn::KwTo,
     pub item: syn::ItemOrCategory,
 }

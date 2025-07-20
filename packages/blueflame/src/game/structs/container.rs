@@ -63,6 +63,33 @@ impl Ptr![ListNode] {
 
         Ok(())
     }
+
+    /// `sead::ListImpl::swap` - swap two nodes
+    pub fn swap(
+        self: Ptr![ListNode],
+        other: Ptr![ListNode],
+        memory: &mut Memory,
+    ) -> Result<(), memory::Error> {
+        // same node so swapping does nothing
+        if self == other {
+            return Ok(());
+        }
+        mem! { memory:
+            let self_prev = *(&self->mPrev);
+            let other_prev = *(&other->mPrev);
+        }
+        // if they are next to each other, then one remove/insert is enough
+        if other_prev != self {
+            self.erase(memory)?;
+            other_prev.insert_back(self, memory)?;
+        }
+        if self_prev != other {
+            other.erase(memory)?;
+            self_prev.insert_back(other, memory)?;
+        }
+
+        Ok(())
+    }
 }
 
 #[derive(MemObject, Default, Clone)]
