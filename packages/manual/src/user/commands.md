@@ -42,6 +42,7 @@ Clicking on a command will take you to the corresponding documentation page.
 | [<skyb>:slot</skyb>](../action/flags.md#number-of-slots-ie-hestu-upgrade) | Alias for <skyb>:slots</skyb> |
 | [<skyb>:slots</skyb>](../action/flags.md#number-of-slots-ie-hestu-upgrade) | Change number of equipment slots |
 | [<skyb>:smug</skyb>](../action/material.md) | Perform Arrowless Offset Smuggling |
+| [<skyb>!swap</skyb>](../action/low_level.md#change-item-data) | Swap two item nodes |
 | <skyb>talk-to</skyb> | Talk to an NPC for buying or selling |
 | [<skyb>:targeting</skyb>](../action/entangle.md) | Changes the target for Prompt Entanglement |
 | [<skyb>unequip</skyb>](../action/equip.md) | Unequip an item |
@@ -49,5 +50,6 @@ Clicking on a command will take you to the corresponding documentation page.
 | <skyb>unpause</skyb> | Close the inventory |
 | <skyb>untalk</skyb> | Closes buying or selling dialog |
 | [<skyb>use</skyb>](../action/overworld.md) | Use equipments or materials in the overworld |
+| [<skyb>!write</skyb>](../action/low_level.md#change-item-data) | Edit inventory item data |
 
 </div>
