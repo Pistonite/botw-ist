@@ -7,3 +7,6 @@ reload
 !init 1 slate 1 glider 5 apples 1 pot-lid 1 trav-bow 1 hylian-hood 1 arrow 1 royal-claymore 1 orb 1 elixir
 save
 reload
+
+!swap slate and glider
+!write [equipped] to slate

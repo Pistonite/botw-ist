@@ -508,3 +508,13 @@ pub enum ScreenItemState<T> {
     /// Slot has a normal item (in_inventory = true)
     Normal(T),
 }
+
+impl<T> ScreenItemState<T> {
+    pub fn as_ref(&self) -> Option<&T> {
+        match self {
+            ScreenItemState::Empty => None,
+            ScreenItemState::Translucent(x) => Some(x),
+            ScreenItemState::Normal(x) => Some(x),
+        }
+    }
+}

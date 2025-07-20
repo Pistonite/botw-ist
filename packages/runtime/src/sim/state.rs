@@ -265,6 +265,8 @@ impl State {
             X::SuInit(items) => self.handle_su_add_slot(ctx, items, true).await,
             X::SuAddSlot(items) => self.handle_su_add_slot(ctx, items, false).await,
             X::SuRemove(items) => self.handle_su_remove(ctx, items).await,
+            X::SuSwap(item1, item2) => self.handle_su_swap(ctx, item1, item2).await,
+            X::SuWrite(meta, item) => self.handle_su_write(ctx, meta, item).await,
             X::SuSetGdt(name, meta) => self.handle_su_set_gdt(ctx, name, meta).await,
 
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
@@ -626,6 +628,34 @@ impl State {
         let items = items.to_vec();
         in_game!(self, rt, cpu, sys, errors => {
             sim::actions::force_remove_item(&mut cpu, sys, errors, &items)
+        })
+    }
+
+    async fn handle_su_swap(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        item1: &cir::ItemSelectSpec,
+        item2: &cir::ItemSelectSpec,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling !SWAP");
+        let item1 = item1.clone();
+        let item2 = item2.clone();
+        in_game!(self, rt, cpu, _sys, errors => {
+            sim::actions::low_level::swap_items(&mut cpu, errors, &item1, &item2)
+        })
+    }
+
+    async fn handle_su_write(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        write_meta: &cir::ItemMeta,
+        item: &cir::ItemSelectSpec,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling !WRITE");
+        let write_meta = write_meta.clone();
+        let item = item.clone();
+        in_game!(self, rt, cpu, _sys, errors => {
+            sim::actions::low_level::write_meta(&mut cpu, errors, &write_meta, &item)
         })
     }
 

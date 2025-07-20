@@ -250,7 +250,7 @@ fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, m
                 slot_i += 1;
 
                 let mut accessible = tab_accessible;
-                if accessible {
+                if accessible && !force_accessible {
                     // FIXME: need more testing with how this works for bows
                     // see FIXME above
                     const SWORD: i32 = PouchItemType::Sword as i32;
@@ -267,7 +267,7 @@ fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, m
 
                 // it could be more than 20 if you have a LOT of arrow slots
                 // (because empty bow slots shift them)
-                if tab_slot < 20 {
+                if tab_slot < 20 || force_accessible {
                     while tab.len() < tab_slot {
                         tab.push(None);
                     }

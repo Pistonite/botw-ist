@@ -147,8 +147,6 @@ pub enum Command {
     SuSwap(Box<cir::ItemSelectSpec>, Box<cir::ItemSelectSpec>),
     /// See [`syn::CmdSuWrite`]
     SuWrite(Box<cir::ItemMeta>, Box<cir::ItemSelectSpec>),
-    /// See [`syn::CmdSuWriteName`]
-    SuWriteName(Box<String>, Box<cir::ItemSelectSpec>),
     /// See [`syn::CmdSuRemove`]
     SuRemove(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdSuReloadGdt`]
@@ -330,11 +328,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
             let meta = cir::ItemMeta::parse_syn(&cmd.props, errors);
             let item = cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?;
             Some(X::SuWrite(Box::new(meta), Box::new(item)))
-        }
-        C::SuWriteName(cmd) => {
-            let name = cmd.name.name.to_string();
-            let item = cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?;
-            Some(X::SuWriteName(Box::new(name), Box::new(item)))
         }
         C::SuRemove(cmd) => Some(X::SuRemove(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,

@@ -40,10 +40,8 @@ pub struct ItemMeta {
     /// Number of upgrades on armor
     pub star: Option<i32>,
 
-    //////////////////////////
     // If new meta properties are added for matching,
     // they need to be updated in screen.rs!
-    //////////////////////////
     /// For constrained item list, manually specify the position
     /// of the item to skip look up
     pub position: Option<ItemPosition>,

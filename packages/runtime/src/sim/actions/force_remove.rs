@@ -19,7 +19,7 @@ pub fn force_remove_item(
     super::switch_to_inventory_or_stop!(ctx, sys, errors, "REMOVE");
     // open a temporary inventory that allows access to items
     // even when mCount = 0 (since it was allowed in the old version)
-    let mut inventory = sim::PouchScreen::open(ctx.cpu(), true)?;
+    let mut inventory = sim::PouchScreen::open_no_exec(ctx.cpu().proc, true)?;
 
     'outer: for item in items {
         let name = &item.name;

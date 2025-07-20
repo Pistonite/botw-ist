@@ -11,18 +11,22 @@ Make sure you read the doc carefully before using them!
 ```
 
 ## Syntax
-Generate Broken Slots
+
+Examples are available at each section below
+
+[Generate Broken Slots](#generate-broken-slots)
 > `!break X slots` <br>
 
-Adding item slots directly
+[Adding item slots directly](#add-item-slots)
 > `!init` [`FINITE_ITEM_LIST`](../user/syntax_item.md) <br>
 > `!add-slot` [`FINITE_ITEM_LIST`](../user/syntax_item.md) <br>
 
-
-Forcefully remove item
+[Forcefully remove item](#forcefully-remove-items)
 > `!remove` [`CONSTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
 
-Examples are available at each section below
+[Change item data](#change-item-data)
+> `!write` [`[META]`](../user/syntax_item.md#metadata) `to` [`ITEM`](../user/syntax_item.md)<br>
+> `!swap` [`ITEM1`](../user/syntax_item.md) `and` [`ITEM2`](../user/syntax_item.md) <br>
 
 ## Generate Broken Slots
 
@@ -68,12 +72,64 @@ for the corresponding category.
 ```
 
 
-## Forcefully remove items
+## Forcefully Remove Items
+
 The <skyb>!remove</skyb> supercommand lets you forcefully delete items from the inventory:
 - For Arrows, Materials, Foods, and Key Items, the value of the slot will decrease by the amount
 - For the rest, the amount in the command corresponds to how many slots of this item you want to remove.
 
+Inventory and GameData state are fixed and synced afterward;
+
 Examples
 ```skybook
 !remove all cores
+```
+
+```admonish warning
+This command can target items that are normally inaccessible in the pouch screen.
+For example, when `mCount` is `0`, or when the item slot is over the maximum available slots
+for Weapon/Bow/Arrow/Shield.
+```
+
+
+## Change Item Data
+
+The <skyb>!write</skyb> supercommand lets you edit the data for an item using the
+[Item Meta Syntax](../user/syntax_item.md#metadata). Inventory and GameData state
+are fixed and synced afterward.
+
+Currently, changing the `ingredients` is not supported.
+
+Examples
+```skybook
+# Change the value of the Master Sword to 0
+# NOTE THAT THIS DOES NOT BREAK IT 
+# to break Master Sword properly (allowing MSWMC), you have to use the `use` command
+!write [value=0] to master-sword
+
+# Change the price of wild greens with price 102 to 101
+!write [price=101] to wild-greens[price=102]
+
+# When targeting the item by position, you can also change the item name
+# Change the item in material tab 1, row 1, column 2, to royal-claymore
+# with durability 20 (no matter what the item at that position is)
+!write [dura=20] to royal-claymore[category=material, row=1, col=1]
+```
+
+```admonish warning
+This command can target items that are normally inaccessible in the pouch screen.
+For example, when `mCount` is `0`, or when the item slot is over the maximum available slots
+for Weapon/Bow/Arrow/Shield.
+```
+
+The <skyb>!swap</skyb> supercommands targets 2 items, and swap their nodes in the list.
+Inventory and GameData state are fixed and synced afterward.
+
+Examples
+```skybook
+# Swap the first apple stack and the first banana stack
+!swap apple and banana
+
+# Swap the equipped royal claymore and the equipped bow (whatever the bow is)
+!swap royal-claymore[equipped] and bow[equipped]
 ```
