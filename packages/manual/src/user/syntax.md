@@ -29,7 +29,7 @@ hold 2 apples drop
 hold 2 apples; drop
 ```
 
-In general, the syntax is case sensitive. Although some features like item search is case-insensitive,
+In general, the syntax is case-sensitive. Although some features like item search is case-insensitive,
 it's recommended to keep everything lower-case, unless upper-case is needed (for example
 when specifying actor name or GDT flag name).
 
@@ -67,6 +67,6 @@ Generally, `key`s are `kebab-case` words, and `value`s can be one of:
   like `<Foo>`.
 
 ```admonish tip
-Generally, the 3 string formats are all accept and can be interchangeable.
+Generally, the 3 string formats are all accepted and can be interchangeable.
 In some cases however, the formats can have different meanings.
 ```

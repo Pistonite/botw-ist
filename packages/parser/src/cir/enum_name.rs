@@ -3,7 +3,7 @@
 //! by commands in the right context.
 //!
 //! When parsing, `-`, `-`, and spaces (` `) are ignored.
-//! So for example `resist-cold` is the same as `resistcold`
+//! So for example `resist-cold` is the same as `resistcold`.
 
 /// Parse cook effect name for the `effect` meta property for items
 #[rustfmt::skip]

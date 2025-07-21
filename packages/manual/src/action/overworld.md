@@ -1,10 +1,10 @@
 # Overworld Operations
 
-Things you can do in the overworld
+Things you can do in the overworld:
 
 - <skyb>use</skyb> command uses and decreases durability of equipments,
-  or can be used to remove items while in the overworld, e.g. <skyb>use fairy</skyb>
-- <skyb>shoot</skyb> is an alias of <skyb>use bow</skyb>
+  or can be used to remove items while in the overworld, e.g. <skyb>use fairy</skyb>.
+- <skyb>shoot</skyb> is an alias of <skyb>use bow</skyb>.
 - <skyb>:overworld drop</skyb> command drops equipped equipments.
 
 ## Syntax
@@ -21,12 +21,12 @@ Annotations:
 ## Using Equipments
 
 To <skyb>use</skyb> an equipped weapon, you can either specify the category,
-or the item name (given the item is equipped)
+or the item name (given the item is equipped).
 
 ```skybook
-# Use the currently equipped weapon to hit something
+# Use the currently-equipped weapon to hit something
 use weapon
-# Use the currently equipped weapon to hit something 5 times
+# Use the currently-equipped weapon to hit something 5 times
 use weapon 5 times
 # Shoot with Royal Bow. Royal Bow must be the currently equipped bow
 use royal-bow
@@ -35,7 +35,7 @@ shoot
 ```
 
 The <skyb>:per-use</skyb> annotation changes how much durability is consumed
-per use. The default is `100`
+per use. The default is `100`.
 
 ```skybook
 # Bombing the shield takes 30 durability off
@@ -51,7 +51,7 @@ Special cases:
 ## Using Non-equipments
 
 When the item specified for <skyb>use</skyb> is not an equipment,
-it will attempt to remove the item instead. The only legitmate use
+it will attempt to remove the item instead. The only legitimate use
 of this is <skyb>use fairy</skyb>. However, the simulator will permit
 any item to be used this way.
 
@@ -63,13 +63,13 @@ hold fairy; use fairy; drop
 ## Dropping the Overworld Equipment
 
 ```admonish todo
-This command is WIP
+This command is WIP.
 ```
 In some cases, you can drop the equipment in the overworld without interacting
-with the inventory, for example when getting shocked.
+with the inventory; for example, when getting shocked.
 
 TODO
 
 ## Detail
 
-- <skyb>use</skyb> requires [`Overworld`](../user/screen_system.md)
+- <skyb>use</skyb> requires [`Overworld`](../user/screen_system.md).

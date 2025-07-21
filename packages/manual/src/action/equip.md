@@ -3,7 +3,7 @@
 Operations on equipments in inventory.
 
 - <skyb>equip</skyb> and <skyb>unequip</skyb> changes the equipped status.
-- <skyb>drop</skyb> drops the equipment from the inventory
+- <skyb>drop</skyb> drops the equipment from the inventory.
 
 ## Syntax
 
@@ -12,7 +12,7 @@ Operations on equipments in inventory.
 > `drop` [`CONTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
 
 Annotations:
-  - [`:dpad`](#change-equipments) - Use the DPad menu instead of inventory menu to change equipments
+  - [`:dpad`](#change-equipments) - Use the DPad menu instead of inventory menu to change equipments.
 
 ## Change equipments
 Example
@@ -83,7 +83,7 @@ and cannot be used to unequip arrows.
 
 ## Dropping Equipments from Inventory
 Use the <skyb>drop</skyb> command to drop equipments, which deletes the item in inventory,
-and spawn the item in overworld when the inventory is closed.
+and spawns the item in overworld when the inventory is closed.
 
 The game has a limitation on how many weapons can be dropped, but this is not implemented in the simulator.
 

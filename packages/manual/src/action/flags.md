@@ -1,7 +1,7 @@
 # Game Flags
 
 Change flag values in GameData (GDT), such as number of upgrade slots,
-if a tab is discovered, and quest flags.
+whether a tab is discovered, and quest flags.
 
 - <skyb>:slots</skyb> can be used to change the flag value
   for how many slots are available for Weapons, Bows and Shields
@@ -22,6 +22,7 @@ Moreover, <skyb>!set-gdt</skyb> can be used to set *any* GDT flag.
 according to the category that is specified.
 
 Examples:
+
 ```skybook
 # sets the number of weapon slots to 20 (singular/plural forms are both accepted)
 :slots [weapon=20]
@@ -38,6 +39,7 @@ Examples:
 ## Discovered Tabs
 <skyb>:discovered</skyb> edits the `IsOpenItemCategory` flag array.
 The category is parsed in the same way as [item categories](../user/syntax_item.md#name).
+
 With a few minor differences:
 - `arrow` and `arrows` are allowed, and they are the same as `bow`/`bows`
 - Specific armor subtype (Upper/Lower/Head) is not allowed, use `armor`/`armors` instead
@@ -55,7 +57,7 @@ Examples
 
 ```admonish note
 When changing a tab from undiscovered to discovered, the inventory will not automatically
-update until it is changed (i.e. when `updateInventoryInfo()` is called again)
+update until it is changed (i.e. when `updateInventoryInfo()` is called again).
 ```
 
 ## Any Flag
@@ -75,6 +77,7 @@ The meta is where you specify the value. First, you need to specify one of the p
 - `vec3f` (alias: `vector3f`)
 
 For non-vector types, the meta value is the value to set. Examples:
+
 ```skybook
 # Make Master Sword stay in True Form
 !set-gdt <Open_MasterSword_FullPower>[bool=true]
@@ -82,7 +85,8 @@ For non-vector types, the meta value is the value to set. Examples:
 !set-gdt <MasterSwordRecoverTime>[f32=10.0]
 ```
 
-For array values, use the `index` property to specify the array index (alias: `i` or `idx`)
+For array values, use the `index` property to specify the array index (alias: `i` or `idx`):
+
 ```skybook
 # Set the first item in GDT to Travel Medallion
 # String values work without quotes if it only contains alphabetical characters and _ or -
@@ -90,7 +94,7 @@ For array values, use the `index` property to specify the array index (alias: `i
 # Set the value of the 20-th item in GDT (0-indexed) to 1000
 !set-gdt <PorchItem_Value1>[s32=1000, idx=20]
 # Set the modifier value of the 10-th shield in GDT (0-indexed) to 1000
-!set-gdt <PorchShield_ValueSp>[s32=1000, idx=20]
+!set-gdt <PorchShield_ValueSp>[s32=1000, idx=10]
 ```
 
 For vector values, instead of specifying the value with the `vec2f` or `vec3f` key,
@@ -105,5 +109,5 @@ are specified will be changed
 ```
 
 ```admonish note
-Integer values for vector components are automatically converted to 32-bit IEEE-754 floats
+Integer values for vector components are automatically converted to 32-bit IEEE-754 floats.
 ```

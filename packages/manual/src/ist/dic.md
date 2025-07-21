@@ -5,12 +5,12 @@
 In the game, durability is stored as a *fixed-point* integer,
 with `1` being `0.015`. For example, a weapon with durability `10` has the internal
 value of `1000`. In the case of corruption, the durability is transferred
-from an equipment not to another equipment, but to an item. The value
+from an equipment - not to another equipment, but to an item. The value
 then becomes the count of items. This is very useful, since
 you can get a LOT of items from an equipment with relatively low durability
 that's easy to get.
 
-This form of corruption was previously only possible using *Memory Storage*
+This form of corruption was previously only possible using *Memory Storage* -
 another very complex glitch with a lengthy setup. With IST, however,
 Inventory Corruption is much easier, hence the name *Direct Inventory Corruption*.
 
@@ -61,7 +61,7 @@ after a reload*.
 
 Remember that reloading a save also causes durability to be applied?
 This means inventory corruption automatically happens after a reload.
-All the player needs to do to exploit this is to transfer specific items
+All the player needs to do to exploit this, is to transfer specific items
 to desync the `GameData` in the way so that equipped items are aligned
 to the item to corrupt. This is why different IST setups exist to corrupt
 different things in different speedruns.
@@ -70,8 +70,8 @@ different things in different speedruns.
 This is also why it is important to follow the setup to unequip/equip
 certain items before reloading, because the equipped item slot is what is
 used for corruption. To be exact, the durability of the *last equipped slot*
-is transfered into the *first equipped slot* in *both* `Visible Inventory`
-and `GameData`
+is transferred into the *first equipped slot* in *both* `Visible Inventory`
+and `GameData`.
 ```
 
 ## Aligning the Items
@@ -123,7 +123,7 @@ put (sort) the item into the correct category when you get something:
    - The list is sorted from lowest value to highest
 
 ```admonish info
-This type of sort is referred to as a *stable sort* using a *predicate* that only compares the category of the items
+This type of sort is referred to as a *stable sort* using a *predicate* that only compares the category of the items.
 ```
 
 The sorting itself cannot achieve the unsorted state, but *absence of sort* can.
@@ -141,8 +141,3 @@ faster to not break as many slots. This is why some setups require dropping some
 immediately pick them up again. While picking up the weapons, the `mCount` never surpasses
 `1`, causing the weapons you pick up remain at the end of the inventory.
 ```
-
-
-
-
-

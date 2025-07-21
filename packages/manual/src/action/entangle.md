@@ -4,10 +4,10 @@ Activate [Prompt Entanglement](../ist/pe.md) and perform actions on a slot using
 from another.
 
 - <skyb>entangle</skyb> activates PE and sets the target item
-- <skyb>:targeting</skyb> changes the target item, or allow you to target empty slots
+- <skyb>:targeting</skyb> changes the target item, or allows you to target empty slots
 
 ```admonish warning
-PE is not 100% accurate
+PE is not 100% accurate.
 ```
 
 ## Syntax
@@ -73,18 +73,18 @@ drop pot-lid # will hold the roasted endura carrot
 
 Since it can be redundant to activate, then target the same item,
 <skyb>entangle</skyb> will also target the item by default.
-The command above can be shortened as
+The command above can be shortened as:
+
 ```skybook
 entangle roasted-endura-carrot
 drop pot-lid # will hold the roasted endura carrot
 ```
 
-However, sometimes it might be cleared to write it as <skyb>entangle</skyb> then <skyb>:targeting</skyb>.
+However, sometimes it might be clearer to write it as <skyb>entangle</skyb> then <skyb>:targeting</skyb>.
 For example, during speedrun, it's usually faster to <skyb>entangle</skyb>
 the source item, to skip resetting the prompt, which means the item to setup
 the <skyb>entangle</skyb> is different from the item to target.
 However, it's up to your preference how to write the command.
 
 The effect of <skyb>:targeting</skyb> will only last until the next command,
-but you can use multiple <skyb>:targeting</skyb> within the same <skyb>entangle</skyb>
-
+but you can use multiple <skyb>:targeting</skyb> within the same <skyb>entangle</skyb>.

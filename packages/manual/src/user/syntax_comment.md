@@ -4,7 +4,7 @@ Comments and Notes are text in the script that don't affect
 the output of the command.
 
 ## Comments
-Comments are lines that start with `#` or `//`. They are completely ignored
+Comments are lines that start with `#` or `//`. They are completely ignored.
 
 ```skybook
 # This is a comment
@@ -13,11 +13,11 @@ Comments are lines that start with `#` or `//`. They are completely ignored
 
 ```admonish tip
 In the script editor, you can use the hotkey `Ctrl + /` to quick toggle
-selected lines between commented/uncommented
+selected lines between commented/uncommented.
 ```
 
 ## Block Literals
-Block Literal is a multi-line block that starts and ends with `'''` (triple single-quotes)
+Block Literal is a multi-line block that starts and ends with `'''` (triple single-quotes).
 
 ```skybook
 '''
@@ -29,7 +29,7 @@ It can have multiple lines
 
 Addtionally, a block literal can have a `tag`, which is a string after the `'''`
 that starts the block. For example, the `note` tag can be used to add
-notes to blocks of commands, which can be viewed in the `Notes` extension
+notes to blocks of commands, which can be viewed in the `Notes` extension.
 
 ```skybook
 '''note
@@ -40,5 +40,5 @@ drop all shields
 ```
 
 ```admonish info
-The `Notes` feature is not implemented yet
+The `Notes` feature is not implemented yet.
 ```

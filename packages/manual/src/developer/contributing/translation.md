@@ -28,7 +28,7 @@ To add new translations, follow these steps:
       button.ok: "好的"
     ```
 3. Go to the `localization` package (`cd packages/localization`)
-4. Run the `edit` task and pass in your file
+4. Run the `edit` task and pass in your file:
    ```
    task edit -- path/to/your/file
    ```

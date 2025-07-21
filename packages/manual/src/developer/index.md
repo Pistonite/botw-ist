@@ -1,7 +1,7 @@
 # Developer Manual
 
 This section is highly technical and only intended for people 
-who work with or are interested in the IST simulator as a developer.
+who work with, or are interested in, the IST simulator as a developer.
 For example:
   - Contributing to the project
   - Building extensions for the simulator

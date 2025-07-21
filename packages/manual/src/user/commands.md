@@ -7,7 +7,7 @@ Clicking on a command will take you to the corresponding documentation page.
 
 | Command | Description |
 |-|-|
-| <skyb>:accurately-simulate</skyb> | Turn off optimizations that may be inaccurate |
+| [<skyb>:accurately-simulate</skyb>](../action/get.md#performance) | Turn off optimizations that may be inaccurate |
 | [<skyb>!add-slot</skyb>](../action/low_level.md) | Adding a new slot to the inventory list by editing memory, bypassing all checks |
 | [<skyb>!break</skyb>](../action/low_level.md) | Edit memory to simulate generating Broken Slots |
 | [<skyb>buy</skyb>](../action/get.md) | Buying items |
@@ -30,7 +30,7 @@ Clicking on a command will take you to the corresponding documentation page.
 | <skyb>open-inventory</skyb> | Alias for <skyb>pause</skyb> |
 | <skyb>:overworld</skyb> | Specify the next action to be performed in the overworld |
 | <skyb>pause</skyb> | Open the inventory |
-| <skyb>:pause-during</skyb> | Open the inventory during certain operations |
+| [<skyb>:pause-during</skyb>](../action/get.md#pause-on-item-text-boxes) | Open the inventory during certain operations |
 | [<skyb>:per-use</skyb>](../action/overworld.md) | Change the durability to decrease per use |
 | [<skyb>pick-up</skyb>](../action/get.md) | Pick up an item from the ground |
 | [<skyb>!remove</skyb>](../action/low_level.md) | Forcefully remove items from inventory, even non-interactable ones |

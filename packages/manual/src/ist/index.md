@@ -42,14 +42,14 @@ The inventory that you see when opening the inventory in-game - the `Visible Inv
 stored as a (doubly-)linked list. In this list representation, items in different categories
 are "concatenated" into the same list. For example, in normal inventory order,
 the list may have all the weapons, followed by all the bows, followed by
-all the arrows, etc, and in the end are all the key items. In one page
+all the arrows, etc, and at the end are all the key items. In one page
 of the item in the in-game UI, the top-left corner is first,
 and it follows row-major order (i.e. the item in row 1 column 2 is after the item
 in row 1 column 1 in the list), and the bottom-right corner is last,
 followed by the upper-left corner item of the next page.
 
 ```admonish info
-The empty spaces and empty tabs in the inventory do not take space in the list
+The empty spaces and empty tabs in the inventory do not take space in the list.
 ```
 
 The items are also stored at the same time in `GameData`, which is the game's flag system.
@@ -72,18 +72,19 @@ as long as mCount is no longer 0, you will be able to access the inventory again
 
 ## Why is it called IST - The main mechanism
 The huge number of glitches that are derived from IST all rely on the core
-mechanism - trasnferring slots, which is how the glitch got its name.
+mechanism - transferring slots, which is how the glitch got its name.
 
 This all happens when the inventory is `Reload`-ed, either when loading a save,
 or restoring the inventory from a quest that takes away your items (i.e.
 Trial of the Sword, Stranded on Eventide, or any of the Blight Refights).
+
 When restoring the inventory, the game needs to do 3 things:
 
 1. Delete all of your current items in `Visible Inventory`.
 2. Load the data of the inventory to restore into `GameData`.
    - In case of reloading a save, it is loaded from the save file.
    - In case of quests, it is already stored in `GameData`.
-3. Add the items `GameData` one by one into the `Visible Inventory`.
+3. Add the items in `GameData` one-by-one into the `Visible Inventory`.
 
 The magic happens in step 1. Since `mCount` is less than the actual number
 of items, the game does not fully delete all the items in inventory.
