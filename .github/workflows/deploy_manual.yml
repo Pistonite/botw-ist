@@ -20,6 +20,8 @@ jobs:
           rust: nightly
           tool-mdbook: true
       - uses: Pistonight/mono-dev/actions/pistonstor@main
+      - run: task exec -- parser:pull-artifacts
+      - run: task exec -- item-assets:pull-artifacts-ts
       - run: task build-manual-ci
       - uses: actions/upload-pages-artifact@v3
         with:

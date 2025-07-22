@@ -24,7 +24,10 @@ jobs:
           ecma-bun: true
           rust: stable
           tool-mdbook: true
-      - uses: Pistonight/mono-dev/actions/pistonstor@main
+      - uses: ./.github/steps/cache-ci
+        with:
+          app-assets: true
+          parser: true
       - run: task build-manual-ci
 
   build-app:
@@ -41,8 +44,9 @@ jobs:
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
-      - uses: Pistonight/mono-dev/actions/pistonstor@main
-      - uses: ./.github/steps/item-assets-cache
+      - uses: ./.github/steps/cache-ci
+        with:
+          app-assets: true
       - run: task build-app-ci
       - uses: actions/upload-artifact@v4
         with:
@@ -66,7 +70,10 @@ jobs:
           rust: nightly
           rust-wasm: true
           rust-src: true
-      - uses: Pistonight/mono-dev/actions/pistonstor@main
+      - uses: ./.github/steps/cache-ci
+        with:
+          parser: true
+          runtime: true
       - if: github.event_name != 'pull_request'
         run: task build-runtime-ci
       - if: github.event_name == 'pull_request'
