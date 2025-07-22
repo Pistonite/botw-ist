@@ -46,3 +46,4 @@ runs:
         runner: blacksmith
     - if: ${{ inputs.runtime == 'true' }}
       run: task exec -- runtime-tests:verify-artifacts
+      shell: bash
