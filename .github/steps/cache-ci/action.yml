@@ -42,7 +42,7 @@ runs:
       with:
         path: |
           packages/blueflame-deps/src/generated
-          packages/runtime/data/program-mini.bfi
+          packages/runtime-tests/data/program-mini.bfi
         key: runtime-cache-ci
         task: exec -- cache-ci-runtime-pull-artifacts
         runner: blacksmith
