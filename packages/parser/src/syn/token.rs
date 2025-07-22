@@ -152,6 +152,7 @@ pub enum TT {
         KwSuResetOverworld = "!reset-overworld",
         KwSuLoadingScreen = "!loading-screen",
         KwSuSetGdt = "!set-gdt",
+        KwSuSmugArrowless = "!smug-arrowless",
         /////////////////////////////
         // When updating syntax, Keep the order in sync with syn and cir Command
         /////////////////////////////

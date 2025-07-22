@@ -268,6 +268,7 @@ impl State {
             X::SuSwap(item1, item2) => self.handle_su_swap(ctx, item1, item2).await,
             X::SuWrite(meta, item) => self.handle_su_write(ctx, meta, item).await,
             X::SuSetGdt(name, meta) => self.handle_su_set_gdt(ctx, name, meta).await,
+            X::SuSmugArrowless => self.handle_su_smug_arrowless(ctx).await,
 
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
         }
@@ -672,6 +673,18 @@ impl State {
             Ok(sim::actions::low_level::set_gdt(&mut cpu, &name, &meta, errors)?)
         })
     }
+
+    async fn handle_su_smug_arrowless(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling !SMUGARROWLESS");
+        in_game!(self, rt, _cpu, sys, _errors => {
+                sys.overworld.set_held_attached(true);
+            Ok(())
+        })
+    }
+
 }
 
 impl GameState {

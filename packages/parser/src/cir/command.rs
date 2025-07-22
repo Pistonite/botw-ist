@@ -161,6 +161,8 @@ pub enum Command {
     ///
     /// First arg is flag name
     SuSetGdt(String, Box<cir::GdtMeta>),
+    /// Activate arrowless smuggle (hold attach)
+    SuSmugArrowless,
 
     /// See [`syn::CmdRoast`] and [`crate::syn::CmdBake`]
     Roast(Vec<cir::ItemSelectSpec>),
@@ -341,6 +343,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             let flag_name = cmd.flag_name.name.to_string();
             Some(X::SuSetGdt(flag_name, Box::new(gdt_value)))
         }
+        C::SuSmugArrowless(_) => Some(X::SuSmugArrowless),
         //////////////////////////////////////////////////////////////////
         A![Slots(cmd)] => {
             let meta = cir::parse_slots_meta(&cmd.meta, errors);

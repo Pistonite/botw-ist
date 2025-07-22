@@ -109,6 +109,8 @@ pub enum Command {
     SuLoadingScreen(syn::KwSuLoadingScreen),
     /// `!set-gdt`
     SuSetGdt(CmdSuSetGdt),
+    /// `!smug-arrowless` - activate arrowless smuggle with items already held
+    SuSmugArrowless(syn::KwSuSmugArrowless),
 
     // BELOW ARE NOT IMPLEMENTED YET
 
