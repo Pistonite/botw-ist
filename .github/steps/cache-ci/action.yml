@@ -24,6 +24,8 @@ runs:
           packages/localization/src/generated
           packages/item-assets/public
           packages/item-assets/src/generated
+          packages/item-system/public
+          packages/item-system/src/generated
         key: app-assets-cache-ci
         task: exec -- cache-ci-app-assets-pull-artifacts
         runner: blacksmith
