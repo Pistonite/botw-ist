@@ -19,7 +19,10 @@ jobs:
           ecma-bun: true
           rust: stable
           tool-cargo-binstall: ripgrep,workex=Pistonite/workex
-      - uses: Pistonight/mono-dev/actions/pistonstor@main
+      - uses: ./.github/steps/cache-ci
+        with:
+          app-assets: true
+          parser: true
       - run: task check-ci-layer-1-2 --output group
 
   check-layer-3:
@@ -36,7 +39,10 @@ jobs:
           ecma-bun: true
           rust: stable
           tool-cargo-binstall: ripgrep,layered-crate
-      - uses: Pistonight/mono-dev/actions/pistonstor@main
+      - uses: ./.github/steps/cache-ci
+        with:
+          parser: true
+          runtime: true
       - run: task check-ci-layer-3 --output group
 
   check-layer-4:
@@ -54,7 +60,10 @@ jobs:
           rust: nightly
           rust-wasm: true
           rust-src: true
-      - uses: Pistonight/mono-dev/actions/pistonstor@main
+      - uses: ./.github/steps/cache-ci
+        with:
+          parser: true
+          runtime: true
       - run: task check-ci-layer-4 --output group
 
   test:
@@ -71,5 +80,9 @@ jobs:
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
-      - uses: Pistonight/mono-dev/actions/pistonstor@main
+      - uses: ./.github/steps/cache-ci
+        with:
+          app-assets: true
+          parser: true
+          runtime: true
       - run: task test-ci --output group
