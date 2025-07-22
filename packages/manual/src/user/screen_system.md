@@ -13,7 +13,7 @@ when you open a screen, which can be helpful when optimizing and verifying IST s
 
 ```admonish tip
 The simulator UI has a little icon next to the "Visible Inventory" title
-to indicate which screen you are currently on
+to indicate which screen you are currently on.
 ```
 
 ## Game State
@@ -31,7 +31,6 @@ Please report it on [GitHub](https://github.com/Pistonite/botw-ist/issues)
 if the simulator crashes on a step that you don't think is supposed to crash in game.
 
 You can also view the detail of the crash in the `Crash Viewer` Extension.
-
 ```
 
 Whenever the game is closed in the middle of a simulation (either closed manually or crashed), it will not automatically
@@ -49,7 +48,7 @@ While in game, there are 4 screens that are simulated:
   - You can get/drop items
   - ... all the other things you can do in the overworld
 - `Inventory`:
-  - When pause the game with the `+` button
+  - When you pause the game with the `+` button
   - Player can interact with items in the inventory
 - `Shop Selling`:
   - When talking to a shop owner to sell items
@@ -58,7 +57,7 @@ While in game, there are 4 screens that are simulated:
   - When talking to Beedle or some other NPC to buy items
   - Player can select from a list of items to buy
 
-The `Screen` system works like a state machine, when an action needs a certain
+The `Screen` system works like a state machine; when an action needs a certain
 screen, it will try to transition to that screen state if possible, and display
 an error if it couldn't. The transition looks something like this:
 

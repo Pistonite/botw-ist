@@ -12,12 +12,12 @@ the actors that are involved in inventory glitches:
 
 ## Material Drop Limit
 In the game, you can drop at most `10` items on the ground at a time.
-When you drop the `11`-th item, the least recent dropped item will despawn.
+When you drop the `11`-th item, the least-recent dropped item will despawn.
 This limit is simulated by the `Overworld` system in the following way:
 
 - When dropping material with the <skyb>drop</skyb> command, or auto-dropped
   from a smuggled state, it gets added to the list of items on the ground
-- The least recently dropped items will be removed from the list, until
+- The least-recently dropped items will be removed from the list, until
   there are at most 10 items on the ground
 - The removed items are not deleted immediately. You will see `Will despawn`
   in the tooltip text of the item in the simulator UI.
@@ -42,15 +42,15 @@ Then:
 - If you <skyb>pick-up 5 apples</skyb> right after, there will be `10` apples
   left on the ground, and `5` are added to the inventory.
 - If you <skyb>pause</skyb>, there will still be `15` apples on the ground,
-  since you could <skyb>unpause</skyb> and pick them up
+  since you could <skyb>unpause</skyb> and pick them up.
 - If you <skyb>get 3 bananas</skyb>, the despawning items will now be deleted,
   and there will be `10` apples left on the ground. This is because it's unlikely
-  the apples are still there after you pick up some other item
+  the apples are still there after you pick up some other item.
 
 ## Resetting the Overworld
 
 ```admonish todo
-This functionality is WIP
+This functionality is WIP.
 ```
 
 In a long IST setup, there might be times where you travel between different
@@ -63,7 +63,5 @@ can simulate this:
     - The <skyb>!loading-screen</skyb> supercommand can be used to simulate regenerating the game stage
       with a loading screen, if none of the action commands match your needs.
 - The <skyb>!reset-ground</skyb> supercommand can be used to delete all items
-  on the ground. Use this if you are travelling to another area without a loading
-  screen
-
-
+  on the ground. Use this if you are traveling to another area without a loading
+  screen.

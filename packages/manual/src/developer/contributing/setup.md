@@ -15,12 +15,13 @@ to setup the required tools:
 - Task
 - Magoo
 
-Coreutils is required for Windows development
+Coreutils is required for Windows development.
 ```
 
 ## Clone repository and one-time setup
 
-Run the following commands
+Run the following commands:
+
 ```
 git clone git@github.com:Pistonite/botw-ist --depth 1
 cd botw-ist
@@ -46,6 +47,7 @@ This will:
 After pulling, you need to update the repo locally to sync tools to the latest state.
 
 Run:
+
 ```
 task install
 ```
@@ -64,7 +66,8 @@ To build the Runtime, you need to either:
   and put the image file at `packages/runtime-tests/data/program-mini.bfi`.
   This will use whatever image you provide as the default runtime image.
 
-Now, you can build the runtime WASM module
+Now, you can build the runtime WASM module:
+
 ```
 task exec runtime-wasm:build
 ```

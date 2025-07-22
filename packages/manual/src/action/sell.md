@@ -7,6 +7,7 @@ or trading away Spirit Orbs or Korok Seeds.
 > `sell` [`CONSTRAINED_ITEM_LIST`](../user/syntax.md) <br>
 
 Example
+
 ```skybook
 talk-to beedle
 sell all shroom all pepper
@@ -14,4 +15,4 @@ sell all shroom all pepper
 close-dialog
 ```
 
-Also see [Buy](./get.md)
+Also see [Buy](./get.md).

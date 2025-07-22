@@ -4,9 +4,9 @@ Performing actions on materials in the inventory. Some actions
 may apply to non-materials.
 
 - <skyb>hold</skyb> command performs the "hold" prompt.
-- <skyb>unhold</skyb> command stops holding in inventory, or put away the items in overworld
-- <skyb>drop</skyb> command drops currently held items, or hold and drop new items
-- <skyb>dnp</skyb> command is a shorthand for <skyb>drop</skyb> and [`pick-up`](./get.md)
+- <skyb>unhold</skyb> command stops holding in inventory, or put away the items in overworld.
+- <skyb>drop</skyb> command drops currently-held items, or hold and drop new items.
+- <skyb>dnp</skyb> command is a shorthand for <skyb>drop</skyb> and [`pick-up`](./get.md).
 - <skyb>eat</skyb> command performs the "eat" prompt.
 
 ## Syntax
@@ -37,12 +37,14 @@ The <skyb>:smug</skyb> annotation can be used to activate the item smuggle
 state required for `Arrowless Offset` for the next <skyb>hold</skyb> command, which is when the held materials are attached
 to Link's hand instead of being held in front of him.
 
-To do this in the simulator, put <skyb>:smug</skyb> right before the <skyb>hold</skyb> command
+To do this in the simulator, put <skyb>:smug</skyb> right before the <skyb>hold</skyb> command.
+
 ```skybook
 :smug
 hold 2 shrooms
 # Now you are in Overworld, and held items are attached to Link's hand
 ```
+
 You can also put <skyb>:smug hold</skyb> on the same line (which sounds like *smuggled*, hehe).
 
 To do this in the game, you need:
@@ -54,7 +56,7 @@ To perform this:
 2. Hold the `ZL` button
 3. Hold items from up to 5 slots
 4. Switch to a one-handed weapon
-   - Switch to another or to something else and back if you are already equipping a one-handed weapon
+   - Switch to another one-handed weapon, or to something else and back if you are already equipping a one-handed weapon
 5. Jump and let go of `ZL` button, after landing, when the shield is to Link's side,
    unequip the shield
 
@@ -68,7 +70,7 @@ generate offsets. In game, you can do this by either:
 
 ```admonish tip
 The <skyb>drop</skyb> is also used for dropping equipments, which has
-a slightly different semantic. The description here only applies to materials
+a slightly different semantic. The description here only applies to materials.
 ```
 
 When using <skyb>drop</skyb> without any items, it means to drop
@@ -86,8 +88,8 @@ the same items. Note that dropped items will not despawn after <skyb>pick-up</sk
 ## Detail
 
 - <skyb>hold</skyb> requires [`Inventory` screen](../user/screen_system.md),
-  and you can only hold a maximum of 5 items
+  and you can only hold a maximum of 5 items.
 - <skyb>drop</skyb> requires [`Overworld` screen](../user/screen_system.md)
-  when dropping held items. When a list of items is specified. It may switch
-  screens multiple times to facilitate the action
+  when dropping held items. When a list of items is specified, it may switch
+  screens multiple times to facilitate the action.
 - Certain actions are not possible when you are holding items.

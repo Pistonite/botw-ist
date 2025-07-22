@@ -1,7 +1,7 @@
 # Custom Image
 
 ```admonish todo
-Custom Image functionality is WIP. Please reach out to me if you want to play with it
+Custom Image functionality is WIP. Please reach out to me if you want to play with it.
 ```
 
 When running into code outside the normal inventory logic using glitches
@@ -10,9 +10,9 @@ because it does not contain the full game to be able to execute setups
 that involves code outside of the normal inventory code.
 
 BUT, the simulator is *capable* of executing the whole game's code
-if it is given access. This is refer to as the **Full Mode** or **Custom Image Mode**.
+if it is given access. This is referred to as the **Full Mode** or **Custom Image Mode**.
 To do this, you need to create a BlueFlame image (a `.bfi` file) from the 
-game files
+game files.
 
 ## Create Image
 To create the image, you need the following things:
@@ -31,6 +31,7 @@ The `env` block must be at the beginning, before any lines and comments.
 Empty lines are allowed before the block.
 
 The `env` block should contain one `<key> = <value>` per line. Here is an example:
+
 ```skybook
 '''env
 image = 1.5
@@ -43,7 +44,7 @@ pmdm-addr      = 0x0000003456789ab0
 '''
 ```
 ```admonish note
-The numeric values must be hexadecimal, the leading `0x` is optional
+The numeric values must be hexadecimal; the leading `0x` is optional.
 ```
 ```admonish note
 If a value is invalid, it's equivalent to that value being not specified.
@@ -56,7 +57,7 @@ Allowed values are `1.5` and `1.6`.
 ```admonish warning
 Currently, only `1.5` is supported. `1.6` is recognized but
 not supported. Newer versions won't be recognized by either
-the simulator or uking-relocate
+the simulator or `uking-relocate`.
 ```
 
 The rest of the keys are optional. If not specified, the simulator will use the internal default values.
@@ -85,7 +86,7 @@ One of the following shorthand is recommended:
 | ver 2.0| `dlc-2`, `ver2.0`, `master-trials`  |
 | ver 3.0| `dlc-3`, `ver3.0`, `champions-ballad` |
 
-Invalid DLC version specifier defaults to `ver3.0`
+Invalid DLC version specifier defaults to `ver3.0`.
 
 A Region Address must be a hexadecimal string aligned to `0x100000`,
 the most significant 6 hex-digits must be all `0`.
@@ -121,4 +122,3 @@ when uploading the custom image.
 You can open the
 3-dot menu on the top of the app and select `Delete Custom Image`.
 This clears the custom image file that is stored in your local browser.
-

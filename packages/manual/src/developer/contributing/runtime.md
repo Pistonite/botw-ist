@@ -37,6 +37,7 @@ This will also produce `program-mini.bfi`.
 
 Once you have the mini image, you can now make changes to the runtime packages,
 and rebuild the WASM package:
+
 ```
 cd packages/runtime-wasm
 task build

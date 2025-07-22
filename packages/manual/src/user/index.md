@@ -3,7 +3,7 @@
 ```admonish info
 This section covers how to use the Simulator App. While not
 required, understanding IST itself could make it easier to understand
-some of the concepts here. You can read about IST [here](../ist/index.md)
+some of the concepts here. You can read about IST [here](../ist/index.md).
 ```
 
 ## How the Simulator works
@@ -11,7 +11,7 @@ The **Simulator** runs on a **Script**, which is a text file that contains
 **Commands** for the simulator. Usually, the commands are the **steps** or **actions**
 you perform in the IST setup.
 
-Here's an example of such script, each line is a command.
+Here's an example of such script; each line is a command.
 ```skybook
 get 1 pot-lid 1 apple 1 slate 1 glider
 equip Shield
@@ -44,7 +44,7 @@ The simulator app has 3 editing modes:
 You can switch the mode anytime in the top-left corner of the app.
 
 ```admonish warning
-When switching to `Auto Saved`, your locally saved script will be overwritten with whatever
+When switching to `Auto Saved`, your locally-saved script will be overwritten with whatever
 script that's currently in the script editor!
 
 If you accidentally overwrite your local script and you need it, you can still recover it

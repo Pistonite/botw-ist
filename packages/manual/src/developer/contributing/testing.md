@@ -14,13 +14,13 @@ When there are formatting issues, `task exec -- XXX:fix` can automatically fix t
 
 ### `skybook-api` modification checks
 If you changed code that affects the generated `skybook-api` code, you need
-to commit those changes to git for `skybook-api` checks to pass
+to commit those changes to git for `skybook-api` checks to pass.
 
 ### `localization` checks
 Certain changes require adding keys to localization (e.g. new error types).
 Please reach out to me for adding localizations.
 
-The modification check also requires the changes to be commited to pass.
+The modification check also requires the changes to be committed to pass.
 
 ## Unit and Manual Tests
 We use [Vitest](https://vitest.dev/) for unit testing TypeScript code

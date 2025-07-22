@@ -37,7 +37,7 @@ You cannot <skyb>pick-up</skyb> items that aren't on the ground. Use <skyb>get</
 instead.
 
 ## Buying from NPC
-Normally, you buy items in this game by talking to the item directly in the overworld.
+Normally, you buy items in this game by "talking" to the item directly in the overworld.
 Certain NPCs are exceptions, such as Beedle, Travelling Merchants, and Kilton.
 For these NPCs, you need to talk to them, and buy from a separate dialog.
 
@@ -48,11 +48,11 @@ To talk to an NPC and buy, use the <skyb>talk-to</skyb> command.
 ```skybook
 talk-to beedle    # Opens Shop Buying screen
 buy 5 arrows
-shoot             # Automatically closes the screen and shoot arrow
+shoot             # Automatically close the screen and shoot arrow
                   # To manually close the screen, use `untalk` or `close-dialog`
 ```
 
-To sell, them buy within the same dialog sequence, use the <skyb>:same-dialog</skyb>
+To sell, then buy within the same dialog sequence, use the <skyb>:same-dialog</skyb>
 annotation
 ```skybook
 sell ruby                 # Opens Shop Selling screen
@@ -89,7 +89,8 @@ unpause
 # Now the 2 shrooms will drop to the ground because of how the smuggle works
 ```
 
-You can also use this feature to explicity annotate optimizations for speedruns
+You can also use this feature to explicitly annotate optimizations for speedruns.
+
 ```skybook
 :pause-during get zora-armor; equip zora-armor
 ```

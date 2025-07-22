@@ -10,11 +10,11 @@ the actual implementation in the game.
 This section is WIP and may contain inaccurate information. If you see any issues,
 or want to improve this section,
 please edit [this file](https://github.com/Pistonite/botw-ist/tree/main/packages/manual/src/ist/pe.md)
-and open a Pull Request
+and open a Pull Request.
 ```
 
 **Prompt Entanglement**, or PE, is a glitch that allows you to apply
-a prompt (like "Equip", "Drop", "Hold", etc) to from one item to another item
+a prompt (like "Equip", "Drop", "Hold", etc) from one item to another item
 that is not supposed to have that prompt. For example:
 
 - Holding a Food (only Materials are normally holdable)
@@ -23,8 +23,9 @@ that is not supposed to have that prompt. For example:
 
 ## Invalid Star Tab
 ```admonish note
-IST refers to Inventory Slot Transfer in contexts pertaining Invalid Star Tab.
+IST refers to Inventory Slot Transfer in contexts pertaining to Invalid Star Tab.
 ```
+
 To activate PE, the first step is to activate a state known as **Invalid Star Tab**.
 This is a state that allows the cursor (the box that highlights which item is 
 currently selected in the inventory) to go to the "Key Items" icon.
@@ -34,7 +35,7 @@ items in a category that you have not discovered. For example,
 have a material *without picking up any material*.
 
 At first this seems impossible. However, the catch is "picking up" - 
-You can obtain items without picking them up with IST. In an Invalid Star Tab
+you can obtain items without picking them up with IST. In an Invalid Star Tab
 setup, there are 3 general steps:
 
 - Save with the tab you want to use undiscovered
@@ -80,18 +81,19 @@ together [a spreadsheet](https://docs.google.com/spreadsheets/d/1j0UM0kIGs74DKkK
 to active each slot.
 ```
 
-When Cursor Glitch is active, you can keep it active by move tabs in groups
-of 3 (tap right stick right 3 times, or left 3 times), without pausing too long
+When Cursor Glitch is active, you can keep it active by moving tabs in groups
+of 3 (tap right-stick right 3 times, or left 3 times), without pausing too long
 between them. Pausing while not on a multiple of 3 tabs from where the slot
 is activated will reset the cursor's position, losing the glitched state.
 
 ## Capturing the Prompt
-What the Cursor Glitch enables is that we can now move the cursor to another item,
-with the inventory screen still "thinks" we are on the original item,
+What the Cursor Glitch enables, is that we can now move the cursor to another item,
+while the inventory screen still "thinks" we are on the original item,
 so it opens the prompt of the original item when we trigger it.
 
 When we trigger the prompt (pressing `A`), the prompt used
-comes from the item that is currently showing description on the screen:
+comes from the item that is currently showing the description on the screen:
+
 ```
       |- you are looking at this page
       v
@@ -105,9 +107,9 @@ comes from the item that is currently showing description on the screen:
 When moving tabs in groups of 3, the Cursor Glitch causes the prompt
 to be *locked*, meaning it will not update the name/description of the item.
 You can force update it by going to the System screen and back (pressing `R` then `L`).
-This is often refered to as "resetting" or "capturing" the prompt.
+This is often referred to as "resetting" or "capturing" the prompt.
 
-With the prompt locked, you can now move the cursor to 3 tabs left or right,
+With the prompt locked, you can now move the cursor 3 tabs left or right,
 which will change which item the cursor is on, but will not update the prompt.
 Now, you can press `A` to trigger and use the prompt.
 
@@ -119,8 +121,7 @@ In general, these are the steps to do any PE setup:
 
 ```admonish tip
 Since you can only keep the glitch by moving tabs in groups of 3,
-this means PE can only be used between 2 items that are multiple of 3 tabs apart
-(i.e. have 2 other tabs between the source and target items)
+this means PE can only be used between 2 items that are multiple of 3 tabs apart (i.e. have 2 other tabs between the source and target items).
 ```
 
 ## Applications
@@ -182,7 +183,7 @@ The change equip action will cause a durability update, which transfers the dura
 
 ```admonish tip
 Note that unlike durability transfer with Menu Overload, you do not need to use the equipment
-to update the durability. This is because the desync acheived by PE is the exact opposite of Menu Overload:
+to update the durability. This is because the desync achieved by PE is the exact opposite of Menu Overload:
 
 - Menu Overload desyncs by switching the equipment in the Inventory, but not in overworld
 - PE desyncs by switching the equipment in the overworld, but not in the inventory
@@ -195,4 +196,3 @@ to update the durability.
 You can also use this to unequip the One-hit Obliterator, which is more
 consistent than using Menu Overload. After performing the steps above,
 you will be able to unequip the OHO from the DPad Quick Menu.
-

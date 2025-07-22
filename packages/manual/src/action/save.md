@@ -1,14 +1,14 @@
 # Save Files
 
-Handling game's running and closed state, and simulation of save files
+Handling game's running and closed state, and simulation of save files:
 
-- <skyb>save</skyb> command saves to the *manual save* slot
+- <skyb>save</skyb> command saves to the *manual save* slot.
 - <skyb>save-as file-name</skyb> command saves to a *named save* slot.
     You can later reload this save by its name. This is used to simulate auto-saves,
     but you can have unlimited number of them.
-- <skyb>reload</skyb> command reloads a manual or named save
-- <skyb>new-game</skyb> reloads an imaginary save with the state of a new game
-- <skyb>close-game</skyb> closes the game
+- <skyb>reload</skyb> command reloads a manual or named save.
+- <skyb>new-game</skyb> reloads an imaginary save with the state of a new game.
+- <skyb>close-game</skyb> closes the game.
 
 ## Syntax
 
@@ -24,6 +24,7 @@ instead of `-`), or a quoted string. Spaces and non-alphabetical characters are 
 allowed in quoted names, like <skyb>"Outside of Shrine"</skyb> or <skyb>"神庙外"</skyb>.
 
 Example
+
 ```skybook
 # Save to the manual save slot
 save
@@ -67,7 +68,7 @@ the currently held items, similar to how the game does that when you switch to t
 
 ## Detail
 
-- <skyb>save</skyb> requires [`Inventory`](../user/screen_system.md) screen
-- <skyb>save-as</skyb> can be performed in either `Inventory` or `Overworld`
+- <skyb>save</skyb> requires [`Inventory`](../user/screen_system.md) screen.
+- <skyb>save-as</skyb> can be performed in either `Inventory` or `Overworld`.
 - <skyb>reload</skyb> requires `Inventory` screen if the game is running.
   - <skyb>new-game</skyb> is similar, see implementation detail above.
