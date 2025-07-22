@@ -1,0 +1,51 @@
+name: cache-ci
+
+inputs:
+  # localization, item-assets, item-system
+  app-assets:
+    default: false
+  # parser
+  parser:
+    default: false
+  # blueflame-deps, runtime-tests
+  runtime:
+    default: false
+
+runs:
+  using: composite
+  steps:
+    # setup gcloud access only if the run has access, to update the cache
+    - if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
+      uses: Pistonight/mono-dev/actions/pistonstor@main
+    - if: ${{ inputs.app-assets == 'true' }}
+      uses: Pistonight/mono-dev/actions/permanent-cache@main
+      with:
+        path: |
+          packages/localization/src/generated
+          packages/item-assets/public
+          packages/item-assets/src/generated
+          packages/item-system/public
+          packages/item-system/src/generated
+        key: app-assets-cache-ci
+        task: exec -- cache-ci-app-assets-pull-artifacts
+        runner: blacksmith
+    - if: ${{ inputs.parser == 'true' }}
+      uses: Pistonight/mono-dev/actions/permanent-cache@main
+      with:
+        path: |
+          packages/parser/src/generated
+        key: parser-cache-ci
+        task: exec -- parser:pull-artifacts
+        runner: blacksmith
+    - if: ${{ inputs.runtime == 'true' }}
+      uses: Pistonight/mono-dev/actions/permanent-cache@main
+      with:
+        path: |
+          packages/blueflame-deps/src/generated
+          packages/runtime-tests/data/program-mini.bfi
+        key: runtime-cache-ci
+        task: exec -- cache-ci-runtime-pull-artifacts
+        runner: blacksmith
+    - if: ${{ inputs.runtime == 'true' }}
+      run: task exec -- runtime-tests:verify-artifacts
+      shell: bash

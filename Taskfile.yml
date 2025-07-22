@@ -79,19 +79,22 @@ tasks:
   pull-artifacts:
     desc: Pull artifacts from storage (requires gcloud access)
     deps:
+      - cache-ci-app-assets-pull-artifacts
+      - parser:pull-artifacts
+      - cache-ci-runtime-pull-artifacts
+
+  cache-ci-app-assets-pull-artifacts:
+    deps:
       - localization:pull-artifacts
       - item-assets:pull-artifacts
       - item-system:pull-artifacts
-      - parser:pull-artifacts
+
+  cache-ci-runtime-pull-artifacts:
+    deps:
       - blueflame-deps:pull-artifacts
       - runtime-tests:pull-artifacts
 
   check-ci-layer-1-2:
-    deps:
-      - localization:pull-artifacts
-      - item-assets:pull-artifacts-ts
-      - item-system:pull-artifacts-ts
-      - parser:pull-artifacts
     cmds:
       - pnpm install --frozen-lockfile
       - task: post-install
@@ -99,20 +102,12 @@ tasks:
       - task: check-layer-2
 
   check-ci-layer-3:
-    deps:
-      - parser:pull-artifacts
-      - blueflame-deps:pull-artifacts
-      - runtime-tests:pull-artifacts
     cmds:
       - pnpm install --frozen-lockfile
       - task: post-install
       - task: check-layer-3
 
   check-ci-layer-4:
-    deps:
-      - parser:pull-artifacts
-      - blueflame-deps:pull-artifacts
-      - runtime-tests:pull-artifacts
     cmds:
       - pnpm install --frozen-lockfile
       - task: post-install
@@ -162,13 +157,6 @@ tasks:
         silent: true
 
   test-ci:
-    deps:
-      - localization:pull-artifacts
-      - item-assets:pull-artifacts-ts
-      - item-system:pull-artifacts-ts
-      - parser:pull-artifacts
-      - blueflame-deps:pull-artifacts
-      - runtime-tests:pull-artifacts
     cmds:
       - pnpm install --frozen-lockfile
       - task: post-install
@@ -206,9 +194,6 @@ tasks:
       - task: runtime-wasm:build
 
   build-manual-ci:
-    deps:
-      - parser:pull-artifacts
-      - item-assets:pull-artifacts-ts
     cmds:
         # this technically isn't needed, but not installing pnpm
         # causes CI to be unreliable due to cache issues
@@ -218,12 +203,6 @@ tasks:
       - task: manual:build
 
   build-app-ci:
-    deps:
-      - localization:pull-artifacts
-        # large item assets are cached in CI to speed up builds
-        # here we just pull the TS artifacts
-      - item-assets:pull-artifacts-ts
-      - item-system:pull-artifacts
     cmds:
       - pnpm install --frozen-lockfile
       - task: parser-legacy:install
@@ -232,24 +211,14 @@ tasks:
       - task: app:build
 
   build-runtime-ci-pr:
-    deps:
-      - parser:pull-artifacts
-      - blueflame-deps:pull-artifacts
-      - runtime-tests:pull-artifacts
     cmds:
-      - task: runtime-tests:verify-artifacts
       - pnpm install --frozen-lockfile
       - task: runtime-wasm:build
       - task: runtime-wasm:clean-dist # so we don't upload non-min bundles
       - task: runtime-wasm:build-dist-min
 
   build-runtime-ci:
-    deps:
-      - parser:pull-artifacts
-      - blueflame-deps:pull-artifacts
-      - runtime-tests:pull-artifacts
     cmds:
-      - task: runtime-tests:verify-artifacts
       - pnpm install --frozen-lockfile
       - task: runtime-wasm:build-wasm
       - task: runtime-wasm:build-dist-min
@@ -275,10 +244,6 @@ tasks:
       SKYBOOK_VERSION_TAG:
         sh: echo "v"$(jq '.version' package.json | tr -d '"')
     cmds:
-      - cmd: git tag -d {{.SKYBOOK_VERSION_TAG}}
-        ignore_error: true
-      - cmd: git push origin {{.SKYBOOK_VERSION_TAG}} --delete
-        ignore_error: true
       - git tag {{.SKYBOOK_VERSION_TAG}}
       - git push origin {{.SKYBOOK_VERSION_TAG}}
       # TODO: publish skybook-api
