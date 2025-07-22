@@ -1,5 +1,9 @@
 # <img src="https://github.com/Pistonite/botw-ist/blob/main/packages/manual/src/icon.png?raw=true" width="32px" /> Skybook
 
+![Build Badge](https://img.shields.io/github/actions/workflow/status/Pistonite/botw-ist/build.yml)
+![License Badge](https://img.shields.io/github/license/Pistonite/botw-ist)
+![Issue Badge](https://img.shields.io/github/issues/Pistonite/botw-ist)
+
 Simulator for Inventory Slot Transfer in BOTW
 
 You can use it as a [web app](https://ist.pistonite.app),
