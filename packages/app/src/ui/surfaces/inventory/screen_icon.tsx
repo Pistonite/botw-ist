@@ -3,7 +3,7 @@ import {
     DesktopOff20Regular,
     PersonRunning20Regular,
     ShoppingBagPause20Regular,
-    ShoppingBag20Regular,
+    Cart20Regular,
 } from "@fluentui/react-icons";
 
 import type { InvView_Screen } from "@pistonite/skybook-api";
@@ -33,7 +33,7 @@ export const ScreenIndicator: React.FC<ScreenIndicatorProps> = ({
             break;
         }
         case "shop": {
-            icon = <ShoppingBag20Regular />;
+            icon = <Cart20Regular />;
             break;
         }
         default: {

@@ -4,12 +4,15 @@ Performing actions on materials in the inventory. Some actions
 may apply to non-materials.
 
 - <skyb>hold</skyb> command performs the "hold" prompt.
+  - When used without a list of items, it enters holding state in inventory screen without holding anything.
 - <skyb>unhold</skyb> command stops holding in inventory, or put away the items in overworld.
-- <skyb>drop</skyb> command drops currently-held items, or hold and drop new items.
+- <skyb>drop</skyb> command is used to hold and drop items
+  - When used without a list of items, it drops the currently-held items on the ground.
 - <skyb>dnp</skyb> command is a shorthand for <skyb>drop</skyb> and [`pick-up`](./get.md).
 - <skyb>eat</skyb> command performs the "eat" prompt.
 
 ## Syntax
+> `hold` <br>
 > `hold` [`CONSTRAINED_ITEM_LIST`](../user/syntax.md#finite-vs-constrained-item-specifier)<br>
 > `unhold` <br>
 > `drop` <br>
@@ -34,8 +37,9 @@ dnp 5 weapons
 
 ## Smuggle State for Arrowless Offset
 The <skyb>:smug</skyb> annotation can be used to activate the item smuggle
-state required for `Arrowless Offset` for the next <skyb>hold</skyb> command, which is when the held materials are attached
-to Link's hand instead of being held in front of him.
+state required for `Arrowless Offset` (also known as `Arrowless Smuggle`),
+for the next <skyb>hold</skyb> command, which is when the held materials are attached
+to Link's right hand instead of being held in front of him.
 
 To do this in the simulator, put <skyb>:smug</skyb> right before the <skyb>hold</skyb> command.
 
@@ -65,6 +69,36 @@ items or talking to NPC. While doing so, the simulator will *delay-drop* the ite
 generate offsets. In game, you can do this by either:
 - Whistle and perform the action (`Dpad Down > A`) quickly before the items drop
 - Pull out Bow and perform the action (`ZR > A`) quickly before the items drop
+
+The <skyb>:smug</skyb> annotation can also be used with <skyb>drop</skyb>, for example,
+when using [Prompt Entanglement](../ist/pe.md) to drop-hold some item:
+```skybook
+# Activate PE
+entangle apple
+# Suppose Torch is entangled with Apple
+# This will drop-hold the Apple, then close inventory and perform Arrowless Smuggle
+:smug drop torch
+```
+
+```admonish warning
+<skyb>:smug</skyb> requires automatically switching to `Overworld` screen. If the screen
+was manually switched, the operation will fail. In this case, you can use the
+<skyb>!arrowless-smuggle</skyb> supercommand to manually activate the state
+while already holding items in the overworld.
+
+    ```skybook
+    pause
+    # This will fail, because screen was manually switched
+    :smug hold 1 apple 
+
+    # Do this instead (if removing the `pause` is not an option)
+    pause
+    hold 1 apple
+    unpause
+    !arrowless-smuggle
+    ```
+
+```
 
 ## Dropping Items
 

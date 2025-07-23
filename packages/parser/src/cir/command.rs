@@ -162,7 +162,7 @@ pub enum Command {
     /// First arg is flag name
     SuSetGdt(String, Box<cir::GdtMeta>),
     /// Activate arrowless smuggle (hold attach)
-    SuSmugArrowless,
+    SuArrowlessSmuggle,
 
     /// See [`syn::CmdRoast`] and [`crate::syn::CmdBake`]
     Roast(Vec<cir::ItemSelectSpec>),
@@ -233,9 +233,10 @@ pub async fn parse_command<R: QuotedItemResolver>(
         C::OpenInv(_) => Some(X::OpenInv),
         C::CloseInv(_) => Some(X::CloseInv),
         A![Smug(_)] => Some(X::CoSmug),
-        C::Hold(cmd) => Some(X::Hold(
-            cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
-        )),
+        C::Hold(cmd) => Some(X::Hold(match cmd.items.as_ref() {
+            Some(items) => cir::parse_item_list_constrained(items, resolver, errors).await,
+            None => vec![],
+        })),
         C::Unhold(_) => Some(X::Unhold),
         A![Overworld(_)] => Some(X::CoOverworld),
         C::Drop(cmd) => Some(X::Drop(match cmd.items.as_ref() {
@@ -343,7 +344,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             let flag_name = cmd.flag_name.name.to_string();
             Some(X::SuSetGdt(flag_name, Box::new(gdt_value)))
         }
-        C::SuSmugArrowless(_) => Some(X::SuSmugArrowless),
+        C::SuArrowlessSmuggle(_) => Some(X::SuArrowlessSmuggle),
         //////////////////////////////////////////////////////////////////
         A![Slots(cmd)] => {
             let meta = cir::parse_slots_meta(&cmd.meta, errors);

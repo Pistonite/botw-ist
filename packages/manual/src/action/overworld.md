@@ -73,3 +73,6 @@ TODO
 ## Detail
 
 - <skyb>use</skyb> requires [`Overworld`](../user/screen_system.md).
+- In [Arrowless Smuggle](./material.md#smuggle-state-for-arrowless-offset) state,
+  using a <skyb>weapon</skyb> or <skyb>shield</skyb> will <skyb>unhold</skyb>
+  the item, while using a <skyb>bow</skyb> will <skyb>drop</skyb> the items.

@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use teleparse::Root as _;
 use teleparse::{Parser, Span, ToSpan};
 
 use crate::SemanticToken;
@@ -222,8 +223,15 @@ pub fn parse_tokens(script: &str) -> Vec<(Span, syn::TT)> {
     let mut output_tokens = Vec::new();
     for token in parser.info().tokens.iter() {
         // special cases
-        if token.ty == syn::TT::Word {
-            match script[token.span.lo..token.span.hi].to_lowercase().as_str() {
+        if token.ty == syn::TT::Word || token.ty == syn::TT::Keyword {
+            let source = script[token.span.lo..token.span.hi].to_lowercase();
+            // category names are KeyWords and the Type is added as semantic in commands.
+            // in standalone parsing, we can make them types as well
+            if let Ok(Some(_)) = syn::CategoryName::parse(&source) {
+                output_tokens.push((token.span, syn::TT::Type));
+                continue;
+            }
+            match source.as_str() {
                 "true" | "false" => {
                     output_tokens.push((token.span, syn::TT::Number));
                     continue;

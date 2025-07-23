@@ -2,6 +2,7 @@ use blueflame::linker;
 use blueflame::memory::mem;
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
+use teleparse::Span;
 
 use crate::error::{ErrorReport, sim_error};
 use crate::sim;
@@ -13,7 +14,7 @@ pub fn hold_items(
     errors: &mut Vec<ErrorReport>,
     items: &[cir::ItemSelectSpec],
     pe_target: Option<&cir::ItemSelectSpec>,
-    attach: bool,
+    arrowless_smuggle: Option<Span>,
 ) -> Result<(), processor::Error> {
     // must be in inventory to hold items
     super::switch_to_inventory_or_stop!(ctx, sys, errors, "HOLD");
@@ -26,12 +27,31 @@ pub fn hold_items(
         hold_item_internal(ctx, sys, errors, item, pe_target)?;
     }
 
-    if attach {
-        sys.screen
-            .transition_to_overworld(ctx, &mut sys.overworld, false, errors)?;
-        sys.overworld.set_held_attached(true);
+    if let Some(span) = arrowless_smuggle {
+        // must be in overworld to do arrowless smuggle
+        let original_span = ctx.span;
+        ctx.span = span;
+        super::switch_to_overworld_or_stop!(ctx, sys, errors, "HOLD", {
+            ctx.span = original_span;
+        });
+        ctx.span = original_span;
+        sys.overworld.set_arrowless_smuggle(true);
     }
 
+    Ok(())
+}
+
+/// Trigger the item smuggle state for arrowless offset if currently holding
+/// something in the overworld.
+///
+/// Transitions to overworld if not already (will still transition even if not holding)
+pub fn trigger_arrowless_smuggle(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+    errors: &mut Vec<ErrorReport>,
+) -> Result<(), processor::Error> {
+    super::switch_to_overworld_or_stop!(ctx, sys, errors, "!ARROWLESS");
+    sys.overworld.set_arrowless_smuggle(true);
     Ok(())
 }
 
