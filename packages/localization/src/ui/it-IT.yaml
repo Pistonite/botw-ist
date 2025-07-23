@@ -257,6 +257,7 @@ runtime_error.CannotFindItemNeedMore: "Impossibile trovare questo oggetto nell'i
 runtime_error.CannotFindPromptTarget: "Impossibile trovare l'oggetto bersaglio di Prompt Entanglement per applicare il prompt."
 runtime_error.CannotGetMore: "Impossibile ottenere più di questo oggetto."
 runtime_error.CannotHoldMore: "Impossibile tenere più oggetti."
+runtime_error.CannotSortCategory: "Impossibile ordinare questa categoria nella schermata attuale. Passare alla schermata dell'inventario."
 runtime_error.CannotUnequipArrow: "Impossibile disequipaggiare la freccia."
 runtime_error.CannotUseCategory: "Impossibile usare questo oggetto per categoria. Specificare direttamente il nome dell'oggetto."
 runtime_error.CannotUseMore: "Non è possibile usare ulteriormente questo oggetto. È necessario usarlo `{{time}}` altra/e volta/e."
@@ -296,7 +297,6 @@ runtime_error.UselessItemMatchProp: "Questa proprietà viene ignorata durante la
 runtime_error.UselessMetaForOverworldEquipment: "I metadati vengono ignorati quando si selezionano oggetti equipaggiati nell'overworld. Si prega di rimuovere i metadati."
 runtime_error.UselessPerUseAmount: "L'annotazione 'per uso' non ha alcun effetto per questo tipo di oggetto, si prega di rimuoverla."
 runtime_error.UselessScreenTransition: "Questo comando non ha alcun effetto, poiché sei già su questa schermata."
-
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "Il gioco non è in esecuzione."

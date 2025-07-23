@@ -257,6 +257,7 @@ runtime_error.CannotFindItemNeedMore: "인벤토리에서 이 아이템을 찾�
 runtime_error.CannotFindPromptTarget: "프롬프트 적용을 위한 프롬프트 엔탱글먼트 대상 아이템을 찾을 수 없습니다."
 runtime_error.CannotGetMore: "이 아이템을 더 이상 얻을 수 없습니다."
 runtime_error.CannotHoldMore: "더 이상 아이템을 소지할 수 없습니다."
+runtime_error.CannotSortCategory: "현재 화면에서는 이 카테고리를 정렬할 수 없습니다. 인벤토리 화면으로 전환해주세요."
 runtime_error.CannotUnequipArrow: "화살을 해제할 수 없습니다."
 runtime_error.CannotUseCategory: "이 아이템을 카테고리로 사용할 수 없습니다. 아이템 이름을 직접 지정해 주십시오."
 runtime_error.CannotUseMore: "이 아이템을 더 이상 사용할 수 없습니다. `{{time}}`번 더 사용해야 합니다."
@@ -296,7 +297,6 @@ runtime_error.UselessItemMatchProp: "이 속성은 이 명령에서 아이템을
 runtime_error.UselessMetaForOverworldEquipment: "오버월드에 장착된 아이템을 대상으로 할 때는 메타데이터가 무시됩니다. 메타데이터를 제거하십시오."
 runtime_error.UselessPerUseAmount: "`per-use` 주석은 이 아이템 유형에 영향을 미치지 않습니다. 제거해 주십시오."
 runtime_error.UselessScreenTransition: "이미 이 화면에 있으므로 이 명령은 효과가 없습니다."
-
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "게임이 실행 중이 아닙니다."

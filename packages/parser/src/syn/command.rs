@@ -49,6 +49,8 @@ pub enum Command {
     Cook(CmdCook),
     /// `entangle ITEM`
     Entangle(CmdEntangle),
+    /// `sort CATEGORY`
+    Sort(CmdSort),
 
     // ==== equipments ====
     /// `equip ITEM`
@@ -123,10 +125,6 @@ pub enum Command {
     Boil(CmdBoil),
     /// `freeze ITEMS`
     Freeze(CmdFreeze),
-
-    // ==== advanced inventory operations ====
-    /// `sort CATEGORY`
-    Sort(CmdSort),
 
     // ==== trials ====
     /// `enter TRIAL`
@@ -262,6 +260,15 @@ pub struct CmdEntangle {
 pub struct CmdCoTargeting {
     pub lit: syn::KwTargeting,
     pub item: syn::ItemOrCategory,
+}
+
+/// `sort CATEGORY` - sort the category
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSort {
+    pub lit: syn::KwSort,
+    pub category: syn::CategoryName,
+    pub times: tp::Option<syn::TimesClause>,
 }
 
 ///////////////////////////////////////////////////////////
@@ -498,15 +505,6 @@ pub struct CmdBoil {
 pub struct CmdFreeze {
     pub lit: syn::KwFreeze,
     pub items: syn::ItemListConstrained,
-}
-
-/// `sort CATEGORY` - sort the category
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSort {
-    pub lit: syn::KwSort,
-    pub category: syn::CategoryName,
-    pub times: tp::Option<syn::TimesClause>,
 }
 
 /// `enter TRIAL` - enter a trial

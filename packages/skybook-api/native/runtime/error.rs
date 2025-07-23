@@ -89,6 +89,8 @@ pub enum RuntimeError {
     CannotGetMore,
     #[error("cannot hold more items")]
     CannotHoldMore,
+    #[error("cannot sort this category")]
+    CannotSortCategory,
     #[error("cannot unequip arrows")]
     CannotUnequipArrow,
     #[error("invalid category to use (you need to specify the item name)")]

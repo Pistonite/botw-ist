@@ -257,6 +257,7 @@ runtime_error.CannotFindItemNeedMore: "Dieses Item ist nicht im Inventar zu find
 runtime_error.CannotFindPromptTarget: "Das Zielobjekt für die Prompt-Verflechtung zum Anwenden des Prompts kann nicht gefunden werden."
 runtime_error.CannotGetMore: "Es kann nicht mehr von diesem Gegenstand erhalten werden."
 runtime_error.CannotHoldMore: "Es können keine weiteren Gegenstände gehalten werden."
+runtime_error.CannotSortCategory: "Diese Kategorie kann im aktuellen Bildschirm nicht sortiert werden. Bitte wechseln Sie zum Inventarbildschirm."
 runtime_error.CannotUnequipArrow: "Pfeil kann nicht abgelegt werden."
 runtime_error.CannotUseCategory: "Dieses Item kann nicht nach Kategorie verwendet werden. Bitte geben Sie den Item-Namen direkt an."
 runtime_error.CannotUseMore: "Dieses Item kann nicht weiter verwendet werden. Es muss noch `{{time}}` Mal(e) verwendet werden."
@@ -296,7 +297,6 @@ runtime_error.UselessItemMatchProp: "Diese Eigenschaft wird beim Abgleichen von 
 runtime_error.UselessMetaForOverworldEquipment: "Metadaten werden ignoriert, wenn Gegenstände im Überland ausgerüstet sind. Bitte entfernen Sie die Metadaten."
 runtime_error.UselessPerUseAmount: "Die 'per-use'-Anmerkung hat keine Auswirkung auf diesen Item-Typ, bitte entfernen Sie diese."
 runtime_error.UselessScreenTransition: "Dieser Befehl hat keine Auswirkung, da Sie sich bereits auf diesem Bildschirm befinden."
-
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "Das Spiel läuft nicht."

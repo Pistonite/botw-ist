@@ -257,6 +257,7 @@ runtime_error.CannotFindItemNeedMore: "Cannot find this item in the inventory (n
 runtime_error.CannotFindPromptTarget: "Cannot find the Prompt Entanglement target item to apply the prompt."
 runtime_error.CannotGetMore: "Cannot get more of this item."
 runtime_error.CannotHoldMore: "Cannot hold more items."
+runtime_error.CannotSortCategory: "Cannot sort this category in the current screen. Please switch to inventory screen."
 runtime_error.CannotUnequipArrow: "Cannot unequip arrow."
 runtime_error.CannotUseCategory: "Cannot use this item by category. Please specify the item name directly."
 runtime_error.CannotUseMore: "Cannot use more of this item, need to use `{{time}}` more time(s)."
@@ -296,7 +297,6 @@ runtime_error.UselessItemMatchProp: "This property is ignored when matching item
 runtime_error.UselessMetaForOverworldEquipment: "Metadata is ignored when targeting items equipped in the overworld. Please remove the metadata."
 runtime_error.UselessPerUseAmount: "The `per-use` annotation has no effect for this type of item, please remove it."
 runtime_error.UselessScreenTransition: "This command has no effect, since you are already on this screen."
-
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "The game is not running."

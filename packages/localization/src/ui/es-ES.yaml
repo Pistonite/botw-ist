@@ -257,6 +257,7 @@ runtime_error.CannotFindItemNeedMore: "No se puede encontrar este objeto en el i
 runtime_error.CannotFindPromptTarget: "No se puede encontrar el objeto objetivo de Enmarañamiento de Mensaje para aplicar el mensaje."
 runtime_error.CannotGetMore: "No se puede obtener más de este objeto."
 runtime_error.CannotHoldMore: "No se pueden llevar más artículos."
+runtime_error.CannotSortCategory: "No se puede ordenar esta categoría en la pantalla actual. Por favor, cambie a la pantalla del inventario."
 runtime_error.CannotUnequipArrow: "No se puede desequipar la flecha."
 runtime_error.CannotUseCategory: "No se puede usar este objeto por categoría. Por favor, especifique el nombre del objeto directamente."
 runtime_error.CannotUseMore: "No se puede usar más este objeto. Necesita usarlo `{{time}}` vez(veces) más."
@@ -296,7 +297,6 @@ runtime_error.UselessItemMatchProp: "Esta propiedad se ignora al buscar coincide
 runtime_error.UselessMetaForOverworldEquipment: "Los metadatos se ignoran cuando se apunta a objetos equipados en el supramundo. Por favor, elimine los metadatos."
 runtime_error.UselessPerUseAmount: "La anotación 'por uso' no tiene efecto para este tipo de objeto, por favor, elimínela."
 runtime_error.UselessScreenTransition: "Este comando no tiene ningún efecto, ya que ya se encuentra en esta pantalla."
-
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "El juego no está en ejecución."

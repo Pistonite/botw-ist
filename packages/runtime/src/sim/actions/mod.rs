@@ -21,6 +21,8 @@ mod save_reload;
 pub use save_reload::*;
 mod use_items;
 pub use use_items::*;
+mod sort_items;
+pub use sort_items::*;
 
 mod force_remove;
 pub use force_remove::*;

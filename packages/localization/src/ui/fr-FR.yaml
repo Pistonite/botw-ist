@@ -257,6 +257,7 @@ runtime_error.CannotFindItemNeedMore: "Impossible de trouver cet objet dans l'in
 runtime_error.CannotFindPromptTarget: "Impossible de trouver l'objet cible de l'Enchevêtrement de Prompt pour appliquer le prompt."
 runtime_error.CannotGetMore: "Impossible d'obtenir plus de cet objet."
 runtime_error.CannotHoldMore: "Impossible de tenir plus d'objets."
+runtime_error.CannotSortCategory: "Impossible de trier cette catégorie sur l'écran actuel. Veuillez passer à l'écran d'inventaire."
 runtime_error.CannotUnequipArrow: "Impossible de déséquiper la flèche."
 runtime_error.CannotUseCategory: "Impossible d'utiliser cet objet par catégorie. Veuillez spécifier directement le nom de l'objet."
 runtime_error.CannotUseMore: "Impossible d'utiliser davantage cet objet. Il doit être utilisé `{{time}}` fois de plus."
@@ -296,7 +297,6 @@ runtime_error.UselessItemMatchProp: "Cette propriété est ignorée lors de la c
 runtime_error.UselessMetaForOverworldEquipment: "Les métadonnées sont ignorées lorsque vous ciblez des objets équipés dans le monde. Veuillez supprimer les métadonnées."
 runtime_error.UselessPerUseAmount: "L'annotation 'par utilisation' n'a aucun effet pour ce type d'objet, veuillez la supprimer."
 runtime_error.UselessScreenTransition: "Cette commande n'a aucun effet, car vous êtes déjà sur cet écran."
-
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "Le jeu ne tourne pas."
