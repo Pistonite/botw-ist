@@ -45,6 +45,9 @@ mod __impl {
         /// If the player is in holding state in the inventory screen,
         /// note this can be true even if inventory screen is off
         pub is_holding_in_inventory: bool,
+        /// If the player is holding items in the overworld and is in arrowless
+        /// smuggle state
+        pub is_arrowless_smuggle: bool,
     }
 
     impl Default for InvView_PouchList {
@@ -59,6 +62,7 @@ mod __impl {
                 entangled_slot: -1,
                 screen: InvView_Screen::default(),
                 is_holding_in_inventory: false,
+                is_arrowless_smuggle: false,
             }
         }
     }
