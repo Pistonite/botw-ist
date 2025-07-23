@@ -1,0 +1,34 @@
+get 1 thunder-blade 1 frost-blade 1 flame-blade
+sort weapons
+sort weapons
+get 1 pot-lid 1 hylian-shield
+sort shield 2 times
+get 1 trav-bow 1 arrow 1 bomb-arrow
+sort bow
+get 1 hylian-hood 1 hylian-trousers 1 hylian-tunic
+    1 flamebreaker-helm 1 flamebreaker-armor 1 flamebreaker-boots
+sort armor
+sort armor
+!set-gdt <SortTypeArmorPouch>[bool=true]
+sort armor
+
+get 1 apple 2 palm-fruit 3 durians
+sort materials
+
+get 1 energizing-elixir 1 hasty-elixir 1 hearty-elixir 1 ice-cream
+sort food
+
+get 1 glider 1 slate 1 gale
+sort key-items
+
+!remove gale
+eat all food
+get 1 melon 1 pepper 1 volt-fruit 1 lotus 1 banana 1 truffle
+    1 endura-shroom 1 shroom 1 big-radish 1 radish
+get 1 core 1 shaft # durian palm apple shaft core
+pause unpause
+save
+!break 5 slots
+reload
+sort materials
+sort materials

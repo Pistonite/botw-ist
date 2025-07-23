@@ -7,7 +7,7 @@ Clicking on a command will take you to the corresponding documentation page.
 
 | Command | Description |
 |-|-|
-| [<skyb>:accurately-simulate</skyb>](../action/get.md#performance) | Turn off optimizations that may be inaccurate |
+| <skyb>:accurately-simulate</skyb><br> for ([<skyb>get</skyb>](../action/get.md#performance), [<skyb>sort</skyb>](../action/sort.md#performance) ) | Turn off optimizations that may be inaccurate |
 | [<skyb>!arrowless-smuggle</skyb>](../action/material.md#smuggle-state-for-arrowless-offset) | Perform Arrowless Smuggle with the items currently held (use this if <skyb>:smug</skyb> is not an option)|
 | [<skyb>!add-slot</skyb>](../action/low_level.md) | Adding a new slot to the inventory list by editing memory, bypassing all checks |
 | [<skyb>!break</skyb>](../action/low_level.md) | Edit memory to simulate generating Broken Slots |
@@ -36,13 +36,14 @@ Clicking on a command will take you to the corresponding documentation page.
 | [<skyb>pick-up</skyb>](../action/get.md) | Pick up an item from the ground |
 | [<skyb>!remove</skyb>](../action/low_level.md) | Forcefully remove items from inventory, even non-interactable ones |
 | [<skyb>reload</skyb>](../action/save.md) | Reload a manual or named save |
-| [<skyb>:same-dialog</skyb>](../action/get.md) | Specify the next buy should be in the same dialog sequence |
+| <skyb>:same-dialog</skyb> <br>(for [<skyb>buy</skyb>](../action/get.md#buying-from-npc), [<skyb>sort</skyb>](../action/sort.md#sorting-in-selling-screen) ) | Specify the next action should be in the same dialog sequence |
 | [<skyb>save</skyb>](../action/save.md) | Make a manual save |
 | [<skyb>save-as</skyb>](../action/save.md) | Make a named save |
 | [<skyb>!set-gdt</skyb>](../action/flags.md#any-flag) | Set any GDT flag |
 | [<skyb>:slot</skyb>](../action/flags.md#number-of-slots-ie-hestu-upgrade) | Alias for <skyb>:slots</skyb> |
 | [<skyb>:slots</skyb>](../action/flags.md#number-of-slots-ie-hestu-upgrade) | Change number of equipment slots |
 | [<skyb>:smug</skyb>](../action/material.md#smuggle-state-for-arrowless-offset) | Perform Arrowless Smuggle with the next <skyb>hold</skyb> or <skyb>drop</skyb> command |
+| [<skyb>sort</skyb>](../action/sort.md) | Sort a category of items |
 | [<skyb>!swap</skyb>](../action/low_level.md#change-item-data) | Swap two item nodes |
 | <skyb>talk-to</skyb> | Talk to an NPC for buying or selling |
 | [<skyb>:targeting</skyb>](../action/entangle.md) | Changes the target for Prompt Entanglement |

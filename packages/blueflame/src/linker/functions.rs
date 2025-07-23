@@ -1,5 +1,7 @@
 use crate::env::GameVer;
-use crate::game::{CookItem, FixedSafeString40, PouchItem, WeaponModifierInfo, singleton_instance};
+use crate::game::{
+    CookItem, FixedSafeString40, PouchCategory, PouchItem, WeaponModifierInfo, singleton_instance,
+};
 use crate::memory::{Ptr, mem};
 use crate::processor::{self, Cpu2, reg};
 
@@ -612,6 +614,21 @@ pub fn remove_item_by_name(cpu: &mut Cpu2, name: &str) -> Result<(), processor::
     // TODO --160  (probably inlined)
     cpu.native_jump_to_main_offset(0x009704bc)?;
     cpu.stack_check::<FixedSafeString40>(name_ptr.to_raw())?;
+    Ok(())
+}
+
+/// Call `uking::ui::PauseMenuDataMgr::sortItems` with a category and `false` for `do_not_save`.
+/// This will sort items in that category
+pub fn sort_items(cpu: &mut Cpu2, category: PouchCategory) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu:
+        x[0] = this_ptr,
+        w[1] = category as i32,
+        w[2] = false, // do_not_save = false -> do save
+    };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x0097748c)?;
     Ok(())
 }
 

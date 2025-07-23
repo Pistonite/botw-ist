@@ -237,6 +237,10 @@ impl State {
                 });
                 self.handle_entangle(ctx, item).await
             }
+            X::Sort(spec) => {
+                self.handle_sort(ctx, spec.category, spec.amount as usize, args.as_deref())
+                    .await
+            }
 
             X::Equip(items) => {
                 self.handle_change_equip(ctx, items, args.as_deref(), true)
@@ -415,6 +419,22 @@ impl State {
         let item = item.clone();
         execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::entangle_item(&mut cpu, sys, errors, &item)
+        })
+    }
+
+    async fn handle_sort(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        category: cir::Category,
+        times: usize,
+        args: Option<&StateArgs>,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling SORT");
+        let (accurate, same_dialog) = args
+            .map(|x| (x.accurately_simulate, x.same_dialog))
+            .unwrap_or_default();
+        execute_command!(self, rt, cpu, sys, errors => {
+            sim::actions::sort_items(&mut cpu, sys, errors, category, times, accurate, same_dialog)
         })
     }
 

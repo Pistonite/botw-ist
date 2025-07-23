@@ -25,6 +25,7 @@
     - [Breaking Slots](./action/break_slots.md)
     - [Entangle](./action/entangle.md)
     - [Save Files](./action/save.md)
+    - [Sorting](./action/sort.md)
     - [Overworld Transform]()
     - [Trials]()
     - [Game Flags](./action/flags.md)

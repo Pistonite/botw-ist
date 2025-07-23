@@ -1,4 +1,4 @@
-use blueflame::game::{self, PouchItem, PouchItemType, WeaponModifierInfo};
+use blueflame::game::{self, PouchCategory, PouchItem, PouchItemType, WeaponModifierInfo};
 use blueflame::memory::Ptr;
 use skybook_parser::cir;
 
@@ -192,6 +192,22 @@ pub fn category_to_item_type(category: cir::Category) -> i32 {
         cir::Category::Material => 7,
         cir::Category::Food => 8,
         cir::Category::KeyItem => 9,
+    }
+}
+
+/// Convert parser category to PouchCategory calue
+pub fn category_to_pouch_category(category: cir::Category) -> PouchCategory {
+    match category {
+        cir::Category::Weapon => PouchCategory::Sword,
+        cir::Category::Bow => PouchCategory::Bow,
+        cir::Category::Shield => PouchCategory::Shield,
+        cir::Category::Armor => PouchCategory::Armor,
+        cir::Category::ArmorHead => PouchCategory::Armor,
+        cir::Category::ArmorUpper => PouchCategory::Armor,
+        cir::Category::ArmorLower => PouchCategory::Armor,
+        cir::Category::Material => PouchCategory::Material,
+        cir::Category::Food => PouchCategory::Food,
+        cir::Category::KeyItem => PouchCategory::KeyItem,
     }
 }
 
