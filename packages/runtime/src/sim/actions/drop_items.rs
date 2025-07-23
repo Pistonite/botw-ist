@@ -2,6 +2,7 @@ use blueflame::linker;
 use blueflame::memory::mem;
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
+use teleparse::Span;
 
 use crate::error::{ErrorReport, sim_error, sim_warning};
 use crate::sim;
@@ -23,9 +24,10 @@ pub fn drop_items(
     errors: &mut Vec<ErrorReport>,
     items: &[cir::ItemSelectSpec],
     pe_target: Option<&cir::ItemSelectSpec>,
-    pick_up: bool,
+    arrowless_smuggle: Option<Span>, // do arrowless smuggle at the end with held items (might be from PE)
+    pick_up: bool,                   // for dnp
     overworld: bool,
-    pause_during: bool,
+    pause_during: bool, // mode passed to pick-up
 ) -> Result<(), processor::Error> {
     if items.is_empty() {
         log::debug!("no items specified for DROP, dropping held items ");
@@ -62,6 +64,17 @@ pub fn drop_items(
 
     if pick_up {
         super::pick_up_items(ctx, sys, errors, items, pause_during)?;
+    }
+
+    if let Some(span) = arrowless_smuggle {
+        // must be in overworld to do arrowless smuggle
+        let original_span = ctx.span;
+        ctx.span = span;
+        super::switch_to_overworld_or_stop!(ctx, sys, errors, "DROP", {
+            ctx.span = original_span;
+        });
+        ctx.span = original_span;
+        sys.overworld.set_arrowless_smuggle(true);
     }
 
     Ok(())

@@ -90,7 +90,7 @@ impl PouchScreen {
 
     /// Check if the item in (tab, slot) is an activated PE slot, meaning
     /// the prompt of this item can be used on the PE target item
-    pub fn is_pe_activated_slot(&self, tab: usize, slot: usize) -> bool {
+    pub fn is_pe_activated_slot(&self, tab: usize, slot: usize, is_target: bool) -> bool {
         let Some((active_tab, active_slot)) = self.active_entangle_slot else {
             // PE is not activated
             return false;
@@ -102,7 +102,7 @@ impl PouchScreen {
             return false;
         }
 
-        if self.items.is_translucent_or_empty(tab, slot) {
+        if !is_target && self.items.is_translucent_or_empty(tab, slot) {
             // cannot use prompt from a translucent item, since it's usually
             // not interactable, unless it's also the first slot
             return slot == 0;

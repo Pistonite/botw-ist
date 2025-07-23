@@ -3,6 +3,7 @@ use std::sync::Arc;
 use blueflame::game::gdt;
 use blueflame::processor::{CrashReport, Process};
 use skybook_parser::cir;
+use teleparse::Span;
 
 use crate::error::{Report, sim_error};
 use crate::{exec, sim};
@@ -69,7 +70,7 @@ impl State {
 #[derive(Clone, Default)]
 pub struct StateArgs {
     /// Perform item smuggle for arrowless offset
-    pub smug: bool,
+    pub smug: Option<Span>,
     /// Open the pause menu during the next command (effect may differ depending on the command)
     pub pause_during: bool,
     /// Perform the next operation in the same dialog
@@ -159,7 +160,7 @@ macro_rules! set_arg {
     }};
 }
 
-macro_rules! in_game {
+macro_rules! execute_command {
     ($self:ident, $rt:ident, $cpu:ident, $sys:ident, $errors:ident => $block:block) => {{
         $self
             .with_game($rt, async move |game, rt| {
@@ -190,7 +191,7 @@ impl State {
                 }
                 Ok(Report::with_errors(state, errors))
             }
-            X::CoSmug => set_arg!(self, args, smug, true),
+            X::CoSmug => set_arg!(self, args, smug, Some(ctx.span)),
             X::CoPauseDuring => set_arg!(self, args, pause_during, true),
             X::CoSameDialog => set_arg!(self, args, same_dialog, true),
             X::CoAccuratelySimulate => set_arg!(self, args, accurately_simulate, true),
@@ -268,6 +269,7 @@ impl State {
             X::SuSwap(item1, item2) => self.handle_su_swap(ctx, item1, item2).await,
             X::SuWrite(meta, item) => self.handle_su_write(ctx, meta, item).await,
             X::SuSetGdt(name, meta) => self.handle_su_set_gdt(ctx, name, meta).await,
+            X::SuArrowlessSmuggle => self.handle_su_arrowless_smuggle(ctx).await,
 
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
         }
@@ -284,7 +286,7 @@ impl State {
         let (pause, accurate) = args
             .map(|args| (args.pause_during, args.accurately_simulate))
             .unwrap_or_default();
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::get_items(&mut cpu, sys, errors, &items, pause, accurate)
         })
     }
@@ -298,7 +300,7 @@ impl State {
         log::debug!("handling PICKUP");
         let items = items.to_vec();
         let pause = args.map(|args| args.pause_during).unwrap_or_default();
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::pick_up_items(&mut cpu, sys, errors, &items, pause)
         })
     }
@@ -308,7 +310,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling PAUSE");
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sys.screen.transition_to_inventory(&mut cpu, &mut sys.overworld, true, errors)?;
             Ok(())
         })
@@ -319,7 +321,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling UNPAUSE");
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             if !sys.screen.current_screen().is_inventory() {
                 errors.push(sim_error!(cpu.span, NotRightScreen));
                 return Ok(());
@@ -345,7 +347,7 @@ impl State {
             .map(|x| (x.smug, x.entangle_target.as_ref().cloned()))
             .unwrap_or_default();
         let items = items.to_vec();
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::hold_items(&mut cpu, sys, errors, &items, pe_target.as_ref(), smug)
         })
     }
@@ -355,7 +357,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling UNHOLD");
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             if sys.screen.current_screen().is_overworld() {
                 sys.overworld.despawn_items();
             }
@@ -371,9 +373,10 @@ impl State {
         pick_up: bool,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling DROP");
-        let (pe_target, overworld, pause_during) = args
+        let (smug, pe_target, overworld, pause_during) = args
             .map(|x| {
                 (
+                    x.smug,
                     x.entangle_target.as_ref().cloned(),
                     x.overworld,
                     x.pause_during,
@@ -381,9 +384,9 @@ impl State {
             })
             .unwrap_or_default();
         let items = items.to_vec();
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::drop_items(&mut cpu,
-                sys, errors, &items, pe_target.as_ref(), pick_up, overworld, pause_during)
+                sys, errors, &items, pe_target.as_ref(), smug, pick_up, overworld, pause_during)
         })
     }
 
@@ -398,7 +401,7 @@ impl State {
             .map(|x| x.entangle_target.as_ref().cloned())
             .unwrap_or_default();
         let items = items.to_vec();
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::eat_items(&mut cpu, sys, errors, &items, pe_target.as_ref())
         })
     }
@@ -410,7 +413,7 @@ impl State {
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling ENTANGLE");
         let item = item.clone();
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::entangle_item(&mut cpu, sys, errors, &item)
         })
     }
@@ -427,7 +430,7 @@ impl State {
             .map(|x| (x.entangle_target.as_ref().cloned(), x.dpad))
             .unwrap_or_default();
         let items = items.to_vec();
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::change_equip(&mut cpu,
                 sys, errors, &items, pe_target.as_ref(), is_equip, is_dpad)
         })
@@ -443,7 +446,7 @@ impl State {
         log::debug!("handling USE");
         let per_use = args.and_then(|x| x.per_use);
         let item = item.clone();
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::use_items(&mut cpu, sys, errors, &item, times, per_use)
         })
     }
@@ -453,7 +456,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling OPEN-SHOP");
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sys.screen.transition_to_shop_buying(&mut cpu, &mut sys.overworld, true, errors)?;
             Ok(())
         })
@@ -464,7 +467,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling CLOSE-SHOP");
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             if !sys.screen.current_screen().is_shop() {
                 errors.push(sim_error!(cpu.span, NotRightScreen));
                 return Ok(());
@@ -487,7 +490,7 @@ impl State {
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling SELL");
         let items = items.to_vec();
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::sell_items(&mut cpu, sys, errors, &items)
         })
     }
@@ -509,7 +512,7 @@ impl State {
                 )
             })
             .unwrap_or_default();
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::buy_items(&mut cpu, sys, errors, &items, pause, accurate, same_dialog)
         })
     }
@@ -525,7 +528,7 @@ impl State {
         // allow overworld for auto saves
         let allow_overworld = name.is_some();
 
-        let new_state = in_game!(self, rt, cpu, sys, errors => {
+        let new_state = execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::save(&mut cpu, sys, errors, allow_overworld, send)
         })?;
         let data = recv
@@ -601,7 +604,7 @@ impl State {
         count: i32,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling !BREAK");
-        in_game!(self, rt, cpu, _sys, _errors => {
+        execute_command!(self, rt, cpu, _sys, _errors => {
             sim::actions::low_level::break_slot(&mut cpu, count)
         })
     }
@@ -614,7 +617,7 @@ impl State {
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling !ADDSLOT");
         let items = items.to_vec();
-        in_game!(self, rt, cpu, _sys, errors => {
+        execute_command!(self, rt, cpu, _sys, errors => {
             sim::actions::low_level::add_slots(&mut cpu, errors, &items, init)
         })
     }
@@ -626,7 +629,7 @@ impl State {
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling !REMOVE");
         let items = items.to_vec();
-        in_game!(self, rt, cpu, sys, errors => {
+        execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::force_remove_item(&mut cpu, sys, errors, &items)
         })
     }
@@ -640,7 +643,7 @@ impl State {
         log::debug!("handling !SWAP");
         let item1 = item1.clone();
         let item2 = item2.clone();
-        in_game!(self, rt, cpu, _sys, errors => {
+        execute_command!(self, rt, cpu, _sys, errors => {
             sim::actions::low_level::swap_items(&mut cpu, errors, &item1, &item2)
         })
     }
@@ -654,7 +657,7 @@ impl State {
         log::debug!("handling !WRITE");
         let write_meta = write_meta.clone();
         let item = item.clone();
-        in_game!(self, rt, cpu, _sys, errors => {
+        execute_command!(self, rt, cpu, _sys, errors => {
             sim::actions::low_level::write_meta(&mut cpu, errors, &write_meta, &item)
         })
     }
@@ -668,8 +671,18 @@ impl State {
         log::debug!("handling !SETGDT");
         let name = name.to_string();
         let meta = meta.clone();
-        in_game!(self, rt, cpu, _sys, errors => {
+        execute_command!(self, rt, cpu, _sys, errors => {
             Ok(sim::actions::low_level::set_gdt(&mut cpu, &name, &meta, errors)?)
+        })
+    }
+
+    async fn handle_su_arrowless_smuggle(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling !SMUGARROWLESS");
+        execute_command!(self, rt, cpu, sys, errors => {
+            sim::actions::trigger_arrowless_smuggle(&mut cpu, sys, errors)
         })
     }
 }

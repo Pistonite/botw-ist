@@ -6,11 +6,7 @@ import {
     Button,
     Link,
 } from "@fluentui/react-components";
-import {
-    Grid20Regular,
-    HandMultiple20Regular,
-    Info20Regular,
-} from "@fluentui/react-icons";
+import { Grid20Regular, Info20Regular } from "@fluentui/react-icons";
 import { useSwappedWheelScrollDirection } from "@pistonite/shared-controls";
 
 import {
@@ -46,6 +42,7 @@ import {
 } from "self::ui/components";
 
 import { ScreenIndicator } from "./screen_icon.tsx";
+import { ArrowlessSmuggleIcon, HoldingIcon } from "./holding_icon.tsx";
 
 const useStyles = makeStyles({
     splitContainer: {
@@ -190,19 +187,8 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                     />
                 </Tooltip>
                 <div className={c.toolbarDivider} />
-                {pouch?.val?.isHoldingInInventory && (
-                    <Tooltip
-                        relationship="label"
-                        content={t("main.visible_inventory.holding.desc")}
-                        withArrow
-                        positioning="below"
-                    >
-                        <Button
-                            shape="circular"
-                            icon={<HandMultiple20Regular />}
-                        />
-                    </Tooltip>
-                )}
+                {pouch?.val?.isHoldingInInventory && <HoldingIcon />}
+                {pouch?.val?.isArrowlessSmuggle && <ArrowlessSmuggleIcon />}
             </div>
         </InventoryTitle>
     );

@@ -1,0 +1,10 @@
+:discovered [bow, shield]
+get
+  1 torch 1 axe 1 hammer
+  1 apple 1 banana 1 shroom
+eat all apple all shroom
+entangle hammer
+:targeting <empty>[category=material, row=1, col=3]
+drop hammer
+drop
+hold

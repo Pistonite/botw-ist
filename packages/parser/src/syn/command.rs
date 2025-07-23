@@ -109,6 +109,8 @@ pub enum Command {
     SuLoadingScreen(syn::KwSuLoadingScreen),
     /// `!set-gdt`
     SuSetGdt(CmdSuSetGdt),
+    /// `!arrowless-smuggle` - activate arrowless smuggle with items already held
+    SuArrowlessSmuggle(syn::KwSuArrowlessSmuggle),
 
     // BELOW ARE NOT IMPLEMENTED YET
 
@@ -203,7 +205,7 @@ pub enum CmdCloseInv {
 #[derive(Debug)]
 pub struct CmdHold {
     pub lit: syn::KwHold,
-    pub items: syn::ItemListConstrained,
+    pub items: tp::Option<syn::ItemListConstrained>,
 }
 
 /// `drop` or `drop ITEMS`

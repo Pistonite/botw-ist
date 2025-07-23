@@ -105,7 +105,7 @@ fn use_overworld_equipment_once_internal(
     // TODO: to confirm, does hold smuggle items get unheld? (probably not)
     if item_type == PouchItemType::Bow as i32 {
         // to use bow, first drop/unhold items
-        if sys.overworld.is_holding_attached() {
+        if sys.overworld.is_holding_arrowless_smuggled() {
             log::debug!("automatically dropping for USE command");
             super::drop_held_items(ctx, sys, "USE")?;
         } else if sys.overworld.is_holding() {

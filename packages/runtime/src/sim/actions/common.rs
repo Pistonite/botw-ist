@@ -318,7 +318,7 @@ pub fn change_to_pe_target_if_need(
     slot: usize,
     errors: &mut Vec<ErrorReport>,
 ) -> Result<Option<(usize, usize)>, memory::Error> {
-    if !inventory.is_pe_activated_slot(tab, slot) {
+    if !inventory.is_pe_activated_slot(tab, slot, false) {
         // use position as-is if PE is not activated
         return Ok(Some((tab, slot)));
     }
@@ -327,21 +327,25 @@ pub fn change_to_pe_target_if_need(
         return Ok(Some((tab, slot)));
     };
     // find the target item
+    let mut new_errors = vec![];
     let target_pos = inventory.select(
         &target.name,
         target.meta.as_ref(),
         None,
         memory,
         target.span,
-        errors,
+        &mut new_errors,
     )?;
     let Some((target_tab, target_slot)) = target_pos else {
+        errors.extend(new_errors);
         errors.push(sim_error!(target.span, CannotFindPromptTarget));
         return Ok(None);
     };
+    // eat the selection errors if the target was found
+
     // the target slot must be in a PE activate slot
     // to be able to use PE
-    if !inventory.is_pe_activated_slot(target_tab, target_slot) {
+    if !inventory.is_pe_activated_slot(target_tab, target_slot, true) {
         errors.push(sim_error!(target.span, InvalidPromptTarget));
         return Ok(None);
     }

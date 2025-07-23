@@ -57,4 +57,9 @@ export type InvView_PouchList = {
      * note this can be true even if inventory screen is off
      */
     isHoldingInInventory: boolean;
+    /**
+     * If the player is holding items in the overworld and is in arrowless
+     * smuggle state
+     */
+    isArrowlessSmuggle: boolean;
 };

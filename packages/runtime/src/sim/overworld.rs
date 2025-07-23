@@ -28,7 +28,7 @@ pub struct OverworldSystem {
     holding: Vec<OverworldActor>,
     /// If currently in the "hold attached" state
     /// used for arrowless offset
-    is_hold_attached: bool,
+    is_hold_arrowless_smuggle: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -64,7 +64,7 @@ impl OverworldSystem {
         self.ground_materials.clear();
         self.ground_materials_despawning.clear();
         self.holding.clear();
-        self.is_hold_attached = false;
+        self.is_hold_arrowless_smuggle = false;
     }
 
     pub fn to_iv(&self) -> iv::Overworld {
@@ -134,8 +134,8 @@ impl OverworldSystem {
     }
 
     /// Set the overworld holding state, only possible if there are held items
-    pub fn set_held_attached(&mut self, attached: bool) {
-        self.is_hold_attached = attached && !self.holding.is_empty();
+    pub fn set_arrowless_smuggle(&mut self, attached: bool) {
+        self.is_hold_arrowless_smuggle = attached && !self.holding.is_empty();
     }
 
     /// Check if the player is either currently not holding or the items can be auto-dropped (i.e.
@@ -149,7 +149,7 @@ impl OverworldSystem {
         if self.holding.is_empty() {
             return OverworldPreDropResult::Ok;
         }
-        if !self.is_hold_attached {
+        if !self.is_hold_arrowless_smuggle {
             errors.push(sim_error!(span, CannotDoWhileHoldingInOverworld));
             return OverworldPreDropResult::Holding;
         }
@@ -159,13 +159,13 @@ impl OverworldSystem {
 
     /// Delete the actors currently being held
     pub fn delete_held_items(&mut self) {
-        self.is_hold_attached = false;
+        self.is_hold_arrowless_smuggle = false;
         self.holding.clear();
     }
 
     /// Drop items held by the player to the ground
     pub fn drop_held_items(&mut self) {
-        self.is_hold_attached = false;
+        self.is_hold_arrowless_smuggle = false;
         self.ground_materials
             .extend(std::mem::take(&mut self.holding));
         while self.ground_materials.len() > 10 {
@@ -179,8 +179,8 @@ impl OverworldSystem {
         !self.holding.is_empty()
     }
 
-    pub fn is_holding_attached(&self) -> bool {
-        self.is_holding() && self.is_hold_attached
+    pub fn is_holding_arrowless_smuggled(&self) -> bool {
+        self.is_holding() && self.is_hold_arrowless_smuggle
     }
 
     /// Despawn items that are over the limit

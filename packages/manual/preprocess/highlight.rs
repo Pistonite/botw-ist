@@ -43,17 +43,21 @@ fn process_chapter_content(content: &mut String) -> anyhow::Result<()> {
 /// Handle code blocks with the `skybook` language, using the skybook parser
 fn handle_skybook_script_highlighting(content: &mut String) -> anyhow::Result<()> {
     let old_content = std::mem::take(content);
-    let mut is_in_skybook_block = false;
+    let mut is_in_skybook_block_indent = None;
     let mut skybook_block_content = String::new();
     for line in old_content.lines() {
-        if is_in_skybook_block {
+        if let Some(indent) = is_in_skybook_block_indent {
             if line.trim() == "```" {
-                is_in_skybook_block = false;
+                is_in_skybook_block_indent = None;
                 let script_block = parse_skybook_script(&skybook_block_content, true)?;
                 content.push_str(&script_block);
                 content.push('\n');
                 continue;
             }
+            let line = line
+                .split_at_checked(indent)
+                .map(|(_, x)| x)
+                .unwrap_or(line);
             skybook_block_content.push_str(line);
             skybook_block_content.push('\n');
             continue;
@@ -85,7 +89,8 @@ fn handle_skybook_script_highlighting(content: &mut String) -> anyhow::Result<()
             content.push('\n');
             continue;
         }
-        is_in_skybook_block = true;
+        let indent = line.find('`').unwrap_or_default();
+        is_in_skybook_block_indent = Some(indent);
         skybook_block_content.clear();
     }
 

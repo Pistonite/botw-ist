@@ -213,6 +213,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
         entangled_slot,
         screen: sys.screen.current_screen().iv_type(),
         is_holding_in_inventory: sys.screen.holding_in_inventory,
+        is_arrowless_smuggle: sys.overworld.is_holding_arrowless_smuggled(),
     })
 }
 
