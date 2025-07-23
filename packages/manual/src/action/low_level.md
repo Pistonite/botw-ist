@@ -97,8 +97,8 @@ for Weapon/Bow/Arrow/Shield.
 ## Change Item Data
 
 The <skyb>!write</skyb> supercommand lets you edit the data for an item using the
-[Item Meta Syntax](../user/syntax_item.md#metadata). Inventory and GameData state
-are fixed and synced afterward.
+[Item Meta Syntax](../user/syntax_item.md#metadata). Inventory is fixed afterward,
+but GameData is NOT synced (for historical reason).
 
 Currently, changing the `ingredients` is not supported.
 
@@ -126,7 +126,7 @@ for Weapon/Bow/Arrow/Shield.
 ```
 
 The <skyb>!swap</skyb> supercommands targets 2 items, and swap their nodes in the list.
-Inventory and GameData state are fixed and synced afterward.
+Inventory is fixed afterward, but GameData is NOT synced (for historical reason).
 
 Examples:
 

@@ -52,7 +52,8 @@ pub fn add_slots(
     for item in items {
         add_slots_internal(ctx, errors, item)?;
     }
-    fix_inventory_state_and_gamedata(ctx)
+    fix_inventory_state(ctx)?;
+    linker::save_to_game_data(ctx.cpu())
 }
 
 /// Perform `!add-slot X item` for one item spec
@@ -226,7 +227,7 @@ pub fn write_meta(
     };
 
     write_meta_internal(ctx, write_meta, name, item_ptr)?;
-    fix_inventory_state_and_gamedata(ctx)
+    fix_inventory_state(ctx)
 }
 
 /// Handle the `!swap ITEM1 and ITEM2` supercommand
@@ -246,7 +247,7 @@ pub fn swap_items(
         return Ok(());
     };
     swap_item_internal(ctx, item1_ptr, item2_ptr)?;
-    fix_inventory_state_and_gamedata(ctx)
+    fix_inventory_state(ctx)
 }
 
 /// Use a "forced pouch screen" to find item in the pouch
@@ -335,12 +336,9 @@ fn swap_item_internal(
     Ok(())
 }
 
-pub fn fix_inventory_state_and_gamedata(
-    ctx: &mut sim::Context<&mut Cpu2>,
-) -> Result<(), processor::Error> {
+pub fn fix_inventory_state(ctx: &mut sim::Context<&mut Cpu2>) -> Result<(), processor::Error> {
     linker::update_inventory_info(ctx.cpu())?;
     linker::update_list_heads(ctx.cpu())?;
-    linker::save_to_game_data(ctx.cpu())?;
     Ok(())
 }
 
