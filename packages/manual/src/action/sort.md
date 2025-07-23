@@ -1,6 +1,6 @@
 # Sorting
 
-The <skyb>sort</skyb> command can be used to sort items in a category
+The <skyb>sort</skyb> command can be used to sort items in a category.
 
 ## Syntax
 > `sort CATEGORY` <br>
