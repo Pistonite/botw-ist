@@ -18,6 +18,7 @@ export type RuntimeError =
     | { type: "CannotFindGdtFlag"; data: [string, string] }
     | { type: "CannotGetMore" }
     | { type: "CannotHoldMore" }
+    | { type: "CannotSortCategory" }
     | { type: "CannotUnequipArrow" }
     | { type: "CannotUseCategory" }
     | { type: "CannotUseMore"; data: number }
