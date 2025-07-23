@@ -60,7 +60,7 @@ to make offsets.
 - Unpause and drop the items in your hand.
 
 The example script below uses the 3rd slot in a tab (<skyb>shroom</skyb>)
-so it also needs to eat all of the first slot (<skyb>apple</skyb>)
+so it also needs to eat all of the first slot (<skyb>apple</skyb>).
 
 ```skybook
 :discovered [bow, shield] # spacing for PE

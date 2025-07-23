@@ -27,16 +27,18 @@ Some(
                 cmd: Hold(
                     CmdHold {
                         lit: token Command(12..16),
-                        items: Single(
-                            Item(
-                                Item {
-                                    name: Word(
-                                        17..31 => "royal-claymore",
-                                    ),
-                                    meta: None(
-                                        31,
-                                    ),
-                                },
+                        items: Some(
+                            Single(
+                                Item(
+                                    Item {
+                                        name: Word(
+                                            17..31 => "royal-claymore",
+                                        ),
+                                        meta: None(
+                                            31,
+                                        ),
+                                    },
+                                ),
                             ),
                         ),
                     },
