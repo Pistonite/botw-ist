@@ -257,6 +257,7 @@ runtime_error.CannotFindItemNeedMore: "このアイテムはインベントリ�
 runtime_error.CannotFindPromptTarget: "プロンプトを適用するためのプロンプトエンタングルメントのターゲットアイテムが見つかりません。"
 runtime_error.CannotGetMore: "これ以上このアイテムは入手できません。"
 runtime_error.CannotHoldMore: "これ以上アイテムを持てません。"
+runtime_error.CannotSortCategory: "現在の画面ではこのカテゴリをソートできません。インベントリ画面に切り替えてください。"
 runtime_error.CannotUnequipArrow: "矢を外すことができません。"
 runtime_error.CannotUseCategory: "このアイテムをカテゴリで指定して使用することはできません。アイテム名を直接指定してください。"
 runtime_error.CannotUseMore: "このアイテムはこれ以上使用できません。あと`{{time}}`回使用する必要があります。"
@@ -296,7 +297,6 @@ runtime_error.UselessItemMatchProp: "このプロパティはこのコマンド�
 runtime_error.UselessMetaForOverworldEquipment: "オーバーワールドで装備されているアイテムを対象とする場合、メタデータは無視されます。メタデータを削除してください。"
 runtime_error.UselessPerUseAmount: "「per-use」の注釈はこの種類のアイテムには効果がありません。削除してください。"
 runtime_error.UselessScreenTransition: "既にこの画面にいるため、このコマンドは効果がありません。"
-
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "ゲームが実行されていません。"

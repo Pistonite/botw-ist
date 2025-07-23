@@ -257,6 +257,7 @@ runtime_error.CannotFindItemNeedMore: "在背包中找不到此物品 (還需要
 runtime_error.CannotFindPromptTarget: "找不到選項糾纏目標物品。"
 runtime_error.CannotGetMore: "拿不下這個物品了。"
 runtime_error.CannotHoldMore: "無法手持更多物品。"
+runtime_error.CannotSortCategory: "目前介面無法對此類物品排序。請先打開背包介面。"
 runtime_error.CannotUnequipArrow: "無法取消箭的裝備狀態。"
 runtime_error.CannotUseCategory: "無法以類別方式使用此物品。請直接指定物品名稱。"
 runtime_error.CannotUseMore: "無法再使用此物品。需要再使用`{{time}}`次。"
@@ -296,7 +297,6 @@ runtime_error.UselessItemMatchProp: "此指令會忽略此屬性. 請刪除此�
 runtime_error.UselessMetaForOverworldEquipment: "物品資料在針對主世界中裝備的物品時無效。請刪除額外資料。"
 runtime_error.UselessPerUseAmount: "`per-use` 註釋對此類物品無效，請將其移除。"
 runtime_error.UselessScreenTransition: "您已經打開了此介面。"
-
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "遊戲未啟動。"

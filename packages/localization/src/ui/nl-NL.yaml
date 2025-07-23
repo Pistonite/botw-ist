@@ -257,6 +257,7 @@ runtime_error.CannotFindItemNeedMore: "Kan dit item niet in de inventaris vinden
 runtime_error.CannotFindPromptTarget: "Kan het Prompt Entanglement-doelitem niet vinden om de prompt toe te passen."
 runtime_error.CannotGetMore: "Kan niet meer van dit voorwerp verkrijgen."
 runtime_error.CannotHoldMore: "Kan niet meer voorwerpen vasthouden."
+runtime_error.CannotSortCategory: "Deze categorie kan niet worden gesorteerd in het huidige scherm. Schakel over naar het inventarisscherm."
 runtime_error.CannotUnequipArrow: "Kan pijl niet afleggen."
 runtime_error.CannotUseCategory: "Dit item kan niet per categorie worden gebruikt. Gelieve de itemnaam direct te specificeren."
 runtime_error.CannotUseMore: "Dit item kan niet verder worden gebruikt. Moet nog `{{time}}` keer(en) worden gebruikt."
@@ -296,7 +297,6 @@ runtime_error.UselessItemMatchProp: "Deze eigenschap wordt genegeerd bij het mat
 runtime_error.UselessMetaForOverworldEquipment: "Metadata worden genegeerd bij het richten op items die in de bovenwereld zijn uitgerust. Verwijder de metadata."
 runtime_error.UselessPerUseAmount: "De 'per-use'-aantekening heeft geen effect voor dit type item, gelieve deze te verwijderen."
 runtime_error.UselessScreenTransition: "Deze opdracht heeft geen effect, aangezien u al op dit scherm bent."
-
 
 # Error from getting view from simulation output
 runtime_view_error.Closed: "Het spel is niet actief."
