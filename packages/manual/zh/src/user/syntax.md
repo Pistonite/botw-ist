@@ -1,21 +1,16 @@
-# Command Syntax
+# 指令的语法
 
-The *simulator script* is used to describe the steps to setup IST. The script is made up of *commands*.
-Most commands describe one or more *actions* in game, such as getting an item, dropping some items, or equip something.
+模拟器需要一个由*指令*组成的*脚本*提供IST步骤。大多数指令对应游戏中的*操作*，比如拿道具，丢道具，切换装备等。
 
-The commands can be divided into 3 groups:
-- **Actions**: These correspond to actions you do in game, such as <skyb>get</skyb>, <skyb>pick-up</skyb> and <skyb>hold</skyb>
-- **Annotations**: These commands start with `:` and are used to change the current configuration, such as <skyb>:slots</skyb>
-- **Supercommands**: These command start with `!` and are more powerful than the actions.
-  They often interact directly with the game's state in a way that's not possible with a regular action.
+指令可以被分为三大类：
+- **操作类 Actions**: 对应游戏中的操作，如：拿 - <skyb>get</skyb>, 捡起 - <skyb>pick-up</skyb>，手持 - <skyb>hold</skyb>。
+- **注解类 Annotations**: 前缀为`:`，用于改配置，如： <skyb>:slots</skyb>用于更改装备格子数。
+- **高级类 Supercommands**: 前缀为`!`，用于高级操作，如直接修改内存。这些操作通常无法在游戏中直接完成。
 
-Whitespaces are insignificant in the syntax, including new lines.
-This means one command can be broken into multiple lines and more than one command
-can be put on the same line.
-Commands can also have an optional trailing `;`.
+空白字符，如空格和换行，会被完全忽略。所以一个指令可以写成多行，多个指令也能写在一行。指令间可以加分号`;`，也可以不加。
 
 ```skybook
-# These 2 commands are equivalent
+# 以下2个指令相同
 get 1 apple 1 pot-lid 1 hammer;
 
 get
@@ -23,50 +18,38 @@ get
   1 pot-lid
   1 hammer
 
-# Trailing ; is optional even for multiple commands on the same line
+# 多个指令在同一行，也不需要用分号隔开
 hold 2 apples drop
-# but it's clearer if you separate them with a ;
+# 但隔开可能更好看
 hold 2 apples; drop
 ```
 
-In general, the syntax is case-sensitive. Although some features like item search is case-insensitive,
-it's recommended to keep everything lower-case, unless upper-case is needed (for example
-when specifying actor name or GDT flag name).
+通常情况下，语法是区分大小写的。但包括物品搜索在内的某些功能不区分大小写。这里建议仅在必要情况下使用大写，其他情况都用小写。必要情况例如设定GDT数据名。
 
 ```admonish note
-In the simulator, the inventory displayed are the state after executing the command
-the cursor is on.
-
-The simulator parses the commands by span, not by line. You can view the state
-for each command even if multiple of them are on the same line.
+模拟器界面中显示的背包状态为光标当前指令执行之后的状态。就算一行中有多个指令，您也可以移动光标查看各个指令对应的游戏状态。
 ```
 
-## Item Syntax
-Item syntax is used to specify items for commands like <skyb>get</skyb> or <skyb>drop</skyb>.
-See [Item Syntax](./syntax_item.md).
+## 物品语法
+大多数指令需要通过此语法设定物品。如 <skyb>get</skyb>， <skyb>drop</skyb>等。见 [物品语法](./syntax_item.md).
 
-## Meta Syntax
-The meta syntax is a versatile syntax used to specify additional contextual metadata,
-in the form of ordered key-value pairs, the syntax is:
+## 属性语法
+属性语法以 属性+值 的方式提供一些指令的元数据。语法为：
 
 ```skybook
 [key1=value1, key2=value2, ...]
-# `:` and `=` are interchangeable
+# `:` 和 `=` 都可用于分隔
 [key1:value1, key2:value2, ...]
 ```
-
-Generally, `key`s are `kebab-case` words, and `value`s can be one of:
-- `bool` - either the keyword `true` or `false`.
-  - `true` can be omitted, i.e. <skyb>[equip]</skyb> is the same as <skyb>[equip=true]</skyb>
-- `integer` - an integer in decimal, or hex prefixed with `0x`, like `10` or `0xa`.
-- `float` - a floating point number in decimal, like `1.2` (scientific notation not supported).
-- `words` - one or more words consisted of alphabetical characters, `-` and `_`, with spaces allowed in between,
-  like `hello my-world`
-- `quoted` - a quoted string where any character is allowed `"你好世界"`.
-- `angled` - like `words`, but surrounded by `<` and `>` and no spaces are allowed,
-  like `<Foo>`.
+通常，属性名 `key`以短横线命名法命名(`kebab-case`)，而数值可以是以下几类：
+- 布尔 `bool` - `true`或`false`
+  - 如果值为`true`，可以不写，如<skyb>[equip]</skyb> 同 <skyb>[equip=true]</skyb>。
+- 整数 `integer` - 十进制或`0x`开头的十六进制，比如`10`, `0xa`.
+- 浮点数 `float` - 十进制浮点数，如`1.2`。（不支持科学计数法）
+- 词语 `words` - 由字母组成的一个或多个词语，由短横线，下划线或空格分隔。如`hello my-world`。
+- 引号词 `quoted` - 打上引号的内容，支持任何字符，如`"你好世界"`（注意必须是英文的引号）。
+- 尖括号词 `angled` - 和词语类似，但打上`<`和`>`，内容不允许空格。如`<Foo>`。
 
 ```admonish tip
-Generally, the 3 string formats are all accepted and can be interchangeable.
-In some cases however, the formats can have different meanings.
+通常情况下，词语，引号词，尖括号词都可作为字符串类型使用。但有些情况下它们的意思不同。
 ```

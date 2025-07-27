@@ -7,8 +7,8 @@
         return;
     }
     const isZh = pathname.startsWith("/zh");
-    if (pathname.startsWith("/zh")) {
-        const p = "/" + pathname.substring(3);
+    if (pathname.startsWith("/zh/")) {
+        const p = pathname.substring(3);
         document.write(`<a href="${p}">View English Version</a>`);
     } else {
         const p = "/zh" + pathname;

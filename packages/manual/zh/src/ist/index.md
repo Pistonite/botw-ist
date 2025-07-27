@@ -1,4 +1,4 @@
-# Inventory Slot Transfer
+# 物品转存简介
 
 ## What is IST
 *Believe it or not, Infinite Stuff Trick is NOT the name of the glitch*

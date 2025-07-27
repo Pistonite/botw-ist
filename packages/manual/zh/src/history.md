@@ -1,75 +1,32 @@
 # IST模拟器发展历史
 
-## Discovery
-Inventory Slot Transfer (IST) was discovered in June 2022 by zxrobbin (
-[Video 1](https://www.bilibili.com/video/BV1AS4y1v7wN),
-[Video 2](https://www.bilibili.com/video/BV16T411576U)
-). It initially manifested as an innocent glitch
-to quickly duplicate items in Breath of the Wild. Little did we know
-that IST will become the most complicated glitch to ever exist in BOTW.
+## 发现
+物品转存(IST)于2022年6月由zxrobbin发现（
+[视频 1](https://www.bilibili.com/video/BV1AS4y1v7wN),
+[视频 2](https://www.bilibili.com/video/BV16T411576U)
+）。最初，玩家以为这只是旷野之息中一个能够简单复制道具的Bug。他们不知道的是，IST即将成为野炊中最复杂的Bug，没有之一。
 
-Around June 17, 2022, as the news spread, glitch hunters from the BOTW speedrunning community
-started to investigate and quickly found some patterns to the glitch.
+2022年6月17日左右，新Bug的消息传开。研究者们迅速发现了有关IST的一些规律。
 
+## 初代 - 百分百速通复制模拟器
+在Bug被研究的同时，百分百速通玩家开始将IST复制物品规划进路线。然而，就算是最基础的IST步骤，也需要列出游戏中每一步的背包状态（比如在捡起或丢弃物品时背包的变化）。每一步也都需要计算IST的效果。手写所有步骤需要大量精力，非常繁琐。于是，2022年6月18日，一代IST模拟器诞生。通过将类似 <skyb>get 1 core</skyb> 的指令输入模拟器后，模拟器就能自动计算每一步IST效果。玩家可以在模拟器界面中快速查看和修改不同步骤，然后模拟器会自动计算更新后的结果。这大幅提升了开发IST步骤的效率。这种操作模式依然存在于现在的模拟器中。
 
-## Hundo Duplication Simulator
-Meanwhile, speedrunners of the 100% category started to incorporate
-it into the route. However, even the simplest form of this glitch required 
-tracking the exact state of the player's inventory for every action executed, such as picking
-up or dropping an item. The rules and patterns of this glitch then needs
-to be applied at each of these steps. It was a painstaking process to manually
-track all the information.
+## V2 - 物品转存模拟器
+随着更多IST的应用被开发出来，物品转存开始在百分百以外的速通项目应用，如全神庙、全神兽等。[数值讹转(DIC)](./ist/dic.md)就是IST的应用之一。然而，初代模拟器仅用一天开发，并不支持除了一开始发现的最基本的转存之外的情况。
 
-Luckily, tasks that are difficult for humans are often easy for computers.
-On June 18, 2022, the Hundo Duplication Simulator was born. Users could
-type actions such as <skyb>get 1 core</skyb> into the simulator. The simulator app
-will display the inventory state and allow the user to quickly navigate between the steps.
-This was a massive help for optimizing setups for speedruns because people can change one step and the app will re-calculate
-the state for every step afterwards. This model is still used by the simulator today.
+因为IST已经不再是百分百独有，此项目更名为“IST模拟器”。二代添加了内部数据`和更多物品来更准确地模拟游戏的情况，同时支持数值讹转。
 
-## V2 - IST Simulator
-As more applications of IST are found, the glitch has found its use in categories
-outside of the 100% category, for example in All Shrines and All Dungeons. One
-of such application is [Direct Inventory Corruption](./ist/dic.md). However, the simulator
-was built in one day and did not support any cases other than the very basic
-rules that were initially discovered.
-
-Now that this glitch is not specific to 100-percent, the project was renamed
-to IST Simulator. V2 of the simulator added `GameData` Inventory and more items 
-to simulate the inventory state closer to how the game handles it. Direct Inventory Corruption
-support was added. People were happy.
-
-## V3 - IST + Weapon Modifier Corruption
-...Until more applications of IST are found again, and the simulator being a simulator,
-did not support these new exploits because I couldn't predict the future.
-
-Every time a new discovery is made, it almost certainly invalidates assumptions previously
-made when coding the simulator, and the core has to be re-designed to incorporate the new
-knowledge. In November 2022, I started re-designing the core by referencing
-the [BOTW decompilation project](https://github.com/zeldaret/botw).
-This massively improved the accuracy of the simulator and supported new applications
-such as [Weapon Modifier Corruption](./ist/wmc.md). The UI was also revamped, adding syntax highlighting
-to commands and displaying modifier information for items.
-
+## V3 - 武器附魔
+好景不长 - IST又有新发现。然而模拟器依然只是模拟器，无法在Bug发现前就支持。每次有大的发现时，几乎必然导致模拟器核心需要大改。2022年11月，通过参考[旷野之息反编译项目](https://github.com/zeldaret/botw)，第三代模拟器内核完全重写并支持[武器附魔](./ist/wmc.md)。模拟器界面同时也有更新，比如增加指令的语法颜色，和显示附魔数值。
 
 ## V4 - Skybook
-After the V3 update, a few small fixes were submitted, but no big re-architecture
-was made for 2 years. 
+V3更新后的两年内都没有大更新。尽管V3已经能精确模拟IST在速通运用中大部分情况，它在各种边界情况下依然不完美，比如：
+- 英杰技能和传送标注器的特殊情况
+- 物品页面未被发现的情况
+- 当某操作在游戏中无法实现的情况。比如，在计数为`0`时，玩家无法对背包内物品进行交互。
+- 。。。
 
-While V3 was mostly accurate for setups viable for speedruns, it was still far from being perfect:
-  - It didn't handle special cases for champion abilities or Travel Medallion.
-  - It didn't handle cases where tabs aren't discovered
-  - It couldn't reliably detect and warn user when an action is not possible in game,
-      such as interacting with the inventory when `mCount` is `0`.
-  - ...
+有一点可以明确的是，我们无法枚举所有边界情况。模拟器需要再一次*完全重写*。2022年至2023年间，我提出利用模拟游戏代码自身一部分来模拟IST的想法。2024年至2025年，我带领了一个学生团队将此想法作为他们的毕业设计做验证机。而我则负责除了核心之外的部分，如界面设计、新的语法解析器设计和其他模拟器系统，如主世界和界面系统。2025年7月，Skybook正式上线。
 
-It was clear that we can not chase these edge cases forever. Something needs to be remade *from the ground up*, again.
-Sometime in 2022-2023, I have theorized to build a mini-emulator, to run the simulator from a small part of *the game itself*.
-I submitted this idea as a proposal for senior project at my college, and got a student team who was interested in it.
-I lead the team as the advisor to build a prototype that would later become **BlueFlame**, the new core for V4.
+物品转存发现后3年来的首次，模拟器的精确程度超出Bug研究者的认知。有时的结果看起来像Bug，但其实和游戏里结果一样，只是没有人在游戏里测试过那种情况而已。
 
-At the same time as BlueFlame was being developed by the students, I worked on everything else - a new command system,
-new simulated systems like Overworld and Screens... And finally, in July 2025, Skybook was born.
-
-For the first time, the IST simulator project is *ahead of the game*. The simulator is so accurate, it could
-replicate setups that I didn't know would be possible (and thought they were bugs, but they are not).

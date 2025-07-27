@@ -1,42 +1,42 @@
 # Summary
 
-[Home Page](./index.md)
+[主页](./index.md)
 ---
-- [IST模拟器发展历史]()
-<!-- - [FAQ](./faq.md) -->
-<!-- - [Inventory Slot Transfer](./ist/index.md) -->
-<!--   - [Direct Inventory Corruption (DIC)](./ist/dic.md) -->
-<!--   - [Weapon Modifier Corruption (WMC)](./ist/wmc.md) -->
-<!--   - [Prompt Entanglement (PE)](./ist/pe.md) -->
-<!--   - [Item Stack Underflow (ISU)]() -->
-<!-- - [Using the Simulator](./user/index.md) -->
-<!--   - [Command Syntax](./user/syntax.md) -->
-<!--     - [Item Syntax](./user/syntax_item.md) -->
-<!--     - [Comments and Notes](./user/syntax_comment.md) -->
-<!--   - [Simulation Systems](./user/systems.md) -->
-<!--     - [Screen System](./user/screen_system.md) -->
-<!--     - [Overworld System](./user/overworld_system.md) -->
-<!--   - [Command Reference](./user/commands.md) -->
-<!--     - [Getting Items](./action/get.md) -->
-<!--     - [Material Operations](./action/material.md) -->
-<!--     - [Equipment Operations](./action/equip.md) -->
-<!--     - [Overworld Operations](./action/overworld.md) -->
-<!--     - [Selling Items](./action/sell.md) -->
-<!--     - [Breaking Slots](./action/break_slots.md) -->
-<!--     - [Entangle](./action/entangle.md) -->
-<!--     - [Save Files](./action/save.md) -->
-<!--     - [Sorting](./action/sort.md) -->
-<!--     - [Overworld Transform]() -->
-<!--     - [Trials]() -->
-<!--     - [Game Flags](./action/flags.md) -->
-<!--     - [Low Level Operations](./action/low_level.md) -->
-<!--     - [Constants](./generated/constants.md) -->
-<!--   - [Custom Image](./user/custom_image.md) -->
-<!-- - [Developer](./developer/index.md) -->
-<!--   - [Architecture](./developer/arch/index.md) -->
-<!--   - [Getting Started](./developer/contributing/setup.md) -->
-<!--   - [Build and Run](./developer/contributing/run.md) -->
-<!--   - [Building the Runtime](./developer/contributing/runtime.md) -->
-<!--   - [Checking and Testing](./developer/contributing/testing.md) -->
-<!--   - [Translations](./developer/contributing/translation.md) -->
-<!--   - [Extensions](./developer/extensions.md) -->
+- [IST模拟器发展历史](./history.md)
+- [FAQ](./faq.md) 
+- [物品转存简介](./ist/index.md)
+  - [数值讹转 (DIC)](./ist/dic.md)
+  - [武器附魔 (WMC)](./ist/wmc.md)
+  - [选项纠缠 (PE)](./ist/pe.md)
+  - [物品栈下溢 (ISU)]()
+- [模拟器的使用](./user/index.md)
+  - [指令的语法](./user/syntax.md)
+    - [物品的语法](./user/syntax_item.md)
+    - [注释和笔记](./user/syntax_comment.md)
+  - [模拟器系统](./user/systems.md)
+    - [界面系统](./user/screen_system.md)
+    - [主世界系统](./user/overworld_system.md)
+  - [指令参考](./user/commands.md)
+    - [拿物品](./action/get.md)
+    - [素材操作](./action/material.md)
+    - [装备操作](./action/equip.md)
+    - [主世界操作](./action/overworld.md)
+    - [出售](./action/sell.md)
+    - [制作转存格](./action/break_slots.md)
+    - [纠缠](./action/entangle.md)
+    - [存读档](./action/save.md)
+    - [排序](./action/sort.md)
+    - [主世界素材变换]() 
+    - [挑战]() 
+    - [设置旗标](./action/flags.md)
+    - [高级操作](./action/low_level.md)
+    - [常数值参考](./generated/constants.md)
+  - [自定义镜像](./user/custom_image.md)
+- [开发者文档](./developer/index.md)
+  - [架构](./developer/arch/index.md)
+  - [开始指南](./developer/contributing/setup.md)
+  - [编译与运行](./developer/contributing/run.md)
+  - [编译运行时](./developer/contributing/runtime.md)
+  - [检查与测试](./developer/contributing/testing.md)
+  - [翻译](./developer/contributing/translation.md)
+  - [扩展开发](./developer/extensions.md)
