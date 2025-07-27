@@ -25,12 +25,15 @@ tasks:
       - cp src/icon.png theme/favicon.png
       - bun preprocess/inject-meta.ts pre
       - $(which mkdir) -p src/generated
+      - $(which mkdir) -p zh/src/generated
       - bun preprocess/generate-constants.ts
+      - cp -r theme zh
   dev:
     desc: Start mdbook in watch mode
     cmds:
       - task: build
       - mdbook watch &
+      - mdbook watch zh -d ../book/zh &
       - live-server book -p 8081 {{.CLI_ARGS}}
 
   build:
@@ -38,6 +41,7 @@ tasks:
     cmds:
       - rm -rf book
       - mdbook build
+      - mdbook build zh -d ../book/zh
       - task: parser:package-artifacts-public
       - task: item-assets:package-artifacts-public
       - bun preprocess/inject-meta.ts post

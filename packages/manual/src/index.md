@@ -7,6 +7,9 @@
 <h4 style="text-align:center;margin:0.2em;color:var(--warning-border)">
     <span class="header">The Inventory Slot Transfer Simulator Project</span>
 </h4>
+<h4 style="text-align:center;margin:0.2em;">
+    <a href="/zh/index.html">中文版</a> | English Version
+</h4>
 
 ## Getting started
 - [How to use the simulator](./user/index.md)
@@ -31,8 +34,3 @@ questions about or discuss features of the IST Simulator App.
 Join the [BOTW Speedrunning Discord](https://discord.gg/vjH24SpMhD) and use the `#glitch-hunting` channel
 to discuss IST in general, or get help with the glitch in `#general-help`, or
 the category channel that you are running.
-
-## QQ群
-Pistonite学习交流群: 670991147
-
-(mostly Chinese)

@@ -1,0 +1,18 @@
+<main>
+<div id="-skybook--lang-switch" style="overflow:visible;height:0px;font-size:0.8em">
+<script> (function (){
+    const origin = window.location.origin;
+    const pathname = window.location.pathname;
+    if (!pathname || pathname === "/" || pathname === "/index.html" || pathname === "/zh" || pathname === "/zh/index.html") {
+        return;
+    }
+    const isZh = pathname.startsWith("/zh");
+    if (pathname.startsWith("/zh/")) {
+        const p = pathname.substring(3);
+        document.write(`<a href="${p}">View English Version</a>`);
+    } else {
+        const p = "/zh" + pathname;
+        document.write(`<a href="${p}">查看中文版</a>`);
+    }
+})() </script>
+</div>

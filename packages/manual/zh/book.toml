@@ -1,10 +1,11 @@
 [book]
 authors = ["Pistonight"]
-language = "en"
+language = "zh"
 src = "src"
-title = "IST Simulator Manual"
+title = "IST 模拟器手册"
 
 [output.html]
+site-url = "/zh/"
 default-theme = "frappe"
 preferred-dark-theme = "frappe"
 smart-punctuation = true
@@ -15,7 +16,7 @@ additional-css = [
     "./theme/extra-css/catppuccin.css", 
     "./theme/catppuccin-admonish.css",
     "./theme/extra-css/patch.css", 
-    "./src/special.css", 
+    "../src/special.css", 
 ]
 
 [preprocessor.admonish]
