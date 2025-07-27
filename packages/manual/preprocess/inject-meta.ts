@@ -4,21 +4,26 @@ const mode = process.argv[2];
 // @ts-ignore
 import fs from "node:fs/promises";
 
+const SITE_NAME = "IST Simulator Manual";
+const SITE_NAME_ZH = "IST 模拟器手册";
+
 
 async function preProcess() {
     const version = JSON.parse(await fs.readFile("../../package.json", "utf8")).version.replace("0.", "v");
+    const langSwitchHtml = await fs.readFile("preprocess/lang_switch.html", "utf8");
     let hbs = await fs.readFile("theme/index.hbs", "utf8");
     hbs = hbs.replace(
         `<meta name="theme-color" content="#ffffff">`,
         `<meta name="theme-color" content="#fe8f00">`,
     );
+    hbs = hbs.replace("<main>", langSwitchHtml);
     const headIdx = hbs.indexOf("<head>");
     const beforeHead = hbs.substring(0, headIdx);
     const afterHead = hbs.substring(headIdx + 6);
     const meta = `
 <meta name="og:site_name" content="Skybook ${version}">
 <meta name="og:type" content="website">
-<meta name="og:description" content="IST Simulator Manual">
+<meta name="og:description" content="${SITE_NAME}">
 <meta name="og:image" content="https://skybook.pistonite.dev/favicon.png">
 <meta name="og:title" content="{{ chatper_title }}">
 `;
@@ -27,7 +32,9 @@ async function preProcess() {
 }
 
 async function postProcess() {
-    const pathToTitle = await parseToc();
+    const pathToTitle = new Map();
+    await parseToc("", pathToTitle);
+    await parseToc("zh/", pathToTitle);
     const files: string[] = await fs.readdir("book", { recursive: true });
     const promises = files.map(async (file: string) => {
         if (!file.endsWith(".html")) {
@@ -42,11 +49,16 @@ async function postProcess() {
         let afterHead = html.substring(headIdx + 6);
         const meta = `<meta name="og:url" content="https://skybook.pistonite.dev/${file}">`;
 
-        if (file === "welcome.html" || file === "index.html") {
+        if (file === "index.html") {
             // replace the tlte and description of the home page
-            afterHead = afterHead.replace(/<title>[^<]*<\/title>/, "<title>IST Simulator Manual</title>");
+            afterHead = afterHead.replace(/<title>[^<]*<\/title>/, `<title>${SITE_NAME}</title>`);
             afterHead = afterHead.replace(/<meta name="og:description".*>/, "");
-            afterHead = afterHead.replace(/<meta name="og:title" content="[^"]*">/, `<meta name="og:title" content="IST Simulator Manual">`);
+            afterHead = afterHead.replace(/<meta name="og:title" content="[^"]*">/, `<meta name="og:title" content="${SITE_NAME}">`);
+        } else if (file === "zh/index.html") {
+            // replace the tlte and description of the home page
+            afterHead = afterHead.replace(/<title>[^<]*<\/title>/, `<title>${SITE_NAME_ZH}</title>`);
+            afterHead = afterHead.replace(/<meta name="og:description".*>/, "");
+            afterHead = afterHead.replace(/<meta name="og:title" content="[^"]*">/, `<meta name="og:title" content="${SITE_NAME_ZH}">`);
         } else {
             // add parent title to the meta tags
             const title = pathToTitle.get(file.replace(/\\/g, "/"));
@@ -61,12 +73,11 @@ async function postProcess() {
     await Promise.all(promises);
 }
 
-async function parseToc(): Promise<Map<string, string>> {
-    const lines = (await fs.readFile("src/SUMMARY.md", "utf8"))
+async function parseToc(prefix: string, pathToTitle: Map<string, string>): Promise<void> {
+    const lines = (await fs.readFile(`${prefix}src/SUMMARY.md`, "utf8"))
         .split("\n")
         .map((line: string) => line.trimEnd())
         .filter((x: string) => x.trim().startsWith("-") && x.includes("]("));
-    const pathToTitle = new Map<string, string>();
     const stack = [["",0]];
 
     const getParent = () => {
@@ -104,14 +115,14 @@ async function parseToc(): Promise<Map<string, string>> {
             const [name, path] = parseLine(line);
             if (path) {
                 const parent = getParent();
-                pathToTitle.set(path, parent + name);
+                pathToTitle.set(prefix + path, parent + name);
             }
             stack.push([name, nextLevel]);
         } else if (nextLevel > currLevel) {
             const [name, path] = parseLine(line);
             if (path) {
                 const parent = getParent();
-                pathToTitle.set(path, parent + name);
+                pathToTitle.set(prefix + path, parent + name);
             }
             stack.push([name, nextLevel]);
         } else if (nextLevel < currLevel) {
@@ -124,13 +135,11 @@ async function parseToc(): Promise<Map<string, string>> {
             const [name, path] = parseLine(line);
             if (path) {
                 const parent = getParent();
-                pathToTitle.set(path, parent + name);
+                pathToTitle.set(prefix + path, parent + name);
             }
             stack.push([name, nextLevel]);
         }
     }
-
-    return pathToTitle;
 }
 
 if (mode === "pre") {

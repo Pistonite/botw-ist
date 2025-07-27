@@ -1,4 +1,5 @@
 const TARGET_FILE = "src/generated/constants.md";
+const TARGET_FILE_ZH = "zh/src/generated/constants.md";
 const SOURCE_FILE = "../parser/src/cir/enum_name.rs";
 const HINT = "// @manual-generator-hint";
 
@@ -6,7 +7,7 @@ const HINT = "// @manual-generator-hint";
  * Parse a section starting with the hint and ending with the "end" hint
  * into a markdown section
  */
-const parseHintSection = (lines: string[], hint: string): string => {
+const parseHintSection = (lines: string[], hint: string, zh: boolean): string => {
     console.log(`processing: ${hint}`);
     const output: string[] = [];
     const len = lines.length;
@@ -40,7 +41,11 @@ const parseHintSection = (lines: string[], hint: string): string => {
         output.push(x);
     }
     output.push(`<div class="skybook--wide-table">\n`);
-    output.push("| Constant | Description |");
+    if (zh) {
+        output.push("| 词语 | 说明 |");
+    } else {
+        output.push("| Constant | Description |");
+    }
     output.push("|-|-|");
     // parse each section (row of the table)
     const tableRowByName: Record<string, string> = {};
@@ -101,14 +106,16 @@ const parseHintSection = (lines: string[], hint: string): string => {
 
         const vLen = variants.length;
         const first = variants[0];
-        const firstLine = "| `"+first+"` | " + description + "<br><br>Internal Value: `"+value+"`";
+        const internalValueString = zh ? "内部值: ": "Internal Value: ";
+        const aliasForString = zh ? "同": "Alias for ";
+        const firstLine = "| `"+first+"` | " + description + "<br><br>" + internalValueString + "`"+value+"`";
         tableRowByName[first] = firstLine;
 
         // The first one is the main one, the rest
         // are aliases to it
         for (let i = 1;i<vLen;i++) {
             const v = variants[i];
-            const line = "| `"+v+"` | Alias for `"+first+"` |";
+            const line = "| `"+v+"` | "+aliasForString+"`"+first+"` |";
             tableRowByName[v] = line;
         }
     }
@@ -135,10 +142,22 @@ const header = sourceFileLines
 
 const targetFileContent = 
     header.join("\n") + 
-    parseHintSection(sourceFileLines, "cook-effects") +
-    parseHintSection(sourceFileLines, "weapon-modifiers");
+    parseHintSection(sourceFileLines, "cook-effects", false) +
+    parseHintSection(sourceFileLines, "weapon-modifiers", false);
+
+const HEADER_ZH = `# 属性常数值
+以下为某些指令可用的非关键词属性常数值。
+
+解析时会忽略\`_\`，\`-\`，和空格。
+`;
+
+const targetFileContentZh = 
+    HEADER_ZH +
+    parseHintSection(sourceFileLines, "cook-effects", true) +
+    parseHintSection(sourceFileLines, "weapon-modifiers", true);
 
 
-console.log("writing target file...");
+console.log("writing target files...");
 await Bun.file(TARGET_FILE).write(targetFileContent);
+await Bun.file(TARGET_FILE_ZH).write(targetFileContentZh);
 console.log("done");

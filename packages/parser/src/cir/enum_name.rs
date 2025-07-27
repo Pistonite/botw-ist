@@ -2,7 +2,7 @@
 //! These are non-keyword constants that can be matched
 //! by commands in the right context.
 //!
-//! When parsing, `-`, `-`, and spaces (` `) are ignored.
+//! When parsing, `_`, `-`, and spaces (` `) are ignored.
 //! So for example `resist-cold` is the same as `resistcold`.
 
 /// Parse cook effect name for the `effect` meta property for items
