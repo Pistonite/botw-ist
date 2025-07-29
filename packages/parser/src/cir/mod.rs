@@ -6,8 +6,6 @@ mod item_meta;
 pub use item_meta::*;
 mod item_spec;
 pub use item_spec::*;
-mod trial;
-pub use trial::*;
 mod gdt;
 pub use gdt::*;
 mod meta;
@@ -15,5 +13,7 @@ pub use meta::*;
 mod enum_name;
 mod inventory_meta;
 pub use inventory_meta::*;
+mod system_meta;
+pub use system_meta::*;
 
 pub use skybook_api::parser::cir::*;

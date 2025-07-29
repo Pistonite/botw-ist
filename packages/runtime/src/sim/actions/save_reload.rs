@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use blueflame::game::gdt;
+use blueflame::game::{gdt, WeaponModifierInfo};
 use blueflame::linker;
 use blueflame::linker::events::GameEvent;
 use blueflame::memory::{self, proxy};
@@ -8,6 +8,20 @@ use blueflame::processor::{self, Cpu2, Process};
 
 use crate::error::{ErrorReport, sim_error};
 use crate::sim;
+
+macro_rules! reload_gdt_or_stop {
+    ($ctx:ident, $errors:ident, $gdt:ident) => {{
+        let span = $ctx.span;
+        let proc = &mut $ctx.cpu().proc;
+        let gdt_ptr = blueflame::game::gdt::trigger_param_ptr(proc.memory())?;
+        blueflame::memory::proxy! { let mut gdt = *gdt_ptr as trigger_param in proc };
+        if !gdt.load_save($gdt) {
+            log::error!("unexpected load_save fail");
+            $errors.push($crate::error::sim_error!(span, ReloadFail));
+            return Ok(());
+        }
+    }}
+}
 
 /// Save the game
 ///
@@ -65,7 +79,29 @@ pub fn reload(
 ) -> Result<(), processor::Error> {
     // can only reload from inventory (System tab)
     super::switch_to_inventory_or_stop!(ctx, sys, errors, "RELOAD");
-    regen_stage(ctx, sys, errors, Some(load_gdt))
+    regen_stage(ctx, sys, errors, Some(load_gdt), true)
+}
+
+
+
+/// Simulate a loading screen, such as entering/exiting shrine
+pub fn loading_screen(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+    errors: &mut Vec<ErrorReport>,
+) -> Result<(), processor::Error> {
+    regen_stage(ctx, sys, errors, None, false)
+}
+
+
+/// Reload savedata into GDT, but don't do anything else
+pub fn reload_gdt(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    errors: &mut Vec<ErrorReport>,
+    load_gdt: &gdt::TriggerParam,
+) -> Result<(), processor::Error> {
+    reload_gdt_or_stop!(ctx, errors, load_gdt);
+    Ok(())
 }
 
 /// Regenerate the game stage, and optionally load a save while doing that
@@ -73,63 +109,106 @@ pub fn regen_stage(
     ctx: &mut sim::Context<&mut Cpu2>,
     sys: &mut sim::GameSystems,
     errors: &mut Vec<ErrorReport>,
-    load_gdt: Option<&gdt::TriggerParam>,
+    load_save: Option<&gdt::TriggerParam>,
+    load_gdt: bool
 ) -> Result<(), processor::Error> {
-    // 0. Translucent items are removed
+    // 0. Translucent items are removed before reload
+    // This is called as part of the loading screen, for example,
+    // this is called when entering/exiting shrine as well
     linker::delete_removed_items(ctx.cpu())?;
 
     // 1. BaseProcMgr deletes all actors
     sys.overworld.destroy_all();
 
-    // 2. SaveMgr/GdtMgr (?) loads the save into GDT
-    if let Some(save_gdt) = load_gdt {
-        let span = ctx.span;
-        let proc = &mut ctx.cpu().proc;
-        let gdt_ptr = gdt::trigger_param_ptr(proc.memory())?;
-        proxy! { let mut gdt = *gdt_ptr as trigger_param in proc };
-        if !gdt.load_save(save_gdt) {
-            log::error!("unexpected load_save fail");
-            errors.push(sim_error!(span, ReloadFail));
-            return Ok(());
-        }
-    }
-
     // X. Reset to overworld screen
     sys.screen.reset_to_overworld();
 
-    // 3. PMDM loads GDT
-    linker::load_from_game_data(ctx.cpu())?;
-
-    // 4. Create player equipments
-    #[derive(Default)]
-    struct State {
-        pub weapon: Option<sim::OverworldActor>,
-        pub bow: Option<sim::OverworldActor>,
-        pub shield: Option<sim::OverworldActor>,
+    // 2. SaveMgr/GdtMgr (?) loads the save into GDT
+    if let Some(save_gdt) = load_save {
+        reload_gdt_or_stop!(ctx, errors, save_gdt);
     }
 
+    // 3. PMDM loads from GDT
+    if load_gdt {
+        linker::load_from_game_data(ctx.cpu())?;
+    }
+
+    // 4. Create player equipments
     let state = linker::events::CreateEquip::execute_subscribed(
         ctx.cpu(),
-        State::default(),
-        |state, (slot, name, value, modifier)| {
-            let actor = sim::OverworldActor {
-                name,
-                value,
-                modifier,
-            };
-            match slot {
-                0 => state.weapon = Some(actor),
-                1 => state.shield = Some(actor),
-                2 => state.bow = Some(actor),
-                _ => {}
-            }
-        },
+        CreateEquipState::default(),
+        CreateEquipState::update,
         linker::create_player_equipment,
     )?;
 
     // 4. Equipments update their value
-    sys.overworld
-        .reset_equipments_on_genstage(ctx.cpu(), state.weapon, state.bow, state.shield)?;
+    sys.overworld.reload_equipments(ctx.cpu(), state.weapon, state.bow, state.shield)?;
 
     Ok(())
+}
+
+/// Simulate starting a trial with empty inventory
+pub fn trial_start(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+    errors: &mut Vec<ErrorReport>,
+) -> Result<(), processor::Error> {
+    // 0. To avoid issues, we switch to overworld
+    super::switch_to_overworld_or_stop!(ctx, sys, errors, "!TRIAL-START");
+
+    // X. Delete overworld weapons
+    // I think this is part of createPlayerEquipment, but we don't
+    // simulate that part yet
+    // We know not all overworld actors are destroyed (eventide smuggle)
+    sys.overworld.destroy_weapons();
+
+    // 2. Init Pouch
+    // Technically, we know the event subscription here is not needed
+    // because weapons won't be created because we know the pouch is empty
+    let state = linker::events::CreateEquip::execute_subscribed(
+        ctx.cpu(),
+        CreateEquipState::default(),
+        CreateEquipState::update,
+        linker::init_for_quest,
+    )?;
+
+    // 3. Equipments update their value
+    sys.overworld.reload_equipments(ctx.cpu(), state.weapon, state.bow, state.shield)?;
+
+    // TODO: we don't know yet how refights work
+
+    Ok(())
+}
+
+pub fn trial_finish(
+    ctx: &mut sim::Context<&mut Cpu2>,
+    sys: &mut sim::GameSystems,
+    errors: &mut Vec<ErrorReport>,
+) -> Result<(), processor::Error> {
+    // 0. To avoid issues, we switch to overworld
+    super::switch_to_overworld_or_stop!(ctx, sys, errors, "!TRIAL-FINISH");
+}
+
+#[derive(Default)]
+struct CreateEquipState {
+    weapon: Option<sim::OverworldActor>,
+    bow: Option<sim::OverworldActor>,
+    shield: Option<sim::OverworldActor>,
+}
+
+impl CreateEquipState {
+    fn update(&mut self, args: <linker::events::CreateEquip as GameEvent>::TArgs) {
+        let (slot, name, value, modifier) = args;
+        let actor = sim::OverworldActor {
+            name,
+            value,
+            modifier,
+        };
+        match slot {
+            0 => self.weapon = Some(actor),
+            1 => self.shield = Some(actor),
+            2 => self.bow = Some(actor),
+            _ => {}
+        }
+    }
 }

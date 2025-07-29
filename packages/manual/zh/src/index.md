@@ -16,5 +16,8 @@
 - [物品转存简单介绍](./ist/index.md)
 - [开发者文档](./developer/index.md)
 
+## 遇到问题
+问题请加讨论群或提交到GitHub。
+
 ## QQ群
 Pistonite学习交流群: 670991147

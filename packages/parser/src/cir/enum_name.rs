@@ -115,6 +115,33 @@ pub fn parse_weapon_modifier_bits(value: &str) -> Option<i32> {
     }
 }
 
+/// Parse DLC version name
+#[rustfmt::skip]
+pub fn parse_dlc_version(value: &str) -> Option<u8> {
+    match clean_ident(value).as_str() {
+        // @manual-generator-hint dlc-versions
+        // ## DLC Version
+        // These values can be used for the `dlc` system property
+        // in the [<skyb>!system</skyb>](./system.md) command.
+        //
+        // @manual-generator-hint values
+        // No DLC
+        "none" | "nodlc"
+        => Some(0),
+        // "Day 1" DLC
+        "ver1" | "day1" | "plateau"
+        => Some(1), 
+        // Master Trials (DLC Pack 1, ver 2.0)
+        "ver2" | "mastertrials" | "mastertrial"
+        => Some(2),
+        // Champion's Ballad (DLC Pack 2, ver 3.0)
+        "ver3" | "all" | "championsballad" | "championballad"
+        => Some(3),
+        // @manual-generator-hint end
+        _ => None,
+    }
+}
+
 fn clean_ident(value: &str) -> String {
     value
         .trim()

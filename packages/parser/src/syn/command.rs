@@ -88,7 +88,7 @@ pub enum Command {
     /// `new-game`
     NewGame(syn::KwNewGame),
 
-    // ==== memory editing ===
+    // ==== low level ===
     /// `!break X slots`
     SuBreak(CmdSuBreak),
     /// `!init ITEMS`
@@ -101,18 +101,16 @@ pub enum Command {
     SuWrite(CmdSuWrite),
     /// `!remove ITEMS`
     SuRemove(CmdSuRemove),
-    /// `!reload-gdt SAVE`
-    SuReloadGdt(CmdSuReloadGdt),
-    /// `!reset-ground`
-    SuResetGround(syn::KwSuResetGround),
-    /// `!reset-overworld`
-    SuResetOverworld(syn::KwSuResetOverworld),
-    /// `!loading-screen`
-    SuLoadingScreen(syn::KwSuLoadingScreen),
     /// `!set-gdt`
     SuSetGdt(CmdSuSetGdt),
     /// `!arrowless-smuggle` - activate arrowless smuggle with items already held
     SuArrowlessSmuggle(syn::KwSuArrowlessSmuggle),
+    /// `!system [META]` - system level meta commands
+    SuSystem(CmdSuSystem),
+    /// `!trial-start` - Init pouch for quest
+    SuTrialStart(syn::KwSuTrialStart),
+    /// `!trial-end` - Restore pouch for quest
+    SuTrialEnd(syn::KwSuTrialEnd),
 
     // BELOW ARE NOT IMPLEMENTED YET
 
@@ -125,14 +123,6 @@ pub enum Command {
     Boil(CmdBoil),
     /// `freeze ITEMS`
     Freeze(CmdFreeze),
-
-    // ==== trials ====
-    /// `enter TRIAL`
-    Enter(CmdEnter),
-    /// `exit` - exit current trial
-    Exit(syn::KwExit),
-    /// `leave` - leave current trial without clearing it
-    Leave(syn::KwLeave),
 }
 
 #[derive_syntax]
@@ -433,20 +423,20 @@ pub struct CmdSuRemove {
     pub items: syn::ItemListConstrained,
 }
 
-/// `!reload-gdt` - like `reload`, but only copies GDT from save to memory
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdSuReloadGdt {
-    pub lit: syn::KwSuReloadGdt,
-    pub name: tp::Option<tp::String<syn::Word>>,
-}
-
 /// `!set-gdt <FLAG> [properties]` - set a gamedata flag (bool, s32, f32, vec2f, vec3f)
 #[derive_syntax]
 #[derive(Debug)]
 pub struct CmdSuSetGdt {
     pub lit: syn::KwSuSetGdt,
     pub flag_name: syn::AngledWord,
+    pub props: syn::Meta,
+}
+
+/// `!system [COMMAND_META]` - System-level commands
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSuSystem {
+    pub lit: syn::KwSuSystem,
     pub props: syn::Meta,
 }
 
@@ -505,24 +495,4 @@ pub struct CmdBoil {
 pub struct CmdFreeze {
     pub lit: syn::KwFreeze,
     pub items: syn::ItemListConstrained,
-}
-
-/// `enter TRIAL` - enter a trial
-///
-/// # Trials:
-/// - eventide
-/// - tots/trial of the sword
-/// - beginning trial (when you clear a TOTS for the first time, MS will be automatically upgraded,
-///   which constitutes a gamedata sync
-/// - middle trial
-/// - final trial
-/// - thunderblight refight (when you clear a refight for the first time, ability will be upgraded)
-/// - windblight refight
-/// - waterblight refight
-/// - fireblight refight
-#[derive_syntax]
-#[derive(Debug)]
-pub struct CmdEnter {
-    pub lit: syn::KwEnter,
-    pub trial: tp::String<syn::Word>,
 }

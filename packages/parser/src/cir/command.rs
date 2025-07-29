@@ -163,6 +163,10 @@ pub enum Command {
     SuSetGdt(String, Box<cir::GdtMeta>),
     /// Activate arrowless smuggle (hold attach)
     SuArrowlessSmuggle,
+    /// Init Pouch for Quest
+    SuTrialStart,
+    /// Restore Pouch for Quest
+    SuTrialEnd,
 
     /// See [`syn::CmdRoast`] and [`crate::syn::CmdBake`]
     Roast(Vec<cir::ItemSelectSpec>),
@@ -173,13 +177,6 @@ pub enum Command {
 
     /// See [`syn::CmdUnequip`]
     Sort(cir::CategorySpec),
-
-    /// See [`syn::CmdEnter`]
-    Enter(cir::Trial),
-    /// `exit` - Exit the current trial
-    Exit,
-    /// `leave` - Leave the current trial without clearing it
-    Leave,
 }
 // make sure the command size does not update unexpectedly
 // size only valid for 64-bit platforms
@@ -335,16 +332,19 @@ pub async fn parse_command<R: QuotedItemResolver>(
         C::SuRemove(cmd) => Some(X::SuRemove(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
-        C::SuReloadGdt(cmd) => Some(X::SuReloadGdt(cmd.name.as_ref().map(|x| x.to_string()))),
-        C::SuResetGround(_) => Some(X::SuResetGround),
-        C::SuResetOverworld(_) => Some(X::SuResetOverworld),
-        C::SuLoadingScreen(_) => Some(X::SuLoadingScreen),
+        // C::SuReloadGdt(cmd) => Some(X::SuReloadGdt(cmd.name.as_ref().map(|x| x.to_string()))),
+        // C::SuResetGround(_) => Some(X::SuResetGround),
+        // C::SuResetOverworld(_) => Some(X::SuResetOverworld),
+        // C::SuLoadingScreen(_) => Some(X::SuLoadingScreen),
         C::SuSetGdt(cmd) => {
             let gdt_value = cir::parse_gdt_meta(&cmd.props, errors)?;
             let flag_name = cmd.flag_name.name.to_string();
             Some(X::SuSetGdt(flag_name, Box::new(gdt_value)))
         }
         C::SuArrowlessSmuggle(_) => Some(X::SuArrowlessSmuggle),
+        C::SuSystem(_cmd) => None, // TODO
+        C::SuTrialStart(_) => Some(X::SuTrialStart),
+        C::SuTrialEnd(_) => Some(X::SuTrialEnd),
         //////////////////////////////////////////////////////////////////
         A![Slots(cmd)] => {
             let meta = cir::parse_slots_meta(&cmd.meta, errors);
@@ -397,16 +397,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
                 }
             }
         }
-
-        syn::Command::Enter(cmd) => match cir::parse_trial(&cmd.trial, &cmd.trial.span()) {
-            Ok(trial) => Some(cir::Command::Enter(trial)),
-            Err(e) => {
-                errors.push(e);
-                None
-            }
-        },
-        syn::Command::Exit(_) => Some(cir::Command::Exit),
-        syn::Command::Leave(_) => Some(cir::Command::Leave),
     }
 }
 
