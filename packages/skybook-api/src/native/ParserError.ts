@@ -35,4 +35,5 @@ export type ParserError =
     | { type: "GdtTypeConflict" }
     | { type: "GdtInvalidIndex"; data: number }
     | { type: "GdtMissingVecComp" }
-    | { type: "InvalidEquipmentSlotNum"; data: [Category, number] };
+    | { type: "InvalidEquipmentSlotNum"; data: [Category, number] }
+    | { type: "InvalidSystemCommand"; data: [string, string] };
