@@ -6,6 +6,11 @@ use crate::syn;
 
 use super::MetaParser;
 
+/// Parse the meta for `!system` command
+pub fn parse_system_meta(meta: &syn::Meta, errors: &mut Vec<ErrorReport>) -> Vec<SysCommand> {
+    cir::parse_meta(meta, SysCommandMeta::default(), errors)
+}
+
 /// System meta commands
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SysCommand {
@@ -33,6 +38,7 @@ pub enum SysCommandData {
     LoadingScreenNoRemoveTranslucent,
 }
 
+#[derive(Default)]
 struct SysCommandMeta {
     commands: Vec<SysCommand>
 }

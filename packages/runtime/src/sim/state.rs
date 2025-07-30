@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use blueflame::game::gdt;
@@ -274,6 +275,9 @@ impl State {
             X::SuWrite(meta, item) => self.handle_su_write(ctx, meta, item).await,
             X::SuSetGdt(name, meta) => self.handle_su_set_gdt(ctx, name, meta).await,
             X::SuArrowlessSmuggle => self.handle_su_arrowless_smuggle(ctx).await,
+            X::SuSystem(cmds) => self.handle_su_sys_commands(ctx, cmds).await,
+            X::SuTrialStart => self.handle_su_trial_start(ctx).await,
+            X::SuTrialEnd => self.handle_su_trial_end(ctx).await,
 
             _ => Ok(Report::error(self, sim_error!(ctx.span, Unimplemented))),
         }
@@ -704,6 +708,76 @@ impl State {
         execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::trigger_arrowless_smuggle(&mut cpu, sys, errors)
         })
+    }
+
+    async fn handle_su_trial_start(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling !TRIALSTART");
+        execute_command!(self, rt, cpu, sys, _errors => {
+            sim::actions::trial_start(&mut cpu, sys)
+        })
+    }
+
+    async fn handle_su_trial_end(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling !TRIALSTART");
+        execute_command!(self, rt, cpu, sys, _errors => {
+            sim::actions::trial_end(&mut cpu, sys)
+        })
+    }
+
+    async fn handle_su_sys_commands(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        sys_commands: &[cir::SysCommand]
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling !SYSTEM");
+        let (send, recv) = oneshot::channel();
+        let cmds = sys_commands.to_vec();
+        let mut saves = BTreeMap::new();
+        for (name, data) in self.saves.iter() {
+            saves.insert(name.clone(), Arc::clone(&data));
+        }
+        let manual_save = self.manual_save.clone();
+
+        let new_state = execute_command!(self, rt, cpu, sys, errors => {
+            let mut manual_save = manual_save;
+            sim::actions::system::exec_sys_commands(&mut cpu, sys, 
+                errors, &cmds, &mut saves, &mut manual_save)?;
+            if send.send((saves, manual_save)).is_err() {
+                log::error!("failed to send system command output to runtime main thread");
+            }
+            Ok(())
+        })?;
+        let data = recv
+            .recv()
+            .map_err(|x| exec::Error::RecvResult(x.to_string()));
+        let data = match data {
+            Ok(x) => x,
+            Err(e) => {
+                log::error!("fail to receive system command data: {e}");
+                return Err(e);
+            }
+        };
+        Ok(new_state.map(|mut state| {
+            let (mut out_saves, out_manual_save) = data;
+            let saves = Arc::make_mut(&mut state.saves);
+            saves.retain_mut(|(name, data)| {
+                match out_saves.remove(name) {
+                    Some(out_data) => {
+                        *data = out_data;
+                        true
+                    }
+                    None => false
+                }
+            });
+            state.manual_save = out_manual_save;
+            state
+        }))
     }
 }
 

@@ -48,6 +48,8 @@ mod __impl {
         /// If the player is holding items in the overworld and is in arrowless
         /// smuggle state
         pub is_arrowless_smuggle: bool,
+        /// If the Pouch is currently in trial (quest) mode
+        pub is_trial_mode: bool,
     }
 
     impl Default for InvView_PouchList {
@@ -63,6 +65,7 @@ mod __impl {
                 screen: InvView_Screen::default(),
                 is_holding_in_inventory: false,
                 is_arrowless_smuggle: false,
+                is_trial_mode: false,
             }
         }
     }

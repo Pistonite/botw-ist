@@ -94,6 +94,8 @@ pub enum Command {
     Entangle(Box<cir::ItemSelectSpec>),
     /// See [`syn::CmdCoTargeting`]
     CoTargeting(Box<cir::ItemSelectSpec>),
+    /// See [`syn::CmdSort`]
+    Sort(cir::CategorySpec),
 
     /// Use DPad Quick Menu
     CoDpad,
@@ -163,6 +165,8 @@ pub enum Command {
     SuSetGdt(String, Box<cir::GdtMeta>),
     /// Activate arrowless smuggle (hold attach)
     SuArrowlessSmuggle,
+    /// System Commands
+    SuSystem(Vec<cir::SysCommand>),
     /// Init Pouch for Quest
     SuTrialStart,
     /// Restore Pouch for Quest
@@ -175,8 +179,6 @@ pub enum Command {
     /// See [`syn::CmdFreeze`]
     Freeze(Vec<cir::ItemSelectSpec>),
 
-    /// See [`syn::CmdUnequip`]
-    Sort(cir::CategorySpec),
 }
 // make sure the command size does not update unexpectedly
 // size only valid for 64-bit platforms
@@ -258,6 +260,9 @@ pub async fn parse_command<R: QuotedItemResolver>(
         A![Targeting(cmd)] => Some(X::CoTargeting(Box::new(
             cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?,
         ))),
+        C::Sort(cmd) => {
+            absorb_error(errors, cir::parse_category_with_times(&cmd.category, cmd.times.as_ref())).map(X::Sort)
+        }
         //////////////////////////////////////////////////////////////////
         A![Dpad(_)] => Some(X::CoDpad),
         C::Equip(cmd) => Some(X::Equip(
@@ -342,7 +347,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             Some(X::SuSetGdt(flag_name, Box::new(gdt_value)))
         }
         C::SuArrowlessSmuggle(_) => Some(X::SuArrowlessSmuggle),
-        C::SuSystem(_cmd) => None, // TODO
+        C::SuSystem(cmd) => Some(X::SuSystem(cir::parse_system_meta(&cmd.props, errors))),
         C::SuTrialStart(_) => Some(X::SuTrialStart),
         C::SuTrialEnd(_) => Some(X::SuTrialEnd),
         //////////////////////////////////////////////////////////////////
@@ -388,15 +393,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
 
-        syn::Command::Sort(cmd) => {
-            match cir::parse_category_with_times(&cmd.category, cmd.times.as_ref()) {
-                Ok(spec) => Some(cir::Command::Sort(spec)),
-                Err(e) => {
-                    errors.push(e);
-                    None
-                }
-            }
-        }
     }
 }
 

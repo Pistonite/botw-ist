@@ -202,6 +202,12 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
         }
     }
 
+    let is_trial_mode = try_mem!(
+        Ptr!(&pmdm->mIsPouchForQuest).load(memory),
+        e,
+        "failed to read is_trial_mode: {e}"
+    );
+
     log::debug!("pouch view extracted successfully");
     Ok(iv::PouchList {
         count,
@@ -214,6 +220,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
         screen: sys.screen.current_screen().iv_type(),
         is_holding_in_inventory: sys.screen.holding_in_inventory,
         is_arrowless_smuggle: sys.overworld.is_holding_arrowless_smuggled(),
+        is_trial_mode,
     })
 }
 

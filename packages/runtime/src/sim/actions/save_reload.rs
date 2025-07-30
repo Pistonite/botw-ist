@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
-use blueflame::game::{gdt, WeaponModifierInfo};
+use blueflame::game::gdt;
 use blueflame::linker;
 use blueflame::linker::events::GameEvent;
 use blueflame::memory::{self, proxy};
 use blueflame::processor::{self, Cpu2, Process};
 
-use crate::error::{ErrorReport, sim_error};
+use crate::error::ErrorReport;
 use crate::sim;
 
 macro_rules! reload_gdt_or_stop {
@@ -146,16 +146,8 @@ pub fn recreate_overworld_equipments(
 pub fn trial_start(
     ctx: &mut sim::Context<&mut Cpu2>,
     sys: &mut sim::GameSystems,
-    errors: &mut Vec<ErrorReport>,
 ) -> Result<(), processor::Error> {
-
-    // X. Delete overworld weapons
-    // I think this is part of createPlayerEquipment, but we don't
-    // simulate that part yet
-    // We know not all overworld actors are destroyed (eventide smuggle)
-    sys.overworld.destroy_weapons();
-
-    // 2. Init Pouch
+    // Init Pouch
     // Technically, we know the event subscription here is not needed
     // because weapons won't be created because we know the pouch is empty
     let state = linker::events::CreateEquip::execute_subscribed(
@@ -164,21 +156,28 @@ pub fn trial_start(
         CreateEquipState::update,
         linker::init_for_quest,
     )?;
+    log::debug!("init_for_quest finished");
 
-    // 3. Equipments update their value
+    // Equipments update their value
     sys.overworld.reload_equipments(ctx.cpu(), state.weapon, state.bow, state.shield)?;
 
     Ok(())
 }
 
-pub fn trial_finish(
+/// Simulate ending a trial and restoring the inventory
+pub fn trial_end(
     ctx: &mut sim::Context<&mut Cpu2>,
     sys: &mut sim::GameSystems,
-    errors: &mut Vec<ErrorReport>,
 ) -> Result<(), processor::Error> {
-    // 0. To avoid issues, we switch to overworld
-    super::switch_to_overworld_or_stop!(ctx, sys, errors, "!TRIAL-FINISH");
-    todo!()
+    let state = linker::events::CreateEquip::execute_subscribed(
+        ctx.cpu(),
+        CreateEquipState::default(),
+        CreateEquipState::update,
+        linker::restore_from_quest,
+    )?;
+    sys.overworld.reload_equipments(ctx.cpu(), state.weapon, state.bow, state.shield)?;
+
+    Ok(())
 }
 
 #[derive(Default)]
