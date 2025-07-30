@@ -1,7 +1,9 @@
+use crate::game::AocManager;
 use crate::vm::VirtualMachine;
 use crate::env::Environment;
 
 pub static NAME: &str = "uking::aoc::Manager";
+pub type Type = AocManager;
 
 pub const fn size(_env: Environment) -> u32 {
     0x598

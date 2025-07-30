@@ -77,6 +77,8 @@ pub enum ParserError {
     GdtMissingVecComp,
     #[error("`{1}` is not a valid number of slots for category `{0:?}`")]
     InvalidEquipmentSlotNum(cir::Category, i32),
+    #[error("`{0}={1}` is not a valid system command")]
+    InvalidSystemCommand(String, String),
     //////////////////////////////////
     // Add new errors below
     // The translation files needs to be updated accordingly!!!
