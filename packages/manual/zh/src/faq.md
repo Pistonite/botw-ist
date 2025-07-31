@@ -1,73 +1,37 @@
-# FAQ
+# 常见问题
 
-## What is IST? What is this app?
-Inventory Slot Transfer, or IST, is a glitch in BOTW that desyncs the number of 
-items you have in the inventory and number of items the game *thinks you have*.
-For more details, check out [history of the app](./history.md) and an 
-[overview of the glitch](./ist/index.md).
+## 什么是IST？什么是模拟器？
+IST是物品转存（Inventory Slot Transfer）的缩写。这是旷野之息的一个Bug。它利用了背包物品计数不同步于实际物品计数产生的计数差转移物品到不同存档。模拟器是为了研究这个Bug更方便。详见[模拟器发展历史](./history.md)和[物品转存简介](./ist/index.md)。
 
-## I am new to IST; how do I use this tool?
-You definitely don't need to be a master of IST to find this tool useful.
-If you are looking at a speedrun setup made by someone else, 
-you can view the setup in the tool as a step-by-step guide for how to perform
-the glitch. If you are a glitch hunter or are interested in investigating
-the glitch in more details, the [user manual](./user/index.md) has everything
-you need to unlock the full potential of the simulator.
+## 我不太会IST，如何使用模拟器？
+模拟器并非需要完全理解IST才能使用。你可以用模拟器打开别人制作的IST步骤，查看每一步的操作和背包状态。如果你想用模拟器研究IST，请参考[模拟器的使用](./user/index.md)。[物品转存简介](./ist/index.md)概括了IST的一些理论，可能对使用模拟器有帮助。
 
-In any case, it might be helpful to understand [the basic concepts](./ist/basics.md)
-of IST to get started.
+## 不理解IST，能在速通里用吗？
+不用担心，IST非常复杂，就连世界纪录保持者都不一定完全理解。这也是为什么需要模拟器。
 
-## I can't understand IST, but I still want to speedrun
-Don't worry; IST is very complicated. Most people (including WR holders!)
-don't fully understand the glitch. This is exactly why this tool exists.
+如果你的目标是将IST运用到速通中，大多数人的方法是把步骤完全背下来，或者一边看模拟器的步骤一边执行。
 
-If your goal is to do the setup in a speedrun, what most people do is 
-simply following each action in the setup *exactly*, either from memory,
-or by looking at the steps while they do it.
-Many categories also have tutorials made for the IST section. For example,
-[here](https://www.youtube.com/watch?v=NZBmu9hEZY0) is one for All Dungeons
-made by Player 5.
+## 我不速通，只是想玩IST
+如果在自己的逛街存档用IST，需要特别注意。如果不小心可能会损坏存档。如果是跟着教程做，需要步骤完全一样，最好不要手动存档。
 
-## I just want to play with IST as a casual player
-Be cautious to use IST with your casual file, as effects of IST can persist
-in saves and may cause the saves to be corrupted or non-loadable.
+## 模拟器是怎么做出来的？
+一代至三代模拟器都是通过研究IST的效果和模式，并且参考[旷野之息反编译项目](https://github.com/zeldaret/botw)开发，属于白盒模式。四代模拟器采用黑盒模式，在沙盒中运行游戏的一部分，由模拟器管理进程状态。所以，第四代模拟器甚至可以模拟还未发现的Bug。
 
-There are generalized guides for how to achieve certain things with IST
-in a casual file (for example, <skyb>999 korok seeds</skyb>). You can follow
-these steps. A good place to look for those steps is the `#general-help`
-channel of the [speedrunning discord](./welcome.md#discord).
-There are also tutorials online on YouTube (or Bilibili if you are from China)
-for using IST in a casual file.
+## 可以contribute吗?
+当然！如果你发现了什么Bug，想要自己尝试修，可以在GH上提交PR。如果想要添加新功能，请先与我联系。
 
-## How is the simulator made?
-V1 to V3 of the simulator was developed by understanding the outcome
-and patterns of IST, and by referencing the [decompilation project](https://github.com/zeldaret/botw).
-It was a white-box approach, similar to a person that understood everything ever discovered about IST.
-V4 took the black-box approach, where sections of the real code of the game (not decompiled code)
-is executed in a sandbox orchestrated by the simulator app. This means the simulator
-might even be possible to support use cases that are not discovered yet.
+项目大多数内容都基于开源和公开的游戏数据。但是，有些部分需要你的游戏Dump才能编译。
 
-## Can I contribute?
-Certainly! If you see some bugs and want to take a shot at fixing them,
-feel free to open a PR on GitHub. If you want to add features, please discuss
-with me first. A decent level of programming knowledge is needed.
-
-Most of this project is open-source and use publicly-available data of the game.
-However, some parts require that you own a copy of the game to develop.
-
-Please refer to the [contributing guide](./developer/contributing.md) for more information.
+请参考[贡献指南](./developer/contributing/index.md)。
 
 ```admonish note
-If your goal is to add extra functionality, you might be able to do that through
-an extension. See [Extensions](./developer/extensions.md).
+你需要的功能可能可以通过扩展实现，请参考[扩展](./developer/extensions.md)。
 ```
 ```admonish note
-If you are not familiar with programming, you can still contribute to the test suite
-by providing your (complicated) scripts as test cases. These test cases help ensure
-future updates to the simulator don't introduce bugs. See [Snapshot Testing](./developer/contributing/testing.md#snapshot-tests).
+如果你不熟悉编程，也有方法可以contribute。你可以提供你的（非常复杂的）脚本作为模拟器的测试案例。
+请参考[快照测试](./developer/contributing/testing.md#snapshot-tests)。
 
-If you are not able to generate the snapshot locally, simply make sure the output for every step
-is correct in the App, then open a PR with just the new `.txt` script file.
+如果你无法在本地生成新快照，请确保模拟器每一步的结果都正确，然后直接提交新的`.txt`文件到PR。
 ```
 
 

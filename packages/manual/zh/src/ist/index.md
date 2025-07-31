@@ -1,56 +1,23 @@
 # 物品转存简介
 
-## What is IST
-*Believe it or not, Infinite Stuff Trick is NOT the name of the glitch*
-
-IST stands for **Inventory Slot Transfer**. It is a glitch in Breath of the Wild
-that exploits behavior of the inventory when the variable tracking the 
-number of the items in the inventory is less than the number of items actually in the inventory.
-
-The developers made sure that these two values are kept in sync during normal
-gameplay. However, in very specific scenarios, the game removes the item
-slot from the inventory while subtracting the number of items twice,
-resulting in the game tracking 1 fewer item slots in the inventory.
-By repeating the action, we can make the game track fewer and fewer items.
-
-The difference between the number of items in the inventory and number
-tracked by the game is called `Offset` or number of `Broken Slots`.
-`Offset` is technically more correct, but because it's ambiguous in some contexts,
-this manual will refer to this number as `Broken Slots`.
-The action to create the Broken Slots is referred to as `Breaking Slots`.
-
 ```admonish info
-`Broken Slots` is the name used by the glitch hunting community before
-the underlying concepts of the glitch were fully understood. There's nothing
-actually broken about the slots.
-
-The variable that tracks the number of items is commonly referred to by
-the glitch hunters as `mCount` - a reference to the name of the variable
-in the BOTW decompilation project.
-
-This variable is needed because the inventory is stored as a (doubly-)linked list,
-which has a O(N) time complexity for calculating its length.
-
-The different counts have this relation:
-
-    mCount + Number of broken slots = Actual number of items
-
+本篇对应B站上[物品转存教程第一期：基础理论](https://www.bilibili.com/video/BV1Dn87zoEXs)。
 ```
 
-## Inventory Representation
-The inventory that you see when opening the inventory in-game - the `Visible Inventory` - is 
-stored as a (doubly-)linked list. In this list representation, items in different categories
-are "concatenated" into the same list. For example, in normal inventory order,
-the list may have all the weapons, followed by all the bows, followed by
-all the arrows, etc, and at the end are all the key items. In one page
-of the item in the in-game UI, the top-left corner is first,
-and it follows row-major order (i.e. the item in row 1 column 2 is after the item
-in row 1 column 1 in the list), and the bottom-right corner is last,
-followed by the upper-left corner item of the next page.
+## 什么是IST
+
+IST是**Inventory Slot Transfer**的全称。它是旷野之息中利用了物品计数和物品实际数量不同步的Bug。
+
+开发者确保了在一般游戏操作中，这两个变量始终保持同步。但是有些操作会导致一个物品格子被重复删除，导致物品计数比物品实际数量少1，然后重复操作，即可使物品计数越来越少。物品计数与实际物品数的差称为“物品计数差”，或者“转存格”。“转存格”不是实际存在的格子，所以用“物品计数差”更准确。但是“转存格”的叫法使用更广泛，所以在本手册中，我们将用“转存格”一词。生成计数差的操作称为“制作转存格”。
+
+## 背包结构
+游戏中，打开背包界面能看到的物品我们称之为“可视背包”。可视背包由一个双链表组成。背包中所有页面的物品都连在同一个表中。比如，在正常背包顺序下，表中有所有的武器，然后所有的弓，然后所有的箭，以此类推，最后是所有的重要道具。在背包界面的一页物品中，最左上的物品是表里排最靠前的，最右下的物品是最靠后的。然后先连一行的物品，再到下一行。
 
 ```admonish info
-The empty spaces and empty tabs in the inventory do not take space in the list.
+没有物品的格子称为空格。空格不在背包表中，只是在界面中的显示效果。
 ```
+
+
 
 The items are also stored at the same time in `GameData`, which is the game's flag system.
 The relevant flags are stored with an array type. For example, `PorchItem` is a flag that

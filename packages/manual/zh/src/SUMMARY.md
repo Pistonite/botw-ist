@@ -3,7 +3,7 @@
 [主页](./index.md)
 ---
 - [IST模拟器发展历史](./history.md)
-- [FAQ](./faq.md) 
+- [常见问题](./faq.md) 
 - [物品转存简介](./ist/index.md)
   - [数值讹转 (DIC)](./ist/dic.md)
   - [武器附魔 (WMC)](./ist/wmc.md)
