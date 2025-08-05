@@ -1,4 +1,4 @@
-# Screen System
+# 界面系统
 
 The `Screen` system simulates different dialogs and pause menus in the game.
 For example, when pausing to access the inventory, or when selling items by talking
@@ -16,7 +16,7 @@ The simulator UI has a little icon next to the "Visible Inventory" title
 to indicate which screen you are currently on.
 ```
 
-## Game State
+## 游戏状态
 While not technically a screen, the *Game* itself can also have 2 different states:
 `Running` and, well, not `Running` (closed).
 
@@ -39,7 +39,7 @@ restart. You have to use either of the commands below:
 - <skyb>reload</skyb> or <skyb>reload SAVE_NAME</skyb> to start the game and reload a save
   - `SAVE_NAME` is the name of the save, see [Save Files](../action/save.md)
 
-## Screen Types
+## 界面类型
 While in game, there are 4 screens that are simulated:
 
 - `Overworld`:
@@ -79,7 +79,7 @@ For example, if you are in the inventory menu and need to talk to a shop owner t
 
 That all happens in a single <skyb>sell</skyb> command!
 
-## Manually switching screens
+## 手动切换界面
 The following actions count as *manually* switching the screen.
 If the screen has been manually switched, the simulator will prevent
 certain automatic screen switches.

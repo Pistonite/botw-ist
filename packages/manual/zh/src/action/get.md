@@ -1,4 +1,4 @@
-# Get Items
+# 拿物品
 
 Adding new items to the inventory.
 
@@ -9,15 +9,15 @@ previously dropped on the ground.
 - <skyb>buy</skyb> is similar to <skyb>get</skyb>, but has additionally
   functionality to simulate buying from an NPC in the same dialog as selling.
 
-## Syntax
+## 语法
 > `get` [`FINITE_ITEM_LIST`](../user/syntax_item.md)<br>
 > `buy` [`FINITE_ITEM_LIST`](../user/syntax_item.md#)<br>
 > `pick-up` [`CONSTRAINED_ITEM_LIST`](../user/syntax_item.md#)<br>
 
 Annotations:
-  - [`:same-dialog`](#buying-from-npc)
-  - [`:pause-during`](#pause-on-item-text-boxes)
-  - [`:accurately-simulate`](#performance)
+  - [`:same-dialog`](#从NPC处买东西)
+  - [`:pause-during`](#新物品提示时开背包)
+  - [`:accurately-simulate`](#性能优化)
 
 Examples
 ```skybook
@@ -28,7 +28,7 @@ pick-up all materials   # 1 Diamond, 2 Bananas, 2 Apples
 buy 5 eggs
 ```
 
-## Picking up previously dropped Items
+## 从地上捡起之前丢的物品
 The only difference between <skyb>get</skyb> and <skyb>pick-up</skyb>
 is that <skyb>pick-up</skyb> is used to target items previously [dropped](./remove.md)
 on the [ground](../user/overworld_system.md).
@@ -36,7 +36,7 @@ on the [ground](../user/overworld_system.md).
 You cannot <skyb>pick-up</skyb> items that aren't on the ground. Use <skyb>get</skyb>
 instead.
 
-## Buying from NPC
+## 从NPC处买东西
 Normally, you buy items in this game by "talking" to the item directly in the overworld.
 Certain NPCs are exceptions, such as Beedle, Travelling Merchants, and Kilton.
 For these NPCs, you need to talk to them, and buy from a separate dialog.
@@ -62,7 +62,7 @@ close-dialog
 
 Also see [Selling](./sell.md).
 
-## Pause on Item Text Boxes
+## 新物品提示时开背包
 During <skyb>get</skyb>, <skyb>pick-up</skyb>, or <skyb>buy</skyb>, you may
 encounter a "New Item" text box that allows you to open the inventory.
 
@@ -76,8 +76,8 @@ For example, usually you can eat something immediately in the text box that you 
 but you cannot hold another item. Currently, this situation is too complex to simulate correctly.
 ```
 
-One use case is to force hold items during an item text box by performing [Item Smuggle for Arrowless Offset](./hold.md#smuggle-state-for-arrowless-offset),
-then get an item text box (similar to performing [Arrowless Offset](./break_slots.md#arrowless-offset)).
+One use case is to force hold items during an item text box by performing [Item Smuggle for Arrowless Offset](./material.md#无箭强持),
+then get an item text box (similar to performing [Arrowless Offset](./break_slots.md#无箭法)).
 
 ```skybook
 get 2 shrooms
@@ -95,7 +95,7 @@ You can also use this feature to explicitly annotate optimizations for speedruns
 :pause-during get zora-armor; equip zora-armor
 ```
 
-## Performance
+## 性能优化
 The preferred way to simulate getting multiple stackable items, is by invoking the function
 for adding the item to inventory repeatedly. However, when the number of items to get
 is large, this is a very expensive operation and can slow down script execution significantly.
@@ -119,7 +119,7 @@ you can use the <skyb>:accurately-simulate</skyb> annotation to force the more a
 ```
 
 
-## Detail
+## 细节
 - <skyb>get</skyb>, <skyb>pick-up</skyb> and <skyb>buy</skyb> all require [`Overworld`](../user/screen_system.md) screen.
 - You cannot get new items while holding items in the overworld
   - with <skyb>:smug</skyb>, the held items will be dropped after getting the item

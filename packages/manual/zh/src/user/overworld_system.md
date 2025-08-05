@@ -1,4 +1,4 @@
-# Overworld System
+# 主世界系统
 
 The `Overworld` system simulates objects that the player interacts in the overworld,
 known as `Actor`s. However, the actual overworld in the game is very complex, and
@@ -10,7 +10,7 @@ the actors that are involved in inventory glitches:
 - Any items currently being held by the player in the overworld
 - Any items (including materials and equipments) dropped by the player
 
-## Material Drop Limit
+## 丢弃物品上限
 In the game, you can drop at most `10` items on the ground at a time.
 When you drop the `11`-th item, the least-recent dropped item will despawn.
 This limit is simulated by the `Overworld` system in the following way:
@@ -47,21 +47,10 @@ Then:
   and there will be `10` apples left on the ground. This is because it's unlikely
   the apples are still there after you pick up some other item.
 
-## Resetting the Overworld
+## 重置主世界
 
-```admonish todo
-This functionality is WIP.
-```
+很长的IST步骤可能包含了游戏中多个区域，或是进入、离开神庙。主世界中的物品会因玩家离开区域而消失。在模拟器中，可以通过一些方式模拟：
 
-In a long IST setup, there might be times where you travel between different
-areas in the game, or exit/enter shrines, that cause the overworld to change
-without necessarily any inventory-related action. There are a few ways you
-can simulate this:
-
-- Any action that is supposed to reset the overworld will do so automatically,
-  for example <skyb>reload</skyb>, <skyb>enter shrine</skyb>, or <skyb>leave shrine</skyb>
-    - The <skyb>!loading-screen</skyb> supercommand can be used to simulate regenerating the game stage
-      with a loading screen, if none of the action commands match your needs.
-- The <skyb>!reset-ground</skyb> supercommand can be used to delete all items
-  on the ground. Use this if you are traveling to another area without a loading
-  screen.
+- 正常会重置主世界的指令会自动重置，比如<skyb>reload</skyb>读档。
+    - 可用<skyb>!system [loading-screen]</skyb>系统指令模拟触发加载界面。
+- <skyb>!system [clear-ground]</skyb>指令可以清除地上的物品，比如在离开某区域时。

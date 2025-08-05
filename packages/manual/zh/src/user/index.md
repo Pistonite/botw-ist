@@ -1,4 +1,4 @@
-# User Manual
+# 模拟器的使用
 
 ```admonish info
 This section covers how to use the Simulator App. While not
@@ -6,7 +6,7 @@ required, understanding IST itself could make it easier to understand
 some of the concepts here. You can read about IST [here](../ist/index.md).
 ```
 
-## How the Simulator works
+## 基本功能
 The **Simulator** runs on a **Script**, which is a text file that contains
 **Commands** for the simulator. Usually, the commands are the **steps** or **actions**
 you perform in the IST setup.
@@ -32,7 +32,7 @@ Whenever the script changes, the simulation will automatically rerun in the back
 You can navigate different steps of the simulation by moving your cursor in the editor.
 The UI will display the state of the inventory *after* the command the cursor is on.
 
-## Modes
+## 模式
 The simulator app has 3 editing modes:
 - `Auto Saved`: This is the default mode. Any change you make to the script will be saved locally in your browser,
   so the same script will be there when you open the app the next time.
@@ -60,18 +60,3 @@ Press enter, and copy the output.
 This entry is updated whenever you switch to `Auto Saved` from the other modes. If the backup is
 lost, your script will be lost forever.
 ```
-
-## Migration from V3
-
-URLs with a V3 script embedded (one that starts with `https://ist.itntpiston.app`)
-can be migrated automatically to V4, by simply replacing `itntpiston` with `pistonite`
-in the URL. 
-
-However, note that due to the difference in simulation systems,
-you may need to adjust the script to make it work again. Notable differences are:
-- Migrated commands in V3 may not sync the overworld correctly, such as <skyb>!init</skyb>
-- `pick up` in V3 is translated to <skyb>get</skyb> in V4, since
-  <skyb>pick-up</skyb> in V4 only targets items on the Ground.
-
-Sometimes, it might be easier to rewrite the script from the ground up, following
-the new syntax, since you might have to "workaround the workarounds" of the old simulator.

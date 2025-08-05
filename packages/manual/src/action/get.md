@@ -76,7 +76,7 @@ For example, usually you can eat something immediately in the text box that you 
 but you cannot hold another item. Currently, this situation is too complex to simulate correctly.
 ```
 
-One use case is to force hold items during an item text box by performing [Item Smuggle for Arrowless Offset](./hold.md#smuggle-state-for-arrowless-offset),
+One use case is to force hold items during an item text box by performing [Item Smuggle for Arrowless Offset](./material.md#smuggle-state-for-arrowless-offset),
 then get an item text box (similar to performing [Arrowless Offset](./break_slots.md#arrowless-offset)).
 
 ```skybook

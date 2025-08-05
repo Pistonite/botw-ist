@@ -1,4 +1,4 @@
-# Save Files
+# 存读档
 
 Handling game's running and closed state, and simulation of save files:
 
@@ -10,7 +10,7 @@ Handling game's running and closed state, and simulation of save files:
 - <skyb>new-game</skyb> reloads an imaginary save with the state of a new game.
 - <skyb>close-game</skyb> closes the game.
 
-## Syntax
+## 语法
 
 > `save` <br>
 > `save-as FILE-NAME` <br>
@@ -36,7 +36,7 @@ reload
 reload my-save
 ```
 
-## Inspecting Save Files in the App
+## App中查看存档数据
 Amongst other things, a save file for the game includes a copy of savable flags in GameData,
 which contains the items in the save. Therefore, the simulator displays save files
 similar to how it displays GameData.
@@ -46,7 +46,7 @@ current step in the simulation. Clicking on a save will then display the items i
 
 Note that you can inspect saves even on steps where the game isn't open.
 
-## New Game and Restarting the Game
+## 新游戏/重启游戏
 The <skyb>reload</skyb> and <skyb>new-game</skyb> are the only 2 commands that can
 restart the game after it's closed, either due to crash or was manually closed.
 
@@ -62,11 +62,11 @@ made at new game. The implementation is as follows:
 
 This is not 100% accurate to what the game does, but should be close enough.
 
-## Simulating the System menu
+## 系统页的模拟
 <skyb>save</skyb> (and <skyb>save-as</skyb> if in inventory) will currently automatically <skyb>unhold</skyb>
 the currently held items, similar to how the game does that when you switch to the System menu.
 
-## Detail
+## 细节
 
 - <skyb>save</skyb> requires [`Inventory`](../user/screen_system.md) screen.
 - <skyb>save-as</skyb> can be performed in either `Inventory` or `Overworld`.

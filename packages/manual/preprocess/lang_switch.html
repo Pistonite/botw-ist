@@ -6,6 +6,9 @@
     if (!pathname || pathname === "/" || pathname === "/index.html" || pathname === "/zh" || pathname === "/zh/index.html") {
         return;
     }
+    if (pathname.startsWith("/developer") && pathname !== "/developer/" && pathname !== "/developer/index" && pathname !== "/developer/index.html") {
+        return; // no developer doc for zh for now
+    }
     const isZh = pathname.startsWith("/zh");
     if (pathname.startsWith("/zh/")) {
         const p = pathname.substring(3);

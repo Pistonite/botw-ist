@@ -49,19 +49,12 @@ Then:
 
 ## Resetting the Overworld
 
-```admonish todo
-This functionality is WIP.
-```
-
 In a long IST setup, there might be times where you travel between different
 areas in the game, or exit/enter shrines, that cause the overworld to change
 without necessarily any inventory-related action. There are a few ways you
 can simulate this:
 
 - Any action that is supposed to reset the overworld will do so automatically,
-  for example <skyb>reload</skyb>, <skyb>enter shrine</skyb>, or <skyb>leave shrine</skyb>
-    - The <skyb>!loading-screen</skyb> supercommand can be used to simulate regenerating the game stage
-      with a loading screen, if none of the action commands match your needs.
-- The <skyb>!reset-ground</skyb> supercommand can be used to delete all items
-  on the ground. Use this if you are traveling to another area without a loading
-  screen.
+  for example <skyb>reload</skyb>.
+    - The <skyb>!system [loading-screen]</skyb> supercommand can be used to simulate regenerating the game stage with a loading screen, if none of the action commands match your needs.
+- The <skyb>!system [clear-ground]</skyb> supercommand can be used to delete all items on the ground. Use this if you are traveling to another area without a loading screen.

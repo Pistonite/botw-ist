@@ -1,14 +1,14 @@
-# Sorting
+# 排序
 
 The <skyb>sort</skyb> command can be used to sort items in a category.
 
-## Syntax
+## 语法
 > `sort CATEGORY` <br>
 > `sort CATEGORY X times` <br>
 
 Annotations: 
-- [`:same-dialog`](#sorting-in-selling-screen)
-- [`:accurately-simulate`](#performance)
+- [`:same-dialog`](#在出售界面排序)
+- [`:accurately-simulate`](#性能优化)
 
 Examples:
 ```skybook
@@ -20,7 +20,7 @@ sell all apples
 untalk
 ```
 
-## Sorting Order for Equipments
+## 装备类物品
 For `Weapon`, `Bow`, `Shield`, and `Armor` categories, the game has 2 modes to sort them
 that it toggles every time you sort.
 
@@ -53,7 +53,7 @@ sort armors # will sort by armor type first
 # - SortTypeShieldPouch
 ```
 
-## Sorting in Selling Screen
+## 在出售界面排序
 You can sort `Armor`, `Material` and `Food` while selling items. By default, <skyb>sort</skyb>
 assumes you want to sort in inventory screen, and it will closes the shop screen
 and open inventory screen even if the category specified would allow you to sort in shop screen.
@@ -67,7 +67,7 @@ sort materials # error: cannot auto switch to inventory
 :same-dialog sort materials # ok: opens selling screen
 ```
 
-## Performance
+## 性能优化
 For performance, the number of times is capped at an internal max, since sorting an already-sorted
 list should have no effect. Use <skyb>:accurately-simulate</skyb> to override this behavior.
 
@@ -76,7 +76,7 @@ list should have no effect. Use <skyb>:accurately-simulate</skyb> to override th
 :accurately-simulate sort materials 300 times
 ```
 
-## Detail
+## 细节
 
 - <skyb>sort</skyb> requires [`Inventory`](../user/screen_system.md) screen
   - unless <skyb>:same-dialog</skyb> is used in either `Shop Buying` or `Shop Selling` screen,

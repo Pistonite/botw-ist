@@ -1,9 +1,9 @@
-# Selling Items
+# 出售
 
 The <skyb>sell</skyb> command simulates selling items to a shop keeper,
 or trading away Spirit Orbs or Korok Seeds.
 
-## Syntax
+## 语法
 > `sell` [`CONSTRAINED_ITEM_LIST`](../user/syntax.md) <br>
 
 Example

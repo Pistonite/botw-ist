@@ -26,8 +26,8 @@ Example script for Arrowless Offset in the simulator:
 
 ```skybook
 get 2 shroom 2 pepper 1 banana
-:smug hold 1 shroom 1 pepper
-sell all shroom all pepper
+:smug hold shroom pepper
+sell all materials[held]
 close-dialog
 ```
 

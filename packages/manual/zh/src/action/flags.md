@@ -1,4 +1,4 @@
-# Game Flags
+# 设置旗标
 
 Change flag values in GameData (GDT), such as number of upgrade slots,
 whether a tab is discovered, and quest flags.
@@ -10,12 +10,12 @@ whether a tab is discovered, and quest flags.
 
 Moreover, <skyb>!set-gdt</skyb> can be used to set *any* GDT flag.
 
-## Syntax
+## 语法
 > `:slots [CATEGORY=NUM]` <br>
 > `:discovered [CATEGORY=true|false]` <br>
 > `!set-gdt <FLAG>[GDT_META]` <br>
 
-## Number of Slots (i.e. Hestu Upgrade)
+## 修改装备格解锁数 (呀哈哈升级)
 
 <skyb>:slots</skyb> or <skyb>:slot</skyb> sets these GDT flags
 `WeaponPorchStockNum`, `BowPorchStockNum` and `ShieldPorchStockNum`,
@@ -36,9 +36,9 @@ Examples:
 # Shields: 4-20
 ```
 
-## Discovered Tabs
+## 修改页面是否解锁
 <skyb>:discovered</skyb> edits the `IsOpenItemCategory` flag array.
-The category is parsed in the same way as [item categories](../user/syntax_item.md#name).
+The category is parsed in the same way as [item categories](../user/syntax_item.md#名称).
 
 With a few minor differences:
 - `arrow` and `arrows` are allowed, and they are the same as `bow`/`bows`
@@ -60,7 +60,7 @@ When changing a tab from undiscovered to discovered, the inventory will not auto
 update until it is changed (i.e. when `updateInventoryInfo()` is called again).
 ```
 
-## Any Flag
+## 修改任意旗标
 <skyb>!set-gdt</skyb> can set any flag by name.
 
 The name is specified with angled brackets (e.g. `<PorchItem>`), to indicate the value should

@@ -1,4 +1,4 @@
-# Prompt Entanglement (PE)
+# 选项纠缠 (PE)
 
 ```admonish warning
 This glitch is related to the Pouch Screen, which has not been reversed
@@ -47,7 +47,7 @@ Once the setup is done, you can verify Invalid Star Tab is active if any of the 
 - When you go to the "System" screen, the cursor remains on the left screen.
   You can only see the cursor when you press "Right", which moves it on to the "Save" button.
 
-## Cursor Glitch
+## 光标程错
 ```admonish warning
 The Cursor Glitch is not fully understood, since the inventory screen
 system is not reversed engineered. This section may contain inaccurate information.

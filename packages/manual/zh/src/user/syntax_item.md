@@ -7,16 +7,21 @@ get    3        pot-lid   [durability=3]
 #      ^ 数量   ^ 名称     ^ 属性
 ```
 
-```admonish tip
-同一指令中设定多种物品时，可直接连着写，如<skyb>2 apples 3 bananas</skyb>，不需要分隔。
+同一指令中设定多种物品时，可直接连着写，或用逗号（`,`）分隔。当数量为`1`时，数量可以省略。如<skyb>2 apples 3 bananas</skyb>
 
-当指令中只有一种物品，且数量为`1`时，数量可以省略。如<skyb>get 1 apple</skyb>可缩写为<skyb>get apple</skyb>。但要注意，当有2种或以上物品时，物品数量不可省略。
+更多例子：
+```skybook
+get 2 apples 3 bananas
+
+# 以下指令相同
+get apple banana 2 core
+get apple, 1 banana 2 cores
+get 1 apple banana, 2 cores 
 ```
-
 根据不同指令，物品语法可以有三种语境：
 
 1. `FINITE_ITEM_LIST` （有限物品表）
-   - 数量必须为数字，而如<skyb>all</skyb>的关键词。
+   - 数量必须为数字，而非如<skyb>all</skyb>的关键词。
    - 名称必须为物品而非类别。
    - 设定的属性用于描述物品属性。
    - 通常在获取物品的语境中使用，例如<skyb>get</skyb>指令。
@@ -64,7 +69,7 @@ get    3        pot-lid   [durability=3]
 4. `Category` （类型）-
    当在背包或其他表中选择物品时，可使用类型关键词代替物品名来匹配该类型的第一个物品。比如，当只有一个盾装备时，可使用<skyb>unequip shield</skyb>解除当前盾。或<skyb>pick-up 3 weapons</skyb>捡起地上3个物品，但是无所谓捡起的是什么武器。
 
-```admonish info
+```admonish info title="信息"
 类型关键词为：`weapon`武器， `bow`弓，`shield`盾, `armor`衣服，`material`材料, `food`食物/料理，`key-item`重要道具。可加`s`变复数。
 ```
 
@@ -82,7 +87,8 @@ get    3        pot-lid   [durability=3]
 |-|-|-|
 | `durability` | `dura` |(`int`整数) 等同于设定 `value` 为设定值乘 100|
 | `effect` | | (`int`整数或 `string`字符串) 设定料理效果ID。数字直接指定内部ID（就算数字不合法）。字符串会被转换为ID。见 [料理效果](../generated/constants.md#cook-effects) |
-| `equipped` |`equip` | (`bool`布尔) 物品是否装备 |
+| `equipped` |`equip` | (`bool`布尔) 物品是否装备（拿物品时无效） |
+| `held` |`hold`, `holding` | (`bool`布尔) 物品是否手持（拿物品时无效） |
 | `ingr` | | (`string`字符串) 设定料理的材料。材料名必须是标识符（见上）。此属性可多次使用设定多个材料。 |
 | `level`| | (`int`整数) 设定料理效果等级|
 | `life-recover`| `hp`, `modpower` | (`int`整数) 设定料理回复值，单位为四分之一心。同时可指定附魔威力。 |
@@ -128,11 +134,11 @@ eat 2 apple[category=material, tab=2, slot=0]
 eat 2 apple[tab=0, slot=3]
 ```
 
-```admonish note
+```admonish note title="注意"
 - 若以位置指定的格子中物品和指令中物品不同，指令将报错。
 - 使用 `row` 和 `col` 属性时，必须放在`category`和`tab`之后。
 ```
 
-```admonish warning
+```admonish warning title="重要"
 模拟器会在即将寻找该物品时计算物品位置。所以，当同一操作中该物品之前有物品，并因指令的操作改变了其他物品的位置，此时需要指定的位置可能和模拟器中一开始看到的位置不同。所以，不建议在用位置指定物品的指令中指定多个物品。可以将每一步分成单独的指令。
 ```
