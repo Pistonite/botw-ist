@@ -43,8 +43,7 @@ pub fn sell_items(
             let m = ctx.cpu().proc.memory();
 
             // find the item to sell
-            let Some((mut tab, mut slot)) = shop.select(matcher, m, errors)?
-            else {
+            let Some((mut tab, mut slot)) = shop.select(matcher, m, errors)? else {
                 break;
             };
 

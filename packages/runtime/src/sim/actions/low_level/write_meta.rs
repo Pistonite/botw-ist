@@ -1,4 +1,4 @@
-use blueflame::game::{ self, PouchItem };
+use blueflame::game::{self, PouchItem};
 use blueflame::memory::{self, Ptr, mem};
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;

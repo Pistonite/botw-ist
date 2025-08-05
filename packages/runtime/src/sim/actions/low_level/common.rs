@@ -19,11 +19,7 @@ pub fn find_single_item_target(
     let matcher = &item.matcher;
 
     let mut new_errors = vec![];
-    let Some((tab, slot)) = inventory.select(
-        matcher,
-        ctx.cpu().proc.memory(),
-        &mut new_errors,
-    )?
+    let Some((tab, slot)) = inventory.select(matcher, ctx.cpu().proc.memory(), &mut new_errors)?
     else {
         errors.extend(new_errors);
         return Ok(None);
@@ -35,10 +31,8 @@ pub fn find_single_item_target(
     Ok(item)
 }
 
-
 pub fn fix_inventory_state(ctx: &mut sim::Context<&mut Cpu2>) -> Result<(), processor::Error> {
     linker::update_inventory_info(ctx.cpu())?;
     linker::update_list_heads(ctx.cpu())?;
     Ok(())
 }
-

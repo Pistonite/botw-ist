@@ -48,10 +48,7 @@ pub fn pick_up_item_internal(
             break;
         }
         // find the item on the ground
-        let Some(handle) = sys
-            .overworld
-            .ground_select_mut(matcher, errors)
-        else {
+        let Some(handle) = sys.overworld.ground_select_mut(matcher, errors) else {
             break;
         };
         if linker::cannot_get_item(ctx.cpu(), &handle.actor().name, 1)? {

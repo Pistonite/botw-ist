@@ -35,7 +35,7 @@ pub struct ItemSelectSpec {
 
 /// Specification for matching an item.
 ///
-/// This is [`ItemSelectSpec`] without the amount 
+/// This is [`ItemSelectSpec`] without the amount
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ItemMatchSpec {
     /// The item or category to target
@@ -92,7 +92,7 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
         let Some(amount) = parse_item_amount_optional(item.num.as_ref(), errors) else {
             continue;
         };
-    
+
         let Some((name, meta)) = parse_item(&item.item, resolver, errors).await else {
             continue;
         };
@@ -106,7 +106,7 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
             span: item.span(),
         });
     }
-    
+
     out_item_specs
 }
 
@@ -119,11 +119,11 @@ pub async fn parse_one_item_constrained<R: QuotedItemResolver>(
     let (name, meta) = cir::parse_item_or_category(item, resolver, errors).await?;
     let item = ItemSelectSpec {
         amount: AmountSpec::Num(1),
-        matcher: ItemMatchSpec { 
+        matcher: ItemMatchSpec {
             name,
             meta,
             span: item.span(),
-        }
+        },
     };
     Some(item)
 }
@@ -135,7 +135,7 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
     errors: &mut Vec<ErrorReport>,
 ) -> Vec<ItemSelectSpec> {
     let mut out_item_specs = Vec::with_capacity(list.0.len());
-    
+
     for (item, _comma) in list.0.iter() {
         let (amount, item) = match item {
             syn::MaybeNumberedOrAllItemOrCategory::Numbered(item) => {
@@ -144,17 +144,15 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
                 };
                 (AmountSpec::Num(amount), &item.item)
             }
-            syn::MaybeNumberedOrAllItemOrCategory::All(item) => {
-                match item.but_clause.deref() {
-                    Some(but) => {
-                        let Some(amount) = parse_item_amount(&but.num, errors) else {
-                            continue;
-                        };
-                        (AmountSpec::AllBut(amount), &item.item)
-                    }
-                    None => (AmountSpec::All, &item.item)
+            syn::MaybeNumberedOrAllItemOrCategory::All(item) => match item.but_clause.deref() {
+                Some(but) => {
+                    let Some(amount) = parse_item_amount(&but.num, errors) else {
+                        continue;
+                    };
+                    (AmountSpec::AllBut(amount), &item.item)
                 }
-            }
+                None => (AmountSpec::All, &item.item),
+            },
         };
         let item_span = item.span();
         let Some((name, meta)) = parse_item_or_category(item, resolver, errors).await else {
@@ -166,10 +164,10 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
                 name,
                 meta,
                 span: item_span,
-            }
+            },
         });
     }
-    
+
     out_item_specs
 }
 
@@ -278,7 +276,10 @@ async fn parse_item_name<R: QuotedItemResolver>(
     }
 }
 
-fn parse_item_amount_optional(num: Option<&syn::Number>, errors: &mut Vec<ErrorReport>) -> Option<usize> {
+fn parse_item_amount_optional(
+    num: Option<&syn::Number>,
+    errors: &mut Vec<ErrorReport>,
+) -> Option<usize> {
     let Some(num) = num else {
         return Some(1);
     };

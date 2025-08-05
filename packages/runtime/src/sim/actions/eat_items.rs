@@ -60,10 +60,8 @@ pub fn eat_item_internal(
         }
         let memory = ctx.cpu().proc.memory();
         let position = inventory.select_value_at_least(
-            matcher,
-            1, // must have at least 1 to eat
-            memory,
-            errors,
+            matcher, 1, // must have at least 1 to eat
+            memory, errors,
         )?;
         let Some((tab, slot)) = position else {
             break;

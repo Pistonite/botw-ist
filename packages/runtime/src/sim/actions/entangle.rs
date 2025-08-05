@@ -21,11 +21,7 @@ pub fn entangle_item(
     let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
     let matcher = &item.matcher;
     // find the slot to activate
-    let position = inventory.select(
-        matcher,
-        ctx.cpu().proc.memory(),
-        errors,
-    )?;
+    let position = inventory.select(matcher, ctx.cpu().proc.memory(), errors)?;
 
     let Some((tab, slot)) = position else {
         errors.push(sim_error!(matcher.span, CannotFindItem));

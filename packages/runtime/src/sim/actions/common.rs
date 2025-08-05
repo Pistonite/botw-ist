@@ -1,9 +1,9 @@
 use blueflame::game::{self, WeaponModifierInfo};
+use blueflame::linker;
 use blueflame::linker::events::GameEvent as _;
 use blueflame::memory::{self, Memory};
 use blueflame::processor::{self, Cpu2};
-use blueflame::linker;
-use skybook_parser::{cir, Span};
+use skybook_parser::{Span, cir};
 
 use crate::error::{ErrorReport, sim_error, sim_warning};
 use crate::sim;
@@ -157,7 +157,10 @@ pub fn drop_held_items(
 /// Add an error if the item amount is not 1
 pub fn check_overworld_amount(item: &cir::ItemSelectSpec, errors: &mut Vec<ErrorReport>) {
     if item.amount != cir::AmountSpec::Num(1) {
-        errors.push(sim_warning!(item.matcher.span, UselessAmountForOverworldEquipment))
+        errors.push(sim_warning!(
+            item.matcher.span,
+            UselessAmountForOverworldEquipment
+        ))
     }
 }
 
@@ -327,11 +330,7 @@ pub fn change_to_pe_target_if_need(
     };
     // find the target item
     let mut new_errors = vec![];
-    let target_pos = inventory.select(
-        &target.matcher,
-        memory,
-        &mut new_errors,
-    )?;
+    let target_pos = inventory.select(&target.matcher, memory, &mut new_errors)?;
     let Some((target_tab, target_slot)) = target_pos else {
         errors.extend(new_errors);
         errors.push(sim_error!(target.matcher.span, CannotFindPromptTarget));

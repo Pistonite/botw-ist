@@ -62,7 +62,7 @@ impl PartialEq for ItemMeta {
             && self.ingredients == other.ingredients
             && self.star == other.star
             && self.position == other.position
-        && self.held == other.held
+            && self.held == other.held
     }
 }
 impl Eq for ItemMeta {}

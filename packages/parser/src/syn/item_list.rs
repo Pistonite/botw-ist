@@ -18,4 +18,7 @@ pub type ItemListFiniteEntry = (syn::MaybeNumberedItem, tp::Option<syn::SymComma
 #[derive_syntax]
 #[derive(Debug)]
 pub struct ItemListConstrained(pub tp::Nev<ItemListConstrainedEntry>);
-pub type ItemListConstrainedEntry = (syn::MaybeNumberedOrAllItemOrCategory, tp::Option<syn::SymComma>);
+pub type ItemListConstrainedEntry = (
+    syn::MaybeNumberedOrAllItemOrCategory,
+    tp::Option<syn::SymComma>,
+);

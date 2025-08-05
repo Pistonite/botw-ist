@@ -1,7 +1,7 @@
 use blueflame::linker;
 use blueflame::memory::mem;
 use blueflame::processor::{self, Cpu2};
-use skybook_parser::{cir, Span};
+use skybook_parser::{Span, cir};
 
 use crate::error::{ErrorReport, sim_error, sim_warning};
 use crate::sim;
@@ -101,15 +101,17 @@ fn drop_inventory_material(
     // to drop items in the inventory, if you are holding,
     // then you are locked to holding items and cannot drop
     super::check_not_holding_in_inventory!(ctx, sys, errors, "DROP-INVM");
-    let matcher =  &item.matcher;
+    let matcher = &item.matcher;
     let span = matcher.span;
     // for items, hold up to 5 at a time and drop, and we must know
     // exactly how many there are
     let memory = ctx.cpu().proc.memory();
     let inventory = sys.screen.current_screen().as_inventory().unwrap();
-    let mut amount = super::convert_amount(item.amount, span, errors, true, |_| Ok(inventory.get_amount(matcher, sim::CountingMethod::Value, memory)?))?
-        .count()
-        .unwrap_or_default();
+    let mut amount = super::convert_amount(item.amount, span, errors, true, |_| {
+        Ok(inventory.get_amount(matcher, sim::CountingMethod::Value, memory)?)
+    })?
+    .count()
+    .unwrap_or_default();
     let mut hold_spec = item.clone();
     while amount > 0 {
         if ctx.is_aborted() {

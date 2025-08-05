@@ -21,7 +21,10 @@ mod break_slot {
     ///
     /// This is for backward compatibility with slot breaking in older versions
     /// of simulator
-    pub fn break_slot(ctx: &mut sim::Context<&mut Cpu2>, count: i32) -> Result<(), processor::Error> {
+    pub fn break_slot(
+        ctx: &mut sim::Context<&mut Cpu2>,
+        count: i32,
+    ) -> Result<(), processor::Error> {
         let pmdm = singleton_instance!(pmdm(ctx.cpu().proc.memory()))?;
         mem! {(ctx.cpu().proc.memory_mut()):
             let count1 = *(&pmdm->mList1.mCount);

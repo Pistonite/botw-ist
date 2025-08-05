@@ -1,7 +1,7 @@
 use blueflame::linker;
 use blueflame::memory::mem;
 use blueflame::processor::{self, Cpu2};
-use skybook_parser::{cir, Span};
+use skybook_parser::{Span, cir};
 
 use crate::error::{ErrorReport, sim_error};
 use crate::sim;
@@ -84,10 +84,8 @@ pub fn hold_item_internal(
         let inventory = sys.screen.current_screen().as_inventory().unwrap();
         let memory = ctx.cpu().proc.memory();
         let position = inventory.select_value_at_least(
-            matcher,
-            1, // must have at least 1 to hold
-            memory,
-            errors,
+            matcher, 1, // must have at least 1 to hold
+            memory, errors,
         )?;
         let Some((tab, slot)) = position else {
             break;

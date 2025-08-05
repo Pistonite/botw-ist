@@ -39,9 +39,7 @@ pub fn force_remove_item(
             let m = ctx.cpu().proc.memory();
 
             // find the item
-            let Some((mut tab, mut slot)) =
-                inventory.select(matcher, m, errors)?
-            else {
+            let Some((mut tab, mut slot)) = inventory.select(matcher, m, errors)? else {
                 break;
             };
             let sim::ScreenItemState::Normal(mut item_ptr) = inventory.get(tab, slot) else {

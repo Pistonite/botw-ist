@@ -4,7 +4,7 @@ use blueflame::game::{self, PouchItem, PouchItemType, WeaponModifierInfo, gdt};
 use blueflame::linker;
 use blueflame::memory::{self, Memory, Ptr, mem, proxy};
 use blueflame::processor::{self, Cpu2};
-use skybook_parser::{cir, Span};
+use skybook_parser::{Span, cir};
 
 use crate::error::{ErrorReport, sim_error, sim_warning};
 use crate::{iv, sim};
@@ -524,10 +524,7 @@ impl OverworldSystem {
     }
 
     /// Get number of items on the ground that matches the selector
-    pub fn get_ground_amount(
-        &self,
-        matcher: &cir::ItemMatchSpec,
-    ) -> usize {
+    pub fn get_ground_amount(&self, matcher: &cir::ItemMatchSpec) -> usize {
         let Some(meta) = &matcher.meta else {
             return self.get_ground_amount_without_position_nth(matcher, 0);
         };
@@ -609,7 +606,7 @@ impl OverworldSystem {
         matcher: &cir::ItemMatchSpec,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<EquippedItemHandle<()>> {
-        let span =matcher.span;
+        let span = matcher.span;
         if matcher.meta.is_some() {
             errors.push(sim_warning!(span, UselessMetaForOverworldEquipment));
         }

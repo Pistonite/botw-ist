@@ -1,8 +1,8 @@
-use blueflame::game::{singleton_instance, PouchItem};
+use blueflame::game::{PouchItem, singleton_instance};
 use blueflame::memory::{self, Memory, Ptr, mem};
 use skybook_parser::cir;
 
-use crate::error::{sim_warning, ErrorReport};
+use crate::error::{ErrorReport, sim_warning};
 use crate::sim;
 
 /// Items in inventory screen (for pouch and shop)
@@ -198,7 +198,7 @@ impl ScreenItems {
             return Ok(None);
         };
         let from_slot = match selector {
-            Selector::FromSlot(n) =>  n,
+            Selector::FromSlot(n) => n,
             Selector::IdxAndSlot(tab_i, slot) => {
                 let name = &matcher.name;
                 // warn if the item specified by the position does not match

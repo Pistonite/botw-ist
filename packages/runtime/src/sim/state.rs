@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use blueflame::game::{gdt, singleton_instance};
 use blueflame::processor::{CrashReport, Process};
-use skybook_parser::{cir, Span};
+use skybook_parser::{Span, cir};
 
 use crate::error::{Report, sim_error};
 use crate::{exec, sim};
@@ -276,7 +276,7 @@ impl State {
                 Ok(Report::new(self))
             }
             X::NewGame => self.handle_reload(ctx, None, true).await,
-            
+
             X::SuBreak(count) => self.handle_su_break(ctx, *count).await,
             X::SuInit(items) => self.handle_su_add_slot(ctx, items, true).await,
             X::SuAddSlot(items) => self.handle_su_add_slot(ctx, items, false).await,
@@ -557,11 +557,11 @@ impl State {
         name: Option<&str>,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("Handling SAVE command");
-    
+
         let (send, recv) = oneshot::channel();
         // allow overworld for auto saves
         let allow_overworld = name.is_some();
-    
+
         let new_state = execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::save(&mut cpu, sys, errors, allow_overworld, send)
         })?;
@@ -634,7 +634,7 @@ impl State {
             sim::actions::low_level::break_slot(&mut cpu, count)
         })
     }
-    
+
     async fn handle_su_add_slot(
         self,
         rt: sim::Context<&sim::Runtime>,
@@ -647,7 +647,7 @@ impl State {
             sim::actions::low_level::add_slots(&mut cpu, errors, &items, init)
         })
     }
-    
+
     async fn handle_su_remove(
         self,
         rt: sim::Context<&sim::Runtime>,
@@ -659,7 +659,7 @@ impl State {
             sim::actions::force_remove_item(&mut cpu, sys, errors, &items)
         })
     }
-    
+
     async fn handle_su_swap(
         self,
         rt: sim::Context<&sim::Runtime>,
@@ -673,7 +673,7 @@ impl State {
             sim::actions::low_level::swap_items(&mut cpu, errors, &item1, &item2)
         })
     }
-    
+
     async fn handle_su_write(
         self,
         rt: sim::Context<&sim::Runtime>,
@@ -687,7 +687,7 @@ impl State {
             sim::actions::low_level::write_meta(&mut cpu, errors, &write_meta, &item)
         })
     }
-    
+
     async fn handle_su_set_gdt(
         self,
         rt: sim::Context<&sim::Runtime>,
@@ -701,7 +701,7 @@ impl State {
             Ok(sim::actions::low_level::set_gdt(&mut cpu, &name, &meta, errors)?)
         })
     }
-    
+
     async fn handle_su_arrowless_smuggle(
         self,
         rt: sim::Context<&sim::Runtime>,
@@ -711,7 +711,7 @@ impl State {
             sim::actions::trigger_arrowless_smuggle(&mut cpu, sys, errors)
         })
     }
-    
+
     async fn handle_su_trial_start(
         self,
         rt: sim::Context<&sim::Runtime>,
@@ -721,7 +721,7 @@ impl State {
             sim::actions::trial_start(&mut cpu, sys)
         })
     }
-    
+
     async fn handle_su_trial_end(
         self,
         rt: sim::Context<&sim::Runtime>,
@@ -745,7 +745,7 @@ impl State {
             saves.insert(name.clone(), Arc::clone(data));
         }
         let manual_save = self.manual_save.clone();
-    
+
         let new_state = execute_command!(self, rt, cpu, sys, errors => {
             let mut manual_save = manual_save;
             let mut dlc_version = None;
@@ -761,7 +761,7 @@ impl State {
             // probably because game crashed, not a big problem
             .inspect_err(|e| log::warn!("did not receive system command data: {e}"))
             .ok();
-    
+
         Ok(new_state.map(|mut state| {
             if let Some((mut out_saves, out_manual_save, dlc_version)) = data {
                 let saves = Arc::make_mut(&mut state.saves);

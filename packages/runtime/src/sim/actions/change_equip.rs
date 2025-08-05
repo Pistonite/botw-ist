@@ -57,25 +57,22 @@ pub fn change_equip_inventory(
         }
 
         // only target equipped items if the command is unequip
-        let equip_meta = if is_equip {
-            None
-        } else {
-            Some(true)
-        };
+        let equip_meta = if is_equip { None } else { Some(true) };
         match matcher.meta.as_mut() {
-            None => {let mut meta = cir::ItemMeta::default();
-                meta.equip = equip_meta;
-                matcher.meta = Some(meta)
+            None => {
+                matcher.meta = Some(cir::ItemMeta {
+                    equip: equip_meta,
+                    ..Default::default()
+                })
             }
-            Some(meta) => meta.equip = equip_meta
+            Some(meta) => meta.equip = equip_meta,
         }
         let memory = ctx.cpu().proc.memory();
         // we want to expand the "all" amount if it's equip, to avoid getting stuck
         // to try to equip everything (since equipping something would unequip the rest)
-        let mut remaining =
-            super::convert_amount(item.amount, span, errors, is_equip, |_| {
-                Ok(inventory.get_amount(&matcher, sim::CountingMethod::Slot, memory)?)
-            })?;
+        let mut remaining = super::convert_amount(item.amount, span, errors, is_equip, |_| {
+            Ok(inventory.get_amount(&matcher, sim::CountingMethod::Slot, memory)?)
+        })?;
         let mut check_for_extra_error = true;
 
         loop {
@@ -317,14 +314,7 @@ fn dpad_select(
 ) -> Result<Option<Ptr![PouchItem]>, memory::Error> {
     let span = matcher.span;
     let Some(meta) = &matcher.meta else {
-        return dpad_select_without_position_nth(
-            menu,
-            matcher,
-            is_for_equip,
-            0,
-            errors,
-            memory,
-        );
+        return dpad_select_without_position_nth(menu, matcher, is_for_equip, 0, errors, memory);
     };
     let from_slot = if is_for_equip {
         match &meta.position {
@@ -344,14 +334,7 @@ fn dpad_select(
         0
     };
 
-    dpad_select_without_position_nth(
-        menu,
-        matcher,
-        is_for_equip,
-        from_slot,
-        errors,
-        memory,
-    )
+    dpad_select_without_position_nth(menu, matcher, is_for_equip, from_slot, errors, memory)
 }
 
 /// Select item from dpad

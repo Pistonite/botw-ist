@@ -39,4 +39,3 @@ fn swap_item_internal(
 
     Ok(())
 }
-

@@ -80,7 +80,11 @@ impl Ptr![PauseMenuDataMgr] {
         Ptr!(&self->mGrabbedItems).reinterpret_array()
     }
 
-    pub fn is_item_being_grabbed(self, item: Ptr![PouchItem], memory: &Memory) -> Result<bool, memory::Error> {
+    pub fn is_item_being_grabbed(
+        self,
+        item: Ptr![PouchItem],
+        memory: &Memory,
+    ) -> Result<bool, memory::Error> {
         let grabbed_items = self.grabbed_items();
         for i in 0..5 {
             let grabbed_item = grabbed_items.ith(i);

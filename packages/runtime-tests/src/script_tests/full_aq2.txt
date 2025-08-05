@@ -2,25 +2,28 @@
 # Plateau 
 # note: don't damage the axe at all since it will be
 # transfered to RGC
-get 1 slate
+get slate
   // bombs split
-  1 tree-branch 1 flint 1 axe 1 spear 1 potlid 6 pepper 3 shroom 1 traveler-bow 5 arrow 
+  tree-branch, flint, axe 
+  spear, potlid, 6 pepper 3 shroom
+  traveler-bow, 5 arrow 
   // mag
-  1 amber
+  amber
   // other
-  4 orb 1 glider
+  4 orb, glider
 
 # Satori
-get 2 razorshroom 5 lotus 4 rushroom 1 forest-dweller-bow 4 endura-carrot 10 durian 3 wood 1 orb
+get 2 razorshroom, 5 lotus, 4 rushroom
+  forest-dweller-bow 4 endura-carrot 10 durian 3 wood 1 orb
 
 # Castle
 # note: Royal claymore dura is tight so don't damage it
 # (except the initial sneakstrike)
 get 
-  1 royal-claymore[dura=39]
-  1 royal-guard-claymore 1 razorshroom
-  1 naydra-fang 3 ancient-arrow 1 steel-shield
-get 1 korok
+  royal-claymore[dura=39]
+  royal-guard-claymore, 1 razorshroom
+  naydra-fang 3 ancient-arrow, steel-shield
+get korok
 equip royal-guard-claymore
 # cook speed food and eat
 !remove 3 lotus 2 rushroom
@@ -28,17 +31,17 @@ equip royal-guard-claymore
 # Guardians
 equip aa
 # Drop materials to make him load
-hold 1 amber 3 wood 1 naydra-fang; drop
+hold amber, 3 wood, naydra-fang; drop
 shoot # kill the guardian
 hold 3 razorshroom 2 rushroom; drop
 # You must pick things up in this order
-get 1 shaft
-pick-up 1 wood 1 naydra-fang 1 rushroom 1 amber
+get shaft
+pick-up wood naydra-fang rushroom amber
 pick-up all materials
-get 1 spring
+get spring
 # If you don't have 5 arrows, pick up 2 screws to sell in hateno
 # Wetland, Kak, Hateno
-get 1 knights-sword 1 core 1 fairy 3 orb
+get knights-sword core fairy 3 orb
 sell korok; :slots [weapons=9]
 
 # After Myahm
@@ -47,8 +50,7 @@ eat all pepper all shroom
   all but 3 endura-carrot
 equip axe
 drop traveler-bow
-equip bow
-equip normal-arrow
+equip bow normal-arrow
 drop potlid
 equip shield
 dnp 
@@ -61,32 +63,26 @@ dnp
 # if you don't have 5 arrows, sell something, buy 5 arrows, then save
 save
 # no check items, unfortunately
-drop 1 durian 1 wood 1 endura-carrot 1 razorshroom
+drop durian wood endura-carrot razorshroom
 :smug hold
-   1 durian 1 wood 1 endura-carrot 1 razorshroom
-   1 lotus
-sell 1 durian 1 wood 1 endura-carrot 1 razorshroom
-   1 lotus
+   durian wood endura-carrot razorshroom
+   lotus
+sell all materials[held]
 pick-up all materials
 :smug hold
-   1 durian 1 wood 1 endura-carrot 1 razorshroom
-   1 rushroom
-sell
-   1 durian 1 wood 1 endura-carrot 1 razorshroom
-   1 rushroom
+   durian wood endura-carrot razorshroom
+   rushroom
+sell all materials[held]
 # drop everything except core
-drop 1 flint 1 amber 1 naydra-fang 1 shaft 1 spring 1 fairy 1 lotus
-drop all shields
-unequip bow
-unequip weapon
-reload
-shoot 1 time
-save
-dnp 1 core 1 shaft all razorshroom
+drop all materials; pick-up core
+drop shield
+unequip bow weapon
+reload shoot save
+dnp core shaft, all razorshroom
 reload
 drop 5 flint 5 amber
-sell all flint all amber
-pick-up 5 flint 5 amber
+sell all materials[value=994]
+pick-up all materials
 # WB to statue
 # Trade 6 STAM
 sell all orb
@@ -101,48 +97,40 @@ get 2 wild-green[effect=Enduring]
 !remove 5 razorshroom
 get 1 mushroom-skewer[effect=Mighty]
 dnp all core all shaft
-# use durian for food
-# wb to lab
+# use durian for food, smuggle flame, wb to lab
 equip spear
-eat razorshroom
-eat all durian
+eat razorshroom all durian
 # drop wood and rushroom down to 1
 drop all but 1 wood all but 1 rushroom
 # get stasis and bombs upgrade
 sell 3 core 3 shaft
-drop all shaft all spring
+drop all shaft spring
 pick-up 
   all shaft
   # PICK UP SPRING LAST
   all spring 
 # Outside of lab
 equip royal-guard-claymore
-drop 1 tree-branch 1 axe 1 knights-sword
+drop branch axe knights-sword
 save
 pick-up all weapons
-drop all materials
-drop bows
+drop all materials bows
 # go to different pile
 eat all foods
-drop shield drop all weapons
+drop shield all weapons
 # order doesn't matter
-pick-up 1 shield all weapons
-unequip weapon
-unequip shield
+pick-up shield all weapons
+unequip weapon shield
 reload
 save
 # drop all but shaft
-drop 1 wood 1 rushroom 1 fairy 1 spring
-drop 5 flints
-drop 5 amber
+drop all materials; pick-up all shaft
 eat all foods
 drop all shields
-unequip weapon
-unequip bow
+unequip weapon bow
 reload
 save
 drop 2 shaft 1 spring
 pick-up 1 shaft
 reload
 # merge stacks during joloo nah quest
-
