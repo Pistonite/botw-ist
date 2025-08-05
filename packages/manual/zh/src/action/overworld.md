@@ -1,4 +1,4 @@
-# Overworld Operations
+# 主世界操作
 
 Things you can do in the overworld:
 
@@ -7,7 +7,7 @@ Things you can do in the overworld:
 - <skyb>shoot</skyb> is an alias of <skyb>use bow</skyb>.
 - <skyb>:overworld drop</skyb> command drops equipped equipments.
 
-## Syntax
+## 语法
 > `use CATEGORY_OR_ITEM` (defaults to 1 time) <br>
 > `use CATEGORY_OR_ITEM X times` <br>
 > `shoot` <br>
@@ -15,10 +15,10 @@ Things you can do in the overworld:
 > `:overworld drop` [`CONTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
 
 Annotations:
-  - [`:per-use X`](#using-equipments) - sets the value to decrease per use
+  - [`:per-use X`](#使用装备) - sets the value to decrease per use
   - `:overworld` - changes the semantic of <skyb>drop</skyb>
 
-## Using Equipments
+## 使用装备
 
 To <skyb>use</skyb> an equipped weapon, you can either specify the category,
 or the item name (given the item is equipped).
@@ -48,7 +48,7 @@ Special cases:
   - Using MasterSword while the GDT `Open_MasterSword_FullPower=true` will
     consume `0.2x` specified value, if its value is currently `>=300`
 
-## Using Non-equipments
+## 使用（非装备）物品
 
 When the item specified for <skyb>use</skyb> is not an equipment,
 it will attempt to remove the item instead. The only legitimate use
@@ -60,7 +60,7 @@ For example, create Broken Slot with fairy:
 hold fairy; use fairy; drop
 ```
 
-## Dropping the Overworld Equipment
+## 丢弃装备
 
 ```admonish todo
 This command is WIP.
@@ -70,9 +70,9 @@ with the inventory; for example, when getting shocked.
 
 TODO
 
-## Detail
+## 细节
 
 - <skyb>use</skyb> requires [`Overworld`](../user/screen_system.md).
-- In [Arrowless Smuggle](./material.md#smuggle-state-for-arrowless-offset) state,
+- In [Arrowless Smuggle](./material.md#无箭强持) state,
   using a <skyb>weapon</skyb> or <skyb>shield</skyb> will <skyb>unhold</skyb>
   the item, while using a <skyb>bow</skyb> will <skyb>drop</skyb> the items.

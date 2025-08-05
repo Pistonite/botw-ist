@@ -7,16 +7,20 @@ get    3        pot-lid   [durability=3]
 #      ^ amount ^ name    ^ metadata
 ```
 
-```admonish tip
-To specify multiple items in the same command, simply write them one after another,
-e.g. <skyb>2 apples 3 bananas</skyb>
+To specify multiple items in the same command, simply write them one after another with an optional
+comma (`,`) between each item. Also, when the amount is `1`, you can omit it.
 
-When there is only one item in the list, and the amount is `1`, you can omit the amount. For example <skyb>get 1 apple</skyb> can
-be shortened to just <skyb>get apple</skyb>. However, amount is required 
-when the list contains more than one item name/category.
+More examples:
+```skybook
+get 2 apples 3 bananas
+
+# The following are all equivalent
+get apple banana 2 core
+get apple, 1 banana 2 cores
+get 1 apple banana, 2 cores 
 ```
 
-The syntax could be used in **3** scenarios, depending on the command:
+The item syntax could be used in **3** scenarios, depending on the command:
 
 1. `FINITE_ITEM_LIST`
    - The amount must be a number, not keywords like <skyb>all</skyb>.
@@ -112,7 +116,8 @@ Available metadata properties:
 |-|-|-|
 | `durability` | `dura` |(`int`) Sets `value` to 100 times the specified number |
 | `effect` | | (`int` or `string`) Sets the effect ID for cooked-food. Integer values are used directly (even when invalid), and string values are converted. See [Cook Effects](../generated/constants.md#cook-effects) for possible values |
-| `equipped` |`equip` | (`bool`) If the item is equipped |
+| `equipped` |`equip` | (`bool`) If the item is equipped (May not have effect when adding item) |
+| `held` | `hold`, `holding` | (`bool`) | If the item is being held (May not have effect when adding item) |
 | `ingr` | | (`string`) Set the ingredient of the cooked-food. The string must be an item identifier (see above). The property can be specified multiple times to add multiple ingredients. |
 | `level`| | (`int`) Sets the level of the effect for cooked-food |
 | `life-recover`| `hp`, `modpower` | (`int`) Sets the number of quarter-hearts cooked-food recovers, or value of a weapon modifier |

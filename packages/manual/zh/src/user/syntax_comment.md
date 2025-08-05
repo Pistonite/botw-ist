@@ -1,9 +1,9 @@
-# Comments and Notes
+# 注释和笔记
 
 Comments and Notes are text in the script that don't affect
 the output of the command.
 
-## Comments
+## 注释
 Comments are lines that start with `#` or `//`. They are completely ignored.
 
 ```skybook
@@ -16,7 +16,7 @@ In the script editor, you can use the hotkey `Ctrl + /` to quick toggle
 selected lines between commented/uncommented.
 ```
 
-## Block Literals
+## 注释块
 Block Literal is a multi-line block that starts and ends with `'''` (triple single-quotes).
 
 ```skybook

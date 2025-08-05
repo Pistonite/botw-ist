@@ -1,23 +1,20 @@
-# Break Slots
+# 制作转存格
 
-**Breaking Slots** refers to the action of generating offsets
-to enable IST. See [Inventory Slot Transfer](../ist/index.md) for more info.
+**制作转存格**指增加物品计数差的操作。见[物品转存简介](../ist/index.md)。
 
-You can either break slots by simulating actions, like what you do in the game,
-or use the [<skyb>!break</skyb> supercommand](./low_level.md#generate-broken-slots) to directly edit the memory.
+你可以模拟游戏中制作转存格的方式，或直接用[<skyb>!break</skyb> supercommand](./low_level.md#generate-broken-slots)修改内存制作。
 
-## Arrowless Offset
+## 无箭法
 
-```admonish info
-References for commands used for Arrowless Offset:
-- [`:smug hold`](./material.md#smuggle-state-for-arrowless-offset)
+```admonish info title="信息"
+无箭法制作转存格需要的指令参考
+- [`:smug hold`](./material.md#无箭强持)
 - [`sell`](./sell.md)
 ```
 
-The most commonly used method of breaking slots is known as `Arrowless Offset`,
-which requires a shield, a one-handed weapon and a shop keeper and can break up to 5 slots at once:
+无箭法是最常用的制作方式。只需要一个盾，一个单手武器，和收购物品的NPC。一次性可以最多做5个转存格：
 
-- Enter the [`Arrowless Smuggle`](./material.md#smuggle-state-for-arrowless-offset) state.
+- 触发[无箭强持](./material.md#无箭强持)。
 - Talk to a shop keeper (by pressing `Dpad Down > A` or `ZR > A` quickly).
 - Sell all the items from slots that are being held.
 - Close the dialog.
@@ -26,18 +23,18 @@ Example script for Arrowless Offset in the simulator:
 
 ```skybook
 get 2 shroom 2 pepper 1 banana
-:smug hold 1 shroom 1 pepper
-sell all shroom all pepper
+:smug hold shroom pepper
+sell all materials[held]
 close-dialog
 ```
 
-## Hold Smuggle Offset
+## 强持法
 
 ```admonish todo
 Menu Overload functionality is WIP.
 ```
 
-## Fairy Offset
+## 精灵法
 You can use fairies to break slots by using the last fairy while holding one.
 
 Example script:
@@ -48,7 +45,7 @@ use fairy; # by bombing yourself, or stand on fire, etc...
 drop; # drop the held fairy
 ```
 
-## Eat and Hold Offset
+## 选项纠缠法
 With [Prompt Entanglement](../ist/pe.md), you can eat and hold the same slot
 to make offsets.
 

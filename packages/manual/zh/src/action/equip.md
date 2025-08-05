@@ -1,20 +1,20 @@
-# Equipment Operations
+# 装备操作
 
 Operations on equipments in inventory.
 
 - <skyb>equip</skyb> and <skyb>unequip</skyb> changes the equipped status.
 - <skyb>drop</skyb> drops the equipment from the inventory.
 
-## Syntax
+## 语法
 
 > `equip` [`CONTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
 > `unequip` [`CONTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
 > `drop` [`CONTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
 
 Annotations:
-  - [`:dpad`](#change-equipments) - Use the DPad menu instead of inventory menu to change equipments.
+  - [`:dpad`](#切换装备) - Use the DPad menu instead of inventory menu to change equipments.
 
-## Change equipments
+## 切换装备
 Example
 ```skybook
 # Equip the first weapon
@@ -81,7 +81,7 @@ and cannot be used to unequip arrows.
 ```
 
 
-## Dropping Equipments from Inventory
+## 从背包丢弃装备
 Use the <skyb>drop</skyb> command to drop equipments, which deletes the item in inventory,
 and spawns the item in overworld when the inventory is closed.
 

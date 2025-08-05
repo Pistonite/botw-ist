@@ -45,8 +45,11 @@ Clicking on a command will take you to the corresponding documentation page.
 | [<skyb>:smug</skyb>](../action/material.md#smuggle-state-for-arrowless-offset) | Perform Arrowless Smuggle with the next <skyb>hold</skyb> or <skyb>drop</skyb> command |
 | [<skyb>sort</skyb>](../action/sort.md) | Sort a category of items |
 | [<skyb>!swap</skyb>](../action/low_level.md#change-item-data) | Swap two item nodes |
+| [<skyb>!system</skyb>](../action/system.md) | System operations |
 | <skyb>talk-to</skyb> | Talk to an NPC for buying or selling |
 | [<skyb>:targeting</skyb>](../action/entangle.md) | Changes the target for Prompt Entanglement |
+| [<skyb>!trial-end</skyb>](../action/trial.md) | End trial and restore inventory |
+| [<skyb>!trial-start</skyb>](../action/trial.md) | Start trial and clear inventory |
 | [<skyb>unequip</skyb>](../action/equip.md) | Unequip an item |
 | [<skyb>unhold</skyb>](../action/material.md) | Stop holding materials |
 | <skyb>unpause</skyb> | Close the inventory |

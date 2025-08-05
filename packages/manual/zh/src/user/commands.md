@@ -1,57 +1,59 @@
-# Command Reference
+# 指令参考
 
-This is the full list of commands sorted in alphabetical order.
-Clicking on a command will take you to the corresponding documentation page.
+以下是按字母顺序排序的所有指令。点击指令查看详细说明。
 
 <div class="skybook--wide-table">
 
-| Command | Description |
+| 指令 | 说明 |
 |-|-|
-| <skyb>:accurately-simulate</skyb><br> for ([<skyb>get</skyb>](../action/get.md#performance), [<skyb>sort</skyb>](../action/sort.md#performance) ) | Turn off optimizations that may be inaccurate |
-| [<skyb>!arrowless-smuggle</skyb>](../action/material.md#smuggle-state-for-arrowless-offset) | Perform Arrowless Smuggle with the items currently held (use this if <skyb>:smug</skyb> is not an option)|
-| [<skyb>!add-slot</skyb>](../action/low_level.md) | Adding a new slot to the inventory list by editing memory, bypassing all checks |
-| [<skyb>!break</skyb>](../action/low_level.md) | Edit memory to simulate generating Broken Slots |
-| [<skyb>buy</skyb>](../action/get.md) | Buying items |
-| <skyb>close-dialog</skyb> | Alias for <skyb>untalk</skyb> |
-| <skyb>close-inv</skyb> | Alias for <skyb>unpause</skyb> |
-| <skyb>close-inventory</skyb> | Alias for <skyb>unpause</skyb> |
-| [<skyb>close-game</skyb>](../action/save.md) | Close the game |
-| [<skyb>:discovered</skyb>](../action/flags.md#discovered-tabs) | Change whether a tab is discovered |
-| <skyb>dnp</skyb> | Drop material or equipment, then pick them up |
-| [<skyb>:dpad</skyb>](../action/equip.md) | Specify change equipment should be done using DPad menu |
-| <skyb>drop</skyb> | Drop material or equipment |
-| [<skyb>eat</skyb>](../action/material.md) | Eat an item |
-| [<skyb>entangle</skyb>](../action/entangle.md) | Activates Prompt Entanglement |
-| [<skyb>equip</skyb>](../action/equip.md) | Equips an item |
-| [<skyb>get</skyb>](../action/get.md) | Getting an item |
-| [<skyb>hold</skyb>](../action/material.md) | Hold materials |
-| [<skyb>!init</skyb>](../action/low_level.md) | Resets the inventory memory to the list of items |
-| [<skyb>new-game</skyb>](../action/save.md) | Starts a new game |
-| <skyb>open-inv</skyb> | Alias for <skyb>pause</skyb> |
-| <skyb>open-inventory</skyb> | Alias for <skyb>pause</skyb> |
-| <skyb>:overworld</skyb> | Specify the next action to be performed in the overworld |
-| <skyb>pause</skyb> | Open the inventory |
-| [<skyb>:pause-during</skyb>](../action/get.md#pause-on-item-text-boxes) | Open the inventory during certain operations |
-| [<skyb>:per-use</skyb>](../action/overworld.md) | Change the durability to decrease per use |
-| [<skyb>pick-up</skyb>](../action/get.md) | Pick up an item from the ground |
-| [<skyb>!remove</skyb>](../action/low_level.md) | Forcefully remove items from inventory, even non-interactable ones |
-| [<skyb>reload</skyb>](../action/save.md) | Reload a manual or named save |
-| <skyb>:same-dialog</skyb> <br>(for [<skyb>buy</skyb>](../action/get.md#buying-from-npc), [<skyb>sort</skyb>](../action/sort.md#sorting-in-selling-screen) ) | Specify the next action should be in the same dialog sequence |
-| [<skyb>save</skyb>](../action/save.md) | Make a manual save |
-| [<skyb>save-as</skyb>](../action/save.md) | Make a named save |
-| [<skyb>!set-gdt</skyb>](../action/flags.md#any-flag) | Set any GDT flag |
-| [<skyb>:slot</skyb>](../action/flags.md#number-of-slots-ie-hestu-upgrade) | Alias for <skyb>:slots</skyb> |
-| [<skyb>:slots</skyb>](../action/flags.md#number-of-slots-ie-hestu-upgrade) | Change number of equipment slots |
-| [<skyb>:smug</skyb>](../action/material.md#smuggle-state-for-arrowless-offset) | Perform Arrowless Smuggle with the next <skyb>hold</skyb> or <skyb>drop</skyb> command |
-| [<skyb>sort</skyb>](../action/sort.md) | Sort a category of items |
-| [<skyb>!swap</skyb>](../action/low_level.md#change-item-data) | Swap two item nodes |
-| <skyb>talk-to</skyb> | Talk to an NPC for buying or selling |
-| [<skyb>:targeting</skyb>](../action/entangle.md) | Changes the target for Prompt Entanglement |
-| [<skyb>unequip</skyb>](../action/equip.md) | Unequip an item |
-| [<skyb>unhold</skyb>](../action/material.md) | Stop holding materials |
-| <skyb>unpause</skyb> | Close the inventory |
-| <skyb>untalk</skyb> | Closes buying or selling dialog |
-| [<skyb>use</skyb>](../action/overworld.md) | Use equipments or materials in the overworld |
-| [<skyb>!write</skyb>](../action/low_level.md#change-item-data) | Edit inventory item data |
+| <skyb>:accurately-simulate</skyb><br> 可用于 ([<skyb>get</skyb>](../action/get.md#performance), [<skyb>sort</skyb>](../action/sort.md#performance) ) | 禁用可能不精确的优化 |
+| [<skyb>!arrowless-smuggle</skyb>](../action/material.md#smuggle-state-for-arrowless-offset) | 用当前手持的物品执行无箭强持（可用于<skyb>:smug</skyb>不适用的场景）|
+| [<skyb>!add-slot</skyb>](../action/low_level.md) | 修改内存，绕过所有检查添加物品 |
+| [<skyb>!break</skyb>](../action/low_level.md) | 修改内存制作转存格 |
+| [<skyb>buy</skyb>](../action/get.md) | 买东西 |
+| <skyb>close-dialog</skyb> | 同 <skyb>untalk</skyb> |
+| <skyb>close-inv</skyb> | 同 <skyb>unpause</skyb> |
+| <skyb>close-inventory</skyb> | 同 <skyb>unpause</skyb> |
+| [<skyb>close-game</skyb>](../action/save.md) | 关闭游戏 |
+| [<skyb>:discovered</skyb>](../action/flags.md#discovered-tabs) | 修改页面是否已经解锁 |
+| <skyb>dnp</skyb> | 丢弃材料或装备，然后捡起 |
+| [<skyb>:dpad</skyb>](../action/equip.md) | 指定切换装备由十字界面执行 |
+| <skyb>drop</skyb> | 丢弃材料或装备 |
+| [<skyb>eat</skyb>](../action/material.md) | 吃东西|
+| [<skyb>entangle</skyb>](../action/entangle.md) | 触发选项纠缠 |
+| [<skyb>equip</skyb>](../action/equip.md) | 装备物品 |
+| [<skyb>get</skyb>](../action/get.md) | 拿新物品 |
+| [<skyb>hold</skyb>](../action/material.md) | 手持材料 |
+| [<skyb>!init</skyb>](../action/low_level.md) | 初始化背包内存为某些物品 |
+| [<skyb>new-game</skyb>](../action/save.md) | 开始新游戏 |
+| <skyb>open-inv</skyb> | 同 <skyb>pause</skyb> |
+| <skyb>open-inventory</skyb> | 同 <skyb>pause</skyb> |
+| <skyb>:overworld</skyb> | 指定下一个指令在主世界中执行 |
+| <skyb>pause</skyb> | 打开背包 |
+| [<skyb>:pause-during</skyb>](../action/get.md#pause-on-item-text-boxes) | 某些指令执行时，中途打开背包 |
+| [<skyb>:per-use</skyb>](../action/overworld.md) | 指定下一个<skyb>use</skyb>指令消耗的耐久 |
+| [<skyb>pick-up</skyb>](../action/get.md) | 从地上捡起物品 |
+| [<skyb>!remove</skyb>](../action/low_level.md) | 强制删除物品，无法交互的物品也能删除 |
+| [<skyb>reload</skyb>](../action/save.md) | 加载手动或命名档 |
+| <skyb>:same-dialog</skyb> <br>(可用于 [<skyb>buy</skyb>](../action/get.md#buying-from-npc), [<skyb>sort</skyb>](../action/sort.md#sorting-in-selling-screen) ) | 指定下一个操作在同一个事件对话中执行 |
+| [<skyb>save</skyb>](../action/save.md) | 存手动档 |
+| [<skyb>save-as</skyb>](../action/save.md) | 存档并命名存档 |
+| [<skyb>!set-gdt</skyb>](../action/flags.md#any-flag) | 修改GDT旗标 |
+| [<skyb>:slot</skyb>](../action/flags.md#number-of-slots-ie-hestu-upgrade) | 同 <skyb>:slots</skyb> |
+| [<skyb>:slots</skyb>](../action/flags.md#number-of-slots-ie-hestu-upgrade) | 修改装备类物品解锁了几个格子 |
+| [<skyb>:smug</skyb>](../action/material.md#smuggle-state-for-arrowless-offset) | 执行下一个 <skyb>hold</skyb> 或 <skyb>drop</skyb> 指令后，执行无箭强持 |
+| [<skyb>sort</skyb>](../action/sort.md) | 物品排序 |
+| [<skyb>!swap</skyb>](../action/low_level.md#change-item-data) | 交互两个物品节点位置 |
+| [<skyb>!system</skyb>](../action/system.md) | 系统操作 |
+| <skyb>talk-to</skyb> | 和NPC对话触发购买或出售 |
+| [<skyb>:targeting</skyb>](../action/entangle.md) | 修改选项纠缠目标物品 |
+| [<skyb>!trial-end</skyb>](../action/trial.md) | 结束挑战，恢复背包 |
+| [<skyb>!trial-start</skyb>](../action/trial.md) | 开始挑战，清空背包 |
+| [<skyb>unequip</skyb>](../action/equip.md) | 解除物品装备 |
+| [<skyb>unhold</skyb>](../action/material.md) | 取消手持 |
+| <skyb>unpause</skyb> | 关闭背包 |
+| <skyb>untalk</skyb> | 关闭NPC（购买/出售）对话框 |
+| [<skyb>use</skyb>](../action/overworld.md) | 在主世界中使用装备或材料 |
+| [<skyb>!write</skyb>](../action/low_level.md#change-item-data) | 修改物品内存数据 |
 
 </div>

@@ -1,4 +1,4 @@
-# Custom Image
+# 自定义镜像
 
 ```admonish todo
 Custom Image functionality is WIP. Please reach out to me if you want to play with it.

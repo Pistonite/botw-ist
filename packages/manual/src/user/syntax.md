@@ -16,12 +16,12 @@ Commands can also have an optional trailing `;`.
 
 ```skybook
 # These 2 commands are equivalent
-get 1 apple 1 pot-lid 1 hammer;
+get 1 apple 2 pot-lid hammer;
 
 get
   1 apple
-  1 pot-lid
-  1 hammer
+  2 pot-lid
+  hammer
 
 # Trailing ; is optional even for multiple commands on the same line
 hold 2 apples drop

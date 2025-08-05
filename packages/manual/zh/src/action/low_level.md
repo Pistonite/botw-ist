@@ -1,4 +1,4 @@
-# Low Level Operations
+# 高级操作
 
 These supercommands allow directly editing memory for prototyping or testing,
 or to workaround limitations of the simulator.
@@ -10,25 +10,25 @@ they could be very inconsistent with the behavior of the game sometimes!
 Make sure you read the doc carefully before using them!
 ```
 
-## Syntax
+## 语法
 
 Examples are available at each section below.
 
-[Generate Broken Slots](#generate-broken-slots)
+[Generate Broken Slots](#制作转存格)
 > `!break X slots` <br>
 
-[Adding item slots directly](#add-item-slots)
+[Adding item slots directly](#添加物品格)
 > `!init` [`FINITE_ITEM_LIST`](../user/syntax_item.md) <br>
 > `!add-slot` [`FINITE_ITEM_LIST`](../user/syntax_item.md) <br>
 
-[Forcefully remove item](#forcefully-remove-items)
+[Forcefully remove item](#强制删除物品)
 > `!remove` [`CONSTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
 
-[Change item data](#change-item-data)
-> `!write` [`[META]`](../user/syntax_item.md#metadata) `to` [`ITEM`](../user/syntax_item.md)<br>
+[Change item data](#修改物品数据)
+> `!write` [`[META]`](../user/syntax_item.md#属性) `to` [`ITEM`](../user/syntax_item.md)<br>
 > `!swap` [`ITEM1`](../user/syntax_item.md) `and` [`ITEM2`](../user/syntax_item.md) <br>
 
-## Generate Broken Slots
+## 制作转存格
 
 ```admonish tip
 The simulator supports breaking slots using actions you would
@@ -43,7 +43,7 @@ Example
 !break 20 slots
 ```
 
-## Add Item Slots
+## 添加物品格
 The <skyb>!init</skyb> and <skyb>!add-slot</skyb> command will directly
 push a new item from `list2` to `list1`, and set the memory according
 to the item you specified. This will bypass ALL checks for adding item to inventory.
@@ -73,7 +73,7 @@ for the corresponding category.
 ```
 
 
-## Forcefully Remove Items
+## 强制删除物品
 
 The <skyb>!remove</skyb> supercommand lets you forcefully delete items from the inventory:
 - For Arrows, Materials, Foods, and Key Items, the value of the slot will decrease by the amount.
@@ -94,7 +94,7 @@ for Weapon/Bow/Arrow/Shield.
 ```
 
 
-## Change Item Data
+## 修改物品数据
 
 The <skyb>!write</skyb> supercommand lets you edit the data for an item using the
 [Item Meta Syntax](../user/syntax_item.md#metadata). Inventory is fixed afterward,

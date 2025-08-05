@@ -1,4 +1,4 @@
-# Weapon Modifier Corruption (WMC)
+# 武器附魔 (WMC)
 
 A **Weapon Modifier** refers to the power-ups that can be found
 on an equipment, such as `Attack Up` or `Durability Up`.

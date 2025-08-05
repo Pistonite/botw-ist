@@ -22,19 +22,4 @@ IST是物品转存（Inventory Slot Transfer）的缩写。这是旷野之息的
 
 项目大多数内容都基于开源和公开的游戏数据。但是，有些部分需要你的游戏Dump才能编译。
 
-请参考[贡献指南](./developer/contributing/index.md)。
-
-```admonish note
-你需要的功能可能可以通过扩展实现，请参考[扩展](./developer/extensions.md)。
-```
-```admonish note
-如果你不熟悉编程，也有方法可以contribute。你可以提供你的（非常复杂的）脚本作为模拟器的测试案例。
-请参考[快照测试](./developer/contributing/testing.md#snapshot-tests)。
-
-如果你无法在本地生成新快照，请确保模拟器每一步的结果都正确，然后直接提交新的`.txt`文件到PR。
-```
-
-
-
-
-
+请参考[开发者文档](./developer/index.md)。

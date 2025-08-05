@@ -1,4 +1,4 @@
-# Direct Inventory Corruption (DIC)
+# 数值讹转 (DIC)
 
 *Inventory Corruption* is a form of *Durability Transfer*.
 

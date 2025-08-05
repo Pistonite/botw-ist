@@ -1,4 +1,4 @@
-# Material Operations
+# 素材操作
 
 Performing actions on materials in the inventory. Some actions
 may apply to non-materials.
@@ -11,7 +11,7 @@ may apply to non-materials.
 - <skyb>dnp</skyb> command is a shorthand for <skyb>drop</skyb> and [`pick-up`](./get.md).
 - <skyb>eat</skyb> command performs the "eat" prompt.
 
-## Syntax
+## 语法
 > `hold` <br>
 > `hold` [`CONSTRAINED_ITEM_LIST`](../user/syntax.md#finite-vs-constrained-item-specifier)<br>
 > `unhold` <br>
@@ -35,7 +35,7 @@ eat all materials all food
 dnp 5 weapons
 ```
 
-## Smuggle State for Arrowless Offset
+## 无箭强持
 The <skyb>:smug</skyb> annotation can be used to activate the item smuggle
 state required for `Arrowless Offset` (also known as `Arrowless Smuggle`),
 for the next <skyb>hold</skyb> command, which is when the held materials are attached
@@ -100,7 +100,7 @@ while already holding items in the overworld.
 
 ```
 
-## Dropping Items
+## 丢弃物品
 
 ```admonish tip
 The <skyb>drop</skyb> is also used for dropping equipments, which has
@@ -119,7 +119,7 @@ The <skyb>dnp</skyb> command is equivalent to <skyb>drop</skyb>, then <skyb>pick
 the same items. Note that dropped items will not despawn after <skyb>pick-up</skyb>.
 
 
-## Detail
+## 细节
 
 - <skyb>hold</skyb> requires [`Inventory` screen](../user/screen_system.md),
   and you can only hold a maximum of 5 items.

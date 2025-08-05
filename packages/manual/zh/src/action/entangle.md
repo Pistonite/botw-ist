@@ -1,4 +1,4 @@
-# Entangle
+# 纠缠
 
 Activate [Prompt Entanglement](../ist/pe.md) and perform actions on a slot using prompts
 from another.
@@ -10,12 +10,12 @@ from another.
 PE is not 100% accurate.
 ```
 
-## Syntax
+## 语法
 > `entangle` [`ITEM`](../user/syntax_item.md)<br>
 > `:targeting` [`ITEM`](../user/syntax_item.md)<br>
 
-## Activate PE
-While the [Cursor Glitch](../ist/pe.md#cursor-glitch) is active, you can switch tabs in groups of 3 to keep
+## 触发选项纠缠
+While the [Cursor Glitch](../ist/pe.md#光标程错) is active, you can switch tabs in groups of 3 to keep
 the glitch active. Therefore, conceptually, when you activate a slot,
 all slots that are 3 tabs apart can be considered activated as well.
 
@@ -58,7 +58,7 @@ The <skyb>:targeting</skyb> annotation is used to do that.
 
 ```admonish warning
 <skyb>:targeting</skyb> currently also searches slots that are not activated.
-If there are multiple matches, you might need to use a [Position Property](../user/syntax_item.md#selecting-from-multiple-matches)
+If there are multiple matches, you might need to use a [Position Property](../user/syntax_item.md#从多个匹配物品中选择)
 to specify the activated slot.
 ```
 
