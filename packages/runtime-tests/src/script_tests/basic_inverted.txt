@@ -1,2 +1,0 @@
-get apple, banana, fairy, palm-fruit
-eat all but banana
