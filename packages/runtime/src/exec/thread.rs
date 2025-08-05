@@ -24,6 +24,7 @@ impl Thread {
                 Ok(f) => {
                     log::debug!("processor thread {} got job", self.slot);
                     f(&mut self.cpu);
+                    log::debug!("processor thread {} finished job", self.slot);
                 }
                 Err(e) => {
                     log::debug!(

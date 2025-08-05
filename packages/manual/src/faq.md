@@ -14,7 +14,7 @@ the glitch. If you are a glitch hunter or are interested in investigating
 the glitch in more details, the [user manual](./user/index.md) has everything
 you need to unlock the full potential of the simulator.
 
-In any case, it might be helpful to understand [the basic concepts](./ist/basics.md)
+In any case, it might be helpful to understand [the basic concepts](./ist/index.md)
 of IST to get started.
 
 ## I can't understand IST, but I still want to speedrun
@@ -55,7 +55,7 @@ with me first. A decent level of programming knowledge is needed.
 Most of this project is open-source and use publicly-available data of the game.
 However, some parts require that you own a copy of the game to develop.
 
-Please refer to the [contributing guide](./developer/contributing.md) for more information.
+Please refer to the [contributing guide](./developer/contributing/index.md) for more information.
 
 ```admonish note
 If your goal is to add extra functionality, you might be able to do that through

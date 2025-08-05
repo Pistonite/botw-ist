@@ -1,4 +1,7 @@
-use std::sync::{Mutex, atomic::AtomicU32};
+use std::sync::{
+    Mutex,
+    atomic::{AtomicU32, AtomicUsize, Ordering},
+};
 
 use blueflame::processor::Cpu1;
 
@@ -12,6 +15,7 @@ pub struct ExecutorImpl<S: Spawn> {
     spawner: Mutex<S>,
     /// Handles to the spawned threads
     handles: Mutex<Vec<(S::Joiner, JobSender)>>,
+    handles_len: AtomicUsize,
     /// Serial number to round-robin the threads
     serial: AtomicU32,
 }
@@ -22,6 +26,7 @@ impl<S: Spawn> ExecutorImpl<S> {
         ExecutorImpl {
             spawner: Mutex::new(spawner),
             handles: Mutex::new(Vec::new()),
+            handles_len: AtomicUsize::new(0),
             serial: AtomicU32::new(0),
         }
     }
@@ -45,6 +50,7 @@ impl<S: Spawn> ExecutorImpl<S> {
             let handle = spawner.spawn(i)?;
             handles.push(handle);
         }
+        self.handles_len.store(handles.len(), Ordering::Release);
         log::info!("threads created successfully");
         Ok(())
     }
@@ -55,34 +61,50 @@ impl<S: Spawn> ExecutorImpl<S> {
         F: FnOnce(&mut Cpu1) -> T + Send + 'static,
         T: Send + 'static,
     {
+        // scheduling here is VERY broken. for some reason,
+        // running on a single thread is the fastest, and even having
+        // 2 threads slows everything down by A LOT
+        // i thought the handles.lock() is having too much contention,
+        // but that doesn't seem to be the case.
+        //
+        // In any case, don't look at the stuff below too much.
+        // we will probably rewrite the entire execution model
+        // once I think about how to make it work in both tokio/native
+        // and WASM multithreading
         let (send, recv) = oneshot::channel();
 
         let i = {
-            let handles = self.handles.lock().map_err(|_| Error::Lock)?;
-            if handles.is_empty() {
-                return Err(Error::EmptyPool);
-            }
             let serial = self
                 .serial
-                .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-            let i = (serial as usize) % handles.len();
-
-            log::debug!("executing job on processor thread {i}");
-            handles[i]
-                .1
-                .send(Box::new(|p| {
-                    let t = f(p);
-                    let _ = send.send(t);
-                }))
-                .map_err(|e| Error::SendJob(e.to_string()))?;
-
-            i
+                .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            loop {
+                let handles_len = self.handles_len.load(Ordering::Acquire);
+                if handles_len == 0 {
+                    return Err(Error::EmptyPool);
+                }
+                let i = (serial as usize) % handles_len;
+                {
+                    let handles = self.handles.lock().map_err(|_| Error::Lock)?;
+                    let Some((_, sender)) = handles.get(i) else {
+                        continue;
+                    };
+                    log::debug!("executing job on processor thread {i}");
+                    let _ = sender.send(Box::new(move |p| {
+                        let t = f(p);
+                        if send.send(t).is_err() {
+                            log::error!("processor thread {i} failed to send result back");
+                        }
+                    }));
+                };
+                break i;
+            }
         };
 
-        let exec_result = recv.await.map_err(|e| Error::RecvResult(e.to_string()));
+        log::debug!("waiting for processor thread {i}");
+        let exec_result = { recv.await.map_err(|e| Error::RecvResult(e.to_string())) };
         let exec_error = match exec_result {
             Ok(t) => {
-                log::debug!("processor thread {i} finished job");
+                log::debug!("received from processor thread {i}");
                 return Ok(t);
             }
             Err(e) => e,
@@ -105,6 +127,7 @@ impl<S: Spawn> ExecutorImpl<S> {
                 }
             };
             log::info!("spawned new processor thread {i}");
+            // let mut thread_holder = (thread_holder.0, Some(thread_holder.1));
             // remove the old thread
             std::mem::swap(&mut handles[i], &mut thread_holder);
             thread_holder

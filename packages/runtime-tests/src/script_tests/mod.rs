@@ -1,37 +1,35 @@
 use std::path::Path;
 use std::path::PathBuf;
-use std::pin::Pin;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
 
-use anyhow::Context;
+use cu::pre::*;
+
 use skybook_parser::ParseOutput;
 use skybook_parser::search::QuotedItemResolver;
 use skybook_parser::search::ResolvedItem;
 use skybook_runtime::MaybeAborted;
 use skybook_runtime::sim;
+use tokio::task::JoinSet;
 
-pub fn run(runtime: Arc<sim::Runtime>) -> anyhow::Result<bool> {
-    log::info!("running script tests");
+pub fn run(
+    runtime: Arc<sim::Runtime>,
+    refresh_snapshot: bool,
+    only_test: Option<String>,
+) -> cu::Result<bool> {
+    cu::debug!("running script tests");
 
     let snapshots_dir = Path::new("snapshots");
-    if !snapshots_dir.exists() {
-        std::fs::create_dir_all(snapshots_dir).context("failed to create snapshots directory")?;
-    }
+    cu::fs::ensure_dir(snapshots_dir)?;
 
-    let refresh_snapshot = !std::env::var("SKYBOOK_RUNTIME_TEST_REFRESH")
-        .unwrap_or_default()
-        .is_empty();
     if refresh_snapshot {
-        log::info!("will refresh snapshot");
+        cu::info!("will refresh snapshot");
     }
-
-    let only_test = std::env::var("SKYBOOK_TEST_ONLY").unwrap_or_default();
 
     let mut test_names = vec![];
 
-    if !only_test.is_empty() {
-        log::info!("only testing {only_test}");
+    if let Some(only_test) = only_test {
+        cu::info!("only testing {only_test}");
         test_names.push(only_test);
     } else {
         let test_dir =
@@ -54,14 +52,12 @@ pub fn run(runtime: Arc<sim::Runtime>) -> anyhow::Result<bool> {
     }
 
     let total_count = test_names.len();
-    let passed_count = tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .context("failed to create tokio runtime")?
-        .block_on(async { run_tests(runtime, test_names, refresh_snapshot).await })
-        .context("there were failures running the script tests")?;
+    let passed_count =
+        cu::co::spawn(async move { run_tests(runtime, test_names, refresh_snapshot).await })
+            .join()?
+            .context("there were failures running script tests")?;
 
-    log::info!("{passed_count}/{total_count} script tests passed");
+    cu::info!("{passed_count}/{total_count} script tests passed");
 
     Ok(passed_count == total_count)
 }
@@ -70,35 +66,37 @@ async fn run_tests(
     runtime: Arc<sim::Runtime>,
     test_names: Vec<String>,
     refresh: bool,
-) -> anyhow::Result<usize> {
-    let mut handles = vec![];
+) -> cu::Result<usize> {
+    let mut handles = JoinSet::new();
+    let total_count = test_names.len();
+    let bar = cu::progress_bar(total_count, "script tests");
     for test in test_names {
         let test_file = std::fs::read_to_string(format!("src/script_tests/{test}.txt"))
             .context("cannot read test file")?;
         let parsed = skybook_parser::parse(&StubQuotedItemResolver, &test_file).await;
         if ENCOUNTERED_QUOTED_SEARCH.load(std::sync::atomic::Ordering::SeqCst) {
             ENCOUNTERED_QUOTED_SEARCH.store(false, std::sync::atomic::Ordering::SeqCst);
-            log::error!("FAIL {test} - quoted item search not supported");
+            cu::error!("FAIL {test} - quoted item search not supported");
             continue;
         };
 
         let parsed = Arc::new(parsed);
         let runtime = Arc::clone(&runtime);
-        let handle =
-            tokio::spawn(
-                async move { run_test(&runtime, refresh, &test, &test_file, parsed).await },
-            );
-        handles.push(handle);
+        // let handle =
+        handles.spawn(async move { run_test(&runtime, refresh, &test, &test_file, parsed).await });
     }
 
     let mut passed_count = 0;
-    for handle in handles {
-        match handle.await {
+    let mut finished_count = 0;
+
+    while let Some(result) = handles.join_next().await {
+        finished_count += 1;
+        match result {
             Err(e) => {
-                log::error!("join failed: {e}");
+                cu::error!("join failed: {e}");
             }
             Ok(Err(e)) => {
-                log::error!("error occured while running test: {e}");
+                cu::error!("error occured while running test: {e}");
             }
             Ok(Ok(passed)) => {
                 if passed {
@@ -106,6 +104,8 @@ async fn run_tests(
                 }
             }
         }
+        let failed_count = finished_count - passed_count;
+        cu::progress!(&bar, finished_count, "{failed_count} failed");
     }
 
     Ok(passed_count)
@@ -115,10 +115,10 @@ static ENCOUNTERED_QUOTED_SEARCH: AtomicBool = AtomicBool::new(false);
 
 struct StubQuotedItemResolver;
 impl QuotedItemResolver for StubQuotedItemResolver {
-    type Future = Pin<Box<dyn Future<Output = Option<ResolvedItem>>>>;
+    type Future = cu::BoxedFuture<Option<ResolvedItem>>;
 
     fn resolve_quoted(&self, word: &str) -> Self::Future {
-        log::error!("quoted item search is not supported in tests, searching: {word}");
+        cu::error!("quoted item search is not supported in tests, searching: {word}");
         ENCOUNTERED_QUOTED_SEARCH.store(true, std::sync::atomic::Ordering::Relaxed);
         Box::pin(async { None })
     }
@@ -130,8 +130,8 @@ async fn run_test(
     test_name: &str,
     test_script: &str,
     parsed_output: Arc<ParseOutput>,
-) -> anyhow::Result<bool> {
-    log::debug!("TESTING\n{test_script}");
+) -> cu::Result<bool> {
+    cu::debug!("TESTING\n{test_script}");
     let mut new_snapshot = String::from(
         "// This has RS extension since that usually gives a minimal syntax highlighting.\n//This is not an actual RS file\n\nx!{ SKYBOOK RUNTIME SNAPSHOT V1\n\n",
     );
@@ -140,7 +140,7 @@ async fn run_test(
     let run = sim::Run::new(Arc::new(run_handle));
     // unwrap: we will never abort the run so it will always be finished
     let MaybeAborted::Ok(output) = run.run_parsed(&parsed_output, runtime).await else {
-        log::error!("CANCEL {test_name}");
+        cu::error!("CANCEL {test_name}");
         return Ok(false);
     };
 
@@ -198,7 +198,7 @@ async fn run_test(
     let snapshot_file_path = PathBuf::from(format!("snapshots/{test_name}.snap.rs"));
     if refresh || !snapshot_file_path.exists() {
         std::fs::write(snapshot_file_path, new_snapshot).context("failed to write snapshot")?;
-        log::info!("UPDATE {test_name}");
+        cu::info!("UPDATE {test_name}");
         return Ok(true);
     }
 
@@ -206,7 +206,7 @@ async fn run_test(
         std::fs::read_to_string(snapshot_file_path).context("failed to read snapshot")?;
 
     if old_snapshot_content != new_snapshot {
-        log::error!("FAIL {test_name}");
+        cu::error!("FAIL {test_name}");
         let wip_dir = Path::new("snapshots/wip");
         if !wip_dir.exists() {
             std::fs::create_dir_all(wip_dir).context("cannot create wip directory")?;
@@ -216,6 +216,6 @@ async fn run_test(
         return Ok(false);
     }
 
-    log::info!("PASS {test_name}");
+    cu::info!("PASS {test_name}");
     Ok(true)
 }

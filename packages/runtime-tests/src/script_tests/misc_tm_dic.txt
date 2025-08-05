@@ -1,0 +1,15 @@
+get trav-bow
+get 1 arrow
+get diamond
+get travel-medallion
+!break 3 slot
+dnp diamond
+save
+!system [dlc=none]
+close-game
+reload
+shoot
+save
+reload
+!system [dlc=3]
+reload

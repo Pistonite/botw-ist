@@ -92,6 +92,11 @@ impl Memory {
         self.env
     }
 
+    /// Set the emulated environment constants
+    pub fn set_env(&mut self, env: Environment) {
+        self.env = env;
+    }
+
     /// Get the physical starting address of the program region
     pub fn program_start(&self) -> u64 {
         self.program_start

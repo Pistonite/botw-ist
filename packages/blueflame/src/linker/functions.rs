@@ -632,6 +632,26 @@ pub fn sort_items(cpu: &mut Cpu2, category: PouchCategory) -> Result<(), process
     Ok(())
 }
 
+/// Call `uking::action::InitPouchForQuest::oneShot_`
+pub fn init_for_quest(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu: x[0] = this_ptr };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x00975654)?;
+    Ok(())
+}
+
+/// Call `uking::action::RestorePouchForQuest::oneShot_`
+pub fn restore_from_quest(cpu: &mut Cpu2) -> Result<(), processor::Error> {
+    cpu.reset_stack();
+    let this_ptr = singleton_instance!(pmdm(cpu.proc.memory()))?;
+    reg! { cpu: x[0] = this_ptr };
+    // TODO --160
+    cpu.native_jump_to_main_offset(0x009759BC)?;
+    Ok(())
+}
+
 pub fn is_weapon_profile(cpu: &mut Cpu2, actor: &str) -> Result<bool, processor::Error> {
     let profile = get_actor_profile(cpu, actor)?;
     Ok(profile.starts_with("Weapon"))

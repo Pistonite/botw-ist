@@ -2,9 +2,9 @@ use std::cell::Cell;
 use std::sync::Arc;
 use std::{backtrace::Backtrace, path::Path};
 
-use anyhow::{Context, bail};
 use blueflame::env::GameVer;
 use blueflame::processor::Process;
+use cu::pre::*;
 use sha2::{Digest, Sha256};
 use skybook_runtime::{exec, sim};
 
@@ -44,7 +44,7 @@ pub fn setup_panic_capture() {
             message += "unknown panic info"
         }
         let payload = PanicPayload { message, backtrace };
-        log::error!("panic: {payload}");
+        cu::error!("panic: {payload}");
         PANIC_INFO.with(|b| b.set(Some(payload)))
     }));
 }
@@ -56,17 +56,16 @@ pub fn take_last_panic() -> PanicPayload {
         .expect("no panic payload captured")
 }
 
-pub fn setup_test_process() -> anyhow::Result<Arc<sim::Runtime>> {
-    let image_file = std::env::var("SKYBOOK_RUNTIME_TEST_IMAGE")
-        .context("please define SKYBOOK_RUNTIME_TEST_IMAGE")?;
-    log::info!("loading {image_file}");
+pub fn setup_test_process(image_file: &str) -> cu::Result<Arc<sim::Runtime>> {
+    cu::info!("loading {image_file}");
 
-    let image_bytes = std::fs::read(image_file).context("failed to read BFI")?;
+    let image_bytes = cu::fs::read(image_file).context("failed to read BFI")?;
 
     let runtime = sim::Runtime::new(exec::Spawner::new()?);
     let threads = if cfg!(feature = "single-thread") {
         1
     } else {
+        // 2
         // leave 1 thread for tokio runtime
         num_cpus::get().clamp(2, 9) - 1
     };
@@ -89,8 +88,8 @@ pub fn setup_test_process() -> anyhow::Result<Arc<sim::Runtime>> {
 }
 
 #[cfg(feature = "trace-memory")]
-pub fn collect_memory_trace(process: &Process) -> anyhow::Result<()> {
-    log::info!("collecting memory read trace");
+pub fn collect_memory_trace(process: &Process, update_hash: bool) -> cu::Result<()> {
+    cu::info!("collecting memory read trace");
     let main_start = process.main_start();
     let main_end = match process.memory().env().game_ver {
         GameVer::X150 => main_start + 0x26af000 - 0x4000,
@@ -128,22 +127,19 @@ pub fn collect_memory_trace(process: &Process) -> anyhow::Result<()> {
             }
         }
     }
-    let update_hash = !std::env::var("SKYBOOK_RUNTIME_TEST_REFRESH_HASH")
-        .unwrap_or_default()
-        .is_empty();
     if update_hash {
-        log::info!("updating trace-hash");
-        std::fs::write(hash_file, new_hash).context("failed to save hash file")?;
+        cu::info!("updating trace-hash");
+        cu::fs::write(hash_file, new_hash)?;
     }
-    std::fs::write("trace.txt", read_report).context("failed to save trace report")?;
+    cu::fs::write("trace.txt", read_report)?;
 
     if hash_changed {
         if !update_hash {
-            bail!(
+            cu::bail!(
                 "the trace hash is generated or changed, please re-generate and push the mini image to artifacts"
             );
         } else {
-            log::warn!(
+            cu::warn!(
                 "the hash file is updated now. Make sure you build and push the mini image later, otherwise the hash will be incorrect!"
             );
         }

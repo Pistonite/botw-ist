@@ -56,9 +56,19 @@ pub struct OverworldActor {
 impl OverworldSystem {
     /// Destroy all actors in the overworld
     pub fn destroy_all(&mut self) {
+        self.destroy_weapons();
+        self.destroy_ground();
+    }
+
+    /// Destroy everything equipped by the player
+    pub fn destroy_weapons(&mut self) {
         self.weapon = None;
         self.bow = None;
         self.shield = None;
+    }
+
+    /// Destroy everything on the ground
+    pub fn destroy_ground(&mut self) {
         self.spawning_ground_weapons.clear();
         self.ground_weapons.clear();
         self.ground_materials.clear();
@@ -260,8 +270,8 @@ impl OverworldSystem {
         true
     }
 
-    /// Reset the equipments on gen stage
-    pub fn reset_equipments_on_genstage(
+    /// Reset the equipments on reload
+    pub fn reload_equipments(
         &mut self,
         cpu: &mut Cpu2<'_, '_>,
         weapon: Option<sim::OverworldActor>,

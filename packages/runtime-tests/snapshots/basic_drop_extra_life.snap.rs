@@ -9,7 +9,7 @@ x!{ SKYBOOK RUNTIME SNAPSHOT V1
 
 game: (Running)
   screen: (Overworld)
-  pouch: (count=5, are_tabs_valid=true, num_tabs=3, holding_in_inventory=false, )
+  pouch: (count=5, are_tabs_valid=true, num_tabs=3, holding_in_inventory=false, trial=false, )
     items: (len=5, )
       [000]: (actor_name=Weapon_Lsword_032, value=80000, is_equipped=true, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
         node: (valid=true, pos=419, addr=0x0000002222243f68, prev=0x0000002222200068, next=0x0000002222243cd0, )
@@ -47,7 +47,7 @@ game: (Running)
 
 game: (Running)
   screen: (Inventory)
-  pouch: (count=5, are_tabs_valid=true, num_tabs=3, holding_in_inventory=false, )
+  pouch: (count=5, are_tabs_valid=true, num_tabs=3, holding_in_inventory=false, trial=false, )
     items: (len=5, )
       [000]: (actor_name=Weapon_Lsword_032, value=0, is_equipped=false, item_type=Sword, item_use=WeaponLargeSword, tab_idx=0, tab_slot=0, )
         node: (valid=true, pos=419, addr=0x0000002222243f68, prev=0x0000002222200068, next=0x0000002222243cd0, )

@@ -17,7 +17,7 @@ export class CommandInitialize extends AbstractProperCommand {
     }
 
     public override convert(): string {
-        return `!init ${this.stacks.map((s) => s.convert(0, true)).join(" ")}`;
+        return `!init ${this.stacks.map((s) => s.convert(0, true)).join(" ")}\n!system [sync-overworld]`;
     }
 }
 

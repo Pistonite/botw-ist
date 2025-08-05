@@ -143,7 +143,8 @@ const header = sourceFileLines
 const targetFileContent = 
     header.join("\n") + 
     parseHintSection(sourceFileLines, "cook-effects", false) +
-    parseHintSection(sourceFileLines, "weapon-modifiers", false);
+    parseHintSection(sourceFileLines, "weapon-modifiers", false) +
+    parseHintSection(sourceFileLines, "dlc-versions", false);
 
 const HEADER_ZH = `# 属性常数值
 以下为某些指令可用的非关键词属性常数值。
@@ -154,7 +155,8 @@ const HEADER_ZH = `# 属性常数值
 const targetFileContentZh = 
     HEADER_ZH +
     parseHintSection(sourceFileLines, "cook-effects", true) +
-    parseHintSection(sourceFileLines, "weapon-modifiers", true);
+    parseHintSection(sourceFileLines, "weapon-modifiers", true) +
+    parseHintSection(sourceFileLines, "dlc-versions", true);
 
 
 console.log("writing target files...");

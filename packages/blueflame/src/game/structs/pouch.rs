@@ -39,8 +39,8 @@ pub struct PauseMenuDataMgr {
     // mGerudoSoulItem: Ptr![PouchItem],
     // #[offset(0x44540)]
     // mNewlyAddedItem: PouchItem,
-    // #[offset(0x447d8)]
-    // mIsPouchForQuest: bool,
+    #[offset(0x447d8)]
+    pub mIsPouchForQuest: bool,
     #[offset(0x447e0)]
     pub mEquippedWeapons: [Ptr![PouchItem]; 4],
     // PouchCategory

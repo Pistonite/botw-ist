@@ -32,8 +32,9 @@ tasks:
     desc: Start mdbook in watch mode
     cmds:
       - task: build
-      - mdbook watch &
-      - mdbook watch zh -d ../book/zh &
+      - cmd: >
+          cargo-watch --watch src --watch zh 
+          -s "mdbook build && mdbook build zh -d ../book/zh" &
       - live-server book -p 8081 {{.CLI_ARGS}}
 
   build:

@@ -15,6 +15,7 @@ import {
     MoreHorizontal20Regular,
     PersonFeedback20Regular,
 } from "@fluentui/react-icons";
+import { useLocale } from "@pistonite/pure-react";
 
 import { useUITranslation } from "skybook-localization";
 import { GitHubLink } from "@pistonite/shared-controls";
@@ -24,6 +25,12 @@ const MiscMenuImpl: React.FC = () => {
 
     const version = import.meta.env.VERSION.replace("0.", "v");
     const commitShort = import.meta.env.COMMIT.substring(0, 8);
+
+    const locale = useLocale();
+    const isZh = locale.startsWith("zh");
+    const manualBaseUrl = isZh
+        ? "https://skybook.pistonite.dev/zh/"
+        : "https://skybook.pistonite.dev/";
 
     return (
         <Menu>
@@ -44,10 +51,7 @@ const MiscMenuImpl: React.FC = () => {
                     <MenuItem
                         icon={<BookQuestionMark20Regular />}
                         onClick={() => {
-                            window.open(
-                                "https://skybook.pistonite.dev",
-                                "_blank",
-                            );
+                            window.open(manualBaseUrl, "_blank");
                         }}
                     >
                         {t("menu.skybook_manual")}
@@ -56,7 +60,8 @@ const MiscMenuImpl: React.FC = () => {
                         icon={<PersonFeedback20Regular />}
                         onClick={() => {
                             window.open(
-                                "https://skybook.pistonite.dev/#having-an-issue",
+                                manualBaseUrl +
+                                    (isZh ? "#遇到问题" : "#having-an-issue"),
                                 "_blank",
                             );
                         }}

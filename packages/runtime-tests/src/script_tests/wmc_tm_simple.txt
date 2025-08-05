@@ -1,0 +1,14 @@
+!break 3 slots
+get travel-medallion
+get 999 roasted-endura
+get wild-green[hp=120,price=113]
+get 999 seared-steak
+save
+!system [dlc=none]
+close-game
+reload
+get slate
+!break 3 slots
+eat wild-green
+sell all seared-steak
+reload

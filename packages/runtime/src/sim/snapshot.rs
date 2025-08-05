@@ -90,13 +90,15 @@ fn fmt_iv_pouch(
         let are_tabs_valid = pouch.are_tabs_valid;
         let num_tabs = pouch.num_tabs;
         let holding_in_inventory = pouch.is_holding_in_inventory;
+        let trial = pouch.is_trial_mode;
         write_snapshot_ln!(
             f,
             "  pouch",
             count,
             are_tabs_valid,
             num_tabs,
-            holding_in_inventory
+            holding_in_inventory,
+            trial
         )?;
     }
     {

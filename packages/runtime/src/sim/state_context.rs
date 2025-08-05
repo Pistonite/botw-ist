@@ -75,12 +75,7 @@ impl sim::State {
                 }))
             }
             TakeGame::Uninit => {
-                let process = match ctx.runtime().initial_process() {
-                    Ok(process) => process,
-                    Err(e) => {
-                        return Ok(Report::spanned(self, ctx.span, e));
-                    }
-                };
+                let process = self.initial_process.clone();
                 let span = ctx.span;
                 let game_state = sim::GameState::new(process);
                 let report = f(game_state, ctx).await?.into_report(span);

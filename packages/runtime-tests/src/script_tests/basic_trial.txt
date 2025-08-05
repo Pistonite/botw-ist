@@ -1,0 +1,5 @@
+get 1 axe 1 trav-bow 1 pot-lid 1 apple 1 slate
+!trial-start
+get apple
+!break 2 slots
+!trial-end

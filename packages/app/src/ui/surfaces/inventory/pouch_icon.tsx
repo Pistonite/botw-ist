@@ -1,5 +1,6 @@
 import { Text, Button, Tooltip } from "@fluentui/react-components";
 import {
+    Beach20Regular,
     BoxMultipleArrowRight20Filled,
     HandMultiple20Filled,
 } from "@fluentui/react-icons";
@@ -60,6 +61,28 @@ export const ArrowlessSmuggleIcon: React.FC = () => {
                 shape="circular"
                 icon={<BoxMultipleArrowRight20Filled />}
             />
+        </Tooltip>
+    );
+};
+
+/** Icon to indicate trial mode*/
+export const TrialModeIcon: React.FC = () => {
+    const t = useUITranslation();
+    return (
+        <Tooltip
+            relationship="label"
+            content={
+                <>
+                    <Text weight="bold" block size={200}>
+                        {t(`main.visible_inventory.trial.title`)}
+                    </Text>
+                    {t(`main.visible_inventory.trial.desc`)}
+                </>
+            }
+            withArrow
+            positioning="below"
+        >
+            <Button shape="circular" icon={<Beach20Regular />} />
         </Tooltip>
     );
 };

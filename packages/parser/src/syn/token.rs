@@ -64,6 +64,7 @@ pub enum TT {
         KwEat = "eat",
         KwCook = "cook",
         KwEntangle = "entangle",
+        KwSort = "sort",
 
         KwEquip = "equip",
         KwUnequip = "unequip",
@@ -92,10 +93,6 @@ pub enum TT {
         KwBoil = "boil",
         KwFreeze = "freeze",
         KwDestroy = "destroy",
-        KwSort = "sort",
-        KwEnter = "enter",
-        KwExit = "exit",
-        KwLeave = "leave",
 
 
         // reserved
@@ -147,12 +144,11 @@ pub enum TT {
         KwSuWrite = "!write",
         KwSuWriteName = "!write-name",
         KwSuRemove = "!remove",
-        KwSuReloadGdt = "!reload-gdt",
-        KwSuResetGround = "!reset-ground",
-        KwSuResetOverworld = "!reset-overworld",
-        KwSuLoadingScreen = "!loading-screen",
         KwSuSetGdt = "!set-gdt",
         KwSuArrowlessSmuggle = "!arrowless-smuggle",
+        KwSuSystem = "!system",
+        KwSuTrialStart = "!trial-start",
+        KwSuTrialEnd = "!trial-end",
         /////////////////////////////
         // When updating syntax, Keep the order in sync with syn and cir Command
         /////////////////////////////

@@ -94,6 +94,8 @@ pub enum Command {
     Entangle(Box<cir::ItemSelectSpec>),
     /// See [`syn::CmdCoTargeting`]
     CoTargeting(Box<cir::ItemSelectSpec>),
+    /// See [`syn::CmdSort`]
+    Sort(cir::CategorySpec),
 
     /// Use DPad Quick Menu
     CoDpad,
@@ -163,6 +165,12 @@ pub enum Command {
     SuSetGdt(String, Box<cir::GdtMeta>),
     /// Activate arrowless smuggle (hold attach)
     SuArrowlessSmuggle,
+    /// System Commands
+    SuSystem(Vec<cir::SysCommand>),
+    /// Init Pouch for Quest
+    SuTrialStart,
+    /// Restore Pouch for Quest
+    SuTrialEnd,
 
     /// See [`syn::CmdRoast`] and [`crate::syn::CmdBake`]
     Roast(Vec<cir::ItemSelectSpec>),
@@ -170,21 +178,12 @@ pub enum Command {
     Boil(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdFreeze`]
     Freeze(Vec<cir::ItemSelectSpec>),
-
-    /// See [`syn::CmdUnequip`]
-    Sort(cir::CategorySpec),
-
-    /// See [`syn::CmdEnter`]
-    Enter(cir::Trial),
-    /// `exit` - Exit the current trial
-    Exit,
-    /// `leave` - Leave the current trial without clearing it
-    Leave,
 }
 // make sure the command size does not update unexpectedly
-// size only valid for 64-bit platforms
-#[cfg(not(feature = "wasm"))]
-static_assertions::assert_eq_size!(Command, [u8; 0x20]);
+#[cfg(target_pointer_width = "64")]
+static_assertions::assert_eq_size!(Command, [usize; 4]);
+#[cfg(target_pointer_width = "32")]
+static_assertions::assert_eq_size!(Command, [usize; 6]);
 
 impl Command {
     /// Convience wrapper to create a command for setting a S32 gamedata flag
@@ -261,6 +260,11 @@ pub async fn parse_command<R: QuotedItemResolver>(
         A![Targeting(cmd)] => Some(X::CoTargeting(Box::new(
             cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?,
         ))),
+        C::Sort(cmd) => absorb_error(
+            errors,
+            cir::parse_category_with_times(&cmd.category, cmd.times.as_ref()),
+        )
+        .map(X::Sort),
         //////////////////////////////////////////////////////////////////
         A![Dpad(_)] => Some(X::CoDpad),
         C::Equip(cmd) => Some(X::Equip(
@@ -335,16 +339,15 @@ pub async fn parse_command<R: QuotedItemResolver>(
         C::SuRemove(cmd) => Some(X::SuRemove(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
-        C::SuReloadGdt(cmd) => Some(X::SuReloadGdt(cmd.name.as_ref().map(|x| x.to_string()))),
-        C::SuResetGround(_) => Some(X::SuResetGround),
-        C::SuResetOverworld(_) => Some(X::SuResetOverworld),
-        C::SuLoadingScreen(_) => Some(X::SuLoadingScreen),
         C::SuSetGdt(cmd) => {
             let gdt_value = cir::parse_gdt_meta(&cmd.props, errors)?;
             let flag_name = cmd.flag_name.name.to_string();
             Some(X::SuSetGdt(flag_name, Box::new(gdt_value)))
         }
         C::SuArrowlessSmuggle(_) => Some(X::SuArrowlessSmuggle),
+        C::SuSystem(cmd) => Some(X::SuSystem(cir::parse_system_meta(&cmd.props, errors))),
+        C::SuTrialStart(_) => Some(X::SuTrialStart),
+        C::SuTrialEnd(_) => Some(X::SuTrialEnd),
         //////////////////////////////////////////////////////////////////
         A![Slots(cmd)] => {
             let meta = cir::parse_slots_meta(&cmd.meta, errors);
@@ -387,26 +390,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
         syn::Command::Freeze(cmd) => Some(cir::Command::Freeze(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
-
-        syn::Command::Sort(cmd) => {
-            match cir::parse_category_with_times(&cmd.category, cmd.times.as_ref()) {
-                Ok(spec) => Some(cir::Command::Sort(spec)),
-                Err(e) => {
-                    errors.push(e);
-                    None
-                }
-            }
-        }
-
-        syn::Command::Enter(cmd) => match cir::parse_trial(&cmd.trial, &cmd.trial.span()) {
-            Ok(trial) => Some(cir::Command::Enter(trial)),
-            Err(e) => {
-                errors.push(e);
-                None
-            }
-        },
-        syn::Command::Exit(_) => Some(cir::Command::Exit),
-        syn::Command::Leave(_) => Some(cir::Command::Leave),
     }
 }
 

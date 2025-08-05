@@ -62,4 +62,8 @@ export type InvView_PouchList = {
      * smuggle state
      */
     isArrowlessSmuggle: boolean;
+    /**
+     * If the Pouch is currently in trial (quest) mode
+     */
+    isTrialMode: boolean;
 };
