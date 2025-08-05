@@ -4,14 +4,14 @@
 x!{ SKYBOOK RUNTIME SNAPSHOT V1
 
 runtime error: : cannot get more of this
-  span: 46..54
+  span: 45..54
 -----
-claymore
+ claymore
 -----
 runtime error: : cannot get more of this
-  span: 90..98
+  span: 89..98
 -----
-claymore
+ claymore
 -----
 =====
 

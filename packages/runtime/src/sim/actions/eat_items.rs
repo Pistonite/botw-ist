@@ -38,13 +38,12 @@ pub fn eat_item_internal(
     item: &cir::ItemSelectSpec,
     pe_target: Option<&cir::ItemSelectSpec>,
 ) -> Result<(), processor::Error> {
-    let name = &item.name;
-    let meta = item.meta.as_ref();
+    let matcher = &item.matcher;
     let memory = ctx.cpu().proc.memory();
     let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
-    let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
+    let mut remaining = super::convert_amount(item.amount, matcher.span, errors, false, |_| {
         // eating always decrease value instead of using slot
-        Ok(inventory.get_amount(name, meta, sim::CountingMethod::Value, memory)?)
+        Ok(inventory.get_amount(matcher, sim::CountingMethod::Value, memory)?)
     })?;
 
     let mut check_for_extra_error = true;
@@ -56,17 +55,13 @@ pub fn eat_item_internal(
         // of items, like corrupted food
         // TODO --optimize: we could optimize by calling use_item
         // with a quantity instead of 1, but it won't be as accurate
-        if remaining.is_done_allowing_iterations(item.span, errors, "EAT", 50000) {
+        if remaining.is_done_allowing_iterations(matcher.span, errors, "EAT", 50000) {
             break;
         }
         let memory = ctx.cpu().proc.memory();
-        let position = inventory.select(
-            name,
-            meta,
-            Some(1), // must have at least 1 to eat
-            memory,
-            item.span,
-            errors,
+        let position = inventory.select_value_at_least(
+            matcher, 1, // must have at least 1 to eat
+            memory, errors,
         )?;
         let Some((tab, slot)) = position else {
             break;
@@ -77,14 +72,14 @@ pub fn eat_item_internal(
                 let name_ptr = Ptr!(&item_ptr->mName);
                 let name = name_ptr.cstr(memory)?.load_utf8_lossy(memory)?;
                 if !game::can_use(&name) {
-                    errors.push(sim_error!(item.span, NotEatable));
+                    errors.push(sim_error!(matcher.span, NotEatable));
                     check_for_extra_error = false;
                     break;
                 }
             }
             _ => {
                 // the item to eat must be non empty and non translucent
-                errors.push(sim_error!(item.span, InvalidItemTarget));
+                errors.push(sim_error!(matcher.span, InvalidItemTarget));
                 check_for_extra_error = false;
                 break;
             }
@@ -105,10 +100,10 @@ pub fn eat_item_internal(
     }
     if check_for_extra_error {
         let memory = ctx.cpu().proc.memory();
-        let result = remaining.check(item.span, errors, || {
-            inventory.get_amount(name, meta, sim::CountingMethod::Value, memory)
+        let result = remaining.check(matcher.span, errors, |_| {
+            inventory.get_amount(matcher, sim::CountingMethod::Value, memory)
         })?;
-        super::check_remaining!(result, errors, item.span);
+        super::check_remaining!(result, errors, matcher.span);
     }
 
     Ok(())

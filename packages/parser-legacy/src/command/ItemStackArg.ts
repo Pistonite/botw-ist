@@ -10,6 +10,7 @@ export class ItemStackArg {
     }
 
     public convert(slotIndex: number, replacePlaceholder: boolean): string {
-        return `${this.number.toString().toLocaleLowerCase()} ${convertItem(this.stack, slotIndex, replacePlaceholder)}`;
+        const numString = this.number === 1 ? "" : `${this.number.toString().toLocaleLowerCase()} `;
+        return `${numString} ${convertItem(this.stack, slotIndex, replacePlaceholder)}`;
     }
 }

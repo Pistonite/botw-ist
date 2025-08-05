@@ -3,8 +3,7 @@ use std::sync::Arc;
 
 use blueflame::game::{gdt, singleton_instance};
 use blueflame::processor::{CrashReport, Process};
-use skybook_parser::cir;
-use teleparse::Span;
+use skybook_parser::{Span, cir};
 
 use crate::error::{Report, sim_error};
 use crate::{exec, sim};

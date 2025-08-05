@@ -4,8 +4,7 @@ use blueflame::game::{self, PouchItem, PouchItemType, WeaponModifierInfo, gdt};
 use blueflame::linker;
 use blueflame::memory::{self, Memory, Ptr, mem, proxy};
 use blueflame::processor::{self, Cpu2};
-use skybook_parser::cir;
-use teleparse::Span;
+use skybook_parser::{Span, cir};
 
 use crate::error::{ErrorReport, sim_error, sim_warning};
 use crate::{iv, sim};
@@ -447,71 +446,72 @@ impl OverworldSystem {
     /// Select an item from the ground
     pub fn ground_select(
         &self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
-        span: Span,
+        item: &cir::ItemMatchSpec,
+        // meta: Option<&cir::ItemMeta>,
+        // span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<&Self>> {
-        let handle = self.do_ground_select(item, meta, span, errors)?;
+        let handle = self.do_ground_select(item, errors)?;
         Some(handle.bind(self))
     }
 
     /// Select an item from the ground, with the ability to remove it
     pub fn ground_select_mut(
         &mut self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
-        span: Span,
+        item: &cir::ItemMatchSpec,
+        // meta: Option<&cir::ItemMeta>,
+        // span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<&mut Self>> {
-        let handle = self.do_ground_select(item, meta, span, errors)?;
+        let handle = self.do_ground_select(item, errors)?;
         Some(handle.bind(self))
     }
 
     /// Select an item from the ground
     fn do_ground_select(
         &self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
-        span: Span,
+        matcher: &cir::ItemMatchSpec,
+        // meta: Option<&cir::ItemMeta>,
+        // span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<()>> {
-        let Some(meta) = meta else {
-            return self.do_ground_select_without_position_nth(item, None, 0, span, errors);
+        let Some(meta) = &matcher.meta else {
+            return self.do_ground_select_without_position_nth(matcher, 0, errors);
         };
         let from_slot = match &meta.position {
             None => 0, // match first slot
             Some(cir::ItemPosition::FromSlot(n)) => (*n as usize).saturating_sub(1), // match x-th slot, 1 indexed
             _ => {
                 // cannot specify by tab for items on the ground
-                errors.push(sim_error!(span, PositionSpecNotAllowed));
+                errors.push(sim_error!(matcher.span, PositionSpecNotAllowed));
                 return None;
             }
         };
-        self.do_ground_select_without_position_nth(item, Some(meta), from_slot, span, errors)
+        self.do_ground_select_without_position_nth(matcher, from_slot, errors)
     }
 
     fn do_ground_select_without_position_nth(
         &self,
-        name: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
+        matcher: &cir::ItemMatchSpec,
+        // meta: Option<&cir::ItemMeta>,
         nth: usize,
-        span: Span,
+        // span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<()>> {
-        if let Some(meta) = meta {
+        if let Some(meta) = &matcher.meta {
             if meta.equip.is_some()
                 || meta.effect_duration.is_some()
                 || meta.effect_id.is_some()
                 || meta.effect_level.is_some()
                 || !meta.ingredients.is_empty()
+                || meta.held.is_some()
             {
-                errors.push(sim_warning!(span, UselessItemMatchProp));
+                errors.push(sim_warning!(matcher.span, UselessItemMatchProp));
             }
         }
         let mut count = nth;
         for (handle, item) in self.iter_ground_items() {
-            if !item.matches(name, meta) {
+            if !item.matches(matcher) {
                 continue;
             }
             // matched
@@ -524,33 +524,29 @@ impl OverworldSystem {
     }
 
     /// Get number of items on the ground that matches the selector
-    pub fn get_ground_amount(
-        &self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
-    ) -> usize {
-        let Some(meta) = meta else {
-            return self.get_ground_amount_without_position_nth(item, None, 0);
+    pub fn get_ground_amount(&self, matcher: &cir::ItemMatchSpec) -> usize {
+        let Some(meta) = &matcher.meta else {
+            return self.get_ground_amount_without_position_nth(matcher, 0);
         };
         let from_slot = match &meta.position {
             Some(cir::ItemPosition::FromSlot(n)) => (*n as usize).saturating_sub(1), // match x-th slot, 1 indexed
             _ => 0,
         };
-        self.get_ground_amount_without_position_nth(item, Some(meta), from_slot)
+        self.get_ground_amount_without_position_nth(matcher, from_slot)
     }
 
     /// Get number of items on the ground that matches the selector,
     /// without considering position meta properties
     pub fn get_ground_amount_without_position_nth(
         &self,
-        name: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
+        matcher: &cir::ItemMatchSpec,
+        // meta: Option<&cir::ItemMeta>,
         nth: usize,
     ) -> usize {
         let mut skip = nth;
         let mut count = 0;
         for (_, item) in self.iter_ground_items() {
-            if !item.matches(name, meta) {
+            if !item.matches(matcher) {
                 continue;
             }
             if skip > 0 {
@@ -587,15 +583,10 @@ impl OverworldSystem {
     /// meta is ignored, and will emit a warning if is not None
     pub fn equipped_select(
         &self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
-        span: Span,
+        matcher: &cir::ItemMatchSpec,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<EquippedItemHandle<&Self>> {
-        Some(
-            self.do_equipped_select(item, meta, span, errors)?
-                .bind(self),
-        )
+        Some(self.do_equipped_select(matcher, errors)?.bind(self))
     }
 
     /// Select an item from equipped items
@@ -603,29 +594,23 @@ impl OverworldSystem {
     /// meta is ignored, and will emit a warning if is not None
     pub fn equipped_select_mut(
         &mut self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
-        span: Span,
+        matcher: &cir::ItemMatchSpec,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<EquippedItemHandle<&mut Self>> {
-        Some(
-            self.do_equipped_select(item, meta, span, errors)?
-                .bind(self),
-        )
+        Some(self.do_equipped_select(matcher, errors)?.bind(self))
     }
 
     /// Select an item from equipped items
     fn do_equipped_select(
         &self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
-        span: Span,
+        matcher: &cir::ItemMatchSpec,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<EquippedItemHandle<()>> {
-        if meta.is_some() {
+        let span = matcher.span;
+        if matcher.meta.is_some() {
             errors.push(sim_warning!(span, UselessMetaForOverworldEquipment));
         }
-        match item {
+        match &matcher.name {
             cir::ItemNameSpec::Actor(actor) => {
                 if self.weapon.as_ref().is_some_and(|x| &x.name == actor) {
                     return Some(EquippedItemHandle::Weapon(()));
@@ -663,10 +648,11 @@ impl OverworldSystem {
 
 impl OverworldActor {
     /// Returns if the overworld actor matches the item selector
-    pub fn matches(&self, name: &cir::ItemNameSpec, meta: Option<&cir::ItemMeta>) -> bool {
-        if !sim::util::name_spec_matches(name, &self.name) {
+    pub fn matches(&self, matcher: &cir::ItemMatchSpec) -> bool {
+        if !sim::util::name_spec_matches(&matcher.name, &self.name) {
             return false;
         }
+        let meta = matcher.meta.as_ref();
         // matching value for overworld actors is mostly
         // used for weapons, since materials can only have value = 1
         if let Some(wanted_value) = meta.and_then(|x| x.value)
@@ -682,7 +668,7 @@ impl OverworldActor {
 
         if let Some(wanted_flags) = meta.and_then(|x| x.sell_price)
             && self.modifier.is_none_or(|m| {
-                !sim::util::modifier_meta_matches(name, wanted_flags, m.flags as i32)
+                !sim::util::modifier_meta_matches(&matcher.name, wanted_flags, m.flags as i32)
             })
         {
             return false;

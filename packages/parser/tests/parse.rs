@@ -21,6 +21,8 @@ async fn parse_simple() -> anyhow::Result<()> {
         use bow; freeze meat
 
         use food 3 times
+
+        get apple banana, "food"
     "#};
 
     test_parser_snapshot("simple", script).await

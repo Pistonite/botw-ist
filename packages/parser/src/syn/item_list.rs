@@ -8,12 +8,8 @@ use crate::syn;
 /// This is usually used for adding items
 #[derive_syntax]
 #[derive(Debug)]
-pub enum ItemListFinite {
-    /// Single item, e.g. `apple`
-    Single(syn::Item),
-    /// multiple items with amounts, e.g. `5 apples 3 royal_claymore`
-    List(tp::Nev<syn::NumberedItem>),
-}
+pub struct ItemListFinite(pub tp::Nev<ItemListFiniteEntry>);
+pub type ItemListFiniteEntry = (syn::MaybeNumberedItem, tp::Option<syn::SymComma>);
 
 /// Specifying items from a contrained list
 ///
@@ -21,9 +17,8 @@ pub enum ItemListFinite {
 /// for removal)
 #[derive_syntax]
 #[derive(Debug)]
-pub enum ItemListConstrained {
-    /// Single item, e.g. `apple :from slot 3`
-    Single(syn::ItemOrCategory),
-    /// multiple items with amounts, e.g. `5 apples 3 royal_claymore :from slot 3`
-    List(tp::Nev<syn::NumberedOrAllItemOrCategory>),
-}
+pub struct ItemListConstrained(pub tp::Nev<ItemListConstrainedEntry>);
+pub type ItemListConstrainedEntry = (
+    syn::MaybeNumberedOrAllItemOrCategory,
+    tp::Option<syn::SymComma>,
+);

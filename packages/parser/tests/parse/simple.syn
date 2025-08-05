@@ -1,21 +1,35 @@
 Some(
     Script {
-        stmts: 0..242 => [
+        stmts: 0..268 => [
             Statement {
                 cmd: Eat(
                     CmdEat {
                         lit: token Command(0..3),
-                        items: Single(
-                            Item(
-                                Item {
-                                    name: Word(
-                                        4..7 => "axe",
+                        items: ItemListConstrained(
+                            3..7 => [
+                                (
+                                    Numbered(
+                                        MaybeNumberedItemOrCategory {
+                                            num: None(
+                                                3,
+                                            ),
+                                            item: Item(
+                                                Item {
+                                                    name: Word(
+                                                        4..7 => "axe",
+                                                    ),
+                                                    meta: None(
+                                                        7,
+                                                    ),
+                                                },
+                                            ),
+                                        },
                                     ),
-                                    meta: None(
+                                    None(
                                         7,
                                     ),
-                                },
-                            ),
+                                ),
+                            ],
                         ),
                     },
                 ),
@@ -28,17 +42,31 @@ Some(
                     CmdHold {
                         lit: token Command(12..16),
                         items: Some(
-                            Single(
-                                Item(
-                                    Item {
-                                        name: Word(
-                                            17..31 => "royal-claymore",
+                            ItemListConstrained(
+                                16..31 => [
+                                    (
+                                        Numbered(
+                                            MaybeNumberedItemOrCategory {
+                                                num: None(
+                                                    16,
+                                                ),
+                                                item: Item(
+                                                    Item {
+                                                        name: Word(
+                                                            17..31 => "royal-claymore",
+                                                        ),
+                                                        meta: None(
+                                                            31,
+                                                        ),
+                                                    },
+                                                ),
+                                            },
                                         ),
-                                        meta: None(
+                                        None(
                                             31,
                                         ),
-                                    },
-                                ),
+                                    ),
+                                ],
                             ),
                         ),
                     },
@@ -51,58 +79,65 @@ Some(
                 cmd: Get(
                     CmdGet {
                         lit: token Command(39..42),
-                        items: List(
+                        items: ItemListFinite(
                             43..77 => [
-                                NumberedItem {
-                                    num: Number(
-                                        43..44 => "3",
-                                    ),
-                                    item: Item {
-                                        name: Word(
-                                            45..50 => "apple",
+                                (
+                                    MaybeNumberedItem {
+                                        num: Some(
+                                            Number(
+                                                43..44 => "3",
+                                            ),
                                         ),
-                                        meta: Some(
-                                            Meta {
-                                                open: token Symbol(50..51),
-                                                entries: Punct {
-                                                    span: 51..76,
-                                                    elems: [
-                                                        MetaKvPair {
-                                                            key: 51..55 => "life",
-                                                            value: Some(
-                                                                MetaValueSyntax {
-                                                                    sep: Equal(
-                                                                        token Symbol(56..57),
-                                                                    ),
-                                                                    value: Word(
-                                                                        58..62 => "true",
-                                                                    ),
-                                                                },
-                                                            ),
-                                                        },
-                                                        MetaKvPair {
-                                                            key: 64..68 => "time",
-                                                            value: Some(
-                                                                MetaValueSyntax {
-                                                                    sep: Equal(
-                                                                        token Symbol(69..70),
-                                                                    ),
-                                                                    value: Word(
-                                                                        71..76 => "false",
-                                                                    ),
-                                                                },
-                                                            ),
-                                                        },
-                                                    ],
-                                                    puncts: [
-                                                        token Symbol(62..63),
-                                                    ],
+                                        item: Item {
+                                            name: Word(
+                                                45..50 => "apple",
+                                            ),
+                                            meta: Some(
+                                                Meta {
+                                                    open: token Symbol(50..51),
+                                                    entries: Punct {
+                                                        span: 51..76,
+                                                        elems: [
+                                                            MetaKvPair {
+                                                                key: 51..55 => "life",
+                                                                value: Some(
+                                                                    MetaValueSyntax {
+                                                                        sep: Equal(
+                                                                            token Symbol(56..57),
+                                                                        ),
+                                                                        value: Word(
+                                                                            58..62 => "true",
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            },
+                                                            MetaKvPair {
+                                                                key: 64..68 => "time",
+                                                                value: Some(
+                                                                    MetaValueSyntax {
+                                                                        sep: Equal(
+                                                                            token Symbol(69..70),
+                                                                        ),
+                                                                        value: Word(
+                                                                            71..76 => "false",
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            },
+                                                        ],
+                                                        puncts: [
+                                                            token Symbol(62..63),
+                                                        ],
+                                                    },
+                                                    close: token Symbol(76..77),
                                                 },
-                                                close: token Symbol(76..77),
-                                            },
-                                        ),
+                                            ),
+                                        },
                                     },
-                                },
+                                    None(
+                                        77,
+                                    ),
+                                ),
                             ],
                         ),
                     },
@@ -115,21 +150,28 @@ Some(
                 cmd: Get(
                     CmdGet {
                         lit: token Command(78..81),
-                        items: List(
+                        items: ItemListFinite(
                             82..91 => [
-                                NumberedItem {
-                                    num: Number(
-                                        82..85 => "100",
-                                    ),
-                                    item: Item {
-                                        name: Word(
-                                            86..91 => "apple",
+                                (
+                                    MaybeNumberedItem {
+                                        num: Some(
+                                            Number(
+                                                82..85 => "100",
+                                            ),
                                         ),
-                                        meta: None(
-                                            91,
-                                        ),
+                                        item: Item {
+                                            name: Word(
+                                                86..91 => "apple",
+                                            ),
+                                            meta: None(
+                                                91,
+                                            ),
+                                        },
                                     },
-                                },
+                                    None(
+                                        91,
+                                    ),
+                                ),
                             ],
                         ),
                     },
@@ -142,17 +184,31 @@ Some(
                 cmd: Unequip(
                     CmdUnequip {
                         lit: token Command(93..100),
-                        items: Single(
-                            Item(
-                                Item {
-                                    name: Word(
-                                        101..106 => "arrow",
+                        items: ItemListConstrained(
+                            100..106 => [
+                                (
+                                    Numbered(
+                                        MaybeNumberedItemOrCategory {
+                                            num: None(
+                                                100,
+                                            ),
+                                            item: Item(
+                                                Item {
+                                                    name: Word(
+                                                        101..106 => "arrow",
+                                                    ),
+                                                    meta: None(
+                                                        106,
+                                                    ),
+                                                },
+                                            ),
+                                        },
                                     ),
-                                    meta: None(
+                                    None(
                                         106,
                                     ),
-                                },
-                            ),
+                                ),
+                            ],
                         ),
                     },
                 ),
@@ -164,15 +220,27 @@ Some(
                 cmd: Get(
                     CmdGet {
                         lit: token Command(108..111),
-                        items: Single(
-                            Item {
-                                name: Quoted(
-                                    112..123 => "\"古代箭\"",
+                        items: ItemListFinite(
+                            111..123 => [
+                                (
+                                    MaybeNumberedItem {
+                                        num: None(
+                                            111,
+                                        ),
+                                        item: Item {
+                                            name: Quoted(
+                                                112..123 => "\"古代箭\"",
+                                            ),
+                                            meta: None(
+                                                123,
+                                            ),
+                                        },
+                                    },
+                                    None(
+                                        123,
+                                    ),
                                 ),
-                                meta: None(
-                                    123,
-                                ),
-                            },
+                            ],
                         ),
                     },
                 ),
@@ -184,46 +252,60 @@ Some(
                 cmd: Eat(
                     CmdEat {
                         lit: token Command(124..127),
-                        items: Single(
-                            Item(
-                                Item {
-                                    name: Word(
-                                        128..131 => "axe",
-                                    ),
-                                    meta: Some(
-                                        Meta {
-                                            open: token Symbol(131..132),
-                                            entries: Punct {
-                                                span: 132..143,
-                                                elems: [
-                                                    MetaKvPair {
-                                                        key: 132..141 => "from-slot",
-                                                        value: Some(
-                                                            MetaValueSyntax {
-                                                                sep: Equal(
-                                                                    token Symbol(141..142),
-                                                                ),
-                                                                value: Number(
-                                                                    MetaValueNumber {
-                                                                        int_part: Number(
-                                                                            142..143 => "3",
-                                                                        ),
-                                                                        float_part: None(
-                                                                            143,
+                        items: ItemListConstrained(
+                            127..144 => [
+                                (
+                                    Numbered(
+                                        MaybeNumberedItemOrCategory {
+                                            num: None(
+                                                127,
+                                            ),
+                                            item: Item(
+                                                Item {
+                                                    name: Word(
+                                                        128..131 => "axe",
+                                                    ),
+                                                    meta: Some(
+                                                        Meta {
+                                                            open: token Symbol(131..132),
+                                                            entries: Punct {
+                                                                span: 132..143,
+                                                                elems: [
+                                                                    MetaKvPair {
+                                                                        key: 132..141 => "from-slot",
+                                                                        value: Some(
+                                                                            MetaValueSyntax {
+                                                                                sep: Equal(
+                                                                                    token Symbol(141..142),
+                                                                                ),
+                                                                                value: Number(
+                                                                                    MetaValueNumber {
+                                                                                        int_part: Number(
+                                                                                            142..143 => "3",
+                                                                                        ),
+                                                                                        float_part: None(
+                                                                                            143,
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                            },
                                                                         ),
                                                                     },
-                                                                ),
+                                                                ],
+                                                                puncts: [],
                                                             },
-                                                        ),
-                                                    },
-                                                ],
-                                                puncts: [],
-                                            },
-                                            close: token Symbol(143..144),
+                                                            close: token Symbol(143..144),
+                                                        },
+                                                    ),
+                                                },
+                                            ),
                                         },
                                     ),
-                                },
-                            ),
+                                    None(
+                                        144,
+                                    ),
+                                ),
+                            ],
                         ),
                     },
                 ),
@@ -235,68 +317,82 @@ Some(
                 cmd: Eat(
                     CmdEat {
                         lit: token Command(146..149),
-                        items: Single(
-                            Item(
-                                Item {
-                                    name: Word(
-                                        150..153 => "inf",
-                                    ),
-                                    meta: Some(
-                                        Meta {
-                                            open: token Symbol(153..154),
-                                            entries: Punct {
-                                                span: 154..166,
-                                                elems: [
-                                                    MetaKvPair {
-                                                        key: 154..157 => "tab",
-                                                        value: Some(
-                                                            MetaValueSyntax {
-                                                                sep: Equal(
-                                                                    token Symbol(157..158),
-                                                                ),
-                                                                value: Number(
-                                                                    MetaValueNumber {
-                                                                        int_part: Number(
-                                                                            158..159 => "5",
-                                                                        ),
-                                                                        float_part: None(
-                                                                            159,
-                                                                        ),
-                                                                    },
-                                                                ),
-                                                            },
-                                                        ),
-                                                    },
-                                                    MetaKvPair {
-                                                        key: 160..164 => "slot",
-                                                        value: Some(
-                                                            MetaValueSyntax {
-                                                                sep: Equal(
-                                                                    token Symbol(164..165),
-                                                                ),
-                                                                value: Number(
-                                                                    MetaValueNumber {
-                                                                        int_part: Number(
-                                                                            165..166 => "6",
-                                                                        ),
-                                                                        float_part: None(
-                                                                            166,
+                        items: ItemListConstrained(
+                            149..167 => [
+                                (
+                                    Numbered(
+                                        MaybeNumberedItemOrCategory {
+                                            num: None(
+                                                149,
+                                            ),
+                                            item: Item(
+                                                Item {
+                                                    name: Word(
+                                                        150..153 => "inf",
+                                                    ),
+                                                    meta: Some(
+                                                        Meta {
+                                                            open: token Symbol(153..154),
+                                                            entries: Punct {
+                                                                span: 154..166,
+                                                                elems: [
+                                                                    MetaKvPair {
+                                                                        key: 154..157 => "tab",
+                                                                        value: Some(
+                                                                            MetaValueSyntax {
+                                                                                sep: Equal(
+                                                                                    token Symbol(157..158),
+                                                                                ),
+                                                                                value: Number(
+                                                                                    MetaValueNumber {
+                                                                                        int_part: Number(
+                                                                                            158..159 => "5",
+                                                                                        ),
+                                                                                        float_part: None(
+                                                                                            159,
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                            },
                                                                         ),
                                                                     },
-                                                                ),
+                                                                    MetaKvPair {
+                                                                        key: 160..164 => "slot",
+                                                                        value: Some(
+                                                                            MetaValueSyntax {
+                                                                                sep: Equal(
+                                                                                    token Symbol(164..165),
+                                                                                ),
+                                                                                value: Number(
+                                                                                    MetaValueNumber {
+                                                                                        int_part: Number(
+                                                                                            165..166 => "6",
+                                                                                        ),
+                                                                                        float_part: None(
+                                                                                            166,
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                            },
+                                                                        ),
+                                                                    },
+                                                                ],
+                                                                puncts: [
+                                                                    token Symbol(159..160),
+                                                                ],
                                                             },
-                                                        ),
-                                                    },
-                                                ],
-                                                puncts: [
-                                                    token Symbol(159..160),
-                                                ],
-                                            },
-                                            close: token Symbol(166..167),
+                                                            close: token Symbol(166..167),
+                                                        },
+                                                    ),
+                                                },
+                                            ),
                                         },
                                     ),
-                                },
-                            ),
+                                    None(
+                                        167,
+                                    ),
+                                ),
+                            ],
                         ),
                     },
                 ),
@@ -308,26 +404,33 @@ Some(
                 cmd: PickUp(
                     CmdPickUp {
                         lit: token Command(169..176),
-                        items: List(
+                        items: ItemListConstrained(
                             177..185 => [
-                                Numbered(
-                                    NumberedItemOrCategory {
-                                        num: Number(
-                                            177..178 => "1",
-                                        ),
-                                        item: Category(
-                                            Category {
-                                                name: Weapon(
-                                                    Singular(
-                                                        token Keyword(179..185),
+                                (
+                                    Numbered(
+                                        MaybeNumberedItemOrCategory {
+                                            num: Some(
+                                                Number(
+                                                    177..178 => "1",
+                                                ),
+                                            ),
+                                            item: Category(
+                                                Category {
+                                                    name: Weapon(
+                                                        Singular(
+                                                            token Keyword(179..185),
+                                                        ),
                                                     ),
-                                                ),
-                                                meta: None(
-                                                    185,
-                                                ),
-                                            },
-                                        ),
-                                    },
+                                                    meta: None(
+                                                        185,
+                                                    ),
+                                                },
+                                            ),
+                                        },
+                                    ),
+                                    None(
+                                        185,
+                                    ),
                                 ),
                             ],
                         ),
@@ -341,17 +444,31 @@ Some(
                 cmd: Equip(
                     CmdEquip {
                         lit: token Command(188..193),
-                        items: Single(
-                            Item(
-                                Item {
-                                    name: Word(
-                                        194..203 => "ice_arrow",
+                        items: ItemListConstrained(
+                            193..203 => [
+                                (
+                                    Numbered(
+                                        MaybeNumberedItemOrCategory {
+                                            num: None(
+                                                193,
+                                            ),
+                                            item: Item(
+                                                Item {
+                                                    name: Word(
+                                                        194..203 => "ice_arrow",
+                                                    ),
+                                                    meta: None(
+                                                        203,
+                                                    ),
+                                                },
+                                            ),
+                                        },
                                     ),
-                                    meta: None(
+                                    None(
                                         203,
                                     ),
-                                },
-                            ),
+                                ),
+                            ],
                         ),
                     },
                 ),
@@ -383,17 +500,31 @@ Some(
                 cmd: Freeze(
                     CmdFreeze {
                         lit: token Command(213..219),
-                        items: Single(
-                            Item(
-                                Item {
-                                    name: Word(
-                                        220..224 => "meat",
+                        items: ItemListConstrained(
+                            219..224 => [
+                                (
+                                    Numbered(
+                                        MaybeNumberedItemOrCategory {
+                                            num: None(
+                                                219,
+                                            ),
+                                            item: Item(
+                                                Item {
+                                                    name: Word(
+                                                        220..224 => "meat",
+                                                    ),
+                                                    meta: None(
+                                                        224,
+                                                    ),
+                                                },
+                                            ),
+                                        },
                                     ),
-                                    meta: None(
+                                    None(
                                         224,
                                     ),
-                                },
-                            ),
+                                ),
+                            ],
                         ),
                     },
                 ),
@@ -426,6 +557,74 @@ Some(
                 ),
                 semi: None(
                     242,
+                ),
+            },
+            Statement {
+                cmd: Get(
+                    CmdGet {
+                        lit: token Command(244..247),
+                        items: ItemListFinite(
+                            247..268 => [
+                                (
+                                    MaybeNumberedItem {
+                                        num: None(
+                                            247,
+                                        ),
+                                        item: Item {
+                                            name: Word(
+                                                248..253 => "apple",
+                                            ),
+                                            meta: None(
+                                                253,
+                                            ),
+                                        },
+                                    },
+                                    None(
+                                        253,
+                                    ),
+                                ),
+                                (
+                                    MaybeNumberedItem {
+                                        num: None(
+                                            253,
+                                        ),
+                                        item: Item {
+                                            name: Word(
+                                                254..260 => "banana",
+                                            ),
+                                            meta: None(
+                                                260,
+                                            ),
+                                        },
+                                    },
+                                    Some(
+                                        token Symbol(260..261),
+                                    ),
+                                ),
+                                (
+                                    MaybeNumberedItem {
+                                        num: None(
+                                            261,
+                                        ),
+                                        item: Item {
+                                            name: Quoted(
+                                                262..268 => "\"food\"",
+                                            ),
+                                            meta: None(
+                                                268,
+                                            ),
+                                        },
+                                    },
+                                    None(
+                                        268,
+                                    ),
+                                ),
+                            ],
+                        ),
+                    },
+                ),
+                semi: None(
+                    268,
                 ),
             },
         ],

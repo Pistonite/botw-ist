@@ -22,26 +22,24 @@ pub fn force_remove_item(
     let mut inventory = sim::PouchScreen::open_no_exec(ctx.cpu().proc, true)?;
 
     'outer: for item in items {
-        let name = &item.name;
-        let meta = item.meta.as_ref();
+        let matcher = &item.matcher;
+        let span = matcher.span;
         let memory = ctx.cpu().proc.memory();
         // remove food by stack value instead of slot (like old version)
-        let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
-            Ok(inventory.get_amount(name, meta, sim::CountingMethod::CanStackOrFood, memory)?)
+        let mut remaining = super::convert_amount(item.amount, span, errors, false, |_| {
+            Ok(inventory.get_amount(matcher, sim::CountingMethod::CanStackOrFood, memory)?)
         })?;
         loop {
             if ctx.is_aborted() {
                 break 'outer;
             }
-            if remaining.is_done(item.span, errors, "REMOVE") {
+            if remaining.is_done(span, errors, "REMOVE") {
                 break;
             }
             let m = ctx.cpu().proc.memory();
 
             // find the item
-            let Some((mut tab, mut slot)) =
-                inventory.select(name, meta, None, m, item.span, errors)?
-            else {
+            let Some((mut tab, mut slot)) = inventory.select(matcher, m, errors)? else {
                 break;
             };
             let sim::ScreenItemState::Normal(mut item_ptr) = inventory.get(tab, slot) else {
@@ -59,7 +57,7 @@ pub fn force_remove_item(
             let mut can_stack = game::can_stack(&item_name);
 
             if can_stack && value <= 0 {
-                let position = inventory.select(name, meta, Some(1), m, item.span, errors)?;
+                let position = inventory.select_value_at_least(matcher, 1, m, errors)?;
                 let Some((tab2, slot2)) = position else {
                     break;
                 };
@@ -117,10 +115,10 @@ pub fn force_remove_item(
             inventory.update(tab, slot, None, ctx.cpu().proc.memory())?;
         }
         let memory = ctx.cpu().proc.memory();
-        let result = remaining.check(item.span, errors, || {
-            inventory.get_amount(name, meta, sim::CountingMethod::CanStackOrFood, memory)
+        let result = remaining.check(span, errors, |_| {
+            inventory.get_amount(matcher, sim::CountingMethod::CanStackOrFood, memory)
         })?;
-        super::check_remaining!(result, errors, item.span);
+        super::check_remaining!(result, errors, span);
     }
 
     // close and reopen inventory to ensure consistency

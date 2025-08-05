@@ -35,27 +35,24 @@ pub fn pick_up_item_internal(
     errors: &mut Vec<ErrorReport>,
     item: &cir::ItemSelectSpec,
 ) -> Result<(), processor::Error> {
-    let name = &item.name;
-    let meta = item.meta.as_ref();
-    let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
-        Ok(sys.overworld.get_ground_amount(name, meta))
+    let matcher = &item.matcher;
+    let span = matcher.span;
+    let mut remaining = super::convert_amount(item.amount, span, errors, false, |_| {
+        Ok(sys.overworld.get_ground_amount(matcher))
     })?;
     loop {
         if ctx.is_aborted() {
             return Ok(());
         }
-        if remaining.is_done(item.span, errors, "PICKUP") {
+        if remaining.is_done(span, errors, "PICKUP") {
             break;
         }
         // find the item on the ground
-        let Some(handle) = sys
-            .overworld
-            .ground_select_mut(name, meta, item.span, errors)
-        else {
+        let Some(handle) = sys.overworld.ground_select_mut(matcher, errors) else {
             break;
         };
         if linker::cannot_get_item(ctx.cpu(), &handle.actor().name, 1)? {
-            errors.push(sim_error!(item.span, CannotGetMore));
+            errors.push(sim_error!(span, CannotGetMore));
             continue;
         }
         let actor = handle.remove();
@@ -69,10 +66,10 @@ pub fn pick_up_item_internal(
         )?;
         remaining.sub(1);
     }
-    let result = remaining.check(item.span, errors, || {
-        Ok(sys.overworld.get_ground_amount(name, meta))
+    let result = remaining.check(span, errors, |_| {
+        Ok(sys.overworld.get_ground_amount(matcher))
     })?;
-    super::check_remaining_ground!(result, errors, item.span);
+    super::check_remaining_ground!(result, errors, span);
 
     Ok(())
 }

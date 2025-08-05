@@ -80,6 +80,28 @@ impl Ptr![PauseMenuDataMgr] {
         Ptr!(&self->mGrabbedItems).reinterpret_array()
     }
 
+    pub fn is_item_being_grabbed(
+        self,
+        item: Ptr![PouchItem],
+        memory: &Memory,
+    ) -> Result<bool, memory::Error> {
+        let grabbed_items = self.grabbed_items();
+        for i in 0..5 {
+            let grabbed_item = grabbed_items.ith(i);
+            mem! { memory:
+                let grabbed_item = *(&grabbed_item->mItem);
+            }
+            if grabbed_item == item {
+                return Ok(true);
+            }
+            // we know, probably, the array doesn't have holes
+            if grabbed_item.is_nullptr() {
+                return Ok(false);
+            }
+        }
+        Ok(false)
+    }
+
     pub fn item_buffer(self) -> Ptr![PouchItem[420]] {
         Ptr!(&self->mItemBuffer).reinterpret_array()
     }

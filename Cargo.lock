@@ -2617,7 +2617,6 @@ dependencies = [
  "skybook-api",
  "skybook-parser",
  "static_assertions",
- "teleparse",
  "thiserror",
  "wasm-bindgen-spawn",
  "web-sys",

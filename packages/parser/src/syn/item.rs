@@ -7,27 +7,27 @@ use crate::syn;
 /// Syntax for an item prefixed with a numeric amount
 #[derive_syntax]
 #[derive(Debug)]
-pub struct NumberedItem {
-    pub num: syn::Number,
+pub struct MaybeNumberedItem {
+    pub num: tp::Option<syn::Number>,
     pub item: Item,
 }
 /// Syntax for an item prefixed with an amount or "all"
 #[derive_syntax]
 #[derive(Debug)]
-pub enum NumberedOrAllItemOrCategory {
-    Numbered(NumberedItemOrCategory),
+pub enum MaybeNumberedOrAllItemOrCategory {
+    Numbered(MaybeNumberedItemOrCategory),
     All(AllItemOrCategory),
 }
 
 /// Syntax for an item or category prefixed with a numeric amount
 #[derive_syntax]
 #[derive(Debug)]
-pub struct NumberedItemOrCategory {
-    pub num: syn::Number,
+pub struct MaybeNumberedItemOrCategory {
+    pub num: tp::Option<syn::Number>,
     pub item: ItemOrCategory,
 }
 
-/// Syntax for an item prefixed with "all" or "all but"
+/// Syntax for an item prefixed with "all", "all but", or "all but X"
 #[derive_syntax]
 #[derive(Debug)]
 pub struct AllItemOrCategory {

@@ -18,6 +18,8 @@ mod error;
 pub use error::{Error, ErrorReport};
 mod util;
 
+pub use teleparse::Span;
+
 /// Generated data
 mod generated {
     #[rustfmt::skip]

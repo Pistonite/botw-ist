@@ -786,7 +786,7 @@ game: (Running)
       [016]: (idx=16, actor=Obj_DungeonClearSeal, value=4, is_equipped=false, )
       [017]: (idx=17, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[12]: !remove 1 boko-gut 1 carrot 3 hot-frog
+----- Step[12]: !remove boko-gut carrot 3 hot-frog
 
 game: (Running)
   screen: (Inventory)
@@ -1278,7 +1278,7 @@ game: (Running)
       [016]: (idx=16, actor=Obj_DungeonClearSeal, value=4, is_equipped=false, )
       [017]: (idx=17, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[18]: drop 1 princess 1 pepper 1 shroom 1 carrot
+----- Step[18]: drop princess pepper shroom carrot
 
 game: (Running)
   screen: (Overworld)
@@ -1373,8 +1373,8 @@ game: (Running)
 
 <same>
 ----- Step[20]: hold
-  1 princess 1 pepper 1 shroom 1 carrot
-  1 wood
+  princess pepper shroom carrot
+  wood
 
 game: (Running)
   screen: (Overworld)
@@ -1475,7 +1475,7 @@ game: (Running)
       [016]: (idx=16, actor=Obj_DungeonClearSeal, value=4, is_equipped=false, )
       [017]: (idx=17, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[21]: sell 1 princess 1 pepper 1 shroom 1 carrot
+----- Step[21]: sell all materials[held]
 
 game: (Running)
   screen: (Shop)
@@ -1671,8 +1671,8 @@ game: (Running)
 
 <same>
 ----- Step[24]: hold
-  1 princess 1 pepper 1 shroom 1 carrot
-  1 wood
+  princess pepper shroom carrot
+  wood
 
 game: (Running)
   screen: (Overworld)
@@ -1769,7 +1769,7 @@ game: (Running)
       [016]: (idx=16, actor=Obj_DungeonClearSeal, value=4, is_equipped=false, )
       [017]: (idx=17, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[25]: sell 1 princess 1 pepper 1 shroom 1 carrot
+----- Step[25]: sell all materials[held]
 
 game: (Running)
   screen: (Shop)
@@ -2111,7 +2111,7 @@ game: (Running)
       [012]: (idx=12, actor=Obj_DungeonClearSeal, value=4, is_equipped=false, )
       [013]: (idx=13, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[29]: drop 1 branch 1 axe
+----- Step[29]: drop branch axe
 
 game: (Running)
   screen: (Inventory)
@@ -2716,7 +2716,7 @@ game: (Running)
       [005]: (idx=5, actor=Obj_DungeonClearSeal, value=4, is_equipped=false, )
       [006]: (idx=6, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[38]: drop 1 weapon 1 bow
+----- Step[38]: drop weapon bow
 
 game: (Running)
   screen: (Inventory)
@@ -2849,7 +2849,7 @@ game: (Running)
       [008]: (idx=8, actor=Weapon_Bow_001, value=2200, is_equipped=true, )
         weapon: (idx=0, modifier=none, )
 
------ Step[40]: unequip 1 weapon 1 bow
+----- Step[40]: unequip weapon bow
 
 game: (Running)
   screen: (Inventory)
