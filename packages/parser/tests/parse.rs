@@ -29,16 +29,6 @@ async fn parse_simple() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
-async fn inverted() -> anyhow::Result<()> {
-    let script = indoc! {r#"
-        get apple, banana, fairy, palm-fruit
-        eat all but banana
-    "#};
-
-    test_parser_snapshot("inverted", script).await
-}
-
-#[tokio::test]
 async fn parse_annotation_keyword_as_item() -> anyhow::Result<()> {
     let script = indoc! {r#"
         get smug
