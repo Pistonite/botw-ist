@@ -92,10 +92,7 @@ export class CommandUnequipAll extends AbstractProperCommand {
     }
 }
 
-export const parseASTCommandEquip: ParserItem<ASTCommandEquip, CommandEquip> = (
-    ast,
-    search,
-) => {
+export const parseASTCommandEquip: ParserItem<ASTCommandEquip, CommandEquip> = (ast, search) => {
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     return delegateParseItem(
@@ -107,10 +104,10 @@ export const parseASTCommandEquip: ParserItem<ASTCommandEquip, CommandEquip> = (
     );
 };
 
-export const parseASTCommandUnequip: ParserItem<
-    ASTCommandUnequip,
-    CommandUnequip
-> = (ast, search) => {
+export const parseASTCommandUnequip: ParserItem<ASTCommandUnequip, CommandUnequip> = (
+    ast,
+    search,
+) => {
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     return delegateParseItem(
@@ -122,10 +119,9 @@ export const parseASTCommandUnequip: ParserItem<
     );
 };
 
-export const parseASTCommandUnequipAll: ParserSafe<
-    ASTCommandUnequipAll,
-    CommandUnequipAll
-> = (ast) => {
+export const parseASTCommandUnequipAll: ParserSafe<ASTCommandUnequipAll, CommandUnequipAll> = (
+    ast,
+) => {
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     const argItemType = ast.mLiteralMaybeAllItemType1;

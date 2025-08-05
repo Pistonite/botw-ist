@@ -30,10 +30,9 @@ export class SuperCommandSwap extends AbstractProperCommand {
     }
 }
 
-export const parseASTSuperCommandSwap: ParserSafe<
-    ASTSuperCommandSwap,
-    SuperCommandSwap
-> = (ast) => {
+export const parseASTSuperCommandSwap: ParserSafe<ASTSuperCommandSwap, SuperCommandSwap> = (
+    ast,
+) => {
     const codeBlocks: CodeBlockTree = [
         codeBlockFromRange(ast.literal0, "keyword.super"),
         codeBlockFromRange(ast.literal1, "keyword.super"),
@@ -49,11 +48,7 @@ export const parseASTSuperCommandSwap: ParserSafe<
 export class SuperCommandAddSlot extends AbstractProperCommand {
     private stacks: ItemStackArg[];
     // private _slot: number;
-    constructor(
-        stacks: ItemStackArg[],
-        _slot: number,
-        codeBlocks: CodeBlockTree,
-    ) {
+    constructor(stacks: ItemStackArg[], _slot: number, codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.stacks = stacks;
         // this._slot = slot - 1; //change to 0 based
@@ -77,8 +72,7 @@ export const parseASTSuperCommandAddSlot: ParserItem<
         ast.mArgumentOneOrMoreItemsMaybeFromSlot3,
         search,
         parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot,
-        ([stacks, slot], codeBlocks) =>
-            new SuperCommandAddSlot(stacks, slot, codeBlocks),
+        ([stacks, slot], codeBlocks) => new SuperCommandAddSlot(stacks, slot, codeBlocks),
         codeBlocks,
     );
 };

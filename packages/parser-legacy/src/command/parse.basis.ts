@@ -38,13 +38,8 @@ export const parseASTIdentifier: ParserSafe<ASTIdentifier, string> = (ast) => {
 
 const MaxIdentifierDepth = 500;
 
-export const parseASTOneOrMoreIdentifiers: Parser<
-    ASTOneOrMoreIdentifiers,
-    string[]
-> = (ast) => {
-    const [ids, codeBlocks, idError] = parseASTIdentifierPrime(
-        ast.mIdentifierPrime1,
-    );
+export const parseASTOneOrMoreIdentifiers: Parser<ASTOneOrMoreIdentifiers, string[]> = (ast) => {
+    const [ids, codeBlocks, idError] = parseASTIdentifierPrime(ast.mIdentifierPrime1);
     if (!ids) {
         return [undefined, codeBlocks, idError];
     }
@@ -54,9 +49,7 @@ export const parseASTOneOrMoreIdentifiers: Parser<
     return [ids, codeBlocks, ""];
 };
 
-export const parseASTIdentifierPrime: Parser<ASTIdentifierPrime, string[]> = (
-    ast,
-) => {
+export const parseASTIdentifierPrime: Parser<ASTIdentifierPrime, string[]> = (ast) => {
     const ids: string[] = [];
     const codeBlocks: CodeBlockTree = [];
     let current = ast;
@@ -65,9 +58,7 @@ export const parseASTIdentifierPrime: Parser<ASTIdentifierPrime, string[]> = (
         if (depth > MaxIdentifierDepth) {
             return [undefined, codeBlocks, "Max Identifier Depth Exceeded"];
         }
-        const [currentId, currentCodeBlock] = parseASTIdentifier(
-            current.mIdentifier0,
-        );
+        const [currentId, currentCodeBlock] = parseASTIdentifier(current.mIdentifier0);
         ids.push(currentId);
         codeBlocks.push(currentCodeBlock);
         current = current.mIdentifierPrime1;
@@ -76,9 +67,7 @@ export const parseASTIdentifierPrime: Parser<ASTIdentifierPrime, string[]> = (
     return [ids, flattenCodeBlocks([], codeBlocks, "unknown"), ""];
 };
 
-export const parseASTItemType: ParserSafe<ASTLiteralItemType, ItemType[]> = (
-    ast,
-) => {
+export const parseASTItemType: ParserSafe<ASTLiteralItemType, ItemType[]> = (ast) => {
     if (isLiteralKeyItem(ast)) {
         return [
             [ItemType.Key],

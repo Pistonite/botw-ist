@@ -26,11 +26,7 @@ export class CommandRemove extends AbstractProperCommand {
     private stacks: ItemStackArg[];
     private verb: string;
     private slot: number;
-    constructor(
-        stacks: ItemStackArg[],
-        slot: number,
-        codeBlocks: CodeBlockTree,
-    ) {
+    constructor(stacks: ItemStackArg[], slot: number, codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.stacks = stacks;
         this.slot = slot;
@@ -49,11 +45,7 @@ export class CommandRemove extends AbstractProperCommand {
 export class CommandEat extends AbstractProperCommand {
     private stacks: ItemStackArg[];
     private slot: number;
-    constructor(
-        stacks: ItemStackArg[],
-        slot: number,
-        codeBlocks: CodeBlockTree,
-    ) {
+    constructor(stacks: ItemStackArg[], slot: number, codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.stacks = stacks;
         this.slot = slot;
@@ -79,8 +71,7 @@ export class CommandRemoveAll extends AbstractProperCommand {
     public override convert(): string {
         let s = "";
         // equipments are not sellable in V4
-        const equipmentRemoveVerb =
-            this.verb === "sell" ? "!remove" : this.verb;
+        const equipmentRemoveVerb = this.verb === "sell" ? "!remove" : this.verb;
         if (this.types.includes(ItemType.Weapon)) {
             s += `${equipmentRemoveVerb} all weapons`;
         }
@@ -123,11 +114,7 @@ export class CommandRemoveAll extends AbstractProperCommand {
 export class CommandDnp extends AbstractProperCommand {
     private stacks: ItemStackArg[];
     private slot: number;
-    constructor(
-        stacks: ItemStackArg[],
-        slot: number,
-        codeBlocks: CodeBlockTree,
-    ) {
+    constructor(stacks: ItemStackArg[], slot: number, codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.stacks = stacks;
         this.slot = slot;
@@ -137,10 +124,7 @@ export class CommandDnp extends AbstractProperCommand {
     }
 }
 
-export const parseASTCommandRemove: ParserItem<
-    ASTCommandRemove,
-    CommandRemove
-> = (ast, search) => {
+export const parseASTCommandRemove: ParserItem<ASTCommandRemove, CommandRemove> = (ast, search) => {
     const codeBlocks: CodeBlockTree = [];
     const range = ast.mLiteralRemove0.range;
     const script = getParsingCommand().substring(range[0], range[1]);
@@ -161,10 +145,7 @@ export const parseASTCommandRemove: ParserItem<
     );
 };
 
-export const parseASTCommandDrop: ParserItem<ASTCommandDrop, CommandRemove> = (
-    ast,
-    search,
-) => {
+export const parseASTCommandDrop: ParserItem<ASTCommandDrop, CommandRemove> = (ast, search) => {
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     return delegateParseItem(
@@ -176,10 +157,7 @@ export const parseASTCommandDrop: ParserItem<ASTCommandDrop, CommandRemove> = (
     );
 };
 
-export const parseASTCommandEat: ParserItem<ASTCommandEat, CommandEat> = (
-    ast,
-    search,
-) => {
+export const parseASTCommandEat: ParserItem<ASTCommandEat, CommandEat> = (ast, search) => {
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     return delegateParseItem(
@@ -191,21 +169,16 @@ export const parseASTCommandEat: ParserItem<ASTCommandEat, CommandEat> = (
     );
 };
 
-export const parseASTCommandRemoveAll: ParserSafe<
-    ASTCommandRemoveAll,
-    CommandRemoveAll
-> = (ast) => {
+export const parseASTCommandRemoveAll: ParserSafe<ASTCommandRemoveAll, CommandRemoveAll> = (
+    ast,
+) => {
     const isDrop = isLiteralDrop(ast.mLiteralRemoveOrDrop0);
-    const literal0 = isDrop
-        ? ast.mLiteralRemoveOrDrop0.literal0
-        : ast.mLiteralRemoveOrDrop0;
+    const literal0 = isDrop ? ast.mLiteralRemoveOrDrop0.literal0 : ast.mLiteralRemoveOrDrop0;
     const literal0Range = isDrop
         ? ast.mLiteralRemoveOrDrop0.literal0
         : ast.mLiteralRemoveOrDrop0.range;
     const script = getParsingCommand();
-    const isSell =
-        script.substring(literal0Range[0], literal0Range[1]).toLowerCase() ===
-        "sell";
+    const isSell = script.substring(literal0Range[0], literal0Range[1]).toLowerCase() === "sell";
     const codeBlocks: CodeBlockTree = [
         codeBlockFromRange(literal0, "keyword.command"),
         codeBlockFromRange(ast.literal1, "item.type"),
@@ -227,10 +200,7 @@ export const parseASTCommandRemoveAll: ParserSafe<
     );
 };
 
-export const parseASTCommandDnp: ParserItem<ASTCommandDnp, CommandDnp> = (
-    ast,
-    search,
-) => {
+export const parseASTCommandDnp: ParserItem<ASTCommandDnp, CommandDnp> = (ast, search) => {
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.mLiteralDnp0, "keyword.command"));
     return delegateParseItem(

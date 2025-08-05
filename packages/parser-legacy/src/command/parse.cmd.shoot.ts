@@ -1,12 +1,7 @@
 import type { ASTCommandShoot } from "./ast";
 import { AbstractProperCommand } from "./command";
 import { parseASTAmountOrAll } from "./parse.item";
-import {
-    codeBlockFromRange,
-    type CodeBlockTree,
-    type Parser,
-    type AmountAllType,
-} from "./type";
+import { codeBlockFromRange, type CodeBlockTree, type Parser, type AmountAllType } from "./type";
 
 export class CommandShootArrow extends AbstractProperCommand {
     private count: number | AmountAllType;
@@ -24,10 +19,7 @@ export class CommandShootArrow extends AbstractProperCommand {
     }
 }
 
-export const parseASTCommandShoot: Parser<
-    ASTCommandShoot,
-    CommandShootArrow
-> = (ast) => {
+export const parseASTCommandShoot: Parser<ASTCommandShoot, CommandShootArrow> = (ast) => {
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     const [amount, amountBlocks] = parseASTAmountOrAll(ast.mAmountOrAll1);

@@ -3,12 +3,7 @@ import type { ASTCommandAdd, ASTCommandPickUp } from "./ast";
 import { AbstractProperCommand } from "./command";
 import { parseASTItems } from "./parse.item";
 import { getParsingCommand } from "./parsev2";
-import {
-    codeBlockFromRange,
-    type CodeBlockTree,
-    delegateParseItem,
-    type ParserItem,
-} from "./type";
+import { codeBlockFromRange, type CodeBlockTree, delegateParseItem, type ParserItem } from "./type";
 
 export class CommandAdd extends AbstractProperCommand {
     private verb: string = "get";
@@ -28,15 +23,10 @@ export class CommandAdd extends AbstractProperCommand {
     }
 }
 
-export const parseASTCommandAdd: ParserItem<ASTCommandAdd, CommandAdd> = (
-    ast,
-    search,
-) => {
+export const parseASTCommandAdd: ParserItem<ASTCommandAdd, CommandAdd> = (ast, search) => {
     const codeBlocks: CodeBlockTree = [];
     const range = ast.mLiteralAdd0.range;
-    const script = getParsingCommand()
-        .substring(range[0], range[1])
-        .toLowerCase();
+    const script = getParsingCommand().substring(range[0], range[1]).toLowerCase();
     const isBuy = script === "buy";
     // we convert cook to get, since cook command in V4 means invoking
     // cook sim
@@ -57,10 +47,7 @@ export const parseASTCommandAdd: ParserItem<ASTCommandAdd, CommandAdd> = (
     );
 };
 
-export const parseASTCommandPickup: ParserItem<ASTCommandPickUp, CommandAdd> = (
-    ast,
-    search,
-) => {
+export const parseASTCommandPickup: ParserItem<ASTCommandPickUp, CommandAdd> = (ast, search) => {
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.mLiteralPickUp0, "keyword.command"));
     return delegateParseItem(

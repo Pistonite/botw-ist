@@ -70,11 +70,7 @@ export const parseIdentifier: ParseFunction<ASTIdentifier> = (tokens) => {
     };
 };
 
-export const createIdentifier = (
-    fullText: string,
-    start: number,
-    end: number,
-): ASTIdentifier => {
+export const createIdentifier = (fullText: string, start: number, end: number): ASTIdentifier => {
     return {
         type: "ASTIdentifier",
         value: fullText.substring(start, end),

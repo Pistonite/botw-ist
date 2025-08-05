@@ -8,10 +8,7 @@ export class CommandSync extends AbstractProperCommand {
     }
 }
 
-export const parseASTCommandSyncGameData: Parser<
-    ASTCommandSyncGameData,
-    CommandSync
-> = (ast) => {
+export const parseASTCommandSyncGameData: Parser<ASTCommandSyncGameData, CommandSync> = (ast) => {
     const codeBlocks = [
         codeBlockFromRange(ast.literal0, "keyword.command"),
         codeBlockFromRange(ast.literal1, "keyword.command"),

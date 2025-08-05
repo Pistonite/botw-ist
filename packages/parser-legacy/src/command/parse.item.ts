@@ -1,8 +1,4 @@
-import {
-    type ItemStack,
-    joinItemSearchStrings,
-    type MetaModifyOption,
-} from "./item.ts";
+import { type ItemStack, joinItemSearchStrings, type MetaModifyOption } from "./item.ts";
 import { ItemStackArg } from "./ItemStackArg";
 import {
     type ASTAmountOrAll,
@@ -29,20 +25,15 @@ import {
     type ParserSafe,
 } from "./type";
 
-export const parseASTItems: ParserItem<
-    ASTZeroOrMoreItems | ASTOneOrMoreItems,
-    ItemStackArg[]
-> = (ast, search) => {
+export const parseASTItems: ParserItem<ASTZeroOrMoreItems | ASTOneOrMoreItems, ItemStackArg[]> = (
+    ast,
+    search,
+) => {
     if (isEpsilon(ast)) {
         return [[], [], ""];
     }
     if (isSingleItem(ast)) {
-        return delegateParseItem(
-            ast,
-            search,
-            parseASTSingleItemIntoArg,
-            (x) => [x],
-        );
+        return delegateParseItem(ast, search, parseASTSingleItemIntoArg, (x) => [x]);
     }
     //if(isOneOrMoreItemStacks(ast)){
     return parseASTItemStacks(ast, search);
@@ -52,14 +43,8 @@ export const parseASTItems: ParserItem<
 
 const MaxItemStackDepth = 500;
 
-const parseASTItemStacks: ParserItem<ASTOneOrMoreItemStacks, ItemStackArg[]> = (
-    ast,
-    search,
-) => {
-    const [first, firstCodeBlocks, firstError] = parseASTItemStack(
-        ast.mItemStack0,
-        search,
-    );
+const parseASTItemStacks: ParserItem<ASTOneOrMoreItemStacks, ItemStackArg[]> = (ast, search) => {
+    const [first, firstCodeBlocks, firstError] = parseASTItemStack(ast.mItemStack0, search);
     if (!first) {
         return [undefined, firstCodeBlocks, firstError];
     }
@@ -73,10 +58,7 @@ const parseASTItemStacks: ParserItem<ASTOneOrMoreItemStacks, ItemStackArg[]> = (
         if (depth > MaxItemStackDepth) {
             return [undefined, codeBlocks, "Max item depth exceeded"];
         }
-        const [more, moreCodeBlocks, moreError] = parseASTItemStack(
-            current.mItemStack0,
-            search,
-        );
+        const [more, moreCodeBlocks, moreError] = parseASTItemStack(current.mItemStack0, search);
         codeBlocks.push(moreCodeBlocks);
         if (!more) {
             return [undefined, codeBlocks, moreError];
@@ -118,10 +100,7 @@ const parseASTItemStacks: ParserItem<ASTOneOrMoreItemStacks, ItemStackArg[]> = (
 //     return [items, codeBlocks, ""];
 // }
 
-export const parseASTItemStack: ParserItem<ASTItemStack, ItemStackArg> = (
-    ast,
-    search,
-) => {
+export const parseASTItemStack: ParserItem<ASTItemStack, ItemStackArg> = (ast, search) => {
     //const amount: number | AmountAllType;
     //const amountCodeBlocks: CodeBlockTree;
     //if(isItemStack(ast)){
@@ -130,24 +109,15 @@ export const parseASTItemStack: ParserItem<ASTItemStack, ItemStackArg> = (
     //[amount, amountCodeBlocks] = parseASTAmountOrAll(ast.mAmountOrAll0);
     //}
 
-    const [item, itemCodeBlocks, itemError] = parseASTSingleItem(
-        ast.mSingleItem1,
-        search,
-    );
-    const codeBlocks = [
-        flattenCodeBlocks([], amountCodeBlocks, "item.amount"),
-        itemCodeBlocks,
-    ];
+    const [item, itemCodeBlocks, itemError] = parseASTSingleItem(ast.mSingleItem1, search);
+    const codeBlocks = [flattenCodeBlocks([], amountCodeBlocks, "item.amount"), itemCodeBlocks];
     if (!item) {
         return [undefined, codeBlocks, itemError];
     }
     return [new ItemStackArg(item, amount), codeBlocks, ""];
 };
 
-export const parseASTAmountOrAll: ParserSafe<
-    ASTAmountOrAll,
-    number | AmountAllType
-> = (ast) => {
+export const parseASTAmountOrAll: ParserSafe<ASTAmountOrAll, number | AmountAllType> = (ast) => {
     if (isInteger(ast)) {
         const [amount, amountCodeBlocks] = parseASTInteger(ast);
         return [amount, flattenCodeBlocks([], amountCodeBlocks, "item.amount")];
@@ -156,10 +126,7 @@ export const parseASTAmountOrAll: ParserSafe<
     }
 };
 
-export const parseASTSingleItemIntoArg: ParserItem<
-    ASTSingleItem,
-    ItemStackArg
-> = (ast, search) => {
+export const parseASTSingleItemIntoArg: ParserItem<ASTSingleItem, ItemStackArg> = (ast, search) => {
     const [item, codeBlocks, itemError] = parseASTSingleItem(ast, search);
     if (!item) {
         return [undefined, codeBlocks, itemError];
@@ -167,21 +134,15 @@ export const parseASTSingleItemIntoArg: ParserItem<
     return [new ItemStackArg(item, 1), codeBlocks, itemError];
 };
 
-export const parseASTSingleItem: ParserItem<ASTSingleItem, ItemStack> = (
-    ast,
-    search,
-) => {
-    const [itemStrings, itemCodeBlocks, itemStringError] =
-        parseASTOneOrMoreIdentifiers(ast.mOneOrMoreIdentifiers0);
+export const parseASTSingleItem: ParserItem<ASTSingleItem, ItemStack> = (ast, search) => {
+    const [itemStrings, itemCodeBlocks, itemStringError] = parseASTOneOrMoreIdentifiers(
+        ast.mOneOrMoreIdentifiers0,
+    );
     if (itemStringError || !itemStrings) {
         return [undefined, itemCodeBlocks, itemStringError];
     }
-    const codeBlocks: CodeBlockTree = [
-        flattenCodeBlocks([], itemCodeBlocks, "item.name"),
-    ];
-    const [meta, metaCodeBlocks, metaError] = parseASTMetadata(
-        ast.mMaybeMetadata1,
-    );
+    const codeBlocks: CodeBlockTree = [flattenCodeBlocks([], itemCodeBlocks, "item.name")];
+    const [meta, metaCodeBlocks, metaError] = parseASTMetadata(ast.mMaybeMetadata1);
     codeBlocks.push(metaCodeBlocks);
     if (!meta) {
         return [undefined, codeBlocks, metaError];

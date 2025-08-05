@@ -39,10 +39,10 @@ export class CommandBreakSlots extends AbstractProperCommand {
     }
 }
 
-export const parseASTCommandBreakSlots: ParserItem<
-    ASTCommandBreakSlots,
-    CommandBreakSlots
-> = (ast, search) => {
+export const parseASTCommandBreakSlots: ParserItem<ASTCommandBreakSlots, CommandBreakSlots> = (
+    ast,
+    search,
+) => {
     const codeBlocks: CodeBlock[] = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     const [numberToBreak, numberBlocks] = parseASTInteger(ast.mInteger1);

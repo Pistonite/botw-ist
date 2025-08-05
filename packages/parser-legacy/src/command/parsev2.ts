@@ -57,17 +57,9 @@ import {
     parseASTSuperCommandSwap,
 } from "./parse.cmd.super";
 import { parseASTCommandSyncGameData } from "./parse.cmd.sync";
-import {
-    parseASTCommandEnterTrial,
-    parseASTCommandExitTrial,
-} from "./parse.cmd.trial";
+import { parseASTCommandEnterTrial, parseASTCommandExitTrial } from "./parse.cmd.trial";
 import { parseASTCommandWriteMetadata } from "./parse.cmd.write";
-import {
-    codeBlockFromRange,
-    delegateParseItem,
-    type ParserItem,
-    withNoError,
-} from "./type";
+import { codeBlockFromRange, delegateParseItem, type ParserItem, withNoError } from "./type";
 
 // a bit of a hack to have a context for what
 // the current command being parsed is, which is required

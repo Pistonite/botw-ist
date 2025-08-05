@@ -1,10 +1,7 @@
 import type { ASTClauseFromSlot, ASTClauseInSlot } from "./ast";
 import { codeBlockFromRange, type Parser } from "./type";
 
-export const parseASTClauseSlot: Parser<
-    ASTClauseFromSlot | ASTClauseInSlot,
-    number
-> = (ast) => {
+export const parseASTClauseSlot: Parser<ASTClauseFromSlot | ASTClauseInSlot, number> = (ast) => {
     const codeBlocks = [
         codeBlockFromRange(ast.literal0, "keyword.other"),
         codeBlockFromRange(ast.mLiteralSlot1, "keyword.other"),

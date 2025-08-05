@@ -88,10 +88,7 @@ export const convertItem = (
     slotIndex: number,
     replacePlaceholder: boolean,
 ): string => {
-    return (
-        convertItemName(item.ident, replacePlaceholder) +
-        convertItemMeta(item.meta, slotIndex)
-    );
+    return convertItemName(item.ident, replacePlaceholder) + convertItemMeta(item.meta, slotIndex);
 };
 
 const convertItemName = (name: string, replacePlaceholder: boolean): string => {
@@ -99,31 +96,16 @@ const convertItemName = (name: string, replacePlaceholder: boolean): string => {
     if (replacePlaceholder) {
         // In V3, "bow", "weapon", "shield" are placeholder items.
         // These were removed in V4, since the system and syntax is much better
-        if (
-            matchName === "bow" ||
-            matchName === "bows" ||
-            matchName === "bowes"
-        ) {
+        if (matchName === "bow" || matchName === "bows" || matchName === "bowes") {
             return "traveller-bow";
         }
-        if (
-            matchName === "weapon" ||
-            matchName === "weapons" ||
-            matchName === "weapones"
-        ) {
+        if (matchName === "weapon" || matchName === "weapons" || matchName === "weapones") {
             return "axe";
         }
-        if (
-            matchName === "shield" ||
-            matchName === "shields" ||
-            matchName === "shieldes"
-        ) {
+        if (matchName === "shield" || matchName === "shields" || matchName === "shieldes") {
             return "pot-lid";
         }
-        if (
-            matchName === "food" ||
-            matchName === "foodes"
-        ) {
+        if (matchName === "food" || matchName === "foodes") {
             return "dubious-food";
         }
         if (matchName === "foods") {
@@ -139,10 +121,7 @@ const convertItemName = (name: string, replacePlaceholder: boolean): string => {
     return name;
 };
 
-export const convertItemMeta = (
-    meta: MetaModifyOption | undefined,
-    slotIndex: number,
-): string => {
+export const convertItemMeta = (meta: MetaModifyOption | undefined, slotIndex: number): string => {
     if (slotIndex > 1 || (meta && Object.keys(meta).length > 0)) {
         const props: string[] = [];
         if (meta) {

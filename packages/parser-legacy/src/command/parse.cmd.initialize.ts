@@ -2,12 +2,7 @@ import type { ItemStackArg } from "./ItemStackArg";
 import type { ASTCommandInitialize } from "./ast";
 import { AbstractProperCommand } from "./command";
 import { parseASTItems } from "./parse.item";
-import {
-    codeBlockFromRange,
-    type CodeBlockTree,
-    delegateParseItem,
-    type ParserItem,
-} from "./type";
+import { codeBlockFromRange, type CodeBlockTree, delegateParseItem, type ParserItem } from "./type";
 
 export class CommandInitialize extends AbstractProperCommand {
     private stacks: ItemStackArg[];
@@ -21,14 +16,12 @@ export class CommandInitialize extends AbstractProperCommand {
     }
 }
 
-export const parseASTCommandInitialize: ParserItem<
-    ASTCommandInitialize,
-    CommandInitialize
-> = (ast, search) => {
+export const parseASTCommandInitialize: ParserItem<ASTCommandInitialize, CommandInitialize> = (
+    ast,
+    search,
+) => {
     const codeBlocks: CodeBlockTree = [];
-    codeBlocks.push(
-        codeBlockFromRange(ast.mLiteralInitialize0, "keyword.command"),
-    );
+    codeBlocks.push(codeBlockFromRange(ast.mLiteralInitialize0, "keyword.command"));
     return delegateParseItem(
         ast.mZeroOrMoreItems1,
         search,

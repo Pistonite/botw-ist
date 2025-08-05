@@ -23,13 +23,10 @@ export const parseASTArgumentSingleItemMaybeInSlot: ParserItem<
     [ItemStack, number]
 > = (ast, search) => {
     const [id, idBlocks] = parseASTIdentifier(ast.mIdentifier0);
-    const codeBlocks: CodeBlockTree = [
-        flattenCodeBlocks([], idBlocks, "item.name"),
-    ];
-    const [result, restBlocks, restError] =
-        parseASTArgumentSingleItemMaybeInSlotAIdentifier(
-            ast.mArgumentSingleItemMaybeInSlotAIdentifier1,
-        );
+    const codeBlocks: CodeBlockTree = [flattenCodeBlocks([], idBlocks, "item.name")];
+    const [result, restBlocks, restError] = parseASTArgumentSingleItemMaybeInSlotAIdentifier(
+        ast.mArgumentSingleItemMaybeInSlotAIdentifier1,
+    );
     codeBlocks.push(restBlocks);
     if (!result) {
         return [undefined, codeBlocks, restError];
@@ -58,10 +55,9 @@ const parseASTArgumentSingleItemMaybeInSlotAIdentifier: Parser<
     return parseC2(ast);
 };
 
-const parseC2: Parser<
-    ASTArgumentSingleItemMaybeInSlotAIdentifierC2,
-    [string[], number]
-> = (ast) => {
+const parseC2: Parser<ASTArgumentSingleItemMaybeInSlotAIdentifierC2, [string[], number]> = (
+    ast,
+) => {
     const [id, idBlocks] = parseASTIdentifier(ast.mIdentifier0);
     const codeBlocks = [flattenCodeBlocks([], idBlocks, "item.name")];
     return delegateParse(
