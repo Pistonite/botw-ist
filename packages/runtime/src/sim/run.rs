@@ -53,7 +53,15 @@ impl Run {
     {
         self.output.states.reserve(parsed.steps.len());
 
-        let mut state = sim::State::default();
+        let process = match runtime.initial_process() {
+            Ok(x) => x,
+            Err(e) => {
+                log::error!("unexpected: fail to get initial process from runtime: {e}");
+                return MaybeAborted::Aborted;
+            }
+        };
+
+        let mut state = sim::State::new(process);
         let mut commands = Vec::with_capacity(parsed.steps.len());
         let mut ctx = sim::Context::new(self.handle, runtime);
 

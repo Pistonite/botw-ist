@@ -27,9 +27,6 @@ static_assertions.workspace = true
 wasm-bindgen-spawn = { version = "0.0.2", optional = true }
 web-sys = { version = "0.3.77", features = ["console"], optional = true }
 
-[dev-dependencies]
-tokio = { version = "1.45.0", features = ["macros", "rt-multi-thread"] }
-
 [features]
 # default = ["wasm"]
 wasm = [

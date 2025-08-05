@@ -30,58 +30,24 @@ tasks:
     desc: Refresh script test snapshots
     aliases: [ust]
     env:
-      SKYBOOK_RUNTIME_TEST_REFRESH: true
       SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
-      RUST_BACKTRACE: 1
-      RUST_LOG: info
     cmds:
-      - cargo run --release
+      - cargo run --release -- --refresh {{.CLI_ARGS}}
 
   update-trace-hash:
     desc: Run tests and update the trace hash file
-    env:
-      SKYBOOK_RUNTIME_TEST_REFRESH_HASH: true
-      SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
-      RUST_BACKTRACE: 1
-      RUST_LOG: info
     cmds:
-      - cargo run --release
+      - cargo run --release -- --trace-hash {{.CLI_ARGS}}
 
-  run-full:
+  run:
     desc: Run the tests with the full image
-    env:
-      SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
-      RUST_BACKTRACE: 1
-      RUST_LOG: info
     cmds:
-      - cargo run --release
-
-  run-full-debug:
-    desc: Run the tests with the full image and trace
-    env:
-      SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
-      RUST_BACKTRACE: 1
-      RUST_LOG: debug
-    cmds:
-      - cargo run --release
-
-  run-full-trace:
-    desc: Run the tests with the full image and trace
-    env:
-      SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-full.bfi
-      RUST_BACKTRACE: 1
-      RUST_LOG: trace
-    cmds:
-      - cargo run --release
+      - cargo run --release -- {{.CLI_ARGS}}
 
   run-mini:
     desc: Run the tests with the mini image
-    env:
-      SKYBOOK_RUNTIME_TEST_IMAGE: ./data/program-mini.bfi
-      RUST_BACKTRACE: 1
-      RUST_LOG: info
     cmds:
-      - cargo run --release
+      - cargo run --release -- {{.CLI_ARGS}} --mini
 
   diff:
     desc: Diff script test snapshots

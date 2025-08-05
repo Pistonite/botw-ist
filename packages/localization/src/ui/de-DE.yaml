@@ -101,6 +101,8 @@ main.visible_inventory.holding.desc: "Gegenstände werden derzeit im Inventar ge
 main.visible_inventory.holding.title: "In der Hand"
 main.visible_inventory.mcount.desc: "Die Anzahl der Items im Inventar, die in der Listvariablen gespeichert ist."
 main.visible_inventory.title: "Sichtbares Inventar"
+main.visible_inventory.trial.desc: "Eine Testphase ist aktiv. Inventaränderungen werden erst nach Ende der Testphase mit GDT synchronisiert."
+main.visible_inventory.trial.title: "Testphase"
 main.visible_inventory.view_error: "Inventar kann nicht angezeigt werden!"
 
 category.Armor: "Rüstung"

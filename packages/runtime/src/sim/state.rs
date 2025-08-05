@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
 
-use blueflame::game::gdt;
+use blueflame::game::{gdt, singleton_instance};
 use blueflame::processor::{CrashReport, Process};
 use skybook_parser::cir;
 use teleparse::Span;
@@ -10,8 +10,10 @@ use crate::error::{Report, sim_error};
 use crate::{exec, sim};
 
 /// The state of one step in the simulation.
-#[derive(Clone, Default)]
+#[derive(Clone)]
 pub struct State {
+    /// State of the process when the game just started
+    pub initial_process: Process,
     /// Current game state
     pub game: Game,
     /// Current args
@@ -26,6 +28,15 @@ pub struct State {
 }
 
 impl State {
+    pub fn new(initial_process: Process) -> Self {
+        Self {
+            initial_process,
+            game: Game::Uninit,
+            args: None,
+            saves: Arc::new(vec![]),
+            manual_save: None
+        }
+    }
     /// Get names of all saves
     pub fn save_names(&self) -> Vec<String> {
         self.saves
@@ -557,14 +568,10 @@ impl State {
         })?;
         let data = recv
             .recv()
-            .map_err(|x| exec::Error::RecvResult(x.to_string()));
-        let data = match data {
-            Ok(x) => x,
-            Err(e) => {
-                log::error!("fail to receive save data: {e}");
-                return Err(e);
-            }
-        };
+            // probably because game crashed
+            .inspect_err(|e| {
+                log::warn!("did not receive save data: {e}");
+            }).ok().flatten();
         Ok(new_state.map(|mut state| {
             match data {
                 Some(data) => state.set_save_by_name(name, data),
@@ -587,13 +594,7 @@ impl State {
         // find the save
         let save = if new_game {
             // use the GDT from "new game"
-            let proc = match rt.runtime().initial_process() {
-                Ok(x) => x,
-                Err(e) => {
-                    return Ok(Report::spanned(self, rt.span, e));
-                }
-            };
-            let gdt = match sim::actions::get_save(&proc) {
+            let gdt = match sim::actions::get_save(&self.initial_process) {
                 Ok(x) => x,
                 Err(e) => {
                     log::error!("failed to load new-game save: {e}");
@@ -746,36 +747,47 @@ impl State {
 
         let new_state = execute_command!(self, rt, cpu, sys, errors => {
             let mut manual_save = manual_save;
+            let mut dlc_version = None;
             sim::actions::system::exec_sys_commands(&mut cpu, sys, 
-                errors, &cmds, &mut saves, &mut manual_save)?;
-            if send.send((saves, manual_save)).is_err() {
+                errors, &cmds, &mut saves, &mut manual_save, &mut dlc_version)?;
+            if send.send((saves, manual_save, dlc_version)).is_err() {
                 log::error!("failed to send system command output to runtime main thread");
             }
             Ok(())
         })?;
         let data = recv
             .recv()
-            .map_err(|x| exec::Error::RecvResult(x.to_string()));
-        let data = match data {
-            Ok(x) => x,
-            Err(e) => {
-                log::error!("fail to receive system command data: {e}");
-                return Err(e);
-            }
-        };
+            // probably because game crashed, not a big problem
+            .inspect_err(|e| {
+                log::warn!("did not receive system command data: {e}")
+            })
+                .ok();
+        
         Ok(new_state.map(|mut state| {
-            let (mut out_saves, out_manual_save) = data;
-            let saves = Arc::make_mut(&mut state.saves);
-            saves.retain_mut(|(name, data)| {
-                match out_saves.remove(name) {
-                    Some(out_data) => {
-                        *data = out_data;
-                        true
+            if let Some((mut out_saves, out_manual_save, dlc_version)) = data {
+                let saves = Arc::make_mut(&mut state.saves);
+                saves.retain_mut(|(name, data)| {
+                    match out_saves.remove(name) {
+                        Some(out_data) => {
+                            *data = out_data;
+                            true
+                        }
+                        None => false
                     }
-                    None => false
+                });
+                state.manual_save = out_manual_save;
+                if let Some(ver) = dlc_version {
+                    // update the DLC version of the initial process,
+                    // so when they reboot, it will have the updated DLC version
+                    let m = state.initial_process.memory();
+                    if let Ok(aocm) = singleton_instance!(aocm(m)) {
+                        let m = state.initial_process.memory_mut();
+                        if let Err(e) = aocm.set_dlc_version(ver, m) {
+                            log::error!("failed to set DLC version in initial process: {e}");
+                        }
+                    }
                 }
-            });
-            state.manual_save = out_manual_save;
+            }
             state
         }))
     }

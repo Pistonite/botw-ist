@@ -2,13 +2,13 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use blueflame::game::{gdt, singleton_instance};
-use blueflame::memory::mem;
 use blueflame::processor::{self, Cpu2};
 use skybook_parser::cir;
 
 use crate::error::{ErrorReport, sim_error};
 use crate::sim;
 
+// TODO: probably better ways to handle this, when we fix the scheduling
 pub fn exec_sys_commands(
     ctx: &mut sim::Context<&mut Cpu2>,
     sys: &mut sim::GameSystems,
@@ -16,16 +16,18 @@ pub fn exec_sys_commands(
     cmds: &[cir::SysCommand],
     saves: &mut BTreeMap<String, Arc<gdt::TriggerParam>>,
     manual_save: &mut Option<Arc<gdt::TriggerParam>>,
+    dlc_version: &mut Option<u32>,
 ) -> Result<(), processor::Error> {
     for cmd in cmds {
         use cir::SysCommandData as S;
         match &cmd.data {
             S::Dlc(ver) => {
-                let memory = ctx.cpu().proc.memory();
-                let aocm_ptr = singleton_instance!(aocm(memory))?;
-                mem! { (ctx.cpu().proc.memory_mut()):
-                    *(&aocm_ptr->mVersion) = (*ver as u32);
-                }
+                let ver = *ver as u32;
+                let m = ctx.cpu().proc.memory();
+                let aocm = singleton_instance!(aocm(m))?;
+                let m = ctx.cpu().proc.memory_mut();
+                aocm.set_dlc_version(ver, m)?;
+                *dlc_version = Some(ver);
             }
             S::DeleteSave(name) => match name {
                 None => { *manual_save = None; }

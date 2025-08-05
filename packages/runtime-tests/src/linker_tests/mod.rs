@@ -15,8 +15,8 @@ macro_rules! run {
     };
 }
 
-pub fn run(process: &Process, failures_dir: &Path) -> anyhow::Result<bool> {
-    log::info!("running linker tests");
+pub fn run(process: &Process, failures_dir: &Path) -> cu::Result<bool> {
+    cu::debug!("running linker tests");
     let threads = if cfg!(feature = "single-thread") {
         1
     } else {
@@ -41,27 +41,32 @@ pub fn run(process: &Process, failures_dir: &Path) -> anyhow::Result<bool> {
 
     let total_count = handles.len();
     let mut passed_count = 0;
-    for handle in handles {
-        let result = handle.recv.recv().unwrap();
-        match result {
-            LinkerTestResult::Ok => {
-                log::info!("PASS {}", handle.name);
-                passed_count += 1;
+    {
+        let bar = cu::progress_bar(total_count, "linker tests");
+        for (i, handle) in handles.into_iter().enumerate() {
+            let result = handle.recv.recv().unwrap();
+            match result {
+                LinkerTestResult::Ok => {
+                    cu::info!("PASS {}", handle.name);
+                    passed_count += 1;
+                }
+                LinkerTestResult::Panic(trace) => {
+                    cu::error!("FAIL {} - panic", handle.name);
+                    let file_path = failures_dir.join(handle.name.replace(':', "_"));
+                    let _ = std::fs::write(file_path, trace.to_string());
+                }
+                LinkerTestResult::Crash(crash) => {
+                    cu::error!("FAIL {} - crash", handle.name);
+                    let file_path = failures_dir.join(handle.name.replace(':', "_"));
+                    let _ = std::fs::write(file_path, format!("{crash:?}"));
+                }
             }
-            LinkerTestResult::Panic(trace) => {
-                log::error!("FAIL {} - panic", handle.name);
-                let file_path = failures_dir.join(handle.name.replace(':', "_"));
-                let _ = std::fs::write(file_path, trace.to_string());
-            }
-            LinkerTestResult::Crash(crash) => {
-                log::error!("FAIL {} - crash", handle.name);
-                let file_path = failures_dir.join(handle.name.replace(':', "_"));
-                let _ = std::fs::write(file_path, format!("{crash:?}"));
-            }
+            let failed_count = i+1 - passed_count;
+            cu::progress!(&bar, i+1, "{failed_count} failed");
         }
     }
 
-    log::info!("{passed_count}/{total_count} linker tests passed");
+    cu::info!("{passed_count}/{total_count} linker tests passed");
     pool.join();
 
     Ok(passed_count == total_count)

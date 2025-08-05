@@ -101,6 +101,8 @@ main.visible_inventory.holding.desc: "Des objets sont actuellement tenus dans l'
 main.visible_inventory.holding.title: "En main"
 main.visible_inventory.mcount.desc: "Le nombre d'objets dans l'inventaire stocké dans la variable de liste."
 main.visible_inventory.title: "Inventaire Visible"
+main.visible_inventory.trial.desc: "Un essai est actif. Les modifications d'inventaire ne sont pas synchronisées avec GDT tant que l'essai n'est pas terminé."
+main.visible_inventory.trial.title: "Essai"
 main.visible_inventory.view_error: "Impossible d'afficher l'inventaire !"
 
 category.Armor: "Armure"

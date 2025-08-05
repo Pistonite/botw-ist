@@ -94,6 +94,7 @@ impl From<ArchivedGameVer> for GameVer {
 /// Version of the DLC
 #[derive(
     Debug,
+    Default,
     Clone,
     Copy,
     PartialEq,
@@ -111,6 +112,7 @@ impl From<ArchivedGameVer> for GameVer {
 #[repr(u8)]
 pub enum DlcVer {
     /// Not installed
+    #[default]
     None,
     /// Version 1.0.0 (Day 1 stuff)
     V100,

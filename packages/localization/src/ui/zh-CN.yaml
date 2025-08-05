@@ -101,6 +101,8 @@ main.visible_inventory.holding.desc: "背包界面处于手持模式, 无法执�
 main.visible_inventory.holding.title: "手持中"
 main.visible_inventory.mcount.desc: "储存于列表变量中的物品数量."
 main.visible_inventory.title: "可视背包"
+main.visible_inventory.trial.desc: "正在进行某挑战。挑战结束前，背包更改不会同步到GDT。"
+main.visible_inventory.trial.title: "挑战模式"
 main.visible_inventory.view_error: "无法显示背包！"
 
 category.Armor: "防具"
