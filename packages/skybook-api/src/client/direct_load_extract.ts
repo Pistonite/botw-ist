@@ -11,11 +11,8 @@ export const extractDirectLoad = (): DirectLoad | undefined => {
     }
     if ("__skybook_direct_load" in (globalThis as any).window) {
         // Remove script tag that's already executed
-        const directLoadPayload: DirectLoad = (globalThis as any).window
-            .__skybook_direct_load;
-        (globalThis as any).document
-            .querySelector("script[data-skybook-direct-load]")
-            ?.remove();
+        const directLoadPayload: DirectLoad = (globalThis as any).window.__skybook_direct_load;
+        (globalThis as any).document.querySelector("script[data-skybook-direct-load]")?.remove();
         // verify payload
         if (
             directLoadPayload.content &&

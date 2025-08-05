@@ -4,8 +4,4 @@
  * Generic error report type with an inner error and span
  * of where the error occurred.
  */
-export type ErrorReport<T> = {
-    span: [number, number];
-    isWarning: boolean;
-    error: T;
-};
+export type ErrorReport<T> = { span: [number, number]; isWarning: boolean; error: T };

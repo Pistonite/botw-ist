@@ -211,9 +211,7 @@ export const parseEnvDlcVersion = (dlc: string): number => {
     }
 };
 /** Input is hex string with optional 0x prefix */
-export const parseRegionStart = (
-    addr: string,
-): Result<string, AbsAddrError> => {
+export const parseRegionStart = (addr: string): Result<string, AbsAddrError> => {
     return parseAbsAddrStringInternal(addr, true);
 };
 
@@ -260,9 +258,7 @@ const parseAbsAddrStringInternal = (
 };
 
 /** Input is hex string with optional 0x prefix */
-export const parseRegionSize = (
-    num: string,
-): Result<number, RegionSizeError> => {
+export const parseRegionSize = (num: string): Result<number, RegionSizeError> => {
     if (!num) {
         return { val: 0 };
     }
