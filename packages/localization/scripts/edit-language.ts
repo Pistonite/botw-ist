@@ -10,9 +10,10 @@ async function main() {
         .map((file) => file.substring(0, file.length - 5));
     const otherLangContent = await Promise.all(
         otherLangs.map(async (lang) => {
-            return YAML.load(
-                await Bun.file(`src/ui/${lang}.yaml`).text(),
-            ) as Record<string, string>;
+            return YAML.load(await Bun.file(`src/ui/${lang}.yaml`).text()) as Record<
+                string,
+                string
+            >;
         }),
     );
     const [_execPath, _scriptPath, inputFile] = process.argv;
@@ -27,9 +28,10 @@ async function main() {
                 Record<string, string>
             >;
         } else {
-            inputContent = YAML.load(
-                await Bun.file(inputFile).text(),
-            ) as Record<string, Record<string, string>>;
+            inputContent = YAML.load(await Bun.file(inputFile).text()) as Record<
+                string,
+                Record<string, string>
+            >;
         }
         for (const language in inputContent) {
             if (language === "en-US") {
@@ -97,10 +99,7 @@ const parseLangFile = async (file: string): Promise<LangFile> => {
 };
 
 /** Make sure the content and blocks are the same in the lang file to fix */
-const makeLangFile = (
-    basedOnLang: LangFile,
-    content: Record<string, string>,
-) => {
+const makeLangFile = (basedOnLang: LangFile, content: Record<string, string>) => {
     const newBlocks: LangFile = [];
     for (const block of basedOnLang) {
         const newBlock: LangBlock = {

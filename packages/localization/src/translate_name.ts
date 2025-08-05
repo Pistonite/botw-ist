@@ -1,10 +1,6 @@
 import type { Category } from "@pistonite/skybook-api";
 
-import {
-    type Translator,
-    translateGenerated,
-    translateUI,
-} from "./translate.ts";
+import { type Translator, translateGenerated, translateUI } from "./translate.ts";
 
 /** Translate item category string enum */
 export const translateCategory = (
