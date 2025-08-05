@@ -20,20 +20,20 @@ optional = true
 serde.workspace = true
 derive_more.workspace = true
 enumset.workspace = true
-rand_xoshiro = "0.6.0"
+rand_xoshiro = "0.7.0"
 sha2.workspace = true
 thiserror.workspace = true
 paste = "1.0.15" # TODO --cleanup: do we need this?
-crc32fast = "1.4.2"
+crc32fast = "1.5.0"
 log.workspace = true
 static_assertions.workspace = true
-flate2 = { version = "1.0.35", default-features = false, features = ["rust_backend"] } # explicitly request pure-rust backend
-phf = { version = "0.11.3", features = ["macros"] }
+flate2 = { version = "1.1.2", default-features = false, features = ["rust_backend"] } # explicitly request pure-rust backend
+phf = { version = "0.12.1", features = ["macros"] }
 no-panic = "0.1.35"
 enum-map = "2.7.3"
 num-traits = "0.2.19"
 bit-set = "0.8.0"
-rkyv = "0.8.10"
+rkyv = "0.8.11"
 bitfield-struct = "0.11.0"
 
 [dev-dependencies]

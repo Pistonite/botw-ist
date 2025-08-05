@@ -20,6 +20,7 @@ enumset = "1.1.6"
 env_logger = "0.11.8"
 js-sys = "0.3.77"
 log = "0.4.27"
+oneshot = "0.1.11"
 serde = { version = "1.0.219", features = ["derive"] }
 sha2 = "0.10.9"
 static_assertions = "1.1.0"
