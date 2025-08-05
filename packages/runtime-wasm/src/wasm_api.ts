@@ -57,8 +57,7 @@ export class WasmApi implements NativeApi<number> {
         const isMinBuild = (self as any)["__min"] as boolean;
         const wasmModuleBase = (self as any)["__skybook_path_base"] as string;
         const wasmModulePath = wasmModuleBase + ".wasm";
-        const wasmBindgenJSPath =
-            wasmModuleBase + (isMinBuild ? ".min.js" : ".js");
+        const wasmBindgenJSPath = wasmModuleBase + (isMinBuild ? ".min.js" : ".js");
         await wasm_bindgen({ module_or_path: wasmModulePath });
         await this.exec(() => {
             return wasm_bindgen.module_init(wasmModulePath, wasmBindgenJSPath);
@@ -90,20 +89,13 @@ export class WasmApi implements NativeApi<number> {
         });
     }
 
-    public parseScript(
-        script: string,
-        resolveQuotedItem: QuotedItemResolverFn,
-    ): Pwr<number> {
+    public parseScript(script: string, resolveQuotedItem: QuotedItemResolverFn): Pwr<number> {
         return this.exec(() => {
             return wasm_bindgen.parse_script(script, resolveQuotedItem);
         });
     }
 
-    public parseScriptSemantic(
-        script: string,
-        start: number,
-        end: number,
-    ): Pwr<Uint32Array> {
+    public parseScriptSemantic(script: string, start: number, end: number): Pwr<Uint32Array> {
         return this.exec(() => {
             return wasm_bindgen.parse_script_semantic(script, start, end);
         });
@@ -151,11 +143,7 @@ export class WasmApi implements NativeApi<number> {
         notifyFn: (upToBytePos: number, outputPtr: number) => Promise<void>,
     ): Pwr<MaybeAborted<number>> {
         return this.exec(() => {
-            return wasm_bindgen.run_parsed(
-                parsedOutputPtr,
-                taskHandlePtr,
-                notifyFn,
-            );
+            return wasm_bindgen.run_parsed(parsedOutputPtr, taskHandlePtr, notifyFn);
         });
     }
 
@@ -171,11 +159,7 @@ export class WasmApi implements NativeApi<number> {
         bytePos: number,
     ): Pwr<Result<InvView_PouchList, RuntimeViewError>> {
         return this.exec(() => {
-            return wasm_bindgen.get_pouch_list(
-                runOutputPtr,
-                parseOutputPtr,
-                bytePos,
-            );
+            return wasm_bindgen.get_pouch_list(runOutputPtr, parseOutputPtr, bytePos);
         });
     }
 
@@ -185,11 +169,7 @@ export class WasmApi implements NativeApi<number> {
         bytePos: number,
     ): Pwr<Result<InvView_Gdt, RuntimeViewError>> {
         return this.exec(() => {
-            return wasm_bindgen.get_gdt_inventory(
-                runOutputPtr,
-                parseOutputPtr,
-                bytePos,
-            );
+            return wasm_bindgen.get_gdt_inventory(runOutputPtr, parseOutputPtr, bytePos);
         });
     }
 
@@ -199,11 +179,7 @@ export class WasmApi implements NativeApi<number> {
         bytePos: number,
     ): Pwr<Result<InvView_Overworld, RuntimeViewError>> {
         return this.exec(() => {
-            return wasm_bindgen.get_overworld_items(
-                runOutputPtr,
-                parseOutputPtr,
-                bytePos,
-            );
+            return wasm_bindgen.get_overworld_items(runOutputPtr, parseOutputPtr, bytePos);
         });
     }
 
@@ -213,11 +189,7 @@ export class WasmApi implements NativeApi<number> {
         bytePos: number,
     ): Pwr<string> {
         return this.exec(() => {
-            return wasm_bindgen.get_crash_info(
-                runOutputPtr,
-                parseOutputPtr,
-                bytePos,
-            );
+            return wasm_bindgen.get_crash_info(runOutputPtr, parseOutputPtr, bytePos);
         });
     }
 
@@ -227,11 +199,7 @@ export class WasmApi implements NativeApi<number> {
         bytePos: number,
     ): Pwr<string[]> {
         return this.exec(() => {
-            return wasm_bindgen.get_save_names(
-                runOutputPtr,
-                parseOutputPtr,
-                bytePos,
-            );
+            return wasm_bindgen.get_save_names(runOutputPtr, parseOutputPtr, bytePos);
         });
     }
 
@@ -242,12 +210,7 @@ export class WasmApi implements NativeApi<number> {
         name: string | undefined,
     ): Pwr<Result<InvView_Gdt, RuntimeViewError>> {
         return this.exec(() => {
-            return wasm_bindgen.get_save_inventory(
-                runOutputPtr,
-                parseOutputPtr,
-                bytePos,
-                name,
-            );
+            return wasm_bindgen.get_save_inventory(runOutputPtr, parseOutputPtr, bytePos, name);
         });
     }
 

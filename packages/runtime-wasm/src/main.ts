@@ -19,13 +19,7 @@ async function boot() {
     const parseMgr = new ParseMgr(wapi);
     const runMgr = new RunMgr(wapi, parseMgr, taskMgr);
 
-    const api = createRuntimeWorker(
-        wapi,
-        taskMgr,
-        parseMgr,
-        runMgr,
-        IndexedDBImageMgr,
-    );
+    const api = createRuntimeWorker(wapi, taskMgr, parseMgr, runMgr, IndexedDBImageMgr);
 
     await wxWorkerGlobal()({
         app: skybookRuntimeApp(api, resolveAppPromise),
