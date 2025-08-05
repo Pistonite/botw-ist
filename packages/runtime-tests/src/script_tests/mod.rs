@@ -12,9 +12,12 @@ use skybook_runtime::MaybeAborted;
 use skybook_runtime::sim;
 use tokio::task::JoinSet;
 
-pub fn run(runtime: Arc<sim::Runtime>, refresh_snapshot: bool, only_test: Option<String>) -> cu::Result<bool> {
+pub fn run(
+    runtime: Arc<sim::Runtime>,
+    refresh_snapshot: bool,
+    only_test: Option<String>,
+) -> cu::Result<bool> {
     cu::debug!("running script tests");
-
 
     let snapshots_dir = Path::new("snapshots");
     cu::fs::ensure_dir(snapshots_dir)?;
@@ -49,9 +52,10 @@ pub fn run(runtime: Arc<sim::Runtime>, refresh_snapshot: bool, only_test: Option
     }
 
     let total_count = test_names.len();
-    let passed_count = cu::co::spawn(
-        async move { run_tests(runtime, test_names, refresh_snapshot).await }
-    ).join()?.context("there were failures running script tests")?;
+    let passed_count =
+        cu::co::spawn(async move { run_tests(runtime, test_names, refresh_snapshot).await })
+            .join()?
+            .context("there were failures running script tests")?;
 
     cu::info!("{passed_count}/{total_count} script tests passed");
 
@@ -78,12 +82,8 @@ async fn run_tests(
 
         let parsed = Arc::new(parsed);
         let runtime = Arc::clone(&runtime);
-        // let handle = 
-        handles.spawn(
-            async move { 
-                run_test(&runtime, refresh, &test, &test_file, parsed).await
-            }
-        );
+        // let handle =
+        handles.spawn(async move { run_test(&runtime, refresh, &test, &test_file, parsed).await });
     }
 
     let mut passed_count = 0;

@@ -1,6 +1,5 @@
 import { Text, Button, Tooltip } from "@fluentui/react-components";
 import {
-    Beach20Filled,
     Beach20Regular,
     BoxMultipleArrowRight20Filled,
     HandMultiple20Filled,
@@ -83,10 +82,7 @@ export const TrialModeIcon: React.FC = () => {
             withArrow
             positioning="below"
         >
-            <Button
-                shape="circular"
-                icon={<Beach20Regular />}
-            />
+            <Button shape="circular" icon={<Beach20Regular />} />
         </Tooltip>
     );
 };

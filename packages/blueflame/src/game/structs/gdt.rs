@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 use crate::env::DlcVer;
-use crate::memory::{self, mem, MemObject, Memory, Ptr};
+use crate::memory::{self, MemObject, Memory, Ptr, mem};
 
 #[derive(MemObject, Default, Clone)]
 #[size(0xdc8)]

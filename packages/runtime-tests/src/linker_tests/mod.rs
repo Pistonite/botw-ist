@@ -61,8 +61,8 @@ pub fn run(process: &Process, failures_dir: &Path) -> cu::Result<bool> {
                     let _ = std::fs::write(file_path, format!("{crash:?}"));
                 }
             }
-            let failed_count = i+1 - passed_count;
-            cu::progress!(&bar, i+1, "{failed_count} failed");
+            let failed_count = i + 1 - passed_count;
+            cu::progress!(&bar, i + 1, "{failed_count} failed");
         }
     }
 

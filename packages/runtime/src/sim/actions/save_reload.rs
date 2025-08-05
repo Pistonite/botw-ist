@@ -20,7 +20,7 @@ macro_rules! reload_gdt_or_stop {
             $errors.push($crate::error::sim_error!(span, ReloadFail));
             return Ok(());
         }
-    }}
+    }};
 }
 
 /// Save the game
@@ -82,7 +82,6 @@ pub fn reload(
     regen_stage_internal(ctx, sys, errors, true, Some(load_gdt))
 }
 
-
 /// Reload savedata into GDT, but don't do anything else
 pub fn reload_gdt(
     ctx: &mut sim::Context<&mut Cpu2>,
@@ -138,7 +137,8 @@ pub fn recreate_overworld_equipments(
         linker::create_player_equipment,
     )?;
     // update value to PMDM
-    sys.overworld.reload_equipments(ctx.cpu(), state.weapon, state.bow, state.shield)?;
+    sys.overworld
+        .reload_equipments(ctx.cpu(), state.weapon, state.bow, state.shield)?;
     Ok(())
 }
 
@@ -159,7 +159,8 @@ pub fn trial_start(
     log::debug!("init_for_quest finished");
 
     // Equipments update their value
-    sys.overworld.reload_equipments(ctx.cpu(), state.weapon, state.bow, state.shield)?;
+    sys.overworld
+        .reload_equipments(ctx.cpu(), state.weapon, state.bow, state.shield)?;
 
     Ok(())
 }
@@ -175,7 +176,8 @@ pub fn trial_end(
         CreateEquipState::update,
         linker::restore_from_quest,
     )?;
-    sys.overworld.reload_equipments(ctx.cpu(), state.weapon, state.bow, state.shield)?;
+    sys.overworld
+        .reload_equipments(ctx.cpu(), state.weapon, state.bow, state.shield)?;
 
     Ok(())
 }

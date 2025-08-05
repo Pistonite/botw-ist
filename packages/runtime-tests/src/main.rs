@@ -26,7 +26,7 @@ struct Args {
     common: cu::cli::Flags,
 }
 
-#[cu::cli(flags="common")]
+#[cu::cli(flags = "common")]
 fn main(args: Args) -> cu::Result<()> {
     util::setup_panic_capture();
 
@@ -36,9 +36,9 @@ fn main(args: Args) -> cu::Result<()> {
     }
     std::fs::create_dir_all(failures_dir).context("failed to create failures dir")?;
 
-    let image_file = if args.mini  {
+    let image_file = if args.mini {
         "./data/program-mini.bfi"
-    }else {
+    } else {
         "./data/program-full.bfi"
     };
 

@@ -178,12 +178,12 @@ pub enum Command {
     Boil(Vec<cir::ItemSelectSpec>),
     /// See [`syn::CmdFreeze`]
     Freeze(Vec<cir::ItemSelectSpec>),
-
 }
 // make sure the command size does not update unexpectedly
-// size only valid for 64-bit platforms
-#[cfg(not(feature = "wasm"))]
-static_assertions::assert_eq_size!(Command, [u8; 0x20]);
+#[cfg(target_pointer_width = "64")]
+static_assertions::assert_eq_size!(Command, [usize; 4]);
+#[cfg(target_pointer_width = "32")]
+static_assertions::assert_eq_size!(Command, [usize; 6]);
 
 impl Command {
     /// Convience wrapper to create a command for setting a S32 gamedata flag
@@ -260,9 +260,11 @@ pub async fn parse_command<R: QuotedItemResolver>(
         A![Targeting(cmd)] => Some(X::CoTargeting(Box::new(
             cir::parse_one_item_constrained(&cmd.item, resolver, errors).await?,
         ))),
-        C::Sort(cmd) => {
-            absorb_error(errors, cir::parse_category_with_times(&cmd.category, cmd.times.as_ref())).map(X::Sort)
-        }
+        C::Sort(cmd) => absorb_error(
+            errors,
+            cir::parse_category_with_times(&cmd.category, cmd.times.as_ref()),
+        )
+        .map(X::Sort),
         //////////////////////////////////////////////////////////////////
         A![Dpad(_)] => Some(X::CoDpad),
         C::Equip(cmd) => Some(X::Equip(
@@ -337,10 +339,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
         C::SuRemove(cmd) => Some(X::SuRemove(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
-        // C::SuReloadGdt(cmd) => Some(X::SuReloadGdt(cmd.name.as_ref().map(|x| x.to_string()))),
-        // C::SuResetGround(_) => Some(X::SuResetGround),
-        // C::SuResetOverworld(_) => Some(X::SuResetOverworld),
-        // C::SuLoadingScreen(_) => Some(X::SuLoadingScreen),
         C::SuSetGdt(cmd) => {
             let gdt_value = cir::parse_gdt_meta(&cmd.props, errors)?;
             let flag_name = cmd.flag_name.name.to_string();
@@ -392,7 +390,6 @@ pub async fn parse_command<R: QuotedItemResolver>(
         syn::Command::Freeze(cmd) => Some(cir::Command::Freeze(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
-
     }
 }
 

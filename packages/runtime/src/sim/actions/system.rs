@@ -30,13 +30,17 @@ pub fn exec_sys_commands(
                 *dlc_version = Some(ver);
             }
             S::DeleteSave(name) => match name {
-                None => { *manual_save = None; }
-                Some(x) => { saves.remove(x); }
-            }
+                None => {
+                    *manual_save = None;
+                }
+                Some(x) => {
+                    saves.remove(x);
+                }
+            },
             S::ClearGround => sys.overworld.destroy_ground(),
             S::ClearOverworld => sys.overworld.destroy_all(),
             S::SyncOverworld => super::recreate_overworld_equipments(ctx, sys)?,
-            S::ReloadGdt(name) =>  {
+            S::ReloadGdt(name) => {
                 let save_data = match name {
                     None => {
                         let Some(s) = manual_save.as_ref() else {
@@ -44,7 +48,7 @@ pub fn exec_sys_commands(
                             continue;
                         };
                         s
-                    },
+                    }
                     Some(name) => {
                         let Some(save) = saves.get(name) else {
                             errors.push(sim_error!(cmd.span, SaveNotFound(name.to_string())));
@@ -54,7 +58,7 @@ pub fn exec_sys_commands(
                     }
                 };
                 super::reload_gdt(ctx, errors, save_data)?;
-            },
+            }
             S::LoadingScreen => {
                 super::regen_stage_internal(ctx, sys, errors, true, None)?;
             }

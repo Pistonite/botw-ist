@@ -1,4 +1,7 @@
-use std::sync::{atomic::{AtomicU32, AtomicUsize, Ordering}, Mutex};
+use std::sync::{
+    Mutex,
+    atomic::{AtomicU32, AtomicUsize, Ordering},
+};
 
 use blueflame::processor::Cpu1;
 
@@ -98,9 +101,7 @@ impl<S: Spawn> ExecutorImpl<S> {
         };
 
         log::debug!("waiting for processor thread {i}");
-        let exec_result = {
-            recv.await.map_err(|e| Error::RecvResult(e.to_string()))
-        };
+        let exec_result = { recv.await.map_err(|e| Error::RecvResult(e.to_string())) };
         let exec_error = match exec_result {
             Ok(t) => {
                 log::debug!("received from processor thread {i}");

@@ -29,8 +29,8 @@ const MiscMenuImpl: React.FC = () => {
     const locale = useLocale();
     const isZh = locale.startsWith("zh");
     const manualBaseUrl = isZh
-        ? "https://skybook.pistonite.dev/zh/" 
-         :"https://skybook.pistonite.dev/";
+        ? "https://skybook.pistonite.dev/zh/"
+        : "https://skybook.pistonite.dev/";
 
     return (
         <Menu>
@@ -59,7 +59,11 @@ const MiscMenuImpl: React.FC = () => {
                     <MenuItem
                         icon={<PersonFeedback20Regular />}
                         onClick={() => {
-                            window.open(manualBaseUrl + (isZh ? "#遇到问题" : "#having-an-issue"), "_blank");
+                            window.open(
+                                manualBaseUrl +
+                                    (isZh ? "#遇到问题" : "#having-an-issue"),
+                                "_blank",
+                            );
                         }}
                     >
                         {t("menu.report_issue")}

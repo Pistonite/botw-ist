@@ -1,4 +1,4 @@
-use teleparse::{tp, Span, ToSpan};
+use teleparse::{Span, ToSpan, tp};
 
 use crate::cir;
 use crate::error::{ErrorReport, cir_error};
@@ -40,7 +40,7 @@ pub enum SysCommandData {
 
 #[derive(Default)]
 struct SysCommandMeta {
-    commands: Vec<SysCommand>
+    commands: Vec<SysCommand>,
 }
 impl MetaParser for SysCommandMeta {
     type Output = Vec<SysCommand>;

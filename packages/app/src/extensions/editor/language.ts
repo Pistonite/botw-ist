@@ -61,7 +61,10 @@ export const language: LanguageTokenizer = {
                 },
             ],
             [/[=:,;]/, "delimiter"],
-            [/(0x[\da-fA-F](_?[\da-fA-F])*)|(-?\d(_?\d)*(\.(\d(_?\d)*)?)?)/, "number"],
+            [
+                /(0x[\da-fA-F](_?[\da-fA-F])*)|(-?\d(_?\d)*(\.(\d(_?\d)*)?)?)/,
+                "number",
+            ],
             [/<@word>/, "string.item.literal"],
             [/"[^"]*"/, "string.item.quoted"],
             [/!@word/, "function.command.super"],

@@ -34,7 +34,7 @@ impl State {
             game: Game::Uninit,
             args: None,
             saves: Arc::new(vec![]),
-            manual_save: None
+            manual_save: None,
         }
     }
     /// Get names of all saves
@@ -571,7 +571,9 @@ impl State {
             // probably because game crashed
             .inspect_err(|e| {
                 log::warn!("did not receive save data: {e}");
-            }).ok().flatten();
+            })
+            .ok()
+            .flatten();
         Ok(new_state.map(|mut state| {
             match data {
                 Some(data) => state.set_save_by_name(name, data),
@@ -734,21 +736,21 @@ impl State {
     async fn handle_su_sys_commands(
         self,
         rt: sim::Context<&sim::Runtime>,
-        sys_commands: &[cir::SysCommand]
+        sys_commands: &[cir::SysCommand],
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling !SYSTEM");
         let (send, recv) = oneshot::channel();
         let cmds = sys_commands.to_vec();
         let mut saves = BTreeMap::new();
         for (name, data) in self.saves.iter() {
-            saves.insert(name.clone(), Arc::clone(&data));
+            saves.insert(name.clone(), Arc::clone(data));
         }
         let manual_save = self.manual_save.clone();
 
         let new_state = execute_command!(self, rt, cpu, sys, errors => {
             let mut manual_save = manual_save;
             let mut dlc_version = None;
-            sim::actions::system::exec_sys_commands(&mut cpu, sys, 
+            sim::actions::system::exec_sys_commands(&mut cpu, sys,
                 errors, &cmds, &mut saves, &mut manual_save, &mut dlc_version)?;
             if send.send((saves, manual_save, dlc_version)).is_err() {
                 log::error!("failed to send system command output to runtime main thread");
@@ -758,22 +760,18 @@ impl State {
         let data = recv
             .recv()
             // probably because game crashed, not a big problem
-            .inspect_err(|e| {
-                log::warn!("did not receive system command data: {e}")
-            })
-                .ok();
-        
+            .inspect_err(|e| log::warn!("did not receive system command data: {e}"))
+            .ok();
+
         Ok(new_state.map(|mut state| {
             if let Some((mut out_saves, out_manual_save, dlc_version)) = data {
                 let saves = Arc::make_mut(&mut state.saves);
-                saves.retain_mut(|(name, data)| {
-                    match out_saves.remove(name) {
-                        Some(out_data) => {
-                            *data = out_data;
-                            true
-                        }
-                        None => false
+                saves.retain_mut(|(name, data)| match out_saves.remove(name) {
+                    Some(out_data) => {
+                        *data = out_data;
+                        true
                     }
+                    None => false,
                 });
                 state.manual_save = out_manual_save;
                 if let Some(ver) = dlc_version {
