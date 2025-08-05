@@ -158,21 +158,21 @@ pub fn drop_held_items(
 /// Add an error if the item amount is not 1
 pub fn check_overworld_amount(item: &cir::ItemSelectSpec, errors: &mut Vec<ErrorReport>) {
     if item.amount != cir::AmountSpec::Num(1) {
-        errors.push(sim_warning!(item.span, UselessAmountForOverworldEquipment))
+        errors.push(sim_warning!(item.matcher.span, UselessAmountForOverworldEquipment))
     }
 }
 
 /// Convert `AllBut` variant from the "but" amount to real amount
-pub fn convert_amount<F: FnMut() -> Result<usize, processor::Error>>(
+pub fn convert_amount<F: FnOnce(&mut Vec<ErrorReport>) -> Result<usize, processor::Error>>(
     amount: cir::AmountSpec,
     span: Span,
     errors: &mut Vec<ErrorReport>,
     count_for_all: bool,
-    mut count_fn: F,
+    count_fn: F,
 ) -> Result<OperationAmount, processor::Error> {
     match amount {
         cir::AmountSpec::AllBut(n) => {
-            let count = count_fn()?;
+            let count = count_fn(errors)?;
             if count < n {
                 errors.push(sim_error!(span, NotEnoughForAllBut(n, count)));
                 Ok(OperationAmount::all_but(0, n))
@@ -182,7 +182,7 @@ pub fn convert_amount<F: FnMut() -> Result<usize, processor::Error>>(
         }
         cir::AmountSpec::All => {
             if count_for_all {
-                let count = count_fn()?;
+                let count = count_fn(errors)?;
                 Ok(OperationAmount::num(count))
             } else {
                 Ok(OperationAmount::all())
@@ -261,7 +261,7 @@ impl OperationAmount {
     /// If `Some(X)` is returned, it means the command is expecting `X` more items, which can
     /// no longer be found
     #[must_use = "result of checking if error should be emitted"]
-    pub fn check<F: Fn() -> Result<usize, memory::Error>>(
+    pub fn check<F: FnOnce(&mut Vec<ErrorReport>) -> Result<usize, memory::Error>>(
         &self,
         span: Span,
         errors: &mut Vec<ErrorReport>,
@@ -277,7 +277,7 @@ impl OperationAmount {
             }
             Some(remaining) => match self.all_but {
                 Some(but) => {
-                    if remaining != 0 || but != count_fn()? {
+                    if remaining != 0 || but != count_fn(errors)? {
                         log::warn!("inaccurate all-but detected");
                         errors.push(sim_warning!(span, InaccurateAllBut));
                     }
@@ -329,16 +329,16 @@ pub fn change_to_pe_target_if_need(
     // find the target item
     let mut new_errors = vec![];
     let target_pos = inventory.select(
-        &target.name,
-        target.meta.as_ref(),
+        &target.matcher,
+        // target.meta.as_ref(),
         None,
         memory,
-        target.span,
+        // target.span,
         &mut new_errors,
     )?;
     let Some((target_tab, target_slot)) = target_pos else {
         errors.extend(new_errors);
-        errors.push(sim_error!(target.span, CannotFindPromptTarget));
+        errors.push(sim_error!(target.matcher.span, CannotFindPromptTarget));
         return Ok(None);
     };
     // eat the selection errors if the target was found
@@ -346,7 +346,7 @@ pub fn change_to_pe_target_if_need(
     // the target slot must be in a PE activate slot
     // to be able to use PE
     if !inventory.is_pe_activated_slot(target_tab, target_slot, true) {
-        errors.push(sim_error!(target.span, InvalidPromptTarget));
+        errors.push(sim_error!(target.matcher.span, InvalidPromptTarget));
         return Ok(None);
     }
     // adjust the slot index to target the actual

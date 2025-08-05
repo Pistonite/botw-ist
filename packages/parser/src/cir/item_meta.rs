@@ -45,6 +45,9 @@ pub struct ItemMeta {
     /// For constrained item list, manually specify the position
     /// of the item to skip look up
     pub position: Option<ItemPosition>,
+
+    /// If the item is currently being held
+    pub held: Option<bool>,
 }
 
 impl PartialEq for ItemMeta {
@@ -59,6 +62,7 @@ impl PartialEq for ItemMeta {
             && self.ingredients == other.ingredients
             && self.star == other.star
             && self.position == other.position
+        && self.held == other.held
     }
 }
 impl Eq for ItemMeta {}
@@ -75,6 +79,7 @@ impl std::hash::Hash for ItemMeta {
         self.ingredients.hash(state);
         self.star.hash(state);
         self.position.hash(state);
+        self.held.hash(state);
     }
 }
 
@@ -209,6 +214,9 @@ impl MetaParser for &mut ItemMeta {
                     }
                     self.star = Some(x as i32);
                 }
+            },
+            "held" | "hold" | "holding" => optional {
+                bool(x) => self.held = Some(x)
             },
             "from-slot" => required {
                 int(x) => self.position = Some(ItemPosition::FromSlot(x as u32)),

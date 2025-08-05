@@ -5,15 +5,27 @@ Some(
                 cmd: Get(
                     CmdGet {
                         lit: token Command(0..3),
-                        items: Single(
-                            Item {
-                                name: Word(
-                                    4..8 => "smug",
+                        items: ItemListFinite(
+                            3..8 => [
+                                (
+                                    MaybeNumberedItem {
+                                        num: None(
+                                            3,
+                                        ),
+                                        item: Item {
+                                            name: Word(
+                                                4..8 => "smug",
+                                            ),
+                                            meta: None(
+                                                8,
+                                            ),
+                                        },
+                                    },
+                                    None(
+                                        8,
+                                    ),
                                 ),
-                                meta: None(
-                                    8,
-                                ),
-                            },
+                            ],
                         ),
                     },
                 ),
@@ -25,36 +37,43 @@ Some(
                 cmd: Get(
                     CmdGet {
                         lit: token Command(9..12),
-                        items: List(
+                        items: ItemListFinite(
                             13..31 => [
-                                NumberedItem {
-                                    num: Number(
-                                        13..14 => "3",
-                                    ),
-                                    item: Item {
-                                        name: Word(
-                                            15..24 => "targeting",
+                                (
+                                    MaybeNumberedItem {
+                                        num: Some(
+                                            Number(
+                                                13..14 => "3",
+                                            ),
                                         ),
-                                        meta: Some(
-                                            Meta {
-                                                open: token Symbol(24..25),
-                                                entries: Punct {
-                                                    span: 25..30,
-                                                    elems: [
-                                                        MetaKvPair {
-                                                            key: 25..30 => "equip",
-                                                            value: None(
-                                                                30,
-                                                            ),
-                                                        },
-                                                    ],
-                                                    puncts: [],
+                                        item: Item {
+                                            name: Word(
+                                                15..24 => "targeting",
+                                            ),
+                                            meta: Some(
+                                                Meta {
+                                                    open: token Symbol(24..25),
+                                                    entries: Punct {
+                                                        span: 25..30,
+                                                        elems: [
+                                                            MetaKvPair {
+                                                                key: 25..30 => "equip",
+                                                                value: None(
+                                                                    30,
+                                                                ),
+                                                            },
+                                                        ],
+                                                        puncts: [],
+                                                    },
+                                                    close: token Symbol(30..31),
                                                 },
-                                                close: token Symbol(30..31),
-                                            },
-                                        ),
+                                            ),
+                                        },
                                     },
-                                },
+                                    None(
+                                        31,
+                                    ),
+                                ),
                             ],
                         ),
                     },
@@ -67,46 +86,60 @@ Some(
                 cmd: Eat(
                     CmdEat {
                         lit: token Command(33..36),
-                        items: Single(
-                            Item(
-                                Item {
-                                    name: Word(
-                                        37..41 => "dpad",
-                                    ),
-                                    meta: Some(
-                                        Meta {
-                                            open: token Symbol(41..42),
-                                            entries: Punct {
-                                                span: 42..49,
-                                                elems: [
-                                                    MetaKvPair {
-                                                        key: 42..47 => "equip",
-                                                        value: Some(
-                                                            MetaValueSyntax {
-                                                                sep: Equal(
-                                                                    token Symbol(47..48),
-                                                                ),
-                                                                value: Number(
-                                                                    MetaValueNumber {
-                                                                        int_part: Number(
-                                                                            48..49 => "1",
-                                                                        ),
-                                                                        float_part: None(
-                                                                            49,
+                        items: ItemListConstrained(
+                            36..50 => [
+                                (
+                                    Numbered(
+                                        MaybeNumberedItemOrCategory {
+                                            num: None(
+                                                36,
+                                            ),
+                                            item: Item(
+                                                Item {
+                                                    name: Word(
+                                                        37..41 => "dpad",
+                                                    ),
+                                                    meta: Some(
+                                                        Meta {
+                                                            open: token Symbol(41..42),
+                                                            entries: Punct {
+                                                                span: 42..49,
+                                                                elems: [
+                                                                    MetaKvPair {
+                                                                        key: 42..47 => "equip",
+                                                                        value: Some(
+                                                                            MetaValueSyntax {
+                                                                                sep: Equal(
+                                                                                    token Symbol(47..48),
+                                                                                ),
+                                                                                value: Number(
+                                                                                    MetaValueNumber {
+                                                                                        int_part: Number(
+                                                                                            48..49 => "1",
+                                                                                        ),
+                                                                                        float_part: None(
+                                                                                            49,
+                                                                                        ),
+                                                                                    },
+                                                                                ),
+                                                                            },
                                                                         ),
                                                                     },
-                                                                ),
+                                                                ],
+                                                                puncts: [],
                                                             },
-                                                        ),
-                                                    },
-                                                ],
-                                                puncts: [],
-                                            },
-                                            close: token Symbol(49..50),
+                                                            close: token Symbol(49..50),
+                                                        },
+                                                    ),
+                                                },
+                                            ),
                                         },
                                     ),
-                                },
-                            ),
+                                    None(
+                                        50,
+                                    ),
+                                ),
+                            ],
                         ),
                     },
                 ),
@@ -118,24 +151,31 @@ Some(
                 cmd: Eat(
                     CmdEat {
                         lit: token Command(51..54),
-                        items: List(
+                        items: ItemListConstrained(
                             55..67 => [
-                                Numbered(
-                                    NumberedItemOrCategory {
-                                        num: Number(
-                                            55..56 => "5",
-                                        ),
-                                        item: Item(
-                                            Item {
-                                                name: Word(
-                                                    57..67 => "discovered",
+                                (
+                                    Numbered(
+                                        MaybeNumberedItemOrCategory {
+                                            num: Some(
+                                                Number(
+                                                    55..56 => "5",
                                                 ),
-                                                meta: None(
-                                                    67,
-                                                ),
-                                            },
-                                        ),
-                                    },
+                                            ),
+                                            item: Item(
+                                                Item {
+                                                    name: Word(
+                                                        57..67 => "discovered",
+                                                    ),
+                                                    meta: None(
+                                                        67,
+                                                    ),
+                                                },
+                                            ),
+                                        },
+                                    ),
+                                    None(
+                                        67,
+                                    ),
                                 ),
                             ],
                         ),

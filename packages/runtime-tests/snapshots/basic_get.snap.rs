@@ -4,9 +4,9 @@
 x!{ SKYBOOK RUNTIME SNAPSHOT V1
 
 parse warning: : Specifying position for the item has no effect in this command
-  span: 87..111
+  span: 86..111
 -----
-apple[value=1000, tab=1]
+ apple[value=1000, tab=1]
 -----
 runtime error: : cannot get more of this
   span: 116..123

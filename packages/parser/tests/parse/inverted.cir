@@ -1,0 +1,63 @@
+ParseOutput {
+    steps: [
+        Step {
+            command: CommandWithSpan {
+                command: Get(
+                    [
+                        ItemSpec {
+                            amount: 1,
+                            name: "Item_Fruit_A",
+                            meta: None,
+                            span: 3..9,
+                        },
+                        ItemSpec {
+                            amount: 1,
+                            name: "Item_Fruit_H",
+                            meta: None,
+                            span: 10..17,
+                        },
+                        ItemSpec {
+                            amount: 1,
+                            name: "Animal_Insect_F",
+                            meta: None,
+                            span: 18..24,
+                        },
+                        ItemSpec {
+                            amount: 1,
+                            name: "Item_Fruit_G",
+                            meta: None,
+                            span: 25..36,
+                        },
+                    ],
+                ),
+                span: 0..36,
+            },
+            notes: "",
+        },
+        Step {
+            command: CommandWithSpan {
+                command: Eat(
+                    [
+                        ItemSelectSpec {
+                            amount: All,
+                            matcher: ItemMatchSpec {
+                                name: Actor(
+                                    "Item_Fruit_H",
+                                ),
+                                meta: None,
+                                inverted: true,
+                                span: 49..55,
+                            },
+                        },
+                    ],
+                ),
+                span: 37..55,
+            },
+            notes: "",
+        },
+    ],
+    script_len: 55,
+    pages: [],
+    display: [],
+    errors: [],
+}

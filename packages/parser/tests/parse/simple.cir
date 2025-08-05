@@ -8,11 +8,14 @@ ParseOutput {
                             amount: Num(
                                 1,
                             ),
-                            name: Actor(
-                                "Weapon_Lsword_032",
-                            ),
-                            meta: None,
-                            span: 4..7,
+                            matcher: ItemMatchSpec {
+                                name: Actor(
+                                    "Weapon_Lsword_032",
+                                ),
+                                meta: None,
+                                inverted: false,
+                                span: 4..7,
+                            },
                         },
                     ],
                 ),
@@ -28,11 +31,14 @@ ParseOutput {
                             amount: Num(
                                 1,
                             ),
-                            name: Actor(
-                                "Weapon_Lsword_024",
-                            ),
-                            meta: None,
-                            span: 17..31,
+                            matcher: ItemMatchSpec {
+                                name: Actor(
+                                    "Weapon_Lsword_024",
+                                ),
+                                meta: None,
+                                inverted: false,
+                                span: 17..31,
+                            },
                         },
                     ],
                 ),
@@ -59,6 +65,7 @@ ParseOutput {
                                     ingredients: [],
                                     star: None,
                                     position: None,
+                                    held: None,
                                 },
                             ),
                             span: 43..77,
@@ -93,11 +100,14 @@ ParseOutput {
                             amount: Num(
                                 1,
                             ),
-                            name: Actor(
-                                "NormalArrow",
-                            ),
-                            meta: None,
-                            span: 101..106,
+                            matcher: ItemMatchSpec {
+                                name: Actor(
+                                    "NormalArrow",
+                                ),
+                                meta: None,
+                                inverted: false,
+                                span: 101..106,
+                            },
                         },
                     ],
                 ),
@@ -113,7 +123,7 @@ ParseOutput {
                             amount: 1,
                             name: "古代箭",
                             meta: None,
-                            span: 112..123,
+                            span: 111..123,
                         },
                     ],
                 ),
@@ -129,28 +139,32 @@ ParseOutput {
                             amount: Num(
                                 1,
                             ),
-                            name: Actor(
-                                "Weapon_Lsword_032",
-                            ),
-                            meta: Some(
-                                ItemMeta {
-                                    value: None,
-                                    equip: None,
-                                    life_recover: None,
-                                    effect_duration: None,
-                                    sell_price: None,
-                                    effect_id: None,
-                                    effect_level: None,
-                                    ingredients: [],
-                                    star: None,
-                                    position: Some(
-                                        FromSlot(
-                                            3,
+                            matcher: ItemMatchSpec {
+                                name: Actor(
+                                    "Weapon_Lsword_032",
+                                ),
+                                meta: Some(
+                                    ItemMeta {
+                                        value: None,
+                                        equip: None,
+                                        life_recover: None,
+                                        effect_duration: None,
+                                        sell_price: None,
+                                        effect_id: None,
+                                        effect_level: None,
+                                        ingredients: [],
+                                        star: None,
+                                        position: Some(
+                                            FromSlot(
+                                                3,
+                                            ),
                                         ),
-                                    ),
-                                },
-                            ),
-                            span: 128..144,
+                                        held: None,
+                                    },
+                                ),
+                                inverted: false,
+                                span: 128..144,
+                            },
                         },
                     ],
                 ),
@@ -166,29 +180,33 @@ ParseOutput {
                             amount: Num(
                                 1,
                             ),
-                            name: Actor(
-                                "Item_Enemy_07",
-                            ),
-                            meta: Some(
-                                ItemMeta {
-                                    value: None,
-                                    equip: None,
-                                    life_recover: None,
-                                    effect_duration: None,
-                                    sell_price: None,
-                                    effect_id: None,
-                                    effect_level: None,
-                                    ingredients: [],
-                                    star: None,
-                                    position: Some(
-                                        TabIdxAndSlot(
-                                            5,
-                                            6,
+                            matcher: ItemMatchSpec {
+                                name: Actor(
+                                    "Item_Enemy_07",
+                                ),
+                                meta: Some(
+                                    ItemMeta {
+                                        value: None,
+                                        equip: None,
+                                        life_recover: None,
+                                        effect_duration: None,
+                                        sell_price: None,
+                                        effect_id: None,
+                                        effect_level: None,
+                                        ingredients: [],
+                                        star: None,
+                                        position: Some(
+                                            TabIdxAndSlot(
+                                                5,
+                                                6,
+                                            ),
                                         ),
-                                    ),
-                                },
-                            ),
-                            span: 150..167,
+                                        held: None,
+                                    },
+                                ),
+                                inverted: false,
+                                span: 150..167,
+                            },
                         },
                     ],
                 ),
@@ -204,11 +222,14 @@ ParseOutput {
                             amount: Num(
                                 1,
                             ),
-                            name: Category(
-                                Weapon,
-                            ),
-                            meta: None,
-                            span: 179..185,
+                            matcher: ItemMatchSpec {
+                                name: Category(
+                                    Weapon,
+                                ),
+                                meta: None,
+                                inverted: false,
+                                span: 179..185,
+                            },
                         },
                     ],
                 ),
@@ -224,11 +245,14 @@ ParseOutput {
                             amount: Num(
                                 1,
                             ),
-                            name: Actor(
-                                "IceArrow",
-                            ),
-                            meta: None,
-                            span: 194..203,
+                            matcher: ItemMatchSpec {
+                                name: Actor(
+                                    "IceArrow",
+                                ),
+                                meta: None,
+                                inverted: false,
+                                span: 194..203,
+                            },
                         },
                     ],
                 ),
@@ -256,11 +280,14 @@ ParseOutput {
                             amount: Num(
                                 1,
                             ),
-                            name: Actor(
-                                "Item_Meat_01",
-                            ),
-                            meta: None,
-                            span: 220..224,
+                            matcher: ItemMatchSpec {
+                                name: Actor(
+                                    "Item_Meat_01",
+                                ),
+                                meta: None,
+                                inverted: false,
+                                span: 220..224,
+                            },
                         },
                     ],
                 ),
@@ -280,8 +307,36 @@ ParseOutput {
             },
             notes: "",
         },
+        Step {
+            command: CommandWithSpan {
+                command: Get(
+                    [
+                        ItemSpec {
+                            amount: 1,
+                            name: "Item_Fruit_A",
+                            meta: None,
+                            span: 247..253,
+                        },
+                        ItemSpec {
+                            amount: 1,
+                            name: "Item_Fruit_H",
+                            meta: None,
+                            span: 253..260,
+                        },
+                        ItemSpec {
+                            amount: 1,
+                            name: "food",
+                            meta: None,
+                            span: 261..268,
+                        },
+                    ],
+                ),
+                span: 244..268,
+            },
+            notes: "",
+        },
     ],
-    script_len: 242,
+    script_len: 268,
     pages: [],
     display: [],
     errors: [

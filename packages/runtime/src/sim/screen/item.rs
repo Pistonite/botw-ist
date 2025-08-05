@@ -1,9 +1,9 @@
-use blueflame::game::PouchItem;
+use blueflame::game::{singleton_instance, PouchItem};
 use blueflame::memory::{self, Memory, Ptr, mem};
 use skybook_parser::cir;
 use teleparse::Span;
 
-use crate::error::{ErrorReport, sim_warning};
+use crate::error::{sim_error, sim_warning, ErrorReport};
 use crate::sim;
 
 /// Items in inventory screen (for pouch and shop)
@@ -164,22 +164,33 @@ impl ScreenItems {
     /// Returns the tab index and slot index
     pub fn select(
         &self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
+        matcher: &cir::ItemMatchSpec,
+        // meta: Option<&cir::ItemMeta>,
         value_at_least: Option<i32>,
         memory: &Memory,
-        span: Span,
+        // span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Result<Option<(usize, usize)>, memory::Error> {
-        let Some(meta) = meta else {
-            return self.select_without_position_nth(item, None, value_at_least, 0, memory);
+        let Some(meta) = &matcher.meta else {
+            return self.select_without_position_nth(matcher, value_at_least, 0, memory);
         };
         let Some(selector) = self.process_position_meta(meta.position.as_ref()) else {
             return Ok(None);
         };
         let from_slot = match selector {
-            Selector::FromSlot(n) => n,
+            Selector::FromSlot(n) => {
+                if n != 0 && matcher.inverted {
+                    errors.push(sim_error!(matcher.span, MixedItemPositionAndInverse));
+                    return Ok(None);
+                }
+                n
+            }
             Selector::IdxAndSlot(tab_i, slot) => {
+                if matcher.inverted {
+                    errors.push(sim_error!(matcher.span, MixedItemPositionAndInverse));
+                    return Ok(None);
+                }
+                let name = &matcher.name;
                 // warn if the item specified by the position does not match
                 // the name in the command
                 let Some(tab) = self.tabs.get(tab_i) else {
@@ -188,17 +199,17 @@ impl ScreenItems {
                 let Some(Some(item_in_inv)) = tab.items.get(slot) else {
                     return Ok(Some((tab_i, slot)));
                 };
-                if !sim::util::name_spec_matches(item, &item_in_inv.name) {
-                    match item {
+                if !sim::util::name_spec_matches(name, &item_in_inv.name) {
+                    match name {
                         cir::ItemNameSpec::Actor(name) => {
                             errors.push(sim_warning!(
-                                span,
+                                matcher.span,
                                 ItemMismatch(item_in_inv.name.clone(), name.clone())
                             ));
                         }
                         cir::ItemNameSpec::Category(category) => {
                             errors.push(sim_warning!(
-                                span,
+                                matcher.span,
                                 ItemMismatchCategory(item_in_inv.name.clone(), *category)
                             ));
                         }
@@ -207,7 +218,7 @@ impl ScreenItems {
                 return Ok(Some((tab_i, slot)));
             }
         };
-        self.select_without_position_nth(item, Some(meta), value_at_least, from_slot, memory)
+        self.select_without_position_nth(matcher, value_at_least, from_slot, memory)
     }
 
     /// Select an item from the screen, without considering position meta
@@ -215,15 +226,15 @@ impl ScreenItems {
     /// Returns the tab index and slot index
     pub fn select_without_position_nth(
         &self,
-        name: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
+        matcher: &cir::ItemMatchSpec,
+        // meta: Option<&cir::ItemMeta>,
         value_at_least: Option<i32>,
         nth: usize,
         memory: &Memory,
     ) -> Result<Option<(usize, usize)>, memory::Error> {
         let mut count = nth;
         for (tab_i, slot, _, item) in self.iter_items() {
-            if !item.matches(name, value_at_least, meta, memory)? {
+            if !item.matches(matcher, value_at_least, memory)? {
                 continue;
             }
             // by default, does not target translucent items.
@@ -245,20 +256,35 @@ impl ScreenItems {
     /// for matching.
     pub fn get_amount(
         &self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
+        matcher: &cir::ItemMatchSpec,
+        // meta: Option<&cir::ItemMeta>,
         method: sim::CountingMethod,
         memory: &Memory,
+        errors: &mut Vec<ErrorReport>
     ) -> Result<usize, memory::Error> {
-        let Some(meta) = meta else {
-            return self.get_amount_without_position_nth(item, None, method, 0, memory);
+        let Some(meta) = &matcher.meta else {
+            return self.get_amount_without_position_nth(matcher, method, 0, memory);
         };
         let Some(selector) = self.process_position_meta(meta.position.as_ref()) else {
             return Ok(0);
         };
+        if matcher.inverted {
+            // shouldn't be 
+            return Ok(0);
+        }
         let from_slot = match selector {
-            Selector::FromSlot(n) => n,
+            Selector::FromSlot(n) => {
+                if n != 0 && matcher.inverted {
+                    errors.push(sim_error!(matcher.span, MixedItemPositionAndInverse));
+                    return Ok(0);
+                }
+                n
+            }
             Selector::IdxAndSlot(tab_i, slot) => {
+                if matcher.inverted {
+                    errors.push(sim_error!(matcher.span, MixedItemPositionAndInverse));
+                    return Ok(0);
+                }
                 let Some(tab) = self.tabs.get(tab_i) else {
                     return Ok(0);
                 };
@@ -270,7 +296,7 @@ impl ScreenItems {
                 return item.get_amount(method, memory);
             }
         };
-        self.get_amount_without_position_nth(item, Some(meta), method, from_slot, memory)
+        self.get_amount_without_position_nth(matcher, method, from_slot, memory)
     }
 
     /// Get amount of item that match the input that can be operated on,
@@ -281,8 +307,8 @@ impl ScreenItems {
     /// If PE target is set,
     pub fn get_amount_without_position_nth(
         &self,
-        name: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
+        matcher: &cir::ItemMatchSpec,
+        // meta: Option<&cir::ItemMeta>,
         method: sim::CountingMethod,
         nth: usize,
         memory: &Memory,
@@ -290,7 +316,7 @@ impl ScreenItems {
         let mut skip = nth;
         let mut count = 0;
         for (_, _, _, item) in self.iter_items() {
-            if !item.matches(name, None, meta, memory)? {
+            if !item.matches(matcher, None, memory)? {
                 continue;
             }
             if skip != 0 {
@@ -402,24 +428,27 @@ impl ScreenItems {
 impl ScreenItem {
     fn matches(
         &self,
-        item: &cir::ItemNameSpec,
+        item: &cir::ItemMatchSpec,
         value_at_least: Option<i32>,
-        meta: Option<&cir::ItemMeta>,
+        // meta: Option<&cir::ItemMeta>,
         memory: &Memory,
     ) -> Result<bool, memory::Error> {
-        if !sim::util::name_spec_matches(item, &self.name) {
-            return Ok(false);
+        let inverted = item.inverted;
+        let name = &item.name;
+        if !sim::util::name_spec_matches(name, &self.name) {
+            return Ok(inverted);
         }
         let item_ptr = self.ptr;
+        let meta = item.meta.as_ref();
         if let Some(wanted_value) = meta.and_then(|x| x.value) {
             mem! { memory: let actual_value = *(&item_ptr->mValue); };
             if actual_value != wanted_value {
-                return Ok(false);
+                return Ok(inverted);
             }
         } else if let Some(value_at_least) = value_at_least {
             mem! { memory: let actual_value = *(&item_ptr->mValue); };
             if actual_value < value_at_least {
-                return Ok(false);
+                return Ok(inverted);
             }
         }
 
@@ -428,7 +457,7 @@ impl ScreenItem {
                 if let Some(wanted) = meta.and_then(|x| x.$meta_field) {
                     mem! { memory: let actual = *(&item_ptr->$item_field); };
                     if actual != wanted {
-                        return Ok(false);
+                        return Ok(inverted);
                     }
                 }
             };
@@ -436,7 +465,7 @@ impl ScreenItem {
                 if let Some(wanted) = meta.and_then(|x| x.$meta_field()) {
                     mem! { memory: let actual = *(&item_ptr->$item_field); };
                     if actual != wanted {
-                        return Ok(false);
+                        return Ok(inverted);
                     }
                 }
             };
@@ -446,8 +475,8 @@ impl ScreenItem {
         do_match!(memory, effect_duration, mEffectDuration);
         if let Some(wanted) = meta.and_then(|x| x.sell_price) {
             mem! { memory: let actual = *(&item_ptr->mSellPrice); };
-            if !sim::util::modifier_meta_matches(item, wanted, actual) {
-                return Ok(false);
+            if !sim::util::modifier_meta_matches(&item.name, wanted, actual) {
+                return Ok(inverted);
             }
         }
         do_match!(memory, effect_id_f32(), mEffectId);
@@ -470,11 +499,19 @@ impl ScreenItem {
                 actual_ingrs.push(actual_ingr);
             }
             if wanted != &actual_ingrs {
-                return Ok(false);
+                return Ok(inverted);
             }
         }
 
-        Ok(true)
+        if let Some(wanted) = meta.and_then(|x| x.held) {
+            let pmdm = singleton_instance!(pmdm(memory))?;
+            let actual_held = pmdm.is_item_being_grabbed(self.ptr, memory)?;
+            if wanted != actual_held {
+                return Ok(inverted);
+            }
+        }
+
+        Ok(!inverted)
     }
 
     fn get_amount(

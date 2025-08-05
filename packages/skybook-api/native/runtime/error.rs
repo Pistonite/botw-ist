@@ -145,6 +145,8 @@ pub enum RuntimeError {
     NotRightScreen,
     #[error("the item `{0}` is not sellable")]
     NotSellable(String),
+    #[error("specifying position for inverted selection is not allowed")]
+    MixedItemPositionAndInverse,
     #[error("this operation cannot be completed due to previous errors")]
     OperationNotComplete,
     #[error("cannot specify item position here")]
