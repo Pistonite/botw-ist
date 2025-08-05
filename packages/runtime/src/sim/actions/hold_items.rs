@@ -1,8 +1,7 @@
 use blueflame::linker;
 use blueflame::memory::mem;
 use blueflame::processor::{self, Cpu2};
-use skybook_parser::cir;
-use teleparse::Span;
+use skybook_parser::{cir, Span};
 
 use crate::error::{ErrorReport, sim_error};
 use crate::sim;
@@ -65,13 +64,13 @@ pub fn hold_item_internal(
     item: &cir::ItemSelectSpec,
     pe_target: Option<&cir::ItemSelectSpec>,
 ) -> Result<(), processor::Error> {
-    let name = &item.name;
-    let meta = item.meta.as_ref();
+    let matcher = &item.matcher;
+    let span = matcher.span;
     let memory = ctx.cpu().proc.memory();
     let inventory = sys.screen.current_screen().as_inventory().unwrap();
-    let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
+    let mut remaining = super::convert_amount(item.amount, span, errors, false, |_| {
         // holding always decrease value instead of using slot
-        Ok(inventory.get_amount(name, meta, sim::CountingMethod::Value, memory)?)
+        Ok(inventory.get_amount(matcher, sim::CountingMethod::Value, memory)?)
     })?;
 
     let mut check_for_extra_error = true;
@@ -79,17 +78,15 @@ pub fn hold_item_internal(
         if ctx.is_aborted() {
             return Ok(());
         }
-        if remaining.is_done(item.span, errors, "HOLD") {
+        if remaining.is_done(span, errors, "HOLD") {
             break;
         }
         let inventory = sys.screen.current_screen().as_inventory().unwrap();
         let memory = ctx.cpu().proc.memory();
-        let position = inventory.select(
-            name,
-            meta,
-            Some(1), // must have at least 1 to hold
+        let position = inventory.select_value_at_least(
+            matcher,
+            1, // must have at least 1 to hold
             memory,
-            item.span,
             errors,
         )?;
         let Some((tab, slot)) = position else {
@@ -100,14 +97,14 @@ pub fn hold_item_internal(
                 // the item to hold must be a material
                 mem! { memory: let t = *(&item_ptr->mType); };
                 if t != 7 {
-                    errors.push(sim_error!(item.span, NotHoldable));
+                    errors.push(sim_error!(span, NotHoldable));
                     check_for_extra_error = false;
                     break;
                 }
             }
             _ => {
                 // the item to hold must be non empty and non translucent
-                errors.push(sim_error!(item.span, InvalidItemTarget));
+                errors.push(sim_error!(span, InvalidItemTarget));
                 check_for_extra_error = false;
                 break;
             }
@@ -121,7 +118,7 @@ pub fn hold_item_internal(
         };
 
         if !linker::can_hold_another_item(ctx.cpu())? {
-            errors.push(sim_error!(item.span, CannotHoldMore));
+            errors.push(sim_error!(span, CannotHoldMore));
             return Ok(());
         }
 
@@ -135,10 +132,10 @@ pub fn hold_item_internal(
     if check_for_extra_error {
         let memory = ctx.cpu().proc.memory();
         let inventory = sys.screen.current_screen().as_inventory().unwrap();
-        let result = remaining.check(item.span, errors, || {
-            inventory.get_amount(name, meta, sim::CountingMethod::Value, memory)
+        let result = remaining.check(span, errors, |_| {
+            inventory.get_amount(matcher, sim::CountingMethod::Value, memory)
         })?;
-        super::check_remaining!(result, errors, item.span);
+        super::check_remaining!(result, errors, span);
     }
 
     Ok(())

@@ -1,9 +1,8 @@
 use blueflame::game::{singleton_instance, PouchItem};
 use blueflame::memory::{self, Memory, Ptr, mem};
 use skybook_parser::cir;
-use teleparse::Span;
 
-use crate::error::{sim_error, sim_warning, ErrorReport};
+use crate::error::{sim_warning, ErrorReport};
 use crate::sim;
 
 /// Items in inventory screen (for pouch and shop)
@@ -165,6 +164,27 @@ impl ScreenItems {
     pub fn select(
         &self,
         matcher: &cir::ItemMatchSpec,
+        memory: &Memory,
+        errors: &mut Vec<ErrorReport>,
+    ) -> Result<Option<(usize, usize)>, memory::Error> {
+        self.select_internal(matcher, None, memory, errors)
+    }
+
+    /// Like [`select`](Self::select), with the additional requirement
+    /// that the slot must have at least the value
+    pub fn select_value_at_least(
+        &self,
+        matcher: &cir::ItemMatchSpec,
+        value_at_least: i32,
+        memory: &Memory,
+        errors: &mut Vec<ErrorReport>,
+    ) -> Result<Option<(usize, usize)>, memory::Error> {
+        self.select_internal(matcher, Some(value_at_least), memory, errors)
+    }
+
+    fn select_internal(
+        &self,
+        matcher: &cir::ItemMatchSpec,
         // meta: Option<&cir::ItemMeta>,
         value_at_least: Option<i32>,
         memory: &Memory,
@@ -178,18 +198,8 @@ impl ScreenItems {
             return Ok(None);
         };
         let from_slot = match selector {
-            Selector::FromSlot(n) => {
-                if n != 0 && matcher.inverted {
-                    errors.push(sim_error!(matcher.span, MixedItemPositionAndInverse));
-                    return Ok(None);
-                }
-                n
-            }
+            Selector::FromSlot(n) =>  n,
             Selector::IdxAndSlot(tab_i, slot) => {
-                if matcher.inverted {
-                    errors.push(sim_error!(matcher.span, MixedItemPositionAndInverse));
-                    return Ok(None);
-                }
                 let name = &matcher.name;
                 // warn if the item specified by the position does not match
                 // the name in the command
@@ -260,7 +270,6 @@ impl ScreenItems {
         // meta: Option<&cir::ItemMeta>,
         method: sim::CountingMethod,
         memory: &Memory,
-        errors: &mut Vec<ErrorReport>
     ) -> Result<usize, memory::Error> {
         let Some(meta) = &matcher.meta else {
             return self.get_amount_without_position_nth(matcher, method, 0, memory);
@@ -268,23 +277,9 @@ impl ScreenItems {
         let Some(selector) = self.process_position_meta(meta.position.as_ref()) else {
             return Ok(0);
         };
-        if matcher.inverted {
-            // shouldn't be 
-            return Ok(0);
-        }
         let from_slot = match selector {
-            Selector::FromSlot(n) => {
-                if n != 0 && matcher.inverted {
-                    errors.push(sim_error!(matcher.span, MixedItemPositionAndInverse));
-                    return Ok(0);
-                }
-                n
-            }
+            Selector::FromSlot(n) => n,
             Selector::IdxAndSlot(tab_i, slot) => {
-                if matcher.inverted {
-                    errors.push(sim_error!(matcher.span, MixedItemPositionAndInverse));
-                    return Ok(0);
-                }
                 let Some(tab) = self.tabs.get(tab_i) else {
                     return Ok(0);
                 };
@@ -430,25 +425,23 @@ impl ScreenItem {
         &self,
         item: &cir::ItemMatchSpec,
         value_at_least: Option<i32>,
-        // meta: Option<&cir::ItemMeta>,
         memory: &Memory,
     ) -> Result<bool, memory::Error> {
-        let inverted = item.inverted;
         let name = &item.name;
         if !sim::util::name_spec_matches(name, &self.name) {
-            return Ok(inverted);
+            return Ok(false);
         }
         let item_ptr = self.ptr;
         let meta = item.meta.as_ref();
         if let Some(wanted_value) = meta.and_then(|x| x.value) {
             mem! { memory: let actual_value = *(&item_ptr->mValue); };
             if actual_value != wanted_value {
-                return Ok(inverted);
+                return Ok(false);
             }
         } else if let Some(value_at_least) = value_at_least {
             mem! { memory: let actual_value = *(&item_ptr->mValue); };
             if actual_value < value_at_least {
-                return Ok(inverted);
+                return Ok(false);
             }
         }
 
@@ -457,7 +450,7 @@ impl ScreenItem {
                 if let Some(wanted) = meta.and_then(|x| x.$meta_field) {
                     mem! { memory: let actual = *(&item_ptr->$item_field); };
                     if actual != wanted {
-                        return Ok(inverted);
+                        return Ok(false);
                     }
                 }
             };
@@ -465,7 +458,7 @@ impl ScreenItem {
                 if let Some(wanted) = meta.and_then(|x| x.$meta_field()) {
                     mem! { memory: let actual = *(&item_ptr->$item_field); };
                     if actual != wanted {
-                        return Ok(inverted);
+                        return Ok(false);
                     }
                 }
             };
@@ -476,7 +469,7 @@ impl ScreenItem {
         if let Some(wanted) = meta.and_then(|x| x.sell_price) {
             mem! { memory: let actual = *(&item_ptr->mSellPrice); };
             if !sim::util::modifier_meta_matches(&item.name, wanted, actual) {
-                return Ok(inverted);
+                return Ok(false);
             }
         }
         do_match!(memory, effect_id_f32(), mEffectId);
@@ -499,7 +492,7 @@ impl ScreenItem {
                 actual_ingrs.push(actual_ingr);
             }
             if wanted != &actual_ingrs {
-                return Ok(inverted);
+                return Ok(false);
             }
         }
 
@@ -507,11 +500,11 @@ impl ScreenItem {
             let pmdm = singleton_instance!(pmdm(memory))?;
             let actual_held = pmdm.is_item_being_grabbed(self.ptr, memory)?;
             if wanted != actual_held {
-                return Ok(inverted);
+                return Ok(false);
             }
         }
 
-        Ok(!inverted)
+        Ok(true)
     }
 
     fn get_amount(

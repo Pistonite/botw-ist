@@ -19,18 +19,16 @@ pub fn entangle_item(
     super::switch_to_inventory_or_stop!(ctx, sys, errors, "ENTANGLE");
 
     let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
+    let matcher = &item.matcher;
     // find the slot to activate
     let position = inventory.select(
-        &item.name,
-        item.meta.as_ref(),
-        None,
+        matcher,
         ctx.cpu().proc.memory(),
-        item.span,
         errors,
     )?;
 
     let Some((tab, slot)) = position else {
-        errors.push(sim_error!(item.span, CannotFindItem));
+        errors.push(sim_error!(matcher.span, CannotFindItem));
         return Ok(());
     };
 

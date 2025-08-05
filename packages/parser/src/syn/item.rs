@@ -32,15 +32,15 @@ pub struct MaybeNumberedItemOrCategory {
 #[derive(Debug)]
 pub struct AllItemOrCategory {
     pub all: syn::KwAll,
-    pub but_clause: tp::Option<ButClauseOptNum>,
+    pub but_clause: tp::Option<ButClause>,
     pub item: ItemOrCategory,
 }
 
 #[derive_syntax]
 #[derive(Debug)]
-pub struct ButClauseOptNum {
+pub struct ButClause {
     pub but: syn::KwBut,
-    pub num: tp::Option<syn::Number>,
+    pub num: syn::Number,
 }
 
 /// Syntax for an item or a category

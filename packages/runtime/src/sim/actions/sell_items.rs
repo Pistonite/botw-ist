@@ -25,25 +25,25 @@ pub fn sell_items(
 
     let shop = sys.screen.current_screen_mut().as_selling_mut().unwrap();
     'outer: for item in items {
-        let name = &item.name;
-        let meta = item.meta.as_ref();
+        let matcher = &item.matcher;
+        let span = matcher.span;
         let memory = ctx.cpu().proc.memory();
-        let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
-            Ok(shop.get_amount(name, meta, sim::CountingMethod::CanStack, memory)?)
+        let mut remaining = super::convert_amount(item.amount, span, errors, false, |_| {
+            Ok(shop.get_amount(matcher, sim::CountingMethod::CanStack, memory)?)
         })?;
         let mut check_for_extra_error = true;
         loop {
             if ctx.is_aborted() {
                 break 'outer;
             }
-            if remaining.is_done(item.span, errors, "SELL") {
+            if remaining.is_done(span, errors, "SELL") {
                 break;
             }
 
             let m = ctx.cpu().proc.memory();
 
             // find the item to sell
-            let Some((mut tab, mut slot)) = shop.select(name, meta, None, m, item.span, errors)?
+            let Some((mut tab, mut slot)) = shop.select(matcher, m, errors)?
             else {
                 break;
             };
@@ -63,7 +63,7 @@ pub fn sell_items(
             let mut can_stack = game::can_stack(&item_name);
 
             if can_stack && value <= 0 {
-                let position = shop.select(name, meta, Some(1), m, item.span, errors)?;
+                let position = shop.select_value_at_least(matcher, 1, m, errors)?;
                 let Some((tab2, slot2)) = position else {
                     break;
                 };
@@ -89,7 +89,7 @@ pub fn sell_items(
                 && item_name != "Obj_KorokNuts"
                 && item_name != "Obj_DungeonClearSeal"
             {
-                errors.push(sim_error!(item.span, NotSellable(item_name)));
+                errors.push(sim_error!(span, NotSellable(item_name)));
                 check_for_extra_error = false;
                 break;
             }
@@ -112,10 +112,10 @@ pub fn sell_items(
         }
         if check_for_extra_error {
             let memory = ctx.cpu().proc.memory();
-            let result = remaining.check(item.span, errors, || {
-                shop.get_amount(name, meta, sim::CountingMethod::CanStack, memory)
+            let result = remaining.check(span, errors, |_| {
+                shop.get_amount(matcher, sim::CountingMethod::CanStack, memory)
             })?;
-            super::check_remaining!(result, errors, item.span);
+            super::check_remaining!(result, errors, span);
         }
     }
 

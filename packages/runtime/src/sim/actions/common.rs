@@ -1,10 +1,9 @@
 use blueflame::game::{self, WeaponModifierInfo};
 use blueflame::linker::events::GameEvent as _;
-use blueflame::memory::Memory;
+use blueflame::memory::{self, Memory};
 use blueflame::processor::{self, Cpu2};
-use blueflame::{linker, memory};
-use skybook_parser::cir;
-use teleparse::Span;
+use blueflame::linker;
+use skybook_parser::{cir, Span};
 
 use crate::error::{ErrorReport, sim_error, sim_warning};
 use crate::sim;
@@ -330,10 +329,7 @@ pub fn change_to_pe_target_if_need(
     let mut new_errors = vec![];
     let target_pos = inventory.select(
         &target.matcher,
-        // target.meta.as_ref(),
-        None,
         memory,
-        // target.span,
         &mut new_errors,
     )?;
     let Some((target_tab, target_slot)) = target_pos else {

@@ -42,8 +42,6 @@ pub struct ItemMatchSpec {
     pub name: ItemNameSpec,
     /// The optional metadata to be matched, including position
     pub meta: Option<cir::ItemMeta>,
-    /// If the selection should be inverted
-    pub inverted: bool,
     /// Source span of the item spec
     pub span: Span,
 }
@@ -124,7 +122,6 @@ pub async fn parse_one_item_constrained<R: QuotedItemResolver>(
         matcher: ItemMatchSpec { 
             name,
             meta,
-            inverted: false,
             span: item.span(),
         }
     };
@@ -140,31 +137,22 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
     let mut out_item_specs = Vec::with_capacity(list.0.len());
     
     for (item, _comma) in list.0.iter() {
-        let (amount, item, inverse) = match item {
+        let (amount, item) = match item {
             syn::MaybeNumberedOrAllItemOrCategory::Numbered(item) => {
                 let Some(amount) = parse_item_amount_optional(item.num.as_ref(), errors) else {
                     continue;
                 };
-                (AmountSpec::Num(amount), &item.item, false)
+                (AmountSpec::Num(amount), &item.item)
             }
             syn::MaybeNumberedOrAllItemOrCategory::All(item) => {
                 match item.but_clause.deref() {
                     Some(but) => {
-                        match but.num.deref() {
-                            // "all but X"
-                            Some(num) => {
-                                let Some(amount) = parse_item_amount(num, errors) else {
-                                    continue;
-                                };
-                                (AmountSpec::AllBut(amount), &item.item, false)
-                            }
-                            // "all but"
-                            None => {
-                                (AmountSpec::All, &item.item, true)
-                            }
-                        }
+                        let Some(amount) = parse_item_amount(&but.num, errors) else {
+                            continue;
+                        };
+                        (AmountSpec::AllBut(amount), &item.item)
                     }
-                    None => (AmountSpec::All, &item.item, false)
+                    None => (AmountSpec::All, &item.item)
                 }
             }
         };
@@ -177,7 +165,6 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
             matcher: ItemMatchSpec {
                 name,
                 meta,
-                inverted: inverse,
                 span: item_span,
             }
         });

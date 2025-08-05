@@ -1,4 +1,4 @@
-use teleparse::Span;
+use skybook_parser::Span;
 
 pub use skybook_api::runtime::error::RuntimeError as Error;
 pub use skybook_api::runtime::error::{MaybeAborted, RuntimeInitError, RuntimeViewError};

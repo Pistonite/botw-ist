@@ -20,7 +20,7 @@ log.workspace = true
 oneshot.workspace = true
 serde.workspace = true
 thiserror.workspace = true
-teleparse.workspace = true
+# teleparse.workspace = true
 static_assertions.workspace = true
 
 # TS/WASM dependencies

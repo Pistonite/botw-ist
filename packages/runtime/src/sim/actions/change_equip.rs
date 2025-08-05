@@ -3,7 +3,6 @@ use blueflame::memory::{Memory, Ptr, mem};
 use blueflame::processor::{self, Cpu2};
 use blueflame::{linker, memory};
 use skybook_parser::cir;
-use teleparse::Span;
 
 use crate::error::{ErrorReport, sim_error, sim_warning};
 use crate::sim;
@@ -40,37 +39,42 @@ pub fn change_equip_inventory(
     let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
 
     'outer: for item in items {
-        let name = &item.name;
-        let item_type = sim::util::name_spec_to_item_type(name);
+        let mut matcher = item.matcher.clone();
+        let span = matcher.span;
+        let item_type = sim::util::name_spec_to_item_type(&matcher.name);
         if item_type > PouchItemType::ArmorLower as i32
             && item_type != PouchItemType::KeyItem as i32
         {
-            errors.push(sim_error!(item.span, NotEquipment));
+            errors.push(sim_error!(span, NotEquipment));
             continue;
         }
         if item_type == PouchItemType::Arrow as i32 && !is_equip {
             // unequipping arrow as the same effect as equipped,
             // but in the game, you won't even get the prompt normally,
             // so it's probably not what the user meant to do
-            errors.push(sim_error!(item.span, CannotUnequipArrow));
+            errors.push(sim_error!(span, CannotUnequipArrow));
             continue;
         }
 
         // only target equipped items if the command is unequip
-        let mut meta = item.meta.as_ref().cloned().unwrap_or_default();
-        if is_equip {
-            meta.equip = None;
+        let equip_meta = if is_equip {
+            None
         } else {
-            meta.equip = Some(true);
+            Some(true)
+        };
+        match matcher.meta.as_mut() {
+            None => {let mut meta = cir::ItemMeta::default();
+                meta.equip = equip_meta;
+                matcher.meta = Some(meta)
+            }
+            Some(meta) => meta.equip = equip_meta
         }
-        let meta = Some(meta);
-        let meta_ref = meta.as_ref();
         let memory = ctx.cpu().proc.memory();
         // we want to expand the "all" amount if it's equip, to avoid getting stuck
         // to try to equip everything (since equipping something would unequip the rest)
         let mut remaining =
-            super::convert_amount(item.amount, item.span, errors, is_equip, || {
-                Ok(inventory.get_amount(name, meta_ref, sim::CountingMethod::Slot, memory)?)
+            super::convert_amount(item.amount, span, errors, is_equip, |_| {
+                Ok(inventory.get_amount(&matcher, sim::CountingMethod::Slot, memory)?)
             })?;
         let mut check_for_extra_error = true;
 
@@ -78,12 +82,12 @@ pub fn change_equip_inventory(
             if ctx.is_aborted() {
                 break 'outer;
             }
-            if remaining.is_done(item.span, errors, "CHGEQUIP") {
+            if remaining.is_done(span, errors, "CHGEQUIP") {
                 break;
             }
             // select the item
             let memory = ctx.cpu().proc.memory();
-            let position = inventory.select(name, meta_ref, None, memory, item.span, errors)?;
+            let position = inventory.select(&matcher, memory, errors)?;
             let Some((tab, slot)) = position else {
                 break;
             };
@@ -96,9 +100,9 @@ pub fn change_equip_inventory(
                     };
                     if is_equip == equipped {
                         if is_equip {
-                            errors.push(sim_warning!(item.span, ItemAlreadyEquipped));
+                            errors.push(sim_warning!(span, ItemAlreadyEquipped));
                         } else {
-                            errors.push(sim_warning!(item.span, ItemAlreadyUnequipped));
+                            errors.push(sim_warning!(span, ItemAlreadyUnequipped));
                         }
                         check_for_extra_error = false;
                         break;
@@ -108,7 +112,7 @@ pub fn change_equip_inventory(
                         .load_utf8_lossy(memory)?;
                     let is_herosoul = sim::util::is_hero_soul(&o_item_name);
                     if t > PouchItemType::ArmorLower as i32 && !is_herosoul {
-                        errors.push(sim_error!(item.span, NotEquipment));
+                        errors.push(sim_error!(span, NotEquipment));
                         break;
                     }
                     let is_weapon = t <= PouchItemType::Shield as i32;
@@ -117,7 +121,7 @@ pub fn change_equip_inventory(
                 }
                 _ => {
                     // the item to equip must be non empty and non translucent
-                    errors.push(sim_error!(item.span, InvalidItemTarget));
+                    errors.push(sim_error!(span, InvalidItemTarget));
                     check_for_extra_error = false;
                     break;
                 }
@@ -166,10 +170,10 @@ pub fn change_equip_inventory(
         }
         if check_for_extra_error {
             let memory = ctx.cpu().proc.memory();
-            let result = remaining.check(item.span, errors, || {
-                inventory.get_amount(name, meta_ref, sim::CountingMethod::Slot, memory)
+            let result = remaining.check(span, errors, |_| {
+                inventory.get_amount(&matcher, sim::CountingMethod::Slot, memory)
             })?;
-            super::check_remaining!(result, errors, item.span);
+            super::check_remaining!(result, errors, span);
         }
     }
 
@@ -192,27 +196,26 @@ pub fn change_equip_dpad(
         if ctx.is_aborted() {
             break;
         }
+        let matcher = &item.matcher;
+        let span = matcher.span;
 
-        let name = &item.name;
-        let item_type = sim::util::name_spec_to_item_type(name);
+        let item_type = sim::util::name_spec_to_item_type(&matcher.name);
         if item_type > PouchItemType::Shield as i32 {
-            errors.push(sim_error!(item.span, InvalidDpadType));
+            errors.push(sim_error!(span, InvalidDpadType));
             continue;
         }
         if item_type == PouchItemType::Arrow as i32 && !is_equip {
-            errors.push(sim_error!(item.span, CannotUnequipArrow));
+            errors.push(sim_error!(span, CannotUnequipArrow));
             continue;
         }
-        let meta = item.meta.as_ref();
 
         let cpu = ctx.cpu();
-        let mut remaining = super::convert_amount(item.amount, item.span, errors, false, || {
+        let mut remaining = super::convert_amount(item.amount, span, errors, false, |_| {
             // open dpad menu just for counting first
             let dpad_items = linker::get_weapons_for_dpad(cpu, item_type)?;
             Ok(dpad_get_amount(
                 &dpad_items,
-                name,
-                meta,
+                matcher,
                 is_equip,
                 cpu.proc.memory(),
             )?)
@@ -222,7 +225,7 @@ pub fn change_equip_dpad(
             if ctx.is_aborted() {
                 break 'outer;
             }
-            if remaining.is_done(item.span, errors, "CHGEQUIP-DPAD") {
+            if remaining.is_done(span, errors, "CHGEQUIP-DPAD") {
                 break;
             }
             // open the dpad menu for real
@@ -231,18 +234,16 @@ pub fn change_equip_dpad(
             // select the item
             let selected_item = dpad_select(
                 &dpad_items,
-                name,
-                meta,
+                matcher,
                 is_equip,
-                item.span,
                 errors,
                 ctx.cpu().proc.memory(),
             )?;
             let Some(selected_item) = selected_item else {
                 if is_equip {
-                    errors.push(sim_error!(item.span, CannotFindItemDpadEquip));
+                    errors.push(sim_error!(span, CannotFindItemDpadEquip));
                 } else {
-                    errors.push(sim_error!(item.span, CannotFindItemDpadUnequip));
+                    errors.push(sim_error!(span, CannotFindItemDpadUnequip));
                 }
                 break;
             };
@@ -307,21 +308,20 @@ fn dpad_get_first_equipped(
 /// Select item from dpad
 fn dpad_select(
     menu: &[Ptr![PouchItem]],
-    name: &cir::ItemNameSpec,
-    meta: Option<&cir::ItemMeta>,
+    matcher: &cir::ItemMatchSpec,
+    // meta: Option<&cir::ItemMeta>,
     is_for_equip: bool,
-    span: Span,
+    // span: Span,
     errors: &mut Vec<ErrorReport>,
     memory: &Memory,
 ) -> Result<Option<Ptr![PouchItem]>, memory::Error> {
-    let Some(meta) = meta else {
+    let span = matcher.span;
+    let Some(meta) = &matcher.meta else {
         return dpad_select_without_position_nth(
             menu,
-            name,
-            None,
+            matcher,
             is_for_equip,
             0,
-            span,
             errors,
             memory,
         );
@@ -346,28 +346,28 @@ fn dpad_select(
 
     dpad_select_without_position_nth(
         menu,
-        name,
-        Some(meta),
+        matcher,
         is_for_equip,
         from_slot,
-        span,
         errors,
         memory,
     )
 }
 
 /// Select item from dpad
-#[allow(clippy::too_many_arguments)]
+// #[allow(clippy::too_many_arguments)]
 fn dpad_select_without_position_nth(
     menu: &[Ptr![PouchItem]],
-    spec: &cir::ItemNameSpec,
-    meta: Option<&cir::ItemMeta>,
+    matcher: &cir::ItemMatchSpec,
+    // meta: Option<&cir::ItemMeta>,
     is_for_equip: bool,
     nth: usize,
-    span: Span,
+    // span: Span,
     errors: &mut Vec<ErrorReport>,
     memory: &Memory,
 ) -> Result<Option<Ptr![PouchItem]>, memory::Error> {
+    let meta = matcher.meta.as_ref();
+    let span = matcher.span;
     // currently, we do not match these, as dpad is only supposed
     // to be for weapons. They may still be used in the future
     if let Some(meta) = meta {
@@ -376,6 +376,7 @@ fn dpad_select_without_position_nth(
             || meta.effect_id.is_some()
             || meta.effect_level.is_some()
             || !meta.ingredients.is_empty()
+            || meta.held.is_some()
         {
             errors.push(sim_warning!(span, UselessItemMatchProp));
         }
@@ -388,7 +389,7 @@ fn dpad_select_without_position_nth(
             // skip the unequipped items if it's for unequip
             continue;
         }
-        if !dpad_matches(item, spec, meta, is_for_equip, memory)? {
+        if !dpad_matches(item, matcher, is_for_equip, memory)? {
             if !is_for_equip {
                 // for unequip, we only check the first
                 return Ok(None);
@@ -408,13 +409,13 @@ fn dpad_select_without_position_nth(
 
 fn dpad_get_amount(
     menu: &[Ptr![PouchItem]],
-    name: &cir::ItemNameSpec,
-    meta: Option<&cir::ItemMeta>,
+    matcher: &cir::ItemMatchSpec,
+    // meta: Option<&cir::ItemMeta>,
     is_for_equip: bool,
     memory: &Memory,
 ) -> Result<usize, memory::Error> {
-    let Some(meta) = meta else {
-        return dpad_get_amount_without_position_nth(menu, name, None, is_for_equip, 0, memory);
+    let Some(meta) = &matcher.meta else {
+        return dpad_get_amount_without_position_nth(menu, matcher, is_for_equip, 0, memory);
     };
     let from_slot = if is_for_equip {
         match &meta.position {
@@ -425,14 +426,14 @@ fn dpad_get_amount(
         0
     };
 
-    dpad_get_amount_without_position_nth(menu, name, Some(meta), is_for_equip, from_slot, memory)
+    dpad_get_amount_without_position_nth(menu, matcher, is_for_equip, from_slot, memory)
 }
 
 /// Get number of matching items in dpad menu
 fn dpad_get_amount_without_position_nth(
     menu: &[Ptr![PouchItem]],
-    spec: &cir::ItemNameSpec,
-    meta: Option<&cir::ItemMeta>,
+    matcher: &cir::ItemMatchSpec,
+    // meta: Option<&cir::ItemMeta>,
     is_for_equip: bool,
     nth: usize,
     memory: &Memory,
@@ -441,7 +442,7 @@ fn dpad_get_amount_without_position_nth(
     let mut count = 0;
     for item in menu {
         let item = *item;
-        if !dpad_matches(item, spec, meta, is_for_equip, memory)? {
+        if !dpad_matches(item, matcher, is_for_equip, memory)? {
             continue;
         }
         if skip > 0 {
@@ -456,9 +457,9 @@ fn dpad_get_amount_without_position_nth(
 
 fn dpad_matches(
     item: Ptr![PouchItem],
-    spec: &cir::ItemNameSpec,
-    meta: Option<&cir::ItemMeta>,
-    is_for_equip: bool,
+    matcher: &cir::ItemMatchSpec,
+    // meta: Option<&cir::ItemMeta>,
+    is_for_equip: bool, // false if for unequip
     memory: &Memory,
 ) -> Result<bool, memory::Error> {
     mem! {memory: let equipped = *(&item->mEquipped); }
@@ -476,9 +477,10 @@ fn dpad_matches(
 
     // try to match the item
     let name = Ptr!(&item->mName).cstr(memory)?.load_utf8_lossy(memory)?;
-    if !sim::util::name_spec_matches(spec, &name) {
+    if !sim::util::name_spec_matches(&matcher.name, &name) {
         return Ok(false);
     }
+    let meta = matcher.meta.as_ref();
 
     if let Some(wanted_value) = meta.and_then(|x| x.value) {
         mem! { memory: let actual_value = *(&item->mValue); };
@@ -496,7 +498,7 @@ fn dpad_matches(
     // modifier flag
     if let Some(wanted) = meta.and_then(|x| x.sell_price) {
         mem! { memory: let actual = *(&item->mSellPrice); };
-        if !sim::util::modifier_meta_matches(spec, wanted, actual) {
+        if !sim::util::modifier_meta_matches(&matcher.name, wanted, actual) {
             return Ok(false);
         }
     }

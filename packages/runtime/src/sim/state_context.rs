@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use blueflame::processor::{self, Cpu1, Cpu2, CrashReport};
-use teleparse::Span;
+use skybook_parser::Span;
 
 use crate::error::{Report, sim_error, sim_warning};
 use crate::{ErrorReport, exec, sim};

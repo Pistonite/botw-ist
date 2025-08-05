@@ -4,8 +4,7 @@ use blueflame::game::{self, PouchItem, PouchItemType, WeaponModifierInfo, gdt};
 use blueflame::linker;
 use blueflame::memory::{self, Memory, Ptr, mem, proxy};
 use blueflame::processor::{self, Cpu2};
-use skybook_parser::cir;
-use teleparse::Span;
+use skybook_parser::{cir, Span};
 
 use crate::error::{ErrorReport, sim_error, sim_warning};
 use crate::{iv, sim};
@@ -479,10 +478,6 @@ impl OverworldSystem {
         let Some(meta) = &matcher.meta else {
             return self.do_ground_select_without_position_nth(matcher, 0, errors);
         };
-        if matcher.inverted && meta.position.is_some() {
-            errors.push(sim_error!(matcher.span, MixedItemPositionAndInverse));
-            return None;
-        }
         let from_slot = match &meta.position {
             None => 0, // match first slot
             Some(cir::ItemPosition::FromSlot(n)) => (*n as usize).saturating_sub(1), // match x-th slot, 1 indexed
@@ -532,16 +527,10 @@ impl OverworldSystem {
     pub fn get_ground_amount(
         &self,
         matcher: &cir::ItemMatchSpec,
-        errors: &mut Vec<ErrorReport>
-        // meta: Option<&cir::ItemMeta>,
     ) -> usize {
         let Some(meta) = &matcher.meta else {
             return self.get_ground_amount_without_position_nth(matcher, 0);
         };
-        if matcher.inverted && meta.position.is_some() {
-            errors.push(sim_error!(matcher.span, MixedItemPositionAndInverse));
-            return 0;
-        }
         let from_slot = match &meta.position {
             Some(cir::ItemPosition::FromSlot(n)) => (*n as usize).saturating_sub(1), // match x-th slot, 1 indexed
             _ => 0,
@@ -597,15 +586,10 @@ impl OverworldSystem {
     /// meta is ignored, and will emit a warning if is not None
     pub fn equipped_select(
         &self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
-        span: Span,
+        matcher: &cir::ItemMatchSpec,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<EquippedItemHandle<&Self>> {
-        Some(
-            self.do_equipped_select(item, meta, span, errors)?
-                .bind(self),
-        )
+        Some(self.do_equipped_select(matcher, errors)?.bind(self))
     }
 
     /// Select an item from equipped items
@@ -613,29 +597,23 @@ impl OverworldSystem {
     /// meta is ignored, and will emit a warning if is not None
     pub fn equipped_select_mut(
         &mut self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
-        span: Span,
+        matcher: &cir::ItemMatchSpec,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<EquippedItemHandle<&mut Self>> {
-        Some(
-            self.do_equipped_select(item, meta, span, errors)?
-                .bind(self),
-        )
+        Some(self.do_equipped_select(matcher, errors)?.bind(self))
     }
 
     /// Select an item from equipped items
     fn do_equipped_select(
         &self,
-        item: &cir::ItemNameSpec,
-        meta: Option<&cir::ItemMeta>,
-        span: Span,
+        matcher: &cir::ItemMatchSpec,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<EquippedItemHandle<()>> {
-        if meta.is_some() {
+        let span =matcher.span;
+        if matcher.meta.is_some() {
             errors.push(sim_warning!(span, UselessMetaForOverworldEquipment));
         }
-        match item {
+        match &matcher.name {
             cir::ItemNameSpec::Actor(actor) => {
                 if self.weapon.as_ref().is_some_and(|x| &x.name == actor) {
                     return Some(EquippedItemHandle::Weapon(()));
@@ -674,9 +652,8 @@ impl OverworldSystem {
 impl OverworldActor {
     /// Returns if the overworld actor matches the item selector
     pub fn matches(&self, matcher: &cir::ItemMatchSpec) -> bool {
-        let inverted = matcher.inverted;
         if !sim::util::name_spec_matches(&matcher.name, &self.name) {
-            return inverted;
+            return false;
         }
         let meta = matcher.meta.as_ref();
         // matching value for overworld actors is mostly
@@ -684,12 +661,12 @@ impl OverworldActor {
         if let Some(wanted_value) = meta.and_then(|x| x.value)
             && wanted_value != self.value
         {
-            return inverted;
+            return false;
         }
         if let Some(wanted_mod_value) = meta.and_then(|x| x.life_recover)
             && self.modifier.is_none_or(|m| m.value != wanted_mod_value)
         {
-            return inverted;
+            return false;
         }
 
         if let Some(wanted_flags) = meta.and_then(|x| x.sell_price)
@@ -697,10 +674,10 @@ impl OverworldActor {
                 !sim::util::modifier_meta_matches(&matcher.name, wanted_flags, m.flags as i32)
             })
         {
-            return inverted;
+            return false;
         }
 
-        !inverted
+        true
     }
 
     pub fn to_equipped_iv(&self) -> iv::OverworldItem {

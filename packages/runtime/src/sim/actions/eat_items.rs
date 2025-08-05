@@ -39,13 +39,11 @@ pub fn eat_item_internal(
     pe_target: Option<&cir::ItemSelectSpec>,
 ) -> Result<(), processor::Error> {
     let matcher = &item.matcher;
-    // let name = &item.name;
-    // let meta = item.meta.as_ref();
     let memory = ctx.cpu().proc.memory();
     let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
-    let mut remaining = super::convert_amount(item.amount, matcher.span, errors, false, |errors| {
+    let mut remaining = super::convert_amount(item.amount, matcher.span, errors, false, |_| {
         // eating always decrease value instead of using slot
-        Ok(inventory.get_amount(matcher, sim::CountingMethod::Value, memory, errors)?)
+        Ok(inventory.get_amount(matcher, sim::CountingMethod::Value, memory)?)
     })?;
 
     let mut check_for_extra_error = true;
@@ -61,12 +59,10 @@ pub fn eat_item_internal(
             break;
         }
         let memory = ctx.cpu().proc.memory();
-        let position = inventory.select(
+        let position = inventory.select_value_at_least(
             matcher,
-            // meta,
-            Some(1), // must have at least 1 to eat
+            1, // must have at least 1 to eat
             memory,
-            // item.span,
             errors,
         )?;
         let Some((tab, slot)) = position else {
@@ -106,8 +102,8 @@ pub fn eat_item_internal(
     }
     if check_for_extra_error {
         let memory = ctx.cpu().proc.memory();
-        let result = remaining.check(matcher.span, errors, |errors| {
-            inventory.get_amount(matcher, sim::CountingMethod::Value, memory, errors)
+        let result = remaining.check(matcher.span, errors, |_| {
+            inventory.get_amount(matcher, sim::CountingMethod::Value, memory)
         })?;
         super::check_remaining!(result, errors, matcher.span);
     }
