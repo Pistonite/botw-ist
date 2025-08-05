@@ -17,8 +17,7 @@ export default defineConfig(
             serveStatic([
                 {
                     pattern: /^\/static\/item-assets\/(.*)/,
-                    resolve: ([_, capture]) =>
-                        path.join("..", "item-assets", "public", capture),
+                    resolve: ([_, capture]) => path.join("..", "item-assets", "public", capture),
                 },
             ]),
         ],

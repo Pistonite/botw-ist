@@ -152,10 +152,7 @@ export const DefaultActorData = {
 export type ActorData = typeof DefaultActorData;
 
 /** Get the data property of the actor, or default if the actor doesn't have the property */
-export const getActorParam = <K extends keyof ActorData>(
-    actor: string,
-    key: K,
-): ActorData[K] => {
+export const getActorParam = <K extends keyof ActorData>(actor: string, key: K): ActorData[K] => {
     const data = ActorDataMap[actor];
     if (!data || !(key in data)) {
         return DefaultActorData[key];
@@ -164,9 +161,6 @@ export const getActorParam = <K extends keyof ActorData>(
 };
 
 /** Check if the actor has the property */
-export const hasActorParam = <K extends keyof ActorData>(
-    actor: string,
-    key: K,
-): boolean => {
+export const hasActorParam = <K extends keyof ActorData>(actor: string, key: K): boolean => {
     return key in ActorDataMap[actor];
 };

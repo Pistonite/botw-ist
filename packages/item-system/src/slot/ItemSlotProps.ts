@@ -67,10 +67,7 @@ export type ItemSlotProps = {
 } & StatusProps &
     Pick<ActorSpriteProps, "blank" | "deactive" | "badlyDamaged">;
 
-export const getSlotPropsFromActor = (
-    actor: string,
-    effect?: CookEffect,
-): ItemSlotProps => {
+export const getSlotPropsFromActor = (actor: string, effect?: CookEffect): ItemSlotProps => {
     const [realItemType] = getItemTypeAndUse(actor);
     const isEquipment = isEquipmentType(realItemType);
     const status = effect
@@ -81,9 +78,7 @@ export const getSlotPropsFromActor = (
         elixirEffect: effect ? CookEffectNames[effect as number] || "" : "",
         isEquipped: false,
         isTranslucent: false,
-        durability: isEquipment
-            ? getActorParam(actor, "generalLife")
-            : undefined,
+        durability: isEquipment ? getActorParam(actor, "generalLife") : undefined,
         isInBrokenSlot: false,
         isEntangled: false,
         holdingCount: 0,
@@ -119,11 +114,7 @@ export const getSlotPropsFromPouchItem = (
           ? ("dpad-only" as const)
           : ("none" as const);
 
-    if (
-        actorName === "Weapon_Sword_070" &&
-        value === 0 &&
-        accessibleStatus === "dpad-none"
-    ) {
+    if (actorName === "Weapon_Sword_070" && value === 0 && accessibleStatus === "dpad-none") {
         // since MS with 0 dura is always not accessible in dpad, there's nothing special
         // about it, and we just don't display the accessibleStatus
         accessibleStatus = undefined;
@@ -136,9 +127,7 @@ export const getSlotPropsFromPouchItem = (
         isTranslucent: !item.isInInventory,
         count: getCount(isEquipment, value, canStack),
         // don't show durability for translucent items
-        durability: item.isInInventory
-            ? getDurability(isEquipment, value)
-            : undefined,
+        durability: item.isInInventory ? getDurability(isEquipment, value) : undefined,
         isInBrokenSlot,
         isEntangled: item.promptEntangled,
         holdingCount: item.holdingCount,
@@ -175,22 +164,14 @@ export const getSlotPropsFromGdtItem = (
         );
     } else if (isFood) {
         const { effectId, effectValue, sellPrice } = data.info;
-        status = getStatusProps(
-            actorName,
-            PouchItemType.Food,
-            effectId,
-            effectValue,
-            sellPrice,
-        );
+        status = getStatusProps(actorName, PouchItemType.Food, effectId, effectValue, sellPrice);
     } else {
         status = getDefaultStatusPropsForActor(actorName);
     }
 
     return {
         actor: actorName,
-        elixirEffect: isFood
-            ? CookEffectNames[data.info.effectId] || undefined
-            : undefined,
+        elixirEffect: isFood ? CookEffectNames[data.info.effectId] || undefined : undefined,
         isEquipped: !isAbility && isEquipped,
         isTranslucent: false,
         count: getCount(isEquipment, value, canStack),
@@ -212,8 +193,7 @@ export const getSlotPropsFromOverworldItem = (
 ): ItemSlotProps => {
     const actorName = item.actor;
     const [itemType] = getItemTypeAndUse(actorName);
-    const isEquipment =
-        item.type === "equipped" || item.type === "ground-equipment";
+    const isEquipment = item.type === "equipped" || item.type === "ground-equipment";
 
     let status: StatusProps;
     if (isEquipment) {
@@ -242,11 +222,7 @@ const isChampionAbilityActor = (actor: string) => {
     return /^Obj_(DLC_)?HeroSoul_(Gerudo|Goron|Rito|Zora)$/.test(actor);
 };
 
-const getCount = (
-    isEquipment: boolean,
-    value: number,
-    canStack: boolean,
-): number | undefined => {
+const getCount = (isEquipment: boolean, value: number, canStack: boolean): number | undefined => {
     if (isEquipment) {
         return undefined;
     }
@@ -256,10 +232,7 @@ const getCount = (
     return undefined;
 };
 
-const getDurability = (
-    isEquipment: boolean,
-    value: number,
-): number | undefined => {
+const getDurability = (isEquipment: boolean, value: number): number | undefined => {
     if (isEquipment) {
         return value / 100;
     }

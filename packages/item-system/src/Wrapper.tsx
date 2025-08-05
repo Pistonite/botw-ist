@@ -38,25 +38,18 @@ export const StandaloneItemSlot: React.FC<StandaloneItemSlotProps> = ({
     effect,
     ...props
 }) => {
-    const slotPropsFromActor = useMemo(
-        () => getSlotPropsFromActor(actor, effect),
-        [actor, effect],
-    );
+    const slotPropsFromActor = useMemo(() => getSlotPropsFromActor(actor, effect), [actor, effect]);
 
     return <ItemSlot {...slotPropsFromActor} {...props} />;
 };
 
-export const StandaloneItemSlotWithTooltip: React.FC<
-    StandaloneItemSlotProps
-> = ({ actor, effect, ...props }) => {
-    const slotPropsFromActor = useMemo(
-        () => getSlotPropsFromActor(actor, effect),
-        [actor, effect],
-    );
-    const tooltipProps = useMemo(
-        () => getTooltipPropsFromActor(actor, effect),
-        [actor, effect],
-    );
+export const StandaloneItemSlotWithTooltip: React.FC<StandaloneItemSlotProps> = ({
+    actor,
+    effect,
+    ...props
+}) => {
+    const slotPropsFromActor = useMemo(() => getSlotPropsFromActor(actor, effect), [actor, effect]);
+    const tooltipProps = useMemo(() => getTooltipPropsFromActor(actor, effect), [actor, effect]);
 
     return (
         <ItemTooltip
@@ -85,11 +78,7 @@ const PouchItemSlotImpl: React.FC<PouchItemSlotProps> = ({
     isMasterSwordFullPower,
     ...props
 }) => {
-    const slotProps = getSlotPropsFromPouchItem(
-        item,
-        inBrokenSlot,
-        isMasterSwordFullPower,
-    );
+    const slotProps = getSlotPropsFromPouchItem(item, inBrokenSlot, isMasterSwordFullPower);
     return <ItemSlot {...slotProps} {...props} />;
 };
 export const PouchItemSlot = memo(PouchItemSlotImpl);
@@ -100,11 +89,7 @@ const PouchItemSlotWithTooltipImpl: React.FC<PouchItemSlotProps> = ({
     isMasterSwordFullPower,
     ...props
 }) => {
-    const slotProps = getSlotPropsFromPouchItem(
-        item,
-        inBrokenSlot,
-        isMasterSwordFullPower,
-    );
+    const slotProps = getSlotPropsFromPouchItem(item, inBrokenSlot, isMasterSwordFullPower);
     const tooltipProps = getTooltipPropsFromPouchItem(item, inBrokenSlot);
     return (
         <ItemTooltip {...tooltipProps} {...props}>
@@ -156,10 +141,7 @@ const OverworldItemSlotImpl: React.FC<OverworldItemSlotProps> = ({
     isMasterSwordFullPower,
     ...props
 }) => {
-    const slotProps = getSlotPropsFromOverworldItem(
-        item,
-        isMasterSwordFullPower,
-    );
+    const slotProps = getSlotPropsFromOverworldItem(item, isMasterSwordFullPower);
     return <ItemSlot {...slotProps} {...props} />;
 };
 export const OverworldItemSlot = memo(OverworldItemSlotImpl);
@@ -169,10 +151,7 @@ const OverworldItemSlotWithTooltipImpl: React.FC<OverworldItemSlotProps> = ({
     isMasterSwordFullPower,
     ...props
 }) => {
-    const slotProps = getSlotPropsFromOverworldItem(
-        item,
-        isMasterSwordFullPower,
-    );
+    const slotProps = getSlotPropsFromOverworldItem(item, isMasterSwordFullPower);
     const tooltipProps = getTooltipPropsFromOverworldItem(item);
     return (
         <ItemTooltip {...tooltipProps} {...props}>
@@ -180,6 +159,4 @@ const OverworldItemSlotWithTooltipImpl: React.FC<OverworldItemSlotProps> = ({
         </ItemTooltip>
     );
 };
-export const OverworldItemSlotWithTooltip = memo(
-    OverworldItemSlotWithTooltipImpl,
-);
+export const OverworldItemSlotWithTooltip = memo(OverworldItemSlotWithTooltipImpl);

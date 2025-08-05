@@ -65,20 +65,12 @@ const useStyles = makeStyles({
     },
 });
 
-export const ItemTab: React.FC<ItemTabProps> = ({
-    category,
-    border,
-    nodes,
-    undiscovered,
-}) => {
+export const ItemTab: React.FC<ItemTabProps> = ({ category, border, nodes, undiscovered }) => {
     const styles = useStyles();
 
     const $CategoryIcon = category !== PouchCategory.Invalid && (
         <span className={styles.categoryIconInner}>
-            <ModifierSprite
-                status={`Category${PouchCategoryNames[category]}`}
-                size={32}
-            />
+            <ModifierSprite status={`Category${PouchCategoryNames[category]}`} size={32} />
             {undiscovered && (
                 <span className={styles.blockIcon}>
                     <PresenceBlocked24Regular />
@@ -114,14 +106,9 @@ export const ItemTab: React.FC<ItemTabProps> = ({
                     border ? styles.borderVisible : styles.borderHidden,
                 )}
             >
-                <div className={mergeClasses(border && styles.iconHeight)}>
-                    {$CategoryIcon}
-                </div>
+                <div className={mergeClasses(border && styles.iconHeight)}>{$CategoryIcon}</div>
             </div>
-            <div
-                className={styles.itemContainer}
-                style={{ height: `${height}px` }}
-            >
+            <div className={styles.itemContainer} style={{ height: `${height}px` }}>
                 {$Nodes}
             </div>
         </div>

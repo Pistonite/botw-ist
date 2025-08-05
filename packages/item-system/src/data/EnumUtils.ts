@@ -48,9 +48,7 @@ export const convertWeaponModifierToSpecialStatus = (
 };
 
 /** Convert a CookEffect to a SpecialStatus */
-export const convertCookEffectToSpecialStatus = (
-    effect: CookEffect,
-): SpecialStatus => {
+export const convertCookEffectToSpecialStatus = (effect: CookEffect): SpecialStatus => {
     switch (effect) {
         case CookEffect.LifeMaxUp:
             return SpecialStatus.LifeMaxUp;
@@ -79,9 +77,7 @@ export const convertCookEffectToSpecialStatus = (
 };
 
 /** Port of getType and getItemUse in PMDM */
-export const getItemTypeAndUse = (
-    actorName: string,
-): [PouchItemType, PouchItemUse] => {
+export const getItemTypeAndUse = (actorName: string): [PouchItemType, PouchItemUse] => {
     const isArrow = getActorParam(actorName, "isArrow");
     if (isArrow) {
         return [PouchItemType.Arrow, PouchItemUse.Item];
@@ -140,9 +136,7 @@ export const getItemTypeAndUse = (
  *
  * This function is used to select the modifier to display in the inventory from the bitset
  */
-export const getWeaponSpecialStatusToDisplay = (
-    modifierSet: number,
-): SpecialStatus => {
+export const getWeaponSpecialStatusToDisplay = (modifierSet: number): SpecialStatus => {
     const applicableModifiers = [
         WeaponModifier.AddPower,
         WeaponModifier.AddLife,

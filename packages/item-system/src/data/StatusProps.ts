@@ -44,12 +44,7 @@ export const getStatusProps = (
 ): StatusProps => {
     // only display WeaponModifier for equipments
     if (isEquipmentType(itemType)) {
-        return getStatusPropsForEquipment(
-            actor,
-            itemType,
-            effectValue,
-            sellPrice,
-        );
+        return getStatusPropsForEquipment(actor, itemType, effectValue, sellPrice);
     }
     // get from cook data
     let status: SpecialStatus = SpecialStatus.None;
@@ -91,10 +86,7 @@ export const getStatusPropsForEquipment = (
         displayValue += effectValue;
     }
     // value is doubled if both AddPower and AddGuard are present for shields
-    if (
-        itemType === PouchItemType.Shield &&
-        (modifierSet & WeaponModifier.AddGuard) !== 0
-    ) {
+    if (itemType === PouchItemType.Shield && (modifierSet & WeaponModifier.AddGuard) !== 0) {
         displayValue += effectValue;
     }
 
@@ -203,12 +195,9 @@ export const getWeaponModifierStatusPropList = (
         // multishot is capped at 10. The faster the bow shoots, fewer arrows come out
         const bowChargeRate = getActorParam(actor, "bowArrowChargeRate");
         const quickShotMultiplier =
-            (modifierSet & WeaponModifier.RapidFire) !== 0
-                ? effectValue / 1000
-                : 1;
+            (modifierSet & WeaponModifier.RapidFire) !== 0 ? effectValue / 1000 : 1;
         const multishot = 10 / (bowChargeRate * quickShotMultiplier);
-        const modifierValue =
-            multishot >= 10 ? "10" : `~${multishot.toFixed(2)}`;
+        const modifierValue = multishot >= 10 ? "10" : `~${multishot.toFixed(2)}`;
         output.push({
             status: SpecialStatus.SpreadFire,
             statusIcon: getMultishotIcon(effectValue),
@@ -245,9 +234,7 @@ export const getWeaponModifierStatusPropList = (
 };
 
 /** Get the default props for actor based on its params (e.g. armor effect or bow default multishot) */
-export const getDefaultStatusPropsForActor = (
-    actorName: string,
-): StatusProps => {
+export const getDefaultStatusPropsForActor = (actorName: string): StatusProps => {
     const status = getActorParam(actorName, "specialStatus");
 
     let statusIcon: string = SpecialStatusNames[status] || "";
