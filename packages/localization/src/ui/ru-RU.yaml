@@ -222,6 +222,7 @@ parser.InvalidItemAmount: "Это недопустимое количество 
 parser.InvalidMetaValue: "`{{value}}` не является действительным значением для свойства `{{key}}`"
 parser.InvalidSlot: "`{{arg}}` не является действительным указателем слота элемента"
 parser.InvalidStringLength: "Максимальная разрешенная длина строки в этом контексте составляет {0}"
+parser.InvalidSystemCommand: "`{{key}}={{value}}` не является допустимой системной командой."
 parser.InvalidTimesClause: "`{{arg}}` не является действительным числом для 'раз'"
 parser.InvalidTrial: "`{{arg}}` не является действительным названием испытания"
 parser.InvalidWeaponModifier: "`{{arg}}` не является действительным модификатором оружия"

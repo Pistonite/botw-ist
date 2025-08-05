@@ -222,6 +222,7 @@ parser.InvalidItemAmount: "アイテムの数量が有効ではありません�
 parser.InvalidMetaValue: "`{{value}}` はプロパティ `{{key}}` の有効な値ではありません"
 parser.InvalidSlot: "`{{arg}}` は有効なアイテムスロット指定子ではありません"
 parser.InvalidStringLength: "このコンテキストで許可される文字列の最大長は {0} です"
+parser.InvalidSystemCommand: "`{{key}}={{value}}` は有効なシステムコマンドではありません。"
 parser.InvalidTimesClause: "`{{arg}}` は回数として有効な数値ではありません"
 parser.InvalidTrial: "`{{arg}}` は有効な試練名ではありません"
 parser.InvalidWeaponModifier: "`{{arg}}` は有効な武器修飾子ではありません"
