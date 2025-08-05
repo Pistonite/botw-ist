@@ -17,9 +17,7 @@ import type {
 
 import type { Pwr } from "./error.ts";
 
-export type QuotedItemResolverFn = (
-    query: string,
-) => Promise<ItemSearchResult | undefined | null>;
+export type QuotedItemResolverFn = (query: string) => Promise<ItemSearchResult | undefined | null>;
 
 export type RuntimeInitOutput = {
     /** Custom image version initialized, should be in the form of "X.X.X" */
@@ -27,9 +25,7 @@ export type RuntimeInitOutput = {
 };
 
 /** API bindings for calls into native runtime, plus mixin functions used by the worker */
-export interface NativeApi<TPtr>
-    extends NativeApiFunctions<TPtr>,
-        NativeEmpFactory<TPtr> {}
+export interface NativeApi<TPtr> extends NativeApiFunctions<TPtr>, NativeEmpFactory<TPtr> {}
 
 /** API bindings for calls into native runtime */
 export interface NativeApiFunctions<TPtr> {
@@ -45,20 +41,13 @@ export interface NativeApiFunctions<TPtr> {
     // === parsing api ===
 
     /** Parses the script, returns a ptr to the parse output (that must be freed) */
-    parseScript(
-        script: string,
-        resolveQuotedItem: QuotedItemResolverFn,
-    ): Pwr<TPtr>;
+    parseScript(script: string, resolveQuotedItem: QuotedItemResolverFn): Pwr<TPtr>;
     /**
      * Parse the semantics of the script in the given range
      *
      * The returned vector is triplets of (start, length, semantic token)
      */
-    parseScriptSemantic(
-        script: string,
-        start: number,
-        end: number,
-    ): Pwr<Uint32Array>;
+    parseScriptSemantic(script: string, start: number, end: number): Pwr<Uint32Array>;
     /** Get the errors from the parse output. Does not consume the ptr */
     getParserErrors(ptr: TPtr): Pwr<ErrorReport<ParserError>[]>;
     /** Get number of steps in the parse output. Does not consume the ptr */
@@ -135,18 +124,10 @@ export interface NativeApiFunctions<TPtr> {
      * Get crash info for the given byte position in the script.
      * Does not consume either ptr. Returns empty string if no crash
      */
-    getCrashInfo(
-        runOutputPtr: TPtr,
-        parseOutputPtr: TPtr,
-        bytePos: number,
-    ): Pwr<string>;
+    getCrashInfo(runOutputPtr: TPtr, parseOutputPtr: TPtr, bytePos: number): Pwr<string>;
 
     /** Get list of saves. Does not consume either ptr. */
-    getSaveNames(
-        runOutputPtr: TPtr,
-        parseOutputPtr: TPtr,
-        bytePos: number,
-    ): Pwr<string[]>;
+    getSaveNames(runOutputPtr: TPtr, parseOutputPtr: TPtr, bytePos: number): Pwr<string[]>;
 
     /** Get the save inventory. Does not consume either ptr. Use undefined for manual save */
     getSaveInventory(
@@ -173,13 +154,9 @@ export type ParseOutput = typeof ParseOutput;
 /** Factory type to create Erc (Externally-RefCounted) pointers */
 export type NativeEmpFactory<TPtr> = {
     readonly nullptr: TPtr; // get the nullptr value to pass into native function as fallback when Erc has undefined value
-    readonly makeNativeHandleEmp: ReturnType<
-        typeof makeEmpType<NativeHandle, TPtr>
-    >;
+    readonly makeNativeHandleEmp: ReturnType<typeof makeEmpType<NativeHandle, TPtr>>;
     readonly makeRunOutputEmp: ReturnType<typeof makeEmpType<RunOutput, TPtr>>;
-    readonly makeParseOutputEmp: ReturnType<
-        typeof makeEmpType<ParseOutput, TPtr>
-    >;
+    readonly makeParseOutputEmp: ReturnType<typeof makeEmpType<ParseOutput, TPtr>>;
 };
 
 /** Bind the ref counting API to a Emp factory */

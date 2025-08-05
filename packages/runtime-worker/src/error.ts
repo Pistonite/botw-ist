@@ -49,9 +49,7 @@ export const unwrap = <T>(result: Result<T, WorkerError>): T => {
     return result.val;
 };
 
-export const unwrapMaybeAborted = <T>(
-    result: Result<T, WorkerError>,
-): MaybeAborted<T> => {
+export const unwrapMaybeAborted = <T>(result: Result<T, WorkerError>): MaybeAborted<T> => {
     if (result.err) {
         if (result.err.type === "Aborted") {
             return { type: "Aborted" };
