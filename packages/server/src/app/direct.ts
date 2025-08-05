@@ -46,9 +46,7 @@ export const useDirectLoadFromHome = (url: URL): DirectLoad | undefined => {
 };
 
 /** Handle DirectLoad from any URL (/-/) */
-export const useDirectLoadFromUrl = async (
-    url: URL,
-): Promise<DirectLoad | undefined> => {
+export const useDirectLoadFromUrl = async (url: URL): Promise<DirectLoad | undefined> => {
     const pathname = url.pathname.trim();
     if (!pathname.startsWith("/-/")) {
         return undefined;

@@ -1,9 +1,7 @@
 import { errstr, type Result } from "@pistonite/pure/result";
 
 /** Decode compressed parameter into plain text */
-export const decodeCompressedParam = (
-    param: string,
-): Result<string, string> => {
+export const decodeCompressedParam = (param: string): Result<string, string> => {
     try {
         const compressedBytes = Buffer.from(param, "base64");
         const uncompressedBytes = Bun.gunzipSync(compressedBytes);

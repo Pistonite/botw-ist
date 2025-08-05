@@ -17,9 +17,7 @@ export const useAcceptsGzip = (req: Request): boolean => {
     return false;
 };
 
-export const useStringBody = async (
-    req: Request,
-): Promise<Result<string, unknown>> => {
+export const useStringBody = async (req: Request): Promise<Result<string, unknown>> => {
     try {
         return { val: await req.text() };
     } catch (e) {

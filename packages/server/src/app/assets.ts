@@ -1,11 +1,6 @@
 import { readdir } from "node:fs/promises";
 
-import {
-    make404,
-    makeFile,
-    type ResponsePayload,
-    useAcceptsGzip,
-} from "self::framework";
+import { make404, makeFile, type ResponsePayload, useAcceptsGzip } from "self::framework";
 
 const gzipPaths = (async () => {
     console.log("loading gzipped assets paths");

@@ -81,16 +81,9 @@ class CryptoImpl implements Crypto {
             const inputBytes = this.textEncoder.encode(input);
             const iv = this.getInitializationVector();
 
-            const aesCipher = crypto.createCipheriv(
-                "aes-256-cbc",
-                this.aesKey,
-                iv,
-            );
+            const aesCipher = crypto.createCipheriv("aes-256-cbc", this.aesKey, iv);
             // not sure why node/bun has an extra block in the cipher text.. ?
-            const cipherBytes = Buffer.concat([
-                aesCipher.update(inputBytes),
-                aesCipher.final(),
-            ]);
+            const cipherBytes = Buffer.concat([aesCipher.update(inputBytes), aesCipher.final()]);
 
             const hasher = new Bun.CryptoHasher("sha256", this.hmacKey);
             hasher.update(iv);
@@ -130,10 +123,7 @@ class CryptoImpl implements Crypto {
             }
             const hmac = inputBytes.subarray(inputBytes.length - 32);
             const iv = inputBytes.subarray(0, this.blockSize);
-            const cipherBytes = inputBytes.subarray(
-                this.blockSize,
-                inputBytes.length - 32,
-            );
+            const cipherBytes = inputBytes.subarray(this.blockSize, inputBytes.length - 32);
 
             // Verify the HMAC
             const hasher = new Bun.CryptoHasher("sha256", this.hmacKey);
@@ -147,11 +137,7 @@ class CryptoImpl implements Crypto {
             }
 
             // Decrypt the message
-            const aesDecipher = crypto.createDecipheriv(
-                "aes-256-cbc",
-                this.aesKey,
-                iv,
-            );
+            const aesDecipher = crypto.createDecipheriv("aes-256-cbc", this.aesKey, iv);
             const decryptedBytes = Buffer.concat([
                 aesDecipher.update(cipherBytes),
                 aesDecipher.final(),

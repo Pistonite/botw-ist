@@ -43,10 +43,7 @@ export type SSROptions = {
  *
  * This handles injecting the direct load script and meta tags into the HTML
  */
-export const makeSSR = async (
-    req: Request,
-    options: SSROptions,
-): Promise<ResponsePayload> => {
+export const makeSSR = async (req: Request, options: SSROptions): Promise<ResponsePayload> => {
     const language = useAcceptLanguage(req, languages, "en-US");
 
     let origin: string;

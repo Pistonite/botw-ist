@@ -6,10 +6,7 @@ export const make404 = (): ResponsePayload => {
 };
 
 /** Make a response with an error message and status*/
-export const makeError = (
-    message: string,
-    status?: number,
-): ResponsePayload => {
+export const makeError = (message: string, status?: number): ResponsePayload => {
     return {
         body: message,
         options: {
