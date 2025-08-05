@@ -16,9 +16,7 @@ import { skybookExtensionApp } from "../interfaces/ExtensionApp.bus.ts";
 export const readExtensionProperties = (): ExtensionProperties => {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     if (typeof (globalThis as any).window === "undefined") {
-        throw new Error(
-            "initExtensionWindow must be called in a browser window",
-        );
+        throw new Error("initExtensionWindow must be called in a browser window");
     }
 
     const search = new URLSearchParams((globalThis as any).location.search);
@@ -84,10 +82,7 @@ export const connectPopoutExtensionWindow = async (
         app: skybookExtensionApp(extension),
     });
     if (result.err) {
-        console.error(
-            "Failed to establish connection with host window",
-            result.err,
-        );
+        console.error("Failed to establish connection with host window", result.err);
         return false;
     }
     const {

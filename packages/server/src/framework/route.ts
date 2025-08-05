@@ -40,14 +40,8 @@ export const routeBuilder = (): RouteBuilder => {
                     outbound: outboundHooks,
                 });
             }
-            const inboundHooksMerged = [
-                ...inboundHooks,
-                ...(args.inbound ?? []),
-            ];
-            const outboundHooksMerged = [
-                ...(args.outbound ?? []),
-                ...outboundHooks,
-            ];
+            const inboundHooksMerged = [...inboundHooks, ...(args.inbound ?? [])];
+            const outboundHooksMerged = [...(args.outbound ?? []), ...outboundHooks];
             return route({
                 handler: args.handler,
                 inbound: inboundHooksMerged,
@@ -70,32 +64,14 @@ export const route = (args: RouteArgs | Handler): BunRequestHandler => {
             const url = new URL(req.url) as URL;
             const inboundResult = await executeInboundHooks(req, url, inbound);
             if (inboundResult.err) {
-                return handleOutboundHooks(
-                    req,
-                    url,
-                    false,
-                    inboundResult.err,
-                    outbound,
-                );
+                return handleOutboundHooks(req, url, false, inboundResult.err, outbound);
             }
             if (inboundResult.val) {
-                return handleOutboundHooks(
-                    req,
-                    url,
-                    true,
-                    inboundResult.val,
-                    outbound,
-                );
+                return handleOutboundHooks(req, url, true, inboundResult.val, outbound);
             }
             const result = await executeHandler(req, url, handler);
             if (result.val) {
-                return handleOutboundHooks(
-                    req,
-                    url,
-                    true,
-                    result.val,
-                    outbound,
-                );
+                return handleOutboundHooks(req, url, true, result.val, outbound);
             }
             return handleOutboundHooks(req, url, false, result.err, outbound);
         };
@@ -122,13 +98,7 @@ export const route = (args: RouteArgs | Handler): BunRequestHandler => {
             const url = new URL(req.url) as URL;
             const result = await executeHandler(req, url, handler);
             if (result.val) {
-                return handleOutboundHooks(
-                    req,
-                    url,
-                    true,
-                    result.val,
-                    outbound,
-                );
+                return handleOutboundHooks(req, url, true, result.val, outbound);
             }
             return handleOutboundHooks(req, url, false, result.err, outbound);
         };
@@ -170,12 +140,7 @@ const executeHandler = async (
     } catch (e) {
         console.error(e);
         if (e && typeof e === "object") {
-            if (
-                "body" in e &&
-                "options" in e &&
-                e.options &&
-                typeof e.options === "object"
-            ) {
+            if ("body" in e && "options" in e && e.options && typeof e.options === "object") {
                 // treat the thrown object as a ResponsePayload
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 return { err: e as any };
@@ -199,10 +164,7 @@ const handleOutboundHooks = async (
     return handleResponsePayload(ok, response);
 };
 
-const handleResponsePayload = async (
-    ok: boolean,
-    response: ResponsePayload,
-): Promise<Response> => {
+const handleResponsePayload = async (ok: boolean, response: ResponsePayload): Promise<Response> => {
     if (ok) {
         if (!response.body) {
             console.warn("OK Response has no body!", response);

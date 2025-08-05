@@ -1,8 +1,6 @@
 import type { OutboundHook, ResponsePayload } from "./types.ts";
 
-export const withHeadersOnSuccess = (
-    headers: Record<string, string>,
-): OutboundHook => {
+export const withHeadersOnSuccess = (headers: Record<string, string>): OutboundHook => {
     return (_req, _url, ok: boolean, response: ResponsePayload) => {
         if (!ok) {
             return response;

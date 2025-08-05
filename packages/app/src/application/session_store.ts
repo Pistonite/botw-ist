@@ -94,17 +94,11 @@ export type SessionStore = {
     /** Cached Pouch list views. Key is the step index */
     pouchCached: number[];
     pouchViews: Record<number, Result<InvView_PouchList, RuntimeViewError>>;
-    setPouchViewInCache: (
-        step: number,
-        view: Result<InvView_PouchList, RuntimeViewError>,
-    ) => void;
+    setPouchViewInCache: (step: number, view: Result<InvView_PouchList, RuntimeViewError>) => void;
     /** Cached GDT inventory views. Key is the step index */
     gdtCached: number[];
     gdtViews: Record<number, Result<InvView_Gdt, RuntimeViewError>>;
-    setGdtViewInCache: (
-        step: number,
-        view: Result<InvView_Gdt, RuntimeViewError>,
-    ) => void;
+    setGdtViewInCache: (step: number, view: Result<InvView_Gdt, RuntimeViewError>) => void;
     /** Cached Overworld item views. Key is the step index */
     overworldCached: number[];
     overworldViews: Record<number, Result<InvView_Overworld, RuntimeViewError>>;
@@ -155,8 +149,7 @@ export const useSessionStore = create<SessionStore>()((set) => {
         setModeToLocal: () => {
             log.info("changing app mode to local");
             set(({ activeScript }) => {
-                const { savedScript, setSavedScript } =
-                    usePersistStore.getState();
+                const { savedScript, setSavedScript } = usePersistStore.getState();
                 setSavedScript(activeScript);
                 // save backup if user needs
                 localStorage.setItem("Skybook.AutoBackupScript", savedScript);
@@ -209,12 +202,7 @@ export const useSessionStore = create<SessionStore>()((set) => {
             set(({ mode, activeScript, initialScript }) => {
                 const newScript = activeScript === script ? undefined : script;
                 if (mode === "read-only") {
-                    return getSetActiveScriptPayload(
-                        activeScript,
-                        newScript,
-                        false,
-                        charPos,
-                    );
+                    return getSetActiveScriptPayload(activeScript, newScript, false, charPos);
                 }
                 if (mode === "edit-only") {
                     const hasUnsavedChanges = initialScript !== script;
@@ -325,8 +313,6 @@ const getSetActiveScriptPayload = (
  * Get the debounced value of hasUnsavedChanges of the session
  */
 export const useDebouncedHasUnsavedChanges = () => {
-    const hasUnsavedChanges = useSessionStore(
-        (state) => state.hasUnsavedChanges,
-    );
+    const hasUnsavedChanges = useSessionStore((state) => state.hasUnsavedChanges);
     return useDebounce(hasUnsavedChanges, 50);
 };

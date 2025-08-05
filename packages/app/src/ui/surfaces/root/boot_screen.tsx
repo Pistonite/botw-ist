@@ -21,22 +21,10 @@ import {
     makeStyles,
 } from "@fluentui/react-components";
 
-import type {
-    Runtime,
-    RuntimeWorkerInitArgs,
-    RuntimeInitParams,
-} from "@pistonite/skybook-api";
-import {
-    type Translator,
-    translateUI,
-    useUITranslation,
-} from "skybook-localization";
+import type { Runtime, RuntimeWorkerInitArgs, RuntimeInitParams } from "@pistonite/skybook-api";
+import { type Translator, translateUI, useUITranslation } from "skybook-localization";
 
-import {
-    initRuntime,
-    setCustomImageToProvide,
-    usePersistStore,
-} from "self::application";
+import { initRuntime, setCustomImageToProvide, usePersistStore } from "self::application";
 import { bootLog, useStyleEngine } from "self::util";
 import { ErrorBar } from "self::ui/components";
 
@@ -103,18 +91,12 @@ export const BootScreen: React.FC<BootScreenProps> = ({
     const m = useStyleEngine();
     const c = useStyles();
 
-    const isUseCustomImageByDefault = usePersistStore(
-        (state) => state.isUseCustomImageByDefault,
-    );
+    const isUseCustomImageByDefault = usePersistStore((state) => state.isUseCustomImageByDefault);
     const setUseCustomImageByDefaultInStore = usePersistStore(
         (state) => state.setUseCustomImageByDefault,
     );
-    const storedCustomImageVersion = usePersistStore(
-        (state) => state.customImageVersion,
-    );
-    const setStoredCustomImageVersion = usePersistStore(
-        (state) => state.setCustomImageVersion,
-    );
+    const storedCustomImageVersion = usePersistStore((state) => state.customImageVersion);
+    const setStoredCustomImageVersion = usePersistStore((state) => state.setCustomImageVersion);
 
     const [dialogOpen, setDialogOpen] = useState(true);
     const [machineState, setMachineState] = useState(initialState);
@@ -134,17 +116,13 @@ export const BootScreen: React.FC<BootScreenProps> = ({
 
     // setup dialog states
     const [isCustomImageSelected, setIsCustomImageSelected] = useState(true);
-    const [customImageUpload, setCustomImageUpload] = useState<
-        CustomImageFile | undefined
-    >(undefined);
-    const [uploadError, setUploadError] = useState(false);
-    const [isUseCurrentImageSelected, setIsUseCurrentImageSelected] =
-        useState(false);
-    const [isUseByDefaultSelected, setIsUseByDefaultSelected] = useState(
-        isUseCustomImageByDefault,
+    const [customImageUpload, setCustomImageUpload] = useState<CustomImageFile | undefined>(
+        undefined,
     );
-    const [isDeletePreviousSelected, setIsDeletePreviousSelected] =
-        useState(false);
+    const [uploadError, setUploadError] = useState(false);
+    const [isUseCurrentImageSelected, setIsUseCurrentImageSelected] = useState(false);
+    const [isUseByDefaultSelected, setIsUseByDefaultSelected] = useState(isUseCustomImageByDefault);
+    const [isDeletePreviousSelected, setIsDeletePreviousSelected] = useState(false);
     const openSetupDialog = async () => {
         setDialogOpen(false);
         setIsCustomImageSelected(true);
@@ -177,17 +155,11 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                             <ErrorBar>{errorString}</ErrorBar>
                         </DialogContent>
                         <DialogActions>
-                            <Button
-                                appearance="primary"
-                                onClick={() => window.location.reload()}
-                            >
+                            <Button appearance="primary" onClick={() => window.location.reload()}>
                                 {t("button.refresh")}
                             </Button>
                             <DialogTrigger disableButtonEnhancement>
-                                <Button
-                                    appearance="secondary"
-                                    onClick={openSetupDialog}
-                                >
+                                <Button appearance="secondary" onClick={openSetupDialog}>
                                     {t("button.setup")}
                                 </Button>
                             </DialogTrigger>
@@ -247,13 +219,8 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                         bodyTranslationArgs,
                     )}
                 </p>
-                {promptType === "InitializeError" && (
-                    <ErrorBar>{errorString}</ErrorBar>
-                )}
-                <Link
-                    href="https://skybook.pistonite.dev/user/custom_image"
-                    target="_blank"
-                >
+                {promptType === "InitializeError" && <ErrorBar>{errorString}</ErrorBar>}
+                <Link href="https://skybook.pistonite.dev/user/custom_image" target="_blank">
                     {t("prompt.boot.button.learn_more")}
                 </Link>
             </>
@@ -310,9 +277,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                             <DialogTrigger disableButtonEnhancement>
                                 {$ContinueButton}
                             </DialogTrigger>
-                            <DialogTrigger disableButtonEnhancement>
-                                {$SetupButton}
-                            </DialogTrigger>
+                            <DialogTrigger disableButtonEnhancement>{$SetupButton}</DialogTrigger>
                         </DialogActions>
                     </DialogBody>
                 </DialogSurface>
@@ -322,9 +287,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
 
     const enableSetupDialogLaunchButton = !!(
         !isCustomImageSelected ||
-        (isUseCurrentImageSelected
-            ? storedCustomImageVersion
-            : customImageUpload)
+        (isUseCurrentImageSelected ? storedCustomImageVersion : customImageUpload)
     );
 
     const $SelectTypeRadioGroup = (
@@ -336,14 +299,8 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                     setIsCustomImageSelected(value === "custom");
                 }}
             >
-                <Radio
-                    value="custom"
-                    label={t("dialog.custom_image.field.select_type.custom")}
-                />
-                <Radio
-                    value="default"
-                    label={t("dialog.custom_image.field.select_type.default")}
-                />
+                <Radio value="custom" label={t("dialog.custom_image.field.select_type.custom")} />
+                <Radio value="default" label={t("dialog.custom_image.field.select_type.default")} />
             </RadioGroup>
         </Field>
     );
@@ -376,17 +333,10 @@ export const BootScreen: React.FC<BootScreenProps> = ({
         <Field
             validationState={uploadError ? "error" : "none"}
             validationMessage={
-                uploadError
-                    ? t("dialog.custom_image.button.select_file.error")
-                    : "\u00a0"
+                uploadError ? t("dialog.custom_image.button.select_file.error") : "\u00a0"
             }
         >
-            <div
-                className={m(
-                    "flex-row flex-centera gap-8",
-                    c.fileUploadSection,
-                )}
-            >
+            <div className={m("flex-row flex-centera gap-8", c.fileUploadSection)}>
                 {$SelectImageFileButton}
                 {customImageUpload && <Text>{customImageUpload.name} </Text>}
             </div>
@@ -482,11 +432,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                     <DialogActions>
                         <DialogTrigger disableButtonEnhancement>
                             <Button
-                                appearance={
-                                    enableSetupDialogLaunchButton
-                                        ? "primary"
-                                        : "outline"
-                                }
+                                appearance={enableSetupDialogLaunchButton ? "primary" : "outline"}
                                 disabled={!enableSetupDialogLaunchButton}
                                 onClick={doLaunch}
                             >
@@ -523,9 +469,7 @@ async function selectImageFile(): Promise<CustomImageSelection> {
         id: "skybook-custom-image",
         types: [
             {
-                description: translateUI(
-                    "dialog.custom_image.button.select_file.type_desc",
-                ),
+                description: translateUI("dialog.custom_image.button.select_file.type_desc"),
                 accept: [".bfi"],
             },
         ],

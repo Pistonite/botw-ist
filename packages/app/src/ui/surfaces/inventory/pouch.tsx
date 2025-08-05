@@ -1,11 +1,5 @@
 import { memo, useMemo } from "react";
-import {
-    makeStyles,
-    Text,
-    Tooltip,
-    Button,
-    Link,
-} from "@fluentui/react-components";
+import { makeStyles, Text, Tooltip, Button, Link } from "@fluentui/react-components";
 import { Grid20Regular, Info20Regular } from "@fluentui/react-icons";
 import { useSwappedWheelScrollDirection } from "@pistonite/shared-controls";
 
@@ -14,10 +8,7 @@ import {
     OverworldItemSlotWithTooltip,
     PouchItemSlotWithTooltip,
 } from "skybook-item-system";
-import {
-    translateRuntimeViewError,
-    useUITranslation,
-} from "skybook-localization";
+import { translateRuntimeViewError, useUITranslation } from "skybook-localization";
 
 import {
     useGdtInventoryView,
@@ -42,11 +33,7 @@ import {
 } from "self::ui/components";
 
 import { ScreenIndicator } from "./screen_icon.tsx";
-import {
-    ArrowlessSmuggleIcon,
-    HoldingIcon,
-    TrialModeIcon,
-} from "./pouch_icon.tsx";
+import { ArrowlessSmuggleIcon, HoldingIcon, TrialModeIcon } from "./pouch_icon.tsx";
 
 const useStyles = makeStyles({
     splitContainer: {
@@ -109,10 +96,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
 
     const isTabView = useUIStore((state) => state.isTabViewEnabled);
     const setTabView = useUIStore((state) => state.setIsTabViewEnabled);
-    const isInBrokenSlotArray = useMemo(
-        () => getInBrokenSlotArray(pouch?.val),
-        [pouch],
-    );
+    const isInBrokenSlotArray = useMemo(() => getInBrokenSlotArray(pouch?.val), [pouch]);
     const tabNodes = useMemo(() => {
         if (!isTabView) {
             return undefined;
@@ -147,16 +131,8 @@ export const PouchInventoryPanelImpl: React.FC = () => {
             >
                 <Button icon={<Info20Regular />} appearance="transparent" />
             </Tooltip>
-            <div
-                className={m(
-                    "flex-row flex-1 flex-centera gap-4 pad-4",
-                    c.toolbar,
-                )}
-            >
-                <ScreenIndicator
-                    screen={pouch?.val?.screen}
-                    hasGlider={hasGlider}
-                />
+            <div className={m("flex-row flex-1 flex-centera gap-4 pad-4", c.toolbar)}>
+                <ScreenIndicator screen={pouch?.val?.screen} hasGlider={hasGlider} />
                 <Tooltip
                     relationship="label"
                     content={t("main.visible_inventory.mcount.desc")}
@@ -169,11 +145,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                                 {pouch?.val?.count ?? "--"}
                             </Text>
                         }
-                        appearance={
-                            (pouch?.val?.count || 0) > 0
-                                ? "secondary"
-                                : "transparent"
-                        }
+                        appearance={(pouch?.val?.count || 0) > 0 ? "secondary" : "transparent"}
                     />
                 </Tooltip>
                 <Tooltip
@@ -208,12 +180,8 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                         key={i}
                         category={tab.category}
                         onClick={() => {
-                            const panel = document.getElementById(
-                                "-tabbed-pouch-scroll-",
-                            );
-                            const targetTab = document.getElementById(
-                                `-pouch-tab-${i}-`,
-                            );
+                            const panel = document.getElementById("-tabbed-pouch-scroll-");
+                            const targetTab = document.getElementById(`-pouch-tab-${i}-`);
                             if (!targetTab || !panel) {
                                 return;
                             }
@@ -236,10 +204,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     // don't show "If you think this is a bug" if the message is "game is closed"
     const $PouchError = pouch?.err && (
         <>
-            <ErrorBar
-                title={t("main.visible_inventory.view_error")}
-                noBugReport={isGameClosed}
-            >
+            <ErrorBar title={t("main.visible_inventory.view_error")} noBugReport={isGameClosed}>
                 {translateRuntimeViewError(pouch.err, t)}
             </ErrorBar>
             {pouch.err.type === "Crash" && (
@@ -259,11 +224,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
 
     const $PouchItems = pouch?.val && !isTabView && (
         <div className={m("flex-1 overflow-y-auto scrollbar-thin")}>
-            <div
-                className={m(
-                    "flex flex-wrap max-h-0 overflow-visible pad-itemtop",
-                )}
-            >
+            <div className={m("flex flex-wrap max-h-0 overflow-visible pad-itemtop")}>
                 {pouch.val.items.map((item, i) => (
                     <PouchItemSlotWithTooltip
                         item={item}
@@ -297,25 +258,20 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                             category={tab.category}
                             undiscovered={undiscoveredTabs[tab.category]}
                             border
-                            nodes={tab.items.map(
-                                ({ slot, item, itemIndex }, i) => ({
-                                    slot,
-                                    element: (
-                                        <PouchItemSlotWithTooltip
-                                            item={item}
-                                            key={i}
-                                            inBrokenSlot={
-                                                itemIndex >= 0 &&
-                                                isInBrokenSlotArray[itemIndex]
-                                            }
-                                            isMasterSwordFullPower={
-                                                isMasterSwordFullPower
-                                            }
-                                            {...itemSlotProps}
-                                        />
-                                    ),
-                                }),
-                            )}
+                            nodes={tab.items.map(({ slot, item, itemIndex }, i) => ({
+                                slot,
+                                element: (
+                                    <PouchItemSlotWithTooltip
+                                        item={item}
+                                        key={i}
+                                        inBrokenSlot={
+                                            itemIndex >= 0 && isInBrokenSlotArray[itemIndex]
+                                        }
+                                        isMasterSwordFullPower={isMasterSwordFullPower}
+                                        {...itemSlotProps}
+                                    />
+                                ),
+                            }))}
                         />
                     </div>
                 ))}
@@ -324,45 +280,38 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     );
 
     const { ref: overworldScrollHandler } = useSwappedWheelScrollDirection();
-    const $OverworldItems = overworld?.val &&
-        overworld.val.items.length > 0 && (
-            <div
-                className={m(
-                    "pos-rel overflow-x-auto overflow-y-hidden scrollbar-thin pad-8",
-                    c.overworldScroll,
-                )}
-                ref={overworldScrollHandler}
-            >
-                <div className={m("flex-row")}>
-                    {overworld.val.items.map((item, i) => (
-                        <OverworldItemSlotWithTooltip
-                            item={item}
-                            key={i}
-                            isMasterSwordFullPower={isMasterSwordFullPower}
-                            {...itemSlotProps}
-                        />
-                    ))}
-                </div>
+    const $OverworldItems = overworld?.val && overworld.val.items.length > 0 && (
+        <div
+            className={m(
+                "pos-rel overflow-x-auto overflow-y-hidden scrollbar-thin pad-8",
+                c.overworldScroll,
+            )}
+            ref={overworldScrollHandler}
+        >
+            <div className={m("flex-row")}>
+                {overworld.val.items.map((item, i) => (
+                    <OverworldItemSlotWithTooltip
+                        item={item}
+                        key={i}
+                        isMasterSwordFullPower={isMasterSwordFullPower}
+                        {...itemSlotProps}
+                    />
+                ))}
             </div>
-        );
+        </div>
+    );
 
     return (
         <div className={m("pos-rel wh-100 overflow-hidden")}>
             {$Background}
-            <div
-                className={m("pos-abs all-sides-0 flex-col", c.splitContainer)}
-            >
-                <div
-                    className={m("flex-col flex-1 pad-8", c.inventoryContainer)}
-                >
+            <div className={m("pos-abs all-sides-0 flex-col", c.splitContainer)}>
+                <div className={m("flex-col flex-1 pad-8", c.inventoryContainer)}>
                     {$Title}
                     <div className={m("flex-col gap-4")}>
                         {$TabsWarning}
                         {$PouchError}
                         {pouchError && <ErrorBar>{pouchError}</ErrorBar>}
-                        {overworldError && (
-                            <ErrorBar>{overworldError}</ErrorBar>
-                        )}
+                        {overworldError && <ErrorBar>{overworldError}</ErrorBar>}
                         {gdtError && <ErrorBar>{gdtError}</ErrorBar>}
                     </div>
                     {$TabsMinimap}

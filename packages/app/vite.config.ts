@@ -24,10 +24,7 @@ const staticAssetHeader = (): Plugin => {
         configureServer(server) {
             server.middlewares.use((req, res, next) => {
                 if (req.url?.startsWith("/runtime/")) {
-                    res.setHeader(
-                        "Cross-Origin-Embedder-Policy",
-                        "require-corp",
-                    );
+                    res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
                     res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
                 }
                 next();
@@ -43,9 +40,7 @@ export default defineConfig(({ command }) => {
     }).stdout.trim();
     console.log(`commit: ${commit}`);
 
-    const packageJson = JSON.parse(
-        fs.readFileSync("../../package.json", "utf-8"),
-    );
+    const packageJson = JSON.parse(fs.readFileSync("../../package.json", "utf-8"));
     const version = packageJson.version;
     console.log(`version: ${version}`);
 
@@ -64,18 +59,15 @@ export default defineConfig(({ command }) => {
             serveStatic([
                 {
                     pattern: /^\/runtime\/(.*)/,
-                    resolve: ([_, capture]) =>
-                        path.join("..", "runtime-wasm", "dist", capture),
+                    resolve: ([_, capture]) => path.join("..", "runtime-wasm", "dist", capture),
                 },
                 {
                     pattern: /^\/static\/item-assets\/(.*)/,
-                    resolve: ([_, capture]) =>
-                        path.join("..", "item-assets", "public", capture),
+                    resolve: ([_, capture]) => path.join("..", "item-assets", "public", capture),
                 },
                 {
                     pattern: /^\/static\/item-system\/(.*)/,
-                    resolve: ([_, capture]) =>
-                        path.join("..", "item-system", "public", capture),
+                    resolve: ([_, capture]) => path.join("..", "item-system", "public", capture),
                 },
             ]),
         ],
@@ -98,18 +90,10 @@ export default defineConfig(({ command }) => {
                 output: {
                     chunkFileNames: (info) => {
                         for (let i = 0; i < info.moduleIds.length; i++) {
-                            if (
-                                info.moduleIds[i].match(
-                                    /localization[/\\]src[/\\]ui/,
-                                )
-                            ) {
+                            if (info.moduleIds[i].match(/localization[/\\]src[/\\]ui/)) {
                                 return `assets/strings/ui-${info.name}-[hash].js`;
                             }
-                            if (
-                                info.moduleIds[i].match(
-                                    /localization[/\\]src[/\\]generated/,
-                                )
-                            ) {
+                            if (info.moduleIds[i].match(/localization[/\\]src[/\\]generated/)) {
                                 return `assets/strings/gen-${info.name}-[hash].js`;
                             }
                         }

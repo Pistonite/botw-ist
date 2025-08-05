@@ -42,9 +42,7 @@ export const CrashViewer: React.FC<CrashViewerProps> = ({ crashInfo }) => {
                     <CopyButton textToCopy={"```\n" + crashInfo + "```"} />
                 </Field>
             </div>
-            <div
-                className={m("overflow-y-auto flex-1", dark ? c.dark : c.light)}
-            >
+            <div className={m("overflow-y-auto flex-1", dark ? c.dark : c.light)}>
                 <div className={m("max-h-0 overflow-visible pad-4")}>
                     <pre className={m("margin-0")}>{crashInfo}</pre>
                 </div>

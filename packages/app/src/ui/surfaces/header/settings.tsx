@@ -14,11 +14,7 @@ import {
     ImageSparkle20Regular,
     WrenchSettings20Regular,
 } from "@fluentui/react-icons";
-import {
-    DarkToggle,
-    LanguagePicker,
-    MenuSwitch,
-} from "@pistonite/shared-controls";
+import { DarkToggle, LanguagePicker, MenuSwitch } from "@pistonite/shared-controls";
 
 import { useUITranslation } from "skybook-localization";
 
@@ -27,16 +23,10 @@ import { isLessProductive } from "self::pure-contrib";
 
 /** Settings menu in the header */
 const SettingsMenuImpl: React.FC = () => {
-    const enableHighRes = usePersistStore(
-        (state) => state.enableHighQualityIcons,
-    );
-    const setEnableHighRes = usePersistStore(
-        (state) => state.setEnableHighQualityIcons,
-    );
+    const enableHighRes = usePersistStore((state) => state.enableHighQualityIcons);
+    const setEnableHighRes = usePersistStore((state) => state.setEnableHighQualityIcons);
     const enableAnimations = usePersistStore((state) => state.enableAnimations);
-    const setEnableAnimations = usePersistStore(
-        (state) => state.setEnableAnimations,
-    );
+    const setEnableAnimations = usePersistStore((state) => state.setEnableAnimations);
     const t = useUITranslation();
 
     const tooltipPosition = isLessProductive ? "below" : "after";
@@ -48,18 +38,13 @@ const SettingsMenuImpl: React.FC = () => {
                     content={t("menu.header.preference")}
                     positioning="below"
                 >
-                    <Button
-                        appearance="subtle"
-                        icon={<WrenchSettings20Regular />}
-                    />
+                    <Button appearance="subtle" icon={<WrenchSettings20Regular />} />
                 </Tooltip>
             </MenuTrigger>
             <MenuPopover>
                 <MenuList>
                     <MenuGroup>
-                        <MenuGroupHeader>
-                            {t("menu.header.preference")}
-                        </MenuGroupHeader>
+                        <MenuGroupHeader>{t("menu.header.preference")}</MenuGroupHeader>
                         <LanguagePicker as="submenu" />
                         <DarkToggle as="submenu" />
                         <Tooltip

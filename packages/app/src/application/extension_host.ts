@@ -1,7 +1,4 @@
-import {
-    charPosToBytePos,
-    createBytePosToCharPosArray,
-} from "@pistonite/intwc";
+import { charPosToBytePos, createBytePosToCharPosArray } from "@pistonite/intwc";
 import type { Result } from "@pistonite/pure/result";
 import type { WxPromise } from "@pistonite/workex";
 import { v4 as makeUUID } from "uuid";
@@ -83,19 +80,13 @@ class ExtensionAppHost implements ExtensionApp {
         return { val: { val: result.val } };
     }
 
-    public async provideParserDiagnostics(
-        script: string,
-    ): WxPromise<Diagnostic[]> {
+    public async provideParserDiagnostics(script: string): WxPromise<Diagnostic[]> {
         const result = await this.runtime.getParserDiagnostics(script);
         if (result.err) {
             return result;
         }
         return {
-            val: errorReportsToDiagnostics(
-                script,
-                result.val,
-                translateParserError,
-            ),
+            val: errorReportsToDiagnostics(script, result.val, translateParserError),
         };
     }
 
@@ -131,10 +122,7 @@ class ExtensionAppHost implements ExtensionApp {
         inputScript: string | undefined,
         charPos: number | undefined,
     ): WxPromise<number> {
-        const [script, bytePos] = convertScriptAndCharPosArg(
-            inputScript,
-            charPos,
-        );
+        const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
         return await this.runtime.getStepFromPos(script, bytePos);
     }
 
@@ -156,10 +144,7 @@ class ExtensionAppHost implements ExtensionApp {
         return { val: array };
     }
 
-    public async requestNewTaskIds(
-        uniqueId: string,
-        count: number,
-    ): WxPromise<string[]> {
+    public async requestNewTaskIds(uniqueId: string, count: number): WxPromise<string[]> {
         const oldTaskIds = this.taskIdMap.get(uniqueId);
         const newTaskIds = Array.from({ length: count }).map(() => makeUUID());
         this.taskIdMap.set(uniqueId, newTaskIds);
@@ -188,17 +173,9 @@ class ExtensionAppHost implements ExtensionApp {
         taskId: string,
         bytePos: number,
     ): WxPromise<MaybeAborted<Diagnostic[]>> {
-        const result = await this.runtime.getRuntimeDiagnostics(
-            script,
-            taskId,
-            bytePos,
-        );
+        const result = await this.runtime.getRuntimeDiagnostics(script, taskId, bytePos);
         return mapMaybeAbortedResult(result, (value) => {
-            return errorReportsToDiagnostics(
-                script,
-                value,
-                translateRuntimeError,
-            );
+            return errorReportsToDiagnostics(script, value, translateRuntimeError);
         });
     }
 
@@ -207,10 +184,7 @@ class ExtensionAppHost implements ExtensionApp {
         inputScript: string | undefined,
         charPos: number | undefined,
     ): WxPromise<MaybeAborted<Result<InvView_PouchList, RuntimeViewError>>> {
-        const [script, bytePos] = convertScriptAndCharPosArg(
-            inputScript,
-            charPos,
-        );
+        const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
         return await this.runtime.getPouchList(script, taskId, bytePos);
     }
 
@@ -219,10 +193,7 @@ class ExtensionAppHost implements ExtensionApp {
         inputScript: string | undefined,
         charPos: number | undefined,
     ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
-        const [script, bytePos] = convertScriptAndCharPosArg(
-            inputScript,
-            charPos,
-        );
+        const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
         return await this.runtime.getGdtInventory(script, taskId, bytePos);
     }
 
@@ -231,10 +202,7 @@ class ExtensionAppHost implements ExtensionApp {
         inputScript: string | undefined,
         charPos: number | undefined,
     ): WxPromise<MaybeAborted<Result<InvView_Overworld, RuntimeViewError>>> {
-        const [script, bytePos] = convertScriptAndCharPosArg(
-            inputScript,
-            charPos,
-        );
+        const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
         return await this.runtime.getOverworldItems(script, taskId, bytePos);
     }
 
@@ -243,10 +211,7 @@ class ExtensionAppHost implements ExtensionApp {
         inputScript: string | undefined,
         charPos: number | undefined,
     ): WxPromise<MaybeAborted<string>> {
-        const [script, bytePos] = convertScriptAndCharPosArg(
-            inputScript,
-            charPos,
-        );
+        const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
         return await this.runtime.getCrashInfo(script, taskId, bytePos);
     }
 
@@ -255,10 +220,7 @@ class ExtensionAppHost implements ExtensionApp {
         inputScript: string | undefined,
         charPos: number | undefined,
     ): WxPromise<MaybeAborted<string[]>> {
-        const [script, bytePos] = convertScriptAndCharPosArg(
-            inputScript,
-            charPos,
-        );
+        const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
         return await this.runtime.getSaveNames(script, taskId, bytePos);
     }
 
@@ -268,16 +230,8 @@ class ExtensionAppHost implements ExtensionApp {
         charPos: number | undefined,
         name: string | undefined,
     ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
-        const [script, bytePos] = convertScriptAndCharPosArg(
-            inputScript,
-            charPos,
-        );
-        return await this.runtime.getSaveInventory(
-            script,
-            taskId,
-            bytePos,
-            name,
-        );
+        const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
+        return await this.runtime.getSaveInventory(script, taskId, bytePos, name);
     }
 }
 

@@ -62,19 +62,14 @@ const ExtensionMenuImpl: React.FC = () => {
                     content={t("menu.header.extensions")}
                     positioning="below"
                 >
-                    <Button
-                        appearance="subtle"
-                        icon={<PuzzlePiece20Regular />}
-                    />
+                    <Button appearance="subtle" icon={<PuzzlePiece20Regular />} />
                 </Tooltip>
             </MenuTrigger>
             <MenuPopover>
                 <MenuList>
                     {pinnedIds.length > 0 && (
                         <MenuGroup>
-                            <MenuGroupHeader>
-                                {t("menu.header.pinned")}
-                            </MenuGroupHeader>
+                            <MenuGroupHeader>{t("menu.header.pinned")}</MenuGroupHeader>
                             {pinnedIds.map((id) => (
                                 <ExtensionMenuItem key={id} id={id} />
                             ))}
@@ -82,17 +77,13 @@ const ExtensionMenuImpl: React.FC = () => {
                     )}
                     {recentFiltered.length > 0 && (
                         <MenuGroup>
-                            <MenuGroupHeader>
-                                {t("menu.header.recent")}
-                            </MenuGroupHeader>
+                            <MenuGroupHeader>{t("menu.header.recent")}</MenuGroupHeader>
                             {recentFiltered.map((id) => (
                                 <ExtensionMenuItem key={id} id={id} />
                             ))}
                         </MenuGroup>
                     )}
-                    {(pinnedIds.length > 0 || recentFiltered.length > 0) && (
-                        <MenuDivider />
-                    )}
+                    {(pinnedIds.length > 0 || recentFiltered.length > 0) && <MenuDivider />}
                     <MenuItem
                         icon={<WindowDevTools20Regular />}
                         {...restoreFocusTargetAttribute}
@@ -131,11 +122,7 @@ const ExtensionMenuItem: React.FC<ExtensionMenuItemProps> = ({ id }) => {
     const secondaryId = useCurrentSecondaryExtensionId();
     return (
         <MenuItem
-            icon={
-                id === primaryId || id === secondaryId ? (
-                    <Checkmark20Regular />
-                ) : undefined
-            }
+            icon={id === primaryId || id === secondaryId ? <Checkmark20Regular /> : undefined}
             onClick={() => {
                 const mode = getOpenModeForExtension(id);
                 updateRecency(id);

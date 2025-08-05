@@ -49,11 +49,7 @@ export interface Runtime {
      *
      * The offsets in both inputs and outputs should be byte offsets, not character offsets.
      */
-    getSemanticTokens(
-        script: string,
-        start: number,
-        end: number,
-    ): WxPromise<Uint32Array>;
+    getSemanticTokens(script: string, start: number, end: number): WxPromise<Uint32Array>;
 
     /** Get index of the step from byte position in the script */
     getStepFromPos(script: string, pos: number): WxPromise<number>;
@@ -130,11 +126,7 @@ export interface Runtime {
      *
      * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    getCrashInfo(
-        script: string,
-        taskId: string,
-        pos: number,
-    ): WxPromise<MaybeAborted<string>>;
+    getCrashInfo(script: string, taskId: string, pos: number): WxPromise<MaybeAborted<string>>;
 
     /**
      * Execute the script if not up-to-date, and return the list of save names at the
@@ -142,11 +134,7 @@ export interface Runtime {
      *
      * The taskId should be a UUID, and can be passed into abortTask() to abort this run
      */
-    getSaveNames(
-        script: string,
-        taskId: string,
-        pos: number,
-    ): WxPromise<MaybeAborted<string[]>>;
+    getSaveNames(script: string, taskId: string, pos: number): WxPromise<MaybeAborted<string[]>>;
 
     /**
      * Execute the script if not up-to-date, and return the save inventory for the manual

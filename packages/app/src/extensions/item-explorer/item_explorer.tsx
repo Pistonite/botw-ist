@@ -1,32 +1,17 @@
 import { useState } from "react";
-import {
-    Field,
-    makeStyles,
-    SearchBox,
-    Body1,
-    Checkbox,
-} from "@fluentui/react-components";
+import { Field, makeStyles, SearchBox, Body1, Checkbox } from "@fluentui/react-components";
 import { useQuery } from "@tanstack/react-query";
 import type { Result } from "@pistonite/pure/result";
 import { useDebounce } from "@uidotdev/usehooks";
 
-import {
-    type SearchResultNoScore,
-    useUITranslation,
-} from "skybook-localization";
-import {
-    type CookEffect,
-    StandaloneItemSlotWithTooltip,
-} from "skybook-item-system";
+import { type SearchResultNoScore, useUITranslation } from "skybook-localization";
+import { type CookEffect, StandaloneItemSlotWithTooltip } from "skybook-item-system";
 
 import { Code, Interpolate } from "self::ui/components";
 import { useStyleEngine } from "self::util";
 
 export type Searcher = {
-    search(
-        localized: boolean,
-        query: string,
-    ): Promise<Result<SearchResultNoScore[], string>>;
+    search(localized: boolean, query: string): Promise<Result<SearchResultNoScore[], string>>;
 };
 
 const useStyles = makeStyles({
@@ -65,10 +50,7 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
     const t = useUITranslation();
 
     const $SearchBox = (
-        <Field
-            validationState={error ? "error" : "none"}
-            validationMessage={error}
-        >
+        <Field validationState={error ? "error" : "none"} validationMessage={error}>
             <SearchBox
                 placeholder={t("item_explorer.label.search_placeholder")}
                 value={value}
@@ -91,28 +73,18 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
     );
 
     const $SearchTip = localized ? (
-        <Interpolate
-            quote={<Code>{`"`}</Code>}
-            code_example={<Code>{"fr:espadon royal"}</Code>}
-        >
+        <Interpolate quote={<Code>{`"`}</Code>} code_example={<Code>{"fr:espadon royal"}</Code>}>
             {t("item_explorer.desc.search_tip_localized")}
         </Interpolate>
     ) : (
-        <Interpolate
-            hyphen={<Code>{"-"}</Code>}
-            example={<Code>{"royal-claymore"}</Code>}
-        >
+        <Interpolate hyphen={<Code>{"-"}</Code>} example={<Code>{"royal-claymore"}</Code>}>
             {t("item_explorer.desc.search_tip_ident")}
         </Interpolate>
     );
 
     const $Results = hasResults && (
         <div className={m("overflow-y-auto flex-1", c.resultsScroll)}>
-            <div
-                className={m(
-                    "flex flex-wrap max-h-0 overflow-visible pad-itemtop",
-                )}
-            >
+            <div className={m("flex flex-wrap max-h-0 overflow-visible pad-itemtop")}>
                 {results.map(({ actor, cookEffect }, i) => (
                     <StandaloneItemSlotWithTooltip
                         key={i}

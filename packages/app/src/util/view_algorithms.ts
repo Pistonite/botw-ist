@@ -56,9 +56,7 @@ export const getTabNodesFromPouch = (
 
     // TODO: this might still be displayable - can be implemented if needed
     if (pouch.tabs.some((tab) => tab.tabType < 0)) {
-        log.warn(
-            `corrupted tab types: ${pouch.tabs.map((tab) => tab.tabType).join(", ")}`,
-        );
+        log.warn(`corrupted tab types: ${pouch.tabs.map((tab) => tab.tabType).join(", ")}`);
         return undefined;
     }
 
@@ -80,15 +78,12 @@ export const getTabNodesFromPouch = (
         // weird bugs... fail to display tabs is better than displaying wrong things
         // (should already be checked by runtime)
         if (item.tabIdx !== tabIdx) {
-            log.warn(
-                `item tab index mismatch - should not happen: tabIdx=${tabIdx}`,
-            );
+            log.warn(`item tab index mismatch - should not happen: tabIdx=${tabIdx}`);
             log.warn(item);
             valid = false;
             return;
         }
-        const isEntangledTab =
-            pouch.entangledSlot !== -1 && tabIdx % 3 === entangledTab;
+        const isEntangledTab = pouch.entangledSlot !== -1 && tabIdx % 3 === entangledTab;
         let foundEntangledItem = false;
         // get items in this tab
         const items: TabDataItem<InvView_PouchItem>[] = [];
@@ -185,11 +180,7 @@ export const getTabNodesForGdt = (
     const tabsOut: TabData<InvView_GdtItem>[] = [];
     for (const pouchTab of pouchTabs) {
         const items: TabDataItem<InvView_GdtItem>[] = [];
-        for (
-            let i = 0;
-            i < pouchTab.items.length && gdtIdx < gdt.items.length;
-            i++
-        ) {
+        for (let i = 0; i < pouchTab.items.length && gdtIdx < gdt.items.length; i++) {
             if (pouchTab.items[i].isVisuallyOnly) {
                 continue;
             }
@@ -250,9 +241,7 @@ export const getUndiscoveredTabMap = (
  * However, translucent items can't be removed when mCount = 0, so they can actually
  * be transferred
  */
-export const getInBrokenSlotArray = (
-    pouch: InvView_PouchList | undefined,
-): boolean[] => {
+export const getInBrokenSlotArray = (pouch: InvView_PouchList | undefined): boolean[] => {
     if (!pouch) {
         return [];
     }

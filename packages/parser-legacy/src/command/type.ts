@@ -154,10 +154,7 @@ export const delegateParseItem = <A, T, T2>(
     transformer: (t: T, c: CodeBlockTree) => T2,
     codeBlocks?: CodeBlockTree,
 ): [T2 | undefined, CodeBlockTree, string] => {
-    const result: [T | T2 | undefined, CodeBlockTree, string] = f(
-        ast,
-        searchFunc,
-    );
+    const result: [T | T2 | undefined, CodeBlockTree, string] = f(ast, searchFunc);
     //in place replace
     if (codeBlocks) {
         if (codeBlocks === result[1]) {

@@ -13,10 +13,7 @@ export type ExporterProps = {
     getDirectUrl: () => Promise<string | undefined>;
 };
 
-export const Exporter: React.FC<ExporterProps> = ({
-    getScript,
-    getDirectUrl,
-}) => {
+export const Exporter: React.FC<ExporterProps> = ({ getScript, getDirectUrl }) => {
     const m = useStyleEngine();
     const t = useUITranslation();
     const [isTooLong, setIsTooLong] = useState(false);
@@ -28,9 +25,7 @@ export const Exporter: React.FC<ExporterProps> = ({
                     hint={t("exporter.direct_url.desc")}
                     validationState={isTooLong ? "warning" : undefined}
                     validationMessage={
-                        isTooLong
-                            ? t("exporter.direct_url.too_long_warning")
-                            : undefined
+                        isTooLong ? t("exporter.direct_url.too_long_warning") : undefined
                     }
                 >
                     <CopyButton
@@ -45,10 +40,7 @@ export const Exporter: React.FC<ExporterProps> = ({
                 </Field>
             </div>
             <div>
-                <Field
-                    label={t("exporter.save_as_file")}
-                    hint={t("exporter.save_as_file.desc")}
-                >
+                <Field label={t("exporter.save_as_file")} hint={t("exporter.save_as_file.desc")}>
                     <Button
                         icon={<ArrowDownload20Regular />}
                         onClick={async () => {
@@ -81,9 +73,7 @@ export const Exporter: React.FC<ExporterProps> = ({
                     <Text>
                         <Interpolate
                             https={<Code>https://</Code>}
-                            https_replaced={
-                                <Code>{`${window.location.origin}/-/`}</Code>
-                            }
+                            https_replaced={<Code>{`${window.location.origin}/-/`}</Code>}
                         >
                             {t("exporter.other_service.desc")}
                         </Interpolate>

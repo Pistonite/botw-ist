@@ -4,20 +4,12 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 
-import type {
-    InvView_GdtItem,
-    InvView_PouchItem,
-} from "@pistonite/skybook-api";
+import type { InvView_GdtItem, InvView_PouchItem } from "@pistonite/skybook-api";
 import { initI18n } from "skybook-localization";
 import { registerAssetLocation } from "botw-item-assets";
 
 import { ItemTooltipProvider } from "../tooltip";
-import {
-    CookEffect,
-    PouchCategory,
-    PouchItemType,
-    PouchItemUse,
-} from "../data";
+import { CookEffect, PouchCategory, PouchItemType, PouchItemUse } from "../data";
 import {
     GdtItemSlotWithTooltip,
     PouchItemSlotWithTooltip,
@@ -268,9 +260,7 @@ const App: React.FC = () => {
             <p>Standalone</p>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
                 {STANDALONE.map((item, index) => {
-                    return (
-                        <StandaloneItemSlotWithTooltip key={index} {...item} />
-                    );
+                    return <StandaloneItemSlotWithTooltip key={index} {...item} />;
                 })}
             </div>
             <p>GDT</p>
@@ -305,33 +295,23 @@ const App: React.FC = () => {
                     nodes={[
                         {
                             slot: 0,
-                            element: (
-                                <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />
-                            ),
+                            element: <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />,
                         },
                         {
                             slot: 5,
-                            element: (
-                                <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />
-                            ),
+                            element: <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />,
                         },
                         {
                             slot: 6,
-                            element: (
-                                <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />
-                            ),
+                            element: <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />,
                         },
                         {
                             slot: 19,
-                            element: (
-                                <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />
-                            ),
+                            element: <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />,
                         },
                         {
                             slot: 22,
-                            element: (
-                                <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />
-                            ),
+                            element: <StandaloneItemSlotWithTooltip actor="Weapon_Sword_070" />,
                         },
                     ]}
                 />

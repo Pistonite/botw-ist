@@ -3,22 +3,13 @@ import type { ASTCommandWriteMetadata } from "./ast";
 import { AbstractProperCommand } from "./command";
 import { parseASTArgumentSingleItemMaybeInSlot } from "./parse.clause.inslot";
 import { parseASTMetadata } from "./parse.metadata";
-import {
-    codeBlockFromRange,
-    type CodeBlockTree,
-    type ParserItem,
-} from "./type";
+import { codeBlockFromRange, type CodeBlockTree, type ParserItem } from "./type";
 
 export class CommandWrite extends AbstractProperCommand {
     private itemTarget: string;
     private slot: number;
     private meta: MetaModifyOption;
-    constructor(
-        item: string,
-        slot: number,
-        meta: MetaModifyOption,
-        codeBlocks: CodeBlockTree,
-    ) {
+    constructor(item: string, slot: number, meta: MetaModifyOption, codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.itemTarget = item;
         this.slot = slot;
@@ -31,20 +22,19 @@ export class CommandWrite extends AbstractProperCommand {
     }
 }
 
-export const parseASTCommandWriteMetadata: ParserItem<
-    ASTCommandWriteMetadata,
-    CommandWrite
-> = (ast, search) => {
+export const parseASTCommandWriteMetadata: ParserItem<ASTCommandWriteMetadata, CommandWrite> = (
+    ast,
+    search,
+) => {
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     const [meta, metaBlocks, metaError] = parseASTMetadata(ast.mMetadata1);
     codeBlocks.push(metaBlocks);
     codeBlocks.push(codeBlockFromRange(ast.literal2, "keyword.command"));
-    const [result, itemAndSlotBlocks, resultError] =
-        parseASTArgumentSingleItemMaybeInSlot(
-            ast.mArgumentSingleItemMaybeInSlot3,
-            search,
-        );
+    const [result, itemAndSlotBlocks, resultError] = parseASTArgumentSingleItemMaybeInSlot(
+        ast.mArgumentSingleItemMaybeInSlot3,
+        search,
+    );
     codeBlocks.push(itemAndSlotBlocks);
     if (!meta) {
         return [undefined, codeBlocks, metaError];
@@ -53,9 +43,5 @@ export const parseASTCommandWriteMetadata: ParserItem<
         return [undefined, codeBlocks, resultError];
     }
     const [stack, slot] = result;
-    return [
-        new CommandWrite(stack.ident, slot, meta, codeBlocks),
-        codeBlocks,
-        "",
-    ];
+    return [new CommandWrite(stack.ident, slot, meta, codeBlocks), codeBlocks, ""];
 };

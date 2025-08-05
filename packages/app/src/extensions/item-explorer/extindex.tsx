@@ -5,15 +5,9 @@ import { type Cell, cell } from "@pistonite/pure/memory";
 import type { WxPromise } from "@pistonite/workex";
 
 import type { ActorSpriteProps } from "botw-item-assets";
-import {
-    type SearchResultNoScore,
-    translateGenericError,
-} from "skybook-localization";
+import { type SearchResultNoScore, translateGenericError } from "skybook-localization";
 
-import {
-    FirstPartyExtensionAdapter,
-    type FirstPartyExtension,
-} from "self::util";
+import { FirstPartyExtensionAdapter, type FirstPartyExtension } from "self::util";
 
 import { ItemExplorer, type Searcher } from "./item_explorer.tsx";
 
@@ -27,9 +21,7 @@ export class ItemExplorerExtension
     ) => Promise<Result<SearchResultNoScore[], string>>;
     private component: React.FC;
 
-    private iconSettings: Cell<
-        Pick<ActorSpriteProps, "cheap" | "disableAnimation">
-    >;
+    private iconSettings: Cell<Pick<ActorSpriteProps, "cheap" | "disableAnimation">>;
 
     constructor(standalone: boolean) {
         super(standalone);
@@ -74,27 +66,18 @@ export class ItemExplorerExtension
         });
 
         const subscribe = (
-            cb: (
-                x: Pick<ActorSpriteProps, "cheap" | "disableAnimation">,
-            ) => void,
+            cb: (x: Pick<ActorSpriteProps, "cheap" | "disableAnimation">) => void,
         ) => {
             return this.iconSettings.subscribe(cb);
         };
 
         this.component = () => {
             // eslint-disable-next-line react-hooks/rules-of-hooks
-            const { cheap, disableAnimation } = useSyncExternalStore(
-                subscribe,
-                () => {
-                    return this.iconSettings.get();
-                },
-            );
+            const { cheap, disableAnimation } = useSyncExternalStore(subscribe, () => {
+                return this.iconSettings.get();
+            });
             return (
-                <ItemExplorer
-                    searcher={this}
-                    cheap={cheap}
-                    disableAnimation={disableAnimation}
-                />
+                <ItemExplorer searcher={this} cheap={cheap} disableAnimation={disableAnimation} />
             );
         };
     }

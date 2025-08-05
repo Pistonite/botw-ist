@@ -52,17 +52,11 @@ console.log(key); // Check the type of key with LS to see what's missing
 `;
     };
     const toSwitchCase = (key: string) => `case "${key}": return true;`;
-    const makeOutFilePath = (prefix: string) =>
-        `${SRC_DIR}/${prefix}_${lang}.ts`;
+    const makeOutFilePath = (prefix: string) => `${SRC_DIR}/${prefix}_${lang}.ts`;
 
     fs.writeFileSync(
         makeOutFilePath("parser"),
-        generateCheckerFile(
-            "parser.",
-            "ParserError",
-            "@pistonite/skybook-api",
-            ["Unexpected"],
-        ),
+        generateCheckerFile("parser.", "ParserError", "@pistonite/skybook-api", ["Unexpected"]),
     );
     fs.writeFileSync(
         makeOutFilePath("runtime_init"),
@@ -75,12 +69,7 @@ console.log(key); // Check the type of key with LS to see what's missing
     );
     fs.writeFileSync(
         makeOutFilePath("runtime"),
-        generateCheckerFile(
-            "runtime_error.",
-            "RuntimeError",
-            "@pistonite/skybook-api",
-            [],
-        ),
+        generateCheckerFile("runtime_error.", "RuntimeError", "@pistonite/skybook-api", []),
     );
     fs.writeFileSync(
         makeOutFilePath("runtime_view"),

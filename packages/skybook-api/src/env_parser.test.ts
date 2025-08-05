@@ -9,24 +9,22 @@ import {
 } from "./env_parser.ts";
 
 describe("parseEnvFromScript", () => {
-    it.each([
-        "",
-        "\n",
-        "// comment\n",
-        "// comment\nline\n'''env\nafter ignored",
-    ])("parses empty", (input) => {
-        expect(parseEnvFromScript(input)).toEqual({
-            params: {
-                dlc: 3,
-                programStart: "",
-                stackStart: "",
-                stackSize: 0,
-                heapFreeSize: 0,
-                pmdmAddr: "",
-            },
-            errors: [],
-        });
-    });
+    it.each(["", "\n", "// comment\n", "// comment\nline\n'''env\nafter ignored"])(
+        "parses empty",
+        (input) => {
+            expect(parseEnvFromScript(input)).toEqual({
+                params: {
+                    dlc: 3,
+                    programStart: "",
+                    stackStart: "",
+                    stackSize: 0,
+                    heapFreeSize: 0,
+                    pmdmAddr: "",
+                },
+                errors: [],
+            });
+        },
+    );
     it("parses valid input", () => {
         expect(
             parseEnvFromScript(`
@@ -79,12 +77,8 @@ describe("parseEnvDlcVersion", () => {
     it.each([0, 1, 2, 3])("parses from number", (version) => {
         expect(parseEnvDlcVersion(version.toString())).toBe(version);
         expect(parseEnvDlcVersion("dlc-" + version.toString())).toBe(version);
-        expect(parseEnvDlcVersion("dlc-" + version.toString() + ".0")).toBe(
-            version,
-        );
-        expect(parseEnvDlcVersion("ver-" + version.toString() + ".0")).toBe(
-            version,
-        );
+        expect(parseEnvDlcVersion("dlc-" + version.toString() + ".0")).toBe(version);
+        expect(parseEnvDlcVersion("ver-" + version.toString() + ".0")).toBe(version);
         expect(parseEnvDlcVersion("ver-" + version.toString())).toBe(version);
     });
     it("parses shorthands", () => {
@@ -135,14 +129,11 @@ describe("parseAbsAddrString", () => {
         });
     });
 
-    it.each(["34534500000", "34534000000", "0x34534000000"])(
-        "detects invalid prefix",
-        (input) => {
-            expect(parseRegionStart(input)).toEqual({
-                err: "prefix",
-            });
-        },
-    );
+    it.each(["34534500000", "34534000000", "0x34534000000"])("detects invalid prefix", (input) => {
+        expect(parseRegionStart(input)).toEqual({
+            err: "prefix",
+        });
+    });
 
     it.each(["foo00000", "0xfoo00000"])("detects invalid hex", (input) => {
         expect(parseRegionStart(input)).toEqual({
@@ -157,27 +148,21 @@ describe("parseRegionSize", () => {
             val: 0,
         });
     });
-    it.each(["345", "0x345", "0x3450", "34500"])(
-        "detects invalid align",
-        (input) => {
-            expect(parseRegionSize(input)).toEqual({
-                err: "align",
-            });
-        },
-    );
+    it.each(["345", "0x345", "0x3450", "34500"])("detects invalid align", (input) => {
+        expect(parseRegionSize(input)).toEqual({
+            err: "align",
+        });
+    });
     it.each(["foo00000", "0xfoo00000"])("detects invalid hex", (input) => {
         expect(parseRegionSize(input)).toEqual({
             err: "hex",
         });
     });
-    it.each(["fffff000", "ffffff000", "0xfffff000"])(
-        "detects overflow",
-        (input) => {
-            expect(parseRegionSize(input)).toEqual({
-                err: "overflow",
-            });
-        },
-    );
+    it.each(["fffff000", "ffffff000", "0xfffff000"])("detects overflow", (input) => {
+        expect(parseRegionSize(input)).toEqual({
+            err: "overflow",
+        });
+    });
     it.each`
         input           | output
         ${"1000"}       | ${4096}

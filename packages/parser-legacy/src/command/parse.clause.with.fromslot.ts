@@ -68,26 +68,20 @@ export const parseASTMaybeArgumentWithOneOrMoreItemsAllowAllMaybeFromSlot: Parse
 };
 
 export const parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot: ParserItem<
-    | ASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot
-    | ASTArgumentOneOrMoreItemsMaybeFromSlot,
+    ASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot | ASTArgumentOneOrMoreItemsMaybeFromSlot,
     [ItemStackArg[], number]
 > = (ast, search) => {
-    if (
-        isArgumentSingleItemAllowAllMaybeFromSlot(ast) ||
-        isArgumentSingleItemMaybeFromSlot(ast)
-    ) {
+    if (isArgumentSingleItemAllowAllMaybeFromSlot(ast) || isArgumentSingleItemMaybeFromSlot(ast)) {
         const [result, resultBlocks, resultError] =
             parseASTArgumentSingleItemAllowAllMaybeFromSlot(ast);
         if (!result) {
             return [undefined, resultBlocks, resultError];
         }
         const [ids, meta, slot] = result;
-        return delegateParseItem(
-            [ids, resultBlocks, meta],
-            search,
-            parsedItemSearch,
-            (stack) => [[new ItemStackArg(stack, 1)], slot],
-        );
+        return delegateParseItem([ids, resultBlocks, meta], search, parsedItemSearch, (stack) => [
+            [new ItemStackArg(stack, 1)],
+            slot,
+        ]);
     }
     const [result, resultBlocks, resultError] =
         parseASTArgumentItemStacksAllowAllMaybeFromSlot(ast);
@@ -103,10 +97,7 @@ export const parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot: ParserItem<
                 "parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot: amount is undefined",
             );
         }
-        const [stack, _, itemError] = parsedItemSearch(
-            [ids, resultBlocks, meta],
-            search,
-        );
+        const [stack, _, itemError] = parsedItemSearch([ids, resultBlocks, meta], search);
         if (!stack) {
             return [undefined, resultBlocks, itemError];
         }
@@ -116,17 +107,12 @@ export const parseASTArgumentOneOrMoreItemsAllowAllMaybeFromSlot: ParserItem<
 };
 
 const parseASTArgumentSingleItemAllowAllMaybeFromSlot: Parser<
-    | ASTArgumentSingleItemAllowAllMaybeFromSlot
-    | ASTArgumentSingleItemMaybeFromSlot,
+    ASTArgumentSingleItemAllowAllMaybeFromSlot | ASTArgumentSingleItemMaybeFromSlot,
     [string[], MetaModifyOption, number]
 > = (ast) => {
-    const [firstIdentifier, firstIdentifierBlocks] = parseASTIdentifier(
-        ast.mIdentifier0,
-    );
+    const [firstIdentifier, firstIdentifierBlocks] = parseASTIdentifier(ast.mIdentifier0);
 
-    const codeBlocks: CodeBlockTree = [
-        flattenCodeBlocks([], firstIdentifierBlocks, "item.name"),
-    ];
+    const codeBlocks: CodeBlockTree = [flattenCodeBlocks([], firstIdentifierBlocks, "item.name")];
 
     return delegateParse(
         isArgumentSingleItemAllowAllMaybeFromSlot(ast)
@@ -150,11 +136,7 @@ const parseSingleItemAIdentifier: Parser<
         return [[[], {}, 1 /*default slot*/], [], ""];
     }
     if (isClauseFromSlot(ast)) {
-        return delegateParse(ast, parseASTClauseSlot, (number) => [
-            [],
-            {},
-            number,
-        ]);
+        return delegateParse(ast, parseASTClauseSlot, (number) => [[], {}, number]);
     }
     if (
         isArgumentSingleItemAllowAllMaybeFromSlotAIdentifierC1(ast) ||
@@ -186,8 +168,7 @@ const parseC1: Parser<
 };
 
 const parseASTArgumentItemStacksAllowAllMaybeFromSlot: Parser<
-    | ASTArgumentItemStacksAllowAllMaybeFromSlot
-    | ASTArgumentItemStacksMaybeFromSlot,
+    ASTArgumentItemStacksAllowAllMaybeFromSlot | ASTArgumentItemStacksMaybeFromSlot,
     [[number | AmountAllType | undefined, string[], MetaModifyOption][], number]
 > = (ast) => {
     const allowAll = isArgumentItemStacksAllowAllMaybeFromSlot(ast);
@@ -195,10 +176,7 @@ const parseASTArgumentItemStacksAllowAllMaybeFromSlot: Parser<
         allowAll ? ast.mAmountOrAll0 : ast.mInteger0,
     );
     const [firstId, idBlocks] = parseASTIdentifier(ast.mIdentifier1);
-    const codeBlocks = [
-        amountBlocks,
-        flattenCodeBlocks([], idBlocks, "item.name"),
-    ];
+    const codeBlocks = [amountBlocks, flattenCodeBlocks([], idBlocks, "item.name")];
     return delegateParse(
         allowAll
             ? ast.mArgumentItemStacksAllowAllMaybeFromSlotAIdentifier2

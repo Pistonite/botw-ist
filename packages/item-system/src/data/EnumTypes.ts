@@ -213,7 +213,6 @@ export const WeaponModifier = {
     AddGuard: 0x100,
     Yellow: 0x80000000,
 } as const;
-export type WeaponModifier =
-    (typeof WeaponModifier)[keyof typeof WeaponModifier];
+export type WeaponModifier = (typeof WeaponModifier)[keyof typeof WeaponModifier];
 // intentionally does not have a value to name mapping, since we only
 // need the name for the special status to display the modifier

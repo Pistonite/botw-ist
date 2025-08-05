@@ -1,10 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import {
-    parseEnvFromScript,
-    type ScriptEnvImage,
-} from "@pistonite/skybook-api";
+import { parseEnvFromScript, type ScriptEnvImage } from "@pistonite/skybook-api";
 import type { ActorSpriteProps } from "botw-item-assets";
 
 import { STARTER_SCRIPT } from "self::util";
@@ -52,10 +49,7 @@ export const usePersistStore = create<PersistStore>()(
                     const env = parseEnvFromScript(savedScript);
                     // Set a separate local storage key for the boot flow
                     // to quickly display the logo
-                    localStorage.setItem(
-                        "Skybook.EarlyCI",
-                        env.image ? "1" : "",
-                    );
+                    localStorage.setItem("Skybook.EarlyCI", env.image ? "1" : "");
                 },
                 customImageVersion: "",
                 setCustomImageVersion: (version) => {
@@ -92,9 +86,7 @@ export const usePersistStore = create<PersistStore>()(
 );
 
 export const useItemSlotPropsFromSettings = () => {
-    const enableHighRes = usePersistStore(
-        (state) => state.enableHighQualityIcons,
-    );
+    const enableHighRes = usePersistStore((state) => state.enableHighQualityIcons);
     const enableAnimations = usePersistStore((state) => state.enableAnimations);
     return {
         cheap: !enableHighRes,

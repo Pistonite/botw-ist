@@ -1,10 +1,7 @@
 /**
  * Lanaguage definition for the Skybook script
  */
-import type {
-    LanguageConfiguration,
-    LanguageTokenizer,
-} from "@pistonite/intwc";
+import type { LanguageConfiguration, LanguageTokenizer } from "@pistonite/intwc";
 
 import { GenSyntax } from "./syntax.gen.ts";
 
@@ -37,10 +34,7 @@ export const language: LanguageTokenizer = {
     keywords: GenSyntax.keywords,
     // some keywords are also used as annotation keywords
     // so we just allow all of them to be highlighted as annotation
-    annotaions: [
-        ...GenSyntax.annotations,
-        ...GenSyntax.keywords.map((x) => `:${x}`),
-    ],
+    annotaions: [...GenSyntax.annotations, ...GenSyntax.keywords.map((x) => `:${x}`)],
 
     word: /[_a-zA-Z][-0-9a-zA-Z_]*/,
 
@@ -61,10 +55,7 @@ export const language: LanguageTokenizer = {
                 },
             ],
             [/[=:,;]/, "delimiter"],
-            [
-                /(0x[\da-fA-F](_?[\da-fA-F])*)|(-?\d(_?\d)*(\.(\d(_?\d)*)?)?)/,
-                "number",
-            ],
+            [/(0x[\da-fA-F](_?[\da-fA-F])*)|(-?\d(_?\d)*(\.(\d(_?\d)*)?)?)/, "number"],
             [/<@word>/, "string.item.literal"],
             [/"[^"]*"/, "string.item.quoted"],
             [/!@word/, "function.command.super"],

@@ -14,9 +14,7 @@ export class ParseMgr<TPtr> {
     private napi: NativeApi<TPtr>;
     private isRunning: boolean;
     /** Awaiters for the current run */
-    private runAwaiters: ((
-        x: Result<Emp<ParseOutput, TPtr>, WorkerError>,
-    ) => void)[] = [];
+    private runAwaiters: ((x: Result<Emp<ParseOutput, TPtr>, WorkerError>) => void)[] = [];
     private lastScript: string;
     private serial: number;
     private cachedOutput: Emp<ParseOutput, TPtr> | undefined;
@@ -53,11 +51,7 @@ export class ParseMgr<TPtr> {
     public async parseScript(script: string): Pwr<Emp<ParseOutput, TPtr>> {
         const isScriptUpToDate = this.lastScript === script;
         // if the cache result is up-to-date, return it
-        if (
-            this.cachedOutput !== undefined &&
-            !this.isRunning &&
-            isScriptUpToDate
-        ) {
+        if (this.cachedOutput !== undefined && !this.isRunning && isScriptUpToDate) {
             return { val: this.cachedOutput };
         }
 
@@ -72,9 +66,7 @@ export class ParseMgr<TPtr> {
         return await this.parseScriptInternal(script);
     }
 
-    private async parseScriptInternal(
-        script: string,
-    ): Pwr<Emp<ParseOutput, TPtr>> {
+    private async parseScriptInternal(script: string): Pwr<Emp<ParseOutput, TPtr>> {
         this.isRunning = true;
         // clear the awaiters. Previous runs still have their awaiters,
         // but newer awaiters will be added to this run
@@ -84,10 +76,7 @@ export class ParseMgr<TPtr> {
         this.serial++;
         const serialBefore = this.serial;
         this.lastScript = script;
-        const outputRaw = await this.napi.parseScript(
-            script,
-            resolveQuotedItem,
-        );
+        const outputRaw = await this.napi.parseScript(script, resolveQuotedItem);
 
         if (outputRaw.err) {
             if (serialBefore === this.serial) {
@@ -101,9 +90,7 @@ export class ParseMgr<TPtr> {
             return outputRaw;
         }
 
-        const returnEmp: Emp<ParseOutput, TPtr> = this.napi.makeParseOutputEmp(
-            outputRaw.val,
-        );
+        const returnEmp: Emp<ParseOutput, TPtr> = this.napi.makeParseOutputEmp(outputRaw.val);
         // update cached result
         if (serialBefore === this.serial) {
             this.isRunning = false;
@@ -120,9 +107,7 @@ export class ParseMgr<TPtr> {
     }
 
     /** Parse the script and get diagnostics from the parser */
-    public getParserDiagnostics(
-        script: string,
-    ): Pwr<ErrorReport<ParserError>[]> {
+    public getParserDiagnostics(script: string): Pwr<ErrorReport<ParserError>[]> {
         return this.withParseOutput(script, (ptr) => {
             return this.napi.getParserErrors(ptr);
         });

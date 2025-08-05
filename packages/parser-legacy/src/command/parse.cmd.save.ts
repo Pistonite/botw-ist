@@ -1,8 +1,4 @@
-import {
-    type ASTCommandSave,
-    type ASTMaybeClauseSaveTarget,
-    isEpsilon,
-} from "./ast";
+import { type ASTCommandSave, type ASTMaybeClauseSaveTarget, isEpsilon } from "./ast";
 import { AbstractProperCommand } from "./command";
 import { parseASTOneOrMoreIdentifiers } from "./parse.basis";
 import {
@@ -32,9 +28,7 @@ export class CommandSave extends AbstractProperCommand {
     }
 }
 
-export const parseASTCommandSave: Parser<ASTCommandSave, CommandSave> = (
-    ast,
-) => {
+export const parseASTCommandSave: Parser<ASTCommandSave, CommandSave> = (ast) => {
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
     return delegateParse(
@@ -49,12 +43,8 @@ const parseASTSaveTarget: Parser<ASTMaybeClauseSaveTarget, string> = (ast) => {
     if (isEpsilon(ast)) {
         return ["", [], ""];
     }
-    const codeBlocks: CodeBlockTree = [
-        codeBlockFromRange(ast.literal0, "keyword.command"),
-    ];
-    const [ids, idCodeBlocks, idError] = parseASTOneOrMoreIdentifiers(
-        ast.mOneOrMoreIdentifiers1,
-    );
+    const codeBlocks: CodeBlockTree = [codeBlockFromRange(ast.literal0, "keyword.command")];
+    const [ids, idCodeBlocks, idError] = parseASTOneOrMoreIdentifiers(ast.mOneOrMoreIdentifiers1);
     codeBlocks.push(flattenCodeBlocks([], idCodeBlocks, "identifier.other"));
     if (!ids) {
         return [undefined, codeBlocks, idError];

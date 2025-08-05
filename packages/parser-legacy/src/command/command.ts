@@ -1,9 +1,5 @@
 // Main Command interface.
-import {
-    type CodeBlock,
-    type CodeBlockTree,
-    flattenCodeBlocks,
-} from "./type.ts";
+import { type CodeBlock, type CodeBlockTree, flattenCodeBlocks } from "./type.ts";
 
 // Command error enum
 export enum CmdErr {
@@ -61,9 +57,7 @@ export class AbstractProperCommand implements Command {
         return this.base.codeBlocks;
     }
     convert(): string {
-        throw new Error(
-            "Subtype of AbstractProperCommand must implement convert()",
-        );
+        throw new Error("Subtype of AbstractProperCommand must implement convert()");
     }
     get cmdErr(): CmdErr {
         return CmdErr.None;

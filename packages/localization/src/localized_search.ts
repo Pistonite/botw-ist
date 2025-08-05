@@ -81,13 +81,9 @@ async function searchItemLocalizedInternal(
     const languages = detectLanguage(query);
     let searchFns;
     if (languages.length) {
-        searchFns = await Promise.all(
-            languages.map((lang) => SearchFns[lang]()),
-        );
+        searchFns = await Promise.all(languages.map((lang) => SearchFns[lang]()));
     } else {
-        searchFns = await Promise.all(
-            Object.values(SearchFns).map((fn) => fn()),
-        );
+        searchFns = await Promise.all(Object.values(SearchFns).map((fn) => fn()));
     }
 
     const results: SearchResult[] = [];
@@ -143,9 +139,7 @@ const RangeZh = [
     [0x2f800, 0x2fa1f], // https://en.wikipedia.org/wiki/CJK_Compatibility_Ideographs_Supplement
 ] as const;
 
-function convertCharRangeToRegExp(
-    range: readonly (readonly [number, number])[],
-): RegExp {
+function convertCharRangeToRegExp(range: readonly (readonly [number, number])[]): RegExp {
     const reStr = range
         .map((range) => {
             if (range[0] === range[1]) {
@@ -294,12 +288,8 @@ function createSearchFnFromTranslation(
         cookEffect: number;
     }[] = [];
     searchableActors.forEach((actor) => {
-        const actorNames = translation.map(
-            (t) => t["actor." + actor + ".name"],
-        );
-        if (
-            actorNames.find((name) => name.includes("{{effect")) !== undefined
-        ) {
+        const actorNames = translation.map((t) => t["actor." + actor + ".name"]);
+        if (actorNames.find((name) => name.includes("{{effect")) !== undefined) {
             // add one entry for every effect
             Object.values(CookEffect).forEach((effect) => {
                 const cookEffectTranslation = cookEffectTranslations[effect];
@@ -307,10 +297,7 @@ function createSearchFnFromTranslation(
                 cookEffectTranslation.forEach((args) => {
                     actorNames.forEach((actorName) => {
                         Object.entries(args).forEach(([key, value]) => {
-                            actorName = actorName.replace(
-                                `{{${key}}}`,
-                                `${value}`,
-                            );
+                            actorName = actorName.replace(`{{${key}}}`, `${value}`);
                         });
                         names.add(actorName);
                     });

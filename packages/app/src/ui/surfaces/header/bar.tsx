@@ -27,16 +27,11 @@ const HeaderImpl: React.FC = () => {
     const m = useStyleEngine();
     const c = useStyles();
 
-    const isRunningCustomImage = useSessionStore(
-        (state) => state.runningCustomImageVersion,
-    );
+    const isRunningCustomImage = useSessionStore((state) => state.runningCustomImageVersion);
     return (
         <div className={m("flex-row flex-centera gap-4", c.container)}>
             <div className={m("flex flex-center", c.logo)}>
-                <img
-                    src={isRunningCustomImage ? iconPurple : icon}
-                    height="32px"
-                />
+                <img src={isRunningCustomImage ? iconPurple : icon} height="32px" />
             </div>
             <SettingsMenu />
             {

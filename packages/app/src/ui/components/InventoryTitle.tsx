@@ -36,23 +36,17 @@ export type InventoryTitleProps = {
 };
 
 /** Header of the inventory display section. */
-export const InventoryTitle: React.FC<
-    PropsWithChildren<InventoryTitleProps>
-> = ({ title, dark, children }) => {
+export const InventoryTitle: React.FC<PropsWithChildren<InventoryTitleProps>> = ({
+    title,
+    dark,
+    children,
+}) => {
     const m = useStyleEngine();
     const c = useStyles();
     return (
-        <FluentProvider
-            className={c.noBackground}
-            theme={dark ? webDarkTheme : webLightTheme}
-        >
+        <FluentProvider className={c.noBackground} theme={dark ? webDarkTheme : webLightTheme}>
             <div className={m("flex-row flex-centera gap-2", c.container)}>
-                <span
-                    className={m(
-                        "flex gap-2",
-                        dark ? c.titleColorDark : c.titleColorLight,
-                    )}
-                >
+                <span className={m("flex gap-2", dark ? c.titleColorDark : c.titleColorLight)}>
                     <GlowyText size={500} weight="bold" dark={dark}>
                         {title}
                     </GlowyText>

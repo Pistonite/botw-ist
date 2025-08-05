@@ -1,9 +1,4 @@
-import {
-    Text,
-    makeStyles,
-    type TextProps,
-    mergeClasses,
-} from "@fluentui/react-components";
+import { Text, makeStyles, type TextProps, mergeClasses } from "@fluentui/react-components";
 
 const useStyles = makeStyles({
     text: {
@@ -23,11 +18,7 @@ export type GlowyTextProps = TextProps & {
     dark?: boolean;
 };
 
-export const GlowyText: React.FC<GlowyTextProps> = ({
-    children,
-    dark,
-    ...props
-}) => {
+export const GlowyText: React.FC<GlowyTextProps> = ({ children, dark, ...props }) => {
     const styles = useStyles();
     return (
         <Text

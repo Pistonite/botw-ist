@@ -1,17 +1,8 @@
-import {
-    type PropsWithChildren,
-    useRef,
-    useState,
-    useCallback,
-    useEffect,
-} from "react";
+import { type PropsWithChildren, useRef, useState, useCallback, useEffect } from "react";
 import { makeStyles } from "@fluentui/react-components";
 
 import { ItemTooltipContent } from "./ItemTooltipContent.tsx";
-import {
-    ItemTooltipContext,
-    type SetItemTooltipFn,
-} from "./ItemTooltipContext.ts";
+import { ItemTooltipContext, type SetItemTooltipFn } from "./ItemTooltipContext.ts";
 import type { ItemTooltipWithContextProps } from "./ItemTooltip.tsx";
 
 const useStyles = makeStyles({
@@ -36,9 +27,10 @@ export type ItemTooltipProviderProps = {
  * We really optimize the re-render. Otherwise, users will see CPU
  * spikes when moving the mouse really quickly
  */
-export const ItemTooltipProvider: React.FC<
-    PropsWithChildren<ItemTooltipProviderProps>
-> = ({ backgroundUrl, children }) => {
+export const ItemTooltipProvider: React.FC<PropsWithChildren<ItemTooltipProviderProps>> = ({
+    backgroundUrl,
+    children,
+}) => {
     const styles = useStyles();
 
     const [verbose, setVerbose] = useState(false);
@@ -70,12 +62,8 @@ export const ItemTooltipProvider: React.FC<
     }, []);
     const tooltipDivRef = useRef<HTMLDivElement>(null);
     const childrenContainerRef = useRef<HTMLDivElement>(null);
-    const [tooltipProps, setTooltipProps] = useState<
-        ItemTooltipWithContextProps | undefined
-    >();
-    const [tooltipTarget, setTooltipTarget] = useState<
-        HTMLElement | undefined
-    >();
+    const [tooltipProps, setTooltipProps] = useState<ItemTooltipWithContextProps | undefined>();
+    const [tooltipTarget, setTooltipTarget] = useState<HTMLElement | undefined>();
     const lastPosition = useRef<[number, number]>([0, 0]);
     const setTooltip: SetItemTooltipFn = useCallback(
         (x, y, props, target, verboseNew) => {
@@ -87,18 +75,13 @@ export const ItemTooltipProvider: React.FC<
                 tooltipDiv.style.display = "none";
                 return;
             }
-            const visibilityChanged =
-                (tooltipDiv.style.display === "none") !== !props;
+            const visibilityChanged = (tooltipDiv.style.display === "none") !== !props;
             tooltipDiv.style.display = "unset";
             // This is incorrect for the first render. See below
             positionTooltipDiv(tooltipDiv, x, y);
             lastPosition.current = [x, y];
             // if the tooltip target didn't change, we don't need to rerender
-            if (
-                visibilityChanged ||
-                tooltipTarget !== target ||
-                verboseNew !== verbose
-            ) {
+            if (visibilityChanged || tooltipTarget !== target || verboseNew !== verbose) {
                 setTooltipProps(props);
                 setTooltipTarget(target);
                 setVerbose(verboseNew);
@@ -131,11 +114,7 @@ export const ItemTooltipProvider: React.FC<
     // for the current thing you are hovering on, because of the optimization
     // we did
     useEffect(() => {
-        if (
-            !childrenContainerRef.current ||
-            !tooltipTarget ||
-            !tooltipTarget.isConnected
-        ) {
+        if (!childrenContainerRef.current || !tooltipTarget || !tooltipTarget.isConnected) {
             return;
         }
         const hide = () => {
@@ -186,19 +165,13 @@ export const ItemTooltipProvider: React.FC<
                     backgroundImage: `url(${backgroundUrl})`,
                 }}
             >
-                {tooltipProps && (
-                    <ItemTooltipContent {...tooltipProps} verbose={verbose} />
-                )}
+                {tooltipProps && <ItemTooltipContent {...tooltipProps} verbose={verbose} />}
             </div>
         </ItemTooltipContext.Provider>
     );
 };
 
-const positionTooltipDiv = (
-    tooltipDiv: HTMLDivElement,
-    x: number,
-    y: number,
-) => {
+const positionTooltipDiv = (tooltipDiv: HTMLDivElement, x: number, y: number) => {
     x += 10;
     y += 10;
     const oldX = x;

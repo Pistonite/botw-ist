@@ -3,10 +3,7 @@ import { serial } from "@pistonite/pure/sync";
 import { cell, type Cell } from "@pistonite/pure/memory";
 import type { WxPromise } from "@pistonite/workex";
 
-import {
-    type FirstPartyExtension,
-    FirstPartyExtensionAdapter,
-} from "self::util";
+import { type FirstPartyExtension, FirstPartyExtensionAdapter } from "self::util";
 
 import { CrashViewer } from "./crash_viewer.tsx";
 
@@ -56,11 +53,7 @@ export class CrashViewerExtension
             if (taskId.err) {
                 return;
             }
-            const result = await app.getCrashInfo(
-                taskId.val[0],
-                undefined,
-                undefined,
-            );
+            const result = await app.getCrashInfo(taskId.val[0], undefined, undefined);
             checkCancel();
             if (result.err) {
                 return;

@@ -55,11 +55,7 @@ export interface ExtensionApp {
      * The offsets in both inputs and outputs should be character offsets, not byte offsets.
      * (Note this is different from Runtime.getSemanticTokens)
      */
-    provideSemanticTokens(
-        script: string,
-        start: number,
-        end: number,
-    ): WxPromise<Uint32Array>;
+    provideSemanticTokens(script: string, start: number, end: number): WxPromise<Uint32Array>;
 
     /**
      * Get the step index from character position
@@ -68,10 +64,7 @@ export interface ExtensionApp {
      * However, if `script` is not `undefined` and `charPos` is `undefined`,
      * `charPos` defaults to 0
      */
-    getStepFromCharPos(
-        script: string | undefined,
-        charPos: number | undefined,
-    ): WxPromise<number>;
+    getStepFromCharPos(script: string | undefined, charPos: number | undefined): WxPromise<number>;
 
     /**
      * Get the starting byte positions for each step in the script

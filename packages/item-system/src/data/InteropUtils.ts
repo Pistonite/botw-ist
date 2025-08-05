@@ -5,9 +5,7 @@ import { PouchItemType } from "./EnumTypes.ts";
 export const isGdtDataEquipmentType = (
     data: InvView_GdtItemData,
 ): data is InvView_GdtItemData & { type: "sword" | "shield" | "bow" } => {
-    return (
-        data.type === "sword" || data.type === "bow" || data.type === "shield"
-    );
+    return data.type === "sword" || data.type === "bow" || data.type === "shield";
 };
 
 export const isGdtDataFoodType = (

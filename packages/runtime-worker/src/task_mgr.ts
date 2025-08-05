@@ -51,9 +51,7 @@ export class TaskMgr<TPtr> {
             return raw;
         }
         const id = getNextNativeHandleId();
-        log.debug(
-            `${requestingTaskId}\nacquired native handle container #${id}, ptr=${raw.val}`,
-        );
+        log.debug(`${requestingTaskId}\nacquired native handle container #${id}, ptr=${raw.val}`);
         const container = new NativeHandleContainer(
             this.napi,
             id,
@@ -126,9 +124,7 @@ export class TaskMgr<TPtr> {
         return !taskContainer.isAborted;
     }
 
-    private async waitForTaskToExist(
-        taskId: string,
-    ): Promise<TaskContainer | undefined> {
+    private async waitForTaskToExist(taskId: string): Promise<TaskContainer | undefined> {
         let taskContainer = this.tasks.get(taskId);
         if (!taskContainer) {
             log.debug(`${taskId}\nnon-existent task, waiting for it to exist`);
@@ -146,9 +142,7 @@ export class TaskMgr<TPtr> {
     }
 
     /** Get a reference to native handle by its id */
-    public getNativeHandle(
-        nativeHandleId: number,
-    ): Emp<NativeHandle, TPtr> | undefined {
+    public getNativeHandle(nativeHandleId: number): Emp<NativeHandle, TPtr> | undefined {
         const container = this.nativeHandles.get(nativeHandleId);
         if (!container) {
             return undefined;
@@ -156,13 +150,8 @@ export class TaskMgr<TPtr> {
         return container.getHandle();
     }
 
-    public addNativeHandleDependency(
-        taskId: string,
-        nativeHandleId: number,
-    ): boolean {
-        log.debug(
-            `${taskId} NA#${nativeHandleId}\nadding to native handle container`,
-        );
+    public addNativeHandleDependency(taskId: string, nativeHandleId: number): boolean {
+        log.debug(`${taskId} NA#${nativeHandleId}\nadding to native handle container`);
         const taskContainer = this.tasks.get(taskId);
         if (!taskContainer) {
             log.error(`${taskId}\nis not registered`);
@@ -170,9 +159,7 @@ export class TaskMgr<TPtr> {
         }
         const container = this.nativeHandles.get(nativeHandleId);
         if (!container) {
-            log.error(
-                `${taskId} NA#${nativeHandleId}\nnative handle container does not exist`,
-            );
+            log.error(`${taskId} NA#${nativeHandleId}\nnative handle container does not exist`);
             return false;
         }
         taskContainer.nativeHandleId = nativeHandleId;
@@ -180,20 +167,13 @@ export class TaskMgr<TPtr> {
         return true;
     }
 
-    private removeNativeHandleDependency(
-        taskId: string,
-        nativeHandleId: number,
-    ) {
+    private removeNativeHandleDependency(taskId: string, nativeHandleId: number) {
         const container = this.nativeHandles.get(nativeHandleId);
         if (!container) {
-            log.warn(
-                `${taskId} NA#${nativeHandleId}\nnative handler container does not exist`,
-            );
+            log.warn(`${taskId} NA#${nativeHandleId}\nnative handler container does not exist`);
             return;
         }
-        log.debug(
-            `${taskId} NA#${nativeHandleId}\nremoving task from native handle container`,
-        );
+        log.debug(`${taskId} NA#${nativeHandleId}\nremoving task from native handle container`);
         const shouldNativeTaskAborted = container.abortTask(taskId);
         if (!shouldNativeTaskAborted) {
             return;
@@ -208,9 +188,7 @@ export class TaskMgr<TPtr> {
     private unregisterNativeHandle(nativeHandleId: number) {
         this.nativeHandles.delete(nativeHandleId);
         const remaining = this.nativeHandles.size;
-        log.debug(
-            `NA#${nativeHandleId}\nunregistered. ${remaining} container remaining.`,
-        );
+        log.debug(`NA#${nativeHandleId}\nunregistered. ${remaining} container remaining.`);
         if (remaining === 0) {
             log.info("all native handle containers unregistered");
         }
@@ -232,11 +210,7 @@ class NativeHandleContainer<TPtr> {
     private owningTaskIds: string[];
     private isAbortingNativeTaskScheduled: boolean;
 
-    constructor(
-        napi: NativeApi<TPtr>,
-        id: number,
-        handle: Emp<NativeHandle, TPtr>,
-    ) {
+    constructor(napi: NativeApi<TPtr>, id: number, handle: Emp<NativeHandle, TPtr>) {
         this.napi = napi;
         this.id = id;
         this.handle = handle;
@@ -278,9 +252,7 @@ class NativeHandleContainer<TPtr> {
         await new Promise((r) => setTimeout(r, WAIT_LIMIT * 1000));
         this.isAbortingNativeTaskScheduled = false;
         if (this.owningTaskIds.length) {
-            log.debug(
-                `NA#${this.id}\nnot aborting native handle container - tasks were added`,
-            );
+            log.debug(`NA#${this.id}\nnot aborting native handle container - tasks were added`);
             this.isAbortingNativeTaskScheduled = false;
             return false;
         }

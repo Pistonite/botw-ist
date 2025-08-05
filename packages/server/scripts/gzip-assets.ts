@@ -27,9 +27,7 @@ const gzipDir = async (dir: string) => {
         const compressed = Bun.gzipSync(buffer);
         const actualRatio = compressed.byteLength / buffer.byteLength;
         if (actualRatio > expectedRatio) {
-            console.log(
-                `Skipping ${fullPath} - compression ratio too low (${actualRatio})`,
-            );
+            console.log(`Skipping ${fullPath} - compression ratio too low (${actualRatio})`);
             return;
         }
         console.log(`${fullPath} (${(actualRatio * 100).toFixed(2)}%)`);

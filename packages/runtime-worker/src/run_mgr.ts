@@ -11,18 +11,9 @@ import type {
     RuntimeViewError,
 } from "@pistonite/skybook-api";
 
-import {
-    type NativeApi,
-    type ParseOutput,
-    type RunOutput,
-} from "./native_api.ts";
+import { type NativeApi, type ParseOutput, type RunOutput } from "./native_api.ts";
 import type { ParseMgr } from "./parse_mgr.ts";
-import {
-    type Pwr,
-    type WorkerError,
-    abortedError,
-    nullptrError,
-} from "./error.ts";
+import { type Pwr, type WorkerError, abortedError, nullptrError } from "./error.ts";
 import type { TaskMgr } from "./task_mgr.ts";
 import { log } from "./util.ts";
 import { crashApplication } from "./app_call.ts";
@@ -60,9 +51,7 @@ class RunContext<TPtr> {
             taskMgr.unregisterTask(taskId);
             return undefined;
         }
-        const outputPromise = new Promise<
-            Result<Emp<RunOutput, TPtr>, WorkerError>
-        >((resolve) => {
+        const outputPromise = new Promise<Result<Emp<RunOutput, TPtr>, WorkerError>>((resolve) => {
             this.awaiters.push({
                 resolve,
                 taskId,
@@ -107,11 +96,7 @@ export class RunMgr<TPtr> {
     private serial: number;
     private cachedEmp: Emp<RunOutput, TPtr> | undefined;
 
-    constructor(
-        napi: NativeApi<TPtr>,
-        parseMgr: ParseMgr<TPtr>,
-        taskMgr: TaskMgr<TPtr>,
-    ) {
+    constructor(napi: NativeApi<TPtr>, parseMgr: ParseMgr<TPtr>, taskMgr: TaskMgr<TPtr>) {
         this.napi = napi;
         this.taskMgr = taskMgr;
         this.parseMgr = parseMgr;
@@ -174,11 +159,7 @@ export class RunMgr<TPtr> {
         parseOutputEmp: Emp<ParseOutput, TPtr>,
     ): Pwr<Emp<RunOutput, TPtr>> {
         const isScriptUpToDate = this.lastScript === script;
-        if (
-            this.cachedEmp !== undefined &&
-            this.runContext === undefined &&
-            isScriptUpToDate
-        ) {
+        if (this.cachedEmp !== undefined && this.runContext === undefined && isScriptUpToDate) {
             log.debug(`${taskId}\nreturning cached run result`);
             return { val: this.cachedEmp };
         }
@@ -239,26 +220,16 @@ export class RunMgr<TPtr> {
         // add the task that triggered this run as an awaiter.
         // this is to ensure the task can finish early without waiting
         // for the whole run to finish
-        const outputPromise = thisContext.startAwaitingTask(
-            this.taskMgr,
-            taskId,
-            executeToBytePos,
-        );
+        const outputPromise = thisContext.startAwaitingTask(this.taskMgr, taskId, executeToBytePos);
         if (!outputPromise) {
-            log.error(
-                `${taskId}\nfailed to schedule await - did native handle creation fail?`,
-            );
+            log.error(`${taskId}\nfailed to schedule await - did native handle creation fail?`);
             await crashApplication();
             return { err: { type: "UnexpectedThrow" } };
         }
         this.runContext = thisContext;
 
         try {
-            void this.executeScriptInternal(
-                taskId,
-                parseOutputEmp,
-                thisContext,
-            );
+            void this.executeScriptInternal(taskId, parseOutputEmp, thisContext);
             // wait for the task to finish
             return await outputPromise;
         } catch (e) {
@@ -313,13 +284,9 @@ export class RunMgr<TPtr> {
         }
         const start = performance.now();
 
-        const nativeHandleEmp = this.taskMgr.getNativeHandle(
-            thisContext.nativeHandleId,
-        );
+        const nativeHandleEmp = this.taskMgr.getNativeHandle(thisContext.nativeHandleId);
         if (!nativeHandleEmp) {
-            log.warn(
-                `${PREFIX}\nnative handle is null so the run will not be abortable`,
-            );
+            log.warn(`${PREFIX}\nnative handle is null so the run will not be abortable`);
         }
 
         const outputResult = await scopedCapture(() => {
@@ -332,10 +299,7 @@ export class RunMgr<TPtr> {
                     thisContext.awaiters = [];
                     for (const x of awaiters) {
                         const { resolve, taskId, executeToBytePos } = x;
-                        if (
-                            executeToBytePos < 0 ||
-                            upToBytePos <= executeToBytePos
-                        ) {
+                        if (executeToBytePos < 0 || upToBytePos <= executeToBytePos) {
                             thisContext.awaiters.push(x);
                             continue;
                         }
@@ -363,29 +327,20 @@ export class RunMgr<TPtr> {
         }
 
         const msElapsed = performance.now() - start;
-        if (
-            thisContext.awaiters.length &&
-            (await thisContext.areAllTasksAborted(this.taskMgr))
-        ) {
+        if (thisContext.awaiters.length && (await thisContext.areAllTasksAborted(this.taskMgr))) {
             // only warn if the run took very long
-            const emit =
-                msElapsed > 10000 ? log.warn.bind(log) : log.debug.bind(log);
-            emit(
-                `${PREFIX}\nall tasks are aborted, but the run didn't abort successfully!`,
-            );
+            const emit = msElapsed > 10000 ? log.warn.bind(log) : log.debug.bind(log);
+            emit(`${PREFIX}\nall tasks are aborted, but the run didn't abort successfully!`);
         }
 
-        log.info(
-            `${PREFIX}\nscript execution finished in ${Math.round(msElapsed)}ms`,
-        );
+        log.info(`${PREFIX}\nscript execution finished in ${Math.round(msElapsed)}ms`);
 
         for (const { taskId } of thisContext.awaiters) {
             this.taskMgr.unregisterTask(taskId);
         }
         outputRaw = outputResult.val.value;
 
-        const returnEmp: Emp<RunOutput, TPtr> =
-            this.napi.makeRunOutputEmp(outputRaw);
+        const returnEmp: Emp<RunOutput, TPtr> = this.napi.makeRunOutputEmp(outputRaw);
         // update cached result if we are the latest run
         if (thisSerial === this.serial) {
             log.info(`${PREFIX}\nsaving execution result to cache`);
@@ -407,11 +362,8 @@ export class RunMgr<TPtr> {
         this.cachedEmp = undefined;
     }
 
-    private async makeNewRunContext(
-        requestingTaskId: string,
-    ): Pwr<RunContext<TPtr>> {
-        const nativeHandleId =
-            await this.taskMgr.registerNativeHandle(requestingTaskId);
+    private async makeNewRunContext(requestingTaskId: string): Pwr<RunContext<TPtr>> {
+        const nativeHandleId = await this.taskMgr.registerNativeHandle(requestingTaskId);
         if (nativeHandleId.err) {
             return nativeHandleId;
         }
@@ -436,11 +388,7 @@ export class RunMgr<TPtr> {
             taskId,
             bytePos,
             (parseOutputBorrowed, runOutputBorrowed) => {
-                return this.napi.getPouchList(
-                    runOutputBorrowed,
-                    parseOutputBorrowed,
-                    bytePos,
-                );
+                return this.napi.getPouchList(runOutputBorrowed, parseOutputBorrowed, bytePos);
             },
         );
     }
@@ -455,11 +403,7 @@ export class RunMgr<TPtr> {
             taskId,
             bytePos,
             (parseOutputBorrowed, runOutputBorrowed) => {
-                return this.napi.getGdtInventory(
-                    runOutputBorrowed,
-                    parseOutputBorrowed,
-                    bytePos,
-                );
+                return this.napi.getGdtInventory(runOutputBorrowed, parseOutputBorrowed, bytePos);
             },
         );
     }
@@ -474,30 +418,18 @@ export class RunMgr<TPtr> {
             taskId,
             bytePos,
             (parseOutputBorrowed, runOutputBorrowed) => {
-                return this.napi.getOverworldItems(
-                    runOutputBorrowed,
-                    parseOutputBorrowed,
-                    bytePos,
-                );
+                return this.napi.getOverworldItems(runOutputBorrowed, parseOutputBorrowed, bytePos);
             },
         );
     }
 
-    public getCrashInfo(
-        script: string,
-        taskId: string,
-        bytePos: number,
-    ): Pwr<string> {
+    public getCrashInfo(script: string, taskId: string, bytePos: number): Pwr<string> {
         return this.withParseAndRunOutput(
             script,
             taskId,
             bytePos,
             (parseOutputBorrowed, runOutputBorrowed) => {
-                return this.napi.getCrashInfo(
-                    runOutputBorrowed,
-                    parseOutputBorrowed,
-                    bytePos,
-                );
+                return this.napi.getCrashInfo(runOutputBorrowed, parseOutputBorrowed, bytePos);
             },
         );
     }
@@ -507,31 +439,18 @@ export class RunMgr<TPtr> {
         taskId: string,
         bytePos: number,
     ): Pwr<ErrorReport<RuntimeError>[]> {
-        return this.withParseAndRunOutput(
-            script,
-            taskId,
-            bytePos,
-            (_, runOutputBorrowed) => {
-                return this.napi.getRunErrors(runOutputBorrowed);
-            },
-        );
+        return this.withParseAndRunOutput(script, taskId, bytePos, (_, runOutputBorrowed) => {
+            return this.napi.getRunErrors(runOutputBorrowed);
+        });
     }
 
-    public getSaveNames(
-        script: string,
-        taskId: string,
-        bytePos: number,
-    ): Pwr<string[]> {
+    public getSaveNames(script: string, taskId: string, bytePos: number): Pwr<string[]> {
         return this.withParseAndRunOutput(
             script,
             taskId,
             bytePos,
             (parseOutputBorrowed, runOutputBorrowed) => {
-                return this.napi.getSaveNames(
-                    runOutputBorrowed,
-                    parseOutputBorrowed,
-                    bytePos,
-                );
+                return this.napi.getSaveNames(runOutputBorrowed, parseOutputBorrowed, bytePos);
             },
         );
     }

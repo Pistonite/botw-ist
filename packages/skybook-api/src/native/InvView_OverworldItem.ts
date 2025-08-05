@@ -5,17 +5,7 @@ import type { InvView_WeaponModifier } from "./InvView_WeaponModifier";
  * Item info for something in the overworld
  */
 export type InvView_OverworldItem =
-    | {
-          type: "equipped";
-          actor: string;
-          value: number;
-          modifier: InvView_WeaponModifier;
-      }
+    | { type: "equipped"; actor: string; value: number; modifier: InvView_WeaponModifier }
     | { type: "held"; actor: string }
-    | {
-          type: "ground-equipment";
-          actor: string;
-          value: number;
-          modifier: InvView_WeaponModifier;
-      }
+    | { type: "ground-equipment"; actor: string; value: number; modifier: InvView_WeaponModifier }
     | { type: "ground-item"; actor: string; despawning: boolean };

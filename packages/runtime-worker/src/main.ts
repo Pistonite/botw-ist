@@ -28,9 +28,7 @@ export const createRuntimeWorker = <TPtr>(
     return {
         initialize: async (args) => {
             return {
-                val: unwrap(
-                    await initializeRuntimeWorker(napi, imageMgr, args),
-                ),
+                val: unwrap(await initializeRuntimeWorker(napi, imageMgr, args)),
             };
         },
         resolveItemIdent: async (query) => {
@@ -65,44 +63,32 @@ export const createRuntimeWorker = <TPtr>(
         },
         getPouchList: async (script, taskId, pos) => {
             return {
-                val: unwrapMaybeAborted(
-                    await runMgr.getPouchList(script, taskId, pos),
-                ),
+                val: unwrapMaybeAborted(await runMgr.getPouchList(script, taskId, pos)),
             };
         },
         getGdtInventory: async (script, taskId, pos) => {
             return {
-                val: unwrapMaybeAborted(
-                    await runMgr.getGdtInventory(script, taskId, pos),
-                ),
+                val: unwrapMaybeAborted(await runMgr.getGdtInventory(script, taskId, pos)),
             };
         },
         getOverworldItems: async (script, taskId, pos) => {
             return {
-                val: unwrapMaybeAborted(
-                    await runMgr.getOverworldItems(script, taskId, pos),
-                ),
+                val: unwrapMaybeAborted(await runMgr.getOverworldItems(script, taskId, pos)),
             };
         },
         getCrashInfo: async (script, taskId, pos) => {
             return {
-                val: unwrapMaybeAborted(
-                    await runMgr.getCrashInfo(script, taskId, pos),
-                ),
+                val: unwrapMaybeAborted(await runMgr.getCrashInfo(script, taskId, pos)),
             };
         },
         getSaveNames: async (script, taskId, pos) => {
             return {
-                val: unwrapMaybeAborted(
-                    await runMgr.getSaveNames(script, taskId, pos),
-                ),
+                val: unwrapMaybeAborted(await runMgr.getSaveNames(script, taskId, pos)),
             };
         },
         getSaveInventory: async (script, taskId, pos, name) => {
             return {
-                val: unwrapMaybeAborted(
-                    await runMgr.getSaveInventory(script, taskId, pos, name),
-                ),
+                val: unwrapMaybeAborted(await runMgr.getSaveInventory(script, taskId, pos, name)),
             };
         },
     };

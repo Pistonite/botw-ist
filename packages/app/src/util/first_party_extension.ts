@@ -29,16 +29,10 @@ export class FirstPartyExtensionAdapter implements ExtensionModule {
     public async onAppModeChanged(_mode: SessionMode): WxPromise<void> {
         return {};
     }
-    public async onScriptChanged(
-        _script: string,
-        _charPos: number,
-    ): WxPromise<void> {
+    public async onScriptChanged(_script: string, _charPos: number): WxPromise<void> {
         return {};
     }
-    public async onIconSettingsChanged(
-        _highRes: boolean,
-        _animation: boolean,
-    ): WxPromise<void> {
+    public async onIconSettingsChanged(_highRes: boolean, _animation: boolean): WxPromise<void> {
         return {};
     }
     public onAppConnectionEstablished(app: ExtensionApp): void {

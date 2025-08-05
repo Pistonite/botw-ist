@@ -1,16 +1,7 @@
 import { type ASTCommandHas, isEpsilon, isInteger } from "./ast";
 import { AbstractProperCommand } from "./command";
-import {
-    parseASTIdentifier,
-    parseASTInteger,
-    parseASTOneOrMoreIdentifiers,
-} from "./parse.basis";
-import {
-    codeBlockFromRange,
-    type CodeBlockTree,
-    flattenCodeBlocks,
-    type Parser,
-} from "./type";
+import { parseASTIdentifier, parseASTInteger, parseASTOneOrMoreIdentifiers } from "./parse.basis";
+import { codeBlockFromRange, type CodeBlockTree, flattenCodeBlocks, type Parser } from "./type";
 
 export type GameFlags = {
     weaponSlots: number;
@@ -21,11 +12,7 @@ export type GameFlags = {
 export class CommandHas extends AbstractProperCommand {
     private value: string | number | boolean;
     private key: keyof GameFlags;
-    constructor(
-        key: keyof GameFlags,
-        value: string | number | boolean,
-        codeBlocks: CodeBlockTree,
-    ) {
+    constructor(key: keyof GameFlags, value: string | number | boolean, codeBlocks: CodeBlockTree) {
         super(codeBlocks);
         this.key = key;
         this.value = value;
@@ -49,9 +36,7 @@ export const parseASTCommandHas: Parser<ASTCommandHas, CommandHas> = (ast) => {
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.other"));
     const negative = !isEpsilon(ast.mLiteralMaybeNot1);
     if (negative) {
-        codeBlocks.push(
-            codeBlockFromRange(ast.mLiteralMaybeNot1.literal0, "keyword.other"),
-        );
+        codeBlocks.push(codeBlockFromRange(ast.mLiteralMaybeNot1.literal0, "keyword.other"));
     }
     let value: string | number;
     let valueCodeBlocks: CodeBlockTree;
@@ -62,9 +47,7 @@ export const parseASTCommandHas: Parser<ASTCommandHas, CommandHas> = (ast) => {
     }
     codeBlocks.push(flattenCodeBlocks([], valueCodeBlocks, "meta.value"));
 
-    const [keyIds, keyBlocks, keyError] = parseASTOneOrMoreIdentifiers(
-        ast.mOneOrMoreIdentifiers3,
-    );
+    const [keyIds, keyBlocks, keyError] = parseASTOneOrMoreIdentifiers(ast.mOneOrMoreIdentifiers3);
     codeBlocks.push(flattenCodeBlocks([], keyBlocks, "meta.key"));
 
     if (!keyIds) {

@@ -3,10 +3,10 @@ name = "blueflame-proc-macros"
 version = "0.0.0"
 edition = "2024"
 
-[lib]
-proc-macro = true
-
 [dependencies]
-syn = "2.0.101"
+syn = "2.0.104"
 quote = "1.0.40"
 proc-macro2 = "1.0.95"
+
+[lib]
+proc-macro = true

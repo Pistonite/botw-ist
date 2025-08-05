@@ -105,10 +105,7 @@ export type ItemTooltipGdtMetadata = {
     indexFood?: number | undefined;
 };
 
-export const getTooltipPropsFromActor = (
-    actor: string,
-    effect?: CookEffect,
-): ItemTooltipProps => {
+export const getTooltipPropsFromActor = (actor: string, effect?: CookEffect): ItemTooltipProps => {
     return {
         actor,
         isEquipment: false,
@@ -191,9 +188,7 @@ export const getTooltipPropsFromPouchItem = (
     };
 };
 
-export const getTooltipPropsFromGdtItem = (
-    item: InvView_GdtItem,
-): ItemTooltipProps => {
+export const getTooltipPropsFromGdtItem = (item: InvView_GdtItem): ItemTooltipProps => {
     const { actorName, value, isEquipped } = item.common;
 
     const gdtType = item.data.type;
@@ -229,8 +224,7 @@ export const getTooltipPropsFromGdtItem = (
             index: item.idx,
             indexSword: item.data.type === "sword" ? item.data.idx : undefined,
             indexBow: item.data.type === "bow" ? item.data.idx : undefined,
-            indexShield:
-                item.data.type === "shield" ? item.data.idx : undefined,
+            indexShield: item.data.type === "shield" ? item.data.idx : undefined,
             indexFood: item.data.type === "food" ? item.data.idx : undefined,
         },
         isInBrokenSlot: false,
@@ -239,13 +233,10 @@ export const getTooltipPropsFromGdtItem = (
     };
 };
 
-export const getTooltipPropsFromOverworldItem = (
-    item: InvView_OverworldItem,
-): ItemTooltipProps => {
+export const getTooltipPropsFromOverworldItem = (item: InvView_OverworldItem): ItemTooltipProps => {
     const actorName = item.actor;
     const [itemType] = getItemTypeAndUse(actorName);
-    const isEquipment =
-        item.type === "equipped" || item.type === "ground-equipment";
+    const isEquipment = item.type === "equipped" || item.type === "ground-equipment";
 
     const weaponModifiers = isEquipment
         ? getWeaponModifierStatusPropList(

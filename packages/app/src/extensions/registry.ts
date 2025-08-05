@@ -6,10 +6,7 @@ import { ExporterExtension } from "./exporter/extindex.tsx";
 
 import { extLog, type FirstPartyExtension } from "self::util";
 
-const extensionInstances = new Map<
-    string,
-    () => Promise<FirstPartyExtension | undefined>
->();
+const extensionInstances = new Map<string, () => Promise<FirstPartyExtension | undefined>>();
 
 export type ConnectExtensionFn = (
     id: string,
@@ -44,9 +41,7 @@ export const getExtension = async (
 };
 
 /** Get the created instance of a FirstPartyExtension by its id */
-export const getLoadedExtension = async (
-    id: string,
-): Promise<FirstPartyExtension | undefined> => {
+export const getLoadedExtension = async (id: string): Promise<FirstPartyExtension | undefined> => {
     const existing = extensionInstances.get(id);
     if (existing) {
         return await existing();
@@ -71,9 +66,7 @@ export const createExtensionInstance = async (
             return new CrashViewerExtension(standalone);
         }
         case "save-viewer": {
-            const { SaveViewerExtension } = await import(
-                "./save-viewer/extindex.tsx"
-            );
+            const { SaveViewerExtension } = await import("./save-viewer/extindex.tsx");
             return new SaveViewerExtension(standalone);
         }
         case "exporter": {

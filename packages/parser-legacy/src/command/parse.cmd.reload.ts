@@ -1,12 +1,7 @@
 import type { ASTCommandReload } from "./ast";
 import { AbstractProperCommand } from "./command";
 import { parseASTIdentifierPrime } from "./parse.basis";
-import {
-    codeBlockFromRange,
-    type CodeBlockTree,
-    flattenCodeBlocks,
-    type Parser,
-} from "./type";
+import { codeBlockFromRange, type CodeBlockTree, flattenCodeBlocks, type Parser } from "./type";
 
 export class CommandReload extends AbstractProperCommand {
     private name: string | undefined;
@@ -24,14 +19,10 @@ export class CommandReload extends AbstractProperCommand {
     }
 }
 
-export const parseASTCommandReload: Parser<ASTCommandReload, CommandReload> = (
-    ast,
-) => {
+export const parseASTCommandReload: Parser<ASTCommandReload, CommandReload> = (ast) => {
     const codeBlocks: CodeBlockTree = [];
     codeBlocks.push(codeBlockFromRange(ast.literal0, "keyword.command"));
-    const [ids, idBlocks, idError] = parseASTIdentifierPrime(
-        ast.mIdentifierPrime1,
-    );
+    const [ids, idBlocks, idError] = parseASTIdentifierPrime(ast.mIdentifierPrime1);
     codeBlocks.push(flattenCodeBlocks([], idBlocks, "identifier.other"));
     if (!ids) {
         return [undefined, codeBlocks, idError];

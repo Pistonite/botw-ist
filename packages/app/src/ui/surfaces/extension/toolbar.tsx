@@ -36,9 +36,7 @@ const ExtensionToolbarSecondaryConnected: React.FC = () => {
     );
 };
 
-export const ExtensionToolbarSecondary = memo(
-    ExtensionToolbarSecondaryConnected,
-);
+export const ExtensionToolbarSecondary = memo(ExtensionToolbarSecondaryConnected);
 
 const ExtensionToolbarPrimaryConnected: React.FC = () => {
     const currentPrimaryId = useExtensionStore((state) => state.currentPrimary);
@@ -85,9 +83,7 @@ const ExtensionToolbarPrimaryMobileConnected: React.FC = () => {
     );
 };
 
-const ExtensionToolbarPrimaryMobileMemo = memo(
-    ExtensionToolbarPrimaryMobileConnected,
-);
+const ExtensionToolbarPrimaryMobileMemo = memo(ExtensionToolbarPrimaryMobileConnected);
 
 export const ExtensionToolbarPrimary = () => {
     if (isLessProductive) {

@@ -8,10 +8,9 @@ export class CommandCloseGame extends AbstractProperCommand {
     }
 }
 
-export const parseASTCommandCloseGame: ParserSafe<
-    ASTCommandCloseGame,
-    CommandCloseGame
-> = (ast) => {
+export const parseASTCommandCloseGame: ParserSafe<ASTCommandCloseGame, CommandCloseGame> = (
+    ast,
+) => {
     const codeBlocks = [
         codeBlockFromRange(ast.mLiteralClose0, "keyword.command"),
         codeBlockFromRange(ast.literal1, "keyword.command"),

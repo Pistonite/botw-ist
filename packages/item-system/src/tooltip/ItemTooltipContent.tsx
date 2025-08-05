@@ -1,18 +1,9 @@
 import { memo } from "react";
-import {
-    Caption1,
-    Subtitle2,
-    Text,
-    makeStyles,
-    mergeClasses,
-} from "@fluentui/react-components";
+import { Caption1, Subtitle2, Text, makeStyles, mergeClasses } from "@fluentui/react-components";
 import { Star16Filled } from "@fluentui/react-icons";
 
 import { ActorSprite, ModifierSprite } from "botw-item-assets";
-import {
-    useGeneratedTranslation,
-    useUITranslation,
-} from "skybook-localization";
+import { useGeneratedTranslation, useUITranslation } from "skybook-localization";
 
 import {
     getActorParam,
@@ -189,9 +180,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
             <Subtitle2 className={styles.nameContainer} wrap={false} block>
                 {t(`actor.${actor}.name`, nameTranslationArgs)}
                 {starNum > 1 &&
-                    Array.from({ length: starNum - 1 }).map((_, i) => (
-                        <Star16Filled key={i} />
-                    ))}
+                    Array.from({ length: starNum - 1 }).map((_, i) => <Star16Filled key={i} />)}
             </Subtitle2>
             <Caption1 wrap={false} block italic className={styles.actorName}>
                 {actor}
@@ -199,39 +188,22 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
             {!!description && (
                 <div className={styles.descriptionContainer}>
                     {description.split("\n").map((line, i) => (
-                        <Caption1
-                            wrap={false}
-                            block
-                            key={i}
-                            className={styles.description}
-                        >
+                        <Caption1 wrap={false} block key={i} className={styles.description}>
                             {line || "\u00a0"}
                         </Caption1>
                     ))}
                 </div>
             )}
             {isEquipment && (
-                <Text
-                    wrap={false}
-                    block
-                    font="numeric"
-                    className={styles.numericCompact}
-                >
+                <Text wrap={false} block font="numeric" className={styles.numericCompact}>
                     {ui("tooltip.durability", {
-                        current: Number.isInteger(durability)
-                            ? durability
-                            : durability.toFixed(2),
+                        current: Number.isInteger(durability) ? durability : durability.toFixed(2),
                         max: getActorParam(actor, "generalLife"),
                     })}
                 </Text>
             )}
             {value !== undefined && (
-                <Text
-                    wrap={false}
-                    block
-                    font="numeric"
-                    className={styles.numericCompact}
-                >
+                <Text wrap={false} block font="numeric" className={styles.numericCompact}>
                     {ui("tooltip.value", { value })}
                 </Text>
             )}
@@ -240,10 +212,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                     wrap={false}
                     block
                     font="numeric"
-                    className={mergeClasses(
-                        styles.equipped,
-                        styles.numericCompact,
-                    )}
+                    className={mergeClasses(styles.equipped, styles.numericCompact)}
                 >
                     {ui("tooltip.equipped")}
                 </Text>
@@ -253,47 +222,35 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                     wrap={false}
                     block
                     font="numeric"
-                    className={mergeClasses(
-                        styles.numericCompact,
-                        styles.glitchyColor,
-                    )}
+                    className={mergeClasses(styles.numericCompact, styles.glitchyColor)}
                 >
                     {ui("tooltip.translucent")}
                 </Text>
             )}
             {holdingCount > 0 && (
-                <Text
-                    wrap={false}
-                    block
-                    font="numeric"
-                    className={styles.numericCompact}
-                >
+                <Text wrap={false} block font="numeric" className={styles.numericCompact}>
                     {ui("tooltip.holding", { holding: holdingCount })}
                 </Text>
             )}
-            {weaponModifiers.map(
-                ({ status, statusIcon, modifierValue, active }, i) => (
-                    <span key={i} className={styles.weaponModifierLine}>
-                        <ModifierSprite status={statusIcon} />
-                        <Text
-                            wrap={false}
-                            block
-                            font="numeric"
-                            className={mergeClasses(
-                                styles.numericFontAlignFix,
-                                styles.numericCompact,
-                                active
-                                    ? styles.weaponModifierActive
-                                    : styles.weaponModifierInactive,
-                            )}
-                        >
-                            {t(`status.${SpecialStatusNames[status]}`, {
-                                modifier_value: modifierValue,
-                            })}
-                        </Text>
-                    </span>
-                ),
-            )}
+            {weaponModifiers.map(({ status, statusIcon, modifierValue, active }, i) => (
+                <span key={i} className={styles.weaponModifierLine}>
+                    <ModifierSprite status={statusIcon} />
+                    <Text
+                        wrap={false}
+                        block
+                        font="numeric"
+                        className={mergeClasses(
+                            styles.numericFontAlignFix,
+                            styles.numericCompact,
+                            active ? styles.weaponModifierActive : styles.weaponModifierInactive,
+                        )}
+                    >
+                        {t(`status.${SpecialStatusNames[status]}`, {
+                            modifier_value: modifierValue,
+                        })}
+                    </Text>
+                </span>
+            ))}
             {/* Cook Data */}
             {cookData !== undefined && (
                 <>
@@ -308,8 +265,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                                         font="numeric"
                                         className={styles.numericFontAlignFix}
                                     >
-                                        +{cookData.effectValue}{" "}
-                                        {t("status.LifeMaxUp")}
+                                        +{cookData.effectValue} {t("status.LifeMaxUp")}
                                     </Text>
                                 </>
                             ) : (
@@ -334,9 +290,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                                         className={styles.numericFontAlignFix}
                                     >
                                         {ui("tooltip.stamina_recover", {
-                                            wheels: (
-                                                cookData.effectLevel / 1000.0
-                                            ).toFixed(3),
+                                            wheels: (cookData.effectLevel / 1000.0).toFixed(3),
                                         })}
                                     </Text>
                                 </>
@@ -351,9 +305,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                                         className={styles.numericFontAlignFix}
                                     >
                                         {ui("tooltip.stamina_recover_ex", {
-                                            wheels: (
-                                                cookData.effectLevel / 15.0
-                                            ).toFixed(2),
+                                            wheels: (cookData.effectLevel / 15.0).toFixed(2),
                                         })}
                                     </Text>
                                 </>
@@ -363,8 +315,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                     <div className={styles.foodSecondLineContainer}>
                         {cookData.effectId !== CookEffect.None &&
                             (cookData.effectId !== CookEffect.LifeMaxUp ||
-                                cookData.effectLevel !==
-                                    cookData.effectValue) &&
+                                cookData.effectLevel !== cookData.effectValue) &&
                             cookData.effectId !== CookEffect.LifeRecover &&
                             cookData.effectId !== CookEffect.GutsRecover &&
                             cookData.effectId !== CookEffect.ExGutsMaxUp && (
@@ -372,22 +323,15 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                                     <span className={styles.cookEffectIcons}>
                                         {cookData.effectLevel >= 1 &&
                                         cookData.effectLevel < 4 &&
-                                        Number.isInteger(
-                                            cookData.effectLevel,
-                                        ) ? (
+                                        Number.isInteger(cookData.effectLevel) ? (
                                             Array.from({
                                                 length: cookData.effectLevel,
                                             }).map((_, i) => (
-                                                <ModifierSprite
-                                                    key={i}
-                                                    status={foodStatusName}
-                                                />
+                                                <ModifierSprite key={i} status={foodStatusName} />
                                             ))
                                         ) : (
                                             <>
-                                                <ModifierSprite
-                                                    status={foodStatusName}
-                                                />
+                                                <ModifierSprite status={foodStatusName} />
                                                 <Text
                                                     wrap={false}
                                                     font="numeric"
@@ -403,9 +347,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                                     <Text
                                         wrap={false}
                                         font="numeric"
-                                        className={mergeClasses(
-                                            styles.numericFontAlignFix,
-                                        )}
+                                        className={mergeClasses(styles.numericFontAlignFix)}
                                     >
                                         {t(`status.${foodStatusName}`)}
                                     </Text>
@@ -419,8 +361,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                                     >
                                         {cookData.effectDuration >= 3600
                                             ? new Date(
-                                                  cookData.effectDuration *
-                                                      1000,
+                                                  cookData.effectDuration * 1000,
                                               ).toLocaleTimeString("en-US", {
                                                   timeZone: "UTC",
                                                   hour12: false,
@@ -429,8 +370,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                                                   second: "2-digit",
                                               })
                                             : new Date(
-                                                  cookData.effectDuration *
-                                                      1000,
+                                                  cookData.effectDuration * 1000,
                                               ).toLocaleTimeString("en-US", {
                                                   timeZone: "UTC",
                                                   hour12: false,
@@ -462,10 +402,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                     wrap={false}
                     font="numeric"
                     block
-                    className={mergeClasses(
-                        styles.glitchyColor,
-                        styles.numericCompact,
-                    )}
+                    className={mergeClasses(styles.glitchyColor, styles.numericCompact)}
                 >
                     {ui("tooltip.bad_cook_data")}
                 </Text>
@@ -495,10 +432,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                     wrap={false}
                     block
                     font="numeric"
-                    className={mergeClasses(
-                        styles.numericCompact,
-                        styles.glitchyColor,
-                    )}
+                    className={mergeClasses(styles.numericCompact, styles.glitchyColor)}
                 >
                     {ui("tooltip.broken_slot")}
                 </Text>
@@ -508,10 +442,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                     wrap={false}
                     block
                     font="numeric"
-                    className={mergeClasses(
-                        styles.numericCompact,
-                        styles.glitchyColor,
-                    )}
+                    className={mergeClasses(styles.numericCompact, styles.glitchyColor)}
                 >
                     {ui("tooltip.entangled")}
                 </Text>
@@ -521,17 +452,12 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                     wrap={false}
                     block
                     font="numeric"
-                    className={mergeClasses(
-                        styles.numericCompact,
-                        styles.overworldColor,
-                    )}
+                    className={mergeClasses(styles.numericCompact, styles.overworldColor)}
                 >
-                    {overworldStatus === "equipped" &&
-                        ui("tooltip.equipped_overworld")}
+                    {overworldStatus === "equipped" && ui("tooltip.equipped_overworld")}
                     {overworldStatus === "held" && ui("tooltip.held_overworld")}
                     {overworldStatus === "ground" && ui("tooltip.ground")}
-                    {!!overworldWillDespawn &&
-                        " - " + ui("tooltip.will_despawn")}
+                    {!!overworldWillDespawn && " - " + ui("tooltip.will_despawn")}
                 </Text>
             )}
             {!!accessibleStatus && (
@@ -539,14 +465,9 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
                     wrap={false}
                     block
                     font="numeric"
-                    className={mergeClasses(
-                        styles.numericCompact,
-                        styles.glitchyColor,
-                    )}
+                    className={mergeClasses(styles.numericCompact, styles.glitchyColor)}
                 >
-                    {ui(
-                        `tooltip.accessible_${accessibleStatus.replace("-", "_")}`,
-                    )}
+                    {ui(`tooltip.accessible_${accessibleStatus.replace("-", "_")}`)}
                 </Text>
             )}
             <Text wrap={false} block italic className={styles.profile}>

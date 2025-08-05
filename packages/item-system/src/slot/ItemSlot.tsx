@@ -2,11 +2,7 @@ import type { PropsWithChildren } from "react";
 import { Text, makeStyles, mergeClasses } from "@fluentui/react-components";
 import { Link32Regular, PresenceBlocked24Regular } from "@fluentui/react-icons";
 
-import {
-    ActorSprite,
-    type ActorSpriteProps,
-    ModifierSprite,
-} from "botw-item-assets";
+import { ActorSprite, type ActorSpriteProps, ModifierSprite } from "botw-item-assets";
 
 import { SpecialStatus } from "../data";
 
@@ -55,8 +51,7 @@ const useStyles = makeStyles({
     },
     equipped: {
         backgroundColor: "#0088ff",
-        boxShadow:
-            "inset -2px -2px 5px 0px #ffffffaa, inset 2px 2px 5px 0px #ffffffaa",
+        boxShadow: "inset -2px -2px 5px 0px #ffffffaa, inset 2px 2px 5px 0px #ffffffaa",
     },
     layer: {
         // dimension of the slot, including spaces outside of the box
@@ -201,10 +196,7 @@ const useStyles = makeStyles({
     },
 });
 
-export type ItemSlotContextProps = Pick<
-    ActorSpriteProps,
-    "cheap" | "disableAnimation"
->;
+export type ItemSlotContextProps = Pick<ActorSpriteProps, "cheap" | "disableAnimation">;
 export type ItemSlotFullProps = ItemSlotContextProps & ItemSlotProps;
 
 /** The Item slot display */
@@ -250,9 +242,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
             className={mergeClasses(
                 styles.boxInside,
                 !isInBrokenSlot && styles.boxInsideColor,
-                holdingCount > 0
-                    ? styles.boxInsideHighlightBorder
-                    : styles.boxInsideBorder,
+                holdingCount > 0 ? styles.boxInsideHighlightBorder : styles.boxInsideBorder,
                 isEquipped && styles.equipped,
                 isTranslucent && styles.imageTranslucent,
             )}
@@ -296,13 +286,9 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
 
     const $DurabilityLayer = durability !== undefined && (
         <div className={mergeClasses(styles.layer)}>
-            <span
-                className={mergeClasses(styles.overlayText, styles.durability)}
-            >
+            <span className={mergeClasses(styles.overlayText, styles.durability)}>
                 <Text font="numeric">
-                    {Number.isInteger(durability)
-                        ? durability
-                        : durability.toFixed(2)}
+                    {Number.isInteger(durability) ? durability : durability.toFixed(2)}
                 </Text>
             </span>
         </div>
@@ -310,12 +296,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
 
     const $CountLayer = count !== undefined && (
         <div className={mergeClasses(styles.layer)}>
-            <span
-                className={mergeClasses(
-                    styles.itemCount,
-                    !isEquipped && styles.itemCountShadow,
-                )}
-            >
+            <span className={mergeClasses(styles.itemCount, !isEquipped && styles.itemCountShadow)}>
                 x{count}
             </span>
         </div>
@@ -326,26 +307,17 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
             font="numeric"
             className={mergeClasses(
                 styles.modifierText,
-                statusIsAlternativeColor
-                    ? styles.modifierTextColor2
-                    : styles.modifierTextColor1,
-                (status === SpecialStatus.None || !statusIcon) &&
-                    styles.modifierTextBeginPad,
+                statusIsAlternativeColor ? styles.modifierTextColor2 : styles.modifierTextColor1,
+                (status === SpecialStatus.None || !statusIcon) && styles.modifierTextBeginPad,
             )}
         >
             {statusIconValue}
         </Text>
     );
 
-    const $StatusLayer = (!!statusIconValue ||
-        status !== SpecialStatus.None) && (
+    const $StatusLayer = (!!statusIconValue || status !== SpecialStatus.None) && (
         <div className={mergeClasses(styles.layer)}>
-            <span
-                className={mergeClasses(
-                    styles.overlayText,
-                    styles.modifierOverlay,
-                )}
-            >
+            <span className={mergeClasses(styles.overlayText, styles.modifierOverlay)}>
                 {status !== SpecialStatus.None && statusIcon && (
                     <div className={styles.modifier}>
                         <ModifierSprite status={statusIcon} />
@@ -381,20 +353,11 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
                         : styles.accessibleStatusDpadOnly,
                 )}
             >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                     <path d="m7.788 2.34-.799 1.278A.25.25 0 0 0 7.201 4h1.598a.25.25 0 0 0 .212-.382l-.799-1.279a.25.25 0 0 0-.424 0Zm0 11.32-.799-1.277A.25.25 0 0 1 7.201 12h1.598a.25.25 0 0 1 .212.383l-.799 1.278a.25.25 0 0 1-.424 0ZM3.617 9.01 2.34 8.213a.25.25 0 0 1 0-.424l1.278-.799A.25.25 0 0 1 4 7.201V8.8a.25.25 0 0 1-.383.212Zm10.043-.798-1.277.799A.25.25 0 0 1 12 8.799V7.2a.25.25 0 0 1 .383-.212l1.278.799a.25.25 0 0 1 0 .424Z" />
                     <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v3a.5.5 0 0 1-.5.5h-3A1.5 1.5 0 0 0 0 6.5v3A1.5 1.5 0 0 0 1.5 11h3a.5.5 0 0 1 .5.5v3A1.5 1.5 0 0 0 6.5 16h3a1.5 1.5 0 0 0 1.5-1.5v-3a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 0 16 9.5v-3A1.5 1.5 0 0 0 14.5 5h-3a.5.5 0 0 1-.5-.5v-3A1.5 1.5 0 0 0 9.5 0zM6 1.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3A1.5 1.5 0 0 0 11.5 6h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a1.5 1.5 0 0 0-1.5 1.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-3A1.5 1.5 0 0 0 4.5 10h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 0 6 4.5z" />
                     {accessibleStatus === "dpad-none" && (
-                        <path
-                            d="m0 0L16 16"
-                            strokeWidth="1.2"
-                            stroke="#ffffb5"
-                        />
+                        <path d="m0 0L16 16" strokeWidth="1.2" stroke="#ffffb5" />
                     )}
                 </svg>
             </span>
@@ -417,12 +380,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
 
     return (
         <div className={styles.container}>
-            <div
-                className={mergeClasses(
-                    styles.layer,
-                    isInBrokenSlot && styles.broken,
-                )}
-            >
+            <div className={mergeClasses(styles.layer, isInBrokenSlot && styles.broken)}>
                 {$Outline}
                 {$BoxInside}
             </div>
@@ -439,10 +397,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
 };
 
 /** Display a layer X times to enhance the effect */
-const LayerX: React.FC<PropsWithChildren<{ times: number }>> = ({
-    times,
-    children,
-}) => {
+const LayerX: React.FC<PropsWithChildren<{ times: number }>> = ({ times, children }) => {
     const styles = useStyles();
     return (
         <>

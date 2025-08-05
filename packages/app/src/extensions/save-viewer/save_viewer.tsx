@@ -2,10 +2,7 @@ import { useState } from "react";
 import { makeStyles, Tab, TabList } from "@fluentui/react-components";
 import { ResizeLayout } from "@pistonite/shared-controls";
 
-import {
-    translateRuntimeViewError,
-    useUITranslation,
-} from "skybook-localization";
+import { translateRuntimeViewError, useUITranslation } from "skybook-localization";
 import { GdtItemSlotWithTooltip } from "skybook-item-system";
 
 import { isLessProductive } from "self::pure-contrib";
@@ -46,18 +43,12 @@ export const SaveViewer: React.FC<SaveViewerProps> = ({ useStore }) => {
 
     const $ListView = data?.val && (
         <div className={m("flex-1 h-100 overflow-y-auto scrollbar-thin")}>
-            <div
-                className={m(
-                    "flex flex-wrap max-h-0 overflow-visible pad-itemtop",
-                )}
-            >
+            <div className={m("flex flex-wrap max-h-0 overflow-visible pad-itemtop")}>
                 {data.val.items.map((item, i) => (
                     <GdtItemSlotWithTooltip
                         item={item}
                         key={i}
-                        isMasterSwordFullPower={
-                            !!data.val.masterSword.isTrueForm
-                        }
+                        isMasterSwordFullPower={!!data.val.masterSword.isTrueForm}
                         cheap={cheap}
                         disableAnimation={disableAnimation}
                     />
@@ -89,11 +80,7 @@ export const SaveViewer: React.FC<SaveViewerProps> = ({ useStore }) => {
                         {t("save_viewer.manual_save")}
                     </Tab>
                     {saveNames.map((name) => (
-                        <Tab
-                            key={name}
-                            className={m("overflow-hidden", c.saveTab)}
-                            value={name}
-                        >
+                        <Tab key={name} className={m("overflow-hidden", c.saveTab)} value={name}>
                             {name}
                         </Tab>
                     ))}

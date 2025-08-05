@@ -1,9 +1,4 @@
-import {
-    CookEffect,
-    iterateCookEffect,
-    type MetaModifyOption,
-    WeaponModifier,
-} from "./item.ts";
+import { CookEffect, iterateCookEffect, type MetaModifyOption, WeaponModifier } from "./item.ts";
 
 import {
     type ASTKeyValuePair,
@@ -47,10 +42,7 @@ export type MetaOption = Partial<{
     hp: number;
 }>;
 
-export const parseASTMetadata: Parser<
-    ASTMaybeMetadata | ASTMetadata,
-    MetaModifyOption
-> = (ast) => {
+export const parseASTMetadata: Parser<ASTMaybeMetadata | ASTMetadata, MetaModifyOption> = (ast) => {
     if (isEpsilon(ast)) {
         return [{}, [], ""];
     }
@@ -70,11 +62,7 @@ export const parseASTMetadata: Parser<
     // Metadata validation
     for (const key in meta) {
         if (!(key in MetaTypes)) {
-            return [
-                undefined,
-                codeBlocks,
-                `${key} is not a valid metadata name`,
-            ];
+            return [undefined, codeBlocks, `${key} is not a valid metadata name`];
         }
 
         const value = meta[key as keyof MetaOption];
@@ -90,11 +78,7 @@ export const parseASTMetadata: Parser<
 
     const modifir = meta.modifier;
     if (!parseModifierName(meta)) {
-        return [
-            undefined,
-            codeBlocks,
-            `${modifir} is not a valid modifier name`,
-        ];
+        return [undefined, codeBlocks, `${modifir} is not a valid modifier name`];
     }
 
     return [meta, codeBlocks, ""];
@@ -102,10 +86,10 @@ export const parseASTMetadata: Parser<
 
 const MaxKeyValuePairDepth = 15;
 
-const parseKeyValuePairs: Parser<
-    [ASTKeyValuePair, ASTKeyValuePairPrime],
-    MetaOption
-> = ([first, more]) => {
+const parseKeyValuePairs: Parser<[ASTKeyValuePair, ASTKeyValuePairPrime], MetaOption> = ([
+    first,
+    more,
+]) => {
     const result: Record<string, string | number | boolean> = {};
     const codeBlocks: CodeBlockTree = [];
     let depth = 0;
@@ -115,16 +99,10 @@ const parseKeyValuePairs: Parser<
     codeBlocks.push(firstCodeBlock);
     while (isKeyValuePairPrimeC1(more)) {
         if (depth > MaxKeyValuePairDepth) {
-            return [
-                undefined,
-                codeBlocks,
-                "Key value pairs max depth exceeded",
-            ];
+            return [undefined, codeBlocks, "Key value pairs max depth exceeded"];
         }
         const delimiterBlock = codeBlockFromRange(more.literal0, "delimiter");
-        const [moreResult, moreCodeBlock] = parseKeyValuePair(
-            more.mKeyValuePair1,
-        );
+        const [moreResult, moreCodeBlock] = parseKeyValuePair(more.mKeyValuePair1);
         codeBlocks.push(delimiterBlock, moreCodeBlock);
         result[moreResult[0]] = moreResult[1];
         more = more.mKeyValuePairPrime2;
@@ -133,18 +111,14 @@ const parseKeyValuePairs: Parser<
     return [result, codeBlocks, ""];
 };
 
-const parseKeyValuePair: ParserSafe<
-    ASTKeyValuePair,
-    [string, string | number | boolean]
-> = (ast) => {
+const parseKeyValuePair: ParserSafe<ASTKeyValuePair, [string, string | number | boolean]> = (
+    ast,
+) => {
     const [key, keyCodeBlocks] = parseASTIdentifier(ast.mIdentifier0);
     if (isEpsilon(ast.mValue1)) {
         return [[key, true], flattenCodeBlocks([], keyCodeBlocks, "meta.key")];
     }
-    const valueDelimiterBlocks = codeBlockFromRange(
-        ast.mValue1.mValueSpecifier0,
-        "delimiter",
-    );
+    const valueDelimiterBlocks = codeBlockFromRange(ast.mValue1.mValueSpecifier0, "delimiter");
     const valueAst = ast.mValue1.mValueValue1;
     let value: string | number | boolean;
     let valueCodeBlocks: CodeBlockTree;
@@ -179,10 +153,7 @@ const parseModifierName = (meta: MetaOption): meta is MetaModifyOption => {
         // Try match weapon modifier first
         for (const weaponModifierKey in WeaponModifier) {
             if (weaponModifierKey.toLowerCase().startsWith(matchString)) {
-                casted.price =
-                    WeaponModifier[
-                        weaponModifierKey as keyof typeof WeaponModifier
-                    ];
+                casted.price = WeaponModifier[weaponModifierKey as keyof typeof WeaponModifier];
                 return true;
             }
         }
