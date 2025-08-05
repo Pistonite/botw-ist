@@ -22,17 +22,11 @@ const useStyles = makeStyles({
     },
 });
 
-export const InventoryTabButton: React.FC<InventoryTabButtonProps> = ({
-    category,
-    onClick,
-}) => {
+export const InventoryTabButton: React.FC<InventoryTabButtonProps> = ({ category, onClick }) => {
     const m = useStyleEngine();
     const c = useStyles();
     return (
-        <div
-            className={m("flex-noshrink border-box cursor-pointer")}
-            onClick={onClick}
-        >
+        <div className={m("flex-noshrink border-box cursor-pointer")} onClick={onClick}>
             <div className={m("flex flex-center", c.innerContainer)}>
                 <ModifierSprite
                     status={`Category${PouchCategoryNames[category as number]}`}

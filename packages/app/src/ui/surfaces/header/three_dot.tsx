@@ -35,15 +35,8 @@ const MiscMenuImpl: React.FC = () => {
     return (
         <Menu>
             <MenuTrigger disableButtonEnhancement>
-                <Tooltip
-                    relationship="label"
-                    content={t("menu.header.more")}
-                    positioning="below"
-                >
-                    <Button
-                        appearance="subtle"
-                        icon={<MoreHorizontal20Regular />}
-                    />
+                <Tooltip relationship="label" content={t("menu.header.more")} positioning="below">
+                    <Button appearance="subtle" icon={<MoreHorizontal20Regular />} />
                 </Tooltip>
             </MenuTrigger>
             <MenuPopover>
@@ -60,18 +53,14 @@ const MiscMenuImpl: React.FC = () => {
                         icon={<PersonFeedback20Regular />}
                         onClick={() => {
                             window.open(
-                                manualBaseUrl +
-                                    (isZh ? "#遇到问题" : "#having-an-issue"),
+                                manualBaseUrl + (isZh ? "#遇到问题" : "#having-an-issue"),
                                 "_blank",
                             );
                         }}
                     >
                         {t("menu.report_issue")}
                     </MenuItem>
-                    <GitHubLink
-                        href="https://github.com/Pistonite/botw-ist"
-                        as="submenu"
-                    />
+                    <GitHubLink href="https://github.com/Pistonite/botw-ist" as="submenu" />
                     <MenuDivider />
                     <Caption1>
                         {version} ({commitShort})

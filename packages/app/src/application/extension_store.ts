@@ -64,11 +64,7 @@ export type ExtensionStore = {
      * Open an extension in the primary or secondary slot, optionally
      * update the open mode for the extension for the future
      */
-    open: (
-        id: string,
-        slot: "primary" | "secondary",
-        updateOpenMode?: boolean,
-    ) => void;
+    open: (id: string, slot: "primary" | "secondary", updateOpenMode?: boolean) => void;
 
     /** Update the open mode for the extension with the id */
     updateOpenMode: (id: string, openMode: ExtensionOpenMode) => void;
@@ -97,12 +93,8 @@ export const useExtensionStore = create<ExtensionStore>()(
             builtinIds: [...BuiltinExtensionIds],
             updateBuiltinExtensions: (newIds: string[]) => {
                 log.info("updating built-in extensions");
-                const newPrimary = newIds.filter((id) =>
-                    DefaultPrimaryIds.includes(id),
-                );
-                const newSecondary = newIds.filter((id) =>
-                    DefaultSecondaryIds.includes(id),
-                );
+                const newPrimary = newIds.filter((id) => DefaultPrimaryIds.includes(id));
+                const newSecondary = newIds.filter((id) => DefaultSecondaryIds.includes(id));
                 const toFiltered = (ids: string[]) => {
                     return ids.filter((id) =>
                         (BuiltinExtensionIds as readonly string[]).includes(id),
@@ -120,22 +112,18 @@ export const useExtensionStore = create<ExtensionStore>()(
                         // typescript issue
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         builtinIds: [...BuiltinExtensionIds] as any,
-                        primaryIds: toFiltered([
-                            ...new Set(primaryIds.concat(newPrimary)),
-                        ]),
-                        secondaryIds: toFiltered([
-                            ...new Set(secondaryIds.concat(newSecondary)),
-                        ]),
+                        primaryIds: toFiltered([...new Set(primaryIds.concat(newPrimary))]),
+                        secondaryIds: toFiltered([...new Set(secondaryIds.concat(newSecondary))]),
                         recentIds: toFiltered(recentIds),
                         pinnedIds: toFiltered(pinnedIds),
-                        currentPrimary: (
-                            BuiltinExtensionIds as readonly string[]
-                        ).includes(currentPrimary)
+                        currentPrimary: (BuiltinExtensionIds as readonly string[]).includes(
+                            currentPrimary,
+                        )
                             ? currentPrimary
                             : "",
-                        currentSecondary: (
-                            BuiltinExtensionIds as readonly string[]
-                        ).includes(currentSecondary)
+                        currentSecondary: (BuiltinExtensionIds as readonly string[]).includes(
+                            currentSecondary,
+                        )
                             ? currentSecondary
                             : "",
                     }),
@@ -145,9 +133,7 @@ export const useExtensionStore = create<ExtensionStore>()(
             pinnedIds: [],
             setPinnedIds: (ids) => {
                 set(({ custom }) => {
-                    const customIds = custom.map((e) =>
-                        getCustomExtensionId(e.url),
-                    );
+                    const customIds = custom.map((e) => getCustomExtensionId(e.url));
                     return {
                         pinnedIds: filterInvalidCustomIds(ids, customIds),
                     };
@@ -156,9 +142,7 @@ export const useExtensionStore = create<ExtensionStore>()(
             recentIds: [],
             updateRecency: (id: string) => {
                 set(({ recentIds, custom }) => {
-                    const customIds = custom.map((e) =>
-                        getCustomExtensionId(e.url),
-                    );
+                    const customIds = custom.map((e) => getCustomExtensionId(e.url));
                     return {
                         recentIds: filterInvalidCustomIds(
                             [id, ...recentIds.filter((i) => i !== id)],
@@ -173,11 +157,7 @@ export const useExtensionStore = create<ExtensionStore>()(
             currentPrimary: "editor",
             currentSecondary: "item-explorer",
 
-            open: (
-                id: string,
-                slot: "primary" | "secondary",
-                updateOpenMode = false,
-            ) => {
+            open: (id: string, slot: "primary" | "secondary", updateOpenMode = false) => {
                 // make editor only openable in the primary slot
                 // because issue with the monaco instance
                 if (id === "editor") {
@@ -189,9 +169,7 @@ export const useExtensionStore = create<ExtensionStore>()(
                         newState.currentPrimary = id;
                         if (updateOpenMode) {
                             if (secondaryIds.includes(id)) {
-                                newState.secondaryIds = secondaryIds.filter(
-                                    (i) => i !== id,
-                                );
+                                newState.secondaryIds = secondaryIds.filter((i) => i !== id);
                             }
                             if (!primaryIds.includes(id)) {
                                 newState.primaryIds = [...primaryIds, id];
@@ -201,9 +179,7 @@ export const useExtensionStore = create<ExtensionStore>()(
                         newState.currentSecondary = id;
                         if (updateOpenMode) {
                             if (primaryIds.includes(id)) {
-                                newState.primaryIds = primaryIds.filter(
-                                    (i) => i !== id,
-                                );
+                                newState.primaryIds = primaryIds.filter((i) => i !== id);
                             }
                             if (!secondaryIds.includes(id)) {
                                 newState.secondaryIds = [...secondaryIds, id];
@@ -222,9 +198,7 @@ export const useExtensionStore = create<ExtensionStore>()(
                     const newState: Partial<ExtensionStore> = {};
                     if (openMode === "primary") {
                         if (secondaryIds.includes(id)) {
-                            newState.secondaryIds = secondaryIds.filter(
-                                (i) => i !== id,
-                            );
+                            newState.secondaryIds = secondaryIds.filter((i) => i !== id);
                         }
                         if (!primaryIds.includes(id)) {
                             newState.primaryIds = [...primaryIds, id];
@@ -232,23 +206,17 @@ export const useExtensionStore = create<ExtensionStore>()(
                     } else if (openMode === "secondary") {
                         newState.currentSecondary = id;
                         if (primaryIds.includes(id)) {
-                            newState.primaryIds = primaryIds.filter(
-                                (i) => i !== id,
-                            );
+                            newState.primaryIds = primaryIds.filter((i) => i !== id);
                         }
                         if (!secondaryIds.includes(id)) {
                             newState.secondaryIds = [...secondaryIds, id];
                         }
                     } else {
                         if (primaryIds.includes(id)) {
-                            newState.primaryIds = primaryIds.filter(
-                                (i) => i !== id,
-                            );
+                            newState.primaryIds = primaryIds.filter((i) => i !== id);
                         }
                         if (secondaryIds.includes(id)) {
-                            newState.secondaryIds = secondaryIds.filter(
-                                (i) => i !== id,
-                            );
+                            newState.secondaryIds = secondaryIds.filter((i) => i !== id);
                         }
                     }
                     return newState;
@@ -267,19 +235,11 @@ export const useExtensionStore = create<ExtensionStore>()(
                 // here we need clean the state and delete old ids that aren't
                 // in the new list
                 set(({ pinnedIds, recentIds }) => {
-                    const newCustomIds = extensions.map((e) =>
-                        getCustomExtensionId(e.url),
-                    );
+                    const newCustomIds = extensions.map((e) => getCustomExtensionId(e.url));
                     return {
                         custom: extensions,
-                        pinnedIds: filterInvalidCustomIds(
-                            pinnedIds,
-                            newCustomIds,
-                        ),
-                        recentIds: filterInvalidCustomIds(
-                            recentIds,
-                            newCustomIds,
-                        ),
+                        pinnedIds: filterInvalidCustomIds(pinnedIds, newCustomIds),
+                        recentIds: filterInvalidCustomIds(recentIds, newCustomIds),
                     };
                 });
             },
@@ -318,10 +278,7 @@ export const useExtensionStore = create<ExtensionStore>()(
     ),
 );
 
-const filterInvalidCustomIds = (
-    ids: string[],
-    customIds: string[],
-): string[] => {
+const filterInvalidCustomIds = (ids: string[], customIds: string[]): string[] => {
     return ids.filter((id) => {
         return !id.startsWith("custom-") || customIds.includes(id);
     });
@@ -330,10 +287,7 @@ const filterInvalidCustomIds = (
 if (import.meta.vitest) {
     const { expect, test } = import.meta.vitest;
     test("default ids should cover all built in ids", () => {
-        const defaults = new Set([
-            ...DefaultPrimaryIds,
-            ...DefaultSecondaryIds,
-        ]);
+        const defaults = new Set([...DefaultPrimaryIds, ...DefaultSecondaryIds]);
         const builtin = new Set(BuiltinExtensionIds);
         expect(defaults).toEqual(builtin);
     });

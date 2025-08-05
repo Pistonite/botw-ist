@@ -37,10 +37,7 @@ const CustomLanguageOptions: LanguageClient = {
     getExtensions: () => [".skyb"],
     getTokenizer: () => language,
     getConfiguration: () => configuration,
-    getDiagnosticProviders: () => [
-        ParserDiagnosticProvider,
-        RuntimeDiagnosticProvider,
-    ],
+    getDiagnosticProviders: () => [ParserDiagnosticProvider, RuntimeDiagnosticProvider],
     getSemanticTokensProvider: () => {
         return {
             legend,

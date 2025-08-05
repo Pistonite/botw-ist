@@ -13,10 +13,7 @@ import { createSaveViewerStore, type SaveViewerStore } from "./store.ts";
 
 const UUID = "497ce310-293d-40a2-9a8d-fd4ce41c0d69";
 
-export class SaveViewerExtension
-    extends FirstPartyExtensionAdapter
-    implements FirstPartyExtension
-{
+export class SaveViewerExtension extends FirstPartyExtensionAdapter implements FirstPartyExtension {
     private store: SaveViewerStore;
 
     private component: React.FC;
@@ -25,10 +22,7 @@ export class SaveViewerExtension
         super(standalone);
         const store = createSaveViewerStore();
         store.subscribe((curr, prev) => {
-            if (
-                curr.saveNames !== prev.saveNames ||
-                curr.displayedSave !== prev.displayedSave
-            ) {
+            if (curr.saveNames !== prev.saveNames || curr.displayedSave !== prev.displayedSave) {
                 void this.update(curr.displayedSave);
             }
         });
@@ -60,9 +54,7 @@ export class SaveViewerExtension
             (checkCancel) =>
             async (selectedSave: string | undefined): Promise<void> => {
                 const saveNameForLogging = selectedSave || "<manual save>";
-                extLog.info(
-                    `${saveNameForLogging}\nupdating save viewer display`,
-                );
+                extLog.info(`${saveNameForLogging}\nupdating save viewer display`);
                 const app = this.app;
                 if (!app) {
                     return;
@@ -80,11 +72,7 @@ export class SaveViewerExtension
                 let PREFIX = `${idListSave} ${saveNameForLogging}`;
 
                 // first request list of saves to make sure it's up to date
-                const saves = await app.getSaveNames(
-                    idListSave,
-                    undefined,
-                    undefined,
-                );
+                const saves = await app.getSaveNames(idListSave, undefined, undefined);
                 if (saves.err) {
                     extLog.error(`${PREFIX}\nfailed to get save names`);
                     extLog.error(saves.err);
@@ -96,9 +84,7 @@ export class SaveViewerExtension
                 checkCancel();
                 const { saveNames, setSaveNames } = this.store.getState();
                 if (!shallowEqual(saveNames, saves.val.value)) {
-                    extLog.info(
-                        `${PREFIX}\nsave names updated, retriggering the update`,
-                    );
+                    extLog.info(`${PREFIX}\nsave names updated, retriggering the update`);
                     setSaveNames(saves.val.value);
                     // if the names updated, this function will retrigger
                     return;

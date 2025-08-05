@@ -80,18 +80,14 @@ export const bootstrapAppWithRuntime = (runtime: Runtime): void => {
             }
             const checkCancel = () => {
                 checkTaskCancel();
-                const { activeScript: activeScriptNow } =
-                    useSessionStore.getState();
+                const { activeScript: activeScriptNow } = useSessionStore.getState();
                 if (activeScriptNow !== activeScript) {
                     // script changed while waiting for result
                     throw new Error("cancelled");
                 }
             };
             // this only requires parsing, and should be fast
-            const stepIndex = await runtime.getStepFromPos(
-                activeScript,
-                bytePos,
-            );
+            const stepIndex = await runtime.getStepFromPos(activeScript, bytePos);
             checkCancel();
             if (stepIndex.err) {
                 log.error("failed to get step index");
@@ -211,9 +207,7 @@ const updateLogo = (customImage: boolean) => {
 };
 
 /** Provide the runtime to the React Tree */
-export const RuntimeContext = createContext<Runtime>(
-    undefined as unknown as Runtime,
-);
+export const RuntimeContext = createContext<Runtime>(undefined as unknown as Runtime);
 
 /** Hook to access the runtime from React */
 export const useRuntime = () => {

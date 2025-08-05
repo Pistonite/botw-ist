@@ -29,15 +29,10 @@ const FORMAT = "NAME=URL";
 const CustomExtensionDialogImpl: React.FC = () => {
     const t = useUITranslation();
 
-    const open =
-        useUIStore((state) => state.openedDialogId) === "custom-extension";
+    const open = useUIStore((state) => state.openedDialogId) === "custom-extension";
     const setOpen = useUIStore((state) => state.setOpenedDialog);
-    const setCustomExtensions = useExtensionStore(
-        (state) => state.setCustomExtensions,
-    );
-    const [configText, setConfigText] = useState<string>(
-        getCustomExtensionConfigText,
-    );
+    const setCustomExtensions = useExtensionStore((state) => state.setCustomExtensions);
+    const [configText, setConfigText] = useState<string>(getCustomExtensionConfigText);
     // when opening the dialog, re-initialize the text area
     useEffect(() => {
         if (open) {
@@ -76,9 +71,7 @@ const CustomExtensionDialogImpl: React.FC = () => {
     return (
         <Dialog
             open={open}
-            onOpenChange={(_, { open }) =>
-                setOpen(open ? "custom-extension" : undefined)
-            }
+            onOpenChange={(_, { open }) => setOpen(open ? "custom-extension" : undefined)}
         >
             <DialogSurface>
                 <DialogBody>
@@ -99,9 +92,7 @@ const CustomExtensionDialogImpl: React.FC = () => {
                         >
                             <Textarea
                                 value={configText}
-                                onChange={(_, { value }) =>
-                                    setConfigText(value)
-                                }
+                                onChange={(_, { value }) => setConfigText(value)}
                                 rows={10}
                                 textarea={{
                                     style: {
@@ -113,9 +104,7 @@ const CustomExtensionDialogImpl: React.FC = () => {
                     </DialogContent>
                     <DialogActions>
                         <DialogTrigger disableButtonEnhancement>
-                            <Button appearance="secondary">
-                                {t("button.cancel")}
-                            </Button>
+                            <Button appearance="secondary">{t("button.cancel")}</Button>
                         </DialogTrigger>
                         <DialogTrigger disableButtonEnhancement>
                             <Button appearance="primary" onClick={handleSave}>

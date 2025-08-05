@@ -30,9 +30,7 @@ export type CachedRuntimeData<T> = {
 export const usePouchListView = (): CachedRuntimeData<InvView_PouchList> => {
     const cachedViews = useSessionStore((state) => state.pouchViews);
     const cacheValidity = useSessionStore((state) => state.pouchCached);
-    const setPouchViewInCache = useSessionStore(
-        (state) => state.setPouchViewInCache,
-    );
+    const setPouchViewInCache = useSessionStore((state) => state.setPouchViewInCache);
     return useStoreCachedRuntimeData(
         "PouchList",
         cachedViews,
@@ -54,9 +52,7 @@ const getPouchListShim = (
 export const useGdtInventoryView = (): CachedRuntimeData<InvView_Gdt> => {
     const cachedViews = useSessionStore((state) => state.gdtViews);
     const cacheValidity = useSessionStore((state) => state.gdtCached);
-    const setGdtViewInCache = useSessionStore(
-        (state) => state.setGdtViewInCache,
-    );
+    const setGdtViewInCache = useSessionStore((state) => state.setGdtViewInCache);
     return useStoreCachedRuntimeData(
         "GdtInventory",
         cachedViews,
@@ -75,21 +71,18 @@ const getGdtInventoryShim = (
 };
 
 /** Get the view of the overworld items of the current script and step */
-export const useOverworldItemsView =
-    (): CachedRuntimeData<InvView_Overworld> => {
-        const cachedViews = useSessionStore((state) => state.overworldViews);
-        const cacheValidity = useSessionStore((state) => state.overworldCached);
-        const setOverworldViewInCache = useSessionStore(
-            (state) => state.setOverworldViewInCache,
-        );
-        return useStoreCachedRuntimeData(
-            "OverworldItems",
-            cachedViews,
-            cacheValidity,
-            getOverworldItemsShim,
-            setOverworldViewInCache,
-        );
-    };
+export const useOverworldItemsView = (): CachedRuntimeData<InvView_Overworld> => {
+    const cachedViews = useSessionStore((state) => state.overworldViews);
+    const cacheValidity = useSessionStore((state) => state.overworldCached);
+    const setOverworldViewInCache = useSessionStore((state) => state.setOverworldViewInCache);
+    return useStoreCachedRuntimeData(
+        "OverworldItems",
+        cachedViews,
+        cacheValidity,
+        getOverworldItemsShim,
+        setOverworldViewInCache,
+    );
+};
 const getOverworldItemsShim = (
     runtime: Runtime,
     taskId: string,
@@ -123,9 +116,7 @@ const useStoreCachedRuntimeData = <T>(
     const stepIndex = useSessionStore((state) => state.stepIndex);
     const bytePos = useSessionStore((state) => state.bytePos);
 
-    const cacheIsValid = !!(
-        cacheValidity.includes(stepIndex) && cachedViews[stepIndex]
-    );
+    const cacheIsValid = !!(cacheValidity.includes(stepIndex) && cachedViews[stepIndex]);
     // only use the inventory from state if the cache is valid
     const inventory = cacheIsValid ? cachedViews[stepIndex] : undefined;
 
@@ -143,10 +134,7 @@ const useStoreCachedRuntimeData = <T>(
             return activeScriptNow === activeScript;
         };
         const updateInventory = async () => {
-            const stepIndex = await runtime.getStepFromPos(
-                activeScript,
-                bytePos,
-            );
+            const stepIndex = await runtime.getStepFromPos(activeScript, bytePos);
             if (stepIndex.err) {
                 log.error(`${name}\nfailed because cannot get step index`);
                 log.error(stepIndex.err);
@@ -198,9 +186,7 @@ const useStoreCachedRuntimeData = <T>(
     // Create a per-component cache. If the view is not ready when
     // creating new steps, then we can still render the old result,
     // instead of showing empty state (which causes large UI flickering)
-    const inventoryViewCache = useRef<Result<T, RuntimeViewError> | undefined>(
-        undefined,
-    );
+    const inventoryViewCache = useRef<Result<T, RuntimeViewError> | undefined>(undefined);
     useEffect(() => {
         if (inventory) {
             inventoryViewCache.current = inventory;

@@ -12,11 +12,10 @@
         "@pistonite/shared-controls": "workspace:*",
         "@pistonite/skybook-api": "workspace:*",
         "@pistonite/workex": "catalog:",
-        "@tanstack/react-query": "^5.62.11",
+        "@tanstack/react-query": "^5.84.1",
         "@uidotdev/usehooks": "^2.4.1",
         "botw-item-assets": "workspace:*",
         "mobile-device-detect": "^0.4.3",
-        "numeral": "^2.0.6",
         "react": "catalog:",
         "react-dom": "catalog:",
         "reselect": "^5.1.1",
@@ -24,12 +23,11 @@
         "skybook-localization": "workspace:*",
         "skybook-parser-legacy": "workspace:*",
         "uuid": "catalog:",
-        "zustand": "^5.0.2"
+        "zustand": "^5.0.7"
     },
     "devDependencies": {
         "@pistonite/vite-plugin-intwc": "workspace:*",
         "@types/bun": "catalog:",
-        "@types/numeral": "^2.0.5",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
         "i18next": "catalog:",

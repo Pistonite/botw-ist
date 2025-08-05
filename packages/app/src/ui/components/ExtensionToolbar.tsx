@@ -1,10 +1,4 @@
-import {
-    Button,
-    Dropdown,
-    Option,
-    Tooltip,
-    makeStyles,
-} from "@fluentui/react-components";
+import { Button, Dropdown, Option, Tooltip, makeStyles } from "@fluentui/react-components";
 import { Dismiss20Regular, WindowNew20Regular } from "@fluentui/react-icons";
 import type { PropsWithChildren } from "react";
 
@@ -59,9 +53,14 @@ const useStyles = makeStyles({
 /**
  * The toolbar for selecting and controlling an extension window
  */
-export const ExtensionToolbar: React.FC<
-    PropsWithChildren<ExtensionToolbarProps>
-> = ({ id, allIds, onClickPopout, onClickClose, onSelect, children }) => {
+export const ExtensionToolbar: React.FC<PropsWithChildren<ExtensionToolbarProps>> = ({
+    id,
+    allIds,
+    onClickPopout,
+    onClickClose,
+    onSelect,
+    children,
+}) => {
     const m = useStyleEngine();
     const t = useUITranslation();
     const c = useStyles();
@@ -70,11 +69,7 @@ export const ExtensionToolbar: React.FC<
             <Dropdown
                 className={m("flex-1")}
                 appearance="filled-darker"
-                button={
-                    <span className={c.selectorButton}>
-                        {t(`extension.${id}.name`)}
-                    </span>
-                }
+                button={<span className={c.selectorButton}>{t(`extension.${id}.name`)}</span>}
                 selectedOptions={[id]}
                 onOptionSelect={(_, { optionValue }) => {
                     if (optionValue && optionValue !== id) {

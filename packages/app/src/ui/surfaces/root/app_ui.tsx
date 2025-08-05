@@ -14,10 +14,7 @@ import {
     CustomExtensionDialog,
 } from "self::ui/surfaces/extension";
 import { Header } from "self::ui/surfaces/header";
-import {
-    PouchInventoryPanel,
-    GdtInventoryPanel,
-} from "self::ui/surfaces/inventory";
+import { PouchInventoryPanel, GdtInventoryPanel } from "self::ui/surfaces/inventory";
 import { useStyleEngine } from "self::util";
 
 const AppImpl: React.FC = () => {
@@ -46,25 +43,14 @@ const AppImpl: React.FC = () => {
         } catch {
             // ignore error
         }
-    }, [
-        crashScreenTitle,
-        crashScreenDesc,
-        crashScreenButtonSaveReload,
-        crashScreenButtonReload,
-    ]);
+    }, [crashScreenTitle, crashScreenDesc, crashScreenButtonSaveReload, crashScreenButtonReload]);
 
     const showExtensionPanel = useIsShowingExtensionPanel();
 
-    const extensionPanelPercentage = useUIStore(
-        (state) => state.extensionPanelPercentage,
-    );
-    const setExtensionPanelPercentage = useUIStore(
-        (state) => state.setExtensionPanelPercentage,
-    );
+    const extensionPanelPercentage = useUIStore((state) => state.extensionPanelPercentage);
+    const setExtensionPanelPercentage = useUIStore((state) => state.setExtensionPanelPercentage);
 
-    const gamedataInventoryPercentage = useUIStore(
-        (state) => state.gamedataInventoryPercentage,
-    );
+    const gamedataInventoryPercentage = useUIStore((state) => state.gamedataInventoryPercentage);
     const setGamedataInventoryPercentage = useUIStore(
         (state) => state.setGamedataInventoryPercentage,
     );

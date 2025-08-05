@@ -4,10 +4,7 @@ import { Info20Regular } from "@fluentui/react-icons";
 import { useDark } from "@pistonite/pure-react";
 import { useSwappedWheelScrollDirection } from "@pistonite/shared-controls";
 
-import {
-    translateRuntimeViewError,
-    useUITranslation,
-} from "skybook-localization";
+import { translateRuntimeViewError, useUITranslation } from "skybook-localization";
 import { GdtItemSlotWithTooltip, ItemTab } from "skybook-item-system";
 
 import {
@@ -16,25 +13,13 @@ import {
     usePouchListView,
     useUIStore,
 } from "self::application";
-import {
-    useThemedSheikaBackgroundUrl,
-    getTabNodesForGdt,
-    useStyleEngine,
-} from "self::util";
-import {
-    InventoryTitle,
-    InventorySpinner,
-    ErrorBar,
-} from "self::ui/components";
+import { useThemedSheikaBackgroundUrl, getTabNodesForGdt, useStyleEngine } from "self::util";
+import { InventoryTitle, InventorySpinner, ErrorBar } from "self::ui/components";
 
 const GdtInventoryPanelImpl: React.FC = () => {
     const m = useStyleEngine();
     const dark = useDark();
-    const {
-        data: pouch,
-        loading: pouchLoading,
-        error: pouchError,
-    } = usePouchListView();
+    const { data: pouch, loading: pouchLoading, error: pouchError } = usePouchListView();
     const { data: gdt, loading, error: gdtError } = useGdtInventoryView();
 
     const showSpinner = loading || pouchLoading || !gdt;
@@ -55,10 +40,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
 
     const noShowMaybeBugMsg = gdt?.err?.type === "Closed";
     const $Error = gdt?.err && (
-        <ErrorBar
-            title={t("main.gdt_inventory.view_error")}
-            noBugReport={noShowMaybeBugMsg}
-        >
+        <ErrorBar title={t("main.gdt_inventory.view_error")} noBugReport={noShowMaybeBugMsg}>
             {translateRuntimeViewError(gdt.err, t)}
         </ErrorBar>
     );
@@ -70,18 +52,12 @@ const GdtInventoryPanelImpl: React.FC = () => {
 
     const $ListView = gdt?.val && (
         <div className={m("flex-1 overflow-y-auto scrollbar-thin")}>
-            <div
-                className={m(
-                    "flex flex-wrap max-h-0 overflow-visible pad-itemtop",
-                )}
-            >
+            <div className={m("flex flex-wrap max-h-0 overflow-visible pad-itemtop")}>
                 {gdt.val.items.map((item, i) => (
                     <GdtItemSlotWithTooltip
                         item={item}
                         key={i}
-                        isMasterSwordFullPower={
-                            !!gdt.val.masterSword.isTrueForm
-                        }
+                        isMasterSwordFullPower={!!gdt.val.masterSword.isTrueForm}
                         {...itemSlotProps}
                     />
                 ))}
@@ -96,9 +72,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
             ref={tabbedScrollHandler}
             onScroll={(e) => {
                 // sync scroll to the pouch panel
-                const pouchPanel = document.getElementById(
-                    "-tabbed-pouch-scroll-",
-                );
+                const pouchPanel = document.getElementById("-tabbed-pouch-scroll-");
                 if (pouchPanel) {
                     pouchPanel.scrollLeft = e.currentTarget.scrollLeft;
                 }
@@ -116,9 +90,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
                                 <GdtItemSlotWithTooltip
                                     item={item}
                                     key={i}
-                                    isMasterSwordFullPower={
-                                        !!gdt.val.masterSword.isTrueForm
-                                    }
+                                    isMasterSwordFullPower={!!gdt.val.masterSword.isTrueForm}
                                     {...itemSlotProps}
                                 />
                             ),
@@ -137,20 +109,14 @@ const GdtInventoryPanelImpl: React.FC = () => {
                 }}
                 className={m("pos-abs all-sides-0 flex-col pad-8")}
             >
-                <InventoryTitle
-                    title={t("main.gdt_inventory.title")}
-                    dark={dark}
-                >
+                <InventoryTitle title={t("main.gdt_inventory.title")} dark={dark}>
                     <Tooltip
                         relationship="description"
                         content={t("main.gdt_inventory.desc")}
                         withArrow
                         positioning="below"
                     >
-                        <Button
-                            icon={<Info20Regular />}
-                            appearance="transparent"
-                        />
+                        <Button icon={<Info20Regular />} appearance="transparent" />
                     </Tooltip>
                 </InventoryTitle>
                 <div className={m("flex-col gap-4")}>

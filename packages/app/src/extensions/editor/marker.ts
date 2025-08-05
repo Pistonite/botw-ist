@@ -9,11 +9,7 @@ import type {
     DiagnosticTask,
     DiagnosticMergeResult,
 } from "@pistonite/intwc";
-import {
-    charPosToBytePos,
-    MarkerSeverity,
-    spanToRange,
-} from "@pistonite/intwc";
+import { charPosToBytePos, MarkerSeverity, spanToRange } from "@pistonite/intwc";
 import { logger } from "@pistonite/pure/log";
 
 import type { Diagnostic, ExtensionApp } from "@pistonite/skybook-api";
@@ -34,9 +30,7 @@ export const mergeDataByReplace = (
     _currData: Diagnostic[],
     newBatch: Diagnostic[],
 ): DiagnosticMergeResult<Diagnostic, CustomMarkerData> => {
-    const nextMarkers = newBatch.map((x) =>
-        convertDiagnosticToMarker(model, x),
-    );
+    const nextMarkers = newBatch.map((x) => convertDiagnosticToMarker(model, x));
     return { nextData: newBatch, nextMarkers };
 };
 
@@ -151,10 +145,7 @@ export const provideRuntimeDiagnostics = async (
     const len = positions.length;
 
     log.info(`requesting runtime diagnostics for ${len} steps`);
-    const taskIdResult = await app.requestNewTaskIds(
-        EDITOR_EXTENSION_UUID,
-        len,
-    );
+    const taskIdResult = await app.requestNewTaskIds(EDITOR_EXTENSION_UUID, len);
     if (taskIdResult.err) {
         log.error("failed to get taskIds for runtime diagnostics");
         return [];
@@ -192,10 +183,7 @@ export const provideRuntimeDiagnostics = async (
     return outTasks;
 };
 
-const binarySearchForPosition = (
-    bytePositions: Uint32Array,
-    bytePos: number,
-): number => {
+const binarySearchForPosition = (bytePositions: Uint32Array, bytePos: number): number => {
     let low = 0;
     let high = bytePositions.length;
     while (low < high) {
@@ -209,10 +197,7 @@ const binarySearchForPosition = (
     return low;
 };
 
-const convertDiagnosticToMarker = (
-    model: TextModel,
-    diagnostic: Diagnostic,
-): CustomMarkerData => {
+const convertDiagnosticToMarker = (model: TextModel, diagnostic: Diagnostic): CustomMarkerData => {
     const { message, isWarning, start, end } = diagnostic;
     const range = spanToRange(model, start, end);
     return {

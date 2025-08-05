@@ -13,10 +13,7 @@ export type ExtensionWindowProps = {
     currentId: string;
 };
 
-export const ExtensionWindow: React.FC<ExtensionWindowProps> = ({
-    ids,
-    currentId,
-}) => {
+export const ExtensionWindow: React.FC<ExtensionWindowProps> = ({ ids, currentId }) => {
     const m = useStyleEngine();
     return (
         <div className={m("flex-1 wh-100 min-h-0")}>
@@ -47,11 +44,7 @@ export const ExtensionWrapper: React.FC<ExtensionWrapperProps> = ({ id }) => {
     const { isPending, data: ExtComp } = useQuery({
         queryKey: ["extension", id],
         queryFn: async () => {
-            const extension = await getExtension(
-                id,
-                false,
-                connectLocalExtensionToApp,
-            );
+            const extension = await getExtension(id, false, connectLocalExtensionToApp);
             return extension?.Component;
         },
     });

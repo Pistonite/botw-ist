@@ -9,11 +9,7 @@ const PerfMonitorImpl: React.FC = () => {
     const stepIndex = useSessionStore((state) => state.stepIndex);
     const bytePos = useSessionStore((state) => state.bytePos);
     const mode = useSessionStore((state) => state.mode);
-    const contents = [
-        `CurrStep  ${stepIndex}`,
-        `BytePos   ${bytePos}`,
-        `Mode      ${mode}`,
-    ];
+    const contents = [`CurrStep  ${stepIndex}`, `BytePos   ${bytePos}`, `Mode      ${mode}`];
     const m = useStyleEngine();
     return (
         <Tooltip

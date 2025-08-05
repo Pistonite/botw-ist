@@ -17,10 +17,7 @@ export type ScreenIndicatorProps = {
     hasGlider: boolean;
 };
 
-export const ScreenIndicator: React.FC<ScreenIndicatorProps> = ({
-    screen,
-    hasGlider,
-}) => {
+export const ScreenIndicator: React.FC<ScreenIndicatorProps> = ({ screen, hasGlider }) => {
     const screenReal = screen || "none";
     let icon;
     switch (screenReal) {
@@ -69,10 +66,7 @@ export const ScreenIndicator: React.FC<ScreenIndicatorProps> = ({
                     if (screen !== "overworld") {
                         return;
                     }
-                    const newBg = getRandomBackgroundName(
-                        background,
-                        hasGlider,
-                    );
+                    const newBg = getRandomBackgroundName(background, hasGlider);
                     setBackground(newBg);
                 }}
             />

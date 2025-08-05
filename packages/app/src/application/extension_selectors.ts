@@ -14,10 +14,7 @@ import {
 
 /** Selector to get primary extension ids to display in the toolbar dropdown */
 export const getPrimaryExtensionIdsForDropdown = createSelector(
-    [
-        (state: ExtensionStore) => state.primaryIds,
-        (state: ExtensionStore) => state.currentPrimary,
-    ],
+    [(state: ExtensionStore) => state.primaryIds, (state: ExtensionStore) => state.currentPrimary],
     (ids, current) => {
         return toSortedDedupedBuiltinExtensionIds([...ids, current]);
     },

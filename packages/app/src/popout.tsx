@@ -34,10 +34,7 @@ async function boot() {
         return;
     }
 
-    const connect: ConnectExtensionFn = async (
-        _id: string,
-        extension: FirstPartyExtension,
-    ) => {
+    const connect: ConnectExtensionFn = async (_id: string, extension: FirstPartyExtension) => {
         extLog.error("connecting to host window");
         await connectPopoutExtensionWindow(extension, properties);
         extLog.info("connected");
@@ -45,25 +42,19 @@ async function boot() {
 
     const extension = await getExtension(properties.extensionId, true, connect);
     if (!extension) {
-        extLog.error(
-            `extension with ID '${properties.extensionId}' not found!`,
-        );
+        extLog.error(`extension with ID '${properties.extensionId}' not found!`);
         return;
     }
 
     const queryClient = new QueryClient();
 
-    const rootElement = document.getElementById(
-        "-popout-root-",
-    ) as HTMLDivElement;
+    const rootElement = document.getElementById("-popout-root-") as HTMLDivElement;
     const root = createRoot(rootElement);
     root.render(
         <StrictMode>
             <QueryClientProvider client={queryClient}>
                 <ThemeProvider>
-                    <ItemTooltipProvider
-                        backgroundUrl={getSheikaBackgroundUrl()}
-                    >
+                    <ItemTooltipProvider backgroundUrl={getSheikaBackgroundUrl()}>
                         <div
                             style={{
                                 width: "100vw",

@@ -1,16 +1,9 @@
-import {
-    getNormalizedPath,
-    CodeEditor,
-    type CodeEditorApi,
-} from "@pistonite/intwc";
+import { getNormalizedPath, CodeEditor, type CodeEditorApi } from "@pistonite/intwc";
 import type { WxPromise } from "@pistonite/workex";
 
 import type { ExtensionApp, SessionMode } from "@pistonite/skybook-api";
 
-import {
-    FirstPartyExtensionAdapter,
-    type FirstPartyExtension,
-} from "self::util";
+import { FirstPartyExtensionAdapter, type FirstPartyExtension } from "self::util";
 
 import { init, setApp, updateScriptInApp } from "./init.ts";
 
@@ -18,10 +11,7 @@ void init();
 
 const FILE = getNormalizedPath("script.skyb");
 
-export class EditorExtension
-    extends FirstPartyExtensionAdapter
-    implements FirstPartyExtension
-{
+export class EditorExtension extends FirstPartyExtensionAdapter implements FirstPartyExtension {
     private editor: CodeEditorApi | undefined;
     private scriptChangedBeforeEditorReady: string | undefined;
     private detachEditor: (() => void) | undefined;
@@ -79,16 +69,10 @@ export class EditorExtension
             if (filename !== FILE) {
                 return;
             }
-            updateScriptInApp(
-                editor.getFileContent(FILE),
-                editor.getCursorOffset() || 0,
-            );
+            updateScriptInApp(editor.getFileContent(FILE), editor.getCursorOffset() || 0);
         };
 
-        const unsubscribeContentChange = editor.subscribe(
-            "content-changed",
-            updateHandler,
-        );
+        const unsubscribeContentChange = editor.subscribe("content-changed", updateHandler);
         const unsubscribeCursorPositionChange = editor.subscribe(
             "cursor-position-changed",
             updateHandler,

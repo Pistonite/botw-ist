@@ -5,12 +5,7 @@
  * not Extensions!!! (And popouts don't link with this)
  */
 
-import {
-    addDarkSubscriber,
-    addLocaleSubscriber,
-    getLocale,
-    isDark,
-} from "@pistonite/pure/pref";
+import { addDarkSubscriber, addLocaleSubscriber, getLocale, isDark } from "@pistonite/pure/pref";
 import { wxPopup } from "@pistonite/workex";
 import { bytePosToCharPos } from "@pistonite/intwc";
 
@@ -50,14 +45,10 @@ export const initExtensionManager = () => {
     // we only optimize for script updates, since that's the most
     // often updated state
     useSessionStore.subscribe((curr, prev) => {
-        if (
-            prev.activeScript !== curr.activeScript ||
-            prev.bytePos !== curr.bytePos
-        ) {
+        if (prev.activeScript !== curr.activeScript || prev.bytePos !== curr.bytePos) {
             const charPos = bytePosToCharPos(curr.activeScript, curr.bytePos);
             const len = instances.length;
-            const { currentPrimary, currentSecondary } =
-                useExtensionStore.getState();
+            const { currentPrimary, currentSecondary } = useExtensionStore.getState();
             for (let i = 0; i < len; i++) {
                 // skip updates for local extensions that are not visible right now
                 if (!instances[i].isPopout) {
@@ -66,10 +57,7 @@ export const initExtensionManager = () => {
                         continue;
                     }
                 }
-                void instances[i].instance.onScriptChanged(
-                    curr.activeScript,
-                    charPos,
-                );
+                void instances[i].instance.onScriptChanged(curr.activeScript, charPos);
             }
         }
         if (prev.mode !== curr.mode) {
@@ -80,10 +68,7 @@ export const initExtensionManager = () => {
     });
     // send updates to non-popout extension when switching extensions
     useExtensionStore.subscribe((curr, prev) => {
-        if (
-            curr.currentPrimary !== prev.currentPrimary &&
-            curr.currentPrimary
-        ) {
+        if (curr.currentPrimary !== prev.currentPrimary && curr.currentPrimary) {
             sendEventsToLocalExtensionById(curr.currentPrimary);
         }
         if (
@@ -109,19 +94,12 @@ export const initExtensionManager = () => {
 /**
  * Registers a local (non-popout) extension as running and connect it to the app.
  */
-export const connectLocalExtensionToApp = (
-    id: string,
-    extension: ExtensionModule,
-) => {
+export const connectLocalExtensionToApp = (id: string, extension: ExtensionModule) => {
     extension.onAppConnectionEstablished(getExtensionAppHost());
     notifyAndPushInstance(id, extension, false);
 };
 
-const notifyAndPushInstance = (
-    id: string,
-    extension: Extension,
-    isPopout: boolean,
-) => {
+const notifyAndPushInstance = (id: string, extension: Extension, isPopout: boolean) => {
     sendEventsToExtension(extension);
     instances.push({ id, instance: extension, isPopout });
 };
@@ -144,12 +122,8 @@ const sendEventsToLocalExtensionById = (id: string) => {
 const sendEventsToExtension = (extension: Extension) => {
     void extension.onDarkModeChanged(isDark());
     void extension.onLocaleChanged(getLocale());
-    const { enableHighQualityIcons, enableAnimations } =
-        usePersistStore.getState();
-    void extension.onIconSettingsChanged(
-        enableHighQualityIcons,
-        enableAnimations,
-    );
+    const { enableHighQualityIcons, enableAnimations } = usePersistStore.getState();
+    void extension.onIconSettingsChanged(enableHighQualityIcons, enableAnimations);
     const { activeScript, bytePos, mode } = useSessionStore.getState();
     void extension.onAppModeChanged(mode);
     const charPos = bytePosToCharPos(activeScript, bytePos);

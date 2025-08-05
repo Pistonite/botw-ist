@@ -9,9 +9,7 @@ export const BugReportText: React.FC = () => {
     return (
         <Interpolate
             github={
-                <InlineLink href="https://github.com/Pistonite/botw-ist/issues">
-                    GitHub
-                </InlineLink>
+                <InlineLink href="https://github.com/Pistonite/botw-ist/issues">GitHub</InlineLink>
             }
         >
             {t("main.bug_report")}

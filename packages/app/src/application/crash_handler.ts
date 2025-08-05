@@ -23,17 +23,13 @@ export const loadRecoveryScriptIfNeeded = () => {
         usePersistStore.getState().setSavedScript(script);
         bootLog.info("recovery script detected and set");
     } catch (e) {
-        bootLog.debug(
-            `detected error during boot recovery script, ignored: ${errstr(e)}`,
-        );
+        bootLog.debug(`detected error during boot recovery script, ignored: ${errstr(e)}`);
     }
 };
 
 let crashHandler: () => void = () => {
     log.error("No crash handler registered!!!");
-    alert(
-        "App crashed but no crash handler is registered. Please report this issue.",
-    );
+    alert("App crashed but no crash handler is registered. Please report this issue.");
     window.location.reload();
 };
 export const registerCrashHandler = (handler: () => void) => {

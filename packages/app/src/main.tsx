@@ -33,12 +33,7 @@ import {
     isCrashed,
 } from "self::application";
 import { initNarrow, isLessProductive } from "self::pure-contrib";
-import {
-    bootLog,
-    devLog,
-    getSheikaBackgroundUrl,
-    probeAndRegisterAssetLocation,
-} from "self::util";
+import { bootLog, devLog, getSheikaBackgroundUrl, probeAndRegisterAssetLocation } from "self::util";
 import {
     App,
     BootScreen,
@@ -74,9 +69,7 @@ const createWasmRuntimeWorker = async (): Promise<Runtime> => {
     if (result.err) {
         bootLog.error("failed to connect to runtime worker");
         bootLog.error(result.err);
-        throw new Error(
-            "fatal boot failure: failed to connect to runtime worker",
-        );
+        throw new Error("fatal boot failure: failed to connect to runtime worker");
     }
 
     return result.val.protocols.runtime;
@@ -162,10 +155,7 @@ type BootContext = {
     runtime: Promise<Runtime>;
 };
 
-const bootWithDirectLoad = async (
-    context: BootContext,
-    payload: DirectLoad,
-) => {
+const bootWithDirectLoad = async (context: BootContext, payload: DirectLoad) => {
     bootLog.info("found direct load payload");
     const { setModeToEditOnly, setModeToReadOnly } = useSessionStore.getState();
     if (payload.edit) {
@@ -185,8 +175,7 @@ const bootWithDirectLoad = async (
         return;
     }
 
-    const { customImageVersion, isUseCustomImageByDefault } =
-        usePersistStore.getState();
+    const { customImageVersion, isUseCustomImageByDefault } = usePersistStore.getState();
 
     bootLog.info(`direct load requests custom image: ${env.image}`);
 
@@ -263,9 +252,7 @@ const bootWithLocalScript = async (context: BootContext) => {
     if (isUseCustomImageByDefault) {
         // check we have a valid stored image version
         if (VALID_VERSIONS.includes(customImageVersion)) {
-            bootLog.info(
-                `loading custom image by default, version=${customImageVersion}`,
-            );
+            bootLog.info(`loading custom image by default, version=${customImageVersion}`);
             await continueBootWithCustomImageWithNoDialog(context, env);
             return;
         }
@@ -282,9 +269,7 @@ const checkImageVersion = (
     spec: ScriptEnvImage,
 ): CheckImageVersionResult => {
     if (!VALID_VERSIONS.includes(storedVersion)) {
-        bootLog.debug(
-            `stored_version=${storedVersion} is not a valid image version`,
-        );
+        bootLog.debug(`stored_version=${storedVersion} is not a valid image version`);
         return "no-image";
     }
     if (spec !== storedVersion) {
@@ -297,10 +282,7 @@ const checkImageVersion = (
 const continueBootWithDialog = async (
     context: BootContext,
     env: ScriptEnv,
-    props: Omit<
-        BootScreenProps,
-        "runtime" | "onSuccess" | "scriptImageVersion" | "params"
-    >,
+    props: Omit<BootScreenProps, "runtime" | "onSuccess" | "scriptImageVersion" | "params">,
 ) => {
     // if not mounted already, mount temporary root for showing dialog
     if (!context.unmountBootUI) {
@@ -310,9 +292,7 @@ const continueBootWithDialog = async (
         // i.e. let them see the loading fade-in first
         const msToWait = Math.ceil(1000 - performance.now());
         if (msToWait > 0) {
-            bootLog.debug(
-                `waiting for ${msToWait}ms before showing boot dialog`,
-            );
+            bootLog.debug(`waiting for ${msToWait}ms before showing boot dialog`);
             await new Promise((resolve) => setTimeout(resolve, msToWait));
         }
         if (isCrashed()) {
@@ -320,9 +300,7 @@ const continueBootWithDialog = async (
         }
 
         context.beforeBootUI = async () => {};
-        const rootElement = document.getElementById(
-            "-boot-root-",
-        ) as HTMLDivElement;
+        const rootElement = document.getElementById("-boot-root-") as HTMLDivElement;
         const root = createRoot(rootElement);
         context.unmountBootUI = () => {
             root.unmount();
@@ -347,10 +325,7 @@ const continueBootWithDialog = async (
     }
 };
 
-const continueBootWithCustomImageWithNoDialog = async (
-    context: BootContext,
-    env: ScriptEnv,
-) => {
+const continueBootWithCustomImageWithNoDialog = async (context: BootContext, env: ScriptEnv) => {
     bootLog.info("booting with custom image without dialog");
     const result = await initRuntimeWithArgs(context, {
         isCustomImage: true,
@@ -358,9 +333,7 @@ const continueBootWithCustomImageWithNoDialog = async (
         alwaysAskApp: false,
     });
     if (result.err) {
-        bootLog.info(
-            "failed to initialize runtime with custom image, showing dialog now",
-        );
+        bootLog.info("failed to initialize runtime with custom image, showing dialog now");
         bootLog.error(result.err);
         await continueBootWithDialog(context, env, {
             initialState: "OpenSetupOrUseDefaultImage",
@@ -372,19 +345,14 @@ const continueBootWithCustomImageWithNoDialog = async (
     await bootMainUI(context);
 };
 
-const continueBootWithDefaultImage = async (
-    context: BootContext,
-    env: ScriptEnv,
-) => {
+const continueBootWithDefaultImage = async (context: BootContext, env: ScriptEnv) => {
     bootLog.info("booting with default image without dialog");
     const result = await initRuntimeWithArgs(context, {
         isCustomImage: false,
         deleteCustomImage: false,
     });
     if (result.err) {
-        bootLog.info(
-            "failed to initialize runtime with default image, showing dialog now",
-        );
+        bootLog.info("failed to initialize runtime with default image, showing dialog now");
         bootLog.error(result.err);
         await continueBootWithDialog(context, env, {
             initialState: "Error",
@@ -424,9 +392,7 @@ const bootMainUI = async (context: BootContext) => {
                 <RuntimeContext.Provider value={runtime}>
                     <QueryClientProvider client={queryClient}>
                         <ThemeProvider>
-                            <ItemTooltipProvider
-                                backgroundUrl={getSheikaBackgroundUrl()}
-                            >
+                            <ItemTooltipProvider backgroundUrl={getSheikaBackgroundUrl()}>
                                 <App />
                             </ItemTooltipProvider>
                         </ThemeProvider>

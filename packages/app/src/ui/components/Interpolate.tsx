@@ -3,10 +3,7 @@ import { type PropsWithChildren, memo, type ReactNode } from "react";
 export type InterpolateProps = Record<string, ReactNode>;
 
 /** Little port of the old Interpolate in react-i18next since it works better for us */
-const InterpolateImpl: React.FC<PropsWithChildren<InterpolateProps>> = ({
-    children,
-    ...props
-}) => {
+const InterpolateImpl: React.FC<PropsWithChildren<InterpolateProps>> = ({ children, ...props }) => {
     if (typeof children !== "string") {
         return <>{children}</>;
     }

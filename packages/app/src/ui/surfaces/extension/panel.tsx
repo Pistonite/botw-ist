@@ -11,10 +11,7 @@ import {
 import { ExtensionWindow } from "self::ui/components";
 import { useStyleEngine } from "self::util";
 
-import {
-    ExtensionToolbarPrimary,
-    ExtensionToolbarSecondary,
-} from "./toolbar.tsx";
+import { ExtensionToolbarPrimary, ExtensionToolbarSecondary } from "./toolbar.tsx";
 
 const ExtensionPanelConnected: React.FC = () => {
     const m = useStyleEngine();
@@ -40,10 +37,7 @@ const ExtensionPanelConnected: React.FC = () => {
     const secondaryWindow = (
         <div className={m("flex-col flex-1 wh-100")}>
             <ExtensionToolbarSecondary />
-            <ExtensionWindow
-                ids={secondaryIds}
-                currentId={currentSecondaryId}
-            />
+            <ExtensionWindow ids={secondaryIds} currentId={currentSecondaryId} />
         </div>
     );
     const hasTwoWindows = currentPrimaryId && currentSecondaryId;
