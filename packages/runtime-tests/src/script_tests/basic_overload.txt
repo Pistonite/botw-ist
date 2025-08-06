@@ -1,0 +1,21 @@
+get pot-lid royal-guard-shield
+overload
+equip royal-guard-shield
+unoverload
+:per-use 3000 use shield
+
+!init pot-lid[equip] rusty-shield[equip] diamond
+save
+!break 2 slot
+unequip all shield
+drop diamond
+reload
+use shield 15 times
+use shield
+
+!init slate glider
+spawn 3 axe
+overload
+get axe
+unequip weapon
+pick-up axe

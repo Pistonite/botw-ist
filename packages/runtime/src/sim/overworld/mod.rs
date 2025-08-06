@@ -63,6 +63,11 @@ impl OverworldSystem {
         self.actor_creator.is_actor_creation_allowed = !overloaded;
     }
 
+    /// Check if menu is overloaded
+    pub(crate) fn menu_overloaded(&self) -> bool {
+        !self.actor_creator.is_actor_creation_allowed
+    }
+
     /// Destroy all actors in the overworld. Also stops menu overloading
     pub fn destroy_all(&mut self) {
         self.destroy_weapons();
@@ -130,6 +135,16 @@ impl OverworldSystem {
         if let Ok(spawned) = self.actor_creator.try_spawn(actor) {
             self.add_ground_weapon(spawned);
         }
+    }
+
+    /// Force a weapon to spawn on the ground
+    pub fn force_spawn_weapon(&mut self, actor: sim::Actor) {
+        self.ground_weapons.push(self.actor_creator.force_spawn(actor));
+    }
+
+    /// Force a material to spawn on the ground
+    pub fn force_spawn_material(&mut self, actor: sim::Actor) {
+        self.ground_materials.push(self.actor_creator.force_spawn(actor));
     }
 
     /// Add a weapon to the ground (the item is already spawned)

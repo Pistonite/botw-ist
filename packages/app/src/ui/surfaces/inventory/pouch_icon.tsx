@@ -2,6 +2,7 @@ import { Text, Button, Tooltip } from "@fluentui/react-components";
 import {
     Beach20Regular,
     BoxMultipleArrowRight20Filled,
+    ContentViewGalleryLightning20Regular,
     HandMultiple20Filled,
 } from "@fluentui/react-icons";
 
@@ -83,6 +84,28 @@ export const TrialModeIcon: React.FC = () => {
             positioning="below"
         >
             <Button shape="circular" icon={<Beach20Regular />} />
+        </Tooltip>
+    );
+};
+
+/** Icon to indicate menu overload */
+export const MenuOverloadIcon: React.FC = () => {
+    const t = useUITranslation();
+    return (
+        <Tooltip
+            relationship="label"
+            content={
+                <>
+                    <Text weight="bold" block size={200}>
+                        {t(`main.visible_inventory.overload.title`)}
+                    </Text>
+                    {t(`main.visible_inventory.overload.desc`)}
+                </>
+            }
+            withArrow
+            positioning="below"
+        >
+            <Button shape="circular" icon={<ContentViewGalleryLightning20Regular />} />
         </Tooltip>
     );
 };

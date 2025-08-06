@@ -47,8 +47,8 @@ pub enum TT {
 
         // @syntax-generator-hint commands
         KwGet = "get",
-        KwGetPause = "get-pause",
         KwPickUp = "pick-up",
+        KwSpawn = "spawn",
 
         KwOpenInventory = "open-inventory",
         KwOpenInv = "open-inv",
@@ -62,7 +62,8 @@ pub enum TT {
         KwDrop = "drop",
         KwDnp = "dnp",
         KwEat = "eat",
-        KwCook = "cook", // TODO: cook sim
+        // TODO: cook sim
+        KwCook = "cook",
         KwEntangle = "entangle",
         KwSort = "sort",
         KwOverload = "overload",
@@ -72,7 +73,6 @@ pub enum TT {
         KwUnequip = "unequip",
         KwShoot = "shoot",
         KwUse = "use",
-        KwSpawn = "spawn",
         KwThrow = "throw",
         KwDisplay = "display",
 

@@ -96,8 +96,11 @@ pub enum Command {
     CoTargeting(Box<cir::ItemSelectSpec>),
     /// See [`syn::CmdSort`]
     Sort(cir::CategorySpec),
+
     /// Start or stop menu overload
     Overload(bool),
+    /// See [`syn::CmdSpawn`]
+    Spawn(Vec<cir::ItemSpec>),
 
     /// Use DPad Quick Menu
     CoDpad,
@@ -229,6 +232,9 @@ pub async fn parse_command<R: QuotedItemResolver>(
         C::PickUp(cmd) => Some(X::PickUp(
             cir::parse_item_list_constrained(&cmd.items, resolver, errors).await,
         )),
+        C::Spawn(cmd) => Some(X::Spawn(
+            cir::parse_item_list_finite(&cmd.items, resolver, errors).await,
+        )),
         A![PauseDuring(_)] => Some(X::CoPauseDuring),
         //////////////////////////////////////////////////////////////////
         C::OpenInv(_) => Some(X::OpenInv),
@@ -267,6 +273,7 @@ pub async fn parse_command<R: QuotedItemResolver>(
             cir::parse_category_with_times(&cmd.category, cmd.times.as_ref()),
         )
         .map(X::Sort),
+        //////////////////////////////////////////////////////////////////
         C::Overload(_) => Some(X::Overload(true)),
         C::Unoverload(_) => Some(X::Overload(false)),
         //////////////////////////////////////////////////////////////////

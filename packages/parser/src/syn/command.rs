@@ -29,6 +29,8 @@ pub enum Command {
     Get(CmdGet),
     /// `pick-up ITEMS`
     PickUp(CmdPickUp),
+    /// `spawn ITEMS`
+    Spawn(CmdSpawn),
 
     // ==== inventory screen & holding ====
     /// `pause`
@@ -171,6 +173,15 @@ pub struct CmdPickUp {
     pub lit: syn::KwPickUp,
     pub items: syn::ItemListConstrained,
 }
+
+/// `spawn ITEMS` - spawn items on the ground
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSpawn {
+    pub lit: syn::KwSpawn,
+    pub items: syn::ItemListFinite,
+}
+
 
 ///////////////////////////////////////////////////////////
 
