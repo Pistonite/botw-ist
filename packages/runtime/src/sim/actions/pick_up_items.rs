@@ -61,9 +61,6 @@ pub fn pick_up_item_internal(
             sys,
             true,
             super::AutoEquipType::Spawned(actor)
-            // &actor.name,
-            // Some(actor.value),
-            // actor.modifier,
         )?;
         remaining.sub(1);
     }

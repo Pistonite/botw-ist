@@ -264,7 +264,6 @@ fn drop_overworld_weapon(
         linker::remove_weapon_if_equipped(ctx.cpu(), &actor.name)?;
     }
     sys.overworld.add_ground_weapon(actor);
-    // sys.check_weapon_spawn();
 
     Ok(())
 }

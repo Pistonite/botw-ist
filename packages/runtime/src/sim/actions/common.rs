@@ -358,7 +358,6 @@ pub fn trash_item_wrapped(
     tab: i32,
     slot: i32,
 ) -> Result<(), processor::Error> {
-    // let menu_overload = sys.screen.menu_overload;
 
     #[derive(Default)]
     struct State {
@@ -366,7 +365,6 @@ pub fn trash_item_wrapped(
         pub drop_types: Vec<i32>, // TODO: smallvec?
         // dropping item from inventory, need to spawn a new actor
         pub weapons_to_spawn: Vec<sim::Actor>,
-        // menu_overload: bool,
     }
 
     let state = linker::events::TrashEquip::execute_subscribed(
@@ -374,7 +372,6 @@ pub fn trash_item_wrapped(
         State::default(),
         |state, arg| match arg {
             linker::events::TrashEquipArgs::Trash(name, value, modifier) => {
-                // if !state.menu_overload {
                     let actor = sim::Actor {
                         name,
                         value,
@@ -385,7 +382,6 @@ pub fn trash_item_wrapped(
                         },
                     };
                     state.weapons_to_spawn.push(actor);
-                // }
             }
             linker::events::TrashEquipArgs::PlayerDrop(x) => state.drop_types.push(x),
             _ => {}
@@ -400,7 +396,6 @@ pub fn trash_item_wrapped(
     for weapon in state.weapons_to_spawn {
         sys.overworld.spawn_weapon(weapon);
     }
-    // sys.check_weapon_spawn();
 
     Ok(())
 }

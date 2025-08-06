@@ -326,25 +326,11 @@ impl OverworldSystem {
                         // call from the actor will update the durability in PMDM
                         let value = spawned.value;
                         *slot = Some(spawned);
-                        // self.update_equipment_value_to_pmdm(cpu, item_type as i32)?;
         linker::set_equipped_weapon_value(cpu, value, item_type as i32)?;
                     }
                 }
             }
         }
-        //
-        // self.weapon = weapon;
-        // self.bow = bow;
-        // self.shield = shield;
-        //
-        // if self.weapon.is_some() {
-        // }
-        // if self.bow.is_some() {
-        //     self.update_equipment_value_to_pmdm(cpu, PouchItemType::Bow as i32)?;
-        // }
-        // if self.shield.is_some() {
-        //     self.update_equipment_value_to_pmdm(cpu, PouchItemType::Shield as i32)?;
-        // }
 
         Ok(())
     }
