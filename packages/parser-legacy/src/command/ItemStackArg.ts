@@ -11,6 +11,6 @@ export class ItemStackArg {
 
     public convert(slotIndex: number, replacePlaceholder: boolean): string {
         const numString = this.number === 1 ? "" : `${this.number.toString().toLocaleLowerCase()} `;
-        return `${numString} ${convertItem(this.stack, slotIndex, replacePlaceholder)}`;
+        return `${numString}${convertItem(this.stack, slotIndex, replacePlaceholder)}`;
     }
 }
