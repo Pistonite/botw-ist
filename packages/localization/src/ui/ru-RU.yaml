@@ -100,6 +100,8 @@ main.visible_inventory.desc: "Предметы, которые вы видите
 main.visible_inventory.holding.desc: "Предметы в данный момент удерживаются в инвентаре. Некоторые действия в это время невозможны."
 main.visible_inventory.holding.title: "Удерживается"
 main.visible_inventory.mcount.desc: "Количество предметов в инвентаре, хранящееся в переменной списка."
+main.visible_inventory.overload.desc: "Система акторов перегружена. Новые акторы не смогут появиться в игровом мире (и в меню)."
+main.visible_inventory.overload.title: "Перегрузка"
 main.visible_inventory.title: "Видимый инвентарь"
 main.visible_inventory.trial.desc: "Активна пробная версия. Изменения инвентаря не будут синхронизированы с GDT до окончания пробной версии."
 main.visible_inventory.trial.title: "Пробная версия"

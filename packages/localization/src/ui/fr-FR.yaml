@@ -100,6 +100,8 @@ main.visible_inventory.desc: "Objets visibles lors de l'ouverture de l'inventair
 main.visible_inventory.holding.desc: "Des objets sont actuellement tenus dans l'inventaire. Certaines actions ne sont pas possibles pour le moment."
 main.visible_inventory.holding.title: "En main"
 main.visible_inventory.mcount.desc: "Le nombre d'objets dans l'inventaire stocké dans la variable de liste."
+main.visible_inventory.overload.desc: "Le système d'acteurs est surchargé. Les nouveaux acteurs ne pourront pas apparaître dans le monde (et le menu)."
+main.visible_inventory.overload.title: "Surchargé"
 main.visible_inventory.title: "Inventaire Visible"
 main.visible_inventory.trial.desc: "Un essai est actif. Les modifications d'inventaire ne sont pas synchronisées avec GDT tant que l'essai n'est pas terminé."
 main.visible_inventory.trial.title: "Essai"
