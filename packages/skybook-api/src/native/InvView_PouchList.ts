@@ -66,4 +66,8 @@ export type InvView_PouchList = {
      * If the Pouch is currently in trial (quest) mode
      */
     isTrialMode: boolean;
+    /**
+     * If menu overload is activated
+     */
+    isMenuOverloaded: boolean;
 };

@@ -221,6 +221,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
         is_holding_in_inventory: sys.screen.holding_in_inventory,
         is_arrowless_smuggle: sys.overworld.is_holding_arrowless_smuggled(),
         is_trial_mode,
+        is_menu_overloaded: sys.menu_overloaded(),
     })
 }
 

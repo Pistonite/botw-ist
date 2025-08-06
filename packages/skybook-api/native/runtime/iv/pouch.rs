@@ -50,6 +50,8 @@ mod __impl {
         pub is_arrowless_smuggle: bool,
         /// If the Pouch is currently in trial (quest) mode
         pub is_trial_mode: bool,
+        /// If menu overload is activated
+        pub is_menu_overloaded: bool,
     }
 
     impl Default for InvView_PouchList {
@@ -66,6 +68,7 @@ mod __impl {
                 is_holding_in_inventory: false,
                 is_arrowless_smuggle: false,
                 is_trial_mode: false,
+                is_menu_overloaded: false,
             }
         }
     }

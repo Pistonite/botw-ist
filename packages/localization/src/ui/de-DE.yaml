@@ -100,6 +100,8 @@ main.visible_inventory.desc: "Gegenstände, die beim Öffnen des Inventars sicht
 main.visible_inventory.holding.desc: "Gegenstände werden derzeit im Inventar gehalten. Bestimmte Aktionen sind derzeit nicht möglich."
 main.visible_inventory.holding.title: "In der Hand"
 main.visible_inventory.mcount.desc: "Die Anzahl der Items im Inventar, die in der Listvariablen gespeichert ist."
+main.visible_inventory.overload.desc: "Das Aktorsystem ist überlastet. Neue Aktoren können in der Oberwelt (und im Menü) nicht mehr erzeugt werden."
+main.visible_inventory.overload.title: "Überlastet"
 main.visible_inventory.title: "Sichtbares Inventar"
 main.visible_inventory.trial.desc: "Eine Testphase ist aktiv. Inventaränderungen werden erst nach Ende der Testphase mit GDT synchronisiert."
 main.visible_inventory.trial.title: "Testphase"

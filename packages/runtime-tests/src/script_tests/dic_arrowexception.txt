@@ -1,6 +1,7 @@
 // Migrated from legacy: arrows_quantityCheckExceptions
 // Author: Pearfalse
 !init 1 axe 1 traveller-bow[life=2200, equip=true] 5 arrow[equip=true] 1 slate
+!system [sync-overworld]
 # ensure material tab is discovered
 get 1 apple
 eat all apples

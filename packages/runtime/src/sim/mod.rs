@@ -24,3 +24,6 @@ mod util;
 pub use util::*;
 
 pub mod view;
+
+/// Implements matching algorithms when selecting items
+mod matching;

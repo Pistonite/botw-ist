@@ -33,7 +33,12 @@ import {
 } from "self::ui/components";
 
 import { ScreenIndicator } from "./screen_icon.tsx";
-import { ArrowlessSmuggleIcon, HoldingIcon, TrialModeIcon } from "./pouch_icon.tsx";
+import {
+    ArrowlessSmuggleIcon,
+    HoldingIcon,
+    MenuOverloadIcon,
+    TrialModeIcon,
+} from "./pouch_icon.tsx";
 
 const useStyles = makeStyles({
     splitContainer: {
@@ -166,6 +171,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                 {pouch?.val?.isHoldingInInventory && <HoldingIcon />}
                 {pouch?.val?.isArrowlessSmuggle && <ArrowlessSmuggleIcon />}
                 {pouch?.val?.isTrialMode && <TrialModeIcon />}
+                {pouch?.val?.isMenuOverloaded && <MenuOverloadIcon />}
             </div>
         </InventoryTitle>
     );

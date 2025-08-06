@@ -7,6 +7,8 @@ Things you can do in the overworld:
 - <skyb>shoot</skyb> is an alias of <skyb>use bow</skyb>.
 - <skyb>:overworld drop</skyb> command drops equipped equipments.
 
+Also, the <skyb>spawn</skyb> command can be used to add items directly to the overworld (i.e. on the ground).
+
 ## Syntax
 > `use CATEGORY_OR_ITEM` (defaults to 1 time) <br>
 > `use CATEGORY_OR_ITEM X times` <br>
@@ -62,13 +64,24 @@ hold fairy; use fairy; drop
 
 ## Dropping the Overworld Equipment
 
-```admonish todo
-This command is WIP.
-```
 In some cases, you can drop the equipment in the overworld without interacting
 with the inventory; for example, when getting shocked.
 
-TODO
+```skybook
+get axe
+:overworld drop weapon
+```
+
+## Spawning Items in the Overworld
+The <skyb>spawn</skyb> command lets you create new items on the ground.
+Items created this way does not count in the drop limit. Furthermore, spawning
+items this way will work even when menu overloaded.
+
+```skybook
+# Simulate shooting a bomb arrow on the ground that doesn't explode
+shoot
+spawn bomb-arrow
+```
 
 ## Detail
 

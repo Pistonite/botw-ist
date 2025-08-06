@@ -9,22 +9,38 @@ use skybook_parser::{Span, cir};
 use crate::error::{ErrorReport, sim_error, sim_warning};
 use crate::{iv, sim};
 
+mod actor;
+pub use actor::*;
+
 #[derive(Debug, Default, Clone)]
 pub struct OverworldSystem {
-    weapon: Option<OverworldActor>,
-    bow: Option<OverworldActor>,
-    shield: Option<OverworldActor>,
+    // if we simulate more actor-related things in the future,
+    // it might make sense to have a standalone actor system.
+    // However for now, it makes sense to have the actor creator
+    // be part of the overworld system
+    actor_creator: ActorCreator,
 
-    /// Ground weapons that are scheduled to spawn
-    spawning_ground_weapons: Vec<OverworldActor>,
+    weapon: Option<SpawnedActor>,
+    bow: Option<SpawnedActor>,
+    shield: Option<SpawnedActor>,
+
     /// Weapons already on the ground
-    ground_weapons: Vec<OverworldActor>,
-    /// Materials already on the ground
-    ground_materials: VecDeque<OverworldActor>,
-    /// Materials on the ground that are despawning
-    ground_materials_despawning: Vec<OverworldActor>,
+    ///
+    /// Note that weapon has a drop limit too, but it's more complicated,
+    /// since dropped vs thrown weapons are different, and there are ways
+    /// to dupe thousands of weapons on the ground. For practical purposes,
+    /// it's not important to get weapon despawning implemented, but for materials,
+    /// it's more practical.
+    ground_weapons: Vec<SpawnedActor>,
+    /// Materials on the ground that aren't dropped by the player
+    /// i.e. not subject to despawning
+    ground_materials: Vec<SpawnedActor>,
+    /// Materials on the ground dropped by the player, subject
+    /// to despawning from the front of the list if over 10
+    dropped_materials: VecDeque<SpawnedActor>,
+
     /// Items held by player in the overworld
-    holding: Vec<OverworldActor>,
+    holding: Vec<SpawnedActor>,
     /// If currently in the "hold attached" state
     /// used for arrowless offset
     is_hold_arrowless_smuggle: bool,
@@ -41,22 +57,22 @@ pub enum OverworldPreDropResult {
     AutoDrop,
 }
 
-/// Simulates an actor in the overworld
-#[derive(Debug, Default, Clone)]
-pub struct OverworldActor {
-    /// Name of the actor
-    pub name: String,
-    /// Value for weapons (1 for materials)
-    pub value: i32,
-    /// Weapon modifier if any, None if not weapon
-    pub modifier: Option<WeaponModifierInfo>,
-}
-
 impl OverworldSystem {
-    /// Destroy all actors in the overworld
+    /// Set if menu overload is active
+    pub(crate) fn set_menu_overload(&mut self, overloaded: bool) {
+        self.actor_creator.is_actor_creation_allowed = !overloaded;
+    }
+
+    /// Check if menu is overloaded
+    pub(crate) fn menu_overloaded(&self) -> bool {
+        !self.actor_creator.is_actor_creation_allowed
+    }
+
+    /// Destroy all actors in the overworld. Also stops menu overloading
     pub fn destroy_all(&mut self) {
         self.destroy_weapons();
         self.destroy_ground();
+        self.actor_creator.is_actor_creation_allowed = true;
     }
 
     /// Destroy everything equipped by the player
@@ -68,10 +84,10 @@ impl OverworldSystem {
 
     /// Destroy everything on the ground
     pub fn destroy_ground(&mut self) {
-        self.spawning_ground_weapons.clear();
+        // self.spawning_ground_weapons.clear();
         self.ground_weapons.clear();
+        self.dropped_materials.clear();
         self.ground_materials.clear();
-        self.ground_materials_despawning.clear();
         self.holding.clear();
         self.is_hold_arrowless_smuggle = false;
     }
@@ -97,8 +113,9 @@ impl OverworldSystem {
         for item in &self.ground_materials {
             items.push(item.to_ground_item_iv(false));
         }
-        for item in &self.ground_materials_despawning {
-            items.push(item.to_ground_item_iv(true));
+        for (i, item) in self.dropped_materials.iter().rev().enumerate() {
+            let despawning = i >= 10;
+            items.push(item.to_ground_item_iv(despawning));
         }
 
         iv::Overworld { items }
@@ -107,39 +124,34 @@ impl OverworldSystem {
     /// Spawn additional items held by the player (does not replacing existing)
     pub fn spawn_held_items(&mut self, items: Vec<String>) {
         for item in items {
-            self.holding.push(OverworldActor {
-                name: item,
-                value: 1,
-                modifier: None,
-            });
-        }
-    }
-
-    /// Add an actor to the queue to spawn when inventory is closed
-    pub fn spawn_weapon_later(&mut self, actor: OverworldActor) {
-        log::debug!("adding ground equipments to spawn: {}", actor.name);
-        self.spawning_ground_weapons.push(actor)
-    }
-
-    /// Spawn items that are previous dropped
-    pub fn spawn_ground_weapons(&mut self) {
-        log::debug!(
-            "spawning ground equipments: {:?}",
-            self.spawning_ground_weapons
-        );
-        for weapon in std::mem::take(&mut self.spawning_ground_weapons) {
-            // spawning a broken weapon will just make it break on the spot
-            if weapon.value > 0 {
-                self.ground_weapons.push(weapon);
-            } else {
-                log::debug!("weapon broke on spawn: {}", weapon.name);
+            if let Ok(spawned) = self.actor_creator.try_spawn_value_1(item) {
+                self.holding.push(spawned);
             }
         }
     }
 
-    /// Clear the weapons that are about to spawn (as if spawning failed)
-    pub fn clear_spawning_weapons(&mut self) {
-        self.spawning_ground_weapons.clear()
+    /// Try to spawn a weapon on the ground
+    pub fn spawn_weapon(&mut self, actor: sim::Actor) {
+        if let Ok(spawned) = self.actor_creator.try_spawn(actor) {
+            self.add_ground_weapon(spawned);
+        }
+    }
+
+    /// Force a weapon to spawn on the ground
+    pub fn force_spawn_weapon(&mut self, actor: sim::Actor) {
+        self.ground_weapons
+            .push(self.actor_creator.force_spawn(actor));
+    }
+
+    /// Force a material to spawn on the ground
+    pub fn force_spawn_material(&mut self, actor: sim::Actor) {
+        self.ground_materials
+            .push(self.actor_creator.force_spawn(actor));
+    }
+
+    /// Add a weapon to the ground (the item is already spawned)
+    pub fn add_ground_weapon(&mut self, actor: sim::SpawnedActor) {
+        self.ground_weapons.push(actor);
     }
 
     /// Set the overworld holding state, only possible if there are held items
@@ -175,13 +187,8 @@ impl OverworldSystem {
     /// Drop items held by the player to the ground
     pub fn drop_held_items(&mut self) {
         self.is_hold_arrowless_smuggle = false;
-        self.ground_materials
+        self.dropped_materials
             .extend(std::mem::take(&mut self.holding));
-        while self.ground_materials.len() > 10 {
-            // unwrap: length is > 10
-            let item = self.ground_materials.pop_front().unwrap();
-            self.ground_materials_despawning.push(item);
-        }
     }
 
     pub fn is_holding(&self) -> bool {
@@ -194,10 +201,16 @@ impl OverworldSystem {
 
     /// Despawn items that are over the limit
     pub fn despawn_items(&mut self) {
-        self.ground_materials_despawning.clear();
+        if self.dropped_materials.len() > 10 {
+            while self.dropped_materials.len() > 10 {
+                self.dropped_materials.pop_front();
+            }
+            // clean up potential memory leaks
+            self.dropped_materials.shrink_to_fit();
+        }
     }
 
-    /// Change the player equipment if the item is not null. Do nothing if null
+    /// Change the player equipment in the overworld if the item is not null. Do nothing if null
     ///
     /// Return if the equipment is updated
     pub fn change_player_equipment(
@@ -208,6 +221,9 @@ impl OverworldSystem {
         if item.is_nullptr() {
             return Ok(false);
         }
+        // although we can try spawn first, but we are keeping it simple
+        // and creating the actor first
+
         mem! { memory:
             let item_type = *(&item->mType);
             let value = *(&item->mValue);
@@ -234,22 +250,30 @@ impl OverworldSystem {
         };
 
         let name = Ptr!(&item->mName).cstr(memory)?.load_utf8_lossy(memory)?;
-        *slot = Some(OverworldActor {
+        let actor = sim::Actor {
             name,
             value,
             modifier,
-        });
+        };
+        // try to spawned the actor
+        let Ok(spawned) = self.actor_creator.try_spawn(actor) else {
+            return Ok(false);
+        };
+        *slot = Some(spawned);
 
         Ok(true)
     }
 
     /// Try auto equip an actor on the player as it's picked up or obtained
-    pub fn try_auto_equip(
-        &mut self,
-        name: &str,
-        value: i32,
-        modifier: Option<&WeaponModifierInfo>,
-    ) -> bool {
+    ///
+    /// If the item is an `Actor`, then it will try to be spawned.
+    ///
+    /// Return if the inventory item should be equipped.
+    pub fn try_auto_equip(&mut self, item: Result<Actor, SpawnedActor>) -> bool {
+        let name = match &item {
+            Ok(actor) => &actor.name,
+            Err(actor) => &actor.name,
+        };
         let item_type = game::get_pouch_item_type(name);
         let slot = match item_type {
             0 => &mut self.weapon,
@@ -261,11 +285,22 @@ impl OverworldSystem {
             // already equipped something there
             return false;
         }
-        *slot = Some(OverworldActor {
-            name: name.to_string(),
-            value,
-            modifier: modifier.cloned(),
-        });
+        let spawned = match item {
+            Ok(actor) => {
+                // try to spawn it
+                let Ok(spawned) = self.actor_creator.try_spawn(actor) else {
+                    // if the overworld actor failed to spawn,
+                    // it will still equip the inventory item.
+                    // This is probably because when getting item from event
+                    // (not from picking up from ground, the equip call
+                    // is part of the event)
+                    return true;
+                };
+                spawned
+            }
+            Err(spawned) => spawned,
+        };
+        *slot = Some(spawned);
         true
     }
 
@@ -273,22 +308,29 @@ impl OverworldSystem {
     pub fn reload_equipments(
         &mut self,
         cpu: &mut Cpu2<'_, '_>,
-        weapon: Option<sim::OverworldActor>,
-        bow: Option<sim::OverworldActor>,
-        shield: Option<sim::OverworldActor>,
+        weapon: Option<sim::Actor>,
+        bow: Option<sim::Actor>,
+        shield: Option<sim::Actor>,
     ) -> Result<(), processor::Error> {
-        self.weapon = weapon;
-        self.bow = bow;
-        self.shield = shield;
-
-        if self.weapon.is_some() {
-            self.update_equipment_value_to_pmdm(cpu, PouchItemType::Sword as i32)?;
-        }
-        if self.bow.is_some() {
-            self.update_equipment_value_to_pmdm(cpu, PouchItemType::Bow as i32)?;
-        }
-        if self.shield.is_some() {
-            self.update_equipment_value_to_pmdm(cpu, PouchItemType::Shield as i32)?;
+        for (actor, slot, item_type) in [
+            (weapon, &mut self.weapon, PouchItemType::Sword),
+            (bow, &mut self.bow, PouchItemType::Bow),
+            (shield, &mut self.shield, PouchItemType::Shield),
+        ] {
+            match actor {
+                // if no weapon to load, simply set that
+                None => *slot = None,
+                Some(actor) => {
+                    // if need to load, then we try to spawn it
+                    if let Ok(spawned) = self.actor_creator.try_spawn(actor) {
+                        // if spawn is successfuly, then the ChangeEquip
+                        // call from the actor will update the durability in PMDM
+                        let value = spawned.value;
+                        *slot = Some(spawned);
+                        linker::set_equipped_weapon_value(cpu, value, item_type as i32)?;
+                    }
+                }
+            }
         }
 
         Ok(())
@@ -417,24 +459,29 @@ impl OverworldSystem {
         linker::set_equipped_weapon_value(cpu, value, item_type)
     }
 
-    pub fn get_equiped_item(&self, item_type: i32) -> Option<&OverworldActor> {
+    pub fn get_equiped_item(&self, item_type: i32) -> Option<&Actor> {
         match item_type {
-            0 => self.weapon.as_ref(),
-            1 => self.bow.as_ref(),
-            3 => self.shield.as_ref(),
+            0 => self.weapon.as_deref(),
+            1 => self.bow.as_deref(),
+            3 => self.shield.as_deref(),
             _ => None,
         }
     }
 
-    /// Drop the currently equipped weapon on the player
+    /// Drop the currently equipped weapon on the player to the ground
     pub fn drop_player_equipment(&mut self, item_type: i32) {
-        if let Some(actor) = self.delete_player_equipment(item_type) {
-            self.spawn_weapon_later(actor);
+        if let Some(actor) = self.delete_player_equipment_internal(item_type) {
+            self.ground_weapons.push(actor);
         }
     }
 
-    /// Delete the currently equipped weapon on the player
-    pub fn delete_player_equipment(&mut self, item_type: i32) -> Option<OverworldActor> {
+    /// Delete the currently equipped weapon on the player, and return its data
+    pub fn delete_player_equipment(&mut self, item_type: i32) -> Option<Actor> {
+        self.delete_player_equipment_internal(item_type)
+            .map(Into::into)
+    }
+
+    fn delete_player_equipment_internal(&mut self, item_type: i32) -> Option<SpawnedActor> {
         match item_type {
             0 => self.weapon.take(),
             1 => self.bow.take(),
@@ -447,8 +494,6 @@ impl OverworldSystem {
     pub fn ground_select(
         &self,
         item: &cir::ItemMatchSpec,
-        // meta: Option<&cir::ItemMeta>,
-        // span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<&Self>> {
         let handle = self.do_ground_select(item, errors)?;
@@ -459,8 +504,6 @@ impl OverworldSystem {
     pub fn ground_select_mut(
         &mut self,
         item: &cir::ItemMatchSpec,
-        // meta: Option<&cir::ItemMeta>,
-        // span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<&mut Self>> {
         let handle = self.do_ground_select(item, errors)?;
@@ -471,8 +514,6 @@ impl OverworldSystem {
     fn do_ground_select(
         &self,
         matcher: &cir::ItemMatchSpec,
-        // meta: Option<&cir::ItemMeta>,
-        // span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<()>> {
         let Some(meta) = &matcher.meta else {
@@ -493,9 +534,7 @@ impl OverworldSystem {
     fn do_ground_select_without_position_nth(
         &self,
         matcher: &cir::ItemMatchSpec,
-        // meta: Option<&cir::ItemMeta>,
         nth: usize,
-        // span: Span,
         errors: &mut Vec<ErrorReport>,
     ) -> Option<GroundItemHandle<()>> {
         if let Some(meta) = &matcher.meta {
@@ -559,22 +598,22 @@ impl OverworldSystem {
     }
 
     #[inline(always)]
-    fn iter_ground_items(&self) -> impl Iterator<Item = (GroundItemHandle<()>, &OverworldActor)> {
-        self.ground_materials_despawning
+    fn iter_ground_items(&self) -> impl Iterator<Item = (GroundItemHandle<()>, &Actor)> {
+        self.dropped_materials
             .iter()
             .enumerate()
-            .map(|(i, item)| (GroundItemHandle::MaterialDespawning((), i), item))
+            .map(|(i, item)| (GroundItemHandle::DroppedMaterial((), i), item.as_ref()))
             .chain(
                 self.ground_materials
                     .iter()
                     .enumerate()
-                    .map(|(i, item)| (GroundItemHandle::Material((), i), item)),
+                    .map(|(i, item)| (GroundItemHandle::Material((), i), item.as_ref())),
             )
             .chain(
                 self.ground_weapons
                     .iter()
                     .enumerate()
-                    .map(|(i, item)| (GroundItemHandle::Weapon((), i), item)),
+                    .map(|(i, item)| (GroundItemHandle::Weapon((), i), item.as_ref())),
             )
     }
 
@@ -646,81 +685,11 @@ impl OverworldSystem {
     }
 }
 
-impl OverworldActor {
-    /// Returns if the overworld actor matches the item selector
-    pub fn matches(&self, matcher: &cir::ItemMatchSpec) -> bool {
-        if !sim::util::name_spec_matches(&matcher.name, &self.name) {
-            return false;
-        }
-        let meta = matcher.meta.as_ref();
-        // matching value for overworld actors is mostly
-        // used for weapons, since materials can only have value = 1
-        if let Some(wanted_value) = meta.and_then(|x| x.value)
-            && wanted_value != self.value
-        {
-            return false;
-        }
-        if let Some(wanted_mod_value) = meta.and_then(|x| x.life_recover)
-            && self.modifier.is_none_or(|m| m.value != wanted_mod_value)
-        {
-            return false;
-        }
-
-        if let Some(wanted_flags) = meta.and_then(|x| x.sell_price)
-            && self.modifier.is_none_or(|m| {
-                !sim::util::modifier_meta_matches(&matcher.name, wanted_flags, m.flags as i32)
-            })
-        {
-            return false;
-        }
-
-        true
-    }
-
-    pub fn to_equipped_iv(&self) -> iv::OverworldItem {
-        iv::OverworldItem::Equipped {
-            actor: self.name.clone(),
-            value: self.value,
-            modifier: self
-                .modifier
-                .map(|x| iv::WeaponModifier {
-                    flag: x.flags as i32,
-                    value: x.value,
-                })
-                .unwrap_or_default(),
-        }
-    }
-    pub fn to_ground_weapon_iv(&self) -> iv::OverworldItem {
-        iv::OverworldItem::GroundEquipment {
-            actor: self.name.clone(),
-            value: self.value,
-            modifier: self
-                .modifier
-                .map(|x| iv::WeaponModifier {
-                    flag: x.flags as i32,
-                    value: x.value,
-                })
-                .unwrap_or_default(),
-        }
-    }
-    pub fn to_held_iv(&self) -> iv::OverworldItem {
-        iv::OverworldItem::Held {
-            actor: self.name.clone(),
-        }
-    }
-    pub fn to_ground_item_iv(&self, is_despawning: bool) -> iv::OverworldItem {
-        iv::OverworldItem::GroundItem {
-            actor: self.name.clone(),
-            despawning: is_despawning,
-        }
-    }
-}
-
 #[derive(Debug, Clone, Copy)]
 pub enum GroundItemHandle<TSys> {
     Weapon(TSys, usize),
     Material(TSys, usize),
-    MaterialDespawning(TSys, usize),
+    DroppedMaterial(TSys, usize),
 }
 
 impl GroundItemHandle<()> {
@@ -728,38 +697,38 @@ impl GroundItemHandle<()> {
         match self {
             Self::Weapon(_, i) => GroundItemHandle::Weapon(sys, i),
             Self::Material(_, i) => GroundItemHandle::Material(sys, i),
-            Self::MaterialDespawning(_, i) => GroundItemHandle::MaterialDespawning(sys, i),
+            Self::DroppedMaterial(_, i) => GroundItemHandle::DroppedMaterial(sys, i),
         }
     }
 }
 
 impl GroundItemHandle<&mut OverworldSystem> {
     /// Get reference to the actor
-    pub fn actor(&self) -> &OverworldActor {
+    pub fn actor(&self) -> &Actor {
         match self {
-            Self::Weapon(o, i) => &o.ground_weapons[*i],
-            Self::Material(o, i) => &o.ground_materials[*i],
-            Self::MaterialDespawning(o, i) => &o.ground_materials_despawning[*i],
+            Self::Weapon(o, i) => o.ground_weapons[*i].as_ref(),
+            Self::Material(o, i) => o.ground_materials[*i].as_ref(),
+            Self::DroppedMaterial(o, i) => o.dropped_materials[*i].as_ref(),
         }
     }
 
     /// Remove the item from the ground
-    pub fn remove(self) -> OverworldActor {
+    pub fn remove(self) -> SpawnedActor {
         match self {
             Self::Weapon(o, i) => o.ground_weapons.remove(i),
-            Self::Material(o, i) => o.ground_materials.remove(i).unwrap(),
-            Self::MaterialDespawning(o, i) => o.ground_materials_despawning.remove(i),
+            Self::Material(o, i) => o.ground_materials.remove(i),
+            Self::DroppedMaterial(o, i) => o.dropped_materials.remove(i).unwrap(),
         }
     }
 }
 
 impl GroundItemHandle<&OverworldSystem> {
     /// Get reference to the actor
-    pub fn actor(&self) -> &OverworldActor {
+    pub fn actor(&self) -> &Actor {
         match self {
-            Self::Weapon(o, i) => &o.ground_weapons[*i],
-            Self::Material(o, i) => &o.ground_materials[*i],
-            Self::MaterialDespawning(o, i) => &o.ground_materials_despawning[*i],
+            Self::Weapon(o, i) => o.ground_weapons[*i].as_ref(),
+            Self::Material(o, i) => o.ground_materials[*i].as_ref(),
+            Self::DroppedMaterial(o, i) => o.dropped_materials[*i].as_ref(),
         }
     }
 }
@@ -784,20 +753,20 @@ impl EquippedItemHandle<()> {
 
 impl EquippedItemHandle<&mut OverworldSystem> {
     /// Get reference to the actor
-    pub fn actor(&self) -> &OverworldActor {
+    pub fn actor(&self) -> &Actor {
         match self {
-            Self::Weapon(o) => o.weapon.as_ref().unwrap(),
-            Self::Bow(o) => o.bow.as_ref().unwrap(),
-            Self::Shield(o) => o.shield.as_ref().unwrap(),
+            Self::Weapon(o) => o.weapon.as_deref().unwrap(),
+            Self::Bow(o) => o.bow.as_deref().unwrap(),
+            Self::Shield(o) => o.shield.as_deref().unwrap(),
         }
     }
 
     /// Remove the item
-    pub fn remove(self) -> OverworldActor {
+    pub fn remove(self) -> SpawnedActor {
         match self {
-            Self::Weapon(o) => std::mem::take(&mut o.weapon).unwrap(),
-            Self::Bow(o) => std::mem::take(&mut o.bow).unwrap(),
-            Self::Shield(o) => std::mem::take(&mut o.shield).unwrap(),
+            Self::Weapon(o) => o.weapon.take().unwrap(),
+            Self::Bow(o) => o.bow.take().unwrap(),
+            Self::Shield(o) => o.shield.take().unwrap(),
         }
     }
 }

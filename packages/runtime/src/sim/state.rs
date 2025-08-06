@@ -142,15 +142,14 @@ pub struct GameSystems {
 }
 
 impl GameSystems {
-    /// Process weapon spawning if in overworld
-    pub fn check_weapon_spawn(&mut self) {
-        if self.screen.current_screen().is_overworld() {
-            if !self.screen.menu_overload {
-                self.overworld.spawn_ground_weapons()
-            } else {
-                self.overworld.clear_spawning_weapons()
-            }
-        }
+    /// Set if menu overload is active
+    pub fn set_menu_overload(&mut self, overloaded: bool) {
+        self.overworld.set_menu_overload(overloaded);
+    }
+
+    /// Check if menu is overloaded
+    pub fn menu_overloaded(&self) -> bool {
+        self.overworld.menu_overloaded()
     }
 }
 
@@ -228,6 +227,8 @@ impl State {
         match command {
             X::Get(items) => self.handle_get(ctx, items, args.as_deref()).await,
             X::PickUp(items) => self.handle_pick_up(ctx, items, args.as_deref()).await,
+            X::Spawn(items) => self.handle_spawn(ctx, items).await,
+
             X::OpenInv => self.handle_pause(ctx).await,
             X::CloseInv => self.handle_unpause(ctx).await,
             X::Hold(items) => self.handle_hold(ctx, items, args.as_deref()).await,
@@ -252,6 +253,7 @@ impl State {
                 self.handle_sort(ctx, spec.category, spec.amount as usize, args.as_deref())
                     .await
             }
+            X::Overload(overload) => self.handle_overload(ctx, *overload).await,
 
             X::Equip(items) => {
                 self.handle_change_equip(ctx, items, args.as_deref(), true)
@@ -320,6 +322,18 @@ impl State {
         let pause = args.map(|args| args.pause_during).unwrap_or_default();
         execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::pick_up_items(&mut cpu, sys, errors, &items, pause)
+        })
+    }
+
+    async fn handle_spawn(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        items: &[cir::ItemSpec],
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling SPAWN");
+        let items = items.to_vec();
+        execute_command!(self, rt, cpu, sys, _errors => {
+            sim::actions::spawn_items(&mut cpu, sys, &items)
         })
     }
 
@@ -449,6 +463,17 @@ impl State {
             .unwrap_or_default();
         execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::sort_items(&mut cpu, sys, errors, category, times, accurate, same_dialog)
+        })
+    }
+
+    async fn handle_overload(
+        self,
+        rt: sim::Context<&sim::Runtime>,
+        overload: bool,
+    ) -> Result<Report<Self>, exec::Error> {
+        log::debug!("handling OVERLOAD");
+        execute_command!(self, rt, cpu, sys, errors => {
+            sim::actions::set_menu_overload(&mut cpu, sys, errors, overload)
         })
     }
 

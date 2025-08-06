@@ -29,6 +29,8 @@ pub enum Command {
     Get(CmdGet),
     /// `pick-up ITEMS`
     PickUp(CmdPickUp),
+    /// `spawn ITEMS`
+    Spawn(CmdSpawn),
 
     // ==== inventory screen & holding ====
     /// `pause`
@@ -51,6 +53,10 @@ pub enum Command {
     Entangle(CmdEntangle),
     /// `sort CATEGORY`
     Sort(CmdSort),
+    /// `overload` - start menu overload
+    Overload(syn::KwOverload),
+    /// `unoverload` - stop menu overload
+    Unoverload(syn::KwUnoverload),
 
     // ==== equipments ====
     /// `equip ITEM`
@@ -166,6 +172,14 @@ pub struct CmdGet {
 pub struct CmdPickUp {
     pub lit: syn::KwPickUp,
     pub items: syn::ItemListConstrained,
+}
+
+/// `spawn ITEMS` - spawn items on the ground
+#[derive_syntax]
+#[derive(Debug)]
+pub struct CmdSpawn {
+    pub lit: syn::KwSpawn,
+    pub items: syn::ItemListFinite,
 }
 
 ///////////////////////////////////////////////////////////

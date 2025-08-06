@@ -100,6 +100,8 @@ main.visible_inventory.desc: "インベントリを開いたときに表示さ�
 main.visible_inventory.holding.desc: "現在、アイテムをインベントリに保持しています。この間、特定のアクションは実行できません。"
 main.visible_inventory.holding.title: "手持ち中"
 main.visible_inventory.mcount.desc: "リスト変数に格納されているインベントリ内のアイテム数。"
+main.visible_inventory.overload.desc: "アクターシステムが過負荷状態です。新しいアクターはオーバーワールド（およびメニュー）に生成できません。"
+main.visible_inventory.overload.title: "過負荷"
 main.visible_inventory.title: "表示インベントリ"
 main.visible_inventory.trial.desc: "トライアルが進行中です。トライアル終了まで、インベントリの変更はGDTに同期されません。"
 main.visible_inventory.trial.title: "トライアル"

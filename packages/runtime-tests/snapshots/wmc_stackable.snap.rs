@@ -71,7 +71,75 @@ game: (Running)
       [013]: (idx=13, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [014]: (idx=14, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[1]: save
+----- Step[1]: !system [sync-overworld]
+
+game: (Running)
+  screen: (Overworld)
+  pouch: (count=15, are_tabs_valid=true, num_tabs=5, holding_in_inventory=false, trial=false, )
+    items: (len=15, )
+      [000]: (actor_name=Weapon_Sword_047, value=1400, is_equipped=true, item_type=Sword, item_use=WeaponSmallSword, tab_idx=0, tab_slot=0, )
+        node: (valid=true, pos=419, addr=0x0000002222243f68, prev=0x0000002222200068, next=0x0000002222243cd0, )
+      [001]: (actor_name=Weapon_Bow_033, value=2000, is_equipped=true, item_type=Bow, item_use=WeaponBow, tab_idx=1, tab_slot=0, )
+        node: (valid=true, pos=418, addr=0x0000002222243cd0, prev=0x0000002222243f68, next=0x0000002222243a38, )
+      [002]: (actor_name=BombArrow_A, value=1, is_equipped=true, item_type=Arrow, item_use=Item, tab_idx=1, tab_slot=5, )
+        node: (valid=true, pos=417, addr=0x0000002222243a38, prev=0x0000002222243cd0, next=0x00000022222437a0, )
+      [003]: (actor_name=AncientArrow, value=1, is_equipped=false, item_type=Arrow, item_use=Item, tab_idx=1, tab_slot=6, )
+        node: (valid=true, pos=416, addr=0x00000022222437a0, prev=0x0000002222243a38, next=0x0000002222243508, )
+      [004]: (actor_name=Weapon_Shield_033, value=1400, is_equipped=true, item_type=Shield, item_use=WeaponShield, tab_idx=2, tab_slot=0, )
+        node: (valid=true, pos=415, addr=0x0000002222243508, prev=0x00000022222437a0, next=0x0000002222243270, )
+      [005]: (actor_name=Item_Fruit_A, value=59, is_equipped=false, item_type=Material, item_use=CureItem, tab_idx=3, tab_slot=0, )
+        node: (valid=true, pos=414, addr=0x0000002222243270, prev=0x0000002222243508, next=0x0000002222242fd8, )
+      [006]: (actor_name=Item_Meat_11, value=4, is_equipped=false, item_type=Material, item_use=CureItem, tab_idx=3, tab_slot=1, )
+        node: (valid=true, pos=413, addr=0x0000002222242fd8, prev=0x0000002222243270, next=0x0000002222242d40, )
+      [007]: (actor_name=Animal_Insect_F, value=1, is_equipped=false, item_type=Material, item_use=Item, tab_idx=3, tab_slot=2, )
+        node: (valid=true, pos=412, addr=0x0000002222242d40, prev=0x0000002222242fd8, next=0x0000002222242aa8, )
+      [008]: (actor_name=Item_PlantGet_Q, value=2, is_equipped=false, item_type=Material, item_use=CureItem, tab_idx=3, tab_slot=3, )
+        node: (valid=true, pos=411, addr=0x0000002222242aa8, prev=0x0000002222242d40, next=0x0000002222242810, )
+      [009]: (actor_name=Item_Fruit_D, value=2, is_equipped=false, item_type=Material, item_use=CureItem, tab_idx=3, tab_slot=4, )
+        node: (valid=true, pos=410, addr=0x0000002222242810, prev=0x0000002222242aa8, next=0x0000002222242578, )
+      [010]: (actor_name=Item_Fruit_K, value=2, is_equipped=false, item_type=Material, item_use=CureItem, tab_idx=3, tab_slot=5, )
+        node: (valid=true, pos=409, addr=0x0000002222242578, prev=0x0000002222242810, next=0x00000022222422e0, )
+      [011]: (actor_name=Item_PlantGet_I, value=2, is_equipped=false, item_type=Material, item_use=CureItem, tab_idx=3, tab_slot=6, )
+        node: (valid=true, pos=408, addr=0x00000022222422e0, prev=0x0000002222242578, next=0x0000002222242048, )
+      [012]: (actor_name=Item_Ore_B, value=1, is_equipped=false, item_type=Material, item_use=Item, tab_idx=3, tab_slot=7, )
+        node: (valid=true, pos=407, addr=0x0000002222242048, prev=0x00000022222422e0, next=0x0000002222241db0, )
+      [013]: (actor_name=Obj_DRStone_Get, value=1, is_equipped=false, item_type=KeyItem, item_use=ImportantItem, tab_idx=4, tab_slot=0, )
+        node: (valid=true, pos=406, addr=0x0000002222241db0, prev=0x0000002222242048, next=0x0000002222241b18, )
+      [014]: (actor_name=PlayerStole2, value=1, is_equipped=false, item_type=KeyItem, item_use=ImportantItem, tab_idx=4, tab_slot=1, )
+        node: (valid=true, pos=405, addr=0x0000002222241b18, prev=0x0000002222241db0, next=0x0000002222200068, )
+    tabs: (len=5, )
+      [00]: (item_idx=0, tab_type=Sword, )
+      [01]: (item_idx=1, tab_type=Bow, )
+      [02]: (item_idx=4, tab_type=Shield, )
+      [03]: (item_idx=5, tab_type=Material, )
+      [04]: (item_idx=13, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
+  gdt: (weapons=8, bows=5, shields=4, )
+    discovered_tabs: Sw,Bo,Sh,__,Ma,__,Ki
+    items: (len=15, )
+      [000]: (idx=0, actor=Weapon_Sword_047, value=1400, is_equipped=true, )
+        weapon: (idx=0, modifier=none, )
+      [001]: (idx=1, actor=Weapon_Bow_033, value=2000, is_equipped=true, )
+        weapon: (idx=0, modifier=none, )
+      [002]: (idx=2, actor=BombArrow_A, value=1, is_equipped=true, )
+      [003]: (idx=3, actor=AncientArrow, value=1, is_equipped=false, )
+      [004]: (idx=4, actor=Weapon_Shield_033, value=1400, is_equipped=true, )
+        weapon: (idx=0, modifier=none, )
+      [005]: (idx=5, actor=Item_Fruit_A, value=59, is_equipped=false, )
+      [006]: (idx=6, actor=Item_Meat_11, value=4, is_equipped=false, )
+      [007]: (idx=7, actor=Animal_Insect_F, value=1, is_equipped=false, )
+      [008]: (idx=8, actor=Item_PlantGet_Q, value=2, is_equipped=false, )
+      [009]: (idx=9, actor=Item_Fruit_D, value=2, is_equipped=false, )
+      [010]: (idx=10, actor=Item_Fruit_K, value=2, is_equipped=false, )
+      [011]: (idx=11, actor=Item_PlantGet_I, value=2, is_equipped=false, )
+      [012]: (idx=12, actor=Item_Ore_B, value=1, is_equipped=false, )
+      [013]: (idx=13, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
+      [014]: (idx=14, actor=PlayerStole2, value=1, is_equipped=false, )
+
+----- Step[2]: save
 
 game: (Running)
   screen: (Inventory)
@@ -113,6 +181,10 @@ game: (Running)
       [02]: (item_idx=4, tab_type=Shield, )
       [03]: (item_idx=5, tab_type=Material, )
       [04]: (item_idx=13, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,__,Ki
     items: (len=15, )
@@ -135,7 +207,7 @@ game: (Running)
       [013]: (idx=13, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [014]: (idx=14, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[2]: !remove 57 apples
+----- Step[3]: !remove 57 apples
 
 game: (Running)
   screen: (Inventory)
@@ -177,6 +249,10 @@ game: (Running)
       [02]: (item_idx=4, tab_type=Shield, )
       [03]: (item_idx=5, tab_type=Material, )
       [04]: (item_idx=13, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,__,Ki
     items: (len=15, )
@@ -199,7 +275,7 @@ game: (Running)
       [013]: (idx=13, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [014]: (idx=14, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[3]: get 57 simmered-fruits
+----- Step[4]: get 57 simmered-fruits
 
 game: (Running)
   screen: (Overworld)
@@ -358,6 +434,10 @@ game: (Running)
       [05]: (item_idx=33, tab_type=Food, )
       [06]: (item_idx=53, tab_type=Food, )
       [07]: (item_idx=70, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=72, )
@@ -494,7 +574,7 @@ game: (Running)
       [070]: (idx=70, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [071]: (idx=71, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[4]: !remove 1 apple
+----- Step[5]: !remove 1 apple
 
 game: (Running)
   screen: (Inventory)
@@ -653,6 +733,10 @@ game: (Running)
       [05]: (item_idx=33, tab_type=Food, )
       [06]: (item_idx=53, tab_type=Food, )
       [07]: (item_idx=70, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=72, )
@@ -789,7 +873,7 @@ game: (Running)
       [070]: (idx=70, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [071]: (idx=71, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[5]: get 1 baked-apple
+----- Step[6]: get 1 baked-apple
 
 game: (Running)
   screen: (Overworld)
@@ -950,6 +1034,10 @@ game: (Running)
       [05]: (item_idx=33, tab_type=Food, )
       [06]: (item_idx=53, tab_type=Food, )
       [07]: (item_idx=71, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=73, )
@@ -1088,7 +1176,7 @@ game: (Running)
       [071]: (idx=71, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [072]: (idx=72, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[6]: !remove 1 apple
+----- Step[7]: !remove 1 apple
 
 game: (Running)
   screen: (Inventory)
@@ -1247,6 +1335,10 @@ game: (Running)
       [05]: (item_idx=32, tab_type=Food, )
       [06]: (item_idx=52, tab_type=Food, )
       [07]: (item_idx=70, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=72, )
@@ -1384,7 +1476,7 @@ game: (Running)
       [070]: (idx=70, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [071]: (idx=71, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[7]: get 1 simmered-fruit
+----- Step[8]: get 1 simmered-fruit
 
 game: (Running)
   screen: (Overworld)
@@ -1545,6 +1637,10 @@ game: (Running)
       [05]: (item_idx=32, tab_type=Food, )
       [06]: (item_idx=52, tab_type=Food, )
       [07]: (item_idx=71, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=73, )
@@ -1684,7 +1780,7 @@ game: (Running)
       [071]: (idx=71, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [072]: (idx=72, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[8]: !remove 4 gourmet-meat 1 fairy
+----- Step[9]: !remove 4 gourmet-meat 1 fairy
 
 game: (Running)
   screen: (Inventory)
@@ -1841,6 +1937,10 @@ game: (Running)
       [05]: (item_idx=30, tab_type=Food, )
       [06]: (item_idx=50, tab_type=Food, )
       [07]: (item_idx=69, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=71, )
@@ -1978,7 +2078,7 @@ game: (Running)
       [069]: (idx=69, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [070]: (idx=70, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[9]: get 1 meat-skewer[price=400, hp=120]
+----- Step[10]: get 1 meat-skewer[price=400, hp=120]
 
 game: (Running)
   screen: (Overworld)
@@ -2138,6 +2238,10 @@ game: (Running)
       [05]: (item_idx=30, tab_type=Food, )
       [06]: (item_idx=50, tab_type=Food, )
       [07]: (item_idx=70, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=72, )
@@ -2277,10 +2381,10 @@ game: (Running)
       [070]: (idx=70, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [071]: (idx=71, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[10]: save-as autosave-with-food
+----- Step[11]: save-as autosave-with-food
 
 <same>
------ Step[11]: !break 4 slots
+----- Step[12]: !break 4 slots
 
 game: (Running)
   screen: (Overworld)
@@ -2440,6 +2544,10 @@ game: (Running)
       [05]: (item_idx=30, tab_type=Food, )
       [06]: (item_idx=50, tab_type=Food, )
       [07]: (item_idx=70, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=72, )
@@ -2579,7 +2687,7 @@ game: (Running)
       [070]: (idx=70, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [071]: (idx=71, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[12]: !remove all materials
+----- Step[13]: !remove all materials
 
 game: (Running)
   screen: (Inventory)
@@ -2729,6 +2837,10 @@ game: (Running)
       [05]: (item_idx=25, tab_type=Food, )
       [06]: (item_idx=45, tab_type=Food, )
       [07]: (item_idx=65, tab_type=KeyItem, )
+  overworld: (len=3, )
+    [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=67, )
@@ -2863,7 +2975,7 @@ game: (Running)
       [065]: (idx=65, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [066]: (idx=66, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[13]: reload autosave-with-food
+----- Step[14]: reload autosave-with-food
 
 game: (Running)
   screen: (Overworld)
@@ -3167,7 +3279,7 @@ game: (Running)
       [070]: (idx=70, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [071]: (idx=71, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[14]: reload
+----- Step[15]: reload
 
 game: (Running)
   screen: (Overworld)
@@ -3245,7 +3357,7 @@ game: (Running)
       [013]: (idx=13, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [014]: (idx=14, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[15]: !remove 58 apples 4 gourmet-meat 1 simmered-fruit
+----- Step[16]: !remove 58 apples 4 gourmet-meat 1 simmered-fruit
 
 game: (Running)
   screen: (Inventory)
@@ -3318,7 +3430,7 @@ game: (Running)
       [013]: (idx=13, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [014]: (idx=14, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[16]: !remove 1 apple
+----- Step[17]: !remove 1 apple
 
 game: (Running)
   screen: (Inventory)
@@ -3388,7 +3500,7 @@ game: (Running)
       [012]: (idx=12, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [013]: (idx=13, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[17]: get 1 simmered-fruit
+----- Step[18]: get 1 simmered-fruit
 
 game: (Running)
   screen: (Overworld)
@@ -3460,7 +3572,7 @@ game: (Running)
       [013]: (idx=13, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [014]: (idx=14, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[18]: !remove all endura-carrot all durian all acorn all nightshades all ruby
+----- Step[19]: !remove all endura-carrot all durian all acorn all nightshades all ruby
 
 game: (Running)
   screen: (Inventory)
@@ -3517,7 +3629,7 @@ game: (Running)
       [008]: (idx=8, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [009]: (idx=9, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[19]: !break 5 slots
+----- Step[20]: !break 5 slots
 
 game: (Running)
   screen: (Inventory)
@@ -3574,7 +3686,7 @@ game: (Running)
       [008]: (idx=8, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [009]: (idx=9, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[20]: dnp 1 royal-guard-sword 1 royal-guard-bow
+----- Step[21]: dnp 1 royal-guard-sword 1 royal-guard-bow
 
 game: (Running)
   screen: (Overworld)
@@ -3639,10 +3751,10 @@ game: (Running)
       [009]: (idx=9, actor=Weapon_Bow_033, value=2000, is_equipped=true, )
         weapon: (idx=0, modifier=none, )
 
------ Step[21]: save-as autosave
+----- Step[22]: save-as autosave
 
 <same>
------ Step[22]: drop all weapons
+----- Step[23]: drop all weapons
 
 game: (Running)
   screen: (Inventory)
@@ -3685,10 +3797,11 @@ game: (Running)
       [09]: (item_idx=-1, tab_type=Material, )
       [10]: (item_idx=-1, tab_type=Food, )
       [11]: (item_idx=-1, tab_type=KeyItem, )
-  overworld: (len=3, )
+  overworld: (len=4, )
     [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
     [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
     [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
+    [003]: (typ=GroundEquipment, actor=Weapon_Sword_047, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=9, )
@@ -3706,7 +3819,7 @@ game: (Running)
       [008]: (idx=8, actor=Weapon_Bow_033, value=2000, is_equipped=true, )
         weapon: (idx=0, modifier=none, )
 
------ Step[23]: drop all bows
+----- Step[24]: drop all bows
 
 game: (Running)
   screen: (Inventory)
@@ -3750,10 +3863,12 @@ game: (Running)
       [09]: (item_idx=-1, tab_type=Material, )
       [10]: (item_idx=-1, tab_type=Food, )
       [11]: (item_idx=-1, tab_type=KeyItem, )
-  overworld: (len=3, )
+  overworld: (len=5, )
     [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
     [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
     [002]: (typ=Equipped, actor=Weapon_Shield_033, value=1400, modifier=none, )
+    [003]: (typ=GroundEquipment, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [004]: (typ=GroundEquipment, actor=Weapon_Bow_033, value=2000, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=8, )
@@ -3769,7 +3884,7 @@ game: (Running)
       [006]: (idx=6, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [007]: (idx=7, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[24]: drop all shields
+----- Step[25]: drop all shields
 
 game: (Running)
   screen: (Inventory)
@@ -3814,9 +3929,12 @@ game: (Running)
       [09]: (item_idx=-1, tab_type=Material, )
       [10]: (item_idx=-1, tab_type=Food, )
       [11]: (item_idx=-1, tab_type=KeyItem, )
-  overworld: (len=2, )
+  overworld: (len=5, )
     [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
     [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=GroundEquipment, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [003]: (typ=GroundEquipment, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [004]: (typ=GroundEquipment, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=7, )
@@ -3830,7 +3948,7 @@ game: (Running)
       [005]: (idx=5, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [006]: (idx=6, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[25]: eat 1 baked-apple
+----- Step[26]: eat 1 baked-apple
 
 game: (Running)
   screen: (Inventory)
@@ -3876,9 +3994,12 @@ game: (Running)
       [09]: (item_idx=-1, tab_type=Material, )
       [10]: (item_idx=-1, tab_type=Food, )
       [11]: (item_idx=-1, tab_type=KeyItem, )
-  overworld: (len=2, )
+  overworld: (len=5, )
     [000]: (typ=Equipped, actor=Weapon_Sword_047, value=1400, modifier=none, )
     [001]: (typ=Equipped, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [002]: (typ=GroundEquipment, actor=Weapon_Sword_047, value=1400, modifier=none, )
+    [003]: (typ=GroundEquipment, actor=Weapon_Bow_033, value=2000, modifier=none, )
+    [004]: (typ=GroundEquipment, actor=Weapon_Shield_033, value=1400, modifier=none, )
   gdt: (weapons=8, bows=5, shields=4, )
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=6, )
@@ -3890,7 +4011,7 @@ game: (Running)
       [004]: (idx=4, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [005]: (idx=5, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[26]: get 6 apples
+----- Step[27]: get 6 apples
 
 game: (Running)
   screen: (Overworld)
@@ -3926,7 +4047,7 @@ game: (Running)
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=0, )
 
------ Step[27]: !remove 6 apples
+----- Step[28]: !remove 6 apples
 
 game: (Running)
   screen: (Inventory)
@@ -3959,7 +4080,7 @@ game: (Running)
     discovered_tabs: Sw,Bo,Sh,__,Ma,Fo,Ki
     items: (len=0, )
 
------ Step[28]: get 6 simmered-fruit
+----- Step[29]: get 6 simmered-fruit
 
 game: (Running)
   screen: (Overworld)
@@ -4023,7 +4144,7 @@ game: (Running)
       [010]: (idx=10, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [011]: (idx=11, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[29]: eat 1 fairy
+----- Step[30]: eat 1 fairy
 
 game: (Running)
   screen: (Inventory)
@@ -4087,7 +4208,7 @@ game: (Running)
       [009]: (idx=9, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [010]: (idx=10, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[30]: reload autosave
+----- Step[31]: reload autosave
 
 game: (Running)
   screen: (Overworld)
@@ -4158,10 +4279,10 @@ game: (Running)
       [009]: (idx=9, actor=Weapon_Bow_033, value=2000, is_equipped=true, )
         weapon: (idx=0, modifier=none, )
 
------ Step[31]: save-as autosave
+----- Step[32]: save-as autosave
 
 <same>
------ Step[32]: eat 1 baked-apple
+----- Step[33]: eat 1 baked-apple
 
 game: (Running)
   screen: (Inventory)
@@ -4245,7 +4366,7 @@ game: (Running)
       [014]: (idx=14, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [015]: (idx=15, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[33]: reload autosave
+----- Step[34]: reload autosave
 
 game: (Running)
   screen: (Overworld)
@@ -4316,7 +4437,7 @@ game: (Running)
       [009]: (idx=9, actor=Weapon_Bow_033, value=2000, is_equipped=true, )
         weapon: (idx=0, modifier=none, )
 
------ Step[34]: get 3 pot-lid
+----- Step[35]: get 3 pot-lid
 
 game: (Running)
   screen: (Overworld)
@@ -4413,7 +4534,7 @@ game: (Running)
       [018]: (idx=18, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [019]: (idx=19, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[35]: eat all fairy all simmered-fruit
+----- Step[36]: eat all fairy all simmered-fruit
 
 game: (Running)
   screen: (Inventory)
@@ -4502,10 +4623,10 @@ game: (Running)
       [009]: (idx=9, actor=Obj_DRStone_Get, value=1, is_equipped=false, )
       [010]: (idx=10, actor=PlayerStole2, value=1, is_equipped=false, )
 
------ Step[36]: save-as autosave-with-corruption
+----- Step[37]: save-as autosave-with-corruption
 
 <same>
------ Step[37]: reload autosave-with-corruption
+----- Step[38]: reload autosave-with-corruption
 
 game: (Running)
   screen: (Overworld)
