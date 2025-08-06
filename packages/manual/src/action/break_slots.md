@@ -33,8 +33,37 @@ close-dialog
 
 ## Hold Smuggle Offset
 
-```admonish todo
-Menu Overload functionality is WIP.
+Hold Smuggle Offset is similar to Arrowless Offset, by selling smuggled items
+and dropping them after.
+
+
+- Activate Hold Smuggle (By Menu Overloading, for example with Shock Arrows).
+- Sell the items that are smuggled.
+- Hold another item, to cancel the smuggle.
+- Drop held items.
+
+Since it is required to hold another item after selling, this method can only make
+up to 4 Broken Slots at a time.
+
+```skybook
+get 2 shroom 2 pepper 1 banana
+overload
+hold shroom pepper
+unoverload
+sell all materials[held]
+close-dialog
+hold banana
+drop
+```
+
+```admonish tip
+Other than selling the held slots, you can also do this by entering
+a trial, such as Trial of the Sword. This will remove the slot in the inventory.
+Now you can get a new item, hold it to cancel hold smuggle, and drop the items.
+Note that since getting a new item will take out one held slot out, you can
+also only make up to 4 slots at a time with this method.
+
+This is also how IST was initially discovered.
 ```
 
 ## Fairy Offset

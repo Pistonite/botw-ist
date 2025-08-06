@@ -29,6 +29,7 @@ Clicking on a command will take you to the corresponding documentation page.
 | [<skyb>new-game</skyb>](../action/save.md) | Starts a new game |
 | <skyb>open-inv</skyb> | Alias for <skyb>pause</skyb> |
 | <skyb>open-inventory</skyb> | Alias for <skyb>pause</skyb> |
+| [<skyb>overload</skyb>](../action/overload.md) | Activate Menu Overload |
 | <skyb>:overworld</skyb> | Specify the next action to be performed in the overworld |
 | <skyb>pause</skyb> | Open the inventory |
 | [<skyb>:pause-during</skyb>](../action/get.md#pause-on-item-text-boxes) | Open the inventory during certain operations |
@@ -44,6 +45,7 @@ Clicking on a command will take you to the corresponding documentation page.
 | [<skyb>:slots</skyb>](../action/flags.md#number-of-slots-ie-hestu-upgrade) | Change number of equipment slots |
 | [<skyb>:smug</skyb>](../action/material.md#smuggle-state-for-arrowless-offset) | Perform Arrowless Smuggle with the next <skyb>hold</skyb> or <skyb>drop</skyb> command |
 | [<skyb>sort</skyb>](../action/sort.md) | Sort a category of items |
+| [<skyb>spawn</skyb>](../action/overworld.md#spawning-items-in-the-overworld) | Spawn Items in the Overworld |
 | [<skyb>!swap</skyb>](../action/low_level.md#change-item-data) | Swap two item nodes |
 | [<skyb>!system</skyb>](../action/system.md) | System operations |
 | <skyb>talk-to</skyb> | Talk to an NPC for buying or selling |
@@ -52,6 +54,7 @@ Clicking on a command will take you to the corresponding documentation page.
 | [<skyb>!trial-start</skyb>](../action/trial.md) | Start trial and clear inventory |
 | [<skyb>unequip</skyb>](../action/equip.md) | Unequip an item |
 | [<skyb>unhold</skyb>](../action/material.md) | Stop holding materials |
+| [<skyb>unoverload</skyb>](../action/overload.md) | Cancel Menu Overload |
 | <skyb>unpause</skyb> | Close the inventory |
 | <skyb>untalk</skyb> | Closes buying or selling dialog |
 | [<skyb>use</skyb>](../action/overworld.md) | Use equipments or materials in the overworld |

@@ -26,6 +26,7 @@
     - [Entangle](./action/entangle.md)
     - [Save Files](./action/save.md)
     - [Sorting](./action/sort.md)
+    - [Menu Overload](./action/overload.md)
     - [Overworld Transform]()
     - [Trials](./action/trial.md)
     - [Game Flags](./action/flags.md)
