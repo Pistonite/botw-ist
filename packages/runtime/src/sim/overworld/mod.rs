@@ -139,12 +139,14 @@ impl OverworldSystem {
 
     /// Force a weapon to spawn on the ground
     pub fn force_spawn_weapon(&mut self, actor: sim::Actor) {
-        self.ground_weapons.push(self.actor_creator.force_spawn(actor));
+        self.ground_weapons
+            .push(self.actor_creator.force_spawn(actor));
     }
 
     /// Force a material to spawn on the ground
     pub fn force_spawn_material(&mut self, actor: sim::Actor) {
-        self.ground_materials.push(self.actor_creator.force_spawn(actor));
+        self.ground_materials
+            .push(self.actor_creator.force_spawn(actor));
     }
 
     /// Add a weapon to the ground (the item is already spawned)
@@ -185,7 +187,8 @@ impl OverworldSystem {
     /// Drop items held by the player to the ground
     pub fn drop_held_items(&mut self) {
         self.is_hold_arrowless_smuggle = false;
-        self.dropped_materials.extend(std::mem::take(&mut self.holding));
+        self.dropped_materials
+            .extend(std::mem::take(&mut self.holding));
     }
 
     pub fn is_holding(&self) -> bool {
@@ -248,7 +251,9 @@ impl OverworldSystem {
 
         let name = Ptr!(&item->mName).cstr(memory)?.load_utf8_lossy(memory)?;
         let actor = sim::Actor {
-            name, value, modifier
+            name,
+            value,
+            modifier,
         };
         // try to spawned the actor
         let Ok(spawned) = self.actor_creator.try_spawn(actor) else {
@@ -264,10 +269,7 @@ impl OverworldSystem {
     /// If the item is an `Actor`, then it will try to be spawned.
     ///
     /// Return if the inventory item should be equipped.
-    pub fn try_auto_equip(
-        &mut self,
-        item: Result<Actor, SpawnedActor>,
-    ) -> bool {
+    pub fn try_auto_equip(&mut self, item: Result<Actor, SpawnedActor>) -> bool {
         let name = match &item {
             Ok(actor) => &actor.name,
             Err(actor) => &actor.name,
@@ -296,7 +298,7 @@ impl OverworldSystem {
                 };
                 spawned
             }
-            Err(spawned) => spawned
+            Err(spawned) => spawned,
         };
         *slot = Some(spawned);
         true
@@ -310,7 +312,6 @@ impl OverworldSystem {
         bow: Option<sim::Actor>,
         shield: Option<sim::Actor>,
     ) -> Result<(), processor::Error> {
-
         for (actor, slot, item_type) in [
             (weapon, &mut self.weapon, PouchItemType::Sword),
             (bow, &mut self.bow, PouchItemType::Bow),
@@ -326,7 +327,7 @@ impl OverworldSystem {
                         // call from the actor will update the durability in PMDM
                         let value = spawned.value;
                         *slot = Some(spawned);
-        linker::set_equipped_weapon_value(cpu, value, item_type as i32)?;
+                        linker::set_equipped_weapon_value(cpu, value, item_type as i32)?;
                     }
                 }
             }
@@ -476,7 +477,8 @@ impl OverworldSystem {
 
     /// Delete the currently equipped weapon on the player, and return its data
     pub fn delete_player_equipment(&mut self, item_type: i32) -> Option<Actor> {
-        self.delete_player_equipment_internal(item_type).map(Into::into)
+        self.delete_player_equipment_internal(item_type)
+            .map(Into::into)
     }
 
     fn delete_player_equipment_internal(&mut self, item_type: i32) -> Option<SpawnedActor> {
@@ -682,7 +684,6 @@ impl OverworldSystem {
         None
     }
 }
-
 
 #[derive(Debug, Clone, Copy)]
 pub enum GroundItemHandle<TSys> {

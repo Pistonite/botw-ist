@@ -469,7 +469,7 @@ impl State {
     async fn handle_overload(
         self,
         rt: sim::Context<&sim::Runtime>,
-        overload: bool
+        overload: bool,
     ) -> Result<Report<Self>, exec::Error> {
         log::debug!("handling OVERLOAD");
         execute_command!(self, rt, cpu, sys, errors => {

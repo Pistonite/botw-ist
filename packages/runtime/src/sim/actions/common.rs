@@ -358,7 +358,6 @@ pub fn trash_item_wrapped(
     tab: i32,
     slot: i32,
 ) -> Result<(), processor::Error> {
-
     #[derive(Default)]
     struct State {
         // dropping equipped item to the ground
@@ -372,16 +371,16 @@ pub fn trash_item_wrapped(
         State::default(),
         |state, arg| match arg {
             linker::events::TrashEquipArgs::Trash(name, value, modifier) => {
-                    let actor = sim::Actor {
-                        name,
-                        value,
-                        modifier: if modifier.flags == 0 {
-                            None
-                        } else {
-                            Some(modifier)
-                        },
-                    };
-                    state.weapons_to_spawn.push(actor);
+                let actor = sim::Actor {
+                    name,
+                    value,
+                    modifier: if modifier.flags == 0 {
+                        None
+                    } else {
+                        Some(modifier)
+                    },
+                };
+                state.weapons_to_spawn.push(actor);
             }
             linker::events::TrashEquipArgs::PlayerDrop(x) => state.drop_types.push(x),
             _ => {}
@@ -424,14 +423,12 @@ pub fn get_item_with_auto_equip(
     };
 
     let actor = match item {
-        AutoEquipType::NewItem { name, modifier, ..} => {
-            Ok(sim::Actor {
-                name: name.to_string(),
-                value,
-                modifier
-            })
-        }
-        AutoEquipType::Spawned(spawned) => Err(spawned)
+        AutoEquipType::NewItem { name, modifier, .. } => Ok(sim::Actor {
+            name: name.to_string(),
+            value,
+            modifier,
+        }),
+        AutoEquipType::Spawned(spawned) => Err(spawned),
     };
 
     if sys.overworld.try_auto_equip(actor) {
@@ -445,27 +442,27 @@ pub enum AutoEquipType<'a> {
     NewItem {
         name: &'a str,
         value: Option<i32>,
-        modifier: Option<WeaponModifierInfo>
+        modifier: Option<WeaponModifierInfo>,
     },
-    Spawned(sim::SpawnedActor)
+    Spawned(sim::SpawnedActor),
 }
 impl AutoEquipType<'_> {
     fn name(&self) -> &str {
         match self {
-            AutoEquipType::NewItem { name, ..} => name,
-            AutoEquipType::Spawned(actor) => &actor.name
+            AutoEquipType::NewItem { name, .. } => name,
+            AutoEquipType::Spawned(actor) => &actor.name,
         }
     }
     fn value(&self) -> Option<i32> {
         match self {
-            AutoEquipType::NewItem { value, ..} => value.clone(),
-            AutoEquipType::Spawned(actor) => Some(actor.value)
+            AutoEquipType::NewItem { value, .. } => *value,
+            AutoEquipType::Spawned(actor) => Some(actor.value),
         }
     }
     fn modifier(&self) -> Option<WeaponModifierInfo> {
         match self {
-            AutoEquipType::NewItem { modifier, ..} => modifier.clone(),
-            AutoEquipType::Spawned(actor) => actor.modifier.clone()
+            AutoEquipType::NewItem { modifier, .. } => *modifier,
+            AutoEquipType::Spawned(actor) => actor.modifier,
         }
     }
 }

@@ -3,7 +3,6 @@ use derive_more::{Deref, DerefMut};
 
 use crate::iv;
 
-
 /// Simulates an actor in the game
 #[derive(Debug, Default, Clone)]
 pub struct Actor {
@@ -90,7 +89,7 @@ pub struct ActorCreator {
 impl Default for ActorCreator {
     fn default() -> Self {
         Self {
-            is_actor_creation_allowed: true
+            is_actor_creation_allowed: true,
         }
     }
 }
@@ -110,7 +109,9 @@ impl ActorCreator {
     #[inline]
     pub fn try_spawn_value_1(&self, name: String) -> Result<SpawnedActor, Actor> {
         self.try_spawn(Actor {
-            name, value: 1, modifier: None
+            name,
+            value: 1,
+            modifier: None,
         })
     }
 

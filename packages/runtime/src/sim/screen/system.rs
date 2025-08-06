@@ -243,12 +243,7 @@ impl ScreenSystem {
         let drop_items = self.remove_held_item_after_dialog;
         self.remove_held_item_after_dialog = false;
         let remove_equipments = std::mem::take(&mut self.equipped_items_to_remove_after_dialog);
-        screen.transition_to_overworld(
-            ctx,
-            overworld,
-            drop_items,
-            &remove_equipments,
-        )?;
+        screen.transition_to_overworld(ctx, overworld, drop_items, &remove_equipments)?;
         if drop_items {
             self.holding_in_inventory = false;
         }
@@ -344,31 +339,31 @@ impl Screen {
                 return Ok(());
             }
             Self::Inventory(inv_screen) => {
-                    log::debug!("updating overworld equiments");
-                    if inv_screen.weapon_state.to_delete {
-                        overworld.delete_player_equipment(PouchItemType::Sword as i32);
-                    } else {
-                        need_update_weapon = overworld.change_player_equipment(
-                            inv_screen.weapon_state.item,
-                            ctx.cpu().proc.memory(),
-                        )?;
-                    }
-                    if inv_screen.bow_state.to_delete {
-                        overworld.delete_player_equipment(PouchItemType::Bow as i32);
-                    } else {
-                        need_update_bow = overworld.change_player_equipment(
-                            inv_screen.bow_state.item,
-                            ctx.cpu().proc.memory(),
-                        )?;
-                    }
-                    if inv_screen.shield_state.to_delete {
-                        overworld.delete_player_equipment(PouchItemType::Shield as i32);
-                    } else {
-                        need_update_shield = overworld.change_player_equipment(
-                            inv_screen.shield_state.item,
-                            ctx.cpu().proc.memory(),
-                        )?;
-                    }
+                log::debug!("updating overworld equiments");
+                if inv_screen.weapon_state.to_delete {
+                    overworld.delete_player_equipment(PouchItemType::Sword as i32);
+                } else {
+                    need_update_weapon = overworld.change_player_equipment(
+                        inv_screen.weapon_state.item,
+                        ctx.cpu().proc.memory(),
+                    )?;
+                }
+                if inv_screen.bow_state.to_delete {
+                    overworld.delete_player_equipment(PouchItemType::Bow as i32);
+                } else {
+                    need_update_bow = overworld.change_player_equipment(
+                        inv_screen.bow_state.item,
+                        ctx.cpu().proc.memory(),
+                    )?;
+                }
+                if inv_screen.shield_state.to_delete {
+                    overworld.delete_player_equipment(PouchItemType::Shield as i32);
+                } else {
+                    need_update_shield = overworld.change_player_equipment(
+                        inv_screen.shield_state.item,
+                        ctx.cpu().proc.memory(),
+                    )?;
+                }
                 let actors = linker::events::CreateHoldingItem::execute_subscribed(
                     ctx.cpu(),
                     vec![],
@@ -377,7 +372,7 @@ impl Screen {
                     },
                     linker::create_holding_items,
                 )?;
-                log::debug!("spawning overworld holding items: {:?}", actors);
+                log::debug!("spawning overworld holding items: {actors:?}");
                 overworld.spawn_held_items(actors);
                 // TODO: there is a slight inaccuracy here. When closing inventory,
                 // if player started holding inventory but didn't hold any item,

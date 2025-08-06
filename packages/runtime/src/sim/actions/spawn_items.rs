@@ -34,7 +34,7 @@ fn spawn_item_internal(
         // use 10 as some dummy value, as it should always succeed
         let value = game::get_weapon_general_life(&item.name).unwrap_or(10) * 100;
         (value, modifier)
-    }else {
+    } else {
         (1, None)
     };
     for _ in 0..item.amount {
@@ -43,7 +43,8 @@ fn spawn_item_internal(
         }
         let actor = sim::Actor {
             name: item.name.clone(),
-            value,modifier
+            value,
+            modifier,
         };
         if is_weapon {
             sys.overworld.force_spawn_weapon(actor);

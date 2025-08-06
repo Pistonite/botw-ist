@@ -166,11 +166,11 @@ fn get_item_internal(
         // need to generate new actor because it's not already
         // on the ground
         let auto_equip_type = super::AutoEquipType::NewItem {
-            name, value: meta_value, modifier
-            
+            name,
+            value: meta_value,
+            modifier,
         };
-        super::get_item_with_auto_equip(ctx.cpu(), sys, is_weapon, 
-            auto_equip_type)?;
+        super::get_item_with_auto_equip(ctx.cpu(), sys, is_weapon, auto_equip_type)?;
     }
     Ok(())
 }

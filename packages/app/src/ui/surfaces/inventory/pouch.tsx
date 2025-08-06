@@ -33,7 +33,12 @@ import {
 } from "self::ui/components";
 
 import { ScreenIndicator } from "./screen_icon.tsx";
-import { ArrowlessSmuggleIcon, HoldingIcon, MenuOverloadIcon, TrialModeIcon } from "./pouch_icon.tsx";
+import {
+    ArrowlessSmuggleIcon,
+    HoldingIcon,
+    MenuOverloadIcon,
+    TrialModeIcon,
+} from "./pouch_icon.tsx";
 
 const useStyles = makeStyles({
     splitContainer: {

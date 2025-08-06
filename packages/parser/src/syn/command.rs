@@ -182,7 +182,6 @@ pub struct CmdSpawn {
     pub items: syn::ItemListFinite,
 }
 
-
 ///////////////////////////////////////////////////////////
 
 /// `open-inventory`

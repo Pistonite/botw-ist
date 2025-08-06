@@ -60,7 +60,7 @@ pub fn pick_up_item_internal(
             ctx.cpu(),
             sys,
             true,
-            super::AutoEquipType::Spawned(actor)
+            super::AutoEquipType::Spawned(actor),
         )?;
         remaining.sub(1);
     }

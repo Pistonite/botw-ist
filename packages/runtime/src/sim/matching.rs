@@ -1,5 +1,5 @@
-use skybook_parser::cir;
 use crate::sim;
+use skybook_parser::cir;
 
 impl sim::Actor {
     /// Returns if the overworld actor matches the item selector
