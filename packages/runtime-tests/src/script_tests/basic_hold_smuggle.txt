@@ -8,3 +8,8 @@ unpause # overworld still doesn't have it
 hold durian
 unpause
 drop # items in inventory are deleted
+
+!init 6 apple; overload hold 5 apple
+sell apple
+get giant-ancient-core
+unhold
