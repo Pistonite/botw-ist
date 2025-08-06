@@ -60,9 +60,10 @@ pub fn pick_up_item_internal(
             ctx.cpu(),
             sys,
             true,
-            &actor.name,
-            Some(actor.value),
-            actor.modifier,
+            super::AutoEquipType::Spawned(actor)
+            // &actor.name,
+            // Some(actor.value),
+            // actor.modifier,
         )?;
         remaining.sub(1);
     }

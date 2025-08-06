@@ -62,14 +62,17 @@ pub enum TT {
         KwDrop = "drop",
         KwDnp = "dnp",
         KwEat = "eat",
-        KwCook = "cook",
+        KwCook = "cook", // TODO: cook sim
         KwEntangle = "entangle",
         KwSort = "sort",
+        KwOverload = "overload",
+        KwUnoverload = "unoverload",
 
         KwEquip = "equip",
         KwUnequip = "unequip",
         KwShoot = "shoot",
         KwUse = "use",
+        KwSpawn = "spawn",
         KwThrow = "throw",
         KwDisplay = "display",
 
@@ -124,6 +127,7 @@ pub enum TT {
         KwDpad = "dpad",
         KwPerUse = "per-use",
         KwDiscovered = "discovered",
+        KwSpawnArrow = "spawn-arrow",
         // @syntax-generator-hint end
 
         /////////////////////////////

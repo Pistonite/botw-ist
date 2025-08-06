@@ -184,15 +184,15 @@ pub fn trial_end(
 
 #[derive(Default)]
 struct CreateEquipState {
-    weapon: Option<sim::OverworldActor>,
-    bow: Option<sim::OverworldActor>,
-    shield: Option<sim::OverworldActor>,
+    weapon: Option<sim::Actor>,
+    bow: Option<sim::Actor>,
+    shield: Option<sim::Actor>,
 }
 
 impl CreateEquipState {
     fn update(&mut self, args: <linker::events::CreateEquip as GameEvent>::TArgs) {
         let (slot, name, value, modifier) = args;
-        let actor = sim::OverworldActor {
+        let actor = sim::Actor {
             name,
             value,
             modifier,

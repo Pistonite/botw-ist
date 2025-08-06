@@ -213,6 +213,14 @@ fn drop_inventory_weapon(
             inventory.equipment_state_mut(original_type).set_unequip();
         }
         log::debug!("correct_slot is {correct_slot}");
+
+        // note that we know items attempted to be spawned in the overworld
+        // immediately, rather than at the time of unpause.
+        // this is checked by using a mod that activates menu overloading
+        // with a button press. if the menu is overloaded when
+        // dropping the item, even if the menu is not overloaded
+        // when unpausing, the item will not spawn. the inverse is true as well.
+
         super::trash_item_wrapped(ctx.cpu(), sys, tab as i32, correct_slot)?;
         let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
         inventory.update(tab, slot, Some(false), ctx.cpu().proc.memory())?;
@@ -255,8 +263,8 @@ fn drop_overworld_weapon(
     } else {
         linker::remove_weapon_if_equipped(ctx.cpu(), &actor.name)?;
     }
-    sys.overworld.spawn_weapon_later(actor);
-    sys.check_weapon_spawn();
+    sys.overworld.add_ground_weapon(actor);
+    // sys.check_weapon_spawn();
 
     Ok(())
 }

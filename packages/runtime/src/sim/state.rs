@@ -142,16 +142,20 @@ pub struct GameSystems {
 }
 
 impl GameSystems {
-    /// Process weapon spawning if in overworld
-    pub fn check_weapon_spawn(&mut self) {
-        if self.screen.current_screen().is_overworld() {
-            if !self.screen.menu_overload {
-                self.overworld.spawn_ground_weapons()
-            } else {
-                self.overworld.clear_spawning_weapons()
-            }
-        }
+    /// Set if menu overload is active
+    pub fn set_menu_overload(&mut self, overloaded: bool) {
+        self.overworld.set_menu_overload(overloaded);
     }
+    // /// Process weapon spawning if in overworld
+    // pub fn check_weapon_spawn(&mut self) {
+    //     if self.screen.current_screen().is_overworld() {
+    //         if !self.screen.menu_overload {
+    //             self.overworld.spawn_ground_weapons()
+    //         } else {
+    //             self.overworld.clear_spawning_weapons()
+    //         }
+    //     }
+    // }
 }
 
 macro_rules! set_arg {

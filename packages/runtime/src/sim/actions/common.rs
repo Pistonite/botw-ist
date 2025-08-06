@@ -358,25 +358,24 @@ pub fn trash_item_wrapped(
     tab: i32,
     slot: i32,
 ) -> Result<(), processor::Error> {
-    let menu_overload = sys.screen.menu_overload;
+    // let menu_overload = sys.screen.menu_overload;
 
     #[derive(Default)]
     struct State {
+        // dropping equipped item to the ground
         pub drop_types: Vec<i32>, // TODO: smallvec?
-        pub weapons_to_spawn: Vec<sim::OverworldActor>,
-        menu_overload: bool,
+        // dropping item from inventory, need to spawn a new actor
+        pub weapons_to_spawn: Vec<sim::Actor>,
+        // menu_overload: bool,
     }
 
     let state = linker::events::TrashEquip::execute_subscribed(
         cpu,
-        State {
-            menu_overload,
-            ..Default::default()
-        },
+        State::default(),
         |state, arg| match arg {
             linker::events::TrashEquipArgs::Trash(name, value, modifier) => {
-                if !state.menu_overload {
-                    let actor = sim::OverworldActor {
+                // if !state.menu_overload {
+                    let actor = sim::Actor {
                         name,
                         value,
                         modifier: if modifier.flags == 0 {
@@ -386,7 +385,7 @@ pub fn trash_item_wrapped(
                         },
                     };
                     state.weapons_to_spawn.push(actor);
-                }
+                // }
             }
             linker::events::TrashEquipArgs::PlayerDrop(x) => state.drop_types.push(x),
             _ => {}
@@ -399,9 +398,9 @@ pub fn trash_item_wrapped(
     }
 
     for weapon in state.weapons_to_spawn {
-        sys.overworld.spawn_weapon_later(weapon);
+        sys.overworld.spawn_weapon(weapon);
     }
-    sys.check_weapon_spawn();
+    // sys.check_weapon_spawn();
 
     Ok(())
 }
@@ -410,11 +409,11 @@ pub fn get_item_with_auto_equip(
     cpu: &mut Cpu2<'_, '_>,
     sys: &mut sim::GameSystems,
     is_weapon: bool,
-    name: &str,
-    value: Option<i32>,
-    modifier: Option<WeaponModifierInfo>,
+    item: AutoEquipType<'_>,
 ) -> Result<(), processor::Error> {
-    linker::get_item(cpu, name, value, modifier)?;
+    let name = item.name();
+    let value = item.value();
+    linker::get_item(cpu, name, value, item.modifier())?;
     if !is_weapon {
         return Ok(());
     }
@@ -429,10 +428,49 @@ pub fn get_item_with_auto_equip(
         None => game::get_weapon_general_life(name).unwrap_or(10) * 100,
     };
 
-    if sys.overworld.try_auto_equip(name, value, modifier.as_ref()) {
-        log::debug!("auto-equipping {name}");
+    let actor = match item {
+        AutoEquipType::NewItem { name, modifier, ..} => {
+            Ok(sim::Actor {
+                name: name.to_string(),
+                value,
+                modifier
+            })
+        }
+        AutoEquipType::Spawned(spawned) => Err(spawned)
+    };
+
+    if sys.overworld.try_auto_equip(actor) {
+        log::debug!("auto-equipping last added item");
         linker::equip_last_added_item(cpu)?;
     }
 
     Ok(())
+}
+pub enum AutoEquipType<'a> {
+    NewItem {
+        name: &'a str,
+        value: Option<i32>,
+        modifier: Option<WeaponModifierInfo>
+    },
+    Spawned(sim::SpawnedActor)
+}
+impl AutoEquipType<'_> {
+    fn name(&self) -> &str {
+        match self {
+            AutoEquipType::NewItem { name, ..} => name,
+            AutoEquipType::Spawned(actor) => &actor.name
+        }
+    }
+    fn value(&self) -> Option<i32> {
+        match self {
+            AutoEquipType::NewItem { value, ..} => value.clone(),
+            AutoEquipType::Spawned(actor) => Some(actor.value)
+        }
+    }
+    fn modifier(&self) -> Option<WeaponModifierInfo> {
+        match self {
+            AutoEquipType::NewItem { modifier, ..} => modifier.clone(),
+            AutoEquipType::Spawned(actor) => actor.modifier.clone()
+        }
+    }
 }

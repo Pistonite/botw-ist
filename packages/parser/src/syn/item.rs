@@ -106,4 +106,5 @@ pub enum ItemWord {
     KwDpad(syn::KwDpad),
     KwPerUse(syn::KwPerUse),
     KwDiscovered(syn::KwDiscovered),
+    KwSpawnArrow(syn::KwSpawnArrow),
 }

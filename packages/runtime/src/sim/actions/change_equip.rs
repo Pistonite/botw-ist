@@ -249,13 +249,13 @@ pub fn change_equip_dpad(
                 if selected_item != dpad_get_first_equipped(&dpad_items, ctx.cpu().proc.memory())? {
                     // mark equip in pmdm
                     linker::equip_weapon(ctx.cpu(), selected_item)?;
-                    if !sys.screen.menu_overload {
+                    // if !sys.screen.menu_overload {
                         // update equipment in overworld
                         let memory = ctx.cpu().proc.memory();
+                        need_sync_to_pmdm = 
                         sys.overworld
                             .change_player_equipment(selected_item, memory)?;
-                        need_sync_to_pmdm = true;
-                    }
+                    // }
                 }
             } else {
                 linker::unequip(ctx.cpu(), selected_item)?;

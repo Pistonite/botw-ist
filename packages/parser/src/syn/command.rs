@@ -51,6 +51,10 @@ pub enum Command {
     Entangle(CmdEntangle),
     /// `sort CATEGORY`
     Sort(CmdSort),
+    /// `overload` - start menu overload
+    Overload(syn::KwOverload),
+    /// `unoverload` - stop menu overload
+    Unoverload(syn::KwUnoverload),
 
     // ==== equipments ====
     /// `equip ITEM`

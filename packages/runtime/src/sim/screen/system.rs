@@ -18,8 +18,8 @@ pub struct ScreenSystem {
     /// If the screen switch was performed manually
     is_manually_switched: bool,
 
-    /// If Menu Overload Glitch is active
-    pub menu_overload: bool,
+    // /// If Menu Overload Glitch is active
+    // pub menu_overload: bool,
 
     /// Flag for controlling whether removal of held items
     /// should happen after the dialog when transitioning
@@ -249,7 +249,7 @@ impl ScreenSystem {
         screen.transition_to_overworld(
             ctx,
             overworld,
-            self.menu_overload,
+            // self.menu_overload,
             drop_items,
             &remove_equipments,
         )?;
@@ -336,7 +336,7 @@ impl Screen {
         &mut self,
         ctx: &mut sim::Context<&mut Cpu2>,
         overworld: &mut sim::OverworldSystem,
-        menu_overload: bool,
+        // menu_overload: bool,
         drop_items: bool,
         remove_equipments: &[String],
     ) -> Result<(), processor::Error> {
@@ -349,7 +349,10 @@ impl Screen {
                 return Ok(());
             }
             Self::Inventory(inv_screen) => {
-                if !menu_overload {
+
+
+                
+                // if !menu_overload {
                     log::debug!("updating overworld equiments");
                     if inv_screen.weapon_state.to_delete {
                         overworld.delete_player_equipment(PouchItemType::Sword as i32);
@@ -375,24 +378,25 @@ impl Screen {
                             ctx.cpu().proc.memory(),
                         )?;
                     }
-                } else {
-                    log::debug!("not updating overworld equipments because of menu overload");
-                }
+                // } else {
+                //     log::debug!("not updating overworld equipments because of menu overload");
+                // }
                 #[derive(Default)]
                 struct State {
                     actors: Vec<String>,
-                    menu_overload: bool,
+                    // menu_overload: bool,
                 }
                 let state = linker::events::CreateHoldingItem::execute_subscribed(
                     ctx.cpu(),
-                    State {
-                        menu_overload,
-                        ..Default::default()
-                    },
+                    // State {
+                    //     menu_overload,
+                    //     ..Default::default()
+                    // },
+                    State::default(),
                     |state, name| {
-                        if !state.menu_overload {
+                        // if !state.menu_overload {
                             state.actors.push(name);
-                        }
+                        // }
                     },
                     linker::create_holding_items,
                 )?;
@@ -413,11 +417,11 @@ impl Screen {
         log::debug!("removing translucent items on returning to overworld");
         linker::delete_removed_items(ctx.cpu())?;
 
-        if !menu_overload {
-            overworld.spawn_ground_weapons();
-        } else {
-            overworld.clear_spawning_weapons();
-        }
+        // if !menu_overload {
+        //     overworld.spawn_ground_weapons();
+        // } else {
+        //     overworld.clear_spawning_weapons();
+        // }
 
         // I am not sure if equipment update or drop items happens first,
         // or maybe it's a race condition
