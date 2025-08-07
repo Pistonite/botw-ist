@@ -11,9 +11,9 @@ export class CommandTrial extends AbstractProperCommand {
 
     public override convert(): string {
         if (this.enter) {
-            return "!trial-end";
+            return "!trial-start";
         }
-        return "!trial-start";
+        return "!trial-end";
     }
 }
 
