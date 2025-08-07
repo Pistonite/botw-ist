@@ -59,7 +59,9 @@ pub fn search_item_by_ident_all(search_str: &str) -> Vec<ResolvedItem> {
         }
     }
     for result in &mut results {
-        set_effect(result, effect_id);
+        if is_cook_item(&result.actor) {
+            set_effect(result, effect_id);
+        }
     }
     results
 }

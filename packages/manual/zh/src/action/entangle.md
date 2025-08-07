@@ -6,7 +6,7 @@ from another.
 - <skyb>entangle</skyb> activates PE and sets the target item
 - <skyb>:targeting</skyb> changes the target item, or allows you to target empty slots
 
-```admonish warning
+```admonish warning title="注意"
 PE is not 100% accurate.
 ```
 
@@ -29,7 +29,7 @@ entangle pot-lid
 
 While a slot is activated, you will see a "Link" icon next to it.
 
-```admonish tip
+```admonish tip title="技巧"
 If a slot that's supposed to be activated does't exist in a tab
 (i.e the tab doesn't have enough items), there will be a phantom
 slot displayed in that location when in Tabbed View.
@@ -56,7 +56,7 @@ The <skyb>:targeting</skyb> annotation is used to do that.
 #            doesn't matter what you put here
 ```
 
-```admonish warning
+```admonish warning title="注意"
 <skyb>:targeting</skyb> currently also searches slots that are not activated.
 If there are multiple matches, you might need to use a [Position Property](../user/syntax_item.md#从多个匹配物品中选择)
 to specify the activated slot.
