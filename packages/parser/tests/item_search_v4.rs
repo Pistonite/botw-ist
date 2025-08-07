@@ -17,6 +17,10 @@ fn test_item_search_v4() {
     test_item_search("korok", "Obj_KorokNuts");
     test_item_search("korok-seed", "Obj_KorokNuts");
     test_item_search("korok-leaf", "Weapon_Lsword_056");
+    test_item_search("normal-arrow", "NormalArrow");
+    test_item_search("fire-arrow", "FireArrow");
+    test_item_search("ice-arrow", "IceArrow");
+    test_item_search("shock-arrow", "ElectricArrow");
 }
 
 #[test]

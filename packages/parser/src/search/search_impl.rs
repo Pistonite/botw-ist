@@ -5,6 +5,12 @@ use crate::search::SearchResult;
 
 use super::ResolvedItem;
 
+/// Search for an item by V4 identifier such as `royal_claymore`, and return the best match
+/// if there is one
+pub fn search_item_by_ident(search_str: &str) -> Option<ResolvedItem> {
+    search_item_by_ident_all(search_str).into_iter().next()
+}
+
 /// Search for an item by V4 identifier such as `royal_claymore`. Returns all matches ordered by
 /// score (best match first)
 #[cfg_attr(
@@ -28,57 +34,36 @@ pub fn search_item_by_ident_all(search_str: &str) -> Vec<ResolvedItem> {
         other => other,
     };
 
-    let Some((effect_id, rest_search_str)) = split_and_search_effect(search_str) else {
+    let Some((effect_id, effect_name, rest_search_str)) = split_and_search_effect(search_str)
+    else {
         return do_search_item_by_ident_all(search_str, all_item);
     };
 
     let mut results = do_search_item_by_ident_all(rest_search_str, is_cook_item);
-    // fallback to search whole string if no cook items are found
     if results.is_empty() {
-        return do_search_item_by_ident_all(search_str, all_item);
-    }
+        // fallback to search whole string if no cook items are found
+        results = do_search_item_by_ident_all(search_str, all_item);
 
+        if results.is_empty() {
+            // V3 compatibility: some exlixirs are able to be found just by
+            // searching the effect name, so we do a guess here.
+            // if the search string is exactly a prefix of the effect,
+            // then we coerce the result to a potion
+            if rest_search_str.trim().is_empty() && effect_name.starts_with(search_str) {
+                let item = ResolvedItem {
+                    actor: "Item_Cook_C_17".to_string(),
+                    meta: None,
+                };
+                results = vec![item];
+            }
+        }
+    }
     for result in &mut results {
-        set_effect(result, effect_id);
+        if is_cook_item(&result.actor) {
+            set_effect(result, effect_id);
+        }
     }
-
     results
-}
-
-/// Search for an item by V4 identifier such as `royal_claymore`. Returns the best match
-#[cfg_attr(
-    feature = "cached",
-    cached::proc_macro::cached(size = 512, key = "String", convert = "{ search_str.to_string() }")
-)]
-pub fn search_item_by_ident(search_str: &str) -> Option<ResolvedItem> {
-    // empty input case - this has to be here
-    // because supplement_search_strings will fabricate non-empty search strings
-    // even if the input is empty
-    if search_str
-        .trim_matches(|c| c == ' ' || c == '_' || c == '-')
-        .is_empty()
-    {
-        return None;
-    }
-    let search_str = search_str.to_ascii_lowercase();
-    let search_str = match search_str.as_str() {
-        "speedfood" => return Some(speed_food()),
-        "endurafood" => return Some(endura_food()),
-        other => other,
-    };
-
-    let Some((effect_id, rest_search_str)) = split_and_search_effect(search_str) else {
-        return do_search_item_by_ident(search_str, all_item);
-    };
-
-    if let Some(mut result) = do_search_item_by_ident(rest_search_str, is_cook_item) {
-        set_effect(&mut result, effect_id);
-        return Some(result);
-    }
-
-    // fallback to search whole string if the item is not found
-    // by just searching the part after the effect
-    do_search_item_by_ident(search_str, all_item)
 }
 
 /// Create an item for speed food. (for backward compability with V2 item)
@@ -104,12 +89,14 @@ fn endura_food() -> ResolvedItem {
 }
 
 /// If the first term in the search string could be an effect,
-/// split it, returns the effect ID and the rest of the search string
+/// split it, returns the effect ID, effect name and the rest of the search string
 ///
 /// Returns None if the first term matches multiple effects (i.e. ambiguous)
-fn split_and_search_effect(search_str: &str) -> Option<(i32, &str)> {
-    let i = search_str.find(['_', '-'])?;
-    let (maybe_effect, maybe_item) = (&search_str[..i], &search_str[i + 1..]);
+fn split_and_search_effect(search_str: &str) -> Option<(i32, &'static str, &str)> {
+    let (maybe_effect, maybe_item) = match search_str.find(['_', '-']) {
+        Some(i) => (&search_str[..i], &search_str[i + 1..]),
+        None => (search_str, ""),
+    };
     let mut found = None;
     for (effect_name, effect_id) in COOK_EFFECT_NAMES {
         if effect_name.contains(maybe_effect) {
@@ -117,10 +104,15 @@ fn split_and_search_effect(search_str: &str) -> Option<(i32, &str)> {
                 // found multiple
                 return None;
             }
-            found = Some(*effect_id);
+            found = Some((*effect_id, *effect_name));
         }
     }
-    found.map(|effect_id| (effect_id, maybe_item.trim_matches(|c| c == '_' || c == '-')))
+    let (effect_id, effect_name) = found?;
+    Some((
+        effect_id,
+        effect_name,
+        maybe_item.trim_matches(|c| c == '_' || c == '-'),
+    ))
 }
 
 fn set_effect(result: &mut ResolvedItem, effect_id: i32) {
@@ -128,24 +120,6 @@ fn set_effect(result: &mut ResolvedItem, effect_id: i32) {
         effect_id: Some(effect_id),
         ..Default::default()
     });
-}
-
-fn do_search_item_by_ident(
-    original_search_str: &str,
-    filter: impl Fn(&str) -> bool,
-) -> Option<ResolvedItem> {
-    let mut all_results = BTreeSet::new();
-    let all_search_strs = supplement_search_strings(original_search_str);
-    for search_str in &all_search_strs {
-        search_item_internal(original_search_str, search_str, &mut all_results);
-    }
-
-    let first_result = all_results.into_iter().find(|x| filter(x.result.actor))?;
-
-    Some(ResolvedItem {
-        actor: first_result.result.actor.to_string(),
-        meta: None,
-    })
 }
 
 fn do_search_item_by_ident_all(
@@ -191,7 +165,7 @@ fn supplement_search_strings(search_str: &str) -> Vec<String> {
     all_search_strs
 }
 
-pub fn search_item_internal<'a>(
+fn search_item_internal<'a>(
     original_search_str: &'a str,
     search_str: &str,
     out_results: &mut BTreeSet<SearchResult<'a, 'static>>,

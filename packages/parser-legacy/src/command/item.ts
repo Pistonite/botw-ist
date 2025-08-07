@@ -118,6 +118,11 @@ const convertItemName = (name: string, replacePlaceholder: boolean): string => {
     if (matchName === "korok") {
         return "korok-leaf";
     }
+
+    // In V3, "endur" is endura shroom, but in V4 it's endura carrot
+    if (matchName.match(/end(u(ra?)?)?/)) {
+        return "endura-shroom";
+    }
     return name;
 };
 
