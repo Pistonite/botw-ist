@@ -41,37 +41,50 @@ The simulator app has 3 editing modes:
   The script is read-only in this mode. You can switch to `Not Saving` to enable editing.
   Note that errors will NOT show in the editor in this mode.
 
-You can switch the mode anytime in the top-left corner of the app.
+You can switch the mode anytime in the top-left corner of the header.
 
-```admonish warning
+~~~admonish warning
 When switching to `Auto Saved`, your locally-saved script will be overwritten with whatever
 script that's currently in the script editor!
 
 If you accidentally overwrite your local script and you need it, you can still recover it
 by open the devtool console (F12) and type in the following:
 
-<pre>
-<code class="language-typescript hljs">console.log(localStorage.getItem("Skybook.AutoBackupScript"))</code>
-</pre>
-
+```typescript
+console.log(localStorage.getItem("Skybook.AutoBackupScript"))
+```
 
 Press enter, and copy the output.
 
 This entry is updated whenever you switch to `Auto Saved` from the other modes. If the backup is
 lost, your script will be lost forever.
-```
+~~~
 
 ## Migration from V3
 
 URLs with a V3 script embedded (one that starts with `https://ist.itntpiston.app`)
 can be migrated automatically to V4, by simply replacing `itntpiston` with `pistonite`
-in the URL. 
+in the URL.
 
-However, note that due to the difference in simulation systems,
-you may need to adjust the script to make it work again. Notable differences are:
-- Migrated commands in V3 may not sync the overworld correctly, such as <skyb>!init</skyb>
-- `pick up` in V3 is translated to <skyb>get</skyb> in V4, since
-  <skyb>pick-up</skyb> in V4 only targets items on the Ground.
+Since the script is mechanically converted, it might not work out of the box.
+You can change the mode to `Not Saving` (see above), and see if there are any errors
+in the script. Or, you can simply check if the last step has the correct outcome.
 
-Sometimes, it might be easier to rewrite the script from the ground up, following
-the new syntax, since you might have to "workaround the workarounds" of the old simulator.
+
+Notable differences:
+- <skyb>drop</skyb> in V4 only allows dropping droppable items. For example,
+  <skyb>drop hasty-elixir</skyb> will not work.
+  - **Workaround**: Manually change to <skyb>!remove</skyb> or <skyb>eat</skyb>.
+- `pick up` is translated to <skyb>get</skyb>, since <skyb>pick-up</skyb> in V4
+  specifically targets items that are on the ground. This won't lead to errors,
+  but there will be extra items on the ground.
+  - **Workaround**: Add a <skyb>!system [clear-ground]</skyb> at the end of the script.
+- For setups with Prompt Entanglement, you need to activate PE in V4 with <skyb>entangle</skyb>
+  command.
+
+```admonish info
+While it's technically more consistent to translate the old script using supercommands
+like <skyb>!remove</skyb> that mimics the old behavior more consistently, supercommands
+are not meant to be overused, so it's not worth to change the semantic of the script
+just for the edge cases.
+```

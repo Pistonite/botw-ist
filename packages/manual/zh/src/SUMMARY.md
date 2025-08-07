@@ -9,7 +9,7 @@
   - [武器附魔 (WMC)-未翻译](./ist/wmc.md)
   - [选项纠缠 (PE)-未翻译](./ist/pe.md)
   - [物品栈下溢 (ISU)]()
-- [模拟器的使用-未翻译](./user/index.md)
+- [模拟器的使用](./user/index.md)
   - [指令语法](./user/syntax.md)
     - [物品语法](./user/syntax_item.md)
     - [注释和笔记-未翻译](./user/syntax_comment.md)

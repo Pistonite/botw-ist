@@ -1,5 +1,5 @@
 mod item_search_common;
-use item_search_common::test_item_search;
+use item_search_common::{test_item_search, test_item_search_effect};
 use skybook_parser::cir;
 use skybook_parser::search::{
     COOK_EFFECT_NAMES, ResolvedItem, search_item_by_ident, search_item_by_ident_all,
@@ -95,4 +95,28 @@ fn test_item_search_v3_effect() {
             }
         );
     }
+}
+
+/// In V3, potions with effect are counted as item names,
+/// so you can use word like "hasty" to get "hasty elixir"
+#[test]
+fn test_item_search_v3_potion_effect() {
+    test_item_search_effect("hasty", "Item_Cook_C_17", 13);
+    test_item_search_effect("electro", "Item_Cook_C_17", 6);
+    test_item_search_effect("tough", "Item_Cook_C_17", 11);
+    test_item_search_effect("chilly", "Item_Cook_C_17", 4);
+    for word in ["energi", "energiz", "energizi", "energizin", "energizing"] {
+        test_item_search_effect(word, "Item_Cook_C_17", 14);
+    }
+    for word in ["enduri", "endurin", "enduring"] {
+        test_item_search_effect(word, "Item_Cook_C_17", 15);
+    }
+    test_item_search("spicy", "Item_Fruit_I");
+    test_item_search("hearty", "Item_FishGet_B");
+    test_item_search("mighty", "Item_FishGet_E");
+    test_item_search("sneaky", "Item_FishGet_M");
+    test_item_search("endur", "Item_PlantGet_Q");
+    test_item_search("energ", "Animal_Insect_AA");
+    test_item_search("fireproof", "Animal_Insect_X");
+    test_item_search("electr", "Animal_Insect_I");
 }
