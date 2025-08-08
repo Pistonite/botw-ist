@@ -30,7 +30,7 @@
     - [主世界素材变换]() 
     - [挑战](./action/trial.md) 
     - [设置旗标-未翻译](./action/flags.md)
-    - [高级操作-未翻译](./action/low_level.md)
+    - [高级操作](./action/low_level.md)
     - [系统操作](./action/system.md)
     - [常数值参考](./generated/constants.md)
   - [自定义镜像-未翻译](./user/custom_image.md)
