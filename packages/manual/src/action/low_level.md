@@ -72,6 +72,15 @@ set the corresponding `IsGet` flag for the item, and the `IsOpenItemCategory`
 for the corresponding category.
 ```
 
+```admonish danger
+If <skyb>!init</skyb> or <skyb>!add-slot</skyb> is used while the inventory screen
+is open, the new items may not be accessible until the inventory
+screen is closed and opened again!
+
+While we could implement a force resync, doing that would change some internals
+of the pouch state that you may not want - for example, which item nodes
+correspond to the equipments in the overworld.
+```
 
 ## Forcefully Remove Items
 
@@ -136,4 +145,14 @@ Examples:
 
 # Swap the equipped royal claymore and the equipped bow (whatever the bow is)
 !swap royal-claymore[equipped] and bow[equipped]
+```
+
+```admonish danger
+If <skyb>!write</skyb> or <skyb>!swap</skyb> is used while the inventory screen
+is open, some inventory state may not reflect immediately until the inventory
+is closed and opened again! (For example, when writing <skyb>[equip=false]</skyb>.
+
+While we could implement a force resync, doing that would change some internals
+of the pouch state that you may not want - for example, which item nodes
+correspond to the equipments in the overworld.
 ```

@@ -1,139 +1,130 @@
 # 高级操作
 
-These supercommands allow directly editing memory for prototyping or testing,
-or to workaround limitations of the simulator.
+这些高级指令可以直接修改背包内存，非常适合用于测试或者绕开模拟器的限制。
 
-```admonish danger
-Because these commands edit memory directly, instead of mimicking what the game does,
-they could be very inconsistent with the behavior of the game sometimes!
+```admonish danger title="危险"
+这些指令不会模拟游戏中的操作，而是直接修改内存。所以，有些效果可能和游戏中非常不同。
 
-Make sure you read the doc carefully before using them!
+请在使用前仔细阅读文档！
 ```
 
 ## 语法
 
-Examples are available at each section below.
+例子见下方每个指令的段落。
 
-[Generate Broken Slots](#制作转存格)
+[制作转存格](#制作转存格)
 > `!break X slots` <br>
 
-[Adding item slots directly](#添加物品格)
+[添加物品格](#添加物品格)
 > `!init` [`FINITE_ITEM_LIST`](../user/syntax_item.md) <br>
 > `!add-slot` [`FINITE_ITEM_LIST`](../user/syntax_item.md) <br>
 
-[Forcefully remove item](#强制删除物品)
+[强制删除物品](#强制删除物品)
 > `!remove` [`CONSTRAINED_ITEM_LIST`](../user/syntax_item.md) <br>
 
-[Change item data](#修改物品数据)
+[修改物品数据](#修改物品数据)
 > `!write` [`[META]`](../user/syntax_item.md#属性) `to` [`ITEM`](../user/syntax_item.md)<br>
 > `!swap` [`ITEM1`](../user/syntax_item.md) `and` [`ITEM2`](../user/syntax_item.md) <br>
 
 ## 制作转存格
 
-```admonish tip
-The simulator supports breaking slots using actions you would
-do in-game. See [Break Slots](./break_slots.md).
+```admonish tip title="技巧"
+模拟器支持用游戏中的操作制作转存格，见[制作转存格](./break_slots.md)。
 ```
 
-The <skyb>!break</skyb> command edits `mCount` of `list1` and `list2` directly
-to effectively break slots "by magic".
+<skyb>!break</skyb>指令会修改背包表和空闲表的计数额外制作X个转存格。
 
-Example
 ```skybook
 !break 20 slots
 ```
 
 ## 添加物品格
-The <skyb>!init</skyb> and <skyb>!add-slot</skyb> command will directly
-push a new item from `list2` to `list1`, and set the memory according
-to the item you specified. This will bypass ALL checks for adding item to inventory.
+<skyb>!init</skyb>和<skyb>!add-slot</skyb>指令会直接从空闲表中调用新物品到背包表。所有添加物品时检查的机制都会被绕开。注意空闲计数为`0`时，依然不可以添加物品。
 
-Note that it will still prevent adding items when `list2.mCount` is `0`.
+除此之外，<skyb>!init</skyb>还会重置背包和空闲表的计数，所以转存格也会被消除。
 
-Furthermore, <skyb>!init</skyb> will reset `list1` and `list2` to the initial state
-(where `list2` has `420` items and `list1` has `0`). This means all broken slots
-will be cleared as well.
-
-Example:
-
+例子：
 ```skybook
-# setting items without sorting
+# 在不排序的情况下设置背包状态
 !init 1 slate 1 glider 5 apples
-# adding items not addable (doesn't have CanGetPouch flag)
+# 添加通常无法添加的物品（如下为神庙电梯）
 !add-slot <DgnObj_EntanceElevator_A_01>
-# when adding stackable items with [value=...], the "amount" becomes
-# how many slots to add. e.g. the command below will add 5 slots of 300x arrows
+# 如果添加可堆叠的物品带有[value=...]属性，则数量变为要添加的格子数
+# 下面指令会添加5格箭，每格有300根
 !add-slot 5 arrow[value=300]
 ```
 
-```admonish note
-The inventory state and GameData will be synced. This will also
-set the corresponding `IsGet` flag for the item, and the `IsOpenItemCategory`
-for the corresponding category.
+```admonish note title="信息"
+执行后，此指令会修复背包状态并和GDT数据同步。同时，物品对应的`IsGet`标记（标记物品是否获得过）也会设为`true`，
+物品对应的页面也会设为解锁状态。
+```
+
+```admonish danger title="特别注意"
+如果在打开背包界面时使用<skyb>!init</skyb>或<skyb>!add-slot</skyb>，背包界面和背包数据可能会不同步，导致添加的物品不能马上使用，需要关闭背包再打开。
+
+虽然模拟器可以实现强制同步，但这样会导致一些内部状态改变，比如主世界装备和背包蓝格的对应关系。
 ```
 
 
 ## 强制删除物品
 
-The <skyb>!remove</skyb> supercommand lets you forcefully delete items from the inventory:
-- For Arrows, Materials, Foods, and Key Items, the value of the slot will decrease by the amount.
-- For the rest, the amount in the command corresponds to how many slots of this item you want to remove.
+<skyb>!remove</skyb>指令可用于强制删除物品：
+- 箭，材料，食物和重要道具删除数量以格子值为准。
+- 其他以格子数为准。
 
-Inventory and GameData state are fixed and synced afterward.
+执行后，此指令会修复背包状态并和GDT数据同步。
 
-Example:
 
+例子：
 ```skybook
 !remove all cores
 ```
 
-```admonish warning
-This command can target items that are normally inaccessible in the pouch screen.
-For example, when `mCount` is `0`, or when the item slot is over the maximum available slots
-for Weapon/Bow/Arrow/Shield.
+```admonish warning title="注意"
+此指令可以指定通常情况下背包界面看不见的物品，比如当物品计数为0时，或者当装备类物品超出解锁的格子数时。
 ```
 
 
 ## 修改物品数据
 
-The <skyb>!write</skyb> supercommand lets you edit the data for an item using the
-[Item Meta Syntax](../user/syntax_item.md#metadata). Inventory is fixed afterward,
-but GameData is NOT synced (for historical reason).
+<skyb>!write</skyb>指令可以通过[物品属性语法](../user/syntax_item.md#属性)修改背包状态。执行后，背包状态会修复，但不会同步到GDT。
 
-Currently, changing the `ingredients` is not supported.
+目前不支持修改物品的配料表。
 
-Examples:
+例子：
 
 ```skybook
-# Change the value of the Master Sword to 0
-# NOTE THAT THIS DOES NOT BREAK IT 
-# to break Master Sword properly (allowing MSWMC), you have to use the `use` command
+# 把大师剑耐久设为0
+# 注意，这样不会把大师剑变成损坏状态
+# 如果要损坏大师剑（比如MSWMC），需要用`use`指令破坏大师剑
 !write [value=0] to master-sword
 
-# Change the price of wild greens with price 102 to 101
+# 把价格为101的炒菜的价格改为102
 !write [price=101] to wild-greens[price=102]
 
-# When targeting the item by position, you can also change the item name
-# Change the item in material tab 1, row 1, column 2, to royal-claymore
-# with durability 20 (no matter what the item at that position is)
+# 如果直接指定物品位置，还可以修改该位置物品名
+# 如下，修改材料页第一行第一列的物品为20耐久的王族双手剑
 !write [dura=20] to royal-claymore[category=material, row=1, col=1]
 ```
 
-```admonish warning
-This command can target items that are normally inaccessible in the pouch screen.
-For example, when `mCount` is `0`, or when the item slot is over the maximum available slots
-for Weapon/Bow/Arrow/Shield.
+```admonish warning title="注意"
+此指令可以指定通常情况下背包界面看不见的物品，比如当物品计数为0时，或者当装备类物品超出解锁的格子数时。
 ```
 
-The <skyb>!swap</skyb> supercommands targets 2 items, and swap their nodes in the list.
-Inventory is fixed afterward, but GameData is NOT synced (for historical reason).
+<skyb>!swap</skyb>指令选定2个格子，并交换它们节点在链表中的位置。执行后背包状态会修复，但是不会同步到GDT。
 
-Examples:
+例子：
 
 ```skybook
-# Swap the first apple stack and the first banana stack
+# 交互苹果和香蕉的位置
 !swap apple and banana
 
-# Swap the equipped royal claymore and the equipped bow (whatever the bow is)
+# 交互装备中的王族双手剑和装备中的弓的位置
 !swap royal-claymore[equipped] and bow[equipped]
+```
+
+```admonish danger title="特别注意"
+如果在打开背包界面时使用<skyb>!write</skyb>或<skyb>!swap</skyb>，背包界面和背包数据可能会不同步，导致需要关闭背包再打开才能看到效果。
+
+虽然模拟器可以实现强制同步，但这样会导致一些内部状态改变，比如主世界装备和背包蓝格的对应关系。
 ```
