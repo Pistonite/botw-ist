@@ -21,10 +21,8 @@ tasks:
       - task: cargo:fmt-check
 
   check-layer:
-    env:
-      RUSTFLAGS: "-Dunused-imports"
     cmds:
-      - layered-crate -- check --lib --color=always --all-features
+      - layered-crate -- check --lib --all-features
 
   fix:
     cmds:
