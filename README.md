@@ -1,4 +1,6 @@
-# <img src="https://github.com/Pistonite/botw-ist/blob/main/packages/manual/src/icon.png?raw=true" width="32px" /> Skybook
+<img src="https://github.com/Pistonite/botw-ist/blob/main/packages/manual/src/icon.png?raw=true" width="256px" align="right" />
+
+# Skybook
 
 ![Build Badge](https://img.shields.io/github/actions/workflow/status/Pistonite/botw-ist/build.yml)
 ![License Badge](https://img.shields.io/github/license/Pistonite/botw-ist)
@@ -8,9 +10,6 @@ Simulator for Inventory Slot Transfer in BOTW
 
 You can use it as a [web app](https://ist.pistonite.app),
 please refer to the [manual](https://skybook.pistonite.dev).
-
-The legacy app is still available at https://ist.itntpiston.app ,
-but it will start to be deprecated once V4 achieves feature parity.
 
 ## License
 All code in this repo are under MIT License. BlueFlame has additional contributors. See [LICENSE](./packages/blueflame/LICENSE).
