@@ -380,7 +380,6 @@ impl ScreenItems {
     /// Returns the tab index and slot index. Returns None if the spec is out of bounds.
     /// However, does not check if the slot actually has item or not
     fn select_by_category_and_slot(&self, spec: &cir::CategorySpec) -> Option<(usize, usize)> {
-        log::debug!("selecting {spec:?}");
         let row = (spec.row as usize).saturating_sub(1);
         let col = (spec.col as usize).saturating_sub(1);
         let slot = row * 5 + col;

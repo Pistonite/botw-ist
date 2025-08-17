@@ -29,7 +29,6 @@ log.workspace = true
 static_assertions.workspace = true
 flate2 = { version = "1.1.2", default-features = false, features = ["rust_backend"] } # explicitly request pure-rust backend
 phf = { version = "0.12.1", features = ["macros"] }
-no-panic = "0.1.35"
 enum-map = "2.7.3"
 num-traits = "0.2.19"
 bit-set = "0.8.0"

@@ -273,7 +273,7 @@ impl State {
             X::Save(name) => self.handle_save(ctx, name.as_deref()).await,
             X::Reload(name) => self.handle_reload(ctx, name.as_deref(), false).await,
             X::CloseGame => {
-                log::debug!("handling CLOSE-GAME");
+                cu::debug!("handling CLOSE-GAME");
                 self.game = Game::Closed;
                 Ok(Report::new(self))
             }
@@ -301,7 +301,7 @@ impl State {
         items: &[cir::ItemSpec],
         args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling GET");
+        cu::debug!("handling GET");
         let items = items.to_vec();
         let (pause, accurate) = args
             .map(|args| (args.pause_during, args.accurately_simulate))
@@ -317,7 +317,7 @@ impl State {
         items: &[cir::ItemSelectSpec],
         args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling PICKUP");
+        cu::debug!("handling PICKUP");
         let items = items.to_vec();
         let pause = args.map(|args| args.pause_during).unwrap_or_default();
         execute_command!(self, rt, cpu, sys, errors => {
@@ -330,7 +330,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSpec],
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling SPAWN");
+        cu::debug!("handling SPAWN");
         let items = items.to_vec();
         execute_command!(self, rt, cpu, sys, _errors => {
             sim::actions::spawn_items(&mut cpu, sys, &items)
@@ -341,7 +341,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling PAUSE");
+        cu::debug!("handling PAUSE");
         execute_command!(self, rt, cpu, sys, errors => {
             sys.screen.transition_to_inventory(&mut cpu, &mut sys.overworld, true, errors)?;
             Ok(())
@@ -352,7 +352,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling UNPAUSE");
+        cu::debug!("handling UNPAUSE");
         execute_command!(self, rt, cpu, sys, errors => {
             if !sys.screen.current_screen().is_inventory() {
                 errors.push(sim_error!(cpu.span, NotRightScreen));
@@ -374,7 +374,7 @@ impl State {
         items: &[cir::ItemSelectSpec],
         args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling HOLD");
+        cu::debug!("handling HOLD");
         let (smug, pe_target) = args
             .map(|x| (x.smug, x.entangle_target.as_ref().cloned()))
             .unwrap_or_default();
@@ -388,7 +388,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling UNHOLD");
+        cu::debug!("handling UNHOLD");
         execute_command!(self, rt, cpu, sys, errors => {
             if sys.screen.current_screen().is_overworld() {
                 sys.overworld.despawn_items();
@@ -404,7 +404,7 @@ impl State {
         args: Option<&StateArgs>,
         pick_up: bool,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling DROP");
+        cu::debug!("handling DROP");
         let (smug, pe_target, overworld, pause_during) = args
             .map(|x| {
                 (
@@ -428,7 +428,7 @@ impl State {
         items: &[cir::ItemSelectSpec],
         args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling EAT");
+        cu::debug!("handling EAT");
         let pe_target = args
             .map(|x| x.entangle_target.as_ref().cloned())
             .unwrap_or_default();
@@ -443,7 +443,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         item: &cir::ItemSelectSpec,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling ENTANGLE");
+        cu::debug!("handling ENTANGLE");
         let item = item.clone();
         execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::entangle_item(&mut cpu, sys, errors, &item)
@@ -457,7 +457,7 @@ impl State {
         times: usize,
         args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling SORT");
+        cu::debug!("handling SORT");
         let (accurate, same_dialog) = args
             .map(|x| (x.accurately_simulate, x.same_dialog))
             .unwrap_or_default();
@@ -471,7 +471,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         overload: bool,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling OVERLOAD");
+        cu::debug!("handling OVERLOAD");
         execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::set_menu_overload(&mut cpu, sys, errors, overload)
         })
@@ -484,7 +484,7 @@ impl State {
         args: Option<&StateArgs>,
         is_equip: bool,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling CHGEQUIP");
+        cu::debug!("handling CHGEQUIP");
         let (pe_target, is_dpad) = args
             .map(|x| (x.entangle_target.as_ref().cloned(), x.dpad))
             .unwrap_or_default();
@@ -502,7 +502,7 @@ impl State {
         times: usize,
         args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling USE");
+        cu::debug!("handling USE");
         let per_use = args.and_then(|x| x.per_use);
         let item = item.clone();
         execute_command!(self, rt, cpu, sys, errors => {
@@ -514,7 +514,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling OPEN-SHOP");
+        cu::debug!("handling OPEN-SHOP");
         execute_command!(self, rt, cpu, sys, errors => {
             sys.screen.transition_to_shop_buying(&mut cpu, &mut sys.overworld, true, errors)?;
             Ok(())
@@ -525,7 +525,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling CLOSE-SHOP");
+        cu::debug!("handling CLOSE-SHOP");
         execute_command!(self, rt, cpu, sys, errors => {
             if !sys.screen.current_screen().is_shop() {
                 errors.push(sim_error!(cpu.span, NotRightScreen));
@@ -547,7 +547,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec],
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling SELL");
+        cu::debug!("handling SELL");
         let items = items.to_vec();
         execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::sell_items(&mut cpu, sys, errors, &items)
@@ -560,7 +560,7 @@ impl State {
         items: &[cir::ItemSpec],
         args: Option<&StateArgs>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling BUY");
+        cu::debug!("handling BUY");
         let items = items.to_vec();
         let (pause, accurate, same_dialog) = args
             .map(|args| {
@@ -581,7 +581,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         name: Option<&str>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("Handling SAVE command");
+        cu::debug!("Handling SAVE command");
 
         let (send, recv) = oneshot::channel();
         // allow overworld for auto saves
@@ -594,7 +594,7 @@ impl State {
             .recv()
             // probably because game crashed
             .inspect_err(|e| {
-                log::warn!("did not receive save data: {e}");
+                cu::warn!("did not receive save data: {e}");
             })
             .ok()
             .flatten();
@@ -604,7 +604,7 @@ impl State {
                 // if data is not sent, that means save cannot be executed,
                 // which is fine, and the error should be contained
                 // in the report
-                None => log::warn!("did not get save data from executor thread"),
+                None => cu::warn!("did not get save data from executor thread"),
             }
             state
         }))
@@ -616,14 +616,14 @@ impl State {
         name: Option<&str>,
         new_game: bool,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling RELOAD command");
+        cu::debug!("handling RELOAD command");
         // find the save
         let save = if new_game {
             // use the GDT from "new game"
             let gdt = match sim::actions::get_save(&self.initial_process) {
                 Ok(x) => x,
                 Err(e) => {
-                    log::error!("failed to load new-game save: {e}");
+                    cu::error!("failed to load new-game save: {e}");
                     return Ok(Report::error(self, sim_error!(rt.span, Executor)));
                 }
             };
@@ -654,7 +654,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         count: i32,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !BREAK");
+        cu::debug!("handling !BREAK");
         execute_command!(self, rt, cpu, _sys, _errors => {
             sim::actions::low_level::break_slot(&mut cpu, count)
         })
@@ -666,7 +666,7 @@ impl State {
         items: &[cir::ItemSpec],
         init: bool,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !ADDSLOT");
+        cu::debug!("handling !ADDSLOT");
         let items = items.to_vec();
         execute_command!(self, rt, cpu, _sys, errors => {
             sim::actions::low_level::add_slots(&mut cpu, errors, &items, init)
@@ -678,7 +678,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         items: &[cir::ItemSelectSpec],
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !REMOVE");
+        cu::debug!("handling !REMOVE");
         let items = items.to_vec();
         execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::force_remove_item(&mut cpu, sys, errors, &items)
@@ -691,7 +691,7 @@ impl State {
         item1: &cir::ItemSelectSpec,
         item2: &cir::ItemSelectSpec,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !SWAP");
+        cu::debug!("handling !SWAP");
         let item1 = item1.clone();
         let item2 = item2.clone();
         execute_command!(self, rt, cpu, _sys, errors => {
@@ -705,7 +705,7 @@ impl State {
         write_meta: &cir::ItemMeta,
         item: &cir::ItemSelectSpec,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !WRITE");
+        cu::debug!("handling !WRITE");
         let write_meta = write_meta.clone();
         let item = item.clone();
         execute_command!(self, rt, cpu, _sys, errors => {
@@ -719,7 +719,7 @@ impl State {
         name: &str,
         meta: &cir::GdtMeta,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !SETGDT");
+        cu::debug!("handling !SETGDT");
         let name = name.to_string();
         let meta = meta.clone();
         execute_command!(self, rt, cpu, _sys, errors => {
@@ -731,7 +731,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !SMUGARROWLESS");
+        cu::debug!("handling !SMUGARROWLESS");
         execute_command!(self, rt, cpu, sys, errors => {
             sim::actions::trigger_arrowless_smuggle(&mut cpu, sys, errors)
         })
@@ -741,7 +741,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !TRIALSTART");
+        cu::debug!("handling !TRIALSTART");
         execute_command!(self, rt, cpu, sys, _errors => {
             sim::actions::trial_start(&mut cpu, sys)
         })
@@ -751,7 +751,7 @@ impl State {
         self,
         rt: sim::Context<&sim::Runtime>,
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !TRIALSTART");
+        cu::debug!("handling !TRIALSTART");
         execute_command!(self, rt, cpu, sys, _errors => {
             sim::actions::trial_end(&mut cpu, sys)
         })
@@ -762,7 +762,7 @@ impl State {
         rt: sim::Context<&sim::Runtime>,
         sys_commands: &[cir::SysCommand],
     ) -> Result<Report<Self>, exec::Error> {
-        log::debug!("handling !SYSTEM");
+        cu::debug!("handling !SYSTEM");
         let (send, recv) = oneshot::channel();
         let cmds = sys_commands.to_vec();
         let mut saves = BTreeMap::new();
@@ -777,14 +777,14 @@ impl State {
             sim::actions::system::exec_sys_commands(&mut cpu, sys,
                 errors, &cmds, &mut saves, &mut manual_save, &mut dlc_version)?;
             if send.send((saves, manual_save, dlc_version)).is_err() {
-                log::error!("failed to send system command output to runtime main thread");
+                cu::error!("failed to send system command output to runtime main thread");
             }
             Ok(())
         })?;
         let data = recv
             .recv()
             // probably because game crashed, not a big problem
-            .inspect_err(|e| log::warn!("did not receive system command data: {e}"))
+            .inspect_err(|e| cu::warn!("did not receive system command data: {e}"))
             .ok();
 
         Ok(new_state.map(|mut state| {
@@ -805,7 +805,7 @@ impl State {
                     if let Ok(aocm) = singleton_instance!(aocm(m)) {
                         let m = state.initial_process.memory_mut();
                         if let Err(e) = aocm.set_dlc_version(ver, m) {
-                            log::error!("failed to set DLC version in initial process: {e}");
+                            cu::error!("failed to set DLC version in initial process: {e}");
                         }
                     }
                 }

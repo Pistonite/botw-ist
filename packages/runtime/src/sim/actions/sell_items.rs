@@ -19,7 +19,7 @@ pub fn sell_items(
         .screen
         .transition_to_shop_selling(ctx, &mut sys.overworld, false, errors)?
     {
-        log::warn!("failed to auto-switch to shop for SELL");
+        cu::warn!("failed to auto-switch to shop for SELL");
         return Ok(());
     }
 

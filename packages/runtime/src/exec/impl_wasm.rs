@@ -11,7 +11,7 @@ impl Spawner {
     ///
     /// This only exists to make the implementation the same on all platforms
     pub fn new() -> Result<Self, Error> {
-        log::error!("Cannot call Spawner::new on WASM platform");
+        cu::error!("Cannot call Spawner::new on WASM platform");
         Err(Error::CreateSpawner)
     }
     /// Create new spawner using WASM shared-memory-based WebWorker threads
@@ -19,10 +19,10 @@ impl Spawner {
         wasm_module_path: &str,
         wasm_bindgen_js_path: &str,
     ) -> Result<Self, Error> {
-        log::info!("creating spawner");
+        cu::info!("creating spawner");
         let creator = match ThreadCreator::unready(wasm_module_path, wasm_bindgen_js_path) {
             Err(e) => {
-                log::error!("failed to create spawner!");
+                cu::error!("failed to create spawner!");
                 // we have to use web_sys to log JsValue errors
                 web_sys::console::error_1(&e);
                 // then we return an opaque error
@@ -30,10 +30,10 @@ impl Spawner {
             }
             Ok(x) => x,
         };
-        log::info!("waiting for spawner to be ready");
+        cu::info!("waiting for spawner to be ready");
         let creator = match creator.ready().await {
             Err(e) => {
-                log::error!("failed to wait for spawner to be ready!");
+                cu::error!("failed to wait for spawner to be ready!");
                 web_sys::console::error_1(&e);
                 return Err(Error::CreateSpawner);
             }
@@ -55,7 +55,7 @@ impl Spawn for Spawner {
                 thread.main_loop();
             })
             .map_err(|e| {
-                log::error!("failed to create thread: {e}");
+                cu::error!("failed to create thread: {e}");
                 Error::CreateThread(e.to_string())
             })?;
         Ok((join_handle, handle))

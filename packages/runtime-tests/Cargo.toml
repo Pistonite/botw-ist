@@ -12,19 +12,12 @@ path = "../runtime"
 [dependencies.skybook-parser]
 path = "../parser"
 
-[dependencies.cu]
-version = "0.2.1" 
-git = "https://github.com/Pistonight/cu"
-# path = "../../../cu/packages/copper"
-features = ["cli", "coroutine", "fs"]
-
 [dependencies]
-clap.workspace = true
+cu = { workspace = true, features = ["cli", "fs", "coroutine-heavy"] }
 num_cpus = "1.17.0"
 oneshot.workspace = true
 sha2.workspace = true
 threadpool = "1.8.1"
-tokio.workspace = true
 
 [features]
 default = [

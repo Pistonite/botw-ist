@@ -17,7 +17,7 @@ macro_rules! switch_to_overworld_or_stop {
             .screen
             .transition_to_overworld($ctx, &mut $sys.overworld, false, $errors)?
         {
-            log::warn!(
+            cu::warn!(
                 "failed to auto-switch to overworld for {} command",
                 $command
             );
@@ -37,7 +37,7 @@ macro_rules! switch_to_inventory_or_stop {
             .screen
             .transition_to_inventory($ctx, &mut $sys.overworld, false, $errors)?
         {
-            log::warn!(
+            cu::warn!(
                 "failed to auto-switch to inventory for {} command",
                 $command
             );
@@ -51,7 +51,7 @@ pub(crate) use switch_to_inventory_or_stop;
 macro_rules! check_not_holding_in_inventory {
     ($ctx:ident, $sys:ident, $errors:ident, $command:literal) => {
         if $sys.screen.holding_in_inventory {
-            log::warn!(
+            cu::warn!(
                 "cannot perform {} command while holding in inventory",
                 $command
             );
@@ -69,7 +69,7 @@ macro_rules! predrop_items {
     ($ctx:ident, $sys:ident, $errors:ident, $command:literal) => {
         match $sys.overworld.predrop_for_action($ctx.span, $errors) {
             $crate::sim::OverworldPreDropResult::Holding => {
-                log::warn!("cannot execute {} command while holding items", $command);
+                cu::warn!("cannot execute {} command while holding items", $command);
                 return Ok(());
             }
             $crate::sim::OverworldPreDropResult::AutoDrop => true,
@@ -126,16 +126,16 @@ pub fn handle_predrop_result(
     command: &'static str,
 ) -> Result<(), processor::Error> {
     if open_inventory {
-        log::debug!("auto-opening inventory after {command} command");
+        cu::trace!("auto-opening inventory after {command} command");
         // open pause menu and delay drop
         sys.screen
             .transition_to_inventory(ctx, &mut sys.overworld, false, errors)?;
         if should_drop {
-            log::debug!("setting remove_held_after_dialog after {command} command");
+            cu::trace!("setting remove_held_after_dialog after {command} command");
             sys.screen.set_remove_held_after_dialog();
         }
     } else if should_drop {
-        log::debug!("removing held items on auto-drop cleanup after {command} command");
+        cu::trace!("removing held items on auto-drop cleanup after {command} command");
         drop_held_items(ctx, sys, command)?;
     }
 
@@ -147,7 +147,7 @@ pub fn drop_held_items(
     sys: &mut sim::GameSystems,
     command: &str,
 ) -> Result<(), processor::Error> {
-    log::debug!("dropping held items for {command} command");
+    cu::trace!("dropping held items for {command} command");
     linker::remove_held_items(ctx.cpu())?;
     sys.overworld.drop_held_items();
     sys.screen.holding_in_inventory = false;
@@ -243,7 +243,7 @@ impl OperationAmount {
     ) -> bool {
         self.is_done_check_count += 1;
         if self.is_done_check_count > max {
-            log::error!("iteration limit reached: {operation}, max is {max}");
+            cu::error!("iteration limit reached: {operation}, max is {max}");
             errors.push(sim_error!(span, TooManyIterations));
             return true;
         }
@@ -280,7 +280,7 @@ impl OperationAmount {
             Some(remaining) => match self.all_but {
                 Some(but) => {
                     if remaining != 0 || but != count_fn(errors)? {
-                        log::warn!("inaccurate all-but detected");
+                        cu::warn!("inaccurate all-but detected");
                         errors.push(sim_warning!(span, InaccurateAllBut));
                     }
                     Ok(ItemSelectCheck::Done)
@@ -432,7 +432,7 @@ pub fn get_item_with_auto_equip(
     };
 
     if sys.overworld.try_auto_equip(actor) {
-        log::debug!("auto-equipping last added item");
+        cu::debug!("auto-equipping last added item");
         linker::equip_last_added_item(cpu)?;
     }
 

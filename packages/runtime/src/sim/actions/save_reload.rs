@@ -16,7 +16,7 @@ macro_rules! reload_gdt_or_stop {
         let gdt_ptr = blueflame::game::gdt::trigger_param_ptr(proc.memory())?;
         blueflame::memory::proxy! { let mut gdt = *gdt_ptr as trigger_param in proc };
         if !gdt.load_save($gdt) {
-            log::error!("unexpected load_save fail");
+            cu::error!("unexpected load_save fail");
             $errors.push($crate::error::sim_error!(span, ReloadFail));
             return Ok(());
         }
@@ -40,14 +40,14 @@ pub fn save(
         if !sys.screen.current_screen().is_inventory_or_overworld() {
             super::switch_to_overworld_or_stop!(ctx, sys, errors, "SAVE", {
                 if send.send(None).is_err() {
-                    log::error!("failed to send save data to runtime main thread");
+                    cu::error!("failed to send save data to runtime main thread");
                 }
             });
         }
     } else {
         super::switch_to_inventory_or_stop!(ctx, sys, errors, "SAVE", {
             if send.send(None).is_err() {
-                log::error!("failed to send save data to runtime main thread");
+                cu::error!("failed to send save data to runtime main thread");
             }
         });
     }
@@ -58,7 +58,7 @@ pub fn save(
     }
     let gdt = get_save(ctx.cpu().proc)?;
     if send.send(Some(Arc::new(gdt))).is_err() {
-        log::error!("failed to send save data to runtime main thread");
+        cu::error!("failed to send save data to runtime main thread");
     }
     Ok(())
 }
@@ -156,7 +156,6 @@ pub fn trial_start(
         CreateEquipState::update,
         linker::init_for_quest,
     )?;
-    log::debug!("init_for_quest finished");
 
     // Equipments update their value
     sys.overworld

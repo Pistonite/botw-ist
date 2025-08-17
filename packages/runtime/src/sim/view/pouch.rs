@@ -25,7 +25,7 @@ struct ItemPtrData {
 ///
 /// However, tab overflow is allowed and will be indicated in the returned inventory
 pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::PouchList, Error> {
-    log::debug!("extracting pouch view from process");
+    cu::debug!("extracting pouch view from process");
 
     // get any inventory temporary state
     let (visually_equipped_items, accessible_items, entangled_items, entangled_tab, entangled_slot) = {
@@ -74,7 +74,6 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
     );
 
     let dpad_menu_items = extract_dpad_accessible_items(pmdm, count, memory)?;
-    log::debug!("{} dpad menu items", dpad_menu_items.len());
 
     let mut item_ptr_data = vec![];
     let mut list_index = 0;
@@ -208,7 +207,7 @@ pub fn extract_pouch_view(proc: &Process, sys: &sim::GameSystems) -> Result<iv::
         "failed to read is_trial_mode: {e}"
     );
 
-    log::debug!("pouch view extracted successfully");
+    cu::debug!("pouch view extracted successfully");
     Ok(iv::PouchList {
         count,
         items,
@@ -246,7 +245,7 @@ fn extract_pouch_tabs(
 ) -> Option<i32> {
     let num_tabs = match Ptr!(&pmdm->mNumTabs).load(memory) {
         Err(e) => {
-            log::error!("failed to read num_tabs: {e}");
+            cu::error!("failed to read num_tabs: {e}");
             return None;
         }
         Ok(x) => x,
@@ -257,14 +256,14 @@ fn extract_pouch_tabs(
     }
     let tabs = match Ptr!(&pmdm->mTabs).load(memory) {
         Err(e) => {
-            log::error!("failed to read tabs: {e}");
+            cu::error!("failed to read tabs: {e}");
             return None;
         }
         Ok(x) => x,
     };
     let tab_types = match Ptr!(&pmdm->mTabsType).load(memory) {
         Err(e) => {
-            log::error!("failed to read tab types: {e}");
+            cu::error!("failed to read tab types: {e}");
             return None;
         }
         Ok(x) => x,
@@ -280,7 +279,7 @@ fn extract_pouch_tabs(
         } else {
             match item_ptr_data.iter().position(|x| x.item == tab_item) {
                 None => {
-                    log::error!("the tab data has an item that isn't in list1");
+                    cu::error!("the tab data has an item that isn't in list1");
                     return None;
                 }
                 Some(x) => x as i32,
@@ -488,7 +487,6 @@ fn extract_dpad_accessible_items(
     count: i32,
     memory: &Memory,
 ) -> Result<Vec<u64>, Error> {
-    log::debug!("extracting dpad menus");
     let mut out = vec![];
     for t in [
         PouchItemType::Sword,

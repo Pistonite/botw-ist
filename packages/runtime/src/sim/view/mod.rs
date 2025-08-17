@@ -25,7 +25,7 @@ macro_rules! try_mem {
         match $op {
             Ok(x) => x,
             Err($error) => {
-                log::error!($format);
+                cu::error!($format);
                 return Err(Error::Memory($error));
             }
         }
@@ -36,7 +36,7 @@ pub(crate) use try_mem;
 macro_rules! coherence_error {
     ($($args:tt)*) => {{
         let msg = format!($($args)*);
-        log::error!("{msg}");
+        cu::error!("{msg}");
         return Err(Error::Coherence(msg));
     }}
 }

@@ -31,10 +31,7 @@ fn main(args: Args) -> cu::Result<()> {
     util::setup_panic_capture();
 
     let failures_dir = Path::new("failures");
-    if failures_dir.exists() {
-        std::fs::remove_dir_all(failures_dir).context("failed to clean failures dir")?;
-    }
-    std::fs::create_dir_all(failures_dir).context("failed to create failures dir")?;
+    cu::fs::make_dir_empty(failures_dir)?;
 
     let image_file = if args.mini {
         "./data/program-mini.bfi"

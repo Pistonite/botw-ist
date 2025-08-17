@@ -145,7 +145,7 @@ fn add_slots_internal(
         let isget_flag_name = format!("IsGet_{}", item.name);
         match gdt.by_name_mut::<gdt::fd!(bool)>(&isget_flag_name) {
             Some(flag) => flag.set(true),
-            None => log::warn!("add-slot could not find flag: {isget_flag_name}"),
+            None => cu::warn!("add-slot could not find flag: {isget_flag_name}"),
         }
 
         if let Some(category) = PouchItemType::from_value(item_type).map(PouchItemType::to_category)
@@ -155,10 +155,10 @@ fn add_slots_internal(
                 Some(flag) => {
                     let _ = flag.set_at(category as i32, true);
                 }
-                None => log::warn!("add-slot could not find IsOpenItemCategory flag"),
+                None => cu::warn!("add-slot could not find IsOpenItemCategory flag"),
             }
         } else {
-            log::warn!("add-slot could not find category for item_type: {item_type}")
+            cu::warn!("add-slot could not find category for item_type: {item_type}")
         }
     }
 

@@ -1,4 +1,3 @@
-use crate::env::no_panic;
 use crate::processor::{Cpu0, Error, Process};
 
 pub trait Execute: Send + Sync + std::panic::UnwindSafe + 'static {
@@ -158,7 +157,6 @@ impl ExecuteCache {
     ///
     /// If not found, return Err with the index that a new hook with start
     /// can be inserted.
-    #[no_panic]
     fn find(&self, start: u64, size: u32) -> Result<usize, usize> {
         if size == 0 {
             return self.entries.binary_search_by_key(&start, |hook| hook.start);

@@ -14,8 +14,6 @@ pub enum ShopScreen {
 
 impl ShopScreen {
     pub fn open_sell(cpu2: &mut Cpu2<'_, '_>) -> Result<Self, processor::Error> {
-        log::debug!("opening new shop selling screen");
-
         // TODO: this might not be accurate since no RE is done for shop screen
         // the current implementation is iterating through the tabs,
         // and get the armor/material/food tabs.
@@ -86,7 +84,6 @@ impl ShopScreen {
     /// Transition to buying screen
     pub fn transition_to_buy(&mut self, cpu: &mut Cpu2<'_, '_>) -> Result<(), processor::Error> {
         if let Self::Sell(_) = self {
-            log::debug!("removing translucent items on stop selling");
             linker::delete_removed_items(cpu)?;
             *self = Self::Buy;
         }

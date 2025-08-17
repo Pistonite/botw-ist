@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use cu::pre::*;
 
 mod highlight;
 mod style;
@@ -7,6 +8,9 @@ mod style;
 struct Cli {
     #[clap(subcommand)]
     subcommand: Option<Sub>,
+
+    #[clap(flatten)]
+    common: cu::cli::Flags,
 }
 #[derive(Subcommand)]
 enum Sub {
@@ -14,24 +18,20 @@ enum Sub {
     Style,
 }
 
-fn main() -> anyhow::Result<()> {
-    let args = Cli::parse();
+#[cu::cli(flags = "common")]
+fn main(args: Cli) -> cu::Result<()> {
+    cu::lv::disable_print_time();
     match args.subcommand {
         Some(Sub::Supports { renderer }) => {
-            if renderer == "html" {
-                return Ok(());
-            } else {
-                std::process::exit(1);
-            }
+            cu::ensure!(renderer == "html", "unsupported renderer");
         }
         Some(Sub::Style) => {
             println!("{}", style::create_style_sheet());
-            return Ok(());
         }
-        None => {}
+        None => {
+            highlight::run_highlight()?;
+        }
     }
-
-    highlight::run_highlight()?;
 
     Ok(())
 }

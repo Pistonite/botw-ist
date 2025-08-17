@@ -44,11 +44,9 @@ impl PouchScreen {
     /// If `force_accessible` is true, the inventory will be accessible even
     /// when mCount is 0
     pub fn open(cpu2: &mut Cpu2<'_, '_>, force_accessible: bool) -> Result<Self, processor::Error> {
-        log::debug!("opening new inventory screen");
         // this is needed for "drop" to know if the dropped weapon
         // should be dropped from player, or created by CreatePlayerTrashActorMgr.
         linker::update_equipped_item_array(cpu2)?;
-        log::debug!("equipment array updated");
 
         Ok(Self::open_no_exec(cpu2.proc, force_accessible)?)
     }
@@ -186,7 +184,6 @@ fn do_open(proc: &Process, force_accessible: bool) -> Result<sim::ScreenItems, m
     };
 
     // FIXME: need to figure out how to display tabs when tabs are overflown
-    log::debug!("num_tabs is {num_tabs} before clamp");
     let num_tabs = num_tabs.clamp(0, 50) as usize;
     let mut tabs = Vec::with_capacity(num_tabs);
 

@@ -36,7 +36,7 @@ impl<S: Spawn> ExecutorImpl<S> {
         let mut handles = self.handles.lock().map_err(|_| Error::Lock)?;
         let mut spawner = self.spawner.lock().map_err(|_| Error::Lock)?;
         if handles.len() >= size {
-            log::debug!(
+            cu::debug!(
                 "already have {} threads, not creating new threads",
                 handles.len()
             );
@@ -44,14 +44,14 @@ impl<S: Spawn> ExecutorImpl<S> {
         }
         let to_create = size - handles.len();
         handles.reserve(to_create);
-        log::info!("creating {size} threads");
+        cu::info!("creating {size} threads");
         for i in 0..to_create {
-            log::debug!("spawning processor thread {i}");
+            cu::debug!("spawning processor thread {i}");
             let handle = spawner.spawn(i)?;
             handles.push(handle);
         }
         self.handles_len.store(handles.len(), Ordering::Release);
-        log::info!("threads created successfully");
+        cu::info!("threads created successfully");
         Ok(())
     }
 
@@ -88,11 +88,11 @@ impl<S: Spawn> ExecutorImpl<S> {
                     let Some((_, sender)) = handles.get(i) else {
                         continue;
                     };
-                    log::debug!("executing job on processor thread {i}");
+                    cu::debug!("executing job on processor thread {i}");
                     let _ = sender.send(Box::new(move |p| {
                         let t = f(p);
                         if send.send(t).is_err() {
-                            log::error!("processor thread {i} failed to send result back");
+                            cu::error!("processor thread {i} failed to send result back");
                         }
                     }));
                 };
@@ -100,19 +100,19 @@ impl<S: Spawn> ExecutorImpl<S> {
             }
         };
 
-        log::debug!("waiting for processor thread {i}");
+        cu::debug!("waiting for processor thread {i}");
         let exec_result = { recv.await.map_err(|e| Error::RecvResult(e.to_string())) };
         let exec_error = match exec_result {
             Ok(t) => {
-                log::debug!("received from processor thread {i}");
+                cu::debug!("received from processor thread {i}");
                 return Ok(t);
             }
             Err(e) => e,
         };
 
         // if error happens, try to kill the thread and make a new one
-        log::error!("failed to send job to processor thread {i}: {exec_error}",);
-        log::info!("trying to spawn new processor thread");
+        cu::error!("failed to send job to processor thread {i}: {exec_error}",);
+        cu::info!("trying to spawn new processor thread");
         let (join, send) = {
             let mut handles = self.handles.lock().map_err(|_| Error::Lock)?;
             let mut spawner = self.spawner.lock().map_err(|_| Error::Lock)?;
@@ -121,21 +121,21 @@ impl<S: Spawn> ExecutorImpl<S> {
             let mut thread_holder = match spawner.spawn(i) {
                 Ok(x) => x,
                 Err(e) => {
-                    log::error!("failed to spawn processor thread: {e}");
+                    cu::error!("failed to spawn processor thread: {e}");
                     // leave the bad processor thread in place, and try next time..
                     return Err(e);
                 }
             };
-            log::info!("spawned new processor thread {i}");
+            cu::info!("spawned new processor thread {i}");
             // let mut thread_holder = (thread_holder.0, Some(thread_holder.1));
             // remove the old thread
             std::mem::swap(&mut handles[i], &mut thread_holder);
             thread_holder
         };
-        log::info!("stopping old processor thread {i}");
+        cu::info!("stopping old processor thread {i}");
         drop(send);
         if let Err(e) = join.join() {
-            log::error!("failed to join old processor thread {i}: {e}");
+            cu::error!("failed to join old processor thread {i}: {e}");
         }
 
         Err(exec_error)

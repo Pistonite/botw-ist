@@ -9,11 +9,9 @@ publish = false
 path = "../parser"
 
 [dependencies]
-anyhow.workspace = true
+cu = { workspace = true, features = ["cli", "json"] }
 catppuccin = "2.5.1"
-clap.workspace=true
 mdbook = "0.4.52"
-serde_json = "1.0.142"
 
 [[bin]]
 path = "preprocess/preprocess_main.rs"

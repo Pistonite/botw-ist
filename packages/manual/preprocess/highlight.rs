@@ -1,8 +1,9 @@
+use cu::pre::*;
 use mdbook::{preprocess::CmdPreprocessor, BookItem};
 
 /// Read a mdbook CmdPreprocessor input from stdin
 /// and write the output to stdout
-pub fn run_highlight() -> anyhow::Result<()> {
+pub fn run_highlight() -> cu::Result<()> {
     eprintln!("Running skybook highlighter");
     let (_ctx, mut book) = CmdPreprocessor::parse_input(std::io::stdin())?;
 
@@ -21,12 +22,12 @@ pub fn run_highlight() -> anyhow::Result<()> {
         std::process::exit(1);
     }
 
-    serde_json::to_writer(std::io::stdout(), &book)?;
+    json::write(std::io::stdout(), &book)?;
 
     Ok(())
 }
 
-fn process_book_item(item: &mut BookItem) -> anyhow::Result<()> {
+fn process_book_item(item: &mut BookItem) -> cu::Result<()> {
     if let BookItem::Chapter(chapter) = item {
         process_chapter_content(&mut chapter.content)?;
     }
@@ -34,14 +35,12 @@ fn process_book_item(item: &mut BookItem) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn process_chapter_content(content: &mut String) -> anyhow::Result<()> {
-    handle_skybook_script_highlighting(content)?;
-
-    Ok(())
+fn process_chapter_content(content: &mut String) -> cu::Result<()> {
+    handle_skybook_script_highlighting(content)
 }
 
 /// Handle code blocks with the `skybook` language, using the skybook parser
-fn handle_skybook_script_highlighting(content: &mut String) -> anyhow::Result<()> {
+fn handle_skybook_script_highlighting(content: &mut String) -> cu::Result<()> {
     let old_content = std::mem::take(content);
     let mut is_in_skybook_block_indent = None;
     let mut skybook_block_content = String::new();
@@ -97,7 +96,7 @@ fn handle_skybook_script_highlighting(content: &mut String) -> anyhow::Result<()
     Ok(())
 }
 
-fn parse_skybook_script(script: &str, pre: bool) -> anyhow::Result<String> {
+fn parse_skybook_script(script: &str, pre: bool) -> cu::Result<String> {
     let mut output = if pre {
         String::from("<pre><code>")
     } else {
@@ -141,9 +140,7 @@ fn escape_html(s: &str) -> String {
 }
 
 fn get_skybook_token_css_class(ty: skybook_parser::syn::TT) -> String {
-    let token_name = serde_json::to_string(&ty)
-        .unwrap_or_default()
-        .replace("\"", "");
+    let token_name = json::stringify(&ty).unwrap_or_default().replace("\"", "");
 
     format!("skybook-tt-{token_name}")
 }

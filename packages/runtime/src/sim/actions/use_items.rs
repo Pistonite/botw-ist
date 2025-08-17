@@ -106,10 +106,10 @@ fn use_overworld_equipment_once_internal(
     if item_type == PouchItemType::Bow as i32 {
         // to use bow, first drop/unhold items
         if sys.overworld.is_holding_arrowless_smuggled() {
-            log::debug!("automatically dropping for USE command");
+            cu::debug!("automatically dropping for USE command");
             super::drop_held_items(ctx, sys, "USE")?;
         } else if sys.overworld.is_holding() {
-            log::debug!("automatically unholding for USE command");
+            cu::debug!("automatically unholding for USE command");
             super::unhold_internal(ctx, sys)?;
         }
 
@@ -121,14 +121,14 @@ fn use_overworld_equipment_once_internal(
                 let equipped_arrow =
                     linker::get_equipped_item(ctx.cpu(), PouchItemType::Arrow as i32)?;
                 if equipped_arrow.is_nullptr() {
-                    log::warn!("no arrows equipped");
+                    cu::warn!("no arrows equipped");
                     errors.push(sim_error!(ctx.span, NoArrowsToShoot));
                     return Ok(false);
                 }
                 let m = ctx.cpu().proc.memory();
                 mem! { m: let arrow_count = *(&equipped_arrow->mValue) }
                 if arrow_count < 1 {
-                    log::warn!("equipped arrow has count < 1: {arrow_count}");
+                    cu::warn!("equipped arrow has count < 1: {arrow_count}");
                     errors.push(sim_error!(ctx.span, NoArrowsToShoot));
                     return Ok(false);
                 }
@@ -146,7 +146,7 @@ fn use_overworld_equipment_once_internal(
 
         // decrease the arrow count
         if let Some(arrow) = arrow_name {
-            log::debug!("removing arrow: {arrow}");
+            cu::trace!("removing arrow: {arrow}");
             linker::remove_arrow(ctx.cpu(), &arrow, 1)?;
         }
 
@@ -155,7 +155,7 @@ fn use_overworld_equipment_once_internal(
 
     // using weapon/shield
     if sys.overworld.is_holding() {
-        log::debug!("automatically unholding for USE command");
+        cu::debug!("automatically unholding for USE command");
         super::unhold_internal(ctx, sys)?;
     }
     // damage the equipment

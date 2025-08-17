@@ -1,6 +1,7 @@
+use std::backtrace::Backtrace;
 use std::cell::Cell;
+use std::path::Path;
 use std::sync::Arc;
-use std::{backtrace::Backtrace, path::Path};
 
 use blueflame::env::GameVer;
 use blueflame::processor::Process;

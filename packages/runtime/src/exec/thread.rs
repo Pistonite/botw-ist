@@ -18,16 +18,16 @@ impl Thread {
     /// Execute the main loop of the processor thread, which waits for jobs
     /// to be sent from the main thread and executes them
     pub fn main_loop(mut self) {
-        log::debug!("processor thread {} started", self.slot);
+        cu::debug!("processor thread {} started", self.slot);
         loop {
             match self.recv.recv() {
                 Ok(f) => {
-                    log::debug!("processor thread {} got job", self.slot);
+                    cu::debug!("processor thread {} got job", self.slot);
                     f(&mut self.cpu);
-                    log::debug!("processor thread {} finished job", self.slot);
+                    cu::debug!("processor thread {} finished job", self.slot);
                 }
                 Err(e) => {
-                    log::debug!(
+                    cu::debug!(
                         "processor thread {} failed to receive job, sender must have been dropped: {}",
                         self.slot,
                         e
@@ -36,7 +36,7 @@ impl Thread {
                 }
             }
         }
-        log::debug!("processor thread {} exiting", self.slot);
+        cu::debug!("processor thread {} exiting", self.slot);
     }
 }
 

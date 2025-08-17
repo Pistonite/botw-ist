@@ -31,7 +31,7 @@ pub fn sort_items(
             .screen
             .transition_to_shop_selling(ctx, &mut sys.overworld, false, errors)?
         {
-            log::error!("failed to transition to selling screen for SORT");
+            cu::error!("failed to transition to selling screen for SORT");
             return Ok(());
         }
     } else {

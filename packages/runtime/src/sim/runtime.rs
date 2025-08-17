@@ -48,30 +48,30 @@ impl Runtime {
         threads: usize,
         params: Option<&RuntimeInitParams>,
     ) -> Result<Environment, RuntimeInitError> {
-        log::info!("initializing runtime");
+        cu::info!("initializing runtime");
         if let Err(e) = self.executor.ensure_threads(threads.max(1)) {
-            log::error!("failed to create threads: {e}");
+            cu::error!("failed to create threads: {e}");
             return Err(RuntimeInitError::Executor);
         }
 
-        log::debug!("initializing runtime with custom image params: {params:?}");
+        cu::debug!("initializing runtime with custom image params: {params:?}");
 
         let mut program_bytes = Vec::new();
         let program = match program::unpack_zc(image, &mut program_bytes) {
             Err(e) => {
-                log::error!("failed to unpack blueflame image: {e}");
+                cu::error!("failed to unpack blueflame image: {e}");
                 return Err(RuntimeInitError::BadImage);
             }
             Ok(program) => program,
         };
 
-        log::debug!("program start: 0x{:016x}", program.program_start);
+        cu::debug!("program start: 0x{:016x}", program.program_start);
         if let Some(program_start) = params.map(|x| &x.program_start)
             && !program_start.is_empty()
         {
             match parse_region_addr(program_start) {
                 None => {
-                    log::error!(
+                    cu::error!(
                         "cannot parse program_start from the params, assuming we are OK with the default"
                     );
                 }
@@ -88,19 +88,19 @@ impl Runtime {
 
         let env = {
             let game_ver = program.ver.into();
-            log::info!("game version is {game_ver:?}");
+            cu::info!("game version is {game_ver:?}");
             let params_dlc = params.map(|x| x.dlc).unwrap_or(3);
             let dlc_ver = match DlcVer::from_num(params_dlc) {
                 Some(dlc) => dlc,
                 None => return Err(RuntimeInitError::BadDlcVersion(params_dlc)),
             };
-            log::info!("dlc version is {dlc_ver:?}");
+            cu::info!("dlc version is {dlc_ver:?}");
 
             Environment::new(game_ver, dlc_ver)
         };
 
         if env.game_ver == GameVer::X160 {
-            log::error!(">>>> + LOOK HERE + <<<< Only 1.5 is supported for now");
+            cu::error!(">>>> + LOOK HERE + <<<< Only 1.5 is supported for now");
             return Err(RuntimeInitError::UnsupportedVersion);
         }
 
@@ -109,7 +109,7 @@ impl Runtime {
             Some(x) => match parse_region_addr(x) {
                 Some(x) => x,
                 None => {
-                    log::error!("failed to parse stack_start");
+                    cu::error!("failed to parse stack_start");
                     return Err(RuntimeInitError::InvalidStackStart);
                 }
             },
@@ -120,7 +120,7 @@ impl Runtime {
             Some(x) => match parse_region_addr(x) {
                 Some(x) => x,
                 None => {
-                    log::error!("failed to parse pmdm_addr");
+                    cu::error!("failed to parse pmdm_addr");
                     return Err(RuntimeInitError::InvalidPmdmAddr);
                 }
             },
@@ -148,7 +148,7 @@ impl Runtime {
             heap_free_size,
         ) {
             Err(e) => {
-                log::error!("failed to initialize process: {e}");
+                cu::error!("failed to initialize process: {e}");
                 return Err(RuntimeInitError::InitializeProcess);
             }
             Ok(x) => x,
@@ -197,7 +197,7 @@ fn parse_hex(s: &str) -> Option<u64> {
 fn parse_region_addr(s: &str) -> Option<u64> {
     let addr = parse_hex(s)?;
     if (addr & 0xffffff00000fffffu64) != 0 {
-        log::error!("region address is not the correct format: {s}");
+        cu::error!("region address is not the correct format: {s}");
         return None;
     }
     Some(addr)
