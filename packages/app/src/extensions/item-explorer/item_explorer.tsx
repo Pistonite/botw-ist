@@ -4,14 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import type { Result } from "@pistonite/pure/result";
 import { useDebounce } from "@uidotdev/usehooks";
 
-import { type SearchResultNoScore, useUITranslation } from "skybook-localization";
+import type { ItemSearchResult } from "@pistonite/skybook-api";
+import { useUITranslation } from "skybook-localization";
 import { type CookEffect, StandaloneItemSlotWithTooltip } from "skybook-item-system";
 
 import { Code, Interpolate } from "self::ui/components";
 import { useStyleEngine } from "self::util";
 
 export type Searcher = {
-    search(localized: boolean, query: string): Promise<Result<SearchResultNoScore[], string>>;
+    search(localized: boolean, query: string): Promise<Result<ItemSearchResult[], string>>;
 };
 
 const useStyles = makeStyles({

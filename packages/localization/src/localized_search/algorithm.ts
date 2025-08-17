@@ -12,43 +12,43 @@ import { log } from "./constants.ts";
 const SearchFns = {
     de: once({
         fn: async () => {
-            const s = (await import("./generated/de-DE.yaml")).default;
+            const s = (await import("../generated/de-DE.yaml")).default;
             return buildSearchFunction("de", 0.3, [s]);
         },
     }),
     en: once({
         fn: async () => {
-            const s = (await import("./generated/en-US.yaml")).default;
+            const s = (await import("../generated/en-US.yaml")).default;
             return buildSearchFunction("en", 0.3, [s]);
         },
     }),
     es: once({
         fn: async () => {
-            const s = (await import("./generated/es-ES.yaml")).default;
+            const s = (await import("../generated/es-ES.yaml")).default;
             return buildSearchFunction("es", 0.3, [s]);
         },
     }),
     fr: once({
         fn: async () => {
-            const s = (await import("./generated/fr-FR.yaml")).default;
+            const s = (await import("../generated/fr-FR.yaml")).default;
             return buildSearchFunction("fr", 0.3, [s]);
         },
     }),
     it: once({
         fn: async () => {
-            const s = (await import("./generated/it-IT.yaml")).default;
+            const s = (await import("../generated/it-IT.yaml")).default;
             return buildSearchFunction("it", 0.3, [s]);
         },
     }),
     ja: once({
         fn: async () => {
-            const s = (await import("./generated/ja-JP.yaml")).default;
+            const s = (await import("../generated/ja-JP.yaml")).default;
             return buildSearchFunction("ja", 0.3, [s]);
         },
     }),
     ko: once({
         fn: async () => {
-            const s = (await import("./generated/ko-KR.yaml")).default;
+            const s = (await import("../generated/ko-KR.yaml")).default;
             return buildSearchFunction("ko", 0.3, [s]);
         },
     }),
