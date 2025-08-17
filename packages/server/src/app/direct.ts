@@ -4,14 +4,16 @@ import type { DirectLoad } from "@pistonite/skybook-api";
 import { convertLegacyScript } from "skybook-parser-legacy";
 
 import { decodeCompressedParam } from "self::util";
+import type { UrlParts } from "self::framework";
 
 /** Handle DirectLoad from the home page (/) */
-export const useDirectLoadFromHome = (url: URL): DirectLoad | undefined => {
+export const useDirectLoadFromHome = (url: UrlParts): DirectLoad | undefined => {
+    const search = new URLSearchParams(url.search);
     // handle direct load through param
     // ?r=<v3 raw script>
     // ?c=<v3 compressed script>
     // ?v4=<v4 compressed script>
-    const v4Param = url.searchParams.get("v4");
+    const v4Param = search.get("v4");
     if (v4Param) {
         const script = decodeCompressedParam(v4Param);
         if (script.val) {
@@ -22,7 +24,7 @@ export const useDirectLoadFromHome = (url: URL): DirectLoad | undefined => {
             };
         }
     }
-    const v3cParam = url.searchParams.get("c");
+    const v3cParam = search.get("c");
     if (v3cParam) {
         const script = decodeCompressedParam(v3cParam);
         if (script.val) {
@@ -33,7 +35,7 @@ export const useDirectLoadFromHome = (url: URL): DirectLoad | undefined => {
             };
         }
     }
-    const v3rParam = url.searchParams.get("r");
+    const v3rParam = search.get("r");
     if (v3rParam) {
         console.log("--- direct load v3 raw");
         return {
@@ -46,7 +48,7 @@ export const useDirectLoadFromHome = (url: URL): DirectLoad | undefined => {
 };
 
 /** Handle DirectLoad from any URL (/-/) */
-export const useDirectLoadFromUrl = async (url: URL): Promise<DirectLoad | undefined> => {
+export const useDirectLoadFromUrl = async (url: UrlParts): Promise<DirectLoad | undefined> => {
     const pathname = url.pathname.trim();
     if (!pathname.startsWith("/-/")) {
         return undefined;
@@ -68,7 +70,7 @@ export const useDirectLoadFromGitHubRepo = async (
     user: string,
     repo: string,
     branch: string,
-    url: URL,
+    url: UrlParts,
 ): Promise<DirectLoad | undefined> => {
     const pathname = url.pathname.trim();
     const prefix = `/github/${user}/${repo}/${branch}/`;

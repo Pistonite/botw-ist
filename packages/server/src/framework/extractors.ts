@@ -1,5 +1,15 @@
 import type { Result } from "@pistonite/pure/result";
 
+import { safeParseUrl, type UrlParts } from "./url.ts";
+
+export const useUrl = (req: Request): UrlParts => {
+    const parts = safeParseUrl(req.url);
+    if ("err" in parts) {
+        throw parts.err;
+    }
+    return parts.val;
+};
+
 /** Get if the request accepts Gzip encoding */
 export const useAcceptsGzip = (req: Request): boolean => {
     const acceptEncoding = req.headers.get("Accept-Encoding");

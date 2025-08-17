@@ -17,14 +17,12 @@ type Awaitable<T> = T | Promise<T>;
  */
 export type InboundHook = (
     req: BunRequest,
-    url: URL,
 ) => Awaitable<Result<ResponsePayload | undefined, ResponsePayload>>;
 
-export type Handler = (req: BunRequest, url: URL) => Awaitable<ResponsePayload>;
+export type Handler = (req: BunRequest) => Awaitable<ResponsePayload>;
 
 export type OutboundHook = (
     req: BunRequest,
-    url: URL,
     ok: boolean,
     response: ResponsePayload,
 ) => Awaitable<ResponsePayload>;
