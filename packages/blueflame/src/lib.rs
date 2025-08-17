@@ -32,8 +32,6 @@ pub mod test_utils;
 #[doc(hidden)]
 pub mod __re {
     pub use enumset;
-    #[allow(unused_imports)] // release mode only
-    pub use no_panic;
     pub use phf;
     pub use static_assertions;
 }

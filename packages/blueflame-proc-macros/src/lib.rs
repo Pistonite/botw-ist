@@ -21,12 +21,6 @@ pub fn enabled(input: TokenStream) -> TokenStream {
     features::expand_enable_macro(input)
 }
 
-#[proc_macro_attribute]
-pub fn no_panic(_attr: TokenStream, input: TokenStream) -> TokenStream {
-    no_panic::expand(input)
-}
-mod no_panic;
-
 /// Macro to convert a paste-in instruction bytes to u32 literal
 #[proc_macro]
 pub fn paste_insn(input: TokenStream) -> TokenStream {

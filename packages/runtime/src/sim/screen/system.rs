@@ -106,7 +106,6 @@ impl ScreenSystem {
         }
 
         *self.current_screen_mut() = Screen::Inventory(sim::PouchScreen::open(ctx.cpu(), false)?);
-        log::debug!("inventory screen opened successfully");
 
         Ok(true)
     }
@@ -335,11 +334,11 @@ impl Screen {
         let mut need_update_shield = false;
         match self {
             Self::Overworld => {
-                log::warn!("transition_to_overworld called but screen is already overworld");
+                cu::warn!("transition_to_overworld called but screen is already overworld");
                 return Ok(());
             }
             Self::Inventory(inv_screen) => {
-                log::debug!("updating overworld equiments");
+                cu::debug!("updating overworld equiments");
                 if inv_screen.weapon_state.to_delete {
                     overworld.delete_player_equipment(PouchItemType::Sword as i32);
                 } else {
@@ -372,7 +371,7 @@ impl Screen {
                     },
                     linker::create_holding_items,
                 )?;
-                log::debug!("spawning overworld holding items: {actors:?}");
+                cu::debug!("spawning overworld holding items: {actors:?}");
                 overworld.spawn_held_items(actors);
                 // TODO: there is a slight inaccuracy here. When closing inventory,
                 // if player started holding inventory but didn't hold any item,
@@ -383,17 +382,17 @@ impl Screen {
             Self::Shop(_) => {}
         }
         for x in remove_equipments {
-            log::debug!("removing {x} on returning to overworld");
+            cu::debug!("removing {x} on returning to overworld");
             linker::remove_weapon_if_equipped(ctx.cpu(), x)?;
         }
-        log::debug!("removing translucent items on returning to overworld");
+        cu::debug!("removing translucent items on returning to overworld");
         linker::delete_removed_items(ctx.cpu())?;
 
         // I am not sure if equipment update or drop items happens first,
         // or maybe it's a race condition
 
         if drop_items {
-            log::debug!("removing held items on returning to overworld");
+            cu::debug!("removing held items on returning to overworld");
             linker::remove_held_items(ctx.cpu())?;
             overworld.drop_held_items();
         }

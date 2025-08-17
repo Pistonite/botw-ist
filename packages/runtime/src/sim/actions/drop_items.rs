@@ -29,7 +29,7 @@ pub fn drop_items(
     pause_during: bool, // mode passed to pick-up
 ) -> Result<(), processor::Error> {
     if items.is_empty() {
-        log::debug!("no items specified for DROP, dropping held items ");
+        cu::trace!("no items specified for DROP, dropping held items ");
         super::switch_to_overworld_or_stop!(ctx, sys, errors, "DROP");
         if !sys.overworld.is_holding() {
             errors.push(sim_warning!(ctx.span, NotHolding));
@@ -92,7 +92,7 @@ fn drop_inventory_material(
 ) -> Result<(), processor::Error> {
     // if holding in the overworld, drop those first
     if sys.overworld.is_holding() {
-        log::debug!("dropping currently held items in DROP command before processing other items");
+        cu::trace!("dropping currently held items in DROP command before processing other items");
         super::switch_to_overworld_or_stop!(ctx, sys, errors, "DROP-INVM");
         super::drop_held_items(ctx, sys, "DROP-INVM")?;
     }
@@ -124,7 +124,7 @@ fn drop_inventory_material(
         // need to be in overworld to drop
         super::switch_to_overworld_or_stop!(ctx, sys, errors, "DROP-INVM");
         if !sys.overworld.is_holding() {
-            log::debug!("failed to hold, stopping");
+            cu::debug!("failed to hold, stopping");
             errors.push(sim_error!(span, OperationNotComplete));
             break;
         }
@@ -208,11 +208,10 @@ fn drop_inventory_weapon(
         let correct_slot = inventory.corrected_slot(tab, slot);
         let inventory = sys.screen.current_screen_mut().as_inventory_mut().unwrap();
         if is_equipped {
-            log::debug!("unequipped item from DROP");
+            cu::debug!("unequipped item from DROP");
             linker::unequip_from_tab_slot(ctx.cpu(), tab as i32, correct_slot)?;
             inventory.equipment_state_mut(original_type).set_unequip();
         }
-        log::debug!("correct_slot is {correct_slot}");
 
         // note that we know items attempted to be spawned in the overworld
         // immediately, rather than at the time of unpause.
@@ -256,7 +255,7 @@ fn drop_overworld_weapon(
     };
     let actor = equipment.remove();
     if pause_during {
-        log::debug!("pause-during drop_overworld_weapon");
+        cu::trace!("pause-during drop_overworld_weapon");
         sys.screen.set_remove_equipment_after_dialog(&actor.name);
         sys.screen
             .transition_to_inventory(ctx, &mut sys.overworld, false, errors)?;

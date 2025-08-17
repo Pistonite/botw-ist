@@ -1,4 +1,5 @@
-use std::{panic::UnwindSafe, path::Path};
+use std::panic::UnwindSafe;
+use std::path::Path;
 
 use blueflame::processor::{Cpu1, Cpu2, CrashReport, Process};
 use threadpool::ThreadPool;

@@ -58,7 +58,7 @@ pub fn buy_items(
             .screen
             .transition_to_shop_buying(ctx, &mut sys.overworld, false, errors)?
         {
-            log::error!("failed to transition to buying screen for BUY");
+            cu::error!("failed to transition to buying screen for BUY");
             return Ok(());
         }
     }
@@ -85,7 +85,7 @@ pub fn buy_items(
             // forcefully open inventory screen directly
             *sys.screen.current_screen_mut() =
                 sim::Screen::Inventory(sim::PouchScreen::open(ctx.cpu(), false)?);
-            log::debug!("inventory screen opened forcefully");
+            cu::debug!("inventory screen opened forcefully");
         }
         if should_drop {
             sys.screen.set_remove_held_after_dialog();

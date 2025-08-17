@@ -56,7 +56,7 @@ impl Run {
         let process = match runtime.initial_process() {
             Ok(x) => x,
             Err(e) => {
-                log::error!("unexpected: fail to get initial process from runtime: {e}");
+                cu::error!("unexpected: fail to get initial process from runtime: {e}");
                 return MaybeAborted::Aborted;
             }
         };
@@ -72,7 +72,7 @@ impl Run {
             let step = &parsed.steps[i];
             let pos = step.pos();
             let percentage = pos as f32 / parsed.script_len as f32 * 100.0;
-            log::debug!(
+            cu::debug!(
                 "running: byte_pos {}/{} ({:.2}%)",
                 pos,
                 parsed.script_len,
@@ -96,7 +96,7 @@ impl Run {
 
                     let report = match state.execute_step(ctx.clone(), step).await {
                         Err(e) => {
-                            log::error!("failed to execute step {i}: {e}");
+                            cu::error!("failed to execute step {i}: {e}");
                             return MaybeAborted::Aborted;
                         }
                         Ok(report) => report,

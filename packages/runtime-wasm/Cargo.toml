@@ -25,11 +25,11 @@ js-sys.workspace = true
 wasm-bindgen-futures.workspace = true
 console_error_panic_hook = "0.1.7"
 console_log = { version = "1.0.0", features = ["color"] }
-log.workspace = true
+log = "0.4.27"
 
 [lib]
 crate-type = ["cdylib"]
 
 [features]
 # default = []
-no-trace = ["log/release_max_level_warn"]
+# no-trace = ["log/release_max_level_warn"]

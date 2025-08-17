@@ -10,7 +10,6 @@ use skybook_parser::search::QuotedItemResolver;
 use skybook_parser::search::ResolvedItem;
 use skybook_runtime::MaybeAborted;
 use skybook_runtime::sim;
-use tokio::task::JoinSet;
 
 pub fn run(
     runtime: Arc<sim::Runtime>,
@@ -20,7 +19,7 @@ pub fn run(
     cu::debug!("running script tests");
 
     let snapshots_dir = Path::new("snapshots");
-    cu::fs::ensure_dir(snapshots_dir)?;
+    cu::fs::make_dir(snapshots_dir)?;
 
     if refresh_snapshot {
         cu::info!("will refresh snapshot");
@@ -53,8 +52,7 @@ pub fn run(
 
     let total_count = test_names.len();
     let passed_count =
-        cu::co::spawn(async move { run_tests(runtime, test_names, refresh_snapshot).await })
-            .join()?
+        cu::co::run(async move { run_tests(runtime, test_names, refresh_snapshot).await })
             .context("there were failures running script tests")?;
 
     cu::info!("{passed_count}/{total_count} script tests passed");
@@ -67,7 +65,7 @@ async fn run_tests(
     test_names: Vec<String>,
     refresh: bool,
 ) -> cu::Result<usize> {
-    let mut handles = JoinSet::new();
+    let mut handles = vec![];
     let total_count = test_names.len();
     let bar = cu::progress_bar(total_count, "script tests");
     for test in test_names {
@@ -82,14 +80,19 @@ async fn run_tests(
 
         let parsed = Arc::new(parsed);
         let runtime = Arc::clone(&runtime);
-        // let handle =
-        handles.spawn(async move { run_test(&runtime, refresh, &test, &test_file, parsed).await });
+        let handle =
+            cu::co::spawn(
+                async move { run_test(&runtime, refresh, &test, &test_file, parsed).await },
+            );
+        handles.push(handle);
     }
+
+    let mut handles = cu::co::set(handles);
 
     let mut passed_count = 0;
     let mut finished_count = 0;
 
-    while let Some(result) = handles.join_next().await {
+    while let Some(result) = handles.next().await {
         finished_count += 1;
         match result {
             Err(e) => {
