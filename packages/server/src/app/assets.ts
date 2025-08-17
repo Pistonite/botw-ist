@@ -1,6 +1,6 @@
 import { readdir } from "node:fs/promises";
 
-import { make404, makeFile, type ResponsePayload, useAcceptsGzip } from "self::framework";
+import { make404, makeFile, type ResponsePayload, useAcceptsGzip, useUrl } from "self::framework";
 
 const gzipPaths = (async () => {
     console.log("loading gzipped assets paths");
@@ -15,7 +15,7 @@ const gzipPaths = (async () => {
 
 /** Make an asset response */
 export const makeAsset = async (req: Request): Promise<ResponsePayload> => {
-    const path = new URL(req.url).pathname;
+    const path = useUrl(req).pathname;
     if (!path.startsWith("/") || path.endsWith("/") || path.endsWith(".")) {
         return make404();
     }

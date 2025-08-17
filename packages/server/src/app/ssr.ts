@@ -1,6 +1,6 @@
 import { parseEnvFromScript, type DirectLoad } from "@pistonite/skybook-api";
 
-import { type ResponsePayload, useAcceptLanguage } from "self::framework";
+import { type ResponsePayload, safeParseUrl, useAcceptLanguage } from "self::framework";
 import { VERSION } from "self::util";
 
 import Strings from "./strings.json" with { type: "json" };
@@ -47,10 +47,11 @@ export const makeSSR = async (req: Request, options: SSROptions): Promise<Respon
     const language = useAcceptLanguage(req, languages, "en-US");
 
     let origin: string;
-    try {
-        origin = new URL(options.url).origin;
-    } catch {
+    const url = safeParseUrl(options.url);
+    if ("err" in url) {
         origin = "https://ist.pistonite.app";
+    } else {
+        origin = url.val.origin || "https://ist.pistonite.app";
     }
 
     const titleTag = `<title>${Strings.title[language]}</title>`;

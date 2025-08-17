@@ -4,6 +4,7 @@ import {
     type RouteBuilder,
     withHeadersOnSuccess,
     makeFile,
+    useUrl,
 } from "self::framework";
 
 import { makeSSR } from "./ssr.ts";
@@ -39,7 +40,8 @@ Disallow: /github/
 `;
     return {
         "/": builder.route({
-            handler: (req, url) => {
+            handler: (req) => {
+                const url = useUrl(req);
                 const directLoad = useDirectLoadFromHome(url);
                 if (directLoad) {
                     return makeSSR(req, {
@@ -63,7 +65,8 @@ Disallow: /github/
             ],
         }),
         "/-/*": builder.route({
-            handler: async (req, url) => {
+            handler: async (req) => {
+                const url = useUrl(req);
                 const directLoad = await useDirectLoadFromUrl(url);
                 if (directLoad) {
                     return makeSSR(req, {
@@ -81,7 +84,8 @@ Disallow: /github/
             ],
         }),
         "/github/:user/:repo/:branch/*": builder.route({
-            handler: async (req, url) => {
+            handler: async (req) => {
+                const url = useUrl(req);
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const { user, repo, branch } = (req as any).params;
                 const directLoad = await useDirectLoadFromGitHubRepo(

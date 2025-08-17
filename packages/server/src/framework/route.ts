@@ -61,32 +61,30 @@ export const route = (args: RouteArgs | Handler): BunRequestHandler => {
     const outbound = args.outbound;
     if (inbound?.length && outbound?.length) {
         return async (req: BunRequest) => {
-            const url = new URL(req.url) as URL;
-            const inboundResult = await executeInboundHooks(req, url, inbound);
+            const inboundResult = await executeInboundHooks(req, inbound);
             if (inboundResult.err) {
-                return handleOutboundHooks(req, url, false, inboundResult.err, outbound);
+                return handleOutboundHooks(req, false, inboundResult.err, outbound);
             }
             if (inboundResult.val) {
-                return handleOutboundHooks(req, url, true, inboundResult.val, outbound);
+                return handleOutboundHooks(req, true, inboundResult.val, outbound);
             }
-            const result = await executeHandler(req, url, handler);
+            const result = await executeHandler(req, handler);
             if (result.val) {
-                return handleOutboundHooks(req, url, true, result.val, outbound);
+                return handleOutboundHooks(req, true, result.val, outbound);
             }
-            return handleOutboundHooks(req, url, false, result.err, outbound);
+            return handleOutboundHooks(req, false, result.err, outbound);
         };
     }
     if (inbound?.length) {
         return async (req: BunRequest) => {
-            const url = new URL(req.url) as URL;
-            const inboundResult = await executeInboundHooks(req, url, inbound);
+            const inboundResult = await executeInboundHooks(req, inbound);
             if (inboundResult.err) {
                 return handleResponsePayload(false, inboundResult.err);
             }
             if (inboundResult.val) {
                 return handleResponsePayload(true, inboundResult.val);
             }
-            const result = await executeHandler(req, url, handler);
+            const result = await executeHandler(req, handler);
             if (result.val) {
                 return handleResponsePayload(true, result.val);
             }
@@ -95,17 +93,15 @@ export const route = (args: RouteArgs | Handler): BunRequestHandler => {
     }
     if (outbound?.length) {
         return async (req: BunRequest) => {
-            const url = new URL(req.url) as URL;
-            const result = await executeHandler(req, url, handler);
+            const result = await executeHandler(req, handler);
             if (result.val) {
-                return handleOutboundHooks(req, url, true, result.val, outbound);
+                return handleOutboundHooks(req, true, result.val, outbound);
             }
-            return handleOutboundHooks(req, url, false, result.err, outbound);
+            return handleOutboundHooks(req, false, result.err, outbound);
         };
     }
     return async (req: BunRequest) => {
-        const url = new URL(req.url) as URL;
-        const result = await executeHandler(req, url, handler);
+        const result = await executeHandler(req, handler);
         if (result.val) {
             return handleResponsePayload(true, result.val);
         }
@@ -115,12 +111,11 @@ export const route = (args: RouteArgs | Handler): BunRequestHandler => {
 
 const executeInboundHooks = async (
     req: BunRequest,
-    url: URL,
     hooks: InboundHook[],
 ): Promise<Result<ResponsePayload | undefined, ResponsePayload>> => {
     const len = hooks.length;
     for (let i = 0; i < len; i++) {
-        const result = await hooks[i](req, url);
+        const result = await hooks[i](req);
         // short-circuit
         if (result.val || result.err) {
             return result;
@@ -132,11 +127,10 @@ const executeInboundHooks = async (
 
 const executeHandler = async (
     req: BunRequest,
-    url: URL,
     handler: Handler,
 ): Promise<Result<ResponsePayload, ResponsePayload>> => {
     try {
-        return { val: await handler(req, url) };
+        return { val: await handler(req) };
     } catch (e) {
         console.error(e);
         if (e && typeof e === "object") {
@@ -152,14 +146,13 @@ const executeHandler = async (
 
 const handleOutboundHooks = async (
     req: BunRequest,
-    url: URL,
     ok: boolean,
     response: ResponsePayload,
     hooks: OutboundHook[],
 ): Promise<Response> => {
     const len = hooks.length;
     for (let i = 0; i < len; i++) {
-        response = await hooks[i](req, url, ok, response);
+        response = await hooks[i](req, ok, response);
     }
     return handleResponsePayload(ok, response);
 };
