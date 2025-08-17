@@ -4,8 +4,9 @@ import { debounce } from "@pistonite/pure/sync";
 import { type Cell, cell } from "@pistonite/pure/memory";
 import type { WxPromise } from "@pistonite/workex";
 
+import type { ItemSearchResult } from "@pistonite/skybook-api";
 import type { ActorSpriteProps } from "botw-item-assets";
-import { type SearchResultNoScore, translateGenericError } from "skybook-localization";
+import { translateGenericError } from "skybook-localization";
 
 import { FirstPartyExtensionAdapter, type FirstPartyExtension } from "self::util";
 
@@ -18,7 +19,7 @@ export class ItemExplorerExtension
     public search: (
         localized: boolean,
         query: string,
-    ) => Promise<Result<SearchResultNoScore[], string>>;
+    ) => Promise<Result<ItemSearchResult[], string>>;
     private component: React.FC;
 
     private iconSettings: Cell<Pick<ActorSpriteProps, "cheap" | "disableAnimation">>;
@@ -29,7 +30,7 @@ export class ItemExplorerExtension
             fn: async (
                 localized: boolean,
                 query: string,
-            ): Promise<Result<SearchResultNoScore[], string>> => {
+            ): Promise<Result<ItemSearchResult[], string>> => {
                 if (!query) {
                     return { val: [] };
                 }
