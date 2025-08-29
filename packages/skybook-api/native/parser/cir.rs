@@ -63,6 +63,23 @@ impl Category {
     }
 }
 
+impl std::fmt::Display for Category {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Category::Weapon => write!(f, "weapon"),
+            Category::Bow => write!(f, "bow"),
+            Category::Shield => write!(f, "shield"),
+            Category::Armor => write!(f, "armor"),
+            Category::ArmorHead => write!(f, "armor-head"),
+            Category::ArmorUpper => write!(f, "armor-upper"),
+            Category::ArmorLower => write!(f, "armor-lower"),
+            Category::Material => write!(f, "material"),
+            Category::Food => write!(f, "food"),
+            Category::KeyItem => write!(f, "key-item"),
+        }
+    }
+}
+
 /// MetaValue in parser CIR
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[cfg_attr(feature = "__ts-binding", derive(ts_rs::TS))]

@@ -78,6 +78,17 @@ impl ParseOutput {
         };
         if i < self.steps.len() { Some(i) } else { None }
     }
+
+    /// Convert the commands to a script, which will produce the same output,
+    /// but is probably not the same script as the input
+    pub fn to_script(&self) -> String {
+        let mut out = String::new();
+        for step in &self.steps {
+            step.command().to_script(&mut out);
+            out.push('\n');
+        }
+        out
+    }
 }
 
 /// Type of step to display in the step list

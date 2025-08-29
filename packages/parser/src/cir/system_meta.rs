@@ -38,6 +38,34 @@ pub enum SysCommandData {
     LoadingScreenNoRemoveTranslucent,
 }
 
+impl SysCommandData {
+    pub fn to_script(&self, out: &mut String) {
+        use std::fmt::Write;
+        match self {
+            SysCommandData::Dlc(x) => write!(out, "dlc={x}").unwrap(),
+            SysCommandData::DeleteSave(file) => {
+                out.push_str("delete-save");
+                if let Some(file) = file {
+                    write!(out, "=\"{file}\"").unwrap()
+                }
+            }
+            SysCommandData::ClearGround => write!(out, "clear-ground").unwrap(),
+            SysCommandData::ClearOverworld => write!(out, "clear-overworld").unwrap(),
+            SysCommandData::SyncOverworld => write!(out, "sync-overworld").unwrap(),
+            SysCommandData::ReloadGdt(file) => {
+                out.push_str("reload-gdt");
+                if let Some(file) = file {
+                    write!(out, "=\"{file}\"").unwrap()
+                }
+            }
+            SysCommandData::LoadingScreen => write!(out, "loading-screen").unwrap(),
+            SysCommandData::LoadingScreenNoRemoveTranslucent => {
+                write!(out, "loading-screen=no-remove-translucent").unwrap()
+            }
+        }
+    }
+}
+
 #[derive(Default)]
 struct SysCommandMeta {
     commands: Vec<SysCommand>,

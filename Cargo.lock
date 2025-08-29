@@ -2115,9 +2115,9 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "pistonite-cu"
-version = "0.4.1"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6087544fcd736737ad18b7835740b44579aa8c1cbf7c2776e7e7a5ddb0fa4920"
+checksum = "0d4d1cb6fa3fc5f0db5fc66302382f9650e01c36ea0f10168e9aa1cdeb5fa332"
 dependencies = [
  "anyhow",
  "clap",
@@ -2130,6 +2130,7 @@ dependencies = [
  "oneshot",
  "pathdiff",
  "pistonite-cu-proc-macros",
+ "regex",
  "serde",
  "serde_json",
  "terminal_size",

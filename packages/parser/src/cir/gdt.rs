@@ -89,6 +89,45 @@ impl GdtMeta {
             array_idx: idx,
         }
     }
+
+    pub fn to_script(&self, out: &mut String) {
+        use std::fmt::Write;
+
+        out.push('[');
+        match &self.value {
+            GdtValueSpec::Bool(x) => write!(out, "bool={x}").unwrap(),
+            GdtValueSpec::S32(x) => write!(out, "s32={x}").unwrap(),
+            GdtValueSpec::F32(x) => write!(out, "f32={x}").unwrap(),
+            GdtValueSpec::String32(x) => write!(out, "str32=\"{x}\"").unwrap(),
+            GdtValueSpec::String64(x) => write!(out, "str64=\"{x}\"").unwrap(),
+            GdtValueSpec::String256(x) => write!(out, "str256=\"{x}\"").unwrap(),
+            GdtValueSpec::Vec3f(x, y, z) => {
+                out.push_str("vec3f");
+                if let Some(x) = x {
+                    write!(out, ", x={x}").unwrap();
+                }
+                if let Some(y) = y {
+                    write!(out, ", y={y}").unwrap();
+                }
+                if let Some(z) = z {
+                    write!(out, ", z={z}").unwrap();
+                }
+            }
+            GdtValueSpec::Vec2f(x, y) => {
+                out.push_str("vec2f");
+                if let Some(x) = x {
+                    write!(out, ", x={x}").unwrap();
+                }
+                if let Some(y) = y {
+                    write!(out, ", y={y}").unwrap();
+                }
+            }
+        }
+        if let Some(i) = self.array_idx {
+            write!(out, ", i={i}").unwrap();
+        }
+        out.push(']');
+    }
 }
 
 /// Parse the metadata for !set-gdt command
