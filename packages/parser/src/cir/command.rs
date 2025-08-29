@@ -156,14 +156,6 @@ pub enum Command {
     SuWrite(Box<cir::ItemMeta>, Box<cir::ItemSelectSpec>),
     /// See [`syn::CmdSuRemove`]
     SuRemove(Vec<cir::ItemSelectSpec>),
-    /// See [`syn::CmdSuReloadGdt`]
-    SuReloadGdt(Option<String>),
-    /// `!reset-ground`
-    SuResetGround,
-    /// `!reset-overworld`
-    SuResetOverworld,
-    /// `!loading-screen`
-    SuLoadingScreen,
     /// See [`syn::CmdSuSetGdt`]
     ///
     /// First arg is flag name
@@ -411,5 +403,151 @@ fn parse_save_name(name: &syn::ItemName) -> String {
         syn::ItemName::Word(word) => word.to_string(),
         syn::ItemName::Quoted(quoted) => quoted.as_str().trim_matches('"').to_string(),
         syn::ItemName::Angle(word) => word.name.to_string(),
+    }
+}
+
+impl Command {
+    /// Convert the command to script text
+    pub fn to_script(&self, out: &mut String) {
+        use std::fmt::Write;
+        fn item_specs_to_script(command: &str, items: &[cir::ItemSpec], out: &mut String) {
+            out.push_str(command);
+            for item in items {
+                out.push(' ');
+                item.to_script(out);
+            }
+        }
+        fn item_select_specs_to_script(
+            command: &str,
+            items: &[cir::ItemSelectSpec],
+            out: &mut String,
+        ) {
+            out.push_str(command);
+            for item in items {
+                out.push(' ');
+                item.to_script(out);
+            }
+        }
+        match self {
+            Command::Multi(commands) => {
+                for c in commands {
+                    c.to_script(out);
+                    out.push(';');
+                }
+            }
+            Command::CoAccuratelySimulate => out.push_str(":accurately-simulate"),
+            Command::Get(items) => item_specs_to_script("get", items, out),
+            Command::PickUp(items) => item_select_specs_to_script("pick-up", items, out),
+            Command::CoPauseDuring => out.push_str(":pause-during"),
+
+            Command::OpenInv => out.push_str("pause"),
+            Command::CloseInv => out.push_str("unpause"),
+            Command::CoSmug => out.push_str(":smug"),
+            Command::Hold(items) => item_select_specs_to_script("hold", items, out),
+            Command::Unhold => out.push_str("unhold"),
+            Command::CoOverworld => out.push_str(":overworld"),
+            Command::Drop(items) => item_select_specs_to_script("drop", items, out),
+            Command::Dnp(items) => item_select_specs_to_script("dnp", items, out),
+            Command::Eat(items) => item_select_specs_to_script("eat", items, out),
+            Command::CookHeld => out.push_str("cook"),
+            Command::Cook(items) => item_select_specs_to_script("cook", items, out),
+            Command::Entangle(item) => {
+                out.push_str("entangle ");
+                item.to_script(out);
+            }
+            Command::CoTargeting(item) => {
+                out.push_str(":targeting ");
+                item.to_script(out);
+            }
+            Command::Sort(cat) => {
+                write!(out, "sort {}", cat.category).unwrap();
+                if cat.amount != 1 {
+                    write!(out, " {} times", cat.amount).unwrap();
+                }
+            }
+
+            Command::Overload(activate) => {
+                if *activate {
+                    out.push_str("overload");
+                } else {
+                    out.push_str("unoverload");
+                }
+            }
+            Command::Spawn(items) => item_specs_to_script("spawn", items, out),
+
+            Command::CoDpad => out.push_str(":dpad"),
+            Command::Equip(items) => item_select_specs_to_script("equip", items, out),
+            Command::Unequip(items) => item_select_specs_to_script("unequip", items, out),
+            Command::Use(item, times) => {
+                out.push_str("use ");
+                item.to_script(out);
+                if *times != 1 {
+                    write!(out, " {times} times").unwrap();
+                }
+            }
+            Command::CoPerUse(x) => write!(out, ":per-use {x}").unwrap(),
+            Command::CoNonBreaking => out.push_str(":non-breaking"),
+            Command::CoBreaking => out.push_str(":breaking"),
+            Command::ThrowWeapon => out.push_str("throw weapon"),
+            Command::Display(items) => item_select_specs_to_script("display", items, out),
+
+            Command::OpenShop => out.push_str("talk-to npc"),
+            Command::CloseShop => out.push_str("untalk"),
+            Command::Buy(items) => item_specs_to_script("buy", items, out),
+            Command::Sell(items) => item_select_specs_to_script("sell", items, out),
+            Command::CoSameDialog => out.push_str(":same-dialog"),
+            Command::Save(file) => {
+                out.push_str("save");
+                if let Some(file) = file {
+                    write!(out, "-as \"{file}\"").unwrap();
+                }
+            }
+            Command::Reload(file) => {
+                out.push_str("reload");
+                if let Some(file) = file {
+                    write!(out, " \"{file}\"").unwrap();
+                }
+            }
+            Command::CloseGame => out.push_str("close-game"),
+            Command::NewGame => out.push_str("new-game"),
+            Command::SuBreak(slots) => write!(out, "!break {slots} slots").unwrap(),
+            Command::SuInit(items) => item_specs_to_script("!init", items, out),
+            Command::SuAddSlot(items) => item_specs_to_script("!add-slot", items, out),
+            Command::SuSwap(a, b) => {
+                out.push_str("!swap ");
+                a.to_script(out);
+                out.push(' ');
+                b.to_script(out);
+            }
+            Command::SuWrite(write_meta, item) => {
+                out.push_str("!write ");
+                write_meta.to_script(out);
+                out.push_str(" to ");
+                item.to_script(out);
+            }
+            Command::SuRemove(items) => item_select_specs_to_script("!remove", items, out),
+            Command::SuSetGdt(name, meta) => {
+                write!(out, "!set-gdt <{name}>").unwrap();
+                meta.to_script(out);
+            }
+            Command::SuArrowlessSmuggle => out.push_str("!arrowless-smuggle"),
+            Command::SuSystem(cmds) => {
+                out.push_str("!system [");
+                let mut iter = cmds.iter();
+                if let Some(x) = iter.next() {
+                    x.data.to_script(out);
+                    for x in iter {
+                        out.push(',');
+                        x.data.to_script(out);
+                    }
+                }
+                out.push(']');
+            }
+            Command::SuTrialStart => out.push_str("!trial-start"),
+            Command::SuTrialEnd => out.push_str("!trial-end"),
+            Command::Roast(items) => item_select_specs_to_script("roast", items, out),
+            Command::Boil(items) => item_select_specs_to_script("boil", items, out),
+            Command::Freeze(items) => item_select_specs_to_script("freeze", items, out),
+        }
     }
 }

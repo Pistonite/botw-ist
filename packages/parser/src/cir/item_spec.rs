@@ -21,6 +21,19 @@ pub struct ItemSpec {
     pub span: Span,
 }
 
+impl ItemSpec {
+    pub fn to_script(&self, out: &mut String) {
+        use std::fmt::Write as _;
+        if self.amount != 1 {
+            write!(out, "{} ", self.amount).unwrap();
+        }
+        write!(out, "<{}>", self.name).unwrap();
+        if let Some(meta) = &self.meta {
+            meta.to_script(out);
+        }
+    }
+}
+
 /// Specification for selecting an item
 ///
 /// This is more detailed than [`ItemSpec`], allowing
@@ -31,6 +44,25 @@ pub struct ItemSelectSpec {
     pub amount: AmountSpec,
     /// Item spec to match
     pub matcher: ItemMatchSpec,
+}
+
+impl ItemSelectSpec {
+    pub fn to_script(&self, out: &mut String) {
+        use std::fmt::Write as _;
+        match self.amount {
+            AmountSpec::All => out.push_str("all "),
+            AmountSpec::AllBut(x) => write!(out, "all but {x} ").unwrap(),
+            AmountSpec::Num(x) => {
+                if x != 1 {
+                    write!(out, "{x} ").unwrap();
+                }
+            }
+        }
+        self.matcher.name.to_script(out);
+        if let Some(meta) = &self.matcher.meta {
+            meta.to_script(out);
+        }
+    }
 }
 
 /// Specification for matching an item.
@@ -69,6 +101,16 @@ impl AmountSpec {
 pub enum ItemNameSpec {
     Actor(String),
     Category(cir::Category),
+}
+
+impl ItemNameSpec {
+    pub fn to_script(&self, out: &mut String) {
+        use std::fmt::Write;
+        match self {
+            ItemNameSpec::Actor(x) => write!(out, "<{x}>").unwrap(),
+            ItemNameSpec::Category(x) => write!(out, "{x}").unwrap(),
+        }
+    }
 }
 
 pub async fn parse_item_list_finite_optional<R: QuotedItemResolver>(

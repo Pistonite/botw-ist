@@ -33,4 +33,4 @@ wasm-bindgen-futures = "0.4.50"
 
 [workspace.dependencies.cu]
 package = "pistonite-cu"
-version = "0.4.1"
+version = "0.5.0"

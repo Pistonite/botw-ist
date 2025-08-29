@@ -40,14 +40,14 @@ pub struct ItemMeta {
     /// Number of upgrades on armor
     pub star: Option<i32>,
 
-    // If new meta properties are added for matching,
-    // they need to be updated in screen.rs!
     /// For constrained item list, manually specify the position
     /// of the item to skip look up
     pub position: Option<ItemPosition>,
 
     /// If the item is currently being held
     pub held: Option<bool>,
+    // If new meta properties are added for matching,
+    // they need to be updated in screen.rs!
 }
 
 impl PartialEq for ItemMeta {
@@ -134,6 +134,60 @@ impl ItemMeta {
             errors.push(cir_error!(span, InvalidSlot(slot)));
         }
         ret
+    }
+
+    pub fn to_script(&self, out: &mut String) {
+        use std::fmt::Write as _;
+        let mut has_value = false;
+        macro_rules! add {
+            ($key:literal, $value:expr) => {
+                if !has_value {
+                    has_value = true;
+                    out.push('[');
+                }
+                write!(out, "{}={},", $key, $value).unwrap();
+            };
+        }
+        macro_rules! add_opt {
+            ($key:literal, $value:expr) => {
+                if let Some(x) = $value {
+                    add!($key, x);
+                }
+            };
+        }
+        add_opt!("value", &self.value);
+        add_opt!("equip", &self.equip);
+        add_opt!("hp", &self.life_recover);
+        add_opt!("time", &self.effect_duration);
+        add_opt!("effect", &self.effect_id);
+        add_opt!("level", &self.effect_level);
+        if !self.ingredients.is_empty() {
+            for ingr in &self.ingredients {
+                add!("ingr", ingr);
+            }
+        }
+        add_opt!("star", &self.star);
+        match &self.position {
+            Some(ItemPosition::FromSlot(x)) => {
+                add!("slot", x);
+            }
+            Some(ItemPosition::TabIdxAndSlot(tab, slot)) => {
+                add!("tab", tab);
+                add!("slot", slot);
+            }
+            Some(ItemPosition::TabCategoryAndSlot(spec)) => {
+                add!("category", spec.category);
+                add!("tab", spec.amount);
+                add!("row", spec.row);
+                add!("col", spec.col);
+            }
+            None => {}
+        }
+        add_opt!("held", &self.held);
+        if has_value {
+            out.pop(); // remove last comma
+            out.push(']');
+        }
     }
 }
 
