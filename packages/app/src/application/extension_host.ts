@@ -13,6 +13,7 @@ import type {
     InvView_PouchList,
     InvView_Gdt,
     InvView_Overworld,
+    ItemDragData,
 } from "@pistonite/skybook-api";
 import {
     searchItemLocalized,
@@ -22,6 +23,7 @@ import {
 import { getActorParam } from "skybook-item-system";
 
 import { useSessionStore } from "./session_store.ts";
+import { getDnDSystemApi } from "./dnd_system.ts";
 
 /**
  * This is the host that handles function calls from Extensions using the ExtensionApp API
@@ -45,7 +47,6 @@ class ExtensionAppHost implements ExtensionApp {
     constructor(private runtime: Runtime) {
         this.taskIdMap = new Map();
     }
-
     public async getScript() {
         return { val: useSessionStore.getState().activeScript };
     }
@@ -233,6 +234,22 @@ class ExtensionAppHost implements ExtensionApp {
         const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
         return await this.runtime.getSaveInventory(script, taskId, bytePos, name);
     }
+    public async remoteItemDragStarted(data: ItemDragData): WxPromise<void> {
+        const {setDragData} = useSessionStore.getState();
+        setDragData(data);
+        getDnDSystemApi()?.attachDnDEvents();
+        return {};
+    }
+    public async remoteItemDragStopped(): WxPromise<void> {
+        const {setDragData} = useSessionStore.getState();
+        setDragData(undefined);
+        return {};
+    }
+    public async getItemDragData(): WxPromise<ItemDragData | ""> {
+        const data = useSessionStore.getState().dragData || "";
+        return {val:data };
+    }
+
 }
 
 const errorReportsToDiagnostics = <T>(

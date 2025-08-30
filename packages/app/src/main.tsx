@@ -7,7 +7,6 @@ import { ThemeProvider } from "@pistonite/shared-controls";
 import { wxWorker } from "@pistonite/workex";
 
 import { type Translator, initI18n, translateUI } from "skybook-localization";
-import { ItemTooltipProvider } from "skybook-item-system";
 import { extractDirectLoad } from "@pistonite/skybook-api/client";
 import {
     type Runtime,
@@ -33,7 +32,7 @@ import {
     isCrashed,
 } from "self::application";
 import { initNarrow, isLessProductive } from "self::pure-contrib";
-import { bootLog, devLog, getSheikaBackgroundUrl, probeAndRegisterAssetLocation } from "self::util";
+import { bootLog, devLog, probeAndRegisterAssetLocation } from "self::util";
 import {
     App,
     BootScreen,
@@ -392,9 +391,7 @@ const bootMainUI = async (context: BootContext) => {
                 <RuntimeContext.Provider value={runtime}>
                     <QueryClientProvider client={queryClient}>
                         <ThemeProvider>
-                            <ItemTooltipProvider backgroundUrl={getSheikaBackgroundUrl()}>
                                 <App />
-                            </ItemTooltipProvider>
                         </ThemeProvider>
                     </QueryClientProvider>
                 </RuntimeContext.Provider>

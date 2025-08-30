@@ -4,6 +4,7 @@ import type {
     InvView_GdtItem,
     InvView_OverworldItem,
     InvView_PouchItem,
+    ItemDragData,
 } from "@pistonite/skybook-api";
 
 import {
@@ -23,6 +24,29 @@ import {
     getTooltipPropsFromPouchItem,
 } from "./tooltip";
 import type { CookEffect } from "./data";
+import { DnDSource } from "./dnd";
+
+export type DraggingItemSlotProps = {
+    data: ItemDragData
+};
+
+/** Wrapper for displaying the slot while dragging */
+export const DraggingItemSlot: React.FC<DraggingItemSlotProps> = ({data}) => {
+    switch (data.type) {
+        case "search": {
+            return <StandaloneItemSlot actor={data.payload.actor} effect={data.payload.cookEffect as CookEffect || undefined} />
+        }
+        case "pouch": {
+            return <PouchItemSlot item={data.payload} inBrokenSlot={false} isMasterSwordFullPower={data.isMasterSwordFullPower} />
+        }
+        case "gdt": {
+            return <GdtItemSlot item={data.payload} isMasterSwordFullPower={data.isMasterSwordFullPower}/>;
+        }
+        case "overworld": {
+            return <OverworldItemSlot item={data.payload} isMasterSwordFullPower={data.isMasterSwordFullPower}/>;
+        }
+    }
+}
 
 /** Standalone item slots that can be used outside of the inventory */
 export type StandaloneItemSlotProps = {
@@ -70,15 +94,34 @@ export type PouchItemSlotProps = {
     inBrokenSlot: boolean;
     /** If true, show the master sword as full power */
     isMasterSwordFullPower: boolean;
+    /** If the item slot can be dragged using the DnD system */
+    draggable?: boolean;
+    /** The [tab, slot] of the item in pouch */
+    position?: [number, number];
 } & ItemSlotContextProps;
 
 const PouchItemSlotImpl: React.FC<PouchItemSlotProps> = ({
     item,
     inBrokenSlot,
     isMasterSwordFullPower,
+    draggable,position,
     ...props
 }) => {
     const slotProps = getSlotPropsFromPouchItem(item, inBrokenSlot, isMasterSwordFullPower);
+
+    if (draggable) {
+        return (
+        <DnDSource data={{
+                type: "pouch",
+                payload: item,
+                isMasterSwordFullPower,
+                position
+            }}>
+    <ItemSlot {...slotProps} {...props} />;
+        </DnDSource>
+        );
+    }
+
     return <ItemSlot {...slotProps} {...props} />;
 };
 export const PouchItemSlot = memo(PouchItemSlotImpl);
@@ -87,10 +130,25 @@ const PouchItemSlotWithTooltipImpl: React.FC<PouchItemSlotProps> = ({
     item,
     inBrokenSlot,
     isMasterSwordFullPower,
+    draggable,position,
     ...props
 }) => {
     const slotProps = getSlotPropsFromPouchItem(item, inBrokenSlot, isMasterSwordFullPower);
     const tooltipProps = getTooltipPropsFromPouchItem(item, inBrokenSlot);
+    if (draggable) {
+        return (
+        <ItemTooltip {...tooltipProps} {...props}>
+        <DnDSource data={{
+                type: "pouch",
+                payload: item,
+                isMasterSwordFullPower,
+                position
+            }}>
+    <ItemSlot {...slotProps} {...props} />
+        </DnDSource>
+            </ItemTooltip>
+        );
+    }
     return (
         <ItemTooltip {...tooltipProps} {...props}>
             <ItemSlot {...slotProps} {...props} />
