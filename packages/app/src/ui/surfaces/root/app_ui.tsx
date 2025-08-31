@@ -7,7 +7,7 @@ import { ResizeLayout } from "@pistonite/shared-controls";
 import { useUITranslation } from "skybook-localization";
 import { ItemTooltipProvider } from "skybook-item-system";
 
-import { registerDnDSystemApi, useIsShowingExtensionPanel, useSessionStore, useUIStore } from "self::application";
+import { MainWindowItemDnDProvider, useIsShowingExtensionPanel, useSessionStore, useUIStore } from "self::application";
 import { useNarrow, isLessProductive } from "self::pure-contrib";
 import {
     ExtensionPanel,
@@ -17,7 +17,6 @@ import {
 import { Header } from "self::ui/surfaces/header";
 import { PouchInventoryPanel, GdtInventoryPanel } from "self::ui/surfaces/inventory";
 import { getSheikaBackgroundUrl, useStyleEngine } from "self::util";
-import { MainWindowItemDnDProvider } from "../dnd";
 
 const AppImpl: React.FC = () => {
     const m = useStyleEngine();
@@ -96,12 +95,12 @@ const AppImpl: React.FC = () => {
         </>;
 
     return (
-        <MainWindowItemDnDProvider ref={registerDnDSystemApi}>
-                            <ItemTooltipProvider 
+        <MainWindowItemDnDProvider>
+            <ItemTooltipProvider 
                 suppress={!!dragData}
                 backgroundUrl={getSheikaBackgroundUrl()}>
-                                {$App}
-                            </ItemTooltipProvider>
+                {$App}
+            </ItemTooltipProvider>
         </MainWindowItemDnDProvider>
     );
 };

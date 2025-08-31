@@ -12,6 +12,7 @@ packages:
   - packages/server
   - packages/shared-controls
   - packages/skybook-api
+  - packages/skybook-react
 
 catalog:
   '@fluentui/react-components': ^9.68.2

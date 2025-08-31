@@ -23,7 +23,7 @@ import {
 import { getActorParam } from "skybook-item-system";
 
 import { useSessionStore } from "./session_store.ts";
-import { getDnDSystemApi } from "./dnd_system.ts";
+import { attachDnDEvents, dndLog } from "./dnd_system.ts";
 
 /**
  * This is the host that handles function calls from Extensions using the ExtensionApp API
@@ -234,17 +234,22 @@ class ExtensionAppHost implements ExtensionApp {
         const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
         return await this.runtime.getSaveInventory(script, taskId, bytePos, name);
     }
+
     public async remoteItemDragStarted(data: ItemDragData): WxPromise<void> {
+        dndLog.info("remote dnd drag started");
         const {setDragData} = useSessionStore.getState();
         setDragData(data);
-        getDnDSystemApi()?.attachDnDEvents();
+        attachDnDEvents();
         return {};
     }
+
     public async remoteItemDragStopped(): WxPromise<void> {
+        dndLog.info("remote dnd drag stopped");
         const {setDragData} = useSessionStore.getState();
         setDragData(undefined);
         return {};
     }
+
     public async getItemDragData(): WxPromise<ItemDragData | ""> {
         const data = useSessionStore.getState().dragData || "";
         return {val:data };

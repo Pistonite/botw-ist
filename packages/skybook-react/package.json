@@ -1,0 +1,34 @@
+{
+    "name": "@pistonite/skybook-react",
+    "private": true,
+    "type": "module",
+    "version": "0.0.1",
+    "description": "React utilities for Skybook, the BOTW IST Simulator",
+    "homepage": "https://github.com/Pistonite/botw-ist",
+    "bugs": {
+        "url": "https://github.com/Pistonite/botw-ist/issues"
+    },
+    "license": "MIT",
+    "author": "Pistonight <pistonknight@outlook.com>",
+    "files": [
+        "src/**/*"
+    ],
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Pistonite/botw-ist.git",
+        "directory": "packages/skybook-api"
+    },
+    "dependencies": {
+        "@pistonite/pure": "catalog:",
+        "@pistonite/skybook-api": "workspace:*",
+        "@pistonite/workex": "catalog:",
+        "react": "catalog:"
+    },
+    "devDependencies": {
+        "@types/react": "catalog:",
+        "mono-dev": "workspace:*"
+    }
+}

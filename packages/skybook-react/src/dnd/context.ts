@@ -4,12 +4,12 @@ import type { ItemDragData, ItemDropTarget } from "@pistonite/skybook-api";
 
 export type ItemDnDContextState = {
     /** Start dragging an item in this DnD context */
-    startDragItem: (data: ItemDragData, x: number, y: number) => Promise<void>,
+    startDragItem: (data: ItemDragData, x: number, y: number) => Promise<void>;
 
-    /** 
+    /**
      * Register a drop target. Return a function to unregister this target
      */
-    registerDropTarget: (target: ItemDropTarget) => () => void,
+    registerDropTarget: (target: ItemDropTarget) => () => void;
 };
 
 export const ItemDnDContext = createContext<ItemDnDContextState>({
@@ -18,10 +18,10 @@ export const ItemDnDContext = createContext<ItemDnDContextState>({
     },
     registerDropTarget: () => {
         console.error("DnD context is not provided!");
-        return () => {}
-    }
+        return () => {};
+    },
 });
 
 export const useItemDnD = () => {
     return useContext(ItemDnDContext);
-}
+};

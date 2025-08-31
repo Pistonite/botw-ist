@@ -1,0 +1,4 @@
+.eslintcache
+/tsconfig*.json
+/eslint.config.js
+.prettierignore

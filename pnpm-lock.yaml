@@ -103,6 +103,9 @@ importers:
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
+      '@pistonite/skybook-react':
+        specifier: workspace:*
+        version: link:../skybook-react
       '@pistonite/workex':
         specifier: 'catalog:'
         version: 0.1.4
@@ -259,6 +262,9 @@ importers:
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
+      '@pistonite/skybook-react':
+        specifier: workspace:*
+        version: link:../skybook-react
       botw-item-assets:
         specifier: workspace:*
         version: link:../item-assets
@@ -510,6 +516,28 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 3.2.4(@types/node@22.15.18)(jsdom@26.1.0)
+
+  packages/skybook-react:
+    dependencies:
+      '@pistonite/pure':
+        specifier: 'catalog:'
+        version: 0.27.1
+      '@pistonite/skybook-api':
+        specifier: workspace:*
+        version: link:../skybook-api
+      '@pistonite/workex':
+        specifier: 'catalog:'
+        version: 0.1.4
+      react:
+        specifier: 'catalog:'
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      mono-dev:
+        specifier: workspace:*
+        version: link:../mono-dev
 
 packages:
 

@@ -11,6 +11,7 @@
         "@pistonite/pure-react": "catalog:",
         "@pistonite/shared-controls": "workspace:*",
         "@pistonite/skybook-api": "workspace:*",
+        "@pistonite/skybook-react": "workspace:*",
         "@pistonite/workex": "catalog:",
         "@tanstack/react-query": "^5.84.1",
         "@uidotdev/usehooks": "^2.4.1",

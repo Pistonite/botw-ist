@@ -19,6 +19,7 @@ includes:
   parser-legacy:  {taskfile: ./packages/parser-legacy,    dir: ./packages/parser-legacy,    internal: true}
   item-system:    {taskfile: ./packages/item-system,      dir: ./packages/item-system,      internal: true}
   skybook-api:    {taskfile: ./packages/skybook-api,      dir: ./packages/skybook-api,      internal: true}
+  skybook-react:  {taskfile: ./packages/skybook-react,    dir: ./packages/skybook-react,    internal: true}
   research:       {taskfile: ./packages/research-scripts, dir: ./packages/research-scripts, internal: true}
   localization:   {taskfile: ./packages/localization,     dir: ./packages/localization,     internal: true}
   item-assets:    {taskfile: ./packages/item-assets,      dir: ./packages/item-assets,      internal: true}
@@ -135,6 +136,7 @@ tasks:
       - app:check
       - server:check
       - runtime-worker:check
+      - skybook-react:check
 
   check-layer-3:
     cmds:

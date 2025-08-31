@@ -6,6 +6,7 @@ import type {
     InvView_PouchItem,
     ItemDragData,
 } from "@pistonite/skybook-api";
+import { DragSource } from "@pistonite/skybook-react";
 
 import {
     ItemSlot,
@@ -24,7 +25,6 @@ import {
     getTooltipPropsFromPouchItem,
 } from "./tooltip";
 import type { CookEffect } from "./data";
-import { DnDSource } from "./dnd";
 
 export type DraggingItemSlotProps = {
     data: ItemDragData
@@ -111,14 +111,14 @@ const PouchItemSlotImpl: React.FC<PouchItemSlotProps> = ({
 
     if (draggable) {
         return (
-        <DnDSource data={{
+        <DragSource data={{
                 type: "pouch",
                 payload: item,
                 isMasterSwordFullPower,
                 position
             }}>
     <ItemSlot {...slotProps} {...props} />;
-        </DnDSource>
+        </DragSource>
         );
     }
 
@@ -137,15 +137,15 @@ const PouchItemSlotWithTooltipImpl: React.FC<PouchItemSlotProps> = ({
     const tooltipProps = getTooltipPropsFromPouchItem(item, inBrokenSlot);
     if (draggable) {
         return (
-        <ItemTooltip {...tooltipProps} {...props}>
-        <DnDSource data={{
-                type: "pouch",
-                payload: item,
-                isMasterSwordFullPower,
-                position
-            }}>
-    <ItemSlot {...slotProps} {...props} />
-        </DnDSource>
+            <ItemTooltip {...tooltipProps} {...props}>
+                <DragSource data={{
+                    type: "pouch",
+                    payload: item,
+                    isMasterSwordFullPower,
+                    position
+                }}>
+                    <ItemSlot {...slotProps} {...props} />
+                </DragSource>
             </ItemTooltip>
         );
     }

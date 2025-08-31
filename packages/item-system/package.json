@@ -11,6 +11,7 @@
         "@fluentui/react-icons": "catalog:",
         "@pistonite/pure": "catalog:",
         "@pistonite/skybook-api": "workspace:*",
+        "@pistonite/skybook-react": "workspace:*",
         "botw-item-assets": "workspace:*",
         "react": "catalog:",
         "skybook-localization": "workspace:*"
