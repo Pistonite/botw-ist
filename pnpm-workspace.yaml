@@ -4,6 +4,7 @@ packages:
   - packages/intwc/vite-plugin
   - packages/item-assets
   - packages/item-system
+  - packages/itemsys
   - packages/localization
   - packages/mono-dev
   - packages/parser-legacy

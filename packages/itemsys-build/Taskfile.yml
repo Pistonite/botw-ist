@@ -1,0 +1,57 @@
+version: '3'
+
+tasks:
+  pull-video-deps:
+    desc: Pull the (processed) video deps
+    cmds:
+      - rm -rf video
+      - mkdir -p video
+      - gcloud storage cp -r gs://ist-private/video .
+
+  pull-icons-deps: 
+    desc: Pull the item images deps
+    cmds:
+      - rm -rf icons
+      - gcloud storage cp -r gs://ist-private/icons .
+
+  vdecode:
+    desc: Decode, crop, and clean up video frames using decode.py
+    cmds:
+      - python scripts/videoprep/decode.py {{.CLI_ARGS}}
+
+  vencode:
+    desc: Encode video frames into animated webp
+    cmds:
+      - cargo run --bin skybook-itemsys-build --release -- encode {{.CLI_ARGS}}
+
+  push-animated-artifacts:
+    desc: Push animated webps to cloud
+    cmds:
+      # The square ones are included in the sprite sheet (/Item)
+      - gcloud storage cp target/encode/Obj_DungeonClearSeal.png gs://ist-private/icons/Item
+      - gcloud storage cp target/encode/Obj_DLC_HeroSeal_*.png gs://ist-private/icons/Item
+      - gcloud storage cp target/encode/Obj_WarpDLC.png gs://ist-private/icons/Item
+      - gcloud storage cp target/encode/Obj_HeroSoul_*_Disabled.png gs://ist-private/icons/Item
+      - gcloud storage cp target/encode/Obj_DLC_HeroSoul_*_Disabled.png gs://ist-private/icons/Item
+      # # Activated abilities are not regular sized, so cannot be in sprite sheet
+      - gcloud storage cp target/encode/Obj_HeroSoul_*.png gs://ist-private/icons/SP/Item
+      - gcloud storage cp target/encode/Obj_DLC_HeroSoul_*.png gs://ist-private/icons/SP/Item
+      # # Put WebPs there as well
+      - gcloud storage cp target/encode/*.webp gs://ist-private/icons/SP/Item
+
+  bsource:
+    desc: Build TypeScript source code (requires research-scripts already built)
+    cmds:
+      - python scripts/build-actor-remap.py
+      - python scripts/build-localization.py
+
+  bsprite:
+    desc: Build item sprites and sprites metadata in TypeScript
+    cmds:
+      - cargo run --bin skybook-itemsys-build --release -- sprite {{.CLI_ARGS}}
+
+  clean:
+    desc: Save disk space
+    cmds:
+      - cargo clean
+      - rm -rf video
