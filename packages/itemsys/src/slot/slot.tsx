@@ -5,7 +5,7 @@ import { Link32Regular, PresenceBlocked24Regular } from "@fluentui/react-icons";
 import { ActorSprite, ModifierSprite } from "../sprite";
 import { SpecialStatus } from "../data";
 
-import type { ItemSlotFullProps } from "./item_slot_props.ts";
+import type { ItemSlotFullProps } from "./slot_props.ts";
 
 const useStyles = makeStyles({
     container: {

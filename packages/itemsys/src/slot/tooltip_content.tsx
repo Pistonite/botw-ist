@@ -3,7 +3,7 @@ import { Caption1, Subtitle2, Text, makeStyles, mergeClasses } from "@fluentui/r
 import { Star16Filled } from "@fluentui/react-icons";
 
 import { ActorSprite, ModifierSprite } from "../sprite";
-import { useGeneratedTranslation, useUITranslation } from "skybook-localization";
+import { useGenTranslation, useUITranslation } from "../i18n";
 
 import {
     getActorParam,
@@ -12,7 +12,7 @@ import {
     CookEffectNames,
     SpecialStatusNames,
 } from "../data";
-import type { ItemSlotContextProps } from "./item_slot_props.ts";
+import type { ItemSlotContextProps } from "./slot_props.ts";
 import type { ItemTooltipProps } from "./tooltip_props.ts";
 
 export type ItemTooltipContentProps = {
@@ -122,7 +122,7 @@ const ItemTooltipContentImpl: React.FC<ItemTooltipContentProps> = ({
 }) => {
     const styles = useStyles();
 
-    const t = useGeneratedTranslation();
+    const t = useGenTranslation();
     const ui = useUITranslation();
 
     const effectId = cookData?.effectId || 0;

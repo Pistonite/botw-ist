@@ -19,9 +19,7 @@
         "react": "catalog:",
         "react-dom": "catalog:",
         "reselect": "^5.1.1",
-        "skybook-item-system": "workspace:*",
         "skybook-localization": "workspace:*",
-        "skybook-parser-legacy": "workspace:*",
         "uuid": "catalog:",
         "zustand": "^5.0.7"
     },

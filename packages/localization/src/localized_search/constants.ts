@@ -59,6 +59,6 @@ export const detectLanguage = (text: string) => {
 };
 
 export type SearchError = {
-    type: "UnknownTag",
-    tag: string
+    type: "UnknownTag";
+    tag: string;
 };

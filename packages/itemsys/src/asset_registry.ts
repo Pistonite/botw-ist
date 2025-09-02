@@ -16,8 +16,8 @@ export const registerAssetLocation = (assetLocation: string) => {
         makeSpriteSheetStyle(assetLocation, "chunk0x64") +
         makeSpriteSheetStyle(assetLocation, "chunk1x64") +
         makeSpriteSheetStyle(assetLocation, "chunk2x64") +
-        makeSpriteSheetStyle(assetLocation, "modifiers")
-    + makeFontStyle(assetLocation);
+        makeSpriteSheetStyle(assetLocation, "modifiers") +
+        makeFontStyle(assetLocation);
 
     injectStyle("botw-item-assets", css);
 
@@ -32,7 +32,7 @@ const makeSpriteSheetStyle = (assetLocation: string, chunk: string) => {
 
 const makeFontStyle = (assetLocation: string) => {
     return `@font-face{font-family: CalamitySans; src:url("${assetLocation}fonts/Calamity-Regular.otf") format("opentype")}`;
-}
+};
 
 export const getSpecialIconUrl = (file: string) => {
     return `${theAssetLocation}special/${file}`;

@@ -11,7 +11,9 @@
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons": "catalog:",
         "@pistonite/pure": "catalog:",
-        "@pistonite/skybook-api": "workspace:*"
+        "@pistonite/skybook-api": "workspace:*",
+        "i18next": "catalog:",
+        "react-i18next": "catalog:"
     },
     "peerDependencies": {
         "react": "^18"

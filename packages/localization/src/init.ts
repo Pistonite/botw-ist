@@ -1,6 +1,5 @@
 import { initLocaleWithI18next } from "@pistonite/pure-i18next";
-import {getPureI18nextLoaderConfig as sharedControlsLoader
-} from "@pistonite/shared-controls";
+import { getPureI18nextLoaderConfig as sharedControlsLoader } from "@pistonite/shared-controls";
 
 import { getPureI18nextLoaderConfig as itemsysLoader } from "@pistonite/skybook-itemsys";
 

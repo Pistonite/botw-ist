@@ -3,9 +3,5 @@
     "private": true,
     "version": "0.0.0",
     "description": "The package for building skybook-itemsys and skybook app itself",
-    "type": "module",
-    "dependencies": {
-    },
-    "devDependencies": {
-    }
+    "type": "module"
 }

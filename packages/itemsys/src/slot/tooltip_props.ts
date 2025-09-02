@@ -19,6 +19,9 @@ import {
     type CookEffect,
 } from "../data";
 
+import type { ItemSlotContextProps } from "./slot_props.ts";
+
+export type ItemTooltipWithContextProps = ItemTooltipProps & ItemSlotContextProps;
 export type ItemTooltipProps = {
     /** The actor name of this item and used to look up item properties */
     actor: string;

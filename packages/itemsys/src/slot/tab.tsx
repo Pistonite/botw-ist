@@ -1,9 +1,8 @@
 import { makeStyles, mergeClasses } from "@fluentui/react-components";
-
-import { ModifierSprite } from "botw-item-assets";
-
-import { PouchCategory, PouchCategoryNames } from "./data";
 import { PresenceBlocked24Regular } from "@fluentui/react-icons";
+
+import { ModifierSprite } from "../sprite";
+import { PouchCategory, PouchCategoryNames } from "../data";
 
 export type TabNode = {
     /** The slot number of the item in the tab, corresponding to where it will be displayed */

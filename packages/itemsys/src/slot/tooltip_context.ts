@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { ItemTooltipWithContextProps } from "./ItemTooltip.tsx";
+import type { ItemTooltipWithContextProps } from "./tooltip_props.ts";
 
 export type SetItemTooltipFn = (
     x: number,

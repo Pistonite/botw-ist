@@ -81,3 +81,5 @@ export type RuntimeWorkerInitError =
  * - read-only: edits not allowed
  */
 export type SessionMode = "local" | "edit-only" | "read-only";
+
+export type Translator = (key: string, options?: Record<string, unknown>) => string;

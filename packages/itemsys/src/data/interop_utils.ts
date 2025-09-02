@@ -1,6 +1,6 @@
 import type { InvView_GdtItemData } from "@pistonite/skybook-api";
 
-import { PouchItemType } from "./EnumTypes.ts";
+import { PouchItemType } from "./enum_types.ts";
 
 export const isGdtDataEquipmentType = (
     data: InvView_GdtItemData,

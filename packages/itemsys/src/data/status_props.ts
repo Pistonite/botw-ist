@@ -1,16 +1,16 @@
-import { getActorParam } from "./ActorData.ts";
+import { getActorParam } from "./get_actor_data.ts";
 import {
     CookEffect,
     PouchItemType,
     SpecialStatus,
     SpecialStatusNames,
     WeaponModifier,
-} from "./EnumTypes.ts";
+} from "./enum_types.ts";
 import {
     convertCookEffectToSpecialStatus,
     getWeaponSpecialStatusToDisplay,
     isEquipmentType,
-} from "./EnumUtils.ts";
+} from "./enum_utils.ts";
 
 /** Display props for special status (i.e. the box shown on the top-right of the item) */
 export type StatusProps = {

@@ -15,7 +15,7 @@ pub fn run() -> cu::Result<()> {
     let itemsys_dir = home.parent_abs()?.join("itemsys");
     let src_dir = itemsys_dir.join("src").join("generated");
     cu::fs::make_dir(&src_dir)?;
-    let sprites_dir = itemsys_dir.join("public").join("sprites");
+    let sprites_dir = home.join("public").join("sprites");
     cu::fs::make_dir(&sprites_dir)?;
 
     generate_actors(&icons_dir, &sprites_dir, &src_dir)?;

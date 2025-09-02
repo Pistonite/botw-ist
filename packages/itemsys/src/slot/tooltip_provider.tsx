@@ -1,9 +1,9 @@
 import { type PropsWithChildren, useRef, useState, useCallback, useEffect } from "react";
 import { makeStyles } from "@fluentui/react-components";
 
-import { ItemTooltipContent } from "./ItemTooltipContent.tsx";
-import { ItemTooltipContext, type SetItemTooltipFn } from "./ItemTooltipContext.ts";
-import type { ItemTooltipWithContextProps } from "./ItemTooltip.tsx";
+import { ItemTooltipContent } from "./tooltip_content.tsx";
+import { ItemTooltipContext, type SetItemTooltipFn } from "./tooltip_context.ts";
+import type { ItemTooltipWithContextProps } from "./tooltip_props.tsx";
 
 const useStyles = makeStyles({
     container: {
