@@ -1,4 +1,4 @@
-import { getActorParam } from "./ActorData.ts";
+import { getActorParam } from "./get_actor_data.ts";
 import {
     CookEffect,
     PouchCategory,
@@ -6,7 +6,7 @@ import {
     PouchItemUse,
     SpecialStatus,
     WeaponModifier,
-} from "./EnumTypes.ts";
+} from "./enum_types.ts";
 
 export const isEquipmentType = (itemType: PouchItemType): boolean => {
     return (

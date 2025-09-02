@@ -2,9 +2,11 @@
 
 # Skybook
 
-![Build Badge](https://img.shields.io/github/actions/workflow/status/Pistonite/botw-ist/build.yml)
-![License Badge](https://img.shields.io/github/license/Pistonite/botw-ist)
-![Issue Badge](https://img.shields.io/github/issues/Pistonite/botw-ist)
+![Build Badge](https://img.shields.io/github/actions/workflow/status/Pistonite/botw-ist/build.yml?color=blue)
+![License Badge](https://img.shields.io/github/license/Pistonite/botw-ist?color=blue)
+![Issue Badge](https://img.shields.io/github/issues/Pistonite/botw-ist?color=blue)
+![Version Badge for skybook](https://img.shields.io/github/package-json/v/Pistonite/botw-ist?label=skybook&color=green)
+![Version Badge for skybook-api](https://img.shields.io/npm/v/%40pistonite%2Fskybook-api?label=skybook-api&color=green)
 
 Simulator for Inventory Slot Transfer in BOTW
 

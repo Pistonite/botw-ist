@@ -2,11 +2,10 @@ import type { PropsWithChildren } from "react";
 import { Text, makeStyles, mergeClasses } from "@fluentui/react-components";
 import { Link32Regular, PresenceBlocked24Regular } from "@fluentui/react-icons";
 
-import { ActorSprite, type ActorSpriteProps, ModifierSprite } from "botw-item-assets";
-
+import { ActorSprite, ModifierSprite } from "../sprite";
 import { SpecialStatus } from "../data";
 
-import type { ItemSlotProps } from "./ItemSlotProps.ts";
+import type { ItemSlotFullProps } from "./item_slot_props.ts";
 
 const useStyles = makeStyles({
     container: {
@@ -195,9 +194,6 @@ const useStyles = makeStyles({
         paddingLeft: "2px",
     },
 });
-
-export type ItemSlotContextProps = Pick<ActorSpriteProps, "cheap" | "disableAnimation">;
-export type ItemSlotFullProps = ItemSlotContextProps & ItemSlotProps;
 
 /** The Item slot display */
 export const ItemSlot: React.FC<ItemSlotFullProps> = ({

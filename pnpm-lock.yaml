@@ -103,6 +103,9 @@ importers:
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
+      '@pistonite/skybook-itemsys':
+        specifier: workspace:*
+        version: link:../itemsys
       '@pistonite/workex':
         specifier: 'catalog:'
         version: 0.1.4
@@ -112,9 +115,6 @@ importers:
       '@uidotdev/usehooks':
         specifier: ^2.4.1
         version: 2.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      botw-item-assets:
-        specifier: workspace:*
-        version: link:../item-assets
       mobile-device-detect:
         specifier: ^0.4.3
         version: 0.4.3
@@ -217,34 +217,6 @@ importers:
         specifier: 'catalog:'
         version: 6.3.5(@types/node@22.15.18)
 
-  packages/item-assets:
-    dependencies:
-      '@griffel/react':
-        specifier: 'catalog:'
-        version: 1.5.30(react@18.3.1)
-      '@pistonite/pure':
-        specifier: 'catalog:'
-        version: 0.27.1
-      react:
-        specifier: 'catalog:'
-        version: 18.3.1
-    devDependencies:
-      '@types/react':
-        specifier: 'catalog:'
-        version: 18.3.18
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 18.3.5(@types/react@18.3.18)
-      mono-dev:
-        specifier: workspace:*
-        version: link:../mono-dev
-      react-dom:
-        specifier: 'catalog:'
-        version: 18.3.1(react@18.3.1)
-      vite:
-        specifier: 'catalog:'
-        version: 6.3.5(@types/node@22.15.18)
-
   packages/item-system:
     dependencies:
       '@fluentui/react-components':
@@ -256,9 +228,9 @@ importers:
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
-      botw-item-assets:
+      '@pistonite/skybook-itemsys':
         specifier: workspace:*
-        version: link:../item-assets
+        version: link:../itemsys
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -287,12 +259,18 @@ importers:
 
   packages/itemsys:
     dependencies:
-      '@griffel/react':
-        specifier: ^1
-        version: 1.5.30(react@18.3.1)
+      '@fluentui/react-components':
+        specifier: 'catalog:'
+        version: 9.68.2(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(scheduler@0.23.2)
+      '@fluentui/react-icons':
+        specifier: 'catalog:'
+        version: 2.0.307(react@18.3.1)
       '@pistonite/pure':
-        specifier: ^0.27.1
+        specifier: 'catalog:'
         version: 0.27.1
+      '@pistonite/skybook-api':
+        specifier: workspace:*
+        version: link:../skybook-api
       react:
         specifier: ^18
         version: 18.3.1
@@ -324,6 +302,9 @@ importers:
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
+      '@pistonite/skybook-itemsys':
+        specifier: workspace:*
+        version: link:../itemsys
       fuse.js:
         specifier: ^7.1.0
         version: 7.1.0

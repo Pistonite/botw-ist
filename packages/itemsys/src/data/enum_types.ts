@@ -27,9 +27,7 @@ export const PouchItemTypeNames = [
     "KeyItem",
 ] as const satisfies PouchItemTypeName[];
 
-/**
- * uking::ui::PouchCategory. Used as index for mListHeads
- */
+/** uking::ui::PouchCategory. Used as index for mListHeads */
 export const PouchCategory = {
     Sword: 0,
     Bow: 1,

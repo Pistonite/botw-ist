@@ -1,4 +1,3 @@
-import type { ActorSpriteProps } from "botw-item-assets";
 import type {
     InvView_GdtItem,
     InvView_OverworldItem,
@@ -20,6 +19,10 @@ import {
     PouchItemType,
     type StatusProps,
 } from "../data";
+import type { ActorSpriteProps } from "../sprite";
+
+export type ItemSlotContextProps = Pick<ActorSpriteProps, "cheap" | "disableAnimation">;
+export type ItemSlotFullProps = ItemSlotContextProps & ItemSlotProps;
 
 /** Props to display an item slot */
 export type ItemSlotProps = {

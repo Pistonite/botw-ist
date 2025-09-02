@@ -28,8 +28,11 @@ If you are not familiar with bundler configuration, it's recommended
 that you use the same stack as the IST Simulator itself: `pnpm` + `Vite` + `mono-dev`.
 TODO: example or setup script or something.
 
-If you don't use `mono-dev` or `vite`, ensure your bundler has the config/plugin
-setup to bundle `React` code and `*.yaml` imports.
+If you don't use `mono-dev` or `vite`, you must configure whatever bundler you use
+to:
+- transpile/bundle `React` code
+- handle `*.yaml` imports
+- handle asset loading correctly for `*.css` and `*.otf` files
 
 If you don't use `mono-dev`, ensure you manually dedupe these packages
 in `vite.config.ts`:
@@ -43,7 +46,11 @@ export default defineConfig({
         dedupe: [
             "@pistonite/pure",
             "@pistonite/workex",
-            "@pistonite/skybook-itemsys", // if installed
+            // if using @pistonite/skybook-itemsys, also add the
+            // ones below
+            "@pistonite/skybook-itemsys",
+            "react-i18next",
+            "i18next"
         ]
     }
 });

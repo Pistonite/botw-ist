@@ -1,6 +1,5 @@
 {
     "name": "@pistonite/skybook-api",
-    "private": true,
     "type": "module",
     "version": "0.0.1",
     "description": "Bindings, Extension and Runtime API for Skybook, the BOTW IST Simulator",

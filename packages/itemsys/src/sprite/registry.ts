@@ -8,7 +8,7 @@ let theAssetLocation: string = "";
  * assetLocation is the URL prefix for the asset, should end with `/`.
  * The location should have `special` and `sprites` directory
  */
-export const registerAssetLocation = (assetLocation: string) => {
+export const registerSpriteLocation = (assetLocation: string) => {
     const css =
         makeSpriteSheetStyle(assetLocation, "chunk0x32") +
         makeSpriteSheetStyle(assetLocation, "chunk1x32") +
@@ -16,8 +16,7 @@ export const registerAssetLocation = (assetLocation: string) => {
         makeSpriteSheetStyle(assetLocation, "chunk0x64") +
         makeSpriteSheetStyle(assetLocation, "chunk1x64") +
         makeSpriteSheetStyle(assetLocation, "chunk2x64") +
-        makeSpriteSheetStyle(assetLocation, "modifiers")
-    + makeFontStyle(assetLocation);
+        makeSpriteSheetStyle(assetLocation, "modifiers");
 
     injectStyle("botw-item-assets", css);
 
@@ -29,10 +28,6 @@ const makeSpriteSheetStyle = (assetLocation: string, chunk: string) => {
     const maskCSS = `.bia--sprite-mask-${chunk}{mask-image:url("${assetLocation}sprites/${chunk}.webp")}`;
     return chunkCSS + maskCSS;
 };
-
-const makeFontStyle = (assetLocation: string) => {
-    return `@font-face{font-family: CalamitySans; src:url("${assetLocation}fonts/Calamity-Regular.otf") format("opentype")}`;
-}
 
 export const getSpecialIconUrl = (file: string) => {
     return `${theAssetLocation}special/${file}`;

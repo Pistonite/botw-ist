@@ -11,6 +11,7 @@
         "@pistonite/pure-i18next": "catalog:",
         "@pistonite/shared-controls": "workspace:*",
         "@pistonite/skybook-api": "workspace:*",
+        "@pistonite/skybook-itemsys": "workspace:*",
         "fuse.js": "^7.1.0",
         "i18next": "catalog:",
         "lru-cache": "catalog:",

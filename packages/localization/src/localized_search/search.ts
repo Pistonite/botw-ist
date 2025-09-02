@@ -3,7 +3,7 @@ import { LRUCache } from "lru-cache";
 
 import type { ItemSearchResult } from "@pistonite/skybook-api";
 
-import { detectLanguage } from "./constants.ts";
+import { detectLanguage, type SearchError } from "./constants.ts";
 import {
     mergeResults,
     type SearchEntryWithScore,
@@ -23,13 +23,11 @@ const cache = new LRUCache<string, ItemSearchResult[]>({
  * are cached for future queries. However, cache-misses are extremely slow.
  *
  * Results are sorted by the best match first, and up to `limit` results are returned.
- *
- * If any error occurs, a localized error message is returned
  */
 export const searchItemLocalized = async (
     query: string,
     limit: number,
-): Promise<Result<ItemSearchResult[], string>> => {
+): Promise<Result<ItemSearchResult[], SearchError>> => {
     const cachedResult = cache.get(query);
     if (cachedResult) {
         return { val: limit > 0 ? cachedResult.slice(0, limit) : cachedResult };
@@ -44,7 +42,7 @@ export const searchItemLocalized = async (
 
 const searchItemLocalizedInternal = async (
     query: string,
-): Promise<Result<ItemSearchResult[], string>> => {
+): Promise<Result<ItemSearchResult[], SearchError>> => {
     let searchResults: SearchEntryWithScore[] = [];
     const parts = query.split(":", 2);
     if (parts.length === 2) {
@@ -72,9 +70,6 @@ const searchItemLocalizedInternal = async (
         const results = await Promise.all(searchPromises);
         for (const result of results) {
             searchResults.push(...result);
-            // do we need this?
-            // scheduler.yield();
-            // await new Promise((resolve) => setTimeout(resolve, 0));
         }
     }
     const results = mergeResults(query, searchResults);
