@@ -1,9 +1,10 @@
 import { makeStyles, mergeClasses } from "@fluentui/react-components";
 import { memo } from "react";
 
-import { ActorMetadata } from "../generated/spritemeta_actors.ts";
 import { ActorRemap } from "../generated/actor_remap.ts";
-import { getSpecialIconUrl } from "./registry.ts";
+import { getSpecialIconUrl } from "../asset_registry.ts";
+
+import { ActorMetadata } from "./actor_meta.ts";
 
 export type ActorSpriteProps = {
     /** Name of the Actor to display */

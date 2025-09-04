@@ -1,7 +1,7 @@
 import { makeStyles, mergeClasses } from "@fluentui/react-components";
 import { memo } from "react";
 
-import { ModifierMetadata } from "../generated/spritemeta_modifiers.ts";
+import { ModifierMetadata } from "./modifier_meta.ts";
 
 export type ModifierSpriteProps = {
     /** Name of the special status to show */

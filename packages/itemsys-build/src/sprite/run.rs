@@ -13,7 +13,7 @@ pub fn run() -> cu::Result<()> {
     cu::ensure!(icons_dir.exists(), "icons deps needs to be pulled to build sprites.");
 
     let itemsys_dir = home.parent_abs()?.join("itemsys");
-    let src_dir = itemsys_dir.join("src").join("generated");
+    let src_dir = itemsys_dir.join("src").join("sprite");
     cu::fs::make_dir(&src_dir)?;
     let sprites_dir = home.join("public").join("sprites");
     cu::fs::make_dir(&sprites_dir)?;
@@ -129,7 +129,7 @@ fn generate_actors(
     ];
 
     cu::fs::write(
-        src_dir.join("spritemeta_actors.ts"),
+        src_dir.join("actor_meta.ts"),
         metadata_ts.to_string(),
     )?;
 
@@ -177,7 +177,7 @@ fn generate_modifiers(
     ];
 
     std::fs::write(
-        src_dir.join("spritemeta_modifiers.ts"),
+        src_dir.join("modifier_meta.ts"),
         metadata_ts.to_string(),
     )?;
     Ok(())

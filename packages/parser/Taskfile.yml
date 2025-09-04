@@ -6,10 +6,6 @@ includes:
     internal: true
 
 tasks:
-  build:
-    cmds:
-      - task: bsource
-   
   bsource:
     cmds:
       - python scripts/build-armor-upgrade.py
@@ -32,6 +28,7 @@ tasks:
 
   check:
     cmds:
+      - cargo build # workaround for layered check to execute the build script once
       - task: cargo:clippy-all
       - task: check-layer
       - task: cargo:fmt-check
@@ -41,12 +38,7 @@ tasks:
       - layered-crate -- check --lib --all-features
 
   fix:
-    cmds:
-      - task: cargo:fmt-fix
-
-  clean:
-    cmds:
-      - rm -rf src/generated
+    - task: cargo:fmt-fix
 
   diff:
     desc: Diff parser snapshots

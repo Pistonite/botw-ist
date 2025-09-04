@@ -23,5 +23,8 @@
         "mono-dev": "workspace:*",
         "react-dom": "catalog:",
         "vite": "catalog:"
-    }
+    },
+    "nocheck": [
+        "/src/sprite/*_meta.ts"
+    ]
 }

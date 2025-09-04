@@ -7,14 +7,6 @@ includes:
   mdbook:
     taskfile: ../mono-dev/task/mdbook.yaml
     internal: true
-  parser:
-    taskfile: ../parser
-    dir: ../parser
-    internal: true
-  item-assets:
-    taskfile: ../item-assets
-    dir: ../item-assets
-    internal: true
 
 tasks:
   install:
@@ -43,8 +35,9 @@ tasks:
       - rm -rf book
       - mdbook build
       - mdbook build zh -d ../book/zh
-      - task: parser:package-artifacts-public
-      - task: item-assets:package-artifacts-public
+      - mkdir -p book/_development_/itemsys
+      - cp ../itemsys/src/generated/spritemeta_actors.ts book/_development_/itemsys
+      - cp ../itemsys/src/generated/spritemeta_modifiers.ts book/_development_/itemsys
       - bun preprocess/inject-meta.ts post
 
   check:

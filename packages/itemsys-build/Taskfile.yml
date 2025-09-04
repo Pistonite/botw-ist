@@ -62,7 +62,13 @@ tasks:
       - mkdir -p public/sprites
       - mkdir -p public/special
       - mkdir -p public/images
-      - gcloud storage cp gs://ist-private/artifacts/botw-item-assets/*.webp public/sprites
+      - gcloud storage cp gs://ist-private/artifacts/skybook-itemsys/sprites/*.webp public/sprites
       - gcloud storage cp gs://ist-private/icons/SP/Item/* public/special
       - gcloud storage cp gs://ist-private/images/SheikahBackground*.png public/images
       - gcloud storage cp gs://ist-private/images/bg-*.jpg public/images
+      - gcloud storage cp gs://ist-private/artifacts/skybook-itemsys/generated/* ../itemsys/src/generated
+
+  push-artifacts:
+    cmds:
+      - gcloud storage cp public/sprites/*.webp gs://ist-private/artifacts/skybook-itemsys/sprites
+      - gcloud storage cp ../itemsys/src/generated/* gs://ist-private/artifacts/skybook-itemsys/generated
