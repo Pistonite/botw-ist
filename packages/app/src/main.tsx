@@ -6,8 +6,7 @@ import type { Void } from "@pistonite/pure/result";
 import { ThemeProvider } from "@pistonite/shared-controls";
 import { wxWorker } from "@pistonite/workex";
 
-import { type Translator, initI18n, translateUI } from "skybook-localization";
-import { ItemTooltipProvider } from "skybook-item-system";
+import { initI18n, translateUI } from "skybook-localization";
 import { extractDirectLoad } from "@pistonite/skybook-api/client";
 import {
     type Runtime,
@@ -16,8 +15,10 @@ import {
     type ScriptEnvImage,
     type RuntimeWorkerInitArgs,
     type ScriptEnv,
+    type Translator,
 } from "@pistonite/skybook-api";
 import { skybookRuntime } from "@pistonite/skybook-api/interfaces/Runtime.bus";
+import { getSheikaBackgroundUrl, ItemTooltipProvider } from "@pistonite/skybook-itemsys";
 
 import {
     initExtensionManager,
@@ -33,7 +34,7 @@ import {
     isCrashed,
 } from "self::application";
 import { initNarrow, isLessProductive } from "self::pure-contrib";
-import { bootLog, devLog, getSheikaBackgroundUrl, probeAndRegisterAssetLocation } from "self::util";
+import { bootLog, devLog, probeAndRegisterAssetLocation } from "self::util";
 import {
     App,
     BootScreen,

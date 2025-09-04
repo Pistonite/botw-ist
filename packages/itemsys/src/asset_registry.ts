@@ -37,3 +37,19 @@ const makeFontStyle = (assetLocation: string) => {
 export const getSpecialIconUrl = (file: string) => {
     return `${theAssetLocation}special/${file}`;
 };
+
+export const getSheikaBackgroundUrl = () => {
+    return `${theAssetLocation}images/SheikahBackground.png`;
+};
+
+export const getSheikaBackgroundLightUrl = () => {
+    return `${theAssetLocation}images/SheikahBackgroundLight.png`;
+};
+
+export const getOverworldBackgroundUrl = (name: BackgroundName) => {
+    return `${theAssetLocation}images/bg-${name}.jpg`;
+};
+
+export type BackgroundName = "gerudo"
+| "goron" | "hateno" | "kakariko" | "korok-forest" | "plateau"
+| "sor" | "rito" | "zora";

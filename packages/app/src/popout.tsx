@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@pistonite/shared-controls";
 
 import { initI18n, translateUI } from "skybook-localization";
-import { ItemTooltipProvider } from "skybook-item-system";
+import { getSheikaBackgroundUrl, ItemTooltipProvider } from "@pistonite/skybook-itemsys";
 import {
     readExtensionProperties,
     connectPopoutExtensionWindow,
@@ -14,7 +14,6 @@ import {
 import { type ConnectExtensionFn, getExtension } from "self::extensions";
 import {
     extLog,
-    getSheikaBackgroundUrl,
     probeAndRegisterAssetLocation,
     type FirstPartyExtension,
 } from "self::util";

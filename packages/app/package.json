@@ -33,6 +33,7 @@
         "monaco-editor": "*",
         "mono-dev": "workspace:*",
         "react-i18next": "catalog:",
+        "skybook-itemsys-build": "workspace:*",
         "vite": "catalog:",
         "vite-plugin-serve-static": "^1.1.0",
         "vitest": "catalog:"
