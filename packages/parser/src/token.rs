@@ -1,0 +1,234 @@
+use serde::Serialize;
+use teleparse::derive_lexicon;
+
+/// Token type
+#[derive(Serialize)]
+#[derive_lexicon]
+#[teleparse(ignore(r"\s+"))]
+pub enum TT {
+    /// Line comments (starting with // or #)
+    #[teleparse(regex(r"(//|#).*\n"))]
+    Comment,
+
+    /// A tagged block literal starting wit '''tag\n and ending with '''
+    #[teleparse(regex(r"'''[^\n]*\n(([^'])|('[^'])|(''[^']))*'''"))]
+    BlockLiteral,
+
+    #[teleparse(terminal(
+        SymLAngle = "<",
+        SymRAngle = ">",
+        SymLParen = "(",
+        SymRParen = ")",
+        SymLBracket = "[",
+        SymRBracket = "]",
+        SymLBrace = "{",
+        SymRBrace = "}",
+        SymEqual = "=",
+        SymColon = ":",
+        SymComma = ",",
+        SymSemi = ";",
+        SymQuote = "\"",
+        SymPeriod = ".",
+    ))]
+    Symbol,
+
+    #[teleparse(
+        regex(r"((-)?\d(_?\d)*)|(0x[\da-fA-F](_?[\da-fA-F])*)"),
+        terminal(SymNumber)
+    )]
+    Number,
+
+    /// Action commands
+    #[teleparse(terminal(
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        /////////////////////////////
+
+        // @syntax-generator-hint commands
+        KwGet = "get",
+        KwPickUp = "pick-up",
+        KwSpawn = "spawn",
+
+        KwOpenInventory = "open-inventory",
+        KwOpenInv = "open-inv",
+        KwPause = "pause",
+        KwCloseInventory = "close-inventory",
+        KwCloseInv = "close-inv",
+        KwUnpause = "unpause",
+        KwHold = "hold",
+        KwHoldAttach = "hold-attach",
+        KwUnhold = "unhold",
+        KwDrop = "drop",
+        KwDnp = "dnp",
+        KwEat = "eat",
+        // TODO: cook sim
+        KwCook = "cook",
+        KwEntangle = "entangle",
+        KwSort = "sort",
+        KwOverload = "overload",
+        KwUnoverload = "unoverload",
+
+        KwEquip = "equip",
+        KwUnequip = "unequip",
+        KwShoot = "shoot",
+        KwUse = "use",
+        KwThrow = "throw",
+        KwDisplay = "display",
+
+        KwTalkTo = "talk-to",
+        KwUntalk = "untalk",
+        KwCloseDialog = "close-dialog",
+        KwBuy = "buy",
+        KwSell = "sell",
+
+        KwSave = "save",
+        KwSaveAs = "save-as",
+        KwReload = "reload",
+        KwCloseGame = "close-game",
+        KwNewGame = "new-game",
+
+
+        // == below are WIP ==
+
+        KwRoast = "roast",
+        KwBake = "bake",
+        KwBoil = "boil",
+        KwFreeze = "freeze",
+        KwDestroy = "destroy",
+
+
+        // reserved
+
+        KwGoto = "go-to",
+        // @syntax-generator-hint end
+
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        /////////////////////////////
+    ))]
+    Command,
+
+    #[teleparse(terminal(
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        // Also add the annotation to ItemWord
+        /////////////////////////////
+
+        // @syntax-generator-hint annotations
+        KwSmug = "smug",
+        KwPauseDuring = "pause-during",
+        KwSameDialog = "same-dialog",
+        KwAccuratelySimulate = "accurately-simulate",
+        KwTargeting = "targeting",
+        KwOverworld = "overworld",
+        KwNonBreaking = "non-breaking",
+        KwBreaking = "breaking",
+        KwDpad = "dpad",
+        KwPerUse = "per-use",
+        KwDiscovered = "discovered",
+        KwSpawnArrow = "spawn-arrow",
+        // @syntax-generator-hint end
+
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        // Also add the annotation to ItemWord
+        /////////////////////////////
+    ))]
+    Annotation,
+
+    #[teleparse(terminal(
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        /////////////////////////////
+        KwSuBreak = "!break",
+        KwSuInit = "!init",
+        KwSuAddSlot = "!add-slot",
+        KwSuSwap = "!swap",
+        KwSuWrite = "!write",
+        KwSuWriteName = "!write-name",
+        KwSuRemove = "!remove",
+        KwSuSetGdt = "!set-gdt",
+        KwSuArrowlessSmuggle = "!arrowless-smuggle",
+        KwSuSystem = "!system",
+        KwSuTrialStart = "!trial-start",
+        KwSuTrialEnd = "!trial-end",
+        /////////////////////////////
+        // When updating syntax, Keep the order in sync with syn and cir Command
+        /////////////////////////////
+    ))]
+    SuperCommand,
+
+    #[teleparse(terminal(
+        // @syntax-generator-hint keywords
+        KwAll = "all",
+        KwBut = "but",
+        KwInfinite = "infinite",
+        KwTime = "time",
+        KwTimes = "times",
+        KwSlot = "slot",
+        KwSlots = "slots",
+        KwTo = "to",
+        KwAnd = "and",
+        // @syntax-generator-hint end
+
+        // @syntax-generator-hint types
+        KwWeapon = "weapon",
+        KwWeapons = "weapons",
+        KwBow = "bow",
+        KwBows = "bows",
+        KwShield = "shield",
+        KwShields = "shields",
+        KwArmor = "armor",
+        KwArmors = "armors",
+
+        // armor types
+        KwArmorHead = "armor-head",
+        KwHeadArmor = "head-armor",
+        KwHeadArmors = "head-armors",
+        KwArmorBody = "armor-body",
+        KwBodyArmor = "body-armor",
+        KwBodyArmors = "body-armors",
+        KwArmorChest = "armor-chest",
+        KwChestArmor = "chest-armor",
+        KwChestArmors = "chest-armors",
+        KwArmorUpper = "armor-upper",
+        KwUpperArmor = "upper-armor",
+        KwUpperArmors = "upper-armors",
+        KwArmorLeg = "armor-leg",
+        KwArmorLegs = "armor-legs",
+        KwLegArmor = "leg-armor",
+        KwLegArmors = "leg-armors",
+        KwArmorLower = "armor-lower",
+        KwLowerArmor = "lower-armor",
+        KwLowerArmors = "lower-armors",
+
+        KwMaterial = "material",
+        KwMaterials = "materials",
+        KwFood = "food",
+        KwFoods = "foods",
+        KwKeyItem = "key-item",
+        KwKeyItems = "key-items",
+        // @syntax-generator-hint end
+    ))]
+    Keyword,
+
+    /////////////////////////////
+    // When updating keywords, remember to update the TS language
+    // as well (in packages/app/src/extensions/editor)
+    /////////////////////////////
+    #[teleparse(regex(r"[_a-zA-Z][-0-9a-zA-Z_]*"), terminal(Word))]
+    Word,
+
+    #[teleparse(regex(r#""[^"]*""#), terminal(QuotedWord))]
+    QuotedWord,
+
+    /// A variable name (for example, a meta key)
+    Variable,
+    /// item type/category
+    Type,
+    /// item amount
+    Amount,
+
+    /// item literal (for example <Weapon_Sword_502>)
+    ItemLiteral,
+}

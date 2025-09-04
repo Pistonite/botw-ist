@@ -1,14 +1,15 @@
 use teleparse::{derive_syntax, tp};
 
 use crate::syn;
+use crate::token;
 
 /// Syntax for the metadata specifier, e.g. `[key1:value1, key2=value2, key3]`
 #[derive_syntax]
 #[derive(Debug)]
 pub struct Meta {
-    pub open: syn::SymLBracket,
-    pub entries: tp::Punct<syn::MetaKvPair, syn::SymComma>,
-    pub close: syn::SymRBracket,
+    pub open: token::SymLBracket,
+    pub entries: tp::Punct<syn::MetaKvPair, token::SymComma>,
+    pub close: token::SymRBracket,
 }
 
 /// One key-value pair in a metadata specifier
@@ -30,9 +31,9 @@ pub enum MetaKey {
     /// Regular item ident as meta key (typically kebab-case)
     Word(syn::ItemWord),
     // these keywords can be meta key as well
-    Time(syn::KwTime),
-    Slot(syn::KwSlot),
-    Equip(syn::KwEquip),
+    Time(token::KwTime),
+    Slot(token::KwSlot),
+    Equip(token::KwEquip),
 
     // category name can also be meta key (e.g. :slots, :discovered)
     Category(syn::CategoryName),

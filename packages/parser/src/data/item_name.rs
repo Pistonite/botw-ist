@@ -1,4 +1,26 @@
+use std::collections::BTreeSet;
+
 use super::SearchResult;
+
+// generated from data/item-search-terms.yaml by the build script
+include!("item_name.gen.rs");
+
+/// Filter all items by the word
+pub fn filter_items<'a>(
+    filter_word: &str,
+    original_search_str: &'a str,
+) -> BTreeSet<SearchResult<'a, 'static>> {
+    ITEM_NAMES
+        .iter()
+        .filter_map(|n| {
+            if n.extended_item_name.contains(filter_word) {
+                Some(n.to_result(original_search_str))
+            } else {
+                None
+            }
+        })
+        .collect()
+}
 
 /// A searchable item entry
 #[derive(Debug, PartialEq, Eq)]

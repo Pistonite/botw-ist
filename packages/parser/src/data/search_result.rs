@@ -12,7 +12,6 @@ pub struct SearchResult<'a, 'b> {
 impl std::fmt::Debug for SearchResult<'_, '_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("SearchResult")
-            // .field("search_input", &self.search_input)
             .field("result", &self.result.extended_item_name)
             .finish()
     }
@@ -82,7 +81,6 @@ impl Ord for SearchResult<'_, '_> {
         self_id.cmp(other_id)
     }
 }
-
 impl PartialOrd for SearchResult<'_, '_> {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))

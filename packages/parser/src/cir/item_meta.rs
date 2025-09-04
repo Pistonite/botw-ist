@@ -2,7 +2,6 @@ use teleparse::{Span, tp};
 
 use crate::cir;
 use crate::error::{ErrorReport, cir_error, cir_warning};
-use crate::search;
 use crate::syn;
 
 use super::{MetaParser, enum_name};
@@ -248,7 +247,7 @@ impl MetaParser for &mut ItemMeta {
                     if !self.check_add_more_ingr(v_span, errors) {
                         return;
                     }
-                    match search::search_item_by_ident(&x) {
+                    match cir::search_item_by_ident(&x) {
                         Some(item) => self.ingredients.push(item.actor),
                         None => errors.push(cir_error!(v_span, InvalidItem(x))),
                     }

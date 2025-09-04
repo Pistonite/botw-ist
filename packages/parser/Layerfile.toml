@@ -1,0 +1,21 @@
+[crate]
+
+[layer.parse_output]
+depends-on = ["cir", "semantic_token", "syn", "error"]
+impl = ["error"]
+
+[layer.cir]
+depends-on = ["syn", "data", "error"]
+impl = ["error"]
+
+[layer.semantic_token]
+depends-on = ["syn"]
+
+[layer.syn]
+depends-on = ["token"]
+
+[layer.error]
+depends-on = ["token"]
+
+[layer.token]
+[layer.data]

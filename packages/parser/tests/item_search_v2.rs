@@ -1,18 +1,17 @@
 mod item_search_common;
 use item_search_common::test_item_search;
 use skybook_parser::cir;
-use skybook_parser::search::{ResolvedItem, search_item_by_ident, search_item_by_ident_all};
 
 #[test]
 fn test_item_search_empty() {
-    assert_eq!(search_item_by_ident(""), None);
-    assert_eq!(search_item_by_ident(" "), None);
-    assert_eq!(search_item_by_ident("_"), None);
-    assert_eq!(search_item_by_ident("-"), None);
-    assert_eq!(search_item_by_ident_all(""), vec![]);
-    assert_eq!(search_item_by_ident_all(" "), vec![]);
-    assert_eq!(search_item_by_ident_all("_"), vec![]);
-    assert_eq!(search_item_by_ident_all("-"), vec![]);
+    assert_eq!(cir::search_item_by_ident(""), None);
+    assert_eq!(cir::search_item_by_ident(" "), None);
+    assert_eq!(cir::search_item_by_ident("_"), None);
+    assert_eq!(cir::search_item_by_ident("-"), None);
+    assert_eq!(cir::search_item_by_ident_all(""), vec![]);
+    assert_eq!(cir::search_item_by_ident_all(" "), vec![]);
+    assert_eq!(cir::search_item_by_ident_all("_"), vec![]);
+    assert_eq!(cir::search_item_by_ident_all("-"), vec![]);
 }
 
 /// Test items with hard coded names in V2
@@ -65,8 +64,8 @@ fn test_item_search_v2() {
 
     // Legacy food. Need to add metadata
     assert_eq!(
-        search_item_by_ident("speedfood"),
-        Some(ResolvedItem {
+        cir::search_item_by_ident("speedfood"),
+        Some(cir::ResolvedItem {
             actor: "Item_Cook_A_03".to_string(),
             meta: Some(cir::ItemMeta {
                 effect_id: Some(13),
@@ -76,8 +75,8 @@ fn test_item_search_v2() {
     );
 
     assert_eq!(
-        search_item_by_ident("endurafood"),
-        Some(ResolvedItem {
+        cir::search_item_by_ident("endurafood"),
+        Some(cir::ResolvedItem {
             actor: "Item_Cook_A_01".to_string(),
             meta: Some(cir::ItemMeta {
                 effect_id: Some(15),

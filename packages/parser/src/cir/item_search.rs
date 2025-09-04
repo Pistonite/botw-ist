@@ -1,13 +1,11 @@
 use std::collections::BTreeSet;
 
 use crate::cir;
-use crate::search::SearchResult;
-
-use super::ResolvedItem;
+use crate::data::{self, SearchResult};
 
 /// Search for an item by V4 identifier such as `royal_claymore`, and return the best match
 /// if there is one
-pub fn search_item_by_ident(search_str: &str) -> Option<ResolvedItem> {
+pub fn search_item_by_ident(search_str: &str) -> Option<cir::ResolvedItem> {
     search_item_by_ident_all(search_str).into_iter().next()
 }
 
@@ -17,7 +15,7 @@ pub fn search_item_by_ident(search_str: &str) -> Option<ResolvedItem> {
     feature = "cached",
     cached::proc_macro::cached(size = 512, key = "String", convert = "{ search_str.to_string() }")
 )]
-pub fn search_item_by_ident_all(search_str: &str) -> Vec<ResolvedItem> {
+pub fn search_item_by_ident_all(search_str: &str) -> Vec<cir::ResolvedItem> {
     // empty input case - this has to be here
     // because supplement_search_strings will fabricate non-empty search strings
     // even if the input is empty
@@ -50,7 +48,7 @@ pub fn search_item_by_ident_all(search_str: &str) -> Vec<ResolvedItem> {
             // if the search string is exactly a prefix of the effect,
             // then we coerce the result to a potion
             if rest_search_str.trim().is_empty() && effect_name.starts_with(search_str) {
-                let item = ResolvedItem {
+                let item = cir::ResolvedItem {
                     actor: "Item_Cook_C_17".to_string(),
                     meta: None,
                 };
@@ -67,8 +65,8 @@ pub fn search_item_by_ident_all(search_str: &str) -> Vec<ResolvedItem> {
 }
 
 /// Create an item for speed food. (for backward compability with V2 item)
-fn speed_food() -> ResolvedItem {
-    ResolvedItem {
+fn speed_food() -> cir::ResolvedItem {
+    cir::ResolvedItem {
         actor: "Item_Cook_A_03".to_string(),
         meta: Some(cir::ItemMeta {
             effect_id: Some(13),
@@ -78,8 +76,8 @@ fn speed_food() -> ResolvedItem {
 }
 
 /// Create an item for endura food. (for backward compability with V2 item)
-fn endura_food() -> ResolvedItem {
-    ResolvedItem {
+fn endura_food() -> cir::ResolvedItem {
+    cir::ResolvedItem {
         actor: "Item_Cook_A_01".to_string(),
         meta: Some(cir::ItemMeta {
             effect_id: Some(15),
@@ -115,7 +113,7 @@ fn split_and_search_effect(search_str: &str) -> Option<(i32, &'static str, &str)
     ))
 }
 
-fn set_effect(result: &mut ResolvedItem, effect_id: i32) {
+fn set_effect(result: &mut cir::ResolvedItem, effect_id: i32) {
     result.meta = Some(cir::ItemMeta {
         effect_id: Some(effect_id),
         ..Default::default()
@@ -125,7 +123,7 @@ fn set_effect(result: &mut ResolvedItem, effect_id: i32) {
 fn do_search_item_by_ident_all(
     original_search_str: &str,
     filter: impl Fn(&str) -> bool,
-) -> Vec<ResolvedItem> {
+) -> Vec<cir::ResolvedItem> {
     let mut all_results = BTreeSet::new();
     let all_search_strs = supplement_search_strings(original_search_str);
     for search_str in &all_search_strs {
@@ -135,7 +133,7 @@ fn do_search_item_by_ident_all(
     all_results
         .into_iter()
         .filter(|x| filter(x.result.actor))
-        .map(|r| ResolvedItem {
+        .map(|r| cir::ResolvedItem {
             actor: r.result.actor.to_string(),
             meta: None,
         })
@@ -178,16 +176,7 @@ fn search_item_internal<'a>(
     let Some(first_part) = parts.next() else {
         return;
     };
-    let mut filtered = crate::generated::ITEM_NAMES
-        .iter()
-        .filter_map(|n| {
-            if n.extended_item_name.contains(first_part) {
-                Some(n.to_result(original_search_str))
-            } else {
-                None
-            }
-        })
-        .collect::<BTreeSet<_>>();
+    let mut filtered = data::filter_items(first_part, original_search_str);
 
     for part in parts {
         filtered.retain(|n| n.result.extended_item_name.contains(part));
@@ -204,6 +193,7 @@ fn search_item_internal<'a>(
     out_results.extend(filtered);
 }
 
+#[doc(hidden)]
 pub static COOK_EFFECT_NAMES: &[(&str, i32)] = &[
     ("hearty", 2),
     ("energizing", 14),

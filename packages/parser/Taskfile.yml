@@ -8,13 +8,11 @@ includes:
 tasks:
   build:
     cmds:
-      - task: build-src
+      - task: bsource
    
-  build-src:
+  bsource:
     cmds:
-      - $(which mkdir) -p src/generated
-      - python scripts/generate.py
-      - task: cargo:fmt-fix
+      - python scripts/build-armor-upgrade.py
 
   test:
     cmds:
@@ -35,7 +33,12 @@ tasks:
   check:
     cmds:
       - task: cargo:clippy-all
+      - task: check-layer
       - task: cargo:fmt-check
+
+  check-layer:
+    cmds:
+      - layered-crate -- check --lib --all-features
 
   fix:
     cmds:
@@ -49,25 +52,3 @@ tasks:
     desc: Diff parser snapshots
     cmds:
       - delta tests/parse/{{.CLI_ARGS}} tests/parse/wip/{{.CLI_ARGS}}
-
-  pull-artifacts-public:
-    cmds:
-      - $(which mkdir) -p src/generated
-      - wget -O src/generated/item_name.rs https://skybook.pistonite.dev/botw-ist/packages/parser/item_name.rs
-      - wget -O src/generated/armor_upgrade.rs https://skybook.pistonite.dev/botw-ist/packages/parser/armor_upgrade.rs
-
-  package-artifacts-public:
-    cmds:
-      - $(which mkdir) -p ../manual/book/botw-ist/packages/parser
-      - cp src/generated/item_name.rs ../manual/book/botw-ist/packages/parser/
-      - cp src/generated/armor_upgrade.rs ../manual/book/botw-ist/packages/parser/
-
-  push-artifacts:
-    cmds:
-      - gcloud storage cp src/generated/*.rs gs://ist-private/artifacts/skybook-parser/
-      - gcloud storage cp data/* gs://ist-private/artifacts/skybook-parser/
-
-  pull-artifacts:
-    cmds:
-      - $(which mkdir) -p src/generated
-      - gcloud storage cp gs://ist-private/artifacts/skybook-parser/*.rs src/generated

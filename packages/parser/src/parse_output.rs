@@ -3,10 +3,9 @@ use std::sync::Arc;
 use teleparse::Root as _;
 use teleparse::{Parser, Span, ToSpan};
 
-use crate::SemanticToken;
 use crate::cir;
 use crate::error::{ErrorReport, IntoErrorReport, cir_error};
-use crate::search::QuotedItemResolver;
+use crate::semantic_token::SemanticToken;
 use crate::syn;
 
 /// Output of parsing the script
@@ -101,7 +100,7 @@ pub enum StepDisplay {
 }
 
 /// Parse the script and get the simulation steps and errors
-pub async fn parse_script<R: QuotedItemResolver>(resolver: &R, script: &str) -> ParseOutput {
+pub async fn parse_script<R: cir::QuotedItemResolver>(resolver: &R, script: &str) -> ParseOutput {
     let full_span = Span::new(0, script.len());
     let mut output = ParseOutput {
         script_len: script.len(),

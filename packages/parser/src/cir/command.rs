@@ -4,7 +4,6 @@ use teleparse::{Span, ToSpan};
 
 use crate::cir;
 use crate::error::{ErrorReport, absorb_error};
-use crate::search::QuotedItemResolver;
 use crate::syn;
 
 /// A simulation step
@@ -209,7 +208,7 @@ macro_rules! A {
     };
 }
 
-pub async fn parse_command<R: QuotedItemResolver>(
+pub async fn parse_command<R: cir::QuotedItemResolver>(
     command: &syn::Command,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,

@@ -1,4 +1,2 @@
-/src/generated
-/bindings
 /tests/parse/wip/
-/index.ts
+/target

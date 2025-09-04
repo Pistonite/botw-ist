@@ -3,10 +3,9 @@ use std::ops::Deref;
 use teleparse::{Span, ToSpan, tp};
 
 use crate::cir;
+use crate::data;
 use crate::error::{ErrorReport, absorb_error, cir_error, cir_warning};
-use crate::search::{self, QuotedItemResolver, ResolvedItem};
 use crate::syn;
-use crate::util;
 
 /// Specification for an item
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -113,7 +112,7 @@ impl ItemNameSpec {
     }
 }
 
-pub async fn parse_item_list_finite_optional<R: QuotedItemResolver>(
+pub async fn parse_item_list_finite_optional<R: cir::QuotedItemResolver>(
     list: &tp::Option<syn::ItemListFinite>,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
@@ -124,7 +123,7 @@ pub async fn parse_item_list_finite_optional<R: QuotedItemResolver>(
     }
 }
 
-pub async fn parse_item_list_finite<R: QuotedItemResolver>(
+pub async fn parse_item_list_finite<R: cir::QuotedItemResolver>(
     list: &syn::ItemListFinite,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
@@ -153,7 +152,7 @@ pub async fn parse_item_list_finite<R: QuotedItemResolver>(
 }
 
 /// Parse one item selector in constrained list
-pub async fn parse_one_item_constrained<R: QuotedItemResolver>(
+pub async fn parse_one_item_constrained<R: cir::QuotedItemResolver>(
     item: &syn::ItemOrCategory,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
@@ -171,7 +170,7 @@ pub async fn parse_one_item_constrained<R: QuotedItemResolver>(
 }
 
 /// Parse a Contrained Item List
-pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
+pub async fn parse_item_list_constrained<R: cir::QuotedItemResolver>(
     list: &syn::ItemListConstrained,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
@@ -213,7 +212,7 @@ pub async fn parse_item_list_constrained<R: QuotedItemResolver>(
     out_item_specs
 }
 
-pub async fn parse_item_or_category<R: QuotedItemResolver>(
+pub async fn parse_item_or_category<R: cir::QuotedItemResolver>(
     item: &syn::ItemOrCategory,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
@@ -234,7 +233,7 @@ pub async fn parse_item_or_category<R: QuotedItemResolver>(
     }
 }
 
-pub async fn parse_item_or_category_name<R: QuotedItemResolver>(
+pub async fn parse_item_or_category_name<R: cir::QuotedItemResolver>(
     item: &syn::ItemOrCategoryName,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
@@ -253,7 +252,7 @@ pub async fn parse_item_or_category_name<R: QuotedItemResolver>(
 }
 
 /// Parse an item syntax node. Use the provided resolver to resolve quoted items.
-async fn parse_item<R: QuotedItemResolver>(
+async fn parse_item<R: cir::QuotedItemResolver>(
     item: &syn::Item,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
@@ -275,20 +274,20 @@ async fn parse_item<R: QuotedItemResolver>(
 
     // fix the armor star actor based on meta
     let star_num = meta.as_mut().and_then(|m| m.star.take()).unwrap_or(0);
-    let actor = util::get_armor_with_star(&actor, star_num).to_string();
+    let actor = data::get_armor_with_star(&actor, star_num).to_string();
 
     Some((actor, meta))
 }
 
 /// Parse an item name syntax node. Use the provided resolver to resolve quoted items.
-async fn parse_item_name<R: QuotedItemResolver>(
+async fn parse_item_name<R: cir::QuotedItemResolver>(
     item_name: &syn::ItemName,
     resolver: &R,
     errors: &mut Vec<ErrorReport>,
-) -> Option<ResolvedItem> {
+) -> Option<cir::ResolvedItem> {
     match item_name {
         syn::ItemName::Word(word) => {
-            let result = search::search_item_by_ident(word);
+            let result = cir::search_item_by_ident(word);
             if result.is_none() {
                 errors.push(cir_error!(word, InvalidItem(word.to_string())));
             }
@@ -312,7 +311,7 @@ async fn parse_item_name<R: QuotedItemResolver>(
                 errors.push(cir_error!(angled_word, InvalidEmptyItem));
                 None
             } else {
-                Some(ResolvedItem::new(name.to_string()))
+                Some(cir::ResolvedItem::new(name.to_string()))
             }
         }
     }
