@@ -28,7 +28,6 @@ tasks:
 
   check:
     cmds:
-      - cargo build # workaround for layered check to execute the build script once
       - task: cargo:clippy-all
       - task: check-layer
       - task: cargo:fmt-check
