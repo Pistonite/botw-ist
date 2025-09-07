@@ -13,12 +13,12 @@ import type {
     Runtime,
     RuntimeApp,
     RuntimeWorkerInitArgs,
+    Translator,
 } from "@pistonite/skybook-api";
 import {
     searchItemLocalized,
     translateGenericError,
     translateRuntimeInitError,
-    type Translator,
 } from "skybook-localization";
 
 import { bootLog, log } from "self::util";

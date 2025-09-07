@@ -2,8 +2,8 @@ packages:
   - packages/app
   - packages/intwc
   - packages/intwc/vite-plugin
-  - packages/item-assets
-  - packages/item-system
+  - packages/itemsys
+  - packages/itemsys-build
   - packages/localization
   - packages/mono-dev
   - packages/parser-legacy

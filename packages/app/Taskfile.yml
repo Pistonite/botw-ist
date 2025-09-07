@@ -27,10 +27,8 @@ tasks:
     cmds:
       - task: ecma:vite-build
       - mv dist/popout.html dist/popout-{{.COMMIT_SHORT}}.html
-      - $(which mkdir) -p dist/static/item-assets
-      - cp -r ../item-assets/public/* dist/static/item-assets
-      - $(which mkdir) -p dist/static/item-system
-      - cp -r ../item-system/public/* dist/static/item-system
+      - mkdir -p dist/static/itemsys
+      - cp -r ../itemsys-build/public/* dist/static/itemsys
   # note the runtime is packaged separately so it can be built in parallel
 
   check:

@@ -1,0 +1,12 @@
+version: '3'
+
+includes:
+  ecma:
+    taskfile: ../mono-dev/task/ecma.yaml
+    internal: true
+
+tasks:
+  check:
+    - task: ecma:mono-check
+  fix:
+    - task: ecma:mono-fix

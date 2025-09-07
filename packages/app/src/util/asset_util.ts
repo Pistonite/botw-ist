@@ -1,36 +1,30 @@
 import { useDark } from "@pistonite/pure-react";
 
-import { registerAssetLocation } from "botw-item-assets";
+import {
+    type BackgroundName,
+    getSheikaBackgroundLightUrl,
+    getSheikaBackgroundUrl,
+    registerAssetLocation,
+} from "@pistonite/skybook-itemsys";
 
 import { devLog } from "./log.ts";
 
-let assetPrefix = "/";
-
 export const probeAndRegisterAssetLocation = async () => {
     if (!import.meta.env.DEV) {
-        registerAssetLocation("/static/item-assets/");
+        registerAssetLocation("/static/itemsys/");
         return;
     }
     try {
-        const response = await fetch("/static/item-assets/sprites/modifiers.webp");
+        const response = await fetch("/static/itemsys/sprites/modifiers.webp");
         if (response.ok) {
-            registerAssetLocation("/static/item-assets/");
+            registerAssetLocation("/static/itemsys/");
         }
-        devLog.info("using local item-assets");
+        devLog.info("using local item assets");
         return;
     } catch {
-        devLog.info("[dev] item-assets probing failed, using hosted");
-        registerAssetLocation("https://ist.pistonite.app/static/item-assets/");
-        assetPrefix = "https://ist.pistonite.app/";
+        devLog.info("item-assets probing failed, using hosted");
+        registerAssetLocation("https://ist.pistonite.app/static/itemsys/");
     }
-};
-
-export const getSheikaBackgroundUrl = () => {
-    return `${assetPrefix}static/item-system/SheikahBackground.png`;
-};
-
-export const getSheikaBackgroundLightUrl = () => {
-    return `${assetPrefix}static/item-system/SheikahBackgroundLight.png`;
 };
 
 export const useThemedSheikaBackgroundUrl = () => {
@@ -38,11 +32,7 @@ export const useThemedSheikaBackgroundUrl = () => {
     return dark ? getSheikaBackgroundUrl() : getSheikaBackgroundLightUrl();
 };
 
-export const getOverworldBackgroundUrl = (name: BackgroundName) => {
-    return `${assetPrefix}static/item-system/bg-${name}.jpg`;
-};
-
-const BackgroundGacha = [
+const BackgroundGacha: [BackgroundName, number][] = [
     ["gerudo", 0.1],
     ["goron", 0.1],
     ["hateno", 0.25],
@@ -53,7 +43,6 @@ const BackgroundGacha = [
     ["rito", 0.1],
     ["zora", 0.1],
 ] as const;
-export type BackgroundName = (typeof BackgroundGacha)[number][0];
 export const getRandomBackgroundName = (
     current: BackgroundName,
     hasGlider: boolean,

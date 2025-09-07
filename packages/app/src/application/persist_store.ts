@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { parseEnvFromScript, type ScriptEnvImage } from "@pistonite/skybook-api";
-import type { ActorSpriteProps } from "botw-item-assets";
+import type { ActorSpriteProps } from "@pistonite/skybook-itemsys";
 
 import { STARTER_SCRIPT } from "self::util";
 

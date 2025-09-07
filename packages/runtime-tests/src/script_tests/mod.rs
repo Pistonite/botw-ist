@@ -1,13 +1,11 @@
-use std::path::Path;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
 
 use cu::pre::*;
 
 use skybook_parser::ParseOutput;
-use skybook_parser::search::QuotedItemResolver;
-use skybook_parser::search::ResolvedItem;
+use skybook_parser::cir;
 use skybook_runtime::MaybeAborted;
 use skybook_runtime::sim;
 
@@ -71,9 +69,10 @@ async fn run_tests(
     for test in test_names {
         let test_file = std::fs::read_to_string(format!("src/script_tests/{test}.txt"))
             .context("cannot read test file")?;
-        let parsed = skybook_parser::parse(&StubQuotedItemResolver, &test_file).await;
-        if ENCOUNTERED_QUOTED_SEARCH.load(std::sync::atomic::Ordering::SeqCst) {
-            ENCOUNTERED_QUOTED_SEARCH.store(false, std::sync::atomic::Ordering::SeqCst);
+        let resolver = StubQuotedItemResolver(AtomicBool::new(false));
+        let parsed = skybook_parser::parse(&resolver, &test_file).await;
+        let encountered_quoted_search = resolver.0.load(std::sync::atomic::Ordering::Acquire);
+        if encountered_quoted_search {
             cu::error!("FAIL {test} - quoted item search not supported");
             continue;
         };
@@ -114,15 +113,13 @@ async fn run_tests(
     Ok(passed_count)
 }
 
-static ENCOUNTERED_QUOTED_SEARCH: AtomicBool = AtomicBool::new(false);
-
-struct StubQuotedItemResolver;
-impl QuotedItemResolver for StubQuotedItemResolver {
-    type Future = cu::BoxedFuture<Option<ResolvedItem>>;
+struct StubQuotedItemResolver(AtomicBool);
+impl cir::QuotedItemResolver for StubQuotedItemResolver {
+    type Future = cu::BoxedFuture<Option<cir::ResolvedItem>>;
 
     fn resolve_quoted(&self, word: &str) -> Self::Future {
         cu::error!("quoted item search is not supported in tests, searching: {word}");
-        ENCOUNTERED_QUOTED_SEARCH.store(true, std::sync::atomic::Ordering::Relaxed);
+        self.0.store(true, std::sync::atomic::Ordering::Release);
         Box::pin(async { None })
     }
 }

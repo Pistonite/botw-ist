@@ -22,7 +22,6 @@ jobs:
       - uses: ./.github/steps/cache-ci
         with:
           app-assets: true
-          parser: true
       - run: task check-ci-layer-1-2 --output group
 
   check-layer-3:
@@ -41,7 +40,6 @@ jobs:
           tool-cargo-binstall: ripgrep,layered-crate
       - uses: ./.github/steps/cache-ci
         with:
-          parser: true
           runtime: true
       - run: task check-ci-layer-3 --output group
 
@@ -62,7 +60,6 @@ jobs:
           rust-src: true
       - uses: ./.github/steps/cache-ci
         with:
-          parser: true
           runtime: true
       - run: task check-ci-layer-4 --output group
 
@@ -83,6 +80,5 @@ jobs:
       - uses: ./.github/steps/cache-ci
         with:
           app-assets: true
-          parser: true
           runtime: true
       - run: task test-ci --output group

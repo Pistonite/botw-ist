@@ -3,10 +3,11 @@ import type {
     RuntimeError,
     RuntimeViewError,
     RuntimeWorkerInitError,
+    Translator,
 } from "@pistonite/skybook-api";
+import { translateActorOrAsIs, translateCategory } from "@pistonite/skybook-itemsys";
 
-import { type Translator, translateUI } from "./translate.ts";
-import { translateActorOrAsIs, translateCategory } from "./translate_name.ts";
+import { translateUI } from "./translate.ts";
 
 /** Localize a generic error message */
 export const translateGenericError = (

@@ -6,7 +6,7 @@ import { useDebounce } from "@uidotdev/usehooks";
 
 import type { ItemSearchResult } from "@pistonite/skybook-api";
 import { useUITranslation } from "skybook-localization";
-import { type CookEffect, StandaloneItemSlotWithTooltip } from "skybook-item-system";
+import { type CookEffect, StandaloneItemSlot } from "@pistonite/skybook-itemsys";
 
 import { Code, Interpolate } from "self::ui/components";
 import { useStyleEngine } from "self::util";
@@ -87,7 +87,8 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
         <div className={m("overflow-y-auto flex-1", c.resultsScroll)}>
             <div className={m("flex flex-wrap max-h-0 overflow-visible pad-itemtop")}>
                 {results.map(({ actor, cookEffect }, i) => (
-                    <StandaloneItemSlotWithTooltip
+                    <StandaloneItemSlot
+                        tooltip
                         key={i}
                         actor={actor}
                         effect={cookEffect as CookEffect}

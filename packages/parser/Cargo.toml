@@ -22,6 +22,9 @@ anyhow.workspace = true
 indoc = "2.0.6"
 tokio = { workspace = true, features = ["full"] }
 
+[build-dependencies]
+cu = {workspace = true, features = ["yaml", "fs"] }
+
 [features]
 wasm = ["skybook-api/wasm"]
 cached = ["dep:cached"]

@@ -6,7 +6,7 @@ use std::sync::Arc;
 use blueflame::env::GameVer;
 use js_sys::{Function, Promise, Uint8Array};
 use serde::{Deserialize, Serialize};
-use skybook_parser::{ParseOutput, search};
+use skybook_parser::{ParseOutput, cir};
 use skybook_runtime::exec::Spawner;
 use skybook_runtime::iv;
 use skybook_runtime::sim::{self, RuntimeInitParams};
@@ -120,7 +120,7 @@ pub struct ItemSearchResult {
 /// resolveItemIdent implementation
 #[wasm_bindgen]
 pub fn resolve_item_ident(query: String) -> Vec<ItemSearchResult> {
-    search::search_item_by_ident_all(&query)
+    cir::search_item_by_ident_all(&query)
         .into_iter()
         .map(|r| ItemSearchResult {
             actor: r.actor,

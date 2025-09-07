@@ -1,9 +1,7 @@
 import { initLocaleWithI18next } from "@pistonite/pure-i18next";
+import { getPureI18nextLoaderConfig as sharedControlsLoader } from "@pistonite/shared-controls";
 
-import {
-    loadSharedControlLanguage,
-    namespace as sharedControlsNamespace,
-} from "@pistonite/shared-controls";
+import { getPureI18nextLoaderConfig as itemsysLoader } from "@pistonite/skybook-itemsys";
 
 export const SupportedLocales = [
     "de-DE",
@@ -25,13 +23,13 @@ export const initI18n = (persist: boolean) => {
         default: "en-US",
         persist,
         loader: {
-            ui: (language) => loadLanguage("ui", language),
-            generated: (language) => loadLanguage("generated", language),
-            [sharedControlsNamespace]: loadSharedControlLanguage,
+            ...itemsysLoader(),
+            ...sharedControlsLoader(),
+            ui: loadUILanguage,
         },
     });
 };
 
-const loadLanguage = async (namespace: string, language: string) => {
-    return (await import(`./${namespace}/${language}.yaml`)).default;
+const loadUILanguage = async (language: string): Promise<Record<string, string>> => {
+    return (await import(`./ui/${language}.yaml`)).default;
 };

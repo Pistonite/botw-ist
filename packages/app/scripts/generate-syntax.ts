@@ -2,7 +2,7 @@
 // we could use a rust parser but this is faster to implement
 
 const TARGET_FILE = "src/extensions/editor/syntax.gen.ts";
-const SOURCE_FILE = "../parser/src/syn/token.rs";
+const SOURCE_FILE = "../parser/src/token.rs";
 const HINT = "// @syntax-generator-hint";
 
 /** Parse a section starting with the hint and ending with the "end" hint */

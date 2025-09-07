@@ -6,10 +6,6 @@
 	path = packages/research-scripts
 	url = https://github.com/Pistonight/botw-research-scripts
 	branch = main
-[submodule "item-assets"]
-	path = packages/item-assets
-	url = https://github.com/Pistonight/botw-item-assets
-	branch = main
 [submodule "shared-controls"]
 	path = packages/shared-controls
 	url = https://github.com/Pistonight/shared-controls

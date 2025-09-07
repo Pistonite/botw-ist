@@ -3,71 +3,70 @@ import { once } from "@pistonite/pure/sync";
 import Fuse from "fuse.js";
 
 import type { ItemSearchResult } from "@pistonite/skybook-api";
-
-import { translateUI } from "../translate.ts";
+import { loadItemTranslations } from "@pistonite/skybook-itemsys";
 
 import { getSearchableActors, isArrow, isMaterial } from "./actors.ts";
-import { log } from "./constants.ts";
+import { log, type SearchError } from "./constants.ts";
 
 const SearchFns = {
     de: once({
         fn: async () => {
-            const s = (await import("../generated/de-DE.yaml")).default;
+            const s = await loadItemTranslations("de-DE");
             return buildSearchFunction("de", 0.3, [s]);
         },
     }),
     en: once({
         fn: async () => {
-            const s = (await import("../generated/en-US.yaml")).default;
+            const s = await loadItemTranslations("en-US");
             return buildSearchFunction("en", 0.3, [s]);
         },
     }),
     es: once({
         fn: async () => {
-            const s = (await import("../generated/es-ES.yaml")).default;
+            const s = await loadItemTranslations("es-ES");
             return buildSearchFunction("es", 0.3, [s]);
         },
     }),
     fr: once({
         fn: async () => {
-            const s = (await import("../generated/fr-FR.yaml")).default;
+            const s = await loadItemTranslations("fr-FR");
             return buildSearchFunction("fr", 0.3, [s]);
         },
     }),
     it: once({
         fn: async () => {
-            const s = (await import("../generated/it-IT.yaml")).default;
+            const s = await loadItemTranslations("it-IT");
             return buildSearchFunction("it", 0.3, [s]);
         },
     }),
     ja: once({
         fn: async () => {
-            const s = (await import("../generated/ja-JP.yaml")).default;
+            const s = await loadItemTranslations("ja-JP");
             return buildSearchFunction("ja", 0.3, [s]);
         },
     }),
     ko: once({
         fn: async () => {
-            const s = (await import("../generated/ko-KR.yaml")).default;
+            const s = await loadItemTranslations("ko-KR");
             return buildSearchFunction("ko", 0.3, [s]);
         },
     }),
     nl: once({
         fn: async () => {
-            const s = (await import("../generated/nl-NL.yaml")).default;
+            const s = await loadItemTranslations("nl-NL");
             return buildSearchFunction("nl", 0.3, [s]);
         },
     }),
     ru: once({
         fn: async () => {
-            const s = (await import("../generated/ru-RU.yaml")).default;
+            const s = await loadItemTranslations("ru-RU");
             return buildSearchFunction("ru", 0.3, [s]);
         },
     }),
     zh: once({
         fn: async () => {
-            const s1 = (await import("../generated/zh-CN.yaml")).default;
-            const s2 = (await import("../generated/zh-TW.yaml")).default;
+            const s1 = await loadItemTranslations("zh-CN");
+            const s2 = await loadItemTranslations("zh-TW");
             return buildSearchFunction("zh", 0.35, [s1, s2]);
         },
     }),
@@ -76,13 +75,14 @@ const SearchFns = {
 export const searchInLanguage = async (
     tag: string,
     query: string,
-): Promise<Result<SearchEntryWithScore[], string>> => {
+): Promise<Result<SearchEntryWithScore[], SearchError>> => {
     const buildSearchFn = SearchFns[tag as keyof typeof SearchFns];
     if (!buildSearchFn) {
         return {
-            err: translateUI("item_explorer.search_error.unknown_tag", {
+            err: {
+                type: "UnknownTag",
                 tag,
-            }),
+            },
         };
     }
 

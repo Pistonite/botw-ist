@@ -57,3 +57,8 @@ export const detectLanguage = (text: string) => {
     // maybe add korean?
     return [] as const;
 };
+
+export type SearchError = {
+    type: "UnknownTag";
+    tag: string;
+};

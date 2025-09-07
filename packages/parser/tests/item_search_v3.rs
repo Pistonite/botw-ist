@@ -1,9 +1,6 @@
 mod item_search_common;
 use item_search_common::{test_item_search, test_item_search_effect};
 use skybook_parser::cir;
-use skybook_parser::search::{
-    COOK_EFFECT_NAMES, ResolvedItem, search_item_by_ident, search_item_by_ident_all,
-};
 
 /// Test items with priority in V3
 ///
@@ -73,10 +70,10 @@ fn test_item_search_v3_alias() {
 
 #[test]
 fn test_item_search_v3_effect() {
-    for (effect_name, effect_id) in COOK_EFFECT_NAMES {
+    for (effect_name, effect_id) in cir::COOK_EFFECT_NAMES {
         assert_eq!(
-            search_item_by_ident(&format!("{effect_name}-elixir")),
-            Some(ResolvedItem {
+            cir::search_item_by_ident(&format!("{effect_name}-elixir")),
+            Some(cir::ResolvedItem {
                 actor: "Item_Cook_C_17".to_string(),
                 meta: Some(cir::ItemMeta {
                     effect_id: Some(*effect_id),
@@ -85,8 +82,8 @@ fn test_item_search_v3_effect() {
             })
         );
         assert_eq!(
-            search_item_by_ident_all(&format!("{effect_name}-elixir"))[0],
-            ResolvedItem {
+            cir::search_item_by_ident_all(&format!("{effect_name}-elixir"))[0],
+            cir::ResolvedItem {
                 actor: "Item_Cook_C_17".to_string(),
                 meta: Some(cir::ItemMeta {
                     effect_id: Some(*effect_id),

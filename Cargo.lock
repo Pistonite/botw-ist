@@ -2115,9 +2115,9 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "pistonite-cu"
-version = "0.5.0"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d4d1cb6fa3fc5f0db5fc66302382f9650e01c36ea0f10168e9aa1cdeb5fa332"
+checksum = "aac75466eae0a8a83ae4f5033d944ac94766b871a98cc0ffe8511dc4a2a9aa38"
 dependencies = [
  "anyhow",
  "clap",
@@ -2133,6 +2133,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
+ "serde_yaml_ng",
  "terminal_size",
  "tokio",
  "unicode-width",
@@ -2556,6 +2557,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_yaml_ng"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7b4db627b98b36d4203a7b458cf3573730f2bb591b28871d916dfa9efabfd41f"
+dependencies = [
+ "indexmap",
+ "itoa",
+ "ryu",
+ "serde",
+ "unsafe-libyaml",
+]
+
+[[package]]
 name = "sha1"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2636,6 +2650,7 @@ dependencies = [
  "derive_more",
  "enumset",
  "indoc",
+ "pistonite-cu",
  "serde",
  "skybook-api",
  "static_assertions",
@@ -3219,6 +3234,12 @@ name = "unicode-xid"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853"
+
+[[package]]
+name = "unsafe-libyaml"
+version = "0.2.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "673aac59facbab8a9007c7f6108d11f63b603f7cabff99fabf650fea5c32b861"
 
 [[package]]
 name = "url"

@@ -1,13 +1,13 @@
 use teleparse::ToSpan;
 
-use crate::syn;
+use crate::token;
 
 pub type Error = skybook_api::parser::error::ParserError;
 pub type ErrorReport = skybook_api::ErrorReport<Error>;
 pub trait IntoErrorReport {
     fn into_error_report(self) -> ErrorReport;
 }
-impl IntoErrorReport for teleparse::syntax::Error<syn::TT> {
+impl IntoErrorReport for teleparse::syntax::Error<token::TT> {
     fn into_error_report(self) -> ErrorReport {
         let span = self.span();
         let error = match self.data {
@@ -39,6 +39,7 @@ pub fn absorb_error<T>(errors: &mut Vec<ErrorReport>, result: Result<T, ErrorRep
     }
 }
 
+#[allow(unused)]
 macro_rules! cir_fail {
     ($span:expr, $error_type:ident ( $($args:expr),* $(,)? )) => {
         return Err($crate::error::ErrorReport::error(
@@ -47,7 +48,9 @@ macro_rules! cir_fail {
         ))
     };
 }
+#[allow(unused)]
 pub(crate) use cir_fail;
+#[allow(unused)]
 macro_rules! cir_error {
     ($span:expr, $error_type:ident) => {
         $crate::error::ErrorReport::error(
@@ -62,7 +65,9 @@ macro_rules! cir_error {
         )
     };
 }
+#[allow(unused)]
 pub(crate) use cir_error;
+#[allow(unused)]
 macro_rules! cir_warning {
     ($span:expr, $error_type:ident) => {
         $crate::error::ErrorReport::warning(
@@ -77,4 +82,5 @@ macro_rules! cir_warning {
         )
     };
 }
+#[allow(unused)]
 pub(crate) use cir_warning;

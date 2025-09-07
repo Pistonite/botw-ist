@@ -6,7 +6,7 @@ includes:
     internal: true
 
 tasks:
-  install:
+  bsource:
     desc: Generate AST parser (needs `python`)
     cmds:
       - python scripts/generate_parser.py src/command/ast/grammar.txt src/command/ast/ast.generated.ts

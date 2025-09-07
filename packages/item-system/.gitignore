@@ -1,9 +1,0 @@
-/node_modules
-/src/generated
-/dist
-/public
-*.png
-*.webp
-/tsconfig*.json
-/eslint.config.js
-.prettierignore

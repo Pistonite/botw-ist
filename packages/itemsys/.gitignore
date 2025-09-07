@@ -1,0 +1,7 @@
+/public
+/node_modules
+/src/generated
+.eslintcache
+/tsconfig*.json
+/eslint.config.js
+.prettierignore

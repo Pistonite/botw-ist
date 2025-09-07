@@ -1,5 +1,5 @@
 use cu::pre::*;
-use mdbook::{preprocess::CmdPreprocessor, BookItem};
+use mdbook::{BookItem, preprocess::CmdPreprocessor};
 
 /// Read a mdbook CmdPreprocessor input from stdin
 /// and write the output to stdout

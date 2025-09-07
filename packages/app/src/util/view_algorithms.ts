@@ -11,7 +11,7 @@ import type {
     InvView_PouchItem,
     InvView_PouchList,
 } from "@pistonite/skybook-api";
-import { PouchCategory, getPouchCategoryFromType } from "skybook-item-system";
+import { PouchCategory, getPouchCategoryFromType } from "@pistonite/skybook-itemsys";
 
 import { log } from "./log.ts";
 

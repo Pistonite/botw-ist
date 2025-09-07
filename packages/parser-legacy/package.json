@@ -10,5 +10,8 @@
     "dependencies": {},
     "devDependencies": {
         "mono-dev": "workspace:*"
-    }
+    },
+    "nocheck": [
+        "*.generated.ts"
+    ]
 }

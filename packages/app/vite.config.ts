@@ -62,12 +62,8 @@ export default defineConfig(({ command }) => {
                     resolve: ([_, capture]) => path.join("..", "runtime-wasm", "dist", capture),
                 },
                 {
-                    pattern: /^\/static\/item-assets\/(.*)/,
-                    resolve: ([_, capture]) => path.join("..", "item-assets", "public", capture),
-                },
-                {
-                    pattern: /^\/static\/item-system\/(.*)/,
-                    resolve: ([_, capture]) => path.join("..", "item-system", "public", capture),
+                    pattern: /^\/static\/itemsys\/(.*)/,
+                    resolve: ([_, capture]) => path.join("..", "itemsys-build", "public", capture),
                 },
             ]),
         ],
@@ -86,22 +82,6 @@ export default defineConfig(({ command }) => {
                 input: {
                     index: "index.html",
                     popout: "popout.html",
-                },
-                output: {
-                    chunkFileNames: (info) => {
-                        for (let i = 0; i < info.moduleIds.length; i++) {
-                            if (info.moduleIds[i].match(/localization[/\\]src[/\\]ui/)) {
-                                return `assets/strings/ui-${info.name}-[hash].js`;
-                            }
-                            if (info.moduleIds[i].match(/localization[/\\]src[/\\]generated/)) {
-                                return `assets/strings/gen-${info.name}-[hash].js`;
-                            }
-                        }
-                        return `assets/${info.name}-[hash].js`;
-                    },
-                    manualChunks: {
-                        strings: ["skybook-localization"],
-                    },
                 },
             },
         },

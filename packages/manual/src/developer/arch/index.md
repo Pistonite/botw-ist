@@ -42,12 +42,10 @@ since that can affect the code splitting for bundling.
 
 Current endpoints and what they import:
 - `main`:
-  - `application/extension`
-  - `application/runtime`
-  - `application/store`
+  - `application`
   - `extensions`
   - `ui/components`
-  - `ui/components`
+  - `ui/surfaces`
 - `popout`:
   - `extensions`
-  - `ui`
+  - `ui/components`

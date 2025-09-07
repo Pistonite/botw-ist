@@ -4,9 +4,6 @@ inputs:
   # localization, item-assets, item-system
   app-assets:
     default: false
-  # parser
-  parser:
-    default: false
   # blueflame-deps, runtime-tests
   runtime:
     default: false
@@ -21,21 +18,13 @@ runs:
       uses: Pistonight/mono-dev/actions/permanent-cache@main
       with:
         path: |
-          packages/localization/src/generated
-          packages/item-assets/public
-          packages/item-assets/src/generated
-          packages/item-system/public
-          packages/item-system/src/generated
+          packages/itemsys-build/public/images
+          packages/itemsys-build/public/special
+          packages/itemsys-build/public/sprites
+          packages/itemsys/src/generated
+        version: v2
         key: app-assets-cache-ci
         task: exec -- cache-ci-app-assets-pull-artifacts
-        runner: blacksmith
-    - if: ${{ inputs.parser == 'true' }}
-      uses: Pistonight/mono-dev/actions/permanent-cache@main
-      with:
-        path: |
-          packages/parser/src/generated
-        key: parser-cache-ci
-        task: exec -- parser:pull-artifacts
         runner: blacksmith
     - if: ${{ inputs.runtime == 'true' }}
       uses: Pistonight/mono-dev/actions/permanent-cache@main

@@ -2,7 +2,7 @@ use anyhow::bail;
 use indoc::indoc;
 use teleparse::Root;
 
-use skybook_parser::search::{QuotedItemResolver, ResolvedItem};
+use skybook_parser::cir;
 
 #[tokio::test]
 async fn parse_simple() -> anyhow::Result<()> {
@@ -92,11 +92,11 @@ async fn parse_notes() -> anyhow::Result<()> {
 }
 
 struct StubQuotedItemResolver;
-impl QuotedItemResolver for StubQuotedItemResolver {
-    type Future = std::future::Ready<Option<ResolvedItem>>;
+impl cir::QuotedItemResolver for StubQuotedItemResolver {
+    type Future = std::future::Ready<Option<cir::ResolvedItem>>;
 
     fn resolve_quoted(&self, word: &str) -> Self::Future {
-        std::future::ready(Some(ResolvedItem::new(word.to_string())))
+        std::future::ready(Some(cir::ResolvedItem::new(word.to_string())))
     }
 }
 

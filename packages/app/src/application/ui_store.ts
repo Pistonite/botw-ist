@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import type { BackgroundName } from "self::util";
+import type { BackgroundName } from "@pistonite/skybook-itemsys";
 
 /** Ids of all dialogs that can be opened */
 export type DialogId = "extension-launch" | "custom-extension";
