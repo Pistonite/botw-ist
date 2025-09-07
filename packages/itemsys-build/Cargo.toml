@@ -7,7 +7,7 @@ edition = "2024"
 
 [dependencies.cu]
 package = "pistonite-cu"
-version = "0.5.1"
+version = "0.5.2"
 features = [
     "cli", "fs", "yaml", "json", "derive",
     "coroutine-heavy"

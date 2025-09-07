@@ -3,10 +3,10 @@ import { once } from "@pistonite/pure/sync";
 import Fuse from "fuse.js";
 
 import type { ItemSearchResult } from "@pistonite/skybook-api";
+import { loadItemTranslations } from "@pistonite/skybook-itemsys";
 
 import { getSearchableActors, isArrow, isMaterial } from "./actors.ts";
 import { log, type SearchError } from "./constants.ts";
-import { loadItemTranslations } from "@pistonite/skybook-itemsys";
 
 const SearchFns = {
     de: once({
