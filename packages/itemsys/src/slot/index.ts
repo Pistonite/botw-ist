@@ -1,3 +1,6 @@
+export * from "./dnd_context.ts";
+export * from "./dnd_slot.tsx";
+export * from "./dnd_util.ts";
 export * from "./slot.tsx";
 export * from "./slot_props.ts";
 export * from "./tab.tsx";
