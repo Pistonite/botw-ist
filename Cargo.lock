@@ -2115,9 +2115,9 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "pistonite-cu"
-version = "0.5.1"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a0a8edfa78df74d9113e0283aba59abb8f7d1c08b0bacd80ad238b758c8fdb3"
+checksum = "aac75466eae0a8a83ae4f5033d944ac94766b871a98cc0ffe8511dc4a2a9aa38"
 dependencies = [
  "anyhow",
  "clap",

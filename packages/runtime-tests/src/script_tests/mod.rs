@@ -58,7 +58,6 @@ pub fn run(
     Ok(passed_count == total_count)
 }
 
-
 async fn run_tests(
     runtime: Arc<sim::Runtime>,
     test_names: Vec<String>,
@@ -113,7 +112,6 @@ async fn run_tests(
 
     Ok(passed_count)
 }
-
 
 struct StubQuotedItemResolver(AtomicBool);
 impl cir::QuotedItemResolver for StubQuotedItemResolver {

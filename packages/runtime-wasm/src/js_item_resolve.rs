@@ -42,7 +42,10 @@ impl JsQuotedItemResolver {
         let effect_id = Reflect::get(&result, &JsValue::from_str("cookEffect"))?
             .as_f64()
             .unwrap_or_default();
-        Ok(Some(cir::ResolvedItem::with_effect_id(actor, effect_id as i32)))
+        Ok(Some(cir::ResolvedItem::with_effect_id(
+            actor,
+            effect_id as i32,
+        )))
     }
 }
 

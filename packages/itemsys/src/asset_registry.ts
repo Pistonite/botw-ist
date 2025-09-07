@@ -50,6 +50,13 @@ export const getOverworldBackgroundUrl = (name: BackgroundName) => {
     return `${theAssetLocation}images/bg-${name}.jpg`;
 };
 
-export type BackgroundName = "gerudo"
-| "goron" | "hateno" | "kakariko" | "korok-forest" | "plateau"
-| "sor" | "rito" | "zora";
+export type BackgroundName =
+    | "gerudo"
+    | "goron"
+    | "hateno"
+    | "kakariko"
+    | "korok-forest"
+    | "plateau"
+    | "sor"
+    | "rito"
+    | "zora";

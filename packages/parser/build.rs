@@ -16,9 +16,7 @@ fn generate_item_name() -> cu::Result<()> {
     // using BTreeMap to ensure sorted keys for stable output
     let input = yaml::read::<BTreeMap<String, String>>(cu::fs::reader(input)?)?;
 
-    let mut output_path = Path::new(&manifest_dir)
-        .join("src")
-        .join("data");
+    let mut output_path = Path::new(&manifest_dir).join("src").join("data");
     cu::fs::make_dir(&output_path)?;
     output_path.push("item_name.gen.rs");
 
@@ -81,5 +79,5 @@ fn parse_item_key(key: &str) -> cu::Result<(String, usize, bool)> {
 
 fn manifest_dir() -> String {
     std::env::var("LAYERED_CRATE_ORIGINAL_MANIFEST_DIR")
-    .unwrap_or(env!("CARGO_MANIFEST_DIR").to_string())
+        .unwrap_or(env!("CARGO_MANIFEST_DIR").to_string())
 }
