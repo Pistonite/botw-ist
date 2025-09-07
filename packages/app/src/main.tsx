@@ -393,9 +393,7 @@ const bootMainUI = async (context: BootContext) => {
                 <RuntimeContext.Provider value={runtime}>
                     <QueryClientProvider client={queryClient}>
                         <ThemeProvider>
-                            <ItemTooltipProvider backgroundUrl={getSheikaBackgroundUrl()}>
                                 <App />
-                            </ItemTooltipProvider>
                         </ThemeProvider>
                     </QueryClientProvider>
                 </RuntimeContext.Provider>

@@ -20,6 +20,7 @@ includes:
   itemsys:        {taskfile: ./packages/itemsys,          dir: ./packages/itemsys,          internal: true}
   itemsys-build:  {taskfile: ./packages/itemsys-build,    dir: ./packages/itemsys-build,    internal: true}
   skybook-api:    {taskfile: ./packages/skybook-api,      dir: ./packages/skybook-api,      internal: true}
+  skybook-react:  {taskfile: ./packages/skybook-react,    dir: ./packages/skybook-react,    internal: true}
   research:       {taskfile: ./packages/research-scripts, dir: ./packages/research-scripts, internal: true}
   localization:   {taskfile: ./packages/localization,     dir: ./packages/localization,     internal: true}
   manual:         {taskfile: ./packages/manual,           dir: ./packages/manual,           internal: true}
@@ -123,6 +124,7 @@ tasks:
       - app:check
       - server:check
       - runtime-worker:check
+      - skybook-react:check
 
   check-layer-3:
     cmds:

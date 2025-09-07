@@ -5,8 +5,9 @@ import { memo, useEffect } from "react";
 import { ResizeLayout } from "@pistonite/shared-controls";
 
 import { useUITranslation } from "skybook-localization";
+import { ItemTooltipProvider } from "skybook-item-system";
 
-import { useIsShowingExtensionPanel, useUIStore } from "self::application";
+import { MainWindowItemDnDProvider, useIsShowingExtensionPanel, useSessionStore, useUIStore } from "self::application";
 import { useNarrow, isLessProductive } from "self::pure-contrib";
 import {
     ExtensionPanel,
@@ -15,7 +16,7 @@ import {
 } from "self::ui/surfaces/extension";
 import { Header } from "self::ui/surfaces/header";
 import { PouchInventoryPanel, GdtInventoryPanel } from "self::ui/surfaces/inventory";
-import { useStyleEngine } from "self::util";
+import { getSheikaBackgroundUrl, useStyleEngine } from "self::util";
 
 const AppImpl: React.FC = () => {
     const m = useStyleEngine();
@@ -55,7 +56,9 @@ const AppImpl: React.FC = () => {
         (state) => state.setGamedataInventoryPercentage,
     );
 
-    return (
+    const dragData = useSessionStore(state => state.dragData);
+
+    const $App = 
         <>
             <ResizeLayout
                 className={m("wh-100v")}
@@ -89,7 +92,16 @@ const AppImpl: React.FC = () => {
             </ResizeLayout>
             <ExtensionLaunchDialog />
             <CustomExtensionDialog />
-        </>
+        </>;
+
+    return (
+        <MainWindowItemDnDProvider>
+            <ItemTooltipProvider 
+                suppress={!!dragData}
+                backgroundUrl={getSheikaBackgroundUrl()}>
+                {$App}
+            </ItemTooltipProvider>
+        </MainWindowItemDnDProvider>
     );
 };
 

@@ -9,6 +9,7 @@ import type {
     MaybeAborted,
     RuntimeViewError,
 } from "./native";
+import type { ItemDragData } from "./item_dnd.ts";
 
 /**
  * API implemented by the application and called by the extension.
@@ -187,4 +188,13 @@ export interface ExtensionApp {
         charPos: number | undefined,
         name: string | undefined,
     ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>;
+
+    /** Notify the application that user has started dragging an item in the extension in an remote window */
+    remoteItemDragStarted(data: ItemDragData): WxPromise<void>;
+
+    /** Notify the application that remote dragging has stopped */
+    remoteItemDragStopped(): WxPromise<void>;
+
+    /** Get from the host app the current data attached to the item being dragged */
+    getItemDragData(): WxPromise<ItemDragData | "">;
 }

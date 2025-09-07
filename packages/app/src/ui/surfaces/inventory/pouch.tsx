@@ -238,6 +238,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                         key={i}
                         inBrokenSlot={isInBrokenSlotArray[i]}
                         isMasterSwordFullPower={isMasterSwordFullPower}
+                        draggable
                         {...itemSlotProps}
                     />
                 ))}

@@ -1,4 +1,5 @@
 export * from "./crash_handler.ts";
+export * from "./dnd_provider.tsx";
 export * from "./extension_host.ts";
 export * from "./extension_mgr.ts";
 export * from "./extension_selectors.ts";
