@@ -3,7 +3,7 @@ import { makeStyles, Tab, TabList } from "@fluentui/react-components";
 import { ResizeLayout } from "@pistonite/shared-controls";
 
 import { translateRuntimeViewError, useUITranslation } from "skybook-localization";
-import { GdtItemSlotWithTooltip } from "skybook-item-system";
+import { GdtItemSlot } from "@pistonite/skybook-itemsys";
 
 import { isLessProductive } from "self::pure-contrib";
 import { ErrorBar } from "self::ui/components";
@@ -45,7 +45,8 @@ export const SaveViewer: React.FC<SaveViewerProps> = ({ useStore }) => {
         <div className={m("flex-1 h-100 overflow-y-auto scrollbar-thin")}>
             <div className={m("flex flex-wrap max-h-0 overflow-visible pad-itemtop")}>
                 {data.val.items.map((item, i) => (
-                    <GdtItemSlotWithTooltip
+                    <GdtItemSlot
+                        tooltip
                         item={item}
                         key={i}
                         isMasterSwordFullPower={!!data.val.masterSword.isTrueForm}

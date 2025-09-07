@@ -12,11 +12,7 @@ import {
 } from "@pistonite/skybook-api/client";
 
 import { type ConnectExtensionFn, getExtension } from "self::extensions";
-import {
-    extLog,
-    probeAndRegisterAssetLocation,
-    type FirstPartyExtension,
-} from "self::util";
+import { extLog, probeAndRegisterAssetLocation, type FirstPartyExtension } from "self::util";
 
 async function boot() {
     // Initialize preferences, but do not persist settings

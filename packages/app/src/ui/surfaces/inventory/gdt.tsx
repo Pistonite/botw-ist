@@ -5,7 +5,7 @@ import { useDark } from "@pistonite/pure-react";
 import { useSwappedWheelScrollDirection } from "@pistonite/shared-controls";
 
 import { translateRuntimeViewError, useUITranslation } from "skybook-localization";
-import { GdtItemSlotWithTooltip, ItemTab } from "skybook-item-system";
+import { GdtItemSlot, ItemTab } from "@pistonite/skybook-itemsys";
 
 import {
     useGdtInventoryView,
@@ -54,7 +54,8 @@ const GdtInventoryPanelImpl: React.FC = () => {
         <div className={m("flex-1 overflow-y-auto scrollbar-thin")}>
             <div className={m("flex flex-wrap max-h-0 overflow-visible pad-itemtop")}>
                 {gdt.val.items.map((item, i) => (
-                    <GdtItemSlotWithTooltip
+                    <GdtItemSlot
+                        tooltip
                         item={item}
                         key={i}
                         isMasterSwordFullPower={!!gdt.val.masterSword.isTrueForm}
@@ -87,7 +88,8 @@ const GdtInventoryPanelImpl: React.FC = () => {
                         nodes={tab.items.map(({ slot, item }, i) => ({
                             slot,
                             element: (
-                                <GdtItemSlotWithTooltip
+                                <GdtItemSlot
+                                    tooltip
                                     item={item}
                                     key={i}
                                     isMasterSwordFullPower={!!gdt.val.masterSword.isTrueForm}

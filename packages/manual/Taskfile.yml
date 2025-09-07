@@ -35,9 +35,6 @@ tasks:
       - rm -rf book
       - mdbook build
       - mdbook build zh -d ../book/zh
-      - mkdir -p book/_development_/itemsys
-      - cp ../itemsys/src/generated/spritemeta_actors.ts book/_development_/itemsys
-      - cp ../itemsys/src/generated/spritemeta_modifiers.ts book/_development_/itemsys
       - bun preprocess/inject-meta.ts post
 
   check:

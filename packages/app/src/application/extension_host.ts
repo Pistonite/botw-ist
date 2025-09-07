@@ -18,8 +18,9 @@ import {
     searchItemLocalized,
     translateParserError,
     translateRuntimeError,
+    translateUI,
 } from "skybook-localization";
-import { getActorParam } from "skybook-item-system";
+import { getActorParam } from "@pistonite/skybook-itemsys";
 
 import { useSessionStore } from "./session_store.ts";
 
@@ -60,8 +61,10 @@ class ExtensionAppHost implements ExtensionApp {
     ): WxPromise<Result<{ actor: string; cookEffect: number }[], string>> {
         if (localized) {
             const result = await searchItemLocalized(query, limit);
-            if ("err" in result) {
-                return { val: result };
+            if ("err" in result && result.err) {
+                const { tag } = result.err;
+                const message = translateUI("item_explorer.search_error.unknown_tag", { tag });
+                return { val: { err: message } };
             }
             // filter out upgraded armors
             const filtered = result.val.filter((item) => {

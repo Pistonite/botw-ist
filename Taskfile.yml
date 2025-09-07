@@ -17,11 +17,11 @@ includes:
   runtime-worker: {taskfile: ./packages/runtime-worker,   dir: ./packages/runtime-worker,   internal: true}
   parser:         {taskfile: ./packages/parser,           dir: ./packages/parser,           internal: true}
   parser-legacy:  {taskfile: ./packages/parser-legacy,    dir: ./packages/parser-legacy,    internal: true}
-  item-system:    {taskfile: ./packages/item-system,      dir: ./packages/item-system,      internal: true}
+  itemsys:        {taskfile: ./packages/itemsys,          dir: ./packages/itemsys,          internal: true}
+  itemsys-build:  {taskfile: ./packages/itemsys-build,    dir: ./packages/itemsys-build,    internal: true}
   skybook-api:    {taskfile: ./packages/skybook-api,      dir: ./packages/skybook-api,      internal: true}
   research:       {taskfile: ./packages/research-scripts, dir: ./packages/research-scripts, internal: true}
   localization:   {taskfile: ./packages/localization,     dir: ./packages/localization,     internal: true}
-  item-assets:    {taskfile: ./packages/item-assets,      dir: ./packages/item-assets,      internal: true}
   manual:         {taskfile: ./packages/manual,           dir: ./packages/manual,           internal: true}
   intwc:          {taskfile: ./packages/intwc,            dir: ./packages/intwc,            internal: true}
   shared-controls: {taskfile: ./packages/shared-controls, dir: ./packages/shared-controls,  internal: true}
@@ -48,31 +48,21 @@ tasks:
       - pnpm install
       - task: post-install
 
-  install-ci:
-    cmds:
-      - task: pull-artifacts
-      - pnpm install --frozen-lockfile
-      - task: post-install
-
   post-install:
     cmds:
       - task: app:install
-      - task: parser-legacy:install
       - task: manual:install
       - task: intwc:install
-      - task: item-assets:install
       - task: shared-controls:install
       - task: server:install
 
   build-artifacts:
-    desc: Generate artifacts for development locally and from hosted app
+    desc: Generate artifacts for development locally
     cmds:
-      - task: parser:pull-artifacts-public
-      - task: item-assets:pull-artifacts-public
       - task: research:build
+      - task: parser:bsource
+      - task: itemsys:bsource
       - task: localization:build
-      - task: item-assets:build-src
-      - task: item-system:build
       - task: runtime-wasm:pull-dist
       - task: blueflame-deps:build
 
@@ -80,14 +70,12 @@ tasks:
     desc: Pull artifacts from storage (requires gcloud access)
     deps:
       - cache-ci-app-assets-pull-artifacts
-      - parser:pull-artifacts
       - cache-ci-runtime-pull-artifacts
 
   cache-ci-app-assets-pull-artifacts:
     deps:
       - localization:pull-artifacts
-      - item-assets:pull-artifacts
-      - item-system:pull-artifacts
+      - itemsys-build:pull-artifacts
 
   cache-ci-runtime-pull-artifacts:
     deps:
@@ -131,7 +119,7 @@ tasks:
     deps:
       - manual:check
       - localization:check
-      - item-system:check
+      - itemsys:check
       - app:check
       - server:check
       - runtime-worker:check
@@ -180,7 +168,6 @@ tasks:
 
   test-layer-1:
     deps:
-      - item-system:test
       - skybook-api:test
       - app:test
 
@@ -205,7 +192,6 @@ tasks:
   build-app-ci:
     cmds:
       - pnpm install --frozen-lockfile
-      - task: parser-legacy:install
       - task: intwc:install
       - task: app:install
       - task: app:build
@@ -226,7 +212,6 @@ tasks:
   build-server-ci:
     cmds:
       - pnpm install --frozen-lockfile
-      - task: parser-legacy:install
       - task: server:install
       - task: server:build
 
@@ -237,6 +222,7 @@ tasks:
       - cargo clean
       - rustup update
       - task: runtime-wasm:clean
+      - task: itemsys-build:clean
 
   publish:
     desc: Publish artifacts

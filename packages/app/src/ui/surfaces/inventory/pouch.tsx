@@ -5,9 +5,10 @@ import { useSwappedWheelScrollDirection } from "@pistonite/shared-controls";
 
 import {
     ItemTab,
-    OverworldItemSlotWithTooltip,
-    PouchItemSlotWithTooltip,
-} from "skybook-item-system";
+    OverworldItemSlot,
+    PouchItemSlot,
+    getOverworldBackgroundUrl,
+} from "@pistonite/skybook-itemsys";
 import { translateRuntimeViewError, useUITranslation } from "skybook-localization";
 
 import {
@@ -20,7 +21,6 @@ import {
 } from "self::application";
 import {
     getInBrokenSlotArray,
-    getOverworldBackgroundUrl,
     getTabNodesFromPouch,
     getUndiscoveredTabMap,
     useStyleEngine,
@@ -232,7 +232,8 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         <div className={m("flex-1 overflow-y-auto scrollbar-thin")}>
             <div className={m("flex flex-wrap max-h-0 overflow-visible pad-itemtop")}>
                 {pouch.val.items.map((item, i) => (
-                    <PouchItemSlotWithTooltip
+                    <PouchItemSlot
+                        tooltip
                         item={item}
                         key={i}
                         inBrokenSlot={isInBrokenSlotArray[i]}
@@ -267,7 +268,8 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                             nodes={tab.items.map(({ slot, item, itemIndex }, i) => ({
                                 slot,
                                 element: (
-                                    <PouchItemSlotWithTooltip
+                                    <PouchItemSlot
+                                        tooltip
                                         item={item}
                                         key={i}
                                         inBrokenSlot={
@@ -296,7 +298,8 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         >
             <div className={m("flex-row")}>
                 {overworld.val.items.map((item, i) => (
-                    <OverworldItemSlotWithTooltip
+                    <OverworldItemSlot
+                        tooltip
                         item={item}
                         key={i}
                         isMasterSwordFullPower={isMasterSwordFullPower}

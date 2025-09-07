@@ -1,9 +1,8 @@
 [package]
 name = "skybook-manual-preprocessor"
 version = "0.0.0"
-edition = "2021"
+edition = "2024"
 publish = false
-
 
 [dependencies.skybook-parser]
 path = "../parser"

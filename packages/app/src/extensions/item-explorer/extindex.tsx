@@ -5,7 +5,7 @@ import { type Cell, cell } from "@pistonite/pure/memory";
 import type { WxPromise } from "@pistonite/workex";
 
 import type { ItemSearchResult } from "@pistonite/skybook-api";
-import type { ActorSpriteProps } from "botw-item-assets";
+import type { ActorSpriteProps } from "@pistonite/skybook-itemsys";
 import { translateGenericError } from "skybook-localization";
 
 import { FirstPartyExtensionAdapter, type FirstPartyExtension } from "self::util";

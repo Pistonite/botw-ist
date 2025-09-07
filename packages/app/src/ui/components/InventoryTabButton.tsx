@@ -1,7 +1,6 @@
 import { makeStyles } from "@fluentui/react-components";
 
-import { ModifierSprite } from "botw-item-assets";
-import { type PouchCategory, PouchCategoryNames } from "skybook-item-system";
+import { ModifierSprite, type PouchCategory, PouchCategoryNames } from "@pistonite/skybook-itemsys";
 
 import { useStyleEngine } from "self::util";
 

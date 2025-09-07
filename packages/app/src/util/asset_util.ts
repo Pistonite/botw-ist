@@ -1,6 +1,11 @@
 import { useDark } from "@pistonite/pure-react";
 
-import { type BackgroundName, getSheikaBackgroundLightUrl, getSheikaBackgroundUrl, registerAssetLocation } from "@pistonite/skybook-itemsys";
+import {
+    type BackgroundName,
+    getSheikaBackgroundLightUrl,
+    getSheikaBackgroundUrl,
+    registerAssetLocation,
+} from "@pistonite/skybook-itemsys";
 
 import { devLog } from "./log.ts";
 
@@ -14,14 +19,13 @@ export const probeAndRegisterAssetLocation = async () => {
         if (response.ok) {
             registerAssetLocation("/static/itemsys/");
         }
-        devLog.info("using local item-assets");
+        devLog.info("using local item assets");
         return;
     } catch {
         devLog.info("item-assets probing failed, using hosted");
         registerAssetLocation("https://ist.pistonite.app/static/itemsys/");
     }
 };
-
 
 export const useThemedSheikaBackgroundUrl = () => {
     const dark = useDark();

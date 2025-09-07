@@ -164,6 +164,9 @@ importers:
       react-i18next:
         specifier: 'catalog:'
         version: 15.6.1(i18next@25.3.2(typescript@5.9.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.2)
+      skybook-itemsys-build:
+        specifier: workspace:*
+        version: link:../itemsys-build
       vite:
         specifier: 'catalog:'
         version: 6.3.5(@types/node@22.15.18)

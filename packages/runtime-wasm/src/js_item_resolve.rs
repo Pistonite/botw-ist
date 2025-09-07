@@ -2,7 +2,7 @@ use std::future::Future;
 use std::pin::Pin;
 
 use js_sys::{Function, Promise, Reflect};
-use skybook_parser::search::{QuotedItemResolver, ResolvedItem};
+use skybook_parser::cir;
 use wasm_bindgen::{JsCast, JsValue};
 use wasm_bindgen_futures::JsFuture;
 
@@ -18,13 +18,13 @@ impl JsQuotedItemResolver {
         Self { delegate }
     }
 
-    pub async fn call(self, word: String) -> Option<ResolvedItem> {
+    pub async fn call(self, word: String) -> Option<cir::ResolvedItem> {
         match self.call_internal(&word).await {
             Ok(Some(item)) => Some(item),
             _ => None,
         }
     }
-    pub async fn call_internal(&self, word: &str) -> Result<Option<ResolvedItem>, JsValue> {
+    pub async fn call_internal(&self, word: &str) -> Result<Option<cir::ResolvedItem>, JsValue> {
         let search_result = self
             .delegate
             .call1(&JsValue::NULL, &JsValue::from_str(word))?;
@@ -42,12 +42,12 @@ impl JsQuotedItemResolver {
         let effect_id = Reflect::get(&result, &JsValue::from_str("cookEffect"))?
             .as_f64()
             .unwrap_or_default();
-        Ok(Some(ResolvedItem::with_effect_id(actor, effect_id as i32)))
+        Ok(Some(cir::ResolvedItem::with_effect_id(actor, effect_id as i32)))
     }
 }
 
-impl QuotedItemResolver for JsQuotedItemResolver {
-    type Future = Pin<Box<dyn Future<Output = Option<ResolvedItem>>>>;
+impl cir::QuotedItemResolver for JsQuotedItemResolver {
+    type Future = Pin<Box<dyn Future<Output = Option<cir::ResolvedItem>>>>;
 
     fn resolve_quoted(&self, word: &str) -> Self::Future {
         Box::pin(self.clone().call(word.to_string()))
