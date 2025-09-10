@@ -33,5 +33,5 @@ catalog:
   react-i18next: ^15.6.1
   typescript: =5.8.3
   uuid: ^11.1.0
-  vite: ^6.3.5
+  vite: ^6.3.6
   vitest: ^3.2.4
