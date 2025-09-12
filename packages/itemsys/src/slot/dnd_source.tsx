@@ -1,32 +1,32 @@
 import type { PropsWithChildren } from "react";
 
-import type { ItemDragData, ItemDragDataWithoutLocation } from "@pistonite/skybook-api";
+import type { ItemDragDataWithoutLocation } from "@pistonite/skybook-api";
 
-import { useItemDnD } from "./context.ts";
+import { useItemDnD } from "./dnd_context.ts";
 
 export type DragSourceProps = {
     data: ItemDragDataWithoutLocation;
 };
 
-/** 
+/**
  * A drag-and-drop source item. Clicking on this item will start dragging,
  * using the provided data
  */
-export const DragSource: React.FC<PropsWithChildren<DragSourceProps>> = ({data, children}) => {
-    const {startDragItem} = useItemDnD();
+export const DragSource: React.FC<PropsWithChildren<DragSourceProps>> = ({ data, children }) => {
+    const { startDragItem } = useItemDnD();
     return (
-    <div 
+        <div
             style={{
                 display: "contents",
-                cursor: "pointer"
+                cursor: "pointer",
             }}
-            onMouseDown={(e)=>{
+            onMouseDown={(e) => {
                 // keep location of the item if dragging with right mouse button
                 const keepLocation = !!(e.buttons & 2);
-                void startDragItem({...data, keepLocation}, e.clientX, e.clientY);
+                void startDragItem({ ...data, keepLocation }, e.clientX, e.clientY);
             }}
         >
             {children}
-    </div>
+        </div>
     );
-}
+};

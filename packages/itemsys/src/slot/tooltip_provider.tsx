@@ -168,7 +168,9 @@ export const ItemTooltipProvider: React.FC<PropsWithChildren<ItemTooltipProvider
                     backgroundImage: `url(${backgroundUrl})`,
                 }}
             >
-                {!suppress && tooltipProps && <ItemTooltipContent {...tooltipProps} verbose={verbose} />}
+                {!suppress && tooltipProps && (
+                    <ItemTooltipContent {...tooltipProps} verbose={verbose} />
+                )}
             </div>
         </ItemTooltipContext.Provider>
     );

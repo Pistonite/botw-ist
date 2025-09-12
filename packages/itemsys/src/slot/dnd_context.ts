@@ -6,9 +6,7 @@ export type ItemDnDContextState = {
     /** Start dragging an item in this DnD context */
     startDragItem: (data: ItemDragData, x: number, y: number) => Promise<void>;
 
-    /**
-     * Register a drop target. Return a function to unregister this target
-     */
+    /** Register a drop target. Return a function to unregister this target */
     registerDropTarget: (target: ItemDropTarget) => () => void;
 };
 
