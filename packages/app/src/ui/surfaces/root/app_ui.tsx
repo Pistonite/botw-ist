@@ -5,7 +5,10 @@ import { memo, useEffect } from "react";
 import { ResizeLayout } from "@pistonite/shared-controls";
 
 import { useUITranslation } from "skybook-localization";
-import { ItemTooltipProvider } from "skybook-item-system";
+import {
+    ItemTooltipProvider,
+    getSheikaBackgroundUrl,
+} from "@pistonite/skybook-itemsys";
 
 import { MainWindowItemDnDProvider, useIsShowingExtensionPanel, useSessionStore, useUIStore } from "self::application";
 import { useNarrow, isLessProductive } from "self::pure-contrib";
@@ -16,7 +19,7 @@ import {
 } from "self::ui/surfaces/extension";
 import { Header } from "self::ui/surfaces/header";
 import { PouchInventoryPanel, GdtInventoryPanel } from "self::ui/surfaces/inventory";
-import { getSheikaBackgroundUrl, useStyleEngine } from "self::util";
+import { useStyleEngine } from "self::util";
 
 const AppImpl: React.FC = () => {
     const m = useStyleEngine();

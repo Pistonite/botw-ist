@@ -1,16 +1,17 @@
-import { logger } from "@pistonite/pure/log";
 
 import { useEffect, useMemo, useRef, useState, type PropsWithChildren } from "react";
-import { ExtensionApp, ItemDragData, ItemDropTarget } from "@pistonite/skybook-api";
 
-import { ItemDnDContext } from "./dnd_context.ts";
+import type { ExtensionApp, ItemDragData } from "@pistonite/skybook-api";
 
-const log = logger("dnd", "#b2dc9b").default();
+import { ItemDnDContext } from "./context.ts";
+import { DropTargets, hideDraggingDiv, updateDraggingDiv } from "./util.ts";
+
+
 
 export type RemoteItemDnDProviderProps = {
     app: ExtensionApp,
 };
-//
+
 export const RemoteItemDnDProvider: React.FC<PropsWithChildren<RemoteItemDnDProviderProps>> = ({app, children}) => {
     const [dragData, setDragData] = useState<ItemDragData | undefined>(undefined);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -25,55 +26,80 @@ export const RemoteItemDnDProvider: React.FC<PropsWithChildren<RemoteItemDnDProv
     useEffect(() => {
         const container = containerRef.current;
         const controller = new AbortController();
+        // the extension popout window always needs a listener
+        // to detect when something is dragged into the window
         if (container) {
-            container.addEventListener("mouseenter", (e) => {
-                if (e.buttons) {
-
+            // when dragged in, ask what the data is from app
+            container.addEventListener("mouseenter", async (e) => {
+                const isDragging = !!e.buttons;
+                if (!isDragging) {
+                    log.info("not dragging");
+                    await stopDragging(app);
+                    return;
                 }
-                const {clientX, clientY, buttons} = e;
-
-                // check if we are dragging
+                log.info("requesting dragging item from app");
+                const result = await app.getItemDragData();
+                if ("err" in result) {
+                    log.error("failed to get drag data from app");
+                    log.error(result.err);
+                    // stop dragging in case we can't get data
+                    await stopDragging(app);
+                }
+                // not dragging anything, stop
+                if (!result.val) {
+                    log.info("did not get drag data from app");
+                    return;
+                }
+                setDragData(result.val);
+            }, {signal: controller.signal});
+            // when dragged out, "forget" the data
+            container.addEventListener("mouseleave", () => {
+                setDragData(undefined);
             })
+            log.info("attached base dnd events");
         }
         return () => {
             // clean up whatever last events registered on unmount
+            // eslint-disable-next-line react-hooks/exhaustive-deps
             abortFnRef.current?.()
             controller.abort();
         }
-    }, []);
+    }, [app]);
     // stable reference
     const contextState = useMemo(() => {
         const startDragItem = async (data: ItemDragData, x: number, y: number) => {
+            setDragData(data);
+            updateDraggingDiv(draggingRef, x, y);
+            addContainerEventListenersForRef(abortFnRef, containerRef, draggingRef, dragData, setDragData);
             const result = await app.remoteItemDragStarted(data);
             if ("err" in result) {
                 log.error("failed to send drag start signal to app");
                 log.error(result.err);
             }
-
-            setDragData(data);
-            // 
-            // await new Promise(resolve => setTimeout(resolve, 1));
-            updateDraggingDiv(draggingRef, x, y);
-            const container = containerRef.current;
-            if (container) {
-                const controller = addContainerEventListeners(container, draggingRef);
-                abortFnRef.current?.();
-                abortFnRef.current = controller;
-            }
         };
         return {
-            startDragItem, registerDropTarget
+            startDragItem, registerDropTarget:
+dropTargets.registerDropTarget.bind(dropTargets)
         };
     }
-        , [app]);
+        , [app, dragData]);
     return (
     <ItemDnDContext.Provider value={contextState}>
-            <div ref={containerRef} className={m("pos-rel wh-100")}>
+            <div ref={containerRef}
+                style={{
+                    position: "relative",
+                    width: "100%",
+                    height: "100%"
+                }}
+            >
                 {children}
                 {
                     <div 
                             ref={draggingRef}
-                            className={m("pos-abs", c.zIndex)}
+                        style={{
+                            position: "absolute",
+                            zIndex: 1000
+                        }}
                         >
                             { !!dragData &&
                             <DraggingItemSlot data={dragData} />
@@ -84,28 +110,63 @@ export const RemoteItemDnDProvider: React.FC<PropsWithChildren<RemoteItemDnDProv
     </ItemDnDContext.Provider>
     );
 }
-const dropTargets = new Set<ItemDropTarget>();
-const registerDropTarget = (target: ItemDropTarget): () => void => {
-    dropTargets.add(target);
-    return () => {
-        dropTargets.delete(target);
+
+const dropTargets = new DropTargets();
+
+const stopDragging = async (app: ExtensionApp) => {
+    const result = await app.remoteItemDragStopped();
+    if ("err" in result) {
+        log.error("failed to send drag stopped signal to app");
+        log.error(result.err);
     }
 }
-export const updateDraggingDiv = (draggingRef: React.RefObject<HTMLDivElement>, x: number, y: number) => {
-    const dragging = draggingRef.current;
-    if (dragging) {
-        // this is correct because the container div should always be the same
-        // size as the viewport. Otherwise we need to adjust for the client
-        // rect for the container div
-        dragging.style.top = `${y - 36}px`;
-        dragging.style.left = `${x - 36}px`;
-        dragging.style.display = "unset";
+const addContainerEventListenersForRef = (
+    abortFnRef: React.MutableRefObject<(() => void) | null>,
+    containerRef: React.RefObject<HTMLDivElement>,
+    draggingRef: React.RefObject<HTMLDivElement>,
+    dragData: ItemDragData | undefined,
+    setDragData: (data: ItemDragData | undefined) => void
+    ) => {
+    const container = containerRef.current;
+    if (container) {
+        const controller = addContainerEventListeners(container, draggingRef, dragData, setDragData);
+        abortFnRef.current?.();
+        abortFnRef.current = controller;
     }
 }
 
-export const hideDraggingDiv = (draggingRef: React.RefObject<HTMLDivElement>) => {
-    const dragging = draggingRef.current;
-    if (dragging) {
-        dragging.style.display = "none";
-    }
+const addContainerEventListeners = (
+    container: HTMLDivElement,
+    draggingRef: React.RefObject<HTMLDivElement>,
+    dragData: ItemDragData | undefined,
+    setDragData: (data: ItemDragData | undefined) => void
+): () => void => {
+    log.info("attaching dnd events");
+    const controller = new AbortController();
+    // handle dropping the item
+    container.addEventListener("mouseup", (e) => {
+        log.info("dropping item");
+        if (dragData) {
+            dropTargets.dropItem(dragData, e.clientX, e.clientY);
+        }
+        setDragData(undefined);
+        hideDraggingDiv(draggingRef);
+        controller.abort();
+    }, { signal: controller.signal });
+    // handle dragging in the window and into the window
+    container.addEventListener("mousemove", (e) => {
+        if(!e.buttons) {
+            // if buttons are already released, abort the drag and drop
+            setDragData(undefined);
+            hideDraggingDiv(draggingRef);
+            controller.abort();
+            return;
+        }
+        updateDraggingDiv(draggingRef, e.clientX, e.clientY);
+    }, {signal: controller.signal});
+
+    return () => {
+        log.info("unregistering dnd events");
+        controller.abort();
+    };
 }
