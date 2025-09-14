@@ -7,7 +7,7 @@ use teleparse::derive_lexicon;
 #[teleparse(ignore(r"\s+"))]
 pub enum TT {
     /// Line comments (starting with // or #)
-    #[teleparse(regex(r"(//|#).*\n"))]
+    #[teleparse(regex(r"(//|#)[^\n]*"))]
     Comment,
 
     /// A tagged block literal starting wit '''tag\n and ending with '''
