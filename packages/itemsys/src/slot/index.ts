@@ -1,4 +1,6 @@
 export * from "./dnd_context.ts";
+export * from "./dnd_drop_zone.tsx";
+export * from "./dnd_provider.tsx";
 export * from "./dnd_slot.tsx";
 export * from "./dnd_util.ts";
 export * from "./slot.tsx";

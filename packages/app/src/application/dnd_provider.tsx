@@ -19,8 +19,9 @@ import {
 } from "./dnd_system.ts";
 
 const useStyles = makeStyles({
-    zIndex: {
+    draggingDiv: {
         zIndex: 1000,
+        cursor: "pointer"
     },
 });
 
@@ -61,17 +62,18 @@ export const MainWindowItemDnDProvider: React.FC<PropsWithChildren> = ({ childre
             addContainerEventListenersForRef(abortFnRef, containerRef, draggingRef);
         };
         return {
+            isDragging: !!dragData,
             startDragItem,
             registerDropTarget,
         };
-    }, []);
+    }, [dragData]);
 
     return (
         <ItemDnDContext.Provider value={contextState}>
             <div ref={containerRef} className={m("pos-rel wh-100")}>
                 {children}
                 {
-                    <div ref={draggingRef} className={m("pos-abs", c.zIndex)}>
+                    <div ref={draggingRef} className={m("pos-abs", c.draggingDiv)}>
                         {!!dragData && <DraggingItemSlot data={dragData} />}
                     </div>
                 }

@@ -36,7 +36,7 @@ export type DnDSystemApi = {
     attachDnDEvents: () => void;
 };
 
-export const dndLog = logger("dnd", "#b2dc9b").default();
+export const dndLog = logger("dnd", "#b2dc9b").info();
 
 let systemApi: DnDSystemApi | undefined = undefined;
 
@@ -59,8 +59,8 @@ export const addContainerEventListenersForRef = (
 ) => {
     const container = containerRef.current;
     if (container) {
-        const controller = addContainerEventListeners(container, draggingRef);
         abortFnRef.current?.();
+        const controller = addContainerEventListeners(container, draggingRef);
         abortFnRef.current = controller;
     }
 };
@@ -71,6 +71,9 @@ const addContainerEventListeners = (
 ): (() => void) => {
     dndLog.info("attaching dnd events");
     const controller = new AbortController();
+    container.addEventListener("dragenter", (e) => {
+        console.log("dragging enter");
+    });
     // handle dropping the item
     container.addEventListener(
         "mouseup",
@@ -99,6 +102,7 @@ const addContainerEventListeners = (
     container.addEventListener(
         "mousemove",
         (e) => {
+            console.log("moving");
             if (!e.buttons) {
                 // if buttons are already released, abort the drag and drop
                 const { setDragData } = useSessionStore.getState();

@@ -15,6 +15,7 @@ export const RemoteItemDnDProvider: React.FC<PropsWithChildren<RemoteItemDnDProv
     children,
 }) => {
     const [dragData, setDragData] = useState<ItemDragData | undefined>(undefined);
+    const needEnterCheck = useRef<boolean>(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const draggingRef = useRef<HTMLDivElement>(null);
     const abortFnRef = useRef<(() => void) | null>(null);
@@ -76,10 +77,11 @@ export const RemoteItemDnDProvider: React.FC<PropsWithChildren<RemoteItemDnDProv
             setDragData(data);
             updateDraggingDiv(draggingRef, x, y);
             addContainerEventListenersForRef(
+                app,
                 abortFnRef,
                 containerRef,
                 draggingRef,
-                dragData,
+                data,
                 setDragData,
             );
             const result = await app.remoteItemDragStarted(data);
@@ -89,6 +91,7 @@ export const RemoteItemDnDProvider: React.FC<PropsWithChildren<RemoteItemDnDProv
             }
         };
         return {
+            isDragging: !!dragData,
             startDragItem,
             registerDropTarget: dropTargets.registerDropTarget.bind(dropTargets),
         };
@@ -130,6 +133,7 @@ const stopDragging = async (app: ExtensionApp) => {
     }
 };
 const addContainerEventListenersForRef = (
+    app: ExtensionApp,
     abortFnRef: React.MutableRefObject<(() => void) | null>,
     containerRef: React.RefObject<HTMLDivElement>,
     draggingRef: React.RefObject<HTMLDivElement>,
@@ -139,6 +143,7 @@ const addContainerEventListenersForRef = (
     const container = containerRef.current;
     if (container) {
         const controller = addContainerEventListeners(
+            app,
             container,
             draggingRef,
             dragData,
@@ -150,6 +155,7 @@ const addContainerEventListenersForRef = (
 };
 
 const addContainerEventListeners = (
+    app: ExtensionApp,
     container: HTMLDivElement,
     draggingRef: React.RefObject<HTMLDivElement>,
     dragData: ItemDragData | undefined,
@@ -164,6 +170,7 @@ const addContainerEventListeners = (
             log.info("dropping item");
             if (dragData) {
                 dropTargets.dropItem(dragData, e.clientX, e.clientY);
+                void stopDragging(app);
             }
             setDragData(undefined);
             hideDraggingDiv(draggingRef);
@@ -180,6 +187,7 @@ const addContainerEventListeners = (
                 setDragData(undefined);
                 hideDraggingDiv(draggingRef);
                 controller.abort();
+                void stopDragging(app);
                 return;
             }
             updateDraggingDiv(draggingRef, e.clientX, e.clientY);

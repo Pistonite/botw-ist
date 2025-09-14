@@ -60,6 +60,11 @@ const GdtInventoryPanelImpl: React.FC = () => {
                         key={i}
                         isMasterSwordFullPower={!!gdt.val.masterSword.isTrueForm}
                         {...itemSlotProps}
+                        dragData={{
+                            type: "gdt",
+                            payload: item,
+                            isMasterSwordFullPower: true
+                        }}
                     />
                 ))}
             </div>
