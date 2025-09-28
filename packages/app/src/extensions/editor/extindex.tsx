@@ -165,7 +165,9 @@ const getScriptFromDragData = (data: ItemDragData) => {
         case "pouch": {
             actorName = data.payload.common.actorName;
             effectId = data.payload.data.effectId;
-            position = data.position;
+            if (data.keepLocation) {
+                position = data.position;
+            }
             const itemType = data.payload.itemType;
             if (
                 itemType === 2 ||
