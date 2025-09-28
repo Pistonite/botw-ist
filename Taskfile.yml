@@ -232,4 +232,5 @@ tasks:
     cmds:
       - git tag {{.SKYBOOK_VERSION_TAG}}
       - git push origin {{.SKYBOOK_VERSION_TAG}}
-      # TODO: publish skybook-api
+      - task: skybook-api:publish
+        ignore_error: true

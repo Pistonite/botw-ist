@@ -61,3 +61,6 @@ tasks:
   dev:
     cmds:
       - task: ecma:vitest-watch
+
+  publish:
+    - pnpm publish --access public
