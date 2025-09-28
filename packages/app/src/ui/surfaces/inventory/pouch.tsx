@@ -270,17 +270,23 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                             category={tab.category}
                             undiscovered={undiscoveredTabs[tab.category]}
                             border
-                            nodes={tab.items.map(({ slot, item, itemIndex }, i) => ({
+                            nodes={tab.items.map(({ slot, item, itemIndex }, si) => ({
                                 slot,
                                 element: (
                                     <PouchItemSlot
                                         tooltip
                                         item={item}
-                                        key={i}
+                                        key={si}
                                         inBrokenSlot={
                                             itemIndex >= 0 && isInBrokenSlotArray[itemIndex]
                                         }
                                         isMasterSwordFullPower={isMasterSwordFullPower}
+                                        dragData={{
+                                            type: "pouch",
+                                            payload: item,
+                                            isMasterSwordFullPower,
+                                            position: [i, si]
+                                        }}
                                         {...itemSlotProps}
                                     />
                                 ),

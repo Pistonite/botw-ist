@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type PropsWithChildren } from "react";
-import { Button, makeStyles, Subtitle2 } from "@fluentui/react-components";
+import type { PropsWithChildren } from "react";
+import { Button, makeStyles} from "@fluentui/react-components";
 
 import type { ItemDragData } from "@pistonite/skybook-api";
 
@@ -23,16 +23,16 @@ const useStyles = makeStyles({
         zIndex: 1000,
         boxSizing: "border-box",
         border: "2px dashed white",
-        // boxShadow: "inset -2px -2px 1px 0px #ffffffaa, inset 2px 2px 1px 0px #ffffffaa",
         backgroundColor: "#ffffff11",
         willChange: "opacity",
         transitionDuration: "0.2s",
         pointerEvents: "none",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
         alignItems: "center",
     },
+    hintDiv: 
+                    {position: "relative", top: "-10px", opacity: 0.9}
 });
 
 /** Wrapper to make an area a drop target for dragging items */
@@ -55,9 +55,11 @@ export const ItemDropZone: React.FC<PropsWithChildren<ItemDropZoneProps>> = ({
         {children}
         <div className={c.effectDiv} style={{opacity: data?1:0}} >
             {!!data &&
+                <div className={c.hintDiv}>
                     <Button>
                         {getHint(data)}
                     </Button>
+                </div>
             }
         </div>
     </div>);

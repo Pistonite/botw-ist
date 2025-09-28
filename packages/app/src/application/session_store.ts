@@ -113,9 +113,7 @@ export type SessionStore = {
 
     /** Current item data being dragged (for the entire application, include popout extensions) */
     dragData: ItemDragData | undefined;
-    // isDraggingInThisWindow: boolean,
     setDragData: (data: ItemDragData | undefined) => void;
-    // setIsDraggingInThisWindow: (x: boolean) => void;
 };
 
 export const useSessionStore = create<SessionStore>()((set) => {
@@ -296,13 +294,9 @@ export const useSessionStore = create<SessionStore>()((set) => {
         },
 
         dragData: undefined,
-        // isDraggingInThisWindow: false,
         setDragData: (dragData) => {
             set({ dragData });
         },
-        // setIsDraggingInThisWindow: (x) => {
-        //     set({isDraggingInThisWindow: x})
-        // },
     };
 });
 

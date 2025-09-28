@@ -56,8 +56,6 @@ async function boot() {
         return;
     }
 
-    // render(root, undefined, <extension.Component />);
-
     addLocaleSubscriber(() => {
         const appTitle = translateUI("title");
         const extensionTitleKey = `extension.${properties.extensionId}.name`;

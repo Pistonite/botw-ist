@@ -49,14 +49,3 @@ export type ItemDragDataKeepLocation = {
     /** When dropping, if the location information of the item should be kept */
     keepLocation: boolean;
 };
-
-export type ItemDropTarget = {
-    /**
-     * The element whose bounds will be used to check if
-     * the item is dropped to this target
-     */
-    element: HTMLElement;
-
-    /** Callback to handle data dropped on this target */
-    handler: (data: ItemDragData) => void;
-};

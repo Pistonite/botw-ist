@@ -194,10 +194,4 @@ export interface ExtensionApp {
      * window. Pass in undefined for stop dragging.
      */
     handleItemDrag(data: ItemDragData | undefined): WxPromise<void>;
-    //
-    // /** Notify the application that remote dragging has stopped */
-    // remoteItemDragStopped(): WxPromise<void>;
-    //
-    // /** Get from the host app the current data attached to the item being dragged */
-    // getItemDragData(): WxPromise<ItemDragData | "">;
 }

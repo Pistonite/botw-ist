@@ -24,7 +24,6 @@ import {
 import { getActorParam } from "@pistonite/skybook-itemsys";
 
 import { useSessionStore } from "./session_store.ts";
-import { dndLog } from "./dnd_system.ts";
 
 /**
  * This is the host that handles function calls from Extensions using the ExtensionApp API
@@ -239,7 +238,6 @@ class ExtensionAppHost implements ExtensionApp {
     }
 
     public async handleItemDrag(data: ItemDragData | undefined): WxPromise<void> {
-        dndLog.info("remote dnd drag signal received");
         const { setDragData } = useSessionStore.getState();
         setDragData(data);
         return {};

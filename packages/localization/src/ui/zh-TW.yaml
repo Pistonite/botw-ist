@@ -107,6 +107,9 @@ main.visible_inventory.trial.desc: "正在進行挑戰模式。挑戰模式結�
 main.visible_inventory.trial.title: "挑戰模式"
 main.visible_inventory.view_error: "無法顯示物品欄！"
 
+# Drop Hints
+drop_target.editor: "拖放至此處新增物品到腳本"
+
 # Extension Launch Dialog
 dialog.extension_launch.error.custom_popout_only: "自訂擴充功能只能彈出到新視窗"
 dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} 無法在次要視圖中開啟"

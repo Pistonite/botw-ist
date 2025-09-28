@@ -3,6 +3,7 @@ import type { WxPromise } from "@pistonite/workex";
 
 import type { ExtensionApp, ItemDragData, SessionMode } from "@pistonite/skybook-api";
 import { CookEffectNames, ItemDropZone, translateActorOrAsIs } from "@pistonite/skybook-itemsys";
+import { useUITranslation } from "skybook-localization";
 
 import { FirstPartyExtensionAdapter, type FirstPartyExtension } from "self::util";
 
@@ -23,10 +24,11 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
     constructor(standalone: boolean) {
         super(standalone);
 
-        this.component = () => {
+        const C = () => {
+            const t = useUITranslation();
             return (
                 <ItemDropZone
-                    getHint={() => "drop here hello"}
+                    getHint={() => t("drop_target.editor")}
                     onDropItem={(item) => this.onDropItem(item)}
                     style={{ height: "100%" }}
                 >
@@ -39,6 +41,7 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
                 </ItemDropZone>
             );
         };
+        this.component = C;
     }
 
     public get Component() {

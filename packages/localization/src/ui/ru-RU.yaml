@@ -107,6 +107,9 @@ main.visible_inventory.trial.desc: "Активна пробная версия. 
 main.visible_inventory.trial.title: "Пробная версия"
 main.visible_inventory.view_error: "Не удается отобразить инвентарь!"
 
+# Drop Hints
+drop_target.editor: "Перетащите сюда, чтобы добавить элемент в скрипт"
+
 # Extension Launch Dialog
 dialog.extension_launch.error.custom_popout_only: "Пользовательские расширения можно открывать только в новом окне"
 dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} нельзя открыть во вторичной области"

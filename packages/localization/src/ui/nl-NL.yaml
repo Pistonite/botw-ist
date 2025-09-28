@@ -107,6 +107,9 @@ main.visible_inventory.trial.desc: "Een proef is actief. Inventariswijzigingen w
 main.visible_inventory.trial.title: "Proef"
 main.visible_inventory.view_error: "Inventaris kan niet worden weergegeven!"
 
+# Drop Hints
+drop_target.editor: "Hierheen slepen om item aan script toe te voegen"
+
 # Extension Launch Dialog
 dialog.extension_launch.error.custom_popout_only: "Aangepaste extensies kunnen alleen in een nieuw venster worden geopend"
 dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} kan niet worden geopend in de secundaire weergave"
