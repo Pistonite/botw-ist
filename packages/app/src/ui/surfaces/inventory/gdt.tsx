@@ -63,7 +63,7 @@ const GdtInventoryPanelImpl: React.FC = () => {
                         dragData={{
                             type: "gdt",
                             payload: item,
-                            isMasterSwordFullPower: true
+                            isMasterSwordFullPower: true,
                         }}
                     />
                 ))}

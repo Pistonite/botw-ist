@@ -6,6 +6,7 @@ import { wxWindowOwner } from "@pistonite/workex";
 
 import type { ExtensionModule } from "./extension_types.ts";
 import { skybookExtensionApp } from "../interfaces/ExtensionApp.bus.ts";
+import type { ExtensionApp } from "../extension_app.ts";
 
 /**
  * Initialize an extension popout window

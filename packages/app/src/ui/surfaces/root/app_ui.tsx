@@ -8,7 +8,7 @@ import { useUITranslation } from "skybook-localization";
 import { ItemTooltipProvider, getSheikaBackgroundUrl } from "@pistonite/skybook-itemsys";
 
 import {
-    MainWindowItemDnDProvider,
+    MainWindowItemDragProvider,
     useIsShowingExtensionPanel,
     useSessionStore,
     useUIStore,
@@ -101,11 +101,11 @@ const AppImpl: React.FC = () => {
     );
 
     return (
-        <MainWindowItemDnDProvider>
+        <MainWindowItemDragProvider>
             <ItemTooltipProvider suppress={!!dragData} backgroundUrl={getSheikaBackgroundUrl()}>
                 {$App}
             </ItemTooltipProvider>
-        </MainWindowItemDnDProvider>
+        </MainWindowItemDragProvider>
     );
 };
 

@@ -27,97 +27,95 @@
 
 import { logger } from "@pistonite/pure/log";
 
-import { DropTargets, hideDraggingDiv, updateDraggingDiv } from "@pistonite/skybook-itemsys";
+// import { DropTargets, hideDraggingDiv, updateDraggingDiv } from "@pistonite/skybook-itemsys";
 
-import { useSessionStore } from "./session_store.ts";
-
-export type DnDSystemApi = {
-    /** Attach DnD events when start dragging remotely */
-    attachDnDEvents: () => void;
-};
+// export type DnDSystemApi = {
+//     /** Attach DnD events when start dragging remotely */
+//     attachDnDEvents: () => void;
+// };
 
 export const dndLog = logger("dnd", "#b2dc9b").info();
 
-let systemApi: DnDSystemApi | undefined = undefined;
+// let systemApi: DnDSystemApi | undefined = undefined;
 
-export const registerDnDSystemApi = (api: DnDSystemApi) => {
-    dndLog.info("dnd system api registered");
-    systemApi = api;
-};
+// export const registerDnDSystemApi = (api: DnDSystemApi) => {
+//     dndLog.info("dnd system api registered");
+//     systemApi = api;
+// };
 
-export const attachDnDEvents = () => {
-    systemApi?.attachDnDEvents();
-};
-
-const dropTargets = new DropTargets();
-export const registerDropTarget = dropTargets.registerDropTarget.bind(dropTargets);
-
-export const addContainerEventListenersForRef = (
-    abortFnRef: React.MutableRefObject<(() => void) | null>,
-    containerRef: React.RefObject<HTMLDivElement>,
-    draggingRef: React.RefObject<HTMLDivElement>,
-) => {
-    const container = containerRef.current;
-    if (container) {
-        abortFnRef.current?.();
-        const controller = addContainerEventListeners(container, draggingRef);
-        abortFnRef.current = controller;
-    }
-};
-
-const addContainerEventListeners = (
-    container: HTMLDivElement,
-    draggingRef: React.RefObject<HTMLDivElement>,
-): (() => void) => {
-    dndLog.info("attaching dnd events");
-    const controller = new AbortController();
-    container.addEventListener("dragenter", (e) => {
-        console.log("dragging enter");
-    });
-    // handle dropping the item
-    container.addEventListener(
-        "mouseup",
-        (e) => {
-            dndLog.info("dropping item");
-            const { dragData, setDragData } = useSessionStore.getState();
-            if (dragData) {
-                dropTargets.dropItem(dragData, e.clientX, e.clientY);
-            }
-            setDragData(undefined);
-            hideDraggingDiv(draggingRef);
-            controller.abort();
-        },
-        { signal: controller.signal },
-    );
-    // handle dragging out of the window
-    container.addEventListener(
-        "mouseleave",
-        () => {
-            dndLog.info("item left main window");
-            hideDraggingDiv(draggingRef);
-        },
-        { signal: controller.signal },
-    );
-    // handle dragging in the window and into the window
-    container.addEventListener(
-        "mousemove",
-        (e) => {
-            console.log("moving");
-            if (!e.buttons) {
-                // if buttons are already released, abort the drag and drop
-                const { setDragData } = useSessionStore.getState();
-                setDragData(undefined);
-                hideDraggingDiv(draggingRef);
-                controller.abort();
-                return;
-            }
-            updateDraggingDiv(draggingRef, e.clientX, e.clientY);
-        },
-        { signal: controller.signal },
-    );
-
-    return () => {
-        dndLog.info("unregistering dnd events");
-        controller.abort();
-    };
-};
+// export const attachDnDEvents = () => {
+//     systemApi?.attachDnDEvents();
+// };
+//
+// const dropTargets = new DropTargets();
+// export const registerDropTarget = dropTargets.registerDropTarget.bind(dropTargets);
+//
+// export const addContainerEventListenersForRef = (
+//     abortFnRef: React.MutableRefObject<(() => void) | null>,
+//     containerRef: React.RefObject<HTMLDivElement>,
+//     draggingRef: React.RefObject<HTMLDivElement>,
+// ) => {
+//     const container = containerRef.current;
+//     if (container) {
+//         abortFnRef.current?.();
+//         const controller = addContainerEventListeners(container, draggingRef);
+//         abortFnRef.current = controller;
+//     }
+// };
+//
+// const addContainerEventListeners = (
+//     container: HTMLDivElement,
+//     draggingRef: React.RefObject<HTMLDivElement>,
+// ): (() => void) => {
+//     dndLog.info("attaching dnd events");
+//     const controller = new AbortController();
+//     container.addEventListener("dragenter", (e) => {
+//         console.log("dragging enter");
+//     });
+//     // handle dropping the item
+//     container.addEventListener(
+//         "mouseup",
+//         (e) => {
+//             dndLog.info("dropping item");
+//             const { dragData, setDragData } = useSessionStore.getState();
+//             if (dragData) {
+//                 dropTargets.dropItem(dragData, e.clientX, e.clientY);
+//             }
+//             setDragData(undefined);
+//             hideDraggingDiv(draggingRef);
+//             controller.abort();
+//         },
+//         { signal: controller.signal },
+//     );
+//     // handle dragging out of the window
+//     container.addEventListener(
+//         "mouseleave",
+//         () => {
+//             dndLog.info("item left main window");
+//             hideDraggingDiv(draggingRef);
+//         },
+//         { signal: controller.signal },
+//     );
+//     // handle dragging in the window and into the window
+//     container.addEventListener(
+//         "mousemove",
+//         (e) => {
+//             console.log("moving");
+//             if (!e.buttons) {
+//                 // if buttons are already released, abort the drag and drop
+//                 const { setDragData } = useSessionStore.getState();
+//                 setDragData(undefined);
+//                 hideDraggingDiv(draggingRef);
+//                 controller.abort();
+//                 return;
+//             }
+//             updateDraggingDiv(draggingRef, e.clientX, e.clientY);
+//         },
+//         { signal: controller.signal },
+//     );
+//
+//     return () => {
+//         dndLog.info("unregistering dnd events");
+//         controller.abort();
+//     };
+// };

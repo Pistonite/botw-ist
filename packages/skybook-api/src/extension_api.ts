@@ -1,6 +1,7 @@
 import type { WxPromise } from "@pistonite/workex";
 
 import type { SessionMode } from "./types.ts";
+import type { ItemDragData } from "./item_dnd.ts";
 
 /**
  * API implemented by the extension and called by the application.
@@ -45,4 +46,12 @@ export interface Extension {
      * Popouts will always get this update.
      */
     onScriptChanged(script: string, charPos: number): WxPromise<void>;
+
+    /**
+     * Notify the extension that a drag action has started or stopped. This event
+     * is only sent to popouts.
+     *
+     * The drag action might be initiated from within this extension
+     */
+    onItemDragChanged(data: ItemDragData | undefined): WxPromise<void>;
 }

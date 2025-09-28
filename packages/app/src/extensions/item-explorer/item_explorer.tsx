@@ -98,9 +98,10 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
                             type: "search",
                             localized,
                             payload: {
-                                actor, cookEffect
+                                actor,
+                                cookEffect,
                             },
-                            isMasterSwordFullPower: false
+                            isMasterSwordFullPower: false,
                         }}
                     />
                 ))}

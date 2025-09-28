@@ -31,7 +31,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * Cancel previous requests made to the runtime
      */
     public cancelRuntimeTasks( taskId: string[] ): WxPromise<void> {
-        return this.sender.sendVoid(21 /* ExtensionApp.cancelRuntimeTasks */, [ taskId ]);
+        return this.sender.sendVoid(22 /* ExtensionApp.cancelRuntimeTasks */, [ taskId ]);
     }
 
     /**
@@ -42,7 +42,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * `charPos` defaults to 0
      */
     public getCrashInfo( taskId: string, script: string | undefined, charPos: number | undefined ): WxPromise<MaybeAborted<string>> {
-        return this.sender.send<MaybeAborted<string>>(22 /* ExtensionApp.getCrashInfo */, [ taskId, script, charPos ]);
+        return this.sender.send<MaybeAborted<string>>(23 /* ExtensionApp.getCrashInfo */, [ taskId, script, charPos ]);
     }
 
     /**
@@ -53,14 +53,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * `charPos` defaults to 0
      */
     public getGdtInventory( taskId: string, script: string | undefined, charPos: number | undefined ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
-        return this.sender.send<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>(23 /* ExtensionApp.getGdtInventory */, [ taskId, script, charPos ]);
-    }
-
-    /**
-     * Get from the host app the current data attached to the item being dragged
-     */
-    public getItemDragData( ): WxPromise<ItemDragData | ""> {
-        return this.sender.send<ItemDragData | "">(24 /* ExtensionApp.getItemDragData */, [ ]);
+        return this.sender.send<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>(24 /* ExtensionApp.getGdtInventory */, [ taskId, script, charPos ]);
     }
 
     /**
@@ -142,10 +135,18 @@ export class _wxSenderImpl implements ExtensionApp {
     }
 
     /**
+     * Notify the application that user has started or stopped dragging an item from a different
+     * window. Pass in undefined for stop dragging.
+     */
+    public handleItemDrag( data: ItemDragData | undefined ): WxPromise<void> {
+        return this.sender.sendVoid(33 /* ExtensionApp.handleItemDrag */, [ data ]);
+    }
+
+    /**
      * Invoke the parser for the script and get the diagnostics.
      */
     public provideParserDiagnostics( script: string ): WxPromise<Diagnostic[]> {
-        return this.sender.send<Diagnostic[]>(33 /* ExtensionApp.provideParserDiagnostics */, [ script ]);
+        return this.sender.send<Diagnostic[]>(34 /* ExtensionApp.provideParserDiagnostics */, [ script ]);
     }
 
     /**
@@ -153,14 +154,14 @@ export class _wxSenderImpl implements ExtensionApp {
      * the step that contains the bytePos.
      */
     public providePartialRuntimeDiagnostics( script: string, taskId: string, bytePos: number ): WxPromise<MaybeAborted<Diagnostic[]>> {
-        return this.sender.send<MaybeAborted<Diagnostic[]>>(34 /* ExtensionApp.providePartialRuntimeDiagnostics */, [ script, taskId, bytePos ]);
+        return this.sender.send<MaybeAborted<Diagnostic[]>>(35 /* ExtensionApp.providePartialRuntimeDiagnostics */, [ script, taskId, bytePos ]);
     }
 
     /**
      * Get the diagnostics from running the script.
      */
     public provideRuntimeDiagnostics( script: string, taskId: string ): WxPromise<MaybeAborted<Diagnostic[]>> {
-        return this.sender.send<MaybeAborted<Diagnostic[]>>(35 /* ExtensionApp.provideRuntimeDiagnostics */, [ script, taskId ]);
+        return this.sender.send<MaybeAborted<Diagnostic[]>>(36 /* ExtensionApp.provideRuntimeDiagnostics */, [ script, taskId ]);
     }
 
     /**
@@ -172,21 +173,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * (Note this is different from Runtime.getSemanticTokens)
      */
     public provideSemanticTokens( script: string, start: number, end: number ): WxPromise<Uint32Array> {
-        return this.sender.send<Uint32Array>(36 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
-    }
-
-    /**
-     * Notify the application that user has started dragging an item in the extension in an remote window
-     */
-    public remoteItemDragStarted( data: ItemDragData ): WxPromise<void> {
-        return this.sender.sendVoid(37 /* ExtensionApp.remoteItemDragStarted */, [ data ]);
-    }
-
-    /**
-     * Notify the application that remote dragging has stopped
-     */
-    public remoteItemDragStopped( ): WxPromise<void> {
-        return this.sender.sendVoid(38 /* ExtensionApp.remoteItemDragStopped */, [ ]);
+        return this.sender.send<Uint32Array>(37 /* ExtensionApp.provideSemanticTokens */, [ script, start, end ]);
     }
 
     /**
@@ -199,7 +186,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * before canceling the previous one
      */
     public requestNewTaskIds( uniqueId: string, count: number ): WxPromise<string[]> {
-        return this.sender.send<string[]>(39 /* ExtensionApp.requestNewTaskIds */, [ uniqueId, count ]);
+        return this.sender.send<string[]>(38 /* ExtensionApp.requestNewTaskIds */, [ uniqueId, count ]);
     }
 
     /**
@@ -212,7 +199,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * even when there is no error, the search result could be empty.
      */
     public resolveItem( query: string, localized: boolean, limit: number ): WxPromise<Result<ItemSearchResult[], string>> {
-        return this.sender.send<Result<ItemSearchResult[], string>>(40 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
+        return this.sender.send<Result<ItemSearchResult[], string>>(39 /* ExtensionApp.resolveItem */, [ query, localized, limit ]);
     }
 
     /**
@@ -224,7 +211,7 @@ export class _wxSenderImpl implements ExtensionApp {
      * a character offset (not byte offset) and is 0-based.
      */
     public setScript( script: string, position: number ): WxPromise<void> {
-        return this.sender.sendVoid(41 /* ExtensionApp.setScript */, [ script, position ]);
+        return this.sender.sendVoid(40 /* ExtensionApp.setScript */, [ script, position ]);
     }
 }
 
@@ -233,20 +220,17 @@ export class _wxSenderImpl implements ExtensionApp {
  */
 export const _wxRecverImpl = (handler: ExtensionApp): WxBusRecvHandler => {
     return ((fId, args: any[]) => { switch (fId) {
-        case 21 /* ExtensionApp.cancelRuntimeTasks */: {
+        case 22 /* ExtensionApp.cancelRuntimeTasks */: {
             const [ a0 ] = args;
             return handler.cancelRuntimeTasks( a0 );
         }
-        case 22 /* ExtensionApp.getCrashInfo */: {
+        case 23 /* ExtensionApp.getCrashInfo */: {
             const [ a0, a1, a2 ] = args;
             return handler.getCrashInfo( a0, a1, a2 );
         }
-        case 23 /* ExtensionApp.getGdtInventory */: {
+        case 24 /* ExtensionApp.getGdtInventory */: {
             const [ a0, a1, a2 ] = args;
             return handler.getGdtInventory( a0, a1, a2 );
-        }
-        case 24 /* ExtensionApp.getItemDragData */: {
-            return handler.getItemDragData();
         }
         case 25 /* ExtensionApp.getOverworldItems */: {
             const [ a0, a1, a2 ] = args;
@@ -279,38 +263,35 @@ export const _wxRecverImpl = (handler: ExtensionApp): WxBusRecvHandler => {
             const [ a0, a1 ] = args;
             return handler.getStepFromCharPos( a0, a1 );
         }
-        case 33 /* ExtensionApp.provideParserDiagnostics */: {
+        case 33 /* ExtensionApp.handleItemDrag */: {
+            const [ a0 ] = args;
+            return handler.handleItemDrag( a0 );
+        }
+        case 34 /* ExtensionApp.provideParserDiagnostics */: {
             const [ a0 ] = args;
             return handler.provideParserDiagnostics( a0 );
         }
-        case 34 /* ExtensionApp.providePartialRuntimeDiagnostics */: {
+        case 35 /* ExtensionApp.providePartialRuntimeDiagnostics */: {
             const [ a0, a1, a2 ] = args;
             return handler.providePartialRuntimeDiagnostics( a0, a1, a2 );
         }
-        case 35 /* ExtensionApp.provideRuntimeDiagnostics */: {
+        case 36 /* ExtensionApp.provideRuntimeDiagnostics */: {
             const [ a0, a1 ] = args;
             return handler.provideRuntimeDiagnostics( a0, a1 );
         }
-        case 36 /* ExtensionApp.provideSemanticTokens */: {
+        case 37 /* ExtensionApp.provideSemanticTokens */: {
             const [ a0, a1, a2 ] = args;
             return handler.provideSemanticTokens( a0, a1, a2 );
         }
-        case 37 /* ExtensionApp.remoteItemDragStarted */: {
-            const [ a0 ] = args;
-            return handler.remoteItemDragStarted( a0 );
-        }
-        case 38 /* ExtensionApp.remoteItemDragStopped */: {
-            return handler.remoteItemDragStopped();
-        }
-        case 39 /* ExtensionApp.requestNewTaskIds */: {
+        case 38 /* ExtensionApp.requestNewTaskIds */: {
             const [ a0, a1 ] = args;
             return handler.requestNewTaskIds( a0, a1 );
         }
-        case 40 /* ExtensionApp.resolveItem */: {
+        case 39 /* ExtensionApp.resolveItem */: {
             const [ a0, a1, a2 ] = args;
             return handler.resolveItem( a0, a1, a2 );
         }
-        case 41 /* ExtensionApp.setScript */: {
+        case 40 /* ExtensionApp.setScript */: {
             const [ a0, a1 ] = args;
             return handler.setScript( a0, a1 );
         }

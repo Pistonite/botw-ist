@@ -18,7 +18,7 @@ export type ItemDragDataWithoutLocation = ItemDragDataCommon &
               /** Dragging from the pouch view */
               type: "pouch";
               /** The data of the item */
-              payload: InvView_PouchItem;
+              payload: Omit<InvView_PouchItem, "nodeAddr" | "nodePrev" | "nodeNext" | "nodePos">;
               /**
                * The absolute tab index and slot index this item is dragged from,
                * 0 < tabIndex < 50, 0 < slotIndex < 20.

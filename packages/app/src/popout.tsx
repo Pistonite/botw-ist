@@ -1,19 +1,24 @@
-import { type PropsWithChildren, StrictMode } from "react";
-import { createRoot, Root } from "react-dom/client";
+import { type PropsWithChildren, StrictMode, useCallback } from "react";
+import { createRoot, type Root } from "react-dom/client";
 import { addLocaleSubscriber, initDark } from "@pistonite/pure/pref";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@pistonite/shared-controls";
 
 import { initI18n, translateUI } from "skybook-localization";
-import { getSheikaBackgroundUrl, ItemTooltipProvider, RemoteItemDnDProvider, useItemDnD } from "@pistonite/skybook-itemsys";
+import {
+    getSheikaBackgroundUrl,
+    ItemTooltipProvider,
+    PopoutItemDragProvider,
+    useItemDrag,
+} from "@pistonite/skybook-itemsys";
 import {
     readExtensionProperties,
     connectPopoutExtensionWindow,
 } from "@pistonite/skybook-api/client";
+import type { ExtensionApp } from "@pistonite/skybook-api";
 
 import { type ConnectExtensionFn, getExtension } from "self::extensions";
 import { extLog, probeAndRegisterAssetLocation, type FirstPartyExtension } from "self::util";
-import { ExtensionApp } from "@pistonite/skybook-api";
 
 async function boot() {
     // Initialize preferences, but do not persist settings
@@ -36,14 +41,13 @@ async function boot() {
     const connect: ConnectExtensionFn = async (_id: string, extension: FirstPartyExtension) => {
         extLog.info("connecting to host window");
         const app = await connectPopoutExtensionWindow(extension, properties);
-        console.log(app);
         extLog.info("connected");
         if (!app) {
             return;
         }
         root.unmount();
         const newRoot = createRoot(rootElement);
-        render(newRoot, app, <extension.Component />);
+        render(newRoot, app, extension);
     };
 
     const extension = await getExtension(properties.extensionId, true, connect);
@@ -52,7 +56,7 @@ async function boot() {
         return;
     }
 
-    render(root, undefined, <extension.Component />);
+    // render(root, undefined, <extension.Component />);
 
     addLocaleSubscriber(() => {
         const appTitle = translateUI("title");
@@ -60,51 +64,61 @@ async function boot() {
         const extensionTitle = translateUI(extensionTitleKey);
         document.title = `${extensionTitle} - ${appTitle}`;
     }, true);
-
 }
 
-const render = (root: Root, app: ExtensionApp | undefined, $Inner: React.ReactNode) => {
+const render = (root: Root, app: ExtensionApp, extension: FirstPartyExtension) => {
     const queryClient = new QueryClient();
-    $Inner = (
-                    <PopoutTooltipProvider>
-                        <div
-                            style={{
-                                width: "100vw",
-                                height: "100vh",
-                            }}
-                        >
-                            {$Inner}
-                        </div>
-                    </PopoutTooltipProvider>);
-    if (app) {
-        $Inner = (
-                    <RemoteItemDnDProvider app={app}>
-                {$Inner}
-                    </RemoteItemDnDProvider>
-        );
-    }
     root.render(
         <StrictMode>
             <QueryClientProvider client={queryClient}>
                 <ThemeProvider>
-                    {$Inner}
+                    <PopoutWrapper app={app} extension={extension} />
                 </ThemeProvider>
             </QueryClientProvider>
         </StrictMode>,
     );
+};
 
-}
+type PopoutWrapperProps = {
+    app: ExtensionApp;
+    extension: FirstPartyExtension;
+};
 
 // eslint-disable-next-line react-refresh/only-export-components
-const PopoutTooltipProvider: React.FC<PropsWithChildren> = ({children}) => {
-    const { isDragging } = useItemDnD();
-      return            (  <ItemTooltipProvider backgroundUrl={getSheikaBackgroundUrl()}
-        suppress={isDragging}
-    >
-        {children}
-                    </ItemTooltipProvider>);
-
-
-}
+const PopoutWrapper: React.FC<PopoutWrapperProps> = ({ app, extension }) => {
+    const subscribe = useCallback(
+        (fn: () => void) => {
+            return extension.getItemDragData().subscribe(fn);
+        },
+        [extension],
+    );
+    return (
+        <PopoutItemDragProvider
+            app={app}
+            subscribeData={subscribe}
+            getData={() => extension.getItemDragData().get()}
+        >
+            <PopoutTooltipProvider>
+                <div
+                    style={{
+                        width: "100vw",
+                        height: "100vh",
+                    }}
+                >
+                    <extension.Component />
+                </div>
+            </PopoutTooltipProvider>
+        </PopoutItemDragProvider>
+    );
+};
+// eslint-disable-next-line react-refresh/only-export-components
+const PopoutTooltipProvider: React.FC<PropsWithChildren> = ({ children }) => {
+    const { data } = useItemDrag();
+    return (
+        <ItemTooltipProvider backgroundUrl={getSheikaBackgroundUrl()} suppress={!!data}>
+            {children}
+        </ItemTooltipProvider>
+    );
+};
 
 void boot();

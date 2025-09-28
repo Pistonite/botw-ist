@@ -25,14 +25,17 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
 
         this.component = () => {
             return (
-                <ItemDropZone onDropItem={(item) => this.onDropItem(item)}
-                style={{height: "100%"}}>
-                <CodeEditor
-                    onCreated={(editor) => {
-                        void this.attachEditor(editor);
-                        return undefined;
-                    }}
-                />
+                <ItemDropZone
+                    getHint={() => "drop here hello"}
+                    onDropItem={(item) => this.onDropItem(item)}
+                    style={{ height: "100%" }}
+                >
+                    <CodeEditor
+                        onCreated={(editor) => {
+                            void this.attachEditor(editor);
+                            return undefined;
+                        }}
+                    />
                 </ItemDropZone>
             );
         };
@@ -122,7 +125,7 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
         if (editor.getCurrentFile() !== FILE) {
             return;
         }
-        
+
         const script = editor.getFileContent(FILE);
         const cursorOffset = editor.getCursorOffset() || script.length;
         let before = script.substring(0, cursorOffset);
@@ -138,8 +141,8 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
             after = " " + after;
         }
         editor.setFileContent(FILE, before + itemScript + after);
-        editor.setCursorOffset(newOffset)
-        
+        editor.setCursorOffset(newOffset);
+        updateScriptInApp(before + itemScript + after, newOffset);
     }
 }
 
@@ -161,7 +164,13 @@ const getScriptFromDragData = (data: ItemDragData) => {
             effectId = data.payload.data.effectId;
             position = data.position;
             const itemType = data.payload.itemType;
-            if (itemType === 2 || itemType === 7 || (itemType ===8 && !actorName.startsWith("Item_Cook_")) || actorName === "Obj_KorokNuts" || actorName === "Obj_DungeonClearSeal") {
+            if (
+                itemType === 2 ||
+                itemType === 7 ||
+                (itemType === 8 && !actorName.startsWith("Item_Cook_")) ||
+                actorName === "Obj_KorokNuts" ||
+                actorName === "Obj_DungeonClearSeal"
+            ) {
                 amount = data.payload.common.value;
             }
             break;
@@ -204,9 +213,9 @@ const getScriptFromDragData = (data: ItemDragData) => {
     } else {
         const name = translateActorOrAsIs(actorName);
         if (name === actorName) {
-        itemName = `<${actorName}>`;
+            itemName = `<${actorName}>`;
         } else {
-        itemName = `"${name}"`;
+            itemName = `"${name}"`;
         }
     }
 
@@ -229,5 +238,4 @@ const getScriptFromDragData = (data: ItemDragData) => {
     }
 
     return amountString + itemName;
-    
-}
+};

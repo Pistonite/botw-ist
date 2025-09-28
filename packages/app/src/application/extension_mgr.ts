@@ -65,6 +65,15 @@ export const initExtensionManager = () => {
                 void instance.onAppModeChanged(curr.mode);
             });
         }
+        if (prev.dragData !== curr.dragData) {
+            instances.forEach(({ isPopout, instance }) => {
+                if (!isPopout) {
+                    return;
+                }
+                void instance.onItemDragChanged(curr.dragData);
+            });
+
+        }
     });
     // send updates to non-popout extension when switching extensions
     useExtensionStore.subscribe((curr, prev) => {

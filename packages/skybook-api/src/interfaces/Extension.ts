@@ -8,6 +8,7 @@ import type { Extension } from "../extension_api.ts";
 
 import type { WxPromise, WxBusRecvHandler, WxProtocolBoundSender } from "@pistonite/workex";
 import type { SessionMode } from "../types.ts";
+import type { ItemDragData } from "../item_dnd.ts";
 
 /*
  * These generated implementations are used internally by other generated code.
@@ -50,6 +51,16 @@ export class _wxSenderImpl implements Extension {
     }
 
     /**
+     * Notify the extension that a drag action has started or stopped. This event
+     * is only sent to popouts.
+     * 
+     * The drag action might be initiated from within this extension
+     */
+    public onItemDragChanged( data: ItemDragData | undefined ): WxPromise<void> {
+        return this.sender.sendVoid(19 /* Extension.onItemDragChanged */, [ data ]);
+    }
+
+    /**
      * Notify the extension that the locale perference has changed.
      * 
      * The locale string is one of the supported locales by the application,
@@ -58,7 +69,7 @@ export class _wxSenderImpl implements Extension {
      * The extension can update the UI strings based on this event.
      */
     public onLocaleChanged( locale: string ): WxPromise<void> {
-        return this.sender.sendVoid(19 /* Extension.onLocaleChanged */, [ locale ]);
+        return this.sender.sendVoid(20 /* Extension.onLocaleChanged */, [ locale ]);
     }
 
     /**
@@ -68,7 +79,7 @@ export class _wxSenderImpl implements Extension {
      * Popouts will always get this update.
      */
     public onScriptChanged( script: string, charPos: number ): WxPromise<void> {
-        return this.sender.sendVoid(20 /* Extension.onScriptChanged */, [ script, charPos ]);
+        return this.sender.sendVoid(21 /* Extension.onScriptChanged */, [ script, charPos ]);
     }
 }
 
@@ -89,11 +100,15 @@ export const _wxRecverImpl = (handler: Extension): WxBusRecvHandler => {
             const [ a0, a1 ] = args;
             return handler.onIconSettingsChanged( a0, a1 );
         }
-        case 19 /* Extension.onLocaleChanged */: {
+        case 19 /* Extension.onItemDragChanged */: {
+            const [ a0 ] = args;
+            return handler.onItemDragChanged( a0 );
+        }
+        case 20 /* Extension.onLocaleChanged */: {
             const [ a0 ] = args;
             return handler.onLocaleChanged( a0 );
         }
-        case 20 /* Extension.onScriptChanged */: {
+        case 21 /* Extension.onScriptChanged */: {
             const [ a0, a1 ] = args;
             return handler.onScriptChanged( a0, a1 );
         }

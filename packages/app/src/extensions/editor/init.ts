@@ -102,5 +102,10 @@ export const init = () => {
         theme: {
             customTokenColors: CustomTokenColors,
         },
+        editor: {
+            options: {
+                wordWrap: "on"
+            }
+        }
     });
 };

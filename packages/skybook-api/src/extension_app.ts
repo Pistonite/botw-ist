@@ -189,12 +189,15 @@ export interface ExtensionApp {
         name: string | undefined,
     ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>>;
 
-    /** Notify the application that user has started dragging an item in the extension in an remote window */
-    remoteItemDragStarted(data: ItemDragData): WxPromise<void>;
-
-    /** Notify the application that remote dragging has stopped */
-    remoteItemDragStopped(): WxPromise<void>;
-
-    /** Get from the host app the current data attached to the item being dragged */
-    getItemDragData(): WxPromise<ItemDragData | "">;
+    /**
+     * Notify the application that user has started or stopped dragging an item from a different
+     * window. Pass in undefined for stop dragging.
+     */
+    handleItemDrag(data: ItemDragData | undefined): WxPromise<void>;
+    //
+    // /** Notify the application that remote dragging has stopped */
+    // remoteItemDragStopped(): WxPromise<void>;
+    //
+    // /** Get from the host app the current data attached to the item being dragged */
+    // getItemDragData(): WxPromise<ItemDragData | "">;
 }
