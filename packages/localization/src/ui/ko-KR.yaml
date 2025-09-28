@@ -107,6 +107,9 @@ main.visible_inventory.trial.desc: "체험판이 활성화되었습니다. 체�
 main.visible_inventory.trial.title: "체험판"
 main.visible_inventory.view_error: "인벤토리를 표시할 수 없습니다!"
 
+# Drop Hints
+drop_target.editor: "아이템을 스크립트에 추가하려면 여기에 드롭하세요"
+
 # Extension Launch Dialog
 dialog.extension_launch.error.custom_popout_only: "사용자 정의 확장 프로그램은 새 창에서만 열 수 있습니다"
 dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}}는 보조 보기로 열 수 없습니다"

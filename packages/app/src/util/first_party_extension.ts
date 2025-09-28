@@ -1,7 +1,8 @@
 import { setDark, setLocale } from "@pistonite/pure/pref";
+import { cell, type Cell } from "@pistonite/pure/memory";
 import type { WxPromise } from "@pistonite/workex";
 
-import type { ExtensionApp, SessionMode } from "@pistonite/skybook-api";
+import type { ExtensionApp, ItemDragData, SessionMode } from "@pistonite/skybook-api";
 import type { ExtensionModule } from "@pistonite/skybook-api/client";
 
 /**
@@ -12,16 +13,24 @@ import type { ExtensionModule } from "@pistonite/skybook-api/client";
  * boilerplate. yes it's inheritance, it's fine
  */
 export class FirstPartyExtensionAdapter implements ExtensionModule {
-    protected app: ExtensionApp | undefined = undefined;
-    constructor(private standalone: boolean) {}
+    protected app: ExtensionApp | undefined;
+    private isPopout: boolean;
+    private itemDragData: Cell<ItemDragData | undefined>;
+
+    constructor(isPopout: boolean) {
+        this.app = undefined;
+        this.isPopout = isPopout;
+        this.itemDragData = cell({ initial: undefined });
+    }
+
     public async onDarkModeChanged(dark: boolean): WxPromise<void> {
-        if (this.standalone) {
+        if (this.isPopout) {
             setDark(dark);
         }
         return {};
     }
     public async onLocaleChanged(locale: string): WxPromise<void> {
-        if (this.standalone) {
+        if (this.isPopout) {
             setLocale(locale);
         }
         return {};
@@ -35,6 +44,15 @@ export class FirstPartyExtensionAdapter implements ExtensionModule {
     public async onIconSettingsChanged(_highRes: boolean, _animation: boolean): WxPromise<void> {
         return {};
     }
+    public async onItemDragChanged(item: ItemDragData | undefined): WxPromise<void> {
+        if (this.isPopout) {
+            this.itemDragData.set(item);
+        }
+        return {};
+    }
+    public getItemDragData() {
+        return this.itemDragData;
+    }
     public onAppConnectionEstablished(app: ExtensionApp): void {
         this.app = app;
     }
@@ -42,4 +60,5 @@ export class FirstPartyExtensionAdapter implements ExtensionModule {
 
 export type FirstPartyExtension = ExtensionModule & {
     get Component(): React.FC;
+    getItemDragData(): Cell<ItemDragData | undefined>;
 };

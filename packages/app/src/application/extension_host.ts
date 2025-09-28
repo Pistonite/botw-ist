@@ -13,6 +13,7 @@ import type {
     InvView_PouchList,
     InvView_Gdt,
     InvView_Overworld,
+    ItemDragData,
 } from "@pistonite/skybook-api";
 import {
     searchItemLocalized,
@@ -46,7 +47,6 @@ class ExtensionAppHost implements ExtensionApp {
     constructor(private runtime: Runtime) {
         this.taskIdMap = new Map();
     }
-
     public async getScript() {
         return { val: useSessionStore.getState().activeScript };
     }
@@ -235,6 +235,12 @@ class ExtensionAppHost implements ExtensionApp {
     ): WxPromise<MaybeAborted<Result<InvView_Gdt, RuntimeViewError>>> {
         const [script, bytePos] = convertScriptAndCharPosArg(inputScript, charPos);
         return await this.runtime.getSaveInventory(script, taskId, bytePos, name);
+    }
+
+    public async handleItemDrag(data: ItemDragData | undefined): WxPromise<void> {
+        const { setDragData } = useSessionStore.getState();
+        setDragData(data);
+        return {};
     }
 }
 

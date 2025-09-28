@@ -18,7 +18,6 @@ import {
     type Translator,
 } from "@pistonite/skybook-api";
 import { skybookRuntime } from "@pistonite/skybook-api/interfaces/Runtime.bus";
-import { getSheikaBackgroundUrl, ItemTooltipProvider } from "@pistonite/skybook-itemsys";
 
 import {
     initExtensionManager,
@@ -393,9 +392,7 @@ const bootMainUI = async (context: BootContext) => {
                 <RuntimeContext.Provider value={runtime}>
                     <QueryClientProvider client={queryClient}>
                         <ThemeProvider>
-                            <ItemTooltipProvider backgroundUrl={getSheikaBackgroundUrl()}>
-                                <App />
-                            </ItemTooltipProvider>
+                            <App />
                         </ThemeProvider>
                     </QueryClientProvider>
                 </RuntimeContext.Provider>

@@ -4,6 +4,7 @@ import type {
     InvView_GdtItem,
     InvView_OverworldItem,
     InvView_PouchItem,
+    ItemDragDataWithoutLocation,
 } from "@pistonite/skybook-api";
 
 import type { CookEffect } from "../data";
@@ -24,10 +25,13 @@ import {
     getTooltipPropsFromPouchItem,
 } from "./tooltip_props.ts";
 import { TooltipSource } from "./tooltip.tsx";
+import { DragSource } from "./dnd_source.tsx";
 
 export type ItemSlotWrapperProps = {
     /** If tooltips should be displayed when hovering over the slot */
     tooltip?: boolean;
+    /** If the slot should be draggable, the data carried by the drag */
+    dragData?: ItemDragDataWithoutLocation;
 };
 
 /** Standalone item slots that can be used outside of the inventory */
@@ -40,11 +44,21 @@ export type StandaloneItemSlotProps = {
 } & Partial<ItemSlotFullProps> &
     ItemSlotWrapperProps;
 
-const StandaloneItemSlotImpl: React.FC<StandaloneItemSlotProps> = ({ tooltip, ...props }) => {
-    if (tooltip) {
-        return <StandaloneItemSlotWithTooltipCoreImpl {...props} />;
+const StandaloneItemSlotImpl: React.FC<StandaloneItemSlotProps> = ({
+    tooltip,
+    dragData,
+    ...props
+}) => {
+    const $Inner = tooltip ? (
+        <StandaloneItemSlotWithTooltipCoreImpl {...props} />
+    ) : (
+        <StandaloneItemSlotCoreImpl {...props} />
+    );
+
+    if (!dragData) {
+        return $Inner;
     }
-    return <StandaloneItemSlotCoreImpl {...props} />;
+    return <DragSource data={dragData}>{$Inner}</DragSource>;
 };
 const StandaloneItemSlotCoreImpl: React.FC<StandaloneItemSlotProps> = ({
     actor,
@@ -84,11 +98,16 @@ export type PouchItemSlotProps = {
 } & ItemSlotContextProps &
     ItemSlotWrapperProps;
 
-const PouchItemSlotImpl: React.FC<PouchItemSlotProps> = ({ tooltip, ...props }) => {
-    if (tooltip) {
-        return <PouchItemSlotWithTooltipCoreImpl {...props} />;
+const PouchItemSlotImpl: React.FC<PouchItemSlotProps> = ({ tooltip, dragData, ...props }) => {
+    const $Inner = tooltip ? (
+        <PouchItemSlotWithTooltipCoreImpl {...props} />
+    ) : (
+        <PouchItemSlotCoreImpl {...props} />
+    );
+    if (!dragData) {
+        return $Inner;
     }
-    return <PouchItemSlotCoreImpl {...props} />;
+    return <DragSource data={dragData}>{$Inner}</DragSource>;
 };
 const PouchItemSlotCoreImpl: React.FC<PouchItemSlotProps> = ({
     item,
@@ -124,11 +143,16 @@ export type GdtItemSlotProps = {
 } & ItemSlotContextProps &
     ItemSlotWrapperProps;
 
-const GdtItemSlotImpl: React.FC<GdtItemSlotProps> = ({ tooltip, ...props }) => {
-    if (tooltip) {
-        return <GdtItemSlotWithTooltipCoreImpl {...props} />;
+const GdtItemSlotImpl: React.FC<GdtItemSlotProps> = ({ tooltip, dragData, ...props }) => {
+    const $Inner = tooltip ? (
+        <GdtItemSlotWithTooltipCoreImpl {...props} />
+    ) : (
+        <GdtItemSlotCoreImpl {...props} />
+    );
+    if (!dragData) {
+        return $Inner;
     }
-    return <GdtItemSlotCoreImpl {...props} />;
+    return <DragSource data={dragData}>{$Inner}</DragSource>;
 };
 const GdtItemSlotCoreImpl: React.FC<GdtItemSlotProps> = ({
     item,
@@ -161,11 +185,21 @@ export type OverworldItemSlotProps = {
     isMasterSwordFullPower: boolean;
 } & ItemSlotContextProps &
     ItemSlotWrapperProps;
-const OverworldItemSlotImpl: React.FC<OverworldItemSlotProps> = ({ tooltip, ...props }) => {
-    if (tooltip) {
-        return <OverworldItemSlotWithTooltipCoreImpl {...props} />;
+const OverworldItemSlotImpl: React.FC<OverworldItemSlotProps> = ({
+    tooltip,
+    dragData,
+    ...props
+}) => {
+    const $Inner = tooltip ? (
+        <OverworldItemSlotWithTooltipCoreImpl {...props} />
+    ) : (
+        <OverworldItemSlotCoreImpl {...props} />
+    );
+
+    if (!dragData) {
+        return $Inner;
     }
-    return <OverworldItemSlotCoreImpl {...props} />;
+    return <DragSource data={dragData}>{$Inner}</DragSource>;
 };
 const OverworldItemSlotCoreImpl: React.FC<OverworldItemSlotProps> = ({
     item,

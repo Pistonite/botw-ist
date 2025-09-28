@@ -107,6 +107,9 @@ main.visible_inventory.trial.desc: "Eine Testphase ist aktiv. Inventaränderunge
 main.visible_inventory.trial.title: "Testphase"
 main.visible_inventory.view_error: "Inventar kann nicht angezeigt werden!"
 
+# Drop Hints
+drop_target.editor: "Hierher ziehen, um das Element zum Skript hinzuzufügen"
+
 # Extension Launch Dialog
 dialog.extension_launch.error.custom_popout_only: "Benutzerdefinierte Erweiterungen können nur in einem neuen Fenster geöffnet werden"
 dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} kann nicht im sekundären Fenster geöffnet werden"

@@ -107,6 +107,9 @@ main.visible_inventory.trial.desc: "正在进行某挑战。挑战结束前，�
 main.visible_inventory.trial.title: "挑战模式"
 main.visible_inventory.view_error: "无法显示背包！"
 
+# Drop Hints
+drop_target.editor: "拖放至此处添加物品到脚本"
+
 # Extension Launch Dialog
 dialog.extension_launch.error.custom_popout_only: "第三方扩展只能弹出到新窗口"
 dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} 不能打开到第二视图"

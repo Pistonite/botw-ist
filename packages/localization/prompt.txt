@@ -1,0 +1,51 @@
+I am building an app to simulate inventory in a game
+
+can you translate the following message for the app
+
+input (YAML format)
+```yaml
+en-US:
+  //
+
+
+zh-CN:
+  //
+
+```
+
+Please cross-reference the English and Simplified Chinese version to make sure the meaning
+is correct in your output. Please double check the meanings are correct
+
+context:
+  // provide context for the message
+
+output:
+Please output languages in this format:
+
+```yaml
+<language>:
+  <key>: <value>
+  <key>: <value>
+...
+```
+
+output languages needed:
+
+
+- de-DE
+- es-ES
+- fr-FR
+- it-IT
+- ja-JP
+- ko-KR
+- nl-NL
+- ru-RU
+- zh-TW
+Note:
+
+
+- Please make sure the terms are the correct meaning in other languages
+- Please make sure it sounds natural in the output languages to native speakers of those languages
+	- explain for each language why it sounds natural
+- Please make sure you didn't miss any output languages
+- Please make sure to print one yaml code block for all the languages, and put the reasoning below

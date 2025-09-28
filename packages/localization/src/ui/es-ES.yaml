@@ -107,6 +107,9 @@ main.visible_inventory.trial.desc: "Hay una prueba activa. Los cambios en el inv
 main.visible_inventory.trial.title: "Prueba"
 main.visible_inventory.view_error: "¡No se puede mostrar el inventario!"
 
+# Drop Hints
+drop_target.editor: "Arrastra aquí para añadir el objeto al script"
+
 # Extension Launch Dialog
 dialog.extension_launch.error.custom_popout_only: "Las extensiones personalizadas solo se pueden abrir en una nueva ventana"
 dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} no se puede abrir en vista secundaria"

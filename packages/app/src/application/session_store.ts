@@ -15,6 +15,7 @@ import type {
     RuntimeViewError,
     ScriptEnvImage,
     SessionMode,
+    ItemDragData,
 } from "@pistonite/skybook-api";
 import { translateUI } from "skybook-localization";
 
@@ -109,6 +110,10 @@ export type SessionStore = {
 
     /** Invalidate all cached inventory views */
     invalidateInventoryCache: () => void;
+
+    /** Current item data being dragged (for the entire application, include popout extensions) */
+    dragData: ItemDragData | undefined;
+    setDragData: (data: ItemDragData | undefined) => void;
 };
 
 export const useSessionStore = create<SessionStore>()((set) => {
@@ -286,6 +291,11 @@ export const useSessionStore = create<SessionStore>()((set) => {
                 pouchCached: [],
                 overworldCached: [],
             });
+        },
+
+        dragData: undefined,
+        setDragData: (dragData) => {
+            set({ dragData });
         },
     };
 });

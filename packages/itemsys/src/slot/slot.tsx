@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from "react";
+import { type PropsWithChildren } from "react";
 import { Text, makeStyles, mergeClasses } from "@fluentui/react-components";
 import { Link32Regular, PresenceBlocked24Regular } from "@fluentui/react-icons";
 
@@ -361,7 +361,7 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
     );
 
     const $BlockedIconLayer = accessibleStatus === "none" && (
-        <div className={mergeClasses(styles.layer)}>
+        <div className={styles.layer}>
             <span
                 className={mergeClasses(
                     styles.bigStatusIcon,

@@ -107,6 +107,9 @@ main.visible_inventory.trial.desc: "Un essai est actif. Les modifications d'inve
 main.visible_inventory.trial.title: "Essai"
 main.visible_inventory.view_error: "Impossible d'afficher l'inventaire !"
 
+# Drop Hints
+drop_target.editor: "Déposez ici pour ajouter l'élément au script"
+
 # Extension Launch Dialog
 dialog.extension_launch.error.custom_popout_only: "Les extensions personnalisées ne peuvent être ouvertes que dans une nouvelle fenêtre"
 dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} ne peut pas être ouvert dans la vue secondaire"

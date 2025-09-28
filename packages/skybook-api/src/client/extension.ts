@@ -6,6 +6,7 @@ import { wxWindowOwner } from "@pistonite/workex";
 
 import type { ExtensionModule } from "./extension_types.ts";
 import { skybookExtensionApp } from "../interfaces/ExtensionApp.bus.ts";
+import type { ExtensionApp } from "../extension_app.ts";
 
 /**
  * Initialize an extension popout window
@@ -77,18 +78,18 @@ export type ExtensionProperties = {
 export const connectPopoutExtensionWindow = async (
     extension: ExtensionModule,
     properties: ExtensionProperties,
-): Promise<boolean> => {
+): Promise<ExtensionApp | undefined> => {
     const result = await wxWindowOwner(properties.hostOrigin)({
         app: skybookExtensionApp(extension),
     });
     if (result.err) {
         console.error("Failed to establish connection with host window", result.err);
-        return false;
+        return undefined;
     }
     const {
         protocols: { app },
     } = result.val;
     extension.onAppConnectionEstablished(app);
 
-    return true;
+    return app;
 };

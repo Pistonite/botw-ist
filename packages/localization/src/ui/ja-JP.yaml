@@ -107,6 +107,9 @@ main.visible_inventory.trial.desc: "トライアルが進行中です。トラ�
 main.visible_inventory.trial.title: "トライアル"
 main.visible_inventory.view_error: "インベントリを表示できません！"
 
+# Drop Hints
+drop_target.editor: "スクリプトにアイテムを追加するにはここにドロップしてください"
+
 # Extension Launch Dialog
 dialog.extension_launch.error.custom_popout_only: "カスタム拡張機能は新しいウィンドウでのみ開けます"
 dialog.extension_launch.error.script_editor_no_secondary: "{{script_editor}} はセカンダリビューで開けません"

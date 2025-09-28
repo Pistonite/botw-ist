@@ -94,6 +94,15 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
                         effect={cookEffect as CookEffect}
                         cheap={cheap}
                         disableAnimation={disableAnimation}
+                        dragData={{
+                            type: "search",
+                            localized,
+                            payload: {
+                                actor,
+                                cookEffect,
+                            },
+                            isMasterSwordFullPower: false,
+                        }}
                     />
                 ))}
             </div>

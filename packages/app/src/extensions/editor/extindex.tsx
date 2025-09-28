@@ -1,7 +1,9 @@
 import { getNormalizedPath, CodeEditor, type CodeEditorApi } from "@pistonite/intwc";
 import type { WxPromise } from "@pistonite/workex";
 
-import type { ExtensionApp, SessionMode } from "@pistonite/skybook-api";
+import type { ExtensionApp, ItemDragData, SessionMode } from "@pistonite/skybook-api";
+import { CookEffectNames, ItemDropZone, translateActorOrAsIs } from "@pistonite/skybook-itemsys";
+import { useUITranslation } from "skybook-localization";
 
 import { FirstPartyExtensionAdapter, type FirstPartyExtension } from "self::util";
 
@@ -22,16 +24,24 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
     constructor(standalone: boolean) {
         super(standalone);
 
-        this.component = () => {
+        const C = () => {
+            const t = useUITranslation();
             return (
-                <CodeEditor
-                    onCreated={(editor) => {
-                        void this.attachEditor(editor);
-                        return undefined;
-                    }}
-                />
+                <ItemDropZone
+                    getHint={() => t("drop_target.editor")}
+                    onDropItem={(item) => this.onDropItem(item)}
+                    style={{ height: "100%" }}
+                >
+                    <CodeEditor
+                        onCreated={(editor) => {
+                            void this.attachEditor(editor);
+                            return undefined;
+                        }}
+                    />
+                </ItemDropZone>
             );
         };
+        this.component = C;
     }
 
     public get Component() {
@@ -109,4 +119,126 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
         }
         return {};
     }
+
+    private onDropItem(data: ItemDragData) {
+        const editor = this.editor;
+        if (!editor) {
+            return;
+        }
+        if (editor.getCurrentFile() !== FILE) {
+            return;
+        }
+
+        const script = editor.getFileContent(FILE);
+        const cursorOffset = editor.getCursorOffset() || script.length;
+        let before = script.substring(0, cursorOffset);
+        let after = script.substring(cursorOffset);
+        const itemScript = getScriptFromDragData(data);
+        let newOffset = cursorOffset + itemScript.length;
+        // ensure the item has spaces around it
+        if (before && !before.match(/\s$/)) {
+            before += " ";
+            newOffset += 1;
+        }
+        if (after && !after.match(/^\s/)) {
+            after = " " + after;
+        }
+        editor.setFileContent(FILE, before + itemScript + after);
+        editor.setCursorOffset(newOffset);
+        updateScriptInApp(before + itemScript + after, newOffset);
+    }
 }
+
+const getScriptFromDragData = (data: ItemDragData) => {
+    // we only extract actor, amount and effect id from the drag data
+    let amount = 1;
+    let actorName = "";
+    let effectId = 0;
+    // if the item has a position, then we don't use effect Id
+    let position: [number, number] | undefined = undefined;
+    switch (data.type) {
+        case "search": {
+            actorName = data.payload.actor;
+            effectId = data.payload.cookEffect;
+            break;
+        }
+        case "pouch": {
+            actorName = data.payload.common.actorName;
+            effectId = data.payload.data.effectId;
+            position = data.position;
+            const itemType = data.payload.itemType;
+            if (
+                itemType === 2 ||
+                itemType === 7 ||
+                (itemType === 8 && !actorName.startsWith("Item_Cook_")) ||
+                actorName === "Obj_KorokNuts" ||
+                actorName === "Obj_DungeonClearSeal"
+            ) {
+                amount = data.payload.common.value;
+            }
+            break;
+        }
+        case "gdt": {
+            actorName = data.payload.common.actorName;
+            const gdtData = data.payload.data;
+            switch (gdtData.type) {
+                case "food": {
+                    effectId = gdtData.info.effectId;
+                    if (!actorName.startsWith("Item_Cook_")) {
+                        amount = data.payload.common.value;
+                    }
+                    break;
+                }
+                case "none": {
+                    if (!actorName.startsWith("Armor_")) {
+                        amount = data.payload.common.value;
+                    }
+                }
+            }
+            break;
+        }
+        case "overworld": {
+            actorName = data.payload.actor;
+            break;
+        }
+    }
+
+    let amountString = "";
+    if (amount > 1) {
+        amountString = `${amount} `;
+    }
+
+    let itemName: string;
+    // if the item is an armor, since the upgraded armor
+    // all has the same name, we don't use localized name for accuracy
+    if (actorName.startsWith("Armor_")) {
+        itemName = `<${actorName}>`;
+    } else {
+        const name = translateActorOrAsIs(actorName);
+        if (name === actorName) {
+            itemName = `<${actorName}>`;
+        } else {
+            itemName = `"${name}"`;
+        }
+    }
+
+    const itemMeta: string[] = [];
+    if (position) {
+        const [tab, slot] = position;
+        itemMeta.push(`tab=${tab}`);
+        itemMeta.push(`slot=${slot}`);
+    } else {
+        if (effectId) {
+            const effectName = CookEffectNames[effectId];
+            if (effectName && effectName !== "LifeRecover") {
+                itemMeta.push(`effect=${effectName.toLowerCase()}`);
+            }
+        }
+    }
+
+    if (itemMeta.length) {
+        return `${amountString}${itemName}[${itemMeta.join(", ")}]`;
+    }
+
+    return amountString + itemName;
+};

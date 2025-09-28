@@ -16,6 +16,8 @@ const useStyles = makeStyles({
 });
 
 export type ItemTooltipProviderProps = {
+    /** Suppress all tooltips under this provider */
+    suppress?: boolean;
     /** Url for the image for the background of the tooltip */
     backgroundUrl: string;
 };
@@ -28,6 +30,7 @@ export type ItemTooltipProviderProps = {
  * spikes when moving the mouse really quickly
  */
 export const ItemTooltipProvider: React.FC<PropsWithChildren<ItemTooltipProviderProps>> = ({
+    suppress,
     backgroundUrl,
     children,
 }) => {
@@ -165,7 +168,9 @@ export const ItemTooltipProvider: React.FC<PropsWithChildren<ItemTooltipProvider
                     backgroundImage: `url(${backgroundUrl})`,
                 }}
             >
-                {tooltipProps && <ItemTooltipContent {...tooltipProps} verbose={verbose} />}
+                {!suppress && tooltipProps && (
+                    <ItemTooltipContent {...tooltipProps} verbose={verbose} />
+                )}
             </div>
         </ItemTooltipContext.Provider>
     );
