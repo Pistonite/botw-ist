@@ -1,7 +1,7 @@
 {
     "version": "0.4.12",
     "devDependencies": {
-        "eslint": "^9.32.0"
+        "eslint": "^9.36.0"
     },
     "pnpm": {
         "patchedDependencies": {

@@ -16,7 +16,7 @@ export const decodeCompressedParam = (param: string): Result<string, string> => 
 export const encodeScript = (script: string): Result<string, string> => {
     try {
         const bytes = new TextEncoder().encode(script);
-        const compressedBytes = Bun.gzipSync(bytes);
+        const compressedBytes = Bun.gzipSync(bytes as Uint8Array<ArrayBuffer>);
         const encoded = compressedBytes.toBase64({ alphabet: "base64url" });
         return { val: encoded };
     } catch (e) {
