@@ -33,9 +33,5 @@ export const PopoutItemDragProvider: React.FC<PropsWithChildren<PopoutItemDragPr
             setData,
         };
     }, [app, dragData]);
-    return (
-        <ItemDragContext.Provider value={contextState}>
-{children}
-        </ItemDragContext.Provider>
-    );
+    return <ItemDragContext.Provider value={contextState}>{children}</ItemDragContext.Provider>;
 };

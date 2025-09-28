@@ -30,13 +30,15 @@ export const DragSource: React.FC<PropsWithChildren<DragSourceProps>> = ({ data,
                 setData({ ...data, keepLocation });
                 // this is for compatibility without using skybook-itemsys
                 e.dataTransfer.clearData();
-                e.dataTransfer.setData("application/skybook-item-drag-json", 
+                e.dataTransfer.setData(
+                    "application/skybook-item-drag-json",
                     JSON.stringify(data, (_key: string, value) => {
                         if (typeof value === "bigint") {
                             return 0;
                         }
                         return value;
-                    }));
+                    }),
+                );
             }}
             onDragEnd={() => {
                 log.info("stop dragging item");

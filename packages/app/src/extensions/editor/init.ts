@@ -104,8 +104,8 @@ export const init = () => {
         },
         editor: {
             options: {
-                wordWrap: "on"
-            }
-        }
+                wordWrap: "on",
+            },
+        },
     });
 };

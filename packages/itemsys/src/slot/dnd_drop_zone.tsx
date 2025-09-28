@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "react";
-import { Button, makeStyles} from "@fluentui/react-components";
+import { Button, makeStyles } from "@fluentui/react-components";
 
 import type { ItemDragData } from "@pistonite/skybook-api";
 
@@ -10,7 +10,7 @@ export type ItemDropZoneProps = {
     /** Hint text displayed on the element while dragging in progress */
     getHint: (data: ItemDragData) => string;
     /** Callback when an item is dropped onto this target */
-    onDropItem: (data: ItemDragData) => void
+    onDropItem: (data: ItemDragData) => void;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 const useStyles = makeStyles({
@@ -31,36 +31,40 @@ const useStyles = makeStyles({
         flexDirection: "column",
         alignItems: "center",
     },
-    hintDiv: 
-                    {position: "relative", top: "-10px", opacity: 0.9}
+    hintDiv: { position: "relative", top: "-10px", opacity: 0.9 },
 });
 
 /** Wrapper to make an area a drop target for dragging items */
-export const ItemDropZone: React.FC<PropsWithChildren<ItemDropZoneProps>> = ({ 
+export const ItemDropZone: React.FC<PropsWithChildren<ItemDropZoneProps>> = ({
     getHint,
-    onDropItem, children, ...props }) => {
+    onDropItem,
+    children,
+    ...props
+}) => {
     const c = useStyles();
     const { data } = useItemDrag();
 
-    return (<div {...props} style={{ position: "relative", ...props.style }}
-        onDrop={() => {
-            if (data) {
-                log.info("dropping item");
-                onDropItem(data);
-            } else {
-                log.warn("cannot drop item because it is undefined");
-            }
-        }}
-    >
-        {children}
-        <div className={c.effectDiv} style={{opacity: data?1:0}} >
-            {!!data &&
-                <div className={c.hintDiv}>
-                    <Button>
-                        {getHint(data)}
-                    </Button>
-                </div>
-            }
+    return (
+        <div
+            {...props}
+            style={{ position: "relative", ...props.style }}
+            onDrop={() => {
+                if (data) {
+                    log.info("dropping item");
+                    onDropItem(data);
+                } else {
+                    log.warn("cannot drop item because it is undefined");
+                }
+            }}
+        >
+            {children}
+            <div className={c.effectDiv} style={{ opacity: data ? 1 : 0 }}>
+                {!!data && (
+                    <div className={c.hintDiv}>
+                        <Button>{getHint(data)}</Button>
+                    </div>
+                )}
+            </div>
         </div>
-    </div>);
+    );
 };

@@ -285,7 +285,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                                             type: "pouch",
                                             payload: item,
                                             isMasterSwordFullPower,
-                                            position: [i, si]
+                                            position: [i, si],
                                         }}
                                         {...itemSlotProps}
                                     />

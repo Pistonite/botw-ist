@@ -376,18 +376,18 @@ export const ItemSlot: React.FC<ItemSlotFullProps> = ({
 
     return (
         <div className={styles.container}>
-                <div className={mergeClasses(styles.layer, isInBrokenSlot && styles.broken)}>
-                    {$Outline}
-                    {$BoxInside}
-                </div>
-                {$SpriteLayer}
-                {$HoldingLayer}
-                {$DurabilityLayer}
-                {$CountLayer}
-                {$StatusLayer}
-                {$DpadIconLayer}
-                {$BlockedIconLayer}
-                {$EntangleLayer}
+            <div className={mergeClasses(styles.layer, isInBrokenSlot && styles.broken)}>
+                {$Outline}
+                {$BoxInside}
+            </div>
+            {$SpriteLayer}
+            {$HoldingLayer}
+            {$DurabilityLayer}
+            {$CountLayer}
+            {$StatusLayer}
+            {$DpadIconLayer}
+            {$BlockedIconLayer}
+            {$EntangleLayer}
         </div>
     );
 };

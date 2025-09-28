@@ -72,7 +72,6 @@ export const initExtensionManager = () => {
                 }
                 void instance.onItemDragChanged(curr.dragData);
             });
-
         }
     });
     // send updates to non-popout extension when switching extensions
