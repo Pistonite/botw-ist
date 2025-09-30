@@ -190,22 +190,19 @@ impl<'m> Reader<'m> {
 
 #[cfg(feature = "trace-memory")]
 mod trace_read_impl {
+    use crate::memory::PAGE_SIZE;
     use std::cell::RefCell;
     use std::collections::BTreeSet;
-    use std::sync::{LazyLock, Mutex, Arc};
-    use crate::memory::PAGE_SIZE;
-    static GLOBAL_TRACE: LazyLock<Arc<Mutex<BTreeSet<u64>>>> = LazyLock::new(|| {
-        Arc::new(Mutex::new(Default::default()))
-    });
+    use std::sync::{Arc, LazyLock, Mutex};
+    static GLOBAL_TRACE: LazyLock<Arc<Mutex<BTreeSet<u64>>>> =
+        LazyLock::new(|| Arc::new(Mutex::new(Default::default())));
     thread_local! {
-        static LOCAL_TRACE: RefCell<Vec<u64>> = RefCell::new(Vec::new())
+        static LOCAL_TRACE: RefCell<Vec<u64>> = const { RefCell::new(Vec::new()) };
     }
     pub fn record_read(addr: u64) {
         let page = addr / (PAGE_SIZE as u64);
         if cfg!(feature = "trace-memory-no-auto-commit") {
-            LOCAL_TRACE.with_borrow_mut(|x| {
-                x.push(page)
-            })
+            LOCAL_TRACE.with_borrow_mut(|x| x.push(page))
         } else {
             LazyLock::force(&GLOBAL_TRACE).lock().unwrap().insert(page);
         }
