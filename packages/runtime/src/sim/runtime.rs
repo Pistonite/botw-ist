@@ -162,6 +162,11 @@ impl Runtime {
             *p = Some(process);
         }
 
+        #[cfg(feature = "trace-memory")]
+        {
+            blueflame::memory::commit_read_trace();
+        }
+
         Ok(env)
     }
 
