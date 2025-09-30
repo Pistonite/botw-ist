@@ -94,10 +94,16 @@ impl PouchScreen {
             return false;
         };
 
-        // FIXME: in inventory edge where tabs wrap, it's possible
-        // even when it's not %3
         if active_tab != tab % 3 || slot != active_slot {
-            return false;
+            if tab != 0 {
+                return false;
+            }
+            // see comment in ScreenItems::pe_reachable_item_ptrs
+            let is_default_to_zero_case =
+                active_tab % 3 == 2 || active_tab % 3 == self.tabs.len() % 3;
+            if !is_default_to_zero_case {
+                return false;
+            }
         }
 
         if !is_target && self.items.is_translucent_or_empty(tab, slot) {
