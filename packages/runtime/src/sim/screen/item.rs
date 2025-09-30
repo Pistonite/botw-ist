@@ -85,7 +85,34 @@ impl ScreenItems {
         let mut out = vec![];
         for (tab_i, tab) in self.tabs.iter().enumerate() {
             if tab_i % 3 != active_tab % 3 {
-                continue;
+                if tab_i != 0 {
+                    continue;
+                }
+                // if the 2nd (0-based) tab is activated, then when
+                // the current tab is 0, the cursor will be on the tab
+                // to the left, which is OOB and defaults to 0
+                //   L L L
+                // _ 0 1 2 3 4 5
+                //     C ^
+                // --> R<- (R stick left)
+                // L L L
+                // 0 0 1 2 3 4 5
+                // ^ C
+                //
+                // so the 0th tab is also "activated" if active_tab % 3 is 2
+                // same for the tab n-3
+                //   L   L   L
+                //  n-3 n-2 n-1 _
+                //   ^   C
+                // --> R-> (R stick right)
+                //       L   L  L
+                //  n-3 n-2 n-1 0
+                //           C  ^
+                let is_default_to_zero_case =
+                    active_tab % 3 == 2 || active_tab % 3 == self.tabs.len() % 3;
+                if !is_default_to_zero_case {
+                    continue;
+                }
             }
             let Some(Some(item)) = tab.items.get(active_slot) else {
                 continue;

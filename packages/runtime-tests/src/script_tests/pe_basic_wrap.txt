@@ -1,0 +1,10 @@
+get axe trav-bow apple slate
+entangle apple
+drop axe
+unpause
+unhold
+entangle trav-bow
+drop axe
+unpause
+drop axe
+unpause

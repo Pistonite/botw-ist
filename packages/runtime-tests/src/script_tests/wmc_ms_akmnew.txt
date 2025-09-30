@@ -1,105 +1,110 @@
-// This has a lot of hacks/inconsistencies
-// Since it was migrated from old script
-get 1 boko-spear[dura=1]
-  1 axe 1 trav-bow 1 phrenic
-  1 arrow 1 bomb-arrow 1 pot-lid
-  1 dweller-shield 1 flint 2 shroom 2 fairy
-  2 bluenight 2 endura-carrot 2 princess 1 wood
-  1 slate 4 orb 1 glider
-equip bombarrow
-drop 1 wood 1 flint
+// reference: https://www.youtube.com/watch?v=EwSSDGqQ1tY
+// kinak made the setup
+get slate
+get 3 shroom 6 pepper
+get pot-lid[dura=5] tree-branch axe[dura=40] trav-bow 3 arrow 5 bomb-arrow
+get 4 orb glider
+# kak
+get phrenic nightshade
+eat all but 2 shroom all pepper
+get 2 fairy nightshade 3 endura-carrot wood
+shoot 2 times # 1 arrow left
+# korok forest
+get forest-dweller-shield
+equip bomb-arrow
+shoot 3 times
+drop wood
 get master-sword
-sell 4 orbs
-save
-
-# 1. Activate Prompt Entanglement
+get 2 silent-princess
+shoot
+sell all orb
+save # auto
+# make slots
 :smug hold 
-  1 shroom 1 fairy 1 shade 1 endura-carrot 1 princess
+  shroom nightshade fairy endura-carrot princess
 sell all materials
-pick-up 1 shroom 1 fairy 1 endura-carrot
-drop 1 shroom
-get 1 toasty-hylian-shroom
+pick-up fairy endura-carrot shroom
+drop shroom
+get toasty-hylian-shroom
 reload
-
-# 2. Preparing Inventory for Corruption
+drop endura-carrot[slot=2] nightshade
 :smug hold
-  1 fairy[slot=2] 1 shroom 1 nightshade 2 princess
-sell all shroom 1 fairy[slot=2] all nightshade
+  princess shroom nightshade fairy[slot=2]
+sell princess shroom fairy[held]
 pick-up fairy
-equip master-sword
-# Clip 1
-entangle slate drop pot-lid; drop
-unequip pot-lid
-entangle glider drop pot-lid; drop
-drop all shields all bows
-# Clip 2
-entangle fairy
-equip boko-spear
-unpause; use weapon; drop boko-spear
-drop 1 endura-carrot # roast
-!remove 2 endura-carrot
-get fried-wild-greens[effect=endur]
-pick-up 1 nightshade
+:dpad equip master-sword
+# pe
+entangle slate drop pot-lid
+entangle glider drop shield[slot=2]
+entangle pot-lid equip tree-branch
+drop all shield all bow
+unpause drop
+use weapon 4 times
+drop tree-branch
+drop endura-carrot # roast
+pick-up endura-carrot
+!remove all endura-carrot
+get wild-green[effect=endura]
+pick-up nightshade
 get roasted-endura-carrot
-# Clip 3
 entangle roasted-endura-carrot
-hold 2 fairies
-drop
+hold 2 fairies drop
 pick-up roasted-endura-carrot
-# Clip 4
 entangle roasted-endura-carrot
-hold 3 fairies
-unpause pause
-hold 1 fairy 1 nightshade
-unpause drop # cook
-get wild-greens[hp=112, price=311, effect=sneaky]
-# Clip 5
+hold 3 fairy nightshade
+sort material # will put you on fairy
+hold fairy
+drop # cook
+get wild-green[effect=sneaky, price=311, hp=112]
+# corruption
 pick-up phrenic
-entangle toasty-hylian-shroom
-:targeting <empty-space>[category=bow]
+entangle food
+:targeting <_>[category=bow]
 eat toasty-hylian-shroom
 equip axe
-pick-up 1 roasted-endura-carrot
+pick-up roasted-endura-carrot
 save
-
-# 3. Corruption 1
-pick-up all shields
-unequip shield
+pick-up all shield
+unequip shield 
 drop bow
 unequip weapon
-eat all materials all food
-reload
-save
-
-# 4. Corruption 2
-drop bow; unpause
-entangle <empty-space>[category=bow]
-eat toasty-hylian-shroom; unpause
-entangle <empty-space>[category=bow]
+eat all material all food
+reload; save
+drop bow unpause
+entangle food
+:targeting <_>[category=bow]
+eat toasty-hylian-shroom
+unpause entangle food
+:targeting <_>[category=bow]
 eat toasty-hylian-shroom
 pick-up bow
 unequip weapon
 equip dweller-shield
-eat all materials all food
+eat all material all food
 reload
 shoot
 save
 drop all axe all bow
-eat 2 wild-green 1 roasted-endura-carrot
+eat all wild-green roasted-endura-carrot
 reload
-drop 1 axe 1 bow
+drop axe bow
 eat wild-green
 reload
-eat toasty-hylian-shroom
-eat wild-green[effect=-1]
+eat all food[value=1]
 sell wild-green
-save
+# bol
+save # castle
+# ganon fight
+!write [dura=40] to master-sword
+equip master-sword
+shoot 18 times # blights & ganon
 get bow-of-light
+equip bow-of-light
+# after final shot
+equip phrenic
 reload
-# sort bows... todo
-drop bow[slot=2] # workaround...
-pick-up bow
+sort bow
 drop all shield
 save
-pick-up 3 shield
+pick-up 3 shields
 reload
