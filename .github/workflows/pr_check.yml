@@ -25,25 +25,6 @@ jobs:
           runtime: true
       - run: task check-ci-layer-1-2-3 --output group
 
-  # check-layer-3:
-  #   runs-on: blacksmith-4vcpu-ubuntu-2404
-  #   permissions:
-  #     contents: read
-  #     id-token: write
-  #   steps:
-  #     - uses: Pistonight/mono-dev/actions/setup@main
-  #       with:
-  #         runner: blacksmith
-  #         submodules: true
-  #         ecma-pnpm: true
-  #         ecma-bun: true
-  #         rust: stable
-  #         tool-cargo-binstall: ripgrep,layered-crate
-  #     - uses: ./.github/steps/cache-ci
-  #       with:
-  #         runtime: true
-  #     - run: task check-ci-layer-3 --output group
-
   check-layer-4:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:

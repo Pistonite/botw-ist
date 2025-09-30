@@ -90,12 +90,6 @@ tasks:
       - task: check-layer-2
       - task: check-layer-3
 
-  # check-ci-layer-3:
-  #   cmds:
-  #     - pnpm install --frozen-lockfile
-  #     - task: post-install
-  #     - task: check-layer-3
-
   check-ci-layer-4:
     cmds:
       - pnpm install --frozen-lockfile
