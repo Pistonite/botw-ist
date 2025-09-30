@@ -59,4 +59,5 @@ data = ["blueflame-deps/data"]
 # These are mainly used for debugging
 trace-register = []
 trace-memory = []
+trace-memory-no-auto-commit = ["trace-memory"] # use this in multithreaded memory trace and commit yourself to avoid contention
 trace-call = []

@@ -33,4 +33,5 @@ wasm = [
     "dep:wasm-bindgen-spawn",
     "dep:web-sys",
 ]
+trace-memory = ["blueflame/trace-memory-no-auto-commit"]
 unsafe-leak = []

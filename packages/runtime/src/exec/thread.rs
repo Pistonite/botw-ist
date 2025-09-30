@@ -24,6 +24,10 @@ impl Thread {
                 Ok(f) => {
                     cu::debug!("processor thread {} got job", self.slot);
                     f(&mut self.cpu);
+                    #[cfg(feature = "trace-memory")]
+                    {
+                        blueflame::memory::commit_read_trace();
+                    }
                     cu::debug!("processor thread {} finished job", self.slot);
                 }
                 Err(e) => {

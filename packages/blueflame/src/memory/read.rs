@@ -1,47 +1,6 @@
 use derive_more::derive::Constructor;
 
-#[cfg(feature = "trace-memory")]
-use crate::memory::PAGE_SIZE;
 use crate::memory::{AccessFlags, Error, Memory, Page};
-
-#[cfg(feature = "trace-memory")]
-static READS: std::sync::LazyLock<
-    std::sync::Arc<std::sync::Mutex<std::collections::BTreeSet<u64>>>,
-> = std::sync::LazyLock::new(|| {
-    std::sync::Arc::new(std::sync::Mutex::new(std::collections::BTreeSet::new()))
-});
-
-#[inline(always)]
-#[cfg(feature = "trace-memory")]
-fn record_read(addr: u64) {
-    let page = addr / (PAGE_SIZE as u64);
-    let mut set = std::sync::LazyLock::force(&READS).lock().unwrap();
-    set.insert(page);
-}
-
-/// Get the recorded reads across all memory instances
-/// returns list of (start, end) ranges of physical addresses aligned to page size
-#[cfg(feature = "trace-memory")]
-pub fn get_read_page_ranges() -> Vec<(u64, u64)> {
-    let mut ranges = Vec::new();
-    {
-        let set = std::sync::LazyLock::force(&READS).lock().unwrap();
-        for addr in set.iter().copied() {
-            let Some(range) = ranges.last_mut() else {
-                ranges.push((addr * PAGE_SIZE as u64, (addr + 1) * PAGE_SIZE as u64));
-                continue;
-            };
-            let start = addr * PAGE_SIZE as u64;
-            let end = (addr + 1) * PAGE_SIZE as u64;
-            if start == range.1 {
-                range.1 = end;
-                continue;
-            }
-            ranges.push((start, end));
-        }
-    }
-    ranges
-}
 
 /// Stream reader from memory
 #[derive(Constructor)]
@@ -228,3 +187,56 @@ impl<'m> Reader<'m> {
         Ok(())
     }
 }
+
+#[cfg(feature = "trace-memory")]
+mod trace_read_impl {
+    use crate::memory::PAGE_SIZE;
+    use std::cell::RefCell;
+    use std::collections::BTreeSet;
+    use std::sync::{Arc, LazyLock, Mutex};
+    static GLOBAL_TRACE: LazyLock<Arc<Mutex<BTreeSet<u64>>>> =
+        LazyLock::new(|| Arc::new(Mutex::new(Default::default())));
+    thread_local! {
+        static LOCAL_TRACE: RefCell<Vec<u64>> = const { RefCell::new(Vec::new()) };
+    }
+    pub fn record_read(addr: u64) {
+        let page = addr / (PAGE_SIZE as u64);
+        if cfg!(feature = "trace-memory-no-auto-commit") {
+            LOCAL_TRACE.with_borrow_mut(|x| x.push(page))
+        } else {
+            LazyLock::force(&GLOBAL_TRACE).lock().unwrap().insert(page);
+        }
+    }
+    pub fn commit_read_trace() {
+        #[cfg(feature = "trace-memory-no-auto-commit")]
+        {
+            LOCAL_TRACE.with_borrow_mut(|x| {
+                let mut global = LazyLock::force(&GLOBAL_TRACE).lock().unwrap();
+                global.extend(std::mem::take(x))
+            });
+        }
+    }
+    pub fn get_read_page_ranges() -> Vec<(u64, u64)> {
+        let mut ranges = Vec::new();
+        {
+            let pages = LazyLock::force(&GLOBAL_TRACE).lock().unwrap();
+            for addr in pages.iter().copied() {
+                let Some(range) = ranges.last_mut() else {
+                    ranges.push((addr * PAGE_SIZE as u64, (addr + 1) * PAGE_SIZE as u64));
+                    continue;
+                };
+                let start = addr * PAGE_SIZE as u64;
+                let end = (addr + 1) * PAGE_SIZE as u64;
+                if start == range.1 {
+                    range.1 = end;
+                    continue;
+                }
+                ranges.push((start, end));
+            }
+        };
+
+        ranges
+    }
+}
+#[cfg(feature = "trace-memory")]
+pub use trace_read_impl::*;

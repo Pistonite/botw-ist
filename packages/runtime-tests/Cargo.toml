@@ -22,8 +22,7 @@ threadpool = "1.8.1"
 [features]
 default = [
     "trace-memory",
-    # "blueflame/trace-call",
-    "single-thread" # scheduling issue, way faster with just 1 thread
+    # "single-thread"
 ]
-trace-memory = ["blueflame/trace-memory"]
+trace-memory = ["skybook-runtime/trace-memory"]
 single-thread= []
