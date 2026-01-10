@@ -77,9 +77,9 @@ and `GameData`.
 ## Aligning the Items
 
 In a DIC setup, we need to align the equipped equipment with the item to corrupt.
-This is done by transferring the right number of Swords, Shields, Bows, and Arrows.
-Transferring anything after Arrows typically has no effect, because they don't
-affect the positions of equipments since those categories are after equipments
+This is done by transferring the right number of Swords, Bows, Arrows, and Shields.
+Transferring anything after Shields typically has no effect, because they don't
+affect the positions of equipments since those categories are after equipment
 in inventory order.
 
 Recall that transferring an item means it is not removed in the inventory.
