@@ -290,7 +290,7 @@ fn return_0(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> {
 
 fn is_true_form_master_sword(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
     let params_ptr = gdt::trigger_param_ptr(proc.memory())?;
-    proxy!{ let params = *params_ptr as trigger_param in proc};
+    proxy! { let params = *params_ptr as trigger_param in proc};
     let Some(param) = params.by_name::<gdt::fd!(bool)>("Open_MasterSword_FullPower") else {
         log::warn!("is_true_form_master_sword: failed to find Open_MasterSword_FullPower param");
         reg! { cpu: x[0] = false, return }
