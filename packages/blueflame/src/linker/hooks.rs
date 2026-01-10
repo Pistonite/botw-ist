@@ -1,7 +1,7 @@
 use super::gdt_hooks;
 use crate::env::Environment;
 use crate::game::gdt;
-use crate::memory::{self, Memory, access};
+use crate::memory::{self, Memory, access, proxy};
 use crate::processor::insn::paste_insn;
 use crate::processor::{self, Cpu0, Hook, HookProvider, Process, reg};
 
@@ -55,6 +55,7 @@ impl HookProvider for GameHooks {
         main_offset size   fn
         0x006669f8  000408 return_void, // uking::act::CreatePlayerEquipActorMgr::doRequestCreateWeapon
         0x00666cf8  000688 return_void, // uking::act::CreatePlayerEquipActorMgr::doRequestCreateArmor
+        0x00674830  000612 is_true_form_master_sword, // uking::dmg::DamageInfoMgr::isTrueFormMasterSword
         0x0073c5b4  000732 return_void, // spawnDroppedInventoryItem. This is at 0xD23B20 in 1.6
                                         // but parameters are optimized out
         0x00849580  003456 return_void, // Player::equipmentStuff
@@ -285,4 +286,15 @@ fn return_false(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error>
 
 fn return_0(cpu: &mut Cpu0, _: &mut Process) -> Result<(), processor::Error> {
     reg! { cpu: x[0] = 0, return }
+}
+
+fn is_true_form_master_sword(cpu: &mut Cpu0, proc: &mut Process) -> Result<(), processor::Error> {
+    let params_ptr = gdt::trigger_param_ptr(proc.memory())?;
+    proxy!{ let params = *params_ptr as trigger_param in proc};
+    let Some(param) = params.by_name::<gdt::fd!(bool)>("Open_MasterSword_FullPower") else {
+        log::warn!("is_true_form_master_sword: failed to find Open_MasterSword_FullPower param");
+        reg! { cpu: x[0] = false, return }
+    };
+    let is_true_form = *param.get();
+    reg! { cpu: x[0] = is_true_form, return }
 }
