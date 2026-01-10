@@ -100,7 +100,8 @@ export const getItemTypeAndUse = (actorName: string): [PouchItemType, PouchItemU
             return [PouchItemType.ArmorUpper, PouchItemUse.ArmorUpper];
         case "ArmorLower":
             return [PouchItemType.ArmorLower, PouchItemUse.ArmorLower];
-        case "HouseReins":
+        case "HorseReins":
+        case "HorseSaddle":
             return [PouchItemType.KeyItem, PouchItemUse.Item];
     }
 

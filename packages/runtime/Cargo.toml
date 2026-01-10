@@ -23,8 +23,12 @@ thiserror.workspace = true
 static_assertions.workspace = true
 
 # TS/WASM dependencies
-wasm-bindgen-spawn = { version = "0.0.2", optional = true }
 web-sys = { version = "0.3.77", features = ["console"], optional = true }
+
+[dependencies.wasm-bindgen-spawn]
+version = "0.0.5"
+optional = true
+# path = "../../../wasm-bindgen-spawn"
 
 [features]
 # default = ["wasm"]

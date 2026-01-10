@@ -7,34 +7,27 @@ includes:
 
 tasks:
   build:
-    cmds:
-      - task: build-src
+    - task: build-src
    
   build-src:
-    cmds:
-      - $(which mkdir) -p src/generated
-      - python scripts/generate.py
-      - bun scripts/gen-actors.ts
-      - task: cargo:fmt-fix
+    - $(which mkdir) -p src/generated
+    - python scripts/generate.py
+    - bun scripts/gen-actors.ts
+    - task: cargo:fmt-fix
 
   test:
-    cmds:
-      - cargo test --features data
+    - cargo test --features data
 
   check:
-    cmds:
-      - task: cargo:clippy-all
-      - task: cargo:fmt-check
+    - task: cargo:clippy-all
+    - task: cargo:fmt-check
 
   fix:
-    cmds:
-      - task: cargo:fmt-fix
+    - task: cargo:fmt-fix
 
   push-artifacts:
-    cmds:
-      - gcloud storage cp src/generated/* gs://ist-private/artifacts/blueflame-deps/
+    - gcloud storage cp src/generated/* gs://ist-private/artifacts/blueflame-deps/
 
   pull-artifacts:
-    cmds:
-      - $(which mkdir) -p src/generated
-      - gcloud storage cp gs://ist-private/artifacts/blueflame-deps/* src/generated
+    - $(which mkdir) -p src/generated
+    - gcloud storage cp gs://ist-private/artifacts/blueflame-deps/* src/generated

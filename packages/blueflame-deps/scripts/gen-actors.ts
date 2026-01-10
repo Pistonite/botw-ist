@@ -1,5 +1,5 @@
-import { ActorDataMap } from "../../item-system/src/generated/ActorDataMap.ts"
-import { getActorParam, getItemTypeAndUse, PouchItemType, PouchItemUse } from "../../item-system/src/data"
+import { ActorDataMap } from "../../itemsys/src/generated/actor_data_map.ts"
+import { getActorParam, getItemTypeAndUse, PouchItemType, PouchItemUse } from "../../itemsys/src/data"
 
 console.log("Generate PHF Map for actors");
 
