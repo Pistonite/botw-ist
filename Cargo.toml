@@ -19,7 +19,7 @@ derive_more = { version = "2.0.1", features = ["full"] }
 enumset = "1.1.8"
 js-sys = "0.3.77"
 log = "0.4.27"
-oneshot = "0.1.11"
+oneshot = "0.1.12"
 serde = { version = "1.0.219", features = ["derive"] }
 sha2 = "0.10.9"
 static_assertions = "1.1.0"
