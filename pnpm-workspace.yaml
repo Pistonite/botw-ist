@@ -14,7 +14,8 @@ packages:
   - packages/skybook-api
 
 catalog:
-  '@fluentui/react-components': ^9.70.0
+  mono-dev: github:pistonight/mono-dev#main
+  '@fluentui/react-components': ^9.73.2
   '@fluentui/react-icons': ^2.0.311
   '@griffel/react': ^1.5.30
   '@modyfi/vite-plugin-yaml': ^1.1.1
