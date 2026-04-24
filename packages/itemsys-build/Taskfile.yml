@@ -42,9 +42,9 @@ tasks:
   bsource:
     desc: Build TypeScript source code (requires research-scripts already built)
     cmds:
-      - python scripts/build-actor-remap.py
-      - python scripts/build-localization.py
-      - python scripts/build-actor-data-map.py
+      - uv run scripts/build-actor-remap.py
+      - uv run scripts/build-localization.py
+      - uv run scripts/build-actor-data-map.py
 
   bsprite:
     desc: Build item sprites and sprites metadata in TypeScript
