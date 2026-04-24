@@ -24,7 +24,6 @@ includes:
   localization:   {taskfile: ./packages/localization,     dir: ./packages/localization,     internal: true}
   manual:         {taskfile: ./packages/manual,           dir: ./packages/manual,           internal: true}
   intwc:          {taskfile: ./packages/intwc,            dir: ./packages/intwc,            internal: true}
-  shared-controls: {taskfile: ./packages/shared-controls, dir: ./packages/shared-controls,  internal: true}
 
 tasks:
   install-cargo-extra-tools:
@@ -32,7 +31,7 @@ tasks:
     cmds:
       - task: cargo-binstall
         vars:
-          PACKAGES: mdbook mdbook-admonish live-server cargo-watch wasm-pack ripgrep layered-crate git-delta
+          PACKAGES: mdbook@0.4 mdbook-admonish shwoop wasm-pack ripgrep layered-crate
       - task: cargo-binstall
         vars:
           PACKAGES: workex --git https://github.com/Pistonite/workex
@@ -234,3 +233,11 @@ tasks:
       - git push origin {{.SKYBOOK_VERSION_TAG}}
       - task: skybook-api:publish
         ignore_error: true
+
+  upgrade:
+    desc: Upgrade dependencies
+    cmds:
+      - >
+        pnpm up mono-dev @pistonite/pure @pistonite/workex
+      - pnpm dedupe
+      - pnpm dedupe --check

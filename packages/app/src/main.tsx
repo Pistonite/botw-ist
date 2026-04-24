@@ -7,7 +7,6 @@ import { ThemeProvider } from "@pistonite/shared-controls";
 import { wxWorker } from "@pistonite/workex";
 
 import { initI18n, translateUI } from "skybook-localization";
-import { extractDirectLoad } from "@pistonite/skybook-api/client";
 import {
     type Runtime,
     type DirectLoad,
@@ -146,6 +145,24 @@ const boot = async () => {
     }
 
     await bootWithLocalScript(context);
+};
+
+/** Extract the DirectLoad payload from the page, if exists */
+const extractDirectLoad = (): DirectLoad | undefined => {
+    if ("__skybook_direct_load" in (globalThis as any).window) {
+        // Remove script tag that's already executed
+        const directLoadPayload: DirectLoad = (globalThis as any).window.__skybook_direct_load;
+        (globalThis as any).document.querySelector("script[data-skybook-direct-load]")?.remove();
+        // verify payload
+        if (
+            directLoadPayload.content &&
+            (directLoadPayload.type === "v3" || directLoadPayload.type === "v4")
+        ) {
+            return directLoadPayload;
+        }
+    }
+    return undefined;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 };
 
 type BootContext = {

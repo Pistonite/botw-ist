@@ -17,19 +17,21 @@ anyhow = "1.0.99"
 clap = { version = "4.5.45", features = ["derive"] }
 derive_more = { version = "2.0.1", features = ["full"] }
 enumset = "1.1.8"
-js-sys = "0.3.77"
 log = "0.4.27"
 oneshot = "0.1.11"
 serde = { version = "1.0.219", features = ["derive"] }
 sha2 = "0.10.9"
 static_assertions = "1.1.0"
 teleparse = "0.1.2"
-thiserror = "2.0.15"
+thiserror = "2.0.18"
 tokio = { version = "1.47.1" }
-ts-rs = "11.0.1"
-tsify = { version = "0.5.5", features = ["js"], default-features = false }
-wasm-bindgen = { version = "0.2.100", features = ["serde-serialize"] }
-wasm-bindgen-futures = "0.4.50"
+
+# Rust-Web ecosystem
+js-sys = "0.3.95"
+ts-rs = "11.1.0"
+tsify = { version = "0.5.6", features = ["js"], default-features = false }
+wasm-bindgen = { version = "0.2.118", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.68"
 
 [workspace.dependencies.cu]
 package = "pistonite-cu"

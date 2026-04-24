@@ -1,7 +1,3 @@
-[submodule "research-scripts"]
-	path = packages/research-scripts
-	url = https://github.com/Pistonight/botw-research-scripts
-	branch = main
 [submodule "intwc"]
 	path = packages/intwc
 	url = https://github.com/Pistonight/intwc
