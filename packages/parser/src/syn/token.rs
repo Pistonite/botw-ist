@@ -1,7 +1,7 @@
-use derive_more::derive::{Deref, DerefMut};
 use teleparse::{derive_syntax, tp};
 
 pub use crate::token::*;
+use cu::pre::*;
 
 #[derive_syntax]
 #[derive(Debug, Deref, DerefMut)]

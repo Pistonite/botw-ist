@@ -2,21 +2,20 @@ version: '3'
 
 includes:
   cargo:
-    taskfile: ../mono-dev/task/cargo.yaml
+    taskfile: ../../node_modules/mono-dev/task/cargo.yaml
+    optional: true
     internal: true
 
 tasks:
   bsource:
     cmds:
-      - python scripts/build-armor-upgrade.py
+      - uv run scripts/build-armor-upgrade.py
 
   test:
-    cmds:
-      - cargo test
+    - cargo test
 
   test-parse:
-    cmds:
-      - cargo test --test parse
+    - cargo test --test parse
 
   update-parse-test:
     desc: Update parser tests snapshots
@@ -27,14 +26,12 @@ tasks:
       - cargo test --test parse
 
   check:
-    cmds:
-      - task: cargo:clippy-all
-      - task: check-layer
-      - task: cargo:fmt-check
+    - task: cargo:clippy-all
+    - task: check-layer
+    - task: cargo:fmt-check
 
   check-layer:
-    cmds:
-      - layered-crate -- check --lib --all-features
+    - layered-crate -- check --lib --all-features
 
   fix:
     - task: cargo:fmt-fix

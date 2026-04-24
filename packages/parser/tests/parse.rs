@@ -1,11 +1,10 @@
-use anyhow::bail;
 use indoc::indoc;
 use teleparse::Root;
 
 use skybook_parser::cir;
 
 #[tokio::test]
-async fn parse_simple() -> anyhow::Result<()> {
+async fn parse_simple() -> cu::Result<()> {
     let script = indoc! {r#"
         eat axe   ;
         hold royal-claymore      ;
@@ -29,7 +28,7 @@ async fn parse_simple() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
-async fn parse_annotation_keyword_as_item() -> anyhow::Result<()> {
+async fn parse_annotation_keyword_as_item() -> cu::Result<()> {
     let script = indoc! {r#"
         get smug
         get 3 targeting[equip];
@@ -41,7 +40,7 @@ async fn parse_annotation_keyword_as_item() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
-async fn parse_use_command() -> anyhow::Result<()> {
+async fn parse_use_command() -> cu::Result<()> {
     let script = indoc! {r#"
         use weapon
         use shield 2 times
@@ -54,7 +53,7 @@ async fn parse_use_command() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
-async fn parse_notes() -> anyhow::Result<()> {
+async fn parse_notes() -> cu::Result<()> {
     let script = indoc! {r#"
         '''note
         '''
@@ -100,7 +99,7 @@ impl cir::QuotedItemResolver for StubQuotedItemResolver {
     }
 }
 
-async fn test_parser_snapshot(path: &str, script: &str) -> anyhow::Result<()> {
+async fn test_parser_snapshot(path: &str, script: &str) -> cu::Result<()> {
     if !std::fs::exists("tests/parse")? {
         std::fs::create_dir_all("tests/parse")?;
     }
@@ -145,13 +144,13 @@ async fn test_parser_snapshot(path: &str, script: &str) -> anyhow::Result<()> {
         for e in &errors {
             eprintln!("{e}");
         }
-        bail!("{} snapshot errors", errors.len());
+        cu::bail!("{} snapshot errors", errors.len());
     }
 
     Ok(())
 }
 
-fn process_snapshot_file(path: &str, content: &str, mut update: bool) -> anyhow::Result<()> {
+fn process_snapshot_file(path: &str, content: &str, mut update: bool) -> cu::Result<()> {
     if !std::fs::exists(path)? {
         update = true;
     }
@@ -167,7 +166,7 @@ fn process_snapshot_file(path: &str, content: &str, mut update: bool) -> anyhow:
             std::fs::create_dir_all("tests/parse/wip")?;
         }
         std::fs::write(wip_path, content)?;
-        bail!("Snapshot mismatch: {}", path);
+        cu::bail!("Snapshot mismatch: {}", path);
     }
 
     Ok(())

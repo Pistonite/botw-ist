@@ -1,30 +1,30 @@
 [workspace]
 resolver = "2"
 members = [
-    "packages/blueflame", 
-    "packages/blueflame-deps", 
-    "packages/blueflame-proc-macros", 
-    "packages/manual",
+    # "packages/blueflame", 
+    # "packages/blueflame-deps", 
+    # "packages/blueflame-proc-macros", 
+    # "packages/manual",
     "packages/parser", 
-    "packages/runtime",
-    "packages/runtime-tests",
-    "packages/runtime-wasm",
+    # "packages/runtime",
+    # "packages/runtime-tests",
+    # "packages/runtime-wasm",
     "packages/skybook-api",
 ]
 
 [workspace.dependencies]
-anyhow = "1.0.99"
-clap = { version = "4.5.45", features = ["derive"] }
-derive_more = { version = "2.0.1", features = ["full"] }
+cached = "0.59.0"
 enumset = "1.1.8"
+indoc = "2.0.7"
 log = "0.4.27"
 oneshot = "0.1.11"
-serde = { version = "1.0.219", features = ["derive"] }
+serde = "1"
 sha2 = "0.10.9"
 static_assertions = "1.1.0"
 teleparse = "0.1.2"
+textdistance = "1.1.1"
 thiserror = "2.0.18"
-tokio = { version = "1.47.1" }
+tokio = "1"
 
 # Rust-Web ecosystem
 js-sys = "0.3.95"
@@ -35,4 +35,4 @@ wasm-bindgen-futures = "0.4.68"
 
 [workspace.dependencies.cu]
 package = "pistonite-cu"
-version = "0.5.2"
+version = "0.8.1"

@@ -20,10 +20,11 @@ includes:
   itemsys:        {taskfile: ./packages/itemsys,          dir: ./packages/itemsys,          internal: true}
   itemsys-build:  {taskfile: ./packages/itemsys-build,    dir: ./packages/itemsys-build,    internal: true}
   skybook-api:    {taskfile: ./packages/skybook-api,      dir: ./packages/skybook-api,      internal: true}
-  research:       {taskfile: ./packages/research-scripts, dir: ./packages/research-scripts, internal: true}
   localization:   {taskfile: ./packages/localization,     dir: ./packages/localization,     internal: true}
   manual:         {taskfile: ./packages/manual,           dir: ./packages/manual,           internal: true}
   intwc:          {taskfile: ./packages/intwc,            dir: ./packages/intwc,            internal: true}
+
+  data:       {taskfile: ./packages/botw-data, dir: ./packages/botw-data, internal: true}
 
 tasks:
   install-cargo-extra-tools:

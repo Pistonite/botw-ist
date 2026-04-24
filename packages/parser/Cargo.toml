@@ -8,18 +8,19 @@ publish = false
 path = "../skybook-api"
 
 [dependencies]
-cached = { version = "0.56.0", optional = true }
-derive_more.workspace = true
-enumset.workspace = true
+cu = {workspace = true, features = ["derive", "serde"] }
 serde.workspace = true
+enumset.workspace = true
 static_assertions.workspace = true
 teleparse.workspace = true
-textdistance = "1.1.1"
+textdistance.workspace = true
 thiserror.workspace = true
 
+cached = { workspace = true, optional = true }
+
 [dev-dependencies]
-anyhow.workspace = true
-indoc = "2.0.6"
+cu.workspace = true
+indoc.workspace = true
 tokio = { workspace = true, features = ["full"] }
 
 [build-dependencies]
