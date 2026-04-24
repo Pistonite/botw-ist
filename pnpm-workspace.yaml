@@ -3,7 +3,6 @@ packages:
   # - packages/intwc
   # - packages/intwc/vite-plugin
   # - packages/itemsys
-  # - packages/itemsys-build
   # - packages/localization
   # - packages/parser-legacy
   # - packages/runtime-wasm
@@ -15,6 +14,7 @@ catalog:
   mono-dev: github:pistonight/mono-dev#main
   '@pistonite/pure': ^0.29.4
   '@pistonite/workex': ^0.2.0
+  lru-cache: ^11.3.5
 
   '@fluentui/react-components': ^9.73.2
   '@fluentui/react-icons': ^2.0.311
@@ -25,7 +25,6 @@ catalog:
   '@types/react-dom': ^18.3.5
   '@vitejs/plugin-react': ^4.7.0
   i18next: ^25.5.2
-  lru-cache: ^11.2.2
   react: ^18.3.1
   react-dom: ^18.3.1
   react-i18next: ^16.0.0

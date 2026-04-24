@@ -240,5 +240,6 @@ tasks:
     cmds:
       - >
         pnpm up mono-dev @pistonite/pure @pistonite/workex
+        lru-cache
       - pnpm dedupe
       - pnpm dedupe --check

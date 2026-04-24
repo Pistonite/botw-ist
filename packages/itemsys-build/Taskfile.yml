@@ -17,7 +17,7 @@ tasks:
   vdecode:
     desc: Decode, crop, and clean up video frames using decode.py
     cmds:
-      - python scripts/videoprep/decode.py {{.CLI_ARGS}}
+      - uv run scripts/videoprep/decode.py {{.CLI_ARGS}}
 
   vencode:
     desc: Encode video frames into animated webp
