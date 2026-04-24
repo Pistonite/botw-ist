@@ -10,13 +10,18 @@
     "license": "MIT",
     "author": "Pistonight <pistonknight@outlook.com>",
     "files": [
+        "dist/**/*",
         "src/**/*"
     ],
     "exports": {
-        ".": "./src/index.ts",
-        "./client": "./src/client/index.ts",
-        "./interfaces/*": "./src/interfaces/*.ts",
-        "./interfaces/*.ts": "./src/interfaces/*.ts"
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/_dts_/src/index.d.ts"
+        },
+        "./extension-client": {
+            "import": "./dist/extension_client.js",
+            "types": "./dist/_dts_/src/extension_client.d.ts"
+        }
     },
     "repository": {
         "type": "git",
@@ -24,13 +29,14 @@
         "directory": "packages/skybook-api"
     },
     "dependencies": {
-        "@pistonite/pure": "catalog:",
         "@pistonite/workex": "catalog:"
     },
     "devDependencies": {
+        "@pistonite/pure": "catalog:",
         "mono-dev": "catalog:"
     },
     "nocheck": [
-        "/src/interfaces/*.ts"
+        "/src/protocol/interfaces/*.ts",
+        "/src/native/*.ts"
     ]
 }

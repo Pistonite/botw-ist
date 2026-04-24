@@ -1,6 +1,6 @@
 import type { WxPromise } from "@pistonite/workex";
 
-import type { ItemSearchResult } from "./types.ts";
+import type { ItemSearchResult } from "self::types";
 
 /**
  * API provided by the simulator app that the runtime needs to call

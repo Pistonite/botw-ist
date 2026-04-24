@@ -10,13 +10,13 @@ import type {
     ParserError,
     RuntimeError,
     RuntimeViewError,
-} from "./native";
+} from "self::native";
 import type {
     ItemSearchResult,
     RuntimeWorkerInitArgs,
     RuntimeWorkerInitOutput,
     RuntimeWorkerInitError,
-} from "./types.ts";
+} from "self::types";
 
 /**
  * API provided by the simulator runtime, called by the application.

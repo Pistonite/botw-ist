@@ -2,65 +2,79 @@ version: '3'
 
 includes:
   ecma:
-    taskfile: ../mono-dev/task/ecma.yaml
+    taskfile: ./node_modules/mono-dev/task/ecma.yaml
     internal: true
+    optional: true
   cargo:
-    taskfile: ../mono-dev/task/cargo.yaml
+    taskfile: ./node_modules/mono-dev/task/cargo.yaml
     internal: true
+    optional: true
   git:
-    taskfile: ../mono-dev/task/git.yaml
+    taskfile: ./node_modules/mono-dev/task/git.yaml
     internal: true
+    optional: true
     
 
 tasks:
+  check:
+    desc: Run linters to check the code
+    cmds:
+      # bindings are needed to generate the files to check
+      - task: build-ts-binding
+      - task: build-workex-binding
+      - task: ecma:check
+      - task: cargo:clippy-all
+      - task: cargo:fmt-check
   build:
+    desc: Build the project
+    cmds:
+      - task: build-ts-binding
+      - task: build-workex-binding
+      - task: ecma:lib-build
+
+  build-ts-binding:
+    internal: true
+    env:
+      LC_ALL: C # consistent sort order
+    cmds:
+      - rm -f bindings/* src/native/*.ts
+      - cargo test --lib --features __ts-binding
+      - find bindings -type f | sort | sed 's/^bindings/export * from "./' | sed 's/$/";/' > src/native/index.ts
+      - mv bindings/*.ts src/native
+
+  build-workex-binding:
+    internal: true
     vars:
       VERSION:
         sh: jq '.version' package.json | tr -d '"'
     cmds:
-      - task: build-ts-binding
       - > 
-          workex -p skyb-api-{{.VERSION}} --prefix skybook --no-gitignore
-          -l Extension,ExtensionApp -l Runtime,RuntimeApp
-          src/extension_api.ts 
-          src/extension_app.ts 
-          src/runtime_api.ts
-          src/runtime_app.ts
-      - task: fix
+        workex -p skybapi-{{.VERSION}} --prefix skybook
+        -l Extension,ExtensionApp
+        -l Runtime,RuntimeApp
+        src/protocol/extension_api.ts 
+        src/protocol/extension_app.ts 
+        src/protocol/runtime_api.ts
+        src/protocol/runtime_app.ts
 
-  build-ts-binding:
-    env:
-      LC_ALL: C # consistent sort order
-    cmds:
-      - rm -f bindings/* src/native/*
-      - cargo test --lib --features __ts-binding
-      - $(which mkdir) -p src/native
-      - find bindings -type f | sort | sed 's/^bindings/export * from "./' | sed 's/$/";/' > src/native/index.ts
-      - mv bindings/*.ts src/native
-
-  check:
-    cmds:
-      - task: build
-      - task: git:check-modification
-        vars:
-          CHECK_PATH: packages/skybook-api/src
-          CHECK_MESSAGE: Please regenerate and commit skybook-api bindings
-      - task: ecma:mono-check
-      - task: cargo:clippy-all
-      - task: cargo:fmt-check
 
   fix:
+    desc: Fix style issues
     cmds:
-      - task: ecma:mono-fix
+      - task: ecma:fix
       - task: cargo:fmt-fix
 
   test:
+    desc: Run tests
     cmds:
-      - task: ecma:vitest
+      - task: ecma:test
 
   dev:
+    desc: Start development server
     cmds:
-      - task: ecma:vitest-watch
+      - task: ecma:test-dev
 
   publish:
-    - pnpm publish --access public
+    desc: Publish a release
+    cmds:
+      - pnpm publish --access public

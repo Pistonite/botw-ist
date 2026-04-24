@@ -1,15 +1,14 @@
 import type { Result } from "@pistonite/pure/result";
 import type { WxPromise } from "@pistonite/workex";
 
-import type { Diagnostic, ItemSearchResult } from "./types.ts";
+import type { Diagnostic, ItemSearchResult, ItemDragData } from "self::types";
 import type {
     InvView_Gdt,
     InvView_Overworld,
     InvView_PouchList,
     MaybeAborted,
     RuntimeViewError,
-} from "./native";
-import type { ItemDragData } from "./item_dnd.ts";
+} from "self::native";
 
 /**
  * API implemented by the application and called by the extension.

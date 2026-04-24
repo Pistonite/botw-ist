@@ -1,5 +1,6 @@
-import type { InvView_GdtItem, InvView_OverworldItem, InvView_PouchItem } from "./native";
-import type { ItemSearchResult } from "./types.ts";
+import type { InvView_GdtItem, InvView_OverworldItem, InvView_PouchItem } from "self::native";
+
+import type { ItemSearchResult } from "./misc.ts";
 
 /** Data attached to the item currently being dragged */
 export type ItemDragData = ItemDragDataWithoutLocation & ItemDragDataKeepLocation;
@@ -40,12 +41,12 @@ export type ItemDragDataWithoutLocation = ItemDragDataCommon &
           }
     );
 
-export type ItemDragDataCommon = {
+export interface ItemDragDataCommon {
     /** If master sword is full power in the inventory */
     isMasterSwordFullPower: boolean;
-};
+}
 
-export type ItemDragDataKeepLocation = {
+export interface ItemDragDataKeepLocation {
     /** When dropping, if the location information of the item should be kept */
     keepLocation: boolean;
-};
+}

@@ -4,9 +4,7 @@
 
 import { wxWindowOwner } from "@pistonite/workex";
 
-import type { ExtensionModule } from "./extension_types.ts";
-import { skybookExtensionApp } from "../interfaces/ExtensionApp.bus.ts";
-import type { ExtensionApp } from "../extension_app.ts";
+import { type ExtensionModule, type ExtensionApp, skybookExtensionApp } from "self::protocol";
 
 /**
  * Initialize an extension popout window
@@ -50,7 +48,7 @@ export const readExtensionProperties = (): ExtensionProperties => {
     /* eslint-enable @typescript-eslint/no-explicit-any */
 };
 
-export type ExtensionProperties = {
+export interface ExtensionProperties {
     /**
      * If the extension is a first party extension, return its id.
      *
@@ -73,7 +71,7 @@ export type ExtensionProperties = {
      * This can be used to define custom parameters for 3rd party extensions
      */
     params: URLSearchParams;
-};
+}
 
 export const connectPopoutExtensionWindow = async (
     extension: ExtensionModule,

@@ -1,29 +1,9 @@
-/**
- * Common types
- *
- * @module
- */
+import type { RuntimeInitParams, RuntimeInitError } from "self::native";
 
-import type { ScriptEnvImage } from "./env_parser.ts";
-import type { RuntimeInitParams, RuntimeInitError } from "./native";
-
-/**
- * Type used for JS side item search queries
- */
-export type ItemSearchResult = {
-    /** The item actor name (for example Weapon_Sword_502 */
-    actor: string;
-    /**
-     * The cook effect of the item.
-     *
-     * The number is the game's representation (the CookEffect enum in decomp project).
-     * If the item should not have an effect, the value should be 0 (instead of -1)
-     */
-    cookEffect: number;
-};
+import type { ScriptEnvImage } from "./misc.ts";
 
 /** Diagnostic type for the script */
-export type Diagnostic = {
+export interface Diagnostic {
     /** (Localized) message to display */
     message: string;
     /** Start character position of the diagnostic (inclusive) */
@@ -34,7 +14,7 @@ export type Diagnostic = {
      * Whether this diagnostic is only a warning. If false, it should be treated as an error
      */
     isWarning: boolean;
-};
+}
 
 /** Args for initializing the runtime */
 export type RuntimeWorkerInitArgs =
@@ -52,7 +32,7 @@ export type RuntimeWorkerInitArgs =
           alwaysAskApp: boolean;
       };
 
-export type RuntimeWorkerInitOutput = {
+export interface RuntimeWorkerInitOutput {
     /** Image version that was loaded */
     version: ScriptEnvImage | "";
 
@@ -60,7 +40,7 @@ export type RuntimeWorkerInitOutput = {
      * The image version that is stored in the database
      */
     storedVersion: ScriptEnvImage | "" | "not-changed";
-};
+}
 
 export type RuntimeWorkerInitError =
     | {
@@ -72,14 +52,3 @@ export type RuntimeWorkerInitError =
           type: "SaveImage";
       }
     | RuntimeInitError;
-
-/**
- * Mode of the current session
- *
- * - local: edits are saved to local storage immediately
- * - edit-only: edits are only in-memory
- * - read-only: edits not allowed
- */
-export type SessionMode = "local" | "edit-only" | "read-only";
-
-export type Translator = (key: string, options?: Record<string, unknown>) => string;
