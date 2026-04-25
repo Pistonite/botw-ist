@@ -11,22 +11,22 @@ packages:
   - packages/skybook-api
 
 catalog:
-  mono-dev: github:pistonight/mono-dev#main
+  mono-dev: github:pistonight/mono-dev#dist
   '@pistonite/pure': ^0.29.4
+  '@pistonite/celera': ^0.1.1
   '@pistonite/workex': ^0.2.0
   lru-cache: ^11.3.5
+  react: ^19.2.5
+  react-dom: ^19.2.5
+  '@types/react': ^19.2.14
+  '@types/react-dom': ^19.2.3
+  '@fluentui/react-components': ^9.73.8
+  '@fluentui/react-icons': ^2.0.324
 
-  '@fluentui/react-components': ^9.73.2
-  '@fluentui/react-icons': ^2.0.311
   '@griffel/react': ^1.5.30
-  '@modyfi/vite-plugin-yaml': ^1.1.1
   '@types/bun': ^1.2.23
-  '@types/react': ^18.3.17
-  '@types/react-dom': ^18.3.5
   '@vitejs/plugin-react': ^4.7.0
   i18next: ^25.5.2
-  react: ^18.3.1
-  react-dom: ^18.3.1
   react-i18next: ^16.0.0
   typescript: ^5.9.2
   uuid: ^13.0.0

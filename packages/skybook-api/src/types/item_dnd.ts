@@ -1,4 +1,4 @@
-import type { InvView_GdtItem, InvView_OverworldItem, InvView_PouchItem } from "self::native";
+import type { InvView_GdtItem, InvView_OverworldItem, InvView_PouchItem } from "#native";
 
 import type { ItemSearchResult } from "./misc.ts";
 

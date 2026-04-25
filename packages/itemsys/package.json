@@ -4,25 +4,21 @@
     "version": "0.0.1",
     "description": "Item system for Skybook, the BOTW IST Simulator",
     "type": "module",
-    "exports": {
-        ".": "./src/index.ts"
-    },
+    "exports": "./dist/index.js",
+    "types": "./dist/_dts_/src/index.d.ts",
     "dependencies": {
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons": "catalog:",
         "@pistonite/pure": "catalog:",
-        "@pistonite/skybook-api": "workspace:*",
-        "i18next": "catalog:",
-        "react-i18next": "catalog:"
+        "@pistonite/celera": "catalog:",
+        "@pistonite/skybook-api": "workspace:*"
     },
     "peerDependencies": {
-        "react": "^18"
+        "react": "^19"
     },
     "devDependencies": {
         "@types/react": "catalog:",
-        "mono-dev": "workspace:*",
-        "react-dom": "catalog:",
-        "vite": "catalog:"
+        "mono-dev": "catalog:"
     },
     "nocheck": [
         "/src/sprite/*_meta.ts"

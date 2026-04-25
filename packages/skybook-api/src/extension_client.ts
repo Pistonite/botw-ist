@@ -4,7 +4,7 @@
 
 import { wxWindowOwner } from "@pistonite/workex";
 
-import { type ExtensionModule, type ExtensionApp, skybookExtensionApp } from "self::protocol";
+import { type ExtensionModule, type ExtensionApp, skybookExtensionApp } from "#protocol";
 
 /**
  * Initialize an extension popout window

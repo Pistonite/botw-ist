@@ -1,6 +1,6 @@
 import type { WxPromise } from "@pistonite/workex";
 
-import type { SessionMode, ItemDragData } from "self::types";
+import type { SessionMode, ItemDragData } from "#types";
 
 /**
  * API implemented by the extension and called by the application.

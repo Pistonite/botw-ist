@@ -2,8 +2,8 @@
 
 import type { Result } from "@pistonite/pure/result";
 
-import type { RuntimeInitParams } from "self::native";
-import type { ScriptEnvImage } from "self::types";
+import type { RuntimeInitParams } from "#native";
+import type { ScriptEnvImage } from "#types";
 
 /** Parse the leading env tag from the script */
 export const parseEnvFromScript = (script: string): ScriptEnv => {

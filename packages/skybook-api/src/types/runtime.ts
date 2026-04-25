@@ -1,4 +1,4 @@
-import type { RuntimeInitParams, RuntimeInitError } from "self::native";
+import type { RuntimeInitParams, RuntimeInitError } from "#native";
 
 import type { ScriptEnvImage } from "./misc.ts";
 

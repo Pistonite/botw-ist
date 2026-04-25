@@ -2,11 +2,12 @@ version: '3'
 
 includes:
   ecma:
-    taskfile: ../mono-dev/task/ecma.yaml
+    taskfile: ./node_modules/mono-dev/task/ecma.yaml
     internal: true
+    optional: true
 
 tasks:
   check:
-    - task: ecma:mono-check
+    - task: ecma:check
   fix:
-    - task: ecma:mono-fix
+    - task: ecma:fix
