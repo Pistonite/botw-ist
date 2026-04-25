@@ -1,5 +1,6 @@
+import fs from "node:fs";
 import { ActorDataMap } from "../../itemsys/src/generated/actor_data_map.ts"
-import { getActorParam, getItemTypeAndUse, PouchItemType, PouchItemUse } from "../../itemsys/src/data"
+import { getActorParam, getItemTypeAndUse, PouchItemType, PouchItemUse } from "../../itemsys/src/data/index.ts"
 
 console.log("Generate PHF Map for actors");
 
@@ -98,5 +99,8 @@ for (const actor of canUseActorsSorted) {
 }
 lines.push("];")
 
-Bun.file("src/generated/actor.rs").write(lines.join("\n"))
+fs.writeFileSync(
+    "src/generated/actor.rs",
+        lines.join("\n")
+);
 
