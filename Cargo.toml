@@ -3,7 +3,7 @@ resolver = "2"
 members = [
     # "packages/blueflame", 
     # "packages/blueflame-deps", 
-    # "packages/blueflame-proc-macros", 
+    "packages/blueflame-proc-macros", 
     # "packages/manual",
     "packages/parser", 
     # "packages/runtime",
@@ -36,3 +36,7 @@ wasm-bindgen-futures = "0.4.68"
 [workspace.dependencies.cu]
 package = "pistonite-cu"
 version = "0.8.2"
+
+[workspace.dependencies.pm]
+package = "pistonite-pm"
+version = "0.2.6"
