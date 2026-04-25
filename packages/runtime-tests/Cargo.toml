@@ -14,7 +14,6 @@ path = "../parser"
 
 [dependencies]
 cu = { workspace = true, features = ["cli", "fs", "coroutine-heavy"] }
-num_cpus = "1.17.0"
 oneshot.workspace = true
 sha2.workspace = true
 threadpool = "1.8.1"
@@ -25,4 +24,4 @@ default = [
     # "single-thread"
 ]
 trace-memory = ["skybook-runtime/trace-memory"]
-single-thread= []
+# single-thread= []

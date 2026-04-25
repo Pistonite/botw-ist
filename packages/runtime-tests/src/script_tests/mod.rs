@@ -65,7 +65,7 @@ async fn run_tests(
 ) -> cu::Result<usize> {
     let mut handles = vec![];
     let total_count = test_names.len();
-    let bar = cu::progress_bar(total_count, "script tests");
+    let bar = cu::progress("script tests").total(total_count).spawn();
     for test in test_names {
         let test_file = std::fs::read_to_string(format!("src/script_tests/{test}.txt"))
             .context("cannot read test file")?;
@@ -107,7 +107,7 @@ async fn run_tests(
             }
         }
         let failed_count = finished_count - passed_count;
-        cu::progress!(&bar, finished_count, "{failed_count} failed");
+        cu::progress!(bar = finished_count, "{failed_count} failed");
     }
 
     Ok(passed_count)
