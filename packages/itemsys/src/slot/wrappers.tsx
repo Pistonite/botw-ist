@@ -1,13 +1,11 @@
 import { memo, useMemo } from "react";
 
 import type {
-    InvView_GdtItem, 
+    InvView_GdtItem,
     InvView_OverworldItem,
     InvView_PouchItem,
     ItemDragDataWithoutLocation,
 } from "@pistonite/skybook-api";
-
-import { celeraLogger } from "@pistonite/celera";
 
 import type { CookEffect } from "../data";
 
@@ -29,12 +27,12 @@ import {
 import { TooltipSource } from "./tooltip.tsx";
 import { DragSource } from "./dnd_source.tsx";
 
-export type ItemSlotWrapperProps = {
+export interface ItemSlotWrapperProps {
     /** If tooltips should be displayed when hovering over the slot */
     tooltip?: boolean;
     /** If the slot should be draggable, the data carried by the drag */
     dragData?: ItemDragDataWithoutLocation;
-};
+}
 
 /** Standalone item slots that can be used outside of the inventory */
 export type StandaloneItemSlotProps = {

@@ -2,18 +2,20 @@ import { useState, type PropsWithChildren } from "react";
 
 import type { ItemDragDataWithoutLocation } from "@pistonite/skybook-api";
 
-import { useItemDrag } from "./dnd_context.ts";
-import { dndLog as log } from "./dnd_util.ts";
+import { log } from "#util";
 
-export type DragSourceProps = {
+import { useItemDrag } from "./dnd_context.ts";
+
+export interface DragSourceProps {
     data: ItemDragDataWithoutLocation;
-};
+}
 
 /**
  * A drag-and-drop source item. Clicking on this item will start dragging,
  * using the provided data
  */
-export const DragSource: React.FC<PropsWithChildren<DragSourceProps>> = ({ data, children }) => {
+export const DragSource: React.FC<PropsWithChildren<DragSourceProps>> = (props) => {
+    const { data, children } = props;
     const { setData } = useItemDrag();
     const [dragging, setDragging] = useState(false);
     return (

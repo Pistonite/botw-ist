@@ -1,11 +1,29 @@
 {
     "name": "@pistonite/skybook-itemsys",
-    "private": true,
-    "version": "0.0.1",
-    "description": "Item system for Skybook, the BOTW IST Simulator",
     "type": "module",
-    "exports": "./dist/index.js",
-    "types": "./dist/_dts_/src/index.d.ts",
+    "version": "0.0.1",
+    "private": true,
+    "description": "Item system for Skybook, the BOTW IST Simulator",
+    "homepage": "https://github.com/Pistonite/botw-ist",
+    "bugs": {
+        "url": "https://github.com/Pistonite/botw-ist/issues"
+    },
+    "license": "MIT",
+    "author": "Pistonight <pistonknight@outlook.com>",
+    "files": [
+        "dist/**/*",
+        "src/**/*"
+    ],
+    "pistonight/mono-dev": {
+        "lib": true,
+        "publish": true
+    },
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/_dts_/src/index.d.ts"
+        }
+    },
     "dependencies": {
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons": "catalog:",
@@ -22,5 +40,12 @@
     },
     "nocheck": [
         "/src/sprite/*_meta.ts"
-    ]
+    ],
+    "imports": {
+        "#data": "./src/data/index.ts",
+        "#i18n": "./src/i18n/index.ts",
+        "#slot": "./src/slot/index.ts",
+        "#sprite": "./src/sprite/index.ts",
+        "#util": "./src/util/index.ts"
+    }
 }

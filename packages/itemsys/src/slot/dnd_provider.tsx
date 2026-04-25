@@ -2,21 +2,20 @@ import { useMemo, useSyncExternalStore, type PropsWithChildren } from "react";
 
 import type { ExtensionApp, ItemDragData } from "@pistonite/skybook-api";
 
-import { ItemDragContext } from "./dnd_context.ts";
-import { dndLog as log } from "./dnd_util.ts";
+import { log } from "#util";
 
-export type PopoutItemDragProviderProps = {
+import { ItemDragContext } from "./dnd_context.ts";
+
+export interface PopoutItemDragProviderProps {
     app: ExtensionApp;
     subscribeData: (fn: () => void) => () => void;
     getData: () => ItemDragData | undefined;
-};
+}
 
-export const PopoutItemDragProvider: React.FC<PropsWithChildren<PopoutItemDragProviderProps>> = ({
-    app,
-    subscribeData,
-    getData,
-    children,
-}) => {
+export const PopoutItemDragProvider: React.FC<PropsWithChildren<PopoutItemDragProviderProps>> = (
+    props,
+) => {
+    const { app, subscribeData, getData, children } = props;
     const dragData = useSyncExternalStore(subscribeData, getData);
     // stable reference
     const contextState = useMemo(() => {

@@ -17,12 +17,12 @@ import {
     isGdtDataFoodType,
     normalizeIngredients,
     type CookEffect,
-} from "../data";
+} from "#data";
 
 import type { ItemSlotContextProps } from "./slot_props.ts";
 
 export type ItemTooltipWithContextProps = ItemTooltipProps & ItemSlotContextProps;
-export type ItemTooltipProps = {
+export interface ItemTooltipProps {
     /** The actor name of this item and used to look up item properties */
     actor: string;
 
@@ -79,10 +79,10 @@ export type ItemTooltipProps = {
 
     /** string to show as the profile */
     profile: string;
-};
+}
 
 /** See InvView_PouchItem */
-export type ItemTooltipPouchMetadata = {
+export interface ItemTooltipPouchMetadata {
     itemType: number;
     itemUse: number;
     nodeAddr: bigint;
@@ -92,10 +92,10 @@ export type ItemTooltipPouchMetadata = {
     nodeNext: bigint;
     allocatedIndex: number;
     unallocatedIndex: number;
-};
+}
 
 /** See InvView_GdtItem */
-export type ItemTooltipGdtMetadata = {
+export interface ItemTooltipGdtMetadata {
     /** Index of this GDT slot */
     index: number;
     /** If the item is sword, the index of the sword */
@@ -106,7 +106,7 @@ export type ItemTooltipGdtMetadata = {
     indexShield?: number | undefined;
     /** If the item is food, the index of the food */
     indexFood?: number | undefined;
-};
+}
 
 export const getTooltipPropsFromActor = (actor: string, effect?: CookEffect): ItemTooltipProps => {
     return {

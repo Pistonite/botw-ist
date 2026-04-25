@@ -1,17 +1,17 @@
 import { makeStyles, mergeClasses } from "@fluentui/react-components";
 import { PresenceBlocked24Regular } from "@fluentui/react-icons";
 
-import { ModifierSprite } from "../sprite";
-import { PouchCategory, PouchCategoryNames } from "../data";
+import { ModifierSprite } from "#sprite";
+import { PouchCategory, PouchCategoryNames } from "#data";
 
-export type TabNode = {
+export interface TabNode {
     /** The slot number of the item in the tab, corresponding to where it will be displayed */
     slot: number;
     /** The node to render for this item */
     element: React.ReactNode;
-};
+}
 
-export type ItemTabProps = {
+export interface ItemTabProps {
     /** The category icon to display. PouchCategory.Invalid will not display anything. */
     category: PouchCategory;
     /** Show border around the item tab. */
@@ -20,7 +20,7 @@ export type ItemTabProps = {
     nodes: TabNode[];
     /** Whether the tab is undiscovered (not accessible in game UI) */
     undiscovered?: boolean;
-};
+}
 
 const useStyles = makeStyles({
     container: {
@@ -64,7 +64,8 @@ const useStyles = makeStyles({
     },
 });
 
-export const ItemTab: React.FC<ItemTabProps> = ({ category, border, nodes, undiscovered }) => {
+export const ItemTab: React.FC<ItemTabProps> = (props) => {
+    const { category, border, nodes, undiscovered } = props;
     const styles = useStyles();
 
     const $CategoryIcon = category !== PouchCategory.Invalid && (
@@ -77,13 +78,17 @@ export const ItemTab: React.FC<ItemTabProps> = ({ category, border, nodes, undis
             )}
         </span>
     );
+
     let height = 0;
-    const $Nodes = nodes.map(({ slot, element }) => {
+    const $Nodes: React.ReactNode[] = [];
+    const nodesLen = nodes.length;
+    for (let i = 0; i < nodesLen; i++) {
+        const { slot, element } = nodes[i];
         const h = Math.floor(slot / 5) * 72;
         if (h + 72 > height) {
             height = h + 72;
         }
-        return (
+        $Nodes.push(
             <div
                 key={slot}
                 style={{
@@ -93,9 +98,9 @@ export const ItemTab: React.FC<ItemTabProps> = ({ category, border, nodes, undis
                 }}
             >
                 {element}
-            </div>
+            </div>,
         );
-    });
+    }
 
     return (
         <div className={styles.container}>

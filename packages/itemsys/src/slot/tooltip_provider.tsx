@@ -15,12 +15,12 @@ const useStyles = makeStyles({
     },
 });
 
-export type ItemTooltipProviderProps = {
+export interface ItemTooltipProviderProps {
     /** Suppress all tooltips under this provider */
     suppress?: boolean;
     /** Url for the image for the background of the tooltip */
     backgroundUrl: string;
-};
+}
 
 /**
  * Provider for the ItemTooltipContext
@@ -29,11 +29,10 @@ export type ItemTooltipProviderProps = {
  * We really optimize the re-render. Otherwise, users will see CPU
  * spikes when moving the mouse really quickly
  */
-export const ItemTooltipProvider: React.FC<PropsWithChildren<ItemTooltipProviderProps>> = ({
-    suppress,
-    backgroundUrl,
-    children,
-}) => {
+export const ItemTooltipProvider: React.FC<PropsWithChildren<ItemTooltipProviderProps>> = (
+    props,
+) => {
+    const { suppress, backgroundUrl, children } = props;
     const styles = useStyles();
 
     const [verbose, setVerbose] = useState(false);

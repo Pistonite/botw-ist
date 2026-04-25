@@ -1,8 +1,6 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { useCallback } from "react";
-
-import type { Category, Translator } from "@pistonite/skybook-api";
+import { translate, useTranslation, type TranslatorFn } from "@pistonite/celera";
+import type { Category } from "@pistonite/skybook-api";
 
 /**
  * Translated a key in the generated item translations.
@@ -11,7 +9,7 @@ import type { Category, Translator } from "@pistonite/skybook-api";
  * Requires I18next to be initialized with translations from this package.
  */
 export const translateGen = (key: string, options?: Record<string, unknown>) => {
-    const value = i18next.t(`skybook-itemsys:${key}`, options);
+    const value = translate(`skybook-itemsys:${key}`, options);
     if (value === key) {
         return "";
     }
@@ -25,7 +23,7 @@ export const translateGen = (key: string, options?: Record<string, unknown>) => 
  * Requires I18next to be initialized with translations from this package.
  */
 export const translateUI = (key: string, options?: Record<string, unknown>) => {
-    return i18next.t(`skybook-itemsys-ui:${key}`, options);
+    return translate(`skybook-itemsys-ui:${key}`, options);
 };
 
 /**
@@ -34,19 +32,15 @@ export const translateUI = (key: string, options?: Record<string, unknown>) => {
  * Requires react-i18next and i18next to be initialized with translations
  * from this package.
  */
-export const useUITranslation = (): Translator => {
-    const { t } = useTranslation("skybook-itemsys-ui");
-    return t;
+export const useUITranslation = (): TranslatorFn => {
+    return useTranslation("skybook-itemsys-ui");
 };
 
 /**
  * React hook for generated item translations.
- *
- * Requires react-i18next and i18next to be initialized with translations
- * from this package.
  */
-export const useGenTranslation = (): Translator => {
-    const { t } = useTranslation("skybook-itemsys", { nsMode: "default" });
+export const useGenTranslation = (): TranslatorFn => {
+    const t = useTranslation("skybook-itemsys", { nsMode: "default" });
     // return empty string if the key is not found, similar to the game
     return useCallback(
         (key: string, options?: Record<string, unknown>) => {
@@ -67,7 +61,7 @@ export const useGenTranslation = (): Translator => {
  */
 export const translateCategory = (
     category: Category,
-    translator: Translator = translateUI,
+    translator: TranslatorFn = translateUI,
 ): string => {
     return translator(`category.${category}`);
 };
@@ -79,7 +73,7 @@ export const translateCategory = (
  */
 export const translateActorOrAsIs = (
     actor: string,
-    translator: Translator = translateGen,
+    translator: TranslatorFn = translateGen,
 ): string => {
     const translated = translator(`actor.${actor}.name`);
     if (!translated) {

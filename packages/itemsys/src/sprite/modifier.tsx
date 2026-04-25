@@ -1,15 +1,15 @@
 import { makeStyles, mergeClasses } from "@fluentui/react-components";
 import { memo } from "react";
 
-import { ModifierMetadata } from "./modifier_meta.ts";
+import { ModifierMetadata } from "../generated/modifier_sprite_meta.ts";
 
-export type ModifierSpriteProps = {
+export interface ModifierSpriteProps {
     /** Name of the special status to show */
     status: string;
 
     /** Optional size of the sprite, default is 20 */
     size?: number;
-};
+}
 
 const useStyles = makeStyles({
     sprite: {

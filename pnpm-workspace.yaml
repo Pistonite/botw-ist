@@ -2,7 +2,7 @@ packages:
   # - packages/app
   # - packages/intwc
   # - packages/intwc/vite-plugin
-  # - packages/itemsys
+  - packages/itemsys
   # - packages/localization
   # - packages/parser-legacy
   # - packages/runtime-wasm
@@ -12,9 +12,9 @@ packages:
 
 catalog:
   mono-dev: github:pistonight/mono-dev#dist
-  '@pistonite/pure': ^0.29.4
-  '@pistonite/celera': ^0.1.1
-  '@pistonite/workex': ^0.2.0
+  '@pistonite/pure': ^0.29.5
+  '@pistonite/celera': ^0.1.3
+  '@pistonite/workex': ^0.2.1
   lru-cache: ^11.3.5
   react: ^19.2.5
   react-dom: ^19.2.5

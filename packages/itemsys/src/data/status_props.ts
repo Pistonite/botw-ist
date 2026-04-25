@@ -13,7 +13,7 @@ import {
 } from "./enum_utils.ts";
 
 /** Display props for special status (i.e. the box shown on the top-right of the item) */
-export type StatusProps = {
+export interface StatusProps {
     /** The special status to display on the item slot */
     status: SpecialStatus;
 
@@ -33,7 +33,7 @@ export type StatusProps = {
      * make special status values more visible in the UI (such as WMC meal)
      */
     isAlternativeColor: boolean;
-};
+}
 /** Get the status props for an item slot */
 export const getStatusProps = (
     actor: string,
@@ -112,7 +112,7 @@ export const getStatusPropsForEquipment = (
 };
 
 /** Display props for one specific WeaponModifier.*/
-export type WeaponModifierStatusProps = {
+export interface WeaponModifierStatusProps {
     /** The special status corresponding to the modifier */
     status: SpecialStatus;
 
@@ -133,7 +133,7 @@ export type WeaponModifierStatusProps = {
      * for LongThrow, RapidFire, SurfMaster
      */
     modifierValue: string;
-};
+}
 
 export const getWeaponModifierStatusPropList = (
     actor: string,

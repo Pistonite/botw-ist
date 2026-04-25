@@ -10,10 +10,10 @@ use super::canvas::Canvas;
 pub fn run() -> cu::Result<()> {
     let home = find_root()?;
     let icons_dir = home.join("icons");
-    cu::ensure!(icons_dir.exists(), "icons deps needs to be pulled to build sprites.");
+    cu::ensure!(icons_dir.exists(), "icons deps needs to be pulled to build sprites.")?;
 
     let itemsys_dir = home.parent_abs()?.join("itemsys");
-    let src_dir = itemsys_dir.join("src").join("sprite");
+    let src_dir = itemsys_dir.join("src").join("generated");
     cu::fs::make_dir(&src_dir)?;
     let sprites_dir = home.join("public").join("sprites");
     cu::fs::make_dir(&sprites_dir)?;
@@ -64,7 +64,7 @@ fn generate_actors(
 
     // add the fallback "dummy" image
     let dummy_path = special_dir.join("Dummy.png");
-    cu::ensure!(dummy_path.exists(), "cannot find dummy image: '{}'", dummy_path.display());
+    cu::ensure!(dummy_path.exists(), "cannot find dummy image: '{}'", dummy_path.display())?;
     chunks.last_mut().unwrap().push(dummy_path);
 
     const SPRITES_PER_SIDE: u32 = 16;
@@ -74,7 +74,7 @@ fn generate_actors(
         let len = chunk.len();
         let max = (SPRITES_PER_SIDE * SPRITES_PER_SIDE) as usize;
         cu::info!("actor chunk {i}: {len}/{max} images");
-        cu::ensure!(len <= max, "actor chunk {i} is too big");
+        cu::ensure!(len <= max, "actor chunk {i} is too big")?;
     }
 
     // load the individual icons into sprite sheets
@@ -129,7 +129,7 @@ fn generate_actors(
     ];
 
     cu::fs::write(
-        src_dir.join("actor_meta.ts"),
+        src_dir.join("actor_sprite_meta.ts"),
         metadata_ts.to_string(),
     )?;
 
@@ -147,7 +147,7 @@ fn generate_modifiers(
     let len = modifier_chunk.len();
     let max = (SPRITES_PER_SIDE * SPRITES_PER_SIDE) as usize;
     cu::info!("modifier chunk: {len}/{max} images");
-    cu::ensure!(len <= max, "too many modifiers");
+    cu::ensure!(len <= max, "too many modifiers")?;
 
     let mut modifier_sheet = SpriteSheet::new(0);
     let modifier_path = sprites_dir.join("modifiers.webp");
@@ -177,7 +177,7 @@ fn generate_modifiers(
     ];
 
     std::fs::write(
-        src_dir.join("modifier_meta.ts"),
+        src_dir.join("modifier_sprite_meta.ts"),
         metadata_ts.to_string(),
     )?;
     Ok(())
@@ -189,15 +189,15 @@ fn find_images(data_dir: &Path, profiles: &[&str]) -> cu::Result<Vec<PathBuf>> {
     let mut out = Vec::new();
     for profile in profiles {
         let profile_dir = data_dir.join(profile);
-        cu::ensure!(profile_dir.exists(), "profile directory does not exist: '{}'", profile_dir.display());
+        cu::ensure!(profile_dir.exists(), "profile directory does not exist: '{}'", profile_dir.display())?;
 
         let mut images = Vec::new();
         for entry in profile_dir.read_dir()? {
             let entry = entry?;
             let path = entry.path();
             cu::ensure!(path.is_file(), 
-                "not a file: '{}'", path.display()
-            );
+                "'{}'", path.display()
+            )?;
             images.push(path);
         }
         cu::debug!("profile: {} ({} actors)", profile, images.len());
@@ -217,18 +217,8 @@ fn find_root() -> cu::Result<PathBuf> {
         .ok_or_else(|| cu::fmterr!("Could not find parent of exe"))?;
     let mut path = root_path.to_path_buf();
     // check
-    path.push("package.json");
-    cu::ensure!(path.exists(), "could not find package.json, make sure you are running through the taskfile or cargo.");
-    match cu::fs::read_string(&path) {
-        Ok(x) if x.contains(r#""name": "skybook-itemsys-build","#) => {
-            // found the package
-        }
-        _ => {
-            cu::bail!(
-                "could not verify the root directory is correct. make sure you are running through the taskfile or cargo."
-            );
-        }
-    };
+    path.push("Animate.yaml");
+    cu::ensure!(path.exists(), "could not find Animate.yaml, make sure you are running through the taskfile or cargo.")?;
     path.pop();
     path.normalize()
 }

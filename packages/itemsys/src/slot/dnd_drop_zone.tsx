@@ -3,8 +3,9 @@ import { Button, makeStyles } from "@fluentui/react-components";
 
 import type { ItemDragData } from "@pistonite/skybook-api";
 
+import { log } from "#util";
+
 import { useItemDrag } from "./dnd_context.ts";
-import { dndLog as log } from "./dnd_util.ts";
 
 export type ItemDropZoneProps = {
     /** Hint text displayed on the element while dragging in progress */
@@ -35,12 +36,8 @@ const useStyles = makeStyles({
 });
 
 /** Wrapper to make an area a drop target for dragging items */
-export const ItemDropZone: React.FC<PropsWithChildren<ItemDropZoneProps>> = ({
-    getHint,
-    onDropItem,
-    children,
-    ...props
-}) => {
+export const ItemDropZone: React.FC<PropsWithChildren<ItemDropZoneProps>> = (allProps) => {
+    const { getHint, onDropItem, children, ...props } = allProps;
     const c = useStyles();
     const { data } = useItemDrag();
 

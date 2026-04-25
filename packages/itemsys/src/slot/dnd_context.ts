@@ -2,10 +2,10 @@ import { createContext, useContext } from "react";
 
 import type { ItemDragData } from "@pistonite/skybook-api";
 
-export type ItemDragContextState = {
+export interface ItemDragContextState {
     data: ItemDragData | undefined;
     setData: (data: ItemDragData | undefined) => void;
-};
+}
 
 export const ItemDragContext = createContext<ItemDragContextState>({
     data: undefined,
