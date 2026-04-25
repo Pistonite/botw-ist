@@ -45,7 +45,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn test_ldarb_parse() -> anyhow::Result<()> {
+    pub fn test_ldarb_parse() -> cu::Result<()> {
         let opcode = decode(0x08DFFC20).expect("failed to decode instruction");
         let insn = parse(&opcode)?.expect("failed to parse ldar instruction");
         let mut cpu = Cpu0::default();

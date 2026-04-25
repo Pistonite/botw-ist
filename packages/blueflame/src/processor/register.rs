@@ -280,7 +280,7 @@ impl_reg_value!(i64, signed, u64);
 impl RegValue for f32 {
     #[inline(always)] fn from_32(x: u32) -> Self { f32::from_bits(x) }
     fn from_64(x: u64) -> Self { 
-        log::warn!("reading f32 from a 64-bit register, this is likely invalid");
+        cu::warn!("reading f32 from a 64-bit register, this is likely invalid");
         // this is really invalid operation, so we can do whatever
         // current implementation is only use the lower 32 bits
         f32::from_bits(x as u32)
@@ -298,7 +298,7 @@ impl RegValue for f64 {
     fn from_128(x: u64, _: u64) -> Self {
         // this is really invalid operation, so we can do whatever
         // current implementation is only use the lower 64 bits
-        log::warn!("reading f64 from a 128-bit register, this is likely invalid");
+        cu::warn!("reading f64 from a 128-bit register, this is likely invalid");
         f64::from_bits(x)
     }
     #[inline(always)] fn into_64(self) -> u64 { self.to_bits() }
@@ -310,7 +310,7 @@ impl RegValue for f64 {
 impl<T: MemObject, const SIZE: u32> RegValue for PtrToSized<T, SIZE> {
     // pointer is 64 bit so this is likely invalid
     fn from_32(x: u32) -> Self { 
-        log::warn!("reading pointer from a 32-bit register, this is likely invalid");
+        cu::warn!("reading pointer from a 32-bit register, this is likely invalid");
         Self::new(x as u64)
     }
     #[inline(always)] fn from_64(x: u64) -> Self { Self::new(x) }
@@ -323,7 +323,7 @@ impl<T: MemObject, const SIZE: u32> RegValue for PtrToSized<T, SIZE> {
 impl<T: MemObject, const SIZE: u32, const LEN: usize> RegValue for PtrToArray<T, SIZE, LEN> {
     // pointer is 64 bit so this is likely invalid
     fn from_32(x: u32) -> Self { 
-        log::warn!("reading pointer from a 32-bit register, this is likely invalid");
+        cu::warn!("reading pointer from a 32-bit register, this is likely invalid");
         Self::new(x as u64)
     }
     #[inline(always)] fn from_64(x: u64) -> Self { Self::new(x) }
@@ -494,7 +494,7 @@ impl Flags {
             "cc" => self.check_lo(), // carry clear
             // TODO --cleanup: change condition code to enum
             _ => {
-                log::error!("Unhandled condition code: {cond}");
+                cu::error!("Unhandled condition code: {cond}");
                 panic!("Unhandled condition code: {cond}",)
             }
         }
@@ -570,7 +570,7 @@ mod tests {
         {Cpu0, Process},
     };
     #[test]
-    pub fn eq_condional_passes() -> anyhow::Result<()> {
+    pub fn eq_condional_passes() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         cpu.flags.z = true;
         let mut proc = Process::new_for_test();
@@ -583,7 +583,7 @@ mod tests {
     }
 
     #[test]
-    pub fn eq_condional_fails() -> anyhow::Result<()> {
+    pub fn eq_condional_fails() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         cpu.flags.z = false;
         let mut proc = Process::new_for_test();

@@ -77,7 +77,7 @@ mod tests {
     use crate::processor::{Cpu0, Process, reg};
 
     #[test]
-    pub fn simple_and_test() -> anyhow::Result<()> {
+    pub fn simple_and_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);

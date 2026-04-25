@@ -1,6 +1,6 @@
 use std::ops::ControlFlow;
 
-use derive_more::Constructor;
+use cu::pre::*;
 use disarm64::arm64::InsnOpcode;
 use disarm64::decoder::Opcode;
 
@@ -58,7 +58,7 @@ impl InsnVec {
             return ControlFlow::Continue(());
         }
         let Some(opcode) = disarm64::decoder::decode(bits) else {
-            log::warn!("failed to decode instruction 0x{bits:08x}");
+            cu::warn!("failed to decode instruction 0x{bits:08x}");
             self.insns.push(Entry::CannotDecode(bits));
             return ControlFlow::Break(());
         };
@@ -122,7 +122,7 @@ impl Execute for InsnVec {
 
             match legacy_insn {
                 None => {
-                    log::error!("could not execute instruction, legacy parse failed: {opcode}");
+                    cu::error!("could not execute instruction, legacy parse failed: {opcode}");
                     return Err(Error::BadInstruction(opcode.bits()));
                 }
                 Some(x) => {

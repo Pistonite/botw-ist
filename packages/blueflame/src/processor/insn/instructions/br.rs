@@ -27,7 +27,7 @@ mod tests {
     use super::*;
     use self_::{Cpu0, Process, reg};
     #[test]
-    pub fn simple_br_test() -> anyhow::Result<()> {
+    pub fn simple_br_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         cpu.pc = 0x1000;
         cpu.write(reg!(x[10]), 0x50);

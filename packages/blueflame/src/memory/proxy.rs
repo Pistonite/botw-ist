@@ -2,7 +2,7 @@ use std::panic::UnwindSafe;
 use std::sync::Arc;
 
 use rand_xoshiro::Xoshiro256PlusPlus;
-use rand_xoshiro::rand_core::{RngCore, SeedableRng};
+use rand_xoshiro::rand_core::{Rng, SeedableRng};
 use sha2::{Digest, Sha256};
 
 use crate::memory::{Error, Memory, perm, region};

@@ -29,7 +29,7 @@ pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error
         0 => RegisterType::WReg(rd_idx),
         1 => RegisterType::XReg(rd_idx),
         _ => {
-            log::error!("Invalid decode value for sf in bfm inst: {sf}");
+            cu::error!("Invalid decode value for sf in bfm inst: {sf}");
             return Err(Error::BadInstruction(bits));
         }
     };
@@ -37,7 +37,7 @@ pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error
         0 => RegisterType::WReg(rn_idx),
         1 => RegisterType::XReg(rn_idx),
         _ => {
-            log::error!("Invalid decode value for sf in bfm inst: {sf}");
+            cu::error!("Invalid decode value for sf in bfm inst: {sf}");
             return Err(Error::BadInstruction(bits));
         }
     };
@@ -83,7 +83,7 @@ mod tests {
     use super::*;
     use self_::{Cpu0, Process, insn::paste_insn, reg};
 
-    fn test_bfm(bits: u32, input: u64, expected: u64) -> anyhow::Result<()> {
+    fn test_bfm(bits: u32, input: u64, expected: u64) -> cu::Result<()> {
         let opcode = disarm64::decoder::decode(bits).expect("failed to decode");
         let insn = parse(&opcode)?.unwrap();
         let mut cpu = Cpu0::default();
@@ -96,7 +96,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_full_bitfield() -> anyhow::Result<()> {
+    pub fn test_full_bitfield() -> cu::Result<()> {
         // bfm x0, x1, #0, #63
         test_bfm(
             paste_insn!(20 FC 40 B3),
@@ -106,7 +106,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_low_byte() -> anyhow::Result<()> {
+    pub fn test_low_byte() -> cu::Result<()> {
         // bfm X0, X1, #0, #7
         test_bfm(
             paste_insn!(20 1C 40 B3),
@@ -116,7 +116,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_bits_8_to_15() -> anyhow::Result<()> {
+    pub fn test_bits_8_to_15() -> cu::Result<()> {
         // bfm X0, X1, #8, #15
         test_bfm(
             paste_insn!(20 3C 48 B3),
@@ -126,7 +126,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_upper_half_wrapped() -> anyhow::Result<()> {
+    pub fn test_upper_half_wrapped() -> cu::Result<()> {
         // bfm X0, X1, #32, #47
         test_bfm(
             paste_insn!(20 BC 60 B3),
@@ -136,7 +136,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_middle_word() -> anyhow::Result<()> {
+    pub fn test_middle_word() -> cu::Result<()> {
         // bfm X0, X1, #16, #31
         test_bfm(
             paste_insn!(20 7C 50 B3),
@@ -146,7 +146,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_single_high_bit() -> anyhow::Result<()> {
+    pub fn test_single_high_bit() -> cu::Result<()> {
         // bfm X0, X1, #63, #63
         test_bfm(
             paste_insn!(20 FC 7F B3),
@@ -156,7 +156,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_single_bit_wraparound() -> anyhow::Result<()> {
+    pub fn test_single_bit_wraparound() -> cu::Result<()> {
         // bfm X0, X1, #63, #63
         test_bfm(
             paste_insn!(20 FC 7F B3),

@@ -22,7 +22,7 @@ impl ExecutableInstruction for InsnSbfm {
             RegisterType::XReg(_) => 64,
             RegisterType::WReg(_) => 32,
             _ => {
-                log::error!("sbfm: trying to execute with non general register destination");
+                cu::error!("sbfm: trying to execute with non general register destination");
                 return Err(Error::BadInstruction(0));
             }
         };
@@ -76,7 +76,7 @@ pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error
         0 => RegisterType::WReg(rd_idx),
         1 => RegisterType::XReg(rd_idx),
         _ => {
-            log::error!("Invalid decode value for sf in sbfm inst: {sf}");
+            cu::error!("Invalid decode value for sf in sbfm inst: {sf}");
             return Err(Error::BadInstruction(bits));
         }
     };
@@ -84,7 +84,7 @@ pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error
         0 => RegisterType::WReg(rn_idx),
         1 => RegisterType::XReg(rn_idx),
         _ => {
-            log::error!("Invalid decode value for sf in sbfm inst: {sf}");
+            cu::error!("Invalid decode value for sf in sbfm inst: {sf}");
             return Err(Error::BadInstruction(bits));
         }
     };
@@ -102,7 +102,7 @@ mod tests {
 
     #[test]
     //simple test to make sure that movz instructions don't parse as sbfms
-    pub fn test_sbfm_parse_neg() -> anyhow::Result<()> {
+    pub fn test_sbfm_parse_neg() -> cu::Result<()> {
         let opcode = disarm64::decoder::decode(0x52800088).expect("failed to decode instruction");
         let sbfm_test = parse(&opcode)?;
         assert!(sbfm_test.is_none(), "movz parsed as sbfm");

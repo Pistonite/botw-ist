@@ -184,26 +184,26 @@ impl Memory {
         // return section index, page index, page offset, max page offset
         if !self.heap.check_allocated(addr) {
             if enabled!("mem-strict-heap") {
-                log::error!(
+                cu::error!(
                     "accessing unallocated heap address: 0x{addr:016x} ({})",
                     self.format_addr(addr)
                 );
                 return Err(Error::HeapUnallocated(addr, flags));
             }
-            log::warn!(
+            cu::warn!(
                 "bypassed - accessing unallocated heap address: 0x{addr:016x} ({})",
                 self.format_addr(addr)
             );
         }
         let Some(section_idx) = self.find_section_idx(addr) else {
             if enabled!("mem-strict-section") {
-                log::error!(
+                cu::error!(
                     "accessing invalid section: 0x{addr:016x} ({})",
                     self.format_addr(addr)
                 );
                 return Err(Error::InvalidSection(addr, flags));
             }
-            log::warn!(
+            cu::warn!(
                 "bypassed - accessing invalid section: 0x{addr:016x} ({})",
                 self.format_addr(addr)
             );
@@ -213,13 +213,13 @@ impl Memory {
         // permission check
         if !flags.all(AccessFlag::Force) && !section.flags.all(flags.perms()) {
             if enabled!("mem-permission") {
-                log::error!(
+                cu::error!(
                     "permission denied: 0x{addr:016x} ({})",
                     self.format_addr(addr)
                 );
                 return Err(Error::PermissionDenied(addr, flags));
             }
-            log::warn!(
+            cu::warn!(
                 "bypassed - accessing section without permission: 0x{addr:016x} ({})",
                 self.format_addr(addr)
             );

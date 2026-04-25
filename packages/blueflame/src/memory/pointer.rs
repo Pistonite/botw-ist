@@ -501,7 +501,7 @@ impl Ptr![u8] {
         // let lossy = utf8_error.into_utf8_lossy();
         let lossy = String::from_utf8_lossy(&utf8_error.into_bytes()).into_owned();
 
-        log::warn!(
+        cu::warn!(
             "invalid utf-8 read from pointer: {:016x}, lossy value = {lossy}",
             self.to_raw()
         );
@@ -547,7 +547,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_pointers() -> anyhow::Result<()> {
+    pub fn test_pointers() -> cu::Result<()> {
         let mut mem = Memory::new_for_test();
         let ts = TestSub {
             one: 0x15,

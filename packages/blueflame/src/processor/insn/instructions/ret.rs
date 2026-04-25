@@ -64,7 +64,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn simple_ret_test_with_arg() -> anyhow::Result<()> {
+    pub fn simple_ret_test_with_arg() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         cpu.stack_trace.push_bl(1000, 0x50 - 4);

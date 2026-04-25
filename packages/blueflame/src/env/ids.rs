@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use cu::pre::*;
 
 /// Type for static data files used by BlueFlame
 #[derive(

@@ -45,7 +45,7 @@ pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error
         0 => RegisterType::SReg,
         1 => RegisterType::DReg,
         _ => {
-            log::error!("Invalid sf value in fsub instruction: {sf}");
+            cu::error!("Invalid sf value in fsub instruction: {sf}");
             return Err(Error::BadInstruction(bits));
         }
     };
@@ -63,7 +63,7 @@ mod tests {
     use self_::{Cpu0, Process, insn::paste_insn, reg};
 
     #[test]
-    pub fn test_fsub_parse() -> anyhow::Result<()> {
+    pub fn test_fsub_parse() -> cu::Result<()> {
         // `fsub d0, d1, d2`: 0x1E623820
         let opcode = decode(paste_insn!(20 38 62 x1E)).expect("failed to decode");
         let insn = parse(&opcode)?.unwrap();

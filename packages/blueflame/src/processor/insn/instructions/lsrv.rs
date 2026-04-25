@@ -37,7 +37,7 @@ pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error
         0 => RegisterType::WReg(rd_idx),
         1 => RegisterType::XReg(rd_idx),
         _ => {
-            log::error!("Invalid sf value in lsrv instruction: {sf}");
+            cu::error!("Invalid sf value in lsrv instruction: {sf}");
             return Err(Error::BadInstruction(bits));
         }
     };
@@ -45,7 +45,7 @@ pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error
         0 => RegisterType::WReg(rn_idx),
         1 => RegisterType::XReg(rn_idx),
         _ => {
-            log::error!("Invalid sf value in lsrv instruction: {sf}");
+            cu::error!("Invalid sf value in lsrv instruction: {sf}");
             return Err(Error::BadInstruction(bits));
         }
     };
@@ -53,7 +53,7 @@ pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error
         0 => RegisterType::WReg(rm_idx),
         1 => RegisterType::XReg(rm_idx),
         _ => {
-            log::error!("Invalid sf value in lsrv instruction: {sf}");
+            cu::error!("Invalid sf value in lsrv instruction: {sf}");
             return Err(Error::BadInstruction(bits));
         }
     };
@@ -67,7 +67,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn test_lsrv_parse() -> anyhow::Result<()> {
+    pub fn test_lsrv_parse() -> cu::Result<()> {
         let opcode = decode(0x1AC32441).expect("failed to decode");
         let insn = parse(&opcode)?.expect("failed to parse");
         let mut cpu = Cpu0::default();

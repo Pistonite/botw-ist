@@ -46,7 +46,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn tbz_does_branch() -> anyhow::Result<()> {
+    pub fn tbz_does_branch() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         cpu.pc = 0x1000;
         cpu.write(reg!(x[30]), 4);
@@ -58,7 +58,7 @@ mod tests {
     }
 
     #[test]
-    pub fn tbz_does_not_branch() -> anyhow::Result<()> {
+    pub fn tbz_does_not_branch() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         cpu.pc = 0x1000;
         cpu.write(reg!(x[30]), 4);

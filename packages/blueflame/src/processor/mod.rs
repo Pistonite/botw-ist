@@ -46,12 +46,10 @@ pub mod glue {
                 RegisterType::XReg(i) => reg!(x[i]),
                 RegisterType::WReg(i) => reg!(w[i]),
                 RegisterType::BReg(_) => {
-                    log::error!("cannot convert b reg to reg name");
-                    panic!("cannot convert b reg to reg name")
+                    cu::panicand!(error!("cannot convert b reg to reg name"));
                 }
                 RegisterType::HReg(_) => {
-                    log::error!("cannot convert h reg to reg name");
-                    panic!("cannot convert h reg to reg name")
+                    cu::panicand!(error!("cannot convert h reg to reg name"));
                 }
                 RegisterType::SReg(i) => reg!(s[i]),
                 RegisterType::DReg(i) => reg!(d[i]),
@@ -86,7 +84,7 @@ pub mod glue {
             (idx, 0)
         };
         let Ok(reg_num) = idx.parse::<RegIndex>() else {
-            log::error!("Failed to parse register: {reg}, failed to parse index: {idx}");
+            cu::error!("Failed to parse register: {reg}, failed to parse index: {idx}");
             panic!("Invalid register format: {reg}");
         };
         match reg_type.to_lowercase().as_str() {
@@ -102,12 +100,12 @@ pub mod glue {
                 64 => RegisterType::DReg(reg_num),
                 128 => RegisterType::QReg(reg_num),
                 _ => {
-                    log::error!("Failed to parse vector register: {reg}");
+                    cu::error!("Failed to parse vector register: {reg}");
                     panic!("Unknown register type: {reg}");
                 }
             },
             _ => {
-                log::error!("Failed to parse register: {reg}");
+                cu::error!("Failed to parse register: {reg}");
                 panic!("Unknown register type: {reg}");
             }
         }
@@ -132,20 +130,17 @@ pub mod glue {
             RegisterValue::DReg(v) => i64::from_le_bytes(v.to_le_bytes()),
             RegisterValue::QReg(lo, hi) => {
                 if hi != 0 {
-                    log::error!(
+                    cu::panicand!(error!(
                         "QReg read with upper bits non-zero, this is not implemented. pc=0x{:016x}",
                         cpu.pc
-                    );
-                    panic!(
-                        "QReg read with upper bits non-zero, this is not implemented. pc=0x{:016x}",
-                        cpu.pc
-                    );
+                    ));
                 }
                 lo as i64
             }
             _ => {
-                log::error!("Invalid register read for general register: {reg:?}");
-                panic!("Invalid register read for general register: {reg:?}");
+                cu::panicand!(error!(
+                    "Invalid register read for general register: {reg:?}"
+                ));
             }
         }
     }
@@ -193,10 +188,9 @@ pub mod glue {
             RegisterType::WZR => {}
             RegisterType::XZR => {}
             _ => {
-                log::error!(
+                cu::panicand!(error!(
                     "Invalid register write for general register: {reg:?} with value {val}"
-                );
-                panic!("Invalid register write for general register: {reg:?} with value {val}");
+                ));
             }
         }
     }
@@ -242,8 +236,9 @@ pub mod glue {
             RegisterType::SReg(_) => glue::write_reg(cpu, reg, &RegisterValue::SReg(val as f32)),
             RegisterType::DReg(_) => glue::write_reg(cpu, reg, &RegisterValue::DReg(val)),
             _ => {
-                log::error!("Invalid register write for float register: {reg:?} with value {val}");
-                panic!("Invalid register write for float register: {reg:?} with value {val}");
+                cu::panicand!(error!(
+                    "Invalid register write for float register: {reg:?} with value {val}"
+                ));
             }
         }
     }
@@ -254,8 +249,7 @@ pub mod glue {
             RegisterValue::SReg(v) => v as f64,
             RegisterValue::DReg(v) => v,
             _ => {
-                log::error!("Invalid register read for float register: {reg:?}");
-                panic!("Invalid register read for float register: {reg:?}");
+                cu::panicand!(error!("Invalid register read for float register: {reg:?}"));
             }
         }
     }
@@ -322,15 +316,10 @@ pub mod glue {
                         }
                         //the distinct signed/unsigned extend behavior between uxtw and lsl (technically sxtw)
                         _ => {
-                            log::error!(
-                                "unhandled extra op: {}, shift={}",
-                                extra_op.operation,
-                                extra_op.shift_val
-                            );
-                            panic!(
+                            cu::panicand!(error!(
                                 "unhandled extra op: {}, shift={}",
                                 extra_op.operation, extra_op.shift_val
-                            );
+                            ));
                         }
                     }
                 } else {
@@ -382,15 +371,10 @@ pub mod glue {
                         }
                         //the distinct signed/unsigned extend behavior between uxtw and lsl (technically sxtw)
                         _ => {
-                            log::error!(
+                            cu::panicand!(error!(
                                 "unhandled extra op {}, shift={}",
-                                extra_op.operation,
-                                extra_op.shift_val
-                            );
-                            panic!(
-                                "unhandled extra op: {}, shift={}",
                                 extra_op.operation, extra_op.shift_val
-                            );
+                            ));
                         }
                     }
                 } else {
@@ -417,8 +401,10 @@ pub mod glue {
                 "lsl" => val << extra_op.shift_val,
                 "lsr" => val >> extra_op.shift_val,
                 _ => {
-                    log::error!("unhandled extra op unsigned: {}", extra_op.operation);
-                    panic!("unhandled extra op unsigned: {}", extra_op.operation);
+                    cu::panicand!(error!(
+                        "unhandled extra op unsigned: {}",
+                        extra_op.operation
+                    ));
                 }
             }
         } else {

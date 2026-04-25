@@ -88,7 +88,7 @@ mod tests {
     use self_::{Cpu0, Process};
 
     #[test]
-    pub fn simple_fcmp_test_less() -> anyhow::Result<()> {
+    pub fn simple_fcmp_test_less() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);
@@ -103,7 +103,7 @@ mod tests {
     }
 
     #[test]
-    pub fn simple_fcmp_test_equal() -> anyhow::Result<()> {
+    pub fn simple_fcmp_test_equal() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);
@@ -118,7 +118,7 @@ mod tests {
     }
 
     #[test]
-    pub fn simple_fcmp_test_greater() -> anyhow::Result<()> {
+    pub fn simple_fcmp_test_greater() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);

@@ -66,7 +66,7 @@ fn ldur_core(core: &mut Core, xd: RegisterType, address: u64) -> Result<(), Erro
             return Ok(());
         }
         _ => {
-            log::error!("Invalid register type for ldur: {xd:?}");
+            cu::error!("Invalid register type for ldur: {xd:?}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -174,7 +174,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn simple_ldur_test() -> anyhow::Result<()> {
+    pub fn simple_ldur_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         Ptr!(<i32>(32)).store(&1234, proc.memory_mut())?;

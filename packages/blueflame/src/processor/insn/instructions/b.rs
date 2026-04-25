@@ -28,7 +28,7 @@ mod tests {
     use super::*;
     use self_::{Cpu0, Process};
     #[test]
-    pub fn simple_b_test() -> anyhow::Result<()> {
+    pub fn simple_b_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);

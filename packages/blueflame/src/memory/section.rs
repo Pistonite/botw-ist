@@ -50,7 +50,7 @@ impl Section {
         section: &ArchivedSection,
     ) -> Result<Self, Error> {
         let section_rel_start = section.rel_start.to_native();
-        log::debug!(
+        cu::debug!(
             "constructing section for module `{module_name}`, at rel_start=0x{section_rel_start:08x}, size=0x{byte_size:08x}"
         );
 
@@ -98,7 +98,7 @@ impl Section {
         };
         let flags = flags | section_flags;
 
-        log::debug!(
+        cu::debug!(
             "section for module `{module_name}` constructed at 0x{section_abs_start:08x}, size=0x{byte_size:08x}, flags: {flags}"
         );
 

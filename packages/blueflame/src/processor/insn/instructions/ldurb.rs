@@ -157,7 +157,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn simple_ldurb_test() -> anyhow::Result<()> {
+    pub fn simple_ldurb_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         Ptr!(<i32>(32)).store(&1234, proc.memory_mut())?;

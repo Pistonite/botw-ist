@@ -58,7 +58,7 @@ impl LegacyInstruction {
         );
 
         if insn.is_none() {
-            log::error!("failed to parse instruction as string: {insn_string}");
+            cu::error!("failed to parse instruction as string: {insn_string}");
         }
 
         insn
@@ -168,7 +168,7 @@ fn parse_instruction(opcode: &str, args: &str) -> Option<Box<dyn ExecutableInstr
         "ubfm" => xxx::ubfm::parse(args),
         "movk" => None,
         _ => {
-            log::error!("unknown opcode when parsing instruction as string: {opcode}");
+            cu::error!("unknown opcode when parsing instruction as string: {opcode}");
             None
         }
     }
@@ -189,7 +189,7 @@ pub fn parse_auxiliary(fourth_arg: Option<&String>) -> Option<Option<AuxiliaryOp
             match get_imm_val(&split_arg[1]) {
                 Some(val) => val,
                 None => {
-                    log::error!(
+                    cu::error!(
                         "Failed to parse shift value from argument: {}",
                         split_arg[1]
                     );
@@ -216,7 +216,7 @@ pub fn get_imm_val(imm: &str) -> Option<i64> {
         match u64::from_str_radix(hex, 16) {
             Ok(val) => Some((val as i64) * mult),
             Err(_) => {
-                log::error!("get_imm_val failed to parse hex value: {hex}");
+                cu::error!("get_imm_val failed to parse hex value: {hex}");
                 None
             }
         }
@@ -224,7 +224,7 @@ pub fn get_imm_val(imm: &str) -> Option<i64> {
         match no_dash.parse::<i64>() {
             Ok(val) => Some(val * mult),
             Err(_) => {
-                log::error!("get_imm_val failed to parse value (decimal): {no_dash}");
+                cu::error!("get_imm_val failed to parse value (decimal): {no_dash}");
                 None
             }
         }
@@ -235,7 +235,7 @@ pub fn get_label_val(imm: &str) -> Option<u64> {
     match u64::from_str_radix(stripped, 16) {
         Ok(val) => Some(val),
         Err(_) => {
-            log::error!("get_label_val failed to parse label value: {stripped}");
+            cu::error!("get_label_val failed to parse label value: {stripped}");
             None
         }
     }
@@ -248,7 +248,7 @@ pub fn convert_to_f64(input: &str) -> Option<f64> {
     match trimmed_input.parse::<f64>() {
         Ok(val) => Some(val),
         Err(_) => {
-            log::error!("convert_to_f64 failed to parse value: {trimmed_input}");
+            cu::error!("convert_to_f64 failed to parse value: {trimmed_input}");
             None
         }
     }

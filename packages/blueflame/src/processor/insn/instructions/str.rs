@@ -64,7 +64,7 @@ fn str_core(core: &mut Core, xt: RegisterType, address: u64) -> Result<(), Error
             Ptr!(<i32>(address)).store(&(xt_val as i32), core.proc.memory_mut())?
         }
         _ => {
-            log::error!("Invalid register write: {xt:?} at address {address:#016x}");
+            cu::error!("Invalid register write: {xt:?} at address {address:#016x}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -171,7 +171,7 @@ mod tests {
     use self_::{Cpu0, Process};
 
     #[test]
-    pub fn simple_str_test() -> anyhow::Result<()> {
+    pub fn simple_str_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);
