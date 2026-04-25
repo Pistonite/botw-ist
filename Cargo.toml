@@ -8,7 +8,7 @@ members = [
     "packages/parser", 
     "packages/runtime",
     "packages/runtime-tests",
-    # "packages/runtime-wasm",
+    "packages/runtime-wasm",
     "packages/skybook-api",
 ]
 

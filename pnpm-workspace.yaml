@@ -4,7 +4,7 @@ packages:
   # - packages/intwc/vite-plugin
   # - packages/parser-legacy
   # - packages/runtime-wasm
-  # - packages/runtime-worker
+  - packages/runtime-worker
   # - packages/server
   - packages/localization
   - packages/itemsys

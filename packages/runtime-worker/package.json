@@ -13,6 +13,6 @@
         "lru-cache": "catalog:"
     },
     "devDependencies": {
-        "mono-dev": "workspace:*"
+        "mono-dev": "catalog:"
     }
 }

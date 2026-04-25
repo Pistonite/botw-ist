@@ -2,11 +2,13 @@ version: '3'
 
 includes:
   ecma:
-    taskfile: ../mono-dev/task/ecma.yaml
+    taskfile: ./node_modules/mono-dev/task/ecma.yaml
     internal: true
+    optional: true
   cargo:
-    taskfile: ../mono-dev/task/cargo.yaml
+    taskfile: ./node_modules/mono-dev/task/cargo.yaml
     internal: true
+    optional: true
 
 tasks:
   build:
@@ -17,7 +19,7 @@ tasks:
 
   build-wasm-types:
     cmds:
-      - $(which mkdir) -p node_modules/.wasm-out-type
+      - mkdir -p node_modules/.wasm-out-type
       - wasm-pack build -t no-modules --no-pack --no-opt --out-dir node_modules/.wasm-out-type
 
   build-wasm:
@@ -27,7 +29,7 @@ tasks:
           TARGET_DIR: ../../target
           PACKAGE: skybook_runtime_wasm
           WASM_PACK_ARGS: -t no-modules --no-pack
-      - $(which mkdir) -p node_modules/.wasm-out-type
+      - mkdir -p node_modules/.wasm-out-type
       - cp pkg/skybook_runtime_wasm.d.ts node_modules/.wasm-out-type
 
   clean-dist:
@@ -104,7 +106,7 @@ tasks:
       COMMIT:
         sh: curl {{.ORIGIN}}/commit | cut -c1-8
     cmds:
-      - $(which mkdir) -p dist
+      - mkdir -p dist
       - wget -O dist/worker.js {{.ORIGIN}}/runtime/worker-{{.COMMIT}}.min.js
       - wget -O dist/skybook.js {{.ORIGIN}}/runtime/skybook-{{.COMMIT}}.min.js
       - wget -O dist/skybook.wasm {{.ORIGIN}}/runtime/skybook-{{.COMMIT}}.wasm
