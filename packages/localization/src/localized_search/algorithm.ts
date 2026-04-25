@@ -99,23 +99,23 @@ export const searchInAllLanguages = (query: string): Promise<SearchEntryWithScor
 
 export type SearchFn = (query: string) => SearchEntryWithScore[];
 
-type CookEffectStrings = {
+interface CookEffectStrings {
     effect: string;
     effect_feminine: string;
     effect_masculine: string;
     effect_neuter: string;
     effect_plural: string;
-};
+}
 
 /** An entry in the search data */
-export type SearchEntry = {
+export interface SearchEntry {
     /** the actor for this entry */
     actor: string;
     /** the localized name for this actor */
     names: string[];
     /** the cook effect ID */
     cookEffect: number;
-};
+}
 
 export type SearchEntryWithScore = SearchEntry & {
     score: number;

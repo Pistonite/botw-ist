@@ -21,12 +21,27 @@ catalogs:
     '@pistonite/workex':
       specifier: ^0.2.1
       version: 0.2.1
+    '@types/js-yaml':
+      specifier: ^4.0.9
+      version: 4.0.9
+    '@types/node':
+      specifier: ^25.6.0
+      version: 25.6.0
     '@types/react':
       specifier: ^19.2.14
       version: 19.2.14
+    fuse.js:
+      specifier: ^7.3.0
+      version: 7.3.0
+    js-yaml:
+      specifier: ^4.1.1
+      version: 4.1.1
+    lru-cache:
+      specifier: ^11.3.5
+      version: 11.3.5
     mono-dev:
       specifier: github:pistonight/mono-dev#dist
-      version: 0.3.26
+      version: 0.3.27
 
 importers:
 
@@ -37,7 +52,7 @@ importers:
         version: 9.39.4
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/143a6f9d32478a6bdb95f43ea905b05941e48cff(@babel/runtime@7.29.2)(@types/node@22.15.18)(jsdom@26.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/be44b81c13e285b00a9205c291aa062070f93e36(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@26.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
   packages/itemsys:
     dependencies:
@@ -65,7 +80,44 @@ importers:
         version: 19.2.14
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/143a6f9d32478a6bdb95f43ea905b05941e48cff(@babel/runtime@7.29.2)(@types/node@22.15.18)(jsdom@26.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/be44b81c13e285b00a9205c291aa062070f93e36(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@26.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+
+  packages/localization:
+    dependencies:
+      '@pistonite/celera':
+        specifier: 'catalog:'
+        version: 0.1.3(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
+      '@pistonite/pure':
+        specifier: 'catalog:'
+        version: 0.29.5
+      '@pistonite/skybook-api':
+        specifier: workspace:*
+        version: link:../skybook-api
+      '@pistonite/skybook-itemsys':
+        specifier: workspace:*
+        version: link:../itemsys
+      fuse.js:
+        specifier: 'catalog:'
+        version: 7.3.0
+      lru-cache:
+        specifier: 'catalog:'
+        version: 11.3.5
+    devDependencies:
+      '@types/js-yaml':
+        specifier: 'catalog:'
+        version: 4.0.9
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.6.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
+      js-yaml:
+        specifier: 'catalog:'
+        version: 4.1.1
+      mono-dev:
+        specifier: 'catalog:'
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/be44b81c13e285b00a9205c291aa062070f93e36(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@26.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
   packages/skybook-api:
     dependencies:
@@ -78,7 +130,7 @@ importers:
         version: 0.29.5
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/143a6f9d32478a6bdb95f43ea905b05941e48cff(@babel/runtime@7.29.2)(@types/node@22.15.18)(jsdom@26.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/be44b81c13e285b00a9205c291aa062070f93e36(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@26.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
 packages:
 
@@ -1045,11 +1097,14 @@ packages:
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
 
+  '@types/js-yaml@4.0.9':
+    resolution: {integrity: sha512-k4MGaQl5TGo/iipqb2UDG2UwjXziSWkh0uysQelTlJpX1qGlpUZYm8PnO4DxG1qBomtJUdYJ6qR6xdIah10JLg==}
+
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
-  '@types/node@22.15.18':
-    resolution: {integrity: sha512-v1DKRfUdyW+jJhZNEI1PYy29S2YRxMV5AOO/x/SjKmW0acCIOqmbj6Haf9eHAhsPmrhlHSxEhv/1WszcLWV4cg==}
+  '@types/node@25.6.0':
+    resolution: {integrity: sha512-+qIYRKdNYJwY3vRCZMdJbPLJAtGjQBudzZzdzwQYkEPQd+PJGixUL5QfvCLDaULoLv+RhT3LDkwEfKaAkgSmNQ==}
 
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
@@ -1540,6 +1595,10 @@ packages:
   function-once@3.0.1:
     resolution: {integrity: sha512-bE3E8REk4jANDot3l0sLFkXgywBwzFKsmbwdnVHLJUnt/3kV6dNG0oJJqoRBuS1Z9Lr4ZoQgwV0ZNLDgWDbv7Q==}
 
+  fuse.js@7.3.0:
+    resolution: {integrity: sha512-plz8RVjfcDedTGfVngWH1jmJvBvAwi1v2jecfDerbEnMcmOYUEEwKFTHbNoCiYyzaK2Ws8lABkTCcRSqCY1q4w==}
+    engines: {node: '>=10'}
+
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
@@ -1798,6 +1857,10 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
+  lru-cache@11.3.5:
+    resolution: {integrity: sha512-NxVFwLAnrd9i7KUBxC4DrUhmgjzOs+1Qm50D3oF1/oL+r1NpZ4gA7xvG0/zJ8evR7zIKn4vLf7qTNduWFtCrRw==}
+    engines: {node: 20 || >=22}
+
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
@@ -1821,9 +1884,9 @@ packages:
   minimatch@3.1.5:
     resolution: {integrity: sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==}
 
-  mono-dev@https://codeload.github.com/pistonight/mono-dev/tar.gz/143a6f9d32478a6bdb95f43ea905b05941e48cff:
-    resolution: {tarball: https://codeload.github.com/pistonight/mono-dev/tar.gz/143a6f9d32478a6bdb95f43ea905b05941e48cff}
-    version: 0.3.26
+  mono-dev@https://codeload.github.com/pistonight/mono-dev/tar.gz/be44b81c13e285b00a9205c291aa062070f93e36:
+    resolution: {tarball: https://codeload.github.com/pistonight/mono-dev/tar.gz/be44b81c13e285b00a9205c291aa062070f93e36}
+    version: 0.3.27
     hasBin: true
 
   ms@2.1.3:
@@ -2148,8 +2211,8 @@ packages:
   uc.micro@2.1.0:
     resolution: {integrity: sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A==}
 
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+  undici-types@7.19.2:
+    resolution: {integrity: sha512-qYVnV5OEm2AW8cJMCpdV20CDyaN3g0AjDlOGf1OW4iaDEx8MwdtChUp4zu4H0VP3nDRF/8RKWH+IPp9uW0YGZg==}
 
   undici@7.25.0:
     resolution: {integrity: sha512-xXnp4kTyor2Zq+J1FfPI6Eq3ew5h6Vl0F/8d9XU5zZQf1tX9s2Su1/3PiMmUANFULpmksxkClamIZcaUqryHsQ==}
@@ -3963,14 +4026,14 @@ snapshots:
   '@rolldown/binding-win32-x64-msvc@1.0.0-rc.17':
     optional: true
 
-  '@rolldown/plugin-babel@0.2.3(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.17)(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3))':
+  '@rolldown/plugin-babel@0.2.3(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.17)(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))':
     dependencies:
       '@babel/core': 7.29.0
       picomatch: 4.0.4
       rolldown: 1.0.0-rc.17
     optionalDependencies:
       '@babel/runtime': 7.29.2
-      vite: 8.0.10(@types/node@22.15.18)(yaml@2.8.3)
+      vite: 8.0.10(@types/node@25.6.0)(yaml@2.8.3)
 
   '@rolldown/pluginutils@1.0.0-rc.17': {}
 
@@ -4023,12 +4086,13 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
+  '@types/js-yaml@4.0.9': {}
+
   '@types/json-schema@7.0.15': {}
 
-  '@types/node@22.15.18':
+  '@types/node@25.6.0':
     dependencies:
-      undici-types: 6.21.0
-    optional: true
+      undici-types: 7.19.2
 
   '@types/react-dom@19.2.3(@types/react@19.2.14)':
     dependencies:
@@ -4162,12 +4226,12 @@ snapshots:
       '@typescript/native-preview-win32-arm64': 7.0.0-dev.20260421.2
       '@typescript/native-preview-win32-x64': 7.0.0-dev.20260421.2
 
-  '@vitejs/plugin-react@6.0.1(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.17)(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3)))(babel-plugin-react-compiler@1.0.0)(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3))':
+  '@vitejs/plugin-react@6.0.1(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.17)(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3)))(babel-plugin-react-compiler@1.0.0)(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.7
-      vite: 8.0.10(@types/node@22.15.18)(yaml@2.8.3)
+      vite: 8.0.10(@types/node@25.6.0)(yaml@2.8.3)
     optionalDependencies:
-      '@rolldown/plugin-babel': 0.2.3(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.17)(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3))
+      '@rolldown/plugin-babel': 0.2.3(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.17)(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))
       babel-plugin-react-compiler: 1.0.0
 
   '@vitest/expect@4.1.5':
@@ -4179,13 +4243,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.0
 
-  '@vitest/mocker@4.1.5(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3))':
+  '@vitest/mocker@4.1.5(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))':
     dependencies:
       '@vitest/spy': 4.1.5
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 8.0.10(@types/node@22.15.18)(yaml@2.8.3)
+      vite: 8.0.10(@types/node@25.6.0)(yaml@2.8.3)
 
   '@vitest/pretty-format@4.1.5':
     dependencies:
@@ -4564,6 +4628,8 @@ snapshots:
 
   function-once@3.0.1: {}
 
+  fuse.js@7.3.0: {}
+
   gensync@1.0.0-beta.2: {}
 
   get-current-package@1.0.1:
@@ -4793,6 +4859,8 @@ snapshots:
   lru-cache@10.4.3:
     optional: true
 
+  lru-cache@11.3.5: {}
+
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
@@ -4822,14 +4890,14 @@ snapshots:
     dependencies:
       brace-expansion: 1.1.14
 
-  mono-dev@https://codeload.github.com/pistonight/mono-dev/tar.gz/143a6f9d32478a6bdb95f43ea905b05941e48cff(@babel/runtime@7.29.2)(@types/node@22.15.18)(jsdom@26.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3):
+  mono-dev@https://codeload.github.com/pistonight/mono-dev/tar.gz/be44b81c13e285b00a9205c291aa062070f93e36(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@26.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3):
     dependencies:
       '@babel/core': 7.29.0
       '@eslint/js': 9.39.4
       '@prettier/cli': 0.10.0(prettier@3.4.2)
-      '@rolldown/plugin-babel': 0.2.3(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.17)(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3))
+      '@rolldown/plugin-babel': 0.2.3(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.17)(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))
       '@typescript/native-preview': 7.0.0-dev.20260421.2
-      '@vitejs/plugin-react': 6.0.1(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.17)(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3)))(babel-plugin-react-compiler@1.0.0)(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3))
+      '@vitejs/plugin-react': 6.0.1(@rolldown/plugin-babel@0.2.3(@babel/core@7.29.0)(@babel/runtime@7.29.2)(rolldown@1.0.0-rc.17)(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3)))(babel-plugin-react-compiler@1.0.0)(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))
       babel-plugin-react-compiler: 1.0.0
       eslint: 9.39.4
       eslint-plugin-react-compiler: 19.1.0-rc.2(eslint@9.39.4)
@@ -4843,9 +4911,9 @@ snapshots:
       typedoc-theme-oxide: 0.3.0(typedoc@0.28.19(typescript@6.0.3))
       typescript: 6.0.3
       typescript-eslint: 8.59.0(eslint@9.39.4)(typescript@6.0.3)
-      vite: 8.0.10(@types/node@22.15.18)(yaml@2.8.3)
-      vite-plugin-wasm: 3.6.0(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3))
-      vitest: 4.1.5(@types/node@22.15.18)(jsdom@26.1.0)(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3))
+      vite: 8.0.10(@types/node@25.6.0)(yaml@2.8.3)
+      vite-plugin-wasm: 3.6.0(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))
+      vitest: 4.1.5(@types/node@25.6.0)(jsdom@26.1.0)(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))
     transitivePeerDependencies:
       - '@babel/plugin-transform-runtime'
       - '@babel/runtime'
@@ -5203,8 +5271,7 @@ snapshots:
 
   uc.micro@2.1.0: {}
 
-  undici-types@6.21.0:
-    optional: true
+  undici-types@7.19.2: {}
 
   undici@7.25.0: {}
 
@@ -5222,11 +5289,11 @@ snapshots:
     dependencies:
       react: 19.2.5
 
-  vite-plugin-wasm@3.6.0(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3)):
+  vite-plugin-wasm@3.6.0(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3)):
     dependencies:
-      vite: 8.0.10(@types/node@22.15.18)(yaml@2.8.3)
+      vite: 8.0.10(@types/node@25.6.0)(yaml@2.8.3)
 
-  vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3):
+  vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3):
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
@@ -5234,14 +5301,14 @@ snapshots:
       rolldown: 1.0.0-rc.17
       tinyglobby: 0.2.16
     optionalDependencies:
-      '@types/node': 22.15.18
+      '@types/node': 25.6.0
       fsevents: 2.3.3
       yaml: 2.8.3
 
-  vitest@4.1.5(@types/node@22.15.18)(jsdom@26.1.0)(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3)):
+  vitest@4.1.5(@types/node@25.6.0)(jsdom@26.1.0)(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3)):
     dependencies:
       '@vitest/expect': 4.1.5
-      '@vitest/mocker': 4.1.5(vite@8.0.10(@types/node@22.15.18)(yaml@2.8.3))
+      '@vitest/mocker': 4.1.5(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))
       '@vitest/pretty-format': 4.1.5
       '@vitest/runner': 4.1.5
       '@vitest/snapshot': 4.1.5
@@ -5258,10 +5325,10 @@ snapshots:
       tinyexec: 1.1.1
       tinyglobby: 0.2.16
       tinyrainbow: 3.1.0
-      vite: 8.0.10(@types/node@22.15.18)(yaml@2.8.3)
+      vite: 8.0.10(@types/node@25.6.0)(yaml@2.8.3)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 22.15.18
+      '@types/node': 25.6.0
       jsdom: 26.1.0
     transitivePeerDependencies:
       - msw

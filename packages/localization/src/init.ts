@@ -1,7 +1,5 @@
-import { initLocaleWithI18next } from "@pistonite/pure-i18next";
-import { getPureI18nextLoaderConfig as sharedControlsLoader } from "@pistonite/shared-controls";
-
-import { getPureI18nextLoaderConfig as itemsysLoader } from "@pistonite/skybook-itemsys";
+import { initLocale } from "@pistonite/celera";
+import { getCeleraI18nLoaderConfig as itemsysLoader } from "@pistonite/skybook-itemsys";
 
 export const SupportedLocales = [
     "de-DE",
@@ -18,13 +16,12 @@ export const SupportedLocales = [
 ] as const;
 
 export const initI18n = (persist: boolean) => {
-    return initLocaleWithI18next({
+    return initLocale({
         supported: SupportedLocales,
         default: "en-US",
         persist,
         loader: {
             ...itemsysLoader(),
-            ...sharedControlsLoader(),
             ui: loadUILanguage,
         },
     });

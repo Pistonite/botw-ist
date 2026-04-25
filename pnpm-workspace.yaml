@@ -2,12 +2,12 @@ packages:
   # - packages/app
   # - packages/intwc
   # - packages/intwc/vite-plugin
-  - packages/itemsys
-  # - packages/localization
   # - packages/parser-legacy
   # - packages/runtime-wasm
   # - packages/runtime-worker
   # - packages/server
+  - packages/localization
+  - packages/itemsys
   - packages/skybook-api
 
 catalog:
@@ -22,6 +22,10 @@ catalog:
   '@types/react-dom': ^19.2.3
   '@fluentui/react-components': ^9.73.8
   '@fluentui/react-icons': ^2.0.324
+  'fuse.js': ^7.3.0
+  js-yaml: ^4.1.1
+  '@types/js-yaml': ^4.0.9
+  '@types/node': ^25.6.0
 
   '@griffel/react': ^1.5.30
   '@types/bun': ^1.2.23

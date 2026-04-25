@@ -11,3 +11,7 @@ tasks:
     - task: ecma:check
   fix:
     - task: ecma:fix
+  build:
+    - task: ecma:lib-build
+  test:
+    - task: ecma:test

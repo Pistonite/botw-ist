@@ -243,6 +243,7 @@ tasks:
         lru-cache
         react react-dom @types/react @types/react-dom
         @fluentui/react-components @fluentui/react-icons
+        fuse.js js-yaml @types/js-yaml @types/node
 
       - pnpm dedupe
       - pnpm dedupe --check

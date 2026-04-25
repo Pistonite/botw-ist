@@ -7,13 +7,8 @@ import YAML from "js-yaml";
 const LANG_TO_CHECK = ["en-US"];
 
 // Check completeness of some lang entries using TypeScript
-const TSCONFIG = {
-    extends: "../../../../mono-dev/toolsets/mono-lint/default-tsconfig.json",
-    compilerOptions: {
-        lib: ["esnext", "dom"],
-    },
-    include: ["src"],
-};
+const TSCONFIG = JSON.parse(fs.readFileSync("tsconfig.src.json", "utf-8"));
+TSCONFIG.compilerOptions.lib = ["esnext", "dom"];
 const DIR = "node_modules/.cache/check-lang-entries";
 const SRC_DIR = `${DIR}/src`;
 if (!fs.existsSync(SRC_DIR)) {

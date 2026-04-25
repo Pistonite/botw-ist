@@ -1,12 +1,8 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
-
-import type { Translator } from "@pistonite/skybook-api";
+import { translate, useTranslation, type TranslatorFn } from "@pistonite/celera";
 
 export const translateUI = (key: string, options?: Record<string, unknown>) => {
-    return i18next.t(`ui:${key}`, options);
+    return translate(`ui:${key}`, options);
 };
-export const useUITranslation = (): Translator => {
-    const { t } = useTranslation("ui");
-    return t;
+export const useUITranslation = (): TranslatorFn => {
+    return useTranslation("ui");
 };

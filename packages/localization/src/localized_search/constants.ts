@@ -1,6 +1,6 @@
 import { logger } from "@pistonite/pure/log";
 
-export const log = logger("item-search", "#3D0985").info();
+export const log = logger("item-search", { color: "#3D0985", level: "info" });
 
 // https://github.com/liyt96/is-japanese/blob/main/lib/is_japanese.js
 // LICENSE: MIT
@@ -58,7 +58,7 @@ export const detectLanguage = (text: string) => {
     return [] as const;
 };
 
-export type SearchError = {
+export interface SearchError {
     type: "UnknownTag";
     tag: string;
-};
+}
