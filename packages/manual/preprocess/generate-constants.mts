@@ -1,3 +1,5 @@
+// @ts-ignore
+import fs from "node:fs";
 const TARGET_FILE = "src/generated/constants.md";
 const TARGET_FILE_ZH = "zh/src/generated/constants.md";
 const SOURCE_FILE = "../parser/src/cir/enum_name.rs";
@@ -131,7 +133,7 @@ const parseHintSection = (lines: string[], hint: string, zh: boolean): string =>
 };
 
 console.log("parsing source file...");
-const sourceFileLines = (await Bun.file(SOURCE_FILE).text())
+const sourceFileLines = (fs.readFileSync(SOURCE_FILE, "utf8"))
     .split("\n")
     .map((x) => x.trim())
     .filter(Boolean);
@@ -160,6 +162,6 @@ const targetFileContentZh =
 
 
 console.log("writing target files...");
-await Bun.file(TARGET_FILE).write(targetFileContent);
-await Bun.file(TARGET_FILE_ZH).write(targetFileContentZh);
+fs.writeFileSync(TARGET_FILE, targetFileContent, "utf8");
+fs.writeFileSync(TARGET_FILE_ZH, targetFileContentZh, "utf8");
 console.log("done");

@@ -9,8 +9,8 @@ path = "../parser"
 
 [dependencies]
 cu = { workspace = true, features = ["cli", "json"] }
-catppuccin = "2.5.1"
-mdbook = "0.4.52"
+catppuccin.workspace = true
+mdbook.workspace = true
 
 [[bin]]
 path = "preprocess/preprocess_main.rs"

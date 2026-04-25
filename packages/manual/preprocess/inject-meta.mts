@@ -78,7 +78,7 @@ async function parseToc(prefix: string, pathToTitle: Map<string, string>): Promi
         .split("\n")
         .map((line: string) => line.trimEnd())
         .filter((x: string) => x.trim().startsWith("-") && x.includes("]("));
-    const stack = [["",0]];
+    const stack: [string, number][] = [["",0]];
 
     const getParent = () => {
         if (stack.length === 0) {
@@ -86,7 +86,7 @@ async function parseToc(prefix: string, pathToTitle: Map<string, string>): Promi
         }
         return `${stack[stack.length - 1][0]} &gt; `;
     };
-    const getLevel = () => {
+    const getLevel = (): number => {
         if (stack.length === 0) {
             return 0;
         }
