@@ -6,7 +6,7 @@ members = [
     "packages/blueflame-proc-macros", 
     "packages/manual",
     "packages/parser", 
-    # "packages/runtime",
+    "packages/runtime",
     # "packages/runtime-tests",
     # "packages/runtime-wasm",
     "packages/skybook-api",
@@ -21,6 +21,7 @@ crc32fast = "1.5.0"
 enumset = "1.1.8"
 enum-map = "2.7.3"
 flate2 = { version = "1.1.2", default-features = false }
+hashlink = "0.11.0"
 indoc = "2.0.7"
 mdbook = "0.4.52"
 num-traits = "0.2.19"
@@ -39,10 +40,12 @@ tokio = "1"
 
 # Rust-Web ecosystem
 js-sys = "0.3.95"
+web-sys = "0.3.95"
 ts-rs = "11.1.0"
 tsify = { version = "0.5.6", features = ["js"], default-features = false }
 wasm-bindgen = { version = "0.2.118", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4.68"
+wasm-bindgen-spawn = "0.0.5"
 
 [workspace.dependencies.cu]
 package = "pistonite-cu"

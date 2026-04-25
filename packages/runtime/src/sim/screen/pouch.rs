@@ -2,7 +2,7 @@ use blueflame::game::{PouchCategory, PouchItem, PouchItemType, gdt, singleton_in
 use blueflame::memory::{self, Ptr, mem, proxy};
 use blueflame::processor::{Cpu2, Process};
 use blueflame::{linker, processor};
-use derive_more::{Deref, DerefMut};
+use cu::pre::*;
 
 use crate::sim;
 
