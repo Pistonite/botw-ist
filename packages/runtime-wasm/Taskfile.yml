@@ -89,15 +89,15 @@ tasks:
       - task: build-wasm-types
       - task: cargo:clippy-all
       - task: cargo:fmt-check
-      - task: ecma:mono-check
+      - task: ecma:check
 
   check-ts:
-      - task: ecma:mono-check
+      - task: ecma:check
 
   fix:
     cmds:
       - task: cargo:fmt-fix
-      - task: ecma:mono-fix
+      - task: ecma:fix
 
   pull-dist:
     desc: Download Runtime WASM for local development

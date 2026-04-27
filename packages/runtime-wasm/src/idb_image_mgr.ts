@@ -9,7 +9,7 @@ const DbName = "BlueFlameImageDB";
 const DbStore = "Image";
 const DbKey = "Custom";
 
-const log = logger("worker-imagedb", "#9226B6").debug();
+const log = logger("worker-imagedb", { color: "#9226B6", level: "debug" });
 
 /** Open the IndexedDB for the custom BlueFlame image, returns undefined if fails */
 const openImageDB = (): Promise<IDBDatabase | undefined> => {

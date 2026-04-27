@@ -1,6 +1,6 @@
 import { wxWorkerGlobal } from "@pistonite/workex";
 
-import { skybookRuntimeApp } from "@pistonite/skybook-api/interfaces/RuntimeApp.bus";
+import { skybookRuntimeApp } from "@pistonite/skybook-api";
 import {
     resolveAppPromise,
     TaskMgr,

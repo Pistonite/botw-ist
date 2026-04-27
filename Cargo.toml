@@ -46,6 +46,8 @@ tsify = { version = "0.5.6", features = ["js"], default-features = false }
 wasm-bindgen = { version = "0.2.118", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4.68"
 wasm-bindgen-spawn = "0.0.5"
+console_log = "1.0.0"
+console_error_panic_hook = "0.1.7"
 
 [workspace.dependencies.cu]
 package = "pistonite-cu"
