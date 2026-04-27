@@ -1,7 +1,6 @@
 packages:
   # - packages/app
-  # - packages/intwc
-  # - packages/intwc/vite-plugin
+  - packages/intwc
   # - packages/parser-legacy
   # - packages/runtime-wasm
   - packages/runtime-worker
@@ -26,9 +25,10 @@ catalog:
   js-yaml: ^4.1.1
   '@types/js-yaml': ^4.0.9
   '@types/node': ^25.6.0
+  '@types/bun': ^1.3.13
+  '@catppuccin/palette': ^1.8.0
 
   '@griffel/react': ^1.5.30
-  '@types/bun': ^1.2.23
   '@vitejs/plugin-react': ^4.7.0
   i18next: ^25.5.2
   react-i18next: ^16.0.0

@@ -1,0 +1,6 @@
+node_modules
+.prettierignore
+/monaco-editor-patch
+/vite-plugin/*.js
+/tsconfig*.json
+/eslint.config.js
