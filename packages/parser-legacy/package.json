@@ -9,7 +9,7 @@
     },
     "dependencies": {},
     "devDependencies": {
-        "mono-dev": "workspace:*"
+        "mono-dev": "catalog:"
     },
     "nocheck": [
         "*.generated.ts"

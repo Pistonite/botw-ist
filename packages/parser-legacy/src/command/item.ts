@@ -14,10 +14,10 @@ export enum ItemType {
 }
 
 // V3->V4: this is the info needed to convert the input to V4 script
-export type ItemStack = {
+export interface ItemStack {
     ident: string;
     meta?: MetaModifyOption;
-};
+}
 
 // the extra data on an item stack
 export type MetaModifyOption = Partial<{

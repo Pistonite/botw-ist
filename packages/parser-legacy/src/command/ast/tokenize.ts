@@ -1,8 +1,8 @@
-export type Token = {
+export interface Token {
     readonly value: string;
     readonly start: number; //inclusive
     readonly end: number; //exclusive
-};
+}
 // Very basic tokenizer. It separates the string into single-character special symbols and whatever is in between
 export const tokenize = (str: string, regex: RegExp): string[] => {
     return tokenizeCore(str, regex).map(({ value }) => value);

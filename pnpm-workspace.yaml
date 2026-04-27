@@ -1,7 +1,7 @@
 packages:
   # - packages/app
   - packages/intwc
-  # - packages/parser-legacy
+  - packages/parser-legacy
   - packages/runtime-wasm
   - packages/runtime-worker
   # - packages/server
