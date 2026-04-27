@@ -1,10 +1,10 @@
 import type { Result } from "@pistonite/pure/result";
 import type { BunRequest } from "bun";
 
-export type ResponsePayload = {
+export interface ResponsePayload {
     body?: Bun.BodyInit;
     options?: ResponseInit;
-};
+}
 
 type Awaitable<T> = T | Promise<T>;
 
@@ -27,11 +27,11 @@ export type OutboundHook = (
     response: ResponsePayload,
 ) => Awaitable<ResponsePayload>;
 
-export type RouteArgs = {
+export interface RouteArgs {
     inbound?: InboundHook[];
     handler: Handler;
     outbound?: OutboundHook[];
-};
+}
 
 export type BunRequestHandler = (req: BunRequest) => Awaitable<Response>;
 

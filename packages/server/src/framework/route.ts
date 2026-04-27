@@ -11,11 +11,11 @@ import type {
 } from "./types.ts";
 
 /** Use a RouteBuilder to create routes with shared inbound and outbound hooks */
-export type RouteBuilder = {
+export interface RouteBuilder {
     inbound: (hook: InboundHook) => RouteBuilder;
     outbound: (hook: OutboundHook) => RouteBuilder;
     route: (args: RouteArgs | Handler) => BunRequestHandler;
-};
+}
 
 export const routeBuilder = (): RouteBuilder => {
     const inboundHooks: InboundHook[] = [];

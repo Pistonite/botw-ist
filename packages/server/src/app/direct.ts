@@ -3,8 +3,8 @@ import { errstr, type Result } from "@pistonite/pure/result";
 import type { DirectLoad } from "@pistonite/skybook-api";
 import { convertLegacyScript } from "skybook-parser-legacy";
 
-import { decodeCompressedParam } from "self::util";
-import type { UrlParts } from "self::framework";
+import { decodeCompressedParam } from "#util";
+import type { UrlParts } from "#framework";
 
 /** Handle DirectLoad from the home page (/) */
 export const useDirectLoadFromHome = (url: UrlParts): DirectLoad | undefined => {

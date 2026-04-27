@@ -5,7 +5,7 @@ import {
     withHeadersOnSuccess,
     makeFile,
     useUrl,
-} from "self::framework";
+} from "#framework";
 
 import { makeSSR } from "./ssr.ts";
 import { makeAsset } from "./assets.ts";

@@ -6,8 +6,8 @@ import {
     type RouteBuilder,
     type Routes,
     useStringBody,
-} from "self::framework";
-import { encodeScript, type Crypto } from "self::util";
+} from "#framework";
+import { encodeScript, type Crypto } from "#util";
 
 export const createApiRoutes = (_crypto: Crypto, builder: RouteBuilder): Routes => {
     return {

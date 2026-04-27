@@ -9,6 +9,10 @@
     },
     "devDependencies": {
         "@types/bun": "catalog:",
-        "mono-dev": "workspace:*"
+        "mono-dev": "catalog:"
+    },
+    "imports": {
+        "#framework": "./src/framework/index.ts",
+        "#util": "./src/util/index.ts"
     }
 }

@@ -2,19 +2,21 @@ version: '3'
 
 includes:
   ecma:
-    taskfile: ../mono-dev/task/ecma.yaml
+    taskfile: ./node_modules/mono-dev/task/ecma.yaml
     internal: true
-  app:
-    taskfile: ../app
-    dir: ../app
-    internal: true
+    optional: true
+  # app:
+  #   taskfile: ../app
+  #   dir: ../app
+  #   internal: true
   runtime-wasm:
     taskfile: ../runtime-wasm
     dir: ../runtime-wasm
     internal: true
   docker:
-    taskfile: ../mono-dev/task/docker.yaml
+    taskfile: ./node_modules/mono-dev/task/docker.yaml
     internal: true
+    optional: true
 
 vars:
   DOCKER_IMAGE: pistonite/skybook-server
@@ -67,7 +69,7 @@ tasks:
     desc: Run server in watch mode
     cmds:
       - task: ecma:mono-config
-      - $(which mkdir) -p dist
+      - mkdir -p dist
       - task: bun-watch
 
   bun-watch:
@@ -81,8 +83,8 @@ tasks:
 
   build:
     cmds:
-      - task: ecma:mono-config
-      - $(which mkdir) -p dist
+      - task: ecma:config
+      - which -p dist
       - cmd: >
           bun build 
           --compile 
@@ -94,11 +96,11 @@ tasks:
   
   check:
     cmds:
-      - task: ecma:mono-check
+      - task: ecma:check
 
   fix:
     cmds:
-      - task: ecma:mono-fix
+      - task: ecma:fix
 
   docker-build:
     cmds:

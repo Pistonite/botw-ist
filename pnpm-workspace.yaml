@@ -4,7 +4,7 @@ packages:
   - packages/parser-legacy
   - packages/runtime-wasm
   - packages/runtime-worker
-  # - packages/server
+  - packages/server
   - packages/localization
   - packages/itemsys
   - packages/skybook-api
