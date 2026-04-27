@@ -1,7 +1,3 @@
-[submodule "intwc"]
-	path = packages/intwc
-	url = https://github.com/Pistonight/intwc
-	branch = main
 [submodule "botw-data"]
 	path = packages/botw-data
 	url = https://github.com/Pistonight/botw-data-scripts
