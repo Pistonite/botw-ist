@@ -39,7 +39,6 @@
     "imports": {
         "#application": "./src/application/index.ts",
         "#extensions": "./src/extensions/index.ts",
-        "#pure-contrib": "./src/pure-contrib/index.ts",
         "#ui/components": "./src/ui/components/index.ts",
         "#ui/surfaces/extension": "./src/ui/surfaces/extension/index.ts",
         "#ui/surfaces/header": "./src/ui/surfaces/header/index.ts",

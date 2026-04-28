@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { addLocaleSubscriber, initDark, ThemeProvider } from "@pistonite/celera";
+import { addLocaleSubscriber, initDark, ThemeProvider, type TranslatorFn } from "@pistonite/celera";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Void } from "@pistonite/pure/result";
 import { wxWorker } from "@pistonite/workex";
@@ -29,8 +29,7 @@ import {
     useSessionStore,
     isCrashed,
 } from "#application";
-import { initNarrow, isLessProductive } from "#pure-contrib";
-import { bootLog, devLog, probeAndRegisterAssetLocation } from "#util";
+import { bootLog, devLog, initDisplayMode, probeAndRegisterAssetLocation } from "#util";
 import {
     App,
     BootScreen,
@@ -94,24 +93,7 @@ const boot = async () => {
     const runtime = createWasmRuntimeWorker();
     void runtime.then(bootstrapAppWithRuntime);
 
-    if (isLessProductive) {
-        initNarrow({
-            threshold: 800,
-            override: (narrow) => {
-                if (window.innerWidth < window.innerHeight) {
-                    return true;
-                }
-                if (narrow && window.innerHeight < window.innerWidth) {
-                    return false;
-                }
-                return narrow;
-            },
-        });
-    } else {
-        initNarrow({
-            threshold: 800,
-        });
-    }
+    initDisplayMode();
 
     const beforeMainUI = async () => {
         if (isCrashed()) {
@@ -383,7 +365,7 @@ const continueBootWithDefaultImage = async (context: BootContext, env: ScriptEnv
 const initRuntimeWithArgs = async (
     context: BootContext,
     args: RuntimeWorkerInitArgs,
-): Promise<Void<(translator: Translator) => string>> => {
+): Promise<Void<(translator: TranslatorFn) => string>> => {
     return await initRuntime(await context.runtime, args);
 };
 

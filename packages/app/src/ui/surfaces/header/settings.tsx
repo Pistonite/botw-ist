@@ -19,7 +19,7 @@ import { DarkToggle, LanguagePicker, MenuSwitch } from "@pistonite/celera";
 import { useUITranslation } from "skybook-localization";
 
 import { usePersistStore } from "#application";
-import { isLessProductive } from "#pure-contrib";
+import { useIsMobile } from "#util";
 
 /** Settings menu in the header */
 const SettingsMenuImpl: React.FC = () => {
@@ -29,7 +29,7 @@ const SettingsMenuImpl: React.FC = () => {
     const setEnableAnimations = usePersistStore((state) => state.setEnableAnimations);
     const t = useUITranslation();
 
-    const tooltipPosition = isLessProductive ? "below" : "after";
+    const tooltipPosition = useIsMobile() ? "below" : "after";
     return (
         <Menu>
             <MenuTrigger disableButtonEnhancement>

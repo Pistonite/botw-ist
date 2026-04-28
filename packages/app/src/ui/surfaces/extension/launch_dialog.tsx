@@ -20,7 +20,6 @@ import {
 
 import { useUITranslation } from "skybook-localization";
 
-import { isLessProductive, useNarrow } from "#pure-contrib";
 import {
     BuiltinExtensionIds,
     useExtensionStore,
@@ -31,12 +30,12 @@ import {
     openExtensionPopup,
     useUIStore,
 } from "#application";
-import { useStyleEngine } from "#util";
+import { useStyleEngine, useIsNarrow, isMobile } from "#util";
 
 const ExtensionLaunchDialogImpl: React.FC = () => {
     const m = useStyleEngine();
     const t = useUITranslation();
-    const narrow = useNarrow();
+    const narrow = useIsNarrow();
 
     const open = useUIStore((state) => state.openedDialogId) === "extension-launch";
     const setOpen = useUIStore((state) => state.setOpenedDialog);
@@ -163,7 +162,7 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
 
     const handleLaunch = () => {
         // block custom extensions on non-PC platforms
-        if (isLessProductive && isSelectedExtensionCustom) {
+        if (isMobile() && isSelectedExtensionCustom) {
             return;
         }
         updateRecency(selectedExtensionId);

@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { makeStyles, Tab, TabList } from "@fluentui/react-components";
-import { ResizeLayout } from "@pistonite/shared-controls";
+import { ResizeLayout } from "@pistonite/celera";
 
 import { translateRuntimeViewError, useUITranslation } from "skybook-localization";
 import { GdtItemSlot } from "@pistonite/skybook-itemsys";
 
-import { isLessProductive } from "#pure-contrib";
 import { ErrorBar } from "#ui/components";
 import { useStyleEngine, useThemedSheikaBackgroundUrl } from "#util";
 

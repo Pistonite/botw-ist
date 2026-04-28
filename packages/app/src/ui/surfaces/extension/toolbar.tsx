@@ -8,8 +8,8 @@ import {
     BuiltinExtensionIds,
     getPrimaryExtensionIdsForDropdown,
 } from "#application";
-import { isLessProductive } from "#pure-contrib";
 import { ExtensionToolbar } from "#ui/components";
+import { useIsMobile } from "#util";
 
 const ExtensionToolbarSecondaryConnected: React.FC = () => {
     const currentSecondaryId = useCurrentSecondaryExtensionId();
@@ -86,7 +86,7 @@ const ExtensionToolbarPrimaryMobileConnected: React.FC = () => {
 const ExtensionToolbarPrimaryMobileMemo = memo(ExtensionToolbarPrimaryMobileConnected);
 
 export const ExtensionToolbarPrimary = () => {
-    if (isLessProductive) {
+    if (useIsMobile()) {
         return <ExtensionToolbarPrimaryMobileMemo />;
     }
     return <ExtensionToolbarPrimaryMemo />;

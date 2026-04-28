@@ -2,8 +2,6 @@ import { createSelector } from "reselect";
 
 import { useUITranslation } from "skybook-localization";
 
-import { isLessProductive, useNarrow } from "#pure-contrib";
-
 import {
     BuiltinExtensionIds,
     useExtensionStore,
@@ -11,6 +9,7 @@ import {
     type ExtensionOpenMode,
     getCustomExtensionId,
 } from "./extension_store.ts";
+import { isNarrowDisplayMode, useDisplayMode } from "#util";
 
 /** Selector to get primary extension ids to display in the toolbar dropdown */
 export const getPrimaryExtensionIdsForDropdown = createSelector(
@@ -66,11 +65,11 @@ export const useExtensionName = (id: string): string => {
 
 /** Get the effective current secondary extension id */
 export const useCurrentSecondaryExtensionId = () => {
-    const narrow = useNarrow();
+    const mode = useDisplayMode();
     const secondary = useExtensionStore((state) => state.currentSecondary);
     // hide secondary extension window when the screen is narrow
     // or on less productive platforms
-    return narrow || isLessProductive ? "" : secondary;
+    return isNarrowDisplayMode(mode) || isNarrowDisplayMode(mode) ? "" : secondary;
 };
 
 /** Get if the extension panel is shown */

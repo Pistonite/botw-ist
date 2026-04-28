@@ -2,9 +2,8 @@ import { memo } from "react";
 import { makeStyles, tokens } from "@fluentui/react-components";
 
 import { useSessionStore } from "#application";
-import { isLessProductive } from "#pure-contrib";
 import { ExtensionsMenu } from "#ui/surfaces/extension";
-import { useStyleEngine } from "#util";
+import { useStyleEngine, useIsMobile } from "#util";
 
 import icon from "./icon.svg";
 import iconPurple from "./icon-purple.svg";
@@ -26,6 +25,7 @@ const useStyles = makeStyles({
 const HeaderImpl: React.FC = () => {
     const m = useStyleEngine();
     const c = useStyles();
+    const isMobile = useIsMobile();
 
     const isRunningCustomImage = useSessionStore((state) => state.runningCustomImageVersion);
     return (
@@ -39,7 +39,7 @@ const HeaderImpl: React.FC = () => {
                 // On other platforms, you can already select all built-in extensions
                 // through the extension window toolbar, so there's no need
                 // for this menu
-                !isLessProductive && <ExtensionsMenu />
+                !isMobile && <ExtensionsMenu />
             }
             <MiscMenu />
             <div className={m("flex-row flex-1 flex-end")}>
