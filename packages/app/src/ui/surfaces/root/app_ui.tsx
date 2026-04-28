@@ -2,7 +2,7 @@
  * This is the main app UI
  */
 import { memo, useEffect } from "react";
-import { ResizeLayout } from "@pistonite/shared-controls";
+import { ResizeLayout } from "@pistonite/celera";
 
 import { useUITranslation } from "skybook-localization";
 import { ItemTooltipProvider, getSheikaBackgroundUrl } from "@pistonite/skybook-itemsys";
@@ -12,16 +12,16 @@ import {
     useIsShowingExtensionPanel,
     useSessionStore,
     useUIStore,
-} from "self::application";
-import { useNarrow, isLessProductive } from "self::pure-contrib";
+} from "#application";
+import { useNarrow, isLessProductive } from "#pure-contrib";
 import {
     ExtensionPanel,
     ExtensionLaunchDialog,
     CustomExtensionDialog,
-} from "self::ui/surfaces/extension";
-import { Header } from "self::ui/surfaces/header";
-import { PouchInventoryPanel, GdtInventoryPanel } from "self::ui/surfaces/inventory";
-import { useStyleEngine } from "self::util";
+} from "#ui/surfaces/extension";
+import { Header } from "#ui/surfaces/header";
+import { PouchInventoryPanel, GdtInventoryPanel } from "#ui/surfaces/inventory";
+import { useStyleEngine } from "#util";
 
 const AppImpl: React.FC = () => {
     const m = useStyleEngine();

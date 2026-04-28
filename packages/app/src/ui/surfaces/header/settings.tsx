@@ -14,12 +14,12 @@ import {
     ImageSparkle20Regular,
     WrenchSettings20Regular,
 } from "@fluentui/react-icons";
-import { DarkToggle, LanguagePicker, MenuSwitch } from "@pistonite/shared-controls";
+import { DarkToggle, LanguagePicker, MenuSwitch } from "@pistonite/celera";
 
 import { useUITranslation } from "skybook-localization";
 
-import { usePersistStore } from "self::application";
-import { isLessProductive } from "self::pure-contrib";
+import { usePersistStore } from "#application";
+import { isLessProductive } from "#pure-contrib";
 
 /** Settings menu in the header */
 const SettingsMenuImpl: React.FC = () => {

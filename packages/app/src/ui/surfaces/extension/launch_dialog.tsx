@@ -20,7 +20,7 @@ import {
 
 import { useUITranslation } from "skybook-localization";
 
-import { isLessProductive, useNarrow } from "self::pure-contrib";
+import { isLessProductive, useNarrow } from "#pure-contrib";
 import {
     BuiltinExtensionIds,
     useExtensionStore,
@@ -30,8 +30,8 @@ import {
     useExtensionName,
     openExtensionPopup,
     useUIStore,
-} from "self::application";
-import { useStyleEngine } from "self::util";
+} from "#application";
+import { useStyleEngine } from "#util";
 
 const ExtensionLaunchDialogImpl: React.FC = () => {
     const m = useStyleEngine();

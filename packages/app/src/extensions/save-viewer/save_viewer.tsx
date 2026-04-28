@@ -5,9 +5,9 @@ import { ResizeLayout } from "@pistonite/shared-controls";
 import { translateRuntimeViewError, useUITranslation } from "skybook-localization";
 import { GdtItemSlot } from "@pistonite/skybook-itemsys";
 
-import { isLessProductive } from "self::pure-contrib";
-import { ErrorBar } from "self::ui/components";
-import { useStyleEngine, useThemedSheikaBackgroundUrl } from "self::util";
+import { isLessProductive } from "#pure-contrib";
+import { ErrorBar } from "#ui/components";
+import { useStyleEngine, useThemedSheikaBackgroundUrl } from "#util";
 
 import type { SaveViewerStore } from "./store.ts";
 

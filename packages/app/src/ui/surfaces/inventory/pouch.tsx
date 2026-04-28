@@ -1,7 +1,7 @@
 import { memo, useMemo } from "react";
 import { makeStyles, Text, Tooltip, Button, Link } from "@fluentui/react-components";
 import { Grid20Regular, Info20Regular } from "@fluentui/react-icons";
-import { useSwappedWheelScrollDirection } from "@pistonite/shared-controls";
+import { useSwappedWheelScrollDirection } from "@pistonite/celera";
 
 import {
     ItemTab,
@@ -18,19 +18,19 @@ import {
     usePouchListView,
     useUIStore,
     openExtension,
-} from "self::application";
+} from "#application";
 import {
     getInBrokenSlotArray,
     getTabNodesFromPouch,
     getUndiscoveredTabMap,
     useStyleEngine,
-} from "self::util";
+} from "#util";
 import {
     InventoryTitle,
     InventoryTabButton,
     InventorySpinner,
     ErrorBar,
-} from "self::ui/components";
+} from "#ui/components";
 
 import { ScreenIndicator } from "./screen_icon.tsx";
 import {

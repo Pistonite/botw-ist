@@ -1,10 +1,10 @@
 import { memo } from "react";
 import { makeStyles, tokens } from "@fluentui/react-components";
 
-import { useSessionStore } from "self::application";
-import { isLessProductive } from "self::pure-contrib";
-import { ExtensionsMenu } from "self::ui/surfaces/extension";
-import { useStyleEngine } from "self::util";
+import { useSessionStore } from "#application";
+import { isLessProductive } from "#pure-contrib";
+import { ExtensionsMenu } from "#ui/surfaces/extension";
+import { useStyleEngine } from "#util";
 
 import icon from "./icon.svg";
 import iconPurple from "./icon-purple.svg";

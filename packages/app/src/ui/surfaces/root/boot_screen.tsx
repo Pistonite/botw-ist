@@ -2,7 +2,7 @@
  * This is the UI for boot flow with custom image configuration dialog
  */
 import { useEffect, useMemo, useState } from "react";
-import { FsErr, fsOpenFile } from "@pistonite/pure/fs";
+import { FsErr, fsOpenFile } from "@pistonite/webfs";
 import {
     Text,
     Button,
@@ -20,18 +20,18 @@ import {
     RadioGroup,
     makeStyles,
 } from "@fluentui/react-components";
+import type { TranslatorFn } from "@pistonite/celera";
 
 import type {
-    Translator,
     Runtime,
     RuntimeWorkerInitArgs,
     RuntimeInitParams,
 } from "@pistonite/skybook-api";
 import { translateUI, useUITranslation } from "skybook-localization";
 
-import { initRuntime, setCustomImageToProvide, usePersistStore } from "self::application";
-import { bootLog, useStyleEngine } from "self::util";
-import { ErrorBar } from "self::ui/components";
+import { initRuntime, setCustomImageToProvide, usePersistStore } from "#application";
+import { bootLog, useStyleEngine } from "#util";
+import { ErrorBar } from "#ui/components";
 
 export type BootScreenState =
     | "OpenSetupOrUseDefaultImage"

@@ -19,8 +19,9 @@ import type {
 } from "@pistonite/skybook-api";
 import { translateUI } from "skybook-localization";
 
+import { log } from "#util";
+
 import { usePersistStore } from "./persist_store.ts";
-import { log } from "self::util";
 
 /** State of the current session. This is not persisted */
 export type SessionStore = {

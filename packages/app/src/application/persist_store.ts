@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 import { parseEnvFromScript, type ScriptEnvImage } from "@pistonite/skybook-api";
 import type { ActorSpriteProps } from "@pistonite/skybook-itemsys";
 
-import { STARTER_SCRIPT } from "self::util";
+import { STARTER_SCRIPT } from "#util";
 
 /** Persistent state for the application, like settings and locally saved script */
 export type PersistStore = {

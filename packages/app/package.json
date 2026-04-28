@@ -12,6 +12,7 @@
         "@pistonite/intwc": "workspace:*",
         "@pistonite/pure": "catalog:",
         "@pistonite/celera": "catalog:",
+        "@pistonite/webfs": "catalog:",
         "@pistonite/skybook-api": "workspace:*",
         "@pistonite/skybook-itemsys": "workspace:*",
         "@pistonite/workex": "catalog:",

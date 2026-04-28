@@ -1,7 +1,8 @@
-import { extLog, type FirstPartyExtension, FirstPartyExtensionAdapter } from "self::util";
+import { serial } from "@pistonite/pure/sync";
+
+import { extLog, type FirstPartyExtension, FirstPartyExtensionAdapter } from "#util";
 
 import { Exporter } from "./exporter.tsx";
-import { serial } from "@pistonite/pure/sync";
 
 export class ExporterExtension extends FirstPartyExtensionAdapter implements FirstPartyExtension {
     private component: React.FC;

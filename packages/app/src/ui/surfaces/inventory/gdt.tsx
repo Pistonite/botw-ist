@@ -1,8 +1,7 @@
 import { memo, useMemo } from "react";
 import { Button, Tooltip } from "@fluentui/react-components";
 import { Info20Regular } from "@fluentui/react-icons";
-import { useDark } from "@pistonite/pure-react";
-import { useSwappedWheelScrollDirection } from "@pistonite/shared-controls";
+import { useDark, useSwappedWheelScrollDirection } from "@pistonite/celera";
 
 import { translateRuntimeViewError, useUITranslation } from "skybook-localization";
 import { GdtItemSlot, ItemTab } from "@pistonite/skybook-itemsys";
@@ -12,9 +11,9 @@ import {
     useItemSlotPropsFromSettings,
     usePouchListView,
     useUIStore,
-} from "self::application";
-import { useThemedSheikaBackgroundUrl, getTabNodesForGdt, useStyleEngine } from "self::util";
-import { InventoryTitle, InventorySpinner, ErrorBar } from "self::ui/components";
+} from "#application";
+import { useThemedSheikaBackgroundUrl, getTabNodesForGdt, useStyleEngine } from "#util";
+import { InventoryTitle, InventorySpinner, ErrorBar } from "#ui/components";
 
 const GdtInventoryPanelImpl: React.FC = () => {
     const m = useStyleEngine();

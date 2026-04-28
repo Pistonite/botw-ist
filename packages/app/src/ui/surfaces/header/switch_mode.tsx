@@ -20,13 +20,13 @@ import {
     SaveEdit20Regular,
 } from "@fluentui/react-icons";
 import { memo } from "react";
-import { useDark } from "@pistonite/pure-react";
+import { useDark } from "@pistonite/celera";
 
 import type { SessionMode } from "@pistonite/skybook-api";
 import { useUITranslation } from "skybook-localization";
 
-import { useDebouncedHasUnsavedChanges, usePersistStore, useSessionStore } from "self::application";
-import { useStyleEngine } from "self::util";
+import { useDebouncedHasUnsavedChanges, usePersistStore, useSessionStore } from "#application";
+import { useStyleEngine } from "#util";
 
 const useStyles = makeStyles({
     warningDark: {

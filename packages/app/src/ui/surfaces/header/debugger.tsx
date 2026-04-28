@@ -2,8 +2,8 @@ import { memo } from "react";
 import { Text, Button, Tooltip } from "@fluentui/react-components";
 import { TopSpeed20Regular } from "@fluentui/react-icons";
 
-import { useSessionStore } from "self::application";
-import { useStyleEngine } from "self::util";
+import { useSessionStore } from "#application";
+import { useStyleEngine } from "#util";
 
 const PerfMonitorImpl: React.FC = () => {
     const stepIndex = useSessionStore((state) => state.stepIndex);
