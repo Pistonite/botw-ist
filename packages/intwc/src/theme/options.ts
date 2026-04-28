@@ -1,6 +1,8 @@
-export type ThemeOptions = { customTokenColors?: CustomTokenColor[] };
+export interface ThemeOptions {
+    customTokenColors?: CustomTokenColor[];
+}
 
-export type CustomTokenColor = {
+export interface CustomTokenColor {
     /**
      * The token to set the color for.
      *
@@ -19,4 +21,4 @@ export type CustomTokenColor = {
      * (which is almost always the case), use an array of 2 colors [light, dark]
      */
     value: string | [string, string];
-};
+}

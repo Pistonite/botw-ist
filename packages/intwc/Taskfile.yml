@@ -12,13 +12,13 @@ tasks:
       # - bun build vite-plugin/plugin.ts > vite-plugin/plugin.js
       - task: ecma:config
 
-  # check:
-  #   cmds:
-  #     - task: ecma:check
-  #
-  # fix:
-  #   cmds:
-  #     - task: ecma:fix
+  check:
+    cmds:
+      - task: ecma:check
+  
+  fix:
+    cmds:
+      - task: ecma:fix
 
   update-patch:
     vars:

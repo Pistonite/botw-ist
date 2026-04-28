@@ -7,7 +7,7 @@ import { provideMarkers } from "./language/diagnostic_provider.ts";
 
 export type CodeEditorEvent = "content-changed" | "cursor-position-changed";
 
-export type CodeEditorApi = {
+export interface CodeEditorApi {
     /** Get the list of opened files */
     getFiles: () => string[];
 
@@ -70,7 +70,7 @@ export type CodeEditorApi = {
 
     /** Set if the editor is read only (in the future, this might be changed to per-file based */
     setReadonly(isReadonly: boolean): void;
-};
+}
 
 let editorOptions: EditorOption = { options: {} };
 

@@ -7,9 +7,7 @@
     "pnpm": {
         "onlyBuiltDependencies": [
             "esbuild"
-        ]
-    },
-    "pnpm-old": {
+        ],
         "patchedDependencies": {
             "monaco-editor@0.52.2": "packages/intwc/patches/monaco-editor@0.52.2.patch"
         }

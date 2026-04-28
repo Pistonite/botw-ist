@@ -35,7 +35,8 @@ const preference = persist({
     deserialize: deserializePreference,
 });
 
-export const initPreference = ({ persist, defaults }: PreferenceOption) => {
+export const initPreference = (options: PreferenceOption) => {
+    const { persist, defaults } = options;
     const value: Preference = { ...getDefaultPreference(), ...defaults };
     if (persist) {
         preference.init(value);

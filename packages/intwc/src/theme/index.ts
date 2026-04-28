@@ -1,5 +1,5 @@
 import * as monaco from "monaco-editor";
-import { addDarkSubscriber } from "@pistonite/pure/pref";
+import { addDarkSubscriber } from "@pistonite/celera";
 
 import { log } from "../internal.ts";
 

@@ -19,6 +19,7 @@
     },
     "dependencies": {
         "@pistonite/pure": "catalog:",
+        "@pistonite/celera": "catalog:",
         "monaco-editor": "0.52.2",
         "react": "catalog:"
     },

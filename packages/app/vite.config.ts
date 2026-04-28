@@ -1,21 +1,14 @@
-/// <reference types="vitest" />
+/// <reference types="mono-dev/vitest" />
+/// <reference types="node" />
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { spawnSync } from "child_process";
+import { spawnSync } from "node:child_process";
+import path from "node:path";
+import fs from "node:fs";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import path from "path";
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import fs from "fs";
-
-import { type Plugin, defineConfig, type UserConfig } from "vite";
+import { type Plugin } from "mono-dev/vite";
 import serveStatic from "vite-plugin-serve-static";
-import intwc from "@pistonite/vite-plugin-intwc";
-import monodev from "mono-dev/vite";
+import intwc from "@pistonite/intwc/vite-plugin";
+import { configure } from "mono-dev/app-build-config";
 
 const staticAssetHeader = (): Plugin => {
     return {
@@ -34,7 +27,7 @@ const staticAssetHeader = (): Plugin => {
 };
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command }) => {
+export default configure(() => {
     const commit = spawnSync("git", ["rev-parse", "HEAD"], {
         encoding: "utf-8",
     }).stdout.trim();
@@ -44,10 +37,7 @@ export default defineConfig(({ command }) => {
     const version = packageJson.version;
     console.log(`version: ${version}`);
 
-    const monodevConfig = monodev({
-        https: command === "serve",
-    });
-    return monodevConfig<UserConfig>({
+    return {
         define: {
             "import.meta.env.COMMIT": JSON.stringify(commit),
             "import.meta.env.VERSION": JSON.stringify(version),
@@ -89,5 +79,5 @@ export default defineConfig(({ command }) => {
             includeSource: ["src/**/*.{js,ts}"],
             environment: "jsdom",
         },
-    });
+    };
 });

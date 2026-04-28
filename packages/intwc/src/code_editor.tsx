@@ -12,7 +12,8 @@ export type CodeEditorProps = {
     onCreated?: (api: CodeEditorApi) => (() => void) | undefined;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export const CodeEditor: React.FC<CodeEditorProps> = ({ onCreated, ...props }) => {
+export const CodeEditor: React.FC<CodeEditorProps> = (allProps) => {
+    const { onCreated, ...props } = allProps;
     const [ref, setRef] = useState<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -25,6 +26,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ onCreated, ...props }) =
             cleanup?.();
             editor.dispose();
         };
+        // legacy - will be fixed in intwc rewrite
+        // eslint-disable-next-line react-compiler/react-compiler
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ref]);
 

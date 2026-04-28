@@ -2,40 +2,47 @@
     "private": true,
     "version": "0.0.0",
     "type": "module",
+    "pistonight/mono-dev": {
+        "https": true,
+        "wasm": true
+    },
     "dependencies": {
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons": "catalog:",
-        "@griffel/react": "catalog:",
         "@pistonite/intwc": "workspace:*",
         "@pistonite/pure": "catalog:",
-        "@pistonite/pure-react": "catalog:",
-        "@pistonite/shared-controls": "workspace:*",
+        "@pistonite/celera": "catalog:",
         "@pistonite/skybook-api": "workspace:*",
         "@pistonite/skybook-itemsys": "workspace:*",
         "@pistonite/workex": "catalog:",
-        "@tanstack/react-query": "^5.84.1",
-        "@uidotdev/usehooks": "^2.4.1",
-        "mobile-device-detect": "^0.4.3",
+        "@tanstack/react-query": "catalog:",
+        "@uidotdev/usehooks": "catalog:",
         "react": "catalog:",
         "react-dom": "catalog:",
-        "reselect": "^5.1.1",
+        "reselect": "catalog:",
         "skybook-localization": "workspace:*",
         "uuid": "catalog:",
-        "zustand": "^5.0.7"
+        "zustand": "catalog:"
     },
     "devDependencies": {
-        "@pistonite/vite-plugin-intwc": "workspace:*",
         "@types/bun": "catalog:",
+        "@types/node": "catalog:",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
-        "i18next": "catalog:",
-        "jsdom": "^26.1.0",
+        "jsdom": "catalog:",
         "monaco-editor": "*",
-        "mono-dev": "workspace:*",
-        "react-i18next": "catalog:",
-        "skybook-itemsys-build": "workspace:*",
-        "vite": "catalog:",
-        "vite-plugin-serve-static": "^1.1.0",
-        "vitest": "catalog:"
+        "mono-dev": "catalog:",
+        "vite-plugin-serve-static": "catalog:"
+    },
+    "imports": {
+        "#application": "./src/application/index.ts",
+        "#extensions": "./src/extensions/index.ts",
+        "#pure-contrib": "./src/pure-contrib/index.ts",
+        "#ui/components": "./src/ui/components/index.ts",
+        "#ui/surfaces/extension": "./src/ui/surfaces/extension/index.ts",
+        "#ui/surfaces/header": "./src/ui/surfaces/header/index.ts",
+        "#ui/surfaces/inventory": "./src/ui/surfaces/inventory/index.ts",
+        "#ui/surfaces/root": "./src/ui/surfaces/root/index.ts",
+        "#util": "./src/util/index.ts"
     }
 }

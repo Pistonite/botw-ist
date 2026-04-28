@@ -14,7 +14,7 @@ import type {
 
 import type { DiagnosticProvider } from "./diagnostic_provider.ts";
 
-export type LanguageClient = {
+export interface LanguageClient {
     /** Get the language id */
     getId: () => string;
     getExtensions?: () => string[];
@@ -40,13 +40,13 @@ export type LanguageClient = {
     ) => CompletionResult;
 
     resolveCompletionItem?: (item: CompletionItem, token: CancellationToken) => CompletionItem;
-};
+}
 
-export type SemanticProvider = {
+export interface SemanticProvider {
     legend: SemanticTokensLegend;
     provideDocumentRangeSemanticTokens: (
         model: TextModel,
         range: Range,
         token: CancellationToken,
     ) => SemanticTokensResult;
-};
+}

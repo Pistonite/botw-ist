@@ -68,7 +68,7 @@ export const convertSemanticTokens = (
     return outputs;
 };
 
-export type SemanticConverterOptions = {
+export interface SemanticConverterOptions {
     /**
      * Convert raw token type to [tokenType, tokenModifiers]
      *
@@ -76,4 +76,4 @@ export type SemanticConverterOptions = {
      * should be a bit set. Return undefined for tokenType for invalid input.
      */
     convertType: (tokenType: number) => [number | undefined, number];
-};
+}

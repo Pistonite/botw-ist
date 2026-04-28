@@ -3,7 +3,7 @@ import type { ThemeOptions } from "./theme/options.ts";
 import type { IEditorOptions, IGlobalEditorOptions } from "./monaco_types.ts";
 
 /** Option to pass in to init */
-export type InitOption = {
+export interface InitOption {
     /**
      * Preferences for the editor
      */
@@ -23,9 +23,9 @@ export type InitOption = {
      * Theme options
      */
     theme?: ThemeOptions;
-};
+}
 
-export type PreferenceOption = {
+export interface PreferenceOption {
     /** If the preference should be persisted to and loaded from localStorage */
     persist?: boolean;
 
@@ -35,16 +35,16 @@ export type PreferenceOption = {
      * These will not be applied to the persisted preference
      */
     defaults?: Partial<Preference>;
-};
+}
 
-export type Preference = {
+export interface Preference {
     /**
      * Input mode for the editor, defaults to "code"
      */
     inputMode: InputMode;
-};
+}
 
-export type LanguageOption = {
+export interface LanguageOption {
     /**
      * TypeScript Configuration
      *
@@ -55,18 +55,18 @@ export type LanguageOption = {
 
     /** Custom language support */
     custom?: LanguageClient[];
-};
+}
 
-export type EditorOption = {
+export interface EditorOption {
     /**
      * Options used when constructing the editor
      *
      * These are added on top of the defaults provided by this wrapper
      */
     options: IEditorOptions & IGlobalEditorOptions;
-};
+}
 
-export type TSOption = {
+export interface TSOption {
     /**
      * If DOM API should be enabled for type checking
      *
@@ -77,9 +77,9 @@ export type TSOption = {
      * Extra libraries to load
      */
     extraLibs?: TSExtraLib[];
-};
+}
 
-export type TSExtraLib = {
+export interface TSExtraLib {
     /**
      * The library name. This is used to make the file uri.
      * For example, if the name is "foo", the file uri will
@@ -88,7 +88,7 @@ export type TSExtraLib = {
     name: string;
     /** The type definition file content */
     content: string;
-};
+}
 
 /** Input mode of the editor */
 export type InputMode = "code" | "vim" | "emacs";

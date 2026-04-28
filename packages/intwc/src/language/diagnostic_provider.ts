@@ -7,7 +7,7 @@ import type { MarkerData, TextModel } from "../monaco_types.ts";
  * The interface implemented by language services to integrate
  * with the diagnostic system
  */
-export type DiagnosticProvider<T, D extends MarkerData> = {
+export interface DiagnosticProvider<T, D extends MarkerData> {
     /**
      * The owner ID for this diagnostic provider.
      *
@@ -49,24 +49,24 @@ export type DiagnosticProvider<T, D extends MarkerData> = {
         previousBatch: T[],
         currentMarkers: D[],
     ) => DiagnosticMergeResult<T, D>;
-};
+}
 
 /** handle for part of a diagnostic request, known as a task */
-export type DiagnosticTask<T> = {
+export interface DiagnosticTask<T> {
     /**
      * The data included in this task
      * If undefined is returned, this response is ignored, and previous markers
      * won't be cleared. This can be used to indicate failure
      */
     data: Promise<T[] | undefined>;
-};
+}
 
-export type DiagnosticMergeResult<T, D extends MarkerData> = {
+export interface DiagnosticMergeResult<T, D extends MarkerData> {
     /** Data to replace the currently cached data */
     nextData: T[];
     /** Markers to replace the current set of markers */
     nextMarkers: D[];
-};
+}
 
 const getNextDiagnosticId = safeidgen(500000);
 
