@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 
 import { useUITranslation } from "skybook-localization";
 
-import { isLessProductive, useNarrow } from "self::pure-contrib";
+import { isLessProductive, useNarrow } from "#pure-contrib";
 
 import {
     BuiltinExtensionIds,

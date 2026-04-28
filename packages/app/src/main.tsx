@@ -1,9 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { addLocaleSubscriber, initDark } from "@pistonite/pure/pref";
+import { addLocaleSubscriber, initDark, ThemeProvider } from "@pistonite/celera";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Void } from "@pistonite/pure/result";
-import { ThemeProvider } from "@pistonite/shared-controls";
 import { wxWorker } from "@pistonite/workex";
 
 import { initI18n, translateUI } from "skybook-localization";
@@ -14,9 +13,8 @@ import {
     type ScriptEnvImage,
     type RuntimeWorkerInitArgs,
     type ScriptEnv,
-    type Translator,
+    skybookRuntime
 } from "@pistonite/skybook-api";
-import { skybookRuntime } from "@pistonite/skybook-api/interfaces/Runtime.bus";
 
 import {
     initExtensionManager,
@@ -30,16 +28,16 @@ import {
     usePersistStore,
     useSessionStore,
     isCrashed,
-} from "self::application";
-import { initNarrow, isLessProductive } from "self::pure-contrib";
-import { bootLog, devLog, probeAndRegisterAssetLocation } from "self::util";
+} from "#application";
+import { initNarrow, isLessProductive } from "#pure-contrib";
+import { bootLog, devLog, probeAndRegisterAssetLocation } from "#util";
 import {
     App,
     BootScreen,
     CrashScreen,
     type BootScreenProps,
     CatchCrash,
-} from "self::ui/surfaces/root";
+} from "#ui/surfaces/root";
 
 const VALID_VERSIONS = ["1.5.0", "1.6.0", "1.8.2"];
 
@@ -149,9 +147,12 @@ const boot = async () => {
 
 /** Extract the DirectLoad payload from the page, if exists */
 const extractDirectLoad = (): DirectLoad | undefined => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ("__skybook_direct_load" in (globalThis as any).window) {
         // Remove script tag that's already executed
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const directLoadPayload: DirectLoad = (globalThis as any).window.__skybook_direct_load;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (globalThis as any).document.querySelector("script[data-skybook-direct-load]")?.remove();
         // verify payload
         if (
@@ -162,7 +163,6 @@ const extractDirectLoad = (): DirectLoad | undefined => {
         }
     }
     return undefined;
-    /* eslint-enable @typescript-eslint/no-explicit-any */
 };
 
 type BootContext = {

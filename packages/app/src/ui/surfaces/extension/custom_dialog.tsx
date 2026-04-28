@@ -12,7 +12,7 @@ import {
     DialogTrigger,
     Field,
 } from "@fluentui/react-components";
-import { InlineLink } from "@pistonite/shared-controls";
+import { InlineLink } from "@pistonite/celera";
 
 import { useUITranslation } from "skybook-localization";
 
@@ -21,8 +21,8 @@ import {
     getCustomExtensionConfigText,
     useExtensionStore,
     useUIStore,
-} from "self::application";
-import { Code, Interpolate } from "self::ui/components";
+} from "#application";
+import { Code, Interpolate } from "#ui/components";
 
 const FORMAT = "NAME=URL";
 

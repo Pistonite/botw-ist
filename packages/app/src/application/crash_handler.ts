@@ -9,7 +9,7 @@
  */
 import { errstr } from "@pistonite/pure/result";
 
-import { bootLog, log } from "self::util";
+import { bootLog, log } from "#util";
 
 import { usePersistStore } from "./persist_store.ts";
 

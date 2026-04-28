@@ -4,7 +4,7 @@ import type { PropsWithChildren } from "react";
 
 import { useUITranslation } from "skybook-localization";
 
-import { useStyleEngine } from "self::util";
+import { useStyleEngine } from "#util";
 
 export type ExtensionToolbarProps = {
     /** Id of the current opened extension */

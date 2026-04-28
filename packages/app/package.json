@@ -3,6 +3,7 @@
     "version": "0.0.0",
     "type": "module",
     "pistonight/mono-dev": {
+        "lib": false,
         "https": true,
         "wasm": true
     },

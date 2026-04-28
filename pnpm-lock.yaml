@@ -21,6 +21,9 @@ catalogs:
     '@pistonite/pure':
       specifier: ^0.29.5
       version: 0.29.5
+    '@pistonite/webfs':
+      specifier: ^0.1.1
+      version: 0.1.1
     '@pistonite/workex':
       specifier: ^0.2.1
       version: 0.2.1
@@ -118,6 +121,9 @@ importers:
       '@pistonite/skybook-itemsys':
         specifier: workspace:*
         version: link:../itemsys
+      '@pistonite/webfs':
+        specifier: 'catalog:'
+        version: 0.1.1
       '@pistonite/workex':
         specifier: 'catalog:'
         version: 0.2.1
@@ -1171,6 +1177,9 @@ packages:
 
   '@pistonite/pure@0.29.5':
     resolution: {integrity: sha512-swO3r1CrcLhyCDMpKilgFSIpXQHWuidNMehd+ePVqn1UVGFhLbKRrOwcRj1ob7ZQix7N6GxfT3+J4PgllNOSMQ==}
+
+  '@pistonite/webfs@0.1.1':
+    resolution: {integrity: sha512-Oxj5C0MlJi2IGxkL8Wdsba+2nFBev9jHrdR0c0kz3Og8OTAPQh7uwhOKwI9E7qrOMnPeBSznC65KOmN39Xbqlw==}
 
   '@pistonite/workex@0.2.1':
     resolution: {integrity: sha512-qwMoFaQwsJIkjL5+I/5PwyMGWRmBgT6bpQHLR8lu2bYiHUHw5E/Q6faniy+GYZk7I7VD4XoOcx+OJfIRl+UUcA==}
@@ -4269,6 +4278,10 @@ snapshots:
   '@pistonite/pure@0.29.5':
     dependencies:
       denque: 2.1.0
+
+  '@pistonite/webfs@0.1.1':
+    dependencies:
+      '@pistonite/pure': 0.29.5
 
   '@pistonite/workex@0.2.1':
     dependencies:

@@ -6,7 +6,7 @@ import {
     webLightTheme,
 } from "@fluentui/react-components";
 
-import { useStyleEngine } from "self::util";
+import { useStyleEngine } from "#util";
 
 import { GlowyText } from "./GlowyText.tsx";
 

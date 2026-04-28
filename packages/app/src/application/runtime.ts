@@ -13,7 +13,6 @@ import type {
     Runtime,
     RuntimeApp,
     RuntimeWorkerInitArgs,
-    Translator,
 } from "@pistonite/skybook-api";
 import {
     searchItemLocalized,
@@ -21,7 +20,7 @@ import {
     translateRuntimeInitError,
 } from "skybook-localization";
 
-import { bootLog, log } from "self::util";
+import { bootLog, log } from "#util";
 
 import { useSessionStore } from "./session_store.ts";
 import { crashApp } from "./crash_handler.ts";

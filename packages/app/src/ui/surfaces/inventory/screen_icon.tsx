@@ -9,8 +9,8 @@ import {
 import type { InvView_Screen } from "@pistonite/skybook-api";
 import { useUITranslation } from "skybook-localization";
 
-import { useUIStore } from "self::application";
-import { getRandomBackgroundName } from "self::util";
+import { useUIStore } from "#application";
+import { getRandomBackgroundName } from "#util";
 
 export type ScreenIndicatorProps = {
     screen?: InvView_Screen;

@@ -6,7 +6,7 @@ import {
     type FirstPartyExtension,
     FirstPartyExtensionAdapter,
     shallowEqual,
-} from "self::util";
+} from "#util";
 
 import { SaveViewer } from "./save_viewer.tsx";
 import { createSaveViewerStore, type SaveViewerStore } from "./store.ts";

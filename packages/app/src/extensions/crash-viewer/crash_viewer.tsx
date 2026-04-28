@@ -1,10 +1,10 @@
 import { Body1, Field, makeStyles } from "@fluentui/react-components";
-import { useDark } from "@pistonite/pure-react";
+import { useDark } from "@pistonite/celera";
 
 import { useUITranslation } from "skybook-localization";
 
-import { useStyleEngine } from "self::util";
-import { CopyButton } from "self::ui/components";
+import { useStyleEngine } from "#util";
+import { CopyButton } from "#ui/components";
 
 export type CrashViewerProps = {
     crashInfo: string;

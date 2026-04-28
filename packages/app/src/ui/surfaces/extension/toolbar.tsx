@@ -7,9 +7,9 @@ import {
     openExtensionPopup,
     BuiltinExtensionIds,
     getPrimaryExtensionIdsForDropdown,
-} from "self::application";
-import { isLessProductive } from "self::pure-contrib";
-import { ExtensionToolbar } from "self::ui/components";
+} from "#application";
+import { isLessProductive } from "#pure-contrib";
+import { ExtensionToolbar } from "#ui/components";
 
 const ExtensionToolbarSecondaryConnected: React.FC = () => {
     const currentSecondaryId = useCurrentSecondaryExtensionId();

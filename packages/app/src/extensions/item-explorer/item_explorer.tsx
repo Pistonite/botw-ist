@@ -8,8 +8,8 @@ import type { ItemSearchResult } from "@pistonite/skybook-api";
 import { useUITranslation } from "skybook-localization";
 import { type CookEffect, StandaloneItemSlot } from "@pistonite/skybook-itemsys";
 
-import { Code, Interpolate } from "self::ui/components";
-import { useStyleEngine } from "self::util";
+import { Code, Interpolate } from "#ui/components";
+import { useStyleEngine } from "#util";
 
 export type Searcher = {
     search(localized: boolean, query: string): Promise<Result<ItemSearchResult[], string>>;

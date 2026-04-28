@@ -1,8 +1,7 @@
 import { type PropsWithChildren, StrictMode, useCallback } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { addLocaleSubscriber, initDark } from "@pistonite/pure/pref";
+import { addLocaleSubscriber, initDark, ThemeProvider } from "@pistonite/celera";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ThemeProvider } from "@pistonite/shared-controls";
 
 import { initI18n, translateUI } from "skybook-localization";
 import {
@@ -14,11 +13,11 @@ import {
 import {
     readExtensionProperties,
     connectPopoutExtensionWindow,
-} from "@pistonite/skybook-api/client";
+} from "@pistonite/skybook-api/extension-client";
 import type { ExtensionApp } from "@pistonite/skybook-api";
 
-import { type ConnectExtensionFn, getExtension } from "self::extensions";
-import { extLog, probeAndRegisterAssetLocation, type FirstPartyExtension } from "self::util";
+import { type ConnectExtensionFn, getExtension } from "#extensions";
+import { extLog, probeAndRegisterAssetLocation, type FirstPartyExtension } from "#util";
 
 async function boot() {
     // Initialize preferences, but do not persist settings

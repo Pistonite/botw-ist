@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { log } from "self::util";
+import { log } from "#util";
 
 /**
  * List of builtin extension IDs

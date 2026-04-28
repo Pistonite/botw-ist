@@ -2,7 +2,7 @@ import { makeStyles } from "@fluentui/react-components";
 
 import { ModifierSprite, type PouchCategory, PouchCategoryNames } from "@pistonite/skybook-itemsys";
 
-import { useStyleEngine } from "self::util";
+import { useStyleEngine } from "#util";
 
 export type InventoryTabButtonProps = {
     category: PouchCategory;

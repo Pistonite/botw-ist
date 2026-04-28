@@ -16,7 +16,7 @@ import { translateGenericError } from "skybook-localization";
 
 import { useRuntime } from "./runtime.ts";
 import { useSessionStore } from "./session_store.ts";
-import { log } from "self::util";
+import { log } from "#util";
 
 export type CachedRuntimeData<T> = {
     data: Result<T, RuntimeViewError> | undefined;
