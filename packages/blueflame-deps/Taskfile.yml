@@ -7,9 +7,6 @@ includes:
     optional: true
 
 tasks:
-  build:
-    - task: build-src
-   
   build-src:
     - mkdir -p src/generated
     - uv run scripts/generate.py

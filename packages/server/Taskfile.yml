@@ -5,10 +5,10 @@ includes:
     taskfile: ./node_modules/mono-dev/task/ecma.yaml
     internal: true
     optional: true
-  # app:
-  #   taskfile: ../app
-  #   dir: ../app
-  #   internal: true
+  app:
+    taskfile: ../app
+    dir: ../app
+    internal: true
   runtime-wasm:
     taskfile: ../runtime-wasm
     dir: ../runtime-wasm

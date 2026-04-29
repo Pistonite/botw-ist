@@ -43,6 +43,11 @@ export default configure(() => {
             "import.meta.env.VERSION": JSON.stringify(version),
             "import.meta.vitest": "undefined",
         },
+        optimizeDeps: {
+            // exclude the ones that requires building
+            // because they are published
+            exclude: ["@pistonite/skybook-itemsys", "@pistonite/skybook-api"]
+        },
         plugins: [
             intwc({ basicLanguages: [] }),
             staticAssetHeader(),

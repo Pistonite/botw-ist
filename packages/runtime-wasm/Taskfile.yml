@@ -11,6 +11,9 @@ includes:
     optional: true
 
 tasks:
+  install:
+    cmds:
+      - echo "nightly" > rust-toolchain
   build:
     desc: Run wasm-bindgen and build the dev dist package
     cmds:

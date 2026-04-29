@@ -7,7 +7,7 @@ includes:
     internal: true
 
 tasks:
-  bsource:
+  build-src:
     cmds:
       - uv run scripts/build-armor-upgrade.py
 

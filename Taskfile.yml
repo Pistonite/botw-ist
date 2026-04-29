@@ -2,7 +2,7 @@ version: '3'
 
 includes:
   common: 
-    taskfile: ./packages/mono-dev/task/common.yaml
+    taskfile: ./node_modules/mono-dev/task/common.yaml
     flatten: true
     optional: true
 
@@ -43,28 +43,25 @@ tasks:
     desc: Install packages for local development
     aliases: [i]
     cmds:
-      - echo "nightly" > packages/runtime-wasm/rust-toolchain
       - magoo install
       - pnpm install
       - task: post-install
 
   post-install:
     cmds:
+      - task: runtime-wasm:install
       - task: app:install
       - task: manual:install
-      - task: intwc:install
-      - task: shared-controls:install
       - task: server:install
 
   build-artifacts:
     desc: Generate artifacts for development locally
     cmds:
-      - task: research:build
-      - task: parser:bsource
-      - task: itemsys:bsource
-      - task: localization:build
+      - task: data:build
+      - task: parser:build-src
+      - task: itemsys-build:build-src
       - task: runtime-wasm:pull-dist
-      - task: blueflame-deps:build
+      - task: blueflame-deps:build-src
 
   pull-artifacts:
     desc: Pull artifacts from storage (requires gcloud access)
@@ -74,7 +71,6 @@ tasks:
 
   cache-ci-app-assets-pull-artifacts:
     deps:
-      - localization:pull-artifacts
       - itemsys-build:pull-artifacts
 
   cache-ci-runtime-pull-artifacts:
@@ -170,6 +166,7 @@ tasks:
     deps:
       - skybook-api:test
       - app:test
+      - itemsys:test
 
   build:
     desc: Check that components can build without failure
@@ -182,9 +179,6 @@ tasks:
 
   build-manual-ci:
     cmds:
-        # this technically isn't needed, but not installing pnpm
-        # causes CI to be unreliable due to cache issues
-        # (and I couldn't figure out how to optinally enable the setup)
       - pnpm install --frozen-lockfile 
       - task: manual:install
       - task: manual:build
@@ -192,7 +186,6 @@ tasks:
   build-app-ci:
     cmds:
       - pnpm install --frozen-lockfile
-      - task: intwc:install
       - task: app:install
       - task: app:build
 
@@ -224,7 +217,7 @@ tasks:
       - task: runtime-wasm:clean
       - task: itemsys-build:clean
 
-  publish:
+  publish-app:
     desc: Publish artifacts
     vars:
       SKYBOOK_VERSION_TAG:
@@ -232,8 +225,11 @@ tasks:
     cmds:
       - git tag {{.SKYBOOK_VERSION_TAG}}
       - git push origin {{.SKYBOOK_VERSION_TAG}}
-      - task: skybook-api:publish
-        ignore_error: true
+
+  publish-api:
+    - task: skybook-api:publish
+  publish-itemsys:
+    - task: itemsys:publish
 
   upgrade:
     desc: Upgrade dependencies
@@ -244,6 +240,7 @@ tasks:
         react react-dom @types/react @types/react-dom
         @fluentui/react-components @fluentui/react-icons
         fuse.js js-yaml @types/js-yaml @types/node
-
+        @types/bun zustand jsdom uuid reselect
+        @uidotdev/usehooks @tanstack/react-query
       - pnpm dedupe
       - pnpm dedupe --check
