@@ -9,8 +9,9 @@ tasks:
   install:
     cmds:
       # - bun scripts/build-themes.ts > src/theme/colors.ts
-      # - bun build vite-plugin/plugin-src.ts > vite-plugin/plugin.js
       - task: ecma:config
+  build-plugin:
+    - bun build vite-plugin/plugin-src.ts > vite-plugin/plugin.js
 
   check:
     cmds:

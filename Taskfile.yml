@@ -231,6 +231,22 @@ tasks:
   publish-itemsys:
     - task: itemsys:publish
 
+  pnpm-dev-link:
+    cmds:
+      - |
+        for f in packages/*/package.json; do
+          sed -i 's|"@pistonite/{{.CLI_ARGS}}": "catalog:"|"@pistonite/{{.CLI_ARGS}}": "link:../../../{{.CLI_ARGS}}"|g' "$f"
+        done
+      - pnpm i
+
+  pnpm-dev-unlink:
+    cmds:
+      - |
+        for f in packages/*/package.json; do
+          sed -i 's|"@pistonite/{{.CLI_ARGS}}": "link:../../../{{.CLI_ARGS}}"|"@pistonite/{{.CLI_ARGS}}": "catalog:"|g' "$f"
+        done
+      - pnpm i
+
   upgrade:
     desc: Upgrade dependencies
     cmds:

@@ -16,17 +16,17 @@ catalogs:
       specifier: ^2.0.324
       version: 2.0.325
     '@pistonite/celera':
+      specifier: ^0.2.3
+      version: 0.2.3
+    '@pistonite/pure':
+      specifier: ^0.29.6
+      version: 0.29.6
+    '@pistonite/webfs':
+      specifier: ^0.1.2
+      version: 0.1.2
+    '@pistonite/workex':
       specifier: ^0.2.2
       version: 0.2.2
-    '@pistonite/pure':
-      specifier: ^0.29.5
-      version: 0.29.5
-    '@pistonite/webfs':
-      specifier: ^0.1.1
-      version: 0.1.1
-    '@pistonite/workex':
-      specifier: ^0.2.1
-      version: 0.2.1
     '@tanstack/react-query':
       specifier: ^5.100.5
       version: 5.100.5
@@ -62,7 +62,7 @@ catalogs:
       version: 11.3.5
     mono-dev:
       specifier: github:pistonight/mono-dev#dist
-      version: 0.3.30
+      version: 0.3.32
     react:
       specifier: ^19.2.5
       version: 19.2.5
@@ -76,8 +76,8 @@ catalogs:
       specifier: ^14.0.0
       version: 14.0.0
     vite-plugin-serve-static:
-      specifier: ^1.1.0
-      version: 1.2.0
+      specifier: ^2.2.0
+      version: 2.2.0
     zustand:
       specifier: ^5.0.12
       version: 5.0.12
@@ -96,7 +96,7 @@ importers:
         version: 9.39.4
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
   packages/app:
     dependencies:
@@ -108,13 +108,13 @@ importers:
         version: 2.0.325(react@19.2.5)
       '@pistonite/celera':
         specifier: 'catalog:'
-        version: 0.2.2(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
+        version: 0.2.3(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
       '@pistonite/intwc':
         specifier: workspace:*
         version: link:../intwc
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.29.5
+        version: 0.29.6
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
@@ -123,10 +123,10 @@ importers:
         version: link:../itemsys
       '@pistonite/webfs':
         specifier: 'catalog:'
-        version: 0.1.1
+        version: 0.1.2
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.2.1
+        version: 0.2.2
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.100.5(react@19.2.5)
@@ -172,19 +172,19 @@ importers:
         version: 0.52.2(patch_hash=789e917d911899942d0d30033e21cd0f6720af75845df5b971a6594d398e368e)
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
       vite-plugin-serve-static:
         specifier: 'catalog:'
-        version: 1.2.0(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))
+        version: 2.2.0(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))
 
   packages/intwc:
     dependencies:
       '@pistonite/celera':
         specifier: 'catalog:'
-        version: 0.2.2(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
+        version: 0.2.3(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.29.5
+        version: 0.29.6
       monaco-editor:
         specifier: 0.52.2
         version: 0.52.2(patch_hash=789e917d911899942d0d30033e21cd0f6720af75845df5b971a6594d398e368e)
@@ -203,7 +203,7 @@ importers:
         version: 19.2.14
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
   packages/itemsys:
     dependencies:
@@ -215,10 +215,10 @@ importers:
         version: 2.0.325(react@19.2.5)
       '@pistonite/celera':
         specifier: 'catalog:'
-        version: 0.2.2(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
+        version: 0.2.3(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.29.5
+        version: 0.29.6
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
@@ -231,16 +231,16 @@ importers:
         version: 19.2.14
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
   packages/localization:
     dependencies:
       '@pistonite/celera':
         specifier: 'catalog:'
-        version: 0.2.2(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
+        version: 0.2.3(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.29.5
+        version: 0.29.6
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
@@ -268,57 +268,57 @@ importers:
         version: 4.1.1
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
   packages/parser-legacy:
     devDependencies:
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
   packages/runtime-wasm:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.29.5
+        version: 0.29.6
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.2.1
+        version: 0.2.2
       skybook-runtime-worker:
         specifier: workspace:*
         version: link:../runtime-worker
     devDependencies:
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
   packages/runtime-worker:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.29.5
+        version: 0.29.6
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.2.1
+        version: 0.2.2
       lru-cache:
         specifier: 'catalog:'
         version: 11.3.5
     devDependencies:
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
   packages/server:
     dependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.29.5
+        version: 0.29.6
       '@pistonite/skybook-api':
         specifier: workspace:*
         version: link:../skybook-api
@@ -331,20 +331,20 @@ importers:
         version: 1.3.13
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
   packages/skybook-api:
     dependencies:
       '@pistonite/workex':
         specifier: 'catalog:'
-        version: 0.2.1
+        version: 0.2.2
     devDependencies:
       '@pistonite/pure':
         specifier: 'catalog:'
-        version: 0.29.5
+        version: 0.29.6
       mono-dev:
         specifier: 'catalog:'
-        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
+        version: https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3)
 
 packages:
 
@@ -1168,21 +1168,21 @@ packages:
   '@oxc-project/types@0.127.0':
     resolution: {integrity: sha512-aIYXQBo4lCbO4z0R3FHeucQHpF46l2LbMdxRvqvuRuW2OxdnSkcng5B8+K12spgLDj93rtN3+J2Vac/TIO+ciQ==}
 
-  '@pistonite/celera@0.2.2':
-    resolution: {integrity: sha512-cvSY43s/nlhhveJMCbv39te2OVVpnRKvxZonV1aoIv19ReU01ziLVvN+/HoomvWdUrwnv6ew26qcpaT7DGZ8rw==}
+  '@pistonite/celera@0.2.3':
+    resolution: {integrity: sha512-CjZeK5242Bd/2GGmT8kYuulvYKdSvqjKOXNC2A9yl3X8s/LWAhJtFci25wGraUCfx/SazK3dEphZedkQJVJhvg==}
     peerDependencies:
       '@fluentui/react-components': ^9
       '@fluentui/react-icons': ^2
       react: ^19
 
-  '@pistonite/pure@0.29.5':
-    resolution: {integrity: sha512-swO3r1CrcLhyCDMpKilgFSIpXQHWuidNMehd+ePVqn1UVGFhLbKRrOwcRj1ob7ZQix7N6GxfT3+J4PgllNOSMQ==}
+  '@pistonite/pure@0.29.6':
+    resolution: {integrity: sha512-uPCpUXq18KRO5omOLHUSQvC7sPCl/6ftvoEbImBp/4NcT4JngAQlIlngyQDMsgar//RddMf0grb6/Er19aRiQw==}
 
-  '@pistonite/webfs@0.1.1':
-    resolution: {integrity: sha512-Oxj5C0MlJi2IGxkL8Wdsba+2nFBev9jHrdR0c0kz3Og8OTAPQh7uwhOKwI9E7qrOMnPeBSznC65KOmN39Xbqlw==}
+  '@pistonite/webfs@0.1.2':
+    resolution: {integrity: sha512-ytlBIVqZnrYeTrourDLeF4fPRisvBLPEjC7fNr052vFXHFHGGXykXHa3CfdCUSH9AaJVRrPbegyUeSqj6AM1oQ==}
 
-  '@pistonite/workex@0.2.1':
-    resolution: {integrity: sha512-qwMoFaQwsJIkjL5+I/5PwyMGWRmBgT6bpQHLR8lu2bYiHUHw5E/Q6faniy+GYZk7I7VD4XoOcx+OJfIRl+UUcA==}
+  '@pistonite/workex@0.2.2':
+    resolution: {integrity: sha512-2Xagu02mJyvU4434J2Keb3rFagaxnUmx/zWAPTFfw5ZM4iWvMSJ+gL41Yn/m3d+dld69S42SqCi4eHGHPqRamQ==}
 
   '@prettier/cli@0.10.0':
     resolution: {integrity: sha512-GKw+FjtslM4iNQNq3dOrDhCes/PcwJ1HYwphJlYyOHgTHru39LJQhhrii/3T0HW2fsfNXnLbhqtyuZfIGMVz+A==}
@@ -1381,63 +1381,63 @@ packages:
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
 
-  '@typescript-eslint/eslint-plugin@8.59.0':
-    resolution: {integrity: sha512-HyAZtpdkgZwpq8Sz3FSUvCR4c+ScbuWa9AksK2Jweub7w4M3yTz4O11AqVJzLYjy/B9ZWPyc81I+mOdJU/bDQw==}
+  '@typescript-eslint/eslint-plugin@8.59.1':
+    resolution: {integrity: sha512-BOziFIfE+6osHO9FoJG4zjoHUcvI7fTNBSpdAwrNH0/TLvzjsk2oo8XSSOT2HhqUyhZPfHv4UOffoJ9oEEQ7Ag==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
-      '@typescript-eslint/parser': ^8.59.0
+      '@typescript-eslint/parser': ^8.59.1
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: '>=4.8.4 <6.1.0'
 
-  '@typescript-eslint/parser@8.59.0':
-    resolution: {integrity: sha512-TI1XGwKbDpo9tRW8UDIXCOeLk55qe9ZFGs8MTKU6/M08HWTw52DD/IYhfQtOEhEdPhLMT26Ka/x7p70nd3dzDg==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
-      typescript: '>=4.8.4 <6.1.0'
-
-  '@typescript-eslint/project-service@8.59.0':
-    resolution: {integrity: sha512-Lw5ITrR5s5TbC19YSvlr63ZfLaJoU6vtKTHyB0GQOpX0W7d5/Ir6vUahWi/8Sps/nOukZQ0IB3SmlxZnjaKVnw==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      typescript: '>=4.8.4 <6.1.0'
-
-  '@typescript-eslint/scope-manager@8.59.0':
-    resolution: {integrity: sha512-UzR16Ut8IpA3Mc4DbgAShlPPkVm8xXMWafXxB0BocaVRHs8ZGakAxGRskF7FId3sdk9lgGD73GSFaWmWFDE4dg==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@typescript-eslint/tsconfig-utils@8.59.0':
-    resolution: {integrity: sha512-91Sbl3s4Kb3SybliIY6muFBmHVv+pYXfybC4Oolp3dvk8BvIE3wOPc+403CWIT7mJNkfQRGtdqghzs2+Z91Tqg==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      typescript: '>=4.8.4 <6.1.0'
-
-  '@typescript-eslint/type-utils@8.59.0':
-    resolution: {integrity: sha512-3TRiZaQSltGqGeNrJzzr1+8YcEobKH9rHnqIp/1psfKFmhRQDNMGP5hBufanYTGznwShzVLs3Mz+gDN7HkWfXg==}
+  '@typescript-eslint/parser@8.59.1':
+    resolution: {integrity: sha512-HDQH9O/47Dxi1ceDhBXdaldtf/WV9yRYMjbjCuNk3qnaTD564qwv61Y7+gTxwxRKzSrgO5uhtw584igXVuuZkA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: '>=4.8.4 <6.1.0'
 
-  '@typescript-eslint/types@8.59.0':
-    resolution: {integrity: sha512-nLzdsT1gdOgFxxxwrlNVUBzSNBEEHJ86bblmk4QAS6stfig7rcJzWKqCyxFy3YRRHXDWEkb2NralA1nOYkkm/A==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@typescript-eslint/typescript-estree@8.59.0':
-    resolution: {integrity: sha512-O9Re9P1BmBLFJyikRbQpLku/QA3/AueZNO9WePLBwQrvkixTmDe8u76B6CYUAITRl/rHawggEqUGn5QIkVRLMw==}
+  '@typescript-eslint/project-service@8.59.1':
+    resolution: {integrity: sha512-+MuHQlHiEr00Of/IQbE/MmEoi44znZHbR/Pz7Opq4HryUOlRi+/44dro9Ycy8Fyo+/024IWtw8m4JUMCGTYxDg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       typescript: '>=4.8.4 <6.1.0'
 
-  '@typescript-eslint/utils@8.59.0':
-    resolution: {integrity: sha512-I1R/K7V07XsMJ12Oaxg/O9GfrysGTmCRhvZJBv0RE0NcULMzjqVpR5kRRQjHsz3J/bElU7HwCO7zkqL+MSUz+g==}
+  '@typescript-eslint/scope-manager@8.59.1':
+    resolution: {integrity: sha512-LwuHQI4pDOYVKvmH2dkaJo6YZCSgouVgnS/z7yBPKBMvgtBvyLqiLy9Z6b7+m/TRcX1NFYUqZetI5Y+aT4GEfg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/tsconfig-utils@8.59.1':
+    resolution: {integrity: sha512-/0nEyPbX7gRsk0Uwfe4ALwwgxuA66d/l2mhRDNlAvaj4U3juhUtJNq0DsY8M2AYwwb9rEq2hrC3IcIcEt++iJA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '>=4.8.4 <6.1.0'
+
+  '@typescript-eslint/type-utils@8.59.1':
+    resolution: {integrity: sha512-klWPBR2ciQHS3f++ug/mVnWKPjBUo7icEL3FAO1lhAR1Z1i5NQYZ1EannMSRYcq5qCv5wNALlXr6fksRHyYl7w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
       typescript: '>=4.8.4 <6.1.0'
 
-  '@typescript-eslint/visitor-keys@8.59.0':
-    resolution: {integrity: sha512-/uejZt4dSere1bx12WLlPfv8GktzcaDtuJ7s42/HEZ5zGj9oxRaD4bj7qwSunXkf+pbAhFt2zjpHYUiT5lHf0Q==}
+  '@typescript-eslint/types@8.59.1':
+    resolution: {integrity: sha512-ZDCjgccSdYPw5Bxh+my4Z0lJU96ZDN7jbBzvmEn0FZx3RtU1C7VWl6NbDx94bwY3V5YsgwRzJPOgeY2Q/nLG8A==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/typescript-estree@8.59.1':
+    resolution: {integrity: sha512-OUd+vJS05sSkOip+BkZ/2NS8RMxrAAJemsC6vU3kmfLyeaJT0TftHkV9mcx2107MmsBVXXexhVu4F0TZXyMl4g==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '>=4.8.4 <6.1.0'
+
+  '@typescript-eslint/utils@8.59.1':
+    resolution: {integrity: sha512-3pIeoXhCeYH9FSCBI8P3iNwJlGuzPlYKkTlen2O9T1DSeeg8UG8jstq6BLk+Mda0qup7mgk4z4XL4OzRaxZ8LA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
+      typescript: '>=4.8.4 <6.1.0'
+
+  '@typescript-eslint/visitor-keys@8.59.1':
+    resolution: {integrity: sha512-LdDNl6C5iJExcM0Yh0PwAIBb9PrSiCsWamF/JyEZawm3kFDnRoaq3LGE4bpyRao/fWeGKKyw7icx0YxrLFC5Cg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260421.2':
@@ -2168,9 +2168,9 @@ packages:
   monaco-editor@0.52.2:
     resolution: {integrity: sha512-GEQWEZmfkOGLdd3XK8ryrfWz3AIP8YymVXiPHEdewrUq7mh0qrKrfHLNCXcbB6sTnMLnOZ3ztSiKcciFUkIJwQ==}
 
-  mono-dev@https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554:
-    resolution: {tarball: https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554}
-    version: 0.3.30
+  mono-dev@https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f:
+    resolution: {tarball: https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f}
+    version: 0.3.32
     hasBin: true
 
   ms@2.1.3:
@@ -2488,8 +2488,8 @@ packages:
     peerDependencies:
       typescript: 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x || 5.7.x || 5.8.x || 5.9.x || 6.0.x
 
-  typescript-eslint@8.59.0:
-    resolution: {integrity: sha512-BU3ONW9X+v90EcCH9ZS6LMackcVtxRLlI3XrYyqZIwVSHIk7Qf7bFw1z0M9Q0IUxhTMZCf8piY9hTYaNEIASrw==}
+  typescript-eslint@8.59.1:
+    resolution: {integrity: sha512-xqDcFVBmlrltH64lklOVp1wYxgJr6LVdg3NamBgH2OOQDLFdTKfIZXF5PfghrnXQKXZGTQs8tr1vL7fJvq8CTQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
@@ -2532,10 +2532,11 @@ packages:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
 
-  vite-plugin-serve-static@1.2.0:
-    resolution: {integrity: sha512-v3nDHcY5Hp+aYPMOrbmx+MRphlM54fBkldu77KJ8gCfcmZKtH49FaUPyXI0IcKoejY60iz0sUV55RbUjL4lSsg==}
+  vite-plugin-serve-static@2.2.0:
+    resolution: {integrity: sha512-ibAoWCw8DIiBCeTsmwW1fEdUmtGyUMK4moYoxZlJpKfIk6C/7VrUpq5MujvygCXgAZnmXSuH4yB9iEHeYn7eMQ==}
+    engines: {node: '>=20'}
     peerDependencies:
-      vite: '>=5.0.0 <8.0.0'
+      vite: '>=5.0.0 <9.0.0'
 
   vite-plugin-wasm@3.6.0:
     resolution: {integrity: sha512-mL/QPziiIA4RAA6DkaZZzOstdwbW5jO4Vz7Zenj0wieKWBlNvIvX5L5ljum9lcUX0ShNfBgCNLKTjNkRVVqcsw==}
@@ -4262,11 +4263,11 @@ snapshots:
 
   '@oxc-project/types@0.127.0': {}
 
-  '@pistonite/celera@0.2.2(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)':
+  '@pistonite/celera@0.2.3(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)':
     dependencies:
       '@fluentui/react-components': 9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0)
       '@fluentui/react-icons': 2.0.325(react@19.2.5)
-      '@pistonite/pure': 0.29.5
+      '@pistonite/pure': 0.29.6
       i18next: 26.0.8(typescript@6.0.3)
       react: 19.2.5
       react-i18next: 17.0.6(i18next@26.0.8(typescript@6.0.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
@@ -4275,17 +4276,17 @@ snapshots:
       - react-native
       - typescript
 
-  '@pistonite/pure@0.29.5':
+  '@pistonite/pure@0.29.6':
     dependencies:
       denque: 2.1.0
 
-  '@pistonite/webfs@0.1.1':
+  '@pistonite/webfs@0.1.2':
     dependencies:
-      '@pistonite/pure': 0.29.5
+      '@pistonite/pure': 0.29.6
 
-  '@pistonite/workex@0.2.1':
+  '@pistonite/workex@0.2.2':
     dependencies:
-      '@pistonite/pure': 0.29.5
+      '@pistonite/pure': 0.29.6
 
   '@prettier/cli@0.10.0(prettier@3.4.2)':
     dependencies:
@@ -4452,14 +4453,14 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
-  '@typescript-eslint/eslint-plugin@8.59.0(@typescript-eslint/parser@8.59.0(eslint@9.39.4)(typescript@6.0.3))(eslint@9.39.4)(typescript@6.0.3)':
+  '@typescript-eslint/eslint-plugin@8.59.1(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@6.0.3))(eslint@9.39.4)(typescript@6.0.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
-      '@typescript-eslint/parser': 8.59.0(eslint@9.39.4)(typescript@6.0.3)
-      '@typescript-eslint/scope-manager': 8.59.0
-      '@typescript-eslint/type-utils': 8.59.0(eslint@9.39.4)(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.59.0(eslint@9.39.4)(typescript@6.0.3)
-      '@typescript-eslint/visitor-keys': 8.59.0
+      '@typescript-eslint/parser': 8.59.1(eslint@9.39.4)(typescript@6.0.3)
+      '@typescript-eslint/scope-manager': 8.59.1
+      '@typescript-eslint/type-utils': 8.59.1(eslint@9.39.4)(typescript@6.0.3)
+      '@typescript-eslint/utils': 8.59.1(eslint@9.39.4)(typescript@6.0.3)
+      '@typescript-eslint/visitor-keys': 8.59.1
       eslint: 9.39.4
       ignore: 7.0.5
       natural-compare: 1.4.0
@@ -4468,41 +4469,41 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@8.59.0(eslint@9.39.4)(typescript@6.0.3)':
+  '@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@6.0.3)':
     dependencies:
-      '@typescript-eslint/scope-manager': 8.59.0
-      '@typescript-eslint/types': 8.59.0
-      '@typescript-eslint/typescript-estree': 8.59.0(typescript@6.0.3)
-      '@typescript-eslint/visitor-keys': 8.59.0
+      '@typescript-eslint/scope-manager': 8.59.1
+      '@typescript-eslint/types': 8.59.1
+      '@typescript-eslint/typescript-estree': 8.59.1(typescript@6.0.3)
+      '@typescript-eslint/visitor-keys': 8.59.1
       debug: 4.4.3
       eslint: 9.39.4
       typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/project-service@8.59.0(typescript@6.0.3)':
+  '@typescript-eslint/project-service@8.59.1(typescript@6.0.3)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.59.0(typescript@6.0.3)
-      '@typescript-eslint/types': 8.59.0
+      '@typescript-eslint/tsconfig-utils': 8.59.1(typescript@6.0.3)
+      '@typescript-eslint/types': 8.59.1
       debug: 4.4.3
       typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/scope-manager@8.59.0':
+  '@typescript-eslint/scope-manager@8.59.1':
     dependencies:
-      '@typescript-eslint/types': 8.59.0
-      '@typescript-eslint/visitor-keys': 8.59.0
+      '@typescript-eslint/types': 8.59.1
+      '@typescript-eslint/visitor-keys': 8.59.1
 
-  '@typescript-eslint/tsconfig-utils@8.59.0(typescript@6.0.3)':
+  '@typescript-eslint/tsconfig-utils@8.59.1(typescript@6.0.3)':
     dependencies:
       typescript: 6.0.3
 
-  '@typescript-eslint/type-utils@8.59.0(eslint@9.39.4)(typescript@6.0.3)':
+  '@typescript-eslint/type-utils@8.59.1(eslint@9.39.4)(typescript@6.0.3)':
     dependencies:
-      '@typescript-eslint/types': 8.59.0
-      '@typescript-eslint/typescript-estree': 8.59.0(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.59.0(eslint@9.39.4)(typescript@6.0.3)
+      '@typescript-eslint/types': 8.59.1
+      '@typescript-eslint/typescript-estree': 8.59.1(typescript@6.0.3)
+      '@typescript-eslint/utils': 8.59.1(eslint@9.39.4)(typescript@6.0.3)
       debug: 4.4.3
       eslint: 9.39.4
       ts-api-utils: 2.5.0(typescript@6.0.3)
@@ -4510,14 +4511,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/types@8.59.0': {}
+  '@typescript-eslint/types@8.59.1': {}
 
-  '@typescript-eslint/typescript-estree@8.59.0(typescript@6.0.3)':
+  '@typescript-eslint/typescript-estree@8.59.1(typescript@6.0.3)':
     dependencies:
-      '@typescript-eslint/project-service': 8.59.0(typescript@6.0.3)
-      '@typescript-eslint/tsconfig-utils': 8.59.0(typescript@6.0.3)
-      '@typescript-eslint/types': 8.59.0
-      '@typescript-eslint/visitor-keys': 8.59.0
+      '@typescript-eslint/project-service': 8.59.1(typescript@6.0.3)
+      '@typescript-eslint/tsconfig-utils': 8.59.1(typescript@6.0.3)
+      '@typescript-eslint/types': 8.59.1
+      '@typescript-eslint/visitor-keys': 8.59.1
       debug: 4.4.3
       minimatch: 10.2.5
       semver: 7.7.4
@@ -4527,20 +4528,20 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@8.59.0(eslint@9.39.4)(typescript@6.0.3)':
+  '@typescript-eslint/utils@8.59.1(eslint@9.39.4)(typescript@6.0.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.9.1(eslint@9.39.4)
-      '@typescript-eslint/scope-manager': 8.59.0
-      '@typescript-eslint/types': 8.59.0
-      '@typescript-eslint/typescript-estree': 8.59.0(typescript@6.0.3)
+      '@typescript-eslint/scope-manager': 8.59.1
+      '@typescript-eslint/types': 8.59.1
+      '@typescript-eslint/typescript-estree': 8.59.1(typescript@6.0.3)
       eslint: 9.39.4
       typescript: 6.0.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/visitor-keys@8.59.0':
+  '@typescript-eslint/visitor-keys@8.59.1':
     dependencies:
-      '@typescript-eslint/types': 8.59.0
+      '@typescript-eslint/types': 8.59.1
       eslint-visitor-keys: 5.0.1
 
   '@typescript/native-preview-darwin-arm64@7.0.0-dev.20260421.2':
@@ -5243,7 +5244,7 @@ snapshots:
 
   monaco-editor@0.52.2(patch_hash=789e917d911899942d0d30033e21cd0f6720af75845df5b971a6594d398e368e): {}
 
-  mono-dev@https://codeload.github.com/pistonight/mono-dev/tar.gz/6e3b1283e2778aaff29d6485ff7927c5c9892554(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3):
+  mono-dev@https://codeload.github.com/pistonight/mono-dev/tar.gz/05d7f7686c3c5e71c535cff46302dafc93d2c42f(@babel/runtime@7.29.2)(@types/node@25.6.0)(jsdom@29.1.0)(prettier@3.4.2)(rolldown@1.0.0-rc.17)(yaml@2.8.3):
     dependencies:
       '@babel/core': 7.29.0
       '@eslint/js': 9.39.4
@@ -5263,7 +5264,7 @@ snapshots:
       typedoc: 0.28.19(typescript@6.0.3)
       typedoc-theme-oxide: 0.3.0(typedoc@0.28.19(typescript@6.0.3))
       typescript: 6.0.3
-      typescript-eslint: 8.59.0(eslint@9.39.4)(typescript@6.0.3)
+      typescript-eslint: 8.59.1(eslint@9.39.4)(typescript@6.0.3)
       vite: 8.0.10(@types/node@25.6.0)(yaml@2.8.3)
       vite-plugin-wasm: 3.6.0(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))
       vitest: 4.1.5(@types/node@25.6.0)(jsdom@29.1.0)(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3))
@@ -5607,12 +5608,12 @@ snapshots:
       typescript: 6.0.3
       yaml: 2.8.3
 
-  typescript-eslint@8.59.0(eslint@9.39.4)(typescript@6.0.3):
+  typescript-eslint@8.59.1(eslint@9.39.4)(typescript@6.0.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.59.0(@typescript-eslint/parser@8.59.0(eslint@9.39.4)(typescript@6.0.3))(eslint@9.39.4)(typescript@6.0.3)
-      '@typescript-eslint/parser': 8.59.0(eslint@9.39.4)(typescript@6.0.3)
-      '@typescript-eslint/typescript-estree': 8.59.0(typescript@6.0.3)
-      '@typescript-eslint/utils': 8.59.0(eslint@9.39.4)(typescript@6.0.3)
+      '@typescript-eslint/eslint-plugin': 8.59.1(@typescript-eslint/parser@8.59.1(eslint@9.39.4)(typescript@6.0.3))(eslint@9.39.4)(typescript@6.0.3)
+      '@typescript-eslint/parser': 8.59.1(eslint@9.39.4)(typescript@6.0.3)
+      '@typescript-eslint/typescript-estree': 8.59.1(typescript@6.0.3)
+      '@typescript-eslint/utils': 8.59.1(eslint@9.39.4)(typescript@6.0.3)
       eslint: 9.39.4
       typescript: 6.0.3
     transitivePeerDependencies:
@@ -5644,7 +5645,7 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite-plugin-serve-static@1.2.0(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3)):
+  vite-plugin-serve-static@2.2.0(vite@8.0.10(@types/node@25.6.0)(yaml@2.8.3)):
     dependencies:
       cors: 2.8.6
       mime-types: 2.1.35

@@ -11,10 +11,10 @@ packages:
 
 catalog:
   mono-dev: github:pistonight/mono-dev#dist
-  '@pistonite/pure': ^0.29.5
-  '@pistonite/celera': ^0.2.2
-  '@pistonite/webfs': ^0.1.1
-  '@pistonite/workex': ^0.2.1
+  '@pistonite/pure': ^0.29.6
+  '@pistonite/celera': ^0.2.3
+  '@pistonite/webfs': ^0.1.2
+  '@pistonite/workex': ^0.2.2
   lru-cache: ^11.3.5
   react: ^19.2.5
   react-dom: ^19.2.5
@@ -31,7 +31,7 @@ catalog:
   zustand: ^5.0.12
   jsdom: ^29.1.0
   uuid: ^14.0.0
-  vite-plugin-serve-static: ^1.1.0
+  vite-plugin-serve-static: ^2.2.0
   reselect: ^5.1.1
   '@uidotdev/usehooks': ^2.4.1
   '@tanstack/react-query': ^5.100.5

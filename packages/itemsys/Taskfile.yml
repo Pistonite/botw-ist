@@ -15,3 +15,5 @@ tasks:
     - task: ecma:lib-build
   test:
     - task: ecma:test
+  publish:
+    - task: ecma:publish

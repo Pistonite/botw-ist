@@ -76,4 +76,4 @@ tasks:
   publish:
     desc: Publish a release
     cmds:
-      - pnpm publish --access public
+      - task: ecma:publish

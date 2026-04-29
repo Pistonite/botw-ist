@@ -45,8 +45,12 @@ export default configure(() => {
         },
         optimizeDeps: {
             // exclude the ones that requires building
-            // because they are published
-            exclude: ["@pistonite/skybook-itemsys", "@pistonite/skybook-api"]
+            exclude: [
+                "@pistonite/skybook-itemsys",
+                "@pistonite/skybook-api",
+                "skybook-runtime-worker",
+                "skybook-localization",
+            ],
         },
         plugins: [
             intwc({ basicLanguages: [] }),
@@ -63,17 +67,25 @@ export default configure(() => {
             ]),
         ],
         resolve: {
-            dedupe: ["botw-item-assets"],
+          dedupe: [
+                "react",
+    "react-dom",
+    "@fluentui/react-components",
+    "@fluentui/react-icons",
+            ],
         },
         server: {
             port: 23172,
+            hmr: {
+                protocol: "wss"
+            },
             headers: {
                 "Cross-Origin-Embedder-Policy": "require-corp",
                 "Cross-Origin-Opener-Policy": "same-origin",
             },
         },
         build: {
-            rollupOptions: {
+            rolldownOptions: {
                 input: {
                     index: "index.html",
                     popout: "popout.html",

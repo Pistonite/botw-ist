@@ -83,16 +83,16 @@ const createEditorMain = (options: Options) => {
     return lines.join("\n");
 };
 
-export const intwcChunks = { intwc: ["@pistonite/intwc", "monaco-editor"] };
+// export const intwcChunks = { intwc: ["@pistonite/intwc", "monaco-editor"] };
 
 const updateRollupOutputConfig = (output: OutputOptions | undefined): OutputOptions => {
     const chunkFileNamesOriginal = output?.chunkFileNames;
     const assetFileNamesOriginal = output?.assetFileNames;
-    const manualChunksOriginal = output?.manualChunks;
-    const manualChunks =
-        typeof manualChunksOriginal === "function"
-            ? manualChunksOriginal
-            : { ...manualChunksOriginal, ...intwcChunks };
+    // const manualChunksOriginal = output?.manualChunks;
+    // const manualChunks =
+    //     typeof manualChunksOriginal === "function"
+    //         ? manualChunksOriginal
+    //         : { ...manualChunksOriginal, ...intwcChunks };
     const chunkFileNames = (info: PreRenderedChunk): string => {
         for (let i = 0; i < info.moduleIds.length; i++) {
             if (info.moduleIds[i].match(/esm[/\\]vs[/\\]basic-languages/)) {
@@ -141,9 +141,9 @@ const updateRollupOutputConfig = (output: OutputOptions | undefined): OutputOpti
         return assetFileNamesOriginal;
     };
     if (output) {
-        return { ...output, chunkFileNames, assetFileNames, manualChunks };
+        return { ...output, chunkFileNames, assetFileNames };
     }
-    return { chunkFileNames, assetFileNames, manualChunks };
+    return { chunkFileNames, assetFileNames };
 };
 
 export default function plugin(options: Options): Plugin {
@@ -159,10 +159,10 @@ export default function plugin(options: Options): Plugin {
             if (!config.build) {
                 config.build = {};
             }
-            if (!config.build.rollupOptions) {
-                config.build.rollupOptions = {};
+            if (!config.build.rolldownOptions) {
+                config.build.rolldownOptions = {};
             }
-            const rollupOptions = config.build.rollupOptions;
+            const rollupOptions = config.build.rolldownOptions;
             const output = rollupOptions.output;
             if (output && Array.isArray(output)) {
                 for (let i = 0; i < output.length; i++) {
