@@ -13,7 +13,7 @@ import {
     type ScriptEnvImage,
     type RuntimeWorkerInitArgs,
     type ScriptEnv,
-    skybookRuntime
+    skybookRuntime,
 } from "@pistonite/skybook-api";
 
 import {
@@ -30,13 +30,7 @@ import {
     isCrashed,
 } from "#application";
 import { bootLog, devLog, initDisplayMode, probeAndRegisterAssetLocation } from "#util";
-import {
-    App,
-    BootScreen,
-    CrashScreen,
-    type BootScreenProps,
-    CatchCrash,
-} from "#ui/surfaces/root";
+import { App, BootScreen, CrashScreen, type BootScreenProps, CatchCrash } from "#ui/surfaces/root";
 
 const VALID_VERSIONS = ["1.5.0", "1.6.0", "1.8.2"];
 

@@ -1,5 +1,3 @@
-import { makeStyles } from "@fluentui/react-components";
-
 import { ModifierSprite, type PouchCategory, PouchCategoryNames } from "@pistonite/skybook-itemsys";
 
 import { useStyleEngine } from "#util";
@@ -9,8 +7,8 @@ export type InventoryTabButtonProps = {
     onClick?: () => void;
 };
 
-const useStyles = makeStyles({
-    innerContainer: {
+const useStyles = useStyleEngine.extend({
+    inner: {
         width: "48px",
         height: "48px",
         filter: "brightness(0.6)",
@@ -22,11 +20,10 @@ const useStyles = makeStyles({
 });
 
 export const InventoryTabButton: React.FC<InventoryTabButtonProps> = ({ category, onClick }) => {
-    const m = useStyleEngine();
-    const c = useStyles();
+    const m = useStyles();
     return (
         <div className={m("flex-noshrink border-box cursor-pointer")} onClick={onClick}>
-            <div className={m("flex flex-center", c.innerContainer)}>
+            <div className={m("flex flex-center c-inner")}>
                 <ModifierSprite
                     status={`Category${PouchCategoryNames[category as number]}`}
                     size={24}

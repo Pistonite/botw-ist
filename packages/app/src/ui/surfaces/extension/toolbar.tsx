@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { isMobile } from "@pistonite/celera";
 
 import {
     getSecondaryExtensionIdsForDropdown,
@@ -9,7 +10,6 @@ import {
     getPrimaryExtensionIdsForDropdown,
 } from "#application";
 import { ExtensionToolbar } from "#ui/components";
-import { useIsMobile } from "#util";
 
 const ExtensionToolbarSecondaryConnected: React.FC = () => {
     const currentSecondaryId = useCurrentSecondaryExtensionId();
@@ -86,7 +86,7 @@ const ExtensionToolbarPrimaryMobileConnected: React.FC = () => {
 const ExtensionToolbarPrimaryMobileMemo = memo(ExtensionToolbarPrimaryMobileConnected);
 
 export const ExtensionToolbarPrimary = () => {
-    if (useIsMobile()) {
+    if (isMobile()) {
         return <ExtensionToolbarPrimaryMobileMemo />;
     }
     return <ExtensionToolbarPrimaryMemo />;

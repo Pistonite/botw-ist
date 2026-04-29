@@ -1,7 +1,7 @@
 /**
  * This is the UI for boot flow with custom image configuration dialog
  */
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { FsErr, fsOpenFile } from "@pistonite/webfs";
 import {
     Text,
@@ -18,15 +18,10 @@ import {
     Link,
     Radio,
     RadioGroup,
-    makeStyles,
 } from "@fluentui/react-components";
 import type { TranslatorFn } from "@pistonite/celera";
 
-import type {
-    Runtime,
-    RuntimeWorkerInitArgs,
-    RuntimeInitParams,
-} from "@pistonite/skybook-api";
+import type { Runtime, RuntimeWorkerInitArgs, RuntimeInitParams } from "@pistonite/skybook-api";
 import { translateUI, useUITranslation } from "skybook-localization";
 
 import { initRuntime, setCustomImageToProvide, usePersistStore } from "#application";
@@ -61,7 +56,7 @@ export type BootScreenProps = {
      * This is a function because some errors needs to be localized,
      * which isn't available yet when the error occured
      */
-    initialErrorString?: (translator: Translator) => string;
+    initialErrorString?: (translator: TranslatorFn) => string;
     /** If the initial state is "OpenSetupOrUseDefaultImage", this is the prompt type */
     openSetupOrDefaultPromptType?: OpenSetupOrDefaultPromptType;
     /** Callback to call when booting is successful */
@@ -70,11 +65,11 @@ export type BootScreenProps = {
 
 let bootScreenSuccessCalled = false;
 
-const useStyles = makeStyles({
+const useStyles = useStyleEngine.extend({
     spacer: {
         height: "32px",
     },
-    fileUploadSection: {
+    "file-upload-section": {
         "& span": {
             flex: 1,
             overflow: "hidden",
@@ -93,8 +88,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
     openSetupOrDefaultPromptType,
     onSuccess,
 }) => {
-    const m = useStyleEngine();
-    const c = useStyles();
+    const m = useStyles();
 
     const isUseCustomImageByDefault = usePersistStore((state) => state.isUseCustomImageByDefault);
     const setUseCustomImageByDefaultInStore = usePersistStore(
@@ -104,20 +98,19 @@ export const BootScreen: React.FC<BootScreenProps> = ({
     const setStoredCustomImageVersion = usePersistStore((state) => state.setCustomImageVersion);
 
     const [dialogOpen, setDialogOpen] = useState(true);
-    const [machineState, setMachineState] = useState(initialState);
+    const [machineState, setMachineStateInternal] = useState(initialState);
+    const setMachineState = (state: BootScreenState) => {
+        setMachineStateInternal(state);
+        setDialogOpen(state !== "Initializing");
+    };
     const [promptType, setPromptType] = useState<OpenSetupOrDefaultPromptType>(
         openSetupOrDefaultPromptType || "LocalNoImage",
     );
     const t = useUITranslation();
     const [errorStringGetter, setErrorStringGetter] = useState<
-        ((translator: Translator) => string) | undefined
+        ((translator: TranslatorFn) => string) | undefined
     >(() => initialErrorString);
-    const errorString = useMemo(() => {
-        if (!errorStringGetter) {
-            return undefined;
-        }
-        return errorStringGetter(t);
-    }, [errorStringGetter, t]);
+    const errorString = errorStringGetter?.(t);
 
     // setup dialog states
     const [isCustomImageSelected, setIsCustomImageSelected] = useState(true);
@@ -139,9 +132,9 @@ export const BootScreen: React.FC<BootScreenProps> = ({
         setMachineState("SetupDialog");
     };
 
-    useEffect(() => {
-        setDialogOpen(machineState !== "Initializing");
-    }, [machineState]);
+    // useEffect(() => {
+    //     setDialogOpen(machineState !== "Initializing");
+    // }, [machineState]);
 
     if (machineState === "Initializing") {
         return null;
@@ -341,7 +334,7 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                 uploadError ? t("dialog.custom_image.button.select_file.error") : "\u00a0"
             }
         >
-            <div className={m("flex-row flex-centera gap-8", c.fileUploadSection)}>
+            <div className={m("flex-row flex-centera gap-8 c-file-upload-section")}>
                 {$SelectImageFileButton}
                 {customImageUpload && <Text>{customImageUpload.name} </Text>}
             </div>
@@ -423,12 +416,12 @@ export const BootScreen: React.FC<BootScreenProps> = ({
                     <DialogTitle>{t("dialog.custom_image.title")}</DialogTitle>
                     <DialogContent>
                         {$SelectTypeRadioGroup}
-                        <div className={c.spacer} />
+                        <div className={m("c-spacer")} />
                         {isCustomImageSelected && (
                             <>
                                 {$UploadField}
                                 {$UseCurrentImageCheckbox}
-                                <div className={c.spacer} />
+                                <div className={m("c-spacer")} />
                                 {$UseCustomImageByDefaultCheckbox}
                             </>
                         )}

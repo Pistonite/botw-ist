@@ -1,5 +1,5 @@
 import { memo, useMemo } from "react";
-import { makeStyles, Text, Tooltip, Button, Link } from "@fluentui/react-components";
+import { Text, Tooltip, Button, Link } from "@fluentui/react-components";
 import { Grid20Regular, Info20Regular } from "@fluentui/react-icons";
 import { useSwappedWheelScrollDirection } from "@pistonite/celera";
 
@@ -25,12 +25,7 @@ import {
     getUndiscoveredTabMap,
     useStyleEngine,
 } from "#util";
-import {
-    InventoryTitle,
-    InventoryTabButton,
-    InventorySpinner,
-    ErrorBar,
-} from "#ui/components";
+import { InventoryTitle, InventoryTabButton, InventorySpinner, ErrorBar } from "#ui/components";
 
 import { ScreenIndicator } from "./screen_icon.tsx";
 import {
@@ -40,11 +35,11 @@ import {
     TrialModeIcon,
 } from "./pouch_icon.tsx";
 
-const useStyles = makeStyles({
-    splitContainer: {
+const useStyles = useStyleEngine.extend({
+    "split-container": {
         zIndex: 1,
     },
-    inventoryContainer: {
+    "inventory-container": {
         backgroundColor: "#00000066",
     },
     background: {
@@ -60,26 +55,25 @@ const useStyles = makeStyles({
         borderRadius: "4px",
     },
 
-    toolbarDivider: {
+    "toolbar-divider": {
         width: "4px",
         height: "20px",
         marginRight: "4px",
         borderRight: "1px solid #888",
     },
 
-    overworldScroll: {
+    "overworld-scroll": {
         maxHeight: "72px",
     },
 
-    tabsMinimap: {
+    "tabs-minimap": {
         borderRadius: "4px",
         backgroundColor: "#00000044",
     },
 });
 
 export const PouchInventoryPanelImpl: React.FC = () => {
-    const m = useStyleEngine();
-    const c = useStyles();
+    const m = useStyles();
     const t = useUITranslation();
 
     const { data: pouch, loading, error: pouchError } = usePouchListView();
@@ -119,7 +113,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
 
     const $Background = (
         <div
-            className={m("pos-abs all-sides-0", c.background)}
+            className={m("pos-abs all-sides-0 c-background")}
             style={{
                 backgroundImage: `url(${backgroundUrl})`,
             }}
@@ -136,7 +130,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
             >
                 <Button icon={<Info20Regular />} appearance="transparent" />
             </Tooltip>
-            <div className={m("flex-row flex-1 flex-centera gap-4 pad-4", c.toolbar)}>
+            <div className={m("flex-row flex-1 flex-centera gap-4 pad-4 c-toolbar")}>
                 <ScreenIndicator screen={pouch?.val?.screen} hasGlider={hasGlider} />
                 <Tooltip
                     relationship="label"
@@ -167,7 +161,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
                         appearance={isTabView ? "secondary" : "transparent"}
                     />
                 </Tooltip>
-                <div className={c.toolbarDivider} />
+                <div className={m("c-toolbar-divider")} />
                 {pouch?.val?.isHoldingInInventory && <HoldingIcon />}
                 {pouch?.val?.isArrowlessSmuggle && <ArrowlessSmuggleIcon />}
                 {pouch?.val?.isTrialMode && <TrialModeIcon />}
@@ -180,7 +174,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
         useSwappedWheelScrollDirection();
     const $TabsMinimap = tabNodes !== undefined && (
         <div className={m("overflow-y-auto scrollbar-thin")}>
-            <div className={m("flex-row", c.tabsMinimap)}>
+            <div className={m("flex-row c-tabs-minimap")}>
                 {tabNodes.map((tab, i) => (
                     <InventoryTabButton
                         key={i}
@@ -302,8 +296,7 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     const $OverworldItems = overworld?.val && overworld.val.items.length > 0 && (
         <div
             className={m(
-                "pos-rel overflow-x-auto overflow-y-hidden scrollbar-thin pad-8",
-                c.overworldScroll,
+                "pos-rel overflow-x-auto overflow-y-hidden scrollbar-thin pad-8 c-overworld-scroll",
             )}
             ref={overworldScrollHandler}
         >
@@ -324,8 +317,8 @@ export const PouchInventoryPanelImpl: React.FC = () => {
     return (
         <div className={m("pos-rel wh-100 overflow-hidden")}>
             {$Background}
-            <div className={m("pos-abs all-sides-0 flex-col", c.splitContainer)}>
-                <div className={m("flex-col flex-1 pad-8", c.inventoryContainer)}>
+            <div className={m("pos-abs all-sides-0 flex-col c-split-container")}>
+                <div className={m("flex-col flex-1 pad-8 c-inventory-container")}>
                     {$Title}
                     <div className={m("flex-col gap-4")}>
                         {$TabsWarning}

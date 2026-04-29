@@ -2,7 +2,12 @@ import { setDark, setLocale } from "@pistonite/celera";
 import { cell, type Cell } from "@pistonite/pure/memory";
 import type { WxPromise } from "@pistonite/workex";
 
-import type { ExtensionApp, ExtensionModule, ItemDragData, SessionMode } from "@pistonite/skybook-api";
+import type {
+    ExtensionApp,
+    ExtensionModule,
+    ItemDragData,
+    SessionMode,
+} from "@pistonite/skybook-api";
 
 /**
  * Adapter for the first-party extensions with common

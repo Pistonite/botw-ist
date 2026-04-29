@@ -15,9 +15,6 @@ catalogs:
     '@fluentui/react-icons':
       specifier: ^2.0.324
       version: 2.0.325
-    '@pistonite/celera':
-      specifier: ^0.1.4
-      version: 0.1.4
     '@pistonite/pure':
       specifier: ^0.29.5
       version: 0.29.5
@@ -107,8 +104,8 @@ importers:
         specifier: 'catalog:'
         version: 2.0.325(react@19.2.5)
       '@pistonite/celera':
-        specifier: 'catalog:'
-        version: 0.1.4(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
+        specifier: link:../../../celera
+        version: link:../../../celera
       '@pistonite/intwc':
         specifier: workspace:*
         version: link:../intwc
@@ -180,8 +177,8 @@ importers:
   packages/intwc:
     dependencies:
       '@pistonite/celera':
-        specifier: 'catalog:'
-        version: 0.1.4(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
+        specifier: link:../../../celera
+        version: link:../../../celera
       '@pistonite/pure':
         specifier: 'catalog:'
         version: 0.29.5
@@ -214,8 +211,8 @@ importers:
         specifier: 'catalog:'
         version: 2.0.325(react@19.2.5)
       '@pistonite/celera':
-        specifier: 'catalog:'
-        version: 0.1.4(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
+        specifier: link:../../../celera
+        version: link:../../../celera
       '@pistonite/pure':
         specifier: 'catalog:'
         version: 0.29.5
@@ -236,8 +233,8 @@ importers:
   packages/localization:
     dependencies:
       '@pistonite/celera':
-        specifier: 'catalog:'
-        version: 0.1.4(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
+        specifier: link:../../../celera
+        version: link:../../../celera
       '@pistonite/pure':
         specifier: 'catalog:'
         version: 0.29.5
@@ -1168,13 +1165,6 @@ packages:
   '@oxc-project/types@0.127.0':
     resolution: {integrity: sha512-aIYXQBo4lCbO4z0R3FHeucQHpF46l2LbMdxRvqvuRuW2OxdnSkcng5B8+K12spgLDj93rtN3+J2Vac/TIO+ciQ==}
 
-  '@pistonite/celera@0.1.4':
-    resolution: {integrity: sha512-N6Rk8qFY2+fXw727oGGi9fqXuLmoa4vtQhWGy0mdFjT2KFFYz1eVRbyLwIUvooxWKfiQi0LRvcpAmJEtXdU1oA==}
-    peerDependencies:
-      '@fluentui/react-components': ^9
-      '@fluentui/react-icons': ^2
-      react: ^19
-
   '@pistonite/pure@0.29.5':
     resolution: {integrity: sha512-swO3r1CrcLhyCDMpKilgFSIpXQHWuidNMehd+ePVqn1UVGFhLbKRrOwcRj1ob7ZQix7N6GxfT3+J4PgllNOSMQ==}
 
@@ -1919,19 +1909,8 @@ packages:
     resolution: {integrity: sha512-CV9TW3Y3f8/wT0BRFc1/KAVQ3TUHiXmaAb6VW9vtiMFf7SLoMd1PdAc4W3KFOFETBJUb90KatHqlsZMWV+R9Gg==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
-  html-parse-stringify@3.0.1:
-    resolution: {integrity: sha512-KknJ50kTInJ7qIScF3jeaFRpMpE8/lfiTdzf/twXyPBLAGrLRTmkz3AdTnKeh40X8k9L2fdYwEp/42WGXIRGcg==}
-
   htmlparser2@10.1.0:
     resolution: {integrity: sha512-VTZkM9GWRAtEpveh7MSF6SjjrpNVNNVJfFup7xTY3UpFtm67foy9HDVXneLtFVt4pMz5kZtgNcvCniNFb1hlEQ==}
-
-  i18next@26.0.8:
-    resolution: {integrity: sha512-BRzLom0mhDhV9v0QhgUUHWQJuwFmnr1194xEcNLYD6ym8y8s542n4jXUvRLnhNTbh9PmpU6kGZamyuGHQMsGjw==}
-    peerDependencies:
-      typescript: ^5 || ^6
-    peerDependenciesMeta:
-      typescript:
-        optional: true
 
   iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
@@ -2281,22 +2260,6 @@ packages:
     peerDependencies:
       react: ^19.2.5
 
-  react-i18next@17.0.4:
-    resolution: {integrity: sha512-hQipmK4EF0y6RO6tt6WuqnmWpWYEXmQUUzecmMBuNsIgYd3smXcG4GtYPWhvgxn0pqMOItKlEO8H24HCs5hc3g==}
-    peerDependencies:
-      i18next: '>= 26.0.1'
-      react: '>= 16.8.0'
-      react-dom: '*'
-      react-native: '*'
-      typescript: ^5 || ^6
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-      typescript:
-        optional: true
-
   react@19.2.5:
     resolution: {integrity: sha512-llUJLzz1zTUBrskt2pwZgLq59AemifIftw4aB7JxOqf1HY2FDaGDxgwpAPVzHU1kdWabH7FauP4i1oEeer2WCA==}
     engines: {node: '>=0.10.0'}
@@ -2625,10 +2588,6 @@ packages:
         optional: true
       jsdom:
         optional: true
-
-  void-elements@3.1.0:
-    resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
-    engines: {node: '>=0.10.0'}
 
   w3c-xmlserializer@5.0.0:
     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
@@ -4262,19 +4221,6 @@ snapshots:
 
   '@oxc-project/types@0.127.0': {}
 
-  '@pistonite/celera@0.1.4(@fluentui/react-components@9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0))(@fluentui/react-icons@2.0.325(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)':
-    dependencies:
-      '@fluentui/react-components': 9.73.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(scheduler@0.27.0)
-      '@fluentui/react-icons': 2.0.325(react@19.2.5)
-      '@pistonite/pure': 0.29.5
-      i18next: 26.0.8(typescript@6.0.3)
-      react: 19.2.5
-      react-i18next: 17.0.4(i18next@26.0.8(typescript@6.0.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
-    transitivePeerDependencies:
-      - react-dom
-      - react-native
-      - typescript
-
   '@pistonite/pure@0.29.5':
     dependencies:
       denque: 2.1.0
@@ -5026,20 +4972,12 @@ snapshots:
     transitivePeerDependencies:
       - '@noble/hashes'
 
-  html-parse-stringify@3.0.1:
-    dependencies:
-      void-elements: 3.1.0
-
   htmlparser2@10.1.0:
     dependencies:
       domelementtype: 2.3.0
       domhandler: 5.0.3
       domutils: 3.2.2
       entities: 7.0.1
-
-  i18next@26.0.8(typescript@6.0.3):
-    optionalDependencies:
-      typescript: 6.0.3
 
   iconv-lite@0.6.3:
     dependencies:
@@ -5393,17 +5331,6 @@ snapshots:
       react: 19.2.5
       scheduler: 0.27.0
 
-  react-i18next@17.0.4(i18next@26.0.8(typescript@6.0.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@6.0.3):
-    dependencies:
-      '@babel/runtime': 7.29.2
-      html-parse-stringify: 3.0.1
-      i18next: 26.0.8(typescript@6.0.3)
-      react: 19.2.5
-      use-sync-external-store: 1.6.0(react@19.2.5)
-    optionalDependencies:
-      react-dom: 19.2.5(react@19.2.5)
-      typescript: 6.0.3
-
   react@19.2.5: {}
 
   require-from-string@2.0.2: {}
@@ -5693,8 +5620,6 @@ snapshots:
       jsdom: 29.1.0
     transitivePeerDependencies:
       - msw
-
-  void-elements@3.1.0: {}
 
   w3c-xmlserializer@5.0.0:
     dependencies:

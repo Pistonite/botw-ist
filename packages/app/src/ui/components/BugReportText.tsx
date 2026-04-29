@@ -1,4 +1,4 @@
-import { InlineLink } from "@pistonite/shared-controls";
+import { InlineLink } from "@pistonite/celera";
 
 import { useUITranslation } from "skybook-localization";
 

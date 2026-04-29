@@ -17,6 +17,7 @@ import {
     OptionGroup,
     Switch,
 } from "@fluentui/react-components";
+import { isMobile } from "@pistonite/celera";
 
 import { useUITranslation } from "skybook-localization";
 
@@ -30,7 +31,7 @@ import {
     openExtensionPopup,
     useUIStore,
 } from "#application";
-import { useStyleEngine, useIsNarrow, isMobile } from "#util";
+import { useStyleEngine, useIsNarrow } from "#util";
 
 const ExtensionLaunchDialogImpl: React.FC = () => {
     const m = useStyleEngine();

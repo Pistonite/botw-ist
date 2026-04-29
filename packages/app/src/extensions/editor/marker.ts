@@ -16,7 +16,7 @@ import type { Diagnostic, ExtensionApp } from "@pistonite/skybook-api";
 
 const EDITOR_EXTENSION_UUID = "b1b45de4-1df7-4832-ae0b-99b516f81df6";
 
-const log = logger("diagnostics", "#02648B").default();
+const log = logger("diagnostics", { color: "#02648B" });
 
 export type CustomMarkerData = MarkerData & {
     charPos: [number, number];

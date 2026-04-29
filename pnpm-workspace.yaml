@@ -12,7 +12,7 @@ packages:
 catalog:
   mono-dev: github:pistonight/mono-dev#dist
   '@pistonite/pure': ^0.29.5
-  '@pistonite/celera': ^0.1.4
+  # '@pistonite/celera': ^0.2.1
   '@pistonite/webfs': ^0.1.1
   '@pistonite/workex': ^0.2.1
   lru-cache: ^11.3.5

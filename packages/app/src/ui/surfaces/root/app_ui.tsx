@@ -20,14 +20,13 @@ import {
 } from "#ui/surfaces/extension";
 import { Header } from "#ui/surfaces/header";
 import { PouchInventoryPanel, GdtInventoryPanel } from "#ui/surfaces/inventory";
-import { isMobileDisplayMode, isNarrowDisplayMode, useDisplayMode, useStyleEngine } from "#util";
+import { isNarrowDisplayMode, useDisplayMode, useStyleEngine } from "#util";
 
 const AppImpl: React.FC = () => {
     const m = useStyleEngine();
     const t = useUITranslation();
     const displayMode = useDisplayMode();
     const isNarrow = isNarrowDisplayMode(displayMode);
-    const isMobile = isMobileDisplayMode(displayMode);
 
     // save the crash localization to localstorage, so we can
     // use it in the future if needed without relying on the translation
@@ -75,7 +74,6 @@ const AppImpl: React.FC = () => {
                 setValuePercent={setExtensionPanelPercentage}
                 minWidth={330}
                 minHeight={45}
-                touch={isMobile}
             >
                 <div className={m("flex-col wh-100")}>
                     <Header />
@@ -89,7 +87,6 @@ const AppImpl: React.FC = () => {
                         setValuePercent={setGamedataInventoryPercentage}
                         minHeight={60}
                         minWidth={400}
-                        touch={isMobile}
                     >
                         <GdtInventoryPanel />
                         <PouchInventoryPanel />

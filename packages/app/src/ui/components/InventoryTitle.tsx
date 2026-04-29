@@ -1,29 +1,24 @@
 import type { PropsWithChildren } from "react";
-import {
-    FluentProvider,
-    makeStyles,
-    webDarkTheme,
-    webLightTheme,
-} from "@fluentui/react-components";
+import { FluentProvider, webDarkTheme, webLightTheme } from "@fluentui/react-components";
 
 import { useStyleEngine } from "#util";
 
 import { GlowyText } from "./GlowyText.tsx";
 
-const useStyles = makeStyles({
+const useStyles = useStyleEngine.extend({
     title: {
         margin: "0 4px",
     },
-    titleColorDark: {
+    "title-dark": {
         color: "#b7f1ff",
     },
-    titleColorLight: {
+    "title-light": {
         color: "#000000",
     },
     container: {
         padding: "4px 0px 8px 0px",
     },
-    noBackground: {
+    "no-bg": {
         backgroundColor: "transparent",
     },
 });
@@ -41,12 +36,11 @@ export const InventoryTitle: React.FC<PropsWithChildren<InventoryTitleProps>> = 
     dark,
     children,
 }) => {
-    const m = useStyleEngine();
-    const c = useStyles();
+    const m = useStyles();
     return (
-        <FluentProvider className={c.noBackground} theme={dark ? webDarkTheme : webLightTheme}>
-            <div className={m("flex-row flex-centera gap-2", c.container)}>
-                <span className={m("flex gap-2", dark ? c.titleColorDark : c.titleColorLight)}>
+        <FluentProvider className={m("c-no-bg")} theme={dark ? webDarkTheme : webLightTheme}>
+            <div className={m("flex-row flex-centera gap-2 c-container")}>
+                <span className={m("flex gap-2", dark ? "c-title-dark" : "c-title-light")}>
                     <GlowyText size={500} weight="bold" dark={dark}>
                         {title}
                     </GlowyText>
