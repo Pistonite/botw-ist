@@ -35,7 +35,7 @@ jobs:
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
-          tool-cargo-binstall: ripgrep,layered-crate
+          tool-cargo-binstall: layered-crate
       - uses: ./.github/steps/cache-ci
         with:
           runtime: true
@@ -55,6 +55,7 @@ jobs:
           rust: nightly
           rust-wasm: true
           rust-src: true
+          tool-cargo-binstall: workex=Pistonite/workex
       - uses: ./.github/steps/cache-ci
         with:
           runtime: true

@@ -42,6 +42,7 @@ jobs:
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
+          tool-cargo-binstall: workex=Pistonite/workex
       - uses: ./.github/steps/cache-ci
         with:
           app-assets: true
@@ -67,6 +68,7 @@ jobs:
           rust: nightly
           rust-wasm: true
           rust-src: true
+          tool-cargo-binstall: workex=Pistonite/workex
       - uses: ./.github/steps/cache-ci
         with:
           parser: true
