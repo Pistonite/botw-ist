@@ -68,7 +68,6 @@ tasks:
   dev:
     desc: Run server in watch mode
     cmds:
-      - task: ecma:mono-config
       - mkdir -p dist
       - task: bun-watch
 
@@ -83,7 +82,6 @@ tasks:
 
   build:
     cmds:
-      - task: ecma:config
       - mkdir -p dist
       - cmd: >
           bun build 
