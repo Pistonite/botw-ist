@@ -16,7 +16,7 @@ jobs:
           mono-dev: pnpm
           ecma-pnpm: true
           ecma-bun: true
-          rust: nightly
+          rust: stable
           tool-mdbook: true
       - uses: Pistonight/mono-dev/actions/pistonstor@main
       - run: task build-manual-ci

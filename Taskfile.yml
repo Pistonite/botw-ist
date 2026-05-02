@@ -174,16 +174,26 @@ tasks:
       - task: manual:build
       - task: runtime-wasm:build
 
+  build-app-manual-server-ci:
+    cmds:
+      - task: app:install
+      - task: manual:install
+      - task: server:install
+      - task: skybook-api:build-dep
+      - task: app:build
+      - task: manual:build
+      - task: server:build
+
   build-manual-ci:
     cmds:
       - task: manual:install
       - task: manual:build
-
-  build-app-ci:
-    cmds:
-      - task: app:install
-      - task: skybook-api:build-dep
-      - task: app:build
+  #
+  # build-app-ci:
+  #   cmds:
+  #     - task: app:install
+  #     - task: skybook-api:build-dep
+  #     - task: app:build
 
   build-runtime-ci-pr:
     cmds:
@@ -198,11 +208,11 @@ tasks:
       - task: runtime-wasm:build-wasm
       - task: runtime-wasm:build-dist-min
 
-  build-server-ci:
-    cmds:
-      - task: server:install
-      - task: skybook-api:build-dep
-      - task: server:build
+  # build-server-ci:
+  #   cmds:
+  #     - task: server:install
+  #     - task: skybook-api:build-dep
+  #     - task: server:build
 
   clean:
     desc: Clean the whole repo for temporaries that might help resolve build issues
