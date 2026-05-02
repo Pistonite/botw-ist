@@ -197,6 +197,7 @@ tasks:
   build-server-ci:
     cmds:
       - task: server:install
+      - task: skybook-api:build
       - task: server:build
 
   clean:
