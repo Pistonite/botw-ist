@@ -10,20 +10,6 @@
     },
     "license": "MIT",
     "author": "Pistonight <pistonknight@outlook.com>",
-    "files": [
-        "dist/**/*",
-        "src/**/*"
-    ],
-    "pistonight/mono-dev": {
-        "lib": true,
-        "publish": true
-    },
-    "exports": {
-        ".": {
-            "import": "./dist/index.js",
-            "types": "./dist/_dts_/src/index.d.ts"
-        }
-    },
     "dependencies": {
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons": "catalog:",
@@ -38,14 +24,24 @@
         "@types/react": "catalog:",
         "mono-dev": "catalog:"
     },
-    "nocheck": [
-        "/src/sprite/*_meta.ts"
+    "files": [
+        "src/**/*"
     ],
+    "exports": {
+        ".": "./src/index.ts"
+    },
     "imports": {
         "#data": "./src/data/index.ts",
         "#i18n": "./src/i18n/index.ts",
         "#slot": "./src/slot/index.ts",
         "#sprite": "./src/sprite/index.ts",
         "#util": "./src/util/index.ts"
+    },
+    "pistonight/mono-dev": {
+        "lib": true,
+        "publish": true,
+        "nocheck": [
+            "/src/sprite/*_meta.ts"
+        ]
     }
 }

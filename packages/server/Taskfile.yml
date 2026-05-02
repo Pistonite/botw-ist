@@ -84,7 +84,7 @@ tasks:
   build:
     cmds:
       - task: ecma:config
-      - which -p dist
+      - mkdir -p dist
       - cmd: >
           bun build 
           --compile 

@@ -2,20 +2,15 @@
     "private": true,
     "version": "0.0.0",
     "type": "module",
-    "pistonight/mono-dev": {
-        "lib": false,
-        "https": true,
-        "wasm": true
-    },
     "dependencies": {
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons": "catalog:",
+        "@pistonite/celera": "catalog:",
         "@pistonite/intwc": "workspace:*",
         "@pistonite/pure": "catalog:",
-        "@pistonite/celera": "catalog:",
-        "@pistonite/webfs": "catalog:",
         "@pistonite/skybook-api": "workspace:*",
         "@pistonite/skybook-itemsys": "workspace:*",
+        "@pistonite/webfs": "catalog:",
         "@pistonite/workex": "catalog:",
         "@tanstack/react-query": "catalog:",
         "@uidotdev/usehooks": "catalog:",
@@ -31,7 +26,6 @@
         "@types/node": "catalog:",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
-        "jsdom": "catalog:",
         "monaco-editor": "*",
         "mono-dev": "catalog:",
         "vite-plugin-serve-static": "catalog:"
@@ -45,5 +39,16 @@
         "#ui/surfaces/inventory": "./src/ui/surfaces/inventory/index.ts",
         "#ui/surfaces/root": "./src/ui/surfaces/root/index.ts",
         "#util": "./src/util/index.ts"
+    },
+    "pistonight/mono-dev": {
+        "lib": false,
+        "https": true,
+        "wasm": true,
+        "worker": "es",
+        "jsdom": true,
+        "import.meta.env": {
+            "VERSION": "../../package.json",
+            "COMMIT": true
+        }
     }
 }

@@ -10,10 +10,10 @@
         "skybook-runtime-worker": "workspace:*"
     },
     "devDependencies": {
-        "mono-dev": "catalog:"
+        "mono-dev": "catalog:",
+        "nocheck": [
+            "src/skybook_runtime_wasm.d.ts"
+        ],
     },
-    "nocheck": [
-        "src/skybook_runtime_wasm.d.ts"
-    ],
     "imports": {}
 }

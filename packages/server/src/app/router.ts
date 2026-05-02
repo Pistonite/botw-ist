@@ -60,7 +60,7 @@ Disallow: /github/
                 // but we also don't want to cache it for too long
                 // when an update is deployed
                 withHeadersOnSuccess({
-                    "Cache-Control": "public, max-age=600",
+                    "Cache-Control": "public, max-age=300",
                 }),
             ],
         }),
@@ -107,7 +107,7 @@ Disallow: /github/
                 // github contents are cached for 5 minutes
                 // so we also cache that long
                 withHeadersOnSuccess({
-                    "Cache-Control": "public, max-age=301",
+                    "Cache-Control": "public, max-age=300",
                 }),
             ],
         }),
@@ -137,21 +137,22 @@ Disallow: /github/
             outbound: [withCacheForeverHeaders],
         }),
         // these static assets are unlikely to change (images)
-        // cache for 7 days
+        // using stale-while-revalidate since some webp images are big
+        // (and will probably not change), so the browser can keep using the stale one.
         "/static/*": builder.route({
             handler: makeAsset,
             outbound: [
                 withHeadersOnSuccess({
-                    "Cache-Control": "public, max-age=604800",
+                    "Cache-Control": "public, max-age=600, stale-while-revalidate=604800",
                 }),
             ],
         }),
-        // other assets, cache for a standard 1 day
+        // other assets, cache for 10 minutes
         "/manifest.json": builder.route({
             handler: makeAsset,
             outbound: [
                 withHeadersOnSuccess({
-                    "Cache-Control": "public, max-age=86400",
+                    "Cache-Control": "public, max-age=600",
                 }),
             ],
         }),

@@ -1,9 +1,7 @@
 /// <reference types="mono-dev/vitest" />
 /// <reference types="node" />
 
-import { spawnSync } from "node:child_process";
 import path from "node:path";
-import fs from "node:fs";
 
 import { type Plugin } from "mono-dev/vite";
 import serveStatic from "vite-plugin-serve-static";
@@ -26,32 +24,8 @@ const staticAssetHeader = (): Plugin => {
     };
 };
 
-// https://vitejs.dev/config/
 export default configure(() => {
-    const commit = spawnSync("git", ["rev-parse", "HEAD"], {
-        encoding: "utf-8",
-    }).stdout.trim();
-    console.log(`commit: ${commit}`);
-
-    const packageJson = JSON.parse(fs.readFileSync("../../package.json", "utf-8"));
-    const version = packageJson.version;
-    console.log(`version: ${version}`);
-
     return {
-        define: {
-            "import.meta.env.COMMIT": JSON.stringify(commit),
-            "import.meta.env.VERSION": JSON.stringify(version),
-            "import.meta.vitest": "undefined",
-        },
-        optimizeDeps: {
-            // exclude the ones that requires building
-            exclude: [
-                "@pistonite/skybook-itemsys",
-                "@pistonite/skybook-api",
-                "skybook-runtime-worker",
-                "skybook-localization",
-            ],
-        },
         plugins: [
             intwc({ basicLanguages: [] }),
             staticAssetHeader(),
@@ -66,19 +40,8 @@ export default configure(() => {
                 },
             ]),
         ],
-        resolve: {
-          dedupe: [
-                "react",
-    "react-dom",
-    "@fluentui/react-components",
-    "@fluentui/react-icons",
-            ],
-        },
         server: {
             port: 23172,
-            hmr: {
-                protocol: "wss"
-            },
             headers: {
                 "Cross-Origin-Embedder-Policy": "require-corp",
                 "Cross-Origin-Opener-Policy": "same-origin",
@@ -90,11 +53,36 @@ export default configure(() => {
                     index: "index.html",
                     popout: "popout.html",
                 },
+                output: {
+                    codeSplitting: {
+                        groups: [
+                            // generated translation chunks
+                            { name: "gen/de", test: /generated[\\/]de/ },
+                            { name: "gen/en", test: /generated[\\/]en/ },
+                            { name: "gen/es", test: /generated[\\/]es/ },
+                            { name: "gen/fr", test: /generated[\\/]fr/ },
+                            { name: "gen/it", test: /generated[\\/]it/ },
+                            { name: "gen/ja", test: /generated[\\/]ja/ },
+                            { name: "gen/ko", test: /generated[\\/]ko/ },
+                            { name: "gen/nl", test: /generated[\\/]nl/ },
+                            { name: "gen/ru", test: /generated[\\/]ru/ },
+                            { name: "gen/zh", test: /generated[\\/]zh/ },
+                            // combined other translation chunks
+                            { name: "msg/de", test: "de-DE" },
+                            { name: "msg/en", test: "en-US" },
+                            { name: "msg/es", test: "es-ES" },
+                            { name: "msg/fr", test: "fr-FR" },
+                            { name: "msg/it", test: "it-IT" },
+                            { name: "msg/ja", test: "ja-JP" },
+                            { name: "msg/ko", test: "ko-KR" },
+                            { name: "msg/nl", test: "nl-NL" },
+                            { name: "msg/ru", test: "ru-RU" },
+                            { name: "msg/zhcn", test: "zh-CN" },
+                            { name: "msg/zhtw", test: "zh-TW" },
+                        ],
+                    },
+                },
             },
-        },
-        test: {
-            includeSource: ["src/**/*.{js,ts}"],
-            environment: "jsdom",
         },
     };
 });

@@ -20,17 +20,20 @@ tasks:
     desc: Run linters to check the code
     cmds:
       # bindings are needed to generate the files to check
-      - task: build-ts-binding
-      - task: build-workex-binding
+      - task: build-dep
       - task: ecma:check
       - task: cargo:clippy-all
       - task: cargo:fmt-check
   build:
     desc: Build the project
     cmds:
-      - task: build-ts-binding
-      - task: build-workex-binding
+      - task: build-dep
       - task: ecma:lib-build
+
+  build-dep:
+    deps:
+      - build-ts-binding
+      - build-workex-binding
 
   build-ts-binding:
     internal: true
@@ -76,4 +79,5 @@ tasks:
   publish:
     desc: Publish a release
     cmds:
+      - task: build-dep
       - task: ecma:publish

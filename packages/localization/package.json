@@ -20,5 +20,8 @@
         "@types/react": "catalog:",
         "js-yaml": "catalog:",
         "mono-dev": "catalog:"
+    },
+    "imports": {
+        "#localized_search": "./src/localized_search/index.ts"
     }
 }

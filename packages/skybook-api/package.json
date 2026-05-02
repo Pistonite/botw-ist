@@ -1,7 +1,7 @@
 {
     "name": "@pistonite/skybook-api",
     "type": "module",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "private": true,
     "description": "Bindings, Extension and Runtime API for Skybook, the BOTW IST Simulator",
     "homepage": "https://github.com/Pistonite/botw-ist",
@@ -10,24 +10,6 @@
     },
     "license": "MIT",
     "author": "Pistonight <pistonknight@outlook.com>",
-    "files": [
-        "dist/**/*",
-        "src/**/*"
-    ],
-    "pistonight/mono-dev": {
-        "lib": true,
-        "publish": true
-    },
-    "exports": {
-        ".": {
-            "import": "./dist/index.js",
-            "types": "./dist/_dts_/src/index.d.ts"
-        },
-        "./extension-client": {
-            "import": "./dist/extension_client.js",
-            "types": "./dist/_dts_/src/extension_client.d.ts"
-        }
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/Pistonite/botw-ist.git",
@@ -40,13 +22,24 @@
         "@pistonite/pure": "catalog:",
         "mono-dev": "catalog:"
     },
-    "nocheck": [
-        "/src/protocol/interfaces/*.ts",
-        "/src/native/*.ts"
+    "files": [
+        "src/**/*"
     ],
+    "exports": {
+        ".": "./src/index.ts",
+        "./extension-client": "./src/extension_client.ts"
+    },
     "imports": {
         "#native": "./src/native/index.ts",
         "#protocol": "./src/protocol/index.ts",
         "#types": "./src/types/index.ts"
+    },
+    "pistonight/mono-dev": {
+        "lib": true,
+        "publish": true,
+        "nocheck": [
+            "/src/protocol/interfaces/*.ts",
+            "/src/native/*.ts"
+        ]
     }
 }

@@ -256,7 +256,7 @@ tasks:
         react react-dom @types/react @types/react-dom
         @fluentui/react-components @fluentui/react-icons
         fuse.js js-yaml @types/js-yaml @types/node
-        @types/bun zustand jsdom uuid reselect
+        @types/bun zustand uuid reselect
         @uidotdev/usehooks @tanstack/react-query
       - pnpm dedupe
       - pnpm dedupe --check

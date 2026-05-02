@@ -1,7 +1,7 @@
 name: cache-ci
 
 inputs:
-  # localization, item-assets, item-system
+  # itemsys, itemsys-build
   app-assets:
     default: false
   # blueflame-deps, runtime-tests
@@ -22,7 +22,7 @@ runs:
           packages/itemsys-build/public/special
           packages/itemsys-build/public/sprites
           packages/itemsys/src/generated
-        version: v2
+        version: v3
         key: app-assets-cache-ci
         task: exec -- cache-ci-app-assets-pull-artifacts
         runner: blacksmith
@@ -32,6 +32,7 @@ runs:
         path: |
           packages/blueflame-deps/src/generated
           packages/runtime-tests/data/program-mini.bfi
+        version: v2
         key: runtime-cache-ci
         task: exec -- cache-ci-runtime-pull-artifacts
         runner: blacksmith

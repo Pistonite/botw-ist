@@ -5,14 +5,6 @@ includes:
     taskfile: ./node_modules/mono-dev/task/ecma.yaml
     internal: true
     optional: true
-  skybook-api:
-    taskfile: ../skybook-api
-    internal: true
-    dir: ../skybook-api
-  itemsys:
-    taskfile: ../itemsys
-    internal: true
-    dir: ../itemsys
 
 tasks:
   install:
@@ -23,17 +15,12 @@ tasks:
     cmds:
       - task: ecma:app-dev
 
-  build-dep:
-    - task: skybook-api:build
-    - task: itemsys:build
-
   build:
     vars:
       COMMIT_SHORT:
         sh: git rev-parse HEAD | cut -c1-8
     desc: Build production bundle
     cmds:
-      - task: build-dep
       - task: ecma:app-build
       - mv dist/popout.html dist/popout-{{.COMMIT_SHORT}}.html
       - mkdir -p dist/static/itemsys

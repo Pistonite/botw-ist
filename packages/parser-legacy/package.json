@@ -9,9 +9,9 @@
     },
     "dependencies": {},
     "devDependencies": {
-        "mono-dev": "catalog:"
+        "mono-dev": "catalog:",
+        "nocheck": [
+            "*.generated.ts"
+        ]
     },
-    "nocheck": [
-        "*.generated.ts"
-    ]
 }

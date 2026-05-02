@@ -14,5 +14,6 @@
     },
     "devDependencies": {
         "mono-dev": "catalog:"
-    }
+    },
+    "imports": {}
 }
