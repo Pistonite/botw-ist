@@ -16,16 +16,16 @@ members = [
 bit-set = "0.10.0"
 bitfield-struct = "0.13.0"
 cached = "0.59.0"
-catppuccin = "2.7.0"
+catppuccin = "2.8.0"
 crc32fast = "1.5.0"
-enumset = "1.1.8"
+enumset = "1.1.10"
 enum-map = "2.7.3"
-flate2 = { version = "1.1.2", default-features = false }
+flate2 = { version = "1.1.9", default-features = false }
 hashlink = "0.11.0"
 indoc = "2.0.7"
 mdbook = "0.4.52"
 num-traits = "0.2.19"
-oneshot = "0.1.11"
+oneshot = "0.1.13"
 paste = "1.0.15" # TODO --cleanup: do we need this?
 phf = "0.13.1"
 rand_xoshiro = "0.8.0"
@@ -39,12 +39,12 @@ thiserror = "2.0.18"
 tokio = "1"
 
 # Rust-Web ecosystem
-js-sys = "0.3.95"
-web-sys = "0.3.95"
+js-sys = "0.3.97"
+web-sys = "0.3.97"
 ts-rs = "11.1.0"
 tsify = { version = "0.5.6", features = ["js"], default-features = false }
-wasm-bindgen = { version = "0.2.118", features = ["serde-serialize"] }
-wasm-bindgen-futures = "0.4.68"
+wasm-bindgen = { version = "0.2.120", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.70"
 wasm-bindgen-spawn = "0.0.5"
 console_log = "1.0.0"
 console_error_panic_hook = "0.1.7"
