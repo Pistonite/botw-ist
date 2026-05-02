@@ -25,7 +25,6 @@ runs:
         version: v3
         key: app-assets-cache-ci
         task: exec -- cache-ci-app-assets-pull-artifacts
-        runner: blacksmith
     - if: ${{ inputs.runtime == 'true' }}
       uses: Pistonight/mono-dev/actions/permanent-cache@main
       with:
@@ -35,7 +34,6 @@ runs:
         version: v2
         key: runtime-cache-ci
         task: exec -- cache-ci-runtime-pull-artifacts
-        runner: blacksmith
     - if: ${{ inputs.runtime == 'true' }}
       run: task exec -- runtime-tests:verify-artifacts
       shell: bash

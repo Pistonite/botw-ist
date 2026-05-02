@@ -42,7 +42,7 @@ const ExtensionPanelConnected: React.FC = () => {
     );
     const hasTwoWindows = currentPrimaryId && currentSecondaryId;
     return (
-        <div className={m("flex-1 wh-100")}>
+        <div className={m("flex-1 wh-100 min-h-0")}>
             {!hasTwoWindows && currentPrimaryId && primaryWindow}
             {!hasTwoWindows && currentSecondaryId && secondaryWindow}
             {hasTwoWindows && (
@@ -50,6 +50,8 @@ const ExtensionPanelConnected: React.FC = () => {
                     className={m("wh-100")}
                     vertical
                     valuePercent={primaryExtensionWindowPercentage}
+                    minHeight={32}
+                    secondMinHeight={32}
                     setValuePercent={setPrimaryExtensionWindowPercentage}
                 >
                     <div className={m("wh-100")}>{primaryWindow}</div>

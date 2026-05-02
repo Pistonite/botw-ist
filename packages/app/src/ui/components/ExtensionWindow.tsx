@@ -21,7 +21,7 @@ export const ExtensionWindow: React.FC<ExtensionWindowProps> = ({ ids, currentId
                 <div
                     key={i}
                     data-extension-id={id}
-                    className={m("wh-100")}
+                    className={m("wh-100 overflow-auto")}
                     style={{
                         display: id === currentId ? "block" : "none",
                     }}
