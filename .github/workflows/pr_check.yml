@@ -17,7 +17,7 @@ jobs:
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
-          tool-cargo-binstall: workex=Pistonite/workex
+          tool-cargo-binstall: ripgrep,workex=Pistonite/workex
       - uses: ./.github/steps/cache-ci
         with:
           app-assets: true

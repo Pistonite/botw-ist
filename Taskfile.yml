@@ -128,6 +128,7 @@ tasks:
 
   check-layer-4:
     cmds:
+      - task: skybook-api:build-dep
       - cmd: >
           if stat packages/runtime-tests/data/program-mini.bfi;
           then
@@ -181,23 +182,26 @@ tasks:
   build-app-ci:
     cmds:
       - task: app:install
+      - task: skybook-api:build-dep
       - task: app:build
 
   build-runtime-ci-pr:
     cmds:
+      - task: skybook-api:build-dep
       - task: runtime-wasm:build
       - task: runtime-wasm:clean-dist # so we don't upload non-min bundles
       - task: runtime-wasm:build-dist-min
 
   build-runtime-ci:
     cmds:
+      - task: skybook-api:build-dep
       - task: runtime-wasm:build-wasm
       - task: runtime-wasm:build-dist-min
 
   build-server-ci:
     cmds:
       - task: server:install
-      - task: skybook-api:build
+      - task: skybook-api:build-dep
       - task: server:build
 
   clean:
