@@ -46,10 +46,10 @@ tasks:
       - magoo install
       - pnpm install
       - task: post-install
+      - task: runtime-wasm:install
 
   post-install:
     cmds:
-      - task: runtime-wasm:install
       - task: app:install
       - task: manual:install
       - task: server:install
