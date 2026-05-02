@@ -80,20 +80,17 @@ tasks:
 
   check-ci-layer-1-2:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: post-install
       - task: check-layer-1
       - task: check-layer-2
 
   check-ci-layer-3:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: post-install
       - task: check-layer-3
 
   check-ci-layer-4:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: post-install
       - task: check-layer-4
 
@@ -142,7 +139,6 @@ tasks:
 
   test-ci:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: post-install
       - task: test
       
@@ -179,32 +175,27 @@ tasks:
 
   build-manual-ci:
     cmds:
-      - pnpm install --frozen-lockfile 
       - task: manual:install
       - task: manual:build
 
   build-app-ci:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: app:install
       - task: app:build
 
   build-runtime-ci-pr:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: runtime-wasm:build
       - task: runtime-wasm:clean-dist # so we don't upload non-min bundles
       - task: runtime-wasm:build-dist-min
 
   build-runtime-ci:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: runtime-wasm:build-wasm
       - task: runtime-wasm:build-dist-min
 
   build-server-ci:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: server:install
       - task: server:build
 

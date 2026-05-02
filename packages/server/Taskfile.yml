@@ -93,31 +93,26 @@ tasks:
           src/main.ts 
   
   check:
-    cmds:
-      - task: ecma:check
+    - task: ecma:check
 
   fix:
-    cmds:
-      - task: ecma:fix
+    - task: ecma:fix
 
   docker-build:
-    cmds:
-      - task: docker:build
+    - task: pull-local
+    - task: build
+    - task: docker:build
 
   docker-run:
-    cmds:
-      - task: docker:run
-        vars: 
-          DOCKER_RUN_FLAGS:  -p 8000:80
+    - task: docker:run
+      vars: 
+        DOCKER_RUN_FLAGS:  -p 8000:80
   
   docker-connect:
-    cmds:
-      - task: docker:connect
+    - task: docker:connect
 
   docker-stop:
-    cmds:
-      - task: docker:stop
+    - task: docker:stop
   
   docker-clean:
-    cmds:
-      - task: docker:clean
+    - task: docker:clean

@@ -13,8 +13,7 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: false
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
@@ -22,6 +21,7 @@ jobs:
       - uses: ./.github/steps/cache-ci
         with:
           app-assets: true
+      - run: pnpm install
       - run: task check-ci-layer-1-2 --output group
 
   check-layer-3:
@@ -32,8 +32,7 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: false
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
@@ -41,6 +40,7 @@ jobs:
       - uses: ./.github/steps/cache-ci
         with:
           runtime: true
+      - run: pnpm install
       - run: task check-ci-layer-3 --output group
 
   check-layer-4:
@@ -51,8 +51,7 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: false
           ecma-pnpm: true
           ecma-bun: true
           rust: nightly
@@ -61,6 +60,7 @@ jobs:
       - uses: ./.github/steps/cache-ci
         with:
           runtime: true
+      - run: pnpm install
       - run: task check-ci-layer-4 --output group
 
   test:
@@ -72,8 +72,7 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: false
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
@@ -81,4 +80,5 @@ jobs:
         with:
           app-assets: true
           runtime: true
+      - run: pnpm install
       - run: task test-ci --output group

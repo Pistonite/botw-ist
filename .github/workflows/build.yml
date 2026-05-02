@@ -18,8 +18,7 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: false
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
@@ -28,6 +27,7 @@ jobs:
         with:
           app-assets: true
           parser: true
+      - run: pnpm install
       - run: task build-manual-ci
 
   build-app:
@@ -39,16 +39,16 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: false
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
       - uses: ./.github/steps/cache-ci
         with:
           app-assets: true
+      - run: pnpm install
       - run: task build-app-ci
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           path: packages/app/dist
           name: app
@@ -63,8 +63,7 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: false
           ecma-pnpm: true
           ecma-bun: true
           rust: nightly
@@ -74,11 +73,12 @@ jobs:
         with:
           parser: true
           runtime: true
+      - run: pnpm install
       - if: github.event_name != 'pull_request'
         run: task build-runtime-ci
       - if: github.event_name == 'pull_request'
         run: task build-runtime-ci-pr
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           path: packages/runtime-wasm/dist
           name: runtime
@@ -93,12 +93,12 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: false
           ecma-pnpm: true
           ecma-bun: true
+      - run: pnpm install
       - run: task build-server-ci
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           path: packages/server/dist
           name: server

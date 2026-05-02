@@ -16,8 +16,10 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          submodules: true
+          mono-dev: false
+          ecma-pnpm: true
           ecma-bun: true
+      - run: pnpm install
       - uses: Pistonight/mono-dev/actions/docker-image@main
         with:
           artifacts-workflow: build.yml
