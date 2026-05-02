@@ -12,7 +12,7 @@ runs:
   using: composite
   steps:
     # setup gcloud access only if the run has access, to update the cache
-    - if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
+    - if: ${{ (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') || github.ref == 'refs/heads/main' }}
       uses: Pistonight/mono-dev/actions/pistonstor@main
     - if: ${{ inputs.app-assets == 'true' }}
       uses: Pistonight/mono-dev/actions/permanent-cache@main
