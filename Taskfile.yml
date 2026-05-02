@@ -253,7 +253,7 @@ tasks:
     desc: Upgrade dependencies
     cmds:
       - >
-        pnpm up mono-dev @pistonite/pure @pistonite/workex @pistonite/celera
+        pnpm up -r mono-dev @pistonite/pure @pistonite/workex @pistonite/celera
         lru-cache
         react react-dom @types/react @types/react-dom
         @fluentui/react-components @fluentui/react-icons
@@ -262,3 +262,4 @@ tasks:
         @uidotdev/usehooks @tanstack/react-query
       - pnpm dedupe
       - pnpm dedupe --check
+      - cargo upgrade

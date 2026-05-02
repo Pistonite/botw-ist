@@ -10,27 +10,27 @@ packages:
   - packages/skybook-api
 
 catalog:
-  mono-dev: github:pistonight/mono-dev#dist
-  '@pistonite/pure': ^0.29.6
-  '@pistonite/celera': ^0.2.3
-  '@pistonite/webfs': ^0.1.2
-  '@pistonite/workex': ^0.2.2
-  lru-cache: ^11.3.5
-  react: ^19.2.5
-  react-dom: ^19.2.5
-  '@types/react': ^19.2.14
-  '@types/react-dom': ^19.2.3
+  '@catppuccin/palette': ^1.8.0
   '@fluentui/react-components': ^9.73.8
-  '@fluentui/react-icons': ^2.0.324
-  'fuse.js': ^7.3.0
-  js-yaml: ^4.1.1
+  '@fluentui/react-icons': ^2.0.325
+  '@pistonite/celera': ^0.2.4
+  '@pistonite/pure': ^0.29.7
+  '@pistonite/webfs': ^0.1.2
+  '@pistonite/workex': ^0.2.3
+  '@tanstack/react-query': ^5.100.8
+  '@types/bun': ^1.3.13
   '@types/js-yaml': ^4.0.9
   '@types/node': ^25.6.0
-  '@types/bun': ^1.3.13
-  '@catppuccin/palette': ^1.8.0
-  zustand: ^5.0.12
+  '@types/react': ^19.2.14
+  '@types/react-dom': ^19.2.3
+  '@uidotdev/usehooks': ^2.4.1
+  'fuse.js': ^7.3.0
+  js-yaml: ^4.1.1
+  lru-cache: ^11.3.5
+  mono-dev: github:pistonight/mono-dev#dist
+  react: ^19.2.5
+  react-dom: ^19.2.5
+  reselect: ^5.1.1
   uuid: ^14.0.0
   vite-plugin-serve-static: ^2.2.0
-  reselect: ^5.1.1
-  '@uidotdev/usehooks': ^2.4.1
-  '@tanstack/react-query': ^5.100.5
+  zustand: ^5.0.12

@@ -18,7 +18,7 @@ export const Exporter: React.FC<ExporterProps> = ({ getScript, getDirectUrl }) =
     const t = useUITranslation();
     const [isTooLong, setIsTooLong] = useState(false);
     return (
-        <div className={m("pad-8 flex-col gap-16")}>
+        <div className={m("pad-8 flex-col gap-16 wh-100 border-box")}>
             <div>
                 <Field
                     label={t("exporter.direct_url")}
