@@ -18,14 +18,14 @@ import type { TaskMgr } from "./task_mgr.ts";
 import { log } from "./util.ts";
 import { crashApplication } from "./app_call.ts";
 
-type RunAwaiter<TPtr> = {
+interface RunAwaiter<TPtr> {
     /** Resolve function to take the output */
     resolve: (x: Result<Emp<RunOutput, TPtr>, WorkerError>) => void;
     /** Task handle id for this run task */
     taskId: string;
     /** Byte pos to execute until for this task */
     executeToBytePos: number;
-};
+}
 
 class RunContext<TPtr> {
     awaiters: RunAwaiter<TPtr>[];

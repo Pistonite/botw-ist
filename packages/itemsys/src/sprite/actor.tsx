@@ -2,11 +2,10 @@ import { makeStyles, mergeClasses } from "@fluentui/react-components";
 import { memo } from "react";
 
 import { ActorRemap } from "../generated/actor_remap.ts";
+import { ActorMetadata } from "../generated/actor_sprite_meta.ts";
 import { getSpecialIconUrl } from "../asset_registry.ts";
 
-import { ActorMetadata } from "./actor_meta.ts";
-
-export type ActorSpriteProps = {
+export interface ActorSpriteProps {
     /** Name of the Actor to display */
     actor: string;
 
@@ -58,7 +57,7 @@ export type ActorSpriteProps = {
      * Use the "powered up" state for Master Sword
      */
     powered?: boolean;
-};
+}
 
 const useStyles = makeStyles({
     sprite: {

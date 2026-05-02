@@ -34,7 +34,7 @@ impl ExecutableInstruction for ScvtfInstruction {
                     Ok(())
                 }
                 _ => {
-                    log::error!(
+                    cu::error!(
                         "scvtf: Register type for rn is not supported: {:?}",
                         self.rn
                     );
@@ -42,7 +42,7 @@ impl ExecutableInstruction for ScvtfInstruction {
                 }
             },
             _ => {
-                log::error!(
+                cu::error!(
                     "scvtf: Register type for rd is not supported: {:?}",
                     self.rn
                 );
@@ -58,7 +58,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn simple_scvtf_test() -> anyhow::Result<()> {
+    pub fn simple_scvtf_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);

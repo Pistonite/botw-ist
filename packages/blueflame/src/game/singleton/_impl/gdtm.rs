@@ -24,7 +24,7 @@ pub const fn main_offset(env: Environment) -> u32 {
 
 pub fn create_instance<VM: VirtualMachine>(cpu: &mut VM, env: Environment) -> Result<(), VM::Error> {
     if env.is160() {
-        log::error!("gdtm create_instance 1.6.0 not implemented yet");
+        cu::error!("gdtm create_instance 1.6.0 not implemented yet");
         return Ok(()); // TODO --160
     }
 

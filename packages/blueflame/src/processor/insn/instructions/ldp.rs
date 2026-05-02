@@ -76,7 +76,7 @@ fn ldp_core(
         RegisterType::SReg(_) => Ptr!(<i32>(address)).load(core.proc.memory())? as i64,
         RegisterType::DReg(_) => Ptr!(<i64>(address)).load(core.proc.memory())?,
         _ => {
-            log::error!("Loading into non-general register type: {rt1:?}");
+            cu::error!("Loading into non-general register type: {rt1:?}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -86,7 +86,7 @@ fn ldp_core(
         RegisterType::SReg(_) => Ptr!(<i32>(address + 4)).load(core.proc.memory())? as i64,
         RegisterType::DReg(_) => Ptr!(<i64>(address + 8)).load(core.proc.memory())?,
         _ => {
-            log::error!("Loading into non-general register type: {rt2:?}");
+            cu::error!("Loading into non-general register type: {rt2:?}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -190,7 +190,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn simple_ldp_test() -> anyhow::Result<()> {
+    pub fn simple_ldp_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         Ptr!(<i32>(32)).store(&1234, proc.memory_mut())?;

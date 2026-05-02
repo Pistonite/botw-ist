@@ -41,7 +41,7 @@ impl ExecutableInstruction for UbfmInstruction {
                 RegisterType::XReg(_) => 64,
                 RegisterType::WReg(_) => 32,
                 _ => {
-                    log::error!("Invalid register type for UBFM: {:?}", self.rd);
+                    cu::error!("Invalid register type for UBFM: {:?}", self.rd);
                     return Err(Error::BadInstruction(0));
                 }
             };
@@ -58,7 +58,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn simple_ubfm_test() -> anyhow::Result<()> {
+    pub fn simple_ubfm_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);

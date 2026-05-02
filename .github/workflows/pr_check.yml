@@ -13,8 +13,7 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: pnpm
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
@@ -32,12 +31,11 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: pnpm
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
-          tool-cargo-binstall: ripgrep,layered-crate
+          tool-cargo-binstall: layered-crate
       - uses: ./.github/steps/cache-ci
         with:
           runtime: true
@@ -51,13 +49,13 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: pnpm
           ecma-pnpm: true
           ecma-bun: true
           rust: nightly
           rust-wasm: true
           rust-src: true
+          tool-cargo-binstall: workex=Pistonite/workex
       - uses: ./.github/steps/cache-ci
         with:
           runtime: true
@@ -72,8 +70,7 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: pnpm
           ecma-pnpm: true
           ecma-bun: true
           rust: stable

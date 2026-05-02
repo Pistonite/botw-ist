@@ -1,0 +1,5 @@
+node_modules
+.prettierignore
+/monaco-editor-patch
+/tsconfig*.json
+/eslint.config.js

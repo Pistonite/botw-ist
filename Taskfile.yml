@@ -2,7 +2,7 @@ version: '3'
 
 includes:
   common: 
-    taskfile: ./packages/mono-dev/task/common.yaml
+    taskfile: ./node_modules/mono-dev/task/common.yaml
     flatten: true
     optional: true
 
@@ -20,11 +20,11 @@ includes:
   itemsys:        {taskfile: ./packages/itemsys,          dir: ./packages/itemsys,          internal: true}
   itemsys-build:  {taskfile: ./packages/itemsys-build,    dir: ./packages/itemsys-build,    internal: true}
   skybook-api:    {taskfile: ./packages/skybook-api,      dir: ./packages/skybook-api,      internal: true}
-  research:       {taskfile: ./packages/research-scripts, dir: ./packages/research-scripts, internal: true}
   localization:   {taskfile: ./packages/localization,     dir: ./packages/localization,     internal: true}
   manual:         {taskfile: ./packages/manual,           dir: ./packages/manual,           internal: true}
   intwc:          {taskfile: ./packages/intwc,            dir: ./packages/intwc,            internal: true}
-  shared-controls: {taskfile: ./packages/shared-controls, dir: ./packages/shared-controls,  internal: true}
+
+  data:       {taskfile: ./packages/botw-data, dir: ./packages/botw-data, internal: true, optional: true}
 
 tasks:
   install-cargo-extra-tools:
@@ -32,7 +32,7 @@ tasks:
     cmds:
       - task: cargo-binstall
         vars:
-          PACKAGES: mdbook mdbook-admonish live-server cargo-watch wasm-pack ripgrep layered-crate git-delta
+          PACKAGES: mdbook@0.4 mdbook-admonish shwoop wasm-pack ripgrep layered-crate
       - task: cargo-binstall
         vars:
           PACKAGES: workex --git https://github.com/Pistonite/workex
@@ -43,28 +43,25 @@ tasks:
     desc: Install packages for local development
     aliases: [i]
     cmds:
-      - echo "nightly" > packages/runtime-wasm/rust-toolchain
       - magoo install
       - pnpm install
       - task: post-install
+      - task: runtime-wasm:install
 
   post-install:
     cmds:
       - task: app:install
       - task: manual:install
-      - task: intwc:install
-      - task: shared-controls:install
       - task: server:install
 
   build-artifacts:
     desc: Generate artifacts for development locally
     cmds:
-      - task: research:build
-      - task: parser:bsource
-      - task: itemsys:bsource
-      - task: localization:build
+      - task: data:build
+      - task: parser:build-src
+      - task: itemsys-build:build-src
       - task: runtime-wasm:pull-dist
-      - task: blueflame-deps:build
+      - task: blueflame-deps:build-src
 
   pull-artifacts:
     desc: Pull artifacts from storage (requires gcloud access)
@@ -74,7 +71,6 @@ tasks:
 
   cache-ci-app-assets-pull-artifacts:
     deps:
-      - localization:pull-artifacts
       - itemsys-build:pull-artifacts
 
   cache-ci-runtime-pull-artifacts:
@@ -84,20 +80,17 @@ tasks:
 
   check-ci-layer-1-2:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: post-install
       - task: check-layer-1
       - task: check-layer-2
 
   check-ci-layer-3:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: post-install
       - task: check-layer-3
 
   check-ci-layer-4:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: post-install
       - task: check-layer-4
 
@@ -135,6 +128,7 @@ tasks:
 
   check-layer-4:
     cmds:
+      - task: skybook-api:build-dep
       - cmd: >
           if stat packages/runtime-tests/data/program-mini.bfi;
           then
@@ -146,7 +140,6 @@ tasks:
 
   test-ci:
     cmds:
-      - pnpm install --frozen-lockfile
       - task: post-install
       - task: test
       
@@ -170,6 +163,7 @@ tasks:
     deps:
       - skybook-api:test
       - app:test
+      - itemsys:test
 
   build:
     desc: Check that components can build without failure
@@ -180,40 +174,33 @@ tasks:
       - task: manual:build
       - task: runtime-wasm:build
 
+  build-app-manual-server-ci:
+    cmds:
+      - task: app:install
+      - task: manual:install
+      - task: server:install
+      - task: skybook-api:build-dep
+      - task: app:build
+      - task: manual:build
+      - task: server:build
+
   build-manual-ci:
     cmds:
-        # this technically isn't needed, but not installing pnpm
-        # causes CI to be unreliable due to cache issues
-        # (and I couldn't figure out how to optinally enable the setup)
-      - pnpm install --frozen-lockfile 
       - task: manual:install
       - task: manual:build
 
-  build-app-ci:
-    cmds:
-      - pnpm install --frozen-lockfile
-      - task: intwc:install
-      - task: app:install
-      - task: app:build
-
   build-runtime-ci-pr:
     cmds:
-      - pnpm install --frozen-lockfile
+      - task: skybook-api:build-dep
       - task: runtime-wasm:build
       - task: runtime-wasm:clean-dist # so we don't upload non-min bundles
       - task: runtime-wasm:build-dist-min
 
   build-runtime-ci:
     cmds:
-      - pnpm install --frozen-lockfile
+      - task: skybook-api:build-dep
       - task: runtime-wasm:build-wasm
       - task: runtime-wasm:build-dist-min
-
-  build-server-ci:
-    cmds:
-      - pnpm install --frozen-lockfile
-      - task: server:install
-      - task: server:build
 
   clean:
     desc: Clean the whole repo for temporaries that might help resolve build issues
@@ -224,7 +211,7 @@ tasks:
       - task: runtime-wasm:clean
       - task: itemsys-build:clean
 
-  publish:
+  publish-app:
     desc: Publish artifacts
     vars:
       SKYBOOK_VERSION_TAG:
@@ -232,5 +219,38 @@ tasks:
     cmds:
       - git tag {{.SKYBOOK_VERSION_TAG}}
       - git push origin {{.SKYBOOK_VERSION_TAG}}
-      - task: skybook-api:publish
-        ignore_error: true
+
+  publish-api:
+    - task: skybook-api:publish
+  publish-itemsys:
+    - task: itemsys:publish
+
+  pnpm-dev-link:
+    cmds:
+      - |
+        for f in packages/*/package.json; do
+          sed -i 's|"@pistonite/{{.CLI_ARGS}}": "catalog:"|"@pistonite/{{.CLI_ARGS}}": "link:../../../{{.CLI_ARGS}}"|g' "$f"
+        done
+      - pnpm i
+
+  pnpm-dev-unlink:
+    cmds:
+      - |
+        for f in packages/*/package.json; do
+          sed -i 's|"@pistonite/{{.CLI_ARGS}}": "link:../../../{{.CLI_ARGS}}"|"@pistonite/{{.CLI_ARGS}}": "catalog:"|g' "$f"
+        done
+      - pnpm i
+
+  upgrade:
+    desc: Upgrade dependencies
+    cmds:
+      - >
+        pnpm up mono-dev @pistonite/pure @pistonite/workex @pistonite/celera
+        lru-cache
+        react react-dom @types/react @types/react-dom
+        @fluentui/react-components @fluentui/react-icons
+        fuse.js js-yaml @types/js-yaml @types/node
+        @types/bun zustand uuid reselect
+        @uidotdev/usehooks @tanstack/react-query
+      - pnpm dedupe
+      - pnpm dedupe --check

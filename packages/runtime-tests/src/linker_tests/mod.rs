@@ -18,12 +18,7 @@ macro_rules! run {
 
 pub fn run(process: &Process, failures_dir: &Path) -> cu::Result<bool> {
     cu::debug!("running linker tests");
-    let threads = if cfg!(feature = "single-thread") {
-        1
-    } else {
-        4
-    };
-    let pool = ThreadPool::new(threads);
+    let pool = ThreadPool::new(4);
 
     let handles = vec![
         run!(&pool, process, pmdm_initialize::run),
@@ -43,7 +38,7 @@ pub fn run(process: &Process, failures_dir: &Path) -> cu::Result<bool> {
     let total_count = handles.len();
     let mut passed_count = 0;
     {
-        let bar = cu::progress_bar(total_count, "linker tests");
+        let bar = cu::progress("linker tests").total(total_count).spawn();
         for (i, handle) in handles.into_iter().enumerate() {
             let result = handle.recv.recv().unwrap();
             match result {
@@ -63,7 +58,7 @@ pub fn run(process: &Process, failures_dir: &Path) -> cu::Result<bool> {
                 }
             }
             let failed_count = i + 1 - passed_count;
-            cu::progress!(&bar, i + 1, "{failed_count} failed");
+            cu::progress!(bar = i + 1, "{failed_count} failed");
         }
     }
 

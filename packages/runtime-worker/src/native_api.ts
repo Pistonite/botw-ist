@@ -19,10 +19,10 @@ import type { Pwr } from "./error.ts";
 
 export type QuotedItemResolverFn = (query: string) => Promise<ItemSearchResult | undefined | null>;
 
-export type RuntimeInitOutput = {
+export interface RuntimeInitOutput {
     /** Custom image version initialized, should be in the form of "X.X.X" */
     gameVersion: string;
-};
+}
 
 /** API bindings for calls into native runtime, plus mixin functions used by the worker */
 export interface NativeApi<TPtr> extends NativeApiFunctions<TPtr>, NativeEmpFactory<TPtr> {}
@@ -152,12 +152,12 @@ const ParseOutput = Symbol("ParseOutput");
 export type ParseOutput = typeof ParseOutput;
 
 /** Factory type to create Erc (Externally-RefCounted) pointers */
-export type NativeEmpFactory<TPtr> = {
+export interface NativeEmpFactory<TPtr> {
     readonly nullptr: TPtr; // get the nullptr value to pass into native function as fallback when Erc has undefined value
     readonly makeNativeHandleEmp: ReturnType<typeof makeEmpType<NativeHandle, TPtr>>;
     readonly makeRunOutputEmp: ReturnType<typeof makeEmpType<RunOutput, TPtr>>;
     readonly makeParseOutputEmp: ReturnType<typeof makeEmpType<ParseOutput, TPtr>>;
-};
+}
 
 /** Bind the ref counting API to a Emp factory */
 export const createNativeEmpFactory = <TPtr>(

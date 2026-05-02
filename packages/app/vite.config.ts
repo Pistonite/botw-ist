@@ -1,21 +1,12 @@
-/// <reference types="vitest" />
+/// <reference types="mono-dev/vitest" />
+/// <reference types="node" />
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { spawnSync } from "child_process";
+import path from "node:path";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import path from "path";
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import fs from "fs";
-
-import { type Plugin, defineConfig, type UserConfig } from "vite";
+import { type Plugin } from "mono-dev/vite";
 import serveStatic from "vite-plugin-serve-static";
-import intwc from "@pistonite/vite-plugin-intwc";
-import monodev from "mono-dev/vite";
+import intwc from "@pistonite/intwc/vite-plugin";
+import { configure } from "mono-dev/app-build-config";
 
 const staticAssetHeader = (): Plugin => {
     return {
@@ -33,26 +24,8 @@ const staticAssetHeader = (): Plugin => {
     };
 };
 
-// https://vitejs.dev/config/
-export default defineConfig(({ command }) => {
-    const commit = spawnSync("git", ["rev-parse", "HEAD"], {
-        encoding: "utf-8",
-    }).stdout.trim();
-    console.log(`commit: ${commit}`);
-
-    const packageJson = JSON.parse(fs.readFileSync("../../package.json", "utf-8"));
-    const version = packageJson.version;
-    console.log(`version: ${version}`);
-
-    const monodevConfig = monodev({
-        https: command === "serve",
-    });
-    return monodevConfig<UserConfig>({
-        define: {
-            "import.meta.env.COMMIT": JSON.stringify(commit),
-            "import.meta.env.VERSION": JSON.stringify(version),
-            "import.meta.vitest": "undefined",
-        },
+export default configure(() => {
+    return {
         plugins: [
             intwc({ basicLanguages: [] }),
             staticAssetHeader(),
@@ -67,9 +40,6 @@ export default defineConfig(({ command }) => {
                 },
             ]),
         ],
-        resolve: {
-            dedupe: ["botw-item-assets"],
-        },
         server: {
             port: 23172,
             headers: {
@@ -78,16 +48,41 @@ export default defineConfig(({ command }) => {
             },
         },
         build: {
-            rollupOptions: {
+            rolldownOptions: {
                 input: {
                     index: "index.html",
                     popout: "popout.html",
                 },
+                output: {
+                    codeSplitting: {
+                        groups: [
+                            // generated translation chunks
+                            { name: "gen/de", test: /generated[\\/]de/ },
+                            { name: "gen/en", test: /generated[\\/]en/ },
+                            { name: "gen/es", test: /generated[\\/]es/ },
+                            { name: "gen/fr", test: /generated[\\/]fr/ },
+                            { name: "gen/it", test: /generated[\\/]it/ },
+                            { name: "gen/ja", test: /generated[\\/]ja/ },
+                            { name: "gen/ko", test: /generated[\\/]ko/ },
+                            { name: "gen/nl", test: /generated[\\/]nl/ },
+                            { name: "gen/ru", test: /generated[\\/]ru/ },
+                            { name: "gen/zh", test: /generated[\\/]zh/ },
+                            // combined other translation chunks
+                            { name: "msg/de", test: "de-DE" },
+                            { name: "msg/en", test: "en-US" },
+                            { name: "msg/es", test: "es-ES" },
+                            { name: "msg/fr", test: "fr-FR" },
+                            { name: "msg/it", test: "it-IT" },
+                            { name: "msg/ja", test: "ja-JP" },
+                            { name: "msg/ko", test: "ko-KR" },
+                            { name: "msg/nl", test: "nl-NL" },
+                            { name: "msg/ru", test: "ru-RU" },
+                            { name: "msg/zhcn", test: "zh-CN" },
+                            { name: "msg/zhtw", test: "zh-TW" },
+                        ],
+                    },
+                },
             },
         },
-        test: {
-            includeSource: ["src/**/*.{js,ts}"],
-            environment: "jsdom",
-        },
-    });
+    };
 });

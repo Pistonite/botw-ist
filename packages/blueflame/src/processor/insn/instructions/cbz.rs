@@ -38,7 +38,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn cbz_withzero_dobranch() -> anyhow::Result<()> {
+    pub fn cbz_withzero_dobranch() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         cpu.pc = 0x1000;
         cpu.write(reg!(x[10]), 0);
@@ -50,7 +50,7 @@ mod tests {
     }
 
     #[test]
-    pub fn cbz_withnonzero_donotbranch() -> anyhow::Result<()> {
+    pub fn cbz_withnonzero_donotbranch() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         cpu.pc = 0x1000;
         cpu.write(reg!(x[10]), 2);

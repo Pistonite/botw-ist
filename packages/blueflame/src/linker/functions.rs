@@ -413,7 +413,7 @@ pub fn get_weapons_for_dpad(
     cpu.native_jump_to_main_offset(0x0097a7cc)?;
     reg! { cpu: w[0] => let count: i32 };
     if count < 0 || count > 20 {
-        log::warn!("get_weapons_for_dpad returned invalid count: {count}");
+        cu::warn!("get_weapons_for_dpad returned invalid count: {count}");
         return Ok(vec![]);
     }
 
@@ -422,7 +422,7 @@ pub fn get_weapons_for_dpad(
     mem! { (cpu.proc.memory()): let items = *out_safe_array; }
     for item in items.into_iter().take(len) {
         if item.is_nullptr() {
-            log::warn!("get_weapons_for_dpad has nullptr in return result");
+            cu::warn!("get_weapons_for_dpad has nullptr in return result");
             continue;
         }
         out_vec.push(item);

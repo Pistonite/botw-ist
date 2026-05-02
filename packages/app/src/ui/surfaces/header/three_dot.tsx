@@ -15,10 +15,9 @@ import {
     MoreHorizontal20Regular,
     PersonFeedback20Regular,
 } from "@fluentui/react-icons";
-import { useLocale } from "@pistonite/pure-react";
+import { useLocale, GitHubLink } from "@pistonite/celera";
 
 import { useUITranslation } from "skybook-localization";
-import { GitHubLink } from "@pistonite/shared-controls";
 
 const MiscMenuImpl: React.FC = () => {
     const t = useUITranslation();

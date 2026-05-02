@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { log } from "self::util";
+import { log } from "#util";
 
 /**
  * List of builtin extension IDs
@@ -285,7 +285,7 @@ const filterInvalidCustomIds = (ids: string[], customIds: string[]): string[] =>
 };
 
 if (import.meta.vitest) {
-    const { expect, test } = import.meta.vitest;
+    const { test, expect } = import.meta.vitest;
     test("default ids should cover all built in ids", () => {
         const defaults = new Set([...DefaultPrimaryIds, ...DefaultSecondaryIds]);
         const builtin = new Set(BuiltinExtensionIds);

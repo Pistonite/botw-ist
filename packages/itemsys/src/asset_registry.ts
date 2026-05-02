@@ -1,4 +1,4 @@
-import { injectStyle } from "@pistonite/pure/pref";
+import { injectStyle } from "@pistonite/celera";
 
 let theAssetLocation: string = "";
 
@@ -19,7 +19,7 @@ export const registerAssetLocation = (assetLocation: string) => {
         makeSpriteSheetStyle(assetLocation, "modifiers") +
         makeFontStyle(assetLocation);
 
-    injectStyle("botw-item-assets", css);
+    injectStyle("skybook-itemsys", css);
 
     theAssetLocation = assetLocation;
 };

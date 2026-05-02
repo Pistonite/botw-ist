@@ -8,7 +8,7 @@ import type { ItemSearchResult } from "@pistonite/skybook-api";
 import type { ActorSpriteProps } from "@pistonite/skybook-itemsys";
 import { translateGenericError } from "skybook-localization";
 
-import { FirstPartyExtensionAdapter, type FirstPartyExtension } from "self::util";
+import { FirstPartyExtensionAdapter, type FirstPartyExtension } from "#util";
 
 import { ItemExplorer, type Searcher } from "./item_explorer.tsx";
 

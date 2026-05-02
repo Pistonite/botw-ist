@@ -14,12 +14,11 @@ import {
     ImageSparkle20Regular,
     WrenchSettings20Regular,
 } from "@fluentui/react-icons";
-import { DarkToggle, LanguagePicker, MenuSwitch } from "@pistonite/shared-controls";
+import { DarkToggle, isMobile, LanguagePicker, MenuSwitch } from "@pistonite/celera";
 
 import { useUITranslation } from "skybook-localization";
 
-import { usePersistStore } from "self::application";
-import { isLessProductive } from "self::pure-contrib";
+import { usePersistStore } from "#application";
 
 /** Settings menu in the header */
 const SettingsMenuImpl: React.FC = () => {
@@ -29,7 +28,7 @@ const SettingsMenuImpl: React.FC = () => {
     const setEnableAnimations = usePersistStore((state) => state.setEnableAnimations);
     const t = useUITranslation();
 
-    const tooltipPosition = isLessProductive ? "below" : "after";
+    const tooltipPosition = isMobile() ? "below" : "after";
     return (
         <Menu>
             <MenuTrigger disableButtonEnhancement>

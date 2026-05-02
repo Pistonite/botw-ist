@@ -5,6 +5,7 @@
 import { serial } from "@pistonite/pure/sync";
 import { wxWrapHandler } from "@pistonite/workex";
 import type { Void } from "@pistonite/pure/result";
+import type { TranslatorFn } from "@pistonite/celera";
 import { v4 as makeUUID } from "uuid";
 import { createContext, useContext } from "react";
 
@@ -13,7 +14,6 @@ import type {
     Runtime,
     RuntimeApp,
     RuntimeWorkerInitArgs,
-    Translator,
 } from "@pistonite/skybook-api";
 import {
     searchItemLocalized,
@@ -21,7 +21,7 @@ import {
     translateRuntimeInitError,
 } from "skybook-localization";
 
-import { bootLog, log } from "self::util";
+import { bootLog, log } from "#util";
 
 import { useSessionStore } from "./session_store.ts";
 import { crashApp } from "./crash_handler.ts";
@@ -139,7 +139,7 @@ export const bootstrapAppWithRuntime = (runtime: Runtime): void => {
 export async function initRuntime(
     runtime: Runtime,
     args: RuntimeWorkerInitArgs,
-): Promise<Void<(translator: Translator) => string>> {
+): Promise<Void<(translator: TranslatorFn) => string>> {
     /* The reason why ^ is a function, is because when the error occured,
      * the localization package might not have been loaded. So we delay
      * translating the message to the UI, where react-i18next will handle

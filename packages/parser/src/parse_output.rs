@@ -266,7 +266,7 @@ pub fn parse_tokens(script: &str) -> Vec<(Span, syn::TT)> {
     }
 
     // sort by position
-    output_tokens.sort_by(|a, b| a.0.lo.cmp(&b.0.lo));
+    output_tokens.sort_by_key(|x| x.0.lo);
 
     output_tokens
 }

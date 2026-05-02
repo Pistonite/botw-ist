@@ -157,7 +157,7 @@ impl TriggerParam {
         let self_list = Fd::list_mut(self);
         let other_list = Fd::list(other);
         if self_list.len() != other_list.len() {
-            log::error!(
+            cu::error!(
                 "fail to load save: length mismatch, self={}, other={}, descriptor={}",
                 self_list.len(),
                 other_list.len(),
@@ -167,7 +167,7 @@ impl TriggerParam {
         }
         for (s, o) in std::iter::zip(self_list.iter_mut(), other_list.iter()) {
             if s.hash() != o.hash() {
-                log::error!(
+                cu::error!(
                     "fail to load save: hash mismatch, self={}, other={}, descriptor={}",
                     s.hash(),
                     o.hash(),
@@ -275,7 +275,7 @@ mod tests {
         verify_flag_order!(vector3f_array_flags);
     }
     #[test]
-    fn test_init() -> anyhow::Result<()> {
+    fn test_init() -> cu::Result<()> {
         let params = gdt::TriggerParam::loaded();
         let flag1 = params
             .by_hash::<gdt::fd!(bool)>(530692287)
@@ -308,6 +308,11 @@ mod tests {
             .by_name::<gdt::fd!(s32)>("KorokNutsNum")
             .expect("flag not found");
         assert_eq!(*flag.get(), 0);
+
+        let flag = params
+            .by_name::<gdt::fd!(bool)>("Open_MasterSword_FullPower")
+            .expect("flag not found");
+        assert!(!*flag.get());
         Ok(())
     }
 

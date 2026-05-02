@@ -1,10 +1,10 @@
-import { Button, Dropdown, Option, Tooltip, makeStyles } from "@fluentui/react-components";
+import { Button, Dropdown, Option, Tooltip } from "@fluentui/react-components";
 import { Dismiss20Regular, WindowNew20Regular } from "@fluentui/react-icons";
 import type { PropsWithChildren } from "react";
 
 import { useUITranslation } from "skybook-localization";
 
-import { useStyleEngine } from "self::util";
+import { useStyleEngine } from "#util";
 
 export type ExtensionToolbarProps = {
     /** Id of the current opened extension */
@@ -40,8 +40,8 @@ export type ExtensionToolbarProps = {
     onSelect: (id: string) => void;
 };
 
-const useStyles = makeStyles({
-    selectorButton: {
+const useStyles = useStyleEngine.extend({
+    "selector-button": {
         // truncate text
         overflowX: "hidden",
         textOverflow: "ellipsis",
@@ -61,15 +61,14 @@ export const ExtensionToolbar: React.FC<PropsWithChildren<ExtensionToolbarProps>
     onSelect,
     children,
 }) => {
-    const m = useStyleEngine();
     const t = useUITranslation();
-    const c = useStyles();
+    const m = useStyles();
     return (
         <div className={m("flex-row gap-4")}>
             <Dropdown
                 className={m("flex-1")}
                 appearance="filled-darker"
-                button={<span className={c.selectorButton}>{t(`extension.${id}.name`)}</span>}
+                button={<span className={m("c-selector-button")}>{t(`extension.${id}.name`)}</span>}
                 selectedOptions={[id]}
                 onOptionSelect={(_, { optionValue }) => {
                     if (optionValue && optionValue !== id) {

@@ -4,10 +4,10 @@ import type { ItemTooltipWithContextProps } from "./tooltip_props.ts";
 import { useSetItemTooltip } from "./tooltip_context.ts";
 
 /** Wrapper to show tooltip for an ItemSlot */
-export const TooltipSource: React.FC<PropsWithChildren<ItemTooltipWithContextProps>> = ({
-    children,
-    ...props
-}) => {
+export const TooltipSource: React.FC<PropsWithChildren<ItemTooltipWithContextProps>> = (
+    allProps,
+) => {
+    const { children, ...props } = allProps;
     const { setItemTooltip } = useSetItemTooltip();
 
     return (

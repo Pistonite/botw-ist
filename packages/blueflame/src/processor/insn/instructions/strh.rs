@@ -156,7 +156,7 @@ mod tests {
     use self_::{Cpu0, Process};
 
     #[test]
-    pub fn simple_strh_test() -> anyhow::Result<()> {
+    pub fn simple_strh_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);

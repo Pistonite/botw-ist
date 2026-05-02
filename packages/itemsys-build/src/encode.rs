@@ -84,7 +84,9 @@ pub async fn run(mut args: Cmd) -> cu::Result<()> {
     let profile = Arc::new(config.encoder);
     let mut handles = Vec::with_capacity(expanded_objects.len());
     let pool = cu::co::pool(0);
-    let bar = cu::progress_bar_lowp(expanded_objects.len(), "encoding objects");
+    let bar = cu::progress(
+        "encoding objects").total(
+        expanded_objects.len()).keep(false).spawn();
     for object in expanded_objects {
         let profile = Arc::clone(&profile);
         let handle = pool.spawn(async move {
@@ -95,11 +97,9 @@ pub async fn run(mut args: Cmd) -> cu::Result<()> {
     }
 
     let mut set = cu::co::set(handles);
-    let mut count = 0;
     while let Some(result) = set.next().await {
         let object = result??;
-        count += 1;
-        cu::progress!(&bar, count, "{object}");
+        cu::progress!(bar += 1, "{object}");
     }
 
     Ok(())
@@ -112,7 +112,7 @@ fn encode(object: &str, profile: &EncoderProfile) -> cu::Result<()> {
     let mut output_name = PathBuf::from(frames_dir.file_name().unwrap());
     output_name.set_extension("webp");
     let input_path = frames_dir.join("frame_0.png");
-    cu::ensure!(input_path.exists(), "cannot find first frame for {object}");
+    cu::ensure!(input_path.exists(), "cannot find first frame for {object}")?;
     let image = image::open(input_path)?;
     let (w, h) = image.dimensions();
     // save the first frame as png in original resolution
@@ -149,7 +149,9 @@ fn encode(object: &str, profile: &EncoderProfile) -> cu::Result<()> {
         frame_images.push(image);
     }
 
-    let bar = cu::progress_bar(frame_images.len(), format!("encoding {object}"));
+    let bar = cu::progress(
+        format!("encoding {object}")).total(
+        frame_images.len()).spawn();
 
     let lossy_config = LossyEncodingConfig {
         target_size: 0,    // off
@@ -188,7 +190,7 @@ fn encode(object: &str, profile: &EncoderProfile) -> cu::Result<()> {
     };
     let mut encoder = Encoder::new_with_options((target_w, target_h), encoder_options)?;
     for (i, image) in frame_images.iter().enumerate() {
-        cu::progress!(&bar, i);
+        cu::progress!(bar += 1);
         encoder.add_frame(image.as_bytes(), timestamp(i as u32))?;
     }
 
@@ -196,7 +198,9 @@ fn encode(object: &str, profile: &EncoderProfile) -> cu::Result<()> {
     let size = encoded.len();
     let output_path = output_dir.join(output_name);
     cu::fs::write(output_path, &*encoded)?;
-    cu::progress_done!(&bar, "finished {object}: {size} bytes");
+    bar.done_with_message(
+        &format!("finished {object}: {size} bytes")
+    );
 
     Ok(())
 }

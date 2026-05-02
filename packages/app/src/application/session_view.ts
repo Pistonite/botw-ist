@@ -16,7 +16,7 @@ import { translateGenericError } from "skybook-localization";
 
 import { useRuntime } from "./runtime.ts";
 import { useSessionStore } from "./session_store.ts";
-import { log } from "self::util";
+import { log } from "#util";
 
 export type CachedRuntimeData<T> = {
     data: Result<T, RuntimeViewError> | undefined;
@@ -109,6 +109,9 @@ const useStoreCachedRuntimeData = <T>(
     ) => WxPromise<MaybeAborted<Result<T, RuntimeViewError>>>,
     setFn: (stepIndex: number, view: Result<T, RuntimeViewError>) => void,
 ): CachedRuntimeData<T> => {
+    // this hook is carefully and manually optimized to work with the simulator runtime
+    // and have smooth experience when switching steps
+    "use no memo";
     const activeScript = useDebounce(
         useSessionStore((state) => state.activeScript),
         100,
@@ -180,6 +183,7 @@ const useStoreCachedRuntimeData = <T>(
         };
         // note we don't trigger when stepIndex updates, because
         // it is computed asynchronously from bytePos
+        // eslint-disable-next-line react-compiler/react-compiler
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [cacheIsValid, runtime, activeScript, bytePos, setFn]);
 
@@ -196,6 +200,7 @@ const useStoreCachedRuntimeData = <T>(
     return {
         // if state for current step is not ready,
         // display the per-component cache to avoid flickering
+        // eslint-disable-next-line react-hooks/refs
         data: inventory || inventoryViewCache.current,
         loading: !cacheIsValid,
         error: errorMessage,

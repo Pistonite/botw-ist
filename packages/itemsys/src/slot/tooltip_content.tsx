@@ -2,8 +2,8 @@ import { memo } from "react";
 import { Caption1, Subtitle2, Text, makeStyles, mergeClasses } from "@fluentui/react-components";
 import { Star16Filled } from "@fluentui/react-icons";
 
-import { ActorSprite, ModifierSprite } from "../sprite";
-import { useGenTranslation, useUITranslation } from "../i18n";
+import { ActorSprite, ModifierSprite } from "#sprite";
+import { useGenTranslation, useUITranslation } from "#i18n";
 
 import {
     getActorParam,
@@ -11,7 +11,8 @@ import {
     CookEffect,
     CookEffectNames,
     SpecialStatusNames,
-} from "../data";
+} from "#data";
+
 import type { ItemSlotContextProps } from "./slot_props.ts";
 import type { ItemTooltipProps } from "./tooltip_props.ts";
 

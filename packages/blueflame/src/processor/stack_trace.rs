@@ -51,7 +51,7 @@ impl StackTrace {
                 }
             }
             None => {
-                log::error!("stack frames popped while empty");
+                cu::error!("stack frames popped while empty");
                 if enabled!("check-stack-frames") {
                     return Err(Error::StackFrameCorrupted);
                 }

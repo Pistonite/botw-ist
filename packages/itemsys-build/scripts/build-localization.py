@@ -2,23 +2,25 @@ import yaml
 import os
 import multiprocessing
 SELF_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-RESEARCH_SCRIPTS_DIR = os.path.join(os.path.dirname(SELF_DIR), "research-scripts")
+DATA_DIR = os.path.join(os.path.dirname(SELF_DIR), "botw-data")
+if not os.path.exists(DATA_DIR):
+    raise Exception(f"botw-data not found: {DATA_DIR}")
 import sys
-sys.path.append(os.path.join(RESEARCH_SCRIPTS_DIR, "src"))
-import msyt # type: ignore
-import spp # type: ignore
+sys.path.append(os.path.join(DATA_DIR))
+from src import msyt # type: ignore
+from src import spp # type: ignore
 
 OUTPUT_DIR = os.path.join(os.path.dirname(SELF_DIR), "itemsys", "src", "generated")
 
 def main():
 
-    actor_dir = os.path.join(RESEARCH_SCRIPTS_DIR, "output", "Actor")
+    actor_dir = os.path.join(DATA_DIR, "output", "Actor")
     actor_files = [os.path.join(actor_dir, f) for f in os.listdir(actor_dir) ]
 
-    cook_effect_dir = os.path.join(RESEARCH_SCRIPTS_DIR, "output", "CookEffect")
+    cook_effect_dir = os.path.join(DATA_DIR, "output", "CookEffect")
     cook_effect_files = [os.path.join(cook_effect_dir, f) for f in os.listdir(cook_effect_dir) ]
 
-    special_status_dir = os.path.join(RESEARCH_SCRIPTS_DIR, "output", "SpecialStatus")
+    special_status_dir = os.path.join(DATA_DIR, "output", "SpecialStatus")
     special_status_files = [os.path.join(special_status_dir, f) for f in os.listdir(special_status_dir) ]
     
     data = {}

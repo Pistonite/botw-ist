@@ -1,4 +1,4 @@
-use serde::Serialize;
+use cu::pre::*;
 use teleparse::derive_lexicon;
 
 /// Token type

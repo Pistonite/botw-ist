@@ -77,7 +77,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn simple_bic_test() -> anyhow::Result<()> {
+    pub fn simple_bic_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         cpu.write(reg!(x[5]), 0xFFFFFFFFu32);
         let mut proc = Process::new_for_test();

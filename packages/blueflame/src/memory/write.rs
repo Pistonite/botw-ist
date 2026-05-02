@@ -1,4 +1,4 @@
-use derive_more::derive::Constructor;
+use cu::pre::*;
 
 use crate::memory::{AccessFlags, Error, Memory};
 
@@ -185,7 +185,7 @@ impl<'m> Writer<'m> {
         }
 
         if self.page_off + len > self.max_page_off {
-            log::error!(
+            cu::error!(
                 "boundary hit at {}, writing {len} bytes",
                 self.memory.format_addr(self.addr)
             );

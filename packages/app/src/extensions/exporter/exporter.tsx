@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Text, Button, Field } from "@fluentui/react-components";
 import { ArrowDownload20Regular } from "@fluentui/react-icons";
-import { fsSave } from "@pistonite/pure/fs";
+import { fsSave } from "@pistonite/webfs";
 
 import { useUITranslation } from "skybook-localization";
 
-import { Code, CopyButton, Interpolate } from "self::ui/components";
-import { useStyleEngine } from "self::util";
+import { Code, CopyButton, Interpolate } from "#ui/components";
+import { useStyleEngine } from "#util";
 
 export type ExporterProps = {
     getScript: () => Promise<string | undefined>;

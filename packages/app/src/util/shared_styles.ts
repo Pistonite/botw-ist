@@ -1,4 +1,4 @@
-import { gale } from "@pistonite/shared-controls";
+import { gale } from "@pistonite/celera";
 
 export const useStyleEngine = gale({
     "gap-1": {

@@ -3,7 +3,7 @@ import { serial } from "@pistonite/pure/sync";
 import { cell, type Cell } from "@pistonite/pure/memory";
 import type { WxPromise } from "@pistonite/workex";
 
-import { type FirstPartyExtension, FirstPartyExtensionAdapter } from "self::util";
+import { type FirstPartyExtension, FirstPartyExtensionAdapter } from "#util";
 
 import { CrashViewer } from "./crash_viewer.tsx";
 

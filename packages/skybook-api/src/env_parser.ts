@@ -1,7 +1,9 @@
 /** Parser for the env tag in the script */
 
 import type { Result } from "@pistonite/pure/result";
-import type { RuntimeInitParams } from "./native";
+
+import type { RuntimeInitParams } from "#native";
+import type { ScriptEnvImage } from "#types";
 
 /** Parse the leading env tag from the script */
 export const parseEnvFromScript = (script: string): ScriptEnv => {
@@ -156,7 +158,7 @@ export const parseEnvFromScript = (script: string): ScriptEnv => {
  *
  * See https://skybook.pistonite.dev/user/custom_image
  */
-export type ScriptEnv = {
+export interface ScriptEnv {
     /**
      * If an env block is defined, the line number range of the block
      *
@@ -178,9 +180,7 @@ export type ScriptEnv = {
 
     /** Parameters parsed from the env block */
     params: RuntimeInitParams;
-};
-
-export type ScriptEnvImage = "1.5.0" | "1.6.0";
+}
 
 export const parseEnvImage = (image: string): ScriptEnvImage | undefined => {
     if (image.includes("1.5")) {

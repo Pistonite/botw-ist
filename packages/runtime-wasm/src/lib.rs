@@ -36,8 +36,8 @@ extern "C" {
 /// Initialize the WASM module
 #[wasm_bindgen]
 pub async fn module_init(wasm_module_path: String, wasm_bindgen_js_path: String) {
-    let _ = console_log::init_with_level(log::Level::Info);
-    log::info!("initializing wasm module");
+    let _ = console_log::init_with_level(cu::lv::I.into());
+    cu::info!("initializing wasm module");
     std::panic::set_hook(Box::new(move |info| {
         console_error_panic_hook::hook(info);
         __global_crash_handler();
@@ -54,7 +54,7 @@ pub async fn module_init(wasm_module_path: String, wasm_bindgen_js_path: String)
         let _ = runtime.set(Arc::new(sim::Runtime::new(spawner)));
     });
 
-    log::info!("wasm module initialized successfully");
+    cu::info!("wasm module initialized successfully");
 }
 
 #[derive(Debug, Clone, Serialize, Tsify)]
@@ -79,11 +79,11 @@ pub fn init_runtime(
         let threads = 4;
         let result = match custom_image {
             Some(data) => {
-                log::info!("initializing runtime in WASM using custom image");
+                cu::info!("initializing runtime in WASM using custom image");
                 runtime.init(&data.to_vec(), threads, params.as_ref())
             }
             None => {
-                log::info!("initializing runtime in WASM using default image");
+                cu::info!("initializing runtime in WASM using default image");
                 runtime.init(
                     include_bytes!("../../runtime-tests/data/program-mini.bfi"),
                     threads,
@@ -267,7 +267,7 @@ pub async fn run_parsed(
                 let promise = match result {
                     Ok(x) => x,
                     Err(e) => {
-                        log::error!("error calling notify_fn in run_parsed");
+                        cu::error!("error calling notify_fn in run_parsed");
                         log_error_in_js(e);
                         return;
                     }
@@ -276,7 +276,7 @@ pub async fn run_parsed(
                 if let Ok(x) = promise.dyn_into::<Promise>()
                     && let Err(e) = JsFuture::from(x).await
                 {
-                    log::error!("error calling notify_fn in run_parsed");
+                    cu::error!("error calling notify_fn in run_parsed");
                     log_error_in_js(e);
                 }
             }

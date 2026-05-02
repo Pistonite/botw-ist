@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use derive_more::derive::{Deref, DerefMut};
+use cu::pre::*;
 use enum_map::EnumMap;
 
 use blueflame_deps::trace_call;
@@ -117,7 +117,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
         match reg {
             0..31 => self.write(reg!(x[reg]), value),
             31 => {
-                log::error!("attempt to write to X31 in VM, which is a reserved register");
+                cu::error!("attempt to write to X31 in VM, which is a reserved register");
             }
             _ => self.write(reg!(d[reg - 32]), value),
         }
@@ -128,7 +128,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
         let value = match from {
             0..31 => self.read(reg!(x[from])),
             31 => {
-                log::error!("attempt to copy from X31 in VM, which is a reserved register");
+                cu::error!("attempt to copy from X31 in VM, which is a reserved register");
                 return Ok(());
             }
             _ => self.read(reg!(d[from - 32])),
@@ -143,7 +143,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
 
         for count in 0.. {
             if has_limit && count > BLOCK_ITERATION_LIMIT {
-                log::error!("Block iteration limit reached in v_execute_until");
+                cu::error!("Block iteration limit reached in v_execute_until");
                 return Err(Error::BlockIterationLimitReached);
             }
             if self.pc == target_abs {
@@ -182,7 +182,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
             return Err(Error::MissingData(id));
         };
         let bytes = &data.bytes;
-        log::debug!("allocating data, length={}", bytes.len());
+        cu::debug!("allocating data, length={}", bytes.len());
         let ptr = self.proc.memory_mut().alloc(bytes.len() as u32)?;
         let ptr = Ptr!(<u8>(ptr));
         ptr.store_slice(bytes, self.proc.memory_mut())?;
@@ -203,7 +203,7 @@ impl VirtualMachine for Cpu3<'_, '_, '_> {
 
         for count in 0.. {
             if has_limit && count > BLOCK_ITERATION_LIMIT {
-                log::error!("Block iteration limit reached in v_execute_to_complete");
+                cu::error!("Block iteration limit reached in v_execute_to_complete");
                 return Err(Error::BlockCountLimitReached);
             }
             if self.pc == target_abs {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Field, makeStyles, SearchBox, Body1, Checkbox } from "@fluentui/react-components";
+import { Field, SearchBox, Body1, Checkbox } from "@fluentui/react-components";
 import { useQuery } from "@tanstack/react-query";
 import type { Result } from "@pistonite/pure/result";
 import { useDebounce } from "@uidotdev/usehooks";
@@ -8,15 +8,15 @@ import type { ItemSearchResult } from "@pistonite/skybook-api";
 import { useUITranslation } from "skybook-localization";
 import { type CookEffect, StandaloneItemSlot } from "@pistonite/skybook-itemsys";
 
-import { Code, Interpolate } from "self::ui/components";
-import { useStyleEngine } from "self::util";
+import { Code, Interpolate } from "#ui/components";
+import { useStyleEngine } from "#util";
 
 export type Searcher = {
     search(localized: boolean, query: string): Promise<Result<ItemSearchResult[], string>>;
 };
 
-const useStyles = makeStyles({
-    resultsScroll: {
+const useStyles = useStyleEngine.extend({
+    "results-scroll": {
         marginTop: "8px",
     },
 });
@@ -46,8 +46,7 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
     const results = data?.val;
     const hasResults = results !== undefined && results.length > 0;
 
-    const m = useStyleEngine();
-    const c = useStyles();
+    const m = useStyles();
     const t = useUITranslation();
 
     const $SearchBox = (
@@ -84,7 +83,7 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
     );
 
     const $Results = hasResults && (
-        <div className={m("overflow-y-auto flex-1", c.resultsScroll)}>
+        <div className={m("overflow-y-auto flex-1 c-results-scroll")}>
             <div className={m("flex flex-wrap max-h-0 overflow-visible pad-itemtop")}>
                 {results.map(({ actor, cookEffect }, i) => (
                     <StandaloneItemSlot

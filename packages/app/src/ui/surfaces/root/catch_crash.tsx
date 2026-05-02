@@ -1,7 +1,7 @@
 import React, { type PropsWithChildren } from "react";
 
-import { crashApp } from "self::application";
-import { log } from "self::util";
+import { crashApp } from "#application";
+import { log } from "#util";
 
 type CrashState = {
     error?: Error;

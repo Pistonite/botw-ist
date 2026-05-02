@@ -3,11 +3,11 @@ import { AbstractProperCommand } from "./command";
 import { parseASTIdentifier, parseASTInteger, parseASTOneOrMoreIdentifiers } from "./parse.basis";
 import { codeBlockFromRange, type CodeBlockTree, flattenCodeBlocks, type Parser } from "./type";
 
-export type GameFlags = {
+export interface GameFlags {
     weaponSlots: number;
     bowSlots: number;
     shieldSlots: number;
-};
+}
 
 export class CommandHas extends AbstractProperCommand {
     private value: string | number | boolean;

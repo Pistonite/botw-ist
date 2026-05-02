@@ -1,7 +1,7 @@
 import { parseEnvFromScript, type DirectLoad } from "@pistonite/skybook-api";
 
-import { type ResponsePayload, safeParseUrl, useAcceptLanguage } from "self::framework";
-import { VERSION } from "self::util";
+import { type ResponsePayload, safeParseUrl, useAcceptLanguage } from "#framework";
+import { VERSION } from "#util";
 
 import Strings from "./strings.json" with { type: "json" };
 
@@ -24,7 +24,7 @@ const getVersion = () => {
     return VERSION.replace("0.", "v");
 };
 
-export type SSROptions = {
+export interface SSROptions {
     /** URL to put in meta */
     url: string;
     /** Direct load payload to inject into the page */
@@ -36,7 +36,7 @@ export type SSROptions = {
         /** Short version of the file name */
         short?: string;
     };
-};
+}
 
 /**
  * Renders the HTML on the server-side

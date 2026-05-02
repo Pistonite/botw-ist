@@ -1,0 +1,51 @@
+version: '3'
+
+includes:
+  ecma:
+    taskfile: ./node_modules/mono-dev/task/ecma.yaml
+    internal: true
+    optional: true
+
+tasks:
+  install:
+    cmds:
+      # - bun scripts/build-themes.ts > src/theme/colors.ts
+      - task: ecma:config
+  build-plugin:
+    - bun build vite-plugin/plugin-src.ts > vite-plugin/plugin.js
+
+  check:
+    cmds:
+      - task: ecma:check
+  
+  fix:
+    cmds:
+      - task: ecma:fix
+
+  update-patch:
+    vars:
+      MONACO_EDITOR_VERSION:
+        sh: jq '.dependencies.["monaco-editor"]' package.json | tr -d '"'
+    cmds:
+      # Clean up
+      - rm -rf monaco-editor-patch
+      # Reinstall the unpatched version
+      - bun scripts/pre-patch.ts
+      - pnpm install
+      # Run patch script
+      - pnpm patch monaco-editor@{{.MONACO_EDITOR_VERSION}} --edit-dir monaco-editor-patch > out
+      - rm out
+      - bun scripts/patch.ts
+      # Apply the patch
+      - pnpm patch-commit monaco-editor-patch || true
+      - rm -rf patches
+      # Move patch file to this file
+      - mv ../../patches .
+      # Clean up
+      - task: apply-patch
+      - rm -rf monaco-editor-patch
+
+  apply-patch:
+    cmds:
+      - bun scripts/post-patch.ts
+      - pnpm install

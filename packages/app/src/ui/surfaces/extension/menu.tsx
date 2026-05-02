@@ -27,7 +27,7 @@ import {
     useExtensionStore,
     openExtensionPopup,
     useUIStore,
-} from "self::application";
+} from "#application";
 
 const RECENT_LIMIT = 5;
 

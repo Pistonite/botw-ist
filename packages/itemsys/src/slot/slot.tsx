@@ -2,8 +2,8 @@ import { type PropsWithChildren } from "react";
 import { Text, makeStyles, mergeClasses } from "@fluentui/react-components";
 import { Link32Regular, PresenceBlocked24Regular } from "@fluentui/react-icons";
 
-import { ActorSprite, ModifierSprite } from "../sprite";
-import { SpecialStatus } from "../data";
+import { ActorSprite, ModifierSprite } from "#sprite";
+import { SpecialStatus } from "#data";
 
 import type { ItemSlotFullProps } from "./slot_props.ts";
 
@@ -196,31 +196,31 @@ const useStyles = makeStyles({
 });
 
 /** The Item slot display */
-export const ItemSlot: React.FC<ItemSlotFullProps> = ({
-    cheap,
-    disableAnimation,
-    actor,
-    elixirEffect,
-    isEquipped,
-    isTranslucent,
-    count,
-    durability,
-    isInBrokenSlot,
-    isEntangled,
-    holdingCount,
-    status,
-    statusIcon,
-    iconValue: statusIconValue,
-    isAlternativeColor: statusIsAlternativeColor,
-    blank,
-    deactive,
-    badlyDamaged,
-    isMasterSwordFullPower,
-    accessibleStatus,
-}) => {
+export const ItemSlot: React.FC<ItemSlotFullProps> = (props) => {
+    const {
+        cheap,
+        actor,
+        elixirEffect,
+        isEquipped,
+        isTranslucent,
+        count,
+        durability,
+        isInBrokenSlot,
+        isEntangled,
+        holdingCount,
+        status,
+        statusIcon,
+        iconValue: statusIconValue,
+        isAlternativeColor: statusIsAlternativeColor,
+        blank,
+        deactive,
+        badlyDamaged,
+        isMasterSwordFullPower,
+        accessibleStatus,
+    } = props;
     const styles = useStyles();
 
-    disableAnimation = disableAnimation || cheap;
+    const disableAnimation = props.disableAnimation || cheap;
 
     const $Outline = (
         <div

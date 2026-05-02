@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { ResizeLayout } from "@pistonite/shared-controls";
+import { ResizeLayout } from "@pistonite/celera";
 
 import {
     getPrimaryExtensionIdsForDropdown,
@@ -7,9 +7,9 @@ import {
     useCurrentSecondaryExtensionId,
     useExtensionStore,
     useUIStore,
-} from "self::application";
-import { ExtensionWindow } from "self::ui/components";
-import { useStyleEngine } from "self::util";
+} from "#application";
+import { ExtensionWindow } from "#ui/components";
+import { useStyleEngine } from "#util";
 
 import { ExtensionToolbarPrimary, ExtensionToolbarSecondary } from "./toolbar.tsx";
 

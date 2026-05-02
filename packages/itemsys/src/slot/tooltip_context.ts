@@ -10,10 +10,10 @@ export type SetItemTooltipFn = (
     verbose: boolean,
 ) => void;
 
-export type ItemTooltipContextState = {
+export interface ItemTooltipContextState {
     setItemTooltip: SetItemTooltipFn;
     tooltipTarget: HTMLElement | undefined;
-};
+}
 
 export const ItemTooltipContext = createContext<ItemTooltipContextState>({
     setItemTooltip: () => {

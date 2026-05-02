@@ -9,7 +9,7 @@ export const loadItemUITranslations = async (language: string): Promise<Record<s
 };
 
 /** Get the loader config for working with the pure/i18next framework */
-export const getPureI18nextLoaderConfig = (): {
+export const getCeleraI18nLoaderConfig = (): {
     "skybook-itemsys": (language: string) => Promise<Record<string, string>>;
     "skybook-itemsys-ui": (language: string) => Promise<Record<string, string>>;
 } => {

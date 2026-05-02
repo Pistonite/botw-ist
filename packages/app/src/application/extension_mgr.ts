@@ -5,19 +5,18 @@
  * not Extensions!!! (And popouts don't link with this)
  */
 
-import { addDarkSubscriber, addLocaleSubscriber, getLocale, isDark } from "@pistonite/pure/pref";
+import { addDarkSubscriber, addLocaleSubscriber, getLocale, isDark } from "@pistonite/celera";
 import { wxPopup } from "@pistonite/workex";
 import { bytePosToCharPos } from "@pistonite/intwc";
 
-import type { Extension } from "@pistonite/skybook-api";
-import type { ExtensionModule } from "@pistonite/skybook-api/client";
-import { skybookExtension } from "@pistonite/skybook-api/interfaces/Extension.bus.ts";
+import { type Extension, type ExtensionModule, skybookExtension } from "@pistonite/skybook-api";
+
+import { devLog, log } from "#util";
 
 import { usePersistStore } from "./persist_store.ts";
 import { useExtensionStore } from "./extension_store.ts";
 import { useSessionStore } from "./session_store.ts";
 import { getExtensionAppHost } from "./extension_host.ts";
-import { devLog, log } from "self::util";
 
 type ExtensionInstanceEntry = {
     id: string;

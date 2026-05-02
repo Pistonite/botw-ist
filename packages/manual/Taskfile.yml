@@ -2,40 +2,43 @@ version: '3'
 
 includes:
   cargo:
-    taskfile: ../mono-dev/task/cargo.yaml
+    taskfile: ../../node_modules/mono-dev/task/cargo.yaml
     internal: true
+    optional: true
   mdbook:
-    taskfile: ../mono-dev/task/mdbook.yaml
+    taskfile: ../../node_modules/mono-dev/task/mdbook.yaml
     internal: true
+    optional: true
 
 tasks:
   install:
     cmds:
-      - task: mdbook:install-theme-monorepo
+      - task: mdbook:install-theme
       - cargo run --bin skybook-manual-preprocessor -- style > theme/skybook.css
       - cp src/icon.svg theme/favicon.svg
       - cp src/icon.png theme/favicon.png
-      - bun preprocess/inject-meta.ts pre
-      - $(which mkdir) -p src/generated
-      - $(which mkdir) -p zh/src/generated
-      - bun preprocess/generate-constants.ts
+      - node --experimental-strip-types preprocess/inject-meta.mts pre
+      - mkdir -p src/generated
+      - mkdir -p zh/src/generated
+      - node --experimental-strip-types preprocess/generate-constants.mts
       - cp -r theme zh
   dev:
     desc: Start mdbook in watch mode
     cmds:
-      - task: build
-      - cmd: >
-          cargo-watch --watch src --watch zh 
-          -s "mdbook build && mdbook build zh -d ../book/zh" &
-      - live-server book -p 8081 {{.CLI_ARGS}}
+      - rm -rf book
+      - shwoop book -w src -w zh --host -- {{.TASK_EXE}} build-internal
 
   build:
     desc: (Re-)build the book
     cmds:
       - rm -rf book
+      - task: build-internal
+
+  build-internal:
+    cmds:
       - mdbook build
       - mdbook build zh -d ../book/zh
-      - bun preprocess/inject-meta.ts post
+      - node --experimental-strip-types preprocess/inject-meta.mts post
 
   check:
     cmds:

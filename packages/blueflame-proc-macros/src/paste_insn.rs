@@ -1,7 +1,5 @@
-use proc_macro::TokenStream;
-use proc_macro2::TokenStream as TokenStream2;
-use quote::quote_spanned;
-use syn::spanned::Spanned as _;
+use pm::pre::*;
+use syn::spanned::Spanned;
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input2 = TokenStream2::from(input.clone());
@@ -32,5 +30,5 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
         result |= part << (8 * i);
     }
-    TokenStream::from(quote_spanned! { input2.span() => #result })
+    TokenStream::from(pm::quote_spanned! { input2.span() => #result })
 }

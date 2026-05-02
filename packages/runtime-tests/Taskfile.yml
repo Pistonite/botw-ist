@@ -2,14 +2,15 @@ version: '3'
 
 includes:
   cargo:
-    taskfile: ../mono-dev/task/cargo.yaml
+    taskfile: ../../node_modules/mono-dev/task/cargo.yaml
+    optional: true
     internal: true
 
 tasks:
   install:
     desc: Install extra tools for working with BlueFlame images
     cmds:
-      - cargo install uking-relocate --git https://github.com/Pistonight/symbotw --branch main
+      - cargo install uking-relocate --git https://github.com/Pistonight/symbotw --branch botw_ist_temp
 
   clean:
     desc: Remove files

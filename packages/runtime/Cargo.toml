@@ -14,8 +14,7 @@ path = "../parser"
 path = "../skybook-api"
 
 [dependencies]
-derive_more.workspace = true
-hashlink = "0.10.0"
+hashlink.workspace = true
 cu.workspace = true
 oneshot.workspace = true
 serde.workspace = true
@@ -23,12 +22,8 @@ thiserror.workspace = true
 static_assertions.workspace = true
 
 # TS/WASM dependencies
-web-sys = { version = "0.3.77", features = ["console"], optional = true }
-
-[dependencies.wasm-bindgen-spawn]
-version = "0.0.5"
-optional = true
-# path = "../../../wasm-bindgen-spawn"
+web-sys = { workspace = true, features = ["console"], optional = true }
+wasm-bindgen-spawn= {workspace = true, optional = true}
 
 [features]
 # default = ["wasm"]

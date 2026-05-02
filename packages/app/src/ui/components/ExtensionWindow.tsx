@@ -1,9 +1,9 @@
 import { Spinner } from "@fluentui/react-components";
 import { useQuery } from "@tanstack/react-query";
 
-import { connectLocalExtensionToApp } from "self::application";
-import { getExtension } from "self::extensions";
-import { useStyleEngine } from "self::util";
+import { connectLocalExtensionToApp } from "#application";
+import { getExtension } from "#extensions";
+import { useStyleEngine } from "#util";
 
 export type ExtensionWindowProps = {
     /** Ids of the extensions loaded in this window */

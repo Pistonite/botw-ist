@@ -24,7 +24,7 @@ macro_rules! decode {
 pub(crate) use decode;
 
 // TODO --cleanup: remove this
-#[derive(derive_more::derive::Constructor)]
+#[derive(cu::pre::Constructor)]
 pub struct Core<'a, 'b> {
     cpu: &'a mut crate::processor::Cpu0,
     proc: &'b mut crate::processor::Process,

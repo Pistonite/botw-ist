@@ -88,7 +88,7 @@ fn stp_core(
             Ptr!(<u64>(address + 8)).store(&hi, core.proc.memory_mut())?;
         }
         _ => {
-            log::error!("Invalid register write xt1: {xt1:?}");
+            cu::error!("Invalid register write xt1: {xt1:?}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -117,7 +117,7 @@ fn stp_core(
             Ptr!(<u64>(address + 24)).store(&hi, core.proc.memory_mut())?;
         }
         _ => {
-            log::error!("Invalid register write xt2: {xt2:?}");
+            cu::error!("Invalid register write xt2: {xt2:?}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -228,7 +228,7 @@ mod tests {
     use self_::{Cpu0, Process};
 
     #[test]
-    pub fn simple_stp_test() -> anyhow::Result<()> {
+    pub fn simple_stp_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);

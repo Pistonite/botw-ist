@@ -1,17 +1,14 @@
-use proc_macro::TokenStream;
-use proc_macro2::TokenStream as TokenStream2;
-use quote::{quote, quote_spanned};
-use syn::parse_macro_input;
-use syn::spanned::Spanned as _;
+use pm::pre::*;
+use syn::spanned::Spanned;
 
-use crate::util::{self, syn_error};
+use crate::util;
 
 pub fn expand(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as syn::DeriveInput);
-    util::unwrap_result(expand_internal(input))
+    let input = syn::parse_macro_input!(input as syn::DeriveInput);
+    pm::flatten(expand_internal(input))
 }
 
-fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
+fn expand_internal(input: syn::DeriveInput) -> pm::Result<TokenStream2> {
     let blueflame = util::crate_ident();
 
     let size = util::get_struct_size(&input)?;
@@ -29,7 +26,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
             None => {
                 let size_span = field_type.span();
                 // use the size from the type
-                let size_tokens = quote_spanned! {
+                let size_tokens = pm::quote_spanned! {
                     size_span => {
                         <#field_type as #blueflame::memory::MemObject>::SIZE
                     }
@@ -38,7 +35,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
             }
             Some((size, lit)) => {
                 let size_span = lit.span();
-                let size_tokens = quote_spanned! {
+                let size_tokens = pm::quote_spanned! {
                     size_span => {
                         #size
                     }
@@ -66,7 +63,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
     let last_field_offset = match fields_ordered_by_offset.last() {
         Some(f) => f.offset,
         None => {
-            syn_error!(struct_name, "Need at least one field in the struct");
+            pm::bail!(struct_name, "Need at least one field in the struct");
         }
     };
 
@@ -77,7 +74,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
             .map(|f| f.offset)
             .unwrap_or(size);
         if next_offset <= curr_offset {
-            syn_error!(
+            pm::bail!(
                 field_data.size_tokens.clone(),
                 "Fields cannot start at the same offset or overlap"
             );
@@ -85,7 +82,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
         let max_size = next_offset - curr_offset;
 
         let size_tokens = &field_data.size_tokens;
-        size_asserts.extend(quote_spanned! {
+        size_asserts.extend(pm::quote_spanned! {
             field_data.size_span => {
                 blueflame_deps::assert_size_less_than!(#size_tokens, #max_size);
             }
@@ -96,7 +93,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
         let field_type = &field_data.typ;
         if i == fields_ordered_by_offset.len() - 1 {
             // special for last field, we want to obey the input size
-            reader_impl.extend(quote! {
+            reader_impl.extend(pm::quote! {
                 let #field_name = {
                     reader.skip(#field_offset- offset);
                     let read_size = (size - #field_offset).min({ #size_tokens });
@@ -104,14 +101,14 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
                     <#field_type as #blueflame::memory::MemObject>::read_sized(reader, read_size)?
                 };
             });
-            writer_impl.extend(quote! {
+            writer_impl.extend(pm::quote! {
                 writer.skip(#field_offset- offset);
                 let write_size = (size - #field_offset).min({ #size_tokens });
                 offset = #field_offset + write_size;
                 <#field_type as #blueflame::memory::MemObject>::write_sized(&self.#field_name, writer, write_size)?;
             });
         } else {
-            reader_impl.extend(quote! {
+            reader_impl.extend(pm::quote! {
                 let #field_name = {
                     reader.skip(#field_offset - offset);
                     let read_size = { #size_tokens };
@@ -119,7 +116,7 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
                     <#field_type as #blueflame::memory::MemObject>::read_sized(reader, read_size)?
                 };
             });
-            writer_impl.extend(quote! {
+            writer_impl.extend(pm::quote! {
                 writer.skip(#field_offset - offset);
                 let write_size = { #size_tokens };
                 offset = #field_offset + write_size;
@@ -127,20 +124,20 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
             });
         }
 
-        constructor_impl.extend(quote! {
+        constructor_impl.extend(pm::quote! {
             #field_name,
         });
 
-        layout_struct_impl.extend(quote!{
+        layout_struct_impl.extend(pm::quote!{
             pub #field_name: #blueflame::memory::traits::FieldMetadata<#field_type, #curr_offset, #size_tokens>,
         });
 
-        layout_new_impl.extend(quote! {
+        layout_new_impl.extend(pm::quote! {
             #field_name: #blueflame::memory::traits::FieldMetadata::new(),
         });
     }
 
-    let expanded = quote! {
+    let expanded = pm::quote! {
         const _: () = {
 
             #[automatically_derived]
@@ -195,13 +192,13 @@ fn expand_internal(input: syn::DeriveInput) -> syn::Result<TokenStream> {
         };
     };
 
-    Ok(expanded.into())
+    Ok(expanded)
 }
 
 struct FieldData<'a, 'b> {
     pub offset: u32,
     pub size_tokens: TokenStream2,
-    pub size_span: proc_macro2::Span,
+    pub size_span: pm::Span2,
     pub name: &'a syn::Ident,
     pub typ: &'b syn::Type,
 }

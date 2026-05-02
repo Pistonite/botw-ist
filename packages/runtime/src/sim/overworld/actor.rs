@@ -1,5 +1,5 @@
 use blueflame::game::WeaponModifierInfo;
-use derive_more::{Deref, DerefMut};
+use cu::pre::*;
 
 use crate::iv;
 

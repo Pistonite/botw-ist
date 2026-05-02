@@ -3,10 +3,10 @@ import { type ASTTarget, parse } from "./ast.generated";
 import { type Token, tokenizeV2 } from "./tokenize";
 import { SpecialSymbols } from "./types";
 
-export type AbstractSyntaxTree = {
+export interface AbstractSyntaxTree {
     data: ASTTarget;
     extra?: ASTIdentifier;
-};
+}
 
 export const createASTFromString = (input: string): AbstractSyntaxTree | undefined => {
     const tokens = tokenizeV2(input, SpecialSymbols);

@@ -2,17 +2,15 @@ version: '3'
 
 includes:
   cargo:
-    taskfile: ../mono-dev/task/cargo.yaml
+    taskfile: ../../node_modules/mono-dev/task/cargo.yaml
     internal: true
+    optional: true
 
 tasks:
-  build:
-    - task: build-src
-   
   build-src:
-    - $(which mkdir) -p src/generated
-    - python scripts/generate.py
-    - bun scripts/gen-actors.ts
+    - mkdir -p src/generated
+    - uv run scripts/generate.py
+    - node --experimental-strip-types scripts/gen-actors.mts
     - task: cargo:fmt-fix
 
   test:
@@ -29,5 +27,5 @@ tasks:
     - gcloud storage cp src/generated/* gs://ist-private/artifacts/blueflame-deps/
 
   pull-artifacts:
-    - $(which mkdir) -p src/generated
+    - mkdir -p src/generated
     - gcloud storage cp gs://ist-private/artifacts/blueflame-deps/* src/generated

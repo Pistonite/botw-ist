@@ -1,6 +1,5 @@
 [target.wasm32-unknown-unknown]
 rustflags = [
-    "-Z", "threads=4",
     "-C", "target-feature=+atomics",
     "-Clink-args=--shared-memory",
     "-Clink-args=--import-memory",

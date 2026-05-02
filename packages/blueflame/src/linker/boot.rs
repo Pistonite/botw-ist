@@ -35,7 +35,7 @@ pub fn init_process(
     pmdm_address: u64,
     heap_free_size: u32,
 ) -> Result<Process, Error> {
-    log::info!("initializing process");
+    cu::info!("initializing process");
     let ver = rkyv::deserialize::<GameVer, rancor::Error>(&image.ver)
         .map_err(|e| Error::BadImage(e.to_string()))?;
     let env = Environment::new(ver, dlc_version);
@@ -59,7 +59,7 @@ pub fn init_process(
 
     let pmdm_rel_start = singleton::pmdm::rel_start(env);
     if pmdm_rel_start as u64 > pmdm_address {
-        log::error!(
+        cu::error!(
             "pmdm rel_start is greater than its physical address: 0x{pmdm_rel_start:x} > 0x{pmdm_address:x}"
         );
         return Err(Error::InvalidPmdmAddress(pmdm_address));
@@ -82,7 +82,7 @@ pub fn init_process(
         (heap_start_alloc - heap_region_start) as u32 + heap_free_size,
         PAGE_SIZE
     );
-    log::debug!("heap start is 0x{heap_region_start:016x}, size is 0x{heap_size:08x}");
+    cu::debug!("heap start is 0x{heap_region_start:016x}, size is 0x{heap_size:08x}");
 
     let program_start = image.program_start.into();
     let program_size = image.program_size.into();
@@ -109,7 +109,7 @@ pub fn init_process(
     }
 
     // construct the memory
-    log::debug!("creating memory");
+    cu::debug!("creating memory");
     let heap = SimpleHeap::new(heap_region_start, heap_size, heap_start_alloc);
     let mut memory = Memory::new_program_zc(
         env,
@@ -121,10 +121,10 @@ pub fn init_process(
         stack_size,
     )?;
     // patch the memory
-    log::debug!("patching memory");
+    cu::debug!("patching memory");
     patch_memory(&mut memory, env)?;
 
-    log::debug!("creating process");
+    cu::debug!("creating process");
     let mut proc = Process::new(
         Arc::new(memory),
         Arc::new(Proxies::default()),
@@ -132,64 +132,26 @@ pub fn init_process(
     );
 
     // create a temporary processor to initialize the singletons
-    log::debug!("creating cpu3");
+    cu::debug!("creating cpu3");
     let mut cpu1 = Cpu1::default();
     let mut cpu3 = Cpu3::new(&mut cpu1, &mut proc, image, heap_adjustment);
     cpu3.reset_stack();
     cpu3.with_crash_report(|cpu| {
-        log::debug!("initializing pmdm");
+        cu::debug!("initializing pmdm");
         singleton::pmdm::create_instance(cpu, env)?;
-        log::debug!("initializing gdtm");
+        cu::debug!("initializing gdtm");
         singleton::gdtm::create_instance(cpu, env)?;
-        log::debug!("initializing info_data");
+        cu::debug!("initializing info_data");
         singleton::info_data::create_instance(cpu, env)?;
-        log::debug!("initializing aocm");
+        cu::debug!("initializing aocm");
         singleton::aocm::create_instance(cpu, env)?;
         Ok(())
     })?;
 
-    log::debug!("process created");
+    cu::debug!("process created");
 
     Ok(proc)
 }
-
-// TODO --cleanup: remove
-// pub fn init_memory_simple(
-//     image: &Program,
-//     stack_start: u64,
-//     stack_size: u32,
-//     heap_size: u32,
-// ) -> Result<(Memory, Proxies), CrateError> {
-//     let program_region = Arc::new(Region::new_program(
-//         image.program_start,
-//         image.program_size,
-//         image.regions(),
-//     )?);
-//     let stack_region = Arc::new(Region::new_rw(RegionType::Stack, stack_start, stack_size));
-//     let heap_region = Arc::new(SimpleHeap::new(
-//         stack_size as u64 + stack_start,
-//         heap_size,
-//         0_u64,
-//     ));
-//
-//     let flags = MemoryFlags {
-//         enable_strict_region: true,
-//         enable_permission_check: true,
-//         enable_allocated_check: true,
-//     };
-//
-//     let memory = Memory::new(
-//         flags,
-//         program_region,
-//         stack_region,
-//         heap_region,
-//         None,
-//         None,
-//         None,
-//     );
-//     let proxies = Proxies::default();
-//     Ok((memory, proxies))
-// }
 
 fn overlaps(a_start: u64, a_size: u32, b_start: u64, b_size: u32) -> bool {
     let a_end = a_start + a_size as u64;

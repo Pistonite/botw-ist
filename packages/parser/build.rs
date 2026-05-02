@@ -1,9 +1,23 @@
 use std::collections::BTreeMap;
 use std::path::Path;
+use std::process::ExitCode;
 
 use cu::pre::*;
 
-fn main() -> cu::Result<()> {
+fn main() -> ExitCode {
+    match main_internal() {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(e) => {
+            let message = format!("{e:?}");
+            for line in message.lines() {
+                println!("cargo::error={line}");
+            }
+            ExitCode::FAILURE
+        }
+    }
+}
+
+fn main_internal() -> cu::Result<()> {
     generate_item_name()
 }
 
@@ -43,7 +57,7 @@ pub static ITEM_NAMES: &[SearchName] = &[
     // the item search algorithm assumes this
     let mut ids_sorted = ids.clone();
     ids_sorted.sort();
-    cu::ensure!(ids == ids_sorted);
+    cu::ensure!(ids == ids_sorted)?;
 
     output += "];\n";
 

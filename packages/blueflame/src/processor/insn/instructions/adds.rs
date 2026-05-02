@@ -90,7 +90,7 @@ mod tests {
     use crate::processor::{Cpu0, Process, reg};
 
     #[test]
-    pub fn simple_adds_test() -> anyhow::Result<()> {
+    pub fn simple_adds_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);
@@ -106,7 +106,7 @@ mod tests {
     }
 
     #[test]
-    pub fn zero_adds_test() -> anyhow::Result<()> {
+    pub fn zero_adds_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);
@@ -120,7 +120,7 @@ mod tests {
     }
 
     #[test]
-    pub fn negative_adds_test() -> anyhow::Result<()> {
+    pub fn negative_adds_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);

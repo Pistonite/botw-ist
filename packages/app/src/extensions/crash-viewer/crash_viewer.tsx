@@ -1,16 +1,16 @@
-import { Body1, Field, makeStyles } from "@fluentui/react-components";
-import { useDark } from "@pistonite/pure-react";
+import { Body1, Field } from "@fluentui/react-components";
+import { useDark } from "@pistonite/celera";
 
 import { useUITranslation } from "skybook-localization";
 
-import { useStyleEngine } from "self::util";
-import { CopyButton } from "self::ui/components";
+import { useStyleEngine } from "#util";
+import { CopyButton } from "#ui/components";
 
 export type CrashViewerProps = {
     crashInfo: string;
 };
 
-const useStyles = makeStyles({
+const useStyles = useStyleEngine.extend({
     dark: {
         backgroundColor: "#292c3c",
         color: "#ef9f76",
@@ -23,8 +23,7 @@ const useStyles = makeStyles({
 
 export const CrashViewer: React.FC<CrashViewerProps> = ({ crashInfo }) => {
     const dark = useDark();
-    const m = useStyleEngine();
-    const c = useStyles();
+    const m = useStyles();
     const t = useUITranslation();
     if (!crashInfo) {
         return (
@@ -42,7 +41,7 @@ export const CrashViewer: React.FC<CrashViewerProps> = ({ crashInfo }) => {
                     <CopyButton textToCopy={"```\n" + crashInfo + "```"} />
                 </Field>
             </div>
-            <div className={m("overflow-y-auto flex-1", dark ? c.dark : c.light)}>
+            <div className={m("overflow-y-auto flex-1", dark ? "c-dark" : "c-light")}>
                 <div className={m("max-h-0 overflow-visible pad-4")}>
                     <pre className={m("margin-0")}>{crashInfo}</pre>
                 </div>

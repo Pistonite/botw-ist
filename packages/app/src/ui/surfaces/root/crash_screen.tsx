@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { log } from "self::util";
+import { log } from "#util";
 
 /**
  * The Crash Screen

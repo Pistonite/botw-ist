@@ -1,16 +1,14 @@
-use proc_macro::TokenStream;
-use proc_macro2::TokenStream as TokenStream2;
-use quote::quote;
-use syn::{parse_macro_input, spanned::Spanned as _};
+use pm::pre::*;
+use syn::spanned::Spanned as _;
 
-use crate::util::{self, syn_error};
+use crate::util;
 
 pub fn expand(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as syn::DeriveInput);
-    util::unwrap_result(expand_internal(input))
+    let input = syn::parse_macro_input!(input as syn::DeriveInput);
+    pm::flatten(expand_internal(input))
 }
 
-fn expand_internal(mut input: syn::DeriveInput) -> syn::Result<TokenStream> {
+fn expand_internal(mut input: syn::DeriveInput) -> pm::Result<TokenStream2> {
     let blueflame = util::crate_ident();
     let name = input.ident.clone();
 
@@ -18,25 +16,25 @@ fn expand_internal(mut input: syn::DeriveInput) -> syn::Result<TokenStream> {
     let mut feature_map_impl = TokenStream2::new();
     {
         let syn::Data::Enum(input) = &mut input.data else {
-            syn_error!(input, "can only be derived for enums");
+            pm::bail!(input, "can only be derived for enums");
         };
 
         for v in input.variants.iter_mut() {
             let ident = &v.ident;
             let ident_kebab_str = ident.to_string().replace("_", "-");
             if v.attrs.iter().any(|a| a.path().is_ident("on")) {
-                default_features_impl.extend(quote! {
+                default_features_impl.extend(pm::quote! {
                     #name::#ident |
                 });
                 v.attrs.retain(|a| !a.path().is_ident("on"));
             }
-            feature_map_impl.extend(quote! {
+            feature_map_impl.extend(pm::quote! {
                 #ident_kebab_str => #name::#ident,
             });
         }
     }
 
-    let expanded = quote! {
+    let expanded = pm::quote! {
         #input
         const _: () = {
             #[automatically_derived]
@@ -59,17 +57,17 @@ fn expand_internal(mut input: syn::DeriveInput) -> syn::Result<TokenStream> {
         };
     };
 
-    Ok(expanded.into())
+    Ok(expanded)
 }
 
 pub fn expand_enable_macro(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input as syn::LitStr);
+    let input = syn::parse_macro_input!(input as syn::LitStr);
 
     let feature_name = input.value();
     let feature_ident = syn::Ident::new(&feature_name.replace("-", "_"), feature_name.span());
 
     let blueflame = util::crate_ident();
-    let expanded = quote! {
+    let expanded = pm::quote! {
         #blueflame::env::is_feature_enabled(#blueflame::env::Feature::#feature_ident)
     };
 

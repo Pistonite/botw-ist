@@ -13,15 +13,14 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          runner: blacksmith
-          submodules: true
+          mono-dev: pnpm
           ecma-pnpm: true
           ecma-bun: true
-          rust: nightly
+          rust: stable
           tool-mdbook: true
       - uses: Pistonight/mono-dev/actions/pistonstor@main
       - run: task build-manual-ci
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: packages/manual/book
           retention-days: 3
@@ -38,5 +37,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 

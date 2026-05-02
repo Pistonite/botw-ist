@@ -1,4 +1,4 @@
-import { useDark } from "@pistonite/pure-react";
+import { useDark } from "@pistonite/celera";
 
 import {
     type BackgroundName,

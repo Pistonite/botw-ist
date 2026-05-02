@@ -195,10 +195,10 @@ export class TaskMgr<TPtr> {
     }
 }
 
-type TaskContainer = {
+interface TaskContainer {
     isAborted: boolean;
     nativeHandleId: number | undefined;
-};
+}
 
 class NativeHandleContainer<TPtr> {
     private napi: NativeApi<TPtr>;

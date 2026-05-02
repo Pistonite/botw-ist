@@ -9,9 +9,11 @@
     },
     "dependencies": {},
     "devDependencies": {
-        "mono-dev": "workspace:*"
+        "mono-dev": "catalog:"
     },
-    "nocheck": [
-        "*.generated.ts"
-    ]
+    "pistonight/mono-dev": {
+        "nocheck": [
+            "*.generated.ts"
+        ]
+    }
 }

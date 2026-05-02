@@ -17,10 +17,10 @@ import {
     OptionGroup,
     Switch,
 } from "@fluentui/react-components";
+import { isMobile } from "@pistonite/celera";
 
 import { useUITranslation } from "skybook-localization";
 
-import { isLessProductive, useNarrow } from "self::pure-contrib";
 import {
     BuiltinExtensionIds,
     useExtensionStore,
@@ -30,13 +30,13 @@ import {
     useExtensionName,
     openExtensionPopup,
     useUIStore,
-} from "self::application";
-import { useStyleEngine } from "self::util";
+} from "#application";
+import { useStyleEngine, useIsNarrow } from "#util";
 
 const ExtensionLaunchDialogImpl: React.FC = () => {
     const m = useStyleEngine();
     const t = useUITranslation();
-    const narrow = useNarrow();
+    const narrow = useIsNarrow();
 
     const open = useUIStore((state) => state.openedDialogId) === "extension-launch";
     const setOpen = useUIStore((state) => state.setOpenedDialog);
@@ -163,7 +163,7 @@ const ExtensionLaunchDialogImpl: React.FC = () => {
 
     const handleLaunch = () => {
         // block custom extensions on non-PC platforms
-        if (isLessProductive && isSelectedExtensionCustom) {
+        if (isMobile() && isSelectedExtensionCustom) {
             return;
         }
         updateRecency(selectedExtensionId);

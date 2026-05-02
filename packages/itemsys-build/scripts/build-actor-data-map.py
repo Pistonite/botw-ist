@@ -3,11 +3,11 @@ import os
 import multiprocessing
 import json
 SELF_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-RESEARCH_SCRIPTS_DIR = os.path.join(os.path.dirname(SELF_DIR), "research-scripts")
-if not os.path.exists(RESEARCH_SCRIPTS_DIR):
-    raise Exception(f"botw-research-scripts not found: {RESEARCH_SCRIPTS_DIR}")
+DATA_DIR = os.path.join(os.path.dirname(SELF_DIR), "botw-data")
+if not os.path.exists(DATA_DIR):
+    raise Exception(f"botw-data not found: {DATA_DIR}")
 import sys
-sys.path.append(os.path.join(RESEARCH_SCRIPTS_DIR, "src"))
+sys.path.append(os.path.join(DATA_DIR, "src"))
 import spp # type: ignore
 
 HEADER = """
@@ -22,7 +22,7 @@ export const ActorDataMap: Record<string, Partial<ActorData>> = JSON.parse(`"""
 OUTPUT_DIR = os.path.join(os.path.dirname(SELF_DIR), "itemsys", "src", "generated")
 
 def main():
-    actor_dir = os.path.join(RESEARCH_SCRIPTS_DIR, "output", "Actor")
+    actor_dir = os.path.join(DATA_DIR, "output", "Actor")
     actor_files = [os.path.join(actor_dir, f) for f in os.listdir(actor_dir) ]
 
     progress = spp.printer(len(actor_files), "Load actor files")

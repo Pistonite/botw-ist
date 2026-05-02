@@ -1,14 +1,9 @@
 import { serial } from "@pistonite/pure/sync";
 import type { WxPromise } from "@pistonite/workex";
 
-import {
-    extLog,
-    type FirstPartyExtension,
-    FirstPartyExtensionAdapter,
-    shallowEqual,
-} from "self::util";
+import { extLog, type FirstPartyExtension, FirstPartyExtensionAdapter, shallowEqual } from "#util";
 
-import { SaveViewer } from "./save_viewer.tsx";
+import { createSaveViewerComponent } from "./save_viewer.tsx";
 import { createSaveViewerStore, type SaveViewerStore } from "./store.ts";
 
 const UUID = "497ce310-293d-40a2-9a8d-fd4ce41c0d69";
@@ -27,9 +22,7 @@ export class SaveViewerExtension extends FirstPartyExtensionAdapter implements F
             }
         });
         this.store = store;
-        this.component = () => {
-            return <SaveViewer useStore={this.store} />;
-        };
+        this.component = createSaveViewerComponent(store);
     }
 
     public get Component() {

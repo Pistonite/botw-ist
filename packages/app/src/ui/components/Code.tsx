@@ -1,8 +1,10 @@
 import type { PropsWithChildren } from "react";
-import { Text, type TextProps, makeStyles, mergeClasses } from "@fluentui/react-components";
-import { useDark } from "@pistonite/pure-react";
+import { Text, type TextProps } from "@fluentui/react-components";
+import { useDark } from "@pistonite/celera";
 
-const useStyles = makeStyles({
+import { useStyleEngine } from "#util";
+
+const useStyles = useStyleEngine.extend({
     base: {
         padding: "0 2px",
     },
@@ -18,10 +20,10 @@ const useStyles = makeStyles({
 
 /** Inline code text */
 export const Code: React.FC<PropsWithChildren<TextProps>> = ({ children, ...rest }) => {
-    const c = useStyles();
+    const m = useStyles();
     const dark = useDark();
     return (
-        <Text className={mergeClasses(c.base, dark ? c.dark : c.light)} font="monospace" {...rest}>
+        <Text className={m("c-base", dark ? "c-dark" : "c-light")} font="monospace" {...rest}>
             {children}
         </Text>
     );

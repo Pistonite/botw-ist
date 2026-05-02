@@ -1,13 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { addLocaleSubscriber, initDark } from "@pistonite/pure/pref";
+import { addLocaleSubscriber, initDark, ThemeProvider, type TranslatorFn } from "@pistonite/celera";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Void } from "@pistonite/pure/result";
-import { ThemeProvider } from "@pistonite/shared-controls";
 import { wxWorker } from "@pistonite/workex";
 
 import { initI18n, translateUI } from "skybook-localization";
-import { extractDirectLoad } from "@pistonite/skybook-api/client";
 import {
     type Runtime,
     type DirectLoad,
@@ -15,9 +13,8 @@ import {
     type ScriptEnvImage,
     type RuntimeWorkerInitArgs,
     type ScriptEnv,
-    type Translator,
+    skybookRuntime,
 } from "@pistonite/skybook-api";
-import { skybookRuntime } from "@pistonite/skybook-api/interfaces/Runtime.bus";
 
 import {
     initExtensionManager,
@@ -31,16 +28,9 @@ import {
     usePersistStore,
     useSessionStore,
     isCrashed,
-} from "self::application";
-import { initNarrow, isLessProductive } from "self::pure-contrib";
-import { bootLog, devLog, probeAndRegisterAssetLocation } from "self::util";
-import {
-    App,
-    BootScreen,
-    CrashScreen,
-    type BootScreenProps,
-    CatchCrash,
-} from "self::ui/surfaces/root";
+} from "#application";
+import { bootLog, devLog, initDisplayMode, probeAndRegisterAssetLocation } from "#util";
+import { App, BootScreen, CrashScreen, type BootScreenProps, CatchCrash } from "#ui/surfaces/root";
 
 const VALID_VERSIONS = ["1.5.0", "1.6.0", "1.8.2"];
 
@@ -97,24 +87,7 @@ const boot = async () => {
     const runtime = createWasmRuntimeWorker();
     void runtime.then(bootstrapAppWithRuntime);
 
-    if (isLessProductive) {
-        initNarrow({
-            threshold: 800,
-            override: (narrow) => {
-                if (window.innerWidth < window.innerHeight) {
-                    return true;
-                }
-                if (narrow && window.innerHeight < window.innerWidth) {
-                    return false;
-                }
-                return narrow;
-            },
-        });
-    } else {
-        initNarrow({
-            threshold: 800,
-        });
-    }
+    initDisplayMode();
 
     const beforeMainUI = async () => {
         if (isCrashed()) {
@@ -146,6 +119,26 @@ const boot = async () => {
     }
 
     await bootWithLocalScript(context);
+};
+
+/** Extract the DirectLoad payload from the page, if exists */
+const extractDirectLoad = (): DirectLoad | undefined => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ("__skybook_direct_load" in (globalThis as any).window) {
+        // Remove script tag that's already executed
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const directLoadPayload: DirectLoad = (globalThis as any).window.__skybook_direct_load;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (globalThis as any).document.querySelector("script[data-skybook-direct-load]")?.remove();
+        // verify payload
+        if (
+            directLoadPayload.content &&
+            (directLoadPayload.type === "v3" || directLoadPayload.type === "v4")
+        ) {
+            return directLoadPayload;
+        }
+    }
+    return undefined;
 };
 
 type BootContext = {
@@ -366,7 +359,7 @@ const continueBootWithDefaultImage = async (context: BootContext, env: ScriptEnv
 const initRuntimeWithArgs = async (
     context: BootContext,
     args: RuntimeWorkerInitArgs,
-): Promise<Void<(translator: Translator) => string>> => {
+): Promise<Void<(translator: TranslatorFn) => string>> => {
     return await initRuntime(await context.runtime, args);
 };
 

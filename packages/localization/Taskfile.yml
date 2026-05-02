@@ -2,28 +2,24 @@ version: '3'
 
 includes:
   ecma:
-    taskfile: ../mono-dev/task/ecma.yaml
+    taskfile: ./node_modules/mono-dev/task/ecma.yaml
     internal: true
+    optional: true
 
   git:
-    taskfile: ../mono-dev/task/git.yaml
+    taskfile: ./node_modules/mono-dev/task/git.yaml
     internal: true
+    optional: true
 
 tasks:
-  build:
-    desc: Generate the localization files
-    aliases: [b]
-    cmds:
-      - python scripts/generate.py
-
   clean:
     cmds:
       - rm -rf node_modules/.cache
       
   check:
     cmds:
-      - task: ecma:mono-check
-      - bun scripts/check-lang-entries.ts
+      - task: ecma:check
+      - node --experimental-strip-types scripts/check-lang-entries.ts
       - task: fix-language
       - task: git:check-modification
         vars:
@@ -31,25 +27,14 @@ tasks:
           CHECK_MESSAGE: Please run localization:fix task to update the translation
   fix:
     cmds:
-      - task: ecma:mono-fix
+      - task: ecma:fix
       - task: fix-language
 
   fix-language:
     cmds:
-      - pnpm exec mono-langtool src/ui --no-confirm
+      - node langtool.js src/ui --no-confirm
 
   edit:
     desc: Make edits to the translation files
     cmds:
-      - pnpm exec mono-langtool src/ui {{.CLI_ARGS}}
-
-  push-artifacts:
-    desc: Push generated files. Requires gcloud access
-    cmds:
-      - gcloud storage cp src/generated/* gs://ist-private/artifacts/skybook-localization/
-
-  pull-artifacts:
-    cmds:
-      - $(which mkdir) -p src/generated
-      - gcloud storage cp gs://ist-private/artifacts/skybook-localization/* src/generated
-
+      - node langtool.js src/ui {{.CLI_ARGS}}

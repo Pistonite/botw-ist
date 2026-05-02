@@ -1,13 +1,13 @@
-import { makeStyles, Spinner } from "@fluentui/react-components";
+import { Spinner } from "@fluentui/react-components";
 import { useDebounce } from "@uidotdev/usehooks";
 
-import { useStyleEngine } from "self::util";
+import { useStyleEngine } from "#util";
 
 export type InventorySpinnerProps = {
     show?: boolean;
 };
 
-const useStyles = makeStyles({
+const useStyles = useStyleEngine.extend({
     container: {
         backgroundColor: "#00000044",
         zIndex: 100,
@@ -15,15 +15,14 @@ const useStyles = makeStyles({
 });
 
 export const InventorySpinner: React.FC<InventorySpinnerProps> = ({ show }) => {
-    const m = useStyleEngine();
-    const c = useStyles();
+    const m = useStyles();
     const showReal = useDebounce(show, 300);
     if (!show || !showReal) {
         return null;
     }
 
     return (
-        <div className={m("pos-abs all-sides-0 flex flex-center", c.container)}>
+        <div className={m("pos-abs all-sides-0 flex flex-center c-container")}>
             <Spinner as="span" size="medium" />
         </div>
     );

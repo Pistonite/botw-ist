@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { errstr, type Result } from "@pistonite/pure/result";
 
-export type Crypto = {
+export interface Crypto {
     /**
      * Encrypt a string value. Returns base64 encoded string
      */
@@ -13,7 +13,7 @@ export type Crypto = {
      * This might not be suitable to expose to the attacker
      */
     decrypt(input: string): Result<string, string>;
-};
+}
 
 export const randomKey = (): string => {
     const randomBytes = crypto.randomBytes(64);

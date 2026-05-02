@@ -90,7 +90,7 @@ mod tests {
     use self_::{Cpu0, Process};
 
     #[test]
-    pub fn test_ccmp_reg_when_true() -> anyhow::Result<()> {
+    pub fn test_ccmp_reg_when_true() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         cpu.flags.z = true;
         let mut proc = Process::new_for_test();
@@ -106,7 +106,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_ccmp_reg_when_false() -> anyhow::Result<()> {
+    pub fn test_ccmp_reg_when_false() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         cpu.flags.z = true;
         let mut proc = Process::new_for_test();

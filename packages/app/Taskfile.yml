@@ -2,8 +2,9 @@ version: '3'
 
 includes:
   ecma:
-    taskfile: ../mono-dev/task/ecma.yaml
+    taskfile: ./node_modules/mono-dev/task/ecma.yaml
     internal: true
+    optional: true
 
 tasks:
   install:
@@ -12,12 +13,7 @@ tasks:
   dev:
     desc: Run frontend app in watch mode
     cmds:
-      - task: ecma:vite-dev
-
-  clean-deps:
-    desc: Delete optimized deps for local changes to take effect
-    cmds:
-      - rm -rf node_modules/.vite
+      - task: ecma:app-dev
 
   build:
     vars:
@@ -25,7 +21,7 @@ tasks:
         sh: git rev-parse HEAD | cut -c1-8
     desc: Build production bundle
     cmds:
-      - task: ecma:vite-build
+      - task: ecma:app-build
       - mv dist/popout.html dist/popout-{{.COMMIT_SHORT}}.html
       - mkdir -p dist/static/itemsys
       - cp -r ../itemsys-build/public/* dist/static/itemsys
@@ -33,13 +29,13 @@ tasks:
 
   check:
     cmds:
-      - task: ecma:mono-check
+      - task: ecma:check
 
   fix:
     cmds:
-      - task: ecma:mono-fix
+      - task: ecma:fix
 
   test:
     cmds:
-      - task: ecma:vitest
+      - task: ecma:test
 

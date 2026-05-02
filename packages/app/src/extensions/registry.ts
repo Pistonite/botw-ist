@@ -4,7 +4,7 @@ import { ItemExplorerExtension } from "./item-explorer/extindex.tsx";
 import { CrashViewerExtension } from "./crash-viewer/extindex.tsx";
 import { ExporterExtension } from "./exporter/extindex.tsx";
 
-import { extLog, type FirstPartyExtension } from "self::util";
+import { extLog, type FirstPartyExtension } from "#util";
 
 const extensionInstances = new Map<string, () => Promise<FirstPartyExtension | undefined>>();
 

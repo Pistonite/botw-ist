@@ -5,7 +5,7 @@ import type { ExtensionApp, ItemDragData, SessionMode } from "@pistonite/skybook
 import { CookEffectNames, ItemDropZone, translateActorOrAsIs } from "@pistonite/skybook-itemsys";
 import { useUITranslation } from "skybook-localization";
 
-import { FirstPartyExtensionAdapter, type FirstPartyExtension } from "self::util";
+import { FirstPartyExtensionAdapter, type FirstPartyExtension } from "#util";
 
 import { init, setApp, updateScriptInApp } from "./init.ts";
 

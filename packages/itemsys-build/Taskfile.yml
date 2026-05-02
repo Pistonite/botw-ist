@@ -17,7 +17,7 @@ tasks:
   vdecode:
     desc: Decode, crop, and clean up video frames using decode.py
     cmds:
-      - python scripts/videoprep/decode.py {{.CLI_ARGS}}
+      - uv run scripts/videoprep/decode.py {{.CLI_ARGS}}
 
   vencode:
     desc: Encode video frames into animated webp
@@ -39,14 +39,14 @@ tasks:
       # # Put WebPs there as well
       - gcloud storage cp target/encode/*.webp gs://ist-private/icons/SP/Item
 
-  bsource:
+  build-src:
     desc: Build TypeScript source code (requires research-scripts already built)
     cmds:
-      - python scripts/build-actor-remap.py
-      - python scripts/build-localization.py
-      - python scripts/build-actor-data-map.py
+      - uv run scripts/build-actor-remap.py
+      - uv run scripts/build-localization.py
+      - uv run scripts/build-actor-data-map.py
 
-  bsprite:
+  build-sprite:
     desc: Build item sprites and sprites metadata in TypeScript
     cmds:
       - cargo run --bin skybook-itemsys-build --release -- sprite {{.CLI_ARGS}}

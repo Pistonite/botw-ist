@@ -1,10 +1,10 @@
 import type { Result } from "@pistonite/pure/result";
 
-export type UrlParts = {
+export interface UrlParts {
     origin: string;
     pathname: string;
     search: string;
-};
+}
 export const safeParseUrl = (urlOrPath: string): Result<UrlParts, unknown> => {
     if (urlOrPath.startsWith("/")) {
         const queryStart = urlOrPath.indexOf("?");

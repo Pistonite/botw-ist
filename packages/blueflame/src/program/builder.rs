@@ -46,7 +46,7 @@ impl BuilderPhase2 {
     /// Add a new section with relative start to the program start.
     /// It will be automatically added to the right module
     pub fn add_section(mut self, rel_start: u32, permissions: u32) -> Self {
-        log::debug!("adding section at rel_start: {rel_start:#08x}");
+        cu::debug!("adding section at rel_start: {rel_start:#08x}");
         let i = match self
             .0
             .modules
@@ -58,7 +58,7 @@ impl BuilderPhase2 {
                 i - 1
             }
         };
-        log::debug!("found module index: {i}");
+        cu::debug!("found module index: {i}");
         let module = &mut self.0.modules[i];
         module.sections.push(Section {
             rel_start,
@@ -83,7 +83,7 @@ impl BuilderPhase3 {
     /// Add a new segment with relative start to the program start,
     /// and data for the segment (must be page aligned, 4KB).
     pub fn add_segment(mut self, rel_start: u32, data: Vec<u8>) -> Self {
-        log::debug!("adding segment at rel_start: {rel_start:#08x}");
+        cu::debug!("adding segment at rel_start: {rel_start:#08x}");
         // find the module
         let i = match self
             .0
@@ -96,7 +96,7 @@ impl BuilderPhase3 {
                 i - 1
             }
         };
-        log::debug!("found module index: {i}");
+        cu::debug!("found module index: {i}");
         let module = &mut self.0.modules[i];
         // find the section
         let i = match module
@@ -109,7 +109,7 @@ impl BuilderPhase3 {
                 i - 1
             }
         };
-        log::debug!("found section index: {i}");
+        cu::debug!("found section index: {i}");
         let section = &mut module.sections[i];
         // add the segment to the section
         section.segments.push(Segment { rel_start, data });
@@ -117,7 +117,7 @@ impl BuilderPhase3 {
     }
 
     pub fn add_data(mut self, data: DataId, bytes: Vec<u8>) -> Self {
-        log::debug!("adding data: {data:?}, len={}", bytes.len());
+        cu::debug!("adding data: {data:?}, len={}", bytes.len());
         self.1.push(Data::new(data, bytes));
         self
     }

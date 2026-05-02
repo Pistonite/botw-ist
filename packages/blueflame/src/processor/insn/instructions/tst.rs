@@ -57,7 +57,7 @@ mod tests {
     use self_::{Cpu0, Process};
 
     #[test]
-    pub fn tst_zero_result() -> anyhow::Result<()> {
+    pub fn tst_zero_result() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         // Check that other flags are unaffected
         cpu.flags.v = true;
@@ -75,7 +75,7 @@ mod tests {
     }
 
     #[test]
-    pub fn tst_negative_result() -> anyhow::Result<()> {
+    pub fn tst_negative_result() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         // Check that other flags are unaffected
         cpu.flags.v = true;
@@ -93,7 +93,7 @@ mod tests {
     }
 
     #[test]
-    pub fn tst_positive_result() -> anyhow::Result<()> {
+    pub fn tst_positive_result() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         // Check that other flags are unaffected
         cpu.flags.v = true;

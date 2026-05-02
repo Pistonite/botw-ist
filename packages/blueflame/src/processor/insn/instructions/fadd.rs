@@ -44,7 +44,7 @@ pub fn parse(d: &Opcode) -> Result<Option<Box<dyn ExecutableInstruction>>, Error
         0 => RegisterType::SReg,
         1 => RegisterType::DReg,
         _ => {
-            log::error!("Invalid sf value for fadd: {sf}");
+            cu::error!("Invalid sf value for fadd: {sf}");
             return Err(Error::BadInstruction(bits));
         }
     };
@@ -62,7 +62,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn test_fadd_parse() -> anyhow::Result<()> {
+    pub fn test_fadd_parse() -> cu::Result<()> {
         let opcode = decode(0x1E622820).expect("failed to decode");
         let insn = parse(&opcode)?.expect("failed to parse");
         let mut cpu = Cpu0::default();

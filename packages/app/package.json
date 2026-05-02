@@ -5,37 +5,50 @@
     "dependencies": {
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons": "catalog:",
-        "@griffel/react": "catalog:",
+        "@pistonite/celera": "catalog:",
         "@pistonite/intwc": "workspace:*",
         "@pistonite/pure": "catalog:",
-        "@pistonite/pure-react": "catalog:",
-        "@pistonite/shared-controls": "workspace:*",
         "@pistonite/skybook-api": "workspace:*",
         "@pistonite/skybook-itemsys": "workspace:*",
+        "@pistonite/webfs": "catalog:",
         "@pistonite/workex": "catalog:",
-        "@tanstack/react-query": "^5.84.1",
-        "@uidotdev/usehooks": "^2.4.1",
-        "mobile-device-detect": "^0.4.3",
+        "@tanstack/react-query": "catalog:",
+        "@uidotdev/usehooks": "catalog:",
         "react": "catalog:",
         "react-dom": "catalog:",
-        "reselect": "^5.1.1",
+        "reselect": "catalog:",
         "skybook-localization": "workspace:*",
         "uuid": "catalog:",
-        "zustand": "^5.0.7"
+        "zustand": "catalog:"
     },
     "devDependencies": {
-        "@pistonite/vite-plugin-intwc": "workspace:*",
         "@types/bun": "catalog:",
+        "@types/node": "catalog:",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
-        "i18next": "catalog:",
-        "jsdom": "^26.1.0",
         "monaco-editor": "*",
-        "mono-dev": "workspace:*",
-        "react-i18next": "catalog:",
-        "skybook-itemsys-build": "workspace:*",
-        "vite": "catalog:",
-        "vite-plugin-serve-static": "^1.1.0",
-        "vitest": "catalog:"
+        "mono-dev": "catalog:",
+        "vite-plugin-serve-static": "catalog:"
+    },
+    "imports": {
+        "#application": "./src/application/index.ts",
+        "#extensions": "./src/extensions/index.ts",
+        "#ui/components": "./src/ui/components/index.ts",
+        "#ui/surfaces/extension": "./src/ui/surfaces/extension/index.ts",
+        "#ui/surfaces/header": "./src/ui/surfaces/header/index.ts",
+        "#ui/surfaces/inventory": "./src/ui/surfaces/inventory/index.ts",
+        "#ui/surfaces/root": "./src/ui/surfaces/root/index.ts",
+        "#util": "./src/util/index.ts"
+    },
+    "pistonight/mono-dev": {
+        "lib": false,
+        "https": true,
+        "wasm": true,
+        "worker": "es",
+        "jsdom": true,
+        "import.meta.env": {
+            "VERSION": "../../package.json",
+            "COMMIT": true
+        }
     }
 }

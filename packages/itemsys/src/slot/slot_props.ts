@@ -18,8 +18,8 @@ import {
     isGdtDataFoodType,
     PouchItemType,
     type StatusProps,
-} from "../data";
-import type { ActorSpriteProps } from "../sprite";
+} from "#data";
+import type { ActorSpriteProps } from "#sprite";
 
 export type ItemSlotContextProps = Pick<ActorSpriteProps, "cheap" | "disableAnimation">;
 export type ItemSlotFullProps = ItemSlotContextProps & ItemSlotProps;

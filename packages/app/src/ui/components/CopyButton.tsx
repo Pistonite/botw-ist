@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 
 import { useUITranslation } from "skybook-localization";
 
-import { log } from "self::util";
+import { log } from "#util";
 
 export type CopyButtonProps = {
     textToCopy: string | (() => Promise<string | undefined>);

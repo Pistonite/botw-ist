@@ -40,7 +40,7 @@ mod tests {
     use crate::processor::{Cpu0, Process, reg};
 
     #[test]
-    pub fn adrp_simple() -> anyhow::Result<()> {
+    pub fn adrp_simple() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         cpu.pc = 0x4050;

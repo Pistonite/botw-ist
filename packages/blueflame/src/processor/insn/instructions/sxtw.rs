@@ -32,7 +32,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn sxtw_with_positive_zero_extends() -> anyhow::Result<()> {
+    pub fn sxtw_with_positive_zero_extends() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);
@@ -43,7 +43,7 @@ mod tests {
     }
 
     #[test]
-    pub fn sxtw_with_negative_one_extends() -> anyhow::Result<()> {
+    pub fn sxtw_with_negative_one_extends() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         let mut core = Core::new(&mut cpu, &mut proc);

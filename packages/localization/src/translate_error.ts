@@ -3,16 +3,16 @@ import type {
     RuntimeError,
     RuntimeViewError,
     RuntimeWorkerInitError,
-    Translator,
 } from "@pistonite/skybook-api";
 import { translateActorOrAsIs, translateCategory } from "@pistonite/skybook-itemsys";
+import type { TranslatorFn } from "@pistonite/celera";
 
 import { translateUI } from "./translate.ts";
 
 /** Localize a generic error message */
 export const translateGenericError = (
     error: string | undefined,
-    translator: Translator = translateUI,
+    translator: TranslatorFn = translateUI,
 ): string => {
     if (error) {
         return translator("error.internal", { error });
@@ -22,7 +22,7 @@ export const translateGenericError = (
 
 export const translateParserError = (
     error: ParserError,
-    translator: Translator = translateUI,
+    translator: TranslatorFn = translateUI,
 ): string => {
     const errorKey = `parser.${error.type}`;
     switch (error.type) {
@@ -63,7 +63,7 @@ export const translateParserError = (
 
 export const translateRuntimeInitError = (
     error: RuntimeWorkerInitError,
-    translator: Translator = translateUI,
+    translator: TranslatorFn = translateUI,
 ): string => {
     const key = `runtime_init.${error.type}`;
     switch (error.type) {
@@ -80,7 +80,7 @@ export const translateRuntimeInitError = (
 
 export const translateRuntimeError = (
     error: RuntimeError,
-    translator: Translator = translateUI,
+    translator: TranslatorFn = translateUI,
 ): string => {
     const key = `runtime_error.${error.type}`;
     switch (error.type) {
@@ -130,7 +130,7 @@ export const translateRuntimeError = (
 
 export const translateRuntimeViewError = (
     error: RuntimeViewError,
-    translator: Translator = translateUI,
+    translator: TranslatorFn = translateUI,
 ): string => {
     const key = `runtime_view_error.${error.type}`;
     return translator(key);

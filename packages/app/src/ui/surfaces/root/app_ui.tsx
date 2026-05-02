@@ -2,7 +2,7 @@
  * This is the main app UI
  */
 import { memo, useEffect } from "react";
-import { ResizeLayout } from "@pistonite/shared-controls";
+import { ResizeLayout } from "@pistonite/celera";
 
 import { useUITranslation } from "skybook-localization";
 import { ItemTooltipProvider, getSheikaBackgroundUrl } from "@pistonite/skybook-itemsys";
@@ -12,21 +12,21 @@ import {
     useIsShowingExtensionPanel,
     useSessionStore,
     useUIStore,
-} from "self::application";
-import { useNarrow, isLessProductive } from "self::pure-contrib";
+} from "#application";
 import {
     ExtensionPanel,
     ExtensionLaunchDialog,
     CustomExtensionDialog,
-} from "self::ui/surfaces/extension";
-import { Header } from "self::ui/surfaces/header";
-import { PouchInventoryPanel, GdtInventoryPanel } from "self::ui/surfaces/inventory";
-import { useStyleEngine } from "self::util";
+} from "#ui/surfaces/extension";
+import { Header } from "#ui/surfaces/header";
+import { PouchInventoryPanel, GdtInventoryPanel } from "#ui/surfaces/inventory";
+import { isNarrowDisplayMode, useDisplayMode, useStyleEngine } from "#util";
 
 const AppImpl: React.FC = () => {
     const m = useStyleEngine();
     const t = useUITranslation();
-    const narrow = useNarrow();
+    const displayMode = useDisplayMode();
+    const isNarrow = isNarrowDisplayMode(displayMode);
 
     // save the crash localization to localstorage, so we can
     // use it in the future if needed without relying on the translation
@@ -67,14 +67,13 @@ const AppImpl: React.FC = () => {
         <>
             <ResizeLayout
                 className={m("wh-100v")}
-                vertical={narrow || !showExtensionPanel}
+                vertical={isNarrow || !showExtensionPanel}
                 disabled={!showExtensionPanel}
                 naturalSize={!showExtensionPanel}
                 valuePercent={extensionPanelPercentage}
                 setValuePercent={setExtensionPanelPercentage}
                 minWidth={330}
                 minHeight={45}
-                touch={isLessProductive}
             >
                 <div className={m("flex-col wh-100")}>
                     <Header />
@@ -88,7 +87,6 @@ const AppImpl: React.FC = () => {
                         setValuePercent={setGamedataInventoryPercentage}
                         minHeight={60}
                         minWidth={400}
-                        touch={isLessProductive}
                     >
                         <GdtInventoryPanel />
                         <PouchInventoryPanel />

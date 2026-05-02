@@ -65,7 +65,7 @@ fn ldr_core(core: &mut Core, xd: RegisterType, address: u64) -> Result<(), Error
             return Ok(());
         }
         _ => {
-            log::error!("Unsupported register type for LDR: {xd:?}");
+            cu::error!("Unsupported register type for LDR: {xd:?}");
             return Err(Error::BadInstruction(0));
         }
     };
@@ -173,7 +173,7 @@ mod tests {
     use self_::{Cpu0, Process, reg};
 
     #[test]
-    pub fn simple_ldr_test() -> anyhow::Result<()> {
+    pub fn simple_ldr_test() -> cu::Result<()> {
         let mut cpu = Cpu0::default();
         let mut proc = Process::new_for_test();
         Ptr!(<i32>(0x1000)).store(&1234, proc.memory_mut())?;

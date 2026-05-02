@@ -19,11 +19,11 @@ export const Colors = {
 
 export type ItemSearchFunction = (word: string) => ItemStack | undefined;
 
-export type CodeBlock = {
+export interface CodeBlock {
     color: keyof typeof Colors;
     start: number; //inclusive
     end: number; // exclusive
-};
+}
 
 export const codeBlockFromRange = (
     range: readonly [number, number] | { range: readonly [number, number] },

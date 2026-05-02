@@ -1,8 +1,6 @@
 import {
-    mergeClasses,
     Button,
     Caption2,
-    makeStyles,
     Menu,
     MenuGroup,
     MenuGroupHeader,
@@ -20,22 +18,22 @@ import {
     SaveEdit20Regular,
 } from "@fluentui/react-icons";
 import { memo } from "react";
-import { useDark } from "@pistonite/pure-react";
+import { useDark } from "@pistonite/celera";
 
 import type { SessionMode } from "@pistonite/skybook-api";
 import { useUITranslation } from "skybook-localization";
 
-import { useDebouncedHasUnsavedChanges, usePersistStore, useSessionStore } from "self::application";
-import { useStyleEngine } from "self::util";
+import { useDebouncedHasUnsavedChanges, usePersistStore, useSessionStore } from "#application";
+import { useStyleEngine } from "#util";
 
-const useStyles = makeStyles({
-    warningDark: {
+const useStyles = useStyleEngine.extend({
+    "warning-dark": {
         color: "orange",
     },
-    warningLight: {
+    "warning-light": {
         color: "darkred",
     },
-    readonlyDark: {
+    "readonly-dark": {
         backgroundColor: "orange",
         color: "black",
         "&:hover": {
@@ -47,7 +45,7 @@ const useStyles = makeStyles({
             color: "black",
         },
     },
-    readonlyLight: {
+    "readonly-light": {
         backgroundColor: "#ff6666",
         color: "black",
         "&:hover": {
@@ -59,21 +57,21 @@ const useStyles = makeStyles({
             color: "black",
         },
     },
-    editonlyDark: {
+    "editonly-dark": {
         color: "lightgreen",
     },
-    editonlyLight: {
+    "editonly-light": {
         color: "green",
     },
-    editonlyUnsaved: {
+    "editonly-unsaved": {
         top: "-4px",
         right: "-4px",
     },
 });
 
-const ModeSwitcherImpl: React.FC = () => {
+export const ModeSwitcher: React.FC = memo(() => {
     const t = useUITranslation();
-    const c = useStyles();
+    const m = useStyles();
     const dark = useDark();
     const mode = useSessionStore((state) => state.mode);
     const setModeToLocal = useSessionStore((state) => state.setModeToLocal);
@@ -110,10 +108,13 @@ const ModeSwitcherImpl: React.FC = () => {
                     })}
                 >
                     <Button
-                        className={mergeClasses(
-                            mode === "read-only" && (dark ? c.readonlyDark : c.readonlyLight),
-                            mode === "edit-only" && (dark ? c.editonlyDark : c.editonlyLight),
-                        )}
+                        className={
+                            mode === "read-only"
+                                ? m(dark ? "c-readonly-dark" : "c-readonly-light")
+                                : mode === "edit-only"
+                                  ? m(dark ? "c-editonly-dark" : "c-editonly-light")
+                                  : ""
+                        }
                         icon={<ModeIcon mode={mode} isHeader />}
                         appearance={mode !== "read-only" ? "subtle" : "outline"}
                     />
@@ -139,12 +140,11 @@ const ModeSwitcherImpl: React.FC = () => {
             </MenuPopover>
         </Menu>
     );
-};
-export const ModeSwitcher = memo(ModeSwitcherImpl);
+});
 
 const ModeDesc: React.FC<{ mode: SessionMode }> = ({ mode }) => {
     const t = useUITranslation();
-    const c = useStyles();
+    const m = useStyles();
     const dark = useDark();
     const currentMode = useSessionStore((state) => state.mode);
     const activeScript = useSessionStore((state) => state.activeScript);
@@ -153,7 +153,7 @@ const ModeDesc: React.FC<{ mode: SessionMode }> = ({ mode }) => {
         return (
             <>
                 <Caption2 block>{t(`menu.mode.${ModeMap[mode]}.desc`)}</Caption2>
-                <Caption2 block className={dark ? c.warningDark : c.warningLight}>
+                <Caption2 block className={m(dark ? "c-warning-dark" : "c-warning-light")}>
                     {t(`menu.mode.${ModeMap[mode]}.warning`)}
                 </Caption2>
             </>
@@ -169,8 +169,7 @@ const ModeMap = {
 } as const;
 const ModeIcon: React.FC<{ mode: SessionMode; isHeader?: boolean }> = ({ mode, isHeader }) => {
     const hasUnsavedChanges = useDebouncedHasUnsavedChanges();
-    const m = useStyleEngine();
-    const c = useStyles();
+    const m = useStyles();
     if (mode === "local") {
         return <SaveEdit20Regular />;
     }
@@ -183,7 +182,7 @@ const ModeIcon: React.FC<{ mode: SessionMode; isHeader?: boolean }> = ({ mode, i
     return (
         <span className={m("pos-rel")}>
             <BeakerEdit20Filled />
-            {hasUnsavedChanges && <span className={m("pos-abs", c.editonlyUnsaved)}>*</span>}
+            {hasUnsavedChanges && <span className={m("pos-abs c-editonly-unsaved")}>*</span>}
         </span>
     );
 };
