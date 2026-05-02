@@ -40,6 +40,37 @@ jobs:
           name: server
           retention-days: 3
 
+  build-app-server:
+    if: github.event_name != 'pull_request'
+    name: app-server
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: Pistonight/mono-dev/actions/setup@main
+        with:
+          mono-dev: pnpm
+          ecma-pnpm: true
+          ecma-bun: true
+          rust: stable
+          tool-cargo-binstall: workex=Pistonite/workex
+      - uses: ./.github/steps/cache-ci
+        with:
+          app-assets: true
+          parser: true
+      - run: task build-app-server-ci
+      - uses: actions/upload-artifact@v7
+        with:
+          path: packages/app/dist
+          name: app
+          retention-days: 3
+      - uses: actions/upload-artifact@v7
+        with:
+          path: packages/server/dist
+          name: server
+          retention-days: 3
+
   build-runtime-wasm:
     name: runtime-wasm
     runs-on: blacksmith-4vcpu-ubuntu-2404

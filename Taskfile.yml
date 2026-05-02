@@ -184,6 +184,14 @@ tasks:
       - task: manual:build
       - task: server:build
 
+  build-app-server-ci:
+    cmds:
+      - task: app:install
+      - task: server:install
+      - task: skybook-api:build-dep
+      - task: app:build
+      - task: server:build
+
   build-manual-ci:
     cmds:
       - task: manual:install
