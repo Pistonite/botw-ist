@@ -24,7 +24,7 @@ includes:
   manual:         {taskfile: ./packages/manual,           dir: ./packages/manual,           internal: true}
   intwc:          {taskfile: ./packages/intwc,            dir: ./packages/intwc,            internal: true}
 
-  data:       {taskfile: ./packages/botw-data, dir: ./packages/botw-data, internal: true}
+  data:       {taskfile: ./packages/botw-data, dir: ./packages/botw-data, internal: true, optional: true}
 
 tasks:
   install-cargo-extra-tools:
