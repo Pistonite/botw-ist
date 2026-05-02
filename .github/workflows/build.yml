@@ -10,7 +10,7 @@ on:
 jobs:
   build-app-manual-server:
     if: github.event_name == 'pull_request'
-    name: manual
+    name: app-manual-server
     runs-on: blacksmith-4vcpu-ubuntu-2404
     permissions:
       contents: read
@@ -40,30 +40,6 @@ jobs:
           name: server
           retention-days: 3
 
-  # build-app:
-  #   name: app
-  #   runs-on: blacksmith-4vcpu-ubuntu-2404
-  #   permissions:
-  #     contents: read
-  #     id-token: write
-  #   steps:
-  #     - uses: Pistonight/mono-dev/actions/setup@main
-  #       with:
-  #         mono-dev: pnpm
-  #         ecma-pnpm: true
-  #         ecma-bun: true
-  #         rust: stable
-  #         tool-cargo-binstall: workex=Pistonite/workex
-  #     - uses: ./.github/steps/cache-ci
-  #       with:
-  #         app-assets: true
-  #     - run: task build-app-ci
-      # - uses: actions/upload-artifact@v7
-      #   with:
-      #     path: packages/app/dist
-      #     name: app
-      #     retention-days: 3
-      
   build-runtime-wasm:
     name: runtime-wasm
     runs-on: blacksmith-4vcpu-ubuntu-2404
@@ -94,22 +70,3 @@ jobs:
           name: runtime
           retention-days: 3
 
-  # build-server:
-  #   name: server
-  #   runs-on: blacksmith-4vcpu-ubuntu-2404
-  #   permissions:
-  #     contents: read
-  #     id-token: write
-  #   steps:
-  #     - uses: Pistonight/mono-dev/actions/setup@main
-  #       with:
-  #         mono-dev: pnpm
-  #         ecma-pnpm: true
-  #         ecma-bun: true
-  #         tool-cargo-binstall: workex=Pistonite/workex
-  #     - run: task build-server-ci
-  #     - uses: actions/upload-artifact@v7
-  #       with:
-  #         path: packages/server/dist
-  #         name: server
-  #         retention-days: 3

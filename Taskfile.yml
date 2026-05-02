@@ -188,12 +188,6 @@ tasks:
     cmds:
       - task: manual:install
       - task: manual:build
-  #
-  # build-app-ci:
-  #   cmds:
-  #     - task: app:install
-  #     - task: skybook-api:build-dep
-  #     - task: app:build
 
   build-runtime-ci-pr:
     cmds:
@@ -207,12 +201,6 @@ tasks:
       - task: skybook-api:build-dep
       - task: runtime-wasm:build-wasm
       - task: runtime-wasm:build-dist-min
-
-  # build-server-ci:
-  #   cmds:
-  #     - task: server:install
-  #     - task: skybook-api:build-dep
-  #     - task: server:build
 
   clean:
     desc: Clean the whole repo for temporaries that might help resolve build issues
