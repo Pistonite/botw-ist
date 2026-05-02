@@ -7,17 +7,18 @@
         ".": "./src/index.ts"
     },
     "dependencies": {
-        "@pistonite/pure": "catalog:",
         "@pistonite/celera": "catalog:",
+        "@pistonite/pure": "catalog:",
         "@pistonite/skybook-api": "workspace:*",
         "@pistonite/skybook-itemsys": "workspace:*",
         "fuse.js": "catalog:",
         "lru-cache": "catalog:"
     },
     "devDependencies": {
-        "@types/node": "catalog:",
         "@types/js-yaml": "catalog:",
+        "@types/node": "catalog:",
         "@types/react": "catalog:",
+        "@typescript/native-preview": "7.0.0-dev.20260421.2",
         "js-yaml": "catalog:",
         "mono-dev": "catalog:"
     },

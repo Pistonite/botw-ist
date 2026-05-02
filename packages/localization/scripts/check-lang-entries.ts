@@ -77,7 +77,7 @@ console.log(key); // Check the type of key with LS to see what's missing
     );
 });
 
-const result = subprocess.spawnSync("pnpm", ["exec", "tsc", "-p", DIR], {
+const result = subprocess.spawnSync("pnpm", ["exec", "tsgo", "-p", DIR], {
     stdio: "inherit",
     encoding: "utf8",
 });
