@@ -28,5 +28,9 @@
         "@types/bun": "catalog:",
         "@types/react": "catalog:",
         "mono-dev": "catalog:"
+    },
+    "imports": {
+        "#theme": "./src/theme/index.ts",
+        "#typescript": "./src/typescript/index.ts"
     }
 }

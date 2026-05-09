@@ -1,2 +1,2 @@
-export * from "./loader.ts";
 export * from "./translate.ts";
+export * from "./loader.ts";

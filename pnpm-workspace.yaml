@@ -12,25 +12,25 @@ packages:
 catalog:
   '@catppuccin/palette': ^1.8.0
   '@fluentui/react-components': ^9.73.8
-  '@fluentui/react-icons': ^2.0.325
-  '@pistonite/celera': ^0.2.4
+  '@fluentui/react-icons': ^2.0.326
+  '@pistonite/celera': ^0.3.0
   '@pistonite/pure': ^0.29.7
   '@pistonite/webfs': ^0.1.2
   '@pistonite/workex': ^0.2.3
-  '@tanstack/react-query': ^5.100.8
+  '@tanstack/react-query': ^5.100.9
   '@types/bun': ^1.3.13
   '@types/js-yaml': ^4.0.9
-  '@types/node': ^25.6.0
+  '@types/node': ^25.6.2
   '@types/react': ^19.2.14
   '@types/react-dom': ^19.2.3
   '@uidotdev/usehooks': ^2.4.1
   'fuse.js': ^7.3.0
   js-yaml: ^4.1.1
-  lru-cache: ^11.3.5
+  lru-cache: ^11.3.6
   mono-dev: github:pistonight/mono-dev#dist
-  react: ^19.2.5
-  react-dom: ^19.2.5
+  react: ^19.2.6
+  react-dom: ^19.2.6
   reselect: ^5.1.1
   uuid: ^14.0.0
   vite-plugin-serve-static: ^2.2.0
-  zustand: ^5.0.12
+  zustand: ^5.0.13

@@ -18,7 +18,7 @@ bitfield-struct = "0.13.0"
 cached = "0.59.0"
 catppuccin = "2.8.0"
 crc32fast = "1.5.0"
-enumset = "1.1.10"
+enumset = "1.1.12"
 enum-map = "2.7.3"
 flate2 = { version = "1.1.9", default-features = false }
 hashlink = "0.11.0"
@@ -39,12 +39,12 @@ thiserror = "2.0.18"
 tokio = "1"
 
 # Rust-Web ecosystem
-js-sys = "0.3.97"
-web-sys = "0.3.97"
+js-sys = "0.3.98"
+web-sys = "0.3.98"
 ts-rs = "11.1.0"
 tsify = { version = "0.5.6", features = ["js"], default-features = false }
-wasm-bindgen = { version = "0.2.120", features = ["serde-serialize"] }
-wasm-bindgen-futures = "0.4.70"
+wasm-bindgen = { version = "0.2.121", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.71"
 wasm-bindgen-spawn = "0.0.5"
 console_log = "1.0.0"
 console_error_panic_hook = "0.1.7"

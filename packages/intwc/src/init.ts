@@ -4,49 +4,49 @@ import { once } from "@pistonite/pure/sync";
 import { initPreference } from "./preference.ts";
 import type { InitOption } from "./types.ts";
 import { initThemes } from "./theme";
-import { patchMonacoTypeScript } from "./typescript";
+// import { patchMonacoTypeScript } from "./typescript";
 import { setEditorOptions } from "./editor_state.ts";
 import { registerDiagnosticProvider } from "./language/diagnostic_provider.ts";
-import { log } from "./internal.ts";
+// import { log } from "./internal.ts";
 
 const initCodeEditorInternal = ({ preferences, language, editor, theme }: InitOption) => {
     initPreference(preferences || {});
 
-    const { typescript, custom } = language || {};
+    const { custom } = language || {};
 
     initThemes(theme || {});
 
-    // initialize TypeScript options
-    if (typescript) {
-        if (!import.meta.env.INTWC_TYPESCRIPT) {
-            log.warn(
-                "TypeScript init options are set, but TypeScript is not loaded using intwc plugin!!!",
-            );
-        } else {
-            const dom = typescript.dom ?? true;
-            monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-                target: monaco.languages.typescript.ScriptTarget.ESNext,
-                lib: dom ? undefined : ["esnext"],
-                noEmit: true,
-                strict: true,
-                // jsx: "preserve",
-                noUnusedLocals: true,
-                noUnusedParameters: true,
-                noFallthroughCasesInSwitch: true,
-            });
-
-            if (typescript.extraLibs) {
-                typescript.extraLibs.forEach((lib) => {
-                    monaco.languages.typescript.typescriptDefaults.addExtraLib(
-                        lib.content,
-                        `file:///_lib_${lib.name}.ts`,
-                    );
-                });
-            }
-
-            patchMonacoTypeScript({ semanticTokensMaxLength: -1 });
-        }
-    }
+    // // initialize TypeScript options
+    // if (typescript) {
+    //     if (!import.meta.env.INTWC_TYPESCRIPT) {
+    //         log.warn(
+    //             "TypeScript init options are set, but TypeScript is not loaded using intwc plugin!!!",
+    //         );
+    //     } else {
+    //         const dom = typescript.dom ?? true;
+    //         monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+    //             target: monaco.languages.typescript.ScriptTarget.ESNext,
+    //             lib: dom ? undefined : ["esnext"],
+    //             noEmit: true,
+    //             strict: true,
+    //             // jsx: "preserve",
+    //             noUnusedLocals: true,
+    //             noUnusedParameters: true,
+    //             noFallthroughCasesInSwitch: true,
+    //         });
+    //
+    //         if (typescript.extraLibs) {
+    //             typescript.extraLibs.forEach((lib) => {
+    //                 monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    //                     lib.content,
+    //                     `file:///_lib_${lib.name}.ts`,
+    //                 );
+    //             });
+    //         }
+    //
+    //         patchMonacoTypeScript({ semanticTokensMaxLength: -1 });
+    //     }
+    // }
 
     if (custom) {
         custom.forEach((client) => {

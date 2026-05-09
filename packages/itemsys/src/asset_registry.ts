@@ -1,4 +1,9 @@
-import { injectStyle } from "@pistonite/celera";
+import { injectStyle, registerTranslationLoader } from "@pistonite/celera";
+
+import { loadItemTranslations, loadItemUITranslations } from "#i18n";
+
+registerTranslationLoader("skybook-itemsys", loadItemTranslations);
+registerTranslationLoader("skybook-itemsys-ui", loadItemUITranslations);
 
 let theAssetLocation: string = "";
 

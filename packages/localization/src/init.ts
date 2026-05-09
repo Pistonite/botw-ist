@@ -1,5 +1,4 @@
-import { initLocale } from "@pistonite/celera";
-import { getCeleraI18nLoaderConfig as itemsysLoader } from "@pistonite/skybook-itemsys";
+import { initLocale, registerTranslationLoader } from "@pistonite/celera";
 
 export const SupportedLocales = [
     "de-DE",
@@ -15,16 +14,13 @@ export const SupportedLocales = [
     "zh-TW",
 ] as const;
 
-export const initI18n = (persist: boolean) => {
-    return initLocale({
+export const initI18n = async (persist: boolean) => {
+    await initLocale({
         supported: SupportedLocales,
         default: "en-US",
         persist,
-        loader: {
-            ...itemsysLoader(),
-            ui: loadUILanguage,
-        },
     });
+    registerTranslationLoader("ui", loadUILanguage);
 };
 
 const loadUILanguage = async (language: string): Promise<Record<string, string>> => {
