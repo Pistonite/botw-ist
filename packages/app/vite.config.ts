@@ -27,7 +27,10 @@ const staticAssetHeader = (): Plugin => {
 export default configure(() => {
     return {
         plugins: [
-            intwc({ basicLanguages: [] }),
+            intwc({
+                languages: [],
+                translations: ["de", "es", "fr", "it", "ja", "ko", "ru", "zh-cn", "zh-tw"],
+            }),
             staticAssetHeader(),
             serveStatic([
                 {

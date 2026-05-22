@@ -2,9 +2,6 @@ import { injectStyle, registerTranslationLoader } from "@pistonite/celera";
 
 import { loadItemTranslations, loadItemUITranslations } from "#i18n";
 
-registerTranslationLoader("skybook-itemsys", loadItemTranslations);
-registerTranslationLoader("skybook-itemsys-ui", loadItemUITranslations);
-
 let theAssetLocation: string = "";
 
 /**
@@ -13,7 +10,7 @@ let theAssetLocation: string = "";
  * assetLocation is the URL prefix for the asset, should end with `/`.
  * The location should have `special` and `sprites` directory
  */
-export const registerAssetLocation = (assetLocation: string) => {
+export const registerAssetLocation = async (assetLocation: string) => {
     const css =
         makeSpriteSheetStyle(assetLocation, "chunk0x32") +
         makeSpriteSheetStyle(assetLocation, "chunk1x32") +
@@ -25,6 +22,8 @@ export const registerAssetLocation = (assetLocation: string) => {
         makeFontStyle(assetLocation);
 
     injectStyle("skybook-itemsys", css);
+    await registerTranslationLoader("skybook-itemsys", loadItemTranslations);
+    await registerTranslationLoader("skybook-itemsys-ui", loadItemUITranslations);
 
     theAssetLocation = assetLocation;
 };

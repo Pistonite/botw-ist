@@ -94,18 +94,13 @@ const CustomTokenColors = [
 ];
 
 /** Initialize the code editor framework for this window */
-export const init = () => {
-    return initCodeEditor({
+export const init = async () => {
+    return await initCodeEditor({
         language: {
             custom: [CustomLanguageOptions],
         },
         theme: {
             customTokenColors: CustomTokenColors,
-        },
-        editor: {
-            options: {
-                wordWrap: "on",
-            },
         },
     });
 };

@@ -3,8 +3,8 @@
  */
 
 import type {
-    MarkerData,
-    TextModel,
+    IMarkerData,
+    ITextModel,
     DiagnosticProvider,
     DiagnosticTask,
     DiagnosticMergeResult,
@@ -18,7 +18,7 @@ const EDITOR_EXTENSION_UUID = "b1b45de4-1df7-4832-ae0b-99b516f81df6";
 
 const log = logger("diagnostics", { color: "#02648B" });
 
-export type CustomMarkerData = MarkerData & {
+export type CustomMarkerData = IMarkerData & {
     charPos: [number, number];
 };
 export type Provider = DiagnosticProvider<Diagnostic, CustomMarkerData>;
@@ -26,7 +26,7 @@ export type Task = DiagnosticTask<Diagnostic>;
 
 /** Merge diagnostic tasks by replacing all markers with new run */
 export const mergeDataByReplace = (
-    model: TextModel,
+    model: ITextModel,
     _currData: Diagnostic[],
     newBatch: Diagnostic[],
 ): DiagnosticMergeResult<Diagnostic, CustomMarkerData> => {
@@ -35,7 +35,7 @@ export const mergeDataByReplace = (
 };
 
 export const mergeData = (
-    model: TextModel,
+    model: ITextModel,
     currData: Diagnostic[],
     newBatch: Diagnostic[],
     prevBatch: Diagnostic[],
@@ -197,7 +197,7 @@ const binarySearchForPosition = (bytePositions: Uint32Array, bytePos: number): n
     return low;
 };
 
-const convertDiagnosticToMarker = (model: TextModel, diagnostic: Diagnostic): CustomMarkerData => {
+const convertDiagnosticToMarker = (model: ITextModel, diagnostic: Diagnostic): CustomMarkerData => {
     const { message, isWarning, start, end } = diagnostic;
     const range = spanToRange(model, start, end);
     return {

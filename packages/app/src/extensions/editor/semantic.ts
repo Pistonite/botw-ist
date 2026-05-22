@@ -2,7 +2,7 @@ import { convertSemanticTokens, rangeToSpan } from "@pistonite/intwc";
 import type {
     CancellationToken,
     SemanticTokensLegend,
-    TextModel,
+    ITextModel,
     Range,
     SemanticTokens,
 } from "@pistonite/intwc";
@@ -27,8 +27,8 @@ type ProviderFn = (
 // This is used to debounce the request per-model.
 // We should only have a fixed size of models, so this won't have
 // memory size issues
-const cachedProvideSemanticTokenFns = new Map<TextModel, ProviderFn>();
-const getProvideSemanticTokenFn = (model: TextModel): ProviderFn => {
+const cachedProvideSemanticTokenFns = new Map<ITextModel, ProviderFn>();
+const getProvideSemanticTokenFn = (model: ITextModel): ProviderFn => {
     const cached = cachedProvideSemanticTokenFns.get(model);
     if (cached) {
         return cached;
@@ -66,7 +66,7 @@ const getProvideSemanticTokenFn = (model: TextModel): ProviderFn => {
 
 export const provideSemanticTokens = async (
     app: ExtensionApp,
-    model: TextModel,
+    model: ITextModel,
     range: Range,
     cancellationToken: CancellationToken,
 ): Promise<SemanticTokens> => {
