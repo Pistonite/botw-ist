@@ -6,7 +6,7 @@
         "@fluentui/react-components": "catalog:",
         "@fluentui/react-icons": "catalog:",
         "@pistonite/celera": "catalog:",
-        "@pistonite/intwc": "workspace:*",
+        "@pistonite/intwc": "catalog:",
         "@pistonite/pure": "catalog:",
         "@pistonite/skybook-api": "workspace:*",
         "@pistonite/skybook-itemsys": "workspace:*",
