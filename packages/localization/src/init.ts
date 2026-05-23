@@ -20,7 +20,7 @@ export const initI18n = async (persist: boolean) => {
         default: "en-US",
         persist,
     });
-    registerTranslationLoader("ui", loadUILanguage);
+    await registerTranslationLoader("ui", loadUILanguage);
 };
 
 const loadUILanguage = async (language: string): Promise<Record<string, string>> => {

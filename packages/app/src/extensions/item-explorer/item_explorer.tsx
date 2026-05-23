@@ -109,7 +109,7 @@ export const ItemExplorer: React.FC<ItemExplorerProps> = ({
     );
 
     return (
-        <div className={m("flex-col h-100 border-box pad-8")}>
+        <div className={m("flex-col h-100 border-box pad-8 overflow-auto")}>
             {$SearchBox}
             {$LocalizedCheckbox}
             <Body1 block>{$SearchTip}</Body1>

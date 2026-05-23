@@ -59,8 +59,8 @@ export const createSaveViewerComponent = (useStore: SaveViewerStore): React.FC =
         );
         return (
             <ResizeLayout
-                className={m("wh-100")}
-                minWidth={150}
+                className={m("wh-100 overflow-auto")}
+                minWidth={30}
                 valuePercent={sidebarPercent}
                 setValuePercent={setSidebarPercent}
             >

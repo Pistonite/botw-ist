@@ -11,19 +11,19 @@ import { devLog } from "./log.ts";
 
 export const probeAndRegisterAssetLocation = async () => {
     if (!import.meta.env.DEV) {
-        registerAssetLocation("/static/itemsys/");
+        await registerAssetLocation("/static/itemsys/");
         return;
     }
     try {
         const response = await fetch("/static/itemsys/sprites/modifiers.webp");
         if (response.ok) {
-            registerAssetLocation("/static/itemsys/");
+            await registerAssetLocation("/static/itemsys/");
         }
         devLog.info("using local item assets");
         return;
     } catch {
         devLog.info("item-assets probing failed, using hosted");
-        registerAssetLocation("https://ist.pistonite.app/static/itemsys/");
+        await registerAssetLocation("https://ist.pistonite.app/static/itemsys/");
     }
 };
 

@@ -1,7 +1,7 @@
 /**
  * Lanaguage definition for the Skybook script
  */
-import type { LanguageConfiguration, LanguageTokenizer } from "@pistonite/intwc";
+import type { LanguageConfiguration, IMonarchLanguage } from "@pistonite/intwc";
 
 import { GenSyntax } from "./syntax.gen.ts";
 
@@ -25,7 +25,7 @@ export const configuration: LanguageConfiguration = {
     ],
 };
 
-export const language: LanguageTokenizer = {
+export const language: IMonarchLanguage = {
     defaultToken: "invalid",
     tokenPostfix: ".skyb",
 

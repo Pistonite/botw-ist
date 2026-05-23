@@ -1,4 +1,9 @@
-import { getNormalizedPath, CodeEditor, type CodeEditorApi } from "@pistonite/intwc";
+import {
+    FileEditor,
+    type SingleFileEditorState,
+    EditorEventType,
+    StatusItemPreset,
+} from "@pistonite/intwc";
 import type { WxPromise } from "@pistonite/workex";
 
 import type { ExtensionApp, ItemDragData, SessionMode } from "@pistonite/skybook-api";
@@ -11,10 +16,8 @@ import { init, setApp, updateScriptInApp } from "./init.ts";
 
 void init();
 
-const FILE = getNormalizedPath("script.skyb");
-
 export class EditorExtension extends FirstPartyExtensionAdapter implements FirstPartyExtension {
-    private editor: CodeEditorApi | undefined;
+    private editor: SingleFileEditorState | undefined;
     private scriptChangedBeforeEditorReady: string | undefined;
     private detachEditor: (() => void) | undefined;
     private isReadonly = false;
@@ -32,11 +35,18 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
                     onDropItem={(item) => this.onDropItem(item)}
                     style={{ height: "100%" }}
                 >
-                    <CodeEditor
+                    <FileEditor
                         onCreated={(editor) => {
                             void this.attachEditor(editor);
                             return undefined;
                         }}
+                        language="skybook"
+                        filename="script.skyb"
+                        statusLeft={[
+                            StatusItemPreset.DiagnosticErrors,
+                            StatusItemPreset.DiagnosticWarnings,
+                        ]}
+                        statusRight={[StatusItemPreset.Position, StatusItemPreset.WordWrap]}
                     />
                 </ItemDropZone>
             );
@@ -56,7 +66,7 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
     public override async onAppModeChanged(mode: SessionMode): WxPromise<void> {
         const isReadonly = mode === "read-only";
         this.isReadonly = isReadonly;
-        this.editor?.setReadonly(isReadonly);
+        this.editor?.overrideOptions({ readOnly: isReadonly });
         return {};
     }
 
@@ -64,8 +74,8 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
      * Attach the extension instance to an editor.
      * Automatically detaches other previously attached editor
      */
-    public async attachEditor(editor: CodeEditorApi): Promise<() => void> {
-        editor.setReadonly(this.isReadonly);
+    public async attachEditor(editor: SingleFileEditorState): Promise<() => void> {
+        editor.overrideOptions({ readOnly: this.isReadonly });
         if (this.editor === editor) {
             return this.detachEditor || (() => {});
         }
@@ -75,16 +85,16 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
 
         this.editor = editor;
 
-        const updateHandler = (filename: string) => {
-            if (filename !== FILE) {
-                return;
-            }
-            updateScriptInApp(editor.getFileContent(FILE), editor.getCursorOffset() || 0);
+        const updateHandler = () => {
+            updateScriptInApp(editor.getContent(), editor.getCursorCharOffset());
         };
 
-        const unsubscribeContentChange = editor.subscribe("content-changed", updateHandler);
+        const unsubscribeContentChange = editor.subscribe(
+            EditorEventType.ContentChanged,
+            updateHandler,
+        );
         const unsubscribeCursorPositionChange = editor.subscribe(
-            "cursor-position-changed",
+            EditorEventType.CursorPositionChanged,
             updateHandler,
         );
 
@@ -112,11 +122,7 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
             this.scriptChangedBeforeEditorReady = script;
             return {};
         }
-        if (!this.editor.getFiles().includes(FILE)) {
-            this.editor.openFile(FILE, script, "skybook");
-        } else {
-            this.editor.setFileContent(FILE, script);
-        }
+        this.editor.setContent(script);
         return {};
     }
 
@@ -125,12 +131,9 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
         if (!editor) {
             return;
         }
-        if (editor.getCurrentFile() !== FILE) {
-            return;
-        }
 
-        const script = editor.getFileContent(FILE);
-        const cursorOffset = editor.getCursorOffset() || script.length;
+        const script = editor.getContent();
+        const cursorOffset = editor.getCursorCharOffset();
         let before = script.substring(0, cursorOffset);
         let after = script.substring(cursorOffset);
         const itemScript = getScriptFromDragData(data);
@@ -143,8 +146,8 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
         if (after && !after.match(/^\s/)) {
             after = " " + after;
         }
-        editor.setFileContent(FILE, before + itemScript + after);
-        editor.setCursorOffset(newOffset);
+        editor.setContent(before + itemScript + after);
+        editor.setCursorCharOffset(newOffset);
         updateScriptInApp(before + itemScript + after, newOffset);
     }
 }
