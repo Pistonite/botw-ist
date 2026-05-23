@@ -34,6 +34,7 @@
         "#application": "./src/application/index.ts",
         "#extensions": "./src/extensions/index.ts",
         "#ui/components": "./src/ui/components/index.ts",
+        "#ui/hooks": "./src/ui/hooks/index.ts",
         "#ui/surfaces/extension": "./src/ui/surfaces/extension/index.ts",
         "#ui/surfaces/header": "./src/ui/surfaces/header/index.ts",
         "#ui/surfaces/inventory": "./src/ui/surfaces/inventory/index.ts",

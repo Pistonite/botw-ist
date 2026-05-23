@@ -28,7 +28,7 @@ export default configure(() => {
     return {
         plugins: [
             intwc({
-                languages: [],
+                languages: ["cpp"],
                 translations: ["de", "es", "fr", "it", "ja", "ko", "ru", "zh-cn", "zh-tw"],
             }),
             staticAssetHeader(),

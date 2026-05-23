@@ -13,7 +13,7 @@ catalog:
   '@fluentui/react-components': ^9.73.8
   '@fluentui/react-icons': ^2.0.327
   '@pistonite/celera': ^0.3.3
-  '@pistonite/intwc': ^0.1.5
+  '@pistonite/intwc': ^0.1.6
   '@pistonite/pure': ^0.29.7
   '@pistonite/webfs': ^0.1.2
   '@pistonite/workex': ^0.2.3

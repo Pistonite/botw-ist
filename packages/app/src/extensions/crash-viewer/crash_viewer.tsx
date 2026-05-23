@@ -1,51 +1,41 @@
-import { Body1, Field } from "@fluentui/react-components";
-import { useDark } from "@pistonite/celera";
+import { Codicon, SimpleEditor, StatusItemPreset } from "@pistonite/intwc";
 
 import { useUITranslation } from "skybook-localization";
-
-import { useStyleEngine } from "#util";
-import { CopyButton } from "#ui/components";
+import { useCopyToClipboard } from "#ui/hooks";
 
 export type CrashViewerProps = {
     crashInfo: string;
 };
 
-const useStyles = useStyleEngine.extend({
-    dark: {
-        backgroundColor: "#292c3c",
-        color: "#ef9f76",
-    },
-    light: {
-        backgroundColor: "#e6e9ef",
-        color: "#e64553",
-    },
-});
-
 export const CrashViewer: React.FC<CrashViewerProps> = ({ crashInfo }) => {
-    const dark = useDark();
-    const m = useStyles();
     const t = useUITranslation();
-    if (!crashInfo) {
-        return (
-            <div className={m("flex-col h-100 border-box")}>
-                <div className={m("flex flex-1 flex-center")}>
-                    <Body1>{t("crash_viewer.no_crash")}</Body1>
-                </div>
-            </div>
-        );
-    }
+    const { copyFn: copyCrashInfo, isJustCopied } = useCopyToClipboard("```\n"+crashInfo+"```");
+
     return (
-        <div className={m("flex-col h-100 border-box")}>
-            <div className={m("pad-4")}>
-                <Field>
-                    <CopyButton textToCopy={"```\n" + crashInfo + "```"} />
-                </Field>
-            </div>
-            <div className={m("overflow-y-auto flex-1", dark ? "c-dark" : "c-light")}>
-                <div className={m("max-h-0 overflow-visible pad-4")}>
-                    <pre className={m("margin-0")}>{crashInfo}</pre>
-                </div>
-            </div>
-        </div>
+    <SimpleEditor
+            value={crashInfo || `<${t("crash_viewer.no_crash")}>`}
+            onValueChange={() => {}}
+            editorOptions={{
+                readOnly: true
+            }}
+            language={crashInfo ? "cpp" : "text"}
+            statusLeft={[
+                {
+                    onClick: copyCrashInfo,
+                    body: isJustCopied ? (<>
+                        <Codicon icon="check"/>
+                        {t("button.copied")}
+                    </>) : (<>
+                            <Codicon icon="copy"/>
+                            {t("button.copy")}
+                        </>)
+                },
+            ]}
+            statusRight={[
+                StatusItemPreset.Position,
+                StatusItemPreset.WordWrap,
+            ]}
+
+        />
     );
 };
