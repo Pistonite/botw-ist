@@ -11,7 +11,7 @@ export type CopyButtonProps = {
 
 export const CopyButton: React.FC<CopyButtonProps> = ({ textToCopy }) => {
     const t = useUITranslation();
-    const { copyFn, isJustCopied}  = useCopyToClipboard(textToCopy);
+    const { copyFn, isJustCopied } = useCopyToClipboard(textToCopy);
     return (
         <Button
             appearance="primary"

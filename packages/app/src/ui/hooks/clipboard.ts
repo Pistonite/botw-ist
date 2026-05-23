@@ -3,11 +3,11 @@ import { useRef, useState } from "react";
 import { log } from "#util";
 
 export interface CopyToClipboardHook {
-    copyFn: () => Promise<void>,
-    isJustCopied: boolean,
+    copyFn: () => Promise<void>;
+    isJustCopied: boolean;
 }
 
-export const useCopyToClipboard = (textToCopy: string | (() => Promise<string|undefined>)) => {
+export const useCopyToClipboard = (textToCopy: string | (() => Promise<string | undefined>)) => {
     const [isCopied, setIsCopied] = useState(false);
     const timeoutRef = useRef<number | undefined>(undefined);
     return {
@@ -36,6 +36,6 @@ export const useCopyToClipboard = (textToCopy: string | (() => Promise<string|un
                 log.error(e);
             }
         },
-        isJustCopied: isCopied
-    }
-}
+        isJustCopied: isCopied,
+    };
+};

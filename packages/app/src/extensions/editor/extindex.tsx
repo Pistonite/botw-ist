@@ -1,4 +1,9 @@
-import { FileEditor, type SingleFileEditorState, EditorEventType, StatusItemPreset } from "@pistonite/intwc";
+import {
+    FileEditor,
+    type SingleFileEditorState,
+    EditorEventType,
+    StatusItemPreset,
+} from "@pistonite/intwc";
 import type { WxPromise } from "@pistonite/workex";
 
 import type { ExtensionApp, ItemDragData, SessionMode } from "@pistonite/skybook-api";
@@ -41,10 +46,7 @@ export class EditorExtension extends FirstPartyExtensionAdapter implements First
                             StatusItemPreset.DiagnosticErrors,
                             StatusItemPreset.DiagnosticWarnings,
                         ]}
-                        statusRight={[
-                            StatusItemPreset.Position,
-                            StatusItemPreset.WordWrap,
-                        ]}
+                        statusRight={[StatusItemPreset.Position, StatusItemPreset.WordWrap]}
                     />
                 </ItemDropZone>
             );

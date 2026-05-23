@@ -9,33 +9,33 @@ export type CrashViewerProps = {
 
 export const CrashViewer: React.FC<CrashViewerProps> = ({ crashInfo }) => {
     const t = useUITranslation();
-    const { copyFn: copyCrashInfo, isJustCopied } = useCopyToClipboard("```\n"+crashInfo+"```");
+    const { copyFn: copyCrashInfo, isJustCopied } = useCopyToClipboard("```\n" + crashInfo + "```");
 
     return (
-    <SimpleEditor
+        <SimpleEditor
             value={crashInfo || `<${t("crash_viewer.no_crash")}>`}
             onValueChange={() => {}}
             editorOptions={{
-                readOnly: true
+                readOnly: true,
             }}
             language={crashInfo ? "cpp" : "text"}
             statusLeft={[
                 {
                     onClick: copyCrashInfo,
-                    body: isJustCopied ? (<>
-                        <Codicon icon="check"/>
-                        {t("button.copied")}
-                    </>) : (<>
-                            <Codicon icon="copy"/>
+                    body: isJustCopied ? (
+                        <>
+                            <Codicon icon="check" />
+                            {t("button.copied")}
+                        </>
+                    ) : (
+                        <>
+                            <Codicon icon="copy" />
                             {t("button.copy")}
-                        </>)
+                        </>
+                    ),
                 },
             ]}
-            statusRight={[
-                StatusItemPreset.Position,
-                StatusItemPreset.WordWrap,
-            ]}
-
+            statusRight={[StatusItemPreset.Position, StatusItemPreset.WordWrap]}
         />
     );
 };
