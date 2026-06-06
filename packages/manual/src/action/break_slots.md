@@ -8,11 +8,10 @@ or use the [<skyb>!break</skyb> supercommand](./low_level.md#generate-broken-slo
 
 ## Arrowless Offset
 
-```admonish info
-References for commands used for Arrowless Offset:
-- [`:smug hold`](./material.md#smuggle-state-for-arrowless-offset)
-- [`sell`](./sell.md)
-```
+> [!NOTE]
+> References for commands used for Arrowless Offset:
+> - [`:smug hold`](./material.md#smuggle-state-for-arrowless-offset)
+> - [`sell`](./sell.md)
 
 The most commonly used method of breaking slots is known as `Arrowless Offset`,
 which requires a shield, a one-handed weapon and a shop keeper and can break up to 5 slots at once:
@@ -56,15 +55,14 @@ hold banana
 drop
 ```
 
-```admonish tip
-Other than selling the held slots, you can also do this by entering
-a trial, such as Trial of the Sword. This will remove the slot in the inventory.
-Now you can get a new item, hold it to cancel hold smuggle, and drop the items.
-Note that since getting a new item will take out one held slot out, you can
-also only make up to 4 slots at a time with this method.
-
-This is also how IST was initially discovered.
-```
+> [!TIP]
+> Other than selling the held slots, you can also do this by entering
+> a trial, such as Trial of the Sword. This will remove the slot in the inventory.
+> Now you can get a new item, hold it to cancel hold smuggle, and drop the items.
+> Note that since getting a new item will take out one held slot out, you can
+> also only make up to 4 slots at a time with this method.
+>
+> This is also how IST was initially discovered.
 
 ## Fairy Offset
 You can use fairies to break slots by using the last fairy while holding one.

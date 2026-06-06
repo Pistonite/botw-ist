@@ -1,23 +1,20 @@
 # 注释和笔记
 
-Comments and Notes are text in the script that don't affect
-the output of the command.
+注释和笔记是脚本中不影响指令输出的文本。
 
 ## 注释
-Comments are lines that start with `#` or `//`. They are completely ignored.
+以`#`或`//`开头的注释会被完全忽略。
 
 ```skybook
 # This is a comment
 // This is also a comment
 ```
 
-```admonish tip
-In the script editor, you can use the hotkey `Ctrl + /` to quick toggle
-selected lines between commented/uncommented.
-```
+> [!TIP]
+> 在脚本编辑器中，可以使用快捷键 `Ctrl + /` 快速切换选中行的注释状态。
 
 ## 注释块
-Block Literal is a multi-line block that starts and ends with `'''` (triple single-quotes).
+注释块是以`'''`（三个单引号）开头和结尾的多行块。
 
 ```skybook
 '''
@@ -27,9 +24,7 @@ It can have multiple lines
 '''
 ```
 
-Addtionally, a block literal can have a `tag`, which is a string after the `'''`
-that starts the block. For example, the `note` tag can be used to add
-notes to blocks of commands, which can be viewed in the `Notes` extension.
+此外，注释块可以有一个`标签`，即紧跟在起始`'''`后面的字符串。例如，`note`标签可以用于为一组指令添加笔记，这些笔记可在`Notes`扩展中查看。
 
 ```skybook
 '''note
@@ -39,6 +34,5 @@ drop all weapons
 drop all shields
 ```
 
-```admonish info
-The `Notes` feature is not implemented yet.
-```
+> [!NOTE]
+> `Notes`功能尚未实现。

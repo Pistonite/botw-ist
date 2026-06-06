@@ -68,13 +68,12 @@ encounter a "New Item" text box that allows you to open the inventory.
 
 The <skyb>:pause-during</skyb> annotation can be used to simulate this action.
 
-```admonish warning
-The simulator does NOT check if you are allowed to open the pause menu when you get
-an item, nor does it check if normal pause menu operations can be performed.
-
-For example, usually you can eat something immediately in the text box that you got it,
-but you cannot hold another item. Currently, this situation is too complex to simulate correctly.
-```
+> [!WARNING]
+> The simulator does NOT check if you are allowed to open the pause menu when you get
+> an item, nor does it check if normal pause menu operations can be performed.
+>
+> For example, usually you can eat something immediately in the text box that you got it,
+> but you cannot hold another item. Currently, this situation is too complex to simulate correctly.
 
 One use case is to force hold items during an item text box by performing [Item Smuggle for Arrowless Offset](./material.md#smuggle-state-for-arrowless-offset),
 then get an item text box (similar to performing [Arrowless Offset](./break_slots.md#arrowless-offset)).

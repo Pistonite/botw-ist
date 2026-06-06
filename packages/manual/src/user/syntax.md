@@ -33,13 +33,12 @@ In general, the syntax is case-sensitive. Although some features like item searc
 it's recommended to keep everything lower-case, unless upper-case is needed (for example
 when specifying actor name or GDT flag name).
 
-```admonish note
-In the simulator, the inventory displayed are the state after executing the command
-the cursor is on.
-
-The simulator parses the commands by span, not by line. You can view the state
-for each command even if multiple of them are on the same line.
-```
+> [!NOTE]
+> In the simulator, the inventory displayed are the state after executing the command
+> the cursor is on.
+>
+> The simulator parses the commands by span, not by line. You can view the state
+> for each command even if multiple of them are on the same line.
 
 ## Item Syntax
 Item syntax is used to specify items for commands like <skyb>get</skyb> or <skyb>drop</skyb>.
@@ -66,7 +65,6 @@ Generally, `key`s are `kebab-case` words, and `value`s can be one of:
 - `angled` - like `words`, but surrounded by `<` and `>` and no spaces are allowed,
   like `<Foo>`.
 
-```admonish tip
-Generally, the 3 string formats are all accepted and can be interchangeable.
-In some cases however, the formats can have different meanings.
-```
+> [!TIP]
+> Generally, the 3 string formats are all accepted and can be interchangeable.
+> In some cases however, the formats can have different meanings.

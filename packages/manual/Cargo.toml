@@ -10,7 +10,7 @@ path = "../parser"
 [dependencies]
 cu = { workspace = true, features = ["cli", "json"] }
 catppuccin.workspace = true
-mdbook.workspace = true
+mdbook-preprocessor.workspace = true
 
 [[bin]]
 path = "preprocess/preprocess_main.rs"

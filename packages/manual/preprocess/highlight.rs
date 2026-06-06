@@ -1,11 +1,11 @@
 use cu::pre::*;
-use mdbook::{BookItem, preprocess::CmdPreprocessor};
+use mdbook_preprocessor::book::BookItem;
 
 /// Read a mdbook CmdPreprocessor input from stdin
 /// and write the output to stdout
 pub fn run_highlight() -> cu::Result<()> {
     eprintln!("Running skybook highlighter");
-    let (_ctx, mut book) = CmdPreprocessor::parse_input(std::io::stdin())?;
+    let (_ctx, mut book) = mdbook_preprocessor::parse_input(std::io::stdin())?;
 
     let mut errors = Vec::new();
 

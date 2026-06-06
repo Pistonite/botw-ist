@@ -11,10 +11,9 @@ to those who are used to previous versions of the simulator.
 Understanding this system could be useful, if you want to explicitly control
 when you open a screen, which can be helpful when optimizing and verifying IST setups.
 
-```admonish tip
-The simulator UI has a little icon next to the "Visible Inventory" title
-to indicate which screen you are currently on.
-```
+> [!TIP]
+> The simulator UI has a little icon next to the "Visible Inventory" title
+> to indicate which screen you are currently on.
 
 ## Game State
 While not technically a screen, the *Game* itself can also have 2 different states:
@@ -25,13 +24,12 @@ the game will keep running, unless:
 - You manually closed the game with the <skyb>close-game</skyb> command.
 - The game crashes.
 
-```admonish note
-When you encounter a game crash, note that it's also possible it's a bug in the simulator. 
-Please report it on [GitHub](https://github.com/Pistonite/botw-ist/issues)
-if the simulator crashes on a step that you don't think is supposed to crash in game.
-
-You can also view the detail of the crash in the `Crash Viewer` Extension.
-```
+> [!NOTE]
+> When you encounter a game crash, note that it's also possible it's a bug in the simulator. 
+> Please report it on [GitHub](https://github.com/Pistonite/botw-ist/issues)
+> if the simulator crashes on a step that you don't think is supposed to crash in game.
+>
+> You can also view the detail of the crash in the `Crash Viewer` Extension.
 
 Whenever the game is closed in the middle of a simulation (either closed manually or crashed), it will not automatically
 restart. You have to use either of the commands below:

@@ -3,12 +3,11 @@
 These supercommands allow directly editing memory for prototyping or testing,
 or to workaround limitations of the simulator.
 
-```admonish danger
-Because these commands edit memory directly, instead of mimicking what the game does,
-they could be very inconsistent with the behavior of the game sometimes!
-
-Make sure you read the doc carefully before using them!
-```
+> [!CAUTION]
+> Because these commands edit memory directly, instead of mimicking what the game does,
+> they could be very inconsistent with the behavior of the game sometimes!
+>
+> Make sure you read the doc carefully before using them!
 
 ## Syntax
 
@@ -30,10 +29,9 @@ Examples are available at each section below.
 
 ## Generate Broken Slots
 
-```admonish tip
-The simulator supports breaking slots using actions you would
-do in-game. See [Break Slots](./break_slots.md).
-```
+> [!TIP]
+> The simulator supports breaking slots using actions you would
+> do in-game. See [Break Slots](./break_slots.md).
 
 The <skyb>!break</skyb> command edits `mCount` of `list1` and `list2` directly
 to effectively break slots "by magic".
@@ -66,21 +64,19 @@ Example:
 !add-slot 5 arrow[value=300]
 ```
 
-```admonish note
-The inventory state and GameData will be synced. This will also
-set the corresponding `IsGet` flag for the item, and the `IsOpenItemCategory`
-for the corresponding category.
-```
+> [!NOTE]
+> The inventory state and GameData will be synced. This will also
+> set the corresponding `IsGet` flag for the item, and the `IsOpenItemCategory`
+> for the corresponding category.
 
-```admonish danger
-If <skyb>!init</skyb> or <skyb>!add-slot</skyb> is used while the inventory screen
-is open, the new items may not be accessible until the inventory
-screen is closed and opened again!
-
-While we could implement a force resync, doing that would change some internals
-of the pouch state that you may not want - for example, which item nodes
-correspond to the equipments in the overworld.
-```
+> [!CAUTION]
+> If <skyb>!init</skyb> or <skyb>!add-slot</skyb> is used while the inventory screen
+> is open, the new items may not be accessible until the inventory
+> screen is closed and opened again!
+>
+> While we could implement a force resync, doing that would change some internals
+> of the pouch state that you may not want - for example, which item nodes
+> correspond to the equipments in the overworld.
 
 ## Forcefully Remove Items
 
@@ -96,11 +92,10 @@ Example:
 !remove all cores
 ```
 
-```admonish warning
-This command can target items that are normally inaccessible in the pouch screen.
-For example, when `mCount` is `0`, or when the item slot is over the maximum available slots
-for Weapon/Bow/Arrow/Shield.
-```
+> [!WARNING]
+> This command can target items that are normally inaccessible in the pouch screen.
+> For example, when `mCount` is `0`, or when the item slot is over the maximum available slots
+> for Weapon/Bow/Arrow/Shield.
 
 
 ## Change Item Data
@@ -128,11 +123,10 @@ Examples:
 !write [dura=20] to royal-claymore[category=material, row=1, col=1]
 ```
 
-```admonish warning
-This command can target items that are normally inaccessible in the pouch screen.
-For example, when `mCount` is `0`, or when the item slot is over the maximum available slots
-for Weapon/Bow/Arrow/Shield.
-```
+> [!WARNING]
+> This command can target items that are normally inaccessible in the pouch screen.
+> For example, when `mCount` is `0`, or when the item slot is over the maximum available slots
+> for Weapon/Bow/Arrow/Shield.
 
 The <skyb>!swap</skyb> supercommands targets 2 items, and swap their nodes in the list.
 Inventory is fixed afterward, but GameData is NOT synced (for historical reason).
@@ -147,12 +141,11 @@ Examples:
 !swap royal-claymore[equipped] and bow[equipped]
 ```
 
-```admonish danger
-If <skyb>!write</skyb> or <skyb>!swap</skyb> is used while the inventory screen
-is open, some inventory state may not reflect immediately until the inventory
-is closed and opened again! (For example, when writing <skyb>[equip=false]</skyb>.
-
-While we could implement a force resync, doing that would change some internals
-of the pouch state that you may not want - for example, which item nodes
-correspond to the equipments in the overworld.
-```
+> [!CAUTION]
+> If <skyb>!write</skyb> or <skyb>!swap</skyb> is used while the inventory screen
+> is open, some inventory state may not reflect immediately until the inventory
+> is closed and opened again! (For example, when writing <skyb>[equip=false]</skyb>.
+>
+> While we could implement a force resync, doing that would change some internals
+> of the pouch state that you may not want - for example, which item nodes
+> correspond to the equipments in the overworld.

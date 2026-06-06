@@ -1,8 +1,7 @@
 # 自定义镜像
 
-```admonish todo
-Custom Image functionality is WIP. Please reach out to me if you want to play with it.
-```
+> [!NOTE]
+> TODO - Custom Image functionality is WIP. Please reach out to me if you want to play with it.
 
 When running into code outside the normal inventory logic using glitches
 like [Item Stack Underflow](../ist/isu.md), the simulator will probably crash
@@ -43,22 +42,19 @@ heap-free-size = 0x40000
 pmdm-addr      = 0x0000003456789ab0
 '''
 ```
-```admonish note
-The numeric values must be hexadecimal; the leading `0x` is optional.
-```
-```admonish note
-If a value is invalid, it's equivalent to that value being not specified.
-At the same time, you will see an error in the script editor.
-```
+> [!NOTE]
+> The numeric values must be hexadecimal; the leading `0x` is optional.
+> [!NOTE]
+> If a value is invalid, it's equivalent to that value being not specified.
+> At the same time, you will see an error in the script editor.
 
 The `image` key specifies the version of the game.
 Allowed values are `1.5` and `1.6`.
 
-```admonish warning
-Currently, only `1.5` is supported. `1.6` is recognized but
-not supported. Newer versions won't be recognized by either
-the simulator or `uking-relocate`.
-```
+> [!WARNING]
+> Currently, only `1.5` is supported. `1.6` is recognized but
+> not supported. Newer versions won't be recognized by either
+> the simulator or `uking-relocate`.
 
 The rest of the keys are optional. If not specified, the simulator will use the internal default values.
 
@@ -71,10 +67,9 @@ The rest of the keys are optional. If not specified, the simulator will use the 
 |`heap-free-size` | Size | Size of the free region of the heap for the simulator to allocate memory |
 |`pmdm-addr` | Physical Address | The address of the `PauseMenuDataMgr` (in other words, the value of `PauseMenuDataMgr*`). This is used to calculate heap start |
 
-```admonish danger
-Large stack/heap size can slow down simulator start-up. It is recommended to only change these
-if the default does not work for you.
-```
+> [!CAUTION]
+> Large stack/heap size can slow down simulator start-up. It is recommended to only change these
+> if the default does not work for you.
 
 DLC specifier can be any string that contains `0`, `1`, `2`, or `3`, which correspond
 to no DLC installed, `DLC ver1.0 (Day 1)`, `DLC ver2.0 (Master Trials)` and `DLC ver3.0 (Champions' Ballad)`.
@@ -104,12 +99,11 @@ You should see a prompt that asks if you want to upload
 a custom image. Select `Setup` and follow the on-screen instructions
 to upload the `.bfi` file you created.
 
-```admonish note
-If the custom image fails to load, you can always select `Use Default Image` 
-in the prompt to start the application normally and fix your script.
-
-The uploaded image is stored in your local browser.
-```
+> [!NOTE]
+> If the custom image fails to load, you can always select `Use Default Image` 
+> in the prompt to start the application normally and fix your script.
+>
+> The uploaded image is stored in your local browser.
 
 ## Use Custom Image By Default
 You can opt-in to always use your custom image for you own script, even when

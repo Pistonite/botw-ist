@@ -6,9 +6,8 @@ from another.
 - <skyb>entangle</skyb> activates PE and sets the target item
 - <skyb>:targeting</skyb> changes the target item, or allows you to target empty slots
 
-```admonish warning
-PE is not 100% accurate.
-```
+> [!WARNING]
+> PE is not 100% accurate.
 
 ## Syntax
 > `entangle` [`ITEM`](../user/syntax_item.md)<br>
@@ -29,12 +28,11 @@ entangle pot-lid
 
 While a slot is activated, you will see a "Link" icon next to it.
 
-```admonish tip
-If a slot that's supposed to be activated does't exist in a tab
-(i.e the tab doesn't have enough items), there will be a phantom
-slot displayed in that location when in Tabbed View.
-This is only a visual effect of the simulator.
-```
+> [!TIP]
+> If a slot that's supposed to be activated does't exist in a tab
+> (i.e the tab doesn't have enough items), there will be a phantom
+> slot displayed in that location when in Tabbed View.
+> This is only a visual effect of the simulator.
 
 The effect of the activation will last until the inventory is closed. You can also
 use another <skyb>entangle</skyb> command to change which slot is activated.
@@ -56,11 +54,10 @@ The <skyb>:targeting</skyb> annotation is used to do that.
 #            doesn't matter what you put here
 ```
 
-```admonish warning
-<skyb>:targeting</skyb> currently also searches slots that are not activated.
-If there are multiple matches, you might need to use a [Position Property](../user/syntax_item.md#selecting-from-multiple-matches)
-to specify the activated slot.
-```
+> [!WARNING]
+> <skyb>:targeting</skyb> currently also searches slots that are not activated.
+> If there are multiple matches, you might need to use a [Position Property](../user/syntax_item.md#selecting-from-multiple-matches)
+> to specify the activated slot.
 
 Finally, in the next command after <skyb>:targeting</skyb>, you can perform
 an action on a PE-enabled slot. If the target item can be reached by the item

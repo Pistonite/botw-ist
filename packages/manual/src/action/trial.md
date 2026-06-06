@@ -28,11 +28,10 @@ Most of the time, a single <skyb>!trial-start</skyb> or <skyb>!trial-end</skyb>
 is accurate enough and you don't need to worry about the specific details
 for each trial. See below if you are in an edge case where the specific event flow matters.
 
-```admonish danger
-You should almost always make sure you are in the overworld to start a trial.
-Starting trial with inventory open is supported but may have unintended results.
-The simulator will NOT automatically switch the screen for you.
-```
+> [!CAUTION]
+> You should almost always make sure you are in the overworld to start a trial.
+> Starting trial with inventory open is supported but may have unintended results.
+> The simulator will NOT automatically switch the screen for you.
 
 ## Eventide
 When walking on eventide, the held items will be dropped if Arrowless Smuggle is active,

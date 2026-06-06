@@ -35,18 +35,17 @@ tasks:
       - task: build-internal
 
   build-internal:
-    cmds:
-      - mdbook build
-      - mdbook build zh -d ../book/zh
-      - node --experimental-strip-types preprocess/inject-meta.mts post
+    - mdbook build
+    - mdbook build zh -d book/zh
+    - node --experimental-strip-types preprocess/inject-meta.mts post
 
   check:
-    cmds:
-      - task: cargo:clippy-all
-      - task: cargo:fmt-check
+    - task: cargo:clippy-all
+    - task: cargo:fmt-check
 
   fix:
-    cmds:
-      - task: cargo:fmt-fix
+    - task: cargo:fmt-fix
     
 
+  migrate:
+    - node --experimental-strip-types update-admonition.ts src

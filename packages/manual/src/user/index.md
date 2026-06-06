@@ -1,10 +1,9 @@
 # User Manual
 
-```admonish info
-This section covers how to use the Simulator App. While not
-required, understanding IST itself could make it easier to understand
-some of the concepts here. You can read about IST [here](../ist/index.md).
-```
+> [!NOTE]
+> This section covers how to use the Simulator App. While not
+> required, understanding IST itself could make it easier to understand
+> some of the concepts here. You can read about IST [here](../ist/index.md).
 
 ## How the Simulator works
 The **Simulator** runs on a **Script**, which is a text file that contains
@@ -43,22 +42,21 @@ The simulator app has 3 editing modes:
 
 You can switch the mode anytime in the top-left corner of the header.
 
-~~~admonish warning
-When switching to `Auto Saved`, your locally-saved script will be overwritten with whatever
-script that's currently in the script editor!
-
-If you accidentally overwrite your local script and you need it, you can still recover it
-by open the devtool console (F12) and type in the following:
-
-```typescript
-console.log(localStorage.getItem("Skybook.AutoBackupScript"))
-```
-
-Press enter, and copy the output.
-
-This entry is updated whenever you switch to `Auto Saved` from the other modes. If the backup is
-lost, your script will be lost forever.
-~~~
+> [!WARNING]
+> When switching to `Auto Saved`, your locally-saved script will be overwritten with whatever
+> script that's currently in the script editor!
+>
+> If you accidentally overwrite your local script and you need it, you can still recover it
+> by open the devtool console (F12) and type in the following:
+>
+> ```typescript
+> console.log(localStorage.getItem("Skybook.AutoBackupScript"))
+> ```
+>
+> Press enter, and copy the output.
+>
+> This entry is updated whenever you switch to `Auto Saved` from the other modes. If the backup is
+> lost, your script will be lost forever.
 
 ## Migration from V3
 
@@ -82,9 +80,8 @@ Notable differences:
 - For setups with Prompt Entanglement, you need to activate PE in V4 with <skyb>entangle</skyb>
   command.
 
-```admonish info
-While it's technically more consistent to translate the old script using supercommands
-like <skyb>!remove</skyb> that mimics the old behavior more consistently, supercommands
-are not meant to be overused, so it's not worth to change the semantic of the script
-just for the edge cases.
-```
+> [!NOTE]
+> While it's technically more consistent to translate the old script using supercommands
+> like <skyb>!remove</skyb> that mimics the old behavior more consistently, supercommands
+> are not meant to be overused, so it's not worth to change the semantic of the script
+> just for the edge cases.

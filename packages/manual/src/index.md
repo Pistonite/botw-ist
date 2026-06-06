@@ -22,10 +22,9 @@ Please provide feedback, bug reports and feature requests on [GitHub](https://gi
 Alternatively, you can join the communities below for discussion in general.
 
 ## Discord
-```admonish warning
-I prefer discussion in public channel over DMs for visibility, in case someone else
-may have the same problems as you. Please only DM me for privacy or other concerns.
-```
+> [!WARNING]
+> I prefer discussion in public channel over DMs for visibility, in case someone else
+> may have the same problems as you. Please only DM me for privacy or other concerns.
 
 Join my [Discord](https://discord.gg/xe2wHYrSgB)
 and get the `BOTW Tools` role to get access to the `#botw-ist` channel to ask

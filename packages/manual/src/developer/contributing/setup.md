@@ -6,17 +6,16 @@ on your PC.
 I aim to make the setup process as streamlined as possible. If you encounter
 any issues, please feel free to reach out and suggest to me how it can be improved!
 
-```admonish info
-Before starting the setup, follow the [`mono-dev` Standard](https://mono.pistonite.dev/standard.html)
-to setup the required tools:
-- Rust Toolchain
-- Node, PNPM, and Bun
-- Python
-- Task
-- Magoo
-
-Coreutils is required for Windows development.
-```
+> [!TIP]
+> Before starting the setup, follow the [`mono-dev` Standard](https://mono.pistonite.dev/standard.html)
+> to setup the required tools:
+> - Rust Toolchain
+> - Node, PNPM, and Bun
+> - Python
+> - Task
+> - Magoo
+>
+> Coreutils is required for Windows development.
 
 ## Clone repository and one-time setup
 
