@@ -17,6 +17,7 @@ path = "../skybook-api"
 hashlink.workspace = true
 cu.workspace = true
 oneshot.workspace = true
+oneshot.features = ["std", "async"]
 serde.workspace = true
 thiserror.workspace = true
 static_assertions.workspace = true
