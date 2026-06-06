@@ -19,12 +19,11 @@ whatever you want to call them):
 - The **`Extensions`**: The extensions are extra UI widgets that interface with the Application
   to easily add new features without changing the underlying architecture.
 
-```admonish info
-For the web application, there is also a server that handles DirectLoad - 
-loading script from another source such as GitHub or embedded URL. The
-server doesn't really have anything to do with the core functionality, so it's
-not discussed here.
-```
+> [!NOTE]
+> For the web application, there is also a server that handles DirectLoad - 
+> loading script from another source such as GitHub or embedded URL. The
+> server doesn't really have anything to do with the core functionality, so it's
+> not discussed here.
 
 These layers can be composed based on different requirements for endpoints.
 For example, the configuration for the web app is:

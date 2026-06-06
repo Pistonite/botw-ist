@@ -13,7 +13,6 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          mono-dev: pnpm
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
@@ -31,7 +30,6 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          mono-dev: pnpm
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
@@ -49,7 +47,6 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          mono-dev: pnpm
           ecma-pnpm: true
           ecma-bun: true
           rust: nightly
@@ -70,7 +67,6 @@ jobs:
     steps:
       - uses: Pistonight/mono-dev/actions/setup@main
         with:
-          mono-dev: pnpm
           ecma-pnpm: true
           ecma-bun: true
           rust: stable

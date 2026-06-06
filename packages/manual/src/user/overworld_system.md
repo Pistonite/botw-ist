@@ -24,11 +24,10 @@ This limit is simulated by the `Overworld` system in the following way:
 - If you perform any action that takes some time so it's impossible to preserve
   the despawning item, the item will be deleted.
 
-```admonish tip
-It is implemented like this because it is possible to drop more than 10 items,
-but pick up the items fast enough before it despawns to keep the materials on the ground
-under the limit. This can be used to optimize IST steps.
-```
+> [!TIP]
+> It is implemented like this because it is possible to drop more than 10 items,
+> but pick up the items fast enough before it despawns to keep the materials on the ground
+> under the limit. This can be used to optimize IST steps.
 
 For example, the following script will result in `15` apples in the overworld,
 `5` of which are in the `Will despawn` state.

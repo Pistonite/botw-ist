@@ -1,17 +1,16 @@
 # Prompt Entanglement (PE)
 
-```admonish warning
-This glitch is related to the Pouch Screen, which has not been reversed
-engineered. Most of the concepts are based on experiments, and may not reflect
-the actual implementation in the game.
-```
+> [!WARNING]
+> This glitch is related to the Pouch Screen, which has not been reversed
+> engineered. Most of the concepts are based on experiments, and may not reflect
+> the actual implementation in the game.
 
-```admonish todo
-This section is WIP and may contain inaccurate information. If you see any issues,
-or want to improve this section,
-please edit [this file](https://github.com/Pistonite/botw-ist/tree/main/packages/manual/src/ist/pe.md)
-and open a Pull Request.
-```
+> [!NOTE]
+> TODO - 
+> This section is WIP and may contain inaccurate information. If you see any issues,
+> or want to improve this section,
+> please edit [this file](https://github.com/Pistonite/botw-ist/tree/main/packages/manual/src/ist/pe.md)
+> and open a Pull Request.
 
 **Prompt Entanglement**, or PE, is a glitch that allows you to apply
 a prompt (like "Equip", "Drop", "Hold", etc) from one item to another item
@@ -22,9 +21,8 @@ that is not supposed to have that prompt. For example:
 - Eating a Key Item
 
 ## Invalid Star Tab
-```admonish note
-IST refers to Inventory Slot Transfer in contexts pertaining to Invalid Star Tab.
-```
+> [!NOTE]
+> IST refers to Inventory Slot Transfer in contexts pertaining to Invalid Star Tab.
 
 To activate PE, the first step is to activate a state known as **Invalid Star Tab**.
 This is a state that allows the cursor (the box that highlights which item is 
@@ -48,10 +46,9 @@ Once the setup is done, you can verify Invalid Star Tab is active if any of the 
   You can only see the cursor when you press "Right", which moves it on to the "Save" button.
 
 ## Cursor Glitch
-```admonish warning
-The Cursor Glitch is not fully understood, since the inventory screen
-system is not reversed engineered. This section may contain inaccurate information.
-```
+> [!WARNING]
+> The Cursor Glitch is not fully understood, since the inventory screen
+> system is not reversed engineered. This section may contain inaccurate information.
 
 When Invalid Star Tab is active, you can now perform the **Cursor Glitch**
 to achieve PE. This glitch uses a sequence of controller inputs
@@ -75,11 +72,10 @@ Typically, we refer to the position of the cursor by the Row and Column.
 In the example above, we say the Cursor Glitch is active at `Row 2, Column 3`,
 or simply `Row 2 Column 3 is activated`.
 
-```admonish tip
-Since the Cursor Glitch is not fully understood, the community has put
-together [a spreadsheet](https://docs.google.com/spreadsheets/d/1j0UM0kIGs74DKkKUNGsDH5LhQIBbDDw9cIxxkcE82P8/edit?gid=0#gid=0) of different input sequences you can use
-to active each slot.
-```
+> [!TIP]
+> Since the Cursor Glitch is not fully understood, the community has put
+> together [a spreadsheet](https://docs.google.com/spreadsheets/d/1j0UM0kIGs74DKkKUNGsDH5LhQIBbDDw9cIxxkcE82P8/edit?gid=0#gid=0) of different input sequences you can use
+> to active each slot.
 
 When Cursor Glitch is active, you can keep it active by moving tabs in groups
 of 3 (tap right-stick right 3 times, or left 3 times), without pausing too long
@@ -119,10 +115,9 @@ In general, these are the steps to do any PE setup:
   and optionally go to the System screen and back to reset the prompt
 - Move tabs in groups of 3 to the target item, and use the prompt
 
-```admonish tip
-Since you can only keep the glitch by moving tabs in groups of 3,
-this means PE can only be used between 2 items that are multiple of 3 tabs apart (i.e. have 2 other tabs between the source and target items).
-```
+> [!TIP]
+> Since you can only keep the glitch by moving tabs in groups of 3,
+> this means PE can only be used between 2 items that are multiple of 3 tabs apart (i.e. have 2 other tabs between the source and target items).
 
 ## Applications
 
@@ -139,14 +134,13 @@ from equipments. Using the "Drop" prompt will not put Link in the holding
 state in inventory screen, allowing you to perform other actions while technically
 holding.
 
-```admonish note
-Note that if you try to hold items that do not have a model (Food, or some Key Items),
-the game will crash when trying to render it in the inventory. You can workaround
-this with Super Hold Smuggle or some other method, which we will not go into depth
-here.
-
-The simulator allows you to hold anything without crashing.
-```
+> [!NOTE]
+> Note that if you try to hold items that do not have a model (Food, or some Key Items),
+> the game will crash when trying to render it in the inventory. You can workaround
+> this with Super Hold Smuggle or some other method, which we will not go into depth
+> here.
+>
+> The simulator allows you to hold anything without crashing.
 
 ### Removing Arrow Slots and Permanent Items
 When you obtain a type of arrow, that arrow slot is stuck in the inventory
@@ -181,17 +175,16 @@ To transfer durability:
 This will switch the equipment in the overworld while not in the inventory.
 The change equip action will cause a durability update, which transfers the durability.
 
-```admonish tip
-Note that unlike durability transfer with Menu Overload, you do not need to use the equipment
-to update the durability. This is because the desync achieved by PE is the exact opposite of Menu Overload:
-
-- Menu Overload desyncs by switching the equipment in the Inventory, but not in overworld
-- PE desyncs by switching the equipment in the overworld, but not in the inventory
-
-Since with Menu Overload, you do not switch equipment in the overworld, which does
-not trigger the change equip action. Therefore, using the equipment manually is required
-to update the durability.
-```
+> [!TIP]
+> Note that unlike durability transfer with Menu Overload, you do not need to use the equipment
+> to update the durability. This is because the desync achieved by PE is the exact opposite of Menu Overload:
+>
+> - Menu Overload desyncs by switching the equipment in the Inventory, but not in overworld
+> - PE desyncs by switching the equipment in the overworld, but not in the inventory
+>
+> Since with Menu Overload, you do not switch equipment in the overworld, which does
+> not trigger the change equip action. Therefore, using the equipment manually is required
+> to update the durability.
 
 You can also use this to unequip the One-hit Obliterator, which is more
 consistent than using Menu Overload. After performing the steps above,

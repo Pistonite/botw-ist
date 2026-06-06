@@ -12,7 +12,7 @@
 - [模拟器的使用](./user/index.md)
   - [指令语法](./user/syntax.md)
     - [物品语法](./user/syntax_item.md)
-    - [注释和笔记-未翻译](./user/syntax_comment.md)
+    - [注释和笔记](./user/syntax_comment.md)
   - [模拟器系统](./user/systems.md)
     - [界面系统-未翻译](./user/screen_system.md)
     - [主世界系统-未翻译](./user/overworld_system.md)

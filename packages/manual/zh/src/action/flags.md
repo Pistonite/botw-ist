@@ -55,10 +55,9 @@ Examples
 :discovered [armor=false]
 ```
 
-```admonish note
-When changing a tab from undiscovered to discovered, the inventory will not automatically
-update until it is changed (i.e. when `updateInventoryInfo()` is called again).
-```
+> [!NOTE]
+> When changing a tab from undiscovered to discovered, the inventory will not automatically
+> update until it is changed (i.e. when `updateInventoryInfo()` is called again).
 
 ## 修改任意旗标
 <skyb>!set-gdt</skyb> can set any flag by name.
@@ -108,6 +107,5 @@ are specified will be changed
 !set-gdt <CookEffect1>[vec2f, i=1, x=101, y=500.0]
 ```
 
-```admonish note
-Integer values for vector components are automatically converted to 32-bit IEEE-754 floats.
-```
+> [!NOTE]
+> Integer values for vector components are automatically converted to 32-bit IEEE-754 floats.

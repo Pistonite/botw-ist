@@ -1,8 +1,7 @@
 # 物品转存简介
 
-```admonish info title="信息"
-本篇对应B站上[物品转存教程第一期：基础理论](https://www.bilibili.com/video/BV1Dn87zoEXs)。
-```
+> [!NOTE]
+> 本篇对应B站上[物品转存教程第一期：基础理论](https://www.bilibili.com/video/BV1Dn87zoEXs)。
 
 ## 什么是IST
 
@@ -13,9 +12,8 @@ IST是**Inventory Slot Transfer**的全称。它是旷野之息中利用了物�
 ## 背包结构
 游戏中，打开背包界面能看到的物品我们称之为“可视背包”。可视背包由一个双链表组成。背包中所有页面的物品都连在同一个表中。比如，在正常背包顺序下，表中有所有的武器，然后所有的弓，然后所有的箭，以此类推，最后是所有的重要道具。在背包界面的一页物品中，最左上的物品是表里排最靠前的，最右下的物品是最靠后的。然后先连一行的物品，再到下一行。
 
-```admonish info title="信息"
-没有物品的格子称为空格。空格不在背包表中，只是在界面中的显示效果。
-```
+> [!NOTE]
+> 没有物品的格子称为空格。空格不在背包表中，只是在界面中的显示效果。
 
 
 
@@ -30,12 +28,11 @@ Whenever the `Visible Inventory` changes, the change is synchronized to `GameDat
 We call this process `Sync GameData` or simply `Sync`. The `GameData` is also
 what is stored in the save files.
 
-```admonish tip title="技巧"
-When `mCount` is 0, you won't be able to see the items in the inventory when you open it.
-This is because the game `thinks` the inventory is empty since the number of items is 0.
-However, the items are still there. You can throw a weapon or pick up any item - 
-as long as mCount is no longer 0, you will be able to access the inventory again.
-```
+> [!TIP]
+> When `mCount` is 0, you won't be able to see the items in the inventory when you open it.
+> This is because the game `thinks` the inventory is empty since the number of items is 0.
+> However, the items are still there. You can throw a weapon or pick up any item - 
+> as long as mCount is no longer 0, you will be able to access the inventory again.
 
 ## Why is it called IST - The main mechanism
 The huge number of glitches that are derived from IST all rely on the core

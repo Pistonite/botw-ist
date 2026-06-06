@@ -11,10 +11,9 @@ Comments are lines that start with `#` or `//`. They are completely ignored.
 // This is also a comment
 ```
 
-```admonish tip
-In the script editor, you can use the hotkey `Ctrl + /` to quick toggle
-selected lines between commented/uncommented.
-```
+> [!TIP]
+> In the script editor, you can use the hotkey `Ctrl + /` to quick toggle
+> selected lines between commented/uncommented.
 
 ## Block Literals
 Block Literal is a multi-line block that starts and ends with `'''` (triple single-quotes).
@@ -39,6 +38,5 @@ drop all weapons
 drop all shields
 ```
 
-```admonish info
-The `Notes` feature is not implemented yet.
-```
+> [!NOTE]
+> The `Notes` feature is not implemented yet.

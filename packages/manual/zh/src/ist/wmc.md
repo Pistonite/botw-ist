@@ -16,13 +16,12 @@ During this corruption:
   - See [`actWeapon.h`](https://github.com/zeldaret/botw/blob/master/src/Game/Actor/actWeapon.h)
     for values for each modifier type.
 
-```admonish info
-You will see [Prompt Entanglement (PE)](./pe.md) often brought up together with WMC.
-This is because WMC relies on the data from a cooked item, and you can only get
-a very limited subset of possible cook data values by cooking with normal ingredients.
-PE allows cooking with unusual ingredients, which is required to get some modifier value/flag.
-However, WMC and PE are 2 separate glitches, and neither is required to perform the other.
-```
+> [!NOTE]
+> You will see [Prompt Entanglement (PE)](./pe.md) often brought up together with WMC.
+> This is because WMC relies on the data from a cooked item, and you can only get
+> a very limited subset of possible cook data values by cooking with normal ingredients.
+> PE allows cooking with unusual ingredients, which is required to get some modifier value/flag.
+> However, WMC and PE are 2 separate glitches, and neither is required to perform the other.
 
 ## Base Mechanism
 WMC is possible because:
@@ -48,16 +47,15 @@ and the cook item.*
 Depending on *how* these 2 conditions are satisfied, the WMC setups
 can be further categorized.
 
-```admonish info
-In general, WMC can refer to any of the cases where the *last added item*
-is not the item that is *supposed* to receive the data.
-
-You can technically corrupt any item in `Visible Inventory`,
-but only Equipments and Foods will have the data saved to `GameData`.
-
-It is not possible to transfer modifier between Weapons, because unlike
-food, the data for weapons are added in the same step as the item itself (condition 2 from above).
-```
+> [!NOTE]
+> In general, WMC can refer to any of the cases where the *last added item*
+> is not the item that is *supposed* to receive the data.
+>
+> You can technically corrupt any item in `Visible Inventory`,
+> but only Equipments and Foods will have the data saved to `GameData`.
+>
+> It is not possible to transfer modifier between Weapons, because unlike
+> food, the data for weapons are added in the same step as the item itself (condition 2 from above).
 
 Currently, WMC is only possible when reloading the inventory from `GameData` (for example
 when reloading a save). This is because there is no known way to trigger adding a cook item
@@ -87,10 +85,9 @@ The step-by-step explanation:
 4. When loading the donor meal, since there are already 60 food, it fails to load.
 5. Since the last-added item was the `hammer`, the data from the donor meal is transferred to the hammer.
 
-```admonish info
-The main drawback for this method is that it requires 60 food and 60 broken slots. Getting 60 broken slots
-is very tedious.
-```
+> [!NOTE]
+> The main drawback for this method is that it requires 60 food and 60 broken slots. Getting 60 broken slots
+> is very tedious.
 
 ## Stackable Food Limit
 The reason why the previous setup required 60 broken slots, is because if we don't transfer 60 food,
@@ -130,11 +127,10 @@ save
 reload
 ```
 
-```admonish info
-As you can see, this method can work with a minimum of 1 broken slots, which is a big improvements over 60 broken slots.
-In speedruns, typically we use more broken slots anyway to corrupt other stuff and for duplicating food to quickly
-reach the 60 food required for the first transfer.
-```
+> [!NOTE]
+> As you can see, this method can work with a minimum of 1 broken slots, which is a big improvements over 60 broken slots.
+> In speedruns, typically we use more broken slots anyway to corrupt other stuff and for duplicating food to quickly
+> reach the 60 food required for the first transfer.
 
 ## The Nullptr Exploit
 Both previous setups require 60 food to make the first transfer happen. It would be really nice if that's not the case.
@@ -145,14 +141,13 @@ without checking if it's the cook item. However, when *there is no last added it
 the game does not advance to the next cook data slot. This means when the next food loads, it will keep using the cook
 data of the previous food!
 
-```admonish info
-This can happen because in the `GameData`, the cook data and the item themselves are not stored in the same array:
-
-- The item name array has 420 strings, one for each item.
-- The cook data array has 60 elements, one for each food.
-
-When the Nullptr Exploit is triggered, the counter for the item array increments, but not the cook data array.
-```
+> [!NOTE]
+> This can happen because in the `GameData`, the cook data and the item themselves are not stored in the same array:
+>
+> - The item name array has 420 strings, one for each item.
+> - The cook data array has 60 elements, one for each food.
+>
+> When the Nullptr Exploit is triggered, the counter for the item array increments, but not the cook data array.
 
 Using this exploit, 60 food is no longer required. However, this exploit is pretty tricky to trigger;
 this is because `mLastAddedItem` is only `nullptr` before any item is added (with one exception being the Master Sword).
@@ -169,9 +164,8 @@ The condition for this trigger is somewhat complicated:
 4. The save being loaded has a Master Sword (either broken or not broken)
    - 3 and 4 usually means the save has a broken Master Sword
 
-```admonish tip
-In one sentence, this means to "transfer a Master Sword into a save with a broken Master Sword".
-```
+> [!TIP]
+> In one sentence, this means to "transfer a Master Sword into a save with a broken Master Sword".
 
 When all of the above conditions are met, the last-added item is set to `nullptr`, enabling the exploit.
 
@@ -183,11 +177,6 @@ The whole setup would be:
 4. Continue the Stackable Food Limit setup
 
 ## Travel Medallion (TMWMC)
-
-```admonish todo
-This section is WIP and may contain inaccurate information. If you see any issues,
-or want to improve this section, please create a Pull Request.
-```
 
 The Travel Medallion is added in the Master Trials DLC. Unlike any other DLC items, it gets removed
 if you uninstall the DLC.
@@ -207,14 +196,6 @@ Unlike MSWMC, Travel Medallion does not set last added item to `nullptr`, so it 
 
 
 ## Zelda Notes (ZNWMC)
-```admonish todo
-This section is WIP and may contain inaccurate information. If you see any issues,
-or want to improve this section, please create a Pull Request.
-```
-
-```admonish warning
-This method has not be verified. It is only theorized based on reverse engineering of version 1.8.0 of the Switch 1 Edition.
-```
 
 Zelda Notes is an item exclusive to the Nintendo Switch 2 Edition. When you uninstall NS2E,
 it gets removed from your inventory and can be used to trigger the Nullptr Exploit:

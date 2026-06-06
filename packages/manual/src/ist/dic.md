@@ -38,11 +38,10 @@ This is correct if the `GameData` is always in-sync with `Visible Inventory`,
 which would be the case most of the time. Therefore, all the inventory corruption
 aims to do is cause `GameData` to be desynced, then trigger a durability set.
 
-```admonish info
-Note that this is only one form of desync, which is the primary one used for inventory corruption.
-There is another form of desync used by inventory corruption using Inventory Storage, which is a 
-derivative of Map Storage. We will not be going into the details for that.
-```
+> [!NOTE]
+> Note that this is only one form of desync, which is the primary one used for inventory corruption.
+> There is another form of desync used by inventory corruption using Inventory Storage, which is a 
+> derivative of Map Storage. We will not be going into the details for that.
 
 ## GameData Corruption with IST
 All it takes for corruption now is 2 things:
@@ -66,13 +65,12 @@ to desync the `GameData` in the way so that equipped items are aligned
 to the item to corrupt. This is why different IST setups exist to corrupt
 different things in different speedruns.
 
-```admonish tip
-This is also why it is important to follow the setup to unequip/equip
-certain items before reloading, because the equipped item slot is what is
-used for corruption. To be exact, the durability of the *last equipped slot*
-is transferred into the *first equipped slot* in *both* `Visible Inventory`
-and `GameData`.
-```
+> [!TIP]
+> This is also why it is important to follow the setup to unequip/equip
+> certain items before reloading, because the equipped item slot is what is
+> used for corruption. To be exact, the durability of the *last equipped slot*
+> is transferred into the *first equipped slot* in *both* `Visible Inventory`
+> and `GameData`.
 
 ## Aligning the Items
 
@@ -93,13 +91,12 @@ the categories:
 - Since Weapon is first, only transferring weapon will affect the position of weapons.
 - The rest follow the same concept
 
-```admonish example
-For example, transferring 1 Bow, 1 Arrow, 1 Shield, will:
-- Not change position of Weapons
-- Push Bows by 1 slot
-- Push Arrows by 2 slots
-- Push Shields by 3 slots
-```
+> [!TIP]
+> For example, transferring 1 Bow, 1 Arrow, 1 Shield, will:
+> - Not change position of Weapons
+> - Push Bows by 1 slot
+> - Push Arrows by 2 slots
+> - Push Shields by 3 slots
 
 ## Unsorted Inventory and Leftward Corruption
 Note that GameData desynced in this way can only push the items *to the right*, not *left*.
@@ -122,9 +119,8 @@ put (sort) the item into the correct category when you get something:
    - Items that should appear in a category before other categories have lower values (say Sword is 0, Bow is 1, etc)
    - The list is sorted from lowest value to highest
 
-```admonish info
-This type of sort is referred to as a *stable sort* using a *predicate* that only compares the category of the items.
-```
+> [!NOTE]
+> This type of sort is referred to as a *stable sort* using a *predicate* that only compares the category of the items.
 
 The sorting itself cannot achieve the unsorted state, but *absence of sort* can.
 The list code has one more optimization, that sort operations are skipped if
@@ -134,10 +130,9 @@ and we know `mCount` is not the actual number of items in the inventory.
 All it needs for the sort to be skipped is to make your `mCount` less than or equal to
 one.
 
-```admonish tip
-Unsorted Inventory can also be used to transfer more equipment with fewer Broken Slots by
-putting Weapons after Key Items. This is typically used in speedrun setups where it could be
-faster to not break as many slots. This is why some setups require dropping some weapons, then
-immediately pick them up again. While picking up the weapons, the `mCount` never surpasses
-`1`, causing the weapons you pick up remain at the end of the inventory.
-```
+> [!TIP]
+> Unsorted Inventory can also be used to transfer more equipment with fewer Broken Slots by
+> putting Weapons after Key Items. This is typically used in speedrun setups where it could be
+> faster to not break as many slots. This is why some setups require dropping some weapons, then
+> immediately pick them up again. While picking up the weapons, the `mCount` never surpasses
+> `1`, causing the weapons you pick up remain at the end of the inventory.

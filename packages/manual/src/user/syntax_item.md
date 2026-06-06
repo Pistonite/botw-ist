@@ -57,16 +57,14 @@ In `CONSTRAINED_ITEM_LIST`, you can use 2 special amount forms: <skyb>all</skyb>
   then perform the action `count - X` times. How the total number is counted depends on the command,
   similar to the eat vs sell situation mentioned earlier.
 
-```admonish note
-The implementation may vary slightly based on the command, but the concepts are the same.
-One notable example is that <skyb>all</skyb> in <skyb>dnp</skyb> is implemented as <skyb>all but 0</skyb>, since
-otherwise it will be stuck in an infinite loop.
-```
+> [!NOTE]
+> The implementation may vary slightly based on the command, but the concepts are the same.
+> One notable example is that <skyb>all</skyb> in <skyb>dnp</skyb> is implemented as <skyb>all but 0</skyb>, since
+> otherwise it will be stuck in an infinite loop.
 
-```admonish warning
-In rare cases, <skyb>all but</skyb> could be inaccurate, if the total number of items changes unexpectedly due to the action.
-Please report if you encounter this issue.
-```
+> [!WARNING]
+> In rare cases, <skyb>all but</skyb> could be inaccurate, if the total number of items changes unexpectedly due to the action.
+> Please report if you encounter this issue.
 
 ## Name
 
@@ -98,9 +96,8 @@ You can specify the name of the item in 4 ways:
    what shield is currently equipped, or <skyb>pick-up 3 weapons</skyb>,
    where it doesn't matter which weapons are picked up.
 
-```admonish info
-  See [token](https://github.com/Pistonite/botw-ist/blob/d5812037f4909eeb48cb2ba666dccdb672563cc4/packages/parser/src/syn/token.rs#L119) for possible category values.
-```
+> [!NOTE]
+> See [token](https://github.com/Pistonite/botw-ist/blob/d5812037f4909eeb48cb2ba666dccdb672563cc4/packages/parser/src/syn/token.rs#L119) for possible category values.
 
 ## Metadata
 The [Meta Syntax](./syntax.md#meta-syntax) is used to specify additional properties for the item:
@@ -168,17 +165,15 @@ eat 2 apple[category=material, tab=2, slot=0]
 eat 2 apple[tab=0, slot=3]
 ```
 
-```admonish note
-- If the slot selected by position has a different item, you will receive an error.
-- When using `row` and `col`, they must be specified after `category` or `tab`.
-```
+> [!NOTE]
+> - If the slot selected by position has a different item, you will receive an error.
+> - When using `row` and `col`, they must be specified after `category` or `tab`.
 
-```admonish warning
-The positions are calculated right before the simulator
-tries to find the item to target. This means if the action performed on
-previous items in the same command changes the inventory, the position
-you need to specify to target the correct item could be different from
-what you see in the inventory in the previous step. For this reason,
-it's not recommended to specify position when performing an action on multiple
-items. Separate the position-dependent action to its own command instead.
-```
+> [!WARNING]
+> The positions are calculated right before the simulator
+> tries to find the item to target. This means if the action performed on
+> previous items in the same command changes the inventory, the position
+> you need to specify to target the correct item could be different from
+> what you see in the inventory in the previous step. For this reason,
+> it's not recommended to specify position when performing an action on multiple
+> items. Separate the position-dependent action to its own command instead.

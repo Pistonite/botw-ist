@@ -35,29 +35,27 @@ unequip gale
 unequip fire-arrow # Error! cannot unequip arrow
 ```
 
-```admonish warning
-When using `from-slot` or `slot` for <skyb>unequip</skyb>,
-note that <skyb>unequip</skyb> only targets the **equipped** items.
-So `slot=2` means the second **equipped** item. <skyb>equip</skyb>
-and other commands target all items, so <skyb>equip weapon[slot=3]</skyb>
-equips the third weapon in the inventory, regardless of which weapon
-is currently equipped. If the third weapon is already equipped, you will
-get an error.
+> [!WARNING]
+> When using `from-slot` or `slot` for <skyb>unequip</skyb>,
+> note that <skyb>unequip</skyb> only targets the **equipped** items.
+> So `slot=2` means the second **equipped** item. <skyb>equip</skyb>
+> and other commands target all items, so <skyb>equip weapon[slot=3]</skyb>
+> equips the third weapon in the inventory, regardless of which weapon
+> is currently equipped. If the third weapon is already equipped, you will
+> get an error.
+>
+> This may seem like a weird design choice, but it makes intuitive sense
+> when you use the command in most cases.
 
-This may seem like a weird design choice, but it makes intuitive sense
-when you use the command in most cases.
-```
-
-```admonish tip
-Normally, you would omit the amount for <skyb>equip</skyb> or use `1` for multiple categories, since equipping another item 
-of the same category would
-just unequip the previous one. However, in some configurations, the items won't be auto-unequipped.
-If you actually want to equip more than one item, you have to specify <skyb>[equipped=false]</skyb>.
-Otherwise, it will error when it hits an item that's already equipped.
-For example, <skyb>equip all weapons[equipped=false]</skyb>.
-
-<skyb>unequip all</skyb> should always work as expected.
-```
+> [!TIP]
+> Normally, you would omit the amount for <skyb>equip</skyb> or use `1` for multiple categories, since equipping another item 
+> of the same category would
+> just unequip the previous one. However, in some configurations, the items won't be auto-unequipped.
+> If you actually want to equip more than one item, you have to specify <skyb>[equipped=false]</skyb>.
+> Otherwise, it will error when it hits an item that's already equipped.
+> For example, <skyb>equip all weapons[equipped=false]</skyb>.
+>
+> <skyb>unequip all</skyb> should always work as expected.
 
 By default, changing equipments are assumed to be done in the pause menu. This should be
 ok in most cases. However, there are edge cases where action must be done through the DPad
@@ -75,10 +73,9 @@ Example
 :dpad unequip weapon
 ```
 
-```admonish warning
-Note that <skyb>:dpad unequip</skyb> can only be used to unequip the first equipped item in the quick menu,
-and cannot be used to unequip arrows.
-```
+> [!WARNING]
+> Note that <skyb>:dpad unequip</skyb> can only be used to unequip the first equipped item in the quick menu,
+> and cannot be used to unequip arrows.
 
 
 ## 从背包丢弃装备

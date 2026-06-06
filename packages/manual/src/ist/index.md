@@ -19,23 +19,22 @@ tracked by the game is called `Offset` or number of `Broken Slots`.
 this manual will refer to this number as `Broken Slots`.
 The action to create the Broken Slots is referred to as `Breaking Slots`.
 
-```admonish info
-`Broken Slots` is the name used by the glitch hunting community before
-the underlying concepts of the glitch were fully understood. There's nothing
-actually broken about the slots.
-
-The variable that tracks the number of items is commonly referred to by
-the glitch hunters as `mCount` - a reference to the name of the variable
-in the BOTW decompilation project.
-
-This variable is needed because the inventory is stored as a (doubly-)linked list,
-which has a O(N) time complexity for calculating its length.
-
-The different counts have this relation:
-
-    mCount + Number of broken slots = Actual number of items
-
-```
+> [!NOTE]
+> `Broken Slots` is the name used by the glitch hunting community before
+> the underlying concepts of the glitch were fully understood. There's nothing
+> actually broken about the slots.
+>
+> The variable that tracks the number of items is commonly referred to by
+> the glitch hunters as `mCount` - a reference to the name of the variable
+> in the BOTW decompilation project.
+>
+> This variable is needed because the inventory is stored as a (doubly-)linked list,
+> which has a O(N) time complexity for calculating its length.
+>
+> The different counts have this relation:
+>
+>     mCount + Number of broken slots = Actual number of items
+>
 
 ## Inventory Representation
 The inventory that you see when opening the inventory in-game - the `Visible Inventory` - is 
@@ -48,9 +47,8 @@ and it follows row-major order (i.e. the item in row 1 column 2 is after the ite
 in row 1 column 1 in the list), and the bottom-right corner is last,
 followed by the upper-left corner item of the next page.
 
-```admonish info
-The empty spaces and empty tabs in the inventory do not take space in the list.
-```
+> [!NOTE]
+> The empty spaces and empty tabs in the inventory do not take space in the list.
 
 The items are also stored at the same time in `GameData`, which is the game's flag system.
 The relevant flags are stored with an array type. For example, `PorchItem` is a flag that
@@ -63,12 +61,11 @@ Whenever the `Visible Inventory` changes, the change is synchronized to `GameDat
 We call this process `Sync GameData` or simply `Sync`. The `GameData` is also
 what is stored in the save files.
 
-```admonish tip
-When `mCount` is 0, you won't be able to see the items in the inventory when you open it.
-This is because the game `thinks` the inventory is empty since the number of items is 0.
-However, the items are still there. You can throw a weapon or pick up any item - 
-as long as mCount is no longer 0, you will be able to access the inventory again.
-```
+> [!TIP]
+> When `mCount` is 0, you won't be able to see the items in the inventory when you open it.
+> This is because the game `thinks` the inventory is empty since the number of items is 0.
+> However, the items are still there. You can throw a weapon or pick up any item - 
+> as long as mCount is no longer 0, you will be able to access the inventory again.
 
 ## Why is it called IST - The main mechanism
 The huge number of glitches that are derived from IST all rely on the core

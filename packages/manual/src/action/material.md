@@ -80,32 +80,30 @@ entangle apple
 :smug drop torch
 ```
 
-```admonish warning
-<skyb>:smug</skyb> requires automatically switching to `Overworld` screen. If the screen
-was manually switched, the operation will fail. In this case, you can use the
-<skyb>!arrowless-smuggle</skyb> supercommand to manually activate the state
-while already holding items in the overworld.
-
-    ```skybook
-    pause
-    # This will fail, because screen was manually switched
-    :smug hold 1 apple 
-
-    # Do this instead (if removing the `pause` is not an option)
-    pause
-    hold 1 apple
-    unpause
-    !arrowless-smuggle
-    ```
+> [!WARNING]
+> <skyb>:smug</skyb> requires automatically switching to `Overworld` screen. If the screen
+> was manually switched, the operation will fail. In this case, you can use the
+> <skyb>!arrowless-smuggle</skyb> supercommand to manually activate the state
+> while already holding items in the overworld.
+>
+>     ```skybook
+>     pause
+>     # This will fail, because screen was manually switched
+>     :smug hold 1 apple 
+>
+>     # Do this instead (if removing the `pause` is not an option)
+>     pause
+>     hold 1 apple
+>     unpause
+>     !arrowless-smuggle
 
 ```
 
 ## Dropping Items
 
-```admonish tip
-The <skyb>drop</skyb> is also used for dropping equipments, which has
-a slightly different semantic. The description here only applies to materials.
-```
+> [!TIP]
+> The <skyb>drop</skyb> is also used for dropping equipments, which has
+> a slightly different semantic. The description here only applies to materials.
 
 When using <skyb>drop</skyb> without any items, it means to drop
 whatever is currently being held to the ground.

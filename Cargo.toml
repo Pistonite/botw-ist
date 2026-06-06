@@ -21,17 +21,17 @@ crc32fast = "1.5.0"
 enumset = "1.1.13"
 enum-map = "2.7.3"
 flate2 = { version = "1.1.9", default-features = false }
-hashlink = "0.11.0"
+hashlink = "0.12.0"
 indoc = "2.0.7"
-mdbook = "0.4.52"
+mdbook-preprocessor = "0.5.3"
 num-traits = "0.2.19"
-oneshot = "0.1.13"
+oneshot = "0.2.1"
 paste = "1.0.15" # TODO --cleanup: do we need this?
 phf = "0.13.1"
 rand_xoshiro = "0.8.1"
 rkyv = "0.8.16"
 serde = "1"
-sha2 = "0.10.9"
+sha2 = "0.11.0"
 static_assertions = "1.1.0"
 teleparse = "0.1.2"
 textdistance = "1.1.1"
@@ -41,7 +41,7 @@ tokio = "1"
 # Rust-Web ecosystem
 js-sys = "0.3.99"
 web-sys = "0.3.99"
-ts-rs = "11.1.0"
+ts-rs = "12.0.1"
 tsify = { version = "0.5.6", features = ["js"], default-features = false }
 wasm-bindgen = { version = "0.2.122", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4.72"
@@ -51,7 +51,7 @@ console_error_panic_hook = "0.1.7"
 
 [workspace.dependencies.cu]
 package = "pistonite-cu"
-version = "0.8.2"
+version = "0.8.3"
 
 [workspace.dependencies.pm]
 package = "pistonite-pm"
