@@ -45,7 +45,3 @@ tasks:
 
   fix:
     - task: cargo:fmt-fix
-    
-
-  migrate:
-    - node --experimental-strip-types update-admonition.ts src
