@@ -19,7 +19,7 @@ tasks:
   check:
     cmds:
       - task: ecma:check
-      - node --experimental-strip-types scripts/check-lang-entries.ts
+      - node scripts/check-lang-entries.ts
       - task: fix-language
       - task: git:check-modification
         vars:

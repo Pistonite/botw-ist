@@ -8,6 +8,7 @@ rustflags = [
     "-Clink-args=--export=__tls_size",
     "-Clink-args=--export=__tls_align",
     "-Clink-args=--export=__tls_base",
+    "-Clink-args=--export=__heap_base",
 ]
 
 [unstable]
