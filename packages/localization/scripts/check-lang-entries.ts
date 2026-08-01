@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import subprocess from "node:child_process";
-import YAML from "js-yaml";
+import { load as yamlLoad } from "js-yaml";
 
 // just checking en-US is fine, since missing keys are duplicated to other language files
 // automatically
@@ -18,7 +18,7 @@ fs.writeFileSync(`${DIR}/tsconfig.json`, JSON.stringify(TSCONFIG, null, 2));
 
 LANG_TO_CHECK.forEach((lang) => {
     const langFile = `src/ui/${lang}.yaml`;
-    const langData = YAML.load(fs.readFileSync(langFile, "utf8"));
+    const langData = yamlLoad(fs.readFileSync(langFile, "utf8"));
 
     const generateCheckerFile = (
         keysPrefix: string,

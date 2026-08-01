@@ -18,44 +18,44 @@ bitfield-struct = "0.13.0"
 cached = "0.59.0"
 catppuccin = "2.8.0"
 crc32fast = "1.5.0"
-enumset = "1.1.13"
+enumset = "1.1.14"
 enum-map = "2.7.3"
 flate2 = { version = "1.1.9", default-features = false }
-hashlink = "0.12.0"
+hashlink = "0.12.1"
 indoc = "2.0.7"
-mdbook-preprocessor = "0.5.3"
+mdbook-preprocessor = "0.5.4"
 num-traits = "0.2.19"
 oneshot = "0.2.1"
 paste = "1.0.15" # TODO --cleanup: do we need this?
 phf = "0.13.1"
 rand_xoshiro = "0.8.1"
-rkyv = "0.8.16"
+rkyv = "0.8.17"
 serde = "1"
 sha2 = "0.11.0"
 static_assertions = "1.1.0"
 teleparse = "0.1.2"
 textdistance = "1.1.1"
-thiserror = "2.0.18"
+thiserror = "2.0.19"
 tokio = "1"
 
 # Rust-Web ecosystem
-js-sys = "0.3.99"
-web-sys = "0.3.99"
+js-sys = "0.3.103"
+web-sys = "0.3.103"
 ts-rs = "12.0.1"
 tsify = { version = "0.5.6", features = ["js"], default-features = false }
-wasm-bindgen = { version = "0.2.122", features = ["serde-serialize"] }
-wasm-bindgen-futures = "0.4.72"
+wasm-bindgen = { version = "0.2.126", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.76"
 wasm-bindgen-spawn = "0.0.5"
-console_log = "1.0.0"
+console_log = "1.1.0"
 console_error_panic_hook = "0.1.7"
 
 [workspace.dependencies.cu]
 package = "pistonite-cu"
-version = "0.8.3"
+version = "0.8.4"
 
 [workspace.dependencies.pm]
 package = "pistonite-pm"
-version = "0.2.6"
+version = "0.2.7"
 
 [workspace.dependencies.disarm64]
 package = "disarm64-custom"

@@ -36,7 +36,7 @@
  *   (i.e. was not automatically copied), the user will be prompted to pick one.
  */
 import { readdir, readFile, writeFile } from "node:fs/promises";
-import YAML from "js-yaml";
+import { load as yamlLoad } from "js-yaml";
 import path from "node:path";
 import readline from "node:readline";
 
@@ -70,7 +70,7 @@ if (!inputDirectory) {
 
 const main = async (inputDirectory, inputFile) => {
     const baseFile = path.join(inputDirectory, BASE);
-    const baseLangContent = YAML.load(await readFile(baseFile, "utf-8"));
+    const baseLangContent = yamlLoad(await readFile(baseFile, "utf-8"));
     // load other langs
     const otherLangs = (await readdir(inputDirectory))
         .filter((file) => file.endsWith(".yaml") && file !== BASE)
@@ -78,7 +78,7 @@ const main = async (inputDirectory, inputFile) => {
     const otherLangContent = await Promise.all(
         otherLangs.map(async (lang) => {
             return (
-                YAML.load(await readFile(path.join(inputDirectory, `${lang}.yaml`), "utf-8")) ?? {}
+                yamlLoad(await readFile(path.join(inputDirectory, `${lang}.yaml`), "utf-8")) ?? {}
             ); // empty object if file is empty
         }),
     );
@@ -89,9 +89,9 @@ const main = async (inputDirectory, inputFile) => {
         );
         let inputContent /*: Record<string, Record<string, string>>*/;
         if (inputFile === "-") {
-            inputContent = YAML.load(await readFile(0, "utf-8"));
+            inputContent = yamlLoad(await readFile(0, "utf-8"));
         } else {
-            inputContent = YAML.load(await readFile(inputFile, "utf-8"));
+            inputContent = yamlLoad(await readFile(inputFile, "utf-8"));
         }
         for (const language in inputContent) {
             if (language === BASE_LANG) {
@@ -217,7 +217,7 @@ const parseLangFile = async (file /*: string*/) /*: Promise<LangFile>*/ => {
             const entryContent = currentBlockEntryLines.join("\n");
             blocks.push({
                 before: currentBlockLines,
-                entries: YAML.load(entryContent),
+                entries: yamlLoad(entryContent),
             });
         }
         currentBlockLines = [];

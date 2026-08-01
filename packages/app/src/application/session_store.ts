@@ -128,7 +128,7 @@ export const useSessionStore = create<SessionStore>()((set) => {
         if (!hasUnsavedChanges) {
             return undefined;
         }
-        let message = undefined;
+        let message;
         if (mode === "local") {
             message = translateUI("prompt.closing.local");
         } else {

@@ -263,8 +263,6 @@ export class RunMgr<TPtr> {
             }
         };
 
-        // Take it out of Erc, we will free it manually (by passing it into runParsed)
-        let outputRaw: TPtr | undefined = undefined;
         // shouldn't be possible, but we will just return nullptr if parseoutput is null
         const stepCount = await this.napi.getStepCount(parseOutputEmp.value);
         if (stepCount.err) {
@@ -338,7 +336,7 @@ export class RunMgr<TPtr> {
         for (const { taskId } of thisContext.awaiters) {
             this.taskMgr.unregisterTask(taskId);
         }
-        outputRaw = outputResult.val.value;
+        const outputRaw = outputResult.val.value;
 
         const returnEmp: Emp<RunOutput, TPtr> = this.napi.makeRunOutputEmp(outputRaw);
         // update cached result if we are the latest run

@@ -55,7 +55,7 @@ const searchItemLocalizedInternal = async (
         searchResults = result.val;
     } else {
         const languages = detectLanguage(query);
-        let searchPromises: Promise<SearchEntryWithScore[]>[] = [];
+        let searchPromises: Promise<SearchEntryWithScore[]>[];
         if (languages.length) {
             searchPromises = languages.map(async (tag) => {
                 const result = await searchInLanguage(tag, query);

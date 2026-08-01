@@ -10,7 +10,7 @@ tasks:
   build-src:
     - mkdir -p src/generated
     - uv run scripts/generate.py
-    - node --experimental-strip-types scripts/gen-actors.mts
+    - node scripts/gen-actors.mts
     - task: cargo:fmt-fix
 
   test:
