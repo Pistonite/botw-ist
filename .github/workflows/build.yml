@@ -23,6 +23,7 @@ jobs:
           rust: stable
           tool-mdbook: true
           tool-cargo-binstall: workex=Pistonite/workex
+          python: uv
       - uses: ./.github/steps/cache-ci
         with:
           itemsys: true
@@ -52,6 +53,7 @@ jobs:
           ecma-bun: true
           rust: stable
           tool-cargo-binstall: workex=Pistonite/workex
+          python: uv
       - uses: ./.github/steps/cache-ci
         with:
           itemsys: true

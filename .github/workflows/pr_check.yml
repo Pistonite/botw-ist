@@ -17,6 +17,7 @@ jobs:
           ecma-bun: true
           rust: stable
           tool-cargo-binstall: ripgrep,workex=Pistonite/workex
+          python: uv
       - uses: ./.github/steps/cache-ci
         with:
           itemsys: true
@@ -70,6 +71,7 @@ jobs:
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
+          python: uv
       - uses: ./.github/steps/cache-ci
         with:
           itemsys: true
