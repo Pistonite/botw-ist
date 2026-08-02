@@ -24,8 +24,9 @@ tasks:
     - task: cargo:fmt-fix
 
   push-artifacts:
-    - gcloud storage cp src/generated/* gs://ist-private/artifacts/blueflame-deps/
+    - gcloud storage cp -r src/generated gs://piston-dev/botw-ist/blueflame-deps/generated
 
   pull-artifacts:
+    - rm -f src/generated/*
     - mkdir -p src/generated
-    - gcloud storage cp gs://ist-private/artifacts/blueflame-deps/* src/generated
+    - gcloud storage cp -r gs://piston-dev/botw-ist/blueflame-deps/generated src

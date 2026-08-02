@@ -29,6 +29,7 @@
         ".": "./src/index.ts"
     },
     "imports": {
+        "#codegen": "./src/codegen/index.ts",
         "#data": "./src/data/index.ts",
         "#i18n": "./src/i18n/index.ts",
         "#slot": "./src/slot/index.ts",

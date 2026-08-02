@@ -24,7 +24,7 @@ tasks:
       - task: ecma:app-build
       - mv dist/popout.html dist/popout-{{.COMMIT_SHORT}}.html
       - mkdir -p dist/static/itemsys
-      - cp -r ../itemsys-build/public/* dist/static/itemsys
+      - cp ../itemsys-build/dist/* dist/static/itemsys
   # note the runtime is packaged separately so it can be built in parallel
 
   check:

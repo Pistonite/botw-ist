@@ -1,7 +1,7 @@
 import { makeStyles, mergeClasses } from "@fluentui/react-components";
 import { memo } from "react";
 
-import { ModifierMetadata } from "../generated/modifier_sprite_meta.ts";
+import { MODIFIER_NUM_PER_SIDE, ModifierMetadata } from "#codegen";
 
 export interface ModifierSpriteProps {
     /** Name of the special status to show */
@@ -35,17 +35,16 @@ const SpriteImpl: React.FC<ModifierSpriteProps> = ({ size, status }) => {
                 backgroundPosition,
                 width: size,
                 height: size,
-                backgroundSize: size * NUM,
+                backgroundSize: size * MODIFIER_NUM_PER_SIDE,
             }}
-        ></div>
+        />
     );
 };
 
 export const ModifierSprite = memo(SpriteImpl);
 
-const NUM = 8;
 const getBackgroundPosition = (position: number, size: number) => {
-    const x = position % NUM;
-    const y = Math.floor(position / NUM);
+    const x = position % MODIFIER_NUM_PER_SIDE;
+    const y = Math.floor(position / MODIFIER_NUM_PER_SIDE);
     return `-${x * size}px -${y * size}px`;
 };

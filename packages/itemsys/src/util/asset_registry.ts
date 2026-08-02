@@ -1,8 +1,7 @@
 import { injectStyle, registerTranslationLoader } from "@pistonite/celera";
 
 import { loadItemTranslations, loadItemUITranslations } from "#i18n";
-
-import { type DistFileKey, DistFileMapping } from "./generated/dist_file_mapping.ts";
+import { type DistFileKey, DistFileMapping } from "#codegen";
 
 let theAssetLocation: string = "";
 
@@ -37,24 +36,23 @@ export const registerAssetLocation = async (assetLocation: string) => {
 
 const makeSpriteSheetStyle = (assetLocation: string, chunk: DistFileKey & `${string}.webp`) => {
     const distChunkFile = DistFileMapping[chunk];
-    const chunkKey = chunk.substring(0, ".webp".length);
-    const chunkCSS = `.bia--sprite-${chunkKey}{background-image:url("${assetLocation}/${distChunkFile}")}`;
-    const maskCSS = `.bia--sprite-mask-${chunkKey}{mask-image:url("${assetLocation}/${distChunkFile}")}`;
+    const chunkKey = chunk.substring(0, chunk.length-".webp".length);
+    const chunkCSS = `.bia--sprite-${chunkKey}{background-image:url("${assetLocation}${distChunkFile}")}`;
+    const maskCSS = `.bia--sprite-mask-${chunkKey}{mask-image:url("${assetLocation}${distChunkFile}")}`;
     return chunkCSS + maskCSS;
 };
 
 const makeFontStyle = (assetLocation: string) => {
     const distFontFile = DistFileMapping["Calamity-Regular.otf"];
-    return `@font-face{font-family: CalamitySans; src:url("${assetLocation}/${distFontFile}") format("opentype")}`;
+    return `@font-face{font-family: CalamitySans; src:url("${assetLocation}${distFontFile}") format("opentype")}`;
 };
 
-
 export const getSheikaBackgroundUrl = () => {
-    return getDistFileUrl("SheikahBackground.png")
+    return getDistFileUrl("SheikahBackground.png");
 };
 
 export const getSheikaBackgroundLightUrl = () => {
-    return getDistFileUrl("SheikahBackgroundLight.png")
+    return getDistFileUrl("SheikahBackgroundLight.png");
 };
 
 export const getOverworldBackgroundUrl = (name: BackgroundName) => {
@@ -62,7 +60,7 @@ export const getOverworldBackgroundUrl = (name: BackgroundName) => {
 };
 
 export const getDistFileUrl = (file: DistFileKey) => {
-    return `${theAssetLocation}/${DistFileMapping[file]}`;
+    return `${theAssetLocation}${DistFileMapping[file]}`;
 };
 
 export type BackgroundName =
