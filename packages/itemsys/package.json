@@ -1,7 +1,7 @@
 {
     "name": "@pistonite/skybook-itemsys",
     "type": "module",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "private": true,
     "description": "Item system for Skybook, the BOTW IST Simulator",
     "homepage": "https://github.com/Pistonite/botw-ist",
@@ -24,9 +24,7 @@
         "@types/react": "catalog:",
         "mono-dev": "catalog:"
     },
-    "files": [
-        "src/**/*"
-    ],
+    "files": [],
     "exports": {
         ".": "./src/index.ts"
     },
@@ -39,6 +37,7 @@
     },
     "pistonight/mono-dev": {
         "lib": true,
-        "publish": true
+        "publish": true,
+        "sourcemap": false
     }
 }

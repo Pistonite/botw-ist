@@ -2,56 +2,67 @@ import { injectStyle, registerTranslationLoader } from "@pistonite/celera";
 
 import { loadItemTranslations, loadItemUITranslations } from "#i18n";
 
+import { type DistFileKey, DistFileMapping } from "./generated/dist_file_mapping.ts";
+
 let theAssetLocation: string = "";
 
 /**
- * Register the location of the item assets
+ * Register the location of the itemsys assets
  *
  * assetLocation is the URL prefix for the asset, should end with `/`.
- * The location should have `special` and `sprites` directory
+ * The location should serve a flat list of the expected asset files
  */
 export const registerAssetLocation = async (assetLocation: string) => {
+    if (!assetLocation.endsWith("/")) {
+        assetLocation += "/";
+    }
     const css =
-        makeSpriteSheetStyle(assetLocation, "chunk0x32") +
-        makeSpriteSheetStyle(assetLocation, "chunk1x32") +
-        makeSpriteSheetStyle(assetLocation, "chunk2x32") +
-        makeSpriteSheetStyle(assetLocation, "chunk0x64") +
-        makeSpriteSheetStyle(assetLocation, "chunk1x64") +
-        makeSpriteSheetStyle(assetLocation, "chunk2x64") +
-        makeSpriteSheetStyle(assetLocation, "modifiers") +
+        makeSpriteSheetStyle(assetLocation, "chunk0x32.webp") +
+        makeSpriteSheetStyle(assetLocation, "chunk1x32.webp") +
+        makeSpriteSheetStyle(assetLocation, "chunk2x32.webp") +
+        makeSpriteSheetStyle(assetLocation, "chunk0x64.webp") +
+        makeSpriteSheetStyle(assetLocation, "chunk1x64.webp") +
+        makeSpriteSheetStyle(assetLocation, "chunk2x64.webp") +
+        makeSpriteSheetStyle(assetLocation, "modifiers.webp") +
         makeFontStyle(assetLocation);
 
     injectStyle("skybook-itemsys", css);
-    await registerTranslationLoader("skybook-itemsys", loadItemTranslations);
-    await registerTranslationLoader("skybook-itemsys-ui", loadItemUITranslations);
 
     theAssetLocation = assetLocation;
+
+    // just a good place to register them :)
+    await registerTranslationLoader("skybook-itemsys", loadItemTranslations);
+    await registerTranslationLoader("skybook-itemsys-ui", loadItemUITranslations);
 };
 
-const makeSpriteSheetStyle = (assetLocation: string, chunk: string) => {
-    const chunkCSS = `.bia--sprite-${chunk}{background-image:url("${assetLocation}sprites/${chunk}.webp")}`;
-    const maskCSS = `.bia--sprite-mask-${chunk}{mask-image:url("${assetLocation}sprites/${chunk}.webp")}`;
+const makeSpriteSheetStyle = (assetLocation: string, chunk: DistFileKey & `${string}.webp`) => {
+    const distChunkFile = DistFileMapping[chunk];
+    const chunkKey = chunk.substring(0, ".webp".length);
+    const chunkCSS = `.bia--sprite-${chunkKey}{background-image:url("${assetLocation}/${distChunkFile}")}`;
+    const maskCSS = `.bia--sprite-mask-${chunkKey}{mask-image:url("${assetLocation}/${distChunkFile}")}`;
     return chunkCSS + maskCSS;
 };
 
 const makeFontStyle = (assetLocation: string) => {
-    return `@font-face{font-family: CalamitySans; src:url("${assetLocation}fonts/Calamity-Regular.otf") format("opentype")}`;
+    const distFontFile = DistFileMapping["Calamity-Regular.otf"];
+    return `@font-face{font-family: CalamitySans; src:url("${assetLocation}/${distFontFile}") format("opentype")}`;
 };
 
-export const getSpecialIconUrl = (file: string) => {
-    return `${theAssetLocation}special/${file}`;
-};
 
 export const getSheikaBackgroundUrl = () => {
-    return `${theAssetLocation}images/SheikahBackground.png`;
+    return getDistFileUrl("SheikahBackground.png")
 };
 
 export const getSheikaBackgroundLightUrl = () => {
-    return `${theAssetLocation}images/SheikahBackgroundLight.png`;
+    return getDistFileUrl("SheikahBackgroundLight.png")
 };
 
 export const getOverworldBackgroundUrl = (name: BackgroundName) => {
-    return `${theAssetLocation}images/bg-${name}.jpg`;
+    return getDistFileUrl(`bg-${name}.jpg` as const);
+};
+
+export const getDistFileUrl = (file: DistFileKey) => {
+    return `${theAssetLocation}/${DistFileMapping[file]}`;
 };
 
 export type BackgroundName =
