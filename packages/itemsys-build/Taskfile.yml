@@ -83,11 +83,12 @@ tasks:
       - gcloud storage cp -r gs://piston-dev/botw-ist/itemsys-build/images target
 
   pull-artifacts:
-    desc: Pull all artifacts needed for 'build'
+    desc: Pull all artifacts and build dist
     cmds:
       - task: dpull-deps
       - task: spull-art
       - task: cpull-art
+      - task: build
 
   build:
     desc: Build the distribution files

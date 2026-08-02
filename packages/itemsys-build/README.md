@@ -45,4 +45,4 @@ Otherwise you can build them locally:
 - `task dpull-deps` to pull dependencies for building distribution
 - `task build` to build the dist files.
 
-Alternatively to skip building `botw-data`, run `task pull-artifacts` and `task build`.
+Alternatively to skip building `botw-data`, run `task pull-artifacts`.

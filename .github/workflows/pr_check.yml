@@ -19,7 +19,7 @@ jobs:
           tool-cargo-binstall: ripgrep,workex=Pistonite/workex
       - uses: ./.github/steps/cache-ci
         with:
-          app-assets: true
+          itemsys: true
       - run: task check-ci-layer-1-2 --output group
 
   check-layer-3:
@@ -72,6 +72,6 @@ jobs:
           rust: stable
       - uses: ./.github/steps/cache-ci
         with:
-          app-assets: true
+          itemsys: true
           runtime: true
       - run: task test-ci --output group

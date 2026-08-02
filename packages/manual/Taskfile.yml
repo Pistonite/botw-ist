@@ -17,10 +17,10 @@ tasks:
       - cargo run --bin skybook-manual-preprocessor -- style > theme/skybook.css
       - cp src/icon.svg theme/favicon.svg
       - cp src/icon.png theme/favicon.png
-      - node --experimental-strip-types preprocess/inject-meta.mts pre
+      - node preprocess/inject-meta.mts pre
       - mkdir -p src/generated
       - mkdir -p zh/src/generated
-      - node --experimental-strip-types preprocess/generate-constants.mts
+      - node preprocess/generate-constants.mts
       - cp -r theme zh
   dev:
     desc: Start mdbook in watch mode
@@ -37,7 +37,7 @@ tasks:
   build-internal:
     - mdbook build
     - mdbook build zh -d book/zh
-    - node --experimental-strip-types preprocess/inject-meta.mts post
+    - node preprocess/inject-meta.mts post
 
   check:
     - task: cargo:clippy-all
