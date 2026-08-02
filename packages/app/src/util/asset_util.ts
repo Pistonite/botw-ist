@@ -15,7 +15,7 @@ export const probeAndRegisterAssetLocation = async () => {
         return;
     }
     try {
-        const response = await fetch("/static/itemsys/sprites/modifiers.webp");
+        const response = await fetch("/static/itemsys/dist_index");
         if (response.ok) {
             await registerAssetLocation("/static/itemsys/");
         }
