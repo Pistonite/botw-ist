@@ -23,9 +23,10 @@ jobs:
           rust: stable
           tool-mdbook: true
           tool-cargo-binstall: workex=Pistonite/workex
+          python: uv
       - uses: ./.github/steps/cache-ci
         with:
-          app-assets: true
+          itemsys: true
       - run: task build-app-manual-server-ci
       - uses: actions/upload-artifact@v7
         with:
@@ -52,9 +53,10 @@ jobs:
           ecma-bun: true
           rust: stable
           tool-cargo-binstall: workex=Pistonite/workex
+          python: uv
       - uses: ./.github/steps/cache-ci
         with:
-          app-assets: true
+          itemsys: true
       - run: task build-app-server-ci
       - uses: actions/upload-artifact@v7
         with:
@@ -84,7 +86,6 @@ jobs:
           tool-cargo-binstall: workex=Pistonite/workex
       - uses: ./.github/steps/cache-ci
         with:
-          parser: true
           runtime: true
       - if: github.event_name != 'pull_request'
         run: task build-runtime-ci

@@ -1,9 +1,8 @@
 import { makeStyles, mergeClasses } from "@fluentui/react-components";
 import { memo } from "react";
 
-import { ActorRemap } from "../generated/actor_remap.ts";
-import { ActorMetadata } from "../generated/actor_sprite_meta.ts";
-import { getSpecialIconUrl } from "../asset_registry.ts";
+import { ActorRemap, ActorMetadata, type DistFileKey, ACTOR_NUM_PER_SIDE } from "#codegen";
+import { getDistFileUrl } from "#util";
 
 export interface ActorSpriteProps {
     /** Name of the Actor to display */
@@ -99,6 +98,10 @@ const useStyles = makeStyles({
                 opacity: 0,
             },
         },
+        width: 64 * ACTOR_NUM_PER_SIDE + "px",
+        height: 64 * ACTOR_NUM_PER_SIDE + "px",
+        backgroundColor: "rgba(255, 0, 0, 0.6)",
+        transformOrigin: "top left",
     },
 });
 
@@ -123,10 +126,15 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({
 
     // Handle simple animated images - Travel Medallion, 5 orbs
     // if not animated, it's in the sprite sheet
-    const isSimpleAnimated =
-        /Obj_(WarpDLC|DungeonClearSeal|HeroSeal_(Gerudo|Goron|Rito|Zora))/.test(actor);
+    const isSimpleAnimated = isAnimatedAndSquare(actor);
     if (!disableAnimation && isSimpleAnimated) {
-        return <div aria-hidden className={baseClass} style={getSpecialActorStyle(actor, size)} />;
+        return (
+            <div
+                aria-hidden
+                className={baseClass}
+                style={getSpecialActorStyle(`${actor}.webp`, size)}
+            />
+        );
     }
 
     const iconActor = mapActor(actor, !!deactive, !!powered, effect);
@@ -137,7 +145,7 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({
     // Special handling for Champion Abilities:
     // - Active ones are larger and needs to be offseted
     // - Deactive ones has animation
-    const isAbility = isChampionAbilityIcon(actor);
+    const isAbility = isChampionAbilityIcon(iconActor);
     if (isAbility) {
         const dlc = iconActor.includes("DLC");
         // active - either animated or not, with offset
@@ -151,19 +159,19 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({
                         style={{
                             top: topOffset,
                         }}
-                        src={getSpecialIconUrl(`${iconActor}.${ext}`)}
+                        src={getDistFileUrl(`${iconActor}.${ext}`)}
                         width={size}
                     />
                 </div>
             );
         }
-        // inactive - if animated, use different sprite
+        // inactive - if animated use the animated version
         if (!disableAnimation) {
             return (
                 <div
                     aria-hidden
                     className={baseClass}
-                    style={getSpecialActorStyle(iconActor, size)}
+                    style={getSpecialActorStyle(`${iconActor}.webp`, size)}
                 />
             );
         }
@@ -205,7 +213,7 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({
             )}
             style={{
                 backgroundPosition,
-                backgroundSize: NUM * size,
+                backgroundSize: ACTOR_NUM_PER_SIDE * size,
                 width: size,
                 height: size,
             }}
@@ -219,10 +227,6 @@ const SpriteImpl: React.FC<ActorSpriteProps> = ({
                     style={{
                         translate: backgroundPosition,
                         transform: `scale(${damageOverlayScale},${damageOverlayScale})`,
-                        transformOrigin: "top left",
-                        width: 1024,
-                        height: 1024,
-                        backgroundColor: "rgba(255, 0, 0, 0.6)",
                     }}
                 />
             )}
@@ -240,29 +244,29 @@ const mapActor = (
     deactive: boolean,
     powered: boolean,
     effect: string | undefined,
-): string => {
+) => {
     // cannot manually pass in a "Disabled" actor
     if (actor.endsWith("_Disabled")) {
-        return "Dummy";
+        return "Dummy" as const;
     }
     // Remap actor name to icon actor name
     if (actor in ActorRemap) {
-        actor = ActorRemap[actor];
+        actor = ActorRemap[actor as keyof ActorRemap];
     }
 
     // Master Sword
     if (actor === "Weapon_Sword_070") {
         if (deactive) {
-            return "Weapon_Sword_070_Disabled";
+            return "Weapon_Sword_070_Disabled" as const;
         }
         if (powered) {
-            return "Weapon_Sword_072";
+            return "Weapon_Sword_072" as const;
         }
     }
 
     // regular OHO, use powered up icon unless deactivated
     if (!deactive && actor === "Weapon_Sword_502") {
-        actor = "Weapon_Sword_503";
+        actor = "Weapon_Sword_503" as const;
     }
 
     // Champion Abilities
@@ -270,7 +274,7 @@ const mapActor = (
         // need to return here because animated images are not
         // in Dummy
         if (deactive) {
-            return `${actor}_Disabled`;
+            return `${actor}_Disabled` as const;
         }
         return actor;
     }
@@ -278,31 +282,40 @@ const mapActor = (
     // Elixirs - they are the same actor, but icon
     // depends on the effect
     if (effect && actor === "Item_Cook_C_17") {
-        actor = `${actor}_${effect}`;
+        actor = `${actor}_${effect}` as const;
     }
 
     if (!(actor in ActorMetadata)) {
-        return "Dummy";
+        return "Dummy" as const;
     }
     return actor;
 };
 
-const NUM = 16; // number of sprites in a row/column
 const getBackgroundPosition = (position: number, size: number) => {
-    const x = position % NUM;
-    const y = Math.floor(position / NUM);
+    const x = position % ACTOR_NUM_PER_SIDE;
+    const y = Math.floor(position / ACTOR_NUM_PER_SIDE);
     return `-${x * size}px -${y * size}px`;
 };
 
-const isChampionAbilityIcon = (iconActor: string) => {
+/** Check animated square icon (Travel Medallion, 5 orbs) */
+const isAnimatedAndSquare = (iconActor: string): iconActor is AnimatedSquareIcon => {
+    return /^Obj_(WarpDLC|DungeonClearSeal|DLC_HeroSeal_(Gerudo|Goron|Rito|Zora))/.test(iconActor);
+};
+
+type AnimatedSquareIcon = `Obj_${"WarpDLC" | "DungeonClearSeal" | `DLC_HeroSeal_${ChampionTown}`}`;
+
+const isChampionAbilityIcon = (iconActor: string): iconActor is ChampionAbilityIcon => {
     return /^Obj_(DLC_)?HeroSoul_(Gerudo|Goron|Rito|Zora)(_Disabled)?$/.test(iconActor);
 };
 
-const getSpecialActorStyle = (actor: string, size: number) => {
+type ChampionAbilityIcon = `Obj_${"DLC_" | ""}HeroSoul_${ChampionTown}${"_Disabled" | ""}`;
+type ChampionTown = "Gerudo" | "Goron" | "Rito" | "Zora";
+
+const getSpecialActorStyle = (actor: DistFileKey & `${string}.webp`, size: number) => {
     return {
         width: size,
         height: size,
-        backgroundImage: `url("${getSpecialIconUrl(actor + ".webp")}")`,
+        backgroundImage: `url("${getDistFileUrl(actor)}")`,
         backgroundSize: size,
     };
 };

@@ -17,9 +17,10 @@ jobs:
           ecma-bun: true
           rust: stable
           tool-cargo-binstall: ripgrep,workex=Pistonite/workex
+          python: uv
       - uses: ./.github/steps/cache-ci
         with:
-          app-assets: true
+          itemsys: true
       - run: task check-ci-layer-1-2 --output group
 
   check-layer-3:
@@ -70,8 +71,9 @@ jobs:
           ecma-pnpm: true
           ecma-bun: true
           rust: stable
+          python: uv
       - uses: ./.github/steps/cache-ci
         with:
-          app-assets: true
+          itemsys: true
           runtime: true
       - run: task test-ci --output group

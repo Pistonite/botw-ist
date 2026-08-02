@@ -1,7 +1,7 @@
 import yaml
 import os
 import multiprocessing
-SELF_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+SELF_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 DATA_DIR = os.path.join(os.path.dirname(SELF_DIR), "botw-data")
 if not os.path.exists(DATA_DIR):
     raise Exception(f"botw-data not found: {DATA_DIR}")
@@ -10,7 +10,7 @@ sys.path.append(os.path.join(DATA_DIR))
 from src import msyt # type: ignore
 from src import spp # type: ignore
 
-OUTPUT_DIR = os.path.join(os.path.dirname(SELF_DIR), "itemsys", "src", "generated")
+OUTPUT_DIR = os.path.join(SELF_DIR, "target", "codegen")
 
 def main():
 

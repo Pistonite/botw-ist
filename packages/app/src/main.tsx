@@ -45,6 +45,9 @@ const createWasmRuntimeWorker = async (): Promise<Runtime> => {
     // create the runtime worker
     let url: string;
     if (import.meta.env.DEV) {
+        // we must use the local worker because otherwise it would be considered
+        // a different origin (i.e. the hosted app origin vs localhost or whatever
+        // origin is used locally), which does not allow threading to work.
         devLog.info("using local runtime worker");
         url = "/runtime/worker.js";
     } else {

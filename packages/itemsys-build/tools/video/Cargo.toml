@@ -1,0 +1,15 @@
+[package]
+name = "itemsys-build-video-encode"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+serde.workspace = true
+cu.workspace = true
+cu.features = ["cli", "fs", "yaml", "derive", "coroutine-heavy"]
+image.workspace = true
+webp-animation.workspace = true
+
+[[bin]]
+name = "encode"
+path = "encode.rs"

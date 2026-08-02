@@ -59,7 +59,7 @@ tasks:
     desc: Download super secret files
     cmds:
       - $(which mkdir) -p data
-      - gcloud storage cp -r gs://ist-private/super-secret/botw150 data
+      - gcloud storage cp -r gs://piston-dev/botw-ist/runtime-tests/data/botw150 data
 
   build-full:
     desc: Build the image that contains the full ExeFS
@@ -82,13 +82,13 @@ tasks:
   push-artifacts:
     desc: Upload built artifacts
     cmds:
-      - gcloud storage cp data/program-mini.bfi gs://ist-private/super-secret/images/
+      - gcloud storage cp data/program-mini.bfi gs://piston-dev/botw-ist/runtime-tests/data/
 
   pull-artifacts:
     desc: Pull built artifacts
     cmds:
       - $(which mkdir) -p data
-      - gcloud storage cp gs://ist-private/super-secret/images/program-mini.bfi data
+      - gcloud storage cp gs://piston-dev/botw-ist/runtime-tests/data/program-mini.bfi data
 
   verify-artifacts:
     cmds:

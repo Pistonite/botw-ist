@@ -2,7 +2,7 @@ import yaml
 import os
 import multiprocessing
 import json
-SELF_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+SELF_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 DATA_DIR = os.path.join(os.path.dirname(SELF_DIR), "botw-data")
 if not os.path.exists(DATA_DIR):
     raise Exception(f"botw-data not found: {DATA_DIR}")
@@ -19,7 +19,7 @@ import type { ActorData } from "../data/default_actor_data.ts";
 
 export const ActorDataMap: Record<string, Partial<ActorData>> = JSON.parse(`"""
 
-OUTPUT_DIR = os.path.join(os.path.dirname(SELF_DIR), "itemsys", "src", "generated")
+OUTPUT_DIR = os.path.join(SELF_DIR, "target", "codegen")
 
 def main():
     actor_dir = os.path.join(DATA_DIR, "output", "Actor")

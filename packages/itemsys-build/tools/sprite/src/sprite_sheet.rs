@@ -56,9 +56,17 @@ impl SpriteSheet {
     /// Load an image file into sprite sheet canvas
     fn load_image(&mut self, path: impl AsRef<Path>, position: usize) -> cu::Result<()> {
         let path = path.as_ref();
-        let image =cu::check!(image::open(path), "could not open image: '{}'", path.display())?;
+        let image = cu::check!(
+            image::open(path),
+            "could not open image: '{}'",
+            path.display()
+        )?;
         let (w, h) = image.dimensions();
-        cu::ensure!(w==h, "image is not square ({w}x{h}): '{}'", path.display())?;
+        cu::ensure!(
+            w == h,
+            "image is not square ({w}x{h}): '{}'",
+            path.display()
+        )?;
         let use_padding = should_use_padding(path.to_string_lossy().as_ref());
         for canvas in &mut self.canvases {
             canvas.load_image(position, &image, use_padding)?;

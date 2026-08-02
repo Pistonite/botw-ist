@@ -1,21 +1,18 @@
-[package]
-name = "skybook-itemsys-build"
-version = "0.0.0"
-edition = "2024"
-
 [workspace]
-
-[dependencies.cu]
-package = "pistonite-cu"
-version = "0.8.2"
-features = [
-    "cli", "fs", "yaml", "json", "derive",
-    "coroutine-heavy"
+resolver = "2"
+members = [
+    "tools/video",
+    "tools/sprite",
 ]
 
-[dependencies]
+[workspace.dependencies.cu]
+package = "pistonite-cu"
+version = "0.9.2"
+
+[workspace.dependencies]
 codize = "0.3.3"
 serde = "1"
 image = "0.25.10"
 webp = "0.3.1"
 webp-animation = { version = "0.10.0", features = ["image"] }
+itertools = "0.15.0"

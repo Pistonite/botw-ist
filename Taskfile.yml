@@ -27,6 +27,8 @@ includes:
   data:  { taskfile: ./packages/botw-data, dir: ./packages/botw-data, internal: true, optional: true }
 
 tasks:
+
+  # -- setup tasks --
   install-cargo-extra-tools:
     aliases: [icets]
     cmds:
@@ -54,22 +56,17 @@ tasks:
       - task: manual:install
       - task: server:install
 
+  # -- artifacts tasks --
   build-artifacts:
     desc: Generate artifacts for development locally
     cmds:
       - task: data:build
       - task: parser:build-src
-      - task: itemsys-build:build-src
+      - task: itemsys-build:pull-dist
       - task: runtime-wasm:pull-dist
       - task: blueflame-deps:build-src
 
-  pull-artifacts:
-    desc: Pull artifacts from storage (requires gcloud access)
-    deps:
-      - cache-ci-app-assets-pull-artifacts
-      - cache-ci-runtime-pull-artifacts
-
-  cache-ci-app-assets-pull-artifacts:
+  cache-ci-itemsys-pull-artifacts:
     deps:
       - itemsys-build:pull-artifacts
 
@@ -78,6 +75,7 @@ tasks:
       - blueflame-deps:pull-artifacts
       - runtime-tests:pull-artifacts
 
+  # -- check tasks --
   check-ci-layer-1-2:
     cmds:
       - task: post-install
@@ -142,35 +140,27 @@ tasks:
     cmds:
       - task: post-install
       - task: test
+      - task: skybook-api:test
       
 
   test:
     desc: Run ALL of the tests
     cmds:
-      - task: test-layer-1
-      - task: test-layer-2
-      - cmd: echo 'All tests passed!'
-        silent: true
-
-  test-layer-2:
-    cmds:
+      - task: skybook-api:test
+      - task: app:test
+      - task: itemsys:test
       - task: parser:test
       - task: blueflame-deps:test
       - task: blueflame:test
       - task: runtime-tests:run-mini
-
-  test-layer-1:
-    deps:
-      - skybook-api:test
-      - app:test
-      - itemsys:test
+      - cmd: echo 'All tests passed!'
+        silent: true
 
   build:
     desc: Check that components can build without failure
-    deps:
-      - app:build
-      - server:build
     cmds:
+      - task: app:build
+      - task: server:build
       - task: manual:build
       - task: runtime-wasm:build
 

@@ -39,7 +39,7 @@ export default configure(() => {
                 },
                 {
                     pattern: /^\/static\/itemsys\/(.*)/,
-                    resolve: ([_, capture]) => path.join("..", "itemsys-build", "public", capture),
+                    resolve: ([_, capture]) => path.join("..", "itemsys-build", "dist", capture),
                 },
             ]),
         ],

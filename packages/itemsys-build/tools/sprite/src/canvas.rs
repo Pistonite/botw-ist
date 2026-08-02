@@ -32,24 +32,24 @@ impl Canvas {
         outer_resolution: u32,
         inner_resolution: u32,
         quality: f32,
-    ) -> Self {
+    ) -> cu::Result<Self> {
         let padding2 = outer_resolution - inner_resolution;
-        if padding2 % 2 != 0 {
-            panic!("padding must be even");
+        if !padding2.is_multiple_of(2) {
+            cu::bail!("canvas padding must be even; please fix the rendering profile");
         }
         let padding = padding2 / 2;
 
         let canvas_size = sprite_per_side * outer_resolution;
         let image = DynamicImage::new_rgba8(canvas_size, canvas_size);
 
-        Self {
+        Ok(Self {
             output,
             sprite_per_side,
             padding,
             scale_to: inner_resolution,
             quality,
             image,
-        }
+        })
     }
 
     pub fn load_image(
@@ -86,10 +86,12 @@ impl Canvas {
     ///
     /// Return the file size
     pub fn write(&self) -> cu::Result<usize> {
-        let encoder = Encoder::from_image(&self.image) .map_err(|x| cu::fmterr!("{x}"));
+        let encoder = Encoder::from_image(&self.image).map_err(|x| cu::fmterr!("{x}"));
         let encoder = cu::check!(encoder, "could not create encoder")?;
 
-        let memory = encoder.encode_simple(false, self.quality).map_err(|x| cu::fmterr!("{x:?}"));
+        let memory = encoder
+            .encode_simple(false, self.quality)
+            .map_err(|x| cu::fmterr!("{x:?}"));
         let memory = cu::check!(memory, "failed to encode canvas")?;
         let len = memory.len();
 

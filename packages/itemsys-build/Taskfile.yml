@@ -1,75 +1,134 @@
 version: '3'
 
+includes:
+  cargo:
+    taskfile: ../../node_modules/mono-dev/task/cargo.yaml
+    internal: true
+    optional: true
+  
+
 tasks:
-  pull-video-deps:
+  # -- video encoding tasks ---
+  vpull-deps:
     desc: Pull the (processed) video deps
     cmds:
-      - rm -rf video
-      - mkdir -p video
-      - gcloud storage cp -r gs://ist-private/video .
-
-  pull-icons-deps: 
-    desc: Pull the item images deps
-    cmds:
-      - rm -rf icons
-      - gcloud storage cp -r gs://ist-private/icons .
-
+      - rm -f target/video/*
+      - mkdir -p target/video
+      - gcloud storage cp -r gs://piston-dev/botw-ist/itemsys-build/video target
   vdecode:
     desc: Decode, crop, and clean up video frames using decode.py
     cmds:
-      - uv run scripts/videoprep/decode.py {{.CLI_ARGS}}
-
+      - uv run tools/video/decode.py {{.CLI_ARGS}}
   vencode:
     desc: Encode video frames into animated webp
     cmds:
-      - cargo run --bin skybook-itemsys-build --release -- encode {{.CLI_ARGS}}
-
-  push-animated-artifacts:
-    desc: Push animated webps to cloud
+      - cargo run --bin encode --release -- {{.CLI_ARGS}}
+  vpush-art:
+    desc: Push encoded animated webps
     cmds:
-      # The square ones are included in the sprite sheet (/Item)
-      - gcloud storage cp target/encode/Obj_DungeonClearSeal.png gs://ist-private/icons/Item
-      - gcloud storage cp target/encode/Obj_DLC_HeroSeal_*.png gs://ist-private/icons/Item
-      - gcloud storage cp target/encode/Obj_WarpDLC.png gs://ist-private/icons/Item
-      - gcloud storage cp target/encode/Obj_HeroSoul_*_Disabled.png gs://ist-private/icons/Item
-      - gcloud storage cp target/encode/Obj_DLC_HeroSoul_*_Disabled.png gs://ist-private/icons/Item
-      # # Activated abilities are not regular sized, so cannot be in sprite sheet
-      - gcloud storage cp target/encode/Obj_HeroSoul_*.png gs://ist-private/icons/SP/Item
-      - gcloud storage cp target/encode/Obj_DLC_HeroSoul_*.png gs://ist-private/icons/SP/Item
-      # # Put WebPs there as well
-      - gcloud storage cp target/encode/*.webp gs://ist-private/icons/SP/Item
-
-  build-src:
-    desc: Build TypeScript source code (requires research-scripts already built)
+      - gcloud storage cp -r target/encode gs://piston-dev/botw-ist/itemsys-build
+  vpull-art:
+    desc: Pull encoded animated webps
     cmds:
-      - uv run scripts/build-actor-remap.py
-      - uv run scripts/build-localization.py
-      - uv run scripts/build-actor-data-map.py
+      - rm -f target/encode/*
+      - mkdir -p target/encode
+      - gcloud storage cp -r gs://piston-dev/botw-ist/itemsys-build/encode target
 
-  build-sprite:
-    desc: Build item sprites and sprites metadata in TypeScript
+  # -- sprite rendering tasks ---
+  spull-deps:
+    desc: Pull the sprite deps (icons)
     cmds:
-      - cargo run --bin skybook-itemsys-build --release -- sprite {{.CLI_ARGS}}
+      - rm -rf target/icons/*
+      - mkdir -p target/icons
+      - gcloud storage cp -r gs://piston-dev/botw-ist/itemsys-build/icons target
+  srender:
+    desc: Render the sprites
+    cmds:
+      - cargo run --bin sprite --release -- {{.CLI_ARGS}}
+  spush-art:
+    desc: Push sprite artifacts
+    cmds:
+      - gcloud storage cp -r target/sprite gs://piston-dev/botw-ist/itemsys-build
+  spull-art:
+    desc: Pull sprite artifacts
+    cmds:
+      - rm -f target/sprite/*
+      - mkdir -p target/sprite
+      - gcloud storage cp -r gs://piston-dev/botw-ist/itemsys-build/sprite target
+
+  # -- codegen tasks ---
+  cgen:
+    desc: Generate itemsys source code (requires botw-data slready built)
+    cmds:
+      - uv run tools/codegen/build-actor-remap.py
+      - uv run tools/codegen/build-localization.py
+      - uv run tools/codegen/build-actor-data-map.py
+  cpush-art:
+    desc: Push code artifacts to cloud
+    cmds:
+      - gcloud storage cp -r target/codegen gs://piston-dev/botw-ist/itemsys-build
+  cpull-art:
+    desc: Pull code artifacts
+    cmds:
+      - rm -f target/codegen/*
+      - mkdir -p target/codegen
+      - gcloud storage cp -r gs://piston-dev/botw-ist/itemsys-build/codegen target
+
+  # -- dist tasks ---
+  dpull-deps:
+    desc: Pull deps needed for 'build'
+    cmds:
+      - rm -f target/images/*
+      - mkdir -p target/images
+      - gcloud storage cp -r gs://piston-dev/botw-ist/itemsys-build/images target
+
+  pull-artifacts:
+    desc: Pull all artifacts and build dist
+    cmds:
+      - task: dpull-deps
+      - task: spull-art
+      - task: cpull-art
+      - task: vpull-art
+      - task: build
+
+  build:
+    desc: Build the distribution files
+    cmds:
+      - rm -rf dist
+      - rm -rf ../itemsys/src/generated
+      - uv run tools/distbuild/distbuild.py
+      - tar -czf dist/itemsys-srcgen.tar.gz -C ../itemsys/src/generated .
+
+  pull-dist:
+    desc: Pull the built distribution files from the app
+    cmds:
+      - rm -rf dist
+      - mkdir -p dist
+      - curl -fsSL -o dist/dist_index https://ist.pistonite.app/static/itemsys/dist_index
+      - silent: true
+        cmd: |
+          echo 'pulling dist files...'
+          while read -r file; do
+            if [ -n "$file" ]; then
+              echo "dist: $file"
+              curl -fsSL -o "dist/$file" "https://ist.pistonite.app/static/itemsys/$file"
+            fi
+          done < dist/dist_index
+      - curl -fsSL -o dist/itemsys-srcgen.tar.gz https://ist.pistonite.app/static/itemsys/itemsys-srcgen.tar.gz
+      - rm -rf ../itemsys/src/generated
+      - mkdir -p ../itemsys/src/generated
+      - tar -xzf dist/itemsys-srcgen.tar.gz -C ../itemsys/src/generated
+
+  check:
+    - task: cargo:clippy-all
+    - task: cargo:fmt-check
+
+
 
   clean:
     desc: Save disk space
     cmds:
       - cargo clean
-      - rm -rf video
+      - rm -rf target
+      - rm -rf .venv
 
-  pull-artifacts:
-    cmds:
-      - mkdir -p public/sprites
-      - mkdir -p public/special
-      - mkdir -p public/images
-      - mkdir -p ../itemsys/src/generated
-      - gcloud storage cp gs://ist-private/artifacts/skybook-itemsys/sprites/*.webp public/sprites
-      - gcloud storage cp gs://ist-private/icons/SP/Item/* public/special
-      - gcloud storage cp gs://ist-private/images/SheikahBackground*.png public/images
-      - gcloud storage cp gs://ist-private/images/bg-*.jpg public/images
-      - gcloud storage cp gs://ist-private/artifacts/skybook-itemsys/generated/* ../itemsys/src/generated
-
-  push-artifacts:
-    cmds:
-      - gcloud storage cp public/sprites/*.webp gs://ist-private/artifacts/skybook-itemsys/sprites
-      - gcloud storage cp ../itemsys/src/generated/* gs://ist-private/artifacts/skybook-itemsys/generated

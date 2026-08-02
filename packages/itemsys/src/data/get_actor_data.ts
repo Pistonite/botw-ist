@@ -1,4 +1,4 @@
-import { ActorDataMap } from "../generated/actor_data_map.ts";
+import { ActorDataMap } from "#codegen";
 import { DefaultActorData, type ActorData } from "./default_actor_data.ts";
 
 /** Get the data property of the actor, or default if the actor doesn't have the property */

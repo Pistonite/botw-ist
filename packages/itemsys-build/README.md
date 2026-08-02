@@ -1,10 +1,49 @@
-## Building animated icons
+# itemsys-build
+
+Build scripts/files/assets for itemsys
+
+## Creating animated icons
+
+This step is not needed for development. The relevant tools are in `tools/video`.
 
 The animated icons are built from a video recording of the game.
+The videos are stored in GCP and see `tools/video/prep/splice.ps1` to see
+the (re-)encoding used to generate the spliced videos. The videos are spliced
+to exactly one animation cycle.
 
-- Step 1: Get the video, see `scripts/videoprep/splice.ps1`
-- Step 2: (`vdecode` task) Decode the video into frames, crop the item out and 
-  use algorithms to automatically fix the image (for example delete the orb count).
-  See `scripts/decode.py`
-- Step 3: Encode the frames into `webp`, and use an algorithm to add alpha.
-  See `src/encode.rs`
+To build the animated icons:
+- `task vpull-deps` to download the videos (requires GCP access).
+- `task vdecode` to decode the videos into frames and clean the frames.
+- `task vencode` to encode the frames into webp.
+
+To push the encoded animated icons: `task vpush-art`.
+
+## Creating sprites
+
+This step is not needed for development. The relevant tools are in `tools/sprite`.
+
+The sprite tool re-encode item icons into spritesheets so they can be smaller and faster to load.
+
+To build the spritesheets:
+- Either build the animated icons or pull them `task vpull-art`.
+- `task spull-deps` to pull the other icons.
+- `task srender` to render the sprites and metadata.
+
+To push the generated sprites: `task spush-art`
+
+## Distribution files
+
+This step is not needed for development unless you are changing asset hosting itself.
+The app detects that you don't have the assets locally and will pull from the hosted
+app directly.
+
+Without GCP access, you can pull the distribution files directly from hosted app
+for development. Run `task pull-dist`.
+
+Otherwise you can build them locally:
+- `task cgen` to build the code (requires `botw-data` already built)
+- `task dpull-deps` to pull dependencies for building distribution
+- Build or pull the animated icons and sprites by following the 2 sections above.
+- `task build` to build the dist files.
+
+Alternatively to skip building `botw-data`, run `task pull-artifacts`.

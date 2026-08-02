@@ -7,7 +7,7 @@ import type {
     ItemDragDataWithoutLocation,
 } from "@pistonite/skybook-api";
 
-import type { CookEffect } from "../data";
+import type { CookEffect } from "#data";
 
 import {
     getSlotPropsFromActor,
