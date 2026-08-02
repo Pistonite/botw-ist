@@ -43,6 +43,7 @@ for development. Run `task pull-dist`.
 Otherwise you can build them locally:
 - `task cgen` to build the code (requires `botw-data` already built)
 - `task dpull-deps` to pull dependencies for building distribution
+- Build or pull the animated icons and sprites by following the 2 sections above.
 - `task build` to build the dist files.
 
 Alternatively to skip building `botw-data`, run `task pull-artifacts`.
