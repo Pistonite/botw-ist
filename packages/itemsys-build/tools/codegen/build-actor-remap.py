@@ -1,7 +1,7 @@
 import os
 import yaml
 import json
-SELF_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+SELF_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 # requires research-scripts package to be built
 DATA_DIR = os.path.join(os.path.dirname(SELF_DIR), "botw-data")
@@ -18,7 +18,7 @@ HEADER = """
 export type ActorRemap = Record<string, string>;
 """
 
-OUTPUT_DIR = os.path.join(os.path.dirname(SELF_DIR), "itemsys", "src", "generated")
+OUTPUT_DIR = os.path.join(SELF_DIR, "target", "codegen")
 
 def main():
     actor_icon_remap_path = os.path.join(DATA_DIR, "output", "actor-icon-remap.yaml")

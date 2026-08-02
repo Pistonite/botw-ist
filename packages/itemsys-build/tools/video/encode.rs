@@ -43,10 +43,11 @@ pub struct Cmd {
     common: cu::cli::Flags,
 }
 
-pub async fn run(mut args: Cmd) -> cu::Result<()> {
+#[cu::cli]
+async fn main(mut args: Cmd) -> cu::Result<()> {
     // load config
-    let config_file = include_str!("../Animate.yaml");
-    let config= yaml::parse::<Config>(&config_file)?;
+    let config_file = include_str!("../../Animate.yaml");
+    let config = yaml::parse::<Config>(&config_file)?;
     let mut expanded_objects = BTreeSet::new();
 
     // parse inputs
@@ -84,13 +85,15 @@ pub async fn run(mut args: Cmd) -> cu::Result<()> {
     let profile = Arc::new(config.encoder);
     let mut handles = Vec::with_capacity(expanded_objects.len());
     let pool = cu::co::pool(0);
-    let bar = cu::progress(
-        "encoding objects").total(
-        expanded_objects.len()).keep(false).spawn();
+    let bar = cu::progress("encoding objects")
+        .total(expanded_objects.len())
+        .max_display_children(8)
+        .spawn();
     for object in expanded_objects {
         let profile = Arc::clone(&profile);
+        let bar = bar.clone();
         let handle = pool.spawn(async move {
-            encode(&object, &profile)?;
+            encode(bar, &object, &profile)?;
             cu::Ok(object)
         });
         handles.push(handle);
@@ -105,7 +108,7 @@ pub async fn run(mut args: Cmd) -> cu::Result<()> {
     Ok(())
 }
 
-fn encode(object: &str, profile: &EncoderProfile) -> cu::Result<()> {
+fn encode(bar: Arc<cu::ProgressBar>, object: &str, profile: &EncoderProfile) -> cu::Result<()> {
     let frames_dir = Path::new("target").join("decode").join(object);
     let output_dir = Path::new("target").join("encode");
     cu::fs::make_dir(&output_dir)?;
@@ -149,9 +152,11 @@ fn encode(object: &str, profile: &EncoderProfile) -> cu::Result<()> {
         frame_images.push(image);
     }
 
-    let bar = cu::progress(
-        format!("encoding {object}")).total(
-        frame_images.len()).spawn();
+    let bar = bar
+        .child(format!("encoding {object}"))
+        .total(frame_images.len())
+        .keep(false)
+        .spawn();
 
     let lossy_config = LossyEncodingConfig {
         target_size: 0,    // off
@@ -198,9 +203,8 @@ fn encode(object: &str, profile: &EncoderProfile) -> cu::Result<()> {
     let size = encoded.len();
     let output_path = output_dir.join(output_name);
     cu::fs::write(output_path, &*encoded)?;
-    bar.done_with_message(
-        &format!("finished {object}: {size} bytes")
-    );
+    cu::info!("finished {object}: {size} bytes");
+    bar.done();
 
     Ok(())
 }
@@ -246,11 +250,7 @@ fn add_alpha(r: u8, g: u8, b: u8) -> (u8, u8, u8, u8) {
         // since alpha max is 1.0, this should not overflow
         // check just in case
         let xa = (x as f64 / a).floor();
-        if xa > 255.0 {
-            255
-        } else {
-            xa as u8
-        }
+        if xa > 255.0 { 255 } else { xa as u8 }
     }
 
     let a = (alpha * 255.0).floor() as u8;

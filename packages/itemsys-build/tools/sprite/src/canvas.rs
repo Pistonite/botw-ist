@@ -86,10 +86,12 @@ impl Canvas {
     ///
     /// Return the file size
     pub fn write(&self) -> cu::Result<usize> {
-        let encoder = Encoder::from_image(&self.image) .map_err(|x| cu::fmterr!("{x}"));
+        let encoder = Encoder::from_image(&self.image).map_err(|x| cu::fmterr!("{x}"));
         let encoder = cu::check!(encoder, "could not create encoder")?;
 
-        let memory = encoder.encode_simple(false, self.quality).map_err(|x| cu::fmterr!("{x:?}"));
+        let memory = encoder
+            .encode_simple(false, self.quality)
+            .map_err(|x| cu::fmterr!("{x:?}"));
         let memory = cu::check!(memory, "failed to encode canvas")?;
         let len = memory.len();
 

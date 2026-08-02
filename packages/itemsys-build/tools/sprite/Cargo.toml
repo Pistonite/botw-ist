@@ -1,0 +1,16 @@
+[package]
+name = "itemsys-build-sprite"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+serde.workspace = true
+cu.workspace = true
+cu.features = ["cli", "fs", "yaml", "json", "coroutine-heavy"]
+webp.workspace = true
+codize.workspace = true
+image.workspace = true
+
+[[bin]]
+name = "sprite"
+path = "src/main.rs"

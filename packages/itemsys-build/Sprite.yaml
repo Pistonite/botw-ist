@@ -1,0 +1,64 @@
+chunks:
+  item_0:
+    - icons/CapturedActor/*
+    - icons/Item/*
+    - icons/PlayerItem/*
+    - encode/Obj_DungeonClearSeal.png
+    - encode/Obj_DLC_HeroSeal_*.png
+    - encode/Obj_WarpDLC.png
+    - encode/Obj_HeroSoul_*_Disabled.png
+    - encode/Obj_DLC_HeroSoul_*_Disabled.png
+  item_1:
+    - icons/Bullet/*
+    - icons/Weapon*/*
+  item_2:
+    - icons/Armor*/*
+    - icons/Horse*/*
+    - icons/CookResult/*
+    - icons/Dummy.png
+  modifier:
+    - icons/SpecialStatus/*
+
+render:
+  profiles:
+    lo_res:
+      sprites_per_side: 16
+      outer_size: 32
+      inner_size: 28
+      quality: 75
+    hi_res:
+      sprites_per_side: 16
+      outer_size: 64
+      inner_size: 56
+      quality: 90
+    modifier:
+      sprites_per_side: 8
+      outer_size: 48
+      inner_size: 48
+      quality: 90
+
+  groups:
+    actor:
+      - chunk: item_0
+        emit:
+          - path: chunk0x32.webp
+            profile: lo_res
+          - path: chunk0x64.webp
+            profile: hi_res
+      - chunk: item_1
+        emit:
+          - path: chunk1x32.webp
+            profile: lo_res
+          - path: chunk1x64.webp
+            profile: hi_res
+      - chunk: item_2
+        emit:
+          - path: chunk2x32.webp
+            profile: lo_res
+          - path: chunk2x64.webp
+            profile: hi_res
+    modifier:
+      - chunk: modifier
+        emit:
+          - path: modifiers.webp
+            profile: modifier

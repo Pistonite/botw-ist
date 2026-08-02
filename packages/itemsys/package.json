@@ -39,9 +39,6 @@
     },
     "pistonight/mono-dev": {
         "lib": true,
-        "publish": true,
-        "nocheck": [
-            "/src/sprite/*_meta.ts"
-        ]
+        "publish": true
     }
 }
