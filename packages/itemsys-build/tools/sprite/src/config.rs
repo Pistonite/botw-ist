@@ -39,13 +39,13 @@ pub struct Config {
     pub target: PathBuf,
     /// chunk_name -> globs
     pub chunks: BTreeMap<String, Vec<String>>,
-    pub render: RenderConfig
+    pub render: RenderConfig,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RenderConfig {
     pub profiles: BTreeMap<String, RenderProfileConfig>,
-    pub groups: BTreeMap<String, Vec<RenderGroupConfig>>
+    pub groups: BTreeMap<String, Vec<RenderGroupConfig>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -53,18 +53,17 @@ pub struct RenderProfileConfig {
     pub sprites_per_side: u32,
     pub outer_size: u32,
     pub inner_size: u32,
-    pub quality: f32
+    pub quality: f32,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RenderGroupConfig {
     pub chunk: String,
-    pub emit: Vec<RenderGroupEmitConfig>
+    pub emit: Vec<RenderGroupEmitConfig>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RenderGroupEmitConfig {
     pub path: String,
-    pub profile: String
+    pub profile: String,
 }
-

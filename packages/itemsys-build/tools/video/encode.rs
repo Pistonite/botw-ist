@@ -47,7 +47,7 @@ pub struct Cmd {
 async fn main(mut args: Cmd) -> cu::Result<()> {
     // load config
     let config_file = include_str!("../../Animate.yaml");
-    let config = yaml::parse::<Config>(&config_file)?;
+    let config = yaml::parse::<Config>(config_file)?;
     let mut expanded_objects = BTreeSet::new();
 
     // parse inputs
@@ -58,12 +58,18 @@ async fn main(mut args: Cmd) -> cu::Result<()> {
         if let Some(object) = obj.strip_suffix('*') {
             if object.is_empty() {
                 for key in config.objects.keys() {
-                    let name = key.splitn(2, ":").skip(1).next().unwrap();
+                    let (_, name) = cu::check!(
+                        key.split_once(':'),
+                        "invalid key: {key}, must be the format '<profile>:<name>'"
+                    )?;
                     expanded_objects.insert(name.to_string());
                 }
             } else {
                 for key in config.objects.keys() {
-                    let name = key.splitn(2, ":").skip(1).next().unwrap();
+                    let (_, name) = cu::check!(
+                        key.split_once(':'),
+                        "invalid key: {key}, must be the format '<profile>:<name>'"
+                    )?;
                     if name.starts_with(object) {
                         expanded_objects.insert(name.to_string());
                     }
@@ -71,9 +77,10 @@ async fn main(mut args: Cmd) -> cu::Result<()> {
             }
         } else {
             for key in config.objects.keys() {
-                let mut parts = key.splitn(2, ":");
-                let profile = parts.next().unwrap();
-                let name = parts.next().unwrap();
+                let (profile, name) = cu::check!(
+                    key.split_once(':'),
+                    "invalid key: {key}, must be the format '<profile>:<name>'"
+                )?;
                 if name == obj || profile == obj {
                     expanded_objects.insert(name.to_string());
                 }

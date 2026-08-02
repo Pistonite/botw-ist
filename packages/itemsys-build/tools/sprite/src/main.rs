@@ -1,7 +1,7 @@
 mod canvas;
-mod sprite_sheet;
-mod run;
 mod config;
+mod run;
+mod sprite_sheet;
 
 #[cu::cli]
 fn main(_: cu::cli::Flags) -> cu::Result<()> {

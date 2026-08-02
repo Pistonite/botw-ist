@@ -30,17 +30,19 @@ def copy_dist(files: list[str]):
     for file in files:
         copy_dist_one(os.path.join(SELF_DIR, file), mapping)
 
+    # file mapping typescript for mapping to the right file in itemsys code
     lines = ["export const DistFileMapping = {"]
     for name in sorted(mapping):
         lines.append(f"    \"{name}\": \"{mapping[name]}\",")
     lines.append("} as const;")
+    lines.append("export type DistFileKey = keyof typeof DistFileMapping;")
     lines.append("")
     output = os.path.join(SRCGEN_DIR, "dist_file_mapping.ts")
     with open(output, "w", encoding="utf-8", newline="\n") as f:
-        f.write("\n".join(lines))
+        f.write("\n".join(lines)+"\n")
     print("srcgen: dist_file_mapping.ts")
 
-    # index of the files in dist (itemsys-srcgen.tar.gz is packed separately and not included)
+    # index of the files in dist
     index = os.path.join(DIST_DIR, "dist_index")
     with open(index, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(sorted(mapping.values())) + "\n")

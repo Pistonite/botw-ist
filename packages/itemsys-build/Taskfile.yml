@@ -1,5 +1,12 @@
 version: '3'
 
+includes:
+  cargo:
+    taskfile: ../../node_modules/mono-dev/task/cargo.yaml
+    internal: true
+    optional: true
+  
+
 tasks:
   # -- video encoding tasks ---
   vpull-deps:
@@ -113,6 +120,9 @@ tasks:
       - mkdir -p ../itemsys/src/generated
       - tar -xzf dist/itemsys-srcgen.tar.gz -C ../itemsys/src/generated
 
+  check:
+    - task: cargo:clippy-all
+    - task: cargo:fmt-check
 
 
 
