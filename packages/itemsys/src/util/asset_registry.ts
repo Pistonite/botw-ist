@@ -36,7 +36,7 @@ export const registerAssetLocation = async (assetLocation: string) => {
 
 const makeSpriteSheetStyle = (assetLocation: string, chunk: DistFileKey & `${string}.webp`) => {
     const distChunkFile = DistFileMapping[chunk];
-    const chunkKey = chunk.substring(0, chunk.length-".webp".length);
+    const chunkKey = chunk.substring(0, chunk.length - ".webp".length);
     const chunkCSS = `.bia--sprite-${chunkKey}{background-image:url("${assetLocation}${distChunkFile}")}`;
     const maskCSS = `.bia--sprite-mask-${chunkKey}{mask-image:url("${assetLocation}${distChunkFile}")}`;
     return chunkCSS + maskCSS;
