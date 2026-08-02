@@ -22,43 +22,44 @@ chunks:
 render:
   profiles:
     lo_res:
-      sprites_per_side: 16
       outer_size: 32
       inner_size: 28
       quality: 75
     hi_res:
-      sprites_per_side: 16
       outer_size: 64
       inner_size: 56
       quality: 90
     modifier:
-      sprites_per_side: 8
       outer_size: 48
       inner_size: 48
       quality: 90
 
   groups:
     actor:
-      - chunk: item_0
-        emit:
-          - path: chunk0x32.webp
-            profile: lo_res
-          - path: chunk0x64.webp
-            profile: hi_res
-      - chunk: item_1
-        emit:
-          - path: chunk1x32.webp
-            profile: lo_res
-          - path: chunk1x64.webp
-            profile: hi_res
-      - chunk: item_2
-        emit:
-          - path: chunk2x32.webp
-            profile: lo_res
-          - path: chunk2x64.webp
-            profile: hi_res
+      sprites_per_side: 16
+      chunks:
+        - chunk: item_0
+          emit:
+            - path: chunk0x32.webp
+              profile: lo_res
+            - path: chunk0x64.webp
+              profile: hi_res
+        - chunk: item_1
+          emit:
+            - path: chunk1x32.webp
+              profile: lo_res
+            - path: chunk1x64.webp
+              profile: hi_res
+        - chunk: item_2
+          emit:
+            - path: chunk2x32.webp
+              profile: lo_res
+            - path: chunk2x64.webp
+              profile: hi_res
     modifier:
-      - chunk: modifier
-        emit:
-          - path: modifiers.webp
-            profile: modifier
+      sprites_per_side: 8
+      chunks:
+        - chunk: modifier
+          emit:
+            - path: modifiers.webp
+              profile: modifier

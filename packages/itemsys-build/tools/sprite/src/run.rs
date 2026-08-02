@@ -3,6 +3,7 @@ use std::path::PathBuf;
 
 use codize::cconcat;
 use cu::pre::*;
+use itertools::Itertools as _;
 
 use crate::canvas::Canvas;
 use crate::config::{self, Config, RenderGroupConfig};
@@ -64,7 +65,7 @@ fn render_group(
     config: &Config,
     chunks: &BTreeMap<String, Vec<PathBuf>>,
     group_name: &str,
-    group: &[RenderGroupConfig],
+    group: &RenderGroupConfig,
 ) -> cu::Result<()> {
     cu::info!("rendering group '{group_name}'");
     if group_name.is_empty() {
@@ -73,8 +74,9 @@ fn render_group(
 
     let mut metadata = Metadata::default();
     let mut seen_emit_paths = BTreeSet::default();
+    let sprites_per_side = group.sprites_per_side;
 
-    for (i, chunk_config) in group.iter().enumerate() {
+    for (i, chunk_config) in group.chunks.iter().enumerate() {
         let i = u16::try_from(i)?;
         let chunk_name = &chunk_config.chunk;
         let input_files = cu::check!(
@@ -95,7 +97,6 @@ fn render_group(
                 config.render.profiles.get(emit_profile),
                 "group '{group_name}', chunk '{chunk_name}' references an invalid profile '{emit_profile}'"
             )?;
-            let sprites_per_side = profile.sprites_per_side;
             let max_files = (sprites_per_side * sprites_per_side) as usize;
             if max_files < len {
                 cu::bail!(
@@ -142,17 +143,17 @@ fn render_group(
         x.push_str("Metadata");
         x
     };
+    let meta_per_side_constant = format!("{}_NUM_PER_SIDE", group_name.to_uppercase());
+
     cu::info!("emitting metadata for '{group_name}': {meta_emit_name}");
 
-    let ts_chunk_type = (0..group.len())
-        .map(|i| i.to_string())
-        .collect::<Vec<_>>()
-        .join("|");
+    let ts_chunk_type = (0..group.chunks.len()).map(|i| i.to_string()).join("|");
     let metadata = json::stringify(&metadata)?;
     let metadata_ts = cconcat![
         "/** FileName => [ChunkId, Position]*/",
         format!("export type {meta_type_name} = Record<string,[{ts_chunk_type},number]>;",),
         format!("export const {meta_type_name}: {meta_type_name} = JSON.parse(`{metadata}`)",),
+        format!("export const {meta_per_side_constant} = {sprites_per_side} as const;",),
     ];
 
     cu::fs::write(meta_emit_path, metadata_ts.to_string())?;

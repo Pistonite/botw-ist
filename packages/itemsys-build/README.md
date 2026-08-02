@@ -27,4 +27,22 @@ The sprite tool re-encode item icons into spritesheets so they can be smaller an
 To build the spritesheets:
 - Either build the animated icons or pull them `task vpull-art`.
 - `task spull-deps` to pull the other icons.
-- `task schunk` to build the chunk metadata.
+- `task srender` to render the sprites and metadata.
+
+To push the generated sprites: `task spush-art`
+
+## Distribution files
+
+This step is not needed for development unless you are changing asset hosting itself.
+The app detects that you don't have the assets locally and will pull from the hosted
+app directly.
+
+Without GCP access, you can pull the distribution files directly from hosted app
+for development. Run `task pull-dist`.
+
+Otherwise you can build them locally:
+- `task cgen` to build the code (requires `botw-data` already built)
+- `task dpull-deps` to pull dependencies for building distribution
+- `task build` to build the dist files.
+
+Alternatively to skip building `botw-data`, run `task pull-artifacts` and `task build`.

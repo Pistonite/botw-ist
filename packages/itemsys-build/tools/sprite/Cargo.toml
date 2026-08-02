@@ -10,6 +10,7 @@ cu.features = ["cli", "fs", "yaml", "json", "coroutine-heavy"]
 webp.workspace = true
 codize.workspace = true
 image.workspace = true
+itertools.workspace = true
 
 [[bin]]
 name = "sprite"

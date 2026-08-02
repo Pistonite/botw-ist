@@ -15,3 +15,4 @@ serde = "1"
 image = "0.25.10"
 webp = "0.3.1"
 webp-animation = { version = "0.10.0", features = ["image"] }
+itertools = "0.15.0"

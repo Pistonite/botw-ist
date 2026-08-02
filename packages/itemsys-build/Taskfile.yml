@@ -57,9 +57,6 @@ tasks:
       - gcloud storage cp -r gs://piston-dev/botw-ist/itemsys-build/sprite target
 
   # -- codegen tasks ---
-  cpull-deps:
-    desc: Pull deps for building source code files
-    cmds:
   cgen:
     desc: Generate itemsys source code (requires botw-data slready built)
     cmds:

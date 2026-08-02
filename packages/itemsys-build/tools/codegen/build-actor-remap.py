@@ -15,7 +15,7 @@ HEADER = """
  */
 
 /** Actor name -> icon actor name, if different */
-export type ActorRemap = Record<string, string>;
+export type ActorRemap = typeof ActorRemap;
 """
 
 OUTPUT_DIR = os.path.join(SELF_DIR, "target", "codegen")
@@ -30,9 +30,9 @@ def main():
     with open(output_path, "w", encoding="utf-8", newline="\n") as f:
         f.write(HEADER)
         f.write("\n")
-        f.write("export const ActorRemap: ActorRemap = JSON.parse(`")
+        f.write("export const ActorRemap = ")
         json.dump(icon_remap, f, sort_keys=True, separators=(',', ':')) # minify
-        f.write("`);\n")
+        f.write(" as const;\n")
     print(output_path)
 
 if __name__ == "__main__":
