@@ -146,16 +146,19 @@ def process_actor(actor_file) -> tuple[str, dict] | None:
         if "armorDefenceAddLevel" in gparam:
             data["armorDefenceAddLevel"] = gparam["armorDefenceAddLevel"]
 
-    if not data:
-        return None
 
-    # filter out if it only has generalLife (some animals)
-    if len(data) == 1 and "generalLife" in data:
-        return None
+    # filter in if profile is Weapon* to include all equipments
+    if not profile.startswith("Weapon"):
+        if not data:
+            return None
 
-    # filter out if it only has attackPower and life (some animals)
-    if len(data) == 2 and "attackPower" in data and "generalLife" in data:
-        return None
+        # filter out if it only has generalLife (some animals)
+        if len(data) == 1 and "generalLife" in data:
+            return None
+
+        # filter out if it only has attackPower and life (some animals)
+        if len(data) == 2 and "attackPower" in data and "generalLife" in data:
+            return None
 
     data["profile"] = profile
 

@@ -1,7 +1,7 @@
 {
     "name": "@pistonite/skybook-itemsys",
     "type": "module",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "private": true,
     "description": "Item system for Skybook, the BOTW IST Simulator",
     "homepage": "https://github.com/Pistonite/botw-ist",

@@ -20,7 +20,7 @@ runs:
         path: |
           packages/itemsys-build/dist
           packages/itemsys/src/generated
-        version: v4
+        version: v5
         key: itemsys-cache-ci
         task: exec -- cache-ci-itemsys-pull-artifacts
     - if: ${{ inputs.runtime == 'true' }}
@@ -29,7 +29,7 @@ runs:
         path: |
           packages/blueflame-deps/src/generated
           packages/runtime-tests/data/program-mini.bfi
-        version: v3
+        version: v4
         key: runtime-cache-ci
         task: exec -- cache-ci-runtime-pull-artifacts
     - if: ${{ inputs.runtime == 'true' }}
