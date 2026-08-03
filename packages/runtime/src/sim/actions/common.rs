@@ -265,7 +265,7 @@ impl OperationAmount {
     #[must_use = "result of checking if error should be emitted"]
     pub fn check<F: FnOnce(&mut Vec<ErrorReport>) -> Result<usize, memory::Error>>(
         &self,
-        span: Span,
+        _span: Span,
         errors: &mut Vec<ErrorReport>,
         count_fn: F,
     ) -> Result<ItemSelectCheck, memory::Error> {
@@ -281,7 +281,8 @@ impl OperationAmount {
                 Some(but) => {
                     if remaining != 0 || but != count_fn(errors)? {
                         cu::warn!("inaccurate all-but detected");
-                        errors.push(sim_warning!(span, InaccurateAllBut));
+                        // see https://github.com/Pistonite/botw-ist/issues/227
+                        // errors.push(sim_warning!(span, InaccurateAllBut));
                     }
                     Ok(ItemSelectCheck::Done)
                 }

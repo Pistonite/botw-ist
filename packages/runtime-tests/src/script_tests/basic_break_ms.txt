@@ -1,0 +1,4 @@
+get master-sword slate glider
+use weapon 40 times
+save
+reload

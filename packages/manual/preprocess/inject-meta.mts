@@ -24,7 +24,7 @@ async function preProcess() {
 <meta name="og:site_name" content="Skybook ${version}">
 <meta name="og:type" content="website">
 <meta name="og:description" content="${SITE_NAME}">
-<meta name="og:image" content="https://skybook.pistonite.dev/favicon.png">
+<meta name="og:image" content="https://skybook.pistonite.dev/icon.png">
 <meta name="og:title" content="{{ chatper_title }}">
 `;
     hbs = beforeHead + "<head>" + meta + afterHead;
