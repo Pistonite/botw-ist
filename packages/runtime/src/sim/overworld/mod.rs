@@ -398,6 +398,15 @@ impl OverworldSystem {
             // break the inventory actor
             if is_master_sword {
                 linker::break_master_sword(cpu)?;
+                // also set the recover time flag to 600 seconds
+                let trigger_param_ptr = gdt::trigger_param_ptr(cpu.proc.memory())?;
+                let mut guard = cpu.proc.proxies_mut(|p|{
+                    &mut p.trigger_param
+                });
+                let mut trigger_params = guard.get_mut(trigger_param_ptr)?;
+                if let Some(flag) = trigger_params.by_name_mut::<gdt::fd!(f32)>("MasterSwordRecoverTime") {
+                    flag.set(600f32);
+                }
             } else {
                 linker::remove_weapon_if_equipped(cpu, &actor_name)?;
             }
