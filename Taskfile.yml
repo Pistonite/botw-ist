@@ -29,6 +29,10 @@ includes:
 tasks:
 
   # -- setup tasks --
+  setup:
+    - task: data:install
+    - task: install-cargo-extra-tools
+
   install-cargo-extra-tools:
     aliases: [icets]
     cmds:
@@ -61,6 +65,7 @@ tasks:
     desc: Generate artifacts for development locally
     cmds:
       - task: data:build
+      - task: skybook-api:build-dep
       - task: parser:build-src
       - task: itemsys-build:pull-dist
       - task: runtime-wasm:pull-dist
