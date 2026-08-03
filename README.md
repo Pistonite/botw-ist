@@ -19,3 +19,6 @@ All code in this repo are under MIT License. BlueFlame has additional contributo
 
 This repo does not contain any copyrighted assets or code from BOTW!
 This project cannot be used to play BOTW!
+
+## Contributing
+Please refer to the [Contributing](https://skybook.pistonite.dev/developer/contributing/setup.html) chapter in the project manual.

@@ -1,74 +1,62 @@
 # Getting Started
 
+
+> [!IMPORTANT]
+> Please refer to [`mono-dev`](https://mono.pistonite.dev/standard.html)
+> for contributing guidelines and tools setup for my projects.
+>
+> Please setup tools for Rust, TypeScript, and Python. The instructions are
+> in the `mono-dev` link above.
+
 The first step to contributing is to setup a development environment locally
 on your PC.
 
 I aim to make the setup process as streamlined as possible. If you encounter
 any issues, please feel free to reach out and suggest to me how it can be improved!
 
-> [!TIP]
-> Before starting the setup, follow the [`mono-dev` Standard](https://mono.pistonite.dev/standard.html)
-> to setup the required tools:
-> - Rust Toolchain
-> - Node, PNPM, and Bun
-> - Python
-> - Task
-> - Magoo
->
-> Coreutils is required for Windows development.
-
 ## Clone repository and one-time setup
 
-Run the following commands:
+Assuming you have the repo cloned already, 
+run the following commands from the repo root
 
 ```
-git clone git@github.com:Pistonite/botw-ist --depth 1
-cd botw-ist
 magoo install
-task exec -- research:install
-task install-cargo-extra-tools
+task setup
+task install
 task build-artifacts
-task install
-task check
 ```
 
-This will:
-- Clone the repository to your PC using your GitHub account
-  - If you don't have GitHub account or don't have SSH key setup, use
-    `https://github.com/Pistonite/botw-ist` as the URL instead
-- `magoo` will setup the submodules for you
-- Research scripts will be ran to ensure data files are setup
-- Data artifacts will be built from the data files
-- Dependency packages will be downloaded
-- Configuration files will be generated
+Breakdown:
+- `magoo install` checks out the submodules
+- `task setup` performs one time setup, including build additional tools required
+  with `cargo`
+- `task install` installs the dependencies and runs post-install scripts.
+- `task build-artifacts` generates required artifacts for development locally.
 
-## Keeping up-to-date
-After pulling, you need to update the repo locally to sync tools to the latest state.
+> [!TIP]
+> When updating your local copy of the repo (i.e. with `git pull`),
+> run `task install` again to stay up-to-date with the latest dependencies.
+> You do not need to run the other setups in most cases.
 
-Run:
-
-```
-task install
-```
-
-That's it!
+Then proceed to [Build and run](./run.md) to start development!
 
 ## Building Runtime
 
-The setup above will let you build and run the web app without building
-the Runtime locally.
-To build the Runtime, you need to either:
-- Set up [uking-relocate](https://github.com/Pistonight/symbotw/tree/main/packages/uking-relocate),
-  and put the game files in `packages/runtime-tests/data/botw150`.
-  - Then, run `task exec -- runtime-tests:build-mini` to build the mini image.
-- Set up a [BlueFlame image](../../user/custom_image.md),
-  and put the image file at `packages/runtime-tests/data/program-mini.bfi`.
-  This will use whatever image you provide as the default runtime image.
+If you are only working on the frontend UI, or the manual (this website),
+then you don't need to do this setup for building the runtime.
+The project is setup to automatically download the runtime from the hosted app
+and use that for local development.
 
-Now, you can build the runtime WASM module:
+However if you do need to make changes to the runtime:
+- Make sure you already ran the commands above to build other artifacts as they are needed
+  to run the integration tests.
+- Run `task exec -- runtime-tests:install` to install `uking-relocate`, an experimental tool
+  for making BlueFlame images
+- Obtain a dump of the game's ExeFS, decompress the NSO (with hactool) and convert it to ELF (with nx2elf).
+- Put the ExeFS at `packages/runtime-tests/data/botw150/`. Name the files with `.elf` suffix.
+- You need one extra file `Actor/ActorInfo.product.sbyml` from RomFS. Obtain the file and put it
+  at `packages/runtime-tests/data/botw150/romfs/Actor/ActorInfo.product.sbyml`.
+- Run `task exec -- runtime-tests:build-mini` to generate `program-mini.bfi`
+- Now the WASM runtime should build: `task exec -- runtime-wasm:build`
 
-```
-task exec runtime-wasm:build
-```
-
-After that, the local build of the app will use the locally built Runtime.
+Then proceed to [Build and run](./run.md) to start development!

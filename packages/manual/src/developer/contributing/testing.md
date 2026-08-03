@@ -1,7 +1,6 @@
-# Checking Testing
+# Checking and Testing
 
 You should make sure your changes are properly checked and tested.
-
 Most of the time, this means you should at least manually tested the change,
 and if needed, add at least one [Snapshot Test](#snapshot-tests) if the runtime
 is changed.
@@ -12,19 +11,10 @@ You can also run `task exec -- XXX:check` to only run checks for one package.
 
 When there are formatting issues, `task exec -- XXX:fix` can automatically fix that.
 
-### `skybook-api` modification checks
-If you changed code that affects the generated `skybook-api` code, you need
-to commit those changes to git for `skybook-api` checks to pass.
-
-### `localization` checks
-Certain changes require adding keys to localization (e.g. new error types).
-Please reach out to me for adding localizations.
-
-The modification check also requires the changes to be committed to pass.
-
 ## Unit and Manual Tests
 We use [Vitest](https://vitest.dev/) for unit testing TypeScript code
-and standard Cargo test for Rust.
+and standard Cargo test for Rust. The only difference is since we use `mono-dev`
+configurations, import from `mono-dev/vitest` instead of `vitest`.
 
 Also make sure to test your changes manually in the app. See [Build and Run](./run.md)
 for how to run the app locally.
@@ -46,3 +36,10 @@ the [`delta`](https://github.com/dandavison/delta) tool).
 When you think the new snapshot is ready, copy it to `snapshots` and replace the old snapshot.
 
 You can also run the `ust` task to update all snapshots.
+
+> [!WARNING]
+> The snapshot tests are used to generate the memory trace to build the mini
+> image. If your new tests require changing the mini image, make sure
+> that test pass but do not include it in the Pull Request (since you don't have
+> access to update the mini image). Instead open a different Pull Request
+> with just the new tests, and I will push a commit that updates the mini image.
