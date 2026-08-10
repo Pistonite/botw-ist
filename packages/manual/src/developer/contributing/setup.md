@@ -7,6 +7,8 @@
 >
 > Please setup tools for Rust, TypeScript, and Python. The instructions are
 > in the `mono-dev` link above.
+>
+> You also need `jq` installed
 
 The first step to contributing is to setup a development environment locally
 on your PC.
