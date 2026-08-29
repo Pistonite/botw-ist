@@ -3,26 +3,9 @@
 
 import path from "node:path";
 
-import { type Plugin } from "mono-dev/vite";
 import serveStatic from "vite-plugin-serve-static";
 import intwc from "@pistonite/intwc/vite-plugin";
 import { configure } from "mono-dev/app-build-config";
-
-const staticAssetHeader = (): Plugin => {
-    return {
-        name: "static-asset-header",
-        apply: "serve",
-        configureServer(server) {
-            server.middlewares.use((req, res, next) => {
-                if (req.url?.startsWith("/runtime/")) {
-                    res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-                    res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-                }
-                next();
-            });
-        },
-    };
-};
 
 export default configure(() => {
     return {
@@ -31,11 +14,14 @@ export default configure(() => {
                 languages: ["cpp"],
                 translations: ["de", "es", "fr", "it", "ja", "ko", "ru", "zh-cn", "zh-tw"],
             }),
-            staticAssetHeader(),
             serveStatic([
                 {
                     pattern: /^\/runtime\/(.*)/,
                     resolve: ([_, capture]) => path.join("..", "runtime-wasm", "dist", capture),
+                    headers: {
+                        "Cross-Origin-Embedder-Policy": "require-corp",
+                        "Cross-Origin-Opener-Policy": "same-origin",
+                    },
                 },
                 {
                     pattern: /^\/static\/itemsys\/(.*)/,
